@@ -1,6 +1,20 @@
+2024-03-10  Andreas Scherer  <https://ascherer.github.io>
+
+	* ctwill-hint.ch,
+	* ctwill-mini.ch,
+	* cweave.w,
+	* cweb.1,
+	* cwebman-w2c.ch,
+	* cwebman.tex,
+	* po/de/web2c-help.po,
+	* po/web2c-help.pot,
+	* prod-cweave.w,
+	* prod-twill.w,
+	* prod.w: Add new option '-F' for CWEAVE/CTWILL.
+
 2024-02-14  Andreas Scherer  <https://ascherer.github.io>
 
-	* cwtwill-proofsort: In-place invocation.
+	* ctwill-proofsort: In-place invocation.
 
 2024-01-24  Andreas Scherer  <https://ascherer.github.io>
 

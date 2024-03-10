@@ -5,10 +5,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: CWEBbin 2021\n"
+"Project-Id-Version: CWEBbin 2024\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-07-27 09:00+0200\n"
-"PO-Revision-Date: 2021-07-27 09:00+0200\n"
+"POT-Creation-Date: 2024-03-10 16:35+0100\n"
+"PO-Revision-Date: 2024-03-10 16:35+0100\n"
 "Last-Translator: Andreas Scherer <andreas_github@freenet.de>\n"
 "Language-Team: German\n"
 "Language: de\n"
@@ -27,7 +27,7 @@ msgstr ""
 msgid "  Tangle WEBFILE with CHANGEFILE into a C/C++ program."
 msgstr "  Verknüpfe WEBFILE mit CHANGEFILE in ein C/C++ Programm."
 
-#: help.h:54 help.h:74 help.h:100
+#: help.h:54 help.h:77 help.h:106
 msgid "  Default CHANGEFILE is /dev/null;"
 msgstr "  Vorgabe für CHANGEFILE ist /dev/null;"
 
@@ -35,114 +35,122 @@ msgstr "  Vorgabe für CHANGEFILE ist /dev/null;"
 msgid "  C output goes to the basename of WEBFILE extended with `.c'"
 msgstr "  C Ausgabe geht in den Hauptnamen des WEBFILE erweitert um `.c',"
 
-#: help.h:56 help.h:76 help.h:102
+#: help.h:56 help.h:79 help.h:108
 msgid "  unless otherwise specified by OUTFILE; in this case, '-' specifies"
 msgstr "  sofern nicht ein anderes OUTFILE angegeben ist; in diesem Fall"
 
-#: help.h:57 help.h:77 help.h:103
+#: help.h:57 help.h:80 help.h:109
 msgid "  a null CHANGEFILE."
 msgstr "  bezeichnet '-' ein leeres CHANGEFILE."
 
-#: help.h:59 help.h:79 help.h:105
+#: help.h:59 help.h:82 help.h:111
 msgid "+b          print banner line on terminal"
 msgstr "+b          schreibe die Startmeldung"
 
-#: help.h:64 help.h:85 help.h:112
-msgid "-dN         set 'kpathsea_debug' to N (0..127)"
-msgstr "-dN         setze 'kpathsea_debug' auf N (0..127)"
-
-#: help.h:60 help.h:80 help.h:106
+#: help.h:60 help.h:83 help.h:112
 msgid "+h          print success message on completion"
 msgstr "+h          schreibe die Erfolgsmeldung am Ende"
+
+#: help.h:61 help.h:84 help.h:113
+msgid "+p          print progress report messages"
+msgstr "+p          schreibe die Fortschrittsmeldungen"
+
+#: help.h:62 help.h:85 help.h:114
+msgid "+/-q        shortcut for '-bhp'; also '--quiet' (default)"
+msgstr "+/-q        Kurzform für '-bhp'; auch '--quiet' (Vorgabe)"
+
+#: help.h:63 help.h:86 help.h:115
+msgid "+/-v        shortcut for '+bhp'; also '--verbose'"
+msgstr "+/-v        Kurzform für '+bhp'; auch '--verbose'"
+
+#: help.h:64 help.h:87 help.h:116
+msgid "+c          check temporary output for changes"
+msgstr "+c          prüfe temporäre Ausgabe auf Änderungen"
+
+#: help.h:65 help.h:88 help.h:117
+msgid "-dN         set 'kpathsea_debug' to N (0..127)"
+msgstr "-dN         setze 'kpathsea_debug' auf N (0..127)"
 
 #: help.h:66
 msgid "+k          keep separators in numeric literals in the output"
 msgstr "+k          konserviere '-Trenner in Zahlen in der Ausgabe"
 
-#: help.h:61 help.h:81 help.h:107
-msgid "+p          print progress report messages"
-msgstr "+p          schreibe die Fortschrittsmeldungen"
-
-#: help.h:62 help.h:82 help.h:108
-msgid "+/-q        shortcut for '-bhp'; also '--quiet' (default)"
-msgstr "+/-q        Kurzform für '-bhp'; auch '--quiet' (Vorgabe)"
-
-#: help.h:63 help.h:83 help.h:109
-msgid "+/-v        shortcut for '+bhp'; also '--verbose'"
-msgstr "+/-v        Kurzform für '+bhp'; auch '--verbose'"
-
-#: help.h:64 help.h:85 help.h:112
-msgid "+c          check temporary output for changes"
-msgstr "+c          prüfe temporäre Ausgabe auf Änderungen"
-
-#: help.h:66 help.h:93 help.h:121
+#: help.h:67 help.h:96 help.h:126
 msgid "+s          print usage statistics"
 msgstr "+s          melde die Verbrauchsstatistik"
 
-#: help.h:95 help.h:124
-msgid "+t          treat 'typename' in a template like 'typedef'"
-msgstr "+t          behandle 'typename' in Templates wie 'typedef'"
+#: help.h:68
+msgid "+u          transliterate UTF-8 characters in C code"
+msgstr "+u          ersetze UTF-8 Zeichen in C-Code"
 
-#: help.h:66 help.h:92 help.h:119
+#: help.h:69 help.h:98 help.h:128
 msgid "--help      display this help and exit"
 msgstr "--help      zeige diesen Hilfetext und ende"
 
-#: help.h:67 help.h:93 help.h:120
+#: help.h:70 help.h:99 help.h:129
 msgid "--version   output version information and exit"
 msgstr "--version   zeige die Versionsinformation und ende"
 
-#: help.h:72
+#: help.h:75
 msgid ""
 "Usage: cweave [OPTIONS] WEBFILE[.w] [{CHANGEFILE[.ch]|-} [OUTFILE[.tex]]]"
 msgstr ""
 "Aufruf: cweave [OPTIONS] WEBFILE[.w] [{CHANGEFILE[.ch]|-} [OUTFILE[.tex]]]"
 
-#: help.h:73
+#: help.h:76 help.h:638
 msgid "  Weave WEBFILE with CHANGEFILE into a TeX document."
 msgstr "  Verwebe WEBFILE mit CHANGEFILE in ein TeX Dokument."
 
-#: help.h:75 help.h:101
+#: help.h:78 help.h:107
 msgid "  TeX output goes to the basename of WEBFILE extended with `.tex'"
 msgstr "  TeX Ausgabe geht in den Hauptnamen des WEBFILE erweitert um `.tex',"
 
-#: help.h:84 help.h:110
+#: help.h:89 help.h:118
 msgid "-e          do not enclose C material in \\PB{...}"
 msgstr "-e          schließe C Material nicht in \\PB{...} ein"
 
-#: help.h:85 help.h:111
+#: help.h:90 help.h:119
 msgid "-f          do not force a newline after every C statement in output"
 msgstr "-f          erzwinge keinen Zeilenumbruch nach jedem C Statement"
 
-#: help.h:86 help.h:112
+#: help.h:91 help.h:120
+msgid "-F          do not force a compound statement to start on a new line"
+msgstr "-F          erzwinge keine neue Zeile am Beginn eines Code-Blocks"
+
+#: help.h:92 help.h:121
 msgid "-i          suppress indentation of parameter declarations"
 msgstr "-i          unterdrücke die Einrückung von Parameterdeklarationen"
 
-#: help.h:87 help.h:113
+#: help.h:93 help.h:122
 msgid "-o          suppress separation of declarations and statements"
 msgstr "-o          unterdrücke die Trennung von Deklarationen und Statements"
 
-#: help.h:88 help.h:114
+#: help.h:94 help.h:123
 msgid "-x          omit indices, section names, table of contents"
 msgstr "-x          verzichte auf Indexe, Abschnittnamen und Inhaltsverzeichnis"
 
-#: help.h:89
+#: help.h:95
 msgid "+lX         use macros for language X as of Xcwebmac.tex"
 msgstr "+lX         benutze Macros für Sprache X aus Xcwebmac.tex"
 
-#: help.h:98
+#: help.h:97 help.h:127
+msgid "+t          treat 'typename' in a template like 'typedef'"
+msgstr "+t          behandle 'typename' in Templates wie 'typedef'"
+
+#: help.h:104
 msgid ""
 "Usage: ctwill [OPTIONS] WEBFILE[.w] [{CHANGEFILE[.ch]|-} [OUTFILE[.tex]]]"
 msgstr ""
 "Aufruf: ctwill [OPTIONS] WEBFILE[.w] [{CHANGEFILE[.ch]|-} [OUTFILE[.tex]]]"
 
-#: help.h:99
+#: help.h:105 help.h:655
 msgid "  Weave WEBFILE with CHANGEFILE into a TeX document with mini-indexes."
 msgstr "  Verwebe WEBFILE mit CHANGEFILE in ein TeX Dokument mit Miniindexen."
 
-#: help.h:115
+#: help.h:124
 msgid "+P          \\input ctproofmac.tex instead of ctwimac.tex"
 msgstr "+P          \\input ctproofmac.tex an Stelle von ctwimac.tex"
 
-#: help.h:116
+#: help.h:125
 msgid "+/-lX       use macros for language X as of Xct{wi|proof}mac.tex"
 msgstr "+/-lX       benutze Macros für Sprache X aus Xct{wi|proof}mac.tex"

@@ -185,12 +185,20 @@ argument to switch between different user languages and macro packages.
 (Off by default.) (Has no effect on \.{CTANGLE}.)
 \hfil\vskip\normallineskip
 \option o Separate declarations and the first statement in a function block.
-(On by default.) (Has no effect on \.{CTANGLE}.)
+(On by default.) (\.{CWEAVE} only.)
 \hfil\vskip\normallineskip
 \option u Transliteration of UTF-8 multi-byte characters.
 (Off by default.) (Has no effect on \.{CWEAVE}.)}
 
 \yskip
+@z
+
+@x
+\option x Include indexes and a table of contents in the \TEX/ file
+output by \.{CWEAVE}. (On by default.) (Has no effect on \.{CTANGLE}.)
+@y
+\option x Include indexes and a table of contents in the \TEX/ file
+output by \.{CWEAVE}. (On by default.) (\.{CWEAVE} only.)
 @z
 
 @x

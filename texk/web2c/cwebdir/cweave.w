@@ -2855,7 +2855,8 @@ if (cat1==rbrace) {
   reduce(pp,2,stmt,-1,54);
 }
 else if ((cat1==stmt||cat1==decl||cat1==function) && cat2==rbrace) {
-  big_app(force); big_app1(pp); big_app(indent); big_app(force);
+  big_app(force); big_app1(pp); big_app(indent);
+  big_app(force_first ? force : break_space);
   big_app1(pp+1); big_app(force); big_app(backup); big_app1(pp+2);
   big_app(outdent); big_app(force); reduce(pp,3,stmt,-1,55);
 }
@@ -2948,12 +2949,15 @@ else if (cat1==stmt||cat1==decl||cat1==function) {
 else if (cat1==rbrace) reduce(pp,0,decl,-1,156);
 
 @ The user can decide at run-time whether short statements should be
-grouped together on the same line.
+grouped together on the same line. Another form of compaction places
+the first line of a `compound statement', a.k.a.\ `block', next to
+the opening curly brace.
 
 @d force_lines flags['f'] /* should each statement be on its own line? */
+@d force_first flags['F'] /* should compound statement start on new line? */
 
 @<Set init...@>=
-force_lines=true;
+force_lines=force_first=true;
 
 @ @<Cases for |stmt|@>=
 if (cat1==stmt || cat1==decl || cat1==function) {

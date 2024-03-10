@@ -1,3 +1,8 @@
+2024-03-10  Andreas Scherer  <https://ascherer.github.io>
+
+	* ctwill.man,
+	* cweb.man: Add new option '-F' for CWEAVE/CTWILL.
+
 2024-03-02  Bjarni Ingi Gislason  <bjarniig@simnet.is>
 
 	* pdftex.man: whitespace, \-, etc. updates.

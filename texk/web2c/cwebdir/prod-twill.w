@@ -154,7 +154,7 @@ We use \\{in}, \\{out}, \\{back}, \\{bsp}, and \\{din} as shorthands for
    \hfill $F\,|big_force|\,$\altt $S$ $D$ $F$ \unskip & outer block\cr
 \+& |lbrace| |rbrace| & |stmt| \hfill $L\.{\\,}R$ & empty statement\cr
 \advance\midcol35pt
-\+& |lbrace| \altt|stmt| |decl| |function| |rbrace| & |stmt| \hfill
+\+\dagit& |lbrace| \altt|stmt| |decl| |function| |rbrace| & |stmt| \hfill
      $|force|\,L\,\\{in}\,|force|\,S\,
                 |force|\,\\{back}\,R\,\\{out}\,|force|$ & compound statement\cr
 \advance\midcol-20pt
@@ -335,6 +335,9 @@ Rule 41: The |big_force| becomes |force| if \.{CWEAVE} has been invoked with the
 \.{-o} option.
 
 Rule 48: The |exp| or |int_like| must not be immediately followed by |base|.
+
+Rule 55: The second |force| becomes \\{bsp} if \.{CWEAVE} has been invoked
+with the \.{-F} option.
 
 Rule 69: The $|do|\ldots|while|$ loop is wrapped in |force| if \.{CWEAVE} is invoked with the \.{-f} option.
 
