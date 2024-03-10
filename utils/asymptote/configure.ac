@@ -317,9 +317,11 @@ AC_ARG_ENABLE(readline,
 AC_ARG_ENABLE(static,
 [AS_HELP_STRING(--enable-static[[[=no]]],link against static libraries)])
 
+LDSTATIC=""
 STATIC=""
 DYNAMIC=""
 if test "x$enable_static" = "xyes"; then
+  LDSTATIC="-static "
   STATIC="-Wl,-Bstatic "
   DYNAMIC="-Wl,-Bdynamic "
 fi
@@ -330,29 +332,31 @@ AC_CHECK_LIB([edit],[readline])
 AC_CHECK_HEADERS(editline/readline.h)
 ])
 
+AC_DEFUN([CHECK_FOUND_STATIC],[
+AC_DEFINE($1,1,DEFINE_LIB($2))
+LIBS=$LIBS$STATIC"-l$2 "$DYNAMIC
+])
+
 AC_DEFUN([AC_CHECK_LIB_STATIC],[
-PKGFLAGS=`pkg-config --silence-errors --libs $1`
-if test "x$PKGFLAGS" == "x"; then
-PKGFLAGS=-l"$2 "
-echo Will try linking with $PKGFLAGS
-fi
-LDFLAGS_SAVE=$LDFLAGS
-LDFLAGS="$LDFLAGS ""$STATIC ""$PKGFLAGS""$DYNAMIC "
-AC_CHECK_LIB($2,$3,AC_DEFINE($4,1,DEFINE_LIB($2)),
+LDFLAGS0=$LDFLAGS
+LDFLAGS=$LDFLAGS$LDSTATIC
+AC_CHECK_LIB($1,$2,CHECK_FOUND_STATIC($3,$1),
 if test "x$enable_static" = "xyes"; then
 [
-LDFLAGS="$LDFLAGS_SAVE ""$PKGFLAGS"
-AS_UNSET([ac_cv_lib_$2_$3])
-AC_CHECK_LIB($2,$3,,$5)
+AS_UNSET([ac_cv_lib_$1_$2])
+LDFLAGS=$LDFLAGS0
+AC_CHECK_LIB($1,$2,,$4)
 ]
 else
-$5
+$4
 fi
 )
+LDFLAGS=$LDFLAGS0
 ])
 
 if test "x$enable_readline" != "xno"; then
 CPPFLAGS="$CPPFLAGS "`pkg-config --cflags readline`
+LDFLAGS="$LDFLAGS "`pkg-config --libs readline`
 AC_COMPILE_IFELSE([
 AC_LANG_PROGRAM([
 #include <stdio.h>
@@ -363,16 +367,14 @@ AC_LANG_PROGRAM([
 abort
 #endif
 ])],
-AC_CHECK_LIB_STATIC(readline,readline,history_list,HAVE_LIBREADLINE,READLINE),
+AC_CHECK_LIB_STATIC(readline,history_list,HAVE_LIBREADLINE,READLINE),
 READLINE)
 
-CPPFLAGS="$CPPFLAGS "`pkg-config --cflags tinfo`
-AC_CHECK_LIB_STATIC(tinfo,tinfo,tgetent,HAVE_LIBTINFO,AC_MSG_NOTICE([perhaps tgetent is in -lncurses]))
+AC_CHECK_LIB_STATIC(tinfo,tgetent,HAVE_LIBTINFO,AC_MSG_NOTICE([perhaps tgetent is in -lncurses]))
 
-CPPFLAGS="$CPPFLAGS "`pkg-config --cflags ncurses`
 AC_CHECK_HEADERS([ncurses/curses.h ncurses.h curses.h],[break])
-AC_CHECK_LIB_STATIC(ncurses,ncurses,setupterm,HAVE_LIBCURSES,
-                    AC_CHECK_LIB(curses,setupterm))
+AC_CHECK_LIB_STATIC([ncurses],[setupterm],HAVE_LIBCURSES,
+                    AC_CHECK_LIB([curses],[setupterm]))
 fi
 
 AC_ARG_ENABLE(fftw,
@@ -380,8 +382,9 @@ AC_ARG_ENABLE(fftw,
 
 if test "x$enable_fftw" != "xno"; then
 CPPFLAGS="$CPPFLAGS "`pkg-config --cflags fftw3`
+LDFLAGS="$LDFLAGS "`pkg-config --libs fftw3`
 AC_CHECK_HEADER(fftw3.h,
-AC_CHECK_LIB_STATIC(fftw3,fftw3,fftw_execute,HAVE_LIBFFTW3,
+AC_CHECK_LIB_STATIC([fftw3],[fftw_execute],HAVE_LIBFFTW3,
            AC_MSG_NOTICE([*** Could not find libfftw3: will compile without optional fast Fourier transforms. ***])),
      AC_MSG_NOTICE([*** Header file fftw3.h not found: will compile without optional fast Fourier transforms. ***]))
 fi
@@ -400,29 +403,27 @@ AC_CHECK_HEADERS([fenv.h stddef.h libintl.h])
 AC_CHECK_HEADERS(fpu_control.h)
 AC_CHECK_FUNCS([feenableexcept])
 
-AC_ARG_ENABLE(xdr,
-[AS_HELP_STRING(--enable-xdr[[[=yes]]],enable XDR/V3D support)])
-if test "x$enable_xdr" != "xno"; then
 case "$OSTYPE" in
      darwin*)
      ;;
      *)
      CPPFLAGS="$CPPFLAGS "`pkg-config --cflags libtirpc`
+     LDFLAGS="$LDFLAGS "`pkg-config --libs libtirpc`
      ;;
 esac
 
 AC_COMPILE_IFELSE([AC_LANG_PROGRAM([#include "xstream.h"])],
-                   AC_CHECK_LIB_STATIC(libtirpc,tirpc,xdrstdio_create,
-                    HAVE_LIBTIRPC,AC_MSG_NOTICE([*** Could not find libtirpc; XDR/V3D support disabled ***])),
-AC_MSG_NOTICE([*** Broken rpc headers; XDR/V3D support disabled ***]))
-fi
+                   [AC_SEARCH_LIBS([xdrstdio_create],[nsl tirpc])
+                    AC_DEFINE(HAVE_LIBTIRPC,1,
+                   DEFINE([a working <tirpc/rpc/rpc.h> header]))],
+   AC_MSG_WARN([*** Broken rpc headers; XDR/V3D support disabled ***]))
 
 AC_ARG_ENABLE(gsl,
 [AS_HELP_STRING(--enable-gsl[[[=yes]]],enable GNU Scientific Library)])
 
 if test "x$enable_gsl" != "xno"; then
   CPPFLAGS="$CPPFLAGS "`pkg-config --cflags gsl`
-  LDFLAGS="$LDFLAGS "`pkg-config --silence-errors --libs gsl`
+  LDFLAGS="$LDFLAGS "`pkg-config --libs gsl`
   AC_CHECK_HEADER(gsl/gsl_sf.h,
    AC_CHECK_LIB([gsl], gsl_sf_debye_6, [AC_DEFINE(HAVE_LIBGSL,1,
    DEFINE_LIB[gsl]) LIBS=$LIBS"-lgsl -lgslcblas "],
