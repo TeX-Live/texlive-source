@@ -14588,7 +14588,7 @@ ac_config_headers="$ac_config_headers c-auto.h:c-auto.in"
 
 
 
-printf "%s\n" "#define TEX_LIVE_VERSION \"2024\"" >>confdefs.h
+printf "%s\n" "#define TEX_LIVE_VERSION \"2025/dev\"" >>confdefs.h
 
 
 ac_fn_c_check_header_compile "$LINENO" "ctype.h" "ac_cv_header_ctype_h" "$ac_includes_default"

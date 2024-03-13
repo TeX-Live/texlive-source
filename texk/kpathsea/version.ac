@@ -23,4 +23,4 @@ dnl   releases.
 dnl --------------------------------------------------------
 dnl
 dnl This file is m4-included from configure.ac.
-m4_define([kpse_version], [6.4.0])
+m4_define([kpse_version], [6.4.0/dev])
