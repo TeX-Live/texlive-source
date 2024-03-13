@@ -1,3 +1,7 @@
+2024-03-13  Andreas Scherer  <https://ascherer.github.io>
+
+	* cweb.man: Post-release fix of typo in date string.
+
 2024-03-10  Andreas Scherer  <https://ascherer.github.io>
 
 	* ctwill.man,
