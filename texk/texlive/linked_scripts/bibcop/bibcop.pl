@@ -21,12 +21,13 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-# 2024-01-17 0.0.19
+# 2024-03-15 0.0.20
 package bibcop;
 
 use warnings;
 use strict;
 use File::Basename;
+use Time::Piece;
 
 # Hash of incoming command line arguments.
 my %args = map { $_ => 1 } @ARGV;
@@ -36,10 +37,10 @@ my %args = map { $_ => 1 } @ARGV;
 
 # Only these tags are allowed and only these types of entries.
 my %blessed = (
-  'article' => ['doi', 'year', 'title', 'author', 'journal', 'volume', 'number', 'publisher?', 'pages?'],
-  'inproceedings' => ['doi', 'booktitle', 'title', 'author', 'year', 'pages?', 'organization?', 'volume?'],
+  'article' => ['doi', 'year', 'title', 'author', 'journal', 'volume', 'number', 'month?', 'publisher?', 'pages?'],
+  'inproceedings' => ['doi', 'booktitle', 'title', 'author', 'year', 'pages?', 'month?', 'organization?', 'volume?'],
   'book' => ['title', 'author', 'year', 'publisher', 'doi?'],
-  'misc' => ['title', 'author', 'year', 'eprint?', 'archiveprefix?', 'primaryclass?', 'publisher?', 'organization?', 'doi?', 'url?'],
+  'misc' => ['title', 'author', 'year', 'eprint?', 'archiveprefix?', 'primaryclass?', 'month?', 'publisher?', 'organization?', 'doi?', 'howpublished?', 'note?'],
 );
 
 # See https://research.arizona.edu/faq/what-do-you-mean-when-you-say-use-title-case-proposalproject-titles
@@ -235,7 +236,7 @@ sub check_org_in_booktitle {
     return;
   }
   my (%entry) = @_;
-  my @orgs = ( 'ACM', 'IEEE' );
+  my @orgs = qw/ACM IEEE/;
   if (exists($entry{'booktitle'})) {
     my $title = $entry{'booktitle'};
     foreach my $o (@orgs) {
@@ -428,7 +429,7 @@ sub check_month {
   my (%entry) = @_;
   if (exists $entry{'month'}) {
     my $month = $entry{'month'};
-    if (not $month =~ /^[1-9]|10|11|12$/) {
+    if (not $month =~ /^[1-9]|10|11|12|jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec$/) {
       return "The format of the 'month' is wrong"
     }
   }
@@ -530,14 +531,26 @@ sub entry_fix {
   my $tags = $blessed{$type};
   my %allowed = map { $_ => 1 } @$tags;
   my @lines;
+  if (exists $entry{'booktitle'} and $entry{':type'} eq 'article') {
+    $entry{'journal'} = $entry{'booktitle'};
+  }
+  if (exists $entry{'journal'} and $entry{':type'} eq 'inproceedings') {
+    $entry{'booktitle'} = $entry{'journal'};
+  }
   foreach my $tag (keys %entry) {
     if ($tag =~ /^:/) {
+      next;
+    }
+    my $value = clean_tex($entry{$tag});
+    if ($tag eq 'url') {
+      my $today = localtime->strftime('%d-%m-%Y');
+      push(@lines, "  howpublished = {\\url{$value}},");
+      push(@lines, "  note = {[Online; accessed $today]},");
       next;
     }
     if (not exists $allowed{$tag} and not exists $allowed{$tag . '?'}) {
       next;
     }
-    my $value = clean_tex($entry{$tag});
     my $fixer = "fix_$tag";
     my $fixed = $value;
     if (defined &{$fixer}) {
@@ -562,10 +575,22 @@ sub entry_fix {
 
 sub fix_author {
   my ($value) = @_;
+  $value =~ s/\s{2,}/ /g;
   my @authors = split(/\s+and\s+/, $value);
   foreach my $author (@authors) {
     $author =~ s/^\s+|\s+$//g;
+    if (index($author, '{') != -1 or index($author, '}') != -1) {
+      next;
+    }
     $author =~ s/ ([A-Z])($| )/ $1.$2/g;
+    if (index($author, ',') eq -1) {
+      my @words = split(/\s+/, $author);
+      my $total = @words+0;
+      if ($total gt 1) {
+        $author = $words[$total - 1] . ', ' . join(' ', @words[0 .. $total - 2]);
+      }
+    }
+    $author =~ s/^\s+|\s+$//g;
   }
   return join(' and ', @authors);
 }
@@ -585,11 +610,9 @@ sub fix_capitalization {
     if (not $word =~ /^[A-Za-z]/) {
       next;
     }
-    if (exists $minors{$word}) {
-      next;
-    }
-    if (exists $minors{lc($word)} and $pos gt 1) {
-      $word = lc($word);
+    my $lc = lc($word);
+    if (exists $minors{$lc} and $pos gt 1 and not $words[$pos - 2] =~ /:$/) {
+      $word = $lc;
       next;
     }
     if ($word =~ /^[a-z].*/) {
@@ -647,6 +670,11 @@ sub fix_booktitle {
   if (index($value, 'Proceedings ') != 0) {
     $value = 'Proceedings of the ' . $value;
   }
+  $value =~ s/ (19|20)[0-9]{2} / /g;
+  my @orgs = qw/ACM IEEE ACM\/IEEE IEEE\/ACM/;
+  foreach my $org (@orgs) {
+    $value =~ s/ \Q$org\E / /g;
+  }
   return $value;
 }
 
@@ -656,15 +684,26 @@ sub fix_journal {
   return $value;
 }
 
+sub fix_org_name {
+  my ($value) = @_;
+  my @orgs = qw/ACM IEEE/;
+  foreach my $org (@orgs) {
+    $value =~ s/^\Q$org\E($|[^A-Z0-9a-z].*$)/$org/g;
+  }
+  return $value;
+}
+
 sub fix_publisher {
   my ($value) = @_;
   $value = fix_capitalization($value);
+  $value = fix_org_name($value);
   return $value;
 }
 
 sub fix_organization {
   my ($value) = @_;
   $value = fix_capitalization($value);
+  $value = fix_org_name($value);
   return $value;
 }
 
@@ -919,7 +958,7 @@ if (@ARGV+0 eq 0 or exists $args{'--help'} or exists $args{'-?'}) {
     "      --latex     Report errors in LaTeX format using \\PackageWarningNoLine command\n\n" .
     "If any issues, report to GitHub: https://github.com/yegor256/bibcop");
 } elsif (exists $args{'--version'} or exists $args{'-v'}) {
-  info('0.0.19 2024-01-17');
+  info('0.0.20 2024-03-15');
 } else {
   my ($file) = grep { not($_ =~ /^-.*$/) } @ARGV;
   if (not $file) {
@@ -930,9 +969,15 @@ if (@ARGV+0 eq 0 or exists $args{'--help'} or exists $args{'-?'}) {
   my @entries = entries($bib);
   if (exists $args{'--fix'}) {
     my $fixed = '';
+    my %seen;
     for my $i (0..(@entries+0 - 1)) {
       my %entry = %{ $entries[$i] };
+      my $name = $entry{':name'};
+      if (exists $seen{$name}) {
+        next;
+      }
       $fixed = $fixed . entry_fix(%entry);
+      $seen{$name} = 1;
     }
     if (exists $args{'-i'} or exists $args{'--in-place'}) {
       open(my $out, '>', $file) or error('Cannot open file for writing: ' . $file);
