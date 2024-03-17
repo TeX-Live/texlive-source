@@ -1,3 +1,10 @@
+2024-03-17  Karl Berry  <karl@tug.org>
+
+	* Makefile.am (install-data-hook, uninstall-hook): 
+	special-case memoize-*.{pl,py} to not remove their extensions, a
+	la listings-ext.sh. From Robert Alessi,
+	https://tug.org/pipermail/tlbuild/2024q1/005499.html
+
 2024-02-11  Karl Berry  <karl@tug.org>
 
 	* Makefile.am (texmf_other_scripts): whoops, undo
