@@ -652,6 +652,7 @@ bibtex,bibtex8,\
 extractbb,\
 gregorio,\
 kpsewhich,\
+l3sys-query,\
 makeindex,\
 memoize-extract.pl,\
 memoize-extract.py,\
