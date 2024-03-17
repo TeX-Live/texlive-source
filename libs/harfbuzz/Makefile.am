@@ -140,6 +140,8 @@ libharfbuzz_a_SOURCES =  \
 	@HARFBUZZ_TREE@/src/hb-subset-cff1.cc \
 	@HARFBUZZ_TREE@/src/hb-subset-cff2.cc \
 	@HARFBUZZ_TREE@/src/hb-subset-input.hh \
+	@HARFBUZZ_TREE@/src/hb-subset-instancer-iup.cc \
+	@HARFBUZZ_TREE@/src/hb-subset-instancer-iup.hh \
 	@HARFBUZZ_TREE@/src/hb-subset-instancer-solver.cc \
 	@HARFBUZZ_TREE@/src/hb-subset-instancer-solver.hh \
 	@HARFBUZZ_TREE@/src/hb-subset.hh \

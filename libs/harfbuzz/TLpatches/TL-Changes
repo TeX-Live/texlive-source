@@ -1,5 +1,5 @@
-Changes applied to the harfbuzz-8.3.0/ tree as obtained from:
-	https://github.com/harfbuzz/harfbuzz/releases/download/8.3.0/
+Changes applied to the harfbuzz-8.3.1/ tree as obtained from:
+	https://github.com/harfbuzz/harfbuzz/releases/download/8.3.1/
 
 Removed:
 	COPYING
@@ -19,6 +19,7 @@ Removed:
 	src/Makefile.in
 	src/hb-version.h
 	src/hb-features.h.in
+	src/hb-features.h
 
         unused dirs:
 	docs

@@ -1,6 +1,6 @@
 project('harfbuzz', 'c', 'cpp',
   meson_version: '>= 0.55.0',
-  version: '8.3.0',
+  version: '8.3.1',
   default_options: [
     'cpp_eh=none',          # Just to support msvc, we are passing -fno-exceptions also anyway
     # 'cpp_rtti=false',     # Do NOT enable, wraps inherit it and ICU needs RTTI
@@ -22,9 +22,16 @@ pkgmod = import('pkgconfig')
 cpp = meson.get_compiler('cpp')
 null_dep = dependency('', required: false)
 
-# Enforce C++14 requirement for MSVC STL
-if ['clang', 'clang-cl'].contains(cpp.get_id()) and cpp.get_define('_MSC_FULL_VER') != ''
-  add_project_arguments('-std=c++14', language: 'cpp')
+# Only perform these checks if cpp_std is c++11 as setting -std directly
+# produces a warning from meson.
+if get_option('cpp_std') == 'c++11'
+  # Enforce C++14 requirement for MSVC STL
+  if cpp.get_id() == 'clang' and cpp.get_define('_MSC_FULL_VER') != ''
+    add_project_arguments('-std=c++14', language: 'cpp')
+  elif cpp.get_id() == 'clang-cl'
+    # Clang-cl produces a warning when using -std=c++14, but not when using /std:c++14
+    add_project_arguments('/std:c++14', language : 'cpp')
+  endif
 endif
 
 if cpp.get_argument_syntax() == 'msvc'
@@ -72,15 +79,15 @@ check_headers = [
 ]
 
 check_funcs = [
-  ['atexit'],
-  ['mprotect'],
-  ['sysconf'],
-  ['getpagesize'],
-  ['mmap'],
-  ['isatty'],
-  ['uselocale'],
-  ['newlocale'],
-  ['sincosf'],
+  ['atexit', {'prefix': '#include <stdlib.h>'}],
+  ['mprotect', {'prefix': '#include <sys/mman.h>'}],
+  ['sysconf', {'prefix': '#include <unistd.h>'}],
+  ['getpagesize', {'prefix': '#include <unistd.h>'}],
+  ['mmap', {'prefix': '#include <sys/mman.h>'}],
+  ['isatty', {'prefix': '#include <unistd.h>'}],
+  ['uselocale', {'prefix': '#include <locale.h>'}],
+  ['newlocale', {'prefix': '#include <locale.h>'}],
+  ['sincosf', {'prefix': '#define _GNU_SOURCE\n#include <math.h>'}],
 ]
 
 m_dep = cpp.find_library('m', required: false)
@@ -356,11 +363,12 @@ foreach check : check_funcs
   opts = check.get(1, {})
   link_withs = opts.get('link_with', [])
   check_deps = opts.get('deps', [])
+  check_prefix = opts.get('prefix', '')
   extra_deps = []
   found = true
 
   # First try without linking
-  found = cpp.has_function(name, dependencies: check_deps)
+  found = cpp.has_function(name, prefix: check_prefix, dependencies: check_deps)
 
   if not found and link_withs.length() > 0
     found = true
@@ -375,7 +383,7 @@ foreach check : check_funcs
     endforeach
 
     if found
-      found = cpp.has_function(name, dependencies: check_deps + extra_deps)
+      found = cpp.has_function(name, prefix: check_prefix, dependencies: check_deps + extra_deps)
     endif
   endif
 

@@ -147,6 +147,7 @@ am_libharfbuzz_a_OBJECTS = @HARFBUZZ_TREE@/src/hb-blob.$(OBJEXT) \
 	@HARFBUZZ_TREE@/src/hb-subset-cff-common.$(OBJEXT) \
 	@HARFBUZZ_TREE@/src/hb-subset-cff1.$(OBJEXT) \
 	@HARFBUZZ_TREE@/src/hb-subset-cff2.$(OBJEXT) \
+	@HARFBUZZ_TREE@/src/hb-subset-instancer-iup.$(OBJEXT) \
 	@HARFBUZZ_TREE@/src/hb-subset-instancer-solver.$(OBJEXT) \
 	@HARFBUZZ_TREE@/src/hb-ucd.$(OBJEXT) \
 	@HARFBUZZ_TREE@/src/hb-unicode.$(OBJEXT) \
@@ -256,6 +257,7 @@ am__depfiles_remade = ./$(DEPDIR)/hbtest-dummy.Po \
 	@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-subset-cff-common.Po \
 	@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-subset-cff1.Po \
 	@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-subset-cff2.Po \
+	@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-subset-instancer-iup.Po \
 	@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-subset-instancer-solver.Po \
 	@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ucd.Po \
 	@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-unicode.Po
@@ -824,6 +826,8 @@ libharfbuzz_a_SOURCES = @HARFBUZZ_TREE@/src/hb-algs.hh \
 	@HARFBUZZ_TREE@/src/hb-subset-cff1.cc \
 	@HARFBUZZ_TREE@/src/hb-subset-cff2.cc \
 	@HARFBUZZ_TREE@/src/hb-subset-input.hh \
+	@HARFBUZZ_TREE@/src/hb-subset-instancer-iup.cc \
+	@HARFBUZZ_TREE@/src/hb-subset-instancer-iup.hh \
 	@HARFBUZZ_TREE@/src/hb-subset-instancer-solver.cc \
 	@HARFBUZZ_TREE@/src/hb-subset-instancer-solver.hh \
 	@HARFBUZZ_TREE@/src/hb-subset.hh \
@@ -1163,6 +1167,9 @@ clean-noinstLIBRARIES:
 @HARFBUZZ_TREE@/src/hb-subset-cff2.$(OBJEXT):  \
 	@HARFBUZZ_TREE@/src/$(am__dirstamp) \
 	@HARFBUZZ_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@HARFBUZZ_TREE@/src/hb-subset-instancer-iup.$(OBJEXT):  \
+	@HARFBUZZ_TREE@/src/$(am__dirstamp) \
+	@HARFBUZZ_TREE@/src/$(DEPDIR)/$(am__dirstamp)
 @HARFBUZZ_TREE@/src/hb-subset-instancer-solver.$(OBJEXT):  \
 	@HARFBUZZ_TREE@/src/$(am__dirstamp) \
 	@HARFBUZZ_TREE@/src/$(DEPDIR)/$(am__dirstamp)
@@ -1327,6 +1334,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-subset-cff-common.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-subset-cff1.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-subset-cff2.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-subset-instancer-iup.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-subset-instancer-solver.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ucd.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-unicode.Po@am__quote@ # am--include-marker
@@ -1983,6 +1991,7 @@ distclean: distclean-recursive
 	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-subset-cff-common.Po
 	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-subset-cff1.Po
 	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-subset-cff2.Po
+	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-subset-instancer-iup.Po
 	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-subset-instancer-solver.Po
 	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ucd.Po
 	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-unicode.Po
@@ -2090,6 +2099,7 @@ maintainer-clean: maintainer-clean-recursive
 	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-subset-cff-common.Po
 	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-subset-cff1.Po
 	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-subset-cff2.Po
+	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-subset-instancer-iup.Po
 	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-subset-instancer-solver.Po
 	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-ucd.Po
 	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-unicode.Po
