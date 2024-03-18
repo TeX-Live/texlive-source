@@ -19,7 +19,7 @@
 # <texmf>/doc/generic/memoize/FILES.
 
 my $PROG = 'memoize-clean.pl';
-my $VERSION = '2024/01/21 v1.1.2';
+my $VERSION = '2024/03/15 v1.2.0';
 
 use strict;
 use Getopt::Long;

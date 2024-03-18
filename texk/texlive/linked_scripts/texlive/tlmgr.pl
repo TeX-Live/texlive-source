@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 70080 2024-02-22 23:13:07Z karl $
+# $Id: tlmgr.pl 70671 2024-03-17 01:10:09Z karl $
 # Copyright 2008-2024 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
@@ -8,8 +8,8 @@
 
 use strict; use warnings;
 
-my $svnrev = '$Revision: 70080 $';
-my $datrev = '$Date: 2024-02-23 00:13:07 +0100 (Fri, 23 Feb 2024) $';
+my $svnrev = '$Revision: 70671 $';
+my $datrev = '$Date: 2024-03-17 02:10:09 +0100 (Sun, 17 Mar 2024) $';
 my $tlmgrrevision;
 my $tlmgrversion;
 my $prg;
@@ -5044,10 +5044,10 @@ sub action_platform {
         print "    $a\n";
       }
     }
-    print "Already installed platforms are marked with (i)\n";
-    print "You can add new platforms with: tlmgr platform add PLAT1 PLAT2...\n";
-    print "You can remove platforms with: tlmgr platform remove PLAT1 PLAT2...\n";
-    print "You can set the active platform with: tlmgr platform set PLAT\n";
+    print "Already installed platforms are marked with (i).\n";
+    print "Add new platforms with: tlmgr platform add PLAT1 PLAT2...\n";
+    print "Remove platforms with:  tlmgr platform remove PLAT1 PLAT2...\n";
+    print "Set the active platform with: tlmgr platform set PLAT\n";
     return ($F_OK | $F_NOPOSTACTION);
 
   } elsif ($what =~ m/^add$/i) {
@@ -5082,7 +5082,8 @@ sub action_platform {
                 }
               }
             } else {
-              tlwarn("$prg: action platform add, cannot find package $pkg.$a\n");
+              tlwarn("$prg: action platform add: package $pkg does not exist",
+                     " for platform: $a\n");
               $ret |= $F_WARNING;
             }
           }
@@ -10552,7 +10553,7 @@ This script and its documentation were written for the TeX Live
 distribution (L<https://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 70080 2024-02-22 23:13:07Z karl $
+$Id: tlmgr.pl 70671 2024-03-17 01:10:09Z karl $
 =cut
 
 # test HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html
