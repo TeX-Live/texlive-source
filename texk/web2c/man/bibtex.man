@@ -1,14 +1,14 @@
-.TH BIBTEX 1 "24 August 2023" "bibtex 0.99d" "Web2C @VERSION@"
+.TH BIBTEX 1 "18 March 2024" "bibtex 0.99d" "Web2C @VERSION@"
 .\"=====================================================================
 .if t .ds TX \fRT\\h'-0.1667m'\\v'0.20v'E\\v'-0.20v'\\h'-0.125m'X\fP
 .if n .ds TX TeX
 .ie t .ds OX \fIT\v'+0.25m'E\v'-0.25m'X\fP
 .el .ds OX TeX
 .\" BX definition must follow TX so BX can use TX
-.if t .ds BX \fRB\s-2IB\s0\fP\*(TX
+.if t .ds BX \fRB\s-2IB\s+2\fP\*(TX
 .if n .ds BX BibTeX
 .\" LX definition must follow TX so LX can use TX
-.if t .ds LX \fRL\\h'-0.36m'\\v'-0.15v'\\s-2A\\s0\\h'-0.15m'\\v'0.15v'\fP\*(TX
+.if t .ds LX \fRL\\h'-0.36m'\\v'-0.15v'\\s-2A\\s+2\\h'-0.15m'\\v'0.15v'\fP\*(TX
 .if n .ds LX LaTeX
 .\"=====================================================================
 .SH NAME
@@ -40,13 +40,13 @@ file that will be incorporated into the document on subsequent runs of
 .PP
 \*(BX looks up, in bibliographic database
 .RB ( .bib )
-files specified by the \\bibliography command,
-the entries specified by the \\cite and \\nocite commands
+files specified by the \ebibliography command,
+the entries specified by the \ecite and \enocite commands
 in the \*(LX or \*(TX source file.
 It formats the information from those entries
 according to instructions in a bibliography style
 .RB ( .bst )
-file (specified by the \\bibliographystyle command),
+file (specified by the \ebibliographystyle command),
 and it outputs the results to the
 .B .bbl
 file.
@@ -55,7 +55,8 @@ The \*(LX manual
 explains what a \*(LX source file must contain to work with \*(BX.
 Appendix B of the manual describes the format of the
 .B .bib
-files. The `\*(BXing' document describes extensions and details of
+files.
+The `\*(BXing' document describes extensions and details of
 this format, and it gives other useful hints for using \*(BX.
 .\"=====================================================================
 .SH OPTIONS
@@ -64,11 +65,11 @@ The
 option defines the minimum number of
 .B crossref
 required for automatic inclusion of the crossref base entry in the citation
-list; the default is two. 
+list; the default is two.
 To avoid these automatic inclusions altogether, give this option
 a sufficiently large number, and be sure to remove any
 previous
-.B .aux 
+.B .aux
 and
 .B .bbl
 files.  Otherwise the option may
@@ -82,13 +83,14 @@ With the
 option, \*(BX operates silently.  Without it, a banner and progress
 reports are printed on
 .IR stdout .
-.PP
+.
 .\"=====================================================================
 .SH ENVIRONMENT
 \*(BX searches the directories in the
 path defined by the BSTINPUTS environment variable for
 .B .bst
-files. If BSTINPUTS is not set, it uses the system default.
+files.
+If BSTINPUTS is not set, it uses the system default.
 For
 .B .bib
 files, it uses the BIBINPUTS environment variable if that is set,
