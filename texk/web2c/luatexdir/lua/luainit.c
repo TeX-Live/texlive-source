@@ -387,7 +387,7 @@ static void parse_options(int ac, char **av)
             lua_offset = optind;
             luainit = 1;
         } else if (ARGUMENT_IS("lua")) {
-            startup_filename = optarg;
+            startup_filename =  xstrdup(optarg);
             lua_offset = (optind - 1);
             luainit = 1;
 #ifdef LuajitTeX
@@ -499,7 +499,7 @@ static void parse_options(int ac, char **av)
             initversionstring(&versions);
             print_version_banner();
             /* *INDENT-OFF* */
-            puts("\n\nThe LuaTeX team is Hans Hagen, Hartmut Henkel, Taco Hoekwater, Luigi Scarso.\n\n"
+            puts("\n\nThe luatex project is a ConTeXt community project by\nHans Hagen, Hartmut Henkel, Taco Hoekwater and Luigi Scarso.\nThe current maintainers are Hans Hagen and Luigi Scarso.\n\n"
                  MyName " merges and builds upon (parts of) the code from these projects:\n\n"
                  "tex       : Donald Knuth\n"
                  "etex      : Peter Breitenlohner, Phil Taylor and friends\n"
