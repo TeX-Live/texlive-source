@@ -772,7 +772,8 @@ install-data-hook: installdirs-local
 @WIN32_FALSE@	cd $(DESTDIR)$(bindir) && \
 @WIN32_FALSE@	  for s in $(nobase_dist_texmf_scripts_SCRIPTS); do \
 @WIN32_FALSE@	    target=`basename $$s | tr '[A-Z]' '[a-z]'`; \
-@WIN32_FALSE@	    echo "$$s" | grep 'listings-ext.sh\|memoize-.*\.' >/dev/null \
+@WIN32_FALSE@	    echo "$$s" | grep 'memoize-.*\.' >/dev/null \
+@WIN32_FALSE@	    || echo "$$s" | grep 'listings-ext.sh' >/dev/null \
 @WIN32_FALSE@	    || target=`echo $$target | sed 's,\.[^/]*$$,,'`; \
 @WIN32_FALSE@	    rm -f $$target; \
 @WIN32_FALSE@	    echo "creating link '$$target' -> '$$REL/texmf-dist/scripts/$$s'"; \
@@ -799,7 +800,8 @@ install-links:
 uninstall-hook:
 	@for s in $(nobase_dist_texmf_scripts_SCRIPTS); do \
 	  target=`basename $$s | tr '[A-Z]' '[a-z]'`; \
-	  echo "$$s" | grep 'listings-ext.sh\|memoize-.*\.' >/dev/null \
+	  echo "$$s" | grep 'memoize-.*\.' >/dev/null \
+	  || echo "$$s" | grep 'listings-ext.sh' >/dev/null \
 	  || target=`echo $$target | sed 's,\.[^/]*$$,,'`; \
 	  rm -f $(DESTDIR)$(bindir)/$$target$(WINEXT); \
 	done

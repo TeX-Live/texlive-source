@@ -1,3 +1,9 @@
+2024-03-19  Karl Berry  <karl@tug.org>
+
+	* Makefile.am (install-data-hook, uninstall-hook): can't use
+	EREs or grep -E or egrep. Switch to successive invocations.
+	https://tug.org/pipermail/tlbuild/2024q1/005505.html
+
 2024-03-17  Karl Berry  <karl@tug.org>
 
 	* Makefile.am (install-data-hook, uninstall-hook): 

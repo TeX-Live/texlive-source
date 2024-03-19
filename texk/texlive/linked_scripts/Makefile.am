@@ -326,7 +326,9 @@ else !WIN32
 	cd $(DESTDIR)$(bindir) && \
 	  for s in $(nobase_dist_texmf_scripts_SCRIPTS); do \
 	    target=`basename $$s | tr '[A-Z]' '[a-z]'`; \
-	    echo "$$s" | grep 'listings-ext.sh\|memoize-.*\.' >/dev/null \
+## we can't use egrep or grep -E or ere patterns portably.
+	    echo "$$s" | grep 'memoize-.*\.' >/dev/null \
+	    || echo "$$s" | grep 'listings-ext.sh' >/dev/null \
 	    || target=`echo $$target | sed 's,\.[^/]*$$,,'`; \
 	    rm -f $$target; \
 	    echo "creating link '$$target' -> '$$REL/texmf-dist/scripts/$$s'"; \
@@ -362,7 +364,8 @@ endif WIN32
 uninstall-hook:
 	@for s in $(nobase_dist_texmf_scripts_SCRIPTS); do \
 	  target=`basename $$s | tr '[A-Z]' '[a-z]'`; \
-	  echo "$$s" | grep 'listings-ext.sh\|memoize-.*\.' >/dev/null \
+	  echo "$$s" | grep 'memoize-.*\.' >/dev/null \
+	  || echo "$$s" | grep 'listings-ext.sh' >/dev/null \
 	  || target=`echo $$target | sed 's,\.[^/]*$$,,'`; \
 	  rm -f $(DESTDIR)$(bindir)/$$target$(WINEXT); \
 	done
