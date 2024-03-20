@@ -1,4 +1,4 @@
-.TH WEAVE 1 "13 October 2023" "Web2C @VERSION@"
+.TH WEAVE 1 "20 March 2024 "Web2C @VERSION@"
 .\"=====================================================================
 .if n .ds MF Metafont
 .if t .ds MF Metafont
@@ -58,11 +58,12 @@ In this case you can specify '-' as an empty change file.
 There are several macros
 that probably should be redefined by
 the programmer at the beginning of the \*(WB file.
-It is a good idea to set \\title
+It is a good idea to set
+.I \etitle
 to the name of the program.
 And, to cause output of only changed modules, one can say
-\\let\\maybe=\\iffalse (usually as the first change in the
-change file).
+.I \elet\emaybe=\eiffalse
+(usually as the first change in the change file).
 .\"=====================================================================
 .SH ENVIRONMENT
 The environment variable WEBINPUTS is used to search for the input files,

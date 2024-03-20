@@ -1,3 +1,8 @@
+2024-03-13  Andreas Scherer  <https://ascherer.github.io>
+
+	* weave.man,
+	* twill.man: .I, \e updates according to README.
+
 2024-03-18  Bjarni Ingi Gislason  <bjarniig@simnet.is>
 
 	* bibtex.man: \e, etc., updates.

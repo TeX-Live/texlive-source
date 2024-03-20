@@ -1,4 +1,4 @@
-.TH TWILL 1 "16 February 2024" "Web2C @VERSION@"
+.TH TWILL 1 "20 March 2024" "Web2C @VERSION@"
 .\"=====================================================================
 .if n .ds MF Metafont
 .if t .ds MF Metafont
@@ -57,7 +57,9 @@ to the root of the \*(WB file name.
 .PP
 There are several macros that probably should be redefined by
 the programmer at the beginning of the \*(WB file.
-It is a good idea to set \\title to the name of the program.
+It is a good idea to set
+.I \etitle
+to the name of the program.
 .PP
 .B twill
 is exactly like
