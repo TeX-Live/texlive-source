@@ -1,0 +1,24 @@
+% $Id$
+% Public domain. Based on a post by David Carlisle to tex-live,
+% https://tug.org/pipermail/tex-live/2024-March/050292.html
+% 
+\catcode`\{=1 \catcode`\}=2
+\pdfoutput = 1
+\pdfmapline{cmr10 CMR10 <cmr10.pfb}
+\font\f = cmr10 \f
+\hsize=6in
+\vsize=9in
+\parfillskip=0pt plus1fil
+
+% with original TL24 binaries, \aftergroup on the \output routine didn't work.
+\def\xxx{\aftergroup should-appear!\global\let\xxx\relax}
+
+\output{\xxx\global\advance\count0 by 1 \shipout\box255}
+
+page1
+
+\penalty-10000
+
+page2
+
+\end
