@@ -1,9 +1,9 @@
 #!/usr/bin/env perl
-# $Id: updmap.pl 65932 2023-02-19 20:49:48Z siepo $
+# $Id: updmap.pl 70707 2024-03-19 22:03:22Z karl $
 # updmap - maintain map files for outline fonts.
 # (Maintained in TeX Live:Master/texmf-dist/scripts/texlive.)
 # 
-# Copyright 2011-2022 Norbert Preining
+# Copyright 2011-2024 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 #
@@ -13,7 +13,7 @@
 # later adaptions by Reinhard Kotucha, and Karl Berry.
 # The current implementation is a complete rewrite.
 
-my $svnid = '$Id: updmap.pl 65932 2023-02-19 20:49:48Z siepo $';
+my $svnid = '$Id: updmap.pl 70707 2024-03-19 22:03:22Z karl $';
 
 my $TEXMFROOT;
 BEGIN {
@@ -26,10 +26,10 @@ BEGIN {
   unshift(@INC, "$TEXMFROOT/tlpkg");
 }
 
-my $lastchdate = '$Date: 2023-02-19 21:49:48 +0100 (Sun, 19 Feb 2023) $';
+my $lastchdate = '$Date: 2024-03-19 23:03:22 +0100 (Tue, 19 Mar 2024) $';
 $lastchdate =~ s/^\$Date:\s*//;
 $lastchdate =~ s/ \(.*$//;
-my $svnrev = '$Revision: 65932 $';
+my $svnrev = '$Revision: 70707 $';
 $svnrev =~ s/^\$Revision:\s*//;
 $svnrev =~ s/\s*\$$//;
 my $version = "r$svnrev ($lastchdate)";
@@ -66,7 +66,8 @@ if (wndws()) {
 my $texmfconfig = $TEXMFCONFIG;
 my $texmfvar    = $TEXMFVAR;
 
-my %opts = ( quiet => 0, nohash => 0, nomkmap => 0 );
+# copy by default for portability.
+my %opts = ( quiet => 0, nohash => 0, nomkmap => 0, copy => 1 );
 my $alldata;
 my $updLSR;
 
@@ -75,12 +76,12 @@ my @cmdline_options = (
   "user",
   "listfiles",
   "cnffile=s@", 
-  "copy", 
+  "copy!", 
   "disable=s@",
   "dvipdfmoutputdir=s",
   "dvipdfmxoutputdir=s",
   "dvipsoutputdir=s",
-  # the following does not work, Getopt::Long looses the first
+  # the following does not work, Getopt::Long loses the first
   # entry in a multi setting, treat it separately in processOptions
   # furthermore, it is not supported by older perls, so do it differently
   #"enable=s{1,2}",
@@ -88,8 +89,8 @@ my @cmdline_options = (
   "force",
   "listavailablemaps",
   "listmaps|l",
-  "nohash",
-  "nomkmap",
+  "nohash!",
+  "nomkmap!",
   "dry-run|n",
   "outputdir=s",
   "pdftexoutputdir=s",
@@ -2272,6 +2273,10 @@ Among other things, these map files are used to determine which fonts
 should be used as bitmaps and which as outlines, and to determine which
 font files are included, typically subsetted, in the PDF or PostScript output.
 
+These maps are for fonts installed within the TeX hierarchy, and are not
+related to any system font lookups. They are primarily used for Type 1
+fonts, though a few OpenType and TrueType fonts are involved also.
+
 updmap-sys (or updmap -sys) is intended to affect the system-wide 
 configuration, while updmap-user (or updmap -user) affects personal
 configuration files only, overriding the system files.  
@@ -2281,7 +2286,8 @@ running updmap-sys no longer has any effect.  updmap-sys issues a
 warning about this, since it is rarely desirable.
 See https://tug.org/texlive/scripts-sys-user.html for details.
 
-By default, the TeX filename database (ls-R) is also updated.
+By default, the TeX filename database (ls-R) is also updated; use
+--nohash to skip that step.
 
 The updmap system is regrettably complicated, for both inherent and
 historical reasons.  A general overview:
@@ -2290,8 +2296,8 @@ historical reasons.  A general overview:
   font-specific .maps, in which each line gives information about a
   different TeX (.tfm) font.
 - updmap reads the updmap.cfg files and then concatenates the
-  contents of those .map files into the main output files: psfonts.map
-  for dvips and pdftex.map for pdftex and dvipdfmx.
+  contents of those .map files into the main output files, generically
+  named: psfonts.map for dvips, and pdftex.map for pdftex and dvipdfmx.
 - The updmap.cfg files themselves are created and updated at package
   installation time, by the system installer or the package manager or
   by hand, and not (by default) by updmap.
@@ -2305,7 +2311,8 @@ Options:
   --pdftexoutputdir DIR     specify output directory (pdftex syntax)
   --pxdvioutputdir DIR      specify output directory (pxdvi syntax)
   --outputdir DIR           specify output directory (for all files)
-  --copy                    cp generic files rather than using symlinks
+  --[no-]copy               create generic files as copies (default);
+                               with -no-copy, create symlinks
   --force                   recreate files even if config hasn't changed
   --nomkmap                 do not recreate map files
   --nohash                  do not run mktexlsr (a.k.a. texhash)

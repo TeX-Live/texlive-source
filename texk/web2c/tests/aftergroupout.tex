@@ -2,6 +2,8 @@
 % Public domain. Based on a post by David Carlisle to tex-live,
 % https://tug.org/pipermail/tex-live/2024-March/050292.html
 % 
+% See ./unbalanced-braces.tex for background.
+% 
 \catcode`\{=1 \catcode`\}=2
 \pdfoutput = 1
 \pdfmapline{cmr10 CMR10 <cmr10.pfb}
@@ -11,7 +13,7 @@
 \parfillskip=0pt plus1fil
 
 % with original TL24 binaries, \aftergroup on the \output routine didn't work.
-\def\xxx{\aftergroup should-appear!\global\let\xxx\relax}
+\def\xxx{\aftergroup A\global\let\xxx\relax}
 
 \output{\xxx\global\advance\count0 by 1 \shipout\box255}
 
