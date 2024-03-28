@@ -36,7 +36,7 @@ for those people who are interested.
 -- Details of the script itself, etc.
 --
 local copyright = "Copyright (C) 2024 The LaTeX Project"
-local release_date = "2024-03-15"
+local release_date = "2024-03-28"
 local script_desc = "System queries for LaTeX using Lua\n"
 local script_name = "l3sys-query"
 
@@ -51,7 +51,7 @@ local option_list =
     exclude =
       {
         cmds = {"ls"},
-        desc = "Exclude entries from directory listing",
+        desc = "[<xarg>] Exclude entries from directory listing",
         type = "string"
       },
     ["ignore-case"] =
@@ -89,13 +89,13 @@ local option_list =
     sort =
       {
         cmds = {"ls"},
-        desc = "Method used to sort directory listing",
+        desc = "[name|date] Method used to sort directory listing",
         type = "string"
       },
     type = 
       {
         cmds = {"ls"},
-        desc  = "Selects the type of entry in a directory listing",
+        desc  = "[d|f] Select just the directories or files in a listing",
         type  = "string"
       },
     version =
@@ -235,6 +235,8 @@ local function parse_args()
     -- No options are allowed in position 1, so filter those out
     if a == "--version" or a == "-v" then
       cmd = "version"
+    elseif a == "--help" or a == "-h" then
+      cmd = "help"
     elseif not match(a,"^%-") then
       cmd = a
     end
@@ -523,14 +525,16 @@ end
 --
 -- Execute the given command
 --
-
--- Only 'known' commands do anything at all
-if cmd == "version" then
+if cmd == "help" then
+  help()
+  exit(0)
+elseif cmd == "version" then
   version()
   exit(0)
+-- Only 'known' commands do anything at all
 elseif not cmd_impl[cmd] then
   if cmd == "" then
-    help()
+    info_and_quit(script_name .. ": No " .. script_name .. " command specified.")
   else
     info_and_quit(script_name .. ": '" .. cmd .. "' is not a " .. script_name ..
       " command.")
@@ -541,7 +545,13 @@ end
 -- Check options are valid for cmd
 for k,_ in pairs(options) do
   local cmds = option_list[k].cmds
-  if not cmds then
+  if k == "help" then
+    help()
+    exit(0)
+  elseif k == "version" then
+    version()
+    exit(0)
+  elseif not cmds then
     -- Should not be possible:
     -- everything except --help and --version should have an entry
     print("Internal error")
