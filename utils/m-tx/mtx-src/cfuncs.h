@@ -64,7 +64,7 @@ extern void toUpper(char *s);
 extern void delete1(char *s, short p);
 extern void predelete(char *s, short l);
 extern void shorten(char *s, short new_length);
-extern short strpos2 (char *s1, char *s2, short p);
+extern short strpos2 (char *s1, char *s2, int p);
 extern short nextWordBound(char *s, char trigger, short p);
 
 #undef vextern
