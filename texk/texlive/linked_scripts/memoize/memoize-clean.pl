@@ -19,7 +19,7 @@
 # <texmf>/doc/generic/memoize/FILES.
 
 my $PROG = 'memoize-clean.pl';
-my $VERSION = '2024/03/15 v1.2.0';
+my $VERSION = '2024/04/02 v1.3.0';
 
 use strict;
 use Getopt::Long;
@@ -53,7 +53,7 @@ GetOptions(
     "yes|y"   => \$yes,
     "all|a"   => \$all,
     "prefix|p=s" => \@prefixes,
-    "quiet|q|?" => \$quiet,
+    "quiet|q" => \$quiet,
     "help|h|?" => \$help,
     "version|V"  => \$print_version,
     ) or die $usage;

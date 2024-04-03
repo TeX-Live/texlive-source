@@ -18,7 +18,7 @@
 # The files belonging to this work and covered by LPPL are listed in
 # <texmf>/doc/generic/memoize/FILES.
 
-__version__ = '2024/03/15 v1.2.0'
+__version__ = '2024/04/02 v1.3.0'
 
 import argparse, re, sys, os, subprocess, itertools, traceback, platform
 from pathlib import Path, PurePath
@@ -72,6 +72,7 @@ def error(short, long):
     if not args.quiet:
         print(ERROR[None].format(short = short, long = long, header = header))
     if log:
+        short = short.replace('\\', '\\string\\')
         long = long.replace('\\', '\\string\\')
         print(
             ERROR[args.format].format(
@@ -82,13 +83,14 @@ def error(short, long):
     endinput()
     
 def warning(text):
+    if text and not args.quiet:
+        print(WARNING[None].format(text = text, header = header, indent = indent))
     if log:
+        text = text.replace('\\', '\\string\\')
         print(
             WARNING[args.format].format(
                 text = text, texindent = texindent, package_name = package_name),
             file = log)
-    if not args.quiet:
-        print(WARNING[None].format(text = text, header = header, indent = indent))
     global exit_code
     exit_code = 10
     
@@ -96,6 +98,7 @@ def info(text):
     if text and not args.quiet:
         print(INFO[None].format(text = text, header = header, indent = indent))
         if log:
+            text = text.replace('\\', '\\string\\')
             print(
                 INFO[args.format].format(
                     text = text, texindent = texindent, package_name = package_name),
@@ -424,7 +427,7 @@ if __name__ == '__main__':
         info(f"Extracting new externs listed in '{mmz_file}' from '{pdf_file}'")
         done_message = "Done (there was nothing to extract)"
         indent = '  '
-        texindent = '\space\space '
+        texindent = r'\space\space '
 
         # \paragraph{Process \texttt{.mmz}}
 
@@ -482,12 +485,12 @@ if __name__ == '__main__':
                         except pdfrw.errors.PdfParseError as err:
                             error(rf"File '{pdf_file}' seems corrupted. Perhaps you "
                                   rf"have to load Memoize earlier in the preamble",
-                                  f"In particular, Memoize must be loaded before "
-                                  f"TikZ library 'fadings' and any package "
-                                  f"deploying it, and in Beamer, load Memoize "
-                                  f"by writing \RequirePackage{{memoize}} before "
-                                  f"\documentclass{{beamer}}. "
-                                  f"This was the error thrown by Python: \n{err}")
+                                  rf"In particular, Memoize must be loaded before "
+                                  rf"TikZ library 'fadings' and any package "
+                                  rf"deploying it, and in Beamer, load Memoize "
+                                  rf"by writing \RequirePackage{{memoize}} before "
+                                  rf"\documentclass{{beamer}}. "
+                                  rf"This was the error thrown by Python: \n{err}")
                     # Does the page exist?
                     if page_n >= len(pdf.pages):
                         error(rf"I cannot extract page {page_n} from '{pdf_file}', "
