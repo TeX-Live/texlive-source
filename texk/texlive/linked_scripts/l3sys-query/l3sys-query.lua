@@ -36,7 +36,7 @@ for those people who are interested.
 -- Details of the script itself, etc.
 --
 local copyright = "Copyright (C) 2024 The LaTeX Project"
-local release_date = "2024-03-28"
+local release_date = "2024-04-03"
 local script_desc = "System queries for LaTeX using Lua\n"
 local script_name = "l3sys-query"
 
@@ -368,7 +368,7 @@ local function help()
 
   -- 'Header' of fixed info
   print("Usage: " .. script_name .. " <cmd> [<options>] [<args>]\n")
-  print("Valid  <cmd>s are:")
+  print("Valid <cmd>s are:")
 
   -- Sort the commands, pad the descriptions, print
   local t,longest = format_list(cmd_desc)
