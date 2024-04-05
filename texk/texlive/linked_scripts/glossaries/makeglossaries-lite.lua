@@ -36,7 +36,7 @@
    Also makeglossaries and makeglossaries-lite.lua.
   
    History:
-   * 4.48 - 4.53:
+   * 4.48 - 4.54:
      - no change.
    * 4.47:
      - Added hybrid instructions if record option detected but not \makeglossaries
@@ -70,7 +70,7 @@
      - changed first line from lua to texlua
 --]]
 
-thisversion = "4.53 (2023-09-29)"
+thisversion = "4.54 (2024-04-03)"
 
 quiet = false
 dryrun = false
