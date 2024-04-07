@@ -1,5 +1,7 @@
+dnl $Id$
 dnl Process this file with autoconf to produce a configure script.
 dnl
+dnl   Copyright (C) 2016-2024 Karl Berry <tex-live@tug.org>
 dnl   Copyright (C) 2010-2014 Peter Breitenlohner <tex-live@tug.org>
 dnl
 dnl   based on zziplib-0.13.58:
@@ -22,6 +24,8 @@ AC_CANONICAL_HOST
 
 # Checks for programs.
 AC_PROG_CC
+AM_PROG_AS
+AM_PROG_AR
 AC_PROG_RANLIB
 AC_PROG_LN_S
 

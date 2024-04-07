@@ -1,7 +1,7 @@
 dnl $Id$
 dnl Process this file with autoconf to produce a configure script.
 dnl
-dnl   Copyright (C) 2016-2020 Karl Berry <tex-live@tug.org>
+dnl   Copyright (C) 2016-2024 Karl Berry <tex-live@tug.org>
 dnl   Copyright (C) 2009-2013 Peter Breitenlohner <tex-live@tug.org>
 dnl
 dnl   This file is free software; the copyright holder
@@ -15,9 +15,12 @@ AC_CONFIG_SRCDIR([zlib-src/zlib.h])
 AC_CONFIG_AUX_DIR([../../build-aux])
 AC_CONFIG_MACRO_DIR([../../m4])
 
+
 KPSE_BASIC([zlib])
 
 AC_PROG_CC
+AM_PROG_AS
+AM_PROG_AR
 AC_PROG_RANLIB
 AC_PROG_LN_S
 
