@@ -1,0 +1,13 @@
+\documentclass[dvipdfmx]{article}
+\usepackage{graphicx}
+\begin{document}
+\parindent0pt
+\includegraphics[page=1]{sue-mp.pdf}
+
+\makeatletter
+\@tempcnta=0
+\loop\ifnum\@tempcnta<10000
+  \noindent\includegraphics[page=1]{sue-mp.pdf}\hfil
+  \advance\@tempcnta1
+\repeat
+\end{document}

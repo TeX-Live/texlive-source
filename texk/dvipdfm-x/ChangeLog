@@ -1,3 +1,10 @@
+2024-04-09  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* dvipdfmx-incl.test, tests/multi_incl.{tex,dvi},
+	tests/sue-mp.pdf, Makefile.am:
+	Add tests for including images multiple times
+	from Hironori Kitagawa <h_kitagawa2001@yahoo.co.jp>.
+
 2024-04-07  Yukimasa Morimi  <h20y6m@yahoo.co.jp>
 
 	* pdfximage.c: fix an issue where the PDF becomes large when
