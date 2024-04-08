@@ -36,7 +36,7 @@ for those people who are interested.
 -- Details of the script itself, etc.
 --
 local copyright = "Copyright (C) 2024 The LaTeX Project"
-local release_date = "2024-04-03"
+local release_date = "2024-04-08"
 local script_desc = "System queries for LaTeX using Lua\n"
 local script_name = "l3sys-query"
 
