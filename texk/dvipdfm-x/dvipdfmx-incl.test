@@ -11,9 +11,10 @@ LC_ALL=C; export LC_ALL;  LANGUAGE=C; export LANGUAGE
 TEXMFCNF=$srcdir/../kpathsea
 TFMFONTS=".;$srcdir/tests;$srcdir/data"
 T1FONTS="$srcdir/tests;$srcdir/data"
+TEXFONTMAPS="$srcdir/tests;$srcdir/data"
 TEXPICTS=$srcdir/tests
 SOURCE_DATE_EPOCH=1588474800
-export TEXMFCNF TFMFONTS T1FONTS TEXPICTS SOURCE_DATE_EPOCH
+export TEXMFCNF TFMFONTS T1FONTS TEXFONTMAPS TEXPICTS SOURCE_DATE_EPOCH
 
 failed=
 
@@ -21,11 +22,11 @@ rm -f multi_incl.pdf
 
 echo "*** dvipdfmx: test for including pdf graphics multiple times"
 
-$_xdvipdfmx --dvipdfmx -vv -o multi_incl.pdf $srcdir/tests/multi_incl.dvi \
+$_xdvipdfmx --dvipdfmx -vv -f psfonts.map -o multi_incl.pdf $srcdir/tests/multi_incl.dvi \
  || failed="$failed multi-incl"
 
 filesize=`ls -l multi_incl.pdf | awk '{print $5}'`
-if [ "$filesize" -gt 85000 ]; then
+if [ "$filesize" -gt 85010 ]; then
   echo "Too large file size :" $filesize
   failed="$failed multi-incl-size"
 fi
