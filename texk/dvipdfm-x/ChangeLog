@@ -1,3 +1,10 @@
+2024-04-07  Yukimasa Morimi  <h20y6m@yahoo.co.jp>
+
+	* pdfximage.c: fix an issue where the PDF becomes large when
+	inserting the same image multiple times.
+	https://github.com/texjporg/tex-jp-build/pull/169
+	* configure.ac: version 20240407.
+
 2024-03-10  Karl Berry  <karl@tug.org>
 
 	* TL'24 release.
