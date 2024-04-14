@@ -1,3 +1,8 @@
+2024-04-14  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* etriptest.test:
+	Filter Web2C year/dev in banner.
+
 2024-03-10  Karl Berry  <karl@tug.org>
 
 	* TL'24 release.

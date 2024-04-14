@@ -17,7 +17,6 @@ LC_ALL=C; export LC_ALL;  LANGUAGE=C; export LANGUAGE
 
 testdir=$abs_srcdir/triptrap
 etestdir=$abs_srcdir/etexdir/etrip
-eptestdir=$abs_srcdir/eptexdir/eptrip
 euptestdir=$abs_srcdir/euptexdir/euptrip
 
 TEXMFCNF=$euptestdir; export TEXMFCNF
@@ -34,7 +33,7 @@ cat >filter <<-\_EOF
 	s,^(trip\.tex ##,**(./trip.tex ##,
 	s,^## (\./trip\.tex,**(./trip.tex ##,
 	s/ (TeX Live 20[^)]*)//
-	s/ (Web2C 202[3-9])//
+	s/ (Web2C 202[3-9][^)]*)//
 	s/(preloaded format=.*tex)/(INITEX)/
 	s/format=trip [^)][^)]*)/format=trip)/
 	s/)  [0-9A-Z: ]*$/)/
@@ -183,7 +182,7 @@ $_tftopl ./etrip.tfm etrip.pl || exit 1
 diff $etestdir/etrip.pl etrip.pl || is_OK=false
 
 # get same filename in log
-$LN_S $eptestdir/eptrip.tex etrip.tex
+$LN_S $euptestdir/eptrip.tex etrip.tex
 
 $_euptex --progname=eupinitex --ini <$etestdir/etrip2.in >euptripin.fot
 if test ! -s etrip.fmt; then
@@ -200,7 +199,7 @@ sed "$P_SED1;$P_SED2" etrip.log > euptrip.log
 
 # We use $DIFF instead of `diff' only for those files where there
 # might actually be legitimate numerical differences.
-$DIFF $DIFFFLAGS $eptestdir/eptrip.log euptrip.log
+$DIFF $DIFFFLAGS $euptestdir/eptrip.log euptrip.log
 
 mv etrip.out euptrip.out
 diff $etestdir/etrip.out euptrip.out

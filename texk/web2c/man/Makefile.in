@@ -98,10 +98,11 @@ host_triplet = @host@
 @ETEX_TRUE@am__append_9 = etex.man
 @PDFTEX_TRUE@am__append_10 = $(pdftex_man_sources)
 @PDFTEX_TRUE@am__append_11 = pdftex:pdflatex
-@EPTEX_TRUE@am__append_12 = ptex.man ppltotf.man ptftopl.man \
-@EPTEX_TRUE@	pbibtex.man
-@EPTEX_TRUE@am__append_13 = ptex:eptex ptex:euptex ptex:uptex \
-@EPTEX_TRUE@	ppltotf:uppltotf ptftopl:uptftopl pbibtex:upbibtex
+@EUPTEX_TRUE@am__append_12 = ptex.man ppltotf.man ptftopl.man \
+@EUPTEX_TRUE@	pbibtex.man
+@EUPTEX_TRUE@am__append_13 = ptex:eptex ptex:euptex ptex:uptex \
+@EUPTEX_TRUE@	ppltotf:uppltotf ptftopl:uptftopl \
+@EUPTEX_TRUE@	pbibtex:upbibtex
 @LUATEX_TRUE@am__append_14 = luatex.man
 @LUATEX_TRUE@am__append_15 = luatex:texlua luatex:texluac \
 @LUATEX_TRUE@  luatex:luahbtex luatex:luajittex \

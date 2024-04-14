@@ -151,43 +151,6 @@ EXTRA_DIST += \
 	synctexdir/synctex-e-mem.ch1 \
 	synctexdir/synctex-e-rec.ch0
 
-## SyncTeX infrastructure: e-pTeX
-
-if EPTEX_SYNCTEX
-
-eptex_CPPFLAGS += -I$(srcdir)/synctexdir $(ZLIB_INCLUDES)
-
-eptex_LDADD += $(ZLIB_LIBS)
-eptex_prereq += $(ZLIB_DEPEND)
-
-eptex_ch_synctex = \
-	synctexdir/synctex-def.ch0 \
-	synctexdir/synctex-ep-mem.ch0 \
-	synctexdir/synctex-mem.ch0 \
-	synctexdir/synctex-e-mem.ch0 \
-	synctexdir/synctex-ep-mem.ch1 \
-	synctexdir/synctex-p-rec.ch0 \
-	synctexdir/synctex-rec.ch0 \
-	synctexdir/synctex-rec.ch1 \
-	synctexdir/synctex-ep-rec.ch0 \
-	synctexdir/synctex-e-rec.ch0 \
-	synctexdir/synctex-p-rec.ch1
-
-dist_eptex_SOURCES += \
-	synctexdir/synctex.c \
-	synctexdir/synctex.h \
-	synctexdir/synctex-common.h \
-	synctexdir/synctex-eptex.h
-
-eptex_CPPFLAGS += -D__SyncTeX__ -DSYNCTEX_ENGINE_H=\"synctex-eptex.h\"
-
-endif EPTEX_SYNCTEX
-
-EXTRA_DIST += \
-	synctexdir/synctex-ep-mem.ch0 \
-	synctexdir/synctex-ep-mem.ch1 \
-	synctexdir/synctex-ep-rec.ch0
-
 ## SyncTeX infrastructure: e-upTeX
 
 if EUPTEX_SYNCTEX

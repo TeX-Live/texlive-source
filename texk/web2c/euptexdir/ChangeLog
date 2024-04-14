@@ -1,3 +1,19 @@
+2024-04-14  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* epTeX_doc/{{README,Changes}.txt,ChangeLog,eptex-base.ch},
+	tests/{{fontchar,pdforigin}.{sh,tex},{lastnodefont,
+	lastnodesubtype_math,pdfpagewidth,pdfsavepos,
+	printkanji-eptex,suppress_errors,uchar,zero_search}.tex},
+	euptrip/eptrip.{tex,log}, unbalanced-braces-eptex.ch:
+	Move from ../eptexdir/*.
+	* am/euptex.am, euptexextra.h, e{,u}ptriptest.test,
+	pdfprimitive.test: Remove eptex and eptexdir.
+	We already use alias of e-upTeX (euptex)
+	and will never build e-pTeX binary (eptex).
+	https://github.com/texjporg/tex-jp-build/issues/32
+	* e{,u}ptriptest.test:
+	Filter Web2C year/dev in banner.
+
 2024-03-10  Karl Berry  <karl@tug.org>
 
 	* TL'24 release.

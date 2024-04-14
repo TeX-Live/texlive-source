@@ -1,3 +1,10 @@
+2024-04-14  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* ac/web2c.ac (eptex), Makefile.am,
+	euptexdir/am/euptex.am, eptexdir/*: Remove eptex and eptexdir/.
+	* {mftraptest,triptest}.test:
+	Filter Web2C year/dev in banner.
+
 2024-03-24  Karl Berry  <karl@freefriends.org>
 
 	* unbalanced-braces.ch: fix from DRF in order to make

@@ -36,7 +36,7 @@ cat >filter <<-\_EOF
 	s,^\*\*(trap\.mf,** \&trap  trap \
 	(trap.mf,
 	s/ (TeX Live 20[^)]*)//
-	s/ (Web2C 202[3-9])//
+	s/ (Web2C 202[3-9][^)]*)//
 	s/base=trap [^)][^)]*)/base=trap)/
 	s/)  [0-9A-Z: ]*$/)/
 	s/usage [1-9][0-9&]* ([1-9][0-9&]* still/usage XX\&XX (YYY\&YYYYY still/

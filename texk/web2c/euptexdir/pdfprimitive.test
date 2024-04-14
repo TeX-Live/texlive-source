@@ -17,7 +17,7 @@ FILE=pdfprimitive-euptex
 
 # get same filename in log
 rm -f $FILE.*
-$LN_S $srcdir/eptexdir/tests/pdfprimitive-test.tex $FILE.tex
+$LN_S $srcdir/euptexdir/tests/pdfprimitive-test.tex $FILE.tex
 
 $_euptex -ini -etex $FILE && exit 1
 

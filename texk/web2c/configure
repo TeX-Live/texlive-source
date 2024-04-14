@@ -828,10 +828,6 @@ UPTEX_SYNCTEX_FALSE
 UPTEX_SYNCTEX_TRUE
 UPTEX_FALSE
 UPTEX_TRUE
-EPTEX_SYNCTEX_FALSE
-EPTEX_SYNCTEX_TRUE
-EPTEX_FALSE
-EPTEX_TRUE
 PTEX_SYNCTEX_FALSE
 PTEX_SYNCTEX_TRUE
 PTEX_FALSE
@@ -1035,8 +1031,6 @@ enable_etex
 enable_etex_synctex
 enable_ptex
 enable_ptex_synctex
-enable_eptex
-enable_eptex_synctex
 enable_uptex
 enable_uptex_synctex
 enable_euptex
@@ -1782,8 +1776,6 @@ Optional Features:
   --disable-etex-synctex    build e-TeX without SyncTeX support
   --enable-ptex           compile and install pTeX
   --disable-ptex-synctex    build pTeX without SyncTeX support
-  --enable-eptex          compile and install e-pTeX
-  --disable-eptex-synctex   build e-pTeX without SyncTeX support
   --enable-uptex          compile and install upTeX
   --disable-uptex-synctex   build upTeX without SyncTeX support
   --disable-euptex        do not compile and install e-upTeX
@@ -20294,28 +20286,6 @@ test "x$enable_web2c:$enable_ptex" = xyes:yes && {
   need_ptexenc=yes
   need_zlib=yes
 }
-# Check whether --enable-eptex was given.
-if test ${enable_eptex+y}
-then :
-  enableval=$enable_eptex;
-fi
-case $enable_eptex in #(
-  yes | no) :
-     ;; #(
-  *) :
-    enable_eptex=no ;;
-esac
-
-# Check whether --enable-eptex-synctex was given.
-if test ${enable_eptex_synctex+y}
-then :
-  enableval=$enable_eptex_synctex;
-fi
-
-test "x$enable_web2c:$enable_eptex" = xyes:yes && {
-  need_ptexenc=yes
-  need_zlib=yes
-}
 # Check whether --enable-uptex was given.
 if test ${enable_uptex+y}
 then :
@@ -23097,36 +23067,6 @@ esac
 else
   PTEX_SYNCTEX_TRUE='#'
   PTEX_SYNCTEX_FALSE=
-fi
- if test "x$enable_eptex" = xyes; then
-  EPTEX_TRUE=
-  EPTEX_FALSE='#'
-else
-  EPTEX_TRUE='#'
-  EPTEX_FALSE=
-fi
-
-case $enable_native_texlive_build:$enable_eptex_synctex in #(
-  yes:yes | no:yes | no:no) :
-     ;; #(
-  *) :
-    if test -z "$enable_eptex_synctex"
-then :
-  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: Assuming \`--enable-eptex-synctex=yes'" >&5
-printf "%s\n" "$as_me: Assuming \`--enable-eptex-synctex=yes'" >&6;}
-else case e in #(
-  e) { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Enforcing \`--enable-eptex-synctex=yes' (native TeX Live build)" >&5
-printf "%s\n" "$as_me: WARNING: Enforcing \`--enable-eptex-synctex=yes' (native TeX Live build)" >&2;} ;;
-esac
-fi
-         enable_eptex_synctex=yes ;;
-esac
- if test "x$enable_eptex_synctex" = xyes; then
-  EPTEX_SYNCTEX_TRUE=
-  EPTEX_SYNCTEX_FALSE='#'
-else
-  EPTEX_SYNCTEX_TRUE='#'
-  EPTEX_SYNCTEX_FALSE=
 fi
  if test "x$enable_uptex" = xyes; then
   UPTEX_TRUE=
@@ -29260,14 +29200,6 @@ Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${PTEX_SYNCTEX_TRUE}" && test -z "${PTEX_SYNCTEX_FALSE}"; then
   as_fn_error $? "conditional \"PTEX_SYNCTEX\" was never defined.
-Usually this means the macro was only invoked conditionally." "$LINENO" 5
-fi
-if test -z "${EPTEX_TRUE}" && test -z "${EPTEX_FALSE}"; then
-  as_fn_error $? "conditional \"EPTEX\" was never defined.
-Usually this means the macro was only invoked conditionally." "$LINENO" 5
-fi
-if test -z "${EPTEX_SYNCTEX_TRUE}" && test -z "${EPTEX_SYNCTEX_FALSE}"; then
-  as_fn_error $? "conditional \"EPTEX_SYNCTEX\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${UPTEX_TRUE}" && test -z "${UPTEX_FALSE}"; then
