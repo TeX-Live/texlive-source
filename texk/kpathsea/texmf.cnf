@@ -941,3 +941,11 @@ guess_input_kanji_encoding.mendex = 1
 % command_line_encoding = none
 % in a texmf.cnf prefered, for example $TEXMFLOCAL/web2c/texmf.cnf.
 command_line_encoding = utf-8
+
+% From TeX Live 2024, the engine for ptex, eptex, platex, and
+% platex-dev is euptex. Therefore the function should be switched off
+% for ptex, eptex, platex and platex-dev.
+command_line_encoding.ptex = none
+command_line_encoding.eptex = none
+command_line_encoding.platex = none
+command_line_encoding.platex-dev = none
