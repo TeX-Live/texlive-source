@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: texfot,v 1.50 2023/08/29 15:20:57 karl Exp $
+# $Id: texfot,v 1.53 2024/04/17 16:52:12 karl Exp $
 # Invoke a TeX command, filtering all but interesting terminal output;
 # do not look at the log or check any output files.
 # Exit status is that of the subprogram.
@@ -8,7 +8,7 @@
 # 
 # Public domain.  Originally written 2014 by Karl Berry.
 
-my $ident = '$Id: texfot,v 1.50 2023/08/29 15:20:57 karl Exp $';
+my $ident = '$Id: texfot,v 1.53 2024/04/17 16:52:12 karl Exp $';
 (my $prg = $0) =~ s,^.*/,,;
 select STDERR; $| = 1;  # no buffering
 select STDOUT; $| = 1;
@@ -147,6 +147,7 @@ sub process_output {
       LaTeX\ Warning:\ You\ have\ requested\ package
      |LaTeX\ Font\ Warning:\ Some\ font\ shapes
      |LaTeX\ Font\ Warning:\ Size\ substitutions
+     |Module\ luamplib\ Warning:\ This\ is\ MetaPost
      |Package\ auxhook\ Warning:\ Cannot\ patch
      |Package\ biditools\ Warning:\ Patching
      |Package\ caption\ Warning:\ Un(supported|known)\ document\ class
@@ -471,6 +472,6 @@ are released to the public domain. Email C<karl@freefriends.org> with
 bug reports. It has no home page beyond the package page on CTAN:
 L<https://ctan.org/pkg/texfot>.
 
-  $Id: texfot,v 1.50 2023/08/29 15:20:57 karl Exp $
+  $Id: texfot,v 1.53 2024/04/17 16:52:12 karl Exp $
 
 =cut
