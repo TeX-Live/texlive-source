@@ -751,8 +751,6 @@ enable_etex
 enable_etex_synctex
 enable_ptex
 enable_ptex_synctex
-enable_eptex
-enable_eptex_synctex
 enable_uptex
 enable_uptex_synctex
 enable_euptex
@@ -1553,8 +1551,6 @@ Optional Features:
   --disable-etex-synctex      build e-TeX without SyncTeX support
   --enable-ptex             compile and install pTeX
   --disable-ptex-synctex      build pTeX without SyncTeX support
-  --enable-eptex            compile and install e-pTeX
-  --disable-eptex-synctex     build e-pTeX without SyncTeX support
   --enable-uptex            compile and install upTeX
   --disable-uptex-synctex     build upTeX without SyncTeX support
   --disable-euptex          do not compile and install e-upTeX
@@ -4547,28 +4543,6 @@ then :
 fi
 
 test "x$enable_web2c:$enable_ptex" = xyes:yes && {
-  need_ptexenc=yes
-  need_zlib=yes
-}
-# Check whether --enable-eptex was given.
-if test ${enable_eptex+y}
-then :
-  enableval=$enable_eptex;
-fi
-case $enable_eptex in #(
-  yes | no) :
-     ;; #(
-  *) :
-    enable_eptex=no ;;
-esac
-
-# Check whether --enable-eptex-synctex was given.
-if test ${enable_eptex_synctex+y}
-then :
-  enableval=$enable_eptex_synctex;
-fi
-
-test "x$enable_web2c:$enable_eptex" = xyes:yes && {
   need_ptexenc=yes
   need_zlib=yes
 }
