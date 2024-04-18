@@ -16240,7 +16240,7 @@ begin
     if gen_faked_interword_space
         and pdf_doing_string
         and (not must_end_string)
-        and (s_out > space(f) - space_shrink(f))
+        and (s_out > space(f) - space_shrink(f) - 65536)
         and (v = 0)
     then begin
         must_insert_space := true;

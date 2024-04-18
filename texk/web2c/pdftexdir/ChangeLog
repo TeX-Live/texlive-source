@@ -1,3 +1,10 @@
+2024-04-18  Thanh Han The  <hanthethanh@gmail.com>
+
+	* pdftex.web (pdf_begin_string): increase tolerance for finding
+	interword spaces by 1pt, since overfull lines can have smaller
+	spaces than space-space_shrink. Report from Ulrike,
+	https://tug.org/pipermail/pdftex/2024-April/009388.html
+
 2024-03-10  Karl Berry  <karl@tug.org>
 
 	* TL'24 release.
