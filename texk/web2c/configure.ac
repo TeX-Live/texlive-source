@@ -33,6 +33,16 @@ AC_CONFIG_MACRO_DIRS([../../m4 m4])
 WEB2CVERSION=tex_live_version()
 AC_SUBST([WEB2CVERSION])
 
+# LuaTeX requires system extensions for socket support.
+# Must be at the very beginning.
+# SyncTeX and plenty of others unconditionally define GNU_SOURCE,
+# so it probably wouldn't hurt to always use system extensions,
+# but maybe it is cleaner not to, in the case of cut-down sources.
+if test "x$enable_luatex" = xyes; then
+  AC_MSG_NOTICE([using system extensions, since LuaTeX is enabled])
+  AC_USE_SYSTEM_EXTENSIONS
+fi
+
 KPSE_COMMON([web2c programs])
 
 AM_CONDITIONAL([cross], [test "x$cross_compiling" = xyes])
@@ -46,7 +56,7 @@ KPSE_LT_HACK
 KPSE_WEB2C_PREPARE
 m4_include([ac/web2c.ac])
 
-# XeTeX now requires C++11 because ICU does :(.
+# XeTeX requires C++11 because ICU does :(.
 if test "x$enable_xetex" = xyes; then
   AC_MSG_NOTICE([checking for C++11, since XeTeX is enabled])
   AX_CXX_COMPILE_STDCXX([11])
@@ -283,7 +293,7 @@ AC_CHECK_SIZEOF([off_t], , AC_INCLUDES_DEFAULT
 [#include <kpathsea/config.h>])
 
 if test "x$with_system_kpathsea" = xyes; then
-dnl Although quite unusual, it is possible to build Web2C (TeX & Co)
+dnl It is possible to build Web2C (TeX & Co)
 dnl using installed (system) kpathsea headers and library.
 dnl In that case we need the location of <kpathsea/paths.h>.
   list="/usr/include /usr/local/include `echo $KPATHSEA_INCLUDES | sed 's/-I//g'`"

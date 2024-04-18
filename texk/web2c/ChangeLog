@@ -1,3 +1,10 @@
+2024-04-18  Karl Berry  <karl@freefriends.org>
+
+	* configure.ac (AC_USE_SYSTEM_EXTENSIONS) [enable_luatex]: call this.
+	From the Makefile of busytex, via Luigi mail to karl
+	of 12 Apr 2024 06:26:23:
+	"For example `gethostbyaddr()` requires `_GNU_SOURCE` or similar".
+
 2024-04-14  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* ac/web2c.ac (eptex), Makefile.am,
