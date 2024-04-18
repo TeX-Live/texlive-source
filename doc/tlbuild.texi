@@ -2,7 +2,7 @@
 @setfilename tlbuild.info
 
 @set version 2024
-@set month-year March 2024
+@set month-year April 2024
 
 @set mytitle Building @TeX{} Live (@value{version})
 @settitle @value{mytitle}
@@ -1233,11 +1233,14 @@ This macro caches its results in the @code{kpse_cv_warning_cflags},
 @end defmac
 
 @defmac KPSE_COMPILER_VISIBILITY
+@vindex -fvisibility=hidden
+@vindex -fvisibility-inlines-hidden
 When using the C or C++ compiler, try to set
 @code{VISIBILITY_C[XX]FLAGS} to flags to hide external symbols.  Call
-@code{AC_SUBST} for this variable.  At present this only tests for
-the compiler option @code{-fvisibility=hidden}, but could be
-extended if necessary.
+@code{AC_SUBST} for this variable.  This tests for the compiler option
+@code{-fvisibility=hidden} and, except for C,
+@code{-fvisibility-inlines-hidden}.  Reports or patches for additional
+tests are welcome.
 
 @vindex kpse_cv_visibility_c[xx]flags
 This macro caches its results in the @code{kpse_cv_visibility_cflags}

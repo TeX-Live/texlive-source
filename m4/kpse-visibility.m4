@@ -1,6 +1,6 @@
 # $Id$
 # Public macros for the TeX Live (TL) tree.
-# Copyright 2017-2018 Karl Berry <tex-live@tug.org>
+# Copyright 2017-2024 Karl Berry <tex-live@tug.org>
 # Copyright 2013-2014 Peter Breitenlohner <tex-live@tug.org>
 #
 # This file is free software; the copyright holder
@@ -62,8 +62,19 @@ kpse_save_flags=$AS_TR_CPP($2)
 AC_LANG_CONFTEST([AC_LANG_SOURCE([[#include <stdio.h>
                                    extern void foo(void);
                                    void foo(void){printf("foo\n");}]])])
-# FIXME: Add tests for non-GNU compilers
-for kpse_flag in '-fvisibility=hidden -fvisibility-inlines-hidden' '-fvisibility=hidden'; do
+# Maybe other compiler need other tests; patches needed.
+# 
+# The idea, maybe, is to use both flags when they are supported, but
+# old C++ compilers, as well as C, don't support
+# -fvisibility-inlines-hidden, so test just -fvisibility=hidden too?
+# 
+for kpse_flag in "-fvisibility=hidden -fvisibility-inlines-hidden" \
+                 "-fvisibility=hidden"; do
+  if test x"$1" = xC \
+     && echo "$kpse_flag" | grep inlines-hidden >/dev/null; then
+    # C does not support this additional flag; just skip the test.
+    continue
+  fi
   AS_TR_CPP($2)="$kpse_save_flags -Werror $kpse_flag"
   AC_COMPILE_IFELSE([], [kpse_cv_visibility_$2=$kpse_flag; break])
 done

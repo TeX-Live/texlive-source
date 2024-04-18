@@ -1,3 +1,9 @@
+2024-04-18  Karl Berry  <karl@freefriends.org>
+
+	* kpse-visibility.m4 (_KPSE_VISIBILITY_FLAGS): avoid testing or
+	including -fvisibility-inlines-hidden for C. From Luigi, mail of
+	12 Apr 2024 06:26:23.
+
 2024-02-01  Luigi Scarso  <luigi.scarso@gmail.com>
 
 	* kpse-pkgs.m4 (kpse_libs_pkgs): add mpfi (new subdir).
