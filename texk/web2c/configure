@@ -3990,13 +3990,15 @@ WEB2CVERSION=2025/dev
 
 
 # LuaTeX requires system extensions for socket support.
-# Must be at the very beginning.
+# Must be at the very beginning or warnings about compiler tests.
 # SyncTeX and plenty of others unconditionally define GNU_SOURCE,
-# so it probably wouldn't hurt to always use system extensions,
-# but maybe it is cleaner not to, in the case of cut-down sources.
-if test "x$enable_luatex" = xyes; then
-  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: using system extensions, since LuaTeX is enabled" >&5
-printf "%s\n" "$as_me: using system extensions, since LuaTeX is enabled" >&6;}
+# so it's probably more consistent to always use it.
+
+# Also, we can't easily make it conditional on LuaTeX only because then
+# OBJEXT ends up defined as the empty string (error: no way to make
+# "basechsuffix."), which seems odd, but whatever.
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: using system extensions" >&5
+printf "%s\n" "$as_me: using system extensions" >&6;}
 
 
 
@@ -5267,7 +5269,6 @@ then :
 
 fi
 
-fi
 
 am__api_version='1.16'
 

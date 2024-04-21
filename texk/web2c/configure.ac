@@ -34,14 +34,15 @@ WEB2CVERSION=tex_live_version()
 AC_SUBST([WEB2CVERSION])
 
 # LuaTeX requires system extensions for socket support.
-# Must be at the very beginning.
+# Must be at the very beginning or warnings about compiler tests.
 # SyncTeX and plenty of others unconditionally define GNU_SOURCE,
-# so it probably wouldn't hurt to always use system extensions,
-# but maybe it is cleaner not to, in the case of cut-down sources.
-if test "x$enable_luatex" = xyes; then
-  AC_MSG_NOTICE([using system extensions, since LuaTeX is enabled])
-  AC_USE_SYSTEM_EXTENSIONS
-fi
+# so it's probably more consistent to always use it.
+
+# Also, we can't easily make it conditional on LuaTeX only because then
+# OBJEXT ends up defined as the empty string (error: no way to make
+# "basechsuffix."), which seems odd, but whatever.
+AC_MSG_NOTICE([using system extensions])
+AC_USE_SYSTEM_EXTENSIONS
 
 KPSE_COMMON([web2c programs])
 

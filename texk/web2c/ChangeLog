@@ -1,3 +1,9 @@
+2024-04-21  Karl Berry  <karl@freefriends.org>
+
+	* configure.ac (AC_USE_SYSTEM_EXTENSIONS): make it unconditional,
+        since otherwise we get:
+make[5]: *** No rule to make target 'basechsuffix.', needed by 'lib.a'.  Stop.
+
 2024-04-18  Karl Berry  <karl@freefriends.org>
 
 	* configure.ac (AC_USE_SYSTEM_EXTENSIONS) [enable_luatex]: call this.
