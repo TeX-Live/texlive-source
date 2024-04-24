@@ -4491,15 +4491,11 @@ euptex_ch_srcs = \
 	euptexdir/etex.ch0 \
 	uptexdir/ptex-base.ch \
 	uptexdir/uptex-m.ch \
-	euptexdir/euptex.ch0 \
 	euptexdir/eptex.ech \
 	euptexdir/etex.ch1 \
-	euptexdir/euptex.ch1 \
 	$(euptex_ch_synctex) \
 	euptexdir/fam256.ch \
-	euptexdir/pdfstrcmp-eup-pre.ch \
 	euptexdir/pdfutils.ch \
-	euptexdir/pdfstrcmp-eup-post.ch \
 	euptexdir/suppresserrors.ch \
 	euptexdir/unbalanced-braces-eptex.ch \
 	euptexdir/char-warning-eptex.ch \

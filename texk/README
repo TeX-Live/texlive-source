@@ -118,10 +118,10 @@ web2c - maintained here, by us - core web2c, plain tex, etc.
         cweb - https://github.com/ascherer/cwebbin
                (original Knuth, ftp://ftp.cs.stanford.edu/pub/cweb/
                and ftp://ftp.cs.stanford.edu/pub/ctwill/)
-       eptex - https://github.com/texjporg/tex-jp-build
-               also: https://osdn.jp/projects/eptex
         etex - maintained here
-      euptex - https://www.t-lab.opal.ne.jp/tex/uptex_en.html
+      euptex - https://github.com/texjporg/tex-jp-build
+               also: https://www.t-lab.opal.ne.jp/tex/uptex_en.html
+               also: https://github.com/h-kitagawa/eptex-wiki
        hitex - https://hint.userweb.mwn.de/hint/hitex.html
   mflua[jit] - https://serveur-svn.lri.fr/svn/modhel/mflua
                also: https://www.luatex.org/download.html

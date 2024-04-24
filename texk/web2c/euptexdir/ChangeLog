@@ -1,3 +1,10 @@
+2024-04-24  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* eptex.ech, etex.ch1, euptex.ch{0,1},
+	pdfstrcmp-eup-{pre,post}.ch, pdfutils.ch, am/euptex.am:
+	Clean up building environment.
+	https://github.com/texjporg/tex-jp-build/issues/32
+
 2024-04-14  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* epTeX_doc/{{README,Changes}.txt,ChangeLog,eptex-base.ch},
