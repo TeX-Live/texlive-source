@@ -7,7 +7,7 @@ use strict; use warnings;
 
 package TeXLive::TLUtils;
 
-my $svnrev = '$Revision: 70794 $';
+my $svnrev = '$Revision: 71007 $';
 my $_modulerevision = ($svnrev =~ m/: ([0-9]+) /) ? $1 : "unknown";
 sub module_revision { return $_modulerevision; }
 
@@ -4865,6 +4865,13 @@ sub tlnet_disabled_packages {
   return @ret;
 }
 
+=item C<< report_tlpdb_differences($rret) >>
+
+Report, using info function, as given in hash reference argument RET,
+with keys removed_packages, added_packages, different_packages.
+
+=cut
+
 sub report_tlpdb_differences {
   my $rret = shift;
   my %ret = %$rret;
@@ -4883,19 +4890,29 @@ sub report_tlpdb_differences {
   }
   if (defined($ret{'different_packages'})) {
     info ("different packages from A to B:\n");
+    my $printed_fmttriggers_msg = 0;
     for my $p (sort keys %{$ret{'different_packages'}}) {
-      info ("  $p\n");
+      info ("  $p:\n");
       for my $k (sort keys %{$ret{'different_packages'}->{$p}}) {
         if ($k eq "revision") {
-          info("    revision differ: $ret{'different_packages'}->{$p}->{$k}\n");
+         info("    revision differ: $ret{'different_packages'}->{$p}->{$k}\n");
         } elsif ($k eq "removed" || $k eq "added") {
-          info("    $k files:\n");
+          info ("    $k files:\n");
           for my $f (sort @{$ret{'different_packages'}->{$p}->{$k}}) {
-            info("      $f\n");
+            info ("      $f\n");
           }
+        } elsif ($k eq "fmttriggers") {
+          # fmttriggers; don't bother making a complete report.
+          # The fmttriggers will differ when the global variables in
+          # 00texlive.autopatterns.tlpsrc change but we forgot to
+          # tlforceincr all the packages that depend on the variables.
+          # Which happens depressingly often.
+          info("    $k differ)\n");
+          info("(if 00texlive.autopatterns change, tlforceincr dependents.)\n")
+            if ! $printed_fmttriggers_msg; # just show once
+          $printed_fmttriggers_msg = 1;
         } else {
-          # e.g., fmttriggers; don't bother making a nice report.
-          info("  unknown differ $k\n");
+          info("    $k differ\n");
         }
       }
     }

@@ -1,7 +1,7 @@
 
 
-local svnrevision = string.match("$Revision: 70363 $", "%d+") or "0"
-local svndate     = string.match("$Date: 2024-03-03 01:45:04 +0100 (Sun, 03 Mar 2024) $", "[-%d]+") or "2009-12-04"
+local svnrevision = string.match("$Revision: 71041 $", "%d+") or "0"
+local svndate     = string.match("$Date: 2024-04-23 12:33:27 +0200 (Tue, 23 Apr 2024) $", "[-%d]+") or "2009-12-04"
 local bannerstr   = "runscript wrapper utility (rev. " ..
                     svnrevision .. ", " .. svndate .. ")\n" .. 
                     "usage:   runscript script-name [arguments]\n" ..
@@ -287,14 +287,11 @@ local function show_error(msg)
   if guimode then
     local err_cmd
     os.setenv('RUNSCRIPT_ERROR_MESSAGE', msg)
-    local errmess_path = TEXDIR .. '/texmf-dist/scripts/texlive/tl-errmess.vbs'
-    local err_cmd = {"wscript", errmess_path:gsub('/','\\')}
+    local errmess_path = TEXDIR .. '/texmf-dist/scripts/texlive/tl-errmess.ps1'
+    local err_cmd = {"powershell", "-NoLogo", "-WindowStyle", "hidden",
+       '-ExecutionPolicy', 'Bypass', errmess_path:gsub('/','\\')}
     if lfs.isfile(errmess_path) then
       os.spawn(err_cmd)
-    elseif lfs.isfile(TEXDIR..'/tlpkg/tltcl/tclkit.exe') and
-        lfs.isfile(TEXDIR..'/tlpkg/tltcl/gui_err.tcl') then
-      os.spawn{TEXDIR..'/tlpkg/tltcl/tclkit.exe',
-          TEXDIR..'/tlpkg/tltcl/gui_err.tcl'}
     end
   else
     io.stderr:write(msg, '\n')
