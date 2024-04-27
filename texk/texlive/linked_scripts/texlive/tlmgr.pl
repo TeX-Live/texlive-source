@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 71004 2024-04-19 21:17:05Z karl $
+# $Id: tlmgr.pl 71079 2024-04-25 22:15:30Z karl $
 # Copyright 2008-2024 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
@@ -8,8 +8,8 @@
 
 use strict; use warnings;
 
-my $svnrev = '$Revision: 71004 $';
-my $datrev = '$Date: 2024-04-19 23:17:05 +0200 (Fri, 19 Apr 2024) $';
+my $svnrev = '$Revision: 71079 $';
+my $datrev = '$Date: 2024-04-26 00:15:30 +0200 (Fri, 26 Apr 2024) $';
 my $tlmgrrevision;
 my $tlmgrversion;
 my $prg;
@@ -168,7 +168,7 @@ my %action_specification = (
     "function" => \&action_conf
   },
   "dump-tlpdb" => { 
-    "options"  => { local => 1, remote => 1 },
+    "options"  => { local => 1, remote => 1, json => 1 },
     "run-post" => 0,
     "function" => \&action_dumptlpdb
   },
@@ -212,7 +212,8 @@ my %action_specification = (
       "all" => 1,
       "list" => 1, 
       "only-installed" => 1,
-      "only-remote" => 1
+      "only-remote" => 1,
+      "json" => 1
     },
     "run-post" => 0,
     "function" => \&action_info
@@ -240,11 +241,12 @@ my %action_specification = (
     "function" => \&action_key
   },
   "option" => { 
+    "options"  => { "json" => 1 },
     "run-post" => 1,
     "function" => \&action_option
   },
   "paper" => { 
-    "options"  => { "list" => 1 },
+    "options"  => { "list" => 1, "json" => 1 },
     "run-post" => 1,
     "function" => \&action_paper
   },
@@ -300,7 +302,8 @@ my %action_specification = (
       "all" => 1,
       "backupdir" => "=s",
       "dry-run|n" => 1,
-      "force" => 1
+      "force" => 1,
+      "json" => 1,
     },
     "run-post" => 1,
     "function" => \&action_restore
@@ -311,6 +314,7 @@ my %action_specification = (
       "file" => 1,
       "global" => 1,
       "word" => 1,
+      "json" => 1,
     },
     "run-post" => 1,
     "function" => \&action_search
@@ -348,7 +352,6 @@ my %globaloptions = (
   "debug-translation" => 1,
   "h|?" => 1,
   "help" => 1,
-  "json" => 1,
   "location|repository|repo" => "=s",
   "machine-readable" => 1,
   "no-execute-actions" => 1,
@@ -1710,7 +1713,7 @@ sub action_info {
   my @datafields;
   my $fmt = "list";
   if ($opts{'data'} && $opts{'json'}) {
-    tlwarn("Preferring json output over data output!\n");
+    tlwarn("Preferring JSON output over data output!\n");
     delete($opts{'data'});
   }
   if ($opts{'json'}) {
@@ -1843,13 +1846,29 @@ sub action_search {
     $tlpdb = $localtlpdb;
   }
 
-  my ($foundfile, $founddesc) = search_tlpdb($tlpdb, $r, 
+  my $ret = search_tlpdb($tlpdb, $r, 
     $opts{'file'} || $opts{'all'}, 
     (!$opts{'file'} || $opts{'all'}), 
     $opts{'word'});
- 
-  print $founddesc;
-  print $foundfile;
+
+  if ($opts{'json'}) {
+    my $json = TeXLive::TLUtils::encode_json($ret);
+    print($json);
+  } else {
+    my $retfile = '';
+    my $retdesc = '';
+    for my $pkg (sort keys %{$ret->{"packages"}}) {
+      $retdesc .= "$pkg - " . $ret->{"packages"}{$pkg} . "\n";
+    }
+    for my $pkg (sort keys %{$ret->{"files"}}) {
+      $retfile .= "$pkg:\n";
+      for my $f (@{$ret->{"files"}{$pkg}}) {
+        $retfile .= "\t$f\n";
+      }
+    }
+    print ($retdesc);
+    print ($retfile);
+  }
 
   return ($F_OK | $F_NOPOSTACTION);
 }
@@ -1896,20 +1915,24 @@ sub search_tlpdb {
   # first report on $pkg - $shortdesc found
   my $retfile = '';
   my $retdesc = '';
+  my %ret = ( "packages" => {}, "files" => {} );
   for my $pkg (sort keys %$fndptr) {
     if ($fndptr->{$pkg}{'desc'}) {
-      $retdesc .= "$pkg - " . $fndptr->{$pkg}{'desc'} . "\n";
+      $ret{"packages"}{$pkg} = $fndptr->{$pkg}{'desc'};
     }
   }
   for my $pkg (sort keys %$fndptr) {
     if ($fndptr->{$pkg}{'files'}) {
-      $retfile .= "$pkg:\n";
-      for my $f (keys %{$fndptr->{$pkg}{'files'}}) {
-        $retfile .= "\t$f\n";
-      }
+      $ret{"files"}{$pkg} = [ keys %{$fndptr->{$pkg}{'files'}} ];
     }
   }
-  return($retfile, $retdesc);
+  # {
+  #   require Data::Dumper;
+  #   print Data::Dumper->Dump([\%retjson], [qw(retjson)]);
+  #   my $json = TeXLive::TLUtils::encode_json(\%retjson);
+  #   print($json);
+  # }
+  return (\%ret);
 }
 
 sub search_pkg_files {
@@ -6695,7 +6718,7 @@ sub action_shell {
   # keys which can be set/get and are also settable via global cmdline opts
   my @valid_bool_keys
     = qw/debug-translation machine-readable no-execute-actions
-         verify-repo json/;  
+         verify-repo/;  
   my @valid_string_keys = qw/repository prompt/;
   my @valid_keys = (@valid_bool_keys, @valid_string_keys);
   # set auto flush unconditionally in action shell
@@ -8603,7 +8626,7 @@ Dump the remote TLPDB.
 =item B<--json>
 
 Instead of dumping the actual content, the database is dumped as
-JSON. For the format of JSON output see C<tlpkg/doc/JSON-formats.txt>,
+JSON. For the format of JSON output see C<tlpkg/doc/json-formats.txt>,
 format definition C<TLPDB>.
 
 =back
@@ -8827,11 +8850,11 @@ page for new packages: L<https://ctan.org/upload>.
 
 =item B<--json>
 
-In case C<--json> is specified, the output is a JSON encoded array where
-each array element is the JSON representation of a single C<TLPOBJ> but
-with additional information. For details see
-C<tlpkg/doc/JSON-formats.txt>, format definition: C<TLPOBJINFO>. If both
-C<--json> and C<--data> are given, C<--json> takes precedence.
+If C<--json> is specified, the output is a JSON encoded array where each
+array element is the JSON representation of a single C<TLPOBJ> but with
+additional information. For details see C<tlpkg/doc/json-formats.txt>,
+format definition: C<TLPOBJINFO>. If both C<--json> and C<--data> are
+given, C<--json> takes precedence.
 
 =back
 
@@ -8966,7 +8989,7 @@ synonym).
 Both C<show...> forms take an option C<--json>, which dumps the option
 information in JSON format.  In this case, both forms dump the same
 data. For the format of the JSON output see
-C<tlpkg/doc/JSON-formats.txt>, format definition C<TLOPTION>.
+C<tlpkg/doc/json-formats.txt>, format definition C<TLOPTION>.
 
 In the third form, with I<key>, if I<value> is not given, the setting
 for I<key> is displayed.  If I<value> is present, I<key> is set to
@@ -9082,7 +9105,7 @@ sizes for that program.  The first size shown is the default.
 
 If C<--json> is specified without other options, the paper setup is
 dumped in JSON format. For the format of JSON output see
-C<tlpkg/doc/JSON-formats.txt>, format definition C<TLPAPER>.
+C<tlpkg/doc/json-formats.txt>, format definition C<TLPAPER>.
 
 Incidentally, this syntax of having a specific program name before the
 C<paper> keyword is unusual.  It is inherited from the longstanding
@@ -9420,10 +9443,11 @@ Don't ask questions.
 
 =item B<--json>
 
-When listing backups, the option C<--json> turn on JSON output.
-The format is an array of JSON objects (C<name>, C<rev>, C<date>).
-For details see C<tlpkg/doc/JSON-formats.txt>, format definition: C<TLBACKUPS>.
-If both C<--json> and C<--data> are given, C<--json> takes precedence.
+When listing backups, the option C<--json> writes JSON output. The
+format is an array of JSON objects (C<name>, C<rev>, C<date>). For
+details see C<tlpkg/doc/json-formats.txt>, format definition:
+C<TLBACKUPS>. If both C<--json> and C<--data> are given, C<--json> takes
+precedence.
 
 =back
 
@@ -9466,6 +9490,12 @@ Restrict the search of package names and descriptions (but not
 filenames) to match only full words.  For example, searching for
 C<table> with this option will not output packages containing the word
 C<tables> (unless they also contain the word C<table> on its own).
+
+=item B<--json>
+
+Output search results as a JSON hash with two keys: B<files> and
+B<packages>. For the format of the JSON output see
+C<tlpkg/doc/json-formats.txt>, format definition C<TLSEARCH>.
 
 =back
 
@@ -10554,7 +10584,7 @@ This script and its documentation were written for the TeX Live
 distribution (L<https://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 71004 2024-04-19 21:17:05Z karl $
+$Id: tlmgr.pl 71079 2024-04-25 22:15:30Z karl $
 =cut
 
 # test HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html
