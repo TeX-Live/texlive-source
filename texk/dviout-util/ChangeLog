@@ -1,3 +1,11 @@
+2024-04-27  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* dvispc.c: Support upTeX new encoding
+	for combining characters.
+	* configure.ac: Version 20240427.
+	* COPYING: Copyright year.
+	https://github.com/texjporg/tex-jp-build/issues/46
+
 2023-09-17  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
 	* chkdvifont.c: Check JFM with over 256 glue/kern.
