@@ -28,11 +28,11 @@
    )
 (TYPE O 0
    (CHARWD R 1.0)
-   (CHARHT R 0.9)
-   (CHARDP R 0.1)
+   (CHARHT R 0.88)
+   (CHARDP R 0.12)
    )
 (TYPE O 1
    (CHARWD R 0.5)
-   (CHARHT R 0.9)
-   (CHARDP R 0.1)
+   (CHARHT R 0.88)
+   (CHARDP R 0.12)
    )

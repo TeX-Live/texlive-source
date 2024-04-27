@@ -47,6 +47,18 @@ upjf1_full.vf:
 upjf1_omit.vf:
 	jfmutil zvp02vf upjf1_omit.zvp0
 
+upjf2_full.vf:
+	jfmutil zvp02vf upjf2_full.zvp0
+
+upjv2_full.vf:
+	jfmutil zvp02vf upjv2_full.zvp0
+
+upjf-c.tfm:
+	uppltotf upjf-c.pl
+
+upjv-c.tfm:
+	uppltotf upjv-c.pl
+
 upjf.dvi: upjf.tex
 	uplatex upjf.tex
 	dvispc -a upjf.dvi upjf.dvitxt
@@ -54,4 +66,12 @@ upjf.dvi: upjf.tex
 	sed -i -e "4i xxx1 176 'pdf:docinfo<</Title(upTeXを試す)/Subject(시험)/Creator(LaTeX with hyperref)/Author(☃ ☀)/Producer(dvipdfm)/Keywords(超鏈接; ハイパーリンク; 하이퍼링크)>>'" upjf.dvitxt
 	dvispc -x upjf.dvitxt upjf.dvi
 	rm upjf.dvitxt
+
+upjf2.dvi: upjf2.tex
+	uplatex upjf2.tex
+	dvispc -a upjf2.dvi upjf2.dvitxt
+	sed -i '/xxx/d' upjf2.dvitxt
+	sed -i -e "4i xxx1 176 'pdf:docinfo<</Title(upTeXを試す)/Subject(시험)/Creator(LaTeX with hyperref)/Author(☃ ☀)/Producer(dvipdfm)/Keywords(超鏈接; ハイパーリンク; 하이퍼링크)>>'" upjf2.dvitxt
+	dvispc -x upjf2.dvitxt upjf2.dvi
+	rm upjf2.dvitxt
 

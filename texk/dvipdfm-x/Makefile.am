@@ -249,11 +249,12 @@ DISTCLEANFILES = config.force
 TESTS = xdvipdfmx.test xdvipdfm-ann.test xdvipdfm-bad.test xdvipdfm-bb.test
 TESTS += xdvipdfm-bkm.test xdvipdfm-psz.test xdvipdfm-ptx.test xdvipdfm-res.test
 TESTS += xdvipdfm-rev.test xdvipdfm-ttc.test
-TESTS += dvipdfmx-upjf.test dvipdfmx-incl.test
+TESTS += dvipdfmx-upjf.test dvipdfmx-upjf2.test dvipdfmx-incl.test
 xdvipdfmx.log xdvipdfm-ann.log xdvipdfm-bad.log xdvipdfm-bb.log \
 	xdvipdfm-bkm.log xdvipdfm-psz.log xdvipdfm-ptx.log xdvipdfm-res.log \
 	xdvipdfm-rev.log xdvipdfm-ttc.log \
-	dvipdfmx-upjf.log dvipdfmx-incl.log: xdvipdfmx$(EXEEXT)
+	dvipdfmx-upjf.log dvipdfmx-upjf2.log dvipdfmx-incl.log: \
+	xdvipdfmx$(EXEEXT)
 EXTRA_DIST = $(TESTS)
 ## xdvipdfmx.test
 EXTRA_DIST += tests/dvipdfmx.cfg tests/psfonts.map
@@ -307,7 +308,13 @@ EXTRA_DIST += tests/upjv-r00.opl tests/upjv-r00.ofm
 EXTRA_DIST += tests/upjf1-r.pl tests/upjf1-r.tfm
 EXTRA_DIST += tests/upjf1_full.zvp0 tests/upjf1_full.vf
 EXTRA_DIST += tests/upjf1_omit.zvp0 tests/upjf1_omit.vf
-DISTCLEANFILES += upjf.vf upjv.vf upjf-*.ofm upjv-*.ofm upjf-*.tfm upjf*.pdf
+DISTCLEANFILES += upjf.vf upjv.vf upjf-*.ofm upjv-*.ofm upjf-*.tfm upjf_*.pdf upjf1_*.pdf
+## dvipdfmx-upjf2.test
+EXTRA_DIST += tests/upjf2_full.zvp0 tests/upjf2_full.vf
+EXTRA_DIST += tests/upjv2_full.zvp0 tests/upjv2_full.vf
+EXTRA_DIST += tests/upjf-c.pl tests/upjf-c.tfm
+EXTRA_DIST += tests/upjv-c.pl tests/upjv-c.tfm
+DISTCLEANFILES += upjf2_*.pdf
 ## dvipdfmx-incl.test
 EXTRA_DIST += tests/multi_incl.dvi tests/multi_incl.tex tests/sue-mp.pdf
 DISTCLEANFILES += multi_incl.pdf

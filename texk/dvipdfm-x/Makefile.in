@@ -822,11 +822,12 @@ dist_cmapdata_DATA = data/EUC-UCS2
 DISTCLEANFILES = config.force image*.pdf xbmc*.pdf annot*.pdf pic*.* \
 	bookm*.pdf paper*.pdf ptex*.pdf resrc*.pdf reverse.pdf \
 	ttc*.pdf upjf.vf upjv.vf upjf-*.ofm upjv-*.ofm upjf-*.tfm \
-	upjf*.pdf multi_incl.pdf
+	upjf_*.pdf upjf1_*.pdf upjf2_*.pdf multi_incl.pdf
 TESTS = xdvipdfmx.test xdvipdfm-ann.test xdvipdfm-bad.test \
 	xdvipdfm-bb.test xdvipdfm-bkm.test xdvipdfm-psz.test \
 	xdvipdfm-ptx.test xdvipdfm-res.test xdvipdfm-rev.test \
-	xdvipdfm-ttc.test dvipdfmx-upjf.test dvipdfmx-incl.test
+	xdvipdfm-ttc.test dvipdfmx-upjf.test dvipdfmx-upjf2.test \
+	dvipdfmx-incl.test
 EXTRA_DIST = $(TESTS) tests/dvipdfmx.cfg tests/psfonts.map \
 	tests/cmr10.pfb tests/cmr10.tfm tests/image.dvi \
 	tests/image.tex tests/xbmc.dvi tests/xbmc.tex \
@@ -852,9 +853,12 @@ EXTRA_DIST = $(TESTS) tests/dvipdfmx.cfg tests/psfonts.map \
 	tests/upjv-g00.ofm tests/upjf-r00.opl tests/upjf-r00.ofm \
 	tests/upjv-r00.opl tests/upjv-r00.ofm tests/upjf1-r.pl \
 	tests/upjf1-r.tfm tests/upjf1_full.zvp0 tests/upjf1_full.vf \
-	tests/upjf1_omit.zvp0 tests/upjf1_omit.vf tests/multi_incl.dvi \
-	tests/multi_incl.tex tests/sue-mp.pdf tests/fullmap.dvi \
-	tests/fullmap.tex
+	tests/upjf1_omit.zvp0 tests/upjf1_omit.vf \
+	tests/upjf2_full.zvp0 tests/upjf2_full.vf \
+	tests/upjv2_full.zvp0 tests/upjv2_full.vf tests/upjf-c.pl \
+	tests/upjf-c.tfm tests/upjv-c.pl tests/upjv-c.tfm \
+	tests/multi_incl.dvi tests/multi_incl.tex tests/sue-mp.pdf \
+	tests/fullmap.dvi tests/fullmap.tex
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-am
 
@@ -2026,7 +2030,8 @@ config.force: $(ZLIB_DEPEND) $(LIBPNG_DEPEND) $(KPATHSEA_DEPEND) $(LIBPAPER_DEPE
 xdvipdfmx.log xdvipdfm-ann.log xdvipdfm-bad.log xdvipdfm-bb.log \
 	xdvipdfm-bkm.log xdvipdfm-psz.log xdvipdfm-ptx.log xdvipdfm-res.log \
 	xdvipdfm-rev.log xdvipdfm-ttc.log \
-	dvipdfmx-upjf.log dvipdfmx-incl.log: xdvipdfmx$(EXEEXT)
+	dvipdfmx-upjf.log dvipdfmx-upjf2.log dvipdfmx-incl.log: \
+	xdvipdfmx$(EXEEXT)
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

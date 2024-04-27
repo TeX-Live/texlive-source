@@ -1,3 +1,17 @@
+2024-04-27  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* tfm.{c,h}, vf.c: Support upTeX new encoding
+	for combining characters via virtual fonts.
+	* cidtype2.c: Enable to treat Combining Katakana-Hiragana
+	(Semi-)Voiced Sound Mark in cid_to_code().
+	* dvipdfmx-upjf2.test, tests/upjf2.{tex,dvi}, tests/upj{f,v}.pl,
+	tests/upj{f,v}-c.{pl,tfm}, tests/upjf1-r.{pl,tfm},
+	tests/upj{f,v}2_full.{vf,zvp0}, tests/upjf{,-hara}.map,
+	tests/Makefile_upjf, Makefile.am: Add a test for
+	upTeX new encoding. It requires HaranoAji fonts.
+	https://github.com/texjporg/tex-jp-build/issues/46
+	* configure.ac: version 20240427.
+
 2024-04-09  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* dvipdfmx-incl.test, tests/multi_incl.{tex,dvi},
