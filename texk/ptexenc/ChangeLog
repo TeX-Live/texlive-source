@@ -1,3 +1,11 @@
+2024-04-27  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* unicode.c, ptexenc/unicode.h:
+	Add new functions UVS_* to support new encoding of upTeX
+	to {,de}compose characters with multiple codepoints.
+	* version.ac: Bump to 1.5.0/dev.
+	https://github.com/texjporg/tex-jp-build/issues/46
+
 2024-03-10  Karl Berry  <karl@tug.org>
 
 	* TL'24 release.
