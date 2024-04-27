@@ -3224,18 +3224,21 @@ EXTRA_DIST = PROJECTS cftests cpascal.h help.h w2c/config.h \
 	$(upweb_tests) tests/enc-u.bbl tests/enc-eu.bbl \
 	tests/enc-su.bbl tests/enc-uu.bbl uptexdir/tests/uptex3.tex \
 	uptexdir/tests/uptex3.dvi uptexdir/tests/uptex4.tex \
-	uptexdir/tests/uptex4.dvi uptexdir/tests/uptex3a.typ \
-	uptexdir/tests/uptex4a.typ uptexdir/tests/umin10.pl \
-	uptexdir/tests/umin10.tfm uptexdir/tests/utmin10.pl \
-	uptexdir/tests/utmin10.tfm uptexdir/tests/testnewu.pl \
-	uptexdir/tests/testnewu.tfm uptexdir/tests/uparse.pl \
-	uptexdir/tests/uparse.tfm uptexdir/tests/gkhugeok.tfm \
-	uptexdir/tests/gkhugeng.tfm uptexdir/tests/gkhugeng.err \
-	uptexdir/tests/gk256g.tfm uptexdir/tests/gk256k.tfm \
-	uptexdir/uptrip/uptrip.diffs uptexdir/uptrip/texmf.cnf \
-	$(euptex_web_srcs) $(euptex_ch_srcs) euptexdir/euptex.defines \
-	euptexdir/COPYRIGHT euptexdir/COPYRIGHT.jis \
-	euptexdir/ChangeLog euptexdir/EUPTEX.txt $(euptex_tests) \
+	uptexdir/tests/uptex4.dvi uptexdir/tests/uptex5.tex \
+	uptexdir/tests/uptex5.dvi uptexdir/tests/uptex3a.typ \
+	uptexdir/tests/uptex4a.typ uptexdir/tests/uptex5a.typ \
+	uptexdir/tests/umin10.pl uptexdir/tests/umin10.tfm \
+	uptexdir/tests/utmin10.pl uptexdir/tests/utmin10.tfm \
+	uptexdir/tests/testnewu.pl uptexdir/tests/testnewu.tfm \
+	uptexdir/tests/testnewu8.pl uptexdir/tests/testnewu8.tfm \
+	uptexdir/tests/uparse.pl uptexdir/tests/uparse.tfm \
+	uptexdir/tests/gkhugeok.tfm uptexdir/tests/gkhugeng.tfm \
+	uptexdir/tests/gkhugeng.err uptexdir/tests/gk256g.tfm \
+	uptexdir/tests/gk256k.tfm uptexdir/uptrip/uptrip.diffs \
+	uptexdir/uptrip/texmf.cnf $(euptex_web_srcs) $(euptex_ch_srcs) \
+	euptexdir/euptex.defines euptexdir/COPYRIGHT \
+	euptexdir/COPYRIGHT.jis euptexdir/ChangeLog \
+	euptexdir/EUPTEX.txt $(euptex_tests) \
 	euptexdir/eptrip/eptrip.log euptexdir/eptrip/eptrip.tex \
 	euptexdir/euptrip/euptrip.diffs euptexdir/euptrip/texmf.cnf \
 	euptexdir/pdfprimitive.test \
@@ -3557,9 +3560,9 @@ DISTCLEANFILES = CXXLD.sh tangle.c tangle.h tangle.p tangle-web2c \
 	uptests/nissya_bib.* uptests/xexampl.aux uptests/xexampl.bbl \
 	uptests/xexampl.blg uptests/xenc*.* uptests/fn*.* \
 	uptests/memtest.bib uptests/memtest?.* uptests/xstory.dvityp \
-	uptests/xpagenum.typ uptests/x*ptex[34]*.typ \
+	uptests/xpagenum.typ uptests/x*ptex[345]*.typ \
 	uptests/xcmr10.tfm uptests/xcmr10.pl uptests/xsample*.typ \
-	uptests/x*min10.* uptests/xchcode*.* uptests/xtestnewu.* \
+	uptests/x*min10.* uptests/xchcode*.* uptests/xtestnewu*.* \
 	uptests/xuparse.* uptests/yuparse.* uptests/ygkhuge*.* \
 	uptests/ygk256*.* uptests/xskipjfmp.* uptrip.diffs \
 	$(nodist_euptex_SOURCES) euptex.web euptex.ch euptex-web2c \

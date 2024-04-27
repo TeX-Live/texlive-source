@@ -38,7 +38,7 @@ for doc in ptex3 ptex4; do
 done
 done
 
-for doc in uptex3 uptex4; do
+for doc in uptex3 uptex4 uptex5; do
   $_updvitype $srcdir/uptexdir/tests/$doc.dvi >uptests/x$doc.typ || rc=5
   sed 1d uptests/x$doc.typ >uptests/x${doc}a.typ
   diff $srcdir/uptexdir/tests/${doc}a.typ uptests/x${doc}a.typ || rc=6

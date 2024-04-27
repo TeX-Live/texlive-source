@@ -1,5 +1,6 @@
 #! /bin/sh -vx
-# $Id: newjfm.test 46400 2018-01-21 05:26:27Z hironobu $
+# $Id$
+# Copyright 2024 Japanese TeX Development Community <issue@texjp.org>
 # Copyright 2018 Karl Berry <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
@@ -25,3 +26,17 @@ for font in testnewu; do
 
 done
 
+for font in testnewu8; do
+
+  $_uppltotf -verbose $testdir/$font.pl uptests/x$font.tfm && \
+    cmp $testdir/$font.tfm uptests/x$font.tfm && echo || exit 3
+
+  TEXMFCNF=$srcdir/../kpathsea \
+    $_uptftopl -verbose $testdir/$font.tfm uptests/x$font.pl && \
+    diff $testdir/$font.pl uptests/x$font.pl && echo || exit 4
+
+done
+
+cmp uptests/xtestnewu.tfm uptests/xtestnewu8.tfm || exit 10
+
+exit 0

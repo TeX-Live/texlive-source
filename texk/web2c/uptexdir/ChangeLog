@@ -1,3 +1,20 @@
+2024-04-27  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* uptex-m.ch, kanji.{c,h}, updvitype.ch, uptex.defines:
+	Support new encoding of upTeX for combining characters
+	with multiple codepoints.
+	Trial of Unicode Latin characters (experimental).
+	New kcatcodes (latin_ucs(14), modifier(20)) are added.
+	* {uppltotf,uptftopl,updvitype}.ch: Version p240427.
+	Support upTeX new encoding for combining characters.
+	* newjfm.test, updvitype.test, tests/kcat.tex, tests/upkcat.txt,
+	tests/uptex5.{tex,dvi}, tests/uptex5a.typ,
+	tests/testnewu{,8}.{pl,tfm}, am/uptex.am: Update tests.
+	* uptex-m.ch, upbibtex.ch, uptex_version.h:
+	upTeX version u1.35.
+	https://github.com/texjporg/tex-jp-build/issues/46
+	* COPYRIGHT: copyright year.
+
 2024-04-14  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* {,u}ptriptest.test:

@@ -1,3 +1,11 @@
+2024-04-27  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* eptex.ech, pdfutils.ch, euptex.defines:
+	Support new encoding of upTeX for combining characters
+	with multiple codepoints.
+	https://github.com/texjporg/tex-jp-build/issues/46
+	* COPYRIGHT: copyright year.
+
 2024-04-24  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* eptex.ech, etex.ch1, euptex.ch{0,1},

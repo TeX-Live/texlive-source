@@ -232,8 +232,10 @@ DISTCLEANFILES += uptests/memtest.bib uptests/memtest?.*
 ## uptexdir/updvitype.test
 EXTRA_DIST += uptexdir/tests/uptex3.tex uptexdir/tests/uptex3.dvi \
 	uptexdir/tests/uptex4.tex uptexdir/tests/uptex4.dvi \
-	uptexdir/tests/uptex3a.typ uptexdir/tests/uptex4a.typ
-DISTCLEANFILES += uptests/xstory.dvityp uptests/xpagenum.typ uptests/x*ptex[34]*.typ
+	uptexdir/tests/uptex5.tex uptexdir/tests/uptex5.dvi \
+	uptexdir/tests/uptex3a.typ uptexdir/tests/uptex4a.typ \
+	uptexdir/tests/uptex5a.typ
+DISTCLEANFILES += uptests/xstory.dvityp uptests/xpagenum.typ uptests/x*ptex[345]*.typ
 ## uptexdir/uppltotf.test
 DISTCLEANFILES += uptests/xcmr10.tfm
 ## uptexdir/uptftopl.test
@@ -245,8 +247,9 @@ EXTRA_DIST += uptexdir/tests/umin10.pl uptexdir/tests/umin10.tfm
 EXTRA_DIST += uptexdir/tests/utmin10.pl uptexdir/tests/utmin10.tfm
 DISTCLEANFILES += uptests/x*min10.* uptests/xchcode*.*
 ## uptexdir/newjfm.test
-EXTRA_DIST += uptexdir/tests/testnewu.pl uptexdir/tests/testnewu.tfm
-DISTCLEANFILES += uptests/xtestnewu.*
+EXTRA_DIST += uptexdir/tests/testnewu.pl uptexdir/tests/testnewu.tfm \
+	uptexdir/tests/testnewu8.pl uptexdir/tests/testnewu8.tfm
+DISTCLEANFILES += uptests/xtestnewu*.*
 ## uptexdir/uparse.test
 EXTRA_DIST += uptexdir/tests/uparse.pl uptexdir/tests/uparse.tfm
 DISTCLEANFILES += uptests/xuparse.* uptests/yuparse.*
