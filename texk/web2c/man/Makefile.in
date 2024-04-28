@@ -128,6 +128,7 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/web2c-disable.m4 \
 	$(top_srcdir)/../../m4/kpse-harfbuzz-flags.m4 \
 	$(top_srcdir)/../../m4/kpse-icu-flags.m4 \
 	$(top_srcdir)/../../m4/kpse-kpathsea-flags.m4 \
+	$(top_srcdir)/../../m4/kpse-largefile.m4 \
 	$(top_srcdir)/../../m4/kpse-lex.m4 \
 	$(top_srcdir)/../../m4/kpse-lib-version.m4 \
 	$(top_srcdir)/../../m4/kpse-libpng-flags.m4 \

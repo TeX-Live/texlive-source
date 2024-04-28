@@ -9779,6 +9779,8 @@ esac
 echo 'tldbg:KPSE_COMMON called (pkg=web2c programs, amopt=)' >&5
 echo 'tldbg:KPSE_BASIC called (pkg=web2c programs, amopt=)' >&5
 
+#
+# am_init_automake
 if test "`cd $srcdir && pwd`" != "`pwd`"; then
   # Use -I$(srcdir) only when $(srcdir) != ., so that make's output
   # is not polluted with repeated "-I."
@@ -10035,6 +10037,8 @@ END
 fi
 
 
+# am_maintainer_mode
+
 { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking whether to enable maintainer-specific portions of Makefiles" >&5
 printf %s "checking whether to enable maintainer-specific portions of Makefiles... " >&6; }
     # Check whether --enable-maintainer-mode was given.
@@ -10059,6 +10063,11 @@ fi
   MAINT=$MAINTAINER_MODE_TRUE
 
 
+
+# See comments in kpse-setup.m4 about system extensions.
+
+
+# Check whether prototypes work.
 { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking whether the compiler accepts prototypes" >&5
 printf %s "checking whether the compiler accepts prototypes... " >&6; }
 if test ${kb_cv_c_prototypes+y}
@@ -10092,6 +10101,8 @@ printf "%s\n" "$kb_cv_c_prototypes" >&6; }
 if test "x$kb_cv_c_prototypes" = xno; then
   as_fn_error $? "Sorry, your compiler does not understand prototypes." "$LINENO" 5
 fi
+
+# kpse_compiler_warnings options.
 { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking what warning flags to pass to the C compiler" >&5
 printf %s "checking what warning flags to pass to the C compiler... " >&6; }
 if test ${kpse_cv_warning_cflags+y}
@@ -10148,6 +10159,9 @@ WARNING_CFLAGS=$kpse_cv_warning_cflags
 
 
 
+
+# end of kpse_basic macro.
+echo 'tldbg:KPSE_BASIC done (pkg=web2c programs, amopt=)' >&5
 
 # am_prog_ar must be called before lt_init.
 
@@ -22423,6 +22437,72 @@ case $host_os:$host_cpu in #(
      ;;
 esac
 
+
+if test "x$enable_largefile" != xno; then
+  case $ac_cv_sys_file_offset_bits in #(
+  no) :
+     ;; #(
+  unknown) :
+    case $ac_cv_sys_large_files in #(
+  no | unknown) :
+     ;; #(
+  *) :
+    LUA53_DEFINES="$LUA53_DEFINES -D_LARGE_FILES" ;;
+esac ;; #(
+  *) :
+    LUA53_DEFINES="$LUA53_DEFINES -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64" ;;
+esac
+fi
+case $ac_cv_sys_largefile_source in #(
+  no | unknown) :
+     ;; #(
+  *) :
+    LUA53_DEFINES="$LUA53_DEFINES -D_LARGEFILE_SOURCE" ;;
+esac
+
+if test "x$enable_largefile" != xno; then
+  case $ac_cv_sys_file_offset_bits in #(
+  no) :
+     ;; #(
+  unknown) :
+    case $ac_cv_sys_large_files in #(
+  no | unknown) :
+     ;; #(
+  *) :
+    LUA52_DEFINES="$LUA52_DEFINES -D_LARGE_FILES" ;;
+esac ;; #(
+  *) :
+    LUA52_DEFINES="$LUA52_DEFINES -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64" ;;
+esac
+fi
+case $ac_cv_sys_largefile_source in #(
+  no | unknown) :
+     ;; #(
+  *) :
+    LUA52_DEFINES="$LUA52_DEFINES -D_LARGEFILE_SOURCE" ;;
+esac
+
+if test "x$enable_largefile" != xno; then
+  case $ac_cv_sys_file_offset_bits in #(
+  no) :
+     ;; #(
+  unknown) :
+    case $ac_cv_sys_large_files in #(
+  no | unknown) :
+     ;; #(
+  *) :
+    LUAJIT_DEFINES="$LUAJIT_DEFINES -D_LARGE_FILES" ;;
+esac ;; #(
+  *) :
+    LUAJIT_DEFINES="$LUAJIT_DEFINES -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64" ;;
+esac
+fi
+case $ac_cv_sys_largefile_source in #(
+  no | unknown) :
+     ;; #(
+  *) :
+    LUAJIT_DEFINES="$LUAJIT_DEFINES -D_LARGEFILE_SOURCE" ;;
+esac
 
 LIBS=$kpse_save_LIBS
 if test "x$kpse_cv_have_win32" = xno; then

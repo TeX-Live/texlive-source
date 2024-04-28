@@ -23,7 +23,7 @@ libluasocket_a_CPPFLAGS = \
 #	-DLUASOCKET_DEBUG -I$(top_srcdir)/luatexdir/luasocket $(LUA_LUA53_INCLUDES)
 
 libluajitsocket_a_CPPFLAGS = \
-	-DLUASOCKET_DEBUG -I$(top_srcdir)/luatexdir/luasocket $(LUAJIT_INCLUDES)
+	-DLUASOCKET_DEBUG -I$(top_srcdir)/luatexdir/luasocket $(LUAJIT_INCLUDES) $(LUAJIT_DEFINES)
 
 libluasocket_a_CFLAGS = # $(WARNING_CFLAGS)
 libluajitsocket_a_CFLAGS = # $(WARNING_CFLAGS)

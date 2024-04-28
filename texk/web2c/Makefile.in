@@ -342,6 +342,7 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/web2c-disable.m4 \
 	$(top_srcdir)/../../m4/kpse-harfbuzz-flags.m4 \
 	$(top_srcdir)/../../m4/kpse-icu-flags.m4 \
 	$(top_srcdir)/../../m4/kpse-kpathsea-flags.m4 \
+	$(top_srcdir)/../../m4/kpse-largefile.m4 \
 	$(top_srcdir)/../../m4/kpse-lex.m4 \
 	$(top_srcdir)/../../m4/kpse-lib-version.m4 \
 	$(top_srcdir)/../../m4/kpse-libpng-flags.m4 \
@@ -4674,7 +4675,7 @@ libluasocket_a_CPPFLAGS = \
 #liblua53socket_a_CPPFLAGS = \
 #	-DLUASOCKET_DEBUG -I$(top_srcdir)/luatexdir/luasocket $(LUA_LUA53_INCLUDES)
 libluajitsocket_a_CPPFLAGS = \
-	-DLUASOCKET_DEBUG -I$(top_srcdir)/luatexdir/luasocket $(LUAJIT_INCLUDES)
+	-DLUASOCKET_DEBUG -I$(top_srcdir)/luatexdir/luasocket $(LUAJIT_INCLUDES) $(LUAJIT_DEFINES)
 
 libluasocket_a_CFLAGS = # $(WARNING_CFLAGS)
 libluajitsocket_a_CFLAGS = # $(WARNING_CFLAGS)
@@ -4720,8 +4721,8 @@ libluajitmisc_a_DEPENDENCIES = $(ZZIPLIB_DEPEND) libluajitsocket.a
 libluamisc_a_CPPFLAGS = $(ZLIB_INCLUDES) $(ZZIPLIB_INCLUDES) $(PPLIB_INCLUDES) $(LUA_INCLUDES)
 #liblua53misc_a_CPPFLAGS = $(ZLIB_INCLUDES) $(ZZIPLIB_INCLUDES) $(PPLIB_INCLUDES) $(LUA_LUA53_INCLUDES)
 libluajitmisc_a_CPPFLAGS = $(ZLIB_INCLUDES) $(ZZIPLIB_INCLUDES) \
-	$(PPLIB_INCLUDES) $(LUAJIT_INCLUDES) -DLuajitTeX \
-	-I$(srcdir)/luatexdir
+	$(PPLIB_INCLUDES) $(LUAJIT_INCLUDES) $(LUAJIT_DEFINES) \
+	-DLuajitTeX -I$(srcdir)/luatexdir
 libluamisc_a_CFLAGS = # $(WARNING_CFLAGS)
 #liblua53misc_a_CFLAGS = # $(WARNING_CFLAGS)
 libluajitmisc_a_CFLAGS = # $(WARNING_CFLAGS)
@@ -5275,7 +5276,8 @@ libluaharfbuzz_a_DEPENDENCIES = $(HARFBUZZ_DEPEND) $(GRAPHITE2_DEPEND)
 libluajitharfbuzz_a_DEPENDENCIES = $(HARFBUZZ_DEPEND) $(GRAPHITE2_DEPEND)
 libluaharfbuzz_a_CPPFLAGS = $(AM_CPPFLAGS) $(LUA_INCLUDES) $(HARFBUZZ_INCLUDES) $(GRAPHITE2_INCLUDES)
 libluajitharfbuzz_a_CPPFLAGS = $(AM_CPPFLAGS) $(LUAJIT_INCLUDES) \
-	$(HARFBUZZ_INCLUDES) $(GRAPHITE2_INCLUDES) -DLuajitTeX
+	$(LUAJIT_DEFINES) $(HARFBUZZ_INCLUDES) $(GRAPHITE2_INCLUDES) \
+	-DLuajitTeX
 libluaharfbuzz_a_CFLAGS = # $(WARNING_CFLAGS)
 libluajitharfbuzz_a_CFLAGS = # $(WARNING_CFLAGS)
 libluaharfbuzz_a_SOURCES = \

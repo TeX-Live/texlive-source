@@ -4258,6 +4258,8 @@ esac
 
 echo 'tldbg:KPSE_BASIC called (pkg=paper, amopt=)' >&5
 
+#
+# am_init_automake
 if test "`cd $srcdir && pwd`" != "`pwd`"; then
   # Use -I$(srcdir) only when $(srcdir) != ., so that make's output
   # is not polluted with repeated "-I."
@@ -4514,6 +4516,8 @@ END
 fi
 
 
+# am_maintainer_mode
+
 { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking whether to enable maintainer-specific portions of Makefiles" >&5
 printf %s "checking whether to enable maintainer-specific portions of Makefiles... " >&6; }
     # Check whether --enable-maintainer-mode was given.
@@ -4538,6 +4542,11 @@ fi
   MAINT=$MAINTAINER_MODE_TRUE
 
 
+
+# See comments in kpse-setup.m4 about system extensions.
+
+
+# Check whether prototypes work.
 { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking whether the compiler accepts prototypes" >&5
 printf %s "checking whether the compiler accepts prototypes... " >&6; }
 if test ${kb_cv_c_prototypes+y}
@@ -4571,6 +4580,8 @@ printf "%s\n" "$kb_cv_c_prototypes" >&6; }
 if test "x$kb_cv_c_prototypes" = xno; then
   as_fn_error $? "Sorry, your compiler does not understand prototypes." "$LINENO" 5
 fi
+
+# kpse_compiler_warnings options.
 { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking what warning flags to pass to the C compiler" >&5
 printf %s "checking what warning flags to pass to the C compiler... " >&6; }
 if test ${kpse_cv_warning_cflags+y}
@@ -4627,6 +4638,9 @@ WARNING_CFLAGS=$kpse_cv_warning_cflags
 
 
 
+
+# end of kpse_basic macro.
+echo 'tldbg:KPSE_BASIC done (pkg=paper, amopt=)' >&5
 
 
 ac_ext=c

@@ -1,3 +1,19 @@
+2024-04-28  Luigi Scarso  <luigi.scarso@gmail.com>
+
+	* configure.ac (LUA53_DEFINES, LUA52_DEFINES, LUAJIT_DEFINES): 
+	define _LARGEFILE_SOURCE to help avoid off64_t errors. Specifically:
+
+In file included from /home/texlive/karl/Build/source/Work/libs/zziplib/include/zzip/types.h:25,
+                 from /home/texlive/karl/Build/source/Work/libs/zziplib/include/zzip/zzip.h:17,
+                 from ../../../texk/web2c/luatexdir/luazip/src/luazip.c:13:
+/home/texlive/karl/Build/source/Work/libs/zziplib/include/zzip/conf.h:50:23: error: unknown type name 'off64_t'
+ #define _zzip_off64_t off64_t
+                       ^~~~~~~
+/home/texlive/karl/Build/source/Work/libs/zziplib/include/zzip/types.h:35:15: note: in expansion of macro '_zzip_off64_t'
+ typedef       _zzip_off64_t     zzip_off64_t;
+               ^~~~~~~~~~~~~
+make[5]: *** [Makefile:10380: luatexdir/luazip/src/libluajitmisc_a-luazip.o] Error 1
+
 2024-04-21  Karl Berry  <karl@freefriends.org>
 
 	* configure.ac (AC_USE_SYSTEM_EXTENSIONS): make it unconditional,

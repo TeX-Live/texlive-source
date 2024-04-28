@@ -40,7 +40,7 @@ AC_CHECK_HEADERS([sys/types.h sys/mman.h sys/stat.h sys/param.h]) dnl posix'ish
 AC_CHECK_HEADERS([io.h direct.h byteswap.h])
 AC_CHECK_HEADERS([fnmatch.h])
 
-# ---------------------------------------------------------------
+# mmap ---------------------------------------------------------------
 AC_MSG_CHECKING([whether can use mmap for file scanning])
 enable_mmap='no (just a bit slower)'
 test "x$ac_cv_header_winbase_h" = xyes && enable_mmap="yes, winbase.h"
@@ -51,6 +51,10 @@ AC_MSG_RESULT([$enable_mmap])
 AC_SUBST([ZZIPLIB_DEFINES])
 
 AC_SYS_LARGEFILE_SENSITIVE
+
+# Need this to avoid off64_t error with system extensions enabled.
+KPSE_LARGEFILE([ZZIPLIB_DEFINES], [_LARGEFILE64_SOURCE])
+
 AC_FUNC_FSEEKO
 
 # Checks for typedefs, structures, and compiler characteristics.
