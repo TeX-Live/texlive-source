@@ -1,6 +1,6 @@
 # $Id$
 # Public macros for the TeX Live (TL) tree.
-# Copyright 1995-2009, 2015-2023 Karl Berry <tex-live@tug.org>
+# Copyright 1995-2009, 2015-2024 Karl Berry <tex-live@tug.org>
 # Copyright 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 #
 # This file is free software; the copyright holders
@@ -217,23 +217,32 @@ eval LIBS=\"$[]AS_TR_CPP($1)_LIBS \$LIBS\"
 AC_DEFUN([KPSE_BASIC], [dnl
 echo 'tldbg:[$0] called (pkg=[$1], amopt=[$2])' >&AS_MESSAGE_LOG_FD
 m4_define([Kpse_Package], [$1])
-dnl
+#
+# am_init_automake
 AM_INIT_AUTOMAKE([foreign silent-rules subdir-objects]m4_ifval([$2], [ $2]))
+
+# am_maintainer_mode
 AM_MAINTAINER_MODE
-dnl
-dnl Check whether prototypes work.
+
+# See comments in kpse-setup.m4 about system extensions.
+AC_USE_SYSTEM_EXTENSIONS
+
+# Check whether prototypes work.
 AC_CACHE_CHECK([whether the compiler accepts prototypes],
                [kb_cv_c_prototypes],
                [AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <stdarg.h>]],
-                                                [[extern void foo(int i,...);]])],
+                                             [[extern void foo(int i,...);]])],
                                [kb_cv_c_prototypes=yes],
                                [kb_cv_c_prototypes=no])])
 if test "x$kb_cv_c_prototypes" = xno; then
   AC_MSG_ERROR([Sorry, your compiler does not understand prototypes.])
 fi
-dnl
-dnl Enable flags for compiler warnings
+
+# kpse_compiler_warnings options.
 KPSE_COMPILER_WARNINGS
+
+# end of kpse_basic macro.
+echo 'tldbg:[$0] done (pkg=[$1], amopt=[$2])' >&AS_MESSAGE_LOG_FD
 ]) # KPSE_BASIC
 
 # KPSE_COMMON(PACKAGE-NAME, [MORE-AUTOMAKE-OPTIONS])

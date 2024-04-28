@@ -1,3 +1,7 @@
+2024-04-28  Karl Berry  <karl@freefriends.org>
+
+	* kpse-common.m4 (KPSE_BASIC): 
+
 2024-04-18  Karl Berry  <karl@freefriends.org>
 
 	* kpse-visibility.m4 (_KPSE_VISIBILITY_FLAGS): avoid testing or

@@ -18,6 +18,7 @@
 #   additional program specific configure options (if any)
 #   library dependencies for programs and libraries
 AC_DEFUN([KPSE_SETUP], [dnl
+echo 'tldbg:[$0] called (toplevel=[$1])' >&AS_MESSAGE_LOG_FD
 AC_REQUIRE([AC_CANONICAL_HOST])[]dnl
 AC_REQUIRE([_KPSE_MSG_WARN_PREPARE])[]dnl
 m4_define([kpse_TL], [$1])[]dnl
@@ -74,7 +75,27 @@ KPSE_ENABLE_LT_HACK
 KPSE_LIBS_PREPARE
 KPSE_MKTEX_PREPARE
 KPSE_WEB2C_PREPARE
+
+# We must enable system extensions before any compiler call to avoid
+# (valid) autoconf warnings. Because different configure.ac's use
+# different kpse setup routines, we call the ac_use_system_extensions
+# macro both here and in kpse_basic (in kpse-common.m4). 
+# 
+# Fortunately, Autoconf defines the system_extensions macro to only have
+# any effect once (with ac_defun_once), so it's harmless to call it
+# multiple time.
+# 
+# LuaTeX requires system extensions for socket support. Also, since
+# SyncTeX, some libraries, and others unconditionally #define
+# GNU_SOURCE, it seems more consistent to always use it.
+# 
+AC_USE_SYSTEM_EXTENSIONS
+
+# this macro, kpse_check_win32, is the first compiler call for
+# configure.ac files that use this function (kpse setup).
 KPSE_CHECK_WIN32
+# end call to kpse_check_win32.
+
 AS_CASE([$with_x:$kpse_cv_have_win32],
         [yes:no | no:*], [:],
         [yes:*], [AC_MSG_ERROR([you can not use `--with-x' for Windows])],
@@ -96,6 +117,9 @@ KPSE_FOR_PKGS([utils], [m4_sinclude(kpse_TL[utils/]Kpse_Pkg[/ac/withenable.ac])]
 KPSE_FOR_PKGS([texk], [m4_sinclude(kpse_TL[texk/]Kpse_Pkg[/ac/withenable.ac])])
 KPSE_FOR_PKGS([libs], [m4_sinclude(kpse_TL[libs/]Kpse_Pkg[/ac/withenable.ac])])
 KPSE_FOR_PKGS([texlibs], [m4_sinclude(kpse_TL[texk/]Kpse_Pkg[/ac/withenable.ac])])
+
+# end of kpse_setup macro.
+echo 'tldbg:[$0] done (toplevel=[$1])' >&AS_MESSAGE_LOG_FD
 ]) # KPSE_SETUP
 
 # KPSE_ENABLE_PROG(PROG, REQUIRED-LIBS, OPTIONS, [COMMENT])

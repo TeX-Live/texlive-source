@@ -97,6 +97,7 @@ do_it () {
   $do_cmd "$@"
   if test $? -ne 0; then
     echo "$0: goodbye, exit status of $*: $?" >&2
+    echo "$0: directory: `/bin/pwd`" >&2
     exit 1
   fi
 }
