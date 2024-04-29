@@ -1030,6 +1030,10 @@ tfm_get_fw_width (int font_id, int32_t ch)
     default:
       idx = ch;
     }
+#ifndef WITHOUT_ASCII_PTEX
+  } else if (ch > fm->lastchar && ch <= JFM_LASTCHAR) {
+    idx = 0;
+#endif /* !WITHOUT_ASCII_PTEX */
   } else {
     ERROR("Invalid char: %ld\n", ch);
   }
@@ -1061,6 +1065,10 @@ tfm_get_fw_height (int font_id, int32_t ch)
     default:
       idx = ch;
     }
+#ifndef WITHOUT_ASCII_PTEX
+  } else if (ch > fm->lastchar && ch <= JFM_LASTCHAR) {
+    idx = 0;
+#endif /* !WITHOUT_ASCII_PTEX */
   } else {
     ERROR("Invalid char: %ld\n", ch);
   }
@@ -1092,6 +1100,10 @@ tfm_get_fw_depth (int font_id, int32_t ch)
     default:
       idx = ch;
     }
+#ifndef WITHOUT_ASCII_PTEX
+  } else if (ch > fm->lastchar && ch <= JFM_LASTCHAR) {
+    idx = 0;
+#endif /* !WITHOUT_ASCII_PTEX */
   } else {
     ERROR("Invalid char: %ld\n", ch);
   }

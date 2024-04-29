@@ -39,10 +39,14 @@ endcodespacerange
 <0000> <001f> 1
 endnotdefrange
 
-3 begincidchar
+7 begincidchar
+<31f7> 16340
+<537f> 1698
 <6674> 2646
 <96ea> 2695
+<ff0c> 8268
 <d842df9f> 13803
+<d87edc33> 13719
 endcidchar
 
 14 begincidrange

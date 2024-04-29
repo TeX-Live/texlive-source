@@ -28,7 +28,7 @@ otfpath=`$_kpsewhich HaranoAjiMincho-Regular.otf` || exit 77
 OPENTYPEFONTS=`echo $otfpath | sed -e 's,HaranoAjiMincho-Regular\.otf,,' -e 's,/fonts/opentype/.*$,/fonts/opentype//,'`
 export OPENTYPEFONTS
 
-rm -f upjf.vf upjv.vf
+rm -f upjf.vf upjv.vf upjf-r.ofm upjv-r.ofm
 
 echo "*** dvipdfmx: test for upjf2_full-hara.pdf" && echo \
 	&& cp $srcdir/tests/upjf2_full.vf ./upjf.vf \
