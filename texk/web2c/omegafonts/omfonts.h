@@ -35,6 +35,7 @@ extern int verbose_option;
 extern int char_format;
 extern int num_format;
 extern int text_format;
+extern int omit_ofm;
 
 extern unsigned length_ofm;
 extern unsigned length_ovf;

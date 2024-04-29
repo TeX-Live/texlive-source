@@ -187,14 +187,14 @@ ofm_organize(void)
         eval_four_bytes(&ec);
         eval_four_bytes(&nw);
         eval_four_bytes(&nh);
-        eval_four_bytes(&nd);     
+        eval_four_bytes(&nd);
         eval_four_bytes(&ni);
         eval_four_bytes(&nl);
         eval_four_bytes(&nk);
         eval_four_bytes(&ne);
         eval_four_bytes(&np);
         eval_four_bytes(&font_dir);
-        top_char = 0x10ffff;
+        top_char = 0xffffff;
         top_width = 65535;
         top_height = 255;
         top_depth = 255;

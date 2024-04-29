@@ -350,6 +350,9 @@ const_string OVP2OVFHELP[] = {
     "  Default OVFFILE is basename of OVPFILE extended with `.ovf'.",
     "  Default OFMFILE is basename of OVFFILE extended with `.ofm'.",
     "",
+#ifdef OMFONTS
+    "-omit-ofm              do not output OFMFILE",
+#endif
     "-help                  display this help and exit",
     "-verbose               display progress reports",
     "-version               output version information and exit",

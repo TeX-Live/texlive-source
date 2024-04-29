@@ -1,0 +1,111 @@
+(VTITLE JVF with characters of code points over UCS-range in upTeX encoding)
+(OFMLEVEL H 1)
+(FONTDIR TL)
+(FAMILY UNSPECIFIED)
+(FACE F MRR)
+(CODINGSCHEME UNSPECIFIED)
+(DESIGNSIZE R 10.0)
+(COMMENT DESIGNSIZE IS IN POINTS)
+(COMMENT OTHER SIZES ARE MULTIPLES OF DESIGNSIZE)
+(CHECKSUM H DD8C3992)
+(SEVENBITSAFEFLAG FALSE)
+(MAPFONT D 0
+   (FONTNAME xinbmp)
+   (FONTCHECKSUM H AA6297E0)
+   (FONTAT R 1.0)
+   (FONTDSIZE R 10.0)
+   )
+(MAPFONT D 1
+   (FONTNAME xoverbmp)
+   (FONTCHECKSUM H DD8C3992)
+   (FONTAT R 1.0)
+   (FONTDSIZE R 10.0)
+   )
+(MAPFONT D 2
+   (FONTNAME xadbjpn)
+   (FONTCHECKSUM H DD8C3992)
+   (FONTAT R 1.0)
+   (FONTDSIZE R 10.0)
+   )
+(CHARACTER H 304B
+   (CHARWD R 1.0)
+   (MAP
+      (SETCHAR H 304B)
+      )
+   )
+(CHARACTER H 30EF
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 30EF)
+      )
+   )
+(CHARACTER H 9038
+   (CHARWD R 1.0)
+   (MAP
+      (SETCHAR H 9038)
+      )
+   )
+(CHARACTER H 242EE
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 242EE)
+      )
+   )
+(CHARACTER H 2230EF
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 2)
+      (SETCHAR H 2079)
+      )
+   )
+(CHARACTER H 24304B
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 2)
+      (SETCHAR H 3F51)
+      )
+   )
+(CHARACTER H 408ED4
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 2F9DE)
+      )
+   )
+(CHARACTER H 409038
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 0)
+      (SETCHAR H FA25)
+      )
+   )
+(CHARACTER H 4242EE
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 0)
+      (SETCHAR H FA6C)
+      )
+   )
+(CHARACTER H 8242EE
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 2)
+      (SETCHAR H 37CA)
+      )
+   )
+(CHARACTER H 849038
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 2)
+      (SETCHAR H 3408)
+      )
+   )
+(CHARACTER H 8642EE
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 2)
+      (SETCHAR H 37C9)
+      )
+   )

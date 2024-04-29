@@ -108,7 +108,6 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/web2c-disable.m4 \
 	$(top_srcdir)/../../m4/kpse-harfbuzz-flags.m4 \
 	$(top_srcdir)/../../m4/kpse-icu-flags.m4 \
 	$(top_srcdir)/../../m4/kpse-kpathsea-flags.m4 \
-	$(top_srcdir)/../../m4/kpse-largefile.m4 \
 	$(top_srcdir)/../../m4/kpse-lex.m4 \
 	$(top_srcdir)/../../m4/kpse-lib-version.m4 \
 	$(top_srcdir)/../../m4/kpse-libpng-flags.m4 \
@@ -752,10 +751,11 @@ DISTCLEANFILES = pl-parser.output bad*.* tests/charwdr.* \
 	tests/xofont* tests/Cherokee.tfm tests/OCherokee.ofm \
 	tests/OCherokee.opl tests/OCherokee.ovf tests/xCherokee.* \
 	tests/xOCherokee.* tests/xinbmp* tests/xoverbmp* \
-	tests/realnum.* tests/xrepeated.* tests/sample*.ofm \
-	tests/sample*.ovf tests/sample1-h.opl tests/xsample*.out \
-	tests/shortend.* tests/specialhex.ofm tests/specialhex.opl \
-	tests/specialhex.ovf tests/xspecialhex.* tests/*yarabic*
+	tests/xoverucs* tests/xadbjpn* tests/realnum.* \
+	tests/xrepeated.* tests/sample*.ofm tests/sample*.ovf \
+	tests/sample1-h.opl tests/xsample*.out tests/shortend.* \
+	tests/specialhex.ofm tests/specialhex.opl tests/specialhex.ovf \
+	tests/xspecialhex.* tests/*yarabic*
 linked_programs = ofm2opl opl2ofm ovf2ovp ovp2ovf
 bin_links = \
 	omfonts$(EXEEXT):ofm2opl \
@@ -782,6 +782,7 @@ EXTRA_DIST = $(OMFONTS_tests) tests/badofm.ofm tests/badopl.opl \
 	tests/ofontv5.opl tests/ofontv5.ovp tests/ofontv6.opl \
 	tests/ofontv6.ovp tests/Cherokee.pl tests/OCherokee.ovp \
 	tests/inbmp.opl tests/overbmp.opl tests/overbmp.ovp \
+	tests/overucs.opl tests/overucs.ovp adbjpn.opl \
 	tests/realnum.opl tests/realnum.out tests/repeat.opl \
 	tests/repeated.opl tests/sample.out tests/sample.ovp \
 	tests/sample0-h.opl tests/shorten.opl tests/specialhex.ovp \

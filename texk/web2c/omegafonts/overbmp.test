@@ -58,4 +58,28 @@ $_omfonts -ovf2ovp $tests/xoverbmp1 xoverbmp1 $tests/xoverbmp2 || rc=15
 
 diff $tests/xoverbmp1.ovp $tests/xoverbmp2.ovp || rc=16
 
+
+#
+# JVF with characters of code points over UCS-range in upTeX encoding
+#
+$_omfonts -ovp2ovf $srcdir/$tests/overucs.ovp $tests/xoverucs || rc=21
+
+$_omfonts -ovp2ovf -omit-ofm $srcdir/$tests/overucs.ovp $tests/xoverucs1 || rc=22
+
+cmp $tests/xoverucs.ovf $tests/xoverucs1.ovf || rc=23
+
+$_omfonts -ofm2opl xoverucs $tests/xoverucs || rc=24
+
+diff $srcdir/$tests/overucs.opl $tests/xoverucs.opl || rc=25
+
+$_omfonts -ovf2ovp $tests/xoverucs xoverucs $tests/xoverucs.ovp || rc=26
+
+diff $srcdir/$tests/overucs.ovp $tests/xoverucs.ovp || rc=27
+
+$_omfonts -opl2ofm $srcdir/$tests/adbjpn $tests/xadbjpn || rc=28
+
+$_omfonts -ofm2opl xadbjpn $tests/xadbjpn || rc=29
+
+diff $srcdir/$tests/adbjpn.opl $tests/xadbjpn.opl || rc=30
+
 exit $rc

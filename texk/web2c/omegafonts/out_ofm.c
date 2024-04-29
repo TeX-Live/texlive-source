@@ -42,6 +42,7 @@ void
 output_ofm_file(void)
 {
     check_and_correct();
+    if (omit_ofm) return;
     compute_ofm_extra_stuff();
     compute_ofm_character_info();
     compute_ofm_subsizes();

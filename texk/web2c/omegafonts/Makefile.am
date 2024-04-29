@@ -153,8 +153,9 @@ DISTCLEANFILES += tests/Cherokee.tfm tests/OCherokee.ofm \
 	tests/OCherokee.opl tests/OCherokee.ovf \
 	tests/xCherokee.* tests/xOCherokee.*
 ## overbmp.test
-EXTRA_DIST += tests/inbmp.opl tests/overbmp.opl tests/overbmp.ovp
-DISTCLEANFILES += tests/xinbmp* tests/xoverbmp*
+EXTRA_DIST += tests/inbmp.opl tests/overbmp.opl tests/overbmp.ovp \
+	tests/overucs.opl tests/overucs.ovp adbjpn.opl
+DISTCLEANFILES += tests/xinbmp* tests/xoverbmp* tests/xoverucs* tests/xadbjpn*
 ## realnum.test
 EXTRA_DIST += tests/realnum.opl tests/realnum.out
 DISTCLEANFILES += tests/realnum.*

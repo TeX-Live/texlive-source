@@ -986,16 +986,16 @@ compute_ofm_character_info(void)
             break;
         }
         case OFM_LEVEL0: {
-            if (ec>0x10ffff)
+            if (ec>0xffffff)
                 fatal_error_1(
-                "Char (%x) too big for OFM level-0 (max 10ffff); use level-2",
+                "Char (%x) too big for OFM level-0 (max ffffff); use level-2",
                 ec);
             break;
         }
         case OFM_LEVEL1: {
-            if (ec>0x10ffff)
+            if (ec>0xffffff)
                 fatal_error_1(
-                "Char (%x) too big for OFM level-1 (max 10ffff); use level-2",
+                "Char (%x) too big for OFM level-1 (max ffffff); use level-2",
                 ec);
             num_char_info = 0;
             for (c = bc; c <= ec; c++) {
