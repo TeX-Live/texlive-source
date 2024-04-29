@@ -1,5 +1,6 @@
 #!/usr/bin/env perl
-# $Id: epstopdf.pl 68289 2023-09-15 22:17:54Z karl $
+use warnings;
+# $Id: epstopdf.pl 71121 2024-04-29 17:27:25Z karl $
 # (Copyright lines below.)
 #
 # Redistribution and use in source and binary forms, with or without
@@ -35,7 +36,29 @@
 #
 # emacs-page
 #
-my $ver = "2.33";
+my $ver = "2.34";
+#  2024/04/29 2.34 (Karl Berry)
+#    * if --debug is first argument, give more output.
+#    * do not check for kpsewhich in PATH unless restricted.
+#    * minor wording and doc changes.
+#  2024/04/14 (John Collins)
+#    * use warnings.
+#    * Msys PATH separator is :.
+#    * Do immediate decomposition of path to array on startup, and use array
+#      instead of separate uses of split.
+#    * On Windows, Msys and Cygwin, normalize directory separator to /.
+#    * Detect invocation via Windows TL (and epstopdf.exe wrapper script) by
+#      presence of TL's private gs in PATH: a directory ending in /tlgs/bin.
+#      In this case, change behavior under Cygwin to be like that of Windows
+#      instead of Unix.
+#    * On Cygwin and Msys, put temporary file in current directory instead of
+#      default, which is normally /tmp.  That's so that the pathname to the
+#      temporary file remains valid no matter which kind of gs it's passed to:
+#      native Windows, Msys or Cygwin.
+#    * Prettyprint PATH, one directory per line, in error about program
+#      not in PATH.
+#    Original report from Pablo Gonzalez L,
+#    https://tug.org/pipermail/tex-k/2024-April/004036.html
 #  2023/09/15 2.33 (Karl Berry)
 #    * Cygwin PATH separator is :. Report from Alois Steindl,
 #    https://tug.org/pipermail/tex-live/2023-September/049474.html
@@ -203,9 +226,9 @@ my $ver = "2.33";
 ### emacs-page
 ### program identification
 my $program = "epstopdf";
-my $ident = '($Id: epstopdf.pl 68289 2023-09-15 22:17:54Z karl $)' . " $ver";
+my $ident = '($Id: epstopdf.pl 71121 2024-04-29 17:27:25Z karl $)' . " $ver";
 my $copyright = <<END_COPYRIGHT ;
-Copyright 2009-2023 Karl Berry et al.
+Copyright 2009-2024 Karl Berry et al.
 Copyright 2002-2009 Gerben Wierda et al.
 Copyright 1998-2001 Sebastian Rahtz et al.
 License RBSD: Revised BSD <http://www.xfree86.org/3.3.6/COPYRIGHT2.html#5>
@@ -214,18 +237,98 @@ There is NO WARRANTY, to the extent permitted by law.
 END_COPYRIGHT
 my $title = "$program $ident\n";
 
-my $on_windows = $^O =~ /^(MSWin|msys$)/;
-my $on_windows_or_cygwin = $on_windows || $^O eq "cygwin";
+### message functions.
+sub debug      { print STDERR "* @_\n" if $::opt_debug; }
+sub warning    { print STDERR "==> Warning: @_\n"; }
+sub error      { die "$title!!! Error: @_\n"; }
+sub errorUsage { die "$program: Error: @_ (try --help for more information)\n"; }
+sub warnerr    { $restricted ? error(@_) : warning(@_); }
 
-### ghostscript command name
-my $GS = "gs";
-if ($on_windows) {
+# Check specially for --debug or -d (exactly) as first argument, so we can
+# generate debugging output during initialization.
+$::opt_debug = 1 if @ARGV && ($ARGV[0] eq "--debug" || $ARGV[0] eq "-d");
+
+# Different Windows cases.
+my $on_cygwin = ($^O eq 'cygwin');
+my $on_msys = ($^O eq 'msys');
+my $on_windows = ($^O =~ /^MSWin/) || $on_msys;
+my $on_windows_or_cygwin = $on_windows || $on_cygwin;
+debug "on_windows=$on_windows, on_windows_or_cygwin=$on_windows_or_cygwin";
+debug " on_cygwin=$on_cygwin, on_msys=$on_msys";
+
+# Split PATH and use / as directory separator.
+#
+my $path_sep = ( ($^O =~ /^MSWin/) ? ';' : ':' ); # not msys
+my @pdirs = split($path_sep, $ENV{"PATH"});
+# Normalize directory separators to /. Always valid on Windows.
+if ($on_windows_or_cygwin) {
+  foreach (@pdirs) { s !\\!/!g; }
+}
+debug "Normalized PATH to: @pdirs";
+
+# Default values for commands.
+# Ghostscript, which is always needed.
+my $GS = 'gs';
+# Kpsewhich, only used in restricted mode.
+my $kpsewhich = 'kpsewhich';
+
+# Determine if we were invoked from a standard Windows TL installation via the
+# wrapper script epstopdf.exe:
+my $TL_Windows_bin = undef;
+my $TL_tlgs = undef;
+if ($on_windows_or_cygwin) {
+  debug "Looking for symptoms of Windows TL gs and wrapper .exe:";
+  for (@pdirs) {
+    if (m!^(.+)/tlpkg/tlgs/bin$!) {
+      debug "Found Windows tlgs item '$_' in PATH";
+      # We were probably invoked via runscript by .exe file in native TL
+      # Windows, since then a tlgs/bin item is inserted in PATH,
+      # so that Windows TL's private installation of gs, with its executables
+      # gswin64c.exe and/or gswin32c.exe gets used.
+      # Anything else giving the same symptom is surely a deliberate
+      # configuration to imitate that the TL Windows behavior.
+      my $TL_root = $1;
+      $TL_tlgs = $_;
+      $TL_Windows_bin = "$TL_root/bin/windows";
+      last;
+    }
+  }
+  if ($TL_tlgs) {
+    # Confirm by existence of expected directories and files.
+    # If those do not exist, we don't have a standard native
+    # Windows TL installation.
+    if (-x "$TL_Windows_bin/kpsewhich.exe"
+        && (-x "$TL_tlgs/gswin64c.exe" || -x "$TL_tlgs/gswin32c.exe")
+       ) {
+      # The needed files exist.
+      # The runscript wrapper ensures that the tlgs and the binary directory
+      # of its own installation are in PATH ahead of any directories that
+      # may contain other versions.
+    }
+    else {
+      warning(<<END_STRANGE_WINDOWS);
+It seems epstopdf has been called from native TeX Live Windows,
+with these Windows bin and tlgs dirs:
+  $TL_Windows_bin
+  $TL_tlgs
+But the needed files don't exist, namely kpsewhich and gswin64c or gswin32c
+So we don't have a correct standard TeX Live Windows installation.
+Unsetting the Windows bin and tlgs directories and hoping for the best.
+END_STRANGE_WINDOWS
+      $TL_Windows_bin = undef;
+      $TL_tlgs = undef;
+    }
+  } else {
+    debug "No tlpkg/tlgs/bin item found in PATH: @pdirs";
+  } # not TL_tlgs
+}   # on_windows_or_cygwin
+
+if ($on_windows || defined $TL_tlgs) {
   $GS = "gswin32c";
   if ($ENV{"PROCESSOR_ARCHITECTURE"} eq "AMD64"
       || $ENV{"PROCESSOR_ARCHITEW6432"} eq "AMD64") {
     # prefer gswin64c.exe if on search path.
-    my @pdirs = split(/;/, $ENV{"PATH"});
-    foreach $d (@pdirs) {
+    foreach my $d (@pdirs) {
       $d = substr ($d, 1, -1) if (substr ($d,1,1) eq '"');
       if (-f $d . "/gswin64c.exe") {
         $GS = "gswin64c";
@@ -233,10 +336,12 @@ if ($on_windows) {
       }
     }
   }
+  debug "on_windows and have tlgs, GS set to: $GS";
 }
 
-### restricted mode
-my $restricted = 0;
+
+### restricted mode, implicit if called as repstopdf.
+$restricted = 0;
 $restricted = 1 if $0 =~ /repstopdf/;
 
 ### default values
@@ -386,7 +491,7 @@ The resulting output is guaranteed to start at the 0,0 coordinate, and
 sets a page size exactly corresponding to the BoundingBox.  Thus, the
 result does not need any cropping, and the PDF MediaBox is correct.
 
-If the bounding box in the input is incorrect, of course there will
+If the bounding box in the input is incorrect, inevitably there will
 be resulting problems.
 
 Options:
@@ -403,7 +508,8 @@ Options:
   --(no)hires        scan HiResBoundingBox  (default: $bool[$::opt_hires])
 
 Options for Ghostscript:
-  --gscmd=VAL        pipe output to VAL     (default: $GS)
+  --gscmd=VAL        pipe output to VAL     (default: $GS
+                       [gs on Unix, gswin64c.exe or gswin32c.exe on Windows])
   --gsopt=VAL        single option for gs   (see below)
   --gsopts=VAL       options for gs         (see below)
   --autorotate=VAL   set AutoRotatePages    (default: $rotmsg)
@@ -418,10 +524,9 @@ Options for Ghostscript:
                        screen, ebook, printer, prepress, default.
   --(no)quiet        use -q (-dQUIET)       (default: $bool[$::opt_quiet])
   --res=DPI|DPIxDPI  set image resolution   (default: $resmsg)
-                       ignored if option --debug is set.
   --(no)safer        use -d(NO)SAFER        (default: $bool[$::opt_safer])
 
-Examples all equivalently converting test.eps to test.pdf:
+These examples all equivalently convert test.eps to test.pdf:
   \$ $program test.eps
   \$ $program test.eps test.pdf
   \$ cat test.eps | $program --filter >test.pdf
@@ -433,8 +538,8 @@ Example for using HiResBoundingBox instead of BoundingBox:
 Example for producing epstopdf's attempt at corrected PostScript:
   \$ $program --nogs test.ps >testcorr.ps
 
-In all cases, you can add --debug (-d) to see more about what epstopdf
-is doing.
+In all cases, you can use --debug to see more about what epstopdf
+is doing.  For maximum output, use --debug as the first option.
 
 More about the options for Ghostscript:
   Additional options to be used with gs can be specified
@@ -456,7 +561,7 @@ When reporting bugs, please include an input file and all command line
 options so the problem can be reproduced.
 
 Report bugs to: tex-k\@tug.org
-epstopdf home page: <http://tug.org/epstopdf/>
+epstopdf home page: <https://tug.org/epstopdf/>
 END_OF_USAGE
 
 ### process options
@@ -491,29 +596,8 @@ $::opt_quiet = 0 if $::opt_debug;
 ### restricted option
 $restricted = 1 if $::opt_restricted;
 
-### help functions
-sub debug      { print STDERR "* @_\n" if $::opt_debug; }
-sub warning    { print STDERR "==> Warning: @_\n"; }
-sub error      { die "$title!!! Error: @_\n"; }
-sub errorUsage { die "$program: Error: @_ (try --help for more information)\n"; }
-sub warnerr    { $restricted ? error(@_) : warning(@_); }
-
 ### debug messages
-debug "on_windows=$on_windows, on_windows_or_cygwin=$on_windows_or_cygwin";
 debug "Restricted mode activated" if $restricted;
-
-### safer external commands for Windows in restricted mode
-my $kpsewhich = 'kpsewhich';
-if ($restricted && $on_windows) {
-  use File::Basename;
-  my $mydirname = dirname $0;
-  # $mydirname is the location of the Perl script
-  $kpsewhich = "$mydirname/../../../bin/windows/$kpsewhich";
-  debug "Restricted Windows kpsewhich: $kpsewhich";
-  $GS = "$mydirname/../../../tlpkg/tlgs/bin/$GS";
-  debug "Restricted Windows gs: $GS";
-}
-debug "kpsewhich command: $kpsewhich";
 
 ### check that PROG is in PATH and executable, abort if not. It'd be
 # better to actually try running the program, but then we'd have to
@@ -528,11 +612,10 @@ sub check_prog_exists {
   my ($prog) = @_;
   my @w_ext = ("exe", "com", "bat");
   debug " Checking if $prog is in PATH";
-
   # absolute unix
   if (! $on_windows_or_cygwin && $prog =~ m,^((\.(\.)?)?/),) {
     return 1 if -x $prog; # absolute or explicitly relative
-    error "Required program $prog not found, given explicit directory";
+    error "Required program $prog not found, given with explicit directory";
 
   # absolute windows: optional drive letter, then . or .., then \ or /.
   } elsif ($on_windows_or_cygwin
@@ -545,9 +628,9 @@ sub check_prog_exists {
   }
 
   # not absolute, check path
-  for my $dir (split ($on_windows ? ";" : ":", $ENV{"PATH"})) {
+  for my $dir (@pdirs) {
     $dir = "." if $dir eq ""; # empty path element
-    debug " Checking dir $dir";
+    debug "  Checking dir $dir";
     if (-x "$dir/$prog") {
       return 1;
     } elsif ($on_windows_or_cygwin) {
@@ -558,12 +641,15 @@ sub check_prog_exists {
   }
 
   # if made it through the whole loop, not found, so quit.
-  error "Required program $prog not found in PATH ($ENV{PATH})";
+  my @path_pretty = ();
+  for (@pdirs) { push @path_pretty, "  '$_'\n"; }
+  error "Required program $prog not found in PATH, which contains:\n",
+        @path_pretty;
 }
-check_prog_exists ($kpsewhich);
+check_prog_exists ($kpsewhich) if $restricted; # only needed if restricted
 
 ### check if a name is "safe" according to kpse's open(in|out)_any
-# return true if name is ok, false otherwise
+# return true if name is ok, false if not.
 sub safe_name {
   my ($mode, $name) = @_;
   my $option = "";
@@ -806,8 +892,15 @@ if ($::opt_gs) {
     debug "Ghostscript pipe: @GS";
     open($OUT, '|-', @GS)
       or error "Cannot open Ghostscript for piped input: @GS";
-  } else { # use a temporary file on Windows/Cygwin.
-    ($OUT, $tmp_filename) = tempfile(UNLINK => 1);
+  } else {
+    # use a temporary file on Windows/msys/Cygwin.
+    if ($on_cygwin || $on_msys)  {
+      # Use current directory for temporary file, to avoid problems of
+      # translation of directory name if native Windows gs gets invoked.  
+      ($OUT, $tmp_filename) = tempfile(UNLINK => 1, DIR => '.');
+    } else {
+      ($OUT, $tmp_filename) = tempfile(UNLINK => 1);
+    }
     debug "Using temporary file '$tmp_filename'";
   }
   $outname = $GS;
