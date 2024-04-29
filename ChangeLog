@@ -1,3 +1,9 @@
+2024-04-29  Karl Berry  <karl@freefriends.org>
+
+	* Makefile.am (distdir): override default dist generation,
+	since we don't try to keep make dist working any more.
+	https://tug.org/pipermail/tlbuild/2024q2/005547.html
+
 2023-12-31  Karl Berry  <karl@freefriends.org>
 
 	* reautoconf: add -f / --force option to pass to autoreconf.
