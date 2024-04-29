@@ -4,7 +4,7 @@
 	* dvipdfmx-upjf2.test, tests/UPJF-UTF16-{H,V},
 	tests/upjf-hara.map: Update tests.
 	https://github.com/texjporg/tex-jp-build/issues/46
-	* configure.ac: version 20240427.
+	* configure.ac: version 20240429.
 
 2024-04-27  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
