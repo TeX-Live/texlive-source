@@ -1,3 +1,12 @@
+2024-05-01   Luigi Scarso <luigi.scarso@gmail.com>
+        * Fixed Update |arc| and |t_tot| after |do_arc_test| has just returned |t| 
+          in mp_get_arc_time
+
+2024-03-18  Luigi Scarso <luigi.scarso@gmail.com>
+	* Fixed a bug in n_arg for double and binary mode, 
+          where -0.0 was  different form 0.0. 
+          Work in progress for the  interval mode.
+
 2024-02-16  Luigi Scarso <luigi.scarso@gmail.com>
 	*  Updated manual. MetaPost 2.1
 

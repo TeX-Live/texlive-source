@@ -71,12 +71,12 @@ undergoes any modifications, so that it will be clear which version of
 @^extensions to \MP@>
 @^system dependencies@>
 
-@d default_banner "This is MetaPost, Version 2.10" /* printed when \MP\ starts */
+@d default_banner "This is MetaPost, Version 2.11" /* printed when \MP\ starts */
 @d true 1
 @d false 0
 
 @<Metapost version header@>=
-#define metapost_version "2.10"
+#define metapost_version "2.11"
 
 @ The external library header for \MP\ is |mplib.h|. It contains a
 few typedefs and the header defintions for the externally used
@@ -10353,14 +10353,20 @@ if (number_positive(arc)) {
   new_number (v1);
 
   set_number_from_substraction (d1, arc0, arc); /* d1 = arc0 - arc */
-  set_number_from_div (n1, arc, d1); /* n1 = (arc / d1) */
+  if (number_greater (d1,arc)) {
+    set_number_to_zero(n1); /* n1 = 0 */
+  } else {
+    set_number_from_div (n1, arc, d1); /* n1 = (arc / d1) */
+    floor_scaled(n1);
+  }  
   number_clone (n, n1);
   set_number_from_mul (n1, n1, d1); /* n1 = (n1 * d1) */
   number_substract (arc, n1); /* arc = arc - n1 */
 
   number_clone (d1, inf_t);         /* reuse d1 */
   number_clone (v1, n);             /* v1 = n */
-  number_add (v1, epsilon_t);       /* v1 = n1+1 */
+    
+  set_number_from_int(v1, number_to_int(v1)+1); /* v1 = n1+1 */
   set_number_from_div (d1, d1, v1); /* |d1 = EL_GORDO / v1| */
   if (number_greater (t_tot, d1)) {
     mp->arith_error = true;
