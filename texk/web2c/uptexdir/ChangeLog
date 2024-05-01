@@ -1,3 +1,7 @@
+2024-05-01  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* uptex-m.ch: Revert some patches.
+
 2024-04-27  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* uptex-m.ch, kanji.{c,h}, updvitype.ch, uptex.defines:
