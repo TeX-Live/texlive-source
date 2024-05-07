@@ -197,6 +197,7 @@ texplate/texplate.sh
 thumbpdf/thumbpdf.pl
 tlcockpit/tlcockpit.sh
 tlshell/tlshell.tcl
+typog/typog-grep.pl
 ulqda/ulqda.pl
 urlbst/urlbst
 vpe/vpe.pl
