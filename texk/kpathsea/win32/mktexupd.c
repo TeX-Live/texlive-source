@@ -86,8 +86,7 @@ mktexupd (char *s)
     f = fopen (lsrname, "ab");
     fprintf (f, "\n.%s:\n%s\n", pa, fname);
     fclose (f);
-  } else
-    fprintf(stderr, "mktexupd failed\n");
+  }
   for (i = 0; i < numtree; i++)
     free (pathbuff[i]);
   free (pathbuff);

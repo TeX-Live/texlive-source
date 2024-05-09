@@ -1,3 +1,10 @@
+2024-05-09  Akira Kakuto  <kakuto@jcom.zaq.ne.jp>
+
+	* mktexpk.c, mktextfm.c: Add xputenv("TEXMF_OUTPUT_DIRECTORY", "")
+	to disable output-directory option in METAFONT passed on from a
+	parent program.
+	mktexupd.c: Remove unnecessary messages.
+
 2023-07-08  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* mktextfm.c: remove an unused variable.

@@ -97,6 +97,11 @@ main (int ac, char **av)
   progname = kpse_program_name;
 
 /*
+ * disable output_directory in mktextfm (2024/05/09)
+ */
+  xputenv("TEXMF_OUTPUT_DIRECTORY", "");
+
+/*
  * get tex binary dir
  *
  */
