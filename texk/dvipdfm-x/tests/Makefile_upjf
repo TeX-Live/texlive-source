@@ -41,17 +41,23 @@ upjv-r00.ofm:
 upjf1-r.tfm:
 	uppltotf upjf1-r.pl
 
-upjf1_full.vf:
+upjf1_full.vf: upjf1_full.zvp0
 	jfmutil zvp02vf upjf1_full.zvp0
 
-upjf1_omit.vf:
+upjf1_omit.vf: upjf1_omit.zvp0
 	jfmutil zvp02vf upjf1_omit.zvp0
 
-upjf2_full.vf:
+upjf2_full.vf: upjf2_full.zvp0
 	jfmutil zvp02vf upjf2_full.zvp0
 
-upjv2_full.vf:
+upjv2_full.vf: upjv2_full.zvp0
 	jfmutil zvp02vf upjv2_full.zvp0
+
+upjf3_full.vf: upjf3_full.zvp0
+	jfmutil zvp02vf upjf3_full.zvp0
+
+upjv3_full.vf: upjv3_full.zvp0
+	jfmutil zvp02vf upjv3_full.zvp0
 
 upjf-c.tfm:
 	uppltotf upjf-c.pl
@@ -74,4 +80,12 @@ upjf2.dvi: upjf2.tex
 	sed -i -e "4i xxx1 176 'pdf:docinfo<</Title(upTeXを試す)/Subject(시험)/Creator(LaTeX with hyperref)/Author(☃ ☀)/Producer(dvipdfm)/Keywords(超鏈接; ハイパーリンク; 하이퍼링크)>>'" upjf2.dvitxt
 	dvispc -x upjf2.dvitxt upjf2.dvi
 	rm upjf2.dvitxt
+
+upjf3.dvi: upjf3.tex
+	uplatex upjf3.tex
+	dvispc -a upjf3.dvi upjf3.dvitxt
+	sed -i '/xxx/d' upjf3.dvitxt
+	sed -i -e "4i xxx1 176 'pdf:docinfo<</Title(upTeXを試す)/Subject(시험)/Creator(LaTeX with hyperref)/Author(☃ ☀)/Producer(dvipdfm)/Keywords(超鏈接; ハイパーリンク; 하이퍼링크)>>'" upjf3.dvitxt
+	dvispc -x upjf3.dvitxt upjf3.dvi
+	rm upjf3.dvitxt
 

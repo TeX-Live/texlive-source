@@ -1,0 +1,12 @@
+upjf-r   unicode         HaranoAjiMincho-Regular.otf
+upjf-g   unicode         HaranoAjiGothic-Regular.otf
+upjf-c   Identity-H      HaranoAjiMincho-Regular.otf
+upjf-hu  unicode         NotoSerifHentaigana-Regular.ttf
+upjf-hi  Identity-H      NotoSerifHentaigana-Regular.ttf
+upjv-r   unicode         HaranoAjiMincho-Regular.otf -w 1
+upjv-g   unicode         HaranoAjiGothic-Regular.otf -w 1
+upjv-c   Identity-V      HaranoAjiMincho-Regular.otf
+upjv-hu  unicode         NotoSerifHentaigana-Regular.ttf -w 1
+upjv-hi  Identity-V      NotoSerifHentaigana-Regular.ttf
+
+ptmr8r 8r Times-Roman

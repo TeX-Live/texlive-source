@@ -1,3 +1,15 @@
+2024-05-11  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* dvi.c: Ensure enc_name "UTF16" prior to encoding conversion
+	from UTF32 to UTF16.
+	* dvipdfmx-upjf3.test, tests/upjf3.{tex,dvi},
+	tests/upj{f,v}-h{u,i}.tfm,
+	tests/upj{f,v}3_full.{vf,zvp0}, tests/upjf-noto.map,
+	tests/Makefile_upjf, Makefile.am: Add a test for
+	upTeX new encoding. It requires Noto Hentaigana fonts.
+	https://github.com/texjporg/tex-jp-build/issues/46
+	* configure.ac: version 20240511.
+
 2024-04-29  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* tfm.c: Fix segfaults.
