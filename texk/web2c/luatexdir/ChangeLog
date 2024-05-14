@@ -1,8 +1,14 @@
-2024-04-28  Luigi Scarso <luigi.scarso@gmail.com>
-	
-	* am/luaharfbuzz.am (libluajitharfbuzz_a_CPPFLAGS),
-	* am/luamisc.am (libluajitmisc_a_CPPFLAGS):
-	* am/luasocket.am (libluajitsocket_a_CPPFLAGS): add $(LUAJIT_DEFINES).
+2024-05-13  Luigi Scarso <luigi.scarso@gmail.com>
+	* Omitprocset and ptexprefix (force _ instead of . as separator) (H.Hagen)
+	* Bump to version 1.18.2
+
+
+2024-03-25  Luigi Scarso <luigi.scarso@gmail.com>
+	* Fixed synctex message on a math node with no zero glue
+
+2024-03-20  Luigi Scarso <luigi.scarso@gmail.com>
+	* Fixed wrong initialization of startup_filename (thanks to Wang Weixuan).
+
 
 2024-03-10  Karl Berry  <karl@tug.org>
 
