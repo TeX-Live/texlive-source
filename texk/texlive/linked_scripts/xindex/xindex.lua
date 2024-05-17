@@ -9,7 +9,7 @@
 -----------------------------------------------------------------------
 
         xindex = xindex or { }
- local version = 0.55
+ local version = 0.60
 xindex.version = version
 --xindex.self = "xindex"
 
@@ -46,7 +46,7 @@ local args = require ('xindex-lapp') [[
     -V,--version
     -a,--no_casesensitive
     -b,--no_labels
-    -c,--config (default cfg)
+    -c,--config (default "")
     -e,--escapechar (default ")
     -f,--fix_hyperref
     -g,--no_pagenumber
@@ -57,7 +57,8 @@ local args = require ('xindex-lapp') [[
     -o,--output (default "")
     -p,--prefix (default L)
     -s,--use_stdin
-    -u,--use_UCA 
+    -u,--use_UCA     no more needed
+    -x,--no_UCA
     <files...> (default stdin) .idx file(s)
 ]]
 
@@ -170,7 +171,6 @@ end
 
 logFile = io.open(logfilename,"w+")
 require('xindex-lib')
-
 writeLog(2,"xindex v."..version.." (c) Herbert Voß\n",-1)
 writeLog(1,"Verbose level = "..vlevel.."\n",1)
 writeLog(2,"Logfile:"..logfilename.."\n",1)
@@ -202,45 +202,13 @@ writeLog(2,"ignore space for sorting: "..tostring(ignoreSpace).."\n",-1)
 labelPrefix = args.prefix
 writeLog(2,"Label prefix: "..labelPrefix.."\n",-1)
 
-writeLog(2,"Loading common config file ".."xindex-cfg-common\n",1)
+writeLog(2,"Loading all config files ... \n",1) 
+writeLog(2,"Loading common config file ".."xindex-cfg-common\n",1) -- we need config for lang setting
 Config_File_Common = kpse.find_file("xindex-cfg-common.lua") 
 cfg_common = require(Config_File_Common)
 
-local user_config_file = "xindex-"..args["config"]..".lua"
-print("Local config file is: "..user_config_file)
-writeLog(2,"Loading local config file "..user_config_file,0)
-if kpse.find_file(user_config_file) 
-  then Config_File = kpse.find_file(user_config_file) 
-  else print("Cannot find config file with kpse.find_file!!")
-end
-print("\nLocal KPSE config file is: "..Config_File.."\n")
-cfg = require(Config_File)
-writeLog(2," ... done\n",0)
-
--- Create the character list maps for faster sorting
-
-alphabet_lower_map = CreateCharListMap(alphabet_lower)
-alphabet_upper_map = CreateCharListMap(alphabet_upper)
-
-esc_char = args.escapechar
-esc_char2 = esc_char..esc_char  
-writeLog(2,"Escapechar = "..esc_char.."\n",1)
-escape_chars = { -- by default " is the escape char
-  {esc_char2,     '//escaped2//', esc_char    },
-  {esc_char..'@', '//escapedat//',    '@'    },
-  {esc_char..'|', '//escapedvert//',  '|'    },
-  {esc_char..'!', '//escapedexcl//',  '!'    },
-  {'',            '\\textbar',        '|'    },  
-  {'',            '\\braceLeft',      '{'    },  
-  {'',            '\\braceRight',     '}'    }
-}
-
-outFile = io.open(outfilename,"w+")
-
 check_language = args["checklang"]
 local aux_language = ""
-
-
 if check_language then
   print("check aux file for unknown language")
 --  writeLog(2,'Check language in aux file\n',0) 
@@ -287,32 +255,17 @@ else
   end
 end
 
---print("Sprache:"..language)
+-- next config is UCA
 
-writeLog(2,"Language = "..language.."\n",1) 
-if (indexheader[language] == nil) then
-  writeLog(2,'Corrected the unknown language "'..language..'" to "en"'.."\n",0) 
-  language = "en"
-end  
-
-index_header = indexheader[language]
-if vlevel > 0 then for i=1,#index_header do writeLog(2,index_header[i].."\n",1) end end
-if (folium[language] == nil) then
-  writeLog(2,'Corrected the unknown language "'..language..'" for page folium to "en"'.."\n",0) 
-  page_folium = folium["en"]
-else
-  page_folium = folium[language]
-end  
-
-use_UCA = args["use_UCA"]
+use_UCA = not args["no_UCA"]
 if use_UCA then
   writeLog(1,"Will use LUA-UCA\n",1)
   ducet = require "lua-uca.lua-uca-ducet"
   collator = require "lua-uca.lua-uca-collator"
   languages = require "lua-uca.lua-uca-languages"
   collator_obj = collator.new(ducet)
-  
-  local uca_config_file = "xindex-cfg-uca.lua"
+
+  uca_config_file = "xindex-cfg-uca.lua"      -- for additional language definition
   writeLog(2,"Loading local UCA config file "..uca_config_file,0)
   UCA_Config_File = kpse.find_file(uca_config_file) 
   uca_cfg = require(UCA_Config_File)
@@ -331,11 +284,66 @@ if use_UCA then
     print("[Lua-UCA] Loading language: " .. language)
     collator_obj = languages[language](collator_obj)
   end
+  alphabet_lower_map = {}   -- empty tables for UCA sorting
+  alphabet_upper_map = {}
 else
   writeLog(1,"Will _not_ use LUA-UCA\n",1)
+  -- Create the character list maps for faster sorting if not using UCA
+  writeLog(2,"Loading config file for no UCA".."xindex-cfg-no_uca\n",1)
+  Config_File_UCA = kpse.find_file("xindex-cfg-no_uca.lua") 
+  cfg_UCA = require(Config_File_UCA)
+  alphabet_lower_map = CreateCharListMap(alphabet_lower)
+  alphabet_upper_map = CreateCharListMap(alphabet_upper)
 end
 
-upper = unicode.utf8.upper
+-- at last the user config
+
+if args["config"] ~= '""' then
+  local user_config_file = "xindex-"..args["config"]..".lua"
+  print("Local config file is: "..user_config_file)
+  writeLog(2,"Loading local config file "..user_config_file,0)
+  if kpse.find_file(user_config_file) then 
+    Config_File = kpse.find_file(user_config_file) 
+  else 
+    Config_File = ""
+    print("Cannot find config file with kpse.find_file!!")
+  end
+  print("\nLocal KPSE config file is: "..Config_File.."\n")
+  cfg = require(Config_File)
+  writeLog(2," ... done\n",0)
+end
+
+--print("Sprache:"..language)
+
+writeLog(2,"Language = "..language.."\n",1) 
+if (indexheader[language] == nil) then
+  writeLog(2,'Corrected the unknown language "'..language..'" to "en"'.."\n",0) 
+  language = "en"
+end  
+
+index_header = indexheader[language]
+if vlevel > 0 then for i=1,#index_header do writeLog(2,index_header[i].."\n",1) end end
+if (folium[language] == nil) then
+  writeLog(2,'Corrected the unknown language "'..language..'" for page folium to "en"'.."\n",0) 
+  page_folium = folium["en"]
+else
+  page_folium = folium[language]
+end  
+
+
+
+esc_char = args.escapechar
+esc_char2 = esc_char..esc_char  
+writeLog(2,"Escapechar = "..esc_char.."\n",1)
+escape_chars = { -- by default " is the escape char
+  {esc_char2,     '//escaped2//', esc_char    },
+  {esc_char..'@', '//escapedat//',    '@'    },
+  {esc_char..'|', '//escapedvert//',  '|'    },
+  {esc_char..'!', '//escapedexcl//',  '!'    },
+  {'',            '\\textbar',        '|'    },  
+  {'',            '\\braceLeft',      '{'    },  
+  {'',            '\\braceRight',     '}'    }
+}
 
 no_caseSensitive = args["no_casesensitive"]
 if no_caseSensitive then
