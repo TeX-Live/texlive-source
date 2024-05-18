@@ -1,3 +1,13 @@
+2024-05-18  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
+            TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* xetex.web, xetex.ch:
+	Accept characters of over-BMP when getting character codes
+	from control symbols by using backquote "`".
+	* xetex-ctrlsym.test, tests/ctrlsym.{log,tex}: Add tests.
+	* am/xetex.am: Adjusted.
+	https://github.com/texjporg/tex-jp-build/issues/167
+
 2024-03-10  Karl Berry  <karl@tug.org>
 
 	* TL'24 release.
