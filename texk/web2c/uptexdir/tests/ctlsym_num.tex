@@ -1,0 +1,69 @@
+% Copyright 2024 Japanese TeX Development Community <issue@texjp.org>
+% You may freely use, modify and/or distribute this file.
+%
+\scrollmode
+\newlinechar=10
+
+
+%
+% Following runs on ptex, uptex, eptex and euptex
+%
+\count255=0
+
+\count255=`♪ \relax
+\message{P: \the\count255^^J}
+
+\def\♪{baz}
+\def\雪{qux}
+
+\count255=0
+\count255=`\♪ \relax
+\message{Q: \the\count255. ♪\string\♪ \♪^^J}
+
+\count255=0
+\count255=`雪 \relax
+\message{R: \the\count255^^J}
+\count255=0
+\count255=`\雪 \relax
+\message{S: \the\count255. 雪\string\雪 \雪^^J}
+
+\message{\expandafter\meaning\csname ♪\endcsname.^^J}
+\message{\expandafter\meaning\csname 雪\endcsname.^^J}
+\ifx\Uchar\undefined\else
+\message{\expandafter\meaning\csname \Uchar\jis"2276\endcsname.^^J}
+\message{\expandafter\meaning\csname \Uchar\jis"4063\endcsname.^^J}
+\fi
+
+%
+% Following runs on euptex
+%
+\ifnum\jis"2121="3000
+\ifx\Uchar\undefined
+\else
+
+\count1000=0
+
+\def\🍌{foo}
+\def\𝕯{bar}
+\count1000=`🍌 \relax
+\message{A: \the\count1000^^J}
+\count1000=0
+\count1000=`\🍌 \relax
+\message{B: \the\count1000. 🍌\string\🍌 \🍌^^J}
+
+\count1000=0
+\count1000=`𝕯 \relax
+\message{C: \the\count1000^^J}
+\count1000=0
+\count1000=`\𝕯 \relax
+\message{D: \the\count1000. 𝕯 \string\𝕯  \𝕯^^J}
+
+\message{\expandafter\meaning\csname 🍌\endcsname.^^J}
+\message{\expandafter\meaning\csname 𝕯\endcsname.^^J}
+\message{\expandafter\meaning\csname \Uchar"1F34C\endcsname.^^J}
+\message{\expandafter\meaning\csname \Uchar"1D56F\endcsname.^^J}
+
+\fi
+\fi
+
+\bye

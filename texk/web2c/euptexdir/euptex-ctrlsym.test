@@ -1,0 +1,28 @@
+#! /bin/sh -vx
+# Copyright 2024 Japanese TeX Development Community <issue@texjp.org>
+# You may freely use, modify and/or distribute this file.
+
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_euptex=$BinDir/euptex$ExeExt
+
+LC_ALL=C; export LC_ALL;  LANGUAGE=C; export LANGUAGE
+
+TEXMFCNF=$srcdir/../kpathsea;export TEXMFCNF
+TEXINPUTS=".;$srcdir/tests"; export TEXINPUTS
+TEXFORMATS=.; export TEXFORMATS
+
+# get same filename in log
+rm -f eup-ctrlsym.tex
+$LN_S $srcdir/euptexdir/tests/ctrlsym.tex ./eup-ctrlsym.tex
+
+#exit 77
+
+$_euptex -ini -etex eup-ctrlsym || exit 1
+
+$_euptex -etex -fmt=eup-ctrlsym eup-ctrlsym || exit 2
+
+sed 1d eup-ctrlsym.log >eup-ctrlsym.out
+
+diff $srcdir/euptexdir/tests/ctrlsym.log eup-ctrlsym.out || exit 3
+

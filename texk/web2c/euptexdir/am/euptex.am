@@ -98,13 +98,15 @@ EXTRA_DIST += \
 euptex_tests = \
 	euptexdir/euptriptest.test euptexdir/eptriptest.test \
 	euptexdir/pdfprimitive.test \
+	euptexdir/euptex-ctrlsym.test \
 	euptexdir/eupver.test \
 	euptexdir/upkcat.test \
 	euptexdir/wcfname.test euptexdir/wcfname0.test
 euptexdir/euptriptest.log euptexdir/eptriptest.log: \
 	euptex$(EXEEXT) dvitype$(EXEEXT) pltotf$(EXEEXT) tftopl$(EXEEXT)
 euptexdir/pdfprimitive.log: euptex$(EXEEXT)
-euptexdir/eupver.log euptexdir/upkcat.log \
+euptexdir/euptex-ctrlsym.log \
+	euptexdir/eupver.log euptexdir/upkcat.log \
 	euptexdir/wcfname.log euptexdir/wcfname0.log: euptex$(EXEEXT)
 
 EXTRA_DIST += $(euptex_tests)
@@ -135,5 +137,9 @@ EXTRA_DIST += \
 	euptexdir/tests/pdfprimitive-test.tex \
 	euptexdir/tests/pdfprimitive-euptex.log
 DISTCLEANFILES += pdfprimitive-euptex.*
+
+## euptex-ctrlsym.test
+EXTRA_DIST += euptexdir/tests/ctrlsym.log euptexdir/tests/ctrlsym.tex
+DISTCLEANFILES += eup-ctrlsym.fmt eup-ctrlsym.log eup-ctrlsym.out eup-ctrlsym.tex
 
 # (end of euptex.am)

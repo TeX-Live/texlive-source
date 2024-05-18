@@ -3244,22 +3244,24 @@ EXTRA_DIST = PROJECTS cftests cpascal.h help.h w2c/config.h \
 	euptexdir/euptrip/euptrip.diffs euptexdir/euptrip/texmf.cnf \
 	euptexdir/pdfprimitive.test \
 	euptexdir/tests/pdfprimitive-test.tex \
-	euptexdir/tests/pdfprimitive-euptex.log hitexdir/ChangeLog \
-	$(hitex_web) $(hitex_tests) hitexdir/tests/hello.tex \
-	hitexdir/tests/rule.tex pdftexdir/regex/COPYING.LIB \
-	pdftexdir/regex/README $(pdftex_ch_srcs) \
-	pdftexdir/pdftex.defines pdftexdir/ChangeLog pdftexdir/NEWS \
-	pdftexdir/README pdftexdir/change-files.txt $(pdftex_tests) \
-	tests/wprob.tex pdftexdir/tests/pdfimage.tex tests/1-4.jpg \
-	tests/B.pdf tests/basic.tex tests/lily-ledger-broken.png \
-	tests/expanded.tex tests/expanded.txt tests/cnfline.tex \
-	tests/partoken-ok.tex tests/partoken-xfail.tex \
-	$(ttf2afm_tests) pdftexdir/tests/postV3.afm \
-	pdftexdir/tests/postV3.ttf pdftexdir/tests/postV7.afm \
-	pdftexdir/tests/postV7.ttf $(pdftosrc_tests) \
-	pdftexdir/tests/test-13.pdf pdftexdir/tests/test-13.xref \
-	pdftexdir/tests/test-15.pdf pdftexdir/tests/test-15.xref \
-	$(libluasocket_sources) luatexdir/luasocket/src/ftp_lua.c \
+	euptexdir/tests/pdfprimitive-euptex.log \
+	euptexdir/tests/ctrlsym.log euptexdir/tests/ctrlsym.tex \
+	hitexdir/ChangeLog $(hitex_web) $(hitex_tests) \
+	hitexdir/tests/hello.tex hitexdir/tests/rule.tex \
+	pdftexdir/regex/COPYING.LIB pdftexdir/regex/README \
+	$(pdftex_ch_srcs) pdftexdir/pdftex.defines pdftexdir/ChangeLog \
+	pdftexdir/NEWS pdftexdir/README pdftexdir/change-files.txt \
+	$(pdftex_tests) tests/wprob.tex pdftexdir/tests/pdfimage.tex \
+	tests/1-4.jpg tests/B.pdf tests/basic.tex \
+	tests/lily-ledger-broken.png tests/expanded.tex \
+	tests/expanded.txt tests/cnfline.tex tests/partoken-ok.tex \
+	tests/partoken-xfail.tex $(ttf2afm_tests) \
+	pdftexdir/tests/postV3.afm pdftexdir/tests/postV3.ttf \
+	pdftexdir/tests/postV7.afm pdftexdir/tests/postV7.ttf \
+	$(pdftosrc_tests) pdftexdir/tests/test-13.pdf \
+	pdftexdir/tests/test-13.xref pdftexdir/tests/test-15.pdf \
+	pdftexdir/tests/test-15.xref $(libluasocket_sources) \
+	luatexdir/luasocket/src/ftp_lua.c \
 	luatexdir/luasocket/src/headers_lua.c \
 	luatexdir/luasocket/src/http_lua.c \
 	luatexdir/luasocket/src/ltn12_lua.c \
@@ -3569,7 +3571,8 @@ DISTCLEANFILES = CXXLD.sh tangle.c tangle.h tangle.p tangle-web2c \
 	uptests/ygk256*.* uptests/xskipjfmp.* uptrip.diffs \
 	$(nodist_euptex_SOURCES) euptex.web euptex.ch euptex-web2c \
 	euptex.p euptex.pool euptex-tangle euptrip.diffs \
-	pdfprimitive-euptex.* $(nodist_hitex_SOURCES) \
+	pdfprimitive-euptex.* eup-ctrlsym.fmt eup-ctrlsym.log \
+	eup-ctrlsym.out eup-ctrlsym.tex $(nodist_hitex_SOURCES) \
 	$(nodist_hishrink_SOURCES) $(nodist_histretch_SOURCES) \
 	hiformat-tangle hitex-tangle hello.log rule.log \
 	$(nodist_pdftex_SOURCES) pdftex-final.ch pdftex-web2c pdftex.p \
@@ -4514,6 +4517,7 @@ euptex_ch_srcs = \
 euptex_tests = \
 	euptexdir/euptriptest.test euptexdir/eptriptest.test \
 	euptexdir/pdfprimitive.test \
+	euptexdir/euptex-ctrlsym.test \
 	euptexdir/eupver.test \
 	euptexdir/upkcat.test \
 	euptexdir/wcfname.test euptexdir/wcfname0.test
@@ -21984,7 +21988,8 @@ euptex.ch: tie$(EXEEXT) euptex.web $(euptex_ch_srcs)
 euptexdir/euptriptest.log euptexdir/eptriptest.log: \
 	euptex$(EXEEXT) dvitype$(EXEEXT) pltotf$(EXEEXT) tftopl$(EXEEXT)
 euptexdir/pdfprimitive.log: euptex$(EXEEXT)
-euptexdir/eupver.log euptexdir/upkcat.log \
+euptexdir/euptex-ctrlsym.log \
+	euptexdir/eupver.log euptexdir/upkcat.log \
 	euptexdir/wcfname.log euptexdir/wcfname0.log: euptex$(EXEEXT)
 euptrip.diffs: euptex$(EXEEXT) dvitype$(EXEEXT) pltotf$(EXEEXT) tftopl$(EXEEXT)
 	$(triptrap_diffs) $@
