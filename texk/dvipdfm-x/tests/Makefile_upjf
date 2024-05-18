@@ -59,6 +59,12 @@ upjf3_full.vf: upjf3_full.zvp0
 upjv3_full.vf: upjv3_full.zvp0
 	jfmutil zvp02vf upjv3_full.zvp0
 
+upjf4_full.vf: upjf4_full.zvp0
+	jfmutil zvp02vf upjf4_full.zvp0
+
+upjv4_full.vf: upjv4_full.zvp0
+	jfmutil zvp02vf upjv4_full.zvp0
+
 upjf-c.tfm:
 	uppltotf upjf-c.pl
 

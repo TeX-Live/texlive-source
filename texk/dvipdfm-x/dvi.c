@@ -1477,7 +1477,6 @@ dvi_set (int32_t ch)
   switch (font->type) {
   case  PHYSICAL:
     if (ch > 65535) {
-      /* FIXME: uptex specific undocumented */
       if (font->is_unicode == ENC_UTF16 && tfm_is_jfm(font->tfm_id)) {
         wbuf[0] = (UTF32toUTF16HS(ch) >> 8) & 0xff;
         wbuf[1] =  UTF32toUTF16HS(ch)       & 0xff;
@@ -1563,12 +1562,11 @@ dvi_put (int32_t ch)
   switch (font->type) {
   case  PHYSICAL:
     width = tfm_get_fw_width(font->tfm_id, ch);
-    width = sqxfw(font->size, width);  
+    width = sqxfw(font->size, width);
     /* Treat a single character as a one byte string and use the
      * string routine.
-     */    
+     */
     if (ch > 65535) {
-      /* FIXME: uptex specific undocumented */
       if (font->is_unicode == ENC_UTF16 && tfm_is_jfm(font->tfm_id)) {
         wbuf[0] = (UTF32toUTF16HS(ch) >> 8) & 0xff;
         wbuf[1] =  UTF32toUTF16HS(ch)       & 0xff;

@@ -858,10 +858,13 @@ EXTRA_DIST = $(TESTS) tests/dvipdfmx.cfg tests/psfonts.map \
 	tests/upjv2_full.zvp0 tests/upjv2_full.vf tests/upjf-c.pl \
 	tests/upjf-c.tfm tests/upjv-c.pl tests/upjv-c.tfm \
 	tests/upjf-hara.map tests/upjf3_full.zvp0 tests/upjf3_full.vf \
-	tests/upjv3_full.zvp0 tests/upjv3_full.vf tests/upjf-hu.tfm \
+	tests/upjv3_full.zvp0 tests/upjv3_full.vf \
+	tests/upjf4_full.zvp0 tests/upjf4_full.vf \
+	tests/upjv4_full.zvp0 tests/upjv4_full.vf tests/upjf-hu.tfm \
 	tests/upjf-hi.tfm tests/upjv-hu.tfm tests/upjv-hi.tfm \
-	tests/upjf-noto.map tests/multi_incl.dvi tests/multi_incl.tex \
-	tests/sue-mp.pdf tests/fullmap.dvi tests/fullmap.tex
+	tests/upjf-noto.map tests/upjf-ipa.map tests/multi_incl.dvi \
+	tests/multi_incl.tex tests/sue-mp.pdf tests/fullmap.dvi \
+	tests/fullmap.tex
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-am
 

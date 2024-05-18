@@ -1,0 +1,12 @@
+upjf-r   unicode         ipamjm.ttf
+upjf-g   unicode         HaranoAjiGothic-Regular.otf
+upjf-c   Identity-H      HaranoAjiMincho-Regular.otf
+upjf-hu  unicode         ipamjm.ttf
+upjf-hi  Identity-H      ipamjm.ttf
+upjv-r   unicode         ipamjm.ttf -w 1
+upjv-g   unicode         HaranoAjiGothic-Regular.otf -w 1
+upjv-c   Identity-V      HaranoAjiMincho-Regular.otf
+upjv-hu  unicode         ipamjm.ttf -w 1
+upjv-hi  Identity-V      ipamjm.ttf
+
+ptmr8r 8r Times-Roman

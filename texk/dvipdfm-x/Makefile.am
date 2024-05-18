@@ -319,9 +319,11 @@ DISTCLEANFILES += upjf2_*.pdf
 ## dvipdfmx-upjf3.test
 EXTRA_DIST += tests/upjf3_full.zvp0 tests/upjf3_full.vf
 EXTRA_DIST += tests/upjv3_full.zvp0 tests/upjv3_full.vf
+EXTRA_DIST += tests/upjf4_full.zvp0 tests/upjf4_full.vf
+EXTRA_DIST += tests/upjv4_full.zvp0 tests/upjv4_full.vf
 EXTRA_DIST += tests/upjf-hu.tfm tests/upjf-hi.tfm
 EXTRA_DIST += tests/upjv-hu.tfm tests/upjv-hi.tfm
-EXTRA_DIST += tests/upjf-noto.map
+EXTRA_DIST += tests/upjf-noto.map tests/upjf-ipa.map
 DISTCLEANFILES += upjf3_*.pdf
 ## dvipdfmx-incl.test
 EXTRA_DIST += tests/multi_incl.dvi tests/multi_incl.tex tests/sue-mp.pdf

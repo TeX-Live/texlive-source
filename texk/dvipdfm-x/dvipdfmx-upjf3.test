@@ -43,6 +43,18 @@ echo "*** dvipdfmx: test for upjf3_full-noto.pdf" && echo \
 	&& echo && echo "dvipdfmx-upjf3-vf_full-noto tests OK" && echo \
 	|| failed="$failed dvipdfmx-upjf3-vf_full-noto"
 
+#####  following tests require IPA MJ Mincho font  #####
+
+$_kpsewhich ipamjm.ttf || exit 77
+
+echo "*** dvipdfmx: test for upjf3_full-ipa.pdf" && echo \
+	&& cp $srcdir/tests/upjf4_full.vf ./upjf.vf \
+	&& cp $srcdir/tests/upjv4_full.vf ./upjv.vf \
+	&& $_xdvipdfmx --dvipdfmx -vv --pdfm-str-utf8 -f upjf-ipa.map -o upjf3.pdf $srcdir/tests/upjf3.dvi \
+	&& mv ./upjf3.pdf ./upjf3_full-ipa.pdf \
+	&& echo && echo "dvipdfmx-upjf3-vf_full-ipa tests OK" && echo \
+	|| failed="$failed dvipdfmx-upjf3-vf_full-ipa"
+
 
 test -z "$failed" && exit 0
 echo
