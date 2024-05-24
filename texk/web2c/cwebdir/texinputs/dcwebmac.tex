@@ -28,6 +28,7 @@
 % Version 3.64 [p21] --- Andreas Scherer, Octobre 2005
 % Version 3.64 [p22] --- Andreas Scherer, March 2016
 % Version 4.9 --- Andreas Scherer, June 2022
+% Version 4.12 --- Andreas Scherer, May 2024
 
 \ifx\undefined\botofcontents\input cwebmac.tex\fi
 
@@ -81,11 +82,11 @@
 % \ifodd\pageno\else\titletrue\null\vfill\eject\fi % for duplex printers
   \rightskip 0pt \hyphenpenalty 50 \tolerance 200
   \setpage \output={\normaloutput\page\lheader\rheader}
-  \titletrue % prepare to output the table of contents
+  \ifpdf\startpdf\fi \titletrue % prepare to output the table of contents
   \pageno=\contentspagenumber
   \redefcon
   \ifhint\HINThome\fi% Mark the Table of contents as home page
-  \topofcontents \startpdf
+  \topofcontents
   \line{\headerline}
   \let\ZZ=\contentsline
   \readcontents\relax % read the contents info

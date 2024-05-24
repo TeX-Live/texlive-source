@@ -1,5 +1,5 @@
 % hypertext macros for CWEB listings (in addition to cwebmac.tex)
-% Version 1.1 --- September 2023
+% Version 2.0 --- May 2024
 \ifx\ifacrohint\undefined\endinput\fi % these are not standalone macros
 \ifluatex % LuaTeX is almost like pdfTeX
 \protected\def\pdfliteral   {\pdfextension literal}
@@ -14,6 +14,18 @@
 \let\pdfpageheight=\pageheight
 \let\pdfoutput=\outputmode
 \fi % end of LuaTeX->pdfTeX redirection macros
+
+% Used in cwebmac.tex, pdfctwimac.tex, pdfproofmac.tex
+\def\startpdf{\def\pagemode{/PageMode /UseOutlines}
+  \ifnum\contentspagenumber=0 \advance \pageno by -1
+    \def\pagelabels{/PageLabels << /Nums [ 0 << /S/D/St 1 >>
+      \the\pageno << /P(Contents) >> ] >>}
+  \else \twodigits=\pageno \pageno=\contentspagenumber
+    \advance \pageno by 1 \advance \twodigits by -\pageno
+    \def\pagelabels{/PageLabels << /Nums [ 0 << /S/D/St \the\pageno >>
+      \the\twodigits << /S/D/St \contentspagenumber >> ] >>} \fi
+  \ifpdflua\pdfcatalog{\pagemode\space\pagelabels}
+  \else \special{pdf: docview << \pagemode\space\pagelabels >>}\fi}
 
 \ifacro % The following are general pdf macros
 \def\thewidth{\the\wd0 \space}

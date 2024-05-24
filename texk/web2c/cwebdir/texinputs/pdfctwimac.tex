@@ -1,11 +1,11 @@
 % standard macros for CWEB listings (in addition to plain.tex)
-% Version 4.11 --- October 2023
+% Version 4.12 --- May 2024
 % modified for pages produced by CTWILL
 % further modified for page size of the MMIXware book
 % modified for PDF output with 'tex "\let\pdf+' or '{lua|pdf|xe}tex'
 % This file is not copyrighted and can be used freely.
 \ifx\renewenvironment\undefined\else\endinput\fi % LaTeX will use other macros
-\xdef\fmtversion{\fmtversion+CTWILL4.11+LNCS+PDF}
+\xdef\fmtversion{\fmtversion+CTWILL4.12+LNCS+PDF}
 
 \let\:=\. % preserve a way to get the dot accent
  % (all other accents will still work as usual)
@@ -515,8 +515,6 @@
   %\global\advance\pageno by1}
 %\def\topofcontents{\centerline{\titlefont\title}\vskip.7in
   %\vfill} % this material will start the table of contents page
-%\def\startpdf{\ifpdf \ifpdflua\pdfcatalog{/PageMode /UseOutlines}
-  %\else {\special{pdf: docview << /PageMode /UseOutlines >>}}\fi\fi}
 %\def\botofcontents{\vfill
   %\centerline{\covernote}} % this material will end the table of contents page
 %\def\covernote{}
@@ -569,11 +567,11 @@
 % \ifodd\pageno\else\titletrue\null\vfill\eject\fi % for duplex printers
   %\rightskip 0pt \hyphenpenalty 50 \tolerance 200
   %\setpage \output={\normaloutput\page\lheader\rheader}
-  %\titletrue % prepare to output the table of contents
+  %\ifpdf\startpdf\fi \titletrue % prepare to output the table of contents
   %\pageno=\contentspagenumber
   %\def\grouptitle{TABLE OF CONTENTS}
   %\message{Table of contents:}
-  %\topofcontents \startpdf
+  %\topofcontents
   %\line{\hfil Section\hbox to3em{\hss Page}}
   %\let\ZZ=\contentsline
   %\readcontents\relax % read the contents info

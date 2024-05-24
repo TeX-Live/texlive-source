@@ -1,6 +1,6 @@
 % pdfwebtofront.tex
 % Code from knuth.drv in https://github.com/oberdiek/latex-tds
-% 2020/06/20 v2.0 by Andreas Scherer.
+% 2024/05/24 v3.0 by Andreas Scherer.
 %
 % This file is part of project https://github.com/ascherer/cwebbin
 % and may be distributed under the MIT License or the LaTeX Project
@@ -17,6 +17,14 @@
 \openin\testread=\contentsfile\relax
 \ifeof\testread % First run
 \else % Second run
+  % Fix page numbers in the PDF bootmarks with 'Page Labels'
+  \def\tocpages{1} % Most programs have one page Table-of-Contents
+  \def\pagemode{/PageMode /UseOutlines}
+  \def\pagelabels{/PageLabels << /Nums [
+    \ifnum\contentspagenumber=0 0 << /P(Contents) >> \tocpages << /S/D/St 1 >>
+    \else 0 << /S/D/St \contentspagenumber >> \fi ] >> }
+  \def\startpdf{\ifpdf \ifpdflua\pdfcatalog{\pagemode \pagelabels}
+    \else {\special{pdf: docview << \pagemode \pagelabels >>}}\fi\fi}
   % Redefine '\con' to be invoked before the first '\N' (starred section).
   \let\ORGcon\con
   \def\con{%
@@ -42,10 +50,13 @@
   \edef\y{\detokenize{mf}}%
   \ifx\x\y \texmftrue\else
   \edef\y{\detokenize{pdftex}}%
-  \ifx\x\y \texmftrue\else
+  \ifx\x\y \texmftrue \def\tocpages{2}\else
   \edef\y{\detokenize{xetex}}%
   \ifx\x\y \texmftrue\fi\fi\fi\fi
   \iftexmf
+    % These main programs start on page '3' (after any number of ToC pages)
+    \def\pagelabels{/PageLabels << /Nums [
+      0 << /P(Contents) >> \tocpages << /S/D/St 3 >> ] >> }
     \expandafter\let\csname ORGN\expandafter\endcsname
                     \csname N\endcsname
     \expandafter\outer\expandafter\def\csname N\endcsname{%
@@ -55,6 +66,10 @@
       \csname N\endcsname
     }%
   \else % Much more general approach for WEB and CWEB programs.
+    \edef\y{\detokenize{mp}}%
+    % This main program starts on page '3' (after any number of ToC pages)
+    \ifx\x\y \def\pagelabels{/PageLabels << /Nums [
+        0 << /P(Contents) >> \tocpages << /S/D/St 3 >> ] >> } \fi
     % In fact, '\con' will be invoked _inside_ the first '\N' right _after_
     % '\MN', but _before_ '\eject'.  And '\topofcontents' gets in the twist
     % as well.

@@ -1,3 +1,14 @@
+2024-05-26  Andreas Scherer  <https://ascherer.github.io>
+
+	* cwebacromac.tex,
+	* cwebmac.tex,
+	* texinputs/dcwebmac.tex,
+	* texinputs/fcwebmac.tex,
+	* texinputs/icwebmac.tex,
+	* texinputs/pdfctproofmac.tex,
+	* texinputs/pdfctwimac.tex,
+	* texinputs/pdfwebtocfront.tex: Extend and reshuffle \startpdf.
+
 2024-03-13  Andreas Scherer  <https://ascherer.github.io>
 
 	* ctwill-mini.ch: Fix page breaks in sections 164 and 173.
