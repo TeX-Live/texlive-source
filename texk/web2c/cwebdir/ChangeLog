@@ -1,4 +1,8 @@
-2024-05-26  Andreas Scherer  <https://ascherer.github.io>
+2024-05-25  Andreas Scherer  <https://ascherer.github.io>
+
+	* texinputs/pdfwebtocfront.tex: More room for long ToCs.
+
+2024-05-24  Andreas Scherer  <https://ascherer.github.io>
 
 	* cwebacromac.tex,
 	* cwebmac.tex,
