@@ -12,6 +12,7 @@
 % for C/CWEB programs.
 %
 \ifx\detokenize\undefined\endinput\fi
+\ifx\twodigits\undefined\endinput\fi
 \def\contentsfile{\jobname.toc} % file that gets table of contents info
 \newif\iftexmf\texmffalse % special toc treatment for TeX, Metafont, etc.
 \newread\testread
@@ -20,6 +21,7 @@
 \else % Second run
   % Fix page numbers in the PDF bootmarks with 'Page Labels'
   \def\tocpages{1} % Most programs have one-page Table-of-Contents
+  \def\tocstart{2} % so we start with (fake) page 2 for the rest
   \def\pagemode{/PageMode /UseOutlines}
   \def\pagelabels{/PageLabels << /Nums [
     \ifnum\contentspagenumber=0 0 << /P(Contents) >> \tocpages << /S/D/St 1 >>
@@ -64,7 +66,7 @@
     \expandafter\let\csname ORGN\expandafter\endcsname
                     \csname N\endcsname
     \expandafter\outer\expandafter\def\csname N\endcsname{%
-      \titletrue \con \pageno=2
+      \titletrue \con \pageno=\tocstart
       \expandafter\let\csname N\expandafter\endcsname
                       \csname ORGN\endcsname
       \csname N\endcsname
