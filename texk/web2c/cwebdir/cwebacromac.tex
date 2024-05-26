@@ -16,12 +16,13 @@
 \fi % end of LuaTeX->pdfTeX redirection macros
 
 % Used in cwebmac.tex, pdfctwimac.tex, pdfproofmac.tex
+\def\tocpages{1} % Most programs have one-page Table-of-Contents
 \def\startpdf{\def\pagemode{/PageMode /UseOutlines}
-  \ifnum\contentspagenumber=0 \advance \pageno by -1
-    \def\pagelabels{/PageLabels << /Nums [ 0 << /S/D/St 1 >>
+  \ifnum\contentspagenumber=0 \advance \pageno by -\tocpages
+    \def\pagelabels{/PageLabels << /Nums [ 0 << /S/D/St \tocpages >>
       \the\pageno << /P(Contents) >> ] >>}
   \else \twodigits=\pageno \pageno=\contentspagenumber
-    \advance \pageno by 1 \advance \twodigits by -\pageno
+    \advance \pageno by \tocpages \advance \twodigits by -\pageno
     \def\pagelabels{/PageLabels << /Nums [ 0 << /S/D/St \the\pageno >>
       \the\twodigits << /S/D/St \contentspagenumber >> ] >>} \fi
   \ifpdflua\pdfcatalog{\pagemode\space\pagelabels}

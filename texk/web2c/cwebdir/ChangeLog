@@ -1,5 +1,10 @@
 2024-05-25  Andreas Scherer  <https://ascherer.github.io>
 
+	* cwebacromac.tex: HiTeX has a three-page table-of-contents.
+	* texinputs/pdfwebtocfront.tex: Add \space in PDF code.
+
+2024-05-25  Andreas Scherer  <https://ascherer.github.io>
+
 	* texinputs/pdfwebtocfront.tex: More room for long ToCs.
 
 2024-05-24  Andreas Scherer  <https://ascherer.github.io>
