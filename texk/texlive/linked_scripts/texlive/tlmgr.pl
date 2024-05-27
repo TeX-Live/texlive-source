@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 71079 2024-04-25 22:15:30Z karl $
+# $Id: tlmgr.pl 71331 2024-05-24 07:30:36Z preining $
 # Copyright 2008-2024 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
@@ -8,8 +8,8 @@
 
 use strict; use warnings;
 
-my $svnrev = '$Revision: 71079 $';
-my $datrev = '$Date: 2024-04-26 00:15:30 +0200 (Fri, 26 Apr 2024) $';
+my $svnrev = '$Revision: 71331 $';
+my $datrev = '$Date: 2024-05-24 09:30:36 +0200 (Fri, 24 May 2024) $';
 my $tlmgrrevision;
 my $tlmgrversion;
 my $prg;
@@ -1821,6 +1821,22 @@ sub action_info {
 
 #  SEARCH
 #
+sub format_search_tlpdb_result {
+  my $ret = shift;
+  my $retfile = '';
+  my $retdesc = '';
+  for my $pkg (sort keys %{$ret->{"packages"}}) {
+    $retdesc .= "$pkg - " . $ret->{"packages"}{$pkg} . "\n";
+  }
+  for my $pkg (sort keys %{$ret->{"files"}}) {
+    $retfile .= "$pkg:\n";
+    for my $f (@{$ret->{"files"}{$pkg}}) {
+      $retfile .= "\t$f\n";
+    }
+  }
+  return ($retfile, $retdesc);
+}
+
 sub action_search {
   my ($r) = @ARGV;
   my $tlpdb;
@@ -1855,17 +1871,7 @@ sub action_search {
     my $json = TeXLive::TLUtils::encode_json($ret);
     print($json);
   } else {
-    my $retfile = '';
-    my $retdesc = '';
-    for my $pkg (sort keys %{$ret->{"packages"}}) {
-      $retdesc .= "$pkg - " . $ret->{"packages"}{$pkg} . "\n";
-    }
-    for my $pkg (sort keys %{$ret->{"files"}}) {
-      $retfile .= "$pkg:\n";
-      for my $f (@{$ret->{"files"}{$pkg}}) {
-        $retfile .= "\t$f\n";
-      }
-    }
+    my ($retfile, $retdesc) = format_search_tlpdb_result($ret);
     print ($retdesc);
     print ($retfile);
   }
@@ -4328,7 +4334,8 @@ sub show_one_package_detail {
       }
       # we didn't find a package like this, so use search
       info("$prg: cannot find package $pkg, searching for other matches:\n");
-      my ($foundfile, $founddesc) = search_tlpdb($remotetlpdb,$pkg,1,1,0);
+      my $ret = search_tlpdb($remotetlpdb,$pkg,1,1,0);
+      my ($foundfile, $founddesc) = format_search_tlpdb_result($ret);
       print "\nPackages containing \`$pkg\' in their title/description:\n";
       print $founddesc;
       print "\nPackages containing files matching \`$pkg\':\n";
@@ -10584,7 +10591,7 @@ This script and its documentation were written for the TeX Live
 distribution (L<https://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 71079 2024-04-25 22:15:30Z karl $
+$Id: tlmgr.pl 71331 2024-05-24 07:30:36Z preining $
 =cut
 
 # test HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html
