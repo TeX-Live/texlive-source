@@ -21,7 +21,7 @@
 % 	Incorporates: New binary I/O library, separate optimized
 % 	arithmetic for takefraction/makefraction, new graphics interface.
 
-@x [0] WEAVE: print changes only.
+@x [0.0] l.75 - WEAVE: print changes only.
 \def\botofcontents{\vskip 0pt plus 1fil minus 1.5in}
 @y
 \def\botofcontents{\vskip 0pt plus 1fil minus 1.5in}
@@ -30,17 +30,17 @@
 \def\glob{13}\def\gglob{20, 25} % these are defined in module 1
 @z
 
-@x [1.6] Purge non-local 'goto' label.
+@x [1.6] l.246 - Purge non-local 'goto' label.
 @d end_of_MF=9998 {go here to close files and terminate gracefully}
 @y
 @z
-@x
+@x [1.6] l.250
 start_of_MF@t\hskip-2pt@>, end_of_MF@t\hskip-2pt@>,@,final_end;
 @y
 start_of_MF@t\hskip-2pt@>,@,final_end;
 @z
 
-@x [1.7] Convert `debug..gubed' and `stat..tats' into #ifdefs.
+@x [1.7] l.267 - Convert `debug..gubed' and `stat..tats' into #ifdefs.
 @d debug==@{ {change this to `$\\{debug}\equiv\null$' when debugging}
 @d gubed==@t@>@} {change this to `$\\{gubed}\equiv\null$' when debugging}
 @y
@@ -48,7 +48,7 @@ start_of_MF@t\hskip-2pt@>,@,final_end;
 @d gubed==endif('TEXMF_DEBUG')
 @z
 
-@x [1.7]
+@x [1.7] l.272
 @d stat==@{ {change this to `$\\{stat}\equiv\null$' when gathering
   usage statistics}
 @d tats==@t@>@} {change this to `$\\{tats}\equiv\null$' when gathering
@@ -58,7 +58,7 @@ start_of_MF@t\hskip-2pt@>,@,final_end;
 @d tats==endif('STAT')
 @z
 
-@x [1.8] Same, for `init..tini'.
+@x [1.8] l.287 - Same, for `init..tini'.
 @d init== {change this to `$\\{init}\equiv\.{@@\{}$' in the production version}
 @d tini== {change this to `$\\{tini}\equiv\.{@@\}}$' in the production version}
 @y
@@ -69,7 +69,7 @@ start_of_MF@t\hskip-2pt@>,@,final_end;
 % [1.11] Compile-time constants.  Although we only change a few of
 % these, listing them all makes the patch file for a big Metafont simpler.
 % 16K for BSD I/O; file_name_size is set from the system constant.
-@x
+@x [1.11] l.348
 @<Constants...@>=
 @!mem_max=30000; {greatest index in \MF's internal |mem| array;
   must be strictly less than |max_halfword|;
@@ -145,7 +145,7 @@ start_of_MF@t\hskip-2pt@>,@,final_end;
 @!sup_buf_size = 30000000;
 @z
 
-@x [1.12] Constants defined as WEB macros.
+@x [1.12] l.397 - Constants defined as WEB macros.
 @d mem_min=0 {smallest index in the |mem| array, must not be less
   than |min_halfword|}
 @d mem_top==30000 {largest index in the |mem| array dumped by \.{INIMF};
@@ -168,7 +168,7 @@ start_of_MF@t\hskip-2pt@>,@,final_end;
 @d param_size=150 {maximum number of simultaneous macro parameters}
 @z
 
-@x [1.13] Global parameters that can be changed in texmf.cnf.
+@x [1.13] l.416 - Global parameters that can be changed in texmf.cnf.
 @<Glob...@>=
 @!bad:integer; {is some ``constant'' wrong?}
 @y
@@ -211,7 +211,7 @@ tini@/
 @!quoted_filename:boolean; {current filename is quoted}
 @z
 
-@x [1.16] Use C macros for `incr' and `decr'.
+@x [1.16] l.468 - Use C macros for `incr' and `decr'.
 @d incr(#) == #:=#+1 {increase a variable by unity}
 @d decr(#) == #:=#-1 {decrease a variable by unity}
 @y
@@ -220,13 +220,13 @@ tini@/
 % [2.19] The text_char type is used as an array index into xord.  The
 % default type `char' produces signed integers, which are bad array
 % indices in C.
-@x
+@x [2.19] l.524
 @d text_char == char {the data type of characters in text files}
 @y
 @d text_char == ASCII_code {the data type of characters in text files}
 @z
 
-@x [2.22] Allow any character as input.
+@x [2.22] l.665 - Allow any character as input.
 @^character set dependencies@>
 @^system dependencies@>
 
@@ -246,7 +246,7 @@ for i:=0 to @'37 do xchr[i]:=i;
 for i:=@'177 to @'377 do xchr[i]:=i;
 @z
 
-@x [2.23]
+@x [2.23] l.681
 for i:=0 to @'176 do xord[xchr[i]]:=i;
 @y
 for i:=0 to @'176 do xord[xchr[i]]:=i;
@@ -266,14 +266,14 @@ if translate_filename then read_tcx_file;
 
 % [3.25] Declare name_of_file as a C string.  See comments in tex.ch for
 % why we change the element type to text_char.
-@x
+@x [3.25] l.737
 @!name_of_file:packed array[1..file_name_size] of char;@;@/
   {on some systems this may be a \&{record} variable}
 @y
 @!name_of_file:^text_char;
 @z
 
-@x [3.26] Do file opening in C.
+@x [3.26] l.742 - Do file opening in C.
 @ The \ph\ compiler with which the present version of \MF\ was prepared has
 extended the rules of \PASCAL\ in a very convenient way. To open file~|f|,
 we can write
@@ -328,7 +328,7 @@ end;
 @ All of the file opening functions are defined in C.
 @z
 
-@x [3.27] Do file closing in C.
+@x [3.27] l.793 - Do file closing in C.
 @ Files can be closed with the \ph\ routine `|close(f)|', which
 @:PASCAL H}{\ph@>
 @^system dependencies@>
@@ -352,13 +352,13 @@ end;
 @ And all the file closing routines as well.
 @z
 
-@x [3.29] Array size of input buffer is determined at runtime.
+@x [3.29] l.829 - Array size of input buffer is determined at runtime.
 @!buffer:array[0..buf_size] of ASCII_code; {lines of characters being read}
 @y
 @!buffer:^ASCII_code; {lines of characters being read}
 @z
 
-@x [3.30] Do `input_ln' in C.
+@x [3.30] l.862 - Do `input_ln' in C.
 Standard \PASCAL\ says that a file should have |eoln| immediately
 before |eof|, but \MF\ needs only a weaker restriction: If |eof|
 occurs in the middle of a line, the system function |eoln| should return
@@ -392,7 +392,7 @@ We define |input_ln| in C, for efficiency.  Nevertheless we quote the module
 @p @{ @<Report overflow of the input buffer, and abort@> @}
 @z
 
-@x [3.31] `term_in' and `term_out' are standard input and output.
+@x [3.31] l.894 - `term_in' and `term_out' are standard input and output.
 @<Glob...@>=
 @!term_in:alpha_file; {the terminal as an input file}
 @!term_out:alpha_file; {the terminal as an output file}
@@ -401,7 +401,7 @@ We define |input_ln| in C, for efficiency.  Nevertheless we quote the module
 @d term_out==stdout {the terminal as an output file}
 @z
 
-@x [3.32] We don't need to open the terminal files.
+@x [3.32] l.898 - We don't need to open the terminal files.
 @ Here is how to open the terminal files
 in \ph. The `\.{/I}' switch suppresses the first |get|.
 @:PASCAL H}{\ph@>
@@ -418,7 +418,7 @@ any command line arguments the user has provided.  It's defined in C.
 @d t_open_out == {output already open for text output}
 @z
 
-@x [3.33] Flushing output.
+@x [3.33] l.918 - Flushing output.
 these operations can be specified in \ph:
 @:PASCAL H}{\ph@>
 @^system dependencies@>
@@ -435,7 +435,7 @@ to do nothing, since the user should control the terminal.
 @d clear_terminal == do_nothing
 @z
 
-@x [3.36] Reading the command line.
+@x [3.36] l.991 - Reading the command line.
 @ The following program does the required initialization
 without retrieving a possible command line.
 It should be clear how to modify this routine to deal with command lines,
@@ -507,7 +507,7 @@ exit:
 end;
 @z
 
-@x [4.49] l.1239 -- change documentation (probably needed in more places)
+@x [4.49] l.1253 - change documentation (probably needed in more places)
 would like string @'32 to be the single character @'32 instead of the
 @y
 would like string @'32 to be printed as the single character @'32 instead
@@ -518,7 +518,7 @@ of the
 % assignments directly.  (`strcpy' and `strlen' work here because
 % `pool_name' is a constant string, and thus ends in a null and doesn't
 % start with a space.)
-@x
+@x [4.51] l.1292
 name_of_file:=pool_name; {we needn't set |name_length|}
 if a_open_in(pool_file) then
 @y
@@ -528,12 +528,12 @@ strcpy (stringcast(name_of_file+1), pool_name); {copy the string}
 if a_open_in (pool_file, kpse_mfpool_format) then
 @z
 
-@x [4.51,52,53] Make `MF.POOL' lowercase, and change how it's read.
+@x [4.51] l.1300 - Make `MF.POOL' lowercase, and change how it's read.
 else  bad_pool('! I can''t read MF.POOL.')
 @y
 else  bad_pool('! I can''t read ', pool_name, '; bad path?')
 @z
-@x
+@x [4.52] l.1304
 begin if eof(pool_file) then bad_pool('! MF.POOL has no check sum.');
 @.MF.POOL has no check sum@>
 read(pool_file,m,n); {read two digits of string length}
@@ -542,42 +542,42 @@ begin if eof(pool_file) then bad_pool('! ', pool_name, ' has no check sum.');
 @.MF.POOL has no check sum@>
 read(pool_file,m); read(pool_file,n); {read two digits of string length}
 @z
-@x
+@x [4.52] l.1310
     bad_pool('! MF.POOL line doesn''t begin with two digits.');
 @y
     bad_pool('! ', pool_name, ' line doesn''t begin with two digits.');
 @z
-@x
+@x [4.53] l.1332
   bad_pool('! MF.POOL check sum doesn''t have nine digits.');
 @y
   bad_pool('! ', pool_name, ' check sum doesn''t have nine digits.');
 @z
-@x
+@x [4.53] l.1338
 done: if a<>@$ then bad_pool('! MF.POOL doesn''t match; TANGLE me again.');
 @y
 done: if a<>@$ then
   bad_pool('! ', pool_name, ' doesn''t match; tangle me again (or fix the path).');
 @z
 
-@x [5.54] error_line is a variable, so can't be a subrange array bound
+@x [5.54] l.1398 - error_line is a variable, so can't be a subrange array bound
 @!trick_buf:array[0..error_line] of ASCII_code; {circular buffer for
 @y
 @!trick_buf:array[0..ssup_error_line] of ASCII_code; {circular buffer for
 @z
 
-@x [5.58] Do not expand printable characters.
+@x [5.59] l.1478 - Do not expand printable characters.
 if (s<256)and(selector>pseudo) then print_char(s)
 @y
 if (s<256)and((selector>pseudo)or xprn[s]) then print_char(s)
 @z
 
-@x [5.59] Do not expand printable characters.
+@x [5.60] l.1494 - Do not expand printable characters.
 if (s<256)and(selector>pseudo) then print_char(s)
 @y
 if (s<256)and((selector>pseudo) or xprn[s])then print_char(s)
 @z
 
-@x [5.61] Print rest of banner.
+@x [5.61] l.1509 - Print rest of banner.
 wterm(banner);
 if base_ident=0 then wterm_ln(' (no base preloaded)')
 else  begin slow_print(base_ident); print_ln;
@@ -595,14 +595,14 @@ if translate_filename then begin
 end;
 @z
 
-@x [6.68] l.1603 - Add unspecified_mode.
+@x [6.68] l.1618 - Add unspecified_mode.
 @d error_stop_mode=3 {stops at every opportunity to interact}
 @y
 @d error_stop_mode=3 {stops at every opportunity to interact}
 @d unspecified_mode=4 {extra value for command-line switch}
 @z
 
-@x [6.68] l.1605 - file:line:error style messages.
+@x [6.68] l.1620 - file:line:error style messages.
   print_nl("! "); print(#);
 @y
   if (file_line_error_style_p and not terminal_input) then
@@ -615,14 +615,14 @@ end;
   else begin print_nl("! "); print(#) end;
 @z
 
-@x [6.68] l.1610 - Add interaction_option.
+@x [6.68] l.1625 - Add interaction_option.
 @!interaction:batch_mode..error_stop_mode; {current level of interaction}
 @y
 @!interaction:batch_mode..error_stop_mode; {current level of interaction}
 @!interaction_option:batch_mode..unspecified_mode; {set from command line}
 @z
 
-@x [6.69] l.1612 - Allow override by command line switch.
+@x [6.69] l.1627 - Allow override by command line switch.
 @ @<Set init...@>=interaction:=error_stop_mode;
 @y
 @ @<Set init...@>=if interaction_option=unspecified_mode then
@@ -631,7 +631,7 @@ else
   interaction:=interaction_option;
 @z
 
-@x [6.76] Eliminate non-local goto.
+@x [6.76] l.1727 - Eliminate non-local goto.
 @ The |jump_out| procedure just cuts across all active procedure levels and
 goes to |end_of_MF|. This is the only nontrivial |@!goto| statement in the
 whole program. It is used when there is no recovery from a particular error.
@@ -671,7 +671,7 @@ do_final_end;
 end;
 @z
 
-@x [6.77] l.1736 -- halt on error?
+@x [6.77] l.1751 - halt on error?
 print_char("."); show_context;
 @y
 print_char("."); show_context;
@@ -685,7 +685,7 @@ if (halt_on_error_p) then begin
 end;
 @z
 
-@x [6.79] Handle the switch-to-editor option.
+@x [6.79] l.1774 - Handle the switch-to-editor option.
 line ready to be edited. But such an extension requires some system
 wizardry, so the present implementation simply types out the name of the
 file that should be
@@ -709,7 +709,7 @@ not been commented out.
 @^debugging@>
 @d edit_file==input_stack[file_ptr]
 @z
-@x
+@x [6.79] l.1789
 "E": if file_ptr>0 then if input_stack[file_ptr].name_field>=256 then
   begin print_nl("You want to edit file ");
 @.You want to edit file x@>
@@ -726,36 +726,36 @@ not been commented out.
     jump_out;
 @z
 
-@x [6.88] Declare fatal_error as noreturn.
+@x [6.88] l.1931 - Declare fatal_error as noreturn.
 procedure fatal_error(@!s:str_number); {prints |s|, and that's it}
 @y
 noreturn procedure fatal_error(@!s:str_number); {prints |s|, and that's it}
 @z
 
-@x [6.89] Declare overflow as noreturn.
+@x [6.89] l.1940 - Declare overflow as noreturn.
 procedure overflow(@!s:str_number;@!n:integer); {stop due to finiteness}
 @y
 noreturn procedure overflow(@!s:str_number;@!n:integer); {stop due to finiteness}
 @z
 
-@x [6.90] Declare confusion as noreturn.
+@x [6.90] l.1959 - Declare confusion as noreturn.
 procedure confusion(@!s:str_number);
 @y
 noreturn procedure confusion(@!s:str_number);
 @z
 
-@x [7.96] Do half in cpascal.h. And add halfp as in MetaPost for speed.
+@x [7.96] l.2054 - Do half in cpascal.h. And add halfp as in MetaPost for speed.
 @d half(#)==(#) div 2
 @y
 @z
 
-@x [7.102] Use halfp.
+@x [7.102] l.2123 - Use halfp.
 round_decimals:=half(a+1);
 @y
 round_decimals:=halfp(a+1);
 @z
 
-@x [7.107-7.114] Optionally replace make_fraction etc. with external routines
+@x [7.107] l.2231 - Optionally replace make_fraction etc. with external routines
 @p function make_fraction(@!p,@!q:integer):fraction;
 @y
 In the C version, there are external routines that use double precision
@@ -770,7 +770,7 @@ don't expect anyone will actually notice.)
 @p ifdef('FIXPT')@/
 function make_fraction(@!p,@!q:integer):fraction;
 @z
-@x [7.107]
+@x [7.107] l.2251
   if negative then make_fraction:=-(f+n)@+else make_fraction:=f+n;
   end;
 end;
@@ -780,13 +780,13 @@ end;
 end;@/
 endif('FIXPT')
 @z
-@x [7.109]
+@x [7.109] l.2289
 @p function take_fraction(@!q:integer;@!f:fraction):integer;
 @y
 @p ifdef('FIXPT')@/
 function take_fraction(@!q:integer;@!f:fraction):integer;
 @z
-@x [7.109]
+@x [7.109] l.2308
 else take_fraction:=n+p;
 end;
 @y
@@ -795,7 +795,7 @@ end;@/
 endif('FIXPT')
 @z
 
-@x [7.111] Use halfp.
+@x [7.111] l.2327 - Use halfp.
   repeat if odd(f) then p:=half(p+q)@+else p:=half(p);
   f:=half(f);
   until f=1
@@ -809,13 +809,13 @@ else  repeat if odd(f) then p:=p+halfp(q-p)@+else p:=halfp(p);
   f:=halfp(f);
 @z
 
-@x [7.112]
+@x [7.112] l.2345
 @p function take_scaled(@!q:integer;@!f:scaled):integer;
 @y
 @p ifdef('FIXPT')@/
 function take_scaled(@!q:integer;@!f:scaled):integer;
 @z
-@x [7.112]
+@x [7.112] l.2364
 else take_scaled:=n+p;
 end;
 @y
@@ -824,7 +824,7 @@ end;@/
 endif('FIXPT')
 @z
 
-@x [7.113] Use halfp.
+@x [7.113] l.2371 - Use halfp.
   repeat if odd(f) then p:=half(p+q)@+else p:=half(p);
   f:=half(f);
   until f=1
@@ -838,7 +838,7 @@ else  repeat if odd(f) then p:=p+halfp(q-p)@+else p:=halfp(p);
   f:=halfp(f);
 @z
 
-@x [7.114]
+@x [7.114] l.2381
 operands are positive. \ (This procedure is not used especially often,
 so it is not part of \MF's inner loop.)
 
@@ -851,7 +851,7 @@ an external C routine.)
 @p ifdef('FIXPT')@/
 function make_scaled(@!p,@!q:integer):scaled;
 @z
-@x [7.114]
+@x [7.114] l.2404
   if negative then make_scaled:=-(f+n)@+else make_scaled:=f+n;
   end;
 end;
@@ -862,7 +862,7 @@ end;@/
 endif('FIXPT')
 @z
 
-@x [7.119] Do floor_scaled, floor_unscaled, round_unscaled, round_fraction in C.
+@x [7.119] l.2504 - Do floor_scaled, floor_unscaled, round_unscaled, round_fraction in C.
 @p function floor_scaled(@!x:scaled):scaled;
   {$2^{16}\lfloor x/2^{16}\rfloor$}
 var @!be_careful:integer; {temporary register}
@@ -902,37 +902,37 @@ end;
 @y
 @z
 
-@x [8.121] Use halfp.
+@x [8.121] l.2567 - Use halfp.
   square_rt:=half(q);
 @y
   square_rt:=halfp(q);
 @z
 
-@x [8.126] Use halfp.
+@x [8.126] l.2651 - Use halfp.
   else  begin a:=half(a); b:=half(b); big:=true;
 @y
   else  begin a:=halfp(a); b:=halfp(b); big:=true;
 @z
 
-@x [8.133] Use halfp.
+@x [8.133] l.2748 - Use halfp.
   begin z:=half(z+1); k:=k+1;
 @y
   begin z:=halfp(z+1); k:=k+1;
 @z
 
-@x [8.142] Use halfp.
+@x [8.142] l.2910 - Use halfp.
   begin x:=half(x); y:=half(y);
 @y
   begin x:=halfp(x); y:=halfp(y);
 @z
 
-@x [8.150] Use halfp.
+@x [8.150] l.3059 - Use halfp.
 while j>=fraction_one do j:=half(j);
 @y
 while j>=fraction_one do j:=halfp(j);
 @z
 
-@x [9.153] Increase memory size.
+@x [9.153] l.3148 - Increase memory size.
 @d min_quarterword=0 {smallest allowable value in a |quarterword|}
 @d max_quarterword=255 {largest allowable value in a |quarterword|}
 @d min_halfword==0 {smallest allowable value in a |halfword|}
@@ -944,7 +944,7 @@ while j>=fraction_one do j:=halfp(j);
 @d max_halfword==@"FFFFFFF {largest allowable value in a |halfword|}
 @z
 
-@x [9.155] Don't bother to subtract zero.
+@x [9.155] l.3177 - Don't bother to subtract zero.
 @d ho(#)==#-min_halfword
   {to take a sixteen-bit item from a halfword}
 @d qo(#)==#-min_quarterword {to read eight bits from a quarterword}
@@ -955,7 +955,7 @@ while j>=fraction_one do j:=halfp(j);
 @d qi(#)==#
 @z
 
-@x [9.156] memory_word is defined externally.
+@x [9.156] l.3192 - memory_word is defined externally.
 @!two_halves = packed record@;@/
   @!rh:halfword;
   case two_choices of
@@ -978,7 +978,7 @@ while j>=fraction_one do j:=halfp(j);
 @=#include "texmfmem.h";@>
 @z
 
-@x [10.159] mem is dynamically allocated.
+@x [10.159] l.3267 - mem is dynamically allocated.
 @!mem : array[mem_min..mem_max] of memory_word; {the big dynamic storage area}
 @y
 @!mem : ^memory_word; {the big dynamic storage area}
@@ -987,7 +987,7 @@ while j>=fraction_one do j:=halfp(j);
 % [11.178] Change the word `free' so that it doesn't conflict with the
 % standard C library routine of the same name. Also change arrays that
 % use mem_max, since that's a variable now, effectively disabling the feature.
-@x
+@x [11.178] l.3582
 are debugging.)
 
 @<Glob...@>=
@@ -1002,7 +1002,7 @@ are debugging.)
 @t\hskip1em@>@!was_free: packed array [0..1] of boolean; {this loses too}
 @z
 
-@x [11.182] Eliminate unsigned comparisons to zero.
+@x [11.182] l.3638 - Eliminate unsigned comparisons to zero.
 repeat if (p>=lo_mem_max)or(p<mem_min) then clobbered:=true
   else if (rlink(p)>=lo_mem_max)or(rlink(p)<mem_min) then clobbered:=true
 @y
@@ -1010,7 +1010,7 @@ repeat if (p>=lo_mem_max) then clobbered:=true
   else if (rlink(p)>=lo_mem_max) then clobbered:=true
 @z
 
-@x [12.194] Do `fix_date_and_time' in C.
+@x [12.194] l.4268 - Do `fix_date_and_time' in C.
 @ The following procedure, which is called just before \MF\ initializes its
 input and output, establishes the initial values of the date and time.
 @^system dependencies@>
@@ -1040,14 +1040,14 @@ be used after the year 32767.
 begin date_and_time(sys_time,sys_day,sys_month,sys_year);
 @z
 
-@x [12.198] Change class to c_class to avoid C++ keyword.
+@x [12.198] l.4347 - Change class to c_class to avoid C++ keyword.
 @d max_class=20 {the largest class number}
 @y
 @d max_class=20 {the largest class number}
 @d class==c_class
 @z
 
-@x [12.199] Allow tab and form feed as input.
+@x [12.199] l.4395 - Allow tab and form feed as input.
 for k:=127 to 255 do char_class[k]:=invalid_class;
 @y
 for k:=127 to 255 do char_class[k]:=invalid_class;
@@ -1055,7 +1055,7 @@ char_class[tab]:=space_class;
 char_class[form_feed]:=space_class;
 @z
 
-@x [15.232] Use halfp.
+@x [15.232] l.5187 - Use halfp.
 name_type(q+s):=half(s)+x_part_sector; link(q+s):=null;
 @y
 name_type(q+s):=halfp(s)+x_part_sector; link(q+s):=null;
@@ -1064,7 +1064,7 @@ name_type(q+s):=halfp(s)+x_part_sector; link(q+s):=null;
  [20.329] |valid_range| uses |abs|, which we have defined as a C
 % macro.  Some C preprocessors cannot expand the giant argument here.
 % So we add a temporary.
-@x
+@x [20.329] l.7270
 @p procedure edge_prep(@!ml,@!mr,@!nl,@!nr:integer);
 var @!delta:halfword; {amount of change}
 @y
@@ -1072,7 +1072,7 @@ var @!delta:halfword; {amount of change}
 var @!delta:halfword; {amount of change}
 temp:integer;
 @z
-@x
+@x [20.329] l.7277
 if not valid_range(m_min(cur_edges)+m_offset(cur_edges)-zero_field) or@|
  not valid_range(m_max(cur_edges)+m_offset(cur_edges)-zero_field) then
 @y
@@ -1082,7 +1082,7 @@ if not valid_range (m_min (cur_edges) + temp)
 then
 @z
 
-@x [21.442] Use halfp.
+@x [21.442] l.9489 - Use halfp.
 if odd(right_type(q)) then a:=good_val(b,pen_edge+half(cur_gran))
 else a:=good_val(b-1,pen_edge+half(cur_gran));
 @y
@@ -1090,7 +1090,7 @@ if odd(right_type(q)) then a:=good_val(b,pen_edge+halfp(cur_gran))
 else a:=good_val(b-1,pen_edge+halfp(cur_gran));
 @z
 
-@x [24.509] i18n fix
+@x [24.510] l.10808 - i18n fix
 print(" ("); print_int(info(h)); print(" offset");
 if info(h)<>1 then print_char("s");
 @y
@@ -1102,7 +1102,7 @@ else print(" offset");
 % [25.530] |make_fraction| and |take_fraction| arguments are too long for
 % some preprocessors, when they were defined as macros, just as in the
 % previous change.
-@x
+@x [25.534] l.11334
   alpha:=take_fraction(take_fraction(major_axis,
       make_fraction(gamma,beta)),n_cos)@|
     -take_fraction(take_fraction(minor_axis,
@@ -1119,19 +1119,19 @@ else print(" offset");
   gamma := pyth_add (take_fraction (major_axis, n_cos), gamma);
 @z
 
-@x [26.556] Use halfp.
+@x [26.560] l.11902 - Use halfp.
         begin cur_t:=half(cur_t+1); cur_tt:=half(cur_tt+1); return;
 @y
         begin cur_t:=halfp(cur_t+1); cur_tt:=halfp(cur_tt+1); return;
 @z
 
-@x [26.561] Use halfp.
+@x [26.565] l.11999 - Use halfp.
 begin cur_t:=half(cur_t); cur_tt:=half(cur_tt);
 @y
 begin cur_t:=halfp(cur_t); cur_tt:=halfp(cur_tt);
 @z
 
-@x [27.564] The window functions are defined externally, in C.
+@x [27.568] l.12089 - The window functions are defined externally, in C.
 @p function init_screen:boolean;
 begin init_screen:=false;
 end;
@@ -1143,7 +1143,7 @@ end;
 {These functions/procedures are defined externally in C.}
 @z
 
-@x [27.565] screen_row, screen_col are variables, so can't be subrange array bounds.
+@x [27.569] l.12114 - screen_row, screen_col are variables, so can't be subrange array bounds.
 @!screen_row=0..screen_depth; {a row number on the screen}
 @!screen_col=0..screen_width; {a column number on the screen}
 @!trans_spec=array[screen_col] of screen_col; {a transition spec, see below}
@@ -1153,7 +1153,7 @@ end;
 @!trans_spec=^screen_col; {a transition spec, see below}
 @z
 
-@x [27.567]
+@x [27.571] l.12138
 @p procedure blank_rectangle(@!left_col,@!right_col:screen_col;
   @!top_row,@!bot_row:screen_row);
 var @!r:screen_row;
@@ -1169,7 +1169,7 @@ end;
 {Same thing.}
 @z
 
-@x [27.568]
+@x [27.572] l.12165
 @p procedure paint_row(@!r:screen_row;@!b:pixel_color;var @!a:trans_spec;
   @!n:screen_col);
 var @!k:screen_col; {an index into |a|}
@@ -1191,13 +1191,13 @@ end;
 {Same thing}
 @z
 
-@x [28.596] Use halfp.
+@x [28.600] l.12687 - Use halfp.
 if abs(v)>half(threshold) then
 @y
 if abs(v)>halfp(threshold) then
 @z
 
-@x [31.631] l.13346 - Add datastructures for file:line:error.
+@x [31.635] l.13377 - Add datastructures for file:line:error.
 @!line_stack : array[1..max_in_open] of integer;
 @y
 @!line_stack : array[1..max_in_open] of integer;
@@ -1205,7 +1205,7 @@ if abs(v)>halfp(threshold) then
 @!full_source_filename_stack : ^str_number;
 @z
 
-@x [38.768] Area and extension rules.
+@x [38.772] l.15564 - Area and extension rules.
 @ The file names we shall deal with for illustrative purposes have the
 following structure:  If the name contains `\.>' or `\.:', the file area
 consists of all characters up to and including the final such character;
@@ -1237,20 +1237,20 @@ track of the occurrences of area and extension delimiters:
 @!ext_delimiter:pool_pointer; {the most recent `\..', if any}
 @z
 
-@x [38.769] MF area directories.
+@x [38.773] l.15584 - MF area directories.
 @d MF_area=="MFinputs:"
 @.MFinputs@>
 @y
 In C, the default paths are specified separately.
 @z
 
-@x [38.770] filenames: quoted
+@x [38.774] l.15591 - filenames: quoted
 begin area_delimiter:=0; ext_delimiter:=0;
 @y
 begin area_delimiter:=0; ext_delimiter:=0; quoted_filename:=false;
 @z
 
-@x [38.771] more_name
+@x [38.775] l.15598 - more_name
 begin if c=" " then more_name:=false
 else  begin if (c=">")or(c=":") then
 @y
@@ -1265,13 +1265,13 @@ else  begin
   if IS_DIR_SEP (c) then
 @z
 
-@x [38.771] more_name
+@x [38.775] l.15602 - more_name
   else if (c=".")and(ext_delimiter=0) then ext_delimiter:=pool_ptr;
 @y
   else if c="." then ext_delimiter:=pool_ptr;
 @z
 
-@x [38.772] end_name: quote if spaces in names.
+@x [38.776] l.15611 - end_name: quote if spaces in names.
 @p procedure end_name;
 @y
 @d pool_seq_check(#) == {set |s:=str_start[str_ptr]| and |t:=#|,
@@ -1298,7 +1298,7 @@ var must_quote:boolean; {whether we need to quote a string}
 @!j,@!s,@!t: pool_pointer; {running indices}
 @z
 
-@x [38.772] end_name: quote if spaces in names.
+@x [38.776] l.15618 - end_name: quote if spaces in names.
 if area_delimiter=0 then cur_area:=""
 else  begin cur_area:=str_ptr; incr(str_ptr);
   str_start[str_ptr]:=area_delimiter+1;
@@ -1341,7 +1341,7 @@ if ext_delimiter=0 then cur_name:=make_string
 else cur_ext:=make_string;
 @z
 
-@x [38.773] print_file_name: quote if spaces in names.
+@x [38.777] l.15635 - print_file_name: quote if spaces in names.
 @<Basic printing...@>=
 procedure print_file_name(@!n,@!a,@!e:integer);
 begin slow_print(a); slow_print(n); slow_print(e);
@@ -1371,7 +1371,7 @@ print_quoted(a); print_quoted(n); print_quoted(e);
 if must_quote then slow_print("""");
 @z
 
-@x [38.774] have append_to_name skip quotes.
+@x [38.778] l.15646 - have append_to_name skip quotes.
 @d append_to_name(#)==begin c:=#; incr(k);
   if k<=file_name_size then name_of_file[k]:=xchr[c];
   end
@@ -1381,27 +1381,27 @@ if must_quote then slow_print("""");
   end end
 @z
 
-@x [38.774] (pack_file_name) malloc and null terminate name_of_file.
+@x [38.778] l.15655 - (pack_file_name) malloc and null terminate name_of_file.
 for j:=str_start[a] to str_start[a+1]-1 do append_to_name(so(str_pool[j]));
 @y
 if name_of_file then libc_free (name_of_file);
 name_of_file := xmalloc_array (ASCII_code, length(a)+length(n)+length(e)+1);
 for j:=str_start[a] to str_start[a+1]-1 do append_to_name(so(str_pool[j]));
 @z
-@x
+@x [38.778] l.15659
 for k:=name_length+1 to file_name_size do name_of_file[k]:=' ';
 @y
 name_of_file[name_length + 1] := 0;
 @z
 
-@x [38.775] The default base.
+@x [38.779] l.15668 - The default base.
 @d base_default_length=18 {length of the |MF_base_default| string}
 @d base_area_length=8 {length of its area part}
 @y
 @d base_area_length=0 {no fixed area in C}
 @z
 
-@x [38.776] Where `plain.base' is.
+@x [38.779] l.15674 - Where `plain.base' is.
 @!MF_base_default:packed array[1..base_default_length] of char;
 
 @ @<Set init...@>=
@@ -1415,7 +1415,7 @@ in \.{texmfmp.c}, since we want them to depend on the name of the
 program.
 @z
 
-@x [38.778] Change to pack_buffered_name as with pack_file_name.
+@x [38.782] l.15703 - Change to pack_buffered_name as with pack_file_name.
 for j:=1 to n do append_to_name(xord[MF_base_default[j]]);
 for j:=a to b do append_to_name(buffer[j]);
 for j:=base_default_length-base_ext_length+1 to base_default_length do
@@ -1433,7 +1433,7 @@ if k<=file_name_size then name_length:=k@+else name_length:=file_name_size;
 name_of_file[name_length + 1] := 0;
 @z
 
-@x [38.779] Base file opening: do path searching for the default, not plain.
+@x [38.783] l.15726 - Base file opening: do path searching for the default, not plain.
   pack_buffered_name(0,loc,j-1); {try first without the system file area}
   if w_open_in(base_file) then goto found;
   pack_buffered_name(base_area_length,loc,j-1);
@@ -1443,7 +1443,7 @@ name_of_file[name_length + 1] := 0;
   pack_buffered_name(0,loc,j-1);
   if w_open_in(base_file) then goto found;
 @z
-@x
+@x [38.783] l.15732
   wterm_ln('Sorry, I can''t find that base;',' will try PLAIN.');
 @y
   wterm ('Sorry, I can''t find the base `');
@@ -1452,7 +1452,7 @@ name_of_file[name_length + 1] := 0;
   fputs (MF_base_default + 1, stdout);
   wterm_ln ('''.');
 @z
-@x
+@x [38.783] l.15740
   wterm_ln('I can''t find the PLAIN base file!');
 @.I can't find PLAIN...@>
 @y
@@ -1462,7 +1462,7 @@ name_of_file[name_length + 1] := 0;
 @.I can't find the base...@>
 @z
 
-@x [38.780] make_name_string
+@x [38.784] l.15763 - make_name_string
   make_name_string:=make_string;
   end;
 @y
@@ -1479,27 +1479,27 @@ name_of_file[name_length + 1] := 0;
   end_name;
 @z
 
-@x [38.781] Make scan_file_name ignore leading tabs as well as spaces.
+@x [38.785] l.15795 - Make scan_file_name ignore leading tabs as well as spaces.
 while buffer[loc]=" " do incr(loc);
 @y
 while (buffer[loc]=" ")or(buffer[loc]=tab) do incr(loc);
 @z
 
-@x [38.782] `logname' is declared in <unistd.h> on some systems.
+@x [38.786] l.15805 - `logname' is declared in <unistd.h> on some systems.
 `\.{.base}' and `\.{.tfm}' in the names of \MF's output files.
 @y
 `\.{.base}' and `\.{.tfm}' in the names of \MF's output files.
 @d log_name == texmf_log_name
 @z
 
-@x [38.786] prompt_file_name: avoid empty filenames.
+@x [38.790] l.15847 - prompt_file_name: avoid empty filenames.
 var @!k:0..buf_size; {index into |buffer|}
 @y
 var @!k:0..buf_size; {index into |buffer|}
 @!saved_cur_name:str_number; {to catch empty terminal input}
 @z
 
-@x [38.786] prompt_file_name: avoid empty filenames.
+@x [38.790] l.15860 - prompt_file_name: avoid empty filenames.
 clear_terminal; prompt_input(": "); @<Scan file name in the buffer@>;
 if cur_ext="" then cur_ext:=e;
 @y
@@ -1509,19 +1509,19 @@ if cur_ext="" then cur_ext:=e;
 if length(cur_name)=0 then cur_name:=saved_cur_name;
 @z
 
-@x [38.787] <Scan file name...> needs similar leading tab treatment.
+@x [38.791] l.15867 - <Scan file name...> needs similar leading tab treatment.
 while (buffer[k]=" ")and(k<last) do incr(k);
 @y
 while ((buffer[k]=" ")or(buffer[k]=tab))and(k<last) do incr(k);
 @z
 
-@x [38.788] Adjust for C string conventions.
+@x [38.792] l.15883 - Adjust for C string conventions.
 @!months:packed array [1..36] of char; {abbreviations of month names}
 @y
 @!months:const_cstring;
 @z
 
-@x [38.788] Set correct filename for recorder.
+@x [38.792] l.15885 - Set correct filename for recorder.
 if job_name=0 then job_name:="mfput";
 @.mfput@>
 pack_job_name(".log");
@@ -1533,13 +1533,13 @@ recorder_change_filename(stringcast(name_of_file+1));
 pack_job_name(".log");
 @z
 
-@x [38.790] leading character for C string
+@x [38.794] l.15924 - leading character for C string
 months:='JANFEBMARAPRMAYJUNJULAUGSEPOCTNOVDEC';
 @y
 months := ' JANFEBMARAPRMAYJUNJULAUGSEPOCTNOVDEC';
 @z
 
-@x [38.790] l.15898 - Print TCX name, if given.
+@x [38.794] l.15928 - Print TCX name, if given.
 end
 @y
 if translate_filename then begin
@@ -1551,7 +1551,7 @@ end;
 end
 @z
 
-@x [38.793] (start_input) a_open_in of input file needs path specifier.
+@x [38.797] l.15956 - (start_input) a_open_in of input file needs path specifier.
 begin @<Put the desired file name in |(cur_name,cur_ext,cur_area)|@>;
 if cur_ext="" then cur_ext:=".mf";
 pack_cur_name;
@@ -1576,20 +1576,20 @@ loop@+begin
     goto done;
 @z
 
-@x [38.793] l.15938 - The job name may have been given on the command line.
+@x [38.797] l.15970 - The job name may have been given on the command line.
   begin job_name:=cur_name; open_log_file;
 @y
   begin job_name:=get_job_name(cur_name); open_log_file;
 @z
 
-@x [38.793] Can't return name to string pool because of editor option?
+@x [38.797] l.15976 - Can't return name to string pool because of editor option?
 if name=str_ptr-1 then {conserve string pool space (but see note above)}
   begin flush_string(name); name:=cur_name;
   end;
 @y
 @z
 
-@x [41.866] Use halfp.
+@x [41.870] l.17320 - Use halfp.
 major_axis:=half(a_minus_b+a_plus_b); minor_axis:=half(abs(a_plus_b-a_minus_b));
 if major_axis=minor_axis then theta:=0 {circle}
 else theta:=half(n_arg(txx-tyy,tyx+txy)+n_arg(txx+tyy,tyx-txy));
@@ -1599,7 +1599,7 @@ if major_axis=minor_axis then theta:=0 {circle}
 else theta:=half(n_arg(txx-tyy,tyx+txy)+n_arg(txx+tyy,tyx-txy));
 @z
 
-@x [44.1023] if batchmode, MakeTeX... scripts should be silent.
+@x [44.1027] l.19871 - if batchmode, MakeTeX... scripts should be silent.
 mode_command: begin print_ln; interaction:=cur_mod;
 @y
 mode_command: begin print_ln; interaction:=cur_mod;
@@ -1610,7 +1610,7 @@ else kpse_make_tex_discard_errors := 0;
 
 % [45.1120] `threshold' is both a function and a variable.  Since the
 % function is used much less often than the variable, we'll change that
-@x
+@x [45.1124] l.21405
 @p function threshold(@!m:integer):scaled;
 var @!d:scaled; {lower bound on the smallest interval size}
 begin excess:=min_cover(0)-m;
@@ -1630,19 +1630,19 @@ else  begin repeat d:=perturbation;
   threshold_fn:=d;
 @z
 
-@x [45.1121] Change the call to the threshold function.
+@x [45.1125] l.21428 - Change the call to the threshold function.
 begin d:=threshold(m); perturbation:=0;
 @y
 begin d:=threshold_fn(m); perturbation:=0;
 @z
 
-@x [45.1122] Use halfp.
+@x [45.1126] l.21443 - Use halfp.
 v:=l+half(value(p)-l);
 @y
 v:=l+halfp(value(p)-l);
 @z
 
-@x [45.1133] Use C macros to do the TFM writing, to avoid casting(?) problems.
+@x [45.1137] l.21592 - Use C macros to do the TFM writing, to avoid casting(?) problems.
 @d tfm_out(#)==write(tfm_file,#) {output one byte to |tfm_file|}
 
 @p procedure tfm_two(@!x:integer); {output two bytes to |tfm_file|}
@@ -1672,19 +1672,19 @@ I don't know why not. Some casting problem?
 @p procedure tfm_qqqq(@!x:four_quarters); {output four quarterwords to |tfm_file|}
 @z
 
-@x [45.1134] print_file_name
+@x [45.1138] l.21627 - print_file_name
 print_nl("Font metrics written on "); slow_print(metric_file_name);
 @y
 print_nl("Font metrics written on "); print_file_name(0,metric_file_name,0);
 @z
 
-@x [47.1152] declare gf_buf as a pointer, for dynamic allocated
+@x [47.1156] l.22122 - declare gf_buf as a pointer, for dynamic allocated
 @!gf_buf:array[gf_index] of eight_bits; {buffer for \.{GF} output}
 @y
 @!gf_buf:^eight_bits; {dynamically-allocated buffer for \.{GF} output}
 @z
 
-@x [47.1154] omit write_gf
+@x [47.1158] l.22143 - omit write_gf
 @<Declare generic font output procedures@>=
 procedure write_gf(@!a,@!b:gf_index);
 var k:gf_index;
@@ -1696,7 +1696,7 @@ the bytes to be written in one shot.  Much better than writing four
 bytes at a time.
 @z
 
-@x [47.1155] check gf file size
+@x [47.1159] l.22150 - check gf file size
 each time, we use the macro |gf_out|.
 @y
 each time, we use the macro |gf_out|.
@@ -1706,7 +1706,7 @@ The length of |gf_file| should not exceed |@"7FFFFFFF|; we set
 recursion.
 @z
 
-@x [47.1155] gf_swap: check gf file size
+@x [47.1159] l.22158 - gf_swap: check gf file size
 begin if gf_limit=gf_buf_size then
 @y
 begin if gf_ptr>(@"7FFFFFFF-gf_offset) then
@@ -1717,7 +1717,7 @@ begin if gf_ptr>(@"7FFFFFFF-gf_offset) then
 if gf_limit=gf_buf_size then
 @z
 
-@x [47.1156] empty the last bytes: check gf file size
+@x [47.1160] l.22171 - empty the last bytes: check gf file size
 if gf_ptr>0 then write_gf(0,gf_ptr-1)
 @y
 if gf_ptr>(@"7FFFFFFF-gf_offset) then
@@ -1728,7 +1728,7 @@ if gf_ptr>(@"7FFFFFFF-gf_offset) then
 if gf_ptr>0 then write_gf(0,gf_ptr-1)
 @z
 
-@x [47.1163] C needs k to be 0..256 instead of 0..255.
+@x [47.1167] l.22263 - C needs k to be 0..256 instead of 0..255.
 procedure init_gf;
 var @!k:eight_bits; {runs through all possible character codes}
 @y
@@ -1736,13 +1736,13 @@ procedure init_gf;
 var @!k:0..256; {runs through all possible character codes}
 @z
 
-@x [47.1182] print_file_name
+@x [47.1186] l.22501 - print_file_name
 print_nl("Output written on "); slow_print(output_file_name);
 @y
 print_nl("Output written on "); print_file_name(0,output_file_name,0);
 @z
 
-@x [47.1182] i18n fix
+@x [47.1186] l.22503 - i18n fix
 print(" ("); print_int(total_chars); print(" character");
 if total_chars<>1 then print_char("s");
 @y
@@ -1751,20 +1751,20 @@ if total_chars<>1 then print(" characters")
 else print(" character");
 @z
 
-@x [48.1185] INI = VIR.
+@x [48.1189] l.22533 - INI = VIR.
 base_ident:=" (INIMF)";
 @y
 if ini_version then base_ident:=" (INIMF)";
 @z
 
-@x [48.1186] Add base_engine.
+@x [48.1190] l.22540 - Add base_engine.
 @!w: four_quarters; {four ASCII codes}
 @y
 @!w: four_quarters; {four ASCII codes}
 @!base_engine: ^text_char;
 @z
 
-@x [48.1187] Add base_engine.
+@x [48.1191] l.22569 - Add base_engine.
 @!w: four_quarters; {four ASCII codes}
 @y
 @!w: four_quarters; {four ASCII codes}
@@ -1774,7 +1774,7 @@ if ini_version then base_ident:=" (INIMF)";
 @!dummy_xprn: ASCII_code;
 @z
 
-@x [48.1188] Reading and writing of `base_file' is done in C.
+@x [48.1192] l.22585 - Reading and writing of `base_file' is done in C.
 @d dump_wd(#)==begin base_file^:=#; put(base_file);@+end
 @d dump_int(#)==begin base_file^.int:=#; put(base_file);@+end
 @d dump_hh(#)==begin base_file^.hh:=#; put(base_file);@+end
@@ -1782,7 +1782,7 @@ if ini_version then base_ident:=" (INIMF)";
 @y
 @z
 
-@x [48.1189]
+@x [48.1193] l.22599
 @d undump_wd(#)==begin get(base_file); #:=base_file^;@+end
 @d undump_int(#)==begin get(base_file); #:=base_file^.int;@+end
 @d undump_hh(#)==begin get(base_file); #:=base_file^.hh;@+end
@@ -1790,7 +1790,7 @@ if ini_version then base_ident:=" (INIMF)";
 @y
 @z
 
-@x [48.1190] Dump engine name.
+@x [48.1194] l.22615 - Dump engine name.
 dump_int(@$);@/
 @y
 dump_int(@"57324D46);  {Web2C \MF's magic constant: "W2MF"}
@@ -1806,7 +1806,7 @@ dump_int(@$);@/
 @<Dump |xord|, |xchr|, and |xprn|@>;
 @z
 
-@x [48.1191] Avoid Pascal file convention.
+@x [48.1195] l.22629 - Avoid Pascal file convention.
 x:=base_file^.int;
 if x<>@$ then goto off_base; {check that strings are the same}
 undump_int(x);
@@ -1853,7 +1853,7 @@ if mem_min+1100>mem_top then goto off_base;
 mem:=xmalloc_array (memory_word, mem_max - mem_min + 1);
 @z
 
-@x [48.1195] l.22714 - Check that p did not become corrupt.
+@x [48.1199] l.22713 - Check that p did not become corrupt.
 p:=q+node_size(q);
 if (p>lo_mem_max)or((q>=rlink(q))and(rlink(q)<>rover)) then goto off_base;
 @y
@@ -1869,20 +1869,20 @@ then goto off_base;
 p:=q+node_size(q);
 @z
 
-@x [48.1199] l.22750 - Allow command line to override dumped value.
+@x [48.1203] l.22767 - Allow command line to override dumped value.
 undump(batch_mode)(error_stop_mode)(interaction);
 @y
 undump(batch_mode)(error_stop_mode)(interaction);
 if interaction_option<>unspecified_mode then interaction:=interaction_option;
 @z
 
-@x [48.1199] l.22755 - Test for end-of-file already done by undump.
+@x [48.1203] l.22772 - Test for end-of-file already done by undump.
 undump_int(x);@+if (x<>69069)or eof(base_file) then goto off_base
 @y
 undump_int(x);@+if x<>69069 then goto off_base
 @z
 
-@x [49.1204] Dynamic allocation.
+@x [49.1208] l.22858 - Dynamic allocation.
 @p begin @!{|start_here|}
 @y
 @d const_chk(#) == begin if # < inf@&# then # := inf@&# else
@@ -1927,7 +1927,7 @@ end;
 @+tini
 @z
 
-@x [49.1204] Only do get_strings_started if ini.
+@x [49.1208] l.22870 - Only do get_strings_started if ini.
 @!init if not get_strings_started then goto final_end;
 init_tab; {initialize the tables}
 init_prim; {call |primitive| for each primitive}
@@ -1946,7 +1946,7 @@ end;
 tini@/
 @z
 
-@x [49.1204]
+@x [49.1208] l.22885
 end_of_MF: close_files_and_terminate;
 final_end: ready_already:=0;
 @y
@@ -1956,7 +1956,7 @@ final_end: do_final_end;
 
 % [49.1205] close_files_and_terminate: Print new line before
 % termination; switch to editor if necessary.
-@x
+@x [49.1209] l.22917
     slow_print(log_name); print_char(".");
     end;
   end;
@@ -1969,7 +1969,7 @@ if (edit_name_start<>0) and (interaction>batch_mode) then
     call_edit(str_pool,edit_name_start,edit_name_length,edit_line);
 @z
 
-@x [49.1209] Only do dump if ini.
+@x [49.1213] l.23018 - Only do dump if ini.
   begin @!init store_base_file; return;@+tini@/
 @y
   begin
@@ -1982,7 +1982,7 @@ if (edit_name_start<>0) and (interaction>batch_mode) then
 %if (base_ident=0)or(buffer[loc]="&")or dump_line then
 %@z
 
-@x [51.1214] Add editor-switch variable to globals.
+@x [51.1218] l.23126 - Add editor-switch variable to globals.
 This section should be replaced, if necessary, by any special
 modifications of the program
 that are necessary to make \MF\ work at a particular installation.

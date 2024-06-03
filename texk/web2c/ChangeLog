@@ -1,3 +1,14 @@
+2024-06-03  Karl Berry  <karl@freefriends.org>
+
+	* tests/fix-changefile-lines.py: new script from Tyge Thiessen
+	to update the chapter/section/line numbers in a .ch file,
+	following my request:
+	https://tug.org/pipermail/tex-k/2024-June/004064.html
+	* tex.ch,
+	* mf.ch: update with the script.
+	
+	* unbalanced-braces.ch: tweak text.
+
 2024-04-28  Luigi Scarso  <luigi.scarso@gmail.com>
 
 	* configure.ac (LUA53_DEFINES, LUA52_DEFINES, LUAJIT_DEFINES): 

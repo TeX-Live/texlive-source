@@ -51,16 +51,16 @@
 % of March, 1995 (published as Donald E. Knuth, TeX: The Program,
 % Volume B of Computers & Typesetting).
 
-@x [0.0] l.83 - WEAVE: print changes only.
+@x [0.0] l.88 - WEAVE: print changes only.
   \def\?##1]{\hbox to 1in{\hfil##1.\ }}
   }
-@y 83
+@y
   \def\?##1]{\hbox{Changes to ##1.\ }}
   }
 \let\maybe=\iffalse
 @z
 
-@x [1.2] l.185 - MLTeX: add comment about banner line change
+@x [1.2] l.191 - MLTeX: add comment about banner line change
 November 1984].
 @y
 November 1984].
@@ -72,7 +72,7 @@ a modified \TeX{} version.
 
 @z
 
-@x [1.2] l.188
+@x [1.2] l.193
 @d banner=='This is TeX, Version 3.141592653' {printed when \TeX\ starts}
 @y
 @d TeX_banner_k=='This is TeXk, Version 3.141592653' {printed when \TeX\ starts}
@@ -82,7 +82,7 @@ a modified \TeX{} version.
 @d banner_k==TeX_banner_k
 @z
 
-@x [1.4] l.233 - program header
+@x [1.4] l.244 - program header
 Actually the heading shown here is not quite normal: The |program| line
 does not mention any |output| file, because \ph\ would ask the \TeX\ user
 to specify a file name if |output| were specified here.
@@ -91,14 +91,14 @@ to specify a file name if |output| were specified here.
 @y
 @z
 
-@x [1.4] l.243 - labels in outer block not needed
+@x [1.4] l.255 - labels in outer block not needed
 program TEX; {all file names are defined dynamically}
 label @<Labels in the outer block@>@/
 @y
 program TEX; {all file names are defined dynamically}
 @z
 
-@x [1.6] l.267 - labels in outer block not needed
+@x [1.6] l.279 - labels in outer block not needed
 @ Three labels must be declared in the main program, so we give them
 symbolic names.
 
@@ -119,14 +119,14 @@ we still have to declare the symbolic names.
 
 % Here we change these WEB symbols, which are used much as #ifdef's
 % are in C, into something which will get translated into actual #ifdef's.
-@x [1.7] l.292 - debug..gubed, stat..tats
+@x [1.7] l.304 - debug..gubed, stat..tats
 @d debug==@{ {change this to `$\\{debug}\equiv\null$' when debugging}
 @d gubed==@t@>@} {change this to `$\\{gubed}\equiv\null$' when debugging}
 @y
 @d debug==ifdef('TEXMF_DEBUG')
 @d gubed==endif('TEXMF_DEBUG')
 @z
-@x [1.7] l.297 - debug..gubed, stat..tats
+@x [1.7] l.309 - debug..gubed, stat..tats
 @d stat==@{ {change this to `$\\{stat}\equiv\null$' when gathering
   usage statistics}
 @d tats==@t@>@} {change this to `$\\{tats}\equiv\null$' when gathering
@@ -136,12 +136,12 @@ we still have to declare the symbolic names.
 @d tats==endif('STAT')
 @z
 
-@x [1.8] Somewhat different for `init...tini'..  310 m.8
+@x [1.8] l.322 - Somewhat different for `init...tini'..  310 m.8
 the codewords `$|init|\ldots|tini|$'.
 
 @d init== {change this to `$\\{init}\equiv\.{@@\{}$' in the production version}
 @d tini== {change this to `$\\{tini}\equiv\.{@@\}}$' in the production version}
-@y 314
+@y
 the codewords `$|init|\ldots|tini|$' for declarations and by the codewords
 `$|Init|\ldots|Tini|$' for executable code.  This distinction is helpful for
 implementations where a run-time switch differentiates between the two
@@ -155,13 +155,13 @@ versions of the program.
 @f Tini==end
 @z
 
-@x [1.8] l.319 - init...tini is dynamic
+@x [1.8] l.331 - init...tini is dynamic
 @!init @<Initialize table entries (done by \.{INITEX} only)@>@;@+tini
-@y  318
+@y
 @!Init @<Initialize table entries (done by \.{INITEX} only)@>@;@+Tini
 @z
 
-@x [1.11] l.375 - Compile-time constants: most removed for dynamic allocation.
+@x [1.11] l.389 - Compile-time constants: most removed for dynamic allocation.
 @<Constants...@>=
 @!mem_max=30000; {greatest index in \TeX's internal |mem| array;
   must be strictly less than |max_halfword|;
@@ -291,7 +291,7 @@ versions of the program.
 @!sup_expand_depth = 10000000;
 @z
 
-@x [1.12] l.427 - Constants that are WEB numeric macros.
+@x [1.12] l.441 - Constants that are WEB numeric macros.
 @d mem_bot=0 {smallest index in the |mem| array dumped by \.{INITEX};
   must not be less than |mem_min|}
 @d mem_top==30000 {largest index in the |mem| array dumped by \.{INITEX};
@@ -311,7 +311,7 @@ versions of the program.
                 if you change this, you should also change |iinf_hyphen_size|.}
 @z
 
-@x [1.16] l.498 - Use C macros for `incr' and `decr'.
+@x [1.16] l.512 - Use C macros for `incr' and `decr'.
 @d incr(#) == #:=#+1 {increase a variable by unity}
 @d decr(#) == #:=#-1 {decrease a variable by unity}
 @y
@@ -320,13 +320,13 @@ versions of the program.
 % The text_char type is used as an array index into xord.  The
 % default type `char' produces signed integers, which are bad array
 % indices in C.
-@x [2.19] l.565 - data type text_char is 8-bit ASCII_code
+@x [2.19] l.579 - data type text_char is 8-bit ASCII_code
 @d text_char == char {the data type of characters in text files}
 @y
 @d text_char == ASCII_code {the data type of characters in text files}
 @z
 
-@x [2.20] l.579 - printable characters
+@x [2.20] l.593 - printable characters
 @!xchr: array [ASCII_code] of text_char;
   {specifies conversion of output characters}
 @y
@@ -336,7 +336,7 @@ xprn: array [ASCII_code] of ASCII_code;
    { non zero iff character is printable }
 @z
 
-@x [2.23] l.723 - Translate characters if desired, otherwise allow them all.
+@x [2.23] l.737 - Translate characters if desired, otherwise allow them all.
 for i:=0 to @'37 do xchr[i]:=' ';
 for i:=@'177 to @'377 do xchr[i]:=' ';
 @y
@@ -345,7 +345,7 @@ for i:=0 to @'37 do xchr[i]:=i;
 for i:=@'177 to @'377 do xchr[i]:=i;
 @z
 
-@x [2.24] l.733 - Don't reinitialize xord.
+@x [2.24] l.749 - Don't reinitialize xord.
 for i:=0 to @'176 do xord[xchr[i]]:=i;
 @y
 for i:=0 to @'176 do xord[xchr[i]]:=i;
@@ -371,14 +371,14 @@ if translate_filename then read_tcx_file;
 %       When echoed to the screen and in the log, character codes
 %       above '177 in file names are shown wrongly (typically as ^@).
 %
-@x [3.26] l.789 - name_of_file is no longer an array
+@x [3.26] l.803 - name_of_file is no longer an array
 @!name_of_file:packed array[1..file_name_size] of char;@;@/
   {on some systems this may be a \&{record} variable}
 @y
 @!name_of_file:^text_char;
 @z
 
-@x [3.27] l.794 - Do file opening in C.
+@x [3.27] l.808 - Do file opening in C.
 @ The \ph\ compiler with which the present version of \TeX\ was prepared has
 extended the rules of \PASCAL\ in a very convenient way. To open file~|f|,
 we can write
@@ -438,7 +438,7 @@ end;
 @ All of the file opening functions are defined in C.
 @z
 
-@x [3.28] l.850 - Do file closing in C.
+@x [3.28] l.864 - Do file closing in C.
 @ Files can be closed with the \ph\ routine `|close(f)|', which
 @:PASCAL H}{\ph@>
 @^system dependencies@>
@@ -465,13 +465,13 @@ end;
 @ And all the file closing routines as well.
 @z
 
-@x [3.30] l.888 - Array size of input buffer is determined at runtime.
+@x [3.30] l.903 - Array size of input buffer is determined at runtime.
 @!buffer:array[0..buf_size] of ASCII_code; {lines of characters being read}
 @y
 @!buffer:^ASCII_code; {lines of characters being read}
 @z
 
-@x [3.31] l.933 - Do `input_ln' in C.
+@x [3.31] l.948 - Do `input_ln' in C.
 @p function input_ln(var f:alpha_file;@!bypass_eoln:boolean):boolean;
   {inputs the next line or returns |false|}
 var last_nonblank:0..buf_size; {|last| with trailing blanks removed}
@@ -502,7 +502,7 @@ We define |input_ln| in C, for efficiency. Nevertheless we quote the module
 
 % [3.32] `term_in' and `term_out' are standard input and output.
 % Declare the variables that used to be constants.
-@x [3.32] l.961 - `term_in' and `term_out' are standard input and output.
+@x [3.32] l.975 - `term_in' and `term_out' are standard input and output.
 @<Glob...@>=
 @!term_in:alpha_file; {the terminal as an input file}
 @!term_out:alpha_file; {the terminal as an output file}
@@ -589,7 +589,7 @@ tini@/
 @!insert_src_special_every_display : boolean;
 @z
 
-@x [3.33] l.964 - We don't need to open terminal files.
+@x [3.33] l.979 - We don't need to open terminal files.
 @ Here is how to open the terminal files
 in \ph. The `\.{/I}' switch suppresses the first |get|.
 @:PASCAL H}{\ph@>
@@ -605,7 +605,7 @@ any command line arguments the user has provided.  It's defined in C.
 @d t_open_out == {output already open for text output}
 @z
 
-@x [3.34] l.982 - Flushing output to terminal files.
+@x [3.34] l.998 - Flushing output to terminal files.
 these operations can be specified in \ph:
 @:PASCAL H}{\ph@>
 @^system dependencies@>
@@ -622,7 +622,7 @@ to do nothing, since the user should control the terminal.
 @d clear_terminal == do_nothing
 @z
 
-@x [3.35] l.1017 - needed for e-TeX, but differently
+@x [3.35] l.1034 - needed for e-TeX, but differently
 @<Report overflow of the input buffer, and abort@>=
 if format_ident=0 then
   begin write_ln(term_out,'Buffer size exceeded!'); goto final_end;
@@ -636,7 +636,7 @@ Routine is implemented in C; part of module is, however, needed for e-TeX.
   begin cur_input.loc_field:=first; cur_input.limit_field:=last-1;
 @z
 
-@x [3.37] l.1055 - |init_terminal|, reading the command line.
+@x [3.37] l.1072 - |init_terminal|, reading the command line.
 @ The following program does the required initialization
 without retrieving a possible command line.
 It should be clear how to modify this routine to deal with command lines,
@@ -664,13 +664,13 @@ if last > first then
   end;
 @z
 
-@x [3.37] l.1068 - |init_terminal|, output missing newline.
+@x [3.37] l.1085 - |init_terminal|, output missing newline.
     write(term_out,'! End of file on the terminal... why?');
 @y
     write_ln(term_out,'! End of file on the terminal... why?');
 @z
 
-@x [4.38] l.1126 - Array size for string pool is determined at runtime.
+@x [4.38] l.1144 - Array size for string pool is determined at runtime.
 @!pool_pointer = 0..pool_size; {for variables that point into |str_pool|}
 @!str_number = 0..max_strings; {for variables that point into |str_start|}
 @y
@@ -678,7 +678,7 @@ if last > first then
 @!str_number = 0..ssup_max_strings; {for variables that point into |str_start|}
 @z
 
-@x [4.39] l.1131 - Dynamically size pool arrays.
+@x [4.39] l.1149 - Dynamically size pool arrays.
 @!str_pool:packed array[pool_pointer] of packed_ASCII_code; {the characters}
 @!str_start : array[str_number] of pool_pointer; {the starting pointers}
 @y
@@ -686,7 +686,7 @@ if last > first then
 @!str_start : ^pool_pointer; {the starting pointers}
 @z
 
-@x [4.47] l.1237 - string recycling
+@x [4.47] l.1255 - string recycling
 @p @!init function get_strings_started:boolean; {initializes the string pool,
 @y
 @p @t\4@>@<Declare additional routines for string recycling@>@/
@@ -694,7 +694,7 @@ if last > first then
 @!init function get_strings_started:boolean; {initializes the string pool,
 @z
 
-@x [4.49] l.1272 -- Change documentation (probably needed in more places)
+@x [4.49] l.1290 - Change documentation (probably needed in more places)
 would like string @'32 to be the single character @'32 instead of the
 @y
 would like string @'32 to be printed as the single character @'32
@@ -705,7 +705,7 @@ instead of the
 % assignments directly.  (`strcpy' and `strlen' work here because
 % `pool_name' is a constant string, and thus ends in a null and doesn't
 % start with a space.)
-@x [4.51] l.1314 - Open the pool file.
+@x [4.51] l.1332 - Open the pool file.
 name_of_file:=pool_name; {we needn't set |name_length|}
 if a_open_in(pool_file) then
 @y
@@ -715,12 +715,12 @@ strcpy (stringcast(name_of_file+1), pool_name); {copy the string}
 if a_open_in (pool_file, kpse_texpool_format) then
 @z
 
-@x [4.51] l.1322 - Make `TEX.POOL' lowercase, and change how it's read.
+@x [4.51] l.1340 - Make `TEX.POOL' lowercase, and change how it's read.
 else  bad_pool('! I can''t read TEX.POOL.')
 @y
 else  bad_pool('! I can''t read ', pool_name, '; bad path?')
 @z
-@x [4.52] l.1326 - Make `TEX.POOL' lowercase, and change how it's read.
+@x [4.52] l.1344 - Make `TEX.POOL' lowercase, and change how it's read.
 begin if eof(pool_file) then bad_pool('! TEX.POOL has no check sum.');
 @.TEX.POOL has no check sum@>
 read(pool_file,m,n); {read two digits of string length}
@@ -729,30 +729,30 @@ begin if eof(pool_file) then bad_pool('! ', pool_name, ' has no check sum.');
 @.TEX.POOL has no check sum@>
 read(pool_file,m); read(pool_file,n); {read two digits of string length}
 @z
-@x [4.52] l.1332 - Make `TEX.POOL' lowercase, and change how it's read.
+@x [4.52] l.1350 - Make `TEX.POOL' lowercase, and change how it's read.
     bad_pool('! TEX.POOL line doesn''t begin with two digits.');
 @y
     bad_pool('! ', pool_name, ' line doesn''t begin with two digits.');
 @z
-@x [4.53] l.1354 - Make `TEX.POOL' lowercase, and change how it's read.
+@x [4.53] l.1372 - Make `TEX.POOL' lowercase, and change how it's read.
   bad_pool('! TEX.POOL check sum doesn''t have nine digits.');
 @y
   bad_pool('! ', pool_name, ' check sum doesn''t have nine digits.');
 @z
-@x [4.53] l.1360 - Make `TEX.POOL' lowercase, and change how it's read.
+@x [4.53] l.1378 - Make `TEX.POOL' lowercase, and change how it's read.
 done: if a<>@$ then bad_pool('! TEX.POOL doesn''t match; TANGLE me again.');
 @y
 done: if a<>@$ then
   bad_pool('! ', pool_name, ' doesn''t match; tangle me again (or fix the path).');
 @z
 
-@x [5.54] l.1422 - error_line
+@x [5.54] l.1440 - error_line
 @!trick_buf:array[0..error_line] of ASCII_code; {circular buffer for
 @y
 @!trick_buf:array[0..ssup_error_line] of ASCII_code; {circular buffer for
 @z
 
-@x l.1536 --  If the ``src-specials'' feature is active, change the banner.
+@x [5.61] l.1574 - If the ``src-specials'' feature is active, change the banner.
 wterm(banner);
 @y
 if src_specials_p or file_line_error_style_p or parse_first_line_p then
@@ -761,7 +761,7 @@ else
   wterm(banner);
 @z
 
-@x [5.61] l.1556 - Print rest of banner.
+@x [5.61] l.1575 - Print rest of banner.
 if format_ident=0 then wterm_ln(' (no format preloaded)')
 else  begin slow_print(format_ident); print_ln;
   end;
@@ -787,21 +787,21 @@ if translate_filename then begin
 end;
 @z
 
-@x [5.71] term_input: set limit when fatal_error
+@x [5.71] l.1713 - term_input: set limit when fatal_error
 if not input_ln(term_in,true) then fatal_error("End of file on the terminal!");
 @y
 if not input_ln(term_in,true) then begin
   limit:=0; fatal_error("End of file on the terminal!"); end;
 @z
 
-@x [6.73] l.1732 - Add unspecified_mode.
+@x [6.73] l.1750 - Add unspecified_mode.
 @d error_stop_mode=3 {stops at every opportunity to interact}
 @y
 @d error_stop_mode=3 {stops at every opportunity to interact}
 @d unspecified_mode=4 {extra value for command-line switch}
 @z
 
-@x [6.73] l.1734 - file:line:error style error messages.
+@x [6.73] l.1752 - file:line:error style error messages.
   print_nl("! "); print(#);
 @y
   if file_line_error_style_p then print_file_line
@@ -810,14 +810,14 @@ if not input_ln(term_in,true) then begin
 @z
 
 
-@x [6.73] l.1738 - Add interaction_option.
+@x [6.73] l.1756 - Add interaction_option.
 @!interaction:batch_mode..error_stop_mode; {current level of interaction}
 @y
 @!interaction:batch_mode..error_stop_mode; {current level of interaction}
 @!interaction_option:batch_mode..unspecified_mode; {set from command line}
 @z
 
-@x [6.74] l.1740 - Allow override by command line switch.
+@x [6.74] l.1758 - Allow override by command line switch.
 @ @<Set init...@>=interaction:=error_stop_mode;
 @y
 @ @<Set init...@>=if interaction_option=unspecified_mode then
@@ -830,7 +830,7 @@ else
 % Plus, it's nicer just to do an exit with the appropriate status code
 % under Unix.  We call it `uexit' because there's a WEB symbol called
 % `exit' already.  We use a C macro to change `uexit' back to `exit'.
-@x [6.81] l.1852 - Eliminate nonlocal goto, since C doesn't have them.
+@x [6.81] l.1860 - Eliminate nonlocal goto, since C doesn't have them.
 @ The |jump_out| procedure just cuts across all active procedure levels and
 goes to |end_of_TEX|. This is the only nontrivial |@!goto| statement in the
 whole program. It is used when there is no recovery from a particular error.
@@ -871,7 +871,7 @@ do_final_end;
 end;
 @z
 
-@x [6.82] l.1866 - halt on error?
+@x [6.82] l.1884 - halt on error?
 print_char("."); show_context;
 @y
 print_char("."); show_context;
@@ -885,7 +885,7 @@ if (halt_on_error_p) then begin
 end;
 @z
 
-@x [6.84] l.1904 - Implement the switch-to-editor option.
+@x [6.84] l.1908 - Implement the switch-to-editor option.
 line ready to be edited. But such an extension requires some system
 wizardry, so the present implementation simply types out the name of the
 file that should be
@@ -910,7 +910,7 @@ been commented~out.
 @d edit_file==input_stack[base_ptr]
 @z
 
-@x [6.84] l.1903 - Implement the switch-to-editor option.
+@x [6.84] l.1923 - Implement the switch-to-editor option.
 "E": if base_ptr>0 then if input_stack[base_ptr].name_field>=256 then
   begin print_nl("You want to edit file ");
 @.You want to edit file x@>
@@ -926,19 +926,19 @@ been commented~out.
     jump_out;
 @z
 
-@x [6.93] l.2056 - Declare fatal_error as noreturn.
+@x [6.93] l.2062 - Declare fatal_error as noreturn.
 procedure fatal_error(@!s:str_number); {prints |s|, and that's it}
 @y
 noreturn procedure fatal_error(@!s:str_number); {prints |s|, and that's it}
 @z
 
-@x [6.94] l.2065 - Declare overflow as noreturn.
+@x [6.94] l.2071 - Declare overflow as noreturn.
 procedure overflow(@!s:str_number;@!n:integer); {stop due to finiteness}
 @y
 noreturn procedure overflow(@!s:str_number;@!n:integer); {stop due to finiteness}
 @z
 
-@x [6.95] l.2084 - Declare confusion as noreturn.
+@x [6.95] l.2090 - Declare confusion as noreturn.
 procedure confusion(@!s:str_number);
 @y
 noreturn procedure confusion(@!s:str_number);
@@ -946,7 +946,7 @@ noreturn procedure confusion(@!s:str_number);
 
 % [7.104] `remainder' is a library routine on some systems, so change
 % its name to avoid conflicts.
-@x [7.104] l.2227 - avoid name conflicts with lib routine remainder()
+@x [7.104] l.2248 - avoid name conflicts with lib routine remainder()
 |remainder|, holds the remainder after a division.
 
 @<Glob...@>=
@@ -958,22 +958,22 @@ noreturn procedure confusion(@!s:str_number);
 @<Glob...@>=
 @z
 
-@x [7.109] l.2352 - Define glue_ratio in C.
+@x [7.109] l.2373 - Define glue_ratio in C.
 @!glue_ratio=real; {one-word representation of a glue expansion factor}
 @y
 @z
 
 % [8.110] Make it easy to change constants.  Do not increase
 % max_quarterword without changing the memoryword structure in `texmfmem.h'.
-@x [8.110] l.2422 - increase |max_halfword|
+@x [8.110] l.2428 - increase |max_halfword|
 @d min_halfword==0 {smallest allowable value in a |halfword|}
 @d max_halfword==65535 {largest allowable value in a |halfword|}
-@y 2424
+@y
 @d min_halfword==-@"FFFFFFF {smallest allowable value in a |halfword|}
 @d max_halfword==@"FFFFFFF {largest allowable value in a |halfword|}
 @z
 
-@x [8.111] l.2435 - min_halfword and max_halfword
+@x [8.111] l.2441 - min_halfword and max_halfword
 if (mem_min<min_halfword)or(mem_max>=max_halfword)or@|
   (mem_bot-mem_min>max_halfword+1) then bad:=14;
 @y
@@ -981,7 +981,7 @@ if (mem_bot-sup_main_memory<min_halfword)or@|
   (mem_top+sup_main_memory>=max_halfword) then bad:=14;
 @z
 
-@x [8.111] l.2437 - max_font_max
+@x [8.111] l.2443 - max_font_max
 if (font_base<min_quarterword)or(font_max>max_quarterword) then bad:=15;
 if font_max>font_base+256 then bad:=16;
 @y
@@ -989,7 +989,7 @@ if (max_font_max<min_halfword)or(max_font_max>max_halfword) then bad:=15;
 if font_max>font_base+max_font_max then bad:=16;
 @z
 
-@x [8.112] l.2450 - Efficiency.
+@x [8.112] l.2456 - Efficiency.
 macros are simplified in the obvious way when |min_quarterword=0|.
 @^inner loop@>@^system dependencies@>
 
@@ -1019,7 +1019,7 @@ sufficiently large.
 
 % [8.113] We've put the memory structure into the include file
 % `texmf.h', since it's too hard to translate automatically.
-@x [8.113] l.2453 - data structures for main memory
+@x [8.113] l.2474 - data structures for main memory
 @!quarterword = min_quarterword..max_quarterword; {1/4 of a word}
 @!halfword=min_halfword..max_halfword; {1/2 of a word}
 @!two_choices = 1..2; {used when there are two variants in a record}
@@ -1053,14 +1053,14 @@ sufficiently large.
 
 % [9.116] Change `mem' to `zmem', so we can define mem to be a register
 % pointer to the memory array for speed.
-@x [9.116] l.2545 - definition of main memory array
+@x [9.116] l.2566 - definition of main memory array
 @!mem : array[mem_min..mem_max] of memory_word; {the big dynamic storage area}
 @y
 @!yzmem : ^memory_word; {the big dynamic storage area}
 @!zmem : ^memory_word; {the big dynamic storage area}
 @z
 
-@x [10.144] l.3006 - font numbers can be >255 now.
+@x [10.144] l.3027 - font numbers can be >255 now.
 @p function new_ligature(@!f,@!c:quarterword; @!q:pointer):pointer;
 @y
 @p function new_ligature(@!f:internal_font_number; @!c:quarterword;
@@ -1069,7 +1069,7 @@ sufficiently large.
 
 % [11.165] Fix the word `free' so that it doesn't conflict with the
 % standard C library routine of the same name.
-@x [11.165] l.3364 - avoid conflict with lib function free()
+@x [11.165] l.3385 - avoid conflict with lib function free()
 are debugging.)
 @y
 are debugging.)
@@ -1077,7 +1077,7 @@ are debugging.)
 @d free==free_arr
 @z
 
-@x [11.165] l.3367 - dummy |free| and |was_free| arrays
+@x [11.165] l.3388 - dummy |free| and |was_free| arrays
 @!debug @!free: packed array [mem_min..mem_max] of boolean; {free cells}
 @t\hskip10pt@>@!was_free: packed array [mem_min..mem_max] of boolean;
 @y
@@ -1086,13 +1086,13 @@ are debugging.)
 @t\hskip10pt@>@!was_free: packed array [0..9] of boolean;
 @z
 
-@x [12.174] l.3526 - Eliminate unsigned comparisons to zero.
+@x [12.174] l.3547 - Eliminate unsigned comparisons to zero.
         begin if (font(p)<font_base)or(font(p)>font_max) then
 @y
         begin if (font(p)>font_max) then
 @z
 
-@x [12.176] l.3563 - Eliminate unsigned comparisons to zero.
+@x [12.176] l.3584 - Eliminate unsigned comparisons to zero.
 @p procedure print_font_and_char(@!p:integer); {prints |char_node| data}
 begin if p>mem_end then print_esc("CLOBBERED.")
 else  begin if (font(p)<font_base)or(font(p)>font_max) then print_char("*")
@@ -1102,10 +1102,10 @@ begin if p>mem_end then print_esc("CLOBBERED.")
 else  begin if (font(p)>font_max) then print_char("*")
 @z
 
-@x [12.186] l.3747 - Don't worry about strange floating point values.
+@x [12.186] l.3768 - Don't worry about strange floating point values.
   if abs(mem[p+glue_offset].int)<@'4000000 then print("?.?")
   else if abs(g)>float_constant(20000) then
-@y 3747
+@y
   { The Unix |pc| folks removed this restriction with a remark that
     invalid bit patterns were vanishingly improbable, so we follow
     their example without really understanding it.
@@ -1115,7 +1115,7 @@ else  begin if (font(p)>font_max) then print_char("*")
 @z
 
 
-@x [15.209] l.4165 - MLTeX: \charsubdef primitive
+@x [15.209] l.4186 - MLTeX: \charsubdef primitive
 @d shorthand_def=95 {code definition ( \.{\\chardef}, \.{\\countdef}, etc.~)}
 @y
 @d shorthand_def=95 {code definition ( \.{\\chardef}, \.{\\countdef}, etc.~)}
@@ -1126,7 +1126,7 @@ else  begin if (font(p)>font_max) then print_char("*")
 % can not be translated. For example, messages printed by |print_mode|
 % from [16.211] use different word order and [46.1049] use different
 % word order and words are declined.
-@x [16.211] l.4256
+@x [16.211] l.4259
 begin if m>0 then
   case m div (max_command+1) of
   0:print("vertical");
@@ -1172,13 +1172,13 @@ else  case (-m) div (max_command+1) of
 end;
 @z
 
-@x [16.213] l.4321 - texarray
+@x [16.213] l.4342 - texarray
 @!nest:array[0..nest_size] of list_state_record;
 @y
 @!nest:^list_state_record;
 @z
 
-@x [16.215] l.4344 - remove mem[] reference from initialize.
+@x [16.215] l.4365 - reference from initialize.
 prev_graf:=0; shown_mode:=0;
 @<Start a new current page@>;
 @y
@@ -1189,7 +1189,7 @@ last_glue:=max_halfword; last_penalty:=0; last_kern:=0;
 page_depth:=0; page_max_depth:=0;
 @z
 
-@x [16.219] l.4409 - i18n fix
+@x [16.219] l.4430 - i18n fix
     print_int(nest[p].pg_field); print(" line");
     if nest[p].pg_field<>1 then print_char("s");
 @y
@@ -1198,7 +1198,7 @@ page_depth:=0; page_max_depth:=0;
     else print(" line");
 @z
 
-@x [17.220] l.4448 - MLTeX: char_sub_code_base
+@x [17.220] l.4469 - MLTeX: char_sub_code_base
 paragraph shape.
 @y
 paragraph shape.
@@ -1206,7 +1206,7 @@ Additionally region~4 contains the table with ML\TeX's character
 substitution definitions.
 @z
 
-@x [17.222] l.4523 - frozen_special, for source specials.
+@x [17.222] l.4543 - frozen_special, for source specials.
 @d frozen_null_font=frozen_control_sequence+10
 @y
 @d frozen_special=frozen_control_sequence+10
@@ -1214,13 +1214,13 @@ substitution definitions.
 @d frozen_null_font=frozen_control_sequence+11
 @z
 
-@x [17.222] l.4526 - max_font_max
+@x [17.222] l.4547 - max_font_max
 @d undefined_control_sequence=frozen_null_font+257 {dummy location}
 @y
 @d undefined_control_sequence=frozen_null_font+max_font_max+1 {dummy location}
 @z
 
-@x [17.222] l.4533 - hash_extra
+@x [17.222] l.4554 - hash_extra
 for k:=active_base to undefined_control_sequence-1 do
   eqtb[k]:=eqtb[undefined_control_sequence];
 @y
@@ -1228,14 +1228,14 @@ for k:=active_base to eqtb_top do
   eqtb[k]:=eqtb[undefined_control_sequence];
 @z
 
-@x [17.230] l.4731 - MLTeX: char_sub_code_base
+@x [17.230] l.4752 - MLTeX: char_sub_code_base
 @d int_base=math_code_base+256 {beginning of region 5}
 @y
 @d char_sub_code_base=math_code_base+256 {table of character substitutions}
 @d int_base=char_sub_code_base+256 {beginning of region 5}
 @z
 
-@x [17.230] l.4752 - MLTeX: char_sub_code_base
+@x [17.230] l.4773 - MLTeX: char_sub_code_base
   {Note: |math_code(c)| is the true math code plus |min_halfword|}
 @y
   {Note: |math_code(c)| is the true math code plus |min_halfword|}
@@ -1244,7 +1244,7 @@ for k:=active_base to eqtb_top do
 @z
 
 % MLTeX: \charsubdefmax and \tracingcharsubdef
-@x [17.236] l.4954
+@x [17.236] l.4975
 @d int_pars=55 {total number of integer parameters}
 @y
 @d tex_int_pars=55 {total number of \TeX's integer parameters}
@@ -1259,7 +1259,7 @@ for k:=active_base to eqtb_top do
 @z
 
 % MLTeX: \charsubdefmax and \tracingcharsubdef
-@x [17.236] l.5016
+@x [17.236] l.5037
 @d error_context_lines==int_par(error_context_lines_code)
 @y
 @d error_context_lines==int_par(error_context_lines_code)
@@ -1270,7 +1270,7 @@ for k:=active_base to eqtb_top do
 @z
 
 % MLTeX: \charsubdefmax and \tracingcharsubdef
-@x [17.237] l.5080
+@x [17.237] l.5101
 error_context_lines_code:print_esc("errorcontextlines");
 @y
 error_context_lines_code:print_esc("errorcontextlines");
@@ -1280,7 +1280,7 @@ tracing_char_sub_def_code:print_esc("tracingcharsubdef");
 @z
 
 % MLTeX: \charsubdefmax and \tracingcharsubdef
-@x [17.238] l.5200
+@x [17.238] l.5221
 @!@:error_context_lines_}{\.{\\errorcontextlines} primitive@>
 @y
 @!@:error_context_lines_}{\.{\\errorcontextlines} primitive@>
@@ -1296,7 +1296,7 @@ if mltex_p then
   end;
 @z
 
-@x [17.240] l.5213 - MLTeX: \charsubdefmax and \tracingcharsubdef
+@x [17.240] l.5234 - MLTeX: \charsubdefmax and \tracingcharsubdef
 for k:=int_base to del_code_base-1 do eqtb[k].int:=0;
 @y
 for k:=int_base to del_code_base-1 do eqtb[k].int:=0;
@@ -1305,7 +1305,7 @@ char_sub_def_min:=256; char_sub_def_max:=-1;
 {|tracing_char_sub_def:=0| is already done}@/
 @z
 
-@x [17.241] l.5219 - Do `fix_date_and_time' in C.
+@x [17.241] l.5240 - Do `fix_date_and_time' in C.
 @ The following procedure, which is called just before \TeX\ initializes its
 input and output, establishes the initial values of the date and time.
 @^system dependencies@>
@@ -1335,20 +1335,20 @@ output on the first line of the log file. (New in 2021.)
 begin date_and_time(sys_time,sys_day,sys_month,sys_year);
 @z
 
-@x [17.252] l.5420 - hash_extra
+@x [17.252] l.5447 - hash_extra
 else if n<glue_base then @<Show equivalent |n|, in region 1 or 2@>
 @y
 else if (n<glue_base) or ((n>eqtb_size)and(n<=eqtb_top)) then
   @<Show equivalent |n|, in region 1 or 2@>
 @z
 
-@x [17.253] l.5435 - Change eqtb to zeqtb.
+@x [17.253] l.5462 - Change eqtb to zeqtb.
 @!eqtb:array[active_base..eqtb_size] of memory_word;
 @y
 @!zeqtb:^memory_word;
 @z
 
-@x [18.256] l.5483 - hash_extra
+@x [18.256] l.5510 - hash_extra
 @!hash: array[hash_base..undefined_control_sequence-1] of two_halves;
   {the hash table}
 @!hash_used:pointer; {allocation pointer for |hash|}
@@ -1362,20 +1362,20 @@ else if (n<glue_base) or ((n>eqtb_size)and(n<=eqtb_top)) then
 @!hash_high:pointer; {pointer to next high hash location}
 @z
 
-@x [18.257] l.5491 - hash_extra
+@x [18.257] l.5518 - hash_extra
 next(hash_base):=0; text(hash_base):=0;
 for k:=hash_base+1 to undefined_control_sequence-1 do hash[k]:=hash[hash_base];
 @y
 @z
 
-@x [18.258] l.5495 - hash_extra
+@x [18.258] l.5522 - hash_extra
 hash_used:=frozen_control_sequence; {nothing is used}
 @y
 hash_used:=frozen_control_sequence; {nothing is used}
 hash_high:=0;
 @z
 
-@x [18.260] l.5531 - hash_extra
+@x [18.260] l.5558 - hash_extra
 @ @<Insert a new control...@>=
 begin if text(p)>0 then
   begin repeat if hash_is_full then overflow("hash size",hash_size);
@@ -1401,45 +1401,45 @@ begin if text(p)>0 then
   end;
 @z
 
-@x [18.262] l.5583 - hash_extra
+@x [18.262] l.5610 - hash_extra
 else if p>=undefined_control_sequence then print_esc("IMPOSSIBLE.")
 @y
 else if ((p>=undefined_control_sequence)and(p<=eqtb_size))or(p>eqtb_top) then
   print_esc("IMPOSSIBLE.")
 @z
 
-@x [18.262] l.5584 - Remove more unsigned comparisons to zero.
+@x [18.262] l.5611 - Remove more unsigned comparisons to zero.
 else if (text(p)<0)or(text(p)>=str_ptr) then print_esc("NONEXISTENT.")
 @y
 else if (text(p)>=str_ptr) then print_esc("NONEXISTENT.")
 @z
 
-@x [19.271] l.5872 - texarray
+@x [19.271] l.5899 - texarray
 @!save_stack : array[0..save_size] of memory_word;
 @y
 @!save_stack : ^memory_word;
 @z
 
-@x [19.283] l.6050 - hash_extra
+@x [19.283] l.6077 - hash_extra
 if p<int_base then
 @y
 if (p<int_base)or(p>eqtb_size) then
 @z
 
-@x [20.290] l.6158 - hash_extra
+@x [20.290] l.6185 - hash_extra
 if cs_token_flag+undefined_control_sequence>max_halfword then bad:=21;
 @y
 if cs_token_flag+eqtb_size+hash_extra>max_halfword then bad:=21;
 if (hash_offset<0)or(hash_offset>hash_base) then bad:=42;
 @z
 
-@x [22.301] l.6432 - texarray
+@x [22.301] l.6459 - texarray
 @!input_stack : array[0..stack_size] of in_state_record;
 @y
 @!input_stack : ^in_state_record;
 @z
 
-@x [22.304] l.6536 - texarray; additions for file:line:error style.
+@x [22.304] l.6563 - texarray; additions for file:line:error style.
 @!input_file : array[1..max_in_open] of alpha_file;
 @!line : integer; {current line number in the current source file}
 @!line_stack : array[1..max_in_open] of integer;
@@ -1451,7 +1451,7 @@ if (hash_offset<0)or(hash_offset>hash_base) then bad:=42;
 @!full_source_filename_stack : ^str_number;
 @z
 
-@x [22.306] l.6855 - i18n fix
+@x [22.306] l.6615 - i18n fix
   begin print_nl("Runaway ");
 @.Runaway...@>
   case scanner_status of
@@ -1479,7 +1479,7 @@ if (hash_offset<0)or(hash_offset>hash_base) then bad:=42;
   end; {there are no other cases}
 @z
 
-@x [22.308] l.6701 - texarray
+@x [22.308] l.6728 - texarray
 @!param_stack:array [0..param_size] of pointer;
   {token list pointers for parameters}
 @y
@@ -1487,26 +1487,26 @@ if (hash_offset<0)or(hash_offset>hash_base) then bad:=42;
   {token list pointers for parameters}
 @z
 
-@x [23.328] l.7043 - keep top of source_filename_stack initialized
+@x [23.328] l.7064 - keep top of source_filename_stack initialized
 incr(in_open); push_input; index:=in_open;
 @y
 incr(in_open); push_input; index:=in_open;
 source_filename_stack[index]:=0;full_source_filename_stack[index]:=0;
 @z
 
-@x [23.331] l.7071 - init source file name stacks
+@x [23.331] l.7092 - init source file name stacks
 begin input_ptr:=0; max_in_stack:=0;
 @y
 begin input_ptr:=0; max_in_stack:=0;
 source_filename_stack[0]:=0;full_source_filename_stack[0]:=0;
 @z
 
-@x [24.338] l.7164 - i18n fix
+@x [24.338] l.7191 - i18n fix
 print(" while scanning ");
 @y
 @z
 
-@x [24.339] l.7185 - i18n fix
+@x [24.339] l.7213 - i18n fix
 defining:begin print("definition"); info(p):=right_brace_token+"}";
   end;
 matching:begin print("use"); info(p):=par_token; long_state:=outer_call;
@@ -1561,7 +1561,7 @@ else begin
   end
 @z
 
-@x [28.501] l.9747 - \eof18
+@x [28.501] l.9765 - \eof18
 if_eof_code: begin scan_four_bit_int; b:=(read_open[cur_val]=closed);
   end;
 @y
@@ -1571,7 +1571,7 @@ if_eof_code: begin scan_four_bit_int_or_18;
   end;
 @z
 
-@x [29.513] l.9951 - Area and extension rules for filenames.
+@x [29.513] l.9983 - Area and extension rules for filenames.
 @ The file names we shall deal with for illustrative purposes have the
 following structure:  If the name contains `\.>' or `\.:', the file area
 consists of all characters up to and including the final such character;
@@ -1588,7 +1588,7 @@ otherwise the file area is null.  If the remaining file name contains
 `\..' to the end, otherwise the file extension is null.
 @z
 
-@x [29.513] l.9963 - Area and extension rules for filenames.
+@x [29.513] l.9995 - Area and extension rules for filenames.
 @!area_delimiter:pool_pointer; {the most recent `\.>' or `\.:', if any}
 @!ext_delimiter:pool_pointer; {the relevant `\..', if any}
 @y
@@ -1596,7 +1596,7 @@ otherwise the file area is null.  If the remaining file name contains
 @!ext_delimiter:pool_pointer; {the most recent `\..', if any}
 @z
 
-@x [29.514] l.9973 - TeX area directories.
+@x [29.514] l.10005 - TeX area directories.
 @d TEX_area=="TeXinputs:"
 @.TeXinputs@>
 @d TEX_font_area=="TeXfonts:"
@@ -1605,13 +1605,13 @@ otherwise the file area is null.  If the remaining file name contains
 In C, the default paths are specified separately.
 @z
 
-@x [29.515] l.9995 - filenames: quoted
+@x [29.515] l.10014 - filenames: quoted
 begin area_delimiter:=0; ext_delimiter:=0;
 @y
 begin area_delimiter:=0; ext_delimiter:=0; quoted_filename:=false;
 @z
 
-@x [29.516] l.9992 - filenames: more_name
+@x [29.516] l.10024 - filenames: more_name
 begin if c=" " then more_name:=false
 @y
 begin if (c=" ") and stop_at_space and (not quoted_filename) then
@@ -1622,19 +1622,19 @@ else  if c="""" then begin
   end
 @z
 
-@x [29.516] l.9994 - filenames: more_name
+@x [29.516] l.10026 - filenames: more_name
   if (c=">")or(c=":") then
 @y
   if IS_DIR_SEP(c) then
 @z
 
-@x [29.516] l.9997 - filenames: more_name
+@x [29.516] l.10029 - filenames: more_name
   else if (c=".")and(ext_delimiter=0) then ext_delimiter:=cur_length;
 @y
   else if c="." then ext_delimiter:=cur_length;
 @z
 
-@x [29.517] l.10002 - end_name: string recycling
+@x [29.517] l.10034 - end_name: string recycling
 @ The third.
 @^system dependencies@>
 
@@ -1654,7 +1654,7 @@ var temp_str: str_number; {result of file name cache lookups}
 @!must_quote:boolean; {whether we need to quote a string}
 @z
 
-@x [29.517] l.10022 - end_name: spaces in filenames
+@x [29.517] l.10040 - end_name: spaces in filenames
 @:TeX capacity exceeded number of strings}{\quad number of strings@>
 @y
 @:TeX capacity exceeded number of strings}{\quad number of strings@>
@@ -1713,7 +1713,7 @@ if ext_delimiter<>0 then begin
   end;
 @z
 
-@x [29.517] l.10011 - end_name: string recycling
+@x [29.517] l.10044 - end_name: string recycling
   end;
 if ext_delimiter=0 then
   begin cur_ext:=""; cur_name:=make_string;
@@ -1732,7 +1732,7 @@ if ext_delimiter=0 then
   begin cur_ext:=""; cur_name:=slow_make_string;
 @z
 
-@x [29.517] l.10016 - end_name: string recycling
+@x [29.517] l.10050 - end_name: string recycling
   incr(str_ptr); cur_ext:=make_string;
 @y
   incr(str_ptr); cur_ext:=make_string;
@@ -1749,7 +1749,7 @@ if ext_delimiter=0 then
   cur_ext:=slow_make_string;  {remake extension string}
 @z
 
-@x [29.518] l.10042 - print_file_name: quote if spaces in names.
+@x [29.518] l.10056 - print_file_name: quote if spaces in names.
 some operating systems put the file area last instead of first.)
 @^system dependencies@>
 @y
@@ -1771,7 +1771,7 @@ if #<>0 then
       print(so(str_pool[j]))
 @z
 
-@x [29.518] l.10042 - print_file_name: quote if spaces in names.
+@x [29.518] l.10061 - print_file_name: quote if spaces in names.
 begin slow_print(a); slow_print(n); slow_print(e);
 @y
 var must_quote: boolean; {whether to quote the filename}
@@ -1790,7 +1790,7 @@ print_quoted(a); print_quoted(n); print_quoted(e);
 if must_quote then print_char("""");
 @z
 
-@x [29.519] l.10051 - have append_to_name skip quotes.
+@x [29.519] l.10070 - have append_to_name skip quotes.
 @d append_to_name(#)==begin c:=#; incr(k);
   if k<=file_name_size then name_of_file[k]:=xchr[c];
   end
@@ -1802,7 +1802,7 @@ if must_quote then print_char("""");
 
 % [29.519] In pack_file_name, leave room for the extra null we append at
 % the end of a filename.
-@x [29.519] l.10047 - pack_file_name, leave room for the extra null
+@x [29.519] l.10078 - pack_file_name, leave room for the extra null
 begin k:=0;
 @y
 begin k:=0;
@@ -1810,13 +1810,13 @@ if name_of_file then libc_free (name_of_file);
 name_of_file:= xmalloc_array (ASCII_code, length(a)+length(n)+length(e)+1);
 @z
 
-@x [29.519] l.10051 - pack_file_name, append the extra null
+@x [29.519] l.10083 - pack_file_name, append the extra null
 for k:=name_length+1 to file_name_size do name_of_file[k]:=' ';
 @y
 name_of_file[name_length+1]:=0;
 @z
 
-@x [29.520] l.10060 - filenames: default format.
+@x [29.520] l.10092 - filenames: default format.
 @d format_default_length=20 {length of the |TEX_format_default| string}
 @d format_area_length=11 {length of its area part}
 @d format_ext_length=4 {length of its `\.{.fmt}' part}
@@ -1829,7 +1829,7 @@ length will be set in the main program.
 @d format_ext_length=4 {length of its `\.{.fmt}' part}
 @z
 
-@x [29.521] l.10066 - filenames: default format, where `plain.fmt' is.
+@x [29.520] l.10098 - filenames: default format, where `plain.fmt' is.
 @!TEX_format_default:packed array[1..format_default_length] of char;
 
 @ @<Set init...@>=
@@ -1843,7 +1843,7 @@ in C, instead of Pascal, since we want them to depend on the name of the
 program.
 @z
 
-@x [29.523] l.10095 - Change to pack_buffered_name as with pack_file_name.
+@x [29.523] l.10127 - Change to pack_buffered_name as with pack_file_name.
 for j:=1 to n do append_to_name(xord[TEX_format_default[j]]);
 for j:=a to b do append_to_name(buffer[j]);
 for j:=format_default_length-format_ext_length+1 to format_default_length do
@@ -1861,7 +1861,7 @@ if k<=file_name_size then name_length:=k@+else name_length:=file_name_size;
 name_of_file[name_length+1]:=0;
 @z
 
-@x [29.524] l.10118 - Format file opening: only try once, with path searching.
+@x [29.524] l.10150 - Format file opening: only try once, with path searching.
   pack_buffered_name(0,loc,j-1); {try first without the system file area}
   if w_open_in(fmt_file) then goto found;
   pack_buffered_name(format_area_length,loc,j-1);
@@ -1872,7 +1872,7 @@ name_of_file[name_length+1]:=0;
   if w_open_in(fmt_file) then goto found;
 @z
 
-@x [29.524] l.10124 - replace `PLAIN' in error messages with `default'.
+@x [29.524] l.10156 - replace `PLAIN' in error messages with `default'.
   wterm_ln('Sorry, I can''t find that format;',' will try PLAIN.');
 @y
   wterm ('Sorry, I can''t find the format `');
@@ -1882,7 +1882,7 @@ name_of_file[name_length+1]:=0;
   wterm_ln ('''.');
 @z
 
-@x [29.524] l.10132 - replace `PLAIN' in error messages with `default'.
+@x [29.524] l.10164 - replace `PLAIN' in error messages with `default'.
   wterm_ln('I can''t find the PLAIN format file!');
 @.I can't find PLAIN...@>
 @y
@@ -1892,7 +1892,7 @@ name_of_file[name_length+1]:=0;
 @.I can't find the format...@>
 @z
 
-@x [29.525] l.10170 - make_name_string
+@x [29.525] l.10184 - make_name_string
 begin if (pool_ptr+name_length>pool_size)or(str_ptr=max_strings)or
 @y
 save_area_delimiter, save_ext_delimiter: pool_pointer;
@@ -1900,7 +1900,7 @@ save_name_in_progress, save_stop_at_space: boolean;
 begin if (pool_ptr+name_length>pool_size)or(str_ptr=max_strings)or
 @z
 
-@x [29.525] l.10174 - make_name_string
+@x [29.525] l.10188 - make_name_string
   make_name_string:=make_string;
 @y
   make_name_string:=make_string;
@@ -1920,7 +1920,7 @@ begin if (pool_ptr+name_length>pool_size)or(str_ptr=max_strings)or
   area_delimiter:=save_area_delimiter; ext_delimiter:=save_ext_delimiter;
 @z
 
-@x [29.526] l.10193 - look for a left_brace when scanning a file name
+@x [29.526] l.10206 - look for a left_brace when scanning a file name
 @p procedure scan_file_name;
 label done;
 @y
@@ -1941,7 +1941,7 @@ begin
   else
 @z
 
-@x [29.526] l.10194 - stop scanning file name if we're at end-of-line.
+@x [29.526] l.10213 - stop scanning file name if we're at end-of-line.
   if not more_name(cur_chr) then goto done;
 @y
   {If |cur_chr| is a space and we're not scanning a token list, check
@@ -1951,7 +1951,7 @@ begin
   if not more_name(cur_chr) then goto done;
 @z
 
-@x [29.526] l.10203 - scan a bgroup/egroup-delimited file name
+@x [29.526] l.10216 - scan a bgroup/egroup-delimited file name
 done: end_name; name_in_progress:=false;
 end;
 @y
@@ -1961,7 +1961,7 @@ warning_index := save_warning_index; {restore |warning_index|}
 end;
 @z
 
-@x [29.530] l.10245 - prompt_file_name: prevent empty filenames.
+@x [29.530] l.10264 - prompt_file_name: prevent empty filenames.
 var k:0..buf_size; {index into |buffer|}
 @y
 var k:0..buf_size; {index into |buffer|}
@@ -1970,7 +1970,7 @@ var k:0..buf_size; {index into |buffer|}
 @!saved_cur_area:str_number; {to catch empty terminal input}
 @z
 
-@x [29.530] l.10252 - prompt_file_name: No default extension is TeX input file.
+@x [29.530] l.10271 - prompt_file_name: No default extension is TeX input file.
 if e=".tex" then show_context;
 @y
 if (e=".tex") or (e="") then show_context;
@@ -1982,7 +1982,7 @@ if (e<>"") then
 print(")"); print_ln;
 @z
 
-@x [29.530] l.10258 - prompt_file_name: prevent empty filenames.
+@x [29.530] l.10277 - prompt_file_name: prevent empty filenames.
 clear_terminal; prompt_input(": "); @<Scan file name in the buffer@>;
 if cur_ext="" then cur_ext:=e;
 @y
@@ -2000,20 +2000,20 @@ else
   if cur_ext="" then cur_ext:=e;
 @z
 
-@x [29.532] l.10263 - avoid conflict, `logname' in <unistd.h> on some systems.
+@x [29.532] l.10295 - avoid conflict, `logname' in <unistd.h> on some systems.
 @d ensure_dvi_open==if output_file_name=0 then
 @y
 @d log_name == texmf_log_name
 @d ensure_dvi_open==if output_file_name=0 then
 @z
 
-@x [29.534] l.10285 - Adjust for C string conventions.
+@x [29.534] l.10317 - Adjust for C string conventions.
 @!months:packed array [1..36] of char; {abbreviations of month names}
 @y
 @!months:const_cstring;
 @z
 
-@x [29.534] l.10300 - Filename change for the recorder.
+@x [29.534] l.10319 - Filename change for the recorder.
 if job_name=0 then job_name:="texput";
 @.texput@>
 @y
@@ -2023,7 +2023,7 @@ pack_job_name(".fls");
 recorder_change_filename(stringcast(name_of_file+1));
 @z
 
-@x [29.534] l.10293 - MLTeX: add MLTeX banner after loading fmt file
+@x [29.534] l.10325 - MLTeX: add MLTeX banner after loading fmt file
 @<Print the banner line, including the date and time@>;
 @y
 @<Print the banner line, including the date and time@>;
@@ -2032,7 +2032,7 @@ if mltex_enabled_p then
   end;
 @z
 
-@x
+@x [29.536] l.10356
 begin wlog(banner);
 @y
 begin
@@ -2043,14 +2043,14 @@ else
   wlog(banner);
 @z
 
-@x [29.536] l.10324 - Print rest of banner.
+@x [29.536] l.10357 - Print rest of banner.
 slow_print(format_ident); print("  ");
 @y
 wlog(version_string);
 slow_print(format_ident); print("  ");
 @z
 
-@x [29.536] l.10327 - Adjust for C string conventions.
+@x [29.536] l.10359 - Adjust for C string conventions.
 months:='JANFEBMARAPRMAYJUNJULAUGSEPOCTNOVDEC';
 @y
 months := ' JANFEBMARAPRMAYJUNJULAUGSEPOCTNOVDEC';
@@ -2058,7 +2058,7 @@ months := ' JANFEBMARAPRMAYJUNJULAUGSEPOCTNOVDEC';
 
 % Print whether we're using src-specials and other such features.
 % Print TCX name if one's given.
-@x [29.536] l.10331
+@x [29.536] l.10363
 end
 @y
 if shellenabledp then begin
@@ -2094,7 +2094,7 @@ end
 % to open the file with and without the `.tex' extension, regardless of
 % whether the file already has an extension.  This allows filenames like
 % `foo' and `foo.bar.tex', as well as `foo.tex' and `foo.bar'.
-@x [29.537] l.10338 - start_input
+@x [29.537] l.10373 - start_input
 begin scan_file_name; {set |cur_name| to desired file name}
 if cur_ext="" then cur_ext:=".tex";
 pack_cur_name;
@@ -2117,13 +2117,13 @@ loop@+begin
     goto done;
 @z
 
-@x [29.537] l.10348 - start_input: don't force ".tex" extension.
+@x [29.537] l.10383 - start_input: don't force ".tex" extension.
   prompt_file_name("input file name",".tex");
 @y
   prompt_file_name("input file name","");
 @z
 
-@x [29.537] l.10350 - start_input: string recycling
+@x [29.537] l.10385 - start_input: string recycling
 done: name:=a_make_name_string(cur_file);
 @y
 done: name:=a_make_name_string(cur_file);
@@ -2137,13 +2137,13 @@ if name=str_ptr-1 then {we can try to conserve string pool space now}
   end;
 @z
 
-@x [29.537] l.10352 - start_input: was job_name given on the command line?
+@x [29.537] l.10387 - start_input: was job_name given on the command line?
   begin job_name:=cur_name; open_log_file;
 @y
   begin job_name:=get_job_name(cur_name); open_log_file;
 @z
 
-@x [29.537] l.10356 -
+@x [29.537] l.10390 -  -
 if term_offset+length(name)>max_print_line-2 then print_ln
 else if (term_offset>0)or(file_offset>0) then print_char(" ");
 print_char("("); incr(open_parens); slow_print(name); update_terminal;
@@ -2155,14 +2155,14 @@ print_char("("); incr(open_parens);
 slow_print(full_source_filename_stack[in_open]); update_terminal;
 @z
 
-@x [29.537] l.10360 - start_input: don't return filename to string pool.
+@x [29.537] l.10394 - start_input: don't return filename to string pool.
 if name=str_ptr-1 then {conserve string pool space (but see note above)}
   begin flush_string; name:=cur_name;
   end;
 @y
 @z
 
-@x [30.548] l.10673 - texarray
+@x [30.548] l.10708 - texarray
 @!internal_font_number=font_base..font_max; {|font| in a |char_node|}
 @!font_index=0..font_mem_size; {index into |font_info|}
 @y
@@ -2171,7 +2171,7 @@ if name=str_ptr-1 then {conserve string pool space (but see note above)}
 @!nine_bits=min_quarterword..non_char;
 @z
 
-@x [30.549] l.10682 - texarray
+@x [30.549] l.10717 - texarray
 @!font_info:array[font_index] of memory_word;
   {the big collection of font data}
 @!fmem_ptr:font_index; {first unused word of |font_info|}
@@ -2235,7 +2235,7 @@ if name=str_ptr-1 then {conserve string pool space (but see note above)}
   {|font_bchar| if it doesn't exist in the font, otherwise |non_char|}
 @z
 
-@x [30.550] l.10723 - texarray
+@x [30.550] l.10758 - texarray
 @!char_base:array[internal_font_number] of integer;
   {base addresses for |char_info|}
 @!width_base:array[internal_font_number] of integer;
@@ -2275,12 +2275,12 @@ if name=str_ptr-1 then {conserve string pool space (but see note above)}
   {base addresses for font parameters}
 @z
 
-@x [30.551] l.10743 - texarray
+@x [30.551] l.10778 - texarray
 for k:=font_base to font_max do font_used[k]:=false;
 @y
 @z
 
-@x [30.552] l.10749 - texarray
+@x [30.552] l.10784 - texarray
 font_ptr:=null_font; fmem_ptr:=7;
 font_name[null_font]:="nullfont"; font_area[null_font]:="";
 hyphen_char[null_font]:="-"; skew_char[null_font]:=-1;
@@ -2298,7 +2298,7 @@ for k:=0 to 6 do font_info[k].sc:=0;
 @y
 @z
 
-@x [30.554] l.10795 - MLTeX: |effective_char| in |char_info|
+@x [30.554] l.10830 - MLTeX: |effective_char| in |char_info|
 as fast as possible under the circumstances.
 @^inner loop@>
 
@@ -2356,7 +2356,7 @@ metric information in this font, and character accesses in math mode.
 @#
 @z
 
-@x [30] m.560 l.10876 - MLTeX: |effective_char| in |char_info|
+@x [30.560] l.10911 - MLTeX: |effective_char| in |char_info|
 @p function read_font_info(@!u:pointer;@!nom,@!aire:str_number;
 @y
 @p @t\4@>@<Declare additional functions for ML\TeX@>@/
@@ -2364,21 +2364,21 @@ metric information in this font, and character accesses in math mode.
 function read_font_info(@!u:pointer;@!nom,@!aire:str_number;
 @z
 
-@x [30.560] l.10898 - Check lengths
+@x [30.560] l.10915 - Check lengths
 @!file_opened:boolean; {was |tfm_file| successfully opened?}
 @y
 @!name_too_long:boolean; {|nom| or |aire| exceeds 255 bytes?}
 @!file_opened:boolean; {was |tfm_file| successfully opened?}
 @z
 
-@x [30.561] l.10939 - Check lengths
+@x [30.561] l.10956 - Check lengths
 else print(" not loadable: Metric (TFM) file not found");
 @y
 else if name_too_long then print(" not loadable: Metric (TFM) file name too long")
 else print(" not loadable: Metric (TFM) file not found");
 @z
 
-@x [30.563] l.10961 - Check lengths, don't use TEX_font_area.
+@x [30.563] l.10978 - Check lengths, don't use TEX_font_area.
 if aire="" then pack_file_name(nom,TEX_font_area,".tfm")
 else pack_file_name(nom,aire,".tfm");
 @y
@@ -2393,7 +2393,7 @@ pack_file_name(nom,aire,"");
 % tfm file, we read its first byte into `tfm_temp' right away.  TeX
 % looks at `fbyte' before calling `fget', so it ends up seeing every
 % byte.  This is Pascal-like I/O.
-@x [30.564] l.10956 - reading the tfm file, define fget & fbyte
+@x [30.564] l.10991 - reading the tfm file, define fget & fbyte
 @d fget==get(tfm_file)
 @d fbyte==tfm_file^
 @y
@@ -2401,13 +2401,13 @@ pack_file_name(nom,aire,"");
 @d fbyte==tfm_temp
 @z
 
-@x [30.570] l.11064 - MLTeX: fix for bug while loading font
+@x [30.570] l.11100 - MLTeX: fix for bug while loading font
   begin qw:=char_info(f)(d);
 @y
   begin qw:=orig_char_info(f)(d);
 @z
 
-@x [30.573] l.11116 - MLTeX: fix for bug while loading font
+@x [30.573] l.11152 - MLTeX: fix for bug while loading font
   qw:=char_info(f)(#); {N.B.: not |qi(#)|}
 @y
   qw:=orig_char_info(f)(#); {N.B.: not |qi(#)|}
@@ -2416,19 +2416,19 @@ pack_file_name(nom,aire,"");
 % [30.575] We only want `eof' on the TFM file to be true if we
 % previously had EOF, not if we're at EOF now.  This is like `feof', and
 % unlike our implementation of `eof' elsewhere.
-@x [30.575] l.11180 - Reading the tfm file, replace eof() by feof().
+@x [30.575] l.11197 - Reading the tfm file, replace eof() by feof().
 if eof(tfm_file) then abort;
 @y
 if feof(tfm_file) then abort;
 @z
 
-@x [30.576] l.11180 - MLTeX: fix for bug while loading font
+@x [30.576] l.11216 - MLTeX: fix for bug while loading font
   begin qw:=char_info(f)(bchar); {N.B.: not |qi(bchar)|}
 @y
   begin qw:=orig_char_info(f)(bchar); {N.B.: not |qi(bchar)|}
 @z
 
-@x [30.582] l.11276 - MLTeX: call |effective_char| in |new_character|
+@x [30.582] l.11312 - MLTeX: call |effective_char| in |new_character|
 @p function new_character(@!f:internal_font_number;@!c:eight_bits):pointer;
 label exit;
 var p:pointer; {newly allocated node}
@@ -2448,7 +2448,7 @@ if font_bc[f]<=qo(ec) then if font_ec[f]>=qo(ec) then
   if char_exists(orig_char_info(f)(ec)) then  {N.B.: not |char_info|}
 @z
 
-@x [32.592] l.11820 - font numbers can be >255 now.
+@x [32.592] l.11856 - font numbers can be >255 now.
 @!c,@!f:quarterword; {character and font in current |char_node|}
 @y
  {character and font in current |char_node|}
@@ -2456,7 +2456,7 @@ if font_bc[f]<=qo(ec) then if font_ec[f]>=qo(ec) then
 @!f:internal_font_number;
 @z
 
-@x [32.595] l.11860 - texarray
+@x [32.595] l.11896 - texarray
 @!dvi_buf:array[dvi_index] of eight_bits; {buffer for \.{DVI} output}
 @!half_buf:dvi_index; {half of |dvi_buf_size|}
 @!dvi_limit:dvi_index; {end of the current half buffer}
@@ -2468,7 +2468,7 @@ if font_bc[f]<=qo(ec) then if font_ec[f]>=qo(ec) then
 @!dvi_ptr:integer; {the next available buffer address}
 @z
 
-@x [32.597] l.11886 - write_dvi done in C.
+@x [32.597] l.11922 - write_dvi done in C.
 @p procedure write_dvi(@!a,@!b:dvi_index);
 var k:dvi_index;
 begin for k:=a to b do write(dvi_file,dvi_buf[k]);
@@ -2479,7 +2479,7 @@ the bytes in one shot.  Much better even than writing four
 bytes at a time.
 @z
 
-@x [32.601] l.11911 - check dvi file size
+@x [32.598] l.11928 - check dvi file size
 each time, we use the macro |dvi_out|.
 @y
 each time, we use the macro |dvi_out|.
@@ -2488,7 +2488,7 @@ The length of |dvi_file| should not exceed |@"7FFFFFFF|; we set |cur_s:=-2|
 to prevent further \.{DVI} output causing infinite recursion.
 @z
 
-@x [32.601] l.11918 - dvi_swap: check dvi file size
+@x [32.598] l.11935 - dvi_swap: check dvi file size
 begin if dvi_limit=dvi_buf_size then
 @y
 begin if dvi_ptr>(@"7FFFFFFF-dvi_offset) then
@@ -2499,7 +2499,7 @@ begin if dvi_ptr>(@"7FFFFFFF-dvi_offset) then
 if dvi_limit=dvi_buf_size then
 @z
 
-@x [32.602] l.11932 -  empty the last bytes: check dvi file size
+@x [32.599] l.11949 - empty the last bytes: check dvi file size
 if dvi_ptr>0 then write_dvi(0,dvi_ptr-1)
 @y
 if dvi_ptr>(@"7FFFFFFF-dvi_offset) then
@@ -2510,7 +2510,7 @@ if dvi_ptr>(@"7FFFFFFF-dvi_offset) then
 if dvi_ptr>0 then write_dvi(0,dvi_ptr-1)
 @z
 
-@x [32.602] l.11944 - Allow for outputting more than 256 fonts.
+@x [32.602] l.11980 - Allow for outputting more than 256 fonts.
 begin dvi_out(fnt_def1);
 dvi_out(f-font_base-1);@/
 @y
@@ -2524,7 +2524,7 @@ else begin dvi_out(fnt_def1+1);
   end;
 @z
 
-@x [32.617] l.12280 - Use output_comment if the user set it. Assume it's short enough.
+@x [32.617] l.12297 - Use output_comment if the user set it. Assume it's short enough.
   old_setting:=selector; selector:=new_string;
 @y
 if output_comment then
@@ -2535,14 +2535,14 @@ else begin {the default code is unchanged}
   old_setting:=selector; selector:=new_string;
 @z
 
-@x [32.617] l.12288 - Use output_comment if the user set it.
+@x [32.617] l.12305 - Use output_comment if the user set it.
   end
 @y
 end;
   end
 @z
 
-@x [32.619] l.12294 - MLTeX: substitute character in |hlist_out|
+@x [32.619] l.12330 - MLTeX: substitute character in |hlist_out|
 procedure hlist_out; {output an |hlist_node| box}
 label reswitch, move_past, fin_rule, next_p;
 @y
@@ -2550,7 +2550,7 @@ procedure hlist_out; {output an |hlist_node| box}
 label reswitch, move_past, fin_rule, next_p, continue, found;
 @z
 
-@x [32.620] l.12326 - MLTeX: replace virtual character in |hlist_out|
+@x [32.620] l.12365 - MLTeX: replace virtual character in |hlist_out|
 reaching a non-|char_node|. The program uses the fact that |set_char_0=0|.
 @^inner loop@>
 @y
@@ -2573,7 +2573,7 @@ the current hlist is normally traversed more than once!)
 @^inner loop@>
 @z
 
-@x [32.620] l.12334 - MLTeX: substitute character during |shipout|
+@x [32.620] l.12373 - MLTeX: substitute character during |shipout|
   if c>=qi(128) then dvi_out(set1);
   dvi_out(qo(c));@/
   cur_h:=cur_h+char_width(f)(char_info(f)(c));
@@ -2590,7 +2590,7 @@ the current hlist is normally traversed more than once!)
 continue:
 @z
 
-@x [32.622] l.12349 - more >256 font output stuff.
+@x [32.621] l.12388 - more >256 font output stuff.
 else  begin dvi_out(fnt1); dvi_out(f-font_base-1);
   end;
 @y
@@ -2605,7 +2605,7 @@ else begin dvi_out(fnt1+1);
 
 % We output each portion of the page as we get to it, if we are using
 % IPC, so that the previewer (TeXView) can display it immediately. [SPM]
-@x [32.640] l.12723 - IPC
+@x [32.640] l.12740 - IPC
 done:
 @y
 ifdef ('IPC')
@@ -2632,14 +2632,14 @@ endif ('IPC');
 done:
 @z
 
-@x [32.645] l.12766 - check dvi file size
+@x [32.642] l.12783 - check dvi file size
 else  begin dvi_out(post); {beginning of the postamble}
 @y
 else if cur_s<>-2 then
   begin dvi_out(post); {beginning of the postamble}
 @z
 
-@x [32.645] l.12775 - Use dvi_offset instead of dvi_buf_size with IPC stuff.
+@x [32.642] l.12792 - Use dvi_offset instead of dvi_buf_size with IPC stuff.
   k:=4+((dvi_buf_size-dvi_ptr) mod 4); {the number of 223's}
 @y
 ifdef ('IPC')
@@ -2650,13 +2650,13 @@ ifndef ('IPC')
 endifn ('IPC')
 @z
 
-@x [32.645] l.12780 - use print_file_name
+@x [32.642] l.12797 - use print_file_name
   print_nl("Output written on "); slow_print(output_file_name);
 @y
   print_nl("Output written on "); print_file_name(0, output_file_name, 0);
 @z
 
-@x [32.645] l.12782 - i18n fix
+@x [32.642] l.12799 - i18n fix
   print(" ("); print_int(total_pages); print(" page");
   if total_pages<>1 then print_char("s");
 @y
@@ -2671,7 +2671,7 @@ endifn ('IPC')
 % can be substituted => we have to avoid this in math mode
 % (for compatibility reasons and to avoid other problems).
 %
-@x [35.708] l.13903 - MLTeX: avoid substitution in |var_delimiter|
+@x [35.708] l.13954 - MLTeX: avoid substitution in |var_delimiter|
 if (qo(y)>=font_bc[g])and(qo(y)<=font_ec[g]) then
   begin continue: q:=char_info(g)(y);
 @y
@@ -2679,19 +2679,19 @@ if (qo(y)>=font_bc[g])and(qo(y)<=font_ec[g]) then
   begin continue: q:=orig_char_info(g)(y);
 @z
 
-@x [36.722] l.14207 - MLTeX: avoid substitution in |fetch|
+@x [36.722] l.14224 - MLTeX: avoid substitution in |fetch|
     cur_i:=char_info(cur_f)(cur_c)
 @y
     cur_i:=orig_char_info(cur_f)(cur_c)
 @z
 
-@x [36.740] l.14486 - MLTeX: avoid substitution in |make_math_accent|
+@x [36.740] l.14537 - MLTeX: avoid substitution in |make_math_accent|
   i:=char_info(f)(y);
 @y
   i:=orig_char_info(f)(y);
 @z
 
-@x [36.749] l.14638 - MLTeX: avoid substitution in |make_op|
+@x [36.749] l.14689 - MLTeX: avoid substitution in |make_op|
     begin c:=rem_byte(cur_i); i:=char_info(cur_f)(c);
 @y
     begin c:=rem_byte(cur_i); i:=orig_char_info(cur_f)(c);
@@ -2713,7 +2713,7 @@ if (insert_src_special_every_cr) then insert_src_special;
 if every_cr<>null then begin_token_list(every_cr,every_cr_text);
  @z
 
-@x [42.920] l.18056 - bigtrie: allow larger hyphenation tries.
+@x [42.920] l.18111 - bigtrie: allow larger hyphenation tries.
 Comparatively few different number sequences $n_0\ldots n_k$ actually occur,
 since most of the |n|'s are generally zero. Therefore the number sequences
 are encoded in such a way that |trie_op|$(z_k)$ is only one byte long.
@@ -2745,14 +2745,14 @@ for this pattern by carrying out the following little program: Set
 and |v:=hyf_next[v]|; repeat, if necessary, until |v=min_trie_op|.
 @z
 
-@x [42.920] l.18068 - bigtrie: allow larger hyphenation tries.
+@x [42.920] l.18123 - bigtrie: allow larger hyphenation tries.
 @!trie_pointer=0..trie_size; {an index into |trie|}
 @y
 @!trie_pointer=0..ssup_trie_size; {an index into |trie|}
 @!trie_opcode=0..ssup_trie_opcode;  {a trie opcode}
 @z
 
-@x [42.921] l.18070 - bigtrie: allow larger hyphenation tries.
+@x [42.921] l.18125 - bigtrie: allow larger hyphenation tries.
 @ @d trie_link(#)==trie[#].rh {``downward'' link in a trie}
 @d trie_char(#)==trie[#].b1 {character matched at this trie location}
 @d trie_op(#)==trie[#].b0 {program for hyphenation at this trie location}
@@ -2768,7 +2768,7 @@ another macro.
 @d trie_op(#)==trie_tro[#] {program for hyphenation at this trie location}
 @z
 
-@x [42.921] l.18075 - bigtrie: allow larger hyphenation tries.
+@x [42.921] l.18130 - bigtrie: allow larger hyphenation tries.
 @!trie:array[trie_pointer] of two_halves; {|trie_link|, |trie_char|, |trie_op|}
 @y
 {We will dynamically allocate these arrays.}
@@ -2777,28 +2777,28 @@ another macro.
 @!trie_trc:^quarterword; {|trie_char|}
 @z
 
-@x [42.921] l.18078 - bigtrie: allow larger hyphenation tries.
+@x [42.921] l.18133 - bigtrie: allow larger hyphenation tries.
 @!hyf_next:array[1..trie_op_size] of quarterword; {continuation code}
 @y
 @!hyf_next:array[1..trie_op_size] of trie_opcode; {continuation code}
 @z
 
-@x [42.923] l.18099 - bigtrie: allow larger hyphenation tries.
+@x [42.923] l.18154 - bigtrie: allow larger hyphenation tries.
     begin if trie_op(z)<>min_quarterword then
 @y
     begin if trie_op(z)<>min_trie_op then
 @z
 
-@x [42.924] l.18112 - bigtrie: allow larger hyphenation tries.
+@x [42.924] l.18167 - bigtrie: allow larger hyphenation tries.
 until v=min_quarterword;
 @y
 until v=min_trie_op;
 @z
 
 %%%%%%%% dynamic hyph_size
-@x 18126 m.925
+@x [42.925] l.18181
 different from $\alpha$, we can conclude that $\alpha$ is not in the table.
-@y  18126
+@y
 different from $\alpha$, we can conclude that $\alpha$ is not in the table.
 This is a clever scheme which saves the need for a hash link array.
 However, it is difficult to increase the size of the hyphen exception
@@ -2811,19 +2811,19 @@ arrays start at |0|.
 @z
 
 %%%%%%%% dynamic hyph_size
-@x 18134 m.925
+@x [42.925] l.18189
 @!hyph_pointer=0..hyph_size; {an index into the ordered hash table}
-@y  18134
+@y
 @!hyph_pointer=0..ssup_hyph_size; {index into hyphen exceptions hash table;
                      enlarging this requires changing (un)dump code}
 @z
 
 %%%%%%%% dynamic hyph_size
-@x 18137 m.926
+@x [42.926] l.18192
 @!hyph_word:array[hyph_pointer] of str_number; {exception words}
 @!hyph_list:array[hyph_pointer] of pointer; {lists of hyphen positions}
 @!hyph_count:hyph_pointer; {the number of words in the exception dictionary}
-@y  18139
+@y
 @!hyph_word: ^str_number; {exception words}
 @!hyph_list: ^pointer; {lists of hyphen positions}
 @!hyph_link: ^hyph_pointer; {link array for hyphen exceptions hash table}
@@ -2832,12 +2832,12 @@ arrays start at |0|.
 @z
 
 %%%%%%%% dynamic hyph_size
-@x 18145 m.928
+@x [42.928] l.18200
 for z:=0 to hyph_size do
   begin hyph_word[z]:=0; hyph_list[z]:=null;
   end;
 hyph_count:=0;
-@y  18148
+@y
 for z:=0 to hyph_size do
   begin hyph_word[z]:=0; hyph_list[z]:=null; hyph_link[z]:=0;
   end;
@@ -2846,7 +2846,7 @@ hyph_next:=hyph_prime+1; if hyph_next>hyph_size then hyph_next:=hyph_prime;
 @z
 
 %%%%%%%% dynamic hyph_size
-@x 18163 m.930
+@x [42.930] l.18218
 h:=hc[1]; incr(hn); hc[hn]:=cur_lang;
 for j:=2 to hn do h:=(h+h+hc[j]) mod hyph_size;
 loop@+  begin @<If the string |hyph_word[h]| is less than \(hc)|hc[1..hn]|,
@@ -2855,7 +2855,7 @@ loop@+  begin @<If the string |hyph_word[h]| is less than \(hc)|hc[1..hn]|,
   if h>0 then decr(h)@+else h:=hyph_size;
   end;
 not_found: decr(hn)
-@y  18170
+@y
 h:=hc[1]; incr(hn); hc[hn]:=cur_lang;
 for j:=2 to hn do h:=(h+h+hc[j]) mod hyph_prime;
 loop@+  begin @<If the string |hyph_word[h]| is less than \(hc)|hc[1..hn]|,
@@ -2867,7 +2867,7 @@ loop@+  begin @<If the string |hyph_word[h]| is less than \(hc)|hc[1..hn]|,
 not_found: decr(hn)
 @z
 
-@x [42.931] l.18206 - dynamic hyph_size
+@x [42.931] l.18227 - dynamic hyph_size
 @ @<If the string |hyph_word[h]| is less than \(hc)...@>=
 k:=hyph_word[h]; if k=0 then goto not_found;
 if length(k)<hn then goto not_found;
@@ -2878,7 +2878,7 @@ the module title is no longer descriptive.}
 k:=hyph_word[h]; if k=0 then goto not_found;
 @z
 
-@x [42.931] l.18211 - dynamic hyph_size
+@x [42.931] l.18232 - dynamic hyph_size
   repeat if so(str_pool[u])<hc[j] then goto not_found;
   if so(str_pool[u])>hc[j] then goto done;
 @y
@@ -2887,21 +2887,21 @@ k:=hyph_word[h]; if k=0 then goto not_found;
 @z
 
 %%%%%%%% dynamic hyph_size
-@x 18245 m.934
+@x [42.934] l.18273
 @!s,@!t:str_number; {strings being compared or stored}
 @y
 @!s:str_number; {strings being compared or stored}
 @z
 
 %%%%%%%% dynamic hyph_size
-@x 18274 m.939
+@x [42.939] l.18329
   begin h:=(h+h+hc[j]) mod hyph_size;
-@y  18274
+@y
   begin h:=(h+h+hc[j]) mod hyph_prime;
 @z
 
 %%%%%%%% dynamic hyph_size
-@x 18281 m.940
+@x [42.940] l.18336
 @ @<Insert the \(p)pair |(s,p)|...@>=
 if hyph_count=hyph_size then overflow("exception dictionary",hyph_size);
 @:TeX capacity exceeded exception dictionary}{\quad exception dictionary@>
@@ -2912,7 +2912,7 @@ while hyph_word[h]<>0 do
   if h>0 then decr(h)@+else h:=hyph_size;
   end;
 hyph_word[h]:=s; hyph_list[h]:=p
-@y  18290
+@y
 @ @<Insert the \(p)pair |(s,p)|...@>=
   if hyph_next <= hyph_prime then
      while (hyph_next>0) and (hyph_word[hyph_next-1]>0) do decr(hyph_next);
@@ -2935,7 +2935,7 @@ while hyph_word[h]<>0 do
 found: hyph_word[h]:=s; hyph_list[h]:=p
 @z
 
-@x [42.941] l.18326 - dynamic hyph_size
+@x [42.941] l.18347 - dynamic hyph_size
 @ @<If the string |hyph_word[h]| is less than \(or)...@>=
 k:=hyph_word[h];
 if length(k)<length(s) then goto found;
@@ -2948,14 +2948,14 @@ k:=hyph_word[h];
 if length(k)<>length(s) then goto not_found;
 @z
 
-@x [42.941] l.18331 - dynamic hyph_size
+@x [42.941] l.18352 - dynamic hyph_size
 repeat if str_pool[u]<str_pool[v] then goto found;
 if str_pool[u]>str_pool[v] then goto not_found;
 @y
 repeat if str_pool[u]<>str_pool[v] then goto not_found;
 @z
 
-@x [42.941] l.18335 - dynamic hyph_size
+@x [42.941] l.18356 - dynamic hyph_size
 found:q:=hyph_list[h]; hyph_list[h]:=p; p:=q;@/
 t:=hyph_word[h]; hyph_word[h]:=s; s:=t;
 not_found:
@@ -2969,37 +2969,37 @@ goto found;
 not_found:
 @z
 
-@x [43.943] l.18332 - bigtrie: Larger tries, also in documentation parts.
+@x [43.943] l.18387 - bigtrie: Larger tries, also in documentation parts.
 |hyf_next[@t$v^\prime$@>]=min_quarterword|.
 @y
 |hyf_next[@t$v^\prime$@>]=min_trie_op|.
 @z
 
-@x [43.943] l.18336 - bigtrie: Larger tries, also in documentation parts.
+@x [43.943] l.18391 - bigtrie: Larger tries, also in documentation parts.
 $$\hbox{|@t$v^\prime$@>:=new_trie_op(0,1,min_quarterword)|,\qquad
 @y
 $$\hbox{|@t$v^\prime$@>:=new_trie_op(0,1,min_trie_op)|,\qquad
 @z
 
-@x [43.943] l.18346 - web2c can't parse negative lower bounds in arrays.  Sorry.
+@x [43.943] l.18401 - web2c can't parse negative lower bounds in arrays.  Sorry.
 @!init @!trie_op_hash:array[-trie_op_size..trie_op_size] of 0..trie_op_size;
 @y
 @!init @!trie_op_hash:array[neg_trie_op_size..trie_op_size] of 0..trie_op_size;
 @z
 
-@x [43.943] l.18348 - bigtrie: Larger hyphenation tries.
+@x [43.943] l.18403 - bigtrie: Larger hyphenation tries.
 @!trie_used:array[ASCII_code] of quarterword;
 @y
 @!trie_used:array[ASCII_code] of trie_opcode;
 @z
 
-@x [43.943] l.18352 - bigtrie: Larger hyphenation tries.
+@x [43.943] l.18407 - bigtrie: Larger hyphenation tries.
 @!trie_op_val:array[1..trie_op_size] of quarterword;
 @y
 @!trie_op_val:array[1..trie_op_size] of trie_opcode;
 @z
 
-@x [43.943] l.18355 - Dynamic trie arrays
+@x [43.943] l.18410 - Dynamic trie arrays
 tini
 @y
 tini@;
@@ -3007,13 +3007,13 @@ tini@;
 @!small_op:boolean; {flag used while dumping or undumping}
 @z
 
-@x [43.944] l.18358 - bigtrie: Larger tries, also in documentation parts.
+@x [43.944] l.18413 - bigtrie: Larger tries, also in documentation parts.
 |new_trie_op| could return |min_quarterword| (thereby simply ignoring
 @y
 |new_trie_op| could return |min_trie_op| (thereby simply ignoring
 @z
 
-@x [43.944] l.18365 - bigtrie: Larger hyphenation tries.
+@x [43.944] l.18420 - bigtrie: Larger hyphenation tries.
 function new_trie_op(@!d,@!n:small_number;@!v:quarterword):quarterword;
 label exit;
 var h:-trie_op_size..trie_op_size; {trial hash location}
@@ -3025,7 +3025,7 @@ var h:neg_trie_op_size..trie_op_size; {trial hash location}
 @!u:trie_opcode; {trial op code}
 @z
 
-@x [43.944] l.18370 - Another casting problem, and use |neg_trie_op_size|.
+@x [43.944] l.18425 - Another casting problem, and use |neg_trie_op_size|.
 begin h:=abs(n+313*d+361*v+1009*cur_lang) mod (trie_op_size+trie_op_size)
   - trie_op_size;
 @y
@@ -3033,7 +3033,7 @@ begin h:=abs(n+313*d+361*v+1009*cur_lang) mod (trie_op_size-neg_trie_op_size)
   + neg_trie_op_size;
 @z
 
-@x [43.944] l.18377 - bigtrie: And larger tries again.
+@x [43.944] l.18432 - bigtrie: And larger tries again.
     if u=max_quarterword then
       overflow("pattern memory ops per language",
         max_quarterword-min_quarterword);
@@ -3046,26 +3046,26 @@ begin h:=abs(n+313*d+361*v+1009*cur_lang) mod (trie_op_size-neg_trie_op_size)
     if u>max_op_used then max_op_used:=u;
 @z
 
-@x [43.945] l.18399 - bigtrie: And larger tries again.
+@x [43.945] l.18454 - bigtrie: And larger tries again.
 op_start[0]:=-min_quarterword;
 @y
 op_start[0]:=-min_trie_op;
 @z
 
-@x [43.946] l.18416 - bigtrie: And larger tries again.
+@x [43.946] l.18471 - bigtrie: And larger tries again.
 for k:=0 to 255 do trie_used[k]:=min_quarterword;
 @y
 for k:=0 to 255 do trie_used[k]:=min_trie_op;
 @z
 
-@x [43.946] l.18417 - Dynamic trie arrays.
+@x [43.946] l.18472 - Dynamic trie arrays.
 trie_op_ptr:=0;
 @y
 max_op_used:=min_trie_op;
 trie_op_ptr:=0;
 @z
 
-@x [43.947] l.18438 - Dynamically allocate arrays, and a casting problem.
+@x [43.947] l.18493 - Dynamically allocate arrays, and a casting problem.
 @!init @!trie_c:packed array[trie_pointer] of packed_ASCII_code;
   {characters to match}
 @t\hskip10pt@>@!trie_o:packed array[trie_pointer] of quarterword;
@@ -3093,13 +3093,13 @@ tini
 tini
 @z
 
-@x [43.950] l.18521 - Dynamically allocate & larger tries.
+@x [43.950] l.18576 - Dynamically allocate & larger tries.
 @d trie_back(#)==trie[#].lh {backward links in |trie| holes}
 @y
 @d trie_back(#)==trie_tro[#] {use the opcode field now for backward links}
 @z
 
-@x [43.590] l.18524 - Dynamically allocate & larger tries.
+@x [43.950] l.18579 - Dynamically allocate & larger tries.
 @!init @!trie_taken:packed array[1..trie_size] of boolean;
   {does a family start here?}
 @t\hskip10pt@>@!trie_min:array[ASCII_code] of trie_pointer;
@@ -3117,13 +3117,13 @@ tini
 tini
 @z
 
-@x [43.951] l.18539 - Dynamically allocate.
+@x [43.951] l.18594 - Dynamically allocate.
 trie_not_ready:=true; trie_root:=0; trie_c[0]:=si(0); trie_ptr:=0;
 @y
 trie_not_ready:=true;
 @z
 
-@x [43.958] l.18634 - bigtrie: Larger tries.
+@x [43.958] l.18689 - bigtrie: Larger tries.
 @<Move the data into |trie|@>=
 h.rh:=0; h.b0:=min_quarterword; h.b1:=min_quarterword; {|trie_link:=0|,
   |trie_op:=min_quarterword|, |trie_char:=qi(0)|}
@@ -3137,43 +3137,43 @@ h.rh:=0; h.b0:=min_quarterword; h.b1:=min_quarterword; {|trie_link:=0|,
 @<Move the data into |trie|@>=
 @z
 
-@x [43.958] l.18638 - bigtrie: Larger tries.
+@x [43.958] l.18693 - bigtrie: Larger tries.
   begin for r:=0 to 256 do trie[r]:=h;
 @y
   begin for r:=0 to 256 do clear_trie;
 @z
 
-@x [43.958] l.18643 - bigtrie: Larger tries.
+@x [43.958] l.18698 - bigtrie: Larger tries.
   repeat s:=trie_link(r); trie[r]:=h; r:=s;
 @y
   repeat s:=trie_link(r); clear_trie; r:=s;
 @z
 
-@x [43.960] l.18677 - bigtrie: Larger tries.
+@x [43.960] l.18732 - bigtrie: Larger tries.
 @!v:quarterword; {trie op code}
 @y
 @!v:trie_opcode; {trie op code}
 @z
 
-@x [43.963] l.18749 - bigtrie: Larger tries.
+@x [43.963] l.18804 - bigtrie: Larger tries.
 if trie_o[q]<>min_quarterword then
 @y
 if trie_o[q]<>min_trie_op then
 @z
 
-@x [43.964] l.18762 - bigtrie: Larger tries.
+@x [43.964] l.18817 - bigtrie: Larger tries.
 trie_c[p]:=si(c); trie_o[p]:=min_quarterword;
 @y
 trie_c[p]:=si(c); trie_o[p]:=min_trie_op;
 @z
 
-@x [43.965] l.18768 - bigtrie: Larger tries.
+@x [43.965] l.18823 - bigtrie: Larger tries.
 l:=k; v:=min_quarterword;
 @y
 l:=k; v:=min_trie_op;
 @z
 
-@x [43.966] l.18786 - bigtrie: Larger tries.
+@x [43.966] l.18841 - bigtrie: Larger tries.
 @!h:two_halves; {template used to zero out |trie|'s holes}
 @y
 @z
@@ -3207,7 +3207,7 @@ l:=k; v:=min_trie_op;
 %  main_loop_move_lig,
 %@z
 
-@x [46.1034] l.20074 - source specials
+@x [46.1034] l.20132 - source specials
 @<Append character |cur_chr|...@>=
 @y
 @<Append character |cur_chr|...@>=
@@ -3216,7 +3216,7 @@ if ((head=tail) and (mode>0)) then begin
 end;
 @z
 
-@x [46.1036] l.20138 - MLTeX: substitution in |main_control|
+@x [46.1036] l.20198 - MLTeX: substitution in |main_control|
 main_loop_move+2:if(cur_chr<font_bc[main_f])or(cur_chr>font_ec[main_f]) then
 @y
 main_loop_move+2:
@@ -3224,13 +3224,13 @@ if(qo(effective_char(false,main_f,qi(cur_chr)))>font_ec[main_f])or
   (qo(effective_char(false,main_f,qi(cur_chr)))<font_bc[main_f]) then
 @z
 
-@x [46.1036] l.20141 - MLTeX: substitution in |main_control|
+@x [46.1036] l.20201 - MLTeX: substitution in |main_control|
 main_i:=char_info(main_f)(cur_l);
 @y
 main_i:=effective_char_info(main_f,cur_l);
 @z
 
-@x [46.1049] l.20407 - i18n fix, see change to [16.211]
+@x [46.1049] l.20440
 print("' in "); print_mode(mode);
 @y
 print_in_mode(mode);
@@ -3252,7 +3252,7 @@ print_in_mode(mode);
   if every_hbox<>null then begin_token_list(every_hbox,every_hbox_text);
  @z
 
-@x [47.1091] l.21064 - source specials
+@x [47.1091] l.21124 - source specials
 if indented then
   begin tail:=new_null_box; link(head):=tail; width(tail):=par_indent;@+
   end;
@@ -3273,7 +3273,7 @@ if indented then
   end;
  @z
 
-@x [48.1142] l.21697 - source specials
+@x [48.1139] l.21722 - source specials
 if every_math<>null then begin_token_list(every_math,every_math_text);
 @y
 if (insert_src_special_every_math) then insert_src_special;
@@ -3288,28 +3288,28 @@ if (insert_src_special_every_display) then append_src_special;
 if every_display<>null then begin_token_list(every_display,every_display_text);
  @z
 
-@x [48.1167] l.22042 - source specials
+@x [48.1167] l.22114 - source specials
   if every_vbox<>null then begin_token_list(every_vbox,every_vbox_text);
 @y
   if (insert_src_special_every_vbox) then insert_src_special;
   if every_vbox<>null then begin_token_list(every_vbox,every_vbox_text);
 @z
 
-@x [49.1215] l.22719 - hash_extra
+@x [49.1215] l.22793 - hash_extra
 if (cur_cs=0)or(cur_cs>frozen_control_sequence) then
 @y
 if (cur_cs=0)or(cur_cs>eqtb_top)or
   ((cur_cs>frozen_control_sequence)and(cur_cs<=eqtb_size)) then
 @z
 
-@x [49.1222] l.22794 - MLTeX: \charsubdef primitive
+@x [49.1222] l.22869 - MLTeX: \charsubdef primitive
 @d toks_def_code=6 {|shorthand_def| for \.{\\toksdef}}
 @y
 @d toks_def_code=6 {|shorthand_def| for \.{\\toksdef}}
 @d char_sub_def_code=7 {|shorthand_def| for \.{\\charsubdef}}
 @z
 
-@x [49.1222] l.22810 - MLTeX: \charsubdef primitive
+@x [49.1222] l.22885 - MLTeX: \charsubdef primitive
 @!@:toks_def_}{\.{\\toksdef} primitive@>
 @y
 @!@:toks_def_}{\.{\\toksdef} primitive@>
@@ -3320,14 +3320,14 @@ if mltex_p then
   end;
 @z
 
-@x [49.1222] l.22820 - MLTeX: \charsubdef primitive
+@x [49.1223] l.22895 - MLTeX: \charsubdef primitive
   othercases print_esc("toksdef")
 @y
   char_sub_def_code: print_esc("charsubdef");
   othercases print_esc("toksdef")
 @z
 
-@x [49.1222] l.22833 - MLTeX: \charsubdef primitive
+@x [49.1224] l.22908 - MLTeX: \charsubdef primitive
 shorthand_def: begin n:=cur_chr; get_r_token; p:=cur_cs; define(p,relax,256);
 @y
 shorthand_def: if cur_chr=char_sub_def_code then
@@ -3350,9 +3350,9 @@ shorthand_def: if cur_chr=char_sub_def_code then
 else begin n:=cur_chr; get_r_token; p:=cur_cs; define(p,relax,256);
 @z
 
-@x [49.1252] l.23230 - INI = VIR, so have to do runtime test.
+@x [49.1252] l.23309 - INI = VIR, so have to do runtime test.
     begin @!init new_patterns; goto done;@;@+tini@/
-@y  23215
+@y
     begin @!Init new_patterns; goto done;@;@+Tini@/
 @z
 
@@ -3360,11 +3360,11 @@ else begin n:=cur_chr; get_r_token; p:=cur_cs; define(p,relax,256);
 %   a) the string is already replaced in |scan_file_name| and therefore
 %   b) the wrong string will get flushed!!!
 %
-@x [49.1257] l.23328 unused variable
+@x [49.1257] l.23354 -  unused variable
 @!flushable_string:str_number; {string not yet referenced}
 @y
 @z
-@x [49.1260] l.23383 new_font: string recycling -- already done
+@x [49.1260] l.23409 -  new_font: string recycling -- already done
 flushable_string:=str_ptr-1;
 @y
 @z
@@ -3383,7 +3383,7 @@ flushable_string:=str_ptr-1;
 %
 % otherwise the wrong string will get removed by |flush_string|!!
 %
-@x [49.1260] l.23386 new_font: string recycling -- already done
+@x [49.1260] l.23412 -  new_font: string recycling -- already done
     begin if cur_name=flushable_string then
       begin flush_string; cur_name:=font_name[f];
       end;
@@ -3392,7 +3392,7 @@ flushable_string:=str_ptr-1;
     begin if s>0 then
 @z
 
-@x [49.1265] if batchmode, mktex... scripts should be silent.
+@x [49.1265] l.23454 - if batchmode, mktex... scripts should be silent.
 interaction:=cur_chr;
 @y
 interaction:=cur_chr;
@@ -3401,7 +3401,7 @@ then kpse_make_tex_discard_errors := 1
 else kpse_make_tex_discard_errors := 0;
 @z
 
-@x [49.1275] l.23441 - Same stuff as for \input, this time for \openin.
+@x [49.1275] l.23519 - Same stuff as for \input, this time for \openin.
   if cur_ext="" then cur_ext:=".tex";
   pack_cur_name;
   if a_open_in(read_file[n]) then read_open[n]:=just_open;
@@ -3413,7 +3413,7 @@ else kpse_make_tex_discard_errors := 0;
     read_open[n]:=just_open;
 @z
 
-@x [50.1301] l.23679 - INI = VIR, so runtime test.
+@x [50.1301] l.23760 - INI = VIR, so runtime test.
 format_ident:=" (INITEX)";
 @y
 if ini_version then format_ident:=" (INITEX)";
@@ -3421,14 +3421,14 @@ if ini_version then format_ident:=" (INITEX)";
 
 % Eliminate now-unused variable `w' in `store_fmt_file'.
 % Add format_engine.
-@x [50.1302] l.23690 - store_fmt_file
+@x [50.1302] l.23768 - store_fmt_file
 @!w: four_quarters; {four ASCII codes}
 @y
 @!format_engine: ^text_char;
 @z
 
 % MLTeX: dump |mltex_p| to fmt file
-@x [50.1302] l.23694
+@x [50.1302] l.23772
 @<Dump constants for consistency check@>;
 @y
 @<Dump constants for consistency check@>;
@@ -3438,7 +3438,7 @@ if ini_version then format_ident:=" (INITEX)";
 % Eliminate now-unused variable `w' in `load_fmt_file'.
 % Add format_engine.
 % Add dummies for undumping |xord|, |xchr|, and |xprn| into the void.
-@x [50.1303] l.23722 - load_fmt_file
+@x [50.1303] l.23800 - load_fmt_file
 @!w: four_quarters; {four ASCII codes}
 @y
 @!format_engine: ^text_char;
@@ -3448,28 +3448,28 @@ if ini_version then format_ident:=" (INITEX)";
 @z
 
 % MLTeX: undump |mltex_enabled_p| from fmt file
-@x [50.1303] l.23694
+@x [50.1303] l.23801
 begin @<Undump constants for consistency check@>;
 @y
 begin @<Undump constants for consistency check@>;
 @<Undump ML\TeX-specific data@>;
 @z
 
-@x [50.1305] l.23751 - Do dumping and undumping of fmt files in C.
+@x [50.1305] l.23829 - Do dumping and undumping of fmt files in C.
 @d dump_wd(#)==begin fmt_file^:=#; put(fmt_file);@+end
 @d dump_int(#)==begin fmt_file^.int:=#; put(fmt_file);@+end
 @d dump_hh(#)==begin fmt_file^.hh:=#; put(fmt_file);@+end
 @d dump_qqqq(#)==begin fmt_file^.qqqq:=#; put(fmt_file);@+end
 @y
 @z
-@x [1306]
+@x [50.1306] l.23843
 @d undump_wd(#)==begin get(fmt_file); #:=fmt_file^;@+end
 @d undump_int(#)==begin get(fmt_file); #:=fmt_file^.int;@+end
 @d undump_hh(#)==begin get(fmt_file); #:=fmt_file^.hh;@+end
 @d undump_qqqq(#)==begin get(fmt_file); #:=fmt_file^.qqqq;@+end
 @y
 @z
-@x [still 1306] debug format file
+@x [50.1306] l.23850 - debug format file
 @d undump_size_end_end(#)==too_small(#)@+else undump_end_end
 @y
 @d format_debug_end(#)==
@@ -3483,7 +3483,7 @@ begin @<Undump constants for consistency check@>;
   too_small(#)@+else format_debug (#)(x); undump_end_end
 @z
 
-@x [50,1307] l.23779 - texarray
+@x [50.1307] l.23859 - texarray
 dump_int(@$);@/
 @y
 dump_int(@"57325458);  {Web2C \TeX's magic constant: "W2TX"}
@@ -3502,13 +3502,13 @@ dump_int(hash_high);
 @z
 
 %%%%%%%% dynamic hyph_size
-@x 23784 m.1307
+@x [50.1307] l.23864
 dump_int(hyph_size)
-@y  23784
+@y
 dump_int(hyph_prime)
 @z
 
-@x [50.1308] l.23793 - texarray
+@x [50.1308] l.23873 - texarray
 x:=fmt_file^.int;
 if x<>@$ then goto bad_fmt; {check that strings are the same}
 @y
@@ -3563,7 +3563,7 @@ undump_int(hash_high);
     eqtb[x]:=eqtb[undefined_control_sequence];
 @z
 
-@x [50.1308] l.23795 - texarray
+@x [50.1308] l.23875 - texarray
 undump_int(x);
 if x<>mem_bot then goto bad_fmt;
 undump_int(x);
@@ -3587,15 +3587,15 @@ mem := zmem;
 @z
 
 %%%%%%%% dynamic hyph_size
-@x 23804 m.1308
+@x [50.1308] l.23884
 if x<>hyph_size then goto bad_fmt
-@y  23804
+@y
 if x<>hyph_prime then goto bad_fmt
 @z
 
 % [1309] Make dumping/undumping more efficient by doing whole arrays at
 % a time, via fread/fwrite in texmfmp.c.
-@x [50.1309] l.23814 - Make dumping/undumping more efficient.
+@x [50.1309] l.23894 - Make dumping/undumping more efficient.
 for k:=0 to str_ptr do dump_int(str_start[k]);
 k:=0;
 while k+4<pool_ptr do
@@ -3607,7 +3607,7 @@ dump_things(str_start[0], str_ptr+1);
 dump_things(str_pool[0], pool_ptr);
 @z
 
-@x [50.1310] l.23829 - Make dumping/undumping more efficient.
+@x [50.1310] l.23909 - Make dumping/undumping more efficient.
 undump_size(0)(pool_size)('string pool size')(pool_ptr);
 undump_size(0)(max_strings)('max strings')(str_ptr);
 for k:=0 to str_ptr do undump(0)(pool_ptr)(str_start[k]);
@@ -3629,31 +3629,31 @@ str_pool:=xmalloc_array(packed_ASCII_code, pool_size);
 undump_things(str_pool[0], pool_ptr);
 @z
 
-@x [50.1311] l.23850 - Make dumping/undumping more efficient.
+@x [50.1311] l.23930 - Make dumping/undumping more efficient.
 repeat for k:=p to q+1 do dump_wd(mem[k]);
 @y
 repeat dump_things(mem[p], q+2-p);
 @z
 
-@x [50.1311] l.23855 - Make dumping/undumping more efficient.
+@x [50.1311] l.23935 - Make dumping/undumping more efficient.
 for k:=p to lo_mem_max do dump_wd(mem[k]);
 @y
 dump_things(mem[p], lo_mem_max+1-p);
 @z
 
-@x [50.1311] l.23858 - Make dumping/undumping more efficient.
+@x [50.1311] l.23938 - Make dumping/undumping more efficient.
 for k:=hi_mem_min to mem_end do dump_wd(mem[k]);
 @y
 dump_things(mem[hi_mem_min], mem_end+1-hi_mem_min);
 @z
 
-@x [50.1312] l.23873 - Make dumping/undumping more efficient.
+@x [50.1312] l.23953 - Make dumping/undumping more efficient.
 repeat for k:=p to q+1 do undump_wd(mem[k]);
 @y
 repeat undump_things(mem[p], q+2-p);
 @z
 
-@x [50.1312] l.23955 - Check that p did not become corrupt.
+@x [50.1312] l.23954 - Check that p did not become corrupt.
 p:=q+node_size(q);
 if (p>lo_mem_max)or((q>=rlink(q))and(rlink(q)<>rover)) then goto bad_fmt;
 @y
@@ -3669,19 +3669,19 @@ then goto bad_fmt;
 p:=q+node_size(q);
 @z
 
-@x [50.1312] l.23878 - Make dumping/undumping more efficient.
+@x [50.1312] l.23958 - Make dumping/undumping more efficient.
 for k:=p to lo_mem_max do undump_wd(mem[k]);
 @y
 undump_things(mem[p], lo_mem_max+1-p);
 @z
 
-@x [50.1312] l.23888 - Make dumping/undumping more efficient.
+@x [50.1312] l.23968 - Make dumping/undumping more efficient.
 for k:=hi_mem_min to mem_end do undump_wd(mem[k]);
 @y
 undump_things (mem[hi_mem_min], mem_end+1-hi_mem_min);
 @z
 
-@x [50.1314] l.23899 - hash_extra, source specials
+@x [50.1314] l.23979 - hash_extra, source specials
 undump(hash_base)(frozen_control_sequence)(par_loc);
 par_token:=cs_token_flag+par_loc;@/
 undump(hash_base)(frozen_control_sequence)(write_loc);@/
@@ -3691,7 +3691,7 @@ par_token:=cs_token_flag+par_loc;@/
 undump(hash_base)(hash_top)(write_loc);@/
 @z
 
-@x [50.1315] l.23925 - Make dumping/undumping more efficient - eqtb
+@x [50.1315] l.24005 - Make dumping/undumping more efficienteqtb
 while k<l do
   begin dump_wd(eqtb[k]); incr(k);
   end;
@@ -3699,7 +3699,7 @@ while k<l do
 dump_things(eqtb[k], l-k);
 @z
 
-@x [50.1316] l.23944 - Make dumping/undumping more efficient - eqtb
+@x [50.1316] l.24024 - Make dumping/undumping more efficienteqtb
 while k<l do
   begin dump_wd(eqtb[k]); incr(k);
   end;
@@ -3707,7 +3707,7 @@ while k<l do
 dump_things(eqtb[k], l-k);
 @z
 
-@x [50.1316] l.23947 - hash_extra
+@x [50.1316] l.24027 - hash_extra
 k:=j+1; dump_int(k-l);
 until k>eqtb_size
 @y
@@ -3717,13 +3717,13 @@ if hash_high>0 then dump_things(eqtb[eqtb_size+1],hash_high);
   {dump |hash_extra| part}
 @z
 
-@x [50.1317] l.23958 - Make dumping/undumping more efficient - eqtb
+@x [50.1317] l.24034 - Make dumping/undumping more efficienteqtb
 for j:=k to k+x-1 do undump_wd(eqtb[j]);
 @y
 undump_things(eqtb[k], x);
 @z
 
-@x [50.1317] l.23960 - hash_extra
+@x [50.1317] l.24040 - hash_extra
 until k>eqtb_size
 @y
 until k>eqtb_size;
@@ -3731,20 +3731,20 @@ if hash_high>0 then undump_things(eqtb[eqtb_size+1],hash_high);
   {undump |hash_extra| part}
 @z
 
-@x [50.1318] l.23968 - hash_extra
+@x [50.1318] l.24048 - hash_extra
 dump_int(hash_used); cs_count:=frozen_control_sequence-1-hash_used;
-@y  23968
+@y
 dump_int(hash_used); cs_count:=frozen_control_sequence-1-hash_used+hash_high;
 @z
 
-@x [50.1318] l.23972 - Make dumping/undumping more efficient, hash_extra
+@x [50.1318] l.24052 - Make dumping/undumping more efficient, hash_extra
 for p:=hash_used+1 to undefined_control_sequence-1 do dump_hh(hash[p]);
 @y
 dump_things(hash[hash_used+1], undefined_control_sequence-1-hash_used);
 if hash_high>0 then dump_things(hash[eqtb_size+1], hash_high);
 @z
 
-@x [50.1319] l.23980 - Make dumping/undumping more efficient, hash_extra
+@x [50.1319] l.24060 - Make dumping/undumping more efficient, hash_extra
 for p:=hash_used+1 to undefined_control_sequence-1 do undump_hh(hash[p]);
 @y
 undump_things (hash[hash_used+1], undefined_control_sequence-1-hash_used);
@@ -3759,7 +3759,7 @@ if hash_high > 0 then begin
 end;
 @z
 
-@x [50.1320] l.23985 - Make dumping/undumping more efficient - tfm
+@x [50.1320] l.24065 - Make dumping/undumping more efficienttfm
 for k:=0 to fmem_ptr-1 do dump_wd(font_info[k]);
 dump_int(font_ptr);
 for k:=null_font to font_ptr do
@@ -3770,7 +3770,7 @@ dump_int(font_ptr);
 @<Dump the array info for internal font number |k|@>;
 @z
 
-@x [50.1320] l.23991 - i18n fix
+@x [50.1320] l.24070 - i18n fix
 print_int(font_ptr-font_base); print(" preloaded font");
 if font_ptr<>font_base+1 then print_char("s")
 @y
@@ -3779,7 +3779,7 @@ if font_ptr<>font_base+1 then print(" preloaded fonts")
 else print(" preloaded font")
 @z
 
-@x [50.1321] l.23994 - texarray
+@x [50.1321] l.24074 - texarray
 undump_size(7)(font_mem_size)('font mem size')(fmem_ptr);
 for k:=0 to fmem_ptr-1 do undump_wd(font_info[k]);
 undump_size(font_base)(font_max)('font max')(font_ptr);
@@ -3800,7 +3800,7 @@ undump_size(font_base)(font_base+max_font_max)('font max')(font_ptr);
 % in the same section of the fmt file.  But it's a lot faster to
 % write the arrays of information out, one whole array at a time.
 % So that's the way we handle dumping and undumping font info.
-@x [50.1322] l.24000 - Make dumping/undumping more efficient - tfm
+@x [50.1322] l.24080 - Make dumping/undumping more efficienttfm
 @ @<Dump the array info for internal font number |k|@>=
 begin dump_qqqq(font_check[k]);
 dump_int(font_size[k]);
@@ -3867,7 +3867,7 @@ for k:=null_font to font_ptr do
 end
 @z
 
-@x [50.1322] l.24031 - Make dumping/undumping more efficient - tfm
+@x [50.1323] l.24111 - Make dumping/undumping more efficienttfm
 @ @<Undump the array info for internal font number |k|@>=
 begin undump_qqqq(font_check[k]);@/
 undump_int(font_size[k]);
@@ -3957,12 +3957,12 @@ end
 @z
 
 %%%%%%%% dynamic hyph_size
-@x 24058 m.1324
+@x [50.1324] l.24138
 dump_int(hyph_count);
 for k:=0 to hyph_size do if hyph_word[k]<>0 then
   begin dump_int(k); dump_int(hyph_word[k]); dump_int(hyph_list[k]);
   end;
-@y  24061
+@y
 dump_int(hyph_count);
 if hyph_next <= hyph_prime then hyph_next:=hyph_size;
 dump_int(hyph_next);{minimum value of |hyphen_size| needed}
@@ -3973,7 +3973,7 @@ for k:=0 to hyph_size do if hyph_word[k]<>0 then
   end;
 @z
 
-@x [50.1324] l.24063 - i18n fix
+@x [50.1324] l.24142 - i18n fix
 print_ln; print_int(hyph_count); print(" hyphenation exception");
 if hyph_count<>1 then print_char("s");
 @y
@@ -3982,7 +3982,7 @@ if hyph_count<>1 then print(" hyphenation exceptions")
 else print(" hyphenation exception");
 @z
 
-@x [50.1324] l.24066 - Make dumping/undumping more efficient - trie
+@x [50.1324] l.24146 - Make dumping/undumping more efficienttrie
 for k:=0 to trie_max do dump_hh(trie[k]);
 @y
 dump_things(trie_trl[0], trie_max+1);
@@ -3990,7 +3990,7 @@ dump_things(trie_tro[0], trie_max+1);
 dump_things(trie_trc[0], trie_max+1);
 @z
 
-@x [50.1324] l.24068 - Make dumping/undumping more efficient - trie
+@x [50.1324] l.24148 - Make dumping/undumping more efficienttrie
 for k:=1 to trie_op_ptr do
   begin dump_int(hyf_distance[k]);
   dump_int(hyf_num[k]);
@@ -4002,7 +4002,7 @@ dump_things(hyf_num[1], trie_op_ptr);
 dump_things(hyf_next[1], trie_op_ptr);
 @z
 
-@x [50.1324] l.24076 - i18n fix
+@x [50.1324] l.24155 - i18n fix
 print(" has "); print_int(trie_op_ptr); print(" op");
 if trie_op_ptr<>1 then print_char("s");
 @y
@@ -4012,14 +4012,14 @@ else print(" op");
 @z
 
 %%%%%%%% dynamic hyph_size
-@x 24087 m.1325
+@x [50.1325] l.24167
 undump(0)(hyph_size)(hyph_count);
 for k:=1 to hyph_count do
   begin undump(0)(hyph_size)(j);
   undump(0)(str_ptr)(hyph_word[j]);
   undump(min_halfword)(max_halfword)(hyph_list[j]);
   end;
-@y  24092
+@y
 undump_size(0)(hyph_size)('hyph_size')(hyph_count);
 undump_size(hyph_prime)(hyph_size)('hyph_size')(hyph_next);
 j:=0;
@@ -4041,7 +4041,7 @@ for k:=1 to hyph_count do
   if hyph_next >= hyph_prime then incr(hyph_next);
 @z
 
-@x [50.1325] l.24094 - Make dumping/undumping more efficient - trie
+@x [50.1325] l.24174 - Make dumping/undumping more efficienttrie
 for k:=0 to j do undump_hh(trie[k]);
 @y
 {These first three haven't been allocated yet unless we're \.{INITEX};
@@ -4054,7 +4054,7 @@ if not trie_trc then trie_trc:=xmalloc_array(quarterword, j+1);
 undump_things(trie_trc[0], j+1);
 @z
 
-@x [50.1325] l.24096 - Make dumping/undumping more efficient - trie
+@x [50.1325] l.24176 - Make dumping/undumping more efficienttrie
 for k:=1 to j do
   begin undump(0)(63)(hyf_distance[k]); {a |small_number|}
   undump(0)(63)(hyf_num[k]);
@@ -4068,20 +4068,20 @@ undump_things(hyf_num[1], j);
 undump_upper_check_things(max_trie_op, hyf_next[1], j);
 @z
 
-@x [50.1327] l.24117 - Allow command line to override dumped value.
+@x [50.1327] l.24197 - Allow command line to override dumped value.
 undump(batch_mode)(error_stop_mode)(interaction);
 @y
 undump(batch_mode)(error_stop_mode)(interaction);
 if interaction_option<>unspecified_mode then interaction:=interaction_option;
 @z
 
-@x [50.1327] l.24172 - Test for end-of-file already done by undump.
+@x [50.1327] l.24200 - Test for end-of-file already done by undump.
 if (x<>69069)or eof(fmt_file) then goto bad_fmt
 @y
 if x<>69069 then goto bad_fmt
 @z
 
-@x [51.1332] l.24203 - make the main program a procedure, for eqtb hack.
+@x [51.1332] l.24283 - make the main program a procedure, for eqtb hack.
 @p begin @!{|start_here|}
 @y
 @d const_chk(#)==begin if # < inf@&# then # := inf@&# else
@@ -4196,7 +4196,7 @@ begin @!{|start_here|}
 @+Tini
 @z
 
-@x [51.1332] l.24215 - INI = VIR, so pool init needs runtime test
+@x [51.1332] l.24295 - INI = VIR, so pool init needs runtime test
 @!init if not get_strings_started then goto final_end;
 init_prim; {call |primitive| for each primitive}
 init_str_ptr:=str_ptr; init_pool_ptr:=pool_ptr; fix_date_and_time;
@@ -4208,7 +4208,7 @@ init_str_ptr:=str_ptr; init_pool_ptr:=pool_ptr; fix_date_and_time;
 Tini@/
 @z
 
-@x [51.1332] l.24225 - main
+@x [51.1332] l.24305 - main
 end_of_TEX: close_files_and_terminate;
 final_end: ready_already:=0;
 end.
@@ -4218,7 +4218,7 @@ final_end: do_final_end;
 end {|main_body|};
 @z
 
-@x [51.1333] l.24254 - Print new line before termination; switch to editor if necessary.
+@x [51.1333] l.24334 - Print new line before termination; switch to editor if necessary.
     slow_print(log_name); print_char(".");
     end;
   end;
@@ -4231,42 +4231,42 @@ if (edit_name_start<>0) and (interaction>batch_mode) then
   call_edit(str_pool,edit_name_start,edit_name_length,edit_line);
 @z
 
-@x [51.1334] l.24275 - hash_extra
+@x [51.1334] l.24355 - hash_extra
   wlog_ln(' ',cs_count:1,' multiletter control sequences out of ',
     hash_size:1);@/
-@y  24276
+@y
   wlog_ln(' ',cs_count:1,' multiletter control sequences out of ',
     hash_size:1, '+', hash_extra:1);@/
 @z
 
-@x [51.1335] l.24335 - Only do dump if ini.
+@x [51.1335] l.24415 - Only do dump if ini.
   begin @!init for c:=top_mark_code to split_bot_mark_code do
 @y
   begin @!Init for c:=top_mark_code to split_bot_mark_code do
 @z
 
-@x [51.1335] l.24337 - Only do dump if ini.
+@x [51.1335] l.24418 - Only do dump if ini.
   store_fmt_file; return;@+tini@/
 @y
   store_fmt_file; return;@+Tini@/
 @z
 
-@x [51.1337] l.24361 - Handle %&format in all cases.
+@x [51.1337] l.24441 - Handle %&format in all cases.
 if (format_ident=0)or(buffer[loc]="&") then
 @y
 if (format_ident=0)or(buffer[loc]="&")or dump_line then
 @z
 
-@x [51.1337] l.24366 - Dynamic arrays size.
+@x [51.1337] l.24447 - Dynamic arrays size.
   w_close(fmt_file);
 @y
   w_close(fmt_file);
   eqtb:=zeqtb;
 @z
 
-%% [51] m.1337 l.24371 - MLTeX: add. MLTeX banner after loading fmt file
+%% [51.1337] l.24371 - MLTeX: add. MLTeX banner after loading fmt file
 %%                     (MLTeX change: only "if mltex_enabled_p then ....;")
-@x [51.1337] l.24371 - Allocate hyphenation tries, do char translation, MLTeX
+@x [51.1337] l.24452 - Allocate hyphenation tries, do char translation, MLTeX
 fix_date_and_time;@/
 @y
 if mltex_enabled_p then
@@ -4339,7 +4339,7 @@ if trie_not_ready then begin {initex without format loaded}
 % not possible to portably switch into the debugger while a program is
 % running.  The best approximation is to do a core dump, then run the
 % debugger on it later.
-@x [52.1338] l.24411 - Core-dump in debugging mode on 0 input.
+@x [52.1338] l.24493 - Core-dump in debugging mode on 0 input.
     begin goto breakpoint;@/ {go to every declared label at least once}
     breakpoint: m:=0; @{'BREAKPOINT'@}@/
     end
@@ -4347,9 +4347,9 @@ if trie_not_ready then begin {initex without format loaded}
     dump_core {do something to cause a core dump}
 @z
 
-@x [52.1339] l.24429 - debug - print tfm info
+@x [52.1339] l.24511 - debugprint tfm info
 5: print_word(font_info[n]);
-@y 24397
+@y
 5: begin print_scaled(font_info[n].sc); print_char(" ");@/
   print_int(font_info[n].qqqq.b0); print_char(":");@/
   print_int(font_info[n].qqqq.b1); print_char(":");@/
@@ -4358,14 +4358,14 @@ if trie_not_ready then begin {initex without format loaded}
   end;
 @z
 
-@x [53.1344] l.24544 - source specials
+@x [53.1344] l.24624 - source specials
 primitive("special",extension,special_node);@/
 @y
 primitive("special",extension,special_node);@/
 text(frozen_special):="special"; eqtb[frozen_special]:=eqtb[cur_val];@/
 @z
 
-@x [53.1348] (do_extension) Remove unused variables
+@x [53.1348] l.24657 - (do_extension) Remove unused variables
 var i,@!j,@!k:integer; {all-purpose integers}
 @!p,@!q,@!r:pointer; {all-purpose pointers}
 @y
@@ -4377,13 +4377,13 @@ var k:integer; {all-purpose integers}
 % refer to an actual file, though, so we don't need to change the
 % write_file or write_open arrays. We provide for disabling this at
 % runtime, for paranoids.
-@x [53.1350] l.24609 - system: Allow 18 as a \write stream.
+@x [53.1350] l.24691 - system: Allow 18 as a \write stream.
   else if cur_val>15 then cur_val:=16;
 @y
   else if (cur_val>15) and (cur_val <> 18) then cur_val:=16;
 @z
 
-@x [53.1370] l.24770 - \write18{foo}
+@x [53.1370] l.24852 - \write18{foo}
 begin @<Expand macros in the token list
 @y
 @!d:integer; {number of characters in incomplete current string}
@@ -4392,7 +4392,7 @@ begin @<Expand macros in the token list
 begin @<Expand macros in the token list
 @z
 
-@x [53.1370] l.24773 - system: (write_out) \write18{foo} => system(foo).
+@x [53.1370] l.24855 - system: (write_out) \write18{foo} => system(foo).
 if write_open[j] then selector:=j
 @y
 if j=18 then selector := new_string
@@ -4400,7 +4400,7 @@ else if write_open[j] then selector:=j
 @z
 
 % Then call system(3) on that string.
-@x [53.1370] l.24779 - system: (write_out) \write18{foo} => system(foo).
+@x [53.1370] l.24861 - system: (write_out) \write18{foo} => system(foo).
 flush_list(def_ref); selector:=old_setting;
 @y
 flush_list(def_ref);
@@ -4447,7 +4447,7 @@ end;
 selector:=old_setting;
 @z
 
-@x [53.1373] Need new local.
+@x [53.1373] l.24902 - Need new local.
 procedure out_what(@!p:pointer);
 var j:small_number; {write stream number}
 @y
@@ -4456,7 +4456,7 @@ var j:small_number; {write stream number}
     @!old_setting:0..max_selector;
 @z
 
-@x [53.1374]
+@x [53.1374] l.24923
   else  begin if write_open[j] then a_close(write_file[j]);
     if subtype(p)=close_node then write_open[j]:=false
 @y
@@ -4465,7 +4465,7 @@ var j:small_number; {write stream number}
     if subtype(p)=close_node then do_nothing {already closed}
 @z
 
-@x [still 53.1374] Disallow certain \openout filenames, and log results.
+@x [53.1374] l.24930 - Disallow certain \openout filenames, and log results.
       while not a_open_out(write_file[j]) do
         prompt_file_name("output file name",".tex");
       write_open[j]:=true;
@@ -4489,7 +4489,7 @@ var j:small_number; {write stream number}
       end;
 @z
 
-@x [54.1376] l.24903 - Add editor-switch variables to globals.
+@x [54.1379] l.24985 - Add editor-switch variables to globals.
 @* \[54] System-dependent changes.
 This section should be replaced, if necessary, by any special
 modifications of the program
@@ -5021,7 +5021,7 @@ if x=1 then mltex_enabled_p:=true
 else if x<>0 then goto bad_fmt;
 @z
 
-@x [54.1379] l.24916 - extra routines
+@x [54.1379] l.24996 - extra routines
 @* \[55] Index.
 @y
 
