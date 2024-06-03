@@ -1501,6 +1501,14 @@ begin input_ptr:=0; max_in_stack:=0;
 source_filename_stack[0]:=0;full_source_filename_stack[0]:=0;
 @z
 
+% Original report: https://tug.org/pipermail/tex-k/2024-March/004021.html
+% TeX bug entry:   https://tug.org/texmfbug/newbug.html#B142outer
+@x [24.336] l.7152 - allow interactive deletion of \outer token
+begin if scanner_status<>normal then
+@y
+begin if OK_to_interrupt and(scanner_status<>normal) then
+@z
+
 @x [24.338] l.7191 - i18n fix
 print(" while scanning ");
 @y

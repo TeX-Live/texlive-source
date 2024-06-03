@@ -1,3 +1,12 @@
+2024-06-03  David Fuchs  <drfuchs@yahoo.com>
+
+	* tex.ch (check_outer_validity): don't check unless OK_to_interrupt,
+	to avoid getting into an erroneous state if an \outer token
+	is deleted interactively.
+	Report from Tyge Thiessen:
+	https://tug.org/pipermail/tex-k/2024-March/004021.html
+	DEK bug entry: https://tug.org/texmfbug/newbug.html#B142outer
+
 2024-06-03  Karl Berry  <karl@freefriends.org>
 
 	* tests/fix-changefile-lines.py: new script from Tyge Thiessen
