@@ -20,7 +20,7 @@
 \def\title{PK$\,$\lowercase{to}$\,$GF changes for C}
 @z
 
-@x [1] Define my_name
+@x [2] Define my_name
 @d banner=='This is PKtoGF, Version 1.1'
 @y
 @d my_name=='pktogf'
@@ -444,7 +444,7 @@ final_end :
 @y
 @z
 
-@x System-dependent changes.
+@x [74] System-dependent changes.
 This section should be replaced, if necessary, by changes to the program
 that are necessary to make \.{PKtoGF} work at a particular installation.
 Any additional routines should be inserted here.

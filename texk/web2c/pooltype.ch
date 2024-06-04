@@ -38,7 +38,7 @@ procedure initialize; {this procedure gets things started properly}
     @<Set initial values of key variables@>
 @z
 
-% [??] The text_char type is used as an array index into xord.  The
+% [6] The text_char type is used as an array index into xord.  The
 % default type `char' produces signed integers, which are bad array
 % indices in C.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -48,7 +48,7 @@ procedure initialize; {this procedure gets things started properly}
 @d text_char == ASCII_code {the data type of characters in text files}
 @z
 
-@x [12] Permissiveness
+@x [10] Permissiveness
 for i:=0 to @'37 do xchr[i]:=' ';
 for i:=@'177 to @'377 do xchr[i]:=' ';
 @y
@@ -56,21 +56,21 @@ for i:=0 to @'37 do xchr[i]:=chr(i);
 for i:=@'177 to @'377 do xchr[i]:=chr(i);
 @z
 
-@x Write errors to stderr, avoid nonlocal label.
+@x [15] Write errors to stderr, avoid nonlocal label.
 @d abort(#)==begin write_ln(#); goto 9999;
   end
 @y
 @d abort(#)==begin write_ln(stderr, #); uexit(1); end
 @z
 
-@x Remove unused label from end of program; add uexit(0) call
+@x [15] Remove unused label from end of program; add uexit(0) call
 9999:end.
 @y
 uexit(0);
 end.
 @z
 
-@x Add pool_name variable.
+@x [18] Add pool_name variable.
 @!pool_file:packed file of text_char;
   {the string-pool file output by \.{TANGLE}}
 @y
@@ -79,7 +79,7 @@ end.
 @!pool_name:const_c_string;
 @z
 
-% The name of the pool file is dynamically determined. We open it at the
+% [19] The name of the pool file is dynamically determined. We open it at the
 % end of parse_arguments.
 @x
 reset(pool_file); xsum:=false;
@@ -87,13 +87,13 @@ reset(pool_file); xsum:=false;
 xsum:=false;
 @z
 
-@x Change single read into two reads
+@x [20] Change single read into two reads
 read(pool_file,m,n); {read two digits of string length}
 @y
 read(pool_file,m); read(pool_file,n); {read two digits of string length}
 @z
 
-@x System-dependent changes.
+@x [21] System-dependent changes.
 This section should be replaced, if necessary, by changes to the program
 that are necessary to make \.{POOLtype} work at a particular installation.
 It is usually best to design your change file so that all changes to

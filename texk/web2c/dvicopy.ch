@@ -340,7 +340,7 @@ procedure bad_dvi;
 noreturn procedure bad_dvi;
 @z
 
-@x [111] Fix up opening the binary files
+@x [110] Fix up opening the binary files
 @ To prepare |dvi_file| for input, we |reset| it.
 
 @<Open input file(s)@>=
@@ -353,7 +353,7 @@ dvi_loc:=0;
 dvi_loc:=0;
 @z
 
-@x [113] Make dvi_length() and dvi_move() work.
+@x [112] Make dvi_length() and dvi_move() work.
 @p function dvi_length:int_32;
 begin set_pos(dvi_file,-1); dvi_length:=cur_pos(dvi_file);
 end;
@@ -494,14 +494,14 @@ final_end:end.
 end.
 @z
 
-@x [245] Do this later, to avoid creating empty files.
+@x [246] Do this later, to avoid creating empty files.
 @<Open output file(s)@>=
 rewrite(out_file); {prepares to write packed bytes to |out_file|}
 @y
 @<Open output file(s)@>=
 @z
 
-@x [247] Use external routine to output bytes.
+@x [248] Use external routine to output bytes.
 @d out_byte(#) == write(out_file,#) {write next \.{DVI} byte}
 @y
 @d out_byte(#) == put_byte(#,out_file) {write next \.{DVI} byte}

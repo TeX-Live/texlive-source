@@ -75,7 +75,7 @@ procedure initialize; {this procedure gets things started properly}
 @y
 @z
 
-@x [5] Increase sizes to match vptovf.
+@x [4] Increase sizes to match vptovf.
 @!tfm_size=30000; {maximum length of |tfm| data, in bytes}
 @!lig_size=5000; {maximum length of |lig_kern| program, in words}
 @!hash_size=5003; {preferably a prime number, a bit larger than the number

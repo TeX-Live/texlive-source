@@ -143,7 +143,7 @@ for i:=@'177 to @'377 do xchr[i]:=chr(i);
 @z
 
 
-@x [15] Change `update_terminal' to `flush', `term_in' is stdin.
+@x [16] Change `update_terminal' to `flush', `term_in' is stdin.
 Since the terminal is being used for both input and output, some systems
 need a special routine to make sure that the user can see a prompt message
 before waiting for input based on that message. (Otherwise the message
@@ -586,7 +586,7 @@ loop  @+begin continue:
   endcases;@/
 @z
 
-@x [still 219] If verbose, output a newline at the end.
+@x [219] If verbose, output a newline at the end.
 final_end:end.
 @y
   if verbose and (total_pages mod 13 <> 0) then print_ln (' ');

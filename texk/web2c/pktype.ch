@@ -16,7 +16,7 @@
 \def\title{PK$\,$\lowercase{type} changes for C}
 @z
 
-@x [1] Define my_name
+@x [2] Define my_name
 @d banner=='This is PKtype, Version 2.3' {printed when the program starts}
 @y
 @d my_name=='pktype'
@@ -97,7 +97,7 @@ end;
 @d text_char == char {the data type of characters in text files}
 @z
 
-@x [32] Remove typ_file from globals.
+@x [31] Remove typ_file from globals.
 @ @<Glob...@>=
 @!pk_file:byte_file;  {where the input comes from}
 @!typ_file:text_file; {where the final output goes}
@@ -108,7 +108,7 @@ end;
 @^system dependencies@>
 @z
 
-@x [33] Redo open_pk_file; scrap open_typ_file.
+@x [32] Redo open_pk_file; scrap open_typ_file.
 @ To prepare these files for input and output, we |reset| and |rewrite| them.
 An extension of \PASCAL\ is needed, since we want to associate files
 with external names that are specified dynamically (i.e., not
@@ -137,7 +137,7 @@ begin
 end;
 @z
 
-@x [34] Change pk_loc to cur_loc, and use C strings, not arrays.
+@x [33] Change pk_loc to cur_loc, and use C strings, not arrays.
 @!pk_name,@!typ_name:packed array[1..name_length] of char; {name of input
     and output files}
 @!pk_loc:integer; {how many bytes have we read?}
@@ -227,7 +227,7 @@ else signed_quad:=(((a-256)*256+b)*256+c)*256+d;
 end;
 @z
 
-@x [36] Don't need the <Open files> module.
+@x [35] Don't need the <Open files> module.
 @ Now we are ready to open the files.
 
 @<Open files@>=
@@ -245,7 +245,7 @@ t_print_ln(' ')
 It is not needed when output goes to |stdout|.
 @z
 
-@x [37] Redefine get_16 and get_32.
+@x [36] Redefine get_16 and get_32.
 @p function get_16 : integer ;
 var a : integer ;
 begin a := pk_byte ; get_16 := a * 256 + pk_byte ; end ;
@@ -259,7 +259,7 @@ get_32 := a * 65536 + get_16 ; end ;
 @d get_32==signed_quad
 @z
 
-% [53] web2c can't handle the implied serialism in Pascal write
+% [52] web2c can't handle the implied serialism in Pascal write
 % statements.  (From Martyn.Johnson@cl.cam.ac.uk.)
 @x
           pk_yyy : t_print_ln((pk_loc-1):1,':  Num special: ',get_32:1) ;
@@ -268,7 +268,7 @@ get_32 := a * 65536 + get_16 ; end ;
                    t_print_ln (':  Num special: ',get_32:1) ; end;
 @z
 
-@x [54--55] Eliminate the ``Terminal communication'' chapter.
+@x [53--54] Eliminate the ``Terminal communication'' chapter.
 @* Terminal communication.
 We must get the file names and determine whether input is to be in
 hexadecimal or binary.  To do this, we use the standard input path
@@ -309,7 +309,7 @@ end ;
 @ So there is no |procedure dialog|.
 @z
 
-@x [56] Restructure the main program.
+@x [55] Restructure the main program.
 dialog ;
 @<Open files@> ;
 @y
@@ -320,7 +320,7 @@ final_end :
 @y
 @z
 
-@x System-dependent changes.
+@x [56] System-dependent changes.
 This section should be replaced, if necessary, by changes to the program
 that are necessary to make \.{PKtype} work at a particular installation.
 Any additional routines should be inserted here.

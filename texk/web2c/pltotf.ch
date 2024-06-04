@@ -149,7 +149,7 @@ if verbose then @<Print |c| in octal notation@>;
   print_ln(' units.'); end
 @z
 
-% [118] Change the name of the variable `class', since AIX 3.1's <math.h>
+% [117] Change the name of the variable `class', since AIX 3.1's <math.h>
 % defines a function by that name.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 @x

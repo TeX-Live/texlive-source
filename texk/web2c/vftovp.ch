@@ -122,8 +122,7 @@ end else begin
 end;
 @z
 
-% [22] `index' is not a good choice of identifier in C.
-@x
+@x [22] `index' is not a good choice of identifier in C.
 @<Types...@>=
 @!index=0..tfm_size; {address of a byte in |tfm|}
 @y
@@ -142,8 +141,7 @@ end;
 @!tfm_file_array: ^byte; {the input data all goes here}
 @z
 
-% [24] abort() should cause a bad exit code.
-@x
+@x [24] abort() should cause a bad exit code.
 @d abort(#)==begin print_ln(#);
   print_ln('Sorry, but I can''t go on; are you sure this is a TFM?');
   goto final_end;
@@ -162,8 +160,7 @@ if 4*lf-1>tfm_size then abort('The file is bigger than I can handle!');
 tfm_file_array := xrealloc_array (tfm_file_array, byte, 4 * lf + 1000);
 @z
 
-% [31] Ditto for vf_abort.
-@x
+@x [31] Ditto for vf_abort.
 @d vf_abort(#)==
   begin print_ln(#);
   print_ln('Sorry, but I can''t go on; are you sure this is a VF?');
@@ -260,7 +257,7 @@ free(cur_name);
         print_ln('Check sum in VF file being replaced by TFM check sum');
 @z
 
-@x [42] Remove initialization of now-defunct array.
+@x [43] Remove initialization of now-defunct array.
 @ @<Set init...@>=
 default_directory:=default_directory_name;
 @y
@@ -342,8 +339,7 @@ MBL_string:='MBL'; RI_string:='RI '; RCE_string:='RCE';
 MBL_string:=' MBL'; RI_string:=' RI '; RCE_string:=' RCE';
 @z
 
-% [60] How we output the character code depends on |charcode_format|.
-@x
+@x [60] How we output the character code depends on |charcode_format|.
 begin if font_type>vanilla then
   begin tfm[0]:=c; out_octal(0,1)
   end
@@ -367,8 +363,7 @@ else begin tfm[0]:=c; out_octal(0,1);
   end;
 @z
 
-% [61] Don't output the face code as an integer.
-@x
+@x [61] Don't output the face code as an integer.
   out(MBL_string[1+(b mod 3)]);
   out(RI_string[1+s]);
   out(RCE_string[1+(b div 3)]);
@@ -378,8 +373,7 @@ else begin tfm[0]:=c; out_octal(0,1);
   put_byte(RCE_string[1+(b div 3)], vpl_file);
 @z
 
-% [101] No progress reports unless verbose.
-@x
+@x [100] No progress reports unless verbose.
     incr(chars_on_line);
     end;
   print_octal(c); {progress report}
@@ -389,8 +383,7 @@ else begin tfm[0]:=c; out_octal(0,1);
   if verbose then print_octal(c); {progress report}
 @z
 
-% [112] No nonlocal goto's.
-@x
+@x [112] No nonlocal goto's.
   begin print_ln('Sorry, I haven''t room for so many ligature/kern pairs!');
 @.Sorry, I haven't room...@>
   goto final_end;
@@ -490,7 +483,7 @@ begin if o>=set1 then
   end
 @z
 
-@x [132] Eliminate the |final_end| and |exit| labels.
+@x [131] Eliminate the |final_end| and |exit| labels.
 label final_end, exit;
 @y
 @z
@@ -515,7 +508,7 @@ organize:=vf_input;
 end;
 @z
 
-@x [134] Eliminate the |final_end| and |exit| labels.
+@x [133] Eliminate the |final_end| and |exit| labels.
 label final_end,exit;
 @y
 @z
@@ -528,13 +521,13 @@ do_map:=true;
 end;
 @z
 
-@x [135] No final newline unless verbose.
+@x [134] No final newline unless verbose.
 print_ln('.');@/
 @y
 if verbose then print_ln('.');@/
 @z
 
-@x [136] System-dependent changes.
+@x [135] System-dependent changes.
 This section should be replaced, if necessary, by changes to the program
 that are necessary to make \.{VFtoVP} work at a particular installation.
 It is usually best to design your change file so that all changes to

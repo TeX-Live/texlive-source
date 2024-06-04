@@ -135,7 +135,7 @@ procedure initialize;
 @!stack_size=2000; {number of simultaneous output levels}
 @z
 
-% [??] The text_char type is used as an array index into xord.  The
+% [12] The text_char type is used as an array index into xord.  The
 % default type `char' produces signed integers, which are bad array
 % indices in C.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -160,7 +160,7 @@ for i:=@'200 to @'377 do xchr[i]:=chr(i);
 @d print(#)==write(term_out,#) {`|print|' means write on the terminal}
 @z
 
-@x
+@x [20]
 @<Globals...@>=
 @!term_out:text_file; {the terminal as an output file}
 @y
@@ -341,7 +341,7 @@ command line), then we use alternative \TeX\ macros from `\.{\\input pwebmac}'.
 @.pwebmac@>
 @z
 
-@x
+@x [124]
 out_ptr:=1; out_line:=1; out_buf[1]:="c"; write(tex_file,'\input webma');
 @y
 out_ptr:=1; out_line:=1; out_buf[1]:="c";
