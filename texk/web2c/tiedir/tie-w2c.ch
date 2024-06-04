@@ -110,8 +110,7 @@ Section 5
 
 Section 6
 
-l.155
-@x -- replace preprocessor macros
+@x l.155 -- replace preprocessor macros
 @d spotless 0
 @d troublesome 1
 @d fatal 2
@@ -302,7 +301,7 @@ Section 32
 
 Section 33
 
-@x l.774
+@x l.771
 @d jump_out() exit(1)
 @y
 @d jump_out() exit(EXIT_FAILURE)
