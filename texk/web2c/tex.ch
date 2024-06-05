@@ -2151,7 +2151,7 @@ if name=str_ptr-1 then {we can try to conserve string pool space now}
   begin job_name:=get_job_name(cur_name); open_log_file;
 @z
 
-@x [29.537] l.10390 - -
+@x [29.537] l.10390
 if term_offset+length(name)>max_print_line-2 then print_ln
 else if (term_offset>0)or(file_offset>0) then print_char(" ");
 print_char("("); incr(open_parens); slow_print(name); update_terminal;
@@ -3372,7 +3372,7 @@ else begin n:=cur_chr; get_r_token; p:=cur_cs; define(p,relax,256);
 @!flushable_string:str_number; {string not yet referenced}
 @y
 @z
-@x [49.1260] l.23409 - new_font: string recyclingalready done
+@x [49.1260] l.23409 - new_font: string recycling -- already done
 flushable_string:=str_ptr-1;
 @y
 @z
@@ -3391,7 +3391,7 @@ flushable_string:=str_ptr-1;
 %
 % otherwise the wrong string will get removed by |flush_string|!!
 %
-@x [49.1260] l.23412 - new_font: string recyclingalready done
+@x [49.1260] l.23412 - new_font: string recycling -- already done
     begin if cur_name=flushable_string then
       begin flush_string; cur_name:=font_name[f];
       end;

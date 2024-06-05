@@ -75,7 +75,7 @@ class WebReader:
             self.part_cnt += 1
             self.section_cnt += 1
 
-        if re.search("^@ ", line):
+        if re.search("^@ ", line) or line == "@":
             self.section_cnt += 1
 
         return (part, section, line_number), line
@@ -169,7 +169,7 @@ class ChangeReader:
                     pattern = " -+ "
                     # Remove potentially text comment separator.
                     if re.match(pattern, text):
-                        text = re.sub(pattern, "", text).strip()
+                        text = re.sub(pattern, "", text, 1).strip()
 
             # Create line with standard tag.
             new_line = f"@x [{part}.{section}] l.{line_number}"
