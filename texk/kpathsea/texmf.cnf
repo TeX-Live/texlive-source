@@ -738,21 +738,21 @@ log_openout.initex = f
 file_line_error_style = f
 
 % Enable the mktex... scripts by default?  These must be set to 0 or 1.
-% Particular programs can and do override these settings, for example
-% dvips's -M option.  Your first chance to specify whether the scripts
-% are invoked by default is at configure time.
+% The values shown here are the compile-time defaults for original TeX Live;
+% they can be overridden at compile time with configure options,
+% or at runtime with environment variables or program options.
 %
 % These values are ignored if the script names are changed; e.g., if you
 % set DVIPSMAKEPK to `foo', what counts is the value of the environment
 % variable/config value `FOO', not the `MKTEXPK' value.
 %
 %MKTEXTEX = 0
-%MKTEXPK = 0
-%MKTEXMF = 0
-%MKTEXTFM = 0
-%MKTEXFMT = 0
-%MKOCP = 0
-%MKOFM = 0
+%MKTEXPK = 1
+%MKTEXMF = 1
+%MKTEXTFM = 1
+%MKTEXFMT = 1
+%MKOCP = 1
+%MKOFM = 1
 
 % Used by makempx to run TeX.  We use "etex" because MetaPost is
 % expecting DVI, and not "tex" because we want first line parsing.

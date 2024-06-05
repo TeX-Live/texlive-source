@@ -1,3 +1,8 @@
+2024-06-04  Karl Berry  <karl@freefriends.org>
+
+	* texmf.cnf (MKTEXPK, etc.): adjust values shown to the
+	compile-time defaults, as given in kpathsea/ac/mktex.ac.
+
 2024-03-17  Karl Berry  <karl@tug.org>
 
 	* texmf.cnf (shell_escape_commands): add l3sys-query
