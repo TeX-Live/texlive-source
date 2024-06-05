@@ -3,6 +3,8 @@
 	* tests/fix-changefile-lines.py,
 	* tangle.ch,
 	* weave.ch: Correctly count section start markers.
+	* mf.ch,
+	* tex.ch: Recount parts and sections.
 
 2024-06-03  David Fuchs  <drfuchs@yahoo.com>
 
