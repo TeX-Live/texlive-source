@@ -166,8 +166,9 @@ class ChangeReader:
                 pattern = "l\\.\\d+"
                 if re.match(pattern, text):
                     text = re.sub(pattern, "", text)
-                    pattern = " -+ "
+
                     # Remove potentially text comment separator.
+                    pattern = " -+ "
                     if re.match(pattern, text):
                         text = re.sub(pattern, "", text, 1).strip()
 
