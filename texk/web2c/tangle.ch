@@ -252,7 +252,7 @@ their |equiv| value contains the corresponding numeric value plus $2^{15}$.
 their |equiv| value contains the corresponding numeric value plus $2^{30}$.
 @z
 
-@x [5.47] l.868 - to delimit arguments).
+@x [5.47] l.868 - Add parametric2 macros (macros that use [] to delimit arguments).
 \yskip\hang |parametric| identifiers have been defined to be parametric macros;
 like simple identifiers, their |equiv| value points to the replacement text.
 @y
@@ -273,7 +273,7 @@ the replacement text.
 @!chopped_id:array [0..max_id_length] of ASCII_code; {chopped identifier}
 @z
 
-@x [6.53] l.960 - to delimit arguments).
+@x [6.53] l.960 - Add parametric2 macros (macros that use [] to delimit arguments).
 |numeric|, |simple|, or |parametric|.
 @y
 |numeric|, |simple|, |parametric|, or |parametric2|.
@@ -327,7 +327,7 @@ else  begin
   l:=l-double_chars-1;
 @z
 
-@x [9.85] l.1502 - to delimit arguments).
+@x [9.85] l.1502 - Add parametric2 macros (macros that use [] to delimit arguments).
   begin if ilk[cur_name]=parametric then
 @y
   begin if (ilk[cur_name]=parametric) or (ilk[cur_name]=parametric2) then
@@ -339,20 +339,20 @@ numeric: begin cur_val:=equiv[a]-@'100000; a:=number;
 numeric: begin cur_val:=equiv[a]-@'10000000000; a:=number;
 @z
 
-@x [9.89] l.1590 - to delimit arguments).
+@x [9.89] l.1590 - Add parametric2 macros (macros that use [] to delimit arguments).
 parametric: begin @<Put a parameter on the parameter stack,
 @y
 parametric,parametric2: begin @<Put a parameter on the parameter stack,
 @z
 
-@x [9.90] l.1607 - to delimit arguments).
+@x [9.90] l.1607 - Add parametric2 macros (macros that use [] to delimit arguments).
 if (stack_ptr=0)or(tok_mem[zo,cur_byte]<>"(") then
 @y
 if (stack_ptr=0)or((ilk[a]=parametric)and(tok_mem[zo,cur_byte]<>"("))
     or((ilk[a]=parametric2)and(tok_mem[zo,cur_byte]<>"[")) then
 @z
 
-@x [9.93] l.1654 - to delimit arguments).
+@x [9.93] l.1654 - Add parametric2 macros (macros that use [] to delimit arguments).
 bal:=1; incr(cur_byte); {skip the opening `\.('}
 @y
 bal:=1; incr(cur_byte); {skip the opening `\.(' or `['}
@@ -510,7 +510,7 @@ equiv[p]:=accumulator+@'10000000000; {name |p| now is defined to equal |accumula
     add_in(equiv[q]-@'10000000000);
 @z
 
-@x [15.165] l.2964 - to delimit arguments).
+@x [15.165] l.2964 - Add parametric2 macros (macros that use [] to delimit arguments).
   "(": incr(bal);
   ")": if bal=0 then err_print('! Extra )')
 @.Extra )@>
@@ -530,7 +530,7 @@ equiv[p]:=accumulator+@'10000000000; {name |p| now is defined to equal |accumula
   "#": if (t=parametric)or(t=parametric2) then a:=param;
 @z
 
-@x [15.166] l.2988 - to delimit arguments).
+@x [15.166] l.2988 - Add parametric2 macros (macros that use [] to delimit arguments).
   begin if bal=1 then err_print('! Missing )')
   else err_print('! Missing ',bal:1,' )''s');
 @.Missing n )@>
@@ -557,7 +557,7 @@ equiv[p]:=accumulator+@'10000000000; {name |p| now is defined to equal |accumula
     end
 @z
 
-@x [16.173] l.3107 - to delimit arguments).
+@x [16.173] l.3107 - Add parametric2 macros (macros that use [] to delimit arguments).
   else @<If the next text is `\.{(\#)==}', call |define_macro|
     and |goto continue|@>;
 @y
@@ -565,7 +565,7 @@ equiv[p]:=accumulator+@'10000000000; {name |p| now is defined to equal |accumula
     and |goto continue|@>;
 @z
 
-@x [16.174] l.3114 - to delimit arguments).
+@x [16.174] l.3114 - Add parametric2 macros (macros that use [] to delimit arguments).
 @ @<If the next text is `\.{(\#)==}'...@>=
 if next_control="(" then
   begin next_control:=get_next;

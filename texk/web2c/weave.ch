@@ -459,7 +459,7 @@ if k>0 then
 @ @<Change |pp| to $\max(|scrap_base|,\,|pp+d|)$@>=
 @z
 
-@x [15.174] l.3344
+@x [15.174] l.3344 - Rewrite 'squash' to match description in section [148].
 @ Similarly, the `|squash|' macro invokes a procedure called `|sq|'. This
 procedure takes advantage of the simplification that occurs when |k=1|.
 @y

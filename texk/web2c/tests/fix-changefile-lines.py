@@ -158,7 +158,7 @@ class ChangeReader:
             text = self._lines[self._chunk_start][2:].strip()
 
             # Remove potentially leading [part.section] tag.
-            pattern = "\\[.*\\]"
+            pattern = "\\[\\d+(\\.\\d+)?\\]"
             if re.match(pattern, text):
                 text = re.sub(pattern, "", text).strip()
 
