@@ -71,9 +71,12 @@ class WebReader:
         section = self.section_cnt
         line_number = self._pos
 
-        part_inc = line.count("@*")
-        self.part_cnt += part_inc
-        self.section_cnt += line.count("@ ") + part_inc
+        if re.search("^@\*", line):
+            self.part_cnt += 1
+            self.section_cnt += 1
+
+        if re.search("^@ ", line):
+            self.section_cnt += 1
 
         return (part, section, line_number), line
 

@@ -1,3 +1,9 @@
+2024-06-05  Andreas Scherer  <https://ascherer.github.io>
+
+	* tests/fix-changefile-lines.py,
+	* tangle.ch,
+	* weave.ch: Correctly count section start markers.
+
 2024-06-03  David Fuchs  <drfuchs@yahoo.com>
 
 	* tex.ch (check_outer_validity): don't check unless OK_to_interrupt,

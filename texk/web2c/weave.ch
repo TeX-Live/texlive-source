@@ -47,28 +47,28 @@
 %  11/30/89 KB  Version 4.
 % (more recent changes in the ChangeLog)
 
-@x [0] WEAVE: print changes only
+@x [0.0] l.43 - WEAVE: print changes only
 \def\title{WEAVE}
 @y
 \let\maybe=\iffalse
 \def\title{WEAVE changes for C}
 @z
 
-@x [1] Define my_name
+@x [1.1] l.77 - Define my_name
 @d banner=='This is WEAVE, Version 4.5'
 @y
 @d my_name=='weave'
 @d banner=='This is WEAVE, Version 4.5'
 @z
 
-@x [2] No global labels, define and call parse_arguments.
+@x [1.2] l.85 - No global labels, define and call parse_arguments.
 calls the `|jump_out|' procedure, which goes to the label |end_of_WEAVE|.
 
 @d end_of_WEAVE = 9999 {go here to wrap it up}
 @y
 calls the `|jump_out|' procedure.
 @z
-@x
+@x [1.2] l.91
 label end_of_WEAVE; {go here to finish}
 const @<Constants in the outer block@>@/
 type @<Types in the outer block@>@/
@@ -91,7 +91,7 @@ procedure initialize;
     @<Set initial values@>@/
 @z
 
-@x [8] Increase constants for tex2pdf, etc.
+@x [1.8] l.186 - Increase constants for tex2pdf, etc.
 @!max_bytes=45000; {|1/ww| times the number of bytes in identifiers,
   index entries, and module names; must be less than 65536}
 @!max_names=5000; {number of identifiers, index entries, and module names;
@@ -102,7 +102,7 @@ procedure initialize;
 @!max_names=10239; {number of identifiers, index entries, and module names;
   must be less than 10240}
 @z
-@x
+@x [1.8] l.190
 @!max_modules=2000;{greater than the total number of modules}
 @!hash_size=353; {should be prime}
 @!buf_size=100; {maximum length of input line}
@@ -117,7 +117,7 @@ procedure initialize;
 @!long_buf_size=buf_size+longest_name; {C arithmetic in \PASCAL\ constant}
 @!line_length=80; {lines of \TeX\ output have at most this many characters,
 @z
-@x
+@x [1.8] l.197
 @!max_refs=30000; {number of cross references; must be less than 65536}
 @!max_toks=30000; {number of symbols in \PASCAL\ texts being parsed;
   must be less than 65536}
@@ -139,13 +139,13 @@ procedure initialize;
 % default type `char' produces signed integers, which are bad array
 % indices in C.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-@x
+@x [2.12] l.307
 @d text_char == char {the data type of characters in text files}
 @y
 @d text_char == ASCII_code {the data type of characters in text files}
 @z
 
-@x [17] enable maximum character set
+@x [2.17] l.488 - enable maximum character set
 for i:=1 to @'37 do xchr[i]:=' ';
 for i:=@'200 to @'377 do xchr[i]:=' ';
 @y
@@ -153,20 +153,20 @@ for i:=1 to @'37 do xchr[i]:=chr(i);
 for i:=@'200 to @'377 do xchr[i]:=chr(i);
 @z
 
-@x [20] Terminal I/O.
+@x [3.20] l.514 - Terminal I/O.
 @d print(#)==write(term_out,#) {`|print|' means write on the terminal}
 @y
 @d term_out==stdout
 @d print(#)==write(term_out,#) {`|print|' means write on the terminal}
 @z
 
-@x [20]
+@x [3.20] l.521
 @<Globals...@>=
 @!term_out:text_file; {the terminal as an output file}
 @y
 @z
 
-@x [21] Don't initialize the terminal.
+@x [3.21] l.524 - Don't initialize the terminal.
 @ Different systems have different ways of specifying that the output on a
 certain file will appear on the user's terminal. Here is one way to do this
 on the \PASCAL\ system that was used in \.{TANGLE}'s initial development:
@@ -183,13 +183,13 @@ certain file will appear on the user's terminal.
 {nothing need be done}
 @z
 
-@x [22] `break' is `fflush'.
+@x [3.22] l.537 - `break' is `fflush'.
 @d update_terminal == break(term_out) {empty the terminal output buffer}
 @y
 @d update_terminal == fflush(term_out) {empty the terminal output buffer}
 @z
 
-@x [24] Open input files.
+@x [3.24] l.546 - Open input files.
 @ The following code opens the input files.  Since these files were listed
 in the program header, we assume that the \PASCAL\ runtime system has
 already checked that suitable file names have been given; therefore no
@@ -211,13 +211,13 @@ begin web_file := kpse_open_file(web_name, kpse_web_format);
 end;
 @z
 
-@x [26] Opening the .tex file.
+@x [3.26] l.569 - Opening the .tex file.
 rewrite(tex_file);
 @y
 rewrite(tex_file,tex_name);
 @z
 
-@x [28] web2c doesn't understand f^.
+@x [3.28] l.597 - web2c doesn't understand f^.
     begin buffer[limit]:=xord[f^]; get(f);
     incr(limit);
     if buffer[limit-1]<>" " then final_limit:=limit;
@@ -231,7 +231,7 @@ rewrite(tex_file,tex_name);
       begin while not eoln(f) do vgetc(f);
 @z
 
-@x [33] Fix jump_out
+@x [4.33] l.678 - Fix jump_out
 @ The |jump_out| procedure just cuts across all active procedure levels
 and jumps out of the program. This is the only non-local \&{goto} statement
 in \.{WEAVE}. It is used when no recovery from a particular error has
@@ -248,7 +248,7 @@ and jumps out of the program.
 It is used when no recovery from a particular error has
 been provided.
 @z
-@x
+@x [4.33] l.689
 @d fatal_error(#)==begin new_line; print(#); error; mark_fatal; jump_out;
   end
 
@@ -275,7 +275,7 @@ stat @<Print statistics about memory usage@>;@+tats@;@/
 end;
 @z
 
-@x [37] extend 'byte_mem' for "pdftex.web + pdftex-final.ch"
+@x [5.37] l.726 - extend 'byte_mem' for "pdftex.web + pdftex-final.ch"
 there are programs that need more than 65536 bytes; \TeX\ is one of these.
 @y
 there are programs that need more than 65536 bytes; \TeX\ is one of these
@@ -283,7 +283,7 @@ there are programs that need more than 65536 bytes; \TeX\ is one of these
 its ``final'' change file is applied).
 @z
 
-@x
+@x [5.37] l.729
 is either 0 or 1. (For generality, the first index is actually allowed to
 run between 0 and |ww-1|, where |ww| is defined to be 2; the program will
 @y
@@ -291,13 +291,13 @@ is either 0, 1 or 2. (For generality, the first index is actually allowed to
 run between 0 and |ww-1|, where |ww| is defined to be 3; the program will
 @z
 
-@x
+@x [5.37] l.734
 @d ww=2 {we multiply the byte capacity by approximately this amount}
 @y
 @d ww=3 {we multiply the byte capacity by approximately this amount}
 @z
 
-@x [50] don't enter xrefs if no_xref set
+@x [5.50] l.910 - don't enter xrefs if no_xref set
 @d append_xref(#)==if xref_ptr=max_refs then overflow('cross reference')
   else  begin incr(xref_ptr); num(xref_ptr):=#;
     end
@@ -326,7 +326,7 @@ begin if no_xref then return;
 if (reserved(p)or(byte_start[p]+1=byte_start[p+ww]))and
 @z
 
-@x [124]
+@x [12.124] l.2199
 `\.{\\input webmac}'.
 @.\\input webmac@>
 @.webmac@>
@@ -341,7 +341,7 @@ command line), then we use alternative \TeX\ macros from `\.{\\input pwebmac}'.
 @.pwebmac@>
 @z
 
-@x [124]
+@x [12.124] l.2204
 out_ptr:=1; out_line:=1; out_buf[1]:="c"; write(tex_file,'\input webma');
 @y
 out_ptr:=1; out_line:=1; out_buf[1]:="c";
@@ -349,7 +349,7 @@ if pdf_output then write(tex_file,'\input pwebma')
 else write(tex_file,'\input webma');
 @z
 
-@x [127] see https://tug.org/pipermail/tex-live/2023-July/049306.htm
+@x [12.127] l.2234 - see https://tug.org/pipermail/tex-live/2023-July/049306.htm
 preceded by another backslash. In the latter case, a |"%"| is output at
 the break.
 @y
@@ -357,14 +357,14 @@ preceded by another backslash or a \TeX\ comment marker. In the latter case, a
 |'%'| is output at the break.
 @z
 
-@x [127] deal with malign user input
+@x [12.127] l.2248 - deal with malign user input
   if (d="\")and(out_buf[k-1]<>"\") then {in this case |k>1|}
 @y
   if (d="\")and(out_buf[k-1]<>"\")and(out_buf[k-1]<>"%") then
     {in this case |k>1|}
 @z
 
-@x [148] Purify 'reduce' and 'squash'.
+@x [15.148] l.3007 - Purify 'reduce' and 'squash'.
 @d production(#)==@!debug prod(#) gubed; goto found
 @d reduce(#)==red(#); production
 @d production_end(#)==@!debug prod(#) gubed; goto found;
@@ -376,68 +376,68 @@ preceded by another backslash or a \TeX\ comment marker. In the latter case, a
 @d squash(#)==begin sq(#); production
 @z
 
-@x [151] Special case 'k=0'.
+@x [15.151] l.3100 - Special case 'k=0'.
 else if cat[pp+1]=simp then squash(pp+1,1,math,0)(4)
 @y
 else if cat[pp+1]=simp then reduce(pp+1,0,math,0)(4)
 @z
 
-@x [157] Special case 'k=0'.
+@x [15.157] l.3151 - Special case 'k=0'.
 squash(pp,1,intro,-3)(14)
 @y
 reduce(pp,0,intro,-3)(14)
 @z
 
-@x [161] Special case 'k=0'.
+@x [15.161] l.3193 - Special case 'k=0'.
 else squash(pp,1,simp,-2)(25)
 @y
 else reduce(pp,0,simp,-2)(25)
 @z
 
-@x [162] Special case 'k=0'.
+@x [15.162] l.3212 - Special case 'k=0'.
 else if cat[pp+1]=simp then squash(pp+1,1,math,0)(35)
 @y
 else if cat[pp+1]=simp then reduce(pp+1,0,math,0)(35)
 @z
 
-@x [166] Special case 'k=0'.
+@x [15.166] l.3272 - Special case 'k=0'.
 squash(pp,1,terminator,-3)(42)
 @y
 reduce(pp,0,terminator,-3)(42)
 @z
 
-@x [167] Special case 'k=0'.
+@x [15.167] l.3275 - Special case 'k=0'.
 if cat[pp+1]=close then squash(pp,1,stmt,-2)(43)
 @y
 if cat[pp+1]=close then reduce(pp,0,stmt,-2)(43)
 @z
 
-@x [167] Apply 'squash(...,2,...)'.
+@x [15.167] l.3277 - Apply 'squash(...,2,...)'.
   begin app(force); app(backup); app2(pp); reduce(pp,2,intro,-3)(44);
 @y
   begin app(force); app(backup); squash(pp,2,intro,-3)(44);
 @z
 
-@x [169] Special case 'k=0'.
+@x [15.169] l.3291 - Special case 'k=0'.
 squash(pp,1,stmt,-2)(50)
 @y
 reduce(pp,0,stmt,-2)(50)
 @z
 
-@x [170] Special case 'k=0'.
+@x [15.170] l.3294 - Special case 'k=0'.
 if cat[pp+1]=beginning then squash(pp,1,stmt,-2)(51)
 @y
 if cat[pp+1]=beginning then reduce(pp,0,stmt,-2)(51)
 @z
 
-@x [172] Move special case 'k=1' from 'squash' to special case 'k=0' here.
+@x [15.172] l.3325 - Move special case 'k=1' from 'squash' to special case 'k=0' here.
 scrap list.
 @y
 scrap list.  This procedure takes advantage of the simplification that
 occurs when |k=0|.
 @z
 
-@x
+@x [15.172] l.3330
 begin cat[j]:=c; trans[j]:=text_ptr; freeze_text;
 @y
 begin cat[j]:=c;
@@ -447,19 +447,19 @@ if k>0 then
   end;
 @z
 
-@x [172] Fix spacing.
+@x [15.172] l.3337 - Fix spacing.
 @<Change |pp| to $\max(|scrap_base|,|pp+d|)$@>;
 @y
 @<Change |pp| to $\max(|scrap_base|,\,|pp+d|)$@>;
 @z
 
-@x [173] Fix spacing.
+@x [15.173] l.3340 - Fix spacing.
 @ @<Change |pp| to $\max(|scrap_base|,|pp+d|)$@>=
 @y
 @ @<Change |pp| to $\max(|scrap_base|,\,|pp+d|)$@>=
 @z
 
-@x [174] Rewrite 'squash' to match description in section [148].
+@x [15.174] l.3344
 @ Similarly, the `|squash|' macro invokes a procedure called `|sq|'. This
 procedure takes advantage of the simplification that occurs when |k=1|.
 @y
@@ -467,7 +467,7 @@ procedure takes advantage of the simplification that occurs when |k=1|.
 combines |app|${}_k$ and |red| for matching numbers~|k|.
 @z
 
-@x
+@x [15.174] l.3349
 var i:0..max_scraps; {index into scrap memory}
 begin if k=1 then
   begin cat[j]:=c; @<Change |pp|...@>;
@@ -488,7 +488,7 @@ begin
   red(j,k,c,d);
 @z
 
-@x [239] omit index and module names if no_xref set
+@x [19.239] l.4537 - omit index and module names if no_xref set
 @<Phase III: Output the cross-reference index@>=
 @y
 If the user has set the |no_xref| flag (the `\.{-x} option on the
@@ -505,14 +505,14 @@ if no_xref then begin
 else begin
 @z
 
-@x
+@x [19.239] l.4551
 print('Done.');
 @y
 end;
 print('Done.');
 @z
 
-@x [258] term_in == stdin, when debugging.
+@x [20.258] l.4782 - term_in == stdin, when debugging.
 any error stop will set |debug_cycle| to zero.
 @y
 any error stop will set |debug_cycle| to zero.
@@ -520,24 +520,24 @@ any error stop will set |debug_cycle| to zero.
 @d term_in==stdin
 @z
 
-@x
+@x [20.258] l.4790
 @!term_in:text_file; {the user's terminal as an input file}
 @y
 @z
 
-@x [259] Take out reset(term_in)
+@x [20.259] l.4798 - Take out reset(term_in)
 reset(term_in,'TTY:','/I'); {open |term_in| as the terminal, don't do a |get|}
 @y
 @z
 
-@x [261] print newline at end of run and exit based upon value of history
+@x [21.261] l.4851 - print newline at end of run and exit based upon value of history
 print_ln(banner); {print a ``banner line''}
 @y
 print (banner); {print a ``banner line''}
 print_ln (version_string);
 @z
 
-@x
+@x [21.261] l.4856
 end_of_WEAVE:
 stat @<Print statistics about memory usage@>;@+tats@;@/
 @t\4\4@>{here files should be closed if the operating system requires it}
@@ -548,7 +548,7 @@ jump_out;
 end.
 @z
 
-@x [264] System-dependent changes.
+@x [22.264] l.4886 - System-dependent changes.
 This module should be replaced, if necessary, by changes to the program
 that are necessary to make \.{WEAVE} work at a particular installation.
 It is usually best to design your change file so that all changes to
