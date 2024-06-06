@@ -19,31 +19,15 @@ def main():
         sys.exit(1)
 
     # Read WEB file
-    try:
-        web_file = open(sys.argv[1], "r")
-    except OSError:
-        eprint(f"Could not open {sys.argv[1]}")
-        print(USAGE)
-        sys.exit(1)
-    with web_file:
-        web_lines = [line.rstrip() for line in web_file]
-        web_reader = WebReader(web_lines)
+    web_reader = WebReader(sys.argv[1])
 
     # Read change file
-    try:
-        ch_file = open(sys.argv[2], "r")
-    except OSError:
-        eprint(f"Could not open {sys.argv[2]}")
-        print(USAGE)
-        sys.exit(1)
-    with ch_file:
-        ch_lines = [line.rstrip() for line in ch_file]
+    ch_reader = ChangeReader(sys.argv[2])
 
-    ch_reader = ChangeReader(ch_lines)
+    # Run through the two files in parallel
     ch_reader.traverse(web_reader)
-    updated_ch_lines = ch_reader.get_lines()
 
-    for line in updated_ch_lines:
+    for line in ch_reader.get_lines():
         print(line)
 
 
@@ -52,11 +36,18 @@ class WebReader:
     of the current part and section number.
     """
 
-    def __init__(self, web_lines):
-        self._web_lines = web_lines
+    def __init__(self, web_file):
         self._pos = 0
         self.part_cnt = 0
         self.section_cnt = 0
+        try:
+            self._web_file = open(web_file, "r")
+        except OSError:
+            eprint(f"Could not open {web_file}")
+            print(USAGE)
+            sys.exit(1)
+        with self._web_file:
+            self._web_lines = [line.rstrip() for line in self._web_file]
 
     def next_line(self):
         """Returns the triple of current part, section and line numbers, as
@@ -71,12 +62,25 @@ class WebReader:
         section = self.section_cnt
         line_number = self._pos
 
-        if re.search("^@\*", line):
+        # Look for starred section == part
+        if line.startswith("@*"):
             self.part_cnt += 1
             self.section_cnt += 1
 
-        if re.search("^@ ", line) or line == "@":
+        # Look for unstarred section
+        if line.startswith("@ ") or line == "@":
             self.section_cnt += 1
+
+        # Look for '@i'nclude line
+        result = re.match("^@i \"?(\\w+\\.?\\w+)\"?", line)
+        if result:
+            include_file = result[1]
+            inc_reader = WebReader(include_file)
+            while inc_line := inc_reader.next_line():
+                pass
+            self.part_cnt += inc_reader.part_cnt
+            self.section_cnt += inc_reader.section_cnt
+            # Ignore line count in include file; we're only one step beyond
 
         return (part, section, line_number), line
 
@@ -86,14 +90,24 @@ class ChangeReader:
     information from the corresponding WEB file.
     """
 
-    def __init__(self, ch_lines):
-        self._lines = ch_lines
+    def __init__(self, change_file):
         self._pos = 0
         self._chunk_start = None
         self._match_lines = None
+        try:
+            self._change_file = open(change_file, "r")
+        except OSError:
+            eprint(f"Could not open {change_file}")
+            print(USAGE)
+            sys.exit(1)
+        with self._change_file:
+            self._lines = [line.rstrip() for line in self._change_file]
 
     def advance_to_next_chunk(self):
-        """Find the next change chunk. Store where it starts and the lines to be matched."""
+        """Find the next change chunk. Store where it starts and
+        the lines to be matched.
+        """
+
         while self._pos < len(self._lines):
             line = self._lines[self._pos]
             if line.startswith("@x"):

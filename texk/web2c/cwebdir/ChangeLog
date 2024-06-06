@@ -1,3 +1,10 @@
+2024-06-06  Andreas Scherer  <https://ascherer.github.io>
+
+	* comm-w2c.ch,
+	* ctang-w2c.ch,
+	* ctwill-w2c.ch,
+	* cweav-w2c.ch: Add [part.section] l.ine information.
+
 2024-05-25  Andreas Scherer  <https://ascherer.github.io>
 
 	* cwebacromac.tex: HiTeX has a three-page table-of-contents.

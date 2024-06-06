@@ -16,143 +16,143 @@
 
 @q Please send comments, suggestions, etc. to tex-k@@tug.org.            @>
 
-@x
+@x [0.0] l.25
 \def\title{Common code for CTANGLE and CWEAVE (Version 4.11)}
 @y
 \def\Kpathsea/{{\mc KPATHSEA\spacefactor1000}} \ifacro\sanitizecommand\Kpathsea{KPATHSEA}\fi
 \def\title{Common code for CTANGLE and CWEAVE (4.11 [\TeX~Live])}
 @z
 
-@x
+@x [0.0] l.30
   \centerline{(Version 4.11)}
 @y
   \centerline{(Version 4.11 [\TeX~Live])}
 @z
 
-@x
+@x [0.0] l.32
 \def\botofcontents{\vfill
 @y
 \def\covernote{\vbox{%
 @z
 
-@x
+@x [0.0] l.45
 }
 @y
 }}\datecontentspage
 @z
 
-@x
+@x [1.1] l.51
 to both \.{CTANGLE} and \.{CWEAVE}, which roughly concerns the following
 @y
 to \.{CTANGLE}, \.{CWEAVE}, and \.{CTWILL},
 which roughly concerns the following
 @z
 
-@x
+@x [1.1] l.57
 sometimes use \.{CWEB} to refer to either of the two component
 @y
 sometimes use \.{CWEB} to refer to any of the three component
 @z
 
-@x
+@x [1.2] l.72
 @i common.h
 @y
 @i comm-w2c.h
 @z
 
-@x
+@x [1.18] l.77
 |program|.
 @y
 |program|. And \.{CTWILL} adds some extra twists.
 @z
 
-@x
+@x [1.18] l.80
 boolean program; /* \.{CWEAVE} or \.{CTANGLE}? */
 @y
 cweb program; /* \.{CTANGLE} or \.{CWEAVE} or \.{CTWILL}? */
 @z
 
-@x
+@x [1.20] l.99
   @<Initialize pointers@>@;
 @y
   @<Initialize pointers@>@;
   @<Set up \.{PROGNAME} feature and initialize the search path mechanism@>@;
 @z
 
-@x
+@x [1.20] l.100
   @<Set the default options common to \.{CTANGLE} and \.{CWEAVE}@>@;
 @y
   @<Set locale and bind language catalogs@>@;
   @<Set the default options common to \.{CTANGLE} and \.{CWEAVE}@>@;
 @z
 
-@x
+@x [3.23] l.165
     if ((*(k++) = c) != ' ') limit = k;
 @y
     if ((*(k++) = c) != ' ' && c != '\r') limit = k;
 @z
 
-@x
+@x [3.23] l.168
     loc=buffer; err_print("! Input line too long");
 @y
     loc=buffer; err_print(_("! Input line too long"));
 @z
 
-@x
+@x [4.25] l.197
 static char alt_web_file_name[max_file_name_length]; /* alternate name to try */
 @y
 char *found_filename; /* filename found by |kpse_find_file| */
 @z
 
-@x
+@x [4.29] l.253
     err_print("! Missing @@x in change file");
 @y
     err_print(_("! Missing @@x in change file"));
 @z
 
-@x
+@x [4.30] l.264
     err_print("! Change file ended after @@x");
 @y
     err_print(_("! Change file ended after @@x"));
 @z
 
-@x
+@x [4.32] l.310
       err_print("! Change file ended before @@y");
 @y
       err_print(_("! Change file ended before @@y"));
 @z
 
-@x
+@x [4.32] l.324
         err_print("! CWEB file ended during a change");
 @y
         err_print(_("! CWEB file ended during a change"));
 @z
 
-@x
+@x [4.34] l.338
   loc=buffer+2; err_print("! Where is the matching @@y?");
 @y
   loc=buffer+2; err_print(_("! Where is the matching @@y?"));
 @z
 
-@x
+@x [4.34] l.345
     err_print("of the preceding lines failed to match");
 @y
     err_print(_("of the preceding lines failed to match"));
 @z
 
-@x
+@x [4.35] l.378
       err_print("! Include file name not given");
 @y
       err_print(_("! Include file name not given"));
 @z
 
-@x
+@x [4.35] l.383
       err_print("! Too many nested includes");
 @y
       err_print(_("! Too many nested includes"));
 @z
 
-@x
+@x [4.36] l.393
 @ When an \.{@@i} line is found in the |cur_file|, we must temporarily
 stop reading it and start reading from the named include file.  The
 \.{@@i} line should give a complete file name with or without
@@ -174,13 +174,13 @@ The remainder of the \.{@@i} line after the file name is ignored.
 @^system dependencies@>
 @z
 
-@x
+@x [4.36] l.405
         err_print("! Include file name too long"); goto restart;}
 @y
         err_print(_("! Include file name too long")); goto restart;}
 @z
 
-@x
+@x [4.36] l.408
   char temp_file_name[max_file_name_length];
   char *cur_file_name_end=cur_file_name+max_file_name_length-1;
   char *kk, *k=cur_file_name;
@@ -190,7 +190,7 @@ The remainder of the \.{@@i} line after the file name is ignored.
   char *k=cur_file_name;
 @z
 
-@x
+@x [4.36] l.422
   if ((cur_file=fopen(cur_file_name,"r"))!=NULL) {
 @y
   if ((found_filename=kpse_find_cweb(cur_file_name))!=NULL @|
@@ -204,7 +204,7 @@ The remainder of the \.{@@i} line after the file name is ignored.
     } else fatal(_("! Filename too long\n"), found_filename);
 @z
 
-@x
+@x [4.36] l.426
   if ((kk=getenv("CWEBINPUTS"))!=NULL) {
     if ((l=strlen(kk))>max_file_name_length-2) too_long();
     strcpy(temp_file_name,kk);
@@ -234,25 +234,25 @@ The remainder of the \.{@@i} line after the file name is ignored.
   include_depth--; err_print(_("! Cannot open include file")); goto restart;
 @z
 
-@x
+@x [4.38] l.473
     err_print("! Change file ended without @@z");
 @y
     err_print(_("! Change file ended without @@z"));
 @z
 
-@x
+@x [4.38] l.489
         err_print("! Where is the matching @@z?");
 @y
         err_print(_("! Where is the matching @@z?"));
 @z
 
-@x
+@x [4.39] l.509
     err_print("! Change file entry did not match");
 @y
     err_print(_("! Change file entry did not match"));
 @z
 
-@x
+@x [4.41] l.534
 if ((web_file=fopen(web_file_name,"r"))==NULL) {
   strcpy(web_file_name,alt_web_file_name);
   if ((web_file=fopen(web_file_name,"r"))==NULL)
@@ -271,7 +271,7 @@ else if (strlen(found_filename) < max_file_name_length) {
 } else fatal(_("! Filename too long\n"), found_filename);
 @z
 
-@x
+@x [4.41] l.542
 if ((change_file=fopen(change_file_name,"r"))==NULL)
        fatal("! Cannot open change file ", change_file_name);
 @y
@@ -287,13 +287,13 @@ else if (strlen(found_filename) < max_file_name_length) {
 } else fatal(_("! Filename too long\n"), found_filename);
 @z
 
-@x
+@x [5.46] l.619
 @d hash_size 353 /* should be prime */
 @y
 @d hash_size 8501 /* should be prime */
 @z
 
-@x
+@x [5.51] l.673
   if (byte_ptr+l>byte_mem_end) overflow("byte memory");
   if (name_ptr>=name_dir_end) overflow("name");
 @y
@@ -301,13 +301,13 @@ else if (strlen(found_filename) < max_file_name_length) {
   if (name_ptr>=name_dir_end) overflow(_("name"));
 @z
 
-@x
+@x [5.51] l.677
   if (program==cweave) p->ilk=t, init_node(p);
 @y
   if (program!=ctangle) p->ilk=t, init_node(p);
 @z
 
-@x
+@x [5.57] l.806
   if (s+name_len>byte_mem_end) overflow("byte memory");
   if (name_ptr+1>=name_dir_end) overflow("name");
 @y
@@ -315,55 +315,55 @@ else if (strlen(found_filename) < max_file_name_length) {
   if (name_ptr+1>=name_dir_end) overflow(_("name"));
 @z
 
-@x
+@x [5.58] l.833
   if (name_ptr>=name_dir_end) overflow("name");
 @y
   if (name_ptr>=name_dir_end) overflow(_("name"));
 @z
 
-@x
+@x [5.58] l.838
   if (s+name_len>byte_mem_end) overflow("byte memory");
 @y
   if (s+name_len>byte_mem_end) overflow(_("byte memory"));
 @z
 
-@x
+@x [5.60] l.883
       printf("%s","\n! Ambiguous prefix: matches <");
 @y
       printf("%s",_("\n! Ambiguous prefix: matches <"));
 @z
 
-@x
+@x [5.60] l.886
       printf("%s",">\n and <");
 @y
       printf("%s",_(">\n and <"));
 @z
 
-@x
+@x [5.62] l.912
       printf("%s","\n! New name is a prefix of <");
 @y
       printf("%s",_("\n! New name is a prefix of <"));
 @z
 
-@x
+@x [5.62] l.924
       printf("%s","\n! New name extends <");
 @y
       printf("%s",_("\n! New name extends <"));
 @z
 
-@x
+@x [5.62] l.930
     printf("%s","\n! Section name incompatible with <");
 @y
     printf("%s",_("\n! Section name incompatible with <"));
 @z
 
-@x
+@x [5.62] l.933
     printf("%s",">,\n which abbreviates <");
 @y
     printf("%s",_(">,\n which abbreviates <"));
 @z
 
-@x
+@x [6.67] l.1031
   printf(". (l. %d of change file)\n", change_line);
 else if (cur_line>0) {
   if (include_depth==0) printf(". (l. %d)\n", cur_line);
@@ -375,7 +375,7 @@ else if (cur_line>0) {
   else printf(_(". (l. %d of include file %s)\n"), cur_line, cur_file_name);
 @z
 
-@x
+@x [6.68] l.1057
 Some implementations may wish to pass the |history| value to the
 operating system so that it can be used to govern whether or not other
 programs are started. Here, for instance, we pass the operating system
@@ -397,14 +397,14 @@ can be made sensitive to these conditions.
 @d RETURN_FAIL  20 /* Complete or severe failure */
 @z
 
-@x
+@x [6.68] l.1068
   @<Print the job |history|@>@;
 @y
   @<Print the job |history|@>@;
   @<Remove the temporary file if not already done@>@;
 @z
 
-@x
+@x [6.68] l.1069
   if (history > harmless_message) return EXIT_FAILURE;
   else return EXIT_SUCCESS;
 @y
@@ -416,7 +416,7 @@ can be made sensitive to these conditions.
   }
 @z
 
-@x
+@x [6.69] l.1075
 case spotless:
   if (show_happiness) puts("(No errors were found.)"); break;
 case harmless_message:
@@ -436,13 +436,13 @@ case fatal_message: default:
   puts(_("(That was a fatal error, my friend.)"));
 @z
 
-@x
+@x [6.71] l.1106
   printf("\n! Sorry, %s capacity exceeded",t); fatal("","");
 @y
   printf(_("\n! Sorry, %s capacity exceeded"),t); fatal("","");
 @z
 
-@x
+@x [7.73] l.1118
 or flags to be turned on (beginning with |"+"|).
 @y
 or flags to be turned on (beginning with |"+"|).
@@ -450,20 +450,20 @@ or flags to be turned on (beginning with |"+"|).
 see section |@<Handle flag arg...@>| for details.
 @z
 
-@x
+@x [7.73] l.1130
 char scn_file_name[max_file_name_length]; /* name of |scn_file| */
 @y
 char scn_file_name[max_file_name_length]; /* name of |scn_file| */
 char check_file_name[max_file_name_length]; /* name of |check_file| */
 @z
 
-@x
+@x [7.74] l.1138
 show_banner=show_happiness=show_progress=make_xrefs=true;
 @y
 make_xrefs=true;
 @z
 
-@x
+@x [7.75] l.1142
 file.  It may have an extension, or it may omit the extension to get |".w"| or
 |".web"| added.  The \TEX/ output file name is formed by replacing the \.{CWEB}
 @y
@@ -471,7 +471,7 @@ file.  It may have an extension, or it may omit the extension to get |".w"|
 added.  The \TEX/ output file name is formed by replacing the \.{CWEB}
 @z
 
-@x
+@x [7.75] l.1149
 An omitted change file argument means that |"/dev/null"| should be used,
 when no changes are desired.
 @y
@@ -480,7 +480,7 @@ systems the contents of the compile-time variable |DEV_NULL| (\TeX~Live) or
 |_DEV_NULL| (Amiga)---should be used, when no changes are desired.
 @z
 
-@x
+@x [7.75] l.1165
   strcpy(change_file_name,"/dev/null");
 @y
   strcpy(change_file_name,"/dev/null");
@@ -494,7 +494,7 @@ systems the contents of the compile-time variable |DEV_NULL| (\TeX~Live) or
 @^system dependencies@>
 @z
 
-@x
+@x [7.75] l.1171
         if (*s=='.') dot_pos=s++;
         else if (*s=='/') dot_pos=NULL,name_pos=++s;
         else s++;
@@ -506,7 +506,7 @@ systems the contents of the compile-time variable |DEV_NULL| (\TeX~Live) or
 @^system dependencies@>
 @z
 
-@x
+@x [7.77] l.1186
 @ We use all of |*argv| for the |web_file_name| if there is a |'.'| in it,
 otherwise we add |".w"|. If this file can't be opened, we prepare an
 |alt_web_file_name| by adding |"web"| after the dot.
@@ -515,12 +515,12 @@ otherwise we add |".w"|. If this file can't be opened, we prepare an
 otherwise we add |".w"|.
 @z
 
-@x
+@x [7.77] l.1203
   sprintf(alt_web_file_name,"%s.web",*argv);
 @y
 @z
 
-@x
+@x [7.80] l.1246
 for(dot_pos=*argv+1;*dot_pos>'\0';dot_pos++)
   flags[(eight_bits)*dot_pos]=flag_change;
 @y
@@ -554,7 +554,7 @@ for(dot_pos=*argv+1;*dot_pos>'\0';dot_pos++)
 }
 @z
 
-@x
+@x [7.81] l.1249
 @ @<Print usage error message and quit@>=
 {
 if (program==ctangle)
@@ -572,20 +572,20 @@ cb_usage(program==ctangle ? "ctangle" : program==cweave ? "cweave" : "ctwill");
 @.Usage:@>
 @z
 
-@x
+@x [7.82] l.1261
 @ @<Complain about arg...@>= fatal("! Filename too long\n", *argv);
 @y
 @ @<Complain about arg...@>= fatal(_("! Filename too long\n"), *argv);
 @z
 
-@x
+@x [8.83] l.1272
 FILE *active_file; /* currently active file for \.{CWEAVE} output */
 @y
 FILE *active_file; /* currently active file for \.{CWEAVE} output */
 FILE *check_file; /* temporary output file */
 @z
 
-@x
+@x [8.84] l.1274
 @ @<Scan arguments and open output files@>=
 scan_args();
 if (program==ctangle) {
@@ -613,7 +613,7 @@ else {
 }
 @z
 
-@x
+@x [9.85] l.1286
 @* Index.
 @y
 @** Extensions to {\tentex CWEB}.  The following sections introduce new or
