@@ -74,9 +74,8 @@ class WebReader:
         # Look for '@i'nclude line
         result = re.match("^@i \"?(\\w+\\.?\\w+)\"?", line)
         if result:
-            include_file = result[1]
-            inc_reader = WebReader(include_file)
-            while inc_line := inc_reader.next_line():
+            inc_reader = WebReader(result[1])
+            while inc_reader.next_line():
                 pass
             self.part_cnt += inc_reader.part_cnt
             self.section_cnt += inc_reader.section_cnt
