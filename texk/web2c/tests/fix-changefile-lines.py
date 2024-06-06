@@ -5,7 +5,7 @@
 """
 Reads a WEB file and a change file and writes a change file to stdout with
 potentially corrected part, section and line numbers.
-Written by Tyge Thiessen, 2024. Public domain.
+Written by Tyge Tiessen, 2024. Public domain.
 """
 import re
 import sys
@@ -72,7 +72,7 @@ class WebReader:
             self.section_cnt += 1
 
         # Look for '@i'nclude line
-        result = re.match("^@i \"?(\\w+\\.?\\w+)\"?", line)
+        result = re.match("^@i \"?(\\w+(\\.\\w+)?)\"?", line)
         if result:
             inc_reader = WebReader(result[1])
             while inc_reader.next_line():
