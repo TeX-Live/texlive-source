@@ -1,5 +1,12 @@
 2024-06-09  Andreas Scherer  <https://ascherer.github.io>
 
+	* comm-w2c.ch,
+	* ctang-w2c.ch,
+	* ctwill-w2c.ch,
+	* cweav-w2c.ch: Fix typo (upstream).
+
+2024-06-09  Andreas Scherer  <https://ascherer.github.io>
+
 	* comm-mini.ch,
 	* comm-w2c.ch: Section 'Index.' is on Level 1, not 0.
 	* ctwill-w2c.ch,
