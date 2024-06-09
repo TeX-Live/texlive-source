@@ -158,7 +158,7 @@ class ChangeReader:
             match_start = self._match_lines[0].strip()[:2]
             for repl_index in range(self._pos + 1, len(self._lines)):
                 repl_start = self._lines[repl_index].strip()[:2]
-                # CWEB @<comments@> are ignored; see ctwill-w2c.ch
+                # CWEB @qcomments@> are ignored; see ctwill-w2c.ch
                 if repl_start != "@q":
                     break
             if match_start == "@ ":
