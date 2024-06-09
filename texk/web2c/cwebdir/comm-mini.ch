@@ -283,6 +283,6 @@ Section 96.
 Section 85/102.
 
 @x
-@** Index.
+@* Index.
 @y
 @z

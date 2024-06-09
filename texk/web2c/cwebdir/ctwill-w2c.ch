@@ -1270,7 +1270,7 @@ out_name(cur_name,proofing);
             (ptrdiff_t)(max_sort_ptr-scrap_info),(long)max_scraps);
 @z
 
-@x [13.269] l.4884
+@x [14.270] l.4884
 @** Index.
 @y
 @q Section 270. @>

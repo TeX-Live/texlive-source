@@ -1,3 +1,10 @@
+2024-06-09  Andreas Scherer  <https://ascherer.github.io>
+
+	* comm-mini.ch,
+	* comm-w2c.ch: Section 'Index.' is on Level 1, not 0.
+	* ctwill-w2c.ch,
+	* ../tests/fix-changefile-lines.py: Ignore CWEB @<comment@> line(s).
+
 2024-06-06  Andreas Scherer  <https://ascherer.github.io>
 
 	* comm-w2c.ch,
