@@ -1,9 +1,9 @@
 #!/usr/bin/env perl
-# $Id: fmtutil.pl 68962 2023-11-24 23:01:43Z karl $
+# $Id: fmtutil.pl 71424 2024-06-04 10:25:53Z preining $
 # fmtutil - utility to maintain format files.
 # (Maintained in TeX Live:Master/texmf-dist/scripts/texlive.)
 # 
-# Copyright 2014-2023 Norbert Preining
+# Copyright 2014-2024 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 #
@@ -24,11 +24,11 @@ BEGIN {
   TeX::Update->import();
 }
 
-my $svnid = '$Id: fmtutil.pl 68962 2023-11-24 23:01:43Z karl $';
-my $lastchdate = '$Date: 2023-11-25 00:01:43 +0100 (Sat, 25 Nov 2023) $';
+my $svnid = '$Id: fmtutil.pl 71424 2024-06-04 10:25:53Z preining $';
+my $lastchdate = '$Date: 2024-06-04 12:25:53 +0200 (Tue, 04 Jun 2024) $';
 $lastchdate =~ s/^\$Date:\s*//;
 $lastchdate =~ s/ \(.*$//;
-my $svnrev = '$Revision: 68962 $';
+my $svnrev = '$Revision: 71424 $';
 $svnrev =~ s/^\$Revision:\s*//;
 $svnrev =~ s/\s*\$$//;
 my $version = "r$svnrev ($lastchdate)";
@@ -450,6 +450,9 @@ sub callback_build_formats {
   # for MFBASES.
   $ENV{'TEXFORMATS'} ||= "";
   $ENV{'TEXFORMATS'} = "$tmpdir$sep$ENV{TEXFORMATS}";
+  #
+  # ensure that LC_ALL is set to C to guarantee luatex generating formats
+  $ENV{'LC_ALL'} = "C";
 
   # switch to temporary directory for format generation; on the other hand,
   # for -n, the tmpdir won't exist, but we don't want to find a spurious
