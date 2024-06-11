@@ -882,7 +882,7 @@ void check_outer_validity(void)
     halfword q;
     if (suppress_outer_error_par)
         return;
-    if (scanner_status != normal) {
+    if (   OK_to_interrupt  && (scanner_status != normal)) {
         deletions_allowed = false;
         /*tex
 
