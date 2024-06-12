@@ -32014,15 +32014,14 @@ static pointer new_setpage_node(uint8_t i, str_number n)
   for (p=link(prev_p); p!=null; prev_p=p,p=link(p))
     if (setpage_id(p)==i) break;
   if (p==null)
-    @<allocate a new |setpage_node| |p|@>@;
+    @<Allocate a new |setpage_node| |p|@>@;
   else
     link(prev_p)=link(p);
   link(p)=link(setpage_head);
   link(setpage_head)=p;
   return p;
 }
-@
-@<allocate a new |setpage_node| |p|@>=
+@ @<Allocate a new |setpage_node| |p|@>=
 { p=get_node(setpage_node_size);type(p)=whatsit_node;subtype(p)=setpage_node;
   setpage_number(p)=max_ref[page_kind]=++max_page;
   setpage_id(p)=i;
