@@ -1421,6 +1421,8 @@ declaration.
 @<Forward declarations@>=
 static int s_no(const char *str);
 
+@ (Empty section to keep numbering intact.)
+
 @* On-line and off-line printing.
 Messages that are sent to a user's terminal and to the transcript-log file
 are produced by several `|print|' procedures. These procedures will
@@ -16398,19 +16400,7 @@ if (nest[nest_ptr-1].mode_field==mmode) o=display_indent;
 @<Go through the preamble list, determining the column widths and changing
 the alignrecords to dummy unset boxes@>;
 if (x)
-{ @<Handle an alignment that depends on |hsize| or |vsize|@>@;
-  pop_alignment();
-}
-else
-{ @<Package the preamble list, to determine the actual tabskip glue amounts,
-  and let |p| point to this prototype box@>;
-  @<Set the glue in all the unset boxes of the current list@>;
-  flush_node_list(p);pop_alignment();
-}
-@<Insert the \(c)current list into its environment@>;
-} @/
-@t\4@>@<Declare the procedure called |align_peek|@>@;
-@ @<Handle an alignment that depends on |hsize| or |vsize|@>=
+{ /*Handle an alignment that depends on |hsize| or |vsize|*/
  pointer r=get_node(align_node_size);
  save_ptr=save_ptr-2;pack_begin_line=-mode_line;
 
@@ -16422,6 +16412,17 @@ else
  align_v(r)= (mode!=-vmode);
  link(head)=r; tail=r;
  pack_begin_line=0;
+  pop_alignment();
+}
+else
+{ @<Package the preamble list, to determine the actual tabskip glue amounts,
+  and let |p| point to this prototype box@>;
+  @<Set the glue in all the unset boxes of the current list@>;
+  flush_node_list(p);pop_alignment();
+}
+@<Insert the \(c)current list into its environment@>;
+} @/
+@t\4@>@<Declare the procedure called |align_peek|@>@;
 
 @ It's time now to dismantle the preamble list and to compute the column
 widths. Let $w_{ij}$ be the maximum of the natural widths of all entries
