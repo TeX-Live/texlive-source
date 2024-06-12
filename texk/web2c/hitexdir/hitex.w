@@ -224,6 +224,7 @@
 @s alpha_file int
 @s byte_file int
 @s word_file int
+@s int8_t int
 @s uint8_t int
 @s int16_t int
 @s uint16_t int
@@ -375,7 +376,7 @@ known as `\Prote'.
 @d Prote_banner "This is Prote, Version " Prote_version_string
    /*printed when \Prote\ starts*/
 @#
-@d banner "This is HiTeX, Version 3.141592653"
+@d banner "This is HiTeX, Version 3.141592653"@|
           eTeX_version_string"-"HINT_VERSION_STRING" "TL_VERSION
           /*printed when \TeX\ starts*/
 
@@ -629,7 +630,7 @@ because some fussy \PASCAL\ compilers will complain about redundant labels.
 @d negate(A) A=-A /*change the sign of a variable*/
 @d loop @+while (true) @+ /*repeat over and over until a |goto| happens*/
 @f loop else
-   /*\.{WEB}'s |else| acts like `\ignorespaces|while true do|\unskip'*/
+   /*\.{WEB}'s |loop| acts like `\ignorespaces|while true do|\unskip'*/
 @d do_nothing  /*empty statement*/
 @d empty 0 /*symbolic name for a null constant*/
 
@@ -1492,7 +1493,7 @@ by changing |wterm|, |wterm_ln|, and |wterm_cr| in this section.
 @^system dependencies@>
 
 @<Basic printing procedures@>=
-#define @[put(F)@]    @[fwrite(&((F).d)@],@[sizeof((F).d),1,(F).f)@]@;
+#define @[put(F)@]    @[fwrite(&((F).d),sizeof((F).d),1,(F).f)@]
 #define @[get(F)@]    @[fread(&((F).d),sizeof((F).d),1,(F).f)@]
 
 #define @[pascal_close(F)@]    @[fclose((F).f)@]
@@ -1795,7 +1796,7 @@ $$\vbox{\halign{#\hfil\cr
 |help3("This is the first line of my offer to help.")|\cr
 |("This is the second line. I'm trying to")|\cr
 |("explain the best way for you to proceed.");|\cr
-|error;|\cr}}$$
+|error();|\cr}}$$
 A two-line help message would be given using |help2|, etc.; these informal
 helps should use simple vocabulary that complements the words used in the
 official error message that was printed. (Outside the U.S.A., the help
@@ -3318,7 +3319,7 @@ current \.{\\lineskip}.
 pointer @!q; /*the glue specification*/
 p=get_node(small_node_size);type(p)=glue_node;subtype(p)=n+1;
 leader_ptr(p)=null;@/
-q=@<Current |mem| equivalent of glue parameter number |n|@>@t@>;
+q=@[@<Current |mem| equivalent of glue parameter number |n|@>@];
 glue_ptr(p)=q;incr(glue_ref_count(q));
 return p;
 }
@@ -5485,6 +5486,7 @@ defined by |SOURCE_DATE_EPOCH|.
 @^reference time@>
 @^system dependencies@>
 \TeX\ Live calls |tl_now| to obtain the current time as a |tm| structure.
+@s tm int
 @p static void fix_date_and_time(void)
 {@+ struct tm *t=tl_now();
   time=sys_time= t->tm_hour*60+t->tm_min;/*minutes since midnight*/
@@ -6309,7 +6311,7 @@ the call, since |eq_save| makes the necessary test.
 #ifdef @!STAT
 #define  assign_trace(A, B) if (tracing_assigns > 0) restore_trace(A, B);
 #else
-#define  assign_trace(A, B)
+#define  assign_trace(A, B) @[@]
 #endif
 
 static void eq_define(pointer @!p, quarterword @!t, halfword @!e)
@@ -11530,8 +11532,8 @@ that do not do local optimization.
 
 @ Font parameters are referred to as |slant(f)|, |space(f)|, etc.
 
-@d param_end(A) param_base[A]].sc
-@d param(A) font_info[A+param_end
+@d param_end(A) @[param_base[A]].sc@]
+@d param(A) @[font_info[A+param_end@]
 @d slant param(slant_code) /*slant to the right, per unit distance upward*/
 @d space param(space_code) /*normal space between words*/
 @d space_stretch param(space_stretch_code) /*stretch between words*/
@@ -16885,7 +16887,7 @@ k=1 to 6 do cur_active_width[k]=cur_active_width[k]+mem[q+k].sc|};$$ and we
 want to do this without the overhead of |for| loops. The |do_all_six|
 macro makes such six-tuples convenient.
 
-@d do_all_six(A) A(1);A(2);A(3);A(4);A(5);A(6)
+@d do_all_six(A) A(1);A(2);A(3);A(4);A(5);A(6)@;
 
 @<Glob...@>=
 static scaled @!active_width0[6], *const @!active_width = @!active_width0-1;
@@ -17043,7 +17045,7 @@ loop@+{@+resume: r=link(prev_r);
   @<If node |r| is of type |delta_node|, update |cur_active_width|, set |prev_r|
 and |prev_prev_r|, then |goto resume|@>;
   @<If a line number class has ended, create new active nodes for the best
-feasible breaks in that class; then |return| if |r=last_active|, otherwise
+feasible breaks in that class; then |return| if |r==last_active|, otherwise
 compute the new |line_width|@>;
   @<Consider the demerits for a line from |r| to |cur_p|; deactivate node
 |r| if it should no longer be active; then |goto resume| if a line from
@@ -29639,7 +29641,7 @@ dependent. The information shall be set in |xchg_buffer|.
 @^system dependencies@>
 
 In this basic implementation, we set the string to the empty one by
-simply setting |xchg_buffer_length| to $0$.
+simply setting |xchg_buffer_length| to~$0$.
 
 @d get_file_mtime xchg_buffer_length=0
 
@@ -32371,7 +32373,7 @@ floating_penalty_no  /* |floating_penalty_code|	42*/
     if ( hmap_int[i]>=0) int_defined[hmap_int[i]]=int_par(i);
   max_ref[int_kind]=MAX_INT_DEFAULT;
 @ The function |hget_int_no| tries to allocate a predefined integer number;
-if not successful, it returns $-1$.
+if not successful, it returns~$-1$.
 
 @<Hi\TeX\ auxiliary routines@>=
 static int hget_int_no(int32_t n)
@@ -34479,7 +34481,7 @@ the option structure.
 #include <kpathsea/kpathsea.h>
 static int argument_is(struct option *opt, char * s)
 {@+ return STREQ(opt->name, s); @+}
-#define ARGUMENT_IS(S) argument_is(long_options+option_index,S)
+#define ARGUMENT_IS(S) @[argument_is(long_options+option_index,S)@]
 
 @ Now we can handle the first two options:
 
@@ -35349,6 +35351,8 @@ static int get_md5_sum(int s, int file);
 @ The code that follows was taken from the \.{texmfmp.c} file of
 the \TeX\ Live distribution and slightly modified.
 
+@s md5_byte_t int
+@s md5_state_t int
 
 @<\TeX\ Live auxiliary functions@>=
 
@@ -35407,16 +35411,16 @@ make_time_str(time_t t, bool utc)
 static void get_creation_date(void)
 { make_time_str(start_time,source_date_epoch!=NULL);
 }
-
-/* static structure for file status set by |find_input_file| */
+@#
 #ifdef WIN32
+/* static structure for file status set by |find_input_file| */
+@+@t}\6{@>
 static    struct _stat file_stat;
-#define GET_FILE_STAT _stat(fname,&file_stat)
+#define GET_FILE_STAT @[_stat(fname,&file_stat)@]
 #else
 static     struct stat file_stat;
-#define GET_FILE_STAT stat(fname,&file_stat)
+#define GET_FILE_STAT @[stat(fname,&file_stat)@]
 #endif
-
 
 static char* find_input_file(void)
 { char *fname;
