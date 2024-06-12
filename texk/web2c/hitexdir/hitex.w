@@ -1330,7 +1330,7 @@ while (j < str_start[s+1])
 result=true;
 not_found: return result;
 }
-@t\4@>@<Declare \Prote\ procedures for strings@>@;
+@#@<Declare \Prote\ procedures for strings@>@;
 
 @ The initial values of |str_pool|, |str_start|, |pool_ptr|,
 and |str_ptr| are computed by the \.{INITEX} program, based in part
@@ -2422,7 +2422,7 @@ computing at most 1095 distinct values, but that is plenty.
 
 @d inf_bad 10000 /*infinitely bad value*/
 
-@p @<Declare \Prote\ arithmetic routines@>@/
+@p @<Declare \Prote\ arithmetic routines@>@;
 static halfword badness(scaled @!t, scaled @!s) /*compute badness, given |t >= 0|*/
 {@+int r; /*approximation to $\alpha t/s$, where $\alpha^3\approx
   100\cdot2^{18}$*/
@@ -5005,7 +5005,7 @@ else switch (chr_code) {
   case every_vbox_loc: print_esc("everyvbox");@+break;
   case every_job_loc: print_esc("everyjob");@+break;
   case every_cr_loc: print_esc("everycr");@+break;
-  @/@<Cases of |assign_toks| for |print_cmd_chr|@>@/
+  @/@t\4@>@<Cases of |assign_toks| for |print_cmd_chr|@>@;
   default:print_esc("errhelp");
   } @+break;
 
@@ -5333,7 +5333,7 @@ case right_hyphen_min_code: print_esc("righthyphenmin");@+break;
 case holding_inserts_code: print_esc("holdinginserts");@+break;
 case error_context_lines_code: print_esc("errorcontextlines");@+break;
 case tracing_stack_levels_code: print_esc("tracingstacklevels");@+break;
-@/@<Cases for |print_param|@>@/
+@/@t\4@>@<Cases for |print_param|@>@;
 default:print("[unknown integer parameter!]");
 }
 }
@@ -6037,7 +6037,7 @@ case end_group: print_esc("endgroup");@+break;
 case ex_space: print_esc(" ");@+break;
 case expand_after: switch (chr_code) {
 case 0: print_esc("expandafter");@+break;
-@/@<Cases of |expandafter| for |print_cmd_chr|@>@/
+@/@t\4@>@<Cases of |expandafter| for |print_cmd_chr|@>@;
 } @+break; /*there are no other cases*/
 case halign: print_esc("halign");@+break;
 case hrule: print_esc("hrule");@+break;
@@ -6064,7 +6064,7 @@ case set_box: print_esc("setbox");@+break;
 case set_prev_graf: print_esc("prevgraf");@+break;
 case set_shape: switch (chr_code) {
   case par_shape_loc: print_esc("parshape");@+break;
-  @<Cases of |set_shape| for |print_cmd_chr|@>@;@/
+  @/@t\4@>@<Cases of |set_shape| for |print_cmd_chr|@>@;
   } @+break; /*there are no other cases*/
 case the: if (chr_code==0) print_esc("the")
   @<Cases of |the| for |print_cmd_chr|@>;@+break;
@@ -6273,7 +6273,7 @@ case shape_ref: {@+q=equiv_field(w); /*we need to free a \.{\\parshape} block*/
   if (q!=null) free_node(q, info(q)+info(q)+1);
   } @+break; /*such a block is |2 n+1| words long, where |n==info(q)|*/
 case box_ref: flush_node_list(equiv_field(w));@+break;
-@/@<Cases for |eq_destroy|@>@/
+@/@t\4@>@<Cases for |eq_destroy|@>@;
 default:do_nothing;
 }
 }
@@ -6816,7 +6816,7 @@ case endv: print("end of alignment template");@+break;
 case spacer: chr_cmd("blank space ")@;@+break;
 case letter: chr_cmd("the letter ")@;@+break;
 case other_char: chr_cmd("the character ")@;@+break;
-@t\4@>@<Cases of |print_cmd_chr| for symbolic printing of primitives@>@/
+@/@t\4@>@<Cases of |print_cmd_chr| for symbolic printing of primitives@>@;
 default:print("[unknown command code!]");
 }
 }
@@ -8170,7 +8170,7 @@ case top_bot_mark: @<Insert the \(a)appropriate mark text into the scanner@>@;@+
 case expand_after: switch (cur_chr) {
 case 0: @<Expand the token after the next token@>@;@+break;
 case 1: @<Negate a boolean conditional and |goto reswitch|@>@;@+break;
-@/@<Cases for |expandafter|@>@/
+@/@t\4@>@<Cases for |expandafter|@>@;
 } @+break; /*there are no other cases*/
 case no_expand: @<Suppress expansion of the next token@>@;@+break;
 case cs_name: @<Manufacture a control sequence name@>@;@+break;
@@ -8793,9 +8793,9 @@ have to declare |scan_int| as a |forward| procedure. A few other
 procedures are also declared at this point.
 
 @p static void scan_int(void); /*scans an integer value*/
-@t\4\4@>@<Declare procedures that scan restricted classes of integers@>@;
-@t\4\4@>@<Declare \eTeX\ procedures for scanning@>@;
-@t\4\4@>@<Declare procedures that scan font-related stuff@>@;
+@#@<Declare procedures that scan restricted classes of integers@>@;
+@<Declare \eTeX\ procedures for scanning@>@;
+@<Declare procedures that scan font-related stuff@>@;
 
 @ \TeX\ doesn't know exactly what to expect when |scan_something_internal|
 begins.  For example, an integer or dimension or glue value could occur
@@ -9004,7 +9004,7 @@ case last_item: switch (chr_code) {
   case dimen_val: print_esc("lastkern");@+break;
   case glue_val: print_esc("lastskip");@+break;
   case input_line_no_code: print_esc("inputlineno");@+break;
-  @/@<Cases of |last_item| for |print_cmd_chr|@>@/
+  @/@t\4@>@<Cases of |last_item| for |print_cmd_chr|@>@;
   default:print_esc("badness");
   } @+break;
 
@@ -9078,14 +9078,14 @@ else if (m >= input_line_no_code)
  if (m >= eTeX_glue) @<Process an expression and |return|@>@;
  else if (m >= eTeX_dim)
   {@+switch (m) {
-  @/@<Cases for fetching a dimension value@>@/
+  @/@t\4@>@<Cases for fetching a dimension value@>@;
   }  /*there are no other cases*/
   cur_val_level=dimen_val;
   }
  else{@+switch (m) {
   case input_line_no_code: cur_val=line;@+break;
   case badness_code: cur_val=last_badness;@+break;
-  @/@<Cases for fetching an integer value@>@/
+  @/@t\4@>@<Cases for fetching an integer value@>@;
   }  /*there are no other cases*/
   cur_val_level=int_val;
   }
@@ -9854,7 +9854,7 @@ case convert: switch (chr_code) {
   case font_name_code: print_esc("fontname");@+break;
   case job_name_code: print_esc("jobname");@+break;
   case eTeX_revision_code: print_esc("eTeXrevision");@+break;
-  @/@<Cases of |convert| for |print_cmd_chr|@>@/
+  @/@t\4@>@<Cases of |convert| for |print_cmd_chr|@>@;
   } @+break;
 
 @ The procedure |conv_toks| uses |str_toks| to insert the token list
@@ -9885,7 +9885,7 @@ case string_code: case meaning_code: {@+save_scanner_status=scanner_status;
 case font_name_code: scan_font_ident();@+break;
 case job_name_code: if (job_name==0) open_log_file();@+break;
 case eTeX_revision_code: do_nothing;@+break;
-@/@<Cases of `Scan the argument for command |c|'@>@/
+@/@t\4@>@<Cases of `Scan the argument for command |c|'@>@;
 }  /*there are no other cases*/
 
 @ @<Print the result of command |c|@>=
@@ -9903,7 +9903,7 @@ case font_name_code: {@+printn(font_name[cur_val]);
   } @+break;
 case eTeX_revision_code: print(eTeX_revision);@+break;
 case job_name_code: printn(job_name);@+break;
-@/@<Cases of `Print the result of command |c|'@>@/
+@/@t\4@>@<Cases of `Print the result of command |c|'@>@;
 }  /*there are no other cases*/
 
 @ Now we can't postpone the difficulties any longer; we must bravely tackle
@@ -10221,7 +10221,7 @@ switch (chr_code%unless_code) {
   case if_true_code: print_esc("iftrue");@+break;
   case if_false_code: print_esc("iffalse");@+break;
   case if_case_code: print_esc("ifcase");@+break;
-  @/@<Cases of |if_test| for |print_cmd_chr|@>@/
+  @/@t\4@>@<Cases of |if_test| for |print_cmd_chr|@>@;
   default:print_esc("if");
   }
 } @+break;
@@ -10402,7 +10402,7 @@ case if_eof_code: {@+scan_four_bit_int();b=(read_open[cur_val]==closed);
   } @+break;
 case if_true_code: b=true;@+break;
 case if_false_code: b=false;@+break;
-@/@<Cases for |conditional|@>@/
+@/@t\4@>@<Cases for |conditional|@>@;
 case if_case_code: @<Select the appropriate case and |return| or |goto common_ending|@>;
 }  /*there are no other cases*/
 
@@ -12985,7 +12985,7 @@ entering a new level of recursion.  In effect, the values of |save_h| and
 |save_v| on \TeX's run-time stack correspond to the values of |h| and |v|
 that a \.{DVI}-reading program will push onto its coordinate stack.
 
-@p @t\4@>@<Declare procedures needed in |hlist_out|, |vlist_out|@>@t@>@/
+@p @<Declare procedures needed in |hlist_out|, |vlist_out|@>@t@>@;
 static void hlist_out(void) /*output an |hlist_node| box*/
 {@+
 scaled base_line; /*the baseline coordinate for this box*/
@@ -14955,7 +14955,7 @@ case rel_noad: case close_noad: case punct_noad:
   @<Convert \(a)a final |bin_noad| to an |ord_noad|@>;
   if (type(q)==right_noad) goto done_with_noad;
   } @+break;
-@t\4@>@<Cases for noads that can follow a |bin_noad|@>@;
+@/@t\4@>@<Cases for noads that can follow a |bin_noad|@>@;
 @t\4@>@<Cases for nodes that can appear in an mlist, after which we |goto
 done_with_node|@>@;
 default:confusion("mlist1");
@@ -15942,7 +15942,7 @@ good start. This mostly involves scanning the preamble and putting its
 information into the preamble list.
 @^preamble@>
 
-@p @t\4@>@<Declare the procedure called |get_preamble_token|@>@t@>@/
+@p @<Declare the procedure called |get_preamble_token|@>@;
 static void align_peek(void);@/
 static void normal_paragraph(void);@/
 static void init_align(void)
@@ -16150,7 +16150,7 @@ from internal vertical mode to restricted horizontal mode or vice versa.
 The |space_factor| and |prev_depth| are not used on this semantic level,
 but we clear them to zero just to be tidy.
 
-@p @t\4@>@<Declare the procedure called |init_span|@>@t@>@/
+@p @<Declare the procedure called |init_span|@>@;
 static void init_row(void)
 {@+push_nest();mode=(-hmode-vmode)-mode;
 if (mode==-hmode) space_factor=0;@+else prev_depth=0;
@@ -21132,7 +21132,7 @@ any_mode(ignore_spaces): {@+@<Get the next non-blank non-call...@>;
   goto reswitch;
   }
 case vmode+stop: if (its_all_over()) return;@+break; /*this is the only way out*/
-@t\4@>@<Forbidden cases detected in |main_control|@>@+@, any_mode(mac_param):
+@<Forbidden cases detected in |main_control|@>@+@, any_mode(mac_param):
   report_illegal_case();@+break;
 @<Math-only cases in non-math modes, or vice versa@>: insert_dollar_sign();@+break;
 @t\4@>@<Cases of |main_control| that build boxes and lists@>@;
@@ -25790,7 +25790,7 @@ case extension: switch (chr_code) {
   case ignore_node: print("[HINT internal: ignore]");@+break;
   case immediate_code: print_esc("immediate");@+break;
   case set_language_code: print_esc("setlanguage");@+break;
-  @/@<Cases of |extension| for |print_cmd_chr|@>@/
+  @/@t\4@>@<Cases of |extension| for |print_cmd_chr|@>@;
   default:print("[unknown extension!]");
   } @+break;
 
@@ -25981,7 +25981,7 @@ case xdimen_node:
 case ignore_node: @+break;
 case immediate_code: @<Implement \.{\\immediate}@>@;@+break;
 case set_language_code: @<Implement \.{\\setlanguage}@>@;@+break;
-@/@<Cases for |do_extension|@>@/
+@/@t\4@>@<Cases for |do_extension|@>@;
 default:confusion("ext1");
 @:this can't happen ext1}{\quad ext1@>
 }
@@ -26112,7 +26112,7 @@ case language_node: {@+print_esc("setlanguage");
   print_int(what_lhm(p));print_char(',');
   print_int(what_rhm(p));print_char(')');
   } @+break;
-@/@<Cases for displaying the |whatsit| node@>@/
+@/@t\4@>@<Cases for displaying the |whatsit| node@>@;
 case param_node: print_esc("parameter ");
   print_int(param_type(p));print_char(',');print_int(param_no(p));
   print_char(':');print_int(param_value(p).i);
@@ -26253,7 +26253,7 @@ case write_node: case special_node: case latespecial_node: {@+r=get_node(write_n
 case close_node: case language_node: {@+r=get_node(small_node_size);
   words=small_node_size;
   } @+break;
-@/@<Cases for making a partial copy of the whatsit node@>@/
+@/@t\4@>@<Cases for making a partial copy of the whatsit node@>@;
 case param_node:
 {@+r=get_node(param_node_size);
   if (param_type(p)==glue_type) add_glue_ref(param_value(p).i);
@@ -26436,7 +26436,7 @@ case stream_node:
   free_node(p,stream_node_size); @+break;
 case xdimen_node:
   free_node(p,xdimen_node_size);
-@/@<Cases for wiping out the whatsit node@>@/
+@/@t\4@>@<Cases for wiping out the whatsit node@>@;
 default:confusion("ext3");
 @:this can't happen ext3}{\quad ext3@>
 } @/
@@ -26449,7 +26449,7 @@ goto done;
 
 @ @<Let |d| be the width of the whatsit |p|@>=d=0
 
-@ @d adv_past(A) @+if (subtype(A)==language_node)
+@ @d adv_past(A) if (subtype(A)==language_node)
     {@+cur_lang=what_lang(A);l_hyf=what_lhm(A);r_hyf=what_rhm(A);
     set_hyph_index;
     }
@@ -27753,7 +27753,7 @@ resume: if (s==expr_none) o=l;@+else o=int_val;
 found: @<Scan the next operator and set |o|@>;
 arith_error=b;
 @<Make sure that |f| is in the proper range@>;
-switch (s) {@<Cases for evaluation of the current term@>@;
+switch (s) {@t\4@>@<Cases for evaluation of the current term@>@;
 }  /*there are no other cases*/
 if (o > expr_sub) s=o;@+else@<Evaluate the current expression@>;
 b=arith_error;
@@ -28522,7 +28522,7 @@ if (l < 4)  /*|q| is an index node*/
   }
 else /*|q| is the node for a mark class*/
   {@+switch (a) {
-  @<Cases for |do_marks|@>@;
+  @t\4@>@<Cases for |do_marks|@>@;
   }  /*there are no other cases*/
   if (sa_bot_mark(q)==null) if (sa_split_bot_mark(q)==null)
     {@+free_node(q, mark_class_node_size);q=null;
