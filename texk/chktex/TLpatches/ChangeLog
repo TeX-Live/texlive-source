@@ -1,3 +1,9 @@
+2024-06-12  Akira Kakuto  <kakuto@jcom.zaq.ne.jp>
+
+	* Import chktex-1.7.9.
+	* patch-03-late-decl: Revive once more to support old
+	compilers.
+
 2022-12-15  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
 	* Import chktex-1.7.8.

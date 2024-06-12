@@ -284,6 +284,9 @@ Message 22 in Test.tex: Comment displayed.
 % ignore commands by default  
 ^
 Message 22 in Test.tex: Comment displayed.
+% Bug 65500  
+^
+Message 22 in Test.tex: Comment displayed.
 % Warning 13  
 ^
 Message 13 in Test.tex: Intersentence spacing (`\@') should perhaps be used.
@@ -548,6 +551,9 @@ Message 42 in Test.tex: You should remove spaces in front of `\footnote'
 This is a footnote \footnote{foo}.  
                   ^
 Message 22 in Test.tex: Comment displayed.
+This is a footnote%  
+                  ^
+Message 22 in Test.tex: Comment displayed.
 % Warning 43  
 ^
 Message 46 in Test.tex: Use \( ... \) instead of $ ... $.
@@ -682,7 +688,7 @@ Message 22 in Test.tex: Comment displayed.
 Message 44 in Test.tex: User Regex: -2:Vertical rules in tables are ugly.
 \begin{tabular*}{1.0\linewidth}[h]{|c|cc|}  
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Message 44 in Test.tex: User Regex: -2:Use \toprule, midrule, or \bottomrule from booktabs.
+Message 44 in Test.tex: User Regex: -2:Use \toprule, \midrule, or \bottomrule from booktabs.
   \hline  
   ^^^^^^
 Message 22 in Test.tex: Comment displayed.

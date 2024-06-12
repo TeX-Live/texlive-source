@@ -3,14 +3,14 @@
 ##### TODO: Use something besides errexam?
 ##### TODO: Color/frame for default value
 ###############################################################################
-#### This fiie is input to a simple "tangle" process.  The extions of .in is
+#### This file is input to a simple "tangle" process.  The extensions of .in is
 #### a little misleading in that it's not managed by autotools or m4.  Sorry.
 ####
 #### Two different files are created from this file by calling MakeChkTeXRC.pl
-#### 1. chktexrc, a self-documenting chktecrc example
+#### 1. chktexrc, a self-documenting chktexrc example
 ####   a. Lines with 3 (or more) leading #'s are discarded
 ####   b. Other lines are kept as is
-#### 2. ChkTeXRC.tex, LaTeX documentation for chktecrc.
+#### 2. ChkTeXRC.tex, LaTeX documentation for chktexrc.
 ####   a. Lines with 4 (or more) leading #'s are discarded
 ####   b. Lines with 0 or 2 (exactly) leading #'s are discarded
 ####   c. Lines with 1 or 3 (exactly) leading #'s are turned in (LaTeX-only) lines
@@ -44,11 +44,11 @@
 ### \subsubsection{The \rsrc\ file format}
 ## chktexrc file format
 #
-# The chktecrc file is essentially a bunch of variable assignments.
+# The chktexrc file is essentially a bunch of variable assignments.
 # There are two types of variables, those that take single items and
 # those that take lists.
 #
-# In turn, there are two types of lists, case-sensitive and case-insentive.
+# In turn, there are two types of lists, case-sensitive and case-insensitive.
 # Case-sensitive lists are delimited by @verb@{@endverb@ and @verb@}@endverb@
 # while case-insensitive are delimited by @verb@[@endverb@ and @verb@]@endverb@.
 # Only some variables support case insensitive lists, since in many
@@ -58,7 +58,7 @@
 #
 # Variables can be set with or without an equals sign.  If included, the
 # @verb@=@endverb@ causes the variable to be overwritten.  This is the only thing
-# that makes sense for varibles taking a single item and so we always
+# that makes sense for variables taking a single item and so we always
 # include it in that case.  For list variables, omitting the equals
 # sign will cause the items in the list to be appended instead of
 # overwriting the entire list.
@@ -89,7 +89,7 @@
 # You can use double quotes @verb@"@endverb@ to surround an item with spaces, or you can
 # escape spaces as described later.
 #
-# Detection of tokens like @verb@}@endverb@ are somewhat context sensitve---they
+# Detection of tokens like @verb@}@endverb@ are somewhat context sensitive---they
 # have to be preceded by a space (or newline).  This allows them to be
 # part of an item without escaping.  Since some variables require such
 # characters, this generally makes life easier.
@@ -129,7 +129,7 @@
 ### \subsubsection{Settings in the \rsrc\ file}
 ## Available Settings
 #
-# All avaiable settings follow.
+# All available settings follow.
 #
 
 ## QuoteStyle
@@ -171,12 +171,12 @@ TabSize = 8
 ### \medskip
 ### \begin{chktexrcsimplevar}{CmdSpaceStyle}
 #
-# How to treat a command is followed by punction.  In all cases the
+# How to treat a command is followed by punctuation.  In all cases the
 # warnings are also governed by the main warning settings, namely
 # warnings 12 and 13 about interword and intersentence spacings.
 ### These can be found on page~\pageref{warn:interword}.
 #
-# If set to Ignore, then it won't print any warnings when pucntuation
+# If set to Ignore, then it won't print any warnings when punctuation
 # follows a command.
 #
 #
@@ -308,13 +308,13 @@ UserWarnRegex
     # POSIX:([^[:alnum:]]|^)intro([^[:alnum:]]|$)
 
     # Pretty tables--see http://texdoc.net/texmf-dist/doc/latex/booktabs/booktabs.pdf
-    (?!#-2:Use! \toprule,! midrule,! or! \bottomrule! from! booktabs)\\hline
+    (?!#-2:Use! \toprule,! \midrule,! or! \bottomrule! from! booktabs)\\hline
     # This relies on it being on a single line, and not having anything
     # else on that line.  With PCRE we could match balanced [] and {},
     # but I wonder if it's worth the complexity...
     (?!#-2:Vertical! rules! in! tables! are! ugly)\\begin\{(array|tabularx?\*?)\}(\[.*\])?\{.*\|.*\}
 
-    (?!#-3:Optional! arguments! []! inside! optional! arguments! []! must! be! enclosed! in! {})\[(?!![^\]\[{}]*{(?!![^\]\[{}]*}))[^\]]*\[
+    (?!#-3:Optional! arguments! []! inside! optional! arguments! []! must! be! enclosed! in! {})PCRE:\[(?!![^\]\[{}]*{(?!![^\]\[{}]*}))[^\]]*\[
 
 }
 ### \end{verbatim}
@@ -567,7 +567,7 @@ DashExcpt
 # star variant, two optional arguments, and one required argument.
 #
 # These commands may be ``evaluated'' before they're wiped, so you will
-# typically list filehandling commands and similar here.
+# typically list file handling commands and similar here.
 #
 ### \chktexrcdefault\begin{verbatim}
 WipeArg
@@ -759,7 +759,7 @@ Abbrev
 ### \begin{chktexrclistvar}{IJAccent}
 #
 # Commands which add accents above characters.  This means that @verb@\i@endverb@ or @verb@\j@endverb@
-# (@verb@\imath@endverb@ and @verb@\jmath@endverb@ in mathmode) should be used instead of @verb@i@endverb@ and @verb@j@endverb@.
+# (@verb@\imath@endverb@ and @verb@\jmath@endverb@ in math mode) should be used instead of @verb@i@endverb@ and @verb@j@endverb@.
 #
 # Other accent commands such as @verb@\c@endverb@, @verb@\d@endverb@, and @verb@\b@endverb@, put their accent under
 # the character, and thus should be used with normal @verb@i@endverb@s and @verb@j@endverb@s.
@@ -810,7 +810,7 @@ NonItalic
 # needs italic correction in the end).
 #
 # This is currently empty, since @verb@\textit@endverb@, @verb@\textsl@endverb@, and @verb@\emph@endverb@
-# automatically add italic corecction.
+# automatically add italic correction.
 #
 ### \chktexrcdefault\begin{verbatim}
 ItalCmd
@@ -963,7 +963,7 @@ NoCharNext
 #
 # The arguments of commands listed in@ref@WipeArg@endref@, as well as
 # @verb@\verb+...+@endverb@ commands, are replaced with an innocuous character
-# to prevent that data from inadvertantly producing a warning.
+# to prevent that data from inadvertently producing a warning.
 #
 # This should not contain an alphabetic character (in case the user
 # writes (@verb@\foo\verb+bar+@endverb@), neither should it contain be one of

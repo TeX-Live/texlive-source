@@ -27,7 +27,7 @@ dnl
 
 
 dnl Process this file with autoconf to produce a configure script.
-AC_INIT([ChkTeX],[1.7.8])
+AC_INIT([ChkTeX],[1.7.9])
 AC_SUBST(SCRIPTS)
 AC_SUBST(BUILT_SCRIPTS)
 AC_SUBST(CLEAN)

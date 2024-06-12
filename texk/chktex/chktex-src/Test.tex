@@ -95,6 +95,14 @@ Mr. ``X'' and Mrs. \(Y\)
 % ignore commands by default
 \Mr. ``X'' and \Mrs. \(Y\)
 
+
+% Bug 65500
+\begin{tabular}{lp}
+1 & foo. \\
+2 & bar. \newline kjl
+\end{tabular}
+
+
 % Warning 13
 
 Look at THIS! It's an error.
@@ -213,6 +221,9 @@ foo \above qux
 % Warning 42
 This is a footnote \footnote{foo}.
 This is a footnote\footnote{foo}.
+This is a footnote%
+     \footnote{foo}.
+
 
 % Warning 43
 Here is a mistake $\left{x\right}$.

@@ -1,0 +1,44 @@
+diff -ur chktex/FindErrs.c chktex-src/FindErrs.c
+--- chktex/FindErrs.c	Sat Apr 27 02:28:46 2024
++++ chktex-src/FindErrs.c	Wed Jun 12 17:25:32 2024
+@@ -351,6 +351,7 @@
+ 
+                 EscapePtr = TmpPtr; /* Save it for later */
+                 while ((TmpPtr = strstr(TmpPtr, FileSuppDelim))) {
++                    uint64_t errbit;
+                     TmpPtr += STRLEN(FileSuppDelim);
+                     error = atoi(TmpPtr);
+ 
+@@ -358,7 +359,7 @@
+                     {
+                         PrintPrgErr(pmSuppTooHigh, error, MaxSuppressionBits);
+                     }
+-                    uint64_t errbit = ((uint64_t)1 << abs(error));
++                    errbit = ((uint64_t)1 << abs(error));
+                     if (error > 0)
+                     {
+                         *(uint64_t *)StkTop(&FileSuppStack) |= errbit;
+@@ -1133,19 +1134,21 @@
+                  * this on the first dash */
+                 if (*TmpPtr != '-')
+                 {
++                    struct WordList *el;
+                     /* PrePtr now points to the beginning of the hyphenated phrase */
+                     PrePtr = ++TmpPtr;
+ 
+-                    struct WordList *el = &DashExcpt;
++                    el = &DashExcpt;
+ 
+                     FORWL(i, *el)
+                     {
++                        int FoundHyphenDiff;
+                         char *e = el->Stack.Data[i];
+                         TmpPtr = PrePtr;
+ 
+                         /* Walk through the strings until we find a
+                          * mismatch.  */
+-                        int FoundHyphenDiff = FALSE;
++                        FoundHyphenDiff = FALSE;
+                         while (*e && *TmpPtr && *e == *TmpPtr)
+                         {
+                             /* Skip past characters that are the same */

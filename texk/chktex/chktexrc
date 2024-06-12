@@ -19,11 +19,11 @@
 
 ## chktexrc file format
 #
-# The chktecrc file is essentially a bunch of variable assignments.
+# The chktexrc file is essentially a bunch of variable assignments.
 # There are two types of variables, those that take single items and
 # those that take lists.
 #
-# In turn, there are two types of lists, case-sensitive and case-insentive.
+# In turn, there are two types of lists, case-sensitive and case-insensitive.
 # Case-sensitive lists are delimited by `{' and `}'
 # while case-insensitive are delimited by `[' and `]'.
 # Only some variables support case insensitive lists, since in many
@@ -33,7 +33,7 @@
 #
 # Variables can be set with or without an equals sign.  If included, the
 # `=' causes the variable to be overwritten.  This is the only thing
-# that makes sense for varibles taking a single item and so we always
+# that makes sense for variables taking a single item and so we always
 # include it in that case.  For list variables, omitting the equals
 # sign will cause the items in the list to be appended instead of
 # overwriting the entire list.
@@ -62,7 +62,7 @@
 # You can use double quotes `"' to surround an item with spaces, or you can
 # escape spaces as described later.
 #
-# Detection of tokens like `}' are somewhat context sensitve---they
+# Detection of tokens like `}' are somewhat context sensitive---they
 # have to be preceded by a space (or newline).  This allows them to be
 # part of an item without escaping.  Since some variables require such
 # characters, this generally makes life easier.
@@ -98,7 +98,7 @@
 
 ## Available Settings
 #
-# All avaiable settings follow.
+# All available settings follow.
 #
 
 ## QuoteStyle
@@ -125,11 +125,11 @@ TabSize = 8
 
 ## CmdSpaceStyle
 #
-# How to treat a command is followed by punction.  In all cases the
+# How to treat a command is followed by punctuation.  In all cases the
 # warnings are also governed by the main warning settings, namely
 # warnings 12 and 13 about interword and intersentence spacings.
 #
-# If set to Ignore, then it won't print any warnings when pucntuation
+# If set to Ignore, then it won't print any warnings when punctuation
 # follows a command.
 #
 #
@@ -238,13 +238,13 @@ UserWarnRegex
     # POSIX:([^[:alnum:]]|^)intro([^[:alnum:]]|$)
 
     # Pretty tables--see http://texdoc.net/texmf-dist/doc/latex/booktabs/booktabs.pdf
-    (?!#-2:Use! \toprule,! midrule,! or! \bottomrule! from! booktabs)\\hline
+    (?!#-2:Use! \toprule,! \midrule,! or! \bottomrule! from! booktabs)\\hline
     # This relies on it being on a single line, and not having anything
     # else on that line.  With PCRE we could match balanced [] and {},
     # but I wonder if it's worth the complexity...
     (?!#-2:Vertical! rules! in! tables! are! ugly)\\begin\{(array|tabularx?\*?)\}(\[.*\])?\{.*\|.*\}
 
-    (?!#-3:Optional! arguments! []! inside! optional! arguments! []! must! be! enclosed! in! {})\[(?!![^\]\[{}]*{(?!![^\]\[{}]*}))[^\]]*\[
+    (?!#-3:Optional! arguments! []! inside! optional! arguments! []! must! be! enclosed! in! {})PCRE:\[(?!![^\]\[{}]*{(?!![^\]\[{}]*}))[^\]]*\[
 
 }
 
@@ -453,7 +453,7 @@ DashExcpt
 # star variant, two optional arguments, and one required argument.
 #
 # These commands may be ``evaluated'' before they're wiped, so you will
-# typically list filehandling commands and similar here.
+# typically list file handling commands and similar here.
 #
 WipeArg
 {
@@ -617,7 +617,7 @@ Abbrev
 ## IJAccent
 #
 # Commands which add accents above characters.  This means that `\i' or `\j'
-# (`\imath' and `\jmath' in mathmode) should be used instead of `i' and `j'.
+# (`\imath' and `\jmath' in math mode) should be used instead of `i' and `j'.
 #
 # Other accent commands such as `\c', `\d', and `\b', put their accent under
 # the character, and thus should be used with normal `i's and `j's.
@@ -656,7 +656,7 @@ NonItalic
 # needs italic correction in the end).
 #
 # This is currently empty, since `\textit', `\textsl', and `\emph'
-# automatically add italic corecction.
+# automatically add italic correction.
 #
 ItalCmd
 {
@@ -771,7 +771,7 @@ NoCharNext
 #
 # The arguments of commands listed in WipeArg, as well as
 # `\verb+...+' commands, are replaced with an innocuous character
-# to prevent that data from inadvertantly producing a warning.
+# to prevent that data from inadvertently producing a warning.
 #
 # This should not contain an alphabetic character (in case the user
 # writes (`\foo\verb+bar+'), neither should it contain be one of

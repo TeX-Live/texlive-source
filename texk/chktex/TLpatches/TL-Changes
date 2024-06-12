@@ -1,6 +1,5 @@
-Changes applied to the chktex-1.7.8 tree as obtained from:
-	http://mirror.ctan.org/support/chktex/
-	http://download.savannah.gnu.org/releases/chktex/chktex-1.7.8.tar.gz
+Changes applied to the chktex-1.7.9 tree as obtained from:
+	http://mirror.ctan.org/support/chktex.zip
 
 Remove:
 	aclocal.m4
