@@ -32323,7 +32323,7 @@ but we will need it repeatedly in the function |hdef_param_node| and the overhea
 not warrant having the mapping in both directions.
 
 @<Hi\TeX\ variables@>=
-static const int hmap_int[] ={@/
+static const int hmap_int[] ={@t\1\1@>@/
 pretolerance_no,  /* |pretolerance_code| 0 */
 tolerance_no,  /* |tolerance_code| 1 */
 line_penalty_no,  /* |line_penalty_code| 2 */
@@ -32366,7 +32366,7 @@ year_no,  /* |year_code| 23 */
 -1,  /* |output_penalty_code| 39 */
 -1,  /* |max_dead_cycles_code| 40 */
 hang_after_no,  /* |hang_after_code| 41*/
-floating_penalty_no  /* |floating_penalty_code|	42*/
+@t\2\2@> floating_penalty_no  /* |floating_penalty_code| 42*/
 };
 
 
@@ -32421,7 +32421,7 @@ We proceed as we did for integers, starting with the array that holds the define
 @<Hi\TeX\ variables@>=
 static scaled dimen_defined[0x100]={0};
 @ @<Hi\TeX\ variables@>=
-static const int hmap_dimen[] ={@/
+static const int hmap_dimen[] ={@t\1\1@>@/
   -1, /* |par_indent_code| 0 */
   -1,  /* |math_surround_code| 1 */
   line_skip_limit_no,  /* |line_skip_limit_code| 2 */
@@ -32442,7 +32442,7 @@ static const int hmap_dimen[] ={@/
   hang_indent_no,  /* |hang_indent_code| 17 */
   -1, /* |h_offset_code| 18 */
   -1,  /* |v_offset_code| 19 */
-  emergency_stretch_no /* |emergency_stretch_code| 20 */
+  @t\2\2@> emergency_stretch_no /* |emergency_stretch_code| 20 */
 };
 @ @<Fix definitions for dimension parameters@>=
   dimen_defined[zero_dimen_no]=0;
@@ -32548,8 +32548,7 @@ glue specifications and often a simple comparison of pointers might suffice.
 @<Hi\TeX\ variables@>=
 static pointer glue_defined[0x100];
 @ @<Hi\TeX\ variables@>=
-static int hmap_glue[] ={
-
+static int hmap_glue[] ={@t\1\1@>@/
 line_skip_no,  /* |line_skip_code| 0 */
 baseline_skip_no,  /* |baseline_skip_code| 1 */
 -1,  /* |par_skip_code| 2 */
@@ -32564,7 +32563,7 @@ split_top_skip_no,  /* |split_top_skip_code| 10 */
 tab_skip_no,  /* |tab_skip_code| 11 */
 -1,  /* |space_skip_code| 12 */
 -1,  /* |xspace_skip_code| 13 */
-par_fill_skip_no  /* |par_fill_skip_code| 14 */
+@t\2\2@> par_fill_skip_no  /* |par_fill_skip_code| 14 */
 };
 @ @<Fix definitions for glue parameters@>=
   glue_defined[zero_skip_no]=zero_glue; incr(glue_ref_count(zero_glue));
@@ -34395,7 +34394,7 @@ static const char *option_mfmode="ljfour", *option_dpi_str="600";
 extern int option_compress;
 extern unsigned int debugflags;
 
-static struct option long_options[] = {@/
+static struct option long_options[] = {@t\1\1@>@/
       { "help",                      0, 0, 0 },@/
       { "version",                   0, 0, 0 },@/
       { "interaction",               1, 0, 0 },@/
@@ -34426,8 +34425,8 @@ static struct option long_options[] = {@/
       { "hint-debug",                1, 0, 0 },@/
       { "hint-debug-help",           0, 0, 0 },@/
 #endif
-      { 0, 0, 0, 0 }@+}@+;
-
+@t\2\2@> { 0, 0, 0, 0 } @/
+};
 
 @ Parsing the command line options is accomplished with the
 |parse_options| function which in turn uses the |getopt_long_only|
@@ -35109,7 +35108,7 @@ last=first;
 while (optind < argc) input_add_str(argv[optind++]);
 loc=first;
 return (loc < last);
-@+ }
+}
 
 @ @<Forward declarations@>=
 static int input_command_line(void);
