@@ -251,7 +251,7 @@
 
 @* Introduction.
 This is Hi\TeX, a program derived from \TeX, extending its capabilities
-using \eTeX and \Prote, and adding functions common to other engines from
+using \eTeX\ and \Prote, and adding functions common to other engines from
 the \TeX\ Live distribution. Hi\TeX\ writes output files in
 the \HINT\ file format. Like \TeX, it is
 a document compiler intended to produce typesetting of high
@@ -431,7 +431,7 @@ portions of the program.
 
 The program starts with inserting header files and occassionaly a function
 must be placed before declaring \TeX's macros, because the function
-uses identifiers that \TeX will declare as macros.
+uses identifiers that \TeX\ will declare as macros.
 
 @p @<Header files and function declarations@>@;
 @h
@@ -24651,7 +24651,7 @@ so that the inverse relation between them is clear.
 The global variable |format_ident| is a string that is printed right
 after the |banner| line when \TeX\ is ready to start. For \.{INITEX} this
 string says simply `\.{ (INITEX)}'; for other versions of \TeX\ it says,
-for example, `\.{ (preloaded format=plain 1982.11.19)}', showing the year,
+for example, `\.{(preloaded format=plain 1982.11.19)}', showing the year,
 month, and day that the format file was created. We have |format_ident==0|
 before \TeX's tables are loaded.
 
@@ -27145,7 +27145,7 @@ scanner_status=s;warning_index=w;def_ref=d;
 
 @ The \.{\\showtokens} command displays a token list.
 
-@d show_tokens 5 /* \.{\\showtokens} , must be odd! */
+@d show_tokens 5 /* \.{\\showtokens}, must be odd! */
 
 @<Generate all \eTeX...@>=
 primitive("showtokens", xray, show_tokens);
@@ -28982,7 +28982,7 @@ expand_depth_count=0;
 @* The extended features of \Prote.
 \Prote\ extends furthermore \eTeX\ i.e. \eTeX\ is thus required
 before adding \Prote\ own extensions. But if \eTeX\ mode has not
-be enabled, the engine is still compatible with \TeX with no added
+be enabled, the engine is still compatible with \TeX\ with no added
 primitive commands and with a modification of code---from
 \eTeX\ exclusively for now---that is sufficiently minor so that
 the engine still deserves the name \TeX.
@@ -29819,7 +29819,7 @@ communicate with the routines.
 
 @ To obtain the MD5 hash signature of a file will need an external
 implementation, since the algorithm requires bitwise operation that
-standard \PASCAL does not provide. So we do not bother to try. The
+standard \PASCAL\ does not provide. So we do not bother to try. The
 present implementation returns nothing.
 @^system dependencies@>
 
