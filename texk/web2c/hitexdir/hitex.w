@@ -13346,7 +13346,7 @@ ready for the |ship_out| routine that gets them started in the first place.
 @p static void ship_out(pointer @!p) /*output the box |p|*/
 {@+
 execute_output(p);
-flush_node_list(p);
+@<Flush the box from memory...@>@;
 }
 
 @ @<Flush the box from memory, showing statistics if requested@>=
