@@ -9330,7 +9330,7 @@ do {@<Get the next non-blank non-call token@>;
 if (cur_tok==other_token+'-')
   {@+negative=!negative;cur_tok=other_token+'+';
   }
-} while (!(cur_tok!=other_token+'+'))
+} while (!(cur_tok!=other_token+'+'));
 
 @ A space is ignored after an alphabetic character constant, so that
 such constants behave like numeric ones.
@@ -9451,7 +9451,7 @@ int @!f; /*numerator of a fraction whose denominator is $2^{16}$*/
 f=0;arith_error=false;cur_order=normal;negative=false;
 cur_hfactor=cur_vfactor=0;
 if (!shortcut)
-  {@+@<Get the next non-blank non-sign...@>;
+  {@+@<Get the next non-blank non-sign...@>@;
   if ((cur_cmd >= min_internal)&&(cur_cmd <= max_internal))
     @<Fetch an internal dimension and |goto attach_sign|, or fetch an internal
 integer@>@;
@@ -9690,7 +9690,7 @@ most of the work has already been done.
 bool negative; /*should the answer be negated?*/
 pointer @!q; /*new glue specification*/
 bool @!mu; /*does |level==mu_val|?*/
-mu=(level==mu_val);@<Get the next non-blank non-sign...@>;
+mu=(level==mu_val);@<Get the next non-blank non-sign...@>@;
 if ((cur_cmd >= min_internal)&&(cur_cmd <= max_internal))
   {@+scan_something_internal(level, negative);
   if (cur_val_level >= glue_val)
@@ -16408,7 +16408,7 @@ unsave(); /*that |align_group| was for the whole alignment*/
 if (nest[nest_ptr-1].mode_field==mmode) o=display_indent;
   else o=0;
 @<Go through the preamble list, determining the column widths and changing
-the alignrecords to dummy unset boxes@>;
+the alignrecords to dummy unset boxes@>@;
 if (x)
 { /*Handle an alignment that depends on |hsize| or |vsize|*/
  pointer r=get_node(align_node_size);
@@ -16473,7 +16473,7 @@ glue_stretch(q)=0;glue_shrink(q)=0;
 if (width(q)>max_dimen) x=true;
 #endif
 q=p;
-} while (!(q==null))
+} while (!(q==null));
 
 @ @<Nullify |width(q)| and the tabskip glue following this column@>=
 {@+width(q)=0;r=link(q);s=glue_ptr(r);
@@ -17979,7 +17979,7 @@ quarterword @!t; /*used for replacement counts in discretionary nodes*/
 int @!pen; /*use when calculating penalties between lines*/
 halfword @!cur_line; /*the current line number being justified*/
 @<Reverse the links of the relevant passive nodes, setting |cur_p| to the
-first breakpoint@>;
+first breakpoint@>@;
 cur_line=prev_graf+1;
 do {@<Justify the line ending at breakpoint |cur_p|, and append it to the
 current vertical list, together with associated penalties and other insertions@>;
@@ -18002,7 +18002,7 @@ Node |r| is the passive node being moved from stack to stack.
 @<Reverse the links of the relevant passive nodes...@>=
 q=break_node(best_bet);cur_p=null;
 do {r=q;q=prev_break(q);next_break(r)=cur_p;cur_p=r;
-} while (!(q==null))
+} while (!(q==null));
 
 @ Glue and penalty and kern and math nodes are deleted at the beginning of
 a line, except in the anomalous case that the node to be deleted is actually
@@ -18700,7 +18700,7 @@ if (hyphen_passed==0)
   }
 if (hyphen_passed > 0)
   @<Create and append a discretionary node as an alternative to the unhyphenated
-word, and continue to develop both branches until they become equivalent@>;
+word, and continue to develop both branches until they become equivalent@>@;
 } while (!(j > hn));
 link(s)=q
 
@@ -18726,7 +18726,7 @@ list and to |major_tail| until synchronization has been achieved@>;
 @<Move pointer |s| to the end of the current list, and set |replace_count(r)|
 appropriately@>;
 hyphen_passed=j-1;link(hold_head)=null;
-} while (!(!odd(hyf[j-1])))
+} while (!(!odd(hyf[j-1])));
 
 @ The new hyphen might combine with the previous character via ligature
 or kern. At this point we have |l-1 <= i < j| and |i < hn|.
@@ -19374,7 +19374,7 @@ loop@+{@+h=z-c;@/
 otherwise |goto not_found|@>;
   not_found: z=trie_link(z); /*move to the next hole*/
   }
-found: @<Pack the family into |trie| relative to |h|@>;
+found: @<Pack the family into |trie| relative to |h|@>@;
 }
 
 @ By making sure that |trie_max| is at least |h+256|, we can be sure that
@@ -19408,7 +19408,7 @@ if (l < 256)
   } while (!(l==ll));
   }
 q=trie_r[q];
-} while (!(q==0))
+} while (!(q==0));
 
 @ To pack the entire linked trie, we use the following recursive procedure.
 @^recursion@>
@@ -24895,14 +24895,14 @@ for (k=hi_mem_min; k<=mem_end; k++) undump_wd(mem[k]);
 undump_int(var_used);undump_int(dyn_used)
 
 @ @<Dump the table of equivalents@>=
-@<Dump regions 1 to 4 of |eqtb|@>;
-@<Dump regions 5 and 6 of |eqtb|@>;
+@<Dump regions 1 to 4 of |eqtb|@>@;
+@<Dump regions 5 and 6 of |eqtb|@>@;
 dump_int(par_loc);dump_int(write_loc);@/
 dump_int(input_loc);@/
 @<Dump the hash table@>@;
 
 @ @<Undump the table of equivalents@>=
-@<Undump regions 1 to 6 of |eqtb|@>;
+@<Undump regions 1 to 6 of |eqtb|@>@;
 undump(hash_base, frozen_control_sequence, par_loc);
 par_token=cs_token_flag+par_loc;@/
 undump(hash_base, frozen_control_sequence, write_loc);@/
@@ -24935,7 +24935,7 @@ while (k < l)
   {@+dump_wd(eqtb[k]);incr(k);
   }
 k=j+1;dump_int(k-l);
-} while (!(k==int_base))
+} while (!(k==int_base));
 
 @ @<Dump regions 5 and 6 of |eqtb|@>=
 do {j=k;
@@ -24954,7 +24954,7 @@ while (k < l)
   {@+dump_wd(eqtb[k]);incr(k);
   }
 k=j+1;dump_int(k-l);
-} while (!(k > eqtb_size))
+} while (!(k > eqtb_size));
 
 @ @<Undump regions 1 to 6 of |eqtb|@>=
 k=active_base;
@@ -24966,7 +24966,7 @@ undump_int(x);
 if ((x < 0)||(k+x > eqtb_size+1)) goto bad_fmt;
 for (j=k; j<=k+x-1; j++) eqtb[j]=eqtb[k-1];
 k=k+x;
-} while (!(k > eqtb_size))
+} while (!(k > eqtb_size));
 
 @ A different scheme is used to compress the hash table, since its lower
 region is usually sparse. When |text(p)!=0| for |p <= hash_used|, we output
@@ -30055,7 +30055,7 @@ else{@+n=f/mpfract_one;f=f%mpfract_one;
     }
   }
 f=f+mpfract_one;
-@<Compute $p=\lfloor qf/2^{28}+{1\over2}\rfloor-q$@>;
+@<Compute $p=\lfloor qf/2^{28}+{1\over2}\rfloor-q$@>@;
 be_careful=n-el_gordo;
 if (be_careful+p > 0)
   {@+arith_error=true;n=el_gordo-p;
@@ -30085,7 +30085,7 @@ if (q < mpfract_four)
   } while (!(f==1));
 else do {if (odd(f)) p=p+halfp(q-p);@+else p=halfp(p);
   f=halfp(f);
-  } while (!(f==1))
+  } while (!(f==1));
 
 @ There's an auxiliary array |randoms| that contains 55 pseudo-random
 fractions. Using the recurrence $x_n=(x_{n-55}-x_{n-31})\bmod 2^{28}$,
