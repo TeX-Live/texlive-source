@@ -447,7 +447,7 @@ enum {@+@<Constants in the outer block@>@+};
 @#
 static void initialize(void) /*this procedure gets things started properly*/
   {@+@<Local variables for initialization@>@;
-  @<Initialize whatever \TeX\ might access@>;
+  @<Initialize whatever \TeX\ might access@>@;
   } @#
 @<Basic printing procedures@>@;
 @<Error handling procedures@>@;
@@ -3698,13 +3698,13 @@ while (p > mem_min)
         {@+if ((font(p) < font_base)||(font(p) > font_max))
           print_char('*');
 @.*\relax@>
-        else@<Print the font identifier for |font(p)|@>;
+        else@<Print the font identifier for |font(p)|@>@;
         print_char(' ');font_in_short_display=font(p);
         }
       print_ASCII(qo(character(p)));
       }
     }
-  else@<Print a short indication of the contents of node |p|@>;
+  else@<Print a short indication of the contents of node |p|@>@;
   p=link(p);
   }
 }
@@ -3737,7 +3737,7 @@ its reference count, and one to print a rule dimension.
 {@+if (p > mem_end) print_esc("CLOBBERED.");
 else{@+if ((font(p) < font_base)||(font(p) > font_max)) print_char('*');
 @.*\relax@>
-  else@<Print the font identifier for |font(p)|@>;
+  else@<Print the font identifier for |font(p)|@>@;
   print_char(' ');print_ASCII(qo(character(p)));
   }
 }
@@ -4076,7 +4076,7 @@ specification is being withdrawn.
   }
 
 @p static void delete_glue_ref(pointer @!p) /*|p| points to a glue specification*/
-fast_delete_glue_ref(p)
+fast_delete_glue_ref(p)@;
 static void delete_xdimen_ref(pointer @!p) /*|p| points to a xdimen specification*/
 {@+if (p==null) return;
   if (xdimen_ref_count(p)==null) free_node(p, xdimen_node_size);
@@ -6069,8 +6069,8 @@ case no_expand: print_esc("noexpand");@+break;
 case non_script: print_esc("nonscript");@+break;
 case omit: print_esc("omit");@+break;
 case radical: print_esc("radical");@+break;
-case read_to_cs: if (chr_code==0) print_esc("read")
-  @<Cases of |read| for |print_cmd_chr|@>;@+break;
+case read_to_cs: if (chr_code==0) print_esc("read");
+  else @<Cases of |read| for |print_cmd_chr|@>;@+break;
 case relax: print_esc("relax");@+break;
 case set_box: print_esc("setbox");@+break;
 case set_prev_graf: print_esc("prevgraf");@+break;
@@ -6078,8 +6078,8 @@ case set_shape: switch (chr_code) {
   case par_shape_loc: print_esc("parshape");@+break;
   @/@t\4@>@<Cases of |set_shape| for |print_cmd_chr|@>@;
   } @+break; /*there are no other cases*/
-case the: if (chr_code==0) print_esc("the")
-  @<Cases of |the| for |print_cmd_chr|@>;@+break;
+case the: if (chr_code==0) print_esc("the");
+  else @<Cases of |the| for |print_cmd_chr|@>;@+break;
 case toks_register: @<Cases of |toks_register| for |print_cmd_chr|@>@;@+break;
 case vadjust: print_esc("vadjust");@+break;
 case valign: print_esc("valign");@+break;
@@ -6100,7 +6100,7 @@ Meanwhile, this is a convenient place to catch up on something we were unable
 to do before the hash table was defined:
 
 @<Print the font identifier for |font(p)|@>=
-printn_esc(font_id_text(font(p)))
+printn_esc(font_id_text(font(p)));
 
 @* Saving and restoring equivalents.
 The nested structure provided by `$\.{\char'173}\ldots\.{\char'175}$' groups
@@ -8306,15 +8306,15 @@ primitive("endinput", input, 1);@/
 @!@:end\_input\_}{\.{\\endinput} primitive@>
 
 @ @<Cases of |print_cmd_chr|...@>=
-case input: if (chr_code==0) print_esc("input")
-  @/@<Cases of |input| for |print_cmd_chr|@>;@/
+case input: if (chr_code==0) print_esc("input");
+  else @<Cases of |input| for |print_cmd_chr|@>@;
   else print_esc("endinput");@+break;
 
 @ @<Initiate or terminate input...@>=
-if (cur_chr==1) force_eof=true
-@/@<Cases for |input|@>;@/
+if (cur_chr==1) force_eof=true;
+else @<Cases for |input|@>@;
 else if (name_in_progress) insert_relax();
-else start_input()
+else start_input();
 
 @ Sometimes the expansion looks too far ahead, so we want to insert
 a harmless \.{\\relax} into the user's input.
@@ -9005,9 +9005,9 @@ primitive("badness", last_item, badness_code);
 @ @<Cases of |print_cmd_chr|...@>=
 case set_aux: if (chr_code==vmode) print_esc("prevdepth");
 @+else print_esc("spacefactor");@+break;
-case set_page_int: if (chr_code==0) print_esc("deadcycles")
-@/@<Cases of |set_page_int| for |print_cmd_chr|@>;@/
-@+else print_esc("insertpenalties");@+break;
+case set_page_int: if (chr_code==0) print_esc("deadcycles");
+else @<Cases of |set_page_int| for |print_cmd_chr|@>@;
+else print_esc("insertpenalties");@+break;
 case set_box_dimen: if (chr_code==width_offset) print_esc("wd");
 else if (chr_code==height_offset) print_esc("ht");
 else print_esc("dp");@+break;
@@ -9038,8 +9038,8 @@ else if (m==vmode)
 else scanned_result(space_factor, int_val)
 
 @ @<Fetch the |dead_cycles| or the |insert_penalties|@>=
-{@+if (m==0) cur_val=dead_cycles
-@/@<Cases for `Fetch the |dead_cycles| or the |insert_penalties|'@>;@/
+{@+if (m==0) cur_val=dead_cycles;
+else @<Cases for `Fetch the |dead_cycles| or the |insert_penalties|'@>@;
 else cur_val=insert_penalties;
 cur_val_level=int_val;
 }
@@ -21118,7 +21118,7 @@ if ((space_factor >= 2000)&&(xspace_skip!=zero_glue))
 else{@+if (space_skip!=zero_glue) main_p=space_skip;
   else@<Find the glue specification...@>;
   main_p=new_spec(main_p);
-  @<Modify the glue specification in |main_p| according to the space factor@>;
+  @<Modify the glue specification in |main_p| according to the space factor@>@;
   q=new_glue(main_p);glue_ref_count(main_p)=null;
   }
 link(tail)=q;tail=q;
@@ -21127,7 +21127,7 @@ link(tail)=q;tail=q;
 @ @<Modify the glue specification in |main_p| according to the space factor@>=
 if (space_factor >= 2000) width(main_p)=width(main_p)+extra_space(cur_font);
 stretch(main_p)=xn_over_d(stretch(main_p), space_factor, 1000);
-shrink(main_p)=xn_over_d(shrink(main_p), 1000, space_factor)
+shrink(main_p)=xn_over_d(shrink(main_p), 1000, space_factor);
 
 @ Whew---that covers the main loop. We can now proceed at a leisurely
 pace through the other combinations of possibilities.
@@ -22123,8 +22123,8 @@ case remove_item: if (chr_code==glue_node) print_esc("unskip");
   else print_esc("unpenalty");@+break;
 case un_hbox: if (chr_code==copy_code) print_esc("unhcopy");
   else print_esc("unhbox");@+break;
-case un_vbox: if (chr_code==copy_code) print_esc("unvcopy")
-  @<Cases of |un_vbox| for |print_cmd_chr|@>;@/
+case un_vbox: if (chr_code==copy_code) print_esc("unvcopy");
+  else @<Cases of |un_vbox| for |print_cmd_chr|@>@;
   else print_esc("unvbox");@+break;
 
 @ The |un_hbox| and |un_vbox| commands unwrap one of the 256 current boxes.
@@ -23165,8 +23165,8 @@ primitive("right", left_right, right_noad);
 text(frozen_right)=text(cur_val);eqtb[frozen_right]=eqtb[cur_val];
 
 @ @<Cases of |print_cmd_chr|...@>=
-case left_right: if (chr_code==left_noad) print_esc("left")
-@/@<Cases of |left_right| for |print_cmd_chr|@>;@/
+case left_right: if (chr_code==left_noad) print_esc("left");
+else @<Cases of |left_right| for |print_cmd_chr|@>@;
 else print_esc("right");@+break;
 
 @ @<Cases of |main_control| that build...@>=
@@ -23503,8 +23503,8 @@ primitive("xdef", def, 3);
 
 @ @<Cases of |print_cmd_chr|...@>=
 case prefix: if (chr_code==1) print_esc("long");
-  else if (chr_code==2) print_esc("outer")
-  @/@<Cases of |prefix| for |print_cmd_chr|@>;@/
+  else if (chr_code==2) print_esc("outer");
+  else @<Cases of |prefix| for |print_cmd_chr|@>@;
   else print_esc("global");@+break;
 case def: if (chr_code==0) print_esc("def");
   else if (chr_code==1) print_esc("gdef");
@@ -24149,8 +24149,8 @@ static void alter_integer(void)
 {@+small_number c;
    /*0 for \.{\\deadcycles}, 1 for \.{\\insertpenalties}, etc.*/
 c=cur_chr;scan_optional_equals();scan_int();
-if (c==0) dead_cycles=cur_val
-@/@<Cases for |alter_integer|@>@;@/
+if (c==0) dead_cycles=cur_val;
+else @<Cases for |alter_integer|@>@;
 else insert_penalties=cur_val;
 }
 
@@ -27180,9 +27180,9 @@ primitive("unexpanded", the, 1);@/
 primitive("detokenize", the, show_tokens);@/
 @!@:detokenize\_}{\.{\\detokenize} primitive@>
 
-@ @<Cases of |the| for |print_cmd_chr|@>=;
-else if (chr_code==1) print_esc("unexpanded");
-else print_esc("detokenize")
+@ @<Cases of |the| for |print_cmd_chr|@>=
+if (chr_code==1) print_esc("unexpanded");
+else print_esc("detokenize");
 
 @ @<Handle \.{\\unexpanded} or \.{\\detokenize} and |return|@>=
 if (odd(cur_chr))
@@ -27235,17 +27235,17 @@ interaction mode.
 primitive("interactionmode", set_page_int, 2);
 @!@:interaction\_mode\_}{\.{\\interactionmode} primitive@>
 
-@ @<Cases of |set_page_int| for |print_cmd_chr|@>=;
-else if (chr_code==2) print_esc("interactionmode")
+@ @<Cases of |set_page_int| for |print_cmd_chr|@>=
+if (chr_code==2) print_esc("interactionmode");
 
-@ @<Cases for `Fetch the |dead_cycles| or the |insert_penalties|'@>=;
-else if (m==2) cur_val=interaction
+@ @<Cases for `Fetch the |dead_cycles| or the |insert_penalties|'@>=
+if (m==2) cur_val=interaction;
 
 @ @<Declare \eTeX\ procedures for use...@>=
 static void new_interaction(void);
 
-@ @<Cases for |alter_integer|@>=;
-else if (c==2)
+@ @<Cases for |alter_integer|@>=
+if (c==2)
   {@+if ((cur_val < batch_mode)||(cur_val > error_stop_mode))
     {@+print_err("Bad interaction mode");
 @.Bad interaction mode@>
@@ -27264,8 +27264,8 @@ delimiters to appear between \.{\\left} and \.{\\right}.
 primitive("middle", left_right, middle_noad);
 @!@:middle\_}{\.{\\middle} primitive@>
 
-@ @<Cases of |left_right| for |print_cmd_chr|@>=;
-else if (chr_code==middle_noad) print_esc("middle")
+@ @<Cases of |left_right| for |print_cmd_chr|@>=
+if (chr_code==middle_noad) print_esc("middle");
 
 @ The |scan_tokens| feature of \eTeX\ defines the \.{\\scantokens}
 primitive.
@@ -27274,11 +27274,11 @@ primitive.
 primitive("scantokens", input, 2);
 @!@:scan\_tokens\_}{\.{\\scantokens} primitive@>
 
-@ @<Cases of |input| for |print_cmd_chr|@>=;
-else if (chr_code==2) print_esc("scantokens")
+@ @<Cases of |input| for |print_cmd_chr|@>=
+if (chr_code==2) print_esc("scantokens");
 
-@ @<Cases for |input|@>=;
-else if (cur_chr==2) pseudo_start()
+@ @<Cases for |input|@>=
+if (cur_chr==2) pseudo_start();
 
 @ The global variable |pseudo_files| is used to maintain a stack of
 pseudo files.  The |info| field of each pseudo file points to a linked
@@ -27404,8 +27404,8 @@ while (pseudo_files!=null) pseudo_close(); /*flush pseudo files*/
 primitive("readline", read_to_cs, 1);@/
 @!@:read\_line\_}{\.{\\readline} primitive@>
 
-@ @<Cases of |read| for |print_cmd_chr|@>=;
-else print_esc("readline")
+@ @<Cases of |read| for |print_cmd_chr|@>=
+print_esc("readline");
 
 @ @<Handle \.{\\readline} and |goto done|@>=
 if (j==1)
@@ -27524,8 +27524,8 @@ or during \.{\\write}.
 primitive("protected", prefix, 8);
 @!@:protected\_}{\.{\\protected} primitive@>
 
-@ @<Cases of |prefix| for |print_cmd_chr|@>=;
-else if (chr_code==8) print_esc("protected")
+@ @<Cases of |prefix| for |print_cmd_chr|@>=
+if (chr_code==8) print_esc("protected");
 
 @ The |get_x_or_protected| procedure is like |get_x_token| except that
 protected macros are not expanded.
@@ -28932,9 +28932,9 @@ primitive("pagediscards", un_vbox, last_box_code);@/
 primitive("splitdiscards", un_vbox, vsplit_code);@/
 @!@:split\_discards\_}{\.{\\splitdiscards} primitive@>
 
-@ @<Cases of |un_vbox| for |print_cmd_chr|@>=;
-else if (chr_code==last_box_code) print_esc("pagediscards");
-else if (chr_code==vsplit_code) print_esc("splitdiscards")
+@ @<Cases of |un_vbox| for |print_cmd_chr|@>=
+if (chr_code==last_box_code) print_esc("pagediscards");
+else if (chr_code==vsplit_code) print_esc("splitdiscards");
 
 @ @<Handle saved items and |goto done|@>=
 {@+link(tail)=disc_ptr[cur_chr];disc_ptr[cur_chr]=null;
