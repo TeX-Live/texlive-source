@@ -250,6 +250,10 @@
 @s line normal
 @s to   do
 
+\def\contentspagenumber{0}
+\def\tocpages{3} % HiTeX has a long ToC
+\pageno=\contentspagenumber \advance \pageno by \tocpages
+
 @* Introduction.
 This is Hi\TeX, a program derived from \TeX, extending its capabilities
 using \eTeX\ and \Prote, and adding functions common to other engines from
