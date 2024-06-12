@@ -1498,6 +1498,8 @@ for terminal output, and it is possible to adhere to those conventions
 by changing |wterm|, |wterm_ln|, and |wterm_cr| in this section.
 @^system dependencies@>
 
+@s sizeof x
+
 @<Basic printing procedures@>=
 #define @[put(F)@]    @[fwrite(&((F).d),sizeof((F).d),1,(F).f)@]
 #define @[get(F)@]    @[fread(&((F).d),sizeof((F).d),1,(F).f)@]
