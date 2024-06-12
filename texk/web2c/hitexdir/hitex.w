@@ -13912,21 +13912,20 @@ if (last_badness > vbadness)
 @ When a box is being appended to the current vertical list, the
 baselineskip calculation is handled by the |append_to_vlist| routine.
 
-@p static void append_to_vlist(pointer @!b)@t\2\2@>@/
-{ bool height_known;@t\1@>@/
+@p static void append_to_vlist(pointer @!b)
+{ @+bool height_known;
   height_known=(type(b)==hlist_node || type(b)==vlist_node ||@|
 	   (type(b)==whatsit_node && subtype(b)==hset_node));@/
   if (prev_depth > ignore_depth && height_known)@/
-  {@+scaled d;@t\1@> /*deficiency of space between baselines*/
+  {@+scaled d; /*deficiency of space between baselines*/
     pointer @!p; /*a new glue node*/
-  {@+d=width(baseline_skip)-prev_depth-height(b);
+  d=width(baseline_skip)-prev_depth-height(b);
   if (d < line_skip_limit) p=new_param_glue(line_skip_code);
   else{@+p=new_skip_param(baseline_skip_code);
     width(temp_ptr)=d; /*|temp_ptr==glue_ptr(p)|*/
     }
   link(tail)=p;tail=p;
-  }@+
-} @+  else @+if (prev_depth<=unknown_depth || prev_depth>ignore_depth )@t\2@>@/
+} @+  else @+if (prev_depth<=unknown_depth || prev_depth>ignore_depth ) @/
   {@+pointer p;
 	p=new_baseline_node(baseline_skip, line_skip, line_skip_limit);
     link(tail)= p;tail= p;
@@ -18251,8 +18250,8 @@ int @!c; /*character being considered for hyphenation*/
 second pass, and |cur_p| points to a glue node.
 
 @p
-static void hyphenate_word(void)@t\2\2@>@/
-{ pointer @!q, @!s, @!prev_s;@t\1@> /*miscellaneous nodes of temporary interest*/
+static void hyphenate_word(void)
+{ @+pointer @!q, @!s, @!prev_s; /*miscellaneous nodes of temporary interest*/
   small_number @!j; /*an index into |hc| or |hu|*/
   uint8_t @!c; /*character being considered for hyphenation*/
 
