@@ -2459,12 +2459,16 @@ routines cited there must be modified to allow negative glue ratios.)
 @d unfix(A) ((double)(A)) /*convert from |glue_ratio| to type |double|*/
 @d fix(A) ((glue_ratio)(A)) /*convert from |double| to type |glue_ratio|*/
 @d float_constant(A) ((double)(A)) /*convert |int| constant to |double|*/
+@#
+@d perror e@&r@&r@&o@&r /* this is a \.{CWEB} coding trick: */
+@f perror error /* `\&{perror}' will be equivalent to `\&{error}' */
+@f error x /* but `|error|' will not be treated as a reserved word */
 
 @<Types...@>=
 #if __SIZEOF_FLOAT__==4
 typedef float float32_t;
 #else
-#error  @=float type must have size 4@>
+#perror @=float type must have size 4@>
 #endif
 typedef float @!glue_ratio; /*one-word representation of a glue expansion factor*/
 
@@ -3360,6 +3364,8 @@ kerns inserted from font information or math mode calculations) or |explicit|
 (for kerns inserted from \.{\\kern} and \.{\\/} commands) or |acc_kern|
 (for kerns inserted from non-math accents) or |mu_glue| (for kerns
 inserted from \.{\\mkern} specifications in math formulas).
+
+@s explicit true
 
 @d kern_node 11 /*|type| of a kern node*/
 @d explicit 1 /*|subtype| of kern nodes from \.{\\kern} and \.{\\/}*/
@@ -21682,7 +21688,7 @@ current vertical list.
   }
 else{@+cur_val=box_context-global_box_flag;a=4;
   }
-if (cur_val < 256) define(box_base+cur_val, box_ref, cur_box);
+if (cur_val < 256) @[g_define(box_base+cur_val, box_ref, cur_box)@];
 else sa_def_box;
 }
 
@@ -23605,7 +23611,7 @@ if ((cur_cmd!=def)&&((a%4!=0)||(j!=0)))
 since the following routines test for the \.{\\global} prefix as follows.
 
 @d global (a >= 4)
-@d define(A, B, C) if (global) geq_define(A, B, C);@+else eq_define(A, B, C)
+@d g_define(A, B, C) if (global) geq_define(A, B, C);@+else eq_define(A, B, C)
 @d word_define(A, B) if (global) geq_word_define(A, B);@+else eq_word_define(A, B)
 
 @<Adjust \(f)for the setting of \.{\\globaldefs}@>=
@@ -23647,7 +23653,7 @@ text(frozen_protection)=s_no("inaccessible");
 (Unfortunately, they aren't all as simple as this.)
 
 @<Assignments@>=
-case set_font: define(cur_font_loc, data, cur_chr);@+break;
+case set_font: g_define(cur_font_loc, data, cur_chr);@+break;
 
 @ When a |def| command has been scanned,
 |cur_chr| is odd if the definition is supposed to be global, and
@@ -23661,7 +23667,7 @@ case def: {@+if (odd(cur_chr)&&!global&&(global_defs >= 0)) a=a+4;
     {@+q=get_avail();info(q)=j;link(q)=link(def_ref);
     link(def_ref)=q;
     }
-  define(p, call+(a%4), def_ref);
+  g_define(p, call+(a%4), def_ref);
   } @+break;
 
 @ Both \.{\\let} and \.{\\futurelet} share the command code |let|.
@@ -23693,7 +23699,7 @@ case let: {@+n=cur_chr;
   else if ((cur_cmd==internal_register)||(cur_cmd==toks_register))
     if ((cur_chr < mem_bot)||(cur_chr > lo_mem_stat_max))
       add_sa_ref(cur_chr);
-  define(p, cur_cmd, cur_chr);
+  g_define(p, cur_cmd, cur_chr);
   } @+break;
 
 @ A \.{\\chardef} creates a control sequence whose |cmd| is |char_given|;
@@ -23748,12 +23754,12 @@ producing an ``undefined control sequence'' error or expanding the
 previous meaning.  This allows, for instance, `\.{\\chardef\\foo=123\\foo}'.
 
 @<Assignments@>=
-case shorthand_def: {@+n=cur_chr;get_r_token();p=cur_cs;define(p, relax, 256);
+case shorthand_def: {@+n=cur_chr;get_r_token();p=cur_cs;g_define(p, relax, 256);
   scan_optional_equals();
   switch (n) {
-  case char_def_code: {@+scan_char_num();define(p, char_given, cur_val);
+  case char_def_code: {@+scan_char_num();g_define(p, char_given, cur_val);
     } @+break;
-  case math_char_def_code: {@+scan_fifteen_bit_int();define(p, math_given, cur_val);
+  case math_char_def_code: {@+scan_fifteen_bit_int();g_define(p, math_given, cur_val);
     } @+break;
   default:{@+scan_register_num();
     if (cur_val > 255)
@@ -23761,15 +23767,15 @@ case shorthand_def: {@+n=cur_chr;get_r_token();p=cur_cs;define(p, relax, 256);
       if (j > mu_val) j=tok_val; /*|int_val dotdot mu_val| or |tok_val|*/
       find_sa_element(j, cur_val, true);add_sa_ref(cur_ptr);
       if (j==tok_val) j=toks_register;@+else j=internal_register;
-      define(p, j, cur_ptr);
+      g_define(p, j, cur_ptr);
       }
     else
     switch (n) {
-    case count_def_code: define(p, assign_int, count_base+cur_val);@+break;
-    case dimen_def_code: define(p, assign_dimen, scaled_base+cur_val);@+break;
-    case skip_def_code: define(p, assign_glue, skip_base+cur_val);@+break;
-    case mu_skip_def_code: define(p, assign_mu_glue, mu_skip_base+cur_val);@+break;
-    case toks_def_code: define(p, assign_toks, toks_base+cur_val);
+    case count_def_code: g_define(p, assign_int, count_base+cur_val);@+break;
+    case dimen_def_code: g_define(p, assign_dimen, scaled_base+cur_val);@+break;
+    case skip_def_code: g_define(p, assign_glue, skip_base+cur_val);@+break;
+    case mu_skip_def_code: g_define(p, assign_mu_glue, mu_skip_base+cur_val);@+break;
+    case toks_def_code: g_define(p, assign_toks, toks_base+cur_val);
     }  /*there are no other cases*/
     }
   }
@@ -23785,7 +23791,7 @@ case read_to_cs: {@+j=cur_chr;scan_int();n=cur_val;
     "I'm going to look for the \\cs now.");error();
     }
   get_r_token();
-  p=cur_cs;read_toks(n, p, j);define(p, call, cur_val);
+  p=cur_cs;read_toks(n, p, j);g_define(p, call, cur_val);
   } @+break;
 
 @ The token-list parameters, \.{\\output} and \.{\\everypar}, etc., receive
@@ -23855,7 +23861,7 @@ case assign_dimen: {@+p=cur_chr;scan_optional_equals();
 case assign_glue: case assign_mu_glue: {@+p=cur_chr;n=cur_cmd;scan_optional_equals();
   if (n==assign_mu_glue) scan_glue(mu_val);@+else scan_glue(glue_val);
   trap_zero_glue();
-  define(p, glue_ref, cur_val);
+  g_define(p, glue_ref, cur_val);
   } @+break;
 
 @ When a glue register or parameter becomes zero, it will always point to
@@ -23918,8 +23924,8 @@ case def_code: {@+@<Let |n| be the largest legal code value, based on |cur_chr|@
     help1("I'm going to use 0 instead of that illegal code value.");@/
     error();cur_val=0;
     }
-  if (p < math_code_base) define(p, data, cur_val);
-  else if (p < del_code_base) define(p, data, hi(cur_val));
+  if (p < math_code_base) g_define(p, data, cur_val);
+  else if (p < del_code_base) g_define(p, data, hi(cur_val));
   else word_define(p, cur_val);
   } @+break;
 
@@ -23932,7 +23938,7 @@ else n=255
 
 @ @<Assignments@>=
 case def_family: {@+p=cur_chr;scan_four_bit_int();p=p+cur_val;
-  scan_optional_equals();scan_font_ident();define(p, data, cur_val);
+  scan_optional_equals();scan_font_ident();g_define(p, data, cur_val);
   } @+break;
 
 @ Next we consider changes to \TeX's numeric registers.
@@ -24179,7 +24185,7 @@ case set_shape: {@+q=cur_chr;scan_optional_equals();scan_int();n=cur_val;
       }
     cur_hfactor=fh; cur_vfactor=fv;
     }
-  define(q, shape_ref, p);
+  g_define(q, shape_ref, p);
   } @+break;
 
 @ Here's something that isn't quite so obvious. It guarantees that
@@ -24264,12 +24270,12 @@ else{@+old_setting=selector;selector=new_string;
 @.FONTx@>
   str_room(1);t=make_string();
   }
-define(u, set_font, null_font);scan_optional_equals();scan_file_name();
+g_define(u, set_font, null_font);scan_optional_equals();scan_file_name();
 @<Scan the font size specification@>;
 @<If this font has already been loaded, set |f| to the internal font number
 and |goto common_ending|@>;
 f=read_font_info(u, cur_name, cur_area, s);
-common_ending: define(u, set_font, f);eqtb[font_id_base+f]=eqtb[u];font_id_text(f)=t;
+common_ending: g_define(u, set_font, f);eqtb[font_id_base+f]=eqtb[u];font_id_text(f)=t;
 }
 
 @ @<Scan the font size specification@>=
