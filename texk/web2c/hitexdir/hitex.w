@@ -1708,8 +1708,8 @@ if (n < 0)
       }
     }
   }
-@/do@+{dig[k]=n%10;n=n/10;incr(k);
-}@+ while (!(n==0));
+do {dig[k]=n%10;n=n/10;incr(k);
+} while (!(n==0));
 print_the_digs(k);
 }
 
@@ -1727,8 +1727,8 @@ print_char('0'+(n%10));
    /*prints a positive integer in hexadecimal form*/
 {@+int k; /*index to current digit; we assume that $0\le n<16^{22}$*/
 k=0;print_char('"');
-@/do@+{dig[k]=n%16;n=n/16;incr(k);
-}@+ while (!(n==0));
+do {dig[k]=n%16;n=n/16;incr(k);
+} while (!(n==0));
 print_the_digs(k);
 }
 
@@ -2103,8 +2103,8 @@ show_context();goto resume;
 else{@+if (help_ptr==0)
     help2("Sorry, I don't know how to help in this situation.",@/
     @t\kern1em@>"Maybe you should try asking a human?");
-  @/do@+{decr(help_ptr);print(help_line[help_ptr]);print_ln();
-  }@+ while (!(help_ptr==0));
+  do {decr(help_ptr);print(help_line[help_ptr]);print_ln();
+  } while (!(help_ptr==0));
   }
 help4("Sorry, I already gave what help I could...",@/
   "Maybe you should try asking a human?",@/
@@ -2311,9 +2311,9 @@ if (s < 0)
 print_int(s/unity); /*print the integer part*/
 print_char('.');
 s=10*(s%unity)+5;delta=10;
-@/do@+{if (delta > unity) s=s+0100000-50000; /*round the last digit*/
+do {if (delta > unity) s=s+0100000-50000; /*round the last digit*/
 print_char('0'+(s/unity));s=10*(s%unity);delta=delta*10;
-}@+ while (!(s <= delta));
+} while (!(s <= delta));
 }
 
 @ Physical sizes that a \TeX\ user specifies for portions of documents are
@@ -2584,25 +2584,29 @@ typedef uint16_t quarterword; /*1/4 of a word*/
 typedef int32_t halfword; /*1/2 of a word*/
 typedef int8_t two_choices; /*used when there are two variants in a record*/
 typedef int8_t four_choices; /*used when there are four variants in a record*/
-typedef struct { @;@/
+@#
+typedef struct {
   halfword @!rh;
   union {
   halfword @!lh;
   struct { quarterword @!b0;quarterword @!b1;} ;
   };} two_halves;
-typedef struct { @;@/
+@#
+typedef struct {
   quarterword @!b0;
   quarterword @!b1;
   quarterword @!b2;
   quarterword @!b3;
   } four_quarters;
-typedef struct { @;@/
+@#
+typedef struct {
   union {
   int @!i;
   glue_ratio @!gr;
   two_halves @!hh;
   four_quarters @!qqqq;
   };} memory_word;
+@#
 typedef struct {@+FILE *f;@+memory_word@,d;@+} word_file;
 
 @ When debugging, we may want to print a |memory_word| without knowing
@@ -2785,11 +2789,11 @@ one-word nodes that starts at position |p|.
 {@+pointer @!q, @!r; /*list traversers*/
 if (p!=null)
   {@+r=p;
-  @/do@+{q=r;r=link(r);
+  do {q=r;r=link(r);
 #ifdef @!STAT
 decr(dyn_used);
 #endif
-  }@+ while (!(r==null)); /*now |q| is the last node on the list*/
+  } while (!(r==null)); /*now |q| is the last node on the list*/
   link(q)=avail;avail=p;
   }
 }
@@ -2834,11 +2838,11 @@ pointer @!q; /*the node physically after node |p|*/
 int @!r; /*the newly allocated node, or a candidate for this honor*/
 int @!t; /*temporary register*/
 restart: p=rover; /*start at some free node in the ring*/
-@/do@+{@<Try to allocate within node |p| and its physical successors, and
+do {@<Try to allocate within node |p| and its physical successors, and
 |goto found| if allocation was possible@>;
 @^inner loop@>
 p=rlink(p); /*move to the next node in the ring*/
-}@+ while (!(p==rover)); /*repeat until the whole list has been traversed*/
+} while (!(p==rover)); /*repeat until the whole list has been traversed*/
 if (s==010000000000)
   {@+return max_halfword;
   }
@@ -3588,7 +3592,7 @@ done1:
 
 @ @<Check variable-size...@>=
 p=rover;q=null;clobbered=false;
-@/do@+{if ((p >= lo_mem_max)||(p < mem_min)) clobbered=true;
+do {if ((p >= lo_mem_max)||(p < mem_min)) clobbered=true;
   else if ((rlink(p) >= lo_mem_max)||(rlink(p) < mem_min)) clobbered=true;
   else if (!(is_empty(p))||(node_size(p) < 2)||@|
    (p+node_size(p) > lo_mem_max)||@|(llink(rlink(p))!=p)) clobbered=true;
@@ -3605,7 +3609,7 @@ for (q=p; q<=p+node_size(p)-1; q++)  /*mark all locations free*/
   is_free[q]=true;
   }
 q=p;p=rlink(p);
-}@+ while (!(p==rover));
+} while (!(p==rover));
 done2:
 
 @ @<Check flags...@>=
@@ -5830,10 +5834,10 @@ found: return p;
 
 @ @<Insert a new control...@>=
 {@+if (text(p) > 0)
-  {@+@/do@+{if (hash_is_full) overflow("hash size", hash_size);
+  {@+do {if (hash_is_full) overflow("hash size", hash_size);
 @:TeX capacity exceeded hash size}{\quad hash size@>
   decr(hash_used);
-  }@+ while (!(text(hash_used)==0)); /*search for an empty location in |hash|*/
+  } while (!(text(hash_used)==0)); /*search for an empty location in |hash|*/
   next(p)=hash_used;p=hash_used;
   }
 str_room(l);d=cur_length;
@@ -7568,7 +7572,7 @@ actions.
 in_open=0;open_parens=0;max_buf_stack=0;
 grp_stack[0]=0;if_stack[0]=null;
 param_ptr=0;max_param_stack=0;
-first=buf_size;@/do@+{buffer[first]=0;decr(first);}@+ while (!(first==0));
+first=buf_size;do {buffer[first]=0;decr(first);} while (!(first==0));
 scanner_status=normal;warning_index=null;first=1;
 state=new_line;start=1;index=0;line=0;name=0;
 force_eof=false;
@@ -7938,8 +7942,8 @@ the buffer left two or three places.
 }
 
 @ @<Scan ahead in the buffer...@>=
-{@+@/do@+{cur_chr=buffer[k];cat=cat_code(cur_chr);incr(k);
-}@+ while (!((cat!=letter)||(k > limit)));
+{@+do {cur_chr=buffer[k];cat=cat_code(cur_chr);incr(k);
+} while (!((cat!=letter)||(k > limit)));
 @<If an expanded...@>;
 if (cat!=letter) decr(k);
    /*now |k| points to first nonletter*/
@@ -8248,9 +8252,9 @@ the variables |p| and |q| are reserved for token-list building.
 @ @<Manufacture a control...@>=
 {@+r=get_avail();p=r; /*head of the list of characters*/
 incr(incsname_state);
-@/do@+{get_x_token();
+do {get_x_token();
 if (cur_cs==0) store_new_token(cur_tok);
-}@+ while (!(cur_cs!=0));
+} while (!(cur_cs!=0));
 if (cur_cmd!=end_cs_name) @<Complain about missing \.{\\endcsname}@>;
 decr(incsname_state);
 @<Look up the characters of list |r| in the hash table, and set |cur_cs|@>;
@@ -8526,7 +8530,7 @@ a string that will delimit the next parameter.
 {@+scanner_status=matching;unbalance=0;
 long_state=eq_type(cur_cs);
 if (long_state >= outer_call) long_state=long_state-2;
-@/do@+{link(temp_head)=null;
+do {link(temp_head)=null;
 if ((info(r) > match_token+255)||(info(r) < match_token)) s=null;
 else{@+match_chr=info(r)-match_token;s=link(r);r=s;
   p=temp_head;m=0;
@@ -8534,7 +8538,7 @@ else{@+match_chr=info(r)-match_token;s=link(r);r=s;
 @<Scan a parameter until its delimiter string has been found; or, if |s=null|,
 simply scan the delimiter string@>;@/
  /*now |info(r)| is a token whose command code is either |match| or |end_match|*/
-}@+ while (!(info(r)==end_match_token));
+} while (!(info(r)==end_match_token));
 }
 
 @ If |info(r)| is a |match| or |end_match| command, it cannot be equal to
@@ -8634,7 +8638,7 @@ the rules.
 if (s!=r)
   if (s==null) @<Report an improper use of the macro and abort@>@;
   else{@+t=s;
-    @/do@+{store_new_token(info(t));incr(m);u=link(t);v=s;
+    do {store_new_token(info(t));incr(m);u=link(t);v=s;
     loop@+{@+if (u==r)
         if (cur_tok!=info(v)) goto done;
         else{@+r=link(v);goto resume;
@@ -8643,7 +8647,7 @@ if (s!=r)
       u=link(u);v=link(v);
       }
     done: t=link(t);
-    }@+ while (!(t==r));
+    } while (!(t==r));
     r=s; /*at this point, no tokens are recently matched*/
     }
 
@@ -8735,8 +8739,7 @@ if (cur_cmd!=left_brace)
 }
 
 @ @<Get the next non-blank non-relax non-call token@>=
-@/do@+{get_x_token();
-}@+ while (!((cur_cmd!=spacer)&&(cur_cmd!=relax)))
+do get_x_token(); while (!((cur_cmd!=spacer)&&(cur_cmd!=relax)))
 
 @ The |scan_optional_equals| routine looks for an optional `\.=' sign preceded
 by optional spaces; `\.{\\relax}' is not ignored here.
@@ -8747,8 +8750,7 @@ if (cur_tok!=other_token+'=') back_input();
 }
 
 @ @<Get the next non-blank non-call token@>=
-@/do@+{get_x_token();
-}@+ while (!(cur_cmd!=spacer))
+do get_x_token(); while (!(cur_cmd!=spacer))
 
 @ In case you are getting bored, here is a slightly less trivial routine:
 Given a string of lowercase letters, like `\.{pt}' or `\.{plus}' or
@@ -9324,11 +9326,11 @@ if (negative) negate(cur_val);
 
 @ @<Get the next non-blank non-sign token...@>=
 negative=false;
-@/do@+{@<Get the next non-blank non-call token@>;
+do {@<Get the next non-blank non-call token@>;
 if (cur_tok==other_token+'-')
   {@+negative=!negative;cur_tok=other_token+'+';
   }
-}@+ while (!(cur_tok!=other_token+'+'))
+} while (!(cur_tok!=other_token+'+'))
 
 @ A space is ignored after an alphabetic character constant, so that
 such constants behave like numeric ones.
@@ -10093,13 +10095,13 @@ p=def_ref; /*the reference count*/
 store_new_token(end_match_token);
 if ((n < 0)||(n > 15)) m=16;@+else m=n;
 s=align_state;align_state=1000000; /*disable tab marks, etc.*/
-@/do@+{@<Input and store tokens from the next line of the file@>;
-}@+ while (!(align_state==1000000));
+do @<Input and store tokens from the next line of the file@>@;
+while (!(align_state==1000000));
 cur_val=def_ref;scanner_status=normal;align_state=s;
 }
 
 @ @<Input and store tokens from the next line of the file@>=
-begin_file_reading();name=m+1;
+{begin_file_reading();name=m+1;
 if (read_open[m]==closed) @<Input for \.{\\read} from the terminal@>;
 else if (read_open[m]==just_open) @<Input the first line of |read_file[m]|@>@;
 else@<Input the next line of |read_file[m]|@>;
@@ -10112,12 +10114,12 @@ loop@+{@+get_token();
   if (cur_tok==0) goto done;
      /*|cur_cmd==cur_chr==0| will occur at the end of the line*/
   if (align_state < 1000000)  /*unmatched `\.\}' aborts the line*/
-    {@+@/do@+{get_token();}@+ while (!(cur_tok==0));
+    {@+do get_token(); while (!(cur_tok==0));
     align_state=1000000;goto done;
     }
   store_new_token(cur_tok);
   }
-done: end_file_reading()
+done: end_file_reading();}
 
 @ Here we input on-line into the |buffer| array, prompting the user explicitly
 if |n >= 0|.  The value of |n| is set negative so that additional prompts
@@ -11951,11 +11953,11 @@ if (cur_val==fmem_ptr)
   }
 
 @ @<Increase the number of parameters...@>=
-{@+@/do@+{if (fmem_ptr==font_mem_size)
+{@+do {if (fmem_ptr==font_mem_size)
   overflow("font memory", font_mem_size);
 @:TeX capacity exceeded font memory}{\quad font memory@>
 font_info[fmem_ptr].sc=0;incr(fmem_ptr);incr(font_params[f]);
-}@+ while (!(n==font_params[f]));
+} while (!(n==font_params[f]));
 cur_val=fmem_ptr-1; /*this equals |param_base[f]+font_params[f]|*/
 }
 
@@ -13041,13 +13043,13 @@ reaching a non-|char_node|. The program uses the fact that |set_char_0==0|.
 @<Output node |p| for |hlist_out|...@>=
 reswitch: if (is_char_node(p))
   {@+synch_h;synch_v;
-  @/do@+{f=font(p);c=character(p);
+  do {f=font(p);c=character(p);
   if (f!=dvi_f) @<Change font |dvi_f| to |f|@>;
   if (c >= qi(128)) dvi_out(set1);
   dvi_out(qo(c));@/
   cur_h=cur_h+char_width(f, char_info(f, c));
   p=link(p);
-  }@+ while (!(!is_char_node(p)));
+  } while (!(!is_char_node(p)));
   dvi_h=cur_h;
   }
 else@<Output the non-|char_node| |p| for |hlist_out| and move to the next
@@ -14573,12 +14575,12 @@ be probed in increasing order of height.
 @<Look at the variants of |(z,x)|; set |f| and |c|...@>=
 if ((z!=0)||(x!=min_quarterword))
   {@+z=z+s+16;
-  @/do@+{z=z-16;g=fam_fnt(z);
+  do {z=z-16;g=fam_fnt(z);
   if (g!=null_font)
     @<Look at the list of characters starting with |x| in font |g|; set |f|
 and |c| whenever a better character is found; |goto found| as soon as a large
 enough variant is encountered@>;
-  }@+ while (!(z < 16));
+  } while (!(z < 16));
   }
 
 @ @<Look at the list of characters starting with |x|...@>=
@@ -15729,8 +15731,7 @@ is not a penalty node or a |rel_noad| or absent entirely.
 @<Append any |new_hlist| entries for |q|, and any appropriate penalties@>=
 if (new_hlist(q)!=null)
   {@+link(p)=new_hlist(q);
-  @/do@+{p=link(p);
-  }@+ while (!(link(p)==null));
+  do p=link(p); while (!(link(p)==null));
   }
 if (penalties) if (link(q)!=null) if (pen < inf_penalty)
   {@+r_type=type(link(q));
@@ -16143,8 +16144,7 @@ started, or finishes off the alignment.
 static void align_peek(void)
 {@+
 restart: align_state=1000000;
-@/do@+{get_x_or_protected();
-}@+ while (!(cur_cmd!=spacer));
+do get_x_or_protected(); while (!(cur_cmd!=spacer));
 if (cur_cmd==no_align)
   {@+scan_left_brace();new_save_level(no_align_group);
   if (mode==-vmode) normal_paragraph();
@@ -16256,8 +16256,7 @@ if (extra_info(cur_align)!=span_code)
   init_span(p);
   }
 align_state=1000000;
-@/do@+{get_x_or_protected();
-}@+ while (!(cur_cmd!=spacer));
+do get_x_or_protected(); while (!(cur_cmd!=spacer));
 cur_align=p;
 init_col();return false;
 }
@@ -16351,8 +16350,8 @@ link(end_span)=max_quarterword+1;info(end_span)=null;
 
 @ @<Update width entry for spanned columns@>=
 {@+q=cur_span;
-@/do@+{incr(n);q=link(link(q));
-}@+ while (!(q==cur_align));
+do {incr(n);q=link(link(q));
+} while (!(q==cur_align));
 if (n > max_quarterword) confusion("256 spans"); /*this can happen, but won't*/
 @^system dependencies@>
 @:this can't happen 256 spans}{\quad 256 spans@>
@@ -16460,7 +16459,7 @@ value is changed to zero and so is the next tabskip.
 
 @<Go through the preamble list,...@>=
 q=link(preamble);
-@/do@+{flush_list(u_part(q));flush_list(v_part(q));
+do {flush_list(u_part(q));flush_list(v_part(q));
 p=link(link(q));
 if (width(q)==null_flag)
   @<Nullify |width(q)| and the tabskip glue following this column@>;
@@ -16474,7 +16473,7 @@ glue_stretch(q)=0;glue_shrink(q)=0;
 if (width(q)>max_dimen) x=true;
 #endif
 q=p;
-}@+ while (!(q==null))
+} while (!(q==null))
 
 @ @<Nullify |width(q)| and the tabskip glue following this column@>=
 {@+width(q)=0;r=link(q);s=glue_ptr(r);
@@ -16486,7 +16485,7 @@ if (s!=zero_glue)
 
 @ Merging of two span-node lists is a typical exercise in the manipulation of
 linearly linked data structures. The essential invariant in the following
-|@/do@+{| loop is that we want to dispense with node |r|, in |q|'s list,
+|do {| loop is that we want to dispense with node |r|, in |q|'s list,
 and |u| is its successor; all nodes of |p|'s list up to and including |s|
 have been processed, and the successor of |s| matches |r| or precedes |r|
 or follows |r|, according as |link(r)==n| or |link(r) > n| or |link(r) < n|.
@@ -16494,7 +16493,7 @@ or follows |r|, according as |link(r)==n| or |link(r) > n| or |link(r) < n|.
 @<Merge the widths...@>=
 {@+t=width(q)+width(glue_ptr(link(q)));
 r=info(q);s=end_span;info(s)=p;n=min_quarterword+1;
-@/do@+{width(r)=width(r)-t;u=info(r);
+do {width(r)=width(r)-t;u=info(r);
 while (link(r) > n)
   {@+s=info(s);n=link(info(s))+1;
   }
@@ -16505,7 +16504,7 @@ else{@+if (width(r) > width(info(s))) width(info(s))=width(r);
   free_node(r, span_node_size);
   }
 r=u;
-}@+ while (!(r==end_span));
+} while (!(r==end_span));
 }
 
 @ Now the preamble list has been converted to a list of alternating unset
@@ -16522,12 +16521,12 @@ if (mode==-vmode)
   p=hpack(preamble, saved(1), saved_hfactor(1), saved_vfactor(1), saved(0));overfull_rule=rule_save;
   }
 else{@+q=link(preamble);
-  @/do@+{height(q)=width(q);width(q)=0;q=link(link(q));
-  }@+ while (!(q==null));
+  do {height(q)=width(q);width(q)=0;q=link(link(q));
+  } while (!(q==null));
   p=vpack(preamble, saved(1), saved_hfactor(1), saved_vfactor(1), saved(0));
   q=link(preamble);
-  @/do@+{width(q)=height(q);height(q)=0;q=link(link(q));
-  }@+ while (!(q==null));
+  do {width(q)=height(q);height(q)=0;q=link(link(q));
+  } while (!(q==null));
   }
 pack_begin_line=0
 
@@ -16565,9 +16564,9 @@ else{@+type(q)=vlist_node;height(q)=height(p);
 glue_order(q)=glue_order(p);glue_sign(q)=glue_sign(p);
 glue_set(q)=glue_set(p);shift_amount(q)=o;
 r=link(list_ptr(q));s=link(list_ptr(p));
-@/do@+{@<Set the glue in node |r| and change it from an unset node@>;
+do {@<Set the glue in node |r| and change it from an unset node@>;
 r=link(link(r));s=link(link(s));
-}@+ while (!(r==null));
+} while (!(r==null));
 }
 
 @ A box made from spanned columns will be followed by tabskip glue nodes and
@@ -17810,10 +17809,10 @@ character node.
 
 @<Advance \(c)|cur_p| to the node following the present string...@>=
 {@+prev_p=cur_p;
-@/do@+{f=font(cur_p);
+do {f=font(cur_p);
 act_width=act_width+char_width(f, char_info(f, character(cur_p)));
 cur_p=link(cur_p);
-}@+ while (!(!is_char_node(cur_p)));
+} while (!(!is_char_node(cur_p)));
 }
 
 @ When node |cur_p| is a glue node, we look at |prev_p| to see whether or not
@@ -17838,9 +17837,9 @@ only character nodes, kern nodes, box nodes, rule nodes, and ligature nodes.
 @<Try to break after a discretionary fragment...@>=
 {@+s=pre_break(cur_p);disc_width=0;
 if (s==null) try_break(ex_hyphen_penalty, hyphenated);
-else{@+@/do@+{@<Add the width of node |s| to |disc_width|@>;
+else{@+do {@<Add the width of node |s| to |disc_width|@>;
     s=link(s);
-  }@+ while (!(s==null));
+  } while (!(s==null));
   act_width=act_width+disc_width;
   try_break(hyphen_penalty, hyphenated);
   act_width=act_width-disc_width;
@@ -17918,11 +17917,11 @@ if (link(active)!=last_active)
 
 @ @<Find an active node...@>=
 r=link(active);fewest_demerits=awful_bad;
-@/do@+{if (type(r)!=delta_node) if (total_demerits(r) < fewest_demerits)
+do {if (type(r)!=delta_node) if (total_demerits(r) < fewest_demerits)
   {@+fewest_demerits=total_demerits(r);best_bet=r;
   }
 r=link(r);
-}@+ while (!(r==last_active));
+} while (!(r==last_active));
 best_line=line_number(best_bet)
 
 @ The adjustment for a desired looseness is a slightly more complicated
@@ -17932,7 +17931,7 @@ looseness calculation, independently of the other segments.
 
 @<Find the best active node...@>=
 {@+r=link(active);actual_looseness=0;
-@/do@+{if (type(r)!=delta_node)
+do {if (type(r)!=delta_node)
   {@+line_diff=line_number(r)-best_line;
   if (((line_diff < actual_looseness)&&(looseness <= line_diff))||@|
   ((line_diff > actual_looseness)&&(looseness >= line_diff)))
@@ -17945,7 +17944,7 @@ looseness calculation, independently of the other segments.
     }
   }
 r=link(r);
-}@+ while (!(r==last_active));
+}  while (!(r==last_active));
 best_line=line_number(best_bet);
 }
 
@@ -17982,12 +17981,12 @@ halfword @!cur_line; /*the current line number being justified*/
 @<Reverse the links of the relevant passive nodes, setting |cur_p| to the
 first breakpoint@>;
 cur_line=prev_graf+1;
-@/do@+{@<Justify the line ending at breakpoint |cur_p|, and append it to the
+do {@<Justify the line ending at breakpoint |cur_p|, and append it to the
 current vertical list, together with associated penalties and other insertions@>;
 incr(cur_line);cur_p=next_break(cur_p);
 if (cur_p!=null) if (!post_disc_break)
   @<Prune unwanted nodes at the beginning of the next line@>;
-}@+ while (!(cur_p==null));
+} while (!(cur_p==null));
 if ((cur_line!=best_line)||(link(temp_head)!=null))
   confusion("line breaking");
 @:this can't happen line breaking}{\quad line breaking@>
@@ -18002,8 +18001,8 @@ Node |r| is the passive node being moved from stack to stack.
 
 @<Reverse the links of the relevant passive nodes...@>=
 q=break_node(best_bet);cur_p=null;
-@/do@+{r=q;q=prev_break(q);next_break(r)=cur_p;cur_p=r;
-}@+ while (!(q==null))
+do {r=q;q=prev_break(q);next_break(r)=cur_p;cur_p=r;
+} while (!(q==null))
 
 @ Glue and penalty and kern and math nodes are deleted at the beginning of
 a line, except in the anomalous case that the node to be deleted is actually
@@ -18691,7 +18690,7 @@ pointer @!hyf_node; /*the hyphen, if it exists*/
 @ When the following code is performed, |hyf[0]| and |hyf[hn]| will be zero.
 
 @<Reconstitute nodes for the hyphenated word...@>=
-@/do@+{l=j;j=reconstitute(j, hn, bchar, qi(hyf_char))+1;
+do {l=j;j=reconstitute(j, hn, bchar, qi(hyf_char))+1;
 if (hyphen_passed==0)
   {@+link(s)=link(hold_head);
   while (link(s) > null) s=link(s);
@@ -18702,7 +18701,7 @@ if (hyphen_passed==0)
 if (hyphen_passed > 0)
   @<Create and append a discretionary node as an alternative to the unhyphenated
 word, and continue to develop both branches until they become equivalent@>;
-}@+ while (!(j > hn));
+} while (!(j > hn));
 link(s)=q
 
 @ In this repeat loop we will insert another discretionary if |hyf[j-1]| is
@@ -18716,7 +18715,7 @@ point. (Consider the word `difficult', where the letter `c' is in position |j|.)
     }
 
 @<Create and append a discretionary node as an alternative...@>=
-@/do@+{r=get_node(small_node_size);
+do {r=get_node(small_node_size);
 link(r)=link(hold_head);type(r)=disc_node;
 major_tail=r;r_count=0;
 while (link(major_tail) > null) advance_major_tail;
@@ -18727,7 +18726,7 @@ list and to |major_tail| until synchronization has been achieved@>;
 @<Move pointer |s| to the end of the current list, and set |replace_count(r)|
 appropriately@>;
 hyphen_passed=j-1;link(hold_head)=null;
-}@+ while (!(!odd(hyf[j-1])))
+} while (!(!odd(hyf[j-1])))
 
 @ The new hyphen might combine with the previous character via ligature
 or kern. At this point we have |l-1 <= i < j| and |i < hn|.
@@ -18759,7 +18758,7 @@ if (bchar_label[hf]!=non_address)  /*put left boundary at beginning of new line*
   {@+decr(l);c=hu[l];c_loc=l;hu[l]=256;
   }
 while (l < j)
-  {@+@/do@+{l=reconstitute(l, hn, bchar, non_char)+1;
+  {@+do {l=reconstitute(l, hn, bchar, non_char)+1;
   if (c_loc > 0)
     {@+hu[c_loc]=c;c_loc=0;
     }
@@ -18769,7 +18768,7 @@ while (l < j)
     minor_tail=link(hold_head);
     while (link(minor_tail) > null) minor_tail=link(minor_tail);
     }
-  }@+ while (!(l >= j));
+  } while (!(l >= j));
   while (l > j)
     @<Append characters of |hu[j..]| to |major_tail|, advancing~|j|@>;
   }
@@ -18887,10 +18886,10 @@ for (j=0; j<=r_hyf-1; j++) hyf[hn-j]=0
 
 @ @<Store \(m)maximum values in the |hyf| table@>=
 {@+v=trie_op(z);
-@/do@+{v=v+op_start[cur_lang];i=l-hyf_distance[v];
+do {v=v+op_start[cur_lang];i=l-hyf_distance[v];
 if (hyf_num[v] > hyf[i]) hyf[i]=hyf_num[v];
 v=hyf_next[v];
-}@+ while (!(v==min_quarterword));
+} while (!(v==min_quarterword));
 }
 
 @ The exception table that is built by \TeX's \.{\\hyphenation} primitive is
@@ -18955,10 +18954,10 @@ k=hyph_word[h];if (k==0) goto not_found;
 if (length(k) < hn) goto not_found;
 if (length(k)==hn)
   {@+j=1;u=str_start[k];
-  @/do@+{if (so(str_pool[u]) < hc[j]) goto not_found;
+  do {if (so(str_pool[u]) < hc[j]) goto not_found;
   if (so(str_pool[u]) > hc[j]) goto done;
   incr(j);incr(u);
-  }@+ while (!(j > hn));
+  } while (!(j > hn));
   @<Insert hyphens as specified in |hyph_list[h]|@>;
   decr(hn);goto found;
   }
@@ -19084,10 +19083,10 @@ k=hyph_word[h];
 if (length(k) < length(s)) goto found;
 if (length(k) > length(s)) goto not_found;
 u=str_start[k];v=str_start[s];
-@/do@+{if (str_pool[u] < str_pool[v]) goto found;
+do {if (str_pool[u] < str_pool[v]) goto found;
 if (str_pool[u] > str_pool[v]) goto not_found;
 incr(u);incr(v);
-}@+ while (!(u==str_start[k+1]));
+} while (!(u==str_start[k+1]));
 found: q=hyph_list[h];hyph_list[h]=p;p=q;@/
 t=hyph_word[h];hyph_word[h]=s;s=t;
 not_found:
@@ -19386,9 +19385,9 @@ never be occupied in |trie|, and we will have |trie_max >= trie_link(z)|.
 if (trie_max < h+256)
   {@+if (trie_size <= h+256) overflow("pattern memory", trie_size);
 @:TeX capacity exceeded pattern memory}{\quad pattern memory@>
-  @/do@+{incr(trie_max);trie_taken[trie_max]=false;
+  do {incr(trie_max);trie_taken[trie_max]=false;
   trie_link(trie_max)=trie_max+1;trie_back(trie_max)=trie_max-1;
-  }@+ while (!(trie_max==h+256));
+  } while (!(trie_max==h+256));
   }
 
 @ @<If all characters of the family fit relative to |h|...@>=
@@ -19401,15 +19400,15 @@ goto found
 
 @ @<Pack the family into |trie| relative to |h|@>=
 trie_taken[h]=true;trie_ref[p]=h;q=p;
-@/do@+{z=h+so(trie_c[q]);l=trie_back(z);r=trie_link(z);
+do {z=h+so(trie_c[q]);l=trie_back(z);r=trie_link(z);
 trie_back(r)=l;trie_link(l)=r;trie_link(z)=0;
 if (l < 256)
   {@+if (z < 256) ll=z;@+else ll=256;
-  @/do@+{trie_min[l]=r;incr(l);
-  }@+ while (!(l==ll));
+  do {trie_min[l]=r;incr(l);
+  } while (!(l==ll));
   }
 q=trie_r[q];
-}@+ while (!(q==0))
+} while (!(q==0))
 
 @ To pack the entire linked trie, we use the following recursive procedure.
 @^recursion@>
@@ -19417,12 +19416,12 @@ q=trie_r[q];
 @<Declare procedures for preprocessing hyph...@>=
 static void trie_pack(trie_pointer @!p) /*pack subtries of a family*/
 {@+trie_pointer q; /*a local variable that need not be saved on recursive calls*/
-@/do@+{q=trie_l[p];
+do {q=trie_l[p];
 if ((q > 0)&&(trie_ref[q]==0))
   {@+first_fit(q);trie_pack(q);
   }
 p=trie_r[p];
-}@+ while (!(p==0));
+} while (!(p==0));
 }
 
 @ When the whole trie has been allocated into the sequential table, we
@@ -19440,8 +19439,8 @@ if (trie_max==0)  /*no patterns were given*/
 else{@+if (hyph_root > 0) trie_fix(hyph_root);
   if (trie_root > 0) trie_fix(trie_root); /*this fixes the non-holes in |trie|*/
   r=0; /*now we will zero out all the holes*/
-  @/do@+{s=trie_link(r);trie[r]=h;r=s;
-  }@+ while (!(r > trie_max));
+  do {s=trie_link(r);trie[r]=h;r=s;
+  } while (!(r > trie_max));
   }
 trie_char(0)=qi('?'); /*make |trie_char(c)!=c| for all |c|*/
 
@@ -19457,11 +19456,11 @@ static void trie_fix(trie_pointer @!p) /*moves |p| and its siblings into |trie|*
 ASCII_code @!c; /*another one that need not be saved*/
 trie_pointer @!z; /*|trie| reference; this local variable must be saved*/
 z=trie_ref[p];
-@/do@+{q=trie_l[p];c=so(trie_c[p]);
+do {q=trie_l[p];c=so(trie_c[p]);
 trie_link(z+c)=trie_ref[q];trie_char(z+c)=qi(c);trie_op(z+c)=trie_o[p];
 if (q > 0) trie_fix(q);
 p=trie_r[p];
-}@+ while (!(p==0));
+} while (!(p==0));
 }
 
 @ Now let's go back to the easier problem, of building the linked
@@ -20060,9 +20059,9 @@ if (page_head!=page_tail)
       print_scaled(t);
       if (type(r)==split_up)
         {@+q=page_head;t=0;
-        @/do@+{q=link(q);
+        do {q=link(q);
         if ((type(q)==ins_node)&&(subtype(q)==subtype(r))) incr(t);
-        }@+ while (!(q==broken_ins(r)));
+        } while (!(q==broken_ins(r)));
         print(", #");print_int(t);print(" might split");
         }
       r=link(r);
@@ -20722,8 +20721,7 @@ pop_nest();build_page();
 @.Unbalanced output routine@>
 help2("Your sneaky output routine has problematic {'s and/or }'s.",@/
 "I can't handle that very well; good luck.");error();
-@/do@+{get_token();
-}@+ while (!(loc==null));
+do get_token(); while (!(loc==null));
 }  /*loops forever if reading from a file, since |null==min_halfword <= 0|*/
 
 @ @<Ensure that box 255 is empty after output@>=
@@ -21761,13 +21759,13 @@ else{@+if (!is_char_node(tail))
 
 @ @<Remove the last box...@>=
 {@+q=head;
-@/do@+{p=q;
+do {p=q;
 if (!is_char_node(q)) if (type(q)==disc_node)
   {@+for (m=1; m<=replace_count(q); m++) p=link(p);
   if (p==tail) goto done;
   }
 q=link(p);
-}@+ while (!(q==tail));
+} while (!(q==tail));
 cur_box=tail;shift_amount(cur_box)=0;
 tail=p;link(p)=null;
 done: ;}
@@ -22078,13 +22076,13 @@ if ((mode==vmode)&&(tail==head))
 non-glue@>@;
 else{@+if (!is_char_node(tail)) if (type(tail)==cur_chr)
     {@+q=head;
-    @/do@+{p=q;
+    do {p=q;
     if (!is_char_node(q)) if (type(q)==disc_node)
       {@+for (m=1; m<=replace_count(q); m++) p=link(p);
       if (p==tail) return;
       }
     q=link(p);
-    }@+ while (!(q==tail));
+    } while (!(q==tail));
     link(p)=null;flush_node_list(tail);tail=p;
     }
   }
@@ -23634,8 +23632,7 @@ control sequence for a token that is not redefinable.
 @<Declare subprocedures for |prefixed_command|@>=
 static void get_r_token(void)
 {@+
-restart: @/do@+{get_token();
-}@+ while (!(cur_tok!=space_token));
+restart: do get_token(); while (!(cur_tok!=space_token));
 if ((cur_cs==0)||(cur_cs > frozen_control_sequence))
   {@+print_err("Missing control sequence inserted");
 @.Missing control...@>
@@ -23690,8 +23687,7 @@ case let: if (chr_code!=normal) print_esc("futurelet");@+else print_esc("let");@
 case let: {@+n=cur_chr;
   get_r_token();p=cur_cs;
   if (n==normal)
-    {@+@/do@+{get_token();
-    }@+ while (!(cur_cmd!=spacer));
+    {@+do get_token(); while (!(cur_cmd!=spacer));
     if (cur_tok==other_token+'=')
       {@+get_token();
       if (cur_cmd==spacer) get_token();
@@ -24221,7 +24217,7 @@ new_patterns();goto done;@;
     print_err("Patterns can be loaded only by INITEX");
 @.Patterns can be...@>
     help0;error();
-    @/do@+{get_token();}@+ while (!(cur_cmd==right_brace)); /*flush the patterns*/
+    do get_token(); while (!(cur_cmd==right_brace)); /*flush the patterns*/
     return;
     }
   else{@+new_hyph_exceptions();goto done;
@@ -24855,10 +24851,10 @@ sort_avail();var_used=0;
 dump_int(lo_mem_max);dump_int(rover);
 if (eTeX_ex) for (k=int_val; k<=tok_val; k++) dump_int(sa_root[k]);
 p=mem_bot;q=rover;x=0;
-@/do@+{for (k=p; k<=q+1; k++) dump_wd(mem[k]);
+do {for (k=p; k<=q+1; k++) dump_wd(mem[k]);
 x=x+q+2-p;var_used=var_used+q-p;
 p=q+node_size(q);q=rlink(q);
-}@+ while (!(q==rover));
+} while (!(q==rover));
 var_used=var_used+lo_mem_max-p;dyn_used=mem_end+1-hi_mem_min;@/
 for (k=p; k<=lo_mem_max; k++) dump_wd(mem[k]);
 x=x+lo_mem_max+1-p;
@@ -24880,11 +24876,11 @@ undump(lo_mem_stat_max+1, lo_mem_max, rover);
 if (eTeX_ex) for (k=int_val; k<=tok_val; k++)
   undump(null, lo_mem_max, sa_root[k]);
 p=mem_bot;q=rover;
-@/do@+{for (k=p; k<=q+1; k++) undump_wd(mem[k]);
+do {for (k=p; k<=q+1; k++) undump_wd(mem[k]);
 p=q+node_size(q);
 if ((p > lo_mem_max)||((q >= rlink(q))&&(rlink(q)!=rover))) goto bad_fmt;
 q=rlink(q);
-}@+ while (!(q==rover));
+} while (!(q==rover));
 for (k=p; k<=lo_mem_max; k++) undump_wd(mem[k]);
 if (mem_min < mem_bot-2)  /*make more low memory available*/
   {@+p=llink(rover);q=mem_min+1;
@@ -24921,7 +24917,7 @@ copies of $x_n$, namely $(x_1,\ldots,x_n,x_n,\ldots,x_n)$.
 
 @<Dump regions 1 to 4 of |eqtb|@>=
 k=active_base;
-@/do@+{j=k;
+do {j=k;
 while (j < int_base-1)
   {@+if ((equiv(j)==equiv(j+1))&&(eq_type(j)==eq_type(j+1))&&@|
     (eq_level(j)==eq_level(j+1))) goto found1;
@@ -24939,10 +24935,10 @@ while (k < l)
   {@+dump_wd(eqtb[k]);incr(k);
   }
 k=j+1;dump_int(k-l);
-}@+ while (!(k==int_base))
+} while (!(k==int_base))
 
 @ @<Dump regions 5 and 6 of |eqtb|@>=
-@/do@+{j=k;
+do {j=k;
 while (j < eqtb_size)
   {@+if (eqtb[j].i==eqtb[j+1].i) goto found2;
   incr(j);
@@ -24958,11 +24954,11 @@ while (k < l)
   {@+dump_wd(eqtb[k]);incr(k);
   }
 k=j+1;dump_int(k-l);
-}@+ while (!(k > eqtb_size))
+} while (!(k > eqtb_size))
 
 @ @<Undump regions 1 to 6 of |eqtb|@>=
 k=active_base;
-@/do@+{undump_int(x);
+do {undump_int(x);
 if ((x < 1)||(k+x > eqtb_size+1)) goto bad_fmt;
 for (j=k; j<=k+x-1; j++) undump_wd(eqtb[j]);
 k=k+x;
@@ -24970,7 +24966,7 @@ undump_int(x);
 if ((x < 0)||(k+x > eqtb_size+1)) goto bad_fmt;
 for (j=k; j<=k+x-1; j++) eqtb[j]=eqtb[k-1];
 k=k+x;
-}@+ while (!(k > eqtb_size))
+} while (!(k > eqtb_size))
 
 @ A different scheme is used to compress the hash table, since its lower
 region is usually sparse. When |text(p)!=0| for |p <= hash_used|, we output
@@ -24988,8 +24984,8 @@ print_ln();print_int(cs_count);print(" multiletter control sequences")
 
 @ @<Undump the hash table@>=
 undump(hash_base, frozen_control_sequence, hash_used);p=hash_base-1;
-@/do@+{undump(p+1, hash_used, p);undump_hh(hash[p]);
-}@+ while (!(p==hash_used));
+do {undump(p+1, hash_used, p);undump_hh(hash[p]);
+} while (!(p==hash_used));
 for (p=hash_used+1; p<=undefined_control_sequence-1; p++) undump_hh(hash[p]);
 undump_int(cs_count)
 
@@ -26560,8 +26556,7 @@ end_token_list() /*conserve stack space*/
 @.Unbalanced write...@>
 help2("On this page there's a \\write with fewer real {'s than }'s.",@/
 "I can't handle that very well; good luck.");error();
-@/do@+{get_token();
-}@+ while (!(cur_tok==end_write_token));
+do get_token(); while (!(cur_tok==end_write_token));
 }
 
 @ The |out_what| procedure takes care of outputting whatsit nodes for
@@ -27032,9 +27027,9 @@ a=1;
 print_nl("");print_ln();
 loop@+{@+print_nl("### ");print_group(true);
   if (cur_group==bottom_level) goto done;
-  @/do@+{m=nest[p].mode_field;
+  do {m=nest[p].mode_field;
   if (p > 0) decr(p);else m=vmode;
-  }@+ while (!(m!=hmode));
+  } while (!(m!=hmode));
   print(" (");
   switch (cur_group) {
     case simple_group: {@+incr(p);goto found2;
@@ -27219,14 +27214,14 @@ case show_ifs: {@+begin_diagnostic();print_nl("");print_ln();
     {@+print_nl("### ");print("no active conditionals");
     }
   else{@+p=cond_ptr;n=0;
-    @/do@+{incr(n);p=link(p);@+}@+ while (!(p==null));
+    do {incr(n);p=link(p);@+} while (!(p==null));
     p=cond_ptr;t=cur_if;l=if_line;m=if_limit;
-    @/do@+{print_nl("### level ");print_int(n);print(": ");
+    do {print_nl("### level ");print_int(n);print(": ");
     print_cmd_chr(if_test, t);
     if (m==fi_code) print_esc("else");
     print_if_line(l);
     decr(n);t=subtype(p);l=if_line_field(p);m=type(p);p=link(p);
-    }@+ while (!(p==null));
+    } while (!(p==null));
     }
   } @+break;
 
@@ -27482,9 +27477,9 @@ preceding the mandatory \.{\\endcsname} have been expanded).
 
 @<Cases for |conditional|@>=
 case if_cs_code: {@+n=get_avail();p=n; /*head of the list of characters*/
-  @/do@+{get_x_token();
+  do {get_x_token();
   if (cur_cs==0) store_new_token(cur_tok);
-  }@+ while (!(cur_cs!=0));
+  } while (!(cur_cs!=0));
   if (cur_cmd!=end_cs_name) @<Complain about missing \.{\\endcsname}@>;
   @<Look up the characters of list |n| in the hash table, and set |cur_cs|@>;
   flush_list(n);
@@ -28426,12 +28421,12 @@ else{@+if (sa_index(q) < mu_val_limit)
   else if (sa_ptr(q)!=null) return;
   s=pointer_node_size;
   }
-@/do@+{i=hex_dig4(sa_index(q));p=q;q=link(p);free_node(p, s);
+do {i=hex_dig4(sa_index(q));p=q;q=link(p);free_node(p, s);
 if (q==null)  /*the whole tree has been freed*/
   {@+sa_root[i]=null;return;
   }
 delete_sa_ptr;s=index_node_size; /*node |q| is an index node*/
-}@+ while (!(sa_used(q) > 0));
+} while (!(sa_used(q) > 0));
 }
 
 @ The |print_sa_num| procedure prints the register number corresponding
@@ -28811,7 +28806,7 @@ at by |sa_chain|
 @<Declare \eTeX\ procedures for tr...@>=
 static void sa_restore(void)
 {@+pointer p; /*sparse array element*/
-@/do@+{p=sa_loc(sa_chain);
+do {p=sa_loc(sa_chain);
 if (sa_lev(p)==level_one)
   {@+if (sa_index(p) >= dimen_val_limit) sa_destroy(sa_chain);
 #ifdef @!STAT
@@ -28834,7 +28829,7 @@ delete_sa_ref(p);
 p=sa_chain;sa_chain=link(p);
 if (sa_index(p) < dimen_val_limit) free_node(p, word_node_size);
 else free_node(p, pointer_node_size);
-}@+ while (!(sa_chain==null));
+} while (!(sa_chain==null));
 }
 
 @ When reading \.{\\patterns} while \.{\\savinghyphcodes} is positive
@@ -28855,8 +28850,8 @@ hyph_root=0;hyph_start=0;
 
 @ @<Store hyphenation codes for current language@>=
 {@+c=cur_lang;first_child=false;p=0;
-@/do@+{q=p;p=trie_r[q];
-}@+ while (!((p==0)||(c <= so(trie_c[p]))));
+do {q=p;p=trie_r[q];
+} while (!((p==0)||(c <= so(trie_c[p]))));
 if ((p==0)||(c < so(trie_c[p])))
   @<Insert a new trie node between |q| and |p|, and make |p| point to it@>;
 q=p; /*now node |q| represents |cur_lang|*/
@@ -29291,7 +29286,7 @@ hash since |no_new_control_sequence| is |true|), but since it has the
 for a control sequence entered but never defined.
 
 @ @<Cases for |conditional|@>=
-case if_primitive_code: {@+@/do@+{get_token();}@+ while (!(cur_tok!=space_token));
+case if_primitive_code: {@+do get_token(); while (!(cur_tok!=space_token));
 if ((cur_cs!=0)&&(cur_cmd!=undefined_cs)&&(cur_cmd < call)) b=true;else b=false;
 } @+break;
 
@@ -29730,10 +29725,10 @@ case file_dump_code:
   { FILE *f=fopen((char*)name_of_file0,"rb");
     if (f!=NULL) {@+
       fseek(f,k,SEEK_SET);
-      do@+{i=fgetc(f); if (i==EOF) break;
+      do {i=fgetc(f); if (i==EOF) break;
            dig[0]=i%16;dig[1]=i/16;
            print_the_digs(2);decr(l);
-       }@+ while (!(feof(f)||(l==0)));
+       } while (!(feof(f)||(l==0)));
       fclose(f);
     }
   } @+break;
@@ -30018,7 +30013,7 @@ else{@+n=(n-1)*mpfract_one;
   }
 }
 
-@ The |@/do@+{| loop here preserves the following invariant relations
+@ The |do {| loop here preserves the following invariant relations
 between |f|, |p|, and~|q|:
 (i)~|0 <= p < q|; (ii)~$fq+p=2^k(q+p_0)$, where $k$ is an integer and
 $p_0$ is the original value of~$p$.
@@ -30033,11 +30028,11 @@ in a register, not store it in memory.
 
 @<Compute $f=\lfloor 2^{28}(1+p/q)+{1\over2}\rfloor$@>=
 f=1;
-@/do@+{be_careful=p-q;p=be_careful+p;
+do {be_careful=p-q;p=be_careful+p;
 if (p >= 0) f=f+f+1;
 else{@+double(f);p=p+q;
   }
-}@+ while (!(f >= mpfract_one));
+} while (!(f >= mpfract_one));
 be_careful=p-q;
 if (be_careful+p >= 0) incr(f)
 
@@ -30085,12 +30080,12 @@ $f_0$ is the original value of~$f$; (ii)~$2^k\L f<2^{k+1}$.
 @<Compute $p=\lfloor qf/2^{28}+{1\over2}\rfloor-q$@>=
 p=mpfract_half; /*that's $2^{27}$; the invariants hold now with $k=28$*/
 if (q < mpfract_four)
-  @/do@+{if (odd(f)) p=halfp(p+q);@+else p=halfp(p);
+  do {if (odd(f)) p=halfp(p+q);@+else p=halfp(p);
   f=halfp(f);
-  }@+ while (!(f==1));
-else@/do@+{if (odd(f)) p=p+halfp(q-p);@+else p=halfp(p);
+  } while (!(f==1));
+else do {if (odd(f)) p=p+halfp(q-p);@+else p=halfp(p);
   f=halfp(f);
-  }@+ while (!(f==1))
+  } while (!(f==1))
 
 @ There's an auxiliary array |randoms| that contains 55 pseudo-random
 fractions. Using the recurrence $x_n=(x_{n-55}-x_{n-31})\bmod 2^{28}$,
@@ -30278,15 +30273,15 @@ can readily be obtained with the ratio method (Algorithm 3.4.1R in
 static scaled norm_rand(void)
 {@+int @!x, @!u, @!l; /*what the book would call $2^{16}X$, $2^{28}U$,
   and $-2^{24}\ln U$*/
-@/do@+{
-  @/do@+{next_random;
+do {
+  do {next_random;
   x=take_mpfract(112429, randoms[j_random]-mpfract_half);
      /*$2^{16}\sqrt{8/e}\approx 112428.82793$*/
   next_random;u=randoms[j_random];
-  }@+ while (!(abs(x) < u));
+  } while (!(abs(x) < u));
 x=make_mpfract(x, u);
 l=139548960-m_log(u); /*$2^{24}\cdot12\ln2\approx139548959.6165$*/
-}@+ while (!(ab_vs_cd(1024, l, x, x) >= 0));
+} while (!(ab_vs_cd(1024, l, x, x) >= 0));
 return x;
 }
 
@@ -31174,8 +31169,8 @@ if (option_no_empty_page &&
     ((eject && penalty(p)>2*(eject_penalty)) ||
      (page_contents==empty && !is_visible(p))))
 { pointer r, prev_r = p;
-  while (true)
-  { r =link(prev_r);
+  loop@+{
+    r =link(prev_r);
     if (r==null) return;
     else if (is_visible(r)) break;
     else if (type(r)==penalty_node && penalty(r)<=eject_penalty)
@@ -32821,8 +32816,8 @@ static bool node_equal(pointer p, pointer q)
 }
 
 static bool list_equal(pointer p, pointer q)
-{@+while (true)
-  { if (p==q) return true;
+{@+loop@+{
+    if (p==q) return true;
     if (p==null || q==null) return false;
     if (!node_equal(p,q)) return false;
     p=link(p);q=link(q);
@@ -34441,7 +34436,7 @@ function from the \CEE/ library. This function returns 0 and sets the
 the end of all options is reached.
 @<\TeX\ Live  functions@>=
 static void parse_options (int argc, char *argv[])
-{@+ while (true) {
+{@+ loop @+ {
     int option_index;
     int g = getopt_long_only (argc, argv, "+", long_options, &option_index);
     if (g==0)
