@@ -2271,7 +2271,7 @@ positions from the right end of a binary computer word.
 
 @<Types...@>=
 typedef int scaled; /*this type is used for scaled integers*/
-typedef int32_t nonnegative_integer; /*$0\le x<2^{31}$*/
+typedef uint32_t nonnegative_integer; /*$0\le x<2^{31}$*/
 typedef int8_t small_number; /*this type is self-explanatory*/
 
 @ The following function is used to create a scaled integer from a given decimal
