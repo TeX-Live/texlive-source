@@ -1,7 +1,7 @@
 #!/usr/bin/env perl
 ################################################################################
 # texlogfilter - filter latex engines output or log file
-# Julien Labbé, 2021
+# Julien Labbé, 2021-2024
 #
 # This work may be distributed and/or modified under the conditions of the LaTeX
 # Project Public License, either version 1.3 of this license or (at your option)
@@ -16,7 +16,7 @@ use Getopt::Long;
 use Term::ANSIColor;
 
 my $name = "texlogfilter";
-my $version = "1.3";
+my $version = "1.4";
 
 # options
 my @userfilters;
@@ -188,7 +188,7 @@ while (<>) {
     # assume currentfile is given in the last open parenthesis
     # (works badly for packages)
     if (/^[^(]*\)/) {$currentfile = ""; $lastfile = "";}
-    if (/\(([^)]+($extpattern))$/) {$currentfile = $1;}
+    if (/\(([^)]+($extpattern))[^)]*$/) {$currentfile = $1;}
 
     # try to show usefull lines following some warnings or errors (starting with
     # whitespaces or package name)
@@ -209,12 +209,13 @@ while (<>) {
     elsif (/^(!|.*?:\d+:)/i)                                            { handle_error(); }
     elsif (/^No pages of output/i)                                      { handle_error(); }
 
-    # find warning
+    # find warnings
     elsif (/^(!\s+)?(Class|Package)\s+(\S+)?\s*Warning/i)               { if ($3){$currentpackage=$3}; handle_warning(0, "nofilename"); }
     elsif (/^(!\s+)?(LaTeX|\* LaTeX) Warning: (Citation|Reference)/i)   { if ($showrefmsg) {handle_warning();} }
     elsif (/^(!\s+)?(LaTeX|\* LaTeX) Font Warning/i)                    { $currentpackage="Font"; handle_warning(); }
     elsif (/^(!\s+)?(LaTeX|\* LaTeX) Warning/i)                         { handle_warning(); }
-    elsif (/Runaway argument\?/i)                                       { handle_warning(1); }
+    elsif (/Runaway (definition|argument|preamble|text)\?/i)            { handle_warning(1); }
+    elsif (/Missing character: There is no /i)                          { handle_warning(); }
     elsif (/(overfull|underfull|badbox)/i)                              { if ($showboxmsg){handle_warning(1);} }
 
     # find infos
@@ -336,13 +337,15 @@ distributions of LaTeX version 2005/12/01 or later.
 
 =head2 VERSION
 
-1.1
+1.3.1
 
 =head2 HISTORY
 
 =over
 
-=item * 2024, February, version 1.3: better detect the current file name.
+=item * 2024, June, versions 1.4: add warning patterns.
+
+=item * 2024, February, versions 1.3 and 1.3.1: better detect the current file name.
 
 =item * 2024, February, version 1.2: fix duplicate or missing lines; handle
 package and class names with hyphen; add info and warning patterns for fonts.
