@@ -7,22 +7,49 @@ Reads a WEB file and a change file and writes a change file to stdout with
 potentially corrected part, section and line numbers.
 Written by Tyge Tiessen, 2024. Public domain.
 """
+import getopt
 import re
 import sys
 
 USAGE = f"{sys.argv[0]} <web file> <change file>"
 
+# Optional elements of "@x [{part}.{section}] l.{line} {-(hyphen)} {text}
+part_b, section_b, line_b, hyphen_b, text_b = True, True, True, True, True
+
 
 def main():
-    if len(sys.argv) != 3:
+    try:
+        opts, args = getopt.getopt(sys.argv[1:], "pslht",
+            ["parts", "sections", "lines", "hyphens", "texts"])
+    except getopt.GetoptErr as err:
+        print(USAGE)
+        sys.exit(1)
+
+    global part_b, section_b, line_b, hyphen_b, text_b
+
+    for opt, _ in opts:
+        if opt in ("-p", "--parts"):
+            part_b = False
+        elif opt in ("-s", "--sections"):
+            section_b = False
+        elif opt in ("-l", "--lines"):
+            line_b = False
+        elif opt in ("-h", "--hyphens"):
+            hyphen_b = False
+        elif opt in ("-t", "--texts"):
+            text_b = False
+        else:
+            assert False, f"Unhandled option {opt}"
+
+    if len(args) != 2:
         print(USAGE)
         sys.exit(1)
 
     # Read WEB file
-    web_reader = WebReader(sys.argv[1])
+    web_reader = WebReader(args[0])
 
     # Read change file
-    ch_reader = ChangeReader(sys.argv[2])
+    ch_reader = ChangeReader(args[1])
 
     # Run through the two files in parallel
     ch_reader.traverse(web_reader)
@@ -189,11 +216,24 @@ class ChangeReader:
                     if re.match(pattern, text):
                         text = re.sub(pattern, "", text, 1).strip()
 
-            # Create line with standard tag.
-            new_line = f"@x [{part}.{section}] l.{line_number}"
+            # Create line with standard tag and optional information.
+            new_line = f"@x"
+            if part_b or section_b:
+                new_line += f" ["
+                if part_b:
+                    new_line += f"{part}"
+                if part_b and section_b:
+                    new_line += f"."
+                if section_b:
+                    new_line += f"{section}"
+                new_line += f"]"
+            if line_b:
+                new_line += f" l.{line_number}"
 
-            if text:
-                new_line += f" - {text}"
+            if text_b and text:
+                if hyphen_b:
+                    new_line += f" -"
+                new_line += f" {text}"
 
             ch_line = self._lines[self._chunk_start]
             if new_line[:10] != ch_line[:10]:

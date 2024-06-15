@@ -1,3 +1,8 @@
+2024-06-15  Andreas Scherer  <https://ascherer.github.io>
+
+	* tests/fix-changefile-lines.py,
+	* dvicopy.ch: Output '@x' with optional information.
+
 2024-06-05  Andreas Scherer  <https://ascherer.github.io>
 
 	* tests/fix-changefile-lines.py,

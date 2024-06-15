@@ -36,7 +36,7 @@ calls the `|jump_out|' procedure, which goes to the label |final_end|.
 @y
 calls the `|jump_out|' procedure.
 @z
-@x
+@x [3]
 label final_end;
 @y
 @z
@@ -85,7 +85,7 @@ procedure initialize; {this procedure gets things started properly}
 % [7] Rename the integer types, as they collide with names used by C99.
 % Rather than change the code all over the place, we use macros to do
 % the renaming.  This could also be done at C preprocessor level.
-@x
+@x [7]
 @d int_32 == integer {signed 32~bit integers}
 @y
 @d int_32 == integer {signed 32~bit integers}
@@ -103,7 +103,7 @@ procedure initialize; {this procedure gets things started properly}
 
 % [11] Redirect output, so it can go to either stdout or stderr,
 % depending on where the output dvi file is going.
-@x
+@x [11]
 @d print(#)==write(output,#)
 @d print_ln(#)==write_ln(output,#)
 @d new_line==write_ln(output) {start new line}
@@ -122,7 +122,7 @@ procedure initialize; {this procedure gets things started properly}
 % [15] The text_char type is used as an array index into xord.  The
 % default type `char' produces signed integers, which are bad array
 % indices in C.
-@x
+@x [15]
 @d text_char == char {the data type of characters in text files}
 @d first_text_char=0 {ordinal number of the smallest element of |text_char|}
 @d last_text_char=127 {ordinal number of the largest element of |text_char|}
@@ -143,7 +143,7 @@ by a call on some system procedure that quietly terminates the program.
 @y
 so a procedure called |jump_out| has been introduced.
 @z
-@x
+@x [23]
 @d abort(#)==begin print_ln(' ',#,'.'); jump_out;
     end
 
@@ -175,7 +175,7 @@ says |confusion(|indication of where we are|)|.
 @y
 says |confusion|(indication of where we are).
 @z
-@x
+@x [24]
 procedure confusion(@!p:pckt_pointer);
 @y
 noreturn procedure confusion(@!p:pckt_pointer);
@@ -229,24 +229,24 @@ to |make_font_name|.
 
 % [67] No conversion of filenames in lower case, and initialize and
 % terminate for C strings.  Eliminate now unused variable.
-@x
+@x [67]
 @!c:char; {a character to be appended to |cur_name|}
 @y
 @z
 
-@x
+@x [67]
 cur_loc:=pckt_start[n]; cur_limit:=pckt_start[n+1];
 @y
 cur_name := xmalloc_array (char, pckt_length (n) + pckt_length (e));
 cur_loc:=pckt_start[n]; cur_limit:=pckt_start[n+1];
 @z
 
-@x
+@x [67]
   if (b>="a")and(b<="z") then Decr(b)(("a"-"A")); {convert to upper case}
 @y
 @z
 
-@x
+@x [67]
 cur_loc:=pckt_start[e]; cur_limit:=pckt_start[e+1];
 while cur_loc<cur_limit do
   begin pckt_extract(b); append_res_to_name(xchr[b]);
@@ -380,7 +380,7 @@ id3(".")("V")("F")(vf_ext); {file name extension for \.{VF} files}
 id3(".")("v")("f")(vf_ext); {file name extension for \.{VF} files}
 @z
 
-@x [137/138] Set default directory name
+@x [137] Set default directory name
 @ If no font directory has been specified, \.{\title} is supposed to use
 the default \.{VF} directory, which is a system-dependent place where
 the \.{VF} files for standard fonts are kept.
@@ -488,7 +488,7 @@ end;
 dialog; {get options}
 @y
 @z
-@x
+@x [241]
 final_end:end.
 @y
 end.
