@@ -204,12 +204,12 @@ class ChangeReader:
             # Remove potentially leading [part.section] tag.
             pattern = "\\[\\d+(\\.\\d+)?\\]"
             if re.match(pattern, text):
-                text = re.sub(pattern, "", text).strip()
+                text = re.sub(pattern, "", text, 1).strip()
 
                 # Remove potentially line number information.
                 pattern = "l\\.\\d+"
                 if re.match(pattern, text):
-                    text = re.sub(pattern, "", text)
+                    text = re.sub(pattern, "", text, 1)
 
                     # Remove potentially text comment separator.
                     pattern = " -+ "
