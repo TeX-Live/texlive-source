@@ -7,43 +7,30 @@ Reads a WEB file and a change file and writes a change file to stdout with
 potentially corrected part, section and line numbers.
 Written by Tyge Tiessen, 2024. Public domain.
 """
-import getopt
-import re
-import sys
 
-USAGE = f"{sys.argv[0]} <web file> <change file>"
+import getopt, os, re, sys
 
-# Optional elements of "@x [{part}.{section}] l.{line} {-(hyphen)} {text}
-part_b, section_b, line_b, hyphen_b, text_b = True, True, True, True, True
+USAGE = f"""
+Usage: {os.path.basename(sys.argv[0])} [options] <web file> <change file>
+
+Reads a WEB file and a change file and writes a change file to stdout with
+potentially corrected part, section and line numbers.
+
+Options influence the '@x [part.section] l.line - text' format:
+    -p, --parts     Suppress the 'part' (starred section) number
+    -s, --sections  Suppress the (unstarred) 'section' number
+    -l, --lines     Suppress the 'l.line' number
+    -h, --hyphens   Suppress the '-'
+    -t, --texts     Suppress the 'text'
+
+Written by Tyge Tiessen, 2024. Public domain.
+""".strip()
 
 
 def main():
-    try:
-        opts, args = getopt.getopt(sys.argv[1:], "pslht",
-            ["parts", "sections", "lines", "hyphens", "texts"])
-    except getopt.GetoptErr as err:
-        print(USAGE)
-        sys.exit(1)
-
-    global part_b, section_b, line_b, hyphen_b, text_b
-
-    for opt, _ in opts:
-        if opt in ("-p", "--parts"):
-            part_b = False
-        elif opt in ("-s", "--sections"):
-            section_b = False
-        elif opt in ("-l", "--lines"):
-            line_b = False
-        elif opt in ("-h", "--hyphens"):
-            hyphen_b = False
-        elif opt in ("-t", "--texts"):
-            text_b = False
-        else:
-            assert False, f"Unhandled option {opt}"
-
-    if len(args) != 2:
-        print(USAGE)
-        sys.exit(1)
+    # Handle commamd-line options
+    opt_handler = OptHandler()
+    args = opt_handler.args()
 
     # Read WEB file
     web_reader = WebReader(args[0])
@@ -52,7 +39,7 @@ def main():
     ch_reader = ChangeReader(args[1])
 
     # Run through the two files in parallel
-    ch_reader.traverse(web_reader)
+    ch_reader.traverse(web_reader, opt_handler)
 
     for line in ch_reader.get_lines():
         print(line)
@@ -175,7 +162,7 @@ class ChangeReader:
 
                 return part, section, line_number
 
-    def traverse(self, web_reader):
+    def traverse(self, web_reader, opt_handler):
         """Go through all individual change chunks while updating their tags."""
         while self.advance_to_next_chunk():
             part, section, line_number = self.find_match_in_web(web_reader)
@@ -217,22 +204,22 @@ class ChangeReader:
                         text = re.sub(pattern, "", text, 1).strip()
 
             # Create line with standard tag and optional information.
-            new_line = f"@x"
-            if part_b or section_b:
-                new_line += f" ["
-                if part_b:
+            new_line = "@x"
+            if opt_handler.part_b or opt_handler.section_b:
+                new_line += " ["
+                if opt_handler.part_b:
                     new_line += f"{part}"
-                if part_b and section_b:
-                    new_line += f"."
-                if section_b:
+                if opt_handler.part_b and opt_handler.section_b:
+                    new_line += "."
+                if opt_handler.section_b:
                     new_line += f"{section}"
-                new_line += f"]"
-            if line_b:
+                new_line += "]"
+            if opt_handler.line_b:
                 new_line += f" l.{line_number}"
 
-            if text_b and text:
-                if hyphen_b:
-                    new_line += f" -"
+            if opt_handler.text_b and text:
+                if opt_handler.hyphen_b:
+                    new_line += " -"
                 new_line += f" {text}"
 
             ch_line = self._lines[self._chunk_start]
@@ -247,6 +234,50 @@ class ChangeReader:
 
     def get_lines(self):
         return self._lines
+
+
+class OptHandler:
+    """Parses the invocation line and extracts the options.
+    Returns the remaining arguments, i.e., the WEB and Change File names.
+    """
+
+    def __init__(self):
+        """Optional elements of the output format
+        '@x [{part}.{section}] l.{line} {-(hyphen)} {text}'
+        """
+        self.part_b = True
+        self.section_b = True
+        self.line_b = True
+        self.hyphen_b = True
+        self.text_b = True
+
+        try:
+            opts, self._args = getopt.getopt(sys.argv[1:], "pslht",
+                ["parts", "sections", "lines", "hyphens", "texts"])
+        except getopt.GetoptError as err:
+            print(USAGE)
+            sys.exit(1)
+
+        for opt, _ in opts:
+            if opt in ("-p", "--parts"):
+                self.part_b = False
+            elif opt in ("-s", "--sections"):
+                self.section_b = False
+            elif opt in ("-l", "--lines"):
+                self.line_b = False
+            elif opt in ("-h", "--hyphens"):
+                self.hyphen_b = False
+            elif opt in ("-t", "--texts"):
+                self.text_b = False
+            else:
+                assert False, f"Unhandled option {opt}"
+
+        if len(self._args) != 2:
+            print(USAGE)
+            sys.exit(1)
+
+    def args(self):
+        return self._args
 
 
 def eprint(*args, **kwargs):
