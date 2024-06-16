@@ -241,9 +241,8 @@ class OptHandler:
     """
 
     def __init__(self):
-        """Optional elements of the output format
-        '@x [{part}.{section}] l.{line} {-(hyphen)} {text}'
-        """
+        # Optional elements of the output format
+        # '@x [{part}.{section}] l.{line} {-(hyphen)} {text}'
         self.part_b = True
         self.section_b = True
         self.line_b = True
@@ -254,6 +253,9 @@ class OptHandler:
             opts, self.args = getopt.getopt(sys.argv[1:], "pslht",
                 ["parts", "sections", "lines", "hyphens", "texts"])
         except getopt.GetoptError as err:
+            eprint(f"""
+{os.path.basename(sys.argv[0])}: {err}!
+""")
             print(USAGE)
             sys.exit(1)
 
