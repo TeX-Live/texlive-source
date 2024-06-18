@@ -198,7 +198,7 @@ class ChangeReader:
                     text = re.sub(pattern, "", text, 1)
 
                     # Remove potentially text comment separator.
-                    pattern = " -+ "
+                    pattern = " -*"
                     if re.match(pattern, text):
                         text = re.sub(pattern, "", text, 1).strip()
 
@@ -223,11 +223,11 @@ class ChangeReader:
 
             ch_line = self._lines[self._chunk_start]
             if new_line[:10] != ch_line[:10]:
-                print("Old:")
-                print(f"  {ch_line}")
-                print("New:")
-                print(f"  {new_line}")
-                print()
+                eprint("Old:")
+                eprint(f"  {ch_line}")
+                eprint("New:")
+                eprint(f"  {new_line}")
+                eprint()
 
             self._lines[self._chunk_start] = new_line
 
@@ -253,9 +253,7 @@ class OptHandler:
             opts, self.args = getopt.getopt(sys.argv[1:], "pslht",
                 ["parts", "sections", "lines", "hyphens", "texts"])
         except getopt.GetoptError as err:
-            eprint(f"""
-{os.path.basename(sys.argv[0])}: {err}!
-""")
+            eprint(f"\n{os.path.basename(sys.argv[0])}: {err}!\n")
             print(USAGE)
             sys.exit(1)
 

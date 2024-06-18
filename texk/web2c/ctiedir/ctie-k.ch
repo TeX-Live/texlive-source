@@ -65,7 +65,7 @@ permission notice identical to this one.
 @z
 
 @x [1] l.81
-@d copyright 
+@d copyright
     "Copyright 2002,2003 Julian Gilbey.  All rights reserved.  There is no warranty.\n\
 Run with the --version option for other important information."
 @y
@@ -304,7 +304,7 @@ The next piece is simplified using the kpathsea kpse_find_file
 function.
 
 @x [27] l.497
-If the environment variable \.{CWEBINPUTS} is set, or if the compiler flag 
+If the environment variable \.{CWEBINPUTS} is set, or if the compiler flag
 of the same name was defined at compile time,
 \.{CWEB} will look for include files in the directory thus named, if
 it cannot find them in the current directory.
@@ -315,7 +315,7 @@ variable) to search for this file.@.CWEBINPUTS@>
 @z
 
 @x [27] l.510 Don't need the same variables any longer
-    char temp_file_name[max_file_name_length]; 
+    char temp_file_name[max_file_name_length];
     char *file_name_end;
     char *k, *kk;
     int l; /* length of file name */
@@ -344,7 +344,7 @@ variable) to search for this file.@.CWEBINPUTS@>
         if ((l=strlen(CWEBINPUTS))>max_file_name_length-2) too_long();
         strcpy(temp_file_name, CWEBINPUTS);
 #else
-        l=0; 
+        l=0;
 #endif /* |CWEBINPUTS| */
     }
     if (l>0) {
