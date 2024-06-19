@@ -14,12 +14,12 @@
 %
 % You should have received a copy of the GNU General Public License along with
 % this program.  If not, see <http://www.gnu.org/licenses/>.
-% 
+%
 % Change file to assist in creating the web2c-specific change file.
 % This one comes first, resolves inconsistencies between the generated
 % pdfetex.web and tex.ch
 
-@x [1.2] l.188
+@x [1.2] l.316
 @d TeX_banner=='This is TeX, Version 3.141592653' {printed when \TeX\ starts}
 @#
 @d banner==pdfTeX_banner
@@ -27,7 +27,7 @@
 @d banner=='This is TeX, Version 3.141592653' {printed when \TeX\ starts}
 @z
 
-@x [17.236] l.4960 - first web2c, then pdfTeX, then e-TeX additional integer parameters
+@x [18.254] l.5671 - first web2c, then pdfTeX, then e-TeX additional integer parameters
 @d tex_int_pars=55 {total number of \TeX's integer parameters}
 @#
 @d pdftex_first_integer_code = tex_int_pars {base for \pdfTeX's integer parameters}
