@@ -16,7 +16,7 @@
 % TeX is a trademark of the American Mathematical Society.
 % e-TeX and NTS are trademarks of the NTS group.
 
-% All line numbers refer to tex.web 3.14159265 as of January 20, 2014.
+% All line numbers refer to tex.web 3.141592653 as of January 29, 2021.
 
 @x [0.0] l.1 - this is e-TeX
 % This program is copyright (C) 1982 by D. E. Knuth; all rights are reserved.
