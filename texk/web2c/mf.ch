@@ -20,6 +20,10 @@
 % Revision 1.0  86/01/31  15:46:08  richards
 % 	Incorporates: New binary I/O library, separate optimized
 % 	arithmetic for takefraction/makefraction, new graphics interface.
+%
+% The part, module, and line numbers in this change file refer to
+% MF.WEB 2.71828182 as of January, 2021 (published as Donald E. Knuth,
+% Metafont: The Program, Volume D of Computers & Typesetting Junilee Editions).
 
 @x [0.0] l.75 - WEAVE: print changes only.
 \def\botofcontents{\vskip 0pt plus 1fil minus 1.5in}
