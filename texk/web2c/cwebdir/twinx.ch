@@ -157,6 +157,8 @@ Section 12.
   } while(fgets(buf,buf_size,f));
 @z
 
+Section 14.
+
 @x l.289 C++17 removed 'register' storage class.
 while (1) {@+register node *p,*q,*r,*s,*t;
 @y
@@ -237,6 +239,8 @@ void collapse(
 @y
 {@+node *x;
 @z
+
+Section 21.
 
 @x l.403 C++17 removed 'register' storage class.
 {@+register node *x;
