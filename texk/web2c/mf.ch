@@ -23,7 +23,7 @@
 %
 % The part, module, and line numbers in this change file refer to
 % MF.WEB 2.71828182 as of January, 2021 (published as Donald E. Knuth,
-% Metafont: The Program, Volume D of Computers & Typesetting Junilee Editions).
+% Metafont: The Program, Volume D of Computers & Typesetting Jubilee Editions).
 
 @x [0.0] l.75 - WEAVE: print changes only.
 \def\botofcontents{\vskip 0pt plus 1fil minus 1.5in}
