@@ -193,20 +193,23 @@ class ChangeReader:
             # Remove leading @x.
             text = self._lines[self._chunk_start][2:].strip()
 
-            # Remove potentially leading [part.section] tag.
-            pattern = "\\[\\d+(\\.\\d+)?\\]"
-            if re.match(pattern, text):
-                text = re.sub(pattern, "", text, 1).strip()
+            if opt_handler.part_b or opt_handler.section_b:
+                # Remove potentially leading [part.section] tag.
+                pattern = "\\[\\d+(\\.\\d+)?\\]"
+                if re.match(pattern, text):
+                    text = re.sub(pattern, "", text, 1).strip()
 
+            if opt_handler.line_b:
                 # Remove potentially line number information.
                 pattern = "l\\.\\d+"
                 if re.match(pattern, text):
-                    text = re.sub(pattern, "", text, 1)
+                    text = re.sub(pattern, "", text, 1).strip()
 
-                    # Remove potentially text comment separator.
-                    pattern = " -*"
-                    if re.match(pattern, text):
-                        text = re.sub(pattern, "", text, 1).strip()
+            if opt_handler.hyphen_b:
+                # Remove potentially text comment separator.
+                pattern = "-+"
+                if re.match(pattern, text):
+                    text = re.sub(pattern, "", text, 1).strip()
 
             # Create line with standard tag and optional information.
             new_line = "@x"
