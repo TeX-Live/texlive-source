@@ -195,9 +195,7 @@ class ChangeReader:
             new_line = "@x"
 
             if opt_handler.part_b or opt_handler.section_b:
-                pattern = "\\[\\d+(\\.\\d+)?\\]"
-                if re.match(pattern, old_line):
-                    old_line = re.sub(pattern, "", old_line, 1).strip()
+                old_line = re.sub("\\[\\d+(\\.\\d+)?\\]", "", old_line, 1).strip()
                 new_line += " ["
                 if opt_handler.part_b:
                     new_line += f"{part}"
@@ -208,16 +206,12 @@ class ChangeReader:
                 new_line += "]"
 
             if opt_handler.line_b:
-                pattern = "l\\.\\d+"
-                if re.match(pattern, old_line):
-                    old_line = re.sub(pattern, "", old_line, 1).strip()
+                old_line = re.sub("l\\.\\d+", "", old_line, 1).strip()
                 new_line += f" l.{line_number}"
 
             if opt_handler.text_b and old_line:
                 if opt_handler.hyphen_b:
-                    pattern = "-+"
-                    if re.match(pattern, old_line):
-                        old_line = re.sub(pattern, "", old_line, 1).strip()
+                    old_line = re.sub("-+", "", old_line, 1).strip()
                     new_line += " -"
                 new_line += f" {old_line}"
 
