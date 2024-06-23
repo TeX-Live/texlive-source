@@ -146,8 +146,9 @@ class ChangeReader:
         as well as the line number of the first match line in the WEB file.
         """
         while True:
-            (part, section, line_number), tex_line = web_reader.next_line()
-            if tex_line is None:
+            try:
+                (part, section, line_number), tex_line = web_reader.next_line()
+            except:
                 eprint("ERROR: Could not find match for line:")
                 eprint(f"  {self._match_lines[0]}")
                 sys.exit(1)
