@@ -154,7 +154,10 @@ class ChangeReader:
                 sys.exit(1)
             if tex_line == self._match_lines[0]:
                 for i in range(1, len(self._match_lines)):
-                    _, tex_line = web_reader.next_line()
+                    try:
+                        _, tex_line = web_reader.next_line()
+                    except:
+                        tex_line = None
                     if tex_line is None or tex_line != self._match_lines[i]:
                         eprint("ERROR: Could not match all lines following match line:")
                         eprint(f"  {self._match_lines[0]}")
