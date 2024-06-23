@@ -122,6 +122,9 @@ class ChangeReader:
 
         while self._pos < len(self._lines):
             line = self._lines[self._pos]
+            if line.startswith("@y"):
+                eprint(f"! Where is the matching @z?. (l. {self._pos+1} of change file)")
+                sys.exit(1)
             if line.startswith("@x"):
                 self._chunk_start = self._pos
                 while True:
@@ -134,6 +137,7 @@ class ChangeReader:
                         self._match_lines = self._lines[
                             self._chunk_start + 1 : self._pos
                         ]
+                        self._pos += 1
                         return True
                     elif line.startswith("@x") or line.startswith("@z"):
                         eprint(f"! Where is the matching @y?. (l. {self._pos+1} of change file)")
