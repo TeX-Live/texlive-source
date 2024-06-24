@@ -11,17 +11,13 @@ Written by Tyge Tiessen, 2024. Public domain.
 import getopt, os, re, sys
 
 USAGE = f"""
-Usage: {os.path.basename(sys.argv[0])} [options] <web file> <change file>
+Usage: {os.path.basename(sys.argv[0])} [-i|--init] <web file> <change file>
 
 Reads a WEB file and a change file and writes a change file to stdout with
 potentially corrected part, section and line numbers.
 
-Options influence the '@x [part.section] l.line - text' format:
-    -p, --parts     Suppress the 'part' (starred section) number
-    -s, --sections  Suppress the (unstarred) 'section' number
-    -l, --lines     Suppress the 'l.line' number
-    -h, --hyphens   Suppress the '-'
-    -t, --texts     Suppress the 'text'
+The option '-i' ('--init') forces a '[part.section] l.line' tag after each
+'@x'; this is useful for untagged change files.
 
 Written by Tyge Tiessen, 2024. Public domain.
 """.strip()
@@ -180,40 +176,32 @@ class ChangeReader:
                 # CWEB @qcomments@> are ignored; see ctwill-w2c.ch
                 if repl_start != "@q":
                     break
-            if match_start == "@ ":
-                if repl_start in ["@ ", "@*"]:
+            if match_start == "@ " or match_start == "@":
+                if repl_start in ["@ ", "@*", "@"]:
                     section += 1
             elif match_start == "@*":
                 if repl_start == "@*":
                     part += 1
                     section += 1
-                elif repl_start == "@ ":
+                elif repl_start in ["@ ", "@"]:
                     section += 1
 
-            # Create line with standard tag and optional information.
-            old_line = self._lines[self._chunk_start][2:].strip()
-            new_line = "@x"
+            # Replace '@x' line with updated information.
+            new_line = self._lines[self._chunk_start]
 
-            if opt_handler.part_b or opt_handler.section_b:
-                old_line = re.sub("\\[\\d+(\\.\\d+)?\\]", "", old_line, 1).strip()
-                new_line += " ["
-                if opt_handler.part_b:
-                    new_line += f"{part}"
-                if opt_handler.part_b and opt_handler.section_b:
-                    new_line += "."
-                if opt_handler.section_b:
-                    new_line += f"{section}"
-                new_line += "]"
+            new_line = re.sub(
+                    "\\[\\d+\\.\\d+\\]", f"[{part}.{section}]", new_line, 1)
+            new_line = re.sub(
+                    "^@x \\[\\d+\\]", f"@x [{section}]", new_line, 1)
+            new_line = re.sub(
+                    "l\\.\\d+", f"l.{line_number}", new_line, 1)
 
-            if opt_handler.line_b:
-                old_line = re.sub("l\\.\\d+", "", old_line, 1).strip()
-                new_line += f" l.{line_number}"
-
-            if opt_handler.text_b and old_line:
-                if opt_handler.hyphen_b:
-                    old_line = re.sub("-+", "", old_line, 1).strip()
-                    new_line += " -"
-                new_line += f" {old_line}"
+            # Force '[part.section] l.line' tag after '@x'; useful for untagged
+            # change files, e.g., CWEB's '*-w2c.ch' monsters.
+            if opt_handler.init_b:
+                new_line = re.sub(
+                        "^@x", f"@x [{part}.{section}] l.{line_number}",
+                        new_line, 1)
 
             ch_line = self._lines[self._chunk_start]
             if new_line[:10] != ch_line[:10]:
@@ -237,31 +225,18 @@ class OptHandler:
     def __init__(self):
         # Optional elements of the output format
         # '@x [{part}.{section}] l.{line} {-(hyphen)} {text}'
-        self.part_b = True
-        self.section_b = True
-        self.line_b = True
-        self.hyphen_b = True
-        self.text_b = True
+        self.init_b = False
 
         try:
-            opts, self.args = getopt.getopt(sys.argv[1:], "pslht",
-                ["parts", "sections", "lines", "hyphens", "texts"])
+            opts, self.args = getopt.getopt(sys.argv[1:], "i", ["init"])
         except getopt.GetoptError as err:
             eprint(f"\n{os.path.basename(sys.argv[0])}: {err}!\n")
             print(USAGE)
             sys.exit(1)
 
         for opt, _ in opts:
-            if opt in ("-p", "--parts"):
-                self.part_b = False
-            elif opt in ("-s", "--sections"):
-                self.section_b = False
-            elif opt in ("-l", "--lines"):
-                self.line_b = False
-            elif opt in ("-h", "--hyphens"):
-                self.hyphen_b = False
-            elif opt in ("-t", "--texts"):
-                self.text_b = False
+            if opt in ("-i", "--init"):
+                self.init_b = True
             else:
                 assert False, f"Unhandled option {opt}"
 

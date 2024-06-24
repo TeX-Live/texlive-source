@@ -1,3 +1,8 @@
+2024-06-24  Andreas Scherer  <https://ascherer.github.io>
+
+	* tests/fix-changefile-lines.py,
+	* bibtex.ch: Update a few tags.
+
 2024-06-15  Andreas Scherer  <https://ascherer.github.io>
 
 	* tests/fix-changefile-lines.py,

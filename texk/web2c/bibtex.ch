@@ -1054,7 +1054,7 @@ if (last_cite = max_cites) then
 % [141] Don't pad with blanks, terminate with null.
 % Don't use a path to search for subsidiary aux files,
 % but do check the directory of the main .aux file.
-% 
+%
 % This last is useful, for example, when --output-dir is used with TeX and the
 % .aux file has an \@input directive resulting from a LaTeX \include;
 % see bibtex-auxinclude.test. It's necessary because BibTeX itself does
@@ -1065,7 +1065,7 @@ if (last_cite = max_cites) then
 % changing the add_extension function to look for those overrides to the
 % aux file dirname, so that when we call kpse_*_name_ok below, we're
 % calling it on the actual file that will be used.
-% 
+%
 % And we need to call kpse_*_name_ok because bibtex is included in the
 % shell_escape_commands list that can be invoked by TeX in restricted mode.
 %
@@ -1299,7 +1299,7 @@ while (single_ptr + wiz_def_ptr > wiz_fn_space) do
 @!cite_info : ^str_number; {extra |cite_list| info}
 @z
 
-@x [224] Be silent unless verbose.
+@x [223] Be silent unless verbose.
     print ('Database file #',bib_ptr+1:0,': ');
     print_bib_name;@/
 @y
@@ -1445,7 +1445,7 @@ entry_strs := XTALLOC ((num_ent_strs + 1) * (num_cites + 1) * (ent_str_size + 1)
     x_entry_strs(str_ent_ptr)(0) := end_of_string;
 @z
 
-@x [291] Dynamic lit_stk_size.
+@x [290] Dynamic lit_stk_size.
 @!lit_stack : array[lit_stk_loc] of integer;    {the literal function stack}
 @!lit_stk_type : array[lit_stk_loc] of stk_type; {their corresponding types}
 @y
@@ -1478,7 +1478,7 @@ entry_strs := XTALLOC ((num_ent_strs + 1) * (num_cites + 1) * (ent_str_size + 1)
     end;
 @z
 
-@x [320] Dynamic buf_size.
+@x [322] Dynamic buf_size.
 if (out_buf_length+(p_ptr2-p_ptr1) > buf_size) then
     overflow('output buffer size ',buf_size);
 @y
@@ -1494,7 +1494,7 @@ while (out_buf_length+(p_ptr2-p_ptr1) > buf_size) do
         confusion ('field_info index is out of range');
 @z
 
-@x [330] Macroize entry_strs[][]
+@x [329] Macroize entry_strs[][]
     while (entry_strs[str_ent_ptr][ex_buf_ptr] <> end_of_string) do
                                         {copy characters into the buffer}
         append_ex_buf_char (entry_strs[str_ent_ptr][ex_buf_ptr]);
@@ -1622,7 +1622,7 @@ if (pop_lit2 >= cmd_str_ptr) then       {no shifting---merely change pointers}
 @z
 
 % emacs-page
-@x [468] System-dependent changes.
+@x [467] System-dependent changes.
 This section should be replaced, if necessary, by changes to the program
 that are necessary to make \BibTeX\ work at a particular installation.
 It is usually best to design your change file so that all changes to
