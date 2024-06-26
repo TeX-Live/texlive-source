@@ -2010,7 +2010,6 @@ case '0': case '1': case '2': case '3':
   case '4': case '5': case '6': case '7':
   case '8': case '9': if (deletions_allowed)
   @<Delete \(c)|c-"0"| tokens and |goto resume|@>@;@+break;
-@t\4\4@>@;
 #ifdef @!DEBUG
 case 'D': {@+debug_help();goto resume;@+}
 #endif
@@ -3883,7 +3882,7 @@ else switch (type(p)) {
   case disc_node: @<Display discretionary |p|@>@;@+break;
   case mark_node: @<Display mark |p|@>@;@+break;
   case adjust_node: @<Display adjustment |p|@>@;@+break;
-  @t\4@>@<Cases of |show_node_list| that arise in mlists only@>@;
+  @/@t\4@>@<Cases of |show_node_list| that arise in mlists only@>@;
   default:print("Unknown node type!");
   }
 
@@ -4123,7 +4122,7 @@ while (p!=null)
       flush_node_list(post_break(p));
       } @+break;
     case adjust_node: flush_node_list(adjust_ptr(p));@+break;
-    @t\4@>@<Cases of |flush_node_list| that arise in mlists only@>@;
+    @/@t\4@>@<Cases of |flush_node_list| that arise in mlists only@>@;
     default:confusion("flushing");
 @:this can't happen flushing}{\quad flushing@>
     } @/
@@ -7783,7 +7782,7 @@ and set |state:=mid_line|@>@;@+break;
 any_state_plus(sup_mark): @<If this |sup_mark| starts an expanded character
 like~\.{\^\^A} or~\.{\^\^df}, then |goto reswitch|, otherwise set |state:=mid_line|@>@;@+break;
 any_state_plus(invalid_char): @<Decry the invalid character and |goto restart|@>@;
-@t\4@>@<Handle situations involving spaces, braces, changes of state@>@;
+@/@t\4@>@<Handle situations involving spaces, braces, changes of state@>@;
 default:do_nothing;
 }
 
@@ -14971,7 +14970,7 @@ case rel_noad: case close_noad: case punct_noad:
   if (type(q)==right_noad) goto done_with_noad;
   } @+break;
 @/@t\4@>@<Cases for noads that can follow a |bin_noad|@>@;
-@t\4@>@<Cases for nodes that can appear in an mlist, after which we |goto
+@/@t\4@>@<Cases for nodes that can appear in an mlist, after which we |goto
 done_with_node|@>@;
 default:confusion("mlist1");
 @:this can't happen mlist1}{\quad mlist1@>
@@ -16431,7 +16430,8 @@ else
   flush_node_list(p);pop_alignment();
 }
 @<Insert the \(c)current list into its environment@>;
-} @/
+}
+@#
 @t\4@>@<Declare the procedure called |align_peek|@>@;
 
 @ It's time now to dismantle the preamble list and to compute the column
@@ -20805,7 +20805,7 @@ case hmode+no_boundary: {@+get_x_token();
 case hmode+spacer: if (space_factor==1000) goto append_normal_space;
   else app_space();@+break;
 case hmode+ex_space: case mmode+ex_space: goto append_normal_space;
-@t\4@>@<Cases of |main_control| that are not part of the inner loop@>@;
+@/@t\4@>@<Cases of |main_control| that are not part of the inner loop@>@;
 }  /*of the big |case| statement*/
 goto big_switch;
 main_loop: @<Append character |cur_chr| and the following characters (if~any)
@@ -21495,7 +21495,7 @@ case bottom_level: {@+print_err("Too many }'s");
   } @+break;
 case semi_simple_group: case math_shift_group:
   case math_left_group: extra_right_brace();@+break;
-@t\4@>@<Cases of |handle_right_brace| where a |right_brace| triggers a delayed
+@/@t\4@>@<Cases of |handle_right_brace| where a |right_brace| triggers a delayed
 action@>@;
 default:confusion("rightbrace");
 @:this can't happen rightbrace}{\quad rightbrace@>
