@@ -140,8 +140,8 @@ class ChangeReader:
 
     def find_match_in_web(self, web_reader):
         """Find the match for the current change chunk in the WEB file.
-        Returns the part number and section number just before the first match line,
-        as well as the line number of the first match line in the WEB file.
+        Returns the part, section, and line number of the first match line in
+        the WEB file.
         """
         while True:
             try:
