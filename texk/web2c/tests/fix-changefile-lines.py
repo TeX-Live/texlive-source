@@ -50,13 +50,12 @@ class WebReader:
         self.part_cnt = 0
         self.section_cnt = 0
         try:
-            self._web_file = open(web_file, "r")
+            with open(web_file, "r") as file:
+                self._web_lines = [line.rstrip() for line in file]
         except OSError:
             eprint(f"Could not open {web_file}")
             print(USAGE)
             sys.exit(1)
-        with self._web_file:
-            self._web_lines = [line.rstrip() for line in self._web_file]
 
     def next_line(self):
         """Returns the triple of current part, section and line numbers, as
@@ -105,13 +104,12 @@ class ChangeReader:
         self._chunk_start = None
         self._match_lines = None
         try:
-            self._change_file = open(change_file, "r")
+            with open(change_file, "r") as file:
+                self._lines = [line.rstrip() for line in file]
         except OSError:
             eprint(f"Could not open {change_file}")
             print(USAGE)
             sys.exit(1)
-        with self._change_file:
-            self._lines = [line.rstrip() for line in self._change_file]
 
     def advance_to_next_chunk(self):
         """Find the next change chunk. Store where it starts and
