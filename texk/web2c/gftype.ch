@@ -166,7 +166,7 @@ end;
 @d text_char == char {the data type of characters in text files}
 @z
 
-@x [21] Redo open_gf_file to do path searching.
+@x [22] Redo open_gf_file to do path searching.
 @ To prepare this file for input, we |reset| it.
 
 @p procedure open_gf_file; {prepares to read packed bytes in |gf_file|}

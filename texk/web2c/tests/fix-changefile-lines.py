@@ -67,10 +67,6 @@ class WebReader:
         line = self._web_lines[self._pos]
         self._pos += 1
 
-        part = self.part_cnt
-        section = self.section_cnt
-        line_number = self._pos
-
         # Look for starred section == part
         if line.startswith("@*"):
             self.part_cnt += 1
@@ -80,6 +76,11 @@ class WebReader:
         if line.startswith("@ ") or line == "@":
             self.section_cnt += 1
 
+        # Prepare return values
+        part = self.part_cnt
+        section = self.section_cnt
+        line_number = self._pos
+
         # Look for '@i'nclude line
         result = re.match("^@i \"?(\\w+(\\.\\w+)?)\"?", line)
         if result:
@@ -88,6 +89,7 @@ class WebReader:
                 pass
             self.part_cnt += inc_reader.part_cnt
             self.section_cnt += inc_reader.section_cnt
+            # Do not increase 'part' and 'section' just yet
             # Ignore line count in include file; we're only one step beyond
 
         return (part, section, line_number), line
@@ -151,12 +153,6 @@ class ChangeReader:
                 eprint(self._match_lines[0])
                 sys.exit(1)
             if tex_line == self._match_lines[0]:
-                if tex_line.startswith("@*"):
-                    part += 1
-                    section +=1
-                elif tex_line.startswith("@ ") or tex_line == "@":
-                    section += 1
-
                 for i in range(1, len(self._match_lines)):
                     try:
                         _, tex_line = web_reader.next_line()
