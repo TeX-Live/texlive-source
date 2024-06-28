@@ -1,3 +1,9 @@
+2024-06-28  Andreas Scherer  <https://ascherer.github.io>
+
+	* cwebdir/ctwill-w2c.ch,
+	* tests/fix-changefile-lines.py,
+	* tex.ch: Simpler check for 'change section'.
+
 2024-06-24  Andreas Scherer  <https://ascherer.github.io>
 
 	* tests/fix-changefile-lines.py,

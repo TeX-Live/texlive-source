@@ -1072,11 +1072,10 @@ flush_buffer(out_ptr,false,false);
       default: err_print(_("! Improper macro definition")); break;
 @z
 
-@x [12.236] l.4370
+@x [12.237] l.4370
 @ @<Start a format...@>= {
   doing_format=true;
 @y
-
 @ @<Start a format...@>= {
   doing_format=true;
   is_macro=false;

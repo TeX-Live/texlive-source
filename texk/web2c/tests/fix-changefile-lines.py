@@ -151,6 +151,12 @@ class ChangeReader:
                 eprint(self._match_lines[0])
                 sys.exit(1)
             if tex_line == self._match_lines[0]:
+                if tex_line.startswith("@*"):
+                    part += 1
+                    section +=1
+                elif tex_line.startswith("@ ") or tex_line == "@":
+                    section += 1
+
                 for i in range(1, len(self._match_lines)):
                     try:
                         _, tex_line = web_reader.next_line()
@@ -167,24 +173,6 @@ class ChangeReader:
         """Go through all individual change chunks while updating their tags."""
         while self.advance_to_next_chunk():
             part, section, line_number = self.find_match_in_web(web_reader)
-
-            # Attempt to catch the case where something is inserted just before
-            # the start of a section.
-            match_start = self._match_lines[0].strip()[:2]
-            for repl_index in range(self._pos + 1, len(self._lines)):
-                repl_start = self._lines[repl_index].strip()[:2]
-                # CWEB @qcomments@> are ignored; see ctwill-w2c.ch
-                if repl_start != "@q":
-                    break
-            if match_start == "@ " or match_start == "@":
-                if repl_start in ["@ ", "@*", "@"]:
-                    section += 1
-            elif match_start == "@*":
-                if repl_start == "@*":
-                    part += 1
-                    section += 1
-                elif repl_start in ["@ ", "@"]:
-                    section += 1
 
             # Replace '@x' line with updated information.
             new_line = self._lines[self._chunk_start]
