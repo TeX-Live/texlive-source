@@ -205,8 +205,7 @@ class OptHandler:
     """
 
     def __init__(self):
-        # Optional elements of the output format
-        # '@x [{part}.{section}] l.{line} {-(hyphen)} {text}'
+        # Should we insert tag '[{part}.{section}] l.{line}' after '@x'?
         self.init_b = False
 
         try:
