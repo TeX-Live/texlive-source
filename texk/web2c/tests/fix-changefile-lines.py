@@ -36,7 +36,8 @@ def main():
     # Run through the two files in parallel
     ch_reader.traverse(web_reader, opt_handler)
 
-    print(ch_reader.get_lines())
+    for line in ch_reader.get_lines():
+        print(line)
 
 
 class WebReader:
@@ -50,7 +51,7 @@ class WebReader:
         self.section_cnt = 0
         try:
             with open(web_file, "r") as file:
-                self._web_lines = file.readlines()
+                self._web_lines = [line.rstrip() for line in file]
         except OSError:
             eprint(f"Could not open {web_file}")
             print(USAGE)
@@ -104,7 +105,7 @@ class ChangeReader:
         self._match_lines = None
         try:
             with open(change_file, "r") as file:
-                self._lines = file.readlines()
+                self._lines = [line.rstrip() for line in file]
         except OSError:
             eprint(f"Could not open {change_file}")
             print(USAGE)
