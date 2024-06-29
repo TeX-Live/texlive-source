@@ -649,7 +649,6 @@ shell_escape = p
 % 
 shell_escape_commands = \
 bibtex,bibtex8,\
-extractbb,\
 gregorio,\
 kpsewhich,\
 l3sys-query,\
@@ -660,6 +659,8 @@ repstopdf,\
 r-mpost,\
 texosquery-jre8,\
 
+% other programs considered:
+% extractbb - allowed in the past, but can be exploited.
 % we'd like to allow:
 % dvips - but external commands can be executed, need at least -R1.
 % epspdf, ps2pdf, pstopdf - need to respect openout_any,
