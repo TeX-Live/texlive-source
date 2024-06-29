@@ -661,7 +661,6 @@ texosquery-jre8,\
 
 % other programs considered:
 % extractbb - allowed in the past, but can be exploited.
-% we'd like to allow:
 % dvips - but external commands can be executed, need at least -R1.
 % epspdf, ps2pdf, pstopdf - need to respect openout_any,
 %   and gs -dSAFER must be used and check for shell injection with filenames.
