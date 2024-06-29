@@ -136,7 +136,7 @@ we still have to declare the symbolic names.
 @d tats==endif('STAT')
 @z
 
-@x [1.8] l.322 - Somewhat different for `init...tini'..  310 m.8
+@x [1.8] l.322 - Somewhat different for `init...tini'.
 the codewords `$|init|\ldots|tini|$'.
 
 @d init== {change this to `$\\{init}\equiv\.{@@\{}$' in the production version}
@@ -1178,7 +1178,7 @@ end;
 @!nest:^list_state_record;
 @z
 
-@x [16.215] l.4365 - reference from initialize.
+@x [16.215] l.4365 - remove mem[] reference from initialize.
 prev_graf:=0; shown_mode:=0;
 @<Start a new current page@>;
 @y
@@ -3238,7 +3238,7 @@ main_i:=char_info(main_f)(cur_l);
 main_i:=effective_char_info(main_f,cur_l);
 @z
 
-@x [46.1049] l.20440
+@x [46.1049] l.20440 - i18n fix, see change to [16.211]
 print("' in "); print_mode(mode);
 @y
 print_in_mode(mode);
@@ -3699,7 +3699,7 @@ par_token:=cs_token_flag+par_loc;@/
 undump(hash_base)(hash_top)(write_loc);@/
 @z
 
-@x [50.1315] l.24005 - Make dumping/undumping more efficienteqtb
+@x [50.1315] l.24005 - Make dumping/undumping more efficient - eqtb
 while k<l do
   begin dump_wd(eqtb[k]); incr(k);
   end;
@@ -3707,7 +3707,7 @@ while k<l do
 dump_things(eqtb[k], l-k);
 @z
 
-@x [50.1316] l.24024 - Make dumping/undumping more efficienteqtb
+@x [50.1316] l.24024 - Make dumping/undumping more efficient - eqtb
 while k<l do
   begin dump_wd(eqtb[k]); incr(k);
   end;
@@ -3725,7 +3725,7 @@ if hash_high>0 then dump_things(eqtb[eqtb_size+1],hash_high);
   {dump |hash_extra| part}
 @z
 
-@x [50.1317] l.24034 - Make dumping/undumping more efficienteqtb
+@x [50.1317] l.24034 - Make dumping/undumping more efficient - eqtb
 for j:=k to k+x-1 do undump_wd(eqtb[j]);
 @y
 undump_things(eqtb[k], x);
@@ -3767,7 +3767,7 @@ if hash_high > 0 then begin
 end;
 @z
 
-@x [50.1320] l.24065 - Make dumping/undumping more efficienttfm
+@x [50.1320] l.24065 - Make dumping/undumping more efficient - tfm
 for k:=0 to fmem_ptr-1 do dump_wd(font_info[k]);
 dump_int(font_ptr);
 for k:=null_font to font_ptr do
@@ -3808,7 +3808,7 @@ undump_size(font_base)(font_base+max_font_max)('font max')(font_ptr);
 % in the same section of the fmt file.  But it's a lot faster to
 % write the arrays of information out, one whole array at a time.
 % So that's the way we handle dumping and undumping font info.
-@x [50.1322] l.24080 - Make dumping/undumping more efficienttfm
+@x [50.1322] l.24080 - Make dumping/undumping more efficient - tfm
 @ @<Dump the array info for internal font number |k|@>=
 begin dump_qqqq(font_check[k]);
 dump_int(font_size[k]);
@@ -3875,7 +3875,7 @@ for k:=null_font to font_ptr do
 end
 @z
 
-@x [50.1323] l.24111 - Make dumping/undumping more efficienttfm
+@x [50.1323] l.24111 - Make dumping/undumping more efficient - tfm
 @ @<Undump the array info for internal font number |k|@>=
 begin undump_qqqq(font_check[k]);@/
 undump_int(font_size[k]);
@@ -3990,7 +3990,7 @@ if hyph_count<>1 then print(" hyphenation exceptions")
 else print(" hyphenation exception");
 @z
 
-@x [50.1324] l.24146 - Make dumping/undumping more efficienttrie
+@x [50.1324] l.24146 - Make dumping/undumping more efficient - trie
 for k:=0 to trie_max do dump_hh(trie[k]);
 @y
 dump_things(trie_trl[0], trie_max+1);
@@ -3998,7 +3998,7 @@ dump_things(trie_tro[0], trie_max+1);
 dump_things(trie_trc[0], trie_max+1);
 @z
 
-@x [50.1324] l.24148 - Make dumping/undumping more efficienttrie
+@x [50.1324] l.24148 - Make dumping/undumping more efficient - trie
 for k:=1 to trie_op_ptr do
   begin dump_int(hyf_distance[k]);
   dump_int(hyf_num[k]);
@@ -4049,7 +4049,7 @@ for k:=1 to hyph_count do
   if hyph_next >= hyph_prime then incr(hyph_next);
 @z
 
-@x [50.1325] l.24174 - Make dumping/undumping more efficienttrie
+@x [50.1325] l.24174 - Make dumping/undumping more efficient - trie
 for k:=0 to j do undump_hh(trie[k]);
 @y
 {These first three haven't been allocated yet unless we're \.{INITEX};
@@ -4062,7 +4062,7 @@ if not trie_trc then trie_trc:=xmalloc_array(quarterword, j+1);
 undump_things(trie_trc[0], j+1);
 @z
 
-@x [50.1325] l.24176 - Make dumping/undumping more efficienttrie
+@x [50.1325] l.24176 - Make dumping/undumping more efficient - trie
 for k:=1 to j do
   begin undump(0)(63)(hyf_distance[k]); {a |small_number|}
   undump(0)(63)(hyf_num[k]);
@@ -4355,7 +4355,7 @@ if trie_not_ready then begin {initex without format loaded}
     dump_core {do something to cause a core dump}
 @z
 
-@x [52.1339] l.24511 - debugprint tfm info
+@x [52.1339] l.24511 - debug - print tfm info
 5: print_word(font_info[n]);
 @y
 5: begin print_scaled(font_info[n].sc); print_char(" ");@/
