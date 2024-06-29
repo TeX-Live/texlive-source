@@ -1,7 +1,3 @@
-2024-06-29  Karl Berry  <karl@tug.org>
-
-	* texmf.cnf (shell_escape_commands): remove extractbb.
-
 2024-06-04  Karl Berry  <karl@freefriends.org>
 
 	* texmf.cnf (MKTEXPK, etc.): adjust values shown to the
