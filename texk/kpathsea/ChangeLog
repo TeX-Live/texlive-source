@@ -1,3 +1,8 @@
+2024-07-01  Karl Berry  <karl@tug.org>
+
+	* texmf.cnf (shell_escape_commands): restore extractbb,
+	now as a wrapper script that protects against the exploit.
+
 2024-06-29  Karl Berry  <karl@tug.org>
 
 	* texmf.cnf (shell_escape_commands): remove extractbb.

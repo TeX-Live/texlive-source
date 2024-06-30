@@ -452,6 +452,7 @@ texmf_other_scripts = \
 	texfindpkg/texfindpkg.lua \
 	texdoc/texdoc.tlu \
 	texfot/texfot.pl \
+	texlive/extractbb.lua \
 	texlive/fmtutil-sys.sh \
 	texlive/fmtutil-user.sh \
 	texlive/fmtutil.pl \
