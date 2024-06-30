@@ -7,7 +7,7 @@ use strict; use warnings;
 
 package TeXLive::TLUtils;
 
-my $svnrev = '$Revision: 71007 $';
+my $svnrev = '$Revision: 71593 $';
 my $_modulerevision = ($svnrev =~ m/: ([0-9]+) /) ? $1 : "unknown";
 sub module_revision { return $_modulerevision; }
 
@@ -2643,7 +2643,7 @@ sub check_file_and_remove {
 
   if (!$checksum && !$checksize) {
     tlwarn("$fn_name: neither checksum nor checksize " .
-           "available for $xzfile, cannot check integrity"); 
+           "available for $xzfile, cannot check integrity\n"); 
     return;
   }
   

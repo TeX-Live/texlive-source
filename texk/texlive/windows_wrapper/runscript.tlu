@@ -1,7 +1,7 @@
 
 
-local svnrevision = string.match("$Revision: 71041 $", "%d+") or "0"
-local svndate     = string.match("$Date: 2024-04-23 12:33:27 +0200 (Tue, 23 Apr 2024) $", "[-%d]+") or "2009-12-04"
+local svnrevision = string.match("$Revision: 71447 $", "%d+") or "0"
+local svndate     = string.match("$Date: 2024-06-06 09:46:11 +0200 (Thu, 06 Jun 2024) $", "[-%d]+") or "2009-12-04"
 local bannerstr   = "runscript wrapper utility (rev. " ..
                     svnrevision .. ", " .. svndate .. ")\n" .. 
                     "usage:   runscript script-name [arguments]\n" ..
@@ -41,15 +41,16 @@ local helpstr = [[
     The following script types and their file extensions are currently 
     supported and searched in that order:
     
-      Lua      (.tlu;.texlua;.lua) --  included
-      Perl     (.pl)               --  included
-      Ruby     (.rb)               --  requires installation
-      Python   (.py)               --  requires installation
-      Tcl      (.tcl)              --  included (GUI scripts only)
-      Java     (.jar)              --  requires installation
-      VBScript (.vbs)              --  part of Windows
-      JScript  (.js)               --  part of Windows
-      Batch    (.bat;.cmd)         --  part of Windows
+      Lua        (.tlu;.texlua;.lua) --  included
+      Perl       (.pl)               --  included
+      Ruby       (.rb)               --  requires installation
+      Python     (.py)               --  requires installation
+      Tcl        (.tcl)              --  included (GUI scripts only)
+      Java       (.jar)              --  requires installation
+      Powershell (.ps1)              --  part of Windows
+      VBScript   (.vbs)              --  part of Windows
+      JScript    (.js)               --  part of Windows
+      Batch      (.bat;.cmd)         --  part of Windows
     
     Finally, Unix-style extensionless scripts are searched as last and 
     the interpreter program is established based on the she-bang (#!) 
@@ -744,16 +745,19 @@ local extension_map = {
   ['.py' ] = {'python.exe'},
   ['.rb' ] = {'ruby.exe'},
   ['.tcl'] = {'tclsh.exe tclsh86.exe tclsh85.exe tclkitsh.exe'},
+  ['.ps1'] = {'powershell.exe',  '-NoLogo', '-ExecutionPolicy', 'Bypass', '-file'},
   ['.vbs'] = {'cscript.exe', '-nologo'},
 }
 if guimode then
-  -- for GUI mode wrappers we try GUI mode interpeters where possible
+  -- for GUI mode wrappers we try GUI mode interpreters where possible
   extension_map['.jar'][1] = 'javaw.exe '   .. extension_map['.jar'][1]
   extension_map['.pl' ][1] = 'wperl.exe '   .. extension_map['.pl' ][1]
   extension_map['.py' ][1] = 'pythonw.exe ' .. extension_map['.py' ][1]
   extension_map['.rb' ][1] = 'rubyw.exe '   .. extension_map['.rb' ][1]
   -- gui tcl shares no interpreters with non-gui tcl
   extension_map['.tcl'] = {'wish.exe wish86.exe wish85.exe tclkit.exe'}
+  extension_map['.ps1'] = {'powershell.exe',  '-NoLogo', '-ExecutionPolicy', 'Bypass',
+      '-WindowStyle', 'hidden', '-file'}
   extension_map['.vbs'][1] = 'wscript.exe ' .. extension_map['.vbs'][1]
 end
 extension_map['.cmd'] = extension_map['.bat']
@@ -850,7 +854,7 @@ end
 
 if not ARGV then
   os.setenv('TEXMF', TEXMFDIST)
-  local extlist = '.lua;.tlu;.pl;.rb;.py;.tcl;.jar;.vbs;.js;.bat;.cmd;.texlua;\0'
+  local extlist = '.lua;.tlu;.pl;.rb;.py;.tcl;.jar;.ps1;.vbs;.js;.bat;.cmd;.texlua;\0'
   local progfullname = search_path(progname, BINDIR, '.lua;.tlu;.bat;.cmd;.pl') or
                        find_texmfscript(progname, extlist)
   os.setenv('TEXMF', nil)
