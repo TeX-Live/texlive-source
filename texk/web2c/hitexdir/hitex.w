@@ -5707,8 +5707,9 @@ print_char('=');print_scaled(eqtb[n].sc);print("pt");
 @ Here is a procedure that displays the contents of |eqtb[n]|
 symbolically.
 
-@p @t\4@>@<Declare the procedure called |print_cmd_chr|@>@;@/
+@p @<Declare the procedure called |print_cmd_chr|@>@;
 #ifdef @!STAT
+@+@t}\6\4\4{@>
 static void show_eqtb(pointer @!n)
 {@+if (n < active_base) print_char('?'); /*this can't happen*/
 else if (n < glue_base) @<Show equivalent |n|, in region 1 or 2@>@;
@@ -10794,6 +10795,7 @@ static str_number b_make_name_string(byte_file *f)
 {@+return make_name_string();
 }
 #ifdef @!INIT
+@+@t}\6\4\4{@>
 static str_number w_make_name_string(word_file *f)
 {@+return make_name_string();
 }
@@ -32109,7 +32111,7 @@ static void hint_open(void)
   output_file_name=make_name_string();
   DBG(DBGBASIC,"Output file %s opened\n",(char *)name_of_file+1);
 }
-
+@#
 #define HITEX_VERSION "1.1"
 static void  hput_definitions();
 extern int option_global;
@@ -35167,8 +35169,9 @@ static bool b_open_out(byte_file *f)  /*open a binary file for output*/
 {@+f->f=open_out((char *)name_of_file+1,"wb");
 return f->f!=NULL && ferror(f->f)==0;@+
 }
-
+@#
 #ifdef @!INIT
+@+@t}\6\4\4{@>
 static bool w_open_out(word_file *f)  /*open a word file for output*/
 {@+f->f=open_out((char *)name_of_file+1,"wb");
    return f->f!=NULL && ferror(f->f)==0;@+
