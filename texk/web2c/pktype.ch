@@ -8,12 +8,17 @@
 % There is no terminal input to this program.
 % Output is to stdout, and may, of course, be redirected.
 
+@x [0] l.27
+\def\title{PKtype}
+@y
+\def\title{PK$\,$\lowercase{type} changes for C}
+@z
+
 @x [0] WEAVE: print changes only.
 \pageno=\contentspagenumber \advance\pageno by 1
 @y
 \pageno=\contentspagenumber \advance\pageno by 1
 \let\maybe=\iffalse
-\def\title{PK$\,$\lowercase{type} changes for C}
 @z
 
 @x [2] Define my_name

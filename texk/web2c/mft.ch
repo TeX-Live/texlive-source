@@ -12,12 +12,17 @@
 \def\MP{{\logo META}\-{\logo POST}}
 @z
 
+@x [0] l.26
+\def\title{MFT}
+@y
+\def\title{MFT changes for C and METAPOST}
+@z
+
 @x [0] WEAVE: print changes only.
 \pageno=\contentspagenumber \advance\pageno by 1
 @y
 \pageno=\contentspagenumber \advance\pageno by 1
 \let\maybe=\iffalse
-\def\title{MFT changes for C and METAPOST}
 @z
 
 @x [1]

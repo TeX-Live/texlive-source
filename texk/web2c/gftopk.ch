@@ -11,12 +11,17 @@
 % on the origin of fonts in both gf and pk formats.  The program runs
 % silently unless it is given the -v switch in the command line.
 
+@x [0] l.44
+\def\title{GFtoPK}
+@y
+\def\title{GF$\,$\lowercase{to}$\,$PK changes C}
+@z
+
 @x [0] WEAVE: print changes only.
 \pageno=\contentspagenumber \advance\pageno by 1
 @y
 \pageno=\contentspagenumber \advance\pageno by 1
 \let\maybe=\iffalse
-\def\title{GF$\,$\lowercase{to}$\,$PK changes C}
 @z
 
 @x [1] Define my_name

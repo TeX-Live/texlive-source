@@ -36,12 +36,17 @@
 % 11/30/89 (KB)  Version 4.
 % (more recent changes in the ChangeLog)
 
+@x [0.0] l.34 - Replace program title.
+\def\title{TANGLE}
+@y
+\def\title{TANGLE changes for C}
+@z
+
 @x [0.0] l.43 - Print only changes.
 \pageno=\contentspagenumber \advance\pageno by 1
 @y
 \pageno=\contentspagenumber \advance\pageno by 1
 \let\maybe=\iffalse
-\def\title{TANGLE changes for C}
 @z
 
 @x [1.1] l.70 - Define my_name

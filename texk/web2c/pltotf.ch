@@ -11,12 +11,17 @@
 % 01/16/90 (SR)  Version 3.2.
 % (more recent changes in the ChangeLog)
 
+@x [0] l.34
+\def\title{PL\lowercase{to}TF}
+@y
+\def\title{PL$\,$\lowercase{to}$\,$TF changes for C}
+@z
+
 @x [0] WEAVE: print changes only.
 \pageno=\contentspagenumber \advance\pageno by 1
 @y
 \pageno=\contentspagenumber \advance\pageno by 1
 \let\maybe=\iffalse
-\def\title{PL$\,$\lowercase{to}$\,$TF changes for C}
 @z
 
 @x [1] Define my_name

@@ -35,12 +35,17 @@
 % Revision 0.3  84/11/17  23:51:56  richards
 % 	Base version for GFtoDVI Version 0.3
 
+@x [0] l.32
+\def\title{GF$\,$\lowercase{to}$\,$DVI}
+@y
+\def\title{GF$\,$\lowercase{to}$\,$DVI changes for C}
+@z
+
 @x [0] WEAVE: print changes only.
 \pageno=\contentspagenumber \advance\pageno by 1
 @y
 \pageno=\contentspagenumber \advance\pageno by 1
 \let\maybe=\iffalse
-\def\title{GF$\,$\lowercase{to}$\,$DVI changes for C}
 @z
 
 @x [1] Define my_name

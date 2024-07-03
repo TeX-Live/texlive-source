@@ -1,11 +1,16 @@
 % vptovf.ch for C compilation with web2c.
 
+@x [0] l.22
+\def\title{VP\lowercase{to}VF}
+@y
+\def\title{VP$\,$\lowercase{to}$\,$VF changes for C}
+@z
+
 @x [0] WEAVE: print changes only.
 \pageno=\contentspagenumber \advance\pageno by 1
 @y
 \pageno=\contentspagenumber \advance\pageno by 1
 \let\maybe=\iffalse
-\def\title{VP$\,$\lowercase{to}$\,$VF changes for C}
 @z
 
 @x [1] Define my_name

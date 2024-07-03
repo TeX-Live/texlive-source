@@ -12,12 +12,17 @@
 % gf and pk formats.  PKtoGF runs silently unless it is given the
 % -v switch in the command line.
 
+@x [0] l.21
+\def\title{PKtoGF}
+@y
+\def\title{PK$\,$\lowercase{to}$\,$GF changes for C}
+@z
+
 @x [0] WEAVE: print changes only
 \pageno=\contentspagenumber \advance\pageno by 1
 @y
 \pageno=\contentspagenumber \advance\pageno by 1
 \let\maybe=\iffalse
-\def\title{PK$\,$\lowercase{to}$\,$GF changes for C}
 @z
 
 @x [2] Define my_name

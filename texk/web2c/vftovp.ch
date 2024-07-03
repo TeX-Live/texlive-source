@@ -2,12 +2,17 @@
 % Written by kb@cs.umb.edu.
 % This file is in the public domain.
 
+@x [0] l.18
+\def\title{VF\lowercase{to}VP}
+@y
+\def\title{VF$\,$\lowercase{to}$\,$VP changes for C}
+@z
+
 @x [0] WEAVE: print changes only.
 \pageno=\contentspagenumber \advance\pageno by 1
 @y
 \pageno=\contentspagenumber \advance\pageno by 1
 \let\maybe=\iffalse
-\def\title{VF$\,$\lowercase{to}$\,$VP changes for C}
 @z
 
 @x [1] Define my_name

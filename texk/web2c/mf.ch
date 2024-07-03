@@ -25,12 +25,17 @@
 % MF.WEB 2.71828182 as of January, 2021 (published as Donald E. Knuth,
 % Metafont: The Program, Volume D of Computers & Typesetting Jubilee Editions).
 
+@x [0.0] l.70
+\def\title{{\eightlogo METAFONT}}
+@y
+\def\title{{\eightlogo METAFONT} changes for C}
+@z
+
 @x [0.0] l.75 - WEAVE: print changes only.
 \def\botofcontents{\vskip 0pt plus 1fil minus 1.5in}
 @y
 \def\botofcontents{\vskip 0pt plus 1fil minus 1.5in}
 \let\maybe=\iffalse
-\def\title{\MF\ changes for C}
 \def\glob{13}\def\gglob{20, 25} % these are defined in module 1
 @z
 

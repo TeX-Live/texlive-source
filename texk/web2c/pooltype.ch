@@ -4,12 +4,17 @@
 % 11/29/89 (KB)  Version released with 8-bit TeX.
 % (more recent changes in the ChangeLog)
 
+@x [0] l.16
+\def\title{POOL\lowercase{type}}
+@y
+\def\title{POOL\lowercase{type} changes for C}
+@z
+
 @x [0] WEAVE: print changes only
 \pageno=\contentspagenumber \advance\pageno by 1
 @y
 \pageno=\contentspagenumber \advance\pageno by 1
 \let\maybe=\iffalse
-\def\title{POOL\lowercase{type} changes for C}
 @z
 
 @x [1] Define my_name

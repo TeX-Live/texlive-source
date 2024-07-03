@@ -5,12 +5,17 @@
 %		 properly---it is hard to test without more information.
 % 03/23/88 (ETM) Brought up to date, converted for use with WEB to C.
 
+@x [0] Extend program title.
+\def\title{PATGEN}
+@y
+\def\title{PATGEN changes for C}
+@z
+
 @x WEAVE: print changes only
 \pageno=\contentspagenumber \advance\pageno by 1
 @y
 \pageno=\contentspagenumber \advance\pageno by 1
 \let\maybe=\iffalse
-\def\title{PATGEN changes for C}
 @z
 
 @x [1] Define my_name
