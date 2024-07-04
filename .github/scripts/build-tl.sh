@@ -32,6 +32,11 @@ then
        apt-get update -q -y
        apt-get install -y --no-install-recommends bash gcc g++ make perl libfontconfig-dev libx11-dev libxmu-dev libxaw7-dev build-essential
        ;;
+     almalinux)
+       yum update -y
+       yum install -y gcc-toolset-9 fontconfig-devel libX11-devel libXmu-devel libXaw-devel
+       . /opt/rh/gcc-toolset-9/enable
+       ;;
      centos)
        yum update -y
        yum install -y centos-release-scl

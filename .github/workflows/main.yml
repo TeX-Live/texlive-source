@@ -59,11 +59,11 @@ jobs:
             use_qemu: false
             buildsys: ubuntu
           - tl_name: x86_64-linux
-            image: centos:7
+            image: almalinux:8
             platform: amd64
             ci_build: true
             use_qemu: false
-            buildsys: centos
+            buildsys: almalinux
           - tl_name: x86_64-linuxmusl
             image: alpine:3.5
             platform: amd64
