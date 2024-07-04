@@ -1,3 +1,11 @@
+2024-07-04  Karl Berry  <karl@freefriends.org>
+
+	* xput/xput,
+	* xput/xputserver,
+	* xput/,
+	* ctan-o-mat/ctan-o-mat,
+	* texosquery/texosquery: remove leftovers from old pkg installs.
+
 2024-03-19  Karl Berry  <karl@tug.org>
 
 	* Makefile.am (install-data-hook, uninstall-hook): can't use
