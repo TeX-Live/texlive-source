@@ -64,7 +64,6 @@ class WebReader:
         if self._pos >= len(self._web_lines):
             return None
         line = self._web_lines[self._pos]
-        self._pos += 1
 
         # Look for starred section == part
         if line.startswith("@*"):
@@ -78,7 +77,7 @@ class WebReader:
         # Prepare return values
         part = self.part_cnt
         section = self.section_cnt
-        line_number = self._pos
+        line_number = self._pos = self._pos + 1
 
         # Look for '@i'nclude line
         result = re.match("^@i \"?(\\w+(\\.\\w+)?)\"?", line)
