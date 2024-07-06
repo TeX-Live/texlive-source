@@ -8,12 +8,6 @@
 %  Mar 20 91 THD  Updated to dvicopy 1.2
 % (more recent changes in the ChangeLog)
 
-@x [0] l.38
-\def\title{DVI\lowercase{copy}} % don't change this line!
-@y
-\def\title{DVI\lowercase{copy} changes for C} % don't change this line!
-@z
-
 @x [0] l.59 WEAVE: print changes only
 \pageno=\contentspagenumber \advance\pageno by 1
 @y
