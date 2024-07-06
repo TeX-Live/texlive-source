@@ -21,6 +21,7 @@
 \pdffalse\acrohintfalse
 @y
 \input cwebmac
+\ifhint \input hiplainpage \fi
 @z
 
 @x
