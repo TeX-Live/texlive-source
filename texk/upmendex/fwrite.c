@@ -787,9 +787,9 @@ static void index_normalize(UChar *istr, UChar *ini, int *chset)
 	UChar ch,src[2],dest[8],strX[4],strY[4],strZ[4];
 	UChar32 c32;
 	UErrorCode perr;
-	UCollationResult order;
+	UCollationResult order,order1;
 	UCollationStrength strgth;
-	static int i_y_mode=0;
+	static int i_y_mode=0,o_o_mode=0,u_u_mode=0;
 
 	ch=istr[0];
 	*chset=charset(istr);
@@ -1009,6 +1009,42 @@ static void index_normalize(UChar *istr, UChar *ini, int *chset)
 		}
 		if (i_y_mode==2) {
 			ini[0] = 0x049; /* I */
+			return;
+		}
+	}
+	if (ch==0x0D6||ch==0x0F6||ch==0x150||ch==0x151) {
+		/* check Ö,ö versus Ő,ő for Hungarian */
+		if (o_o_mode==0) {
+			strgth = ucol_getStrength(icu_collator);
+			ucol_setStrength(icu_collator, UCOL_PRIMARY);
+			strX[0] = 0x0D6;  strX[1] = 0x00; /* Ö */
+			strY[0] = 0x150;  strY[1] = 0x00; /* Ő */
+			strZ[0] = 0x04F;  strZ[1] = 0x00; /* O */
+			order  = ucol_strcoll(icu_collator, strY, -1, strX, -1);
+			order1 = ucol_strcoll(icu_collator, strZ, -1, strX, -1);
+			o_o_mode = (order==UCOL_EQUAL && order1!=UCOL_EQUAL) ? 2 : 1;
+			ucol_setStrength(icu_collator, strgth);
+		}
+		if (o_o_mode==2) {
+			ini[0] = 0x0D6; /* Ö */
+			return;
+		}
+	}
+	if (ch==0x0DC||ch==0x0FC||ch==0x170||ch==0x171) {
+		/* check Ü,ü versus Ű,ű for Hungarian */
+		if (u_u_mode==0) {
+			strgth = ucol_getStrength(icu_collator);
+			ucol_setStrength(icu_collator, UCOL_PRIMARY);
+			strX[0] = 0x0DC;  strX[1] = 0x00; /* Ü */
+			strY[0] = 0x170;  strY[1] = 0x00; /* Ű */
+			strZ[0] = 0x055;  strZ[1] = 0x00; /* U */
+			order = ucol_strcoll(icu_collator, strY, -1, strX, -1);
+			order1 = ucol_strcoll(icu_collator, strZ, -1, strX, -1);
+			u_u_mode = (order==UCOL_EQUAL && order1!=UCOL_EQUAL) ? 2 : 1;
+			ucol_setStrength(icu_collator, strgth);
+		}
+		if (u_u_mode==2) {
+			ini[0] = 0x0DC; /* Ü */
 			return;
 		}
 	}
