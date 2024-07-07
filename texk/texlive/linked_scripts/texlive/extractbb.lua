@@ -1,5 +1,5 @@
 #!/usr/bin/env texlua
--- $Id: extractbb.lua 71664 2024-06-30 22:17:00Z karl $
+-- $Id: extractbb.lua 71685 2024-07-02 08:27:58Z mseven $
 -- SPDX-License-Identifier: CC0-1.0
 -- SPDX-FileCopyrightText: 2024 Max Chernoff
 --
@@ -47,7 +47,7 @@ local TARGET_EXEC_NAME = "ebb"
 -- Any extra arguments to be prepended to the target program, before any
 -- user-supplied arguments. Equivalent to ``argv[1], ...'' in C.
 -- (Example: ``--extractbb'')
-local TARGET_PREPEND_ARGS = { "--ebb" }
+local TARGET_PREPEND_ARGS = { "--extractbb" }
 
 -- Any extra arguments to be appended to the target program, after any
 -- user-supplied arguments. Equivalent to ``..., argv[argc]'' in C.

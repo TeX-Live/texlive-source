@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: texconfig.sh 53554 2020-01-26 23:58:37Z karl $
+# $Id: texconfig.sh 71679 2024-07-01 17:04:58Z karl $
 # texconfig version 3.0
 # Originally written by Thomas Esser. Public domain.
 # Now maintained as part of TeX Live; correspondence to tex-live@tug.org.
@@ -28,7 +28,7 @@ PATH="$mydir:$PATH"; export PATH
 progname=texconfig
 
 # the version string
-version='$Id: texconfig.sh 53554 2020-01-26 23:58:37Z karl $'
+version='$Id: texconfig.sh 71679 2024-07-01 17:04:58Z karl $'
 
 envVars="
   AFMFONTS BIBINPUTS BSTINPUTS CMAPFONTS CWEBINPUTS ENCFONTS GFFONTS
@@ -392,52 +392,6 @@ fmgrConfigReplace()
 }
 
 ###############################################################################
-# setupDvipsPaper(paper)
-#   rearranges config.ps to make paper the first paper definition
-#
-setupDvipsPaper()
-{
-  setupDvipsPaperChanged=false
-  setupDvipsPaperFile=config.ps
-  setupDvipsPaperDftPaper=$1
-
-  setupTmpDir
-  co=`tcfmgr --tmp $tmpdir --cmd co --file $setupDvipsPaperFile`
-  if test $? != 0; then
-    echo "$progname: setupDvipsPaper co failed for \`$setupDvipsPaperFile'" >&2
-    (exit 1); return 1
-  fi
-  set x $co; shift
-  setupDvipsPaperID=$1; setupDvipsPaperCfgFile=$3; setupDvipsPaperOrigFile=$4
-
-  ed "$setupDvipsPaperCfgFile" > /dev/null 2>&1 <<-eof
-	/@ /ka
-	\$a
-	@ 
-	.
-	/@ $setupDvipsPaperDftPaper /;/@ /-1m'a-1
-	\$d
-	w
-	q
-eof
-
-  ci=`tcfmgr --tmp $tmpdir --cmd ci --id "$setupDvipsPaperID"`
-  if test $? != 0; then
-    echo "$progname: setupDvipsPaper ci failed for \`$setupDvipsPaperFile'" >&2
-    (exit 1); return 1
-  fi
-  case $ci in
-    "") :;;
-    $lastUpdatedFile)
-      setupDvipsPaperChanged=true;;
-    *) echo "$progname: updated configuration saved as file \`$ci'" >&2
-       setupDvipsPaperChanged=true
-       lastUpdatedFile=$ci;;
-  esac
-  (exit 0); return 0
-}
-
-###############################################################################
 # setupModesMfFile(void) - find modes.mf file (with caching)
 #
 setupModesMfFile()
@@ -571,7 +525,6 @@ tcBatch()
 the TeX installation.
 
 Usage: $progname conf                  (show configuration information)
-       $progname dvipdfmx paper PAPER  (dvipdfmx paper size)
        $progname dvips [OPTION...]     (dvips options)
        $progname faq                   (show pointer to TeX Live docs)
        $progname findprog PROG...      (show locations of PROGs, a la which)
@@ -584,11 +537,9 @@ Usage: $progname conf                  (show configuration information)
        $progname init [FORMAT]...      (rebuild FORMATs, or all formats
                                         plus run texlinks and updmap)
        $progname mode MODE             (set Metafont MODE)
-       $progname paper PAPER           (set default paper size to PAPER)
        $progname pdftex [OPTION]...    (pdftex options)
        $progname rehash                (rebuild ls-R files with mktexlsr)
        $progname version               (or --version; show version info)
-       $progname xdvi paper PAPER      (xdvi paper size)
 
 Get more help with:
        $progname dvipdfmx
@@ -596,7 +547,6 @@ Get more help with:
        $progname font
        $progname hyphen
        $progname mode
-       $progname paper
        $progname pdftex
        $progname xdvi
 
@@ -634,37 +584,8 @@ TeX Live home page: <http://tug.org/texlive/>
 
     # texconfig dvipdfmx
     dvipdfmx)
-      help="Usage: $progname dvipdfmx paper PAPER
-
-Valid PAPER settings:
-  letter legal ledger tabloid a4 a3"
-      case $2 in
-        # texconfig dvipdfmx paper
-        paper-list)
-          for p in letter legal ledger tabloid a4 a3; do echo $p; done
-          ;;
-        paper)
-          case $3 in
-            letter|legal|ledger|tabloid|a4|a3)
-              tlmgr dvipdfmx paper $3
-              ;;
-              # fmgrConfigReplace dvipdfmx.cfg '^p' "p $3";;
-            "") echo "$help" >&2; rc=1;;
-            *)
-             echo "$progname: unknown PAPER \`$3' given as argument for \`$progname dvipdfmx paper'" >&2
-             echo "$progname: try \`$progname dvipdfmx paper' for help" >&2
-             rc=1 ;;
-          esac ;;
-        # texconfig dvipdfmx ""
-        "")
-          echo "$help" >&2; rc=1 ;;
-        # texconfig dvipdfmx <unknown>
-        *)
-          echo "$progname: unknown option \`$2' given as argument for \`$progname dvipdfmx'" >&2
-          echo "$progname: try \`$progname dvipdfmx' for help" >&2
-          rc=1
-          ;;
-      esac
+      abort "Use tlmgr paper dvipdfmx"
+      rc=1
       ;;
 
     # texconfig dvips
@@ -672,7 +593,6 @@ Valid PAPER settings:
       shift
       help="Usage: $progname dvips add PRINTER
        $progname dvips del PRINTER
-       $progname dvips paper PAPER
        $progname dvips [-P PRINTER] mode MODE
        $progname dvips [-P PRINTER] offset OFFSET
        $progname dvips [-P PRINTER] printcmd CMD"
@@ -779,32 +699,7 @@ Valid PAPER settings:
           listDvipsPapers
           ;;
         paper)
-          case $2 in
-            "")
-              echo "Usage: $progname dvips paper PAPER" >&2
-              echo >&2; echo "Valid PAPER settings:" >&2
-              locateConfigPsFile
-              listDvipsPapers | sed 's@ .*@@; s@^@  @' | myFmt
-              rc=1
-              ;;
-            *)
-              tcBatchDvipsPaper=$2
-              locateConfigPsFile
-              case "$configPsFile" in
-                "")
-                  echo "$progname: file config.ps not found" >&2; rc=1
-                  ;;
-                *)
-                  if grep "@ $tcBatchDvipsPaper " $configPsFile >/dev/null 2>&1; then
-                    tlmgr dvips paper $tcBatchDvipsPaper
-                    # setupDvipsPaper "$tcBatchDvipsPaper"
-                  else
-                    echo "$progname: paper \`$tcBatchDvipsPaper' not found in file \`$configPsFile'" >&2; rc=1
-                  fi
-                  ;;
-              esac
-              ;;
-          esac
+          abort "Use tlmgr paper dvips"
           ;;
         mode)
           case $2 in
@@ -876,14 +771,6 @@ Valid MODE settings:"
       echo "Please see https://tug.org/texlive/doc/ for the documentation"
       echo "available in TeX Live."
       ;;
-      # setupTexmfmain
-      # if test -f $MT_TEXMFMAIN/doc/tetex/teTeX-FAQ; then
-      #   <$MT_TEXMFMAIN/doc/tetex/teTeX-FAQ eval ${PAGER-more}
-      # else
-      #   echo "$progname: faq not found (usually in \$TEXMFMAIN/doc/tetex/teTeX-FAQ)" >&2
-      #   rc=1
-      # fi
-      # ;;
 
     findprog)
       shift
@@ -1200,104 +1087,11 @@ Valid MODE settings:"
       ;;
 
     paper)
-      help="Usage: $progname paper PAPER
-
-Valid PAPER settings:
-  letter a4"
-
-      p=$2; pDvips=$2
-      case $2 in
-        letter|a4) ;;
-        "") echo "$help" >&2; rc=1; return;;
-        *)
-          echo "$progname: unknown PAPER \`$2' given as argument for \`$progname paper'" >&2
-          echo "$progname: try \`$progname paper' for help" >&2
-          rc=1
-          return;;
-      esac
-      if checkForBinary dvips >/dev/null && tcfmgr --cmd find --file config.ps >/dev/null 2>&1; then
-        tcBatch dvips paper $pDvips
-      fi
-      if checkForBinary dvipdfmx >/dev/null && tcfmgr --cmd find --file dvipdfmx.cfg >/dev/null 2>&1; then
-        tcBatch dvipdfmx paper $p
-      fi
-      if checkForBinary xdvi >/dev/null && tcfmgr --cmd find --file XDvi >/dev/null 2>&1; then
-        tcBatch xdvi paper $p
-      fi
-      if checkForBinary pdftex >/dev/null && tcfmgr --cmd find --file pdftexconfig.tex >/dev/null 2>&1; then
-        tcBatch pdftex paper $p
-      fi
+      abort "Use tlmgr paper"
       ;;
 
     pdftex)
-      help="Usage: $progname pdftex paper PAPER
-
-Valid PAPER settings:
-  a4 letter"
-      case $2 in
-
-        mode)
-          case $3 in
-            "")
-              echo "Usage: $progname pdftex mode MODE"
-              rc=1
-              ;;
-            *)
-              tcBatchPdftexMode=$3
-              setupTmpDir
-              setupModesMfFile
-              if checkElemInList "$tcBatchPdftexMode" `listMfModes | sed 's@ .*@@'`; then
-                set x `getRes "$tcBatchPdftexMode"`; shift
-                fmgrConfigReplace pdftexconfig.tex 'pdfpkresolution' "\\pdfpkresolution=$1"
-                if $fmgrConfigReplaceChanged; then
-                  fmtutil --refresh
-                fi
-              else
-                echo "$progname: unknown MODE \`$tcBatchPdftexMode' given as argument for \`$progname pdftex mode'" >&2
-                rc=1
-              fi
-              ;;
-          esac
-          ;;
-
-        paper)
-          case $3 in
-            letter|a4)
-              tlmgr pdftex paper $3
-              ;;
-            #letter)
-            #  w="8.5 true in"; h="11 true in"
-            #  setupTmpDir
-            #  fmgrConfigReplace pdftexconfig.tex pdfpagewidth '\pdfpagewidth='"$w"
-            #  wChanged=$fmgrConfigReplaceChanged
-            #  fmgrConfigReplace pdftexconfig.tex pdfpageheight '\pdfpageheight='"$h"
-            #  if $wChanged || $fmgrConfigReplaceChanged; then
-            #    fmtutil --refresh
-            #  fi
-            #  ;;
-            #a4)
-            #  w="210 true mm"; h="297 true mm"
-            #  fmgrConfigReplace pdftexconfig.tex pdfpagewidth '\pdfpagewidth='"$w"
-            #  wChanged=$fmgrConfigReplaceChanged
-            #  fmgrConfigReplace pdftexconfig.tex pdfpageheight '\pdfpageheight='"$h"
-            #  if $wChanged || $fmgrConfigReplaceChanged; then
-            #    fmtutil --refresh
-            #  fi
-            #  ;;
-            "") echo "$help" >&2; rc=1;;
-            *)
-             echo "$progname: unknown PAPER \`$3' given as argument for \`$progname pdftex paper'" >&2
-             echo "$progname: try \`$progname pdftex paper' for help" >&2
-             rc=1 ;;
-          esac ;;
-        "")
-          echo "$help" >&2; rc=1;;
-        *)
-          echo "$progname: unknown option \`$2' given as argument for \`$progname pdftex'" >&2
-          echo "$progname: try \`$progname pdftex' for help" >&2
-          rc=1
-          ;;
-      esac
+      abort "Use tlmgr paper pdftex"
       ;;
 
     rehash)
@@ -1314,112 +1108,7 @@ Valid PAPER settings:
 
     # handle "xdvi paper PAPER"
     xdvi)
-      tcBatchXdviPapers='us           "8.5x11"
-letter       "8.5x11"
-ledger       "17x11"
-tabloid      "11x17"
-usr          "11x8.5"
-legal        "8.5x14"
-legalr       "14x8.5"
-foolscap     "13.5x17.0"
-foolscapr    "17.0x13.5"
-a0           "84.1x118.9cm"
-a1           "59.4x84.1cm"
-a2           "42.0x59.4cm"
-a3           "29.7x42.0cm"
-a4           "21.0x29.7cm"
-a5           "14.8x21.0cm"
-a6           "10.5x14.8cm"
-a7           "7.4x10.5cm"
-a8           "5.2x7.4cm"
-a9           "3.7x5.2cm"
-a10          "2.6x3.7cm"
-a0r          "118.9x84.1cm"
-a1r          "84.1x59.4cm"
-a2r          "59.4x42.0cm"
-a3r          "42.0x29.7cm"
-a4r          "29.7x21.0cm"
-a5r          "21.0x14.8cm"
-a6r          "14.8x10.5cm"
-a7r          "10.5x7.4cm"
-a8r          "7.4x5.2cm"
-a9r          "5.2x3.7cm"
-a10r         "3.7x2.6cm"
-b0           "100.0x141.4cm"
-b1           "70.7x100.0cm"
-b2           "50.0x70.7cm"
-b3           "35.3x50.0cm"
-b4           "25.0x35.3cm"
-b5           "17.6x25.0cm"
-b6           "12.5x17.6cm"
-b7           "8.8x12.5cm"
-b8           "6.2x8.8cm"
-b9           "4.4x6.2cm"
-b10          "3.1x4.4cm"
-b0r          "141.4x100.0cm"
-b1r          "100.0x70.7cm"
-b2r          "70.7x50.0cm"
-b3r          "50.0x35.3cm"
-b4r          "35.3x25.0cm"
-b5r          "25.0x17.6cm"
-b6r          "17.6x12.5cm"
-b7r          "12.5x8.8cm"
-b8r          "8.8x6.2cm"
-b9r          "6.2x4.4cm"
-b10r         "4.4x3.1cm"
-c0           "91.7x129.7cm"
-c1           "64.8x91.7cm"
-c2           "45.8x64.8cm"
-c3           "32.4x45.8cm"
-c4           "22.9x32.4cm"
-c5           "16.2x22.9cm"
-c6           "11.4x16.2cm"
-c7           "8.1x11.4cm"
-c8           "5.7x8.1cm"
-c9           "4.0x5.7cm"
-c10          "2.8x4.0cm"
-c0r          "129.7x91.7cm"
-c1r          "91.7x64.8cm"
-c2r          "64.8x45.8cm"
-c3r          "45.8x32.4cm"
-c4r          "32.4x22.9cm"
-c5r          "22.9x16.2cm"
-c6r          "16.2x11.4cm"
-c7r          "11.4x8.1cm"
-c8r          "8.1x5.7cm"
-c9r          "5.7x4.0cm"
-c10r         "4.0x2.8cm"'
-      help="Usage: $progname xdvi paper PAPER
-
-Valid PAPER settings:
-  a0 a0r a1 a1r a2 a2r a3 a3r a4 a4r a5 a5r a6 a6r a7 a7r a8 a8r a9 a9r a10 a10r
-  b0 b0r b1 b1r b2 b2r b3 b3r b4 b4r b5 b5r b6 b6r b7 b7r b8 b8r b9 b9r b10 b10r
-  c0 c0r c1 c1r c2 c2r c3 c3r c4 c4r c5 c5r c6 c6r c7 c7r c8 c8r c9 c9r c10 c10r
-  us letter ledger tabloid usr legal legalr foolscap foolscapr"
-      case $2 in
-        paper-list)
-          echo "$tcBatchXdviPapers"
-          ;;
-        paper)
-          case $3 in
-            [abc][0-9]|[abc]10|[abc][0-9]r|[abc]10r|us|letter|ledger|tabloid|usr|legal|legalr|foolscap|foolscapr)
-              tlmgr xdvi paper $3
-              # fmgrConfigReplace XDvi paper: "*paper: $3"
-              ;;
-            "") echo "$help" >&2; rc=1;;
-            *)
-             echo "$progname: unknown PAPER \`$3' given as argument for \`$progname xdvi paper'" >&2
-             echo "$progname: try \`$progname xdvi paper' for help" >&2
-             rc=1 ;;
-          esac ;;
-        "")
-          echo "$help" >&2; rc=1;;
-        *)
-          echo "$progname: unknown option \`$2' given as argument for \`$progname xdvi'" >&2
-          echo "$progname: try \`$progname xdvi' for help" >&2
-          rc=1
-          ;;
-      esac
+      abort "Use tlmgr paper xdvi"
       ;;
     *)
       echo "$progname: unknown option \`$1' given as argument for \`$progname'" >&2

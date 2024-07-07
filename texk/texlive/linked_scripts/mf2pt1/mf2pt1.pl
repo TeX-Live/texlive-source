@@ -7,7 +7,7 @@
 
 ########################################################################
 # mf2pt1                                                               #
-# Copyright (C) 2005-2021 Scott Pakin                                  #
+# Copyright (C) 2005-2024 Scott Pakin                                  #
 #                                                                      #
 # This program may be distributed and/or modified under the conditions #
 # of the LaTeX Project Public License, either version 1.3c of this     #
@@ -21,7 +21,7 @@
 # version 2006/05/20 or later.                                         #
 ########################################################################
 
-our $VERSION = "2.7";     # mf2pt1 version number
+our $VERSION = "2.8";     # mf2pt1 version number
 require 5.6.1;            # I haven't tested mf2pt1 with older Perl versions
 
 use Cwd;
@@ -161,7 +161,7 @@ my $filedir;
 my $filenoext;
 my $versionmsg = "mf2pt1 version $VERSION
 
-Copyright (C) 2005-2021 Scott Pakin
+Copyright (C) 2005-2024 Scott Pakin
 
 This program may be distributed and/or modified under the conditions
 of the LaTeX Project Public License, either version 1.3c of this
@@ -1006,9 +1006,9 @@ else {
 Open($1);
 SelectAll();
 RemoveOverlap();
-AddExtrema();
 Simplify(0, 2);
 CorrectDirection();
+AddExtrema(1);
 Simplify(0, 2);
 RoundToInt();
 AutoHint();
