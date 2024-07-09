@@ -5,6 +5,7 @@ use strict;
 use warnings;
 
 use Data::Dumper ();
+use Encode ();
 use English;
 use File::Basename ();
 use Getopt::Long;
@@ -48,32 +49,32 @@ sub limit_string_length {
 ##  We set all colors to `undef' and fill them later with the values
 ##  of the actual configuration.
 my $highlight_patterns = {
-  PARTIAL_LINE => {
-      FONT_SPEC => [qr#
-                       \\
-                       (?: OMS | OMX | OT1 | T1 | TS1 | U )
-                       (?: /[^/]+ ){5} / \S+ \s
-                       (?: \([+-]\d+\) )?
-                      #x, undef],
-      MATH => [qr#
-                  \$
-                  \\
-                  (?: LMS | OML )
-                  (?: /[^/]+ ){5} / \S+ \s
-                  (?: \([+-]\d+\) )?
-                  .*?
-                  \$
-                 #x, undef]
-  },
-  WHOLE_LINE => {
-      FILL_STATE => [qr#^(?:Under|Over)full \\hbox .*$#, undef],
-      FIRST_VBOX => [qr#^%%#, undef],
-      HORIZONTAL_BREAKPOINT => [qr#^@@\d+:.*$#, undef],
-      HORIZONTAL_BREAK_CANDIDATE => [qr#^@[\\ ].*$#, undef],
-      LINE_BREAK_PASS => [qr#^@[a-z]+?pass#, undef],
-      TIGHTNESS => [qr#^(?:Loose|Tight) \\hbox .*$#, undef],
-      VERTICAL_BREAKPOINT => [qr#^% t=\d+.*$#, undef]
-  }
+    PARTIAL_LINE => {
+        FONT_SPEC => [qr#
+                         \\
+                         (?: OMS | OMX | OT1 | T1 | TS1 | U )
+                         (?: /[^/]+ ){5} / \S+ \s
+                         (?: \([+-]\d+\) )?
+                        #x, undef],
+        MATH => [qr#
+                    \$
+                    \\
+                    (?: LMS | OML )
+                    (?: /[^/]+ ){5} / \S+ \s
+                    (?: \([+-]\d+\) )?
+                    .*?
+                    \$
+                   #x, undef]
+    },
+    WHOLE_LINE => {
+        FILL_STATE => [qr#^(?:Under|Over)full \\hbox .*$#, undef],
+        FIRST_VBOX => [qr#^%%#, undef],
+        HORIZONTAL_BREAKPOINT => [qr#^@@\d+:.*$#, undef],
+        HORIZONTAL_BREAK_CANDIDATE => [qr#^@[\\ ].*$#, undef],
+        LINE_BREAK_PASS => [qr#^@[a-z]+?pass#, undef],
+        TIGHTNESS => [qr#^(?:Loose|Tight) \\hbox .*$#, undef],
+        VERTICAL_BREAKPOINT => [qr#^% t=\d+.*$#, undef]
+   }
 };
 
 sub colorize_line {
@@ -84,7 +85,7 @@ sub colorize_line {
         return Term::ANSIColor::colored($line, $pattern_color_pair->[1])
           if $line =~ $pattern_color_pair->[0];
     }
-    return $line if $line =~ m#^\.#;  # we do not paint box contents yet
+    return $line if $line =~ m#^\.#; # we do not paint box contents yet
 
     $line =~ s#$highlight_patterns->{PARTIAL_LINE}->{MATH}->[0]
               #Term::ANSIColor::colored($MATCH, $highlight_patterns->{PARTIAL_LINE}->{MATH}->[1])
@@ -108,13 +109,29 @@ my $open_tag_regexp =
      page="(?<page_match> .*?)"
      >#x;
 
+sub find_encoder {
+    my $encoding = shift;
+
+    my $encoder;
+
+    if ($encoding) {
+        $encoder = Encode::find_encoding($encoding);
+        if (!$encoder) {
+            issue_warning("encoding @{[quote_literal($encoding)]} unknown; proceeding without decoder");
+        }
+    }
+
+    return $encoder;
+}
+
 sub grep_log_file {
     my ($options, $configuration, $file, $filename, $id_regexp) = @_;
 
+    my $encoder = find_encoder($options->{ENCODING});
     my $job_name;
-    my $line_number = 0;        # line number in the log file we are inspecting, i.e., $filename
+    my $line_number = 0; # line number in the log file we are inspecting, i.e., $filename
     my $match_count = 0;
-    my $source_line_number;     # line number in TeX file the log refers to, i.e., "$job_name.tex"
+    my $source_line_number; # line number in TeX file the log refers to, i.e., "$job_name.tex"
     my $page_number;
     my $regexp_modifier = $options->{IGNORE_CASE} ? 'i' : '';
     my $id_value;
@@ -127,6 +144,8 @@ sub grep_log_file {
     while (my $line = readline $file) {
         chomp $line;
         $line_number++;
+
+        $line = Encode::encode_utf8($encoder->decode($line, Encode::FB_CROAK)) if $encoder;
 
         if ($line =~ $close_tag_regexp) {
             fail_with_error("$filename: $line_number: mismatched open/close tags") unless @nesting_levels;
@@ -209,17 +228,23 @@ sub grep_log_file {
             }
         }
     }
+
+    return $match_count;
 }
 
 sub show_ids_in_file {
     my ($options, $configuration, $file, $filename, $id_regexp) = @_;
 
+    my $encoder = find_encoder($options->{ENCODING});
     my $line_number = 0;
+    my $match_count = 0;
     my @nesting_levels;
 
     while (my $line = readline $file) {
         chomp $line;
         $line_number++;
+
+        $line = Encode::encode_utf8($encoder->decode($line, Encode::FB_CROAK)) if $encoder;
 
         if ($line =~ $close_tag_regexp) {
             fail_with_error("$filename: $line_number: mismatched open/close tags") unless @nesting_levels;
@@ -233,6 +258,7 @@ sub show_ids_in_file {
             my $page_number = $+{page_match};
 
             ++$MATCH_COUNT;
+            ++$match_count;
             push @nesting_levels, 1;
 
             if ($options->{LOG_LINE_NUMBER}) {
@@ -272,6 +298,8 @@ sub show_ids_in_file {
             print ' ' x $indent, $id_value, "\n";
         }
     }
+
+    return $match_count;
 }
 
 sub open_file_for_reading {
@@ -288,7 +316,7 @@ sub open_file_for_reading {
           fail_with_error("cannot open @{[quote_filesystem($filename)]}: $OS_ERROR");
     }
 
-    $file;
+    return $file;
 }
 
 sub close_file {
@@ -302,14 +330,16 @@ sub grep_or_show {
     my ($options, $configuration, $file, $filename, $id_regexp) = @_;
 
     if ($options->{SHOW_ALL_IDS}) {
-        show_ids_in_file($options, $configuration, $file, $filename, $id_regexp);
+        return show_ids_in_file($options, $configuration, $file, $filename, $id_regexp);
     } else {
-        grep_log_file($options, $configuration, $file, $filename, $id_regexp);
+        return grep_log_file($options, $configuration, $file, $filename, $id_regexp);
     }
 }
 
 sub scan_files {
     my ($options, $configuration, $id_regexp, $log_filenames) = @_;
+
+    my $match_count = 0;
 
     if (@$log_filenames) {
         foreach my $log_filename (@$log_filenames) {
@@ -323,15 +353,17 @@ sub scan_files {
                 print $filename_header;
             }
             my $file = open_file_for_reading($log_filename);
-            grep_or_show($options, $configuration, $file, $log_filename, $id_regexp);
+            $match_count += grep_or_show($options, $configuration, $file, $log_filename, $id_regexp);
             close_file($file, $log_filename);
         }
     } else {
         my $log_filename = 'stdin';
         my $file = open_file_for_reading($log_filename);
-        grep_or_show($options, $configuration, $file, $log_filename, $id_regexp);
+        $match_count = grep_or_show($options, $configuration, $file, $log_filename, $id_regexp);
         close_file($file, $log_filename);
     }
+
+    return $match_count;
 }
 
 sub redirect_and_scan_files {
@@ -347,10 +379,12 @@ sub redirect_and_scan_files {
     my $stdout = select $pager;
 
     $pager->autoflush;
-    scan_files($options, $configuration, $id_regexp, $log_filenames);
+    my $match_count = scan_files($options, $configuration, $id_regexp, $log_filenames);
 
     close $pager or issue_warning "error occurred while closing the pager (pid: $pid) pipe: $OS_ERROR";
     select $stdout;
+
+    return $match_count;
 }
 
 ########################################################################
@@ -452,6 +486,7 @@ sub setup_configuation {
 my $default_options = {
     COLORIZE_MODE => 'auto',
     DEBUG => 0,
+    ENCODING => undef,
     ID => 0,
     IGNORE_CASE => 0,
     JOB_NAME => 0,
@@ -472,6 +507,7 @@ Options
       --colour [WHEN]         use color to highlight specific log contents
                               WHEN is 'always', 'never', or 'auto'
   -C, --config KEY=VALUE      set configuration KEY to VALUE
+  -E, --encoding ENCODING     set character ENCODING of LOG-FILE
   -i, --[no-]id               print matching id with output lines
   -y, --[no-]ignore-case      ignore case distinctions in patterns and data
   -j, --[no-]job-name         print \\jobname with output lines
@@ -481,13 +517,25 @@ Options
   -P, --[no-]pager            redirect output to pager
   -w, --[no-]word-regexp      match only whole words
 
-  -a, --all, --any            show all IDs in LOG-FILE
+  -a, --all, --any            discover all IDs in LOG-FILE
+
       --debug                 turn on debug output
   -h, --help                  display this help and exit
       --show-config           show default configuration and exit
+      --show-encodings        show all known encodings and exit
   -V, --version               show version information and exit
 
 HELP_TEXT
+
+    exit 0;
+}
+
+sub show_encodings {
+    my @all_encodings = Encode->encodings(':all');
+
+    foreach my $encoding (@all_encodings) {
+        print "$encoding\n";
+    }
 
     exit 0;
 }
@@ -526,10 +574,10 @@ FIXED_CONFIGURATION_TEXT
 
 sub show_version {
     print <<VERSION_TEXT;
-typog-grep 0.1
+typog-grep 0.4
 
 Copyright (C) 2024 by Ch. L. Spiel
-License LPPL: LaTeX Project Public License version 1.3 or later
+License LPPL: LaTeX Project Public License version 1.3c or later
 VERSION_TEXT
 
     exit 0;
@@ -544,6 +592,7 @@ sub get_options {
                              'color|colour=s' => \$options->{COLORIZE_MODE},
                              'C|configuration=s' => sub{setup_configuation($_[1], $configuration)},
                              'debug+' => \$DEBUG,
+                             'E|encoding=s' => \$options->{ENCODING},
                              'h|help' => \&show_help,
                              'i|id!' => \$options->{ID},
                              'y|ignore-case!' => \$options->{IGNORE_CASE},
@@ -552,13 +601,18 @@ sub get_options {
                              'N|log-line-number!' => \$options->{LOG_LINE_NUMBER},
                              'p|page-number!' => \$options->{PAGE_NUMBER},
                              'P|pager!' => \$options->{REQUEST_PAGER},
+                             'show-encodings' => \&show_encodings,
                              'show-config' => \&show_configuration,
                              'V|version' => \&show_version,
                              'w|word-regexp!' => \$options->{WORD_REGEXP}) or
-        fail_with_error('problems while parsing options');
+                               fail_with_error('problems while parsing options');
 
-    fail_with_error("unknown colorize mode @{[quote_literal($options->{COLORIZE_MODE})]}")
-      unless $options->{COLORIZE_MODE} =~ m/^(?:always|auto|never)$/i
+    if ($options->{COLORIZE_MODE}) {
+        fail_with_error("unknown colorize mode @{[quote_literal($options->{COLORIZE_MODE})]}")
+          unless $options->{COLORIZE_MODE} =~ m/^(?:always|auto|never)$/i;
+    } else {
+        $options->{COLORIZE_MODE} = 'auto';
+    }
 }
 
 sub do_colorize {
@@ -579,14 +633,27 @@ sub do_colorize {
 sub main {
     $OUTPUT_IS_REDIRECTED = -t STDOUT ? 0 : 1;
 
-    my $options = {%$default_options};
     my $configuration = {%$default_configuration};
+    my $options = {%$default_options};
+    debug_print(Data::Dumper::Dumper(['Default Configuration', $configuration]));
+    debug_print(Data::Dumper::Dumper(['Default Options', $options]));
 
-    get_options($options, $configuration);
+    my $user_options = {};
+    my $user_configuration = {};
+    get_options($user_options, $user_configuration);
+    debug_print(Data::Dumper::Dumper(['User Configuration', $user_configuration]));
+    debug_print(Data::Dumper::Dumper(['User Options', $user_options]));
+    while (my ($key, $value) = each %$user_options) {
+        $options->{$key} = $value if $value;
+    }
+    while (my ($key, $value) = each %$user_configuration) {
+        $configuration->{$key} = $value if $value;
+    }
+    debug_print(Data::Dumper::Dumper(['Final Configuration', $configuration]));
+    debug_print(Data::Dumper::Dumper(['Final Options', $options]));
+
     $options->{COLORIZE_OUTPUT} = do_colorize($options->{COLORIZE_MODE});
     initialize_highlighting_from_configuration($configuration);
-    debug_print(Data::Dumper::Dumper($configuration));
-    debug_print(Data::Dumper::Dumper($options));
 
     my $id_regexp;
     if ($options->{SHOW_ALL_IDS}) {
@@ -598,17 +665,18 @@ sub main {
         $id_regexp = shift @ARGV;
     }
 
-    if ($options->{REQUEST_PAGER} && $OUTPUT_IS_REDIRECTED) {
+    if ($user_options->{REQUEST_PAGER} && $OUTPUT_IS_REDIRECTED) {
         issue_warning("option @{[quote_literal('--pager')]} ignored because output is redirected");
     }
     my $use_pager = $options->{REQUEST_PAGER} && !$OUTPUT_IS_REDIRECTED;
+    my $match_count;
     if ($use_pager) {
-        redirect_and_scan_files($options, $configuration, $id_regexp, \@ARGV);
+        $match_count = redirect_and_scan_files($options, $configuration, $id_regexp, \@ARGV);
     } else {
-        scan_files($options, $configuration, $id_regexp, \@ARGV);
+        $match_count = scan_files($options, $configuration, $id_regexp, \@ARGV);
     }
 
-    exit ($MATCH_COUNT == 0);
+    exit ($match_count == 0);
 }
 
 main();

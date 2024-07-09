@@ -1,5 +1,5 @@
 #!/usr/bin/env texlua
--- $Id: extractbb.lua 71685 2024-07-02 08:27:58Z mseven $
+-- $Id: extractbb.lua 71746 2024-07-08 21:16:39Z karl $
 -- SPDX-License-Identifier: CC0-1.0
 -- SPDX-FileCopyrightText: 2024 Max Chernoff
 --
@@ -185,9 +185,11 @@ if not resolved_script_path then
     error("Empty resolved script path")
 end
 
-if (script_dir ~= interpreter_dir) and (script_path ~= resolved_script_path) then
-    error("The script is in an incorrect location: " .. script_dir)
-end
+-- But on Macs we get /Library/TeX/texbin. What to do?
+-- (Frank msg to tex-live 8jul24.)
+-- if (script_dir ~= interpreter_dir) and (script_path ~= resolved_script_path) then
+--     error("The script is in an incorrect location: " .. script_dir)
+-- end
 
 if script_name ~= SCRIPT_NAME then
     error("Incorrect script name: " .. script_name)
