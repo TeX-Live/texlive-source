@@ -1,3 +1,7 @@
+2024-07-12  Karl Berry  <karl@freefriends.org>
+
+	* reautoconf with automake 1.17.
+
 2024-04-29  Karl Berry  <karl@freefriends.org>
 
 	* Makefile.am (distdir): override default dist generation,
