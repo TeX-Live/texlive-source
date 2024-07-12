@@ -1,6 +1,6 @@
 #!/usr/bin/env perl
 use warnings;
-# $Id: epstopdf.pl 71584 2024-06-21 22:40:28Z karl $
+# $Id: epstopdf.pl 71777 2024-07-11 21:24:57Z karl $
 # (Copyright lines below.)
 #
 # Redistribution and use in source and binary forms, with or without
@@ -36,7 +36,9 @@ use warnings;
 #
 # emacs-page
 #
-my $ver = "2.35";
+my $ver = "2.36";
+#  2024/07/11 2.36 (Karl Berry)
+#    * regexp syntax for OS/2 test, found by John Collins.
 #  2024/06/21 2.35 (Karl Berry)
 #    * path_sep for OS/2 is also ";".
 #  2024/04/29 2.34 (Karl Berry)
@@ -228,7 +230,7 @@ my $ver = "2.35";
 ### emacs-page
 ### program identification
 my $program = "epstopdf";
-my $ident = '($Id: epstopdf.pl 71584 2024-06-21 22:40:28Z karl $)' . " $ver";
+my $ident = '($Id: epstopdf.pl 71777 2024-07-11 21:24:57Z karl $)' . " $ver";
 my $copyright = <<END_COPYRIGHT ;
 Copyright 2009-2024 Karl Berry et al.
 Copyright 2002-2009 Gerben Wierda et al.
@@ -260,7 +262,7 @@ debug " on_cygwin=$on_cygwin, on_msys=$on_msys";
 
 # Split PATH and use / as directory separator.
 #
-my $path_sep = ($^O =~ /^(OS2|MSWin)i/) ? ';' : ':'; # not msys
+my $path_sep = ($^O =~ /^(OS2|MSWin)/i) ? ';' : ':'; # not msys
 my @pdirs = split($path_sep, $ENV{"PATH"});
 # Normalize directory separators to /. Always valid on Windows.
 if ($on_windows_or_cygwin) {
