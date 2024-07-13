@@ -62,7 +62,7 @@
 @x [0.0] l.54
 }
 @y
-}}\datecontentspage
+}}
 @z
 
 @x [1.1] l.59
