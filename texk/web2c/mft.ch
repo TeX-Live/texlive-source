@@ -5,11 +5,13 @@
 % Support for MP included from a changefile by Wlodek Bzyl.
 % This file is in the public domain.
 
-@x [0] l.16 - WEAVE: use logo font to get the S
+@x [0] l.17 - WEAVE: use logo font to get the S
 \font\logo=manfnt % font used for the METAFONT logo
+\def\MF{{\logo META}\-{\logo FONT}}
 @y
 \font\logo=manfnt % font used for the METAFONT logo
-\font\tenlogo=logo10 % font used for the METAFONT logo
+\font\tenlogo=logo10 % font used for the METAPOST logo
+\def\MF{{\logo META}\-{\logo FONT}}
 \def\MP{{\tenlogo META}\-{\tenlogo POST}}
 @z
 
