@@ -8,8 +8,9 @@
 @x [0] l.16 - WEAVE: use logo font to get the S
 \font\logo=manfnt % font used for the METAFONT logo
 @y
-\font\logo=logo10 % font used for the METAFONT logo
-\def\MP{{\logo META}\-{\logo POST}}
+\font\logo=manfnt % font used for the METAFONT logo
+\font\tenlogo=logo10 % font used for the METAFONT logo
+\def\MP{{\tenlogo META}\-{\tenlogo POST}}
 @z
 
 @x [0] l.26
