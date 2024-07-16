@@ -1,3 +1,7 @@
+2024-07-15  Andreas Scherer  <https://ascherer.github.io>
+
+	* texinputs/pdfwebtocfront.tex: Release file resource early.
+
 2024-07-13  Andreas Scherer  <https://ascherer.github.io>
 
 	* ctwill-w2c.ch: Avoid double '\date' for CTWILL.

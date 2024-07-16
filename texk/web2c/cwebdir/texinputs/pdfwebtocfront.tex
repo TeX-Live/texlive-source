@@ -18,7 +18,7 @@
 \newread\testread
 \openin\testread=\contentsfile\relax
 \ifeof\testread % First run
-\else % Second run
+\else\closein\testread % Second run
   % Fix page numbers in the PDF bootmarks with 'Page Labels'
   \def\tocpages{1} % Most programs have one-page Table-of-Contents
   \def\tocstart{2} % so we start with (fake) page 2 for the rest
