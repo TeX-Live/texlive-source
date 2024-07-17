@@ -42,10 +42,12 @@ int main(
     if((f=fopen(*++argv,"r"))==NULL)
 @z
 
-@x l.28
+@x l.27
+      strncpy(*argv+strlen(*argv)-3,"idx",3);
       f=fopen(*argv,"r");
       if (!f)
 @y
+      memcpy(*argv+strlen(*argv)-3,"idx",3);
       if((f=fopen(*argv,"r"))==NULL)
 @z
 
