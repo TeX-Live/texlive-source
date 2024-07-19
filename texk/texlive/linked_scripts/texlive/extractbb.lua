@@ -1,14 +1,14 @@
 #!/usr/bin/env texlua
--- $Id: extractbb.lua 71746 2024-07-08 21:16:39Z karl $
+-- $Id: extractbb.lua 71832 2024-07-18 09:36:59Z mseven $
 -- SPDX-License-Identifier: CC0-1.0
 -- SPDX-FileCopyrightText: 2024 Max Chernoff
 --
 -- A generic wrapper to make commands safe to run with restricted shell escape.
--- 
+--
 -- Originally created for extractbb, which is listed in shell_escape_commands,
 -- but can be run as dvipdfm(x), which in turn can run arbitrary commands
 -- using its -D option.
--- 
+--
 -- The idea is to exec "ebb --ebb <other args>", since only argv[1] is
 -- used by dvipdfmx to determine its behavior.
 --
@@ -21,7 +21,7 @@
 --[=[
 arg[0] = arg[0]:gsub("extractbb", "ebb")
 table.insert(arg, 1, "ebb")
-table.insert(arg, 2, "--ebb")
+table.insert(arg, 2, "--extractbb")
 os.exec(arg)
 os.exit(1)
 --]=]
@@ -32,10 +32,6 @@ os.exit(1)
 
 -- The base name of this script. (Example: ``extractbb'')
 local SCRIPT_NAME = "extractbb"
-
--- The extension of the script. Extensionless-names are also permitted.
--- (Example: ``lua'')
-local SCRIPT_EXT = "lua"
 
 -- The base name of the path to the target program. (Example: ``xdvipdfmx'')
 local TARGET_PATH_NAME = "xdvipdfmx"
@@ -88,9 +84,24 @@ local script_args = arg
 ----------------------------
 
 -- Error messages
-local function error(message)
-    io.stderr:write("! ERROR (extractbb.lua): " .. message, "\n")
+local function error(title, details)
+    -- Header
+    io.stderr:write("! extractbb ERROR: ")
+    io.stderr:write(title)
+    io.stderr:write(".\n\nTechnical Details:\n")
+
+    -- Messages
+    for key, value in pairs(details) do
+        io.stderr:write(tostring(key), ": ")
+        io.stderr:write("(", type(value), ") ")
+        io.stderr:write(tostring(value), "\n")
+    end
+
+    -- Traceback
+    io.stderr:write("\n")
     io.stderr:write(debug.traceback(nil, 2), "\n")
+
+    -- Flush and exit
     io.stderr:flush()
     os.exit(1)
 end
@@ -146,11 +157,15 @@ end
 
 -- Make sure that we're running unrestricted.
 if status.shell_escape ~= 1 then
-    error("Shell escape has been disabled.")
+    error("Shell escape has been disabled", {
+        shell_escape = status.shell_escape,
+    })
 end
 
 if status.safer_option ~= 0 then
-    error("The ``safer'' option has been enabled.")
+    error("The ``safer'' option has been enabled", {
+        safer_option = status.safer_option,
+    })
 end
 
 -- Set the file permissions.
@@ -162,58 +177,33 @@ if WRITE_PERMS then
     os.setenv("openout_any", WRITE_PERMS)
 end
 
--- Get the directory of the script and interpreter
-local script_path = debug.getinfo(1, "S").source:sub(2)
-local script_dir, script_name, script_ext = split_path(script_path)
-
-local interpreter_dir = kpse.var_value("SELFAUTOLOC")
+-- Get the location of the interpreter
+local interpreter_dir = os.selfdir or kpse.var_value("SELFAUTOLOC")
 local _, interpreter_name, interpreter_ext = split_path(script_args[-1])
-if os.type == 'windows' then
+
+if os.type == "windows" then
     interpreter_ext = INTERPRETER_EXT
 end
--- Look up the script again with kpathsea
-local resolved_script_path = kpse.find_file(
-    script_name .. "." .. (script_ext or SCRIPT_EXT), "texmfscripts", true
-)
 
--- Make sure that our paths are correct
-if not script_dir then
-    error("Empty script dir")
-end
-
-if not resolved_script_path then
-    error("Empty resolved script path")
-end
-
--- But on Macs we get /Library/TeX/texbin. What to do?
--- (Frank msg to tex-live 8jul24.)
--- if (script_dir ~= interpreter_dir) and (script_path ~= resolved_script_path) then
---     error("The script is in an incorrect location: " .. script_dir)
--- end
-
-if script_name ~= SCRIPT_NAME then
-    error("Incorrect script name: " .. script_name)
-end
-
-if interpreter_name ~= INTERPRETER_NAME then
-    error("Incorrect interpreter name: " .. interpreter_name)
-end
-
-if (script_ext ~= SCRIPT_EXT) and (script_ext ~= nil) then
-    error("Incorrect script extension: " .. script_ext)
-end
-
-if (interpreter_ext ~= INTERPRETER_EXT) and (interpreter_ext ~= nil) then
-    error("Incorrect interpreter extension: " .. interpreter_ext)
-end
+-- Error details
+local error_details = {
+    interpreter_dir     = interpreter_dir  or "<nil>",
+    interpreter_name    = interpreter_name or "<nil>",
+    interpreter_ext     = interpreter_ext  or "<nil>",
+    os_type             = os.type          or "<nil>",
+    os_name             = os.name          or "<nil>",
+}
 
 -- Get the path to the target program
 local target_ext  = interpreter_ext and ("." .. interpreter_ext) or ""
 local target_path = interpreter_dir .. "/" .. TARGET_PATH_NAME .. target_ext
 
+error_details.target_path = target_path or "<nil>"
+error_details.target_ext  = target_ext  or "<nil>"
+
 -- Make sure that the target program exists
 if not file_exists(target_path) then
-    error("The target program does not exist: " .. target_path)
+    error("The target program does not exist", error_details)
 end
 
 
@@ -234,7 +224,13 @@ end
 
 for i = 1, #script_args do
     -- We use a numeric iterator here to avoid ``arg[-1]'' and ``arg[0]''.
-    insert(target_args, script_args[i])
+    local this_arg = script_args[i]
+    insert(target_args, this_arg)
+
+    -- Show version information
+    if this_arg:match("%-version") then
+        print("(Wrapped by extractbb.lua $Revision: 71832 $.)")
+    end
 end
 
 for _, arg in ipairs(TARGET_APPEND_ARGS) do
@@ -244,6 +240,10 @@ end
 -- Run the target program, replacing the current process
 local _, err = os.exec(target_args)
 
-if err then
-    error("The target program failed to run.")
+-- Unreachable except in the case of a failed exec
+for key, value in ipairs(target_args) do
+    error_details["target_args[" .. key .. "]"] = value
 end
+
+error_details.exec_message = err or "<nil>"
+error("The target program failed to run", error_details)
