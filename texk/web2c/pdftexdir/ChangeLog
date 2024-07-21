@@ -1,3 +1,14 @@
+2024-05-24  Thanh Han The  <hanthethanh@gmail.com>
+
+	* pdftex.web (pdf_ptex_use_underscore_code),
+	(pdf_ptex_use_underscore): new \pdfptexuseunderscore parameter.
+	(Put each ...): define it.
+	(print_param): print it.
+	(get_ptex_use_underscore): new fn to implement it.
+        (pdf_print_info): adjust Fullbanner prefix character.
+	* pdftoepdf.cc (getptexuseunderscore): declare fn.
+	(write_epdf): use it for FileName, PageNumber, InfoDict.
+
 2024-04-18  Thanh Han The  <hanthethanh@gmail.com>
 
 	* pdftex.web (pdf_begin_string): increase tolerance for finding

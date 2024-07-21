@@ -1,3 +1,10 @@
+- changes:
+  - new primitive \pdfptexuseunderscore: if positive or
+    if \pdfmajorversion >= 2, the PTEX.Fullbanner and other dictionary
+    entries use an _ instead of ., as in PTEX_Fullbanner.
+- bugfixes:
+  - increase tolerance for detecting interword spaces in overfull lines.
+
 pdfTeX 3.141592653-2.6-1.40.26 (TeX Live 2024)
 - bugfixes:
   - more reliable text extraction on BigEndian systems.
