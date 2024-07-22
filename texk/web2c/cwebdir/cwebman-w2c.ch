@@ -208,6 +208,8 @@ output by \.{CWEAVE}. (On by default.) (Has no effect on \.{CTANGLE}.)
 @y
 \option x Include indexes and a table of contents in the \TEX/ file
 output by \.{CWEAVE}. (On by default.) (\.{CWEAVE} only.)
+
+\vfill\eject
 @z
 
 @x l.1123
@@ -286,7 +288,7 @@ and~\pdfURL{F}{cweave.pdf}, which exhibit the complete source code for
 code for \.{COMMON}, and the additional \pdfURL{Appendix~G}{ctwill.pdf}
 exhibits the source code for \.{CTWILL}, which is based on \.{CWEAVE}.}
 
-\eject\titletrue
+\vfill\eject\titletrue
 @z
 
 @x l.1197
@@ -338,7 +340,7 @@ And here's what the same excerpt looks like when typeset.
 @x l.1511
 \vfil\eject\titletrue
 @y
-\vfil\eject\titletrue
+\vfill\eject\titletrue
 \ifx\pdf+\pdftrue\fi \ifxetex\pdftrue\fi
 \ifpdflua\ifnum\pdfoutput>0 \pdftrue\fi\fi
 \ifacro\acrohinttrue\fi \ifhint\acrohinttrue\fi
