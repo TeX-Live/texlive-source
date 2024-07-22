@@ -33,7 +33,7 @@
   \advance\footnotecount by 1\relax}
 @z
 
-@x l.32
+@x l.28
 \outer\def\section #1.{\penalty-500\bigskip
         \centerline{\sectionfont\def\.##1{{\twelvett##1}} #1}\nobreak\vskip 6pt
         \everypar{\hskip-\parindent\everypar{}}}
@@ -93,21 +93,21 @@
   \fi}
 @z
 
-@x l.38
+@x l.34
 \def\runninghead{{\tentt CWEB} USER MANUAL (VERSION 4.11)}
 @y
 \def\Kpathsea/{{\mc KPATHSEA\spacefactor1000}}
 \def\runninghead{{\tentt CWEB} USER MANUAL (Version 4.11 [\TeX~Live])}
 @z
 
-@x l.52
+@x l.48
 \vskip 18pt\centerline{(Version 4.11 --- December 2023)}
 @y
 \vskip 18pt\centerline{(Version 4.11 --- December 2023)%
 \footnote*{This document describes the extended \.{CWEB} (Version 4.11 [\TeX~Live]).}}
 @z
 
-@x l.83
+@x l.79
 Internet page \.{http://www-cs-faculty.stanford.edu/\char`\~knuth/cweb.html}
 @y
 Internet page
@@ -115,7 +115,7 @@ Internet page
           {http://www-cs-faculty.stanford.edu/\TILDE/knuth/cweb.html}
 @z
 
-@x l.88
+@x l.84
 \.{https://github.com/ascherer/cweb} with the really current news.
 @y
 \pdfURL{\.{https://github.com/ascherer/cweb}}%
@@ -123,7 +123,7 @@ Internet page
 with the really current news.
 @z
 
-@x l.106
+@x l.102
 should be sent to the \TeX-related mailing list \.{tex-k@tug.org}.
 @y
 should be sent to the \TeX-related mailing list
@@ -131,7 +131,7 @@ should be sent to the \TeX-related mailing list
    {mailto:tex-k@tug.org}.
 @z
 
-@x l.108
+@x l.104
 Readers who are familiar with Knuth's memo ``The \.{WEB} System of Structured
 Documentation'' will be able
 @y
@@ -139,7 +139,7 @@ Readers who are familiar with Knuth's memo ``\pdfURL{The \.{WEB} System of
 Structured Documentation}{../web/webman.pdf}'' will be able
 @z
 
-@x l.527
+@x l.523
 email address in a \.{CWEB} file (e.g., \.{tex-k@@tug.org}).
 @y
 email address in a \.{CWEB} file (e.g.,
@@ -147,7 +147,7 @@ email address in a \.{CWEB} file (e.g.,
    {mailto:tex-k@tug.org}).
 @z
 
-@x l.922
+@x l.918
 it cannot find them in the current directory.
 @y
 it cannot find them in the current directory.%
@@ -160,7 +160,7 @@ for it.
 (This is true for any other input or change file lookup.)}
 @z
 
-@x l.1029
+@x l.1025
 except for error messages.
 @y
 except for error messages.%
@@ -168,7 +168,7 @@ except for error messages.%
 options `\.{b}', `\.{h}', and `\.{p}' are `off' by default.}
 @z
 
-@x l.1035
+@x l.1031
 options are currently implemented:
 
 \yskip
@@ -202,7 +202,7 @@ argument to switch between different user languages and macro packages.
 \yskip
 @z
 
-@x l.1071
+@x l.1067
 \option x Include indexes and a table of contents in the \TEX/ file
 output by \.{CWEAVE}. (On by default.) (Has no effect on \.{CTANGLE}.)
 @y
@@ -210,14 +210,14 @@ output by \.{CWEAVE}. (On by default.) (Has no effect on \.{CTANGLE}.)
 output by \.{CWEAVE}. (On by default.) (\.{CWEAVE} only.)
 @z
 
-@x l.1127
+@x l.1123
 Sometimes things don't work as smoothly, and you get a bunch of
 @y
 \pdffalse\acrohintfalse
 Sometimes things don't work as smoothly, and you get a bunch of
 @z
 
-@x l.1135
+@x l.1131
 `$\\{main}(\\{argc},\39\\{argv}{}$)'.
 @y
 `$\\{main}(\\{argc},\39\\{argv}{}$)'.
@@ -226,7 +226,7 @@ Sometimes things don't work as smoothly, and you get a bunch of
 \ifpdf\acrohinttrue\fi \ifhint\acrohinttrue\fi
 @z
 
-@x l.1145
+@x l.1141
 the `\.{@\#}' will put extra space after `$\langle\,$Other locals$\,\rangle$'.
 @y
 the `\.{@\#}' will put extra space after `$\langle\,$Other locals$\,\rangle$'.%
@@ -234,14 +234,14 @@ the `\.{@\#}' will put extra space after `$\langle\,$Other locals$\,\rangle$'.%
 to suppress the extra space globally.}
 @z
 
-@x l.1147
+@x l.1143
 \section Hypertext and hyperdocumentation.
 @y
 \vfill\eject
 \section Hypertext and hyperdocumentation.
 @z
 
-@x l.1171
+@x l.1167
 from \.{https://hint.userweb.mwn.de/hint/hintview.html}.
 @y
 from
@@ -249,7 +249,7 @@ from
           {https://hint.userweb.mwn.de/hint/hintview.html}.%
 @z
 
-@x l.1180
+@x l.1176
 the program sources at \.{ftp://ftp.cs.stanford.edu/pub/ctwill}.
 @y
 the program sources at
@@ -259,13 +259,13 @@ the program sources at
 \.{ctwill} executable -- and its associated helpers -- out of the box.}
 @z
 
-@x l.1184
+@x l.1180
 As an example of a real program written in \.{CWEB}, Appendix~A
 @y
 As an example of a real program written in \.{CWEB}, \Appendix A
 @z
 
-@x l.1189
+@x l.1185
 Appendix B displays the files that set \TEX/ up to accept
 the output of \.{CWEAVE}, and Appendix~C discusses how to use some of those
 @y
@@ -273,7 +273,7 @@ the output of \.{CWEAVE}, and Appendix~C discusses how to use some of those
 the output of \.{CWEAVE}, and \Appendix C discusses how to use some of those
 @z
 
-@x l.1195
+@x l.1191
 appendices D, E, and~F, which exhibit the complete source code for
 \.{CTANGLE} and \.{CWEAVE}.
 
@@ -289,7 +289,7 @@ exhibits the source code for \.{CTWILL}, which is based on \.{CWEAVE}.}
 \eject\titletrue
 @z
 
-@x l.1201
+@x l.1197
 \section Appendix A: Excerpts from a \.{CWEB} Program.
 @y
 \def\subsections{4}
@@ -297,28 +297,28 @@ exhibits the source code for \.{CTWILL}, which is based on \.{CWEAVE}.}
 \subsection CWEB file format.
 @z
 
-@x l.1205
+@x l.1201
 generated sections 27--31 of the file \.{common.w}, which contains
 @y
 generated sections 27--31 of the file
 \pdfURL{\.{common.w}}{common.pdf}, which contains
 @z
 
-@x l.1276
+@x l.1272
 \def\runninghead{APPENDIX A --- TRANSLATION BY {\tentt CTANGLE}}
 @y
 \def\runninghead{APPENDIX A --- TRANSLATION BY {\tentt CTANGLE}}
 \subsection Translation by CTANGLE.
 @z
 
-@x l.1344
+@x l.1340
 \def\runninghead{APPENDIX A --- TRANSLATION BY {\tentt CWEAVE}}
 @y
 \def\runninghead{APPENDIX A --- TRANSLATION BY {\tentt CWEAVE}}
 \subsection Translation by CWEAVE.
 @z
 
-@x l.1433
+@x l.1429
 \def\runninghead{APPENDIX A --- FINAL DOCUMENT}
 
 And here's what the same excerpt looks like when typeset.
@@ -335,7 +335,7 @@ And here's what the same excerpt looks like when typeset.
 \def\C#1{\5\5\quad$\triangleright\,${\cmntfont#1}$\,\triangleleft$}
 @z
 
-@x l.1515
+@x l.1511
 \vfil\eject\titletrue
 @y
 \vfil\eject\titletrue
@@ -344,13 +344,13 @@ And here's what the same excerpt looks like when typeset.
 \ifacro\acrohinttrue\fi \ifhint\acrohinttrue\fi
 @z
 
-@x l.1617
+@x l.1613
   \.{ { }\\vskip 15pt \\centerline\{(Version 4.11)\}{ }\\vfill\}}\cr}$$
 @y
   \.{ { }\\vskip 15pt \\centerline\{(Version 4.11)\}{ }\\vfill\}}\cr}$$
 @z
 
-@x l.1732
+@x l.1728
 if you have a duplex printer. Appendices D, E, and F of the complete
 version of this manual are printed using a commented-out option that
 substitutes `$\gets$' for `$=$' in the program listings. Looking at those
@@ -364,14 +364,14 @@ also make use of the alternative format for \CEE/ comments.}
 Looking at those
 @z
 
-@x l.1784
+@x l.1780
 \point 20. Furthermore, group titles can be converted to an arbitrary
 @y
 \vfill\eject
 \point 20. Furthermore, group titles can be converted to an arbitrary
 @z
 
-@x l.1796
+@x l.1792
 \vfill\end
 @y
 \point 21. With modern \TeX\ engines like `\.{luatex}', `\.{pdftex}', and

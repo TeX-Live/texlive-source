@@ -1,3 +1,8 @@
+2024-07-22  Andreas Scherer  <https://ascherer.github.io>
+
+	* cwebman-w2c.ch,
+	* cwebman.tex: Purge unused '\font's.
+
 2024-07-17  Andreas Scherer  <https://ascherer.github.io>
 
 	* twinx.ch: Compile CWEB with G++-14.
