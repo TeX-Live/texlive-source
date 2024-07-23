@@ -1,5 +1,10 @@
 2024-07-23  Andreas Scherer  <https://ascherer.github.io>
 
+	* cwebman-w2c.ch,
+	* cwebman.tex: Adjust typewriter font size in page headers.
+
+2024-07-23  Andreas Scherer  <https://ascherer.github.io>
+
 	* cwebman.tex: Purge header for Appendix C.
 
 2024-07-22  Andreas Scherer  <https://ascherer.github.io>
