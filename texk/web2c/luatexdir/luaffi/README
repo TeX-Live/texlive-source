@@ -12,7 +12,7 @@ The ffi module is available for:
 
 The ARM processor is currently not supported. There are subtle
 differences between this module and the one in luajitTeX 
-and we hope to be in sync around TeXLive 2018.
+and we hope to be in sync around TeXLive 2025.
 Different OS can have different interfaces,
 for instance OS_WIN has not 'complex.h'. If you want portable
 code, stick to the most common concepts.
