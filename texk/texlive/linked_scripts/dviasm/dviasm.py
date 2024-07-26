@@ -6,7 +6,7 @@
 # Copyright (C) 2007-2008 by Jin-Hwan Cho <chofchof@ktug.or.kr>
 # Copyright (C) 2011-2017 by Khaled Hosny <khaledhosny@eglug.org>
 # Copyright (C) 2019      by Arthur Reutenauer <arthur@reutenauer.eu>
-# Copyright (C) 2019-2023 by Hironobu Yamashita <h.y.acetaminophen@gmail.com>
+# Copyright (C) 2019-2024 by Hironobu Yamashita <h.y.acetaminophen@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -192,12 +192,56 @@ def UCS2toJIS(c):
   if len(s) == 1: return ord(s)
   else:           return (s[3] << 8) + s[4]
 
+def XUnicodeDecode(s): # dirty hack to handle >= 0x110000
+  t = []
+  i = 1
+  while i < len(s)-1:
+    c = -1
+    if s[i] == '\\':
+      if s[i+1] == 'x':
+        try:
+          c = int(s[i+2:i+4],16)
+          i += 4
+        except ValueError:
+          warning('Invalid escape sequence \\x ignored!')
+          i += 2
+      elif s[i+1] == 'u':
+        try:
+          c = int(s[i+2:i+6],16)
+          i += 6
+        except ValueError:
+          warning('Invalid escape sequence \\u ignored!')
+          i += 2
+      elif s[i+1] == 'U':
+        try:
+          c = int(s[i+2:i+10],16)
+          i += 10
+        except ValueError:
+          warning('Invalid escape sequence \\U ignored!')
+          i += 2
+      else:
+        if i+1 < len(s)-1:
+          c = ord(s[i+1])
+          i += 2
+        else:
+          warning('Invalid escape character \\ ignored!')
+          i += 1
+    else:
+          c = ord(s[i])
+          i += 1
+    if is_ptex: c = UCS2toJIS(chr(c))
+    if c >= 0: t.append(c)
+  return t
+
 def GetStrUTF8(s): # used in Parse()
   if len(s) > 1 and ((s[0] == "'" and s[-1] == "'") or (s[0] == '"' and s[-1] == '"')):
-    t = s[1:-1].encode('raw_unicode_escape').decode('unicode_escape')
-    if is_ptex: return [UCS2toJIS(c) for c in t]
-    else:       return [ord(c)       for c in t]
-  else:         return ''
+    try: # This should work for valid Unicode
+      t = s[1:-1].encode('raw_unicode_escape').decode('unicode_escape')
+      if is_ptex: return [UCS2toJIS(c) for c in t]
+      else:       return [ord(c)       for c in t]
+    except UnicodeDecodeError: # e.g. for upTeX >= 0x110000
+                  return XUnicodeDecode(s)
+  else:           return ''
 
 def PutStrASCII(t): # used in Dump()
   s = ''
@@ -206,8 +250,7 @@ def PutStrASCII(t): # used in Dump()
     elif 32 <= o < 127: s += chr(o)
     elif o < 256:       s += ('\\x%02x' % o)
     elif o < 65536:     s += ('\\u%04x' % o)
-    else:
-      warning('Not support characters > 65535; may skip %d.\n' % o)
+    else:               s += ('\\U%08x' % o)
   return "'%s'" % s
 
 def PutStrLatin1(t): # used in Dump()
@@ -217,8 +260,7 @@ def PutStrLatin1(t): # used in Dump()
     elif 32 <= o < 127 or 161 <= o < 256: s += chr(o)
     elif o < 256:                         s += ('\\x%02x' % o)
     elif o < 65536:                       s += ('\\u%04x' % o)
-    else:
-      warning('Not support characters > 65535; may skip %d.\n' % o)
+    else:                                 s += ('\\U%08x' % o)
   return "'%s'" % s
 
 def DecodeISO2022JP(c):
@@ -240,7 +282,12 @@ def PutStrUTF8(t): # used in Dump()
       elif o < 128:       s += ('\\x%02x' % o)
       elif is_ptex:
         s += DecodeISO2022JP(o)
-      else:               s += chr(o)
+      else:
+        try:              s += chr(o)
+        except ValueError: # upTeX may have >= 0x110000
+          if o < 256:         s += '\\x%02x' % o
+          elif o < 65536:     s += '\\u%04x' % o
+          else:               s += '\\U%08x' % o
   return "'%s'" % s
 
 def IsFontChanged(f, z):
@@ -1174,12 +1221,12 @@ binary format. It is fully documented at
 Please report bugs to
   https://github.com/aminophen/dviasm"""
 
-  version = """This is %prog-20230823
+  version = """This is %prog-20240725
 
 Copyright (C) 2007-2008 by Jin-Hwan Cho <chofchof@ktug.or.kr>
 Copyright (C) 2011-2017 by Khaled Hosny <khaledhosny@eglug.org>
 Copyright (C) 2019      by Arthur Reutenauer <arthur@reutenauer.eu>
-Copyright (C) 2019-2022 by Hironobu Yamashita <h.y.acetaminophen@gmail.com>
+Copyright (C) 2019-2024 by Hironobu Yamashita <h.y.acetaminophen@gmail.com>
 
 This is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
