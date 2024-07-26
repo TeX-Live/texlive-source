@@ -1,3 +1,7 @@
+2024-07-26  Andreas Scherer  <https://ascherer.github.io>
+
+	* pdftex.ch: Prepare for compilation with gcc-14.
+
 2024-05-24  Thanh Han The  <hanthethanh@gmail.com>
 
 	* pdftex.web (pdf_ptex_use_underscore_code),
@@ -5,7 +9,7 @@
 	(Put each ...): define it.
 	(print_param): print it.
 	(get_ptex_use_underscore): new fn to implement it.
-        (pdf_print_info): adjust Fullbanner prefix character.
+	(pdf_print_info): adjust Fullbanner prefix character.
 	* pdftoepdf.cc (getptexuseunderscore): declare fn.
 	(write_epdf): use it for FileName, PageNumber, InfoDict.
 
