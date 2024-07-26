@@ -1,5 +1,5 @@
 % standard macros for CWEB listings (in addition to plain.tex)
-% Version 4.12 --- May 2024
+% Version 4.12 --- July 2024
 \ifx\renewenvironment\undefined\else\endinput\fi % LaTeX will use other macros
 \xdef\fmtversion{\fmtversion+CWEB4.12}
 \chardef\cwebversion=4 \chardef\cwebrevision=12
@@ -113,8 +113,6 @@
 \let\yskip=\smallskip
 \def\?{\mathrel?}
 \def\,{\relax\ifmmode\mskip\thinmuskip\else\thinspace\fi}
-\def\note#1#2.{\Y\noindent{\hangindent2em%
-    \baselineskip10pt\eightrm#1~\ifacrohint{\pdfnote#2.}\else#2\fi.\par}}
 
 \newtoks\toksA \newtoks\toksB \newtoks\toksC \newtoks\toksD
 \newtoks\toksE \newtoks\toksF \newtoks\usersanitizer
@@ -160,6 +158,8 @@
       [ @thispage /FitH @ypos ]}\fi}}\fi}
 \let\startsection=\stsec
 \def\defin#1{\global\advance\ind by 2 \1\&{#1 }} % begin `define' or `format'
+\def\note#1#2.{\Y\noindent{\hangindent2em\baselineskip10pt%
+  \eightrm#1~\ifacrohint{\pdfnote#2.}\else#2\fi.\par}}
 \def\A{\note{See also section}} % xref for doubly defined section name
 \def\As{\note{See also sections}} % xref for multiply defined section name
 \def\B{\rightskip=0pt plus 100pt minus 10pt % go into C mode
