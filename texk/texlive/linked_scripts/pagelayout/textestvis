@@ -13,7 +13,7 @@
 # LaTeX version 2008/05/04 or later.
 #
 
-version=1.1.0
+version=1.1.1
 
 OK="$( tput setaf 2 )•$( tput sgr0 )"
 FAILED="$( tput setaf 1 )$( tput bold )x$( tput sgr0 )"
@@ -122,13 +122,13 @@ test() {
           fi
         fi
 
-        magick convert -density $2 -quiet $tmpdir/$name.pdf $tmpdir/$name.png
+        magick -density $2 -quiet $tmpdir/$name.pdf $tmpdir/$name.png
         if [ -f "$tmpdir/$name.png" ]; then
           mv $tmpdir/$name.png $tmpdir/$name-0.png
         fi
 
         if [ -f "$name.approved.pdf" ]; then
-          magick convert -density $2 -quiet $name.approved.pdf $tmpdir/$name.approved.png
+          magick -density $2 -quiet $name.approved.pdf $tmpdir/$name.approved.png
           if [ -f "$tmpdir/$name.approved.png" ]; then
             mv $tmpdir/$name.approved.png $tmpdir/$name.approved-0.png
           fi
@@ -311,11 +311,11 @@ compare() {
   spacer=""
   if [ -f "$filea" ]; then
     if [ -f "$fileb" ]; then
-      magick convert -density $1 -quiet $filea $tmpdir/$basenamea.png
+      magick -density $1 -quiet $filea $tmpdir/$basenamea.png
       if [ -f "$tmpdir/$basenamea.png" ]; then
         mv $tmpdir/$basenamea.png $tmpdir/$basenamea-0.png
       fi
-      magick convert -density $1 -quiet $fileb $tmpdir/$basenameb.png
+      magick -density $1 -quiet $fileb $tmpdir/$basenameb.png
       if [ -f "$tmpdir/$basenameb.png" ]; then
         mv $tmpdir/$basenameb.png $tmpdir/$basenameb-0.png
       fi
