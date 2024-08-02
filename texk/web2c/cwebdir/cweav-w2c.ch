@@ -16,62 +16,62 @@
 
 @q Please send comments, suggestions, etc. to tex-k@@tug.org.            @>
 
-@x [0.0] l.35
+@x [0.0] l.34
 \def\title{CWEAVE (Version 4.11)}
 @y
 \def\title{CWEAVE (Version 4.11 [\TeX~Live])}
 @z
 
-@x [0.0] l.39
+@x [0.0] l.38
   \centerline{(Version 4.11)}
 @y
   \centerline{(Version 4.11 [\TeX~Live])}
 @z
 
-@x [0.0] l.41
+@x [0.0] l.40
 \def\botofcontents{\vfill
 @y
 \def\covernote{\vbox{%
 @z
 
-@x [0.0] l.54
+@x [0.0] l.53
 }
 @y
 }}\datecontentspage
 @z
 
-@x [1.1] l.70
+@x [1.1] l.69
 @d banner "This is CWEAVE (Version 4.11)"
 @y
 @d banner "This is CWEAVE, Version 4.11"
   /* will be extended by the \TeX~Live |versionstring| */
 @z
 
-@x [1.2] l.98
+@x [1.2] l.97
   if (show_banner) puts(banner); /* print a ``banner line'' */
 @y
   if (show_banner) cb_show_banner(); /* print a ``banner line'' */
 @z
 
-@x [1.3] l.112
+@x [1.3] l.111
 @i common.h
 @y
 @i comm-w2c.h
 @z
 
-@x [2.23] l.217
+@x [2.23] l.216
 @ @d max_refs 30000 /* number of cross-references; must be less than 65536 */
 @y
 @ @d max_refs 65535 /* number of cross-references; must be less than 65536 */
 @z
 
-@x [2.25] l.246
+@x [2.25] l.245
 @d append_xref(c) if (xref_ptr==xmem_end) overflow("cross-reference");
 @y
 @d append_xref(c) if (xref_ptr==xmem_end) overflow(_("cross-reference"));
 @z
 
-@x [2.30] l.337
+@x [2.30] l.336
 @d max_toks 30000 /* number of symbols in \CEE/ texts being parsed;
   must be less than 65536 */
 @d max_texts 8000 /* number of phrases in \CEE/ texts being parsed;
@@ -83,97 +83,97 @@
   must be less than 10240 */
 @z
 
-@x [4.57] l.888
+@x [4.57] l.887
         err_print("! String didn't end"); loc=limit; break;
 @y
         err_print(_("! String didn't end")); loc=limit; break;
 @z
 
-@x [4.57] l.892
+@x [4.57] l.891
         err_print("! Input ended in middle of string"); loc=buffer; break;
 @y
         err_print(_("! Input ended in middle of string")); loc=buffer; break;
 @z
 
-@x [4.57] l.911
+@x [4.57] l.910
     printf("%s","\n! String too long: ");
 @y
     printf("%s",_("\n! String too long: "));
 @z
 
-@x [4.59] l.930
+@x [4.59] l.929
   case translit_code: err_print("! Use @@l in limbo only"); continue;
 @y
   case translit_code: err_print(_("! Use @@l in limbo only")); continue;
 @z
 
-@x [4.62] l.968
+@x [4.62] l.967
     err_print("! Input ended in section name");
 @y
     err_print(_("! Input ended in section name"));
 @z
 
-@x [4.62] l.981
+@x [4.62] l.980
   printf("%s","\n! Section name too long: ");
 @y
   printf("%s",_("\n! Section name too long: "));
 @z
 
-@x [4.63] l.995
+@x [4.63] l.994
     err_print("! Section name didn't end"); break;
 @y
     err_print(_("! Section name didn't end")); break;
 @z
 
-@x [4.63] l.999
+@x [4.63] l.998
     err_print("! Control codes are forbidden in section name"); break;
 @y
     err_print(_("! Control codes are forbidden in section name")); break;
 @z
 
-@x [4.64] l.1016
+@x [4.64] l.1015
     err_print("! Control text didn't end"); loc=limit;
 @y
     err_print(_("! Control text didn't end")); loc=limit;
 @z
 
-@x [4.64] l.1021
+@x [4.64] l.1020
       err_print("! Control codes are forbidden in control text");
 @y
       err_print(_("! Control codes are forbidden in control text"));
 @z
 
-@x [4.66] l.1036
+@x [4.66] l.1035
 if (loc>=limit) err_print("! Verbatim string didn't end");
 @y
 if (loc>=limit) err_print(_("! Verbatim string didn't end"));
 @z
 
-@x [5.70] l.1073
+@x [5.70] l.1072
   if (++section_count==max_sections) overflow("section number");
 @y
   if (++section_count==max_sections) overflow(_("section number"));
 @z
 
-@x [5.74] l.1162
+@x [5.74] l.1161
     case translit_code: err_print("! Use @@l in limbo only"); continue;
 @y
     case translit_code: err_print(_("! Use @@l in limbo only")); continue;
 @z
 
-@x [5.79] l.1249
+@x [5.79] l.1248
   err_print("! Missing left identifier of @@s");
 @y
   err_print(_("! Missing left identifier of @@s"));
 @z
 
-@x [5.79] l.1254
+@x [5.79] l.1253
     err_print("! Missing right identifier of @@s");
 @y
     err_print(_("! Missing right identifier of @@s"));
 @z
 
-@x [5.82] l.1302
+@x [5.82] l.1301
       printf("%s","\n! Never defined: <");
       print_section_name(p); putchar('>'); mark_harmless();
 @y
@@ -181,7 +181,7 @@ if (loc>=limit) err_print(_("! Verbatim string didn't end"));
       print_section_name(p); putchar('>'); mark_harmless();
 @z
 
-@x [5.82] l.1308
+@x [5.82] l.1307
       printf("%s","\n! Never used: <");
       print_section_name(p); putchar('>'); mark_harmless();
 @y
@@ -189,7 +189,7 @@ if (loc>=limit) err_print(_("! Verbatim string didn't end"));
       print_section_name(p); putchar('>'); mark_harmless();
 @z
 
-@x [6.89] l.1397
+@x [6.89] l.1396
 @ In particular, the |finish_line| procedure is called near the very
 beginning of phase two. We initialize the output variables in a slightly
 tricky way so that the first line of the output file will be
@@ -218,61 +218,61 @@ tex_puts("cwebma");
 *out_ptr='c';
 @z
 
-@x [6.94] l.1462
+@x [6.94] l.1461
   printf("\n! Line had to be broken (output l. %d):\n",out_line);
 @y
   printf(_("\n! Line had to be broken (output l. %d):\n"),out_line);
 @z
 
-@x [7.99] l.1543
+@x [7.99] l.1542
         default: err_print("! Double @@ should be used in limbo");
 @y
         default: err_print(_("! Double @@ should be used in limbo"));
 @z
 
-@x [7.101] l.1585
+@x [7.101] l.1584
 @d app_tok(c) {if (tok_ptr+2>tok_mem_end) overflow("token"); *(tok_ptr++)=c;}
 @y
 @d app_tok(c) {if (tok_ptr+2>tok_mem_end) overflow(_("token")); *(tok_ptr++)=c;}
 @z
 
-@x [7.101] l.1597
+@x [7.101] l.1596
           err_print("! Input ended in mid-comment");
 @y
           err_print(_("! Input ended in mid-comment"));
 @z
 
-@x [7.101] l.1602
+@x [7.101] l.1601
         if (bal>1) err_print("! Missing } in comment");
 @y
         if (bal>1) err_print(_("! Missing } in comment"));
 @z
 
-@x [7.101] l.1618
+@x [7.101] l.1617
       else {err_print("! Extra } in comment");
 @y
       else {err_print(_("! Extra } in comment"));
 @z
 
-@x [7.102] l.1630
+@x [7.102] l.1629
   if (bal>1) err_print("! Missing } in comment");
 @y
   if (bal>1) err_print(_("! Missing } in comment"));
 @z
 
-@x [7.103] l.1638
+@x [7.103] l.1637
     err_print("! Illegal use of @@ in comment");
 @y
     err_print(_("! Illegal use of @@ in comment"));
 @z
 
-@x [8.110] l.2129
+@x [8.110] l.2128
 @i prod.w
 @y
 @i prod-cweave.w
 @z
 
-@x [9.128] l.2651
+@x [9.128] l.2650
 @<Cases for |exp|@>=
 if (cat1==lbrace || cat1==int_like || cat1==decl) {
   make_underlined(pp); big_app(dindent); big_app1(pp);
@@ -286,7 +286,7 @@ if(cat1==lbrace || cat1==int_like || cat1==decl) {
 }
 @z
 
-@x [9.138] l.2755
+@x [9.138] l.2754
 @ @<Cases for |decl_head|@>=
 if (cat1==comma) {
   big_app2(pp); app(opt); app('9'); reduce(pp,2,decl_head,-1,33);
@@ -328,7 +328,7 @@ else if (cat1==int_like || cat1==lbrace || cat1==decl) {
 else if (cat1==semi) squash(pp,2,decl,-1,39);
 @z
 
-@x [9.139] l.2777
+@x [9.139] l.2776
 @ @<Cases for |decl|@>=
 if (cat1==decl) {
   big_app1_insert(pp,force); reduce(pp,2,decl,-1,40);
@@ -347,7 +347,7 @@ else if (cat1==stmt || cat1==function) {
 }
 @z
 
-@x [9.143] l.2834
+@x [9.143] l.2833
 @ @<Cases for |fn_decl|@>=
 if (cat1==decl) {
   big_app1_insert(pp,force); reduce(pp,2,fn_decl,0,51);
@@ -370,14 +370,14 @@ else if (cat1==stmt) {
 }
 @z
 
-@x [9.153] l.2938
+@x [9.153] l.2937
   big_app1_insert(pp,dindent); reduce(pp,2,fn_decl,0,73);
 @y
   big_app1(pp); if (indent_param_decl) big_app(dindent);
   big_app1(pp+1); reduce(pp,2,fn_decl,0,73);
 @z
 
-@x [9.156] l.2964
+@x [9.156] l.2963
   big_app1_insert(pp, (cat1==decl || cat1==function) ? big_force :
      force_lines ? force : break_space); reduce(pp,2,cat1,-1,76);
 @y
@@ -386,109 +386,109 @@ else if (cat1==stmt) {
      ( force_lines ? force : break_space ) ); reduce(pp,2,cat1,-1,76);
 @z
 
-@x [9.186] l.3293
+@x [9.186] l.3292
     overflow("token");
 @y
     overflow(_("token"));
 @z
 
-@x [9.186] l.3297
+@x [9.186] l.3296
     overflow("text");
 @y
     overflow(_("text"));
 @z
 
-@x [9.190] l.3352
+@x [9.190] l.3351
   if (tok_ptr+6>tok_mem_end) overflow("token");
 @y
   if (tok_ptr+6>tok_mem_end) overflow(_("token"));
 @z
 
-@x [9.191] l.3358
+@x [9.191] l.3357
   printf("\nIrreducible scrap sequence in section %d:",(int)section_count);
 @y
   printf(_("\nIrreducible scrap sequence in section %d:"),(int)section_count);
 @z
 
-@x [9.192] l.3368
+@x [9.192] l.3367
   printf("\nTracing after l. %d:\n",cur_line); mark_harmless();
 @y
   printf(_("\nTracing after l. %d:\n"),cur_line); mark_harmless();
 @z
 
-@x [10.197] l.3500
+@x [10.197] l.3499
   overflow("scrap/token/text");
 @y
   overflow(_("scrap/token/text"));
 @z
 
-@x [10.199] l.3585
+@x [10.199] l.3584
       else err_print("! Double @@ should be used in strings");
 @y
       else err_print(_("! Double @@ should be used in strings"));
 @z
 
-@x [10.203] l.3668
+@x [10.203] l.3667
   if (next_control!='|') err_print("! Missing '|' after C text");
 @y
   if (next_control!='|') err_print(_("! Missing '|' after C text"));
 @z
 
-@x [11.211] l.3809
+@x [11.211] l.3808
   if (stack_ptr==stack_end) overflow("stack");
 @y
   if (stack_ptr==stack_end) overflow(_("stack"));
 @z
 
-@x [11.224] l.4132
+@x [11.224] l.4131
   printf("%s","\n! Illegal control code in section name: <");
 @y
   printf("%s",_("\n! Illegal control code in section name: <"));
 @z
 
-@x [11.225] l.4147
+@x [11.225] l.4146
     printf("%s","\n! C text in section name didn't end: <");
 @y
     printf("%s",_("\n! C text in section name didn't end: <"));
 @z
 
-@x [11.225] l.4159
+@x [11.225] l.4158
       if (j>buffer+long_buf_size-3) overflow("buffer");
 @y
       if (j>buffer+long_buf_size-3) overflow(_("buffer"));
 @z
 
-@x [11.226] l.4167
+@x [11.226] l.4166
   if (j>buffer+long_buf_size-4) overflow("buffer");
 @y
   if (j>buffer+long_buf_size-4) overflow(_("buffer"));
 @z
 
-@x [12.227] l.4182
+@x [12.227] l.4181
 if (show_progress) printf("%s","\nWriting the output file...");
 @y
 if (show_progress) printf("%s",_("\nWriting the output file..."));
 @z
 
-@x [12.232] l.4269
+@x [12.232] l.4268
         err_print("! TeX string should be in C text only"); break;
 @y
         err_print(_("! TeX string should be in C text only")); break;
 @z
 
-@x [12.232] l.4275
+@x [12.232] l.4274
         err_print("! You can't do that in TeX text"); break;
 @y
         err_print(_("! You can't do that in TeX text")); break;
 @z
 
-@x [12.236] l.4347
+@x [12.236] l.4346
     err_print("! Improper macro definition");
 @y
     err_print(_("! Improper macro definition"));
 @z
 
-@x [12.236] l.4360
+@x [12.236] l.4359
         } @=/* otherwise fall through */@>@;
       default: err_print("! Improper macro definition"); break;
 @y
@@ -496,62 +496,62 @@ if (show_progress) printf("%s",_("\nWriting the output file..."));
       default: err_print(_("! Improper macro definition")); break;
 @z
 
-@x [12.237] l.4387
+@x [12.237] l.4386
   if (scrap_ptr!=scrap_info+2) err_print("! Improper format definition");
 @y
   if (scrap_ptr!=scrap_info+2) err_print(_("! Improper format definition"));
 @z
 
-@x [12.240] l.4422
+@x [12.240] l.4421
   err_print("! You need an = sign after the section name");
 @y
   err_print(_("! You need an = sign after the section name"));
 @z
 
-@x [12.241] l.4444
+@x [12.241] l.4443
   err_print("! You can't do that in C text");
 @y
   err_print(_("! You can't do that in C text"));
 @z
 
-@x [13.247] l.4535
+@x [13.247] l.4534
   if (show_progress) printf("%s","\nWriting the index...");
 @y
   if (show_progress) printf("%s",_("\nWriting the index..."));
 @z
 
-@x [13.247] l.4546
+@x [13.247] l.4545
     fatal("! Cannot open index file ",idx_file_name);
 @y
     fatal(_("! Cannot open index file "),idx_file_name);
 @z
 
-@x [13.247] l.4558
+@x [13.247] l.4557
     fatal("! Cannot open section file ",scn_file_name);
 @y
     fatal(_("! Cannot open section file "),scn_file_name);
 @z
 
-@x [13.247] l.4570
+@x [13.247] l.4569
 fclose(active_file);
 @y
 fclose(active_file); active_file=tex_file=NULL;
 if (check_for_change) @<Update the result when it has changed@>@;
 @z
 
-@x [13.247] l.4573
+@x [13.247] l.4572
   printf("%s","Done.");
 @y
   printf("%s",_("Done."));
 @z
 
-@x [13.257] l.4725
+@x [13.257] l.4724
     if (sort_ptr>=scrap_info_end) overflow("sorting");
 @y
     if (sort_ptr>=scrap_info_end) overflow(_("sorting"));
 @z
 
-@x [13.269] l.4862
+@x [13.269] l.4861
   puts("\nMemory usage statistics:");
 @.Memory usage statistics:@>
   printf("%td names (out of %ld)\n",@^system dependencies@>
@@ -595,7 +595,7 @@ if (check_for_change) @<Update the result when it has changed@>@;
             (ptrdiff_t)(max_sort_ptr-scrap_info),(long)max_scraps);
 @z
 
-@x [14.270] l.4884
+@x [14.270] l.4883
 @** Index.
 @y
 @** Extensions to {\tentex CWEB}.  The following sections introduce new or

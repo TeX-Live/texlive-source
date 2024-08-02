@@ -27,7 +27,6 @@
 \def\dleft{[\![} \def\dright{]\!]} % double brackets
 \mathchardef\RA="3221 % right arrow
 \mathchardef\BA="3224 % double arrow
-\def\({} % ) kludge for alphabetizing certain section names
 \def\TeXxstring{\\{\TEX/\_string}}
 \def\skipxTeX{\\{skip\_\TEX/}}
 \def\copyxTeX{\\{copy\_\TEX/}}
