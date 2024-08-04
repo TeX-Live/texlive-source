@@ -846,18 +846,18 @@ void write_epdf(void)
 
     // write additional information
     if ((suppress_ptex_info & MASK_SUPPRESS_PTEX_FILENAME) == 0) {
-        pdf_printf("/%s%sFileName (%s)\n", sep, pdfkeyprefix,
+        pdf_printf("/%s%sFileName (%s)\n", pdfkeyprefix, sep,
                    convertStringToPDFString(pdf_doc->file_name,
                                             strlen(pdf_doc->file_name)));
     }
     if ((suppress_ptex_info & MASK_SUPPRESS_PTEX_PAGENUMBER) == 0) {
-        pdf_printf("/%s%sPageNumber %i\n", sep, pdfkeyprefix, (int) epdf_selected_page);
+        pdf_printf("/%s%sPageNumber %i\n", pdfkeyprefix, sep, (int) epdf_selected_page);
     }
     if ((suppress_ptex_info & MASK_SUPPRESS_PTEX_INFODICT) == 0) {
         pdf_doc->doc->getDocInfoNF(&info);
         if (info.isRef()) {
             // the info dict must be indirect (PDF Ref p. 61)
-            pdf_printf("/%s%sInfoDict ", sep, pdfkeyprefix);
+            pdf_printf("/%s%sInfoDict ", pdfkeyprefix, sep);
             pdf_printf("%d 0 R\n", addOther(info.getRef()));
         }
     }
