@@ -26,15 +26,6 @@
 
 \font\ninerm=cmr9
 \let\mc=\ninerm % medium caps
-\def\CEE/{{\mc C\spacefactor1000}}
-\def\UNIX/{{\mc U\kern-.05emNIX\spacefactor1000}}
-\def\TEX/{\TeX}
-\def\CPLUSPLUS/{{\mc C\PP\spacefactor1000}}
-\def\Cee{\CEE/} % for backward compatibility
-\def\Cpp{\CPLUSPLUS/} % for backward compatibility
-\def\9#1{}
- % with this definition of \9 you can say @:sort key}{TeX code@>
- % to alphabetize an index entry by the sort key but format with the TeX code
 \font\eightrm=cmr8
 \font\sixrm=cmr6
 \font\ninei=cmmi9
@@ -146,6 +137,16 @@
 \font\titlefont=cmr7 scaled\magstep4 % title on the contents page
 \font\ttitlefont=cmtt10 scaled\magstep2 % typewriter type in title
 
+\def\CEE/{{\mc C\spacefactor1000}}
+\def\UNIX/{{\mc U\kern-.05emNIX\spacefactor1000}}
+\def\TEX/{\TeX}
+\def\CPLUSPLUS/{{\mc C\PP\spacefactor1000}}
+\def\Cee{\CEE/} % for backward compatibility
+\def\Cpp{\CPLUSPLUS/} % for backward compatibility
+\def\9#1{}
+ % with this definition of \9 you can say @:sort key}{TeX code@>
+ % to alphabetize an index entry by the sort key but format with the TeX code
+
 \def\\#1{\leavevmode\hbox{\it#1\/\kern.05em}} % italic type for identifiers
 \def\|#1{\leavevmode\hbox{$#1$}} % one-letter identifiers look better this way
 \def\&#1{\leavevmode\hbox{\bf
@@ -228,11 +229,9 @@
   \Y\noindent{\hangindent2\em\baselineskip10pt%
     \eightrm#1~\ifacro{\pdfnote#2.}\else#2\fi.\par}}
 
-\newtoks\toksA \newtoks\toksB \newtoks\toksC \newtoks\toksD
-\newtoks\toksE \newtoks\toksF \newtoks\usersanitizer
+\newtoks\toksA \newtoks\toksE
 \newcount\countA \countA=0 \newcount\countB \countB=0
-\newcount\countC \countC=0 \newcount\countD \countD=0
-\newif\iftokprocessed \newif\ifTnum \newif\ifinstr
+\newcount\countNOS \countNOS=0
 {\def\\{\global\let\spacechar= }\\ }
 
 % Here we decide the output format, depending on the TeX engine in use:
@@ -301,7 +300,7 @@
 \outer\def\NN{\ifvoid\partialpage\leftfalse
   \else\ifdim\ht\partialpage<\pageht \lefttrue\else\leftfalse\fi\fi\NNN}
 \outer\def\NNN#1#2#3.{% beginning of starred section
-  \ifacro{\toksF={}\makeoutlinetoks#3\outlinedone\outlinedone}\fi
+  \ifacro{\makeoutlinetoks#3\outlinedone}\fi
   \gdepth=#1\gtitle={#3}\def\secno{#2}\xdef\secstar{#2}
   \ifleft \flushout
     \gdef\rlhead{\let\i=I\uppercase{\ignorespaces#3}} % running left headline
@@ -334,7 +333,7 @@
 \def\T#1{\leavevmode % octal, hex or decimal constant
   \hbox{$\def\?{\kern.2em}%$%
     \let\ \, % C++ digit separator becomes a little white space
-    \def\$##1{\egroup_{\rm##1}\bgroup}% suffix to constant
+    \def\$##1{\egroup_{\rm##1}\bgroup}%$% suffix to constant
     \def\_{\cdot 10^{\aftergroup}}% power of ten (via dirty trick)
     \let\~=\oct \let\^=\hex \let\\=\bin {#1}$}}%$%
 \def\U{\note{This code is used in section}} % xref for use of a section
@@ -543,22 +542,20 @@
   \def\outsecname{Names of the sections}
   \ifpdflua \makebookmarks \countsections
     \pdfdest name {NOS} fith
-    \pdfoutline goto name {NOS} count -\the\countD {\outsecname}
-    \def\X##1:##2\X{\firstsecno##1.%
-      {\toksF={}\makeoutlinetoks##2\outlinedone\outlinedone}%
-      \pdfoutline goto num \the\toksA \expandafter{\the\toksE}}
+    \pdfoutline goto name {NOS} count -\the\countNOS {\outsecname}
   \else \special{pdf: outline -1 << /Title (\outsecname)
-      /Dest [ @thispage /FitH @ypos ] >>}
-    \def\X##1:##2\X{\firstsecno##1.%
-      {\toksF={}\makeoutlinetoks##2\outlinedone\outlinedone}%
-      \special{pdf: outline 0 << /Title (\the\toksE)
-        /A << /S /GoTo /D (\romannumeral\the\toksA) >> >>}}
-  \fi \readsections \fi}
+      /Dest [ @thispage /FitH @ypos ] >>}\fi
+  \def\X##1:##2\X{\firstsecno##1.%
+    {\makeoutlinetoks##2\outlinedone}%
+    \ifpdflua \pdfoutline goto num \the\toksA \expandafter{\the\toksE}
+    \else \special{pdf: outline 0 << /Title (\the\toksE)
+        /A << /S /GoTo /D (\romannumeral\the\toksA) >> >>}\fi}
+  \readsections \fi}
 \def\makebookmarks{\let\ZZ=\writebookmarkline \readcontents\relax}
 \def\countsections{\message{Number of named sections:}
-  {\def\I{\global\advance\countD by 1}\def\X##1\X{\relax}
+  {\def\I{\global\advance\countNOS by 1}\def\X##1\X{\relax}
   \def\Q##1.{\relax}\def\Qs##1.{\relax}\def\U##1.{\relax}\def\Us##1.{\relax}
-  \readsections\relax}\message{\the\countD}}
+  \readsections\relax}\message{\the\countNOS}}
 \def\writebookmarkline#1#2#3#4#5{{%
   \let\(=\let \let\)=\let \let\[=\let \let\]=\let \let\/=\let
   \pdfoutline goto num #3 count -\expnumber{chunk#2.#3} {#5}}}
@@ -579,7 +576,7 @@
 %\def\contentsline#1#2#3#4#5{\ifnum#2=0 \smallbreak\fi
     %\line{\consetup{#2}#1
       %\rm\leaders\hbox to .5em{.\hfil}\hfil
-      %\ \ifacro\pdflink{#3}{\romannumeral#3}\else#3\fi\hbox to3em{\hss#4}}}
+      %\ \ifacro\pdflink{#3}\else#3\fi\hbox to3em{\hss#4}}}
 %\def\consetup#1{\ifcase#1 \bf % depth -1 (@**)
   %\or % depth 0 (@*)
   %\or \hskip2em % depth 1 (@*1)

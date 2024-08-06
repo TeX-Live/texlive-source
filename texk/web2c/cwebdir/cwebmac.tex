@@ -1,5 +1,5 @@
 % standard macros for CWEB listings (in addition to plain.tex)
-% Version 4.12 --- July 2024
+% Version 4.12 --- August 2024
 \ifx\renewenvironment\undefined\else\endinput\fi % LaTeX will use other macros
 \xdef\fmtversion{\fmtversion+CWEB4.12}
 \chardef\cwebversion=4 \chardef\cwebrevision=12
@@ -114,11 +114,9 @@
 \def\?{\mathrel?}
 \def\,{\relax\ifmmode\mskip\thinmuskip\else\thinspace\fi}
 
-\newtoks\toksA \newtoks\toksB \newtoks\toksC \newtoks\toksD
-\newtoks\toksE \newtoks\toksF \newtoks\usersanitizer
+\newtoks\toksA \newtoks\toksE
 \newcount\countA \countA=0 \newcount\countB \countB=0
-\newcount\countC \countC=0 \newcount\countD \countD=0
-\newif\iftokprocessed \newif\ifTnum \newif\ifinstr
+\newcount\countNOS \countNOS=0
 {\def\\{\global\let\spacechar= }\\ }
 
 % Here we decide the output format, depending on the TeX engine in use:
@@ -187,7 +185,7 @@
 \outer\def\M#1{\MN{#1}\ifon\vfil\penalty-100\vfilneg % beginning of section
   \vskip\intersecskip\startsection\ignorespaces}
 \outer\def\N#1#2#3.{% beginning of starred section
-  \ifacro{\toksF={}\makeoutlinetoks#3\outlinedone\outlinedone}\fi
+  \ifacro{\makeoutlinetoks#3\outlinedone}\fi
   \gdepth=#1\gtitle={#3}\MN{#2}%
   \ifon\ifnum#1<\secpagedepth \vfil\eject % force page break if depth is small
     \else\vfil\penalty-100\vfilneg\vskip\intersecskip\fi\fi
@@ -354,23 +352,21 @@
   \ifacro \def\outsecname{Names of the sections} \let\Xpdf\X
 %  \ifpdflua \makebookmarks \pdfdest name {NOS} fitb % in versions < 3.68
   \ifpdflua \pdfdest name {NOS} fith % changed in version 3.69
-    \pdfoutline goto name {NOS} count -\the\countD {\outsecname}
-    \def\X##1:##2\X{\Xpdf##1:##2\X \firstsecno##1.%
-      {\toksF={}\makeoutlinetoks##2\outlinedone\outlinedone}%
-      \pdfoutline goto num \the\toksA \expandafter{\the\toksE}}
+    \pdfoutline goto name {NOS} count -\the\countNOS {\outsecname}
   \else \special{pdf: outline -1 << /Title (\outsecname)
-      /Dest [ @thispage /FitH @ypos ] >>}
-    \def\X##1:##2\X{\Xpdf##1:##2\X \firstsecno##1.%
-      {\toksF={}\makeoutlinetoks##2\outlinedone\outlinedone}%
-      \special{pdf: outline 0 << /Title (\the\toksE)
-        /A << /S /GoTo /D (\romannumeral\the\toksA) >> >>}}
-  \fi\fi
+      /Dest [ @thispage /FitH @ypos ] >>}\fi
+  \def\X##1:##2\X{\Xpdf##1:##2\X \firstsecno##1.%
+    {\makeoutlinetoks##2\outlinedone}%
+    \ifpdflua \pdfoutline goto num \the\toksA \expandafter{\the\toksE}
+    \else \special{pdf: outline 0 << /Title (\the\toksE)
+        /A << /S /GoTo /D (\romannumeral\the\toksA) >> >>}\fi}
+  \fi % \ifacro
   \readsections}
 \def\makebookmarks{\let\ZZ=\writebookmarkline \readcontents\relax}
 \def\countsections{\message{Number of named sections:}
-  {\def\I{\global\advance\countD by 1}\def\X##1\X{\relax}
+  {\def\I{\global\advance\countNOS by 1}\def\X##1\X{\relax}
   \def\Q##1.{\relax}\def\Qs##1.{\relax}\def\U##1.{\relax}\def\Us##1.{\relax}
-  \readsections\relax}\message{\the\countD}}
+  \readsections\relax}\message{\the\countNOS}}
 \def\expnumber#1{\expandafter\ifx\csname#1\endcsname\relax 0%
   \else \csname#1\endcsname \fi} % Petr Olsak's macros from texinfo.tex
 \def\advancenumber#1{\countA=\expnumber{#1}\relax \advance\countA by1
@@ -396,9 +392,9 @@
     \line{\consetup{#2}#1
       \rm\leaders\hbox to .5em{.\hfil}\hfil
       \ \ifhint
-          \HINTlink{#3}{\romannumeral#3}% No page numbers in HINT
+          \HINTlink{#3}% No page numbers in HINT
           \HINTcontents{#1}{#2}{#3}%
-        \else\ifacro\pdflink{#3}{\romannumeral#3}\else#3\fi
+        \else\ifacro\pdflink{#3}\else#3\fi
           \hbox to3em{\hss#4}\fi}}
 \def\consetup#1{\ifcase#1 \bf % depth -1 (@**)
   \or % depth 0 (@*)

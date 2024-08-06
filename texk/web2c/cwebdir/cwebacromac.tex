@@ -1,6 +1,8 @@
 % hypertext macros for CWEB listings (in addition to cwebmac.tex)
-% Version 2.0 --- May 2024
+% Used in cwebmac.tex, pdfctwimac.tex, pdfproofmac.tex
+% Version 3.0 --- August 2024
 \ifx\ifacrohint\undefined\endinput\fi % these are not standalone macros
+
 \ifluatex % LuaTeX is almost like pdfTeX
 \protected\def\pdfliteral   {\pdfextension literal}
 \protected\def\pdfstartlink {\pdfextension startlink\space}
@@ -15,7 +17,6 @@
 \let\pdfoutput=\outputmode
 \fi % end of LuaTeX->pdfTeX redirection macros
 
-% Used in cwebmac.tex, pdfctwimac.tex, pdfproofmac.tex
 \def\tocpages{1} % Most programs have one-page Table-of-Contents
 \def\startpdf{\def\pagemode{/PageMode /UseOutlines}
   \ifnum\contentspagenumber=0 \advance \pageno by -\tocpages
@@ -24,9 +25,41 @@
   \else \twodigits=\pageno \pageno=\contentspagenumber
     \advance \pageno by \tocpages \advance \twodigits by -\pageno
     \def\pagelabels{/PageLabels << /Nums [ 0 << /S/D/St \the\pageno >>
-      \the\twodigits << /S/D/St \contentspagenumber >> ] >>} \fi
+      \the\twodigits << /S/D/St \contentspagenumber >> ] >>}
+  \fi
   \ifpdflua\pdfcatalog{\pagemode\space\pagelabels}
-  \else \special{pdf: docview << \pagemode\space\pagelabels >>}\fi}
+  \else\special{pdf: docview << \pagemode\space\pagelabels >>}\fi}
+
+% Local variables; there are a few externals like '\toksA' and '\countA'
+\newtoks\toksB \newtoks\toksC \newtoks\toksD \newtoks\toksF
+\newtoks\usersanitizer
+\newif\iftokprocessed \newif\ifTnum \newif\ifinstr \newif\ifhavenum
+
+\ifacrohint % Common macros for \ifacro and \ifhint
+\def\pdfnote#1.{\setbox0=\hbox{\toksA={#1.}\toksB={}\maketoks}\the\toksA}
+\def\firstsecno#1.{\setbox0=\hbox{\toksA={#1.}\toksB={}%
+    \def\makenote{\addtokens\toksB{\the\toksC}\def\makenote{\toksD={}
+      \toksC={}\let\space\empty}\makenote}\maketoks}}
+\def\addtokens#1#2{\edef\addtoks{\noexpand#1={\the#1#2}}\addtoks}
+\def\poptoks#1#2|ENDTOKS|{\let\first=#1\toksD={#1}%
+  \ifcat\noexpand\first0\countB=`#1\else\countB=0\fi\toksA={#2}}
+\def\maketoks{\expandafter\poptoks\the\toksA|ENDTOKS|%
+  \let\next=\maketoks % continue processing by default
+  \ifnum\countB>`9 \countB=0 \fi
+  \ifnum\countB<`0
+    \ifhavenum\makenote\fi
+    \ifx\first.\let\next=\maketoksdone % fullstop
+    \else \addtokens\toksB{\the\toksD}
+      \ifx\first,\addtokens\toksB{\space}\fi
+    \fi
+  \else \addtokens\toksC{\the\toksD}\global\havenumtrue
+  \fi
+  \next
+}
+\def\makenote{\addtokens\toksB
+    {\noexpand\pdflink{\the\toksC}}\toksC={}\global\havenumfalse}
+\def\maketoksdone{\edef\st{\global\noexpand\toksA={\the\toksB}}\st}
+\fi % End of common macros
 
 \ifacro % The following are general pdf macros
 \def\thewidth{\the\wd0 \space}
@@ -34,12 +67,13 @@
 \def\thedepth{\the\dp\strutbox\space}
 \ifpdflua
   \ifx\pdfannotlink\undefined\let\pdfannotlink\pdfstartlink\fi% for pdfTeX 0.14
-  \def\pdflink#1#2{\hbox{\pdfannotlink height \theheight depth \thedepth
+  \def\pdflink#1{\hbox{\pdfannotlink height \theheight depth \thedepth
     attr{/Border [0 0 0]} goto num #1 \Blue #1\Black\pdfendlink}} % changed 3.69
-\else\def\pdflink#1#2{\setbox0=\hbox{\special{pdf: bc [ \pdflinkcolor ]}{#1}%
+\else\def\pdflink#1{\setbox0=\hbox{\special{pdf: bc [ \pdflinkcolor ]}{#1}%
     \special{pdf: ec}}\special{pdf: ann width \thewidth height \theheight
-      depth \thedepth << /Type /Annot /Subtype /Link
-      /Border [0 0 0] /A << /S /GoTo /D (#2) >> >>}\box0\relax}\fi
+      depth \thedepth << /Type /Annot /Subtype /Link /Border [0 0 0]
+      /A << /S /GoTo /D (\romannumeral #1) >> >>}\box0\relax}
+\fi
 \def\sanitizecommand#1#2{\addtokens\usersanitizer
        {\noexpand\dosanitizecommand\noexpand#1{#2}}}
 \def\dosanitizecommand#1#2{\ifx\nxt#1\addF{#2}\fi}
@@ -49,7 +83,8 @@
 \catcode`\[=12 \catcode`\]=12 \catcode`\{=1 \catcode`\}=2
 \catcode`\~=12 \def\tildechar{~} \catcode`\~=13
 \catcode`\|=0 |catcode`|\=12 |def|bschar{\} |catcode`|\=0 \catcode`\|=12
-\def\makeoutlinetoks{\Tnumfalse\afterassignment\makeolproctok\let\nxt= }
+\def\makeoutlinetoks{\toksF={}\Tnumfalse
+  \afterassignment\makeolproctok\let\nxt= }
 \def\makeolnexttok{\afterassignment\makeolproctok\let\nxt= }
 \def\makeolgobbletok{\afterassignment\makeolnexttok\let\nxt= }
 \def\addF#1{\addtokens\toksF{#1}\tokprocessedtrue}
@@ -141,7 +176,7 @@
   \fi\fi\fi\fi\fi
 }
 \def\outlinedone{\edef\outlinest{\global\noexpand\toksE={\the\toksF}}%
-  \outlinest\let\outlinedone=\relax}
+  \outlinest\let\outlinedone=\relax\outlinedone}
 \fi % End of pdf macros
 
 \ifhint
@@ -155,34 +190,7 @@
 \def\HINThome{\HINTdest name {HINT.home}%
   \HINToutline goto name {HINT.home} depth 1 {Table of Contents}}
 \def\HINTlabel{{\let\*=\empty\HINTdest num \secstar top}}
-\def\HINTlink#1#2{\HINTstartlink goto num #1 {#1}\HINTendlink}% #2 not used ???
+\def\HINTlink#1{\HINTstartlink goto num #1 {#1}\HINTendlink}
 \def\HINTcontents#1#2#3{\HINToutline goto num #3 depth #2 {#1}}
 \let\pdflink=\HINTlink
 \fi % End of HINT macros
-
-% Common macros for \ifacro and \ifhint
-\ifacrohint
-\def\pdfnote#1.{\setbox0=\hbox{\toksA={#1.}\toksB={}\maketoks}\the\toksA}
-\def\firstsecno#1.{\setbox0=\hbox{\toksA={#1.}\toksB={}%
-    \def\makenote{\addtokens\toksB{\the\toksC}\def\makenote{\toksD={}
-      \toksC={}\let\space\empty}\makenote}\maketoks}}
-\def\addtokens#1#2{\edef\addtoks{\noexpand#1={\the#1#2}}\addtoks}
-\def\poptoks#1#2|ENDTOKS|{\let\first=#1\toksD={#1}%
-  \ifcat\noexpand\first0\countB=`#1\else\countB=0\fi\toksA={#2}}
-\def\maketoks{\expandafter\poptoks\the\toksA|ENDTOKS|%
-  \ifnum\countB>`9 \countB=0 \fi
-  \ifnum\countB<`0
-    \ifnum0=\countC\else\makenote\fi
-    \ifx\first.\let\next=\maketoksdone\else
-        \let\next=\maketoks
-        \addtokens\toksB{\the\toksD}
-        \ifx\first,\addtokens\toksB{\space}\fi
-    \fi
-  \else \addtokens\toksC{\the\toksD}\global\countC=1\let\next=\maketoks
-  \fi
-  \next
-}
-\def\makenote{\addtokens\toksB
-    {\noexpand\pdflink{\the\toksC}{\romannumeral\the\toksC}}\toksC={}\global\countC=0}
-\def\maketoksdone{\edef\st{\global\noexpand\toksA={\the\toksB}}\st}
-\fi % End of common macros

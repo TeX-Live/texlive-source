@@ -1,3 +1,11 @@
+2024-08-06  Andreas Scherer  <https://ascherer.github.io>
+
+	* cwebacromac.tex,
+	* cwebmac.tex,
+	* cwebman.tex,
+	* texinputs/pdfctproofmac.tex,
+	* texinputs/pdfctwimac.tex: Refine PDF-related macros.
+
 2024-08-02  Andreas Scherer  <https://ascherer.github.io>
 
 	* ctwill-w2c.ch,
