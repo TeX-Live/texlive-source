@@ -38,11 +38,11 @@
 \ifacrohint % Common macros for \ifacro and \ifhint
 \def\pdfnote#1.{\setbox0=\hbox{\toksA={#1.}\toksB={}\maketoks}\the\toksA}
 \def\firstsecno#1.{\setbox0=\hbox{\toksA={#1.}\toksB={}%
-    \def\makenote{\addtokens\toksB{\the\toksC}\def\makenote{\toksD={}
-      \toksC={}\let\space\empty}\makenote}\maketoks}}
+    \def\makenote{\addtokens\toksB{\the\toksC}\def\makenote{\let\space\empty
+      \toksC={}\toksD={}}\makenote}\maketoks}}
 \def\addtokens#1#2{\edef\addtoks{\noexpand#1={\the#1#2}}\addtoks}
-\def\poptoks#1#2|ENDTOKS|{\let\first=#1\toksD={#1}%
-  \ifcat\noexpand\first0\countB=`#1\else\countB=0\fi\toksA={#2}}
+\def\poptoks#1#2|ENDTOKS|{\let\first=#1\toksD={#1}\toksA={#2}%
+  \ifcat\noexpand\first0\countB=`#1\else\countB=0\fi}
 \def\maketoks{\expandafter\poptoks\the\toksA|ENDTOKS|%
   \let\next=\maketoks % continue processing by default
   \ifnum\countB>`9 \countB=0 \fi
@@ -72,7 +72,7 @@
 \else\def\pdflink#1{\setbox0=\hbox{\special{pdf: bc [ \pdflinkcolor ]}{#1}%
     \special{pdf: ec}}\special{pdf: ann width \thewidth height \theheight
       depth \thedepth << /Type /Annot /Subtype /Link /Border [0 0 0]
-      /A << /S /GoTo /D (\romannumeral #1) >> >>}\box0\relax}
+      /A << /S /GoTo /D (\romannumeral#1) >> >>}\box0\relax}
 \fi
 \def\sanitizecommand#1#2{\addtokens\usersanitizer
        {\noexpand\dosanitizecommand\noexpand#1{#2}}}
