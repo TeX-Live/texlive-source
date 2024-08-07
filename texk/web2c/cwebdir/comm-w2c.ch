@@ -888,5 +888,5 @@ void cb_show_banner (void)
 @.cweb.mo@>
 }
 
-@* Index.
+@** Index.
 @z
