@@ -616,21 +616,21 @@ else {
 @x [9.85] l.1286
 @* Index.
 @y
-@** Extensions to {\tentex CWEB}.  The following sections introduce new or
+@* Extensions to {\tentex CWEB}.  The following sections introduce new or
 improved features that have been created by numerous contributors over the
 course of a quarter century.
 
 Care has been taken to keep the original section numbering intact, so this new
 material should nicely integrate with the original ``\&{85.~Index}.''
 
-@* Language setting.  This global variable is set by the argument of the
+@*1 Language setting.  This global variable is set by the argument of the
 `\.{+l}' (or `\.{-l}') command-line option.
 
 @<Global var...@>=
 const char *use_language=""; /* prefix of \.{cwebmac.tex} in \TEX/ output */
 
 
-@* User communication.  The |scan_args| and |cb_show_banner| routines and the
+@*1 User communication.  The |scan_args| and |cb_show_banner| routines and the
 |bindtextdomain| argument string need a few extra variables.
 
 @d max_banner 50
@@ -647,7 +647,7 @@ string texmf_locale;@/
 #endif
 char separators[]=SEPARATORS;
 
-@* Temporary file output. Most \CEE/ projects are controlled by a \.{Makefile}
+@*1 Temporary file output. Most \CEE/ projects are controlled by a \.{Makefile}
 that automatically takes care of the temporal dependencies between the different
 source modules. It may be convenient that \.{CWEB} doesn't create new output
 for all existing files, when there are only changes to some of them. Thus the
@@ -696,7 +696,7 @@ if(check_file) fclose(check_file);
 if(strlen(check_file_name)) /* Delete the temporary file in case of a break */
    remove(check_file_name);
 
-@* Internationalization.  If translation catalogs for your personal
+@*1 Internationalization.  If translation catalogs for your personal
 \.{LANGUAGE} are installed at the appropriate place, \.{CTANGLE} and \.{CWEAVE}
 will talk to you in your favorite language.  Catalog \.{cweb} contains all
 strings from ``plain \.{CWEB},'' catalog \.{cweb-tl} contains a few extra
@@ -759,7 +759,7 @@ free(texmf_locale);
 textdomain("cweb"); /* the majority of |"strings"| come from ``plain \.{CWEB}'' */
 @.cweb.mo@>
 
-@* File lookup with \Kpathsea/.  The \.{CTANGLE} and \.{CWEAVE} programs from
+@*1 File lookup with \Kpathsea/.  The \.{CTANGLE} and \.{CWEAVE} programs from
 the original \.{CWEB} package use the compile-time default directory or the
 value of the environment variable \.{CWEBINPUTS} as an alternative place to be
 searched for files, if they could not be found in the current directory.
@@ -816,7 +816,7 @@ numbers.
 Debugging output is always written to |stderr|, and begins with the string
 `\.{kdebug:}'.
 
-@* System dependent changes. The most volatile stuff comes at the very end.
+@*1 System dependent changes. The most volatile stuff comes at the very end.
 
 Modules for dealing with help messages and version info.
 
@@ -888,5 +888,5 @@ void cb_show_banner (void)
 @.cweb.mo@>
 }
 
-@** Index.
+@* Index.
 @z
