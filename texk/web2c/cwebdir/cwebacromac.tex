@@ -31,11 +31,10 @@
   \else\special{pdf: docview << \pagemode\space\pagelabels >>}\fi}
 
 % Local variables; there are a few externals like '\toksA' and '\countA'
-\newtoks\toksB \newtoks\toksC \newtoks\toksD \newtoks\toksF
-\newtoks\usersanitizer
+\newtoks\toksB \newtoks\toksC \newtoks\toksD \newtoks\toksF \newtoks\sanitizer
 \newif\iftokprocessed \newif\ifTnum \newif\ifinstr \newif\ifhavenum
 
-\ifacrohint % Common macros for \ifacro and \ifhint
+\ifacrohint % Common macros for \ifacro and \ifhint to create \pdflink's
 \def\pdfnote#1.{\setbox0=\hbox{\toksA={#1.}\toksB={}\maketoks}\the\toksA}
 \def\firstsecno#1.{\setbox0=\hbox{\toksA={#1.}\toksB={}%
     \def\makenote{\addtokens\toksB{\the\toksC}\def\makenote{\let\space\empty
@@ -49,8 +48,7 @@
   \ifnum\countB<`0
     \ifhavenum\makenote\fi
     \ifx\first.\let\next=\maketoksdone % fullstop
-    \else \addtokens\toksB{\the\toksD}
-      \ifx\first,\addtokens\toksB{\space}\fi
+    \else \addtokens\toksB{\the\toksD} \ifx\first,\addtokens\toksB{\space}\fi
     \fi
   \else \addtokens\toksC{\the\toksD}\global\havenumtrue
   \fi
@@ -59,7 +57,7 @@
 \def\makenote{\addtokens\toksB
     {\noexpand\pdflink{\the\toksC}}\toksC={}\global\havenumfalse}
 \def\maketoksdone{\edef\st{\global\noexpand\toksA={\the\toksB}}\st}
-\fi % End of common macros
+\fi % End of common pdf/hint macros
 
 \ifacro % The following are general pdf macros
 \def\thewidth{\the\wd0 \space}
@@ -74,7 +72,7 @@
       depth \thedepth << /Type /Annot /Subtype /Link /Border [0 0 0]
       /A << /S /GoTo /D (\romannumeral#1) >> >>}\box0\relax}
 \fi
-\def\sanitizecommand#1#2{\addtokens\usersanitizer
+\def\sanitizecommand#1#2{\addtokens\sanitizer
        {\noexpand\dosanitizecommand\noexpand#1{#2}}}
 \def\dosanitizecommand#1#2{\ifx\nxt#1\addF{#2}\fi}
 
@@ -99,7 +97,7 @@
   \else\if\noexpand\nxt\relax % we have a control sequence; is it one we know?
     \ifx\nxt~\addF\space
     \else\ifx\nxt\onespace\addF\space
-    \else\the\usersanitizer
+    \else\the\sanitizer
       \iftokprocessed\else\makeolproctokctli
       \iftokprocessed\else\makeolproctokctlii
       \iftokprocessed\else\makeolproctokctliii % if not recognised, skip it
@@ -180,13 +178,11 @@
 \fi % End of pdf macros
 
 \ifhint
-% The following uses HINT primitives to implement:
+% The following top level macros use HINT primitives to implement:
 % \HINThome to mark the position of the home page
 % \HINTlabel to attach a label to the top of a section
 % \HINTlink to link a section number to the section label
 % \HINTcontents to produce an 'outline' item
-% These are the top level HINT macros that are used in this file
-% No HINT primitives are used directly.
 \def\HINThome{\HINTdest name {HINT.home}%
   \HINToutline goto name {HINT.home} depth 1 {Table of Contents}}
 \def\HINTlabel{{\let\*=\empty\HINTdest num \secstar top}}

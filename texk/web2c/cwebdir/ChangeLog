@@ -1,3 +1,10 @@
+2024-08-10  Andreas Scherer  <https://ascherer.github.io>
+
+	* cwebacromac.tex,
+	* cwebmac.tex,
+	* texinputs/icwebmac.tex,
+	* texinputs/pdfctproofmac.tex: Apply new scanning macros.
+
 2024-08-08  Andreas Scherer  <https://ascherer.github.io>
 
 	* comm-mini.ch,

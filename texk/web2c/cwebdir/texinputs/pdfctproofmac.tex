@@ -326,18 +326,16 @@
 \newbox\lbox % lefthand column in the index
 \def\inx{\par\vskip6pt plus 1fil % we are beginning the index
   \write\cont{} % ensure that the contents file isn't empty
-       \write\cont{\catcode `\noexpand\@=12\relax}   % \makeatother
+       \write\cont{\catcode `\noexpand\@=12\relax} % \makeatother
   \closeout\cont % the contents information has been fully gathered
   \output{\ifpagesaved\normaloutput{\box\sbox}\lheader\rheader\fi
-    \global\setbox\sbox=\page \global\pagesavedtrue}
+    \global\setbox\sbox=\page \global\pagesavedtrue \mark{\topmark}}
   \pagesavedfalse \eject % eject the page-so-far and predecessors
   \setbox\sbox\vbox{\unvbox\sbox} % take it out of its box
   \vsize=\pageheight \advance\vsize by -\ht\sbox % the remaining height
   \hsize=.5\pagewidth \advance\hsize by -10pt
     % column width for the index (20pt between cols)
-  \ifhint\else
-  \parfillskip 0pt plus .6\hsize % try to avoid almost empty lines
-  \fi
+  \ifhint\else\parfillskip 0pt plus .6\hsize\fi % avoid almost empty lines
   \def\lr{L} % this tells whether the left or right column is next
   \output{\if L\lr\global\setbox\lbox=\page \gdef\lr{R}
     \else\normaloutput{\vbox to\pageheight{\box\sbox\vss
@@ -346,9 +344,23 @@
   \message{Index:}
   \parskip 0pt plus .5pt
   \outer\def\I##1, ##2.{\par\hangindent2em\noindent##1:\kern1em
-    \ifacrohint\pdfnote##2.\else##2\fi.} % index entry
-  \def\[##1]{$\underline{##1}$} % underlined index item
-  \rm \rightskip0pt plus 2.5em \tolerance 10000 \let\*=\lapstar
+    \scan##2!.} % index entry
+  \def\[##1]{$\underline{\scan##1!}$\scan} % underlined index item
+  \ifacrohint\def\digits{\pdflink{\the\countA}\scan}
+  \else\def\digits{{\the\countA}\scan}\fi
+  \def\scan##1{\begingroup
+    \ifx!##1% exit on exclamation point
+    \else\ifx,##1,\space\aftergroup\scan %insert,\space}\scan ...
+    \else\ifx\[##1\aftergroup##1%{% insert }\[...
+    \else\ifx\*##1\aftergroup\lapstar\aftergroup\scan %insert }\lapstar\scan ...
+    \else\ifnum`##1>`9##1\aftergroup\scan %{% insert #1}\scan ...
+    \else\ifnum`##1<`0##1\aftergroup\scan %{% insert #1}\scan ...
+    \else
+      \afterassignment\digits \aftergroup\countA
+      \aftergroup##1%{% insert }\countA=#1...\digits ...
+    \fi\fi\fi\fi\fi \fi
+    \endgroup}
+  \rm \rightskip0pt plus 2.5em \tolerance 10000
   \hyphenpenalty 10000 \parindent0pt
   \readindex}
 \def\fin{\par\vfill\eject % this is done when we are ending the index

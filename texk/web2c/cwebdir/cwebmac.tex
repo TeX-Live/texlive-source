@@ -4,9 +4,6 @@
 \xdef\fmtversion{\fmtversion+CWEB4.12}
 \chardef\cwebversion=4 \chardef\cwebrevision=12
 
-\let\:=\. % preserve a way to get the dot accent
- % (all other accents will still work as usual)
-
 \parskip 0pt % no stretch between paragraphs
 \parindent 1em % for paragraphs and for the first line of C text
 
@@ -28,9 +25,10 @@
 \def\CPLUSPLUS/{{\mc C\PP\spacefactor1000}}
 \def\Cee{\CEE/} % for backward compatibility
 \def\Cpp{\CPLUSPLUS/} % for backward compatibility
-\def\9#1{}
- % with this definition of \9 you can say @:sort key}{TeX code@>
- % to alphabetize an index entry by the sort key but format with the TeX code
+\def\9#1{} % with this definition of \9 you can say @:sort key}{TeX code@>
+  % to alphabetize an index entry by the sort key but format with the TeX code
+\let\:=\. % preserve a way to get the dot accent
+  % (all other accents will still work as usual)
 
 \def\\#1{\leavevmode\hbox{\it#1\/\kern.05em}} % italic type for identifiers
 \def\|#1{\leavevmode\hbox{$#1$}} % one-letter identifiers look better this way
@@ -239,9 +237,8 @@
 \def\oct{\hbox{$^\circ$\kern-.1em\it\aftergroup\?\aftergroup}} % CWEB style
 \def\hex{\hbox{$^{\scriptscriptstyle\#}$\tt\aftergroup}} % CWEB style
 \def\bin{\hbox{$^{\scriptscriptstyle b}$\tt\aftergroup}} % new in CWEB 4.3
-\def\vb#1{\leavevmode\hbox{\kern2pt\vrule\vtop{\vbox{\hrule
-        \hbox{\strut\kern2pt\.{#1}\kern2pt}}
-      \hrule}\vrule\kern2pt}} % verbatim string
+\def\vb#1{\leavevmode\hbox{\kern2pt\vrule\vtop{\vbox{\hrule\hbox{\strut
+  \kern2pt\.{#1}\kern2pt}}\hrule}\vrule\kern2pt}} % verbatim string
 \def\p#1{\cdot 2^{#1}} % power of two (hex exponent)
 
 \def\onmaybe{\let\ifon=\maybe} \let\maybe=\iftrue
@@ -316,9 +313,7 @@
   \vsize=\pageheight \advance\vsize by -\ht\sbox % the remaining height
   \hsize=.5\pagewidth \advance\hsize by -10pt
     % column width for the index (20pt between cols)
-  \ifhint\else
-  \parfillskip 0pt plus .6\hsize % try to avoid almost empty lines
-  \fi
+  \ifhint\else\parfillskip 0pt plus .6\hsize\fi % avoid almost empty lines
   \def\lr{L} % this tells whether the left or right column is next
   \output{\if L\lr\global\setbox\lbox=\page \gdef\lr{R}
     \else\normaloutput{\vbox to\pageheight{\box\sbox\vss
@@ -327,9 +322,23 @@
   \message{Index:}
   \parskip 0pt plus .5pt
   \outer\def\I##1, ##2.{\par\hangindent2em\noindent##1:\kern1em
-    \ifacrohint\pdfnote##2.\else##2\fi.} % index entry
-  \def\[##1]{$\underline{##1}$} % underlined index item
-  \rm \rightskip0pt plus 2.5em \tolerance 10000 \let\*=\lapstar
+    \scan##2!.} % index entry
+  \def\[##1]{$\underline{\scan##1!}$\scan} % underlined index item
+  \ifacrohint\def\digits{\pdflink{\the\countA}\scan}
+  \else\def\digits{{\the\countA}\scan}\fi
+  \def\scan##1{\begingroup
+    \ifx!##1% exit on exclamation point
+    \else\ifx,##1,\space\aftergroup\scan %insert,\space}\scan ...
+    \else\ifx\[##1\aftergroup##1%{% insert }\[...
+    \else\ifx\*##1\aftergroup\lapstar\aftergroup\scan %insert }\lapstar\scan ...
+    \else\ifnum`##1>`9##1\aftergroup\scan %{% insert #1}\scan ...
+    \else\ifnum`##1<`0##1\aftergroup\scan %{% insert #1}\scan ...
+    \else
+      \afterassignment\digits \aftergroup\countA
+      \aftergroup##1%{% insert }\countA=#1...\digits ...
+    \fi\fi\fi\fi\fi \fi
+    \endgroup}
+  \rm \rightskip0pt plus 2.5em \tolerance 10000
   \hyphenpenalty 10000 \parindent0pt
   \readindex}
 \def\fin{\par\vfill\eject % this is done when we are ending the index
