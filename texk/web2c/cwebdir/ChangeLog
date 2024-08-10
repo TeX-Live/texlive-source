@@ -3,7 +3,8 @@
 	* cwebacromac.tex,
 	* cwebmac.tex,
 	* texinputs/icwebmac.tex,
-	* texinputs/pdfctproofmac.tex: Apply new scanning macros.
+	* texinputs/pdfctproofmac.tex,
+	* texinputs/pdfctwimac.tex: Apply new scanning macros.
 
 2024-08-08  Andreas Scherer  <https://ascherer.github.io>
 

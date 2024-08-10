@@ -29,6 +29,20 @@
   \fi
   \ifpdflua\pdfcatalog{\pagemode\space\pagelabels}
   \else\special{pdf: docview << \pagemode\space\pagelabels >>}\fi}
+\ifacrohint\def\digits{\pdflink{\the\countA}\scan}
+\else\def\digits{{\the\countA}\scan}\fi
+\def\scan#1{\begingroup
+  \ifx!#1% exit on exclamation point
+  \else\ifx,#1,\space\aftergroup\scan % insert ,\space}\scan ...
+  \else\ifx\[#1\aftergroup#1% insert }\[...
+  \else\ifx\*#1\aftergroup\lapstar\aftergroup\scan % insert }\lapstar\scan ...
+  \else\ifnum`#1>`9#1\aftergroup\scan % insert #1}\scan ...
+  \else\ifnum`#1<`0#1\aftergroup\scan % insert #1}\scan ...
+  \else
+    \afterassignment\digits \aftergroup\countA
+    \aftergroup#1% insert }\countA=#1...\digits ...
+  \fi\fi\fi\fi\fi \fi
+  \endgroup}
 
 % Local variables; there are a few externals like '\toksA' and '\countA'
 \newtoks\toksB \newtoks\toksC \newtoks\toksD \newtoks\toksF \newtoks\sanitizer
