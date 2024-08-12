@@ -17,15 +17,15 @@
 @q Please send comments, suggestions, etc. to tex-k@@tug.org.            @>
 
 @x [0.0] l.34
-\def\title{CWEAVE (Version 4.11)}
+\def\title{CWEAVE (Version 4.12)}
 @y
-\def\title{CWEAVE (Version 4.11 [\TeX~Live])}
+\def\title{CWEAVE (Version 4.12 [\TeX~Live])}
 @z
 
 @x [0.0] l.38
-  \centerline{(Version 4.11)}
+  \centerline{(Version 4.12)}
 @y
-  \centerline{(Version 4.11 [\TeX~Live])}
+  \centerline{(Version 4.12 [\TeX~Live])}
 @z
 
 @x [0.0] l.40
@@ -41,9 +41,9 @@
 @z
 
 @x [1.1] l.69
-@d banner "This is CWEAVE (Version 4.11)"
+@d banner "This is CWEAVE (Version 4.12)"
 @y
-@d banner "This is CWEAVE, Version 4.11"
+@d banner "This is CWEAVE, Version 4.12"
   /* will be extended by the \TeX~Live |versionstring| */
 @z
 

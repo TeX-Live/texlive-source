@@ -1,3 +1,26 @@
+2024-08-12  Andreas Scherer  <https://ascherer.github.io>
+
+	* Makefile
+	* comm-{mac,mini,ql,w2c}.ch
+	* comm-w2c.h
+	* common.h
+	* common.w
+	* ctang-{bs,pc,ql,vms,w2c,w32}.ch
+	* ctangle.c
+	* ctangle.w
+	* ctwill-w2c.ch
+	* cweav-{bs,pc,ql,vms,w2c,w32}.ch
+	* cweave.w
+	* cwebman-w2c.ch
+	* cwebman.tex
+	* po/cweb-tl.pot
+	* po/cweb.pot
+	* po/de/cweb-tl.po
+	* po/de/cweb.po
+	* po/it/cweb.po
+	* prod-{cweave,twill}.w
+	* prod.w: CWEB 4.12 release.
+
 2024-08-10  Andreas Scherer  <https://ascherer.github.io>
 
 	* cwebacromac.tex,

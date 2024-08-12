@@ -35,10 +35,10 @@
 @z
 
 @x [0.0] l.34
-\def\title{CWEAVE (Version 4.11)}
+\def\title{CWEAVE (Version 4.12)}
 @y
 \def\Kpathsea/{{\mc KPATHSEA\spacefactor1000}} \ifacro\sanitizecommand\Kpathsea{KPATHSEA}\fi
-\def\title{CTWILL (Version 4.11 [\TeX~Live])}
+\def\title{CTWILL (Version 4.12 [\TeX~Live])}
 @z
 
 @x [0.0] l.36
@@ -48,9 +48,9 @@
 @z
 
 @x [0.0] l.38
-  \centerline{(Version 4.11)}
+  \centerline{(Version 4.12)}
 @y
-  \centerline{(Version 4.11 [\TeX~Live])}
+  \centerline{(Version 4.12 [\TeX~Live])}
 @z
 
 @x [0.0] l.40
@@ -77,7 +77,7 @@ Crusius, and others who have contributed improvements.
 The ``banner line'' defined here should be changed whenever \.{CWEAVE}
 is modified.
 
-@d banner "This is CWEAVE (Version 4.11)"
+@d banner "This is CWEAVE (Version 4.12)"
 @y
 This is the \.{CTWILL} program by D. E. Knuth, based
 on \.{CWEAVE} by Silvio Levy and D.~E. Knuth. It is also based on
@@ -101,7 +101,7 @@ Until then, \.{CWEAVE}'s sequence of sections will be preserved.
 The ``banner line'' defined here should be changed whenever \.{CTWILL} is
 modified. The version number parallels the corresponding version of \.{CWEAVE}.
 
-@d banner "This is CTWILL, Version 4.11"
+@d banner "This is CTWILL, Version 4.12"
   /* will be extended by the \TeX~Live |versionstring| */
 @z
 
