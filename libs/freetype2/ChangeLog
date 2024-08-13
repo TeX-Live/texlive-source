@@ -1,3 +1,8 @@
+2024-08-13  Akira Kakuto  <kakuto@jcom.zaq.ne.jp>
+
+	Import freetype-2.13.3.
+	* version.ac: Adjusted.
+
 2023-08-26  Akira Kakuto  <kakuto@jcom.zaq.ne.jp>
 
 	Import freetype-2.13.2.

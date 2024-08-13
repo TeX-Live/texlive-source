@@ -15,7 +15,7 @@ cairo 1.16.0 - no longer checked
   Since cairo is only used by MetaPost (for png output), and 1.16.0
   seems fine for that, not taking the time and trouble to update.
 
-freetype2 2.13.2 - checked 26aug23
+freetype2 2.13.3 - checked 13aug24
   https://download.savannah.gnu.org/releases/freetype/
 
 gd 2.3.3 - checked 13sep21

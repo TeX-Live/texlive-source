@@ -8,4 +8,4 @@ dnl
 dnl --------------------------------------------------------
 dnl
 dnl  m4-include this file to define the current freetype version
-m4_define([freetype_version], [2.13.2])
+m4_define([freetype_version], [2.13.3])
