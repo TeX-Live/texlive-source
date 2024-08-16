@@ -72,7 +72,7 @@ show_lists_code: begin begin_diagnostic; show_activities;
   end;
 @y
 show_lists_code:
-  begin @<Adjust |selector| based on |show_stream|@>
+  begin @<Adjust |selector| based on |show_stream|@>@;
   begin_diagnostic; show_activities;
   end;
 @z
@@ -134,7 +134,7 @@ begin get_token;
 @y
 @ @<Show the current meaning of a token...@>=
 begin get_token;
-  @<Adjust |selector| based on |show_stream|@>
+  @<Adjust |selector| based on |show_stream|@>@;
 @z
 
 @x
@@ -143,7 +143,7 @@ begin scan_register_num; fetch_box(p); begin_diagnostic;
 @y
 @ @<Show the current contents of a box@>=
 begin scan_register_num; fetch_box(p);
-@<Adjust |selector| based on |show_stream|@>
+@<Adjust |selector| based on |show_stream|@>@;
 begin_diagnostic;
 @z
 
@@ -153,20 +153,20 @@ begin p:=the_toks;
 @y
 @ @<Show the current value of some parameter...@>=
 begin p:=the_toks;
-@<Adjust |selector| based on |show_stream|@>
+@<Adjust |selector| based on |show_stream|@>@;
 @z
 
 @x
 show_groups: begin begin_diagnostic; show_save_groups;
 @y
-show_groups: begin @<Adjust |selector| based on |show_stream|@>
+show_groups: begin @<Adjust |selector| based on |show_stream|@>@;
   begin_diagnostic; show_save_groups;
 @z
 
 @x
 show_ifs: begin begin_diagnostic; print_nl(""); print_ln;
 @y
-show_ifs: begin @<Adjust |selector| based on |show_stream|@>
+show_ifs: begin @<Adjust |selector| based on |show_stream|@>@;
   begin_diagnostic; print_nl(""); print_ln;
 @z
 
