@@ -1367,7 +1367,7 @@ kpathsea_name_ok (kpathsea kpse, const_string fname, const_string check_var,
 
  not_ok: /* Some test failed.  */
   if (!silent)
-    fprintf (stderr, "\n%s: Not %s %s (%s = %s; %s extended check).\n",
+    fprintf (stderr, "\n%s: Not %s %s (%s = %s; %sextended check).\n",
              kpse->invocation_name, ok_type_name[action], fname,
              check_var, open_choice, extended ? "" : "no ");
   if (expanded_fname) free ((void *) expanded_fname);

@@ -1,3 +1,8 @@
+2024-08-19  Karl Berry  <karl@freefriends.org>
+
+	* tex-file.c (kpathsea_name_ok) <not_ok>: avoid spurious double space
+	in message.
+
 2024-07-01  Karl Berry  <karl@tug.org>
 
 	* texmf.cnf (shell_escape_commands): restore extractbb,
