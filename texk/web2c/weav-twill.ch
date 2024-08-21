@@ -51,9 +51,11 @@ Limbo.
 \def\title{TWILL for \TeX~Live}
 @z
 
-@x 48c24
+@x 47c23
+  \def\rheader{\mainfont Appendix D\hfil \contentspagenumber}
   \centerline{\titlefont The {\ttitlefont WEAVE} processor}
 @y
+  \def\rheader{\mainfont Appendix D${}'$\hfil \contentspagenumber}
   \centerline{\titlefont The {\ttitlefont TWILL} processor}
 @z
 
