@@ -79,7 +79,7 @@ begin
 @<Labels...@>=final_end;
 @y
 @ This module is deleted, because it is only useful for
-a non-local goto, which we don't use in C.
+a non-local |goto|\unskip, which we don't use in C.
 @z
 
 % [6] Remove terminal_line_length, since there is no dialog, and

@@ -82,7 +82,7 @@ begin
 @<Labels...@>=final_end;
 @y
 @ This module is deleted, because it is only useful for
-a non-local goto, which we can't use in C.
+a non-local |goto|\unskip, which we can't use in C.
 @z
 
 @x [6] Dynamic allocation of |row| array.

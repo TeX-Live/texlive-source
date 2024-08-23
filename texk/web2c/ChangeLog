@@ -1,3 +1,10 @@
+2024-08-23  Andreas Scherer  <https://ascherer.github.io>
+
+	* gftopk.ch,
+	* gftype.ch,
+	* pktogf.ch,
+	* pktype.ch: Fix a few spaces.
+
 2024-08-21  Andreas Scherer  <https://ascherer.github.io>
 
 	* weav-twill.ch: Prime the title page.

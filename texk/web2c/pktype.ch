@@ -65,7 +65,7 @@ begin
 @<Labels...@>=final_end;
 @y
 @ This module is deleted, because it is only useful for
-a non-local |goto|, which we don't use in C.
+a non-local |goto|\unskip, which we don't use in C.
 @z
 
 % [6] No need for |name_length| or |terminal_line_length|.  Since these
@@ -89,7 +89,7 @@ to the very end of the program with an error message.
 begin goto final_end;
 end;
 @y
-@ We use a call to the external C exit to avoid a non-local |goto|.
+@ We use a call to the external C exit to avoid a non-local |goto|\unskip.
 
 @d abort(#)==begin print_ln(#); uexit(1) end
 
