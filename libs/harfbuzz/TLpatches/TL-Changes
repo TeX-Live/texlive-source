@@ -1,29 +1,18 @@
-Changes applied to the harfbuzz-8.5.0/ tree as obtained from:
-	https://github.com/harfbuzz/harfbuzz/releases/download/8.5.0/
+Changes applied to the harfbuzz-9.0.0/ tree as obtained from:
+	https://github.com/harfbuzz/harfbuzz/releases/download/9.0.0/
 
 Removed:
-	COPYING
-	Makefile.in
-	aclocal.m4
-	ar-lib
-	compile
-	config.guess
-	config.sub
-	configure
-	depcomp
-	gtk-doc.make
-	install-sh
-	ltmain.sh
-	missing
-	test-driver
-	src/Makefile.in
+	.clang-format
+	.codecov.yml
+	.editorconfig
 	src/hb-version.h
 	src/hb-features.h.in
-	src/hb-features.h
 
         unused dirs:
+	.ci
+	.circleci
+	.github
 	docs
-	m4
 	perf
 	subprojects
 	test

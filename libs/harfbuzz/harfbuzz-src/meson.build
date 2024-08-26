@@ -1,6 +1,6 @@
 project('harfbuzz', 'c', 'cpp',
   meson_version: '>= 0.55.0',
-  version: '8.5.0',
+  version: '9.0.0',
   default_options: [
     'cpp_eh=none',          # Just to support msvc, we are passing -fno-exceptions also anyway
     # 'cpp_rtti=false',     # Do NOT enable, wraps inherit it and ICU needs RTTI
@@ -14,7 +14,9 @@ cairo_min_version = '>= 1.10.0'
 chafa_min_version = '>= 1.6.0'
 icu_min_version = '>= 49.0'
 graphite2_min_version = '>= 1.2.0'
-freetype_min_version = '>= 12.0.6'
+
+freetype_min_version_actual = '>= 2.4.2'
+freetype_min_version = '>= 12.0.6'    # Corresponds to `freetype_min_version_actual`
 
 hb_version_arr = meson.project_version().split('.')
 hb_version_major = hb_version_arr[0].to_int()
@@ -101,12 +103,21 @@ check_funcs = [
 m_dep = cpp.find_library('m', required: false)
 
 if meson.version().version_compare('>=0.60.0')
+  # Sadly, FreeType's versioning schemes are different between pkg-config and CMake
   # pkg-config: freetype2, cmake: Freetype
-  freetype_dep = dependency('freetype2', 'Freetype',
+  freetype_dep = dependency('freetype2',
                             version: freetype_min_version,
-                            required: get_option('freetype'),
-                            default_options: ['harfbuzz=disabled'],
-                            allow_fallback: true)
+                            method: 'pkg-config',
+                            required: false,
+                            allow_fallback: false)
+  if not freetype_dep.found()
+    freetype_dep = dependency('FreeType',
+                              version: freetype_min_version_actual,
+                              method: 'cmake',
+                              required: get_option('freetype'),
+                              default_options: ['harfbuzz=disabled'],
+                              allow_fallback: true)
+  endif
 else
   # painful hack to handle multiple dependencies but also respect options
   freetype_opt = get_option('freetype')
@@ -119,7 +130,7 @@ else
   # when disabled, leave it not-found
   if not freetype_dep.found() and not get_option('freetype').disabled()
     # Try cmake name
-    freetype_dep = dependency('Freetype', version: freetype_min_version, method: 'cmake', required: false)
+    freetype_dep = dependency('Freetype', version: freetype_min_version_actual, method: 'cmake', required: false)
     # Subproject fallback, `allow_fallback: true` means the fallback will be
     # tried even if the freetype option is set to `auto`.
     if not freetype_dep.found()
@@ -172,6 +183,10 @@ else
                            required: get_option('icu'))
     endif
   endif
+endif
+
+if icu_dep.found() and icu_dep.version().version_compare('>=75.1') and (get_option('cpp_std') == 'c++11' or get_option('cpp_std') == 'c++14')
+  add_project_arguments('-std=c++17', language: 'cpp')
 endif
 
 if icu_dep.found() and icu_dep.type_name() == 'pkgconfig'

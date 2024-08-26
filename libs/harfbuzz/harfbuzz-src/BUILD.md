@@ -9,15 +9,15 @@ whereas on Fedora, RHEL, CentOS, and other Red Hat based systems you would do:
 
 and on ArchLinux and Manjaro:
 
-    $ sudo pacman -Suy meson pkg-config ragel gcc freetype2 glib2 cairo
+    $ sudo pacman -Suy meson pkg-config ragel gcc freetype2 glib2 glib2-devel cairo
 
 On macOS:
 
     brew install pkg-config ragel gtk-doc freetype glib cairo meson
 
-Then use meson to build the project like:
+Then use meson to build the project and run the tests, like:
 
-    meson build && meson test -Cbuild
+    meson build && ninja -Cbuild && meson test -Cbuild
 
 On Windows, meson can build the project like above if a working MSVC's cl.exe
 (`vcvarsall.bat`) or gcc/clang is already on your path, and if you use
