@@ -1,6 +1,6 @@
 #!/usr/bin/env texlua
 --
---  $Id: luafindfont.lua 735 2023-06-22 19:12:29Z herbert $
+--  $Id: luafindfont.lua 961 2024-08-25 16:47:59Z herbert $
 -----------------------------------------------------------------------
 --         FILE:  luafindfont.lua
 --  DESCRIPTION:  search for fonts in the database
@@ -8,7 +8,7 @@
 --       AUTHOR:  Herbert Voß  (C) 2023-06-21
 -----------------------------------------------------------------------
         luafindfont = luafindfont or { }
-      local version = 0.13
+      local version = 0.14
 luafindfont.version = version
 
 --[[
@@ -31,14 +31,13 @@ Report bugs to  hvoss@tug.org
 
 ]]
 
+-- equivilant with ConTeXt, e.g. times
 -- mtxrun --script font --list --name --all --pattern=times
 
 kpse.set_program_name("luatex")
 local f = kpse.find_file("lualibs.lua")
 
 require("lualibs")  -- all part of LuaTeX
-
---require("luafindfont-utflib")
 
 if #arg == 0 then
   print("I need at least one argument or option! Will exit ...")
@@ -282,6 +281,13 @@ function compareEntries(f1, f2)
   end
 end
 
+function centerText(text, width)
+  if text == nil then return "" end
+  local spaces = math.floor((width-string.len(text))/2)
+  local len = string.len(text)
+  return ((" "):rep(spaces)..text..(" "):rep(spaces))
+end
+
 local fontData = {}
 local fontListFile = getFileLocation()
 if fontListFile == "" then
@@ -375,20 +381,38 @@ if l_max[3] > maxStrLength then l_max[3] = maxStrLength end
 local minChars = 26
 local Fontname = "Filename"
 local Path = "Path"
-local SymbolicName = "Symbolic name"
+local SymbolicName = "Symbolic"
 local lfdNr = "No."
 
 if (font_str ~= "*") and not noSymbolicNames then
   if args_xetex > 0 then
-    print(string.format("%5s %"..l_max[1].."s %"..l_max[2].."s  %"..l_max[3].."s".."%4s",lfdNr,Fontname,SymbolicName,Path,"X")) 
+--    print(string.format("%5s %"..l_max[1].."s %"..l_max[2].."s  %"..l_max[3].."s".."%4s",lfdNr,Fontname,SymbolicName,Path,"X")) 
+    io.write(string.format("%5s",lfdNr))
+    io.write(centerText(Fontname,l_max[1]))
+    io.write(centerText(SymbolicName,l_max[2]))
+    io.write(centerText(Path,l_max[3]))
+    print("X") 
   else      
-    print(string.format("%5s %"..l_max[1].."s %"..l_max[2].."s  %"..l_max[3].."s",lfdNr,Fontname,SymbolicName,Path)) 
+--    print(string.format("%5s %"..l_max[1].."s %"..l_max[2].."s  %"..l_max[3].."s",lfdNr,Fontname,SymbolicName,Path)) 
+    io.write(string.format("%5s",lfdNr))
+    io.write(centerText(Fontname,l_max[1]))
+    io.write(centerText(SymbolicName,l_max[2]))
+    print(centerText(Path,l_max[3]))
   end
 else
   if args_xetex > 0 then
-    print(string.format("%5s %"..l_max[1].."s  %"..l_max[3].."s".."%4s",lfdNr,Fontname,Path,"X")) 
+--    print(string.format("%5s %"..l_max[1].."s  %"..l_max[3].."s".."%4s",lfdNr,Fontname,Path,"X")) 
+    io.write(string.format("%5s",lfdNr))
+    io.write(centerText(Fontname,l_max[1]))
+    io.write(centerText(SymbolicName,l_max[2]))
+    io.write(centerText(Path,l_max[3]))
+    print("X")
   else
-    print(string.format("%5s %"..l_max[1].."s  %"..l_max[3].."s",lfdNr,Fontname,Path)) 
+--    print(string.format("%5s %"..l_max[1].."s  %"..l_max[3].."s",lfdNr,Fontname,Path)) 
+    io.write(string.format("%5s",lfdNr))
+    io.write(centerText(Fontname,l_max[1]))
+    io.write(centerText(SymbolicName,l_max[2]))
+    print(centerText(Path,l_max[3]))
   end
 end
 
