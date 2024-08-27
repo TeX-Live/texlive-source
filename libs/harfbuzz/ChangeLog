@@ -1,3 +1,8 @@
+2024-08-27  Akira Kakuto  <kakuto@jcom.zaq.ne.jp>
+
+	* Makefile.am: Use amalgam harfbuzz.cc, since it is easy to
+	maintain (from Ebrahim Byagowi <ebrahim@gnu.org>).
+
 2024-08-26  Akira Kakuto  <kakuto@jcom.zaq.ne.jp>
 
 	Import harfbuzz-9.0.0.
