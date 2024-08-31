@@ -1,3 +1,7 @@
+2024-08-31  Andreas Scherer  <https://ascherer.github.io>
+
+	* vftovp.ch: Fix sorting order of new named sections.
+
 2024-08-23  Andreas Scherer  <https://ascherer.github.io>
 
 	* gftopk.ch,
