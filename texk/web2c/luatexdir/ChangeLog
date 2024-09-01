@@ -1,3 +1,8 @@
+2024-09-01  Luigi Scarso <luigi.scarso@gmail.com>
+        * Changed char utf8word[(4 * MAX_WORD_LEN) + 1] = { 0 };
+	in char utf8word[(4 * MAX_WORD_LEN) + 1] ;
+	in function  void hnj_hyphenation(halfword head, halfword tail) (thanks to user202729@protonmail.com)
+
 2024-05-11  Luigi Scarso <luigi.scarso@gmail.com>
         * allow interactive deletion of \outer token, see https://tug.org/texmfbug/newbug.html#B142outer 
 
