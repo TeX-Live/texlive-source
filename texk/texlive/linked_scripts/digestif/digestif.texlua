@@ -1,4 +1,7 @@
 #!/usr/bin/env texlua
+-- Remove relative directories from package path
+package.path = package.path:gsub("%f[^\0;]%.[^;]*", ""):gsub(";+", ";"):gsub("^;", ""):gsub(";$", "")
+package.cpath = package.cpath:gsub("%f[^\0;]%.[^;]*", ""):gsub(";+", ";"):gsub("^;", ""):gsub(";$", "")
 -- Use an invalid directory name in order not to allow kpse to search
 -- in the current directory.
 os.setenv("TEXMFDOTDIR", package.config:find("^\\") and "NUL" or "/dev/null")
