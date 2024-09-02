@@ -12,7 +12,7 @@
 % gf and pk formats.  PKtoGF runs silently unless it is given the
 % -v switch in the command line.
 
-@x [0] l.21
+@x [0] l.22
 \def\title{PKtoGF}
 @y
 \def\title{PK$\,$\lowercase{to}$\,$GF changes for C}

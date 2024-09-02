@@ -8,40 +8,40 @@
 %  Mar 20 91 THD  Updated to dvicopy 1.2
 % (more recent changes in the ChangeLog)
 
-@x [0] l.59 WEAVE: print changes only
+@x [0] l.60 WEAVE: print changes only
 \pageno=\contentspagenumber \advance\pageno by 1
 @y
 \pageno=\contentspagenumber \advance\pageno by 1
 \let\maybe=\iffalse
 @z
 
-@x [1] l.97 Define my_name
+@x [1] l.98 Define my_name
 @d banner=='This is DVIcopy, Version 1.6' {printed when the program starts}
 @y
 @d my_name=='dvicopy'
 @d banner=='This is DVIcopy, Version 1.6' {printed when the program starts}
 @z
 
-@x [2] l.123 No random reading on stdin, may be not seekable.
+@x [2] l.124 No random reading on stdin, may be not seekable.
 @d random_reading==true {should we skip around in the file?}
 @y
 @<Globals in the outer block@>=
 @!random_reading:boolean; {should we skip around in the file?}
 @z
 
-@x [3] l.134 Purge non-local 'goto'.
+@x [3] l.135 Purge non-local 'goto'.
 calls the `|jump_out|' procedure, which goes to the label |final_end|.
 
 @d final_end = 9999 {go here to wrap it up}
 @y
 calls the `|jump_out|' procedure.
 @z
-@x [3] l.140
+@x [3] l.141
 label final_end;
 @y
 @z
 
-@x [3] l.145 Set up kpathsea.
+@x [3] l.146 Set up kpathsea.
 procedure initialize; {this procedure gets things started properly}
   var @<Local variables for initialization@>@/
   begin print_ln(banner);@/
@@ -55,7 +55,7 @@ procedure initialize; {this procedure gets things started properly}
     print (banner); print_ln (version_string);
 @z
 
-@x [5] l.177 Big enough arrays to convert the dvilj sample font document.
+@x [5] l.178 Big enough arrays to convert the dvilj sample font document.
 @<Constants...@>=
 @!max_fonts=100; {maximum number of distinct fonts}
 @!max_chars=10000; {maximum number of different characters among all fonts}
@@ -85,7 +85,7 @@ procedure initialize; {this procedure gets things started properly}
 % [7] Rename the integer types, as they collide with names used by C99.
 % Rather than change the code all over the place, we use macros to do
 % the renaming.  This could also be done at C preprocessor level.
-@x l.244
+@x l.245
 @d int_32 == integer {signed 32~bit integers}
 @y
 @d int_32 == integer {signed 32~bit integers}
@@ -103,7 +103,7 @@ procedure initialize; {this procedure gets things started properly}
 
 % [11] Redirect output, so it can go to either stdout or stderr,
 % depending on where the output dvi file is going.
-@x l.310
+@x l.311
 @d print(#)==write(output,#)
 @d print_ln(#)==write_ln(output,#)
 @d new_line==write_ln(output) {start new line}
@@ -113,7 +113,7 @@ procedure initialize; {this procedure gets things started properly}
 @d new_line==write_ln(term_out) {start new line}
 @z
 
-@x [14] l.379 Permissive input.
+@x [14] l.380 Permissive input.
 @!ASCII_code=" ".."~"; {a subrange of the integers}
 @y
 @!ASCII_code=0..255; {a subrange of the integers}
@@ -122,7 +122,7 @@ procedure initialize; {this procedure gets things started properly}
 % [15] The text_char type is used as an array index into xord.  The
 % default type `char' produces signed integers, which are bad array
 % indices in C.
-@x l.399
+@x l.400
 @d text_char == char {the data type of characters in text files}
 @d first_text_char=0 {ordinal number of the smallest element of |text_char|}
 @d last_text_char=127 {ordinal number of the largest element of |text_char|}
@@ -132,7 +132,7 @@ procedure initialize; {this procedure gets things started properly}
 @d last_text_char=255 {ordinal number of the largest element of |text_char|}
 @z
 
-@x [23] l.572 Remove non-local goto, declare jump_out as noreturn
+@x [23] l.573 Remove non-local goto, declare jump_out as noreturn
 so a procedure called |jump_out| has been introduced. This procedure, which
 transfers control to the label |final_end| at the end of the program,
 contains the only non-local |@!goto| statement in \.{\title}.
@@ -143,7 +143,7 @@ by a call on some system procedure that quietly terminates the program.
 @y
 so a procedure called |jump_out| has been introduced.
 @z
-@x [23] l.581
+@x [23] l.582
 @d abort(#)==begin print_ln(' ',#,'.'); jump_out;
     end
 
@@ -170,31 +170,31 @@ uexit(1);
 end;
 @z
 
-@x [24] l.596 Declare confusion as noreturn
+@x [24] l.597 Declare confusion as noreturn
 says |confusion(|indication of where we are|)|.
 @y
 says |confusion|(indication of where we are).
 @z
-@x [24] l.599
+@x [24] l.600
 procedure confusion(@!p:pckt_pointer);
 @y
 noreturn procedure confusion(@!p:pckt_pointer);
 @z
 
-@x [25] l.608 Declare overflow as noreturn
+@x [25] l.609 Declare overflow as noreturn
 procedure overflow(@!p:pckt_pointer;@!n:int_16u);
 @y
 noreturn procedure overflow(@!p:pckt_pointer;@!n:int_16u);
 @z
 
-@x [62] l.1235 cur_name is no longer a fixed-size array.
+@x [62] l.1236 cur_name is no longer a fixed-size array.
 @!cur_name:packed array[1..name_length] of char; {external name,
   with no lower case letters}
 @y
 @!cur_name:^char;
 @z
 
-@x [63] l.1240 Ignore arguments to make_font_name.
+@x [63] l.1241 Ignore arguments to make_font_name.
 @ For \.{TFM} and \.{VF} files we just append the appropriate extension
 to the file name packet; in addition a system dependent area part
 (usually different for \.{TFM} and \.{VF} files) is prepended if
@@ -229,24 +229,24 @@ to |make_font_name|.
 
 % [67] No conversion of filenames in lower case, and initialize and
 % terminate for C strings.  Eliminate now unused variable.
-@x l.1310
+@x l.1311
 @!c:char; {a character to be appended to |cur_name|}
 @y
 @z
 
-@x [67] l.1312
+@x [67] l.1313
 cur_loc:=pckt_start[n]; cur_limit:=pckt_start[n+1];
 @y
 cur_name := xmalloc_array (char, pckt_length (n) + pckt_length (e));
 cur_loc:=pckt_start[n]; cur_limit:=pckt_start[n+1];
 @z
 
-@x [67] l.1317
+@x [67] l.1318
   if (b>="a")and(b<="z") then Decr(b)(("a"-"A")); {convert to upper case}
 @y
 @z
 
-@x [67] l.1320
+@x [67] l.1321
 cur_loc:=pckt_start[e]; cur_limit:=pckt_start[e+1];
 while cur_loc<cur_limit do
   begin pckt_extract(b); append_res_to_name(xchr[b]);
@@ -258,13 +258,13 @@ while l_cur_name<name_length do
   cur_name[l_cur_name] := 0;
 @z
 
-@x [91] l.1716 Lower case file name extensions.
+@x [91] l.1717 Lower case file name extensions.
 id4(".")("T")("F")("M")(tfm_ext); {file name extension for \.{TFM} files}
 @y
 id4(".")("t")("f")("m")(tfm_ext); {file name extension for \.{TFM} files}
 @z
 
-@x [92] l.1718 Set default directory name
+@x [92] l.1719 Set default directory name
 @ If no font directory has been specified, \.{\title} is supposed to use
 the default \.{TFM} directory, which is a system-dependent place where
 the \.{TFM} files for standard fonts are kept.
@@ -280,26 +280,26 @@ The string variable |TFM_default_area| contains the name of this area.
 @ If no font directory has been specified, we search paths.
 @z
 
-@x [93] l.1730 Remove initialization of now-defunct array
+@x [93] l.1731 Remove initialization of now-defunct array
 @ @<Set init...@>=
 TFM_default_area:=TFM_default_area_name;
 @y
 @ (No initialization to be done.  Keep this module to preserve numbering.)
 @z
 
-@x [94] l.1738 Declare bad_tfm as noreturn
+@x [94] l.1739 Declare bad_tfm as noreturn
 procedure bad_tfm;
 @y
 noreturn procedure bad_tfm;
 @z
 
-@x [94] l.1745 Declare bad_font as noreturn
+@x [94] l.1746 Declare bad_font as noreturn
 procedure bad_font;
 @y
 noreturn procedure bad_font;
 @z
 
-@x [95] l.1757 Open TFM file
+@x [95] l.1758 Open TFM file
 @<TFM: Open |tfm_file|@>=
 make_font_name(TFM_default_area_name_length)(TFM_default_area)(tfm_ext);
 reset(tfm_file,cur_name);
@@ -318,7 +318,7 @@ if full_name then begin
 end else
 @z
 
-@x [104] l.1990 Compute alpha and beta.
+@x [104] l.1991 Compute alpha and beta.
 alpha:=16;
 while z>=@'40000000 do
 @y
@@ -327,20 +327,20 @@ if z>=@'1000000000 then abort('Character size is too large!');
 while z>=@'40000000 do
 @z
 
-@x [108] l.2060 Declare full_name.
+@x [108] l.2061 Declare full_name.
 @!dvi_loc:int_32; {where we are about to look, in |dvi_file|}
 @y
 @!dvi_loc:int_32; {where we are about to look, in |dvi_file|}
 @!full_name: ^char;
 @z
 
-@x [109] l.2067 Declare bad_dvi as noreturn
+@x [109] l.2068 Declare bad_dvi as noreturn
 procedure bad_dvi;
 @y
 noreturn procedure bad_dvi;
 @z
 
-@x [110] l.2076 Fix up opening the binary files
+@x [110] l.2077 Fix up opening the binary files
 @ To prepare |dvi_file| for input, we |reset| it.
 
 @<Open input file(s)@>=
@@ -353,7 +353,7 @@ dvi_loc:=0;
 dvi_loc:=0;
 @z
 
-@x [112] l.2114 Make dvi_length() and dvi_move() work.
+@x [112] l.2115 Make dvi_length() and dvi_move() work.
 @p function dvi_length:int_32;
 begin set_pos(dvi_file,-1); dvi_length:=cur_pos(dvi_file);
 end;
@@ -374,13 +374,13 @@ dvi_loc:=n;
 end;
 @z
 
-@x [135] l.2467 Lower case file name extensions.
+@x [135] l.2468 Lower case file name extensions.
 id3(".")("V")("F")(vf_ext); {file name extension for \.{VF} files}
 @y
 id3(".")("v")("f")(vf_ext); {file name extension for \.{VF} files}
 @z
 
-@x [137] l.2481 Set default directory name
+@x [137] l.2482 Set default directory name
 @ If no font directory has been specified, \.{\title} is supposed to use
 the default \.{VF} directory, which is a system-dependent place where
 the \.{VF} files for standard fonts are kept.
@@ -407,7 +407,7 @@ by setting the \.{VFFONTS} environment variable.
 @ (No initialization to be done.  Keep this module to preserve numbering.)
 @z
 
-@x [139] l.2498 Open VF file
+@x [139] l.2499 Open VF file
 @<VF: Open |vf_file| or |goto not_found|@>=
 make_font_name(VF_default_area_name_length)(VF_default_area)(vf_ext);
 reset(vf_file,cur_name);
@@ -426,7 +426,7 @@ if full_name then begin
 end else
 @z
 
-@x [163] l.2937 copy elements of array piece by piece
+@x [163] l.2938 copy elements of array piece by piece
 @ @<VF: Start a new level@>=
 append_one(push);
 vf_move[vf_ptr]:=vf_move[vf_ptr-1];
@@ -444,19 +444,19 @@ append_one(push);
 vf_move_assign;
 @z
 
-@x [170] l.3033 and again...
+@x [170] l.3034 and again...
   vf_move[vf_ptr]:=vf_move[vf_ptr-1];
 @y
   vf_move_assign;
 @z
 
-@x [176] l.3138 break is fflush.
+@x [176] l.3139 break is fflush.
 @d update_terminal == break(output) {empty the terminal output buffer}
 @y
 @d update_terminal == fflush(stdout) {empty the terminal output buffer}
 @z
 
-@x [176] l.3148
+@x [176] l.3149
 procedure input_ln; {inputs a line from the terminal}
 var k:0..terminal_line_length;
 begin if n_opt=0 then
@@ -484,42 +484,42 @@ while (k<terminal_line_length)and not eoln(input) do
 end;
 @z
 
-@x [241] l.4070 No dialog, remove unused final label.
+@x [241] l.4071 No dialog, remove unused final label.
 dialog; {get options}
 @y
 @z
-@x [241] l.4075
+@x [241] l.4076
 final_end:end.
 @y
 end.
 @z
 
-@x [246] l.4124 Do this later, to avoid creating empty files.
+@x [246] l.4125 Do this later, to avoid creating empty files.
 @<Open output file(s)@>=
 rewrite(out_file); {prepares to write packed bytes to |out_file|}
 @y
 @<Open output file(s)@>=
 @z
 
-@x [248] l.4141 Use external routine to output bytes.
+@x [248] l.4142 Use external routine to output bytes.
 @d out_byte(#) == write(out_file,#) {write next \.{DVI} byte}
 @y
 @d out_byte(#) == put_byte(#,out_file) {write next \.{DVI} byte}
 @z
 
-@x [260] l.4259 String declaration.
+@x [260] l.4260 String declaration.
 @!comment:packed array[1..comm_length] of char; {preamble comment prefix}
 @y
 @!comment:const_c_string; {preamble comment prefix}
 @z
 
-@x [261] l.4270 Output the string from 0 to len-1, not 1 to len.
+@x [261] l.4271 Output the string from 0 to len-1, not 1 to len.
 for k:=1 to comm_length do append_byte(xord[comment[k]]);
 @y
 for k:=0 to comm_length - 1 do append_byte(xord[ucharcast(comment[k])]);
 @z
 
-@x [293] l.4480 System-dependent changes.
+@x [293] l.4481 System-dependent changes.
 This section should be replaced, if necessary, by changes to the program
 that are necessary to make \.{DVIcopy} work at a particular installation.
 It is usually best to design your change file so that all changes to

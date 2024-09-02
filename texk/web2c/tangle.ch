@@ -302,7 +302,7 @@ the replacement text.
       chopped_id[s]:=buffer[i]+@'40
 @z
 
-@x [1.2] l.3
+@x [6.61] l.1086
 else @<Define and output a new string of the pool@>;
 @y
 else @<Define \(and output a new string of the pool@>;
