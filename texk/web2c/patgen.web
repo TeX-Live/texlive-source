@@ -7,10 +7,13 @@
 % Version 2.3 avoided division by zero - Karl Berry (October, 1996).
 % Version 2.4 avoided use of uninitialized variables (September, 2009).
 % A few typos fixed, no version change (April, 2020).
+% Sorting order fixed, no version change (September, 2024).
 
 % Here is TeX material that gets inserted after \input webmac
 \def\hang{\hangindent 3em\indent\ignorespaces}
 \def\PASCAL{Pascal}
+
+\def\({} % this is used to make section names sort themselves better
 
 \def\title{PATGEN}
 \def\contentspagenumber{45} % should be odd
@@ -722,7 +725,7 @@ right of the occupied region (starting at |trie_max+1|).
 @p function first_fit: trie_pointer;
 label found, not_found;
 var s, @!t: trie_pointer; @!q: q_index;
-begin  @<Set |s| to the trie base location at which this state should be
+begin  @<Set \(|s| to the trie base location at which this state should be
     packed@>;
   for q:=1 to qmax do {pack it}
   begin  t:=s+q_char(q);@/
@@ -743,7 +746,7 @@ one level of patterns is being generated, the threshold is set to 7 on
 subsequent levels because the pattern trie will be sparser after bad
 patterns are deleted (see |delete_bad_patterns|).
 
-@<Set |s| to the trie base location at which this state should be packed@>=
+@<Set \(|s| to the trie base location at which this state should be packed@>=
 if qmax>qmax_thresh then t:=trie_back(trie_max+1) @+else t:=0;
 loop  begin t:=trie_link(t); s:=t-q_char(1); {get next unoccupied cell}
   @<Ensure |trie| linked up to |s+num_ASCII_codes|@>;
@@ -914,7 +917,7 @@ end;
 @p function firstc_fit: triec_pointer;
 label found, not_found;
 var a, @!b: triec_pointer; @!q: q_index;
-begin  @<Set |b| to the count trie base location at which this state should
+begin  @<Set \(|b| to the count trie base location at which this state should
     be packed@>;
   for q:=1 to qmax do {pack it}
   begin  a:=b+q_char(q);@/
@@ -932,7 +935,7 @@ end;
 @ The threshold for attempting a first-fit packing is 3 transitions, which
 is lower than for the pattern trie because speed is more important here.
 
-@<Set |b| to the count trie base location...@>=
+@<Set \(|b| to the count trie base location...@>=
 if qmax>3 then a:=triec_back(triec_max+1) @+else a:=0;
 loop  begin a:=triec_link(a); b:=a-q_char(1);@/
   @<Ensure |triec| linked up to |b+num_ASCII_codes|@>;

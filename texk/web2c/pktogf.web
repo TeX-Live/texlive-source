@@ -8,6 +8,7 @@
 % Cleaned up description (bitweight errors) no version change:  July 1990
 % Fixed bug with empty character setting min_n to 1 (1.1): 19 October 1990
 % A few typos, no version change: 22 April 2020, 27 October 2020
+% Sorting order fixed, no version change: 02 September 2024
 \def\versiondate{22 April 2020}
 %
 \font\ninerm=cmr9
@@ -16,7 +17,7 @@
 \def\MF{{\logo META}\-{\logo FONT}}
 \def\PASCAL{{\mc Pascal}}
 \def\tamu{Texas A\char38 M}
-\def\(#1){} % this is used to make section names sort themselves better
+\def\({} % this is used to make section names sort themselves better
 \def\9#1{} % this is used for sort keys in the index
 \def\title{PKtoGF}
 \def\contentspagenumber{1}
@@ -1197,7 +1198,7 @@ else
    @<Read short character preamble@> ;
 @<Calculate and check |min_m|, |max_m|, |min_n|, and |max_n|@> ;
 @<Save character locator@> ;
-@<Write character preamble@> ;
+@<Write \(character preamble@> ;
 @<Read and translate raster description@> ;
 gf_byte(eoc) ;
 last_eoc := gf_loc ;
@@ -1360,7 +1361,7 @@ for i := 0 to 255 do
 @ This module takes care of the simple job of writing the character
 preamble, after picking one to fit.
 
-@<Write character preamble@>=
+@<Write \(character preamble@>=
 begin
    if (char_pointer[car mod 256] = -1) and
       (car >= 0) and (car < 256) and
@@ -1408,7 +1409,7 @@ end
 @ And another module to write out those character locators we have so
 carefully saved up the information for.
 
-@<Write character locators@>=
+@<Write \(character locators@>=
 for i := 0 to 255 do
    if char_pointer[i] <> -1 then begin
       if (s_ver_esc[i] = 0) and (s_hor_esc[i] >= 0) and
@@ -1615,7 +1616,7 @@ gf_quad(mmin_m) ;
 gf_quad(mmax_m) ;
 gf_quad(mmin_n) ;
 gf_quad(mmax_n) ;
-@<Write character locators@> ;
+@<Write \(character locators@> ;
 gf_byte(post_post) ;
 gf_quad(j) ;
 gf_byte(gf_id_byte) ;

@@ -555,7 +555,7 @@ var @!long_options: array[0..n_options] of getopt_struct;
     @!current_option: 0..n_options;
 begin
   @<Initialize the option variables@>;
-  @<Define \(t)the option table@>;
+  @<Define the option table@>;
   repeat
     getopt_return_val := getopt_long_only (argc, argv, '', long_options,
                                            address_of (option_index));
@@ -602,7 +602,7 @@ end;
 @ Here are the options we allow.  The first is one of the standard GNU options.
 @.-help@>
 
-@<Define \(t)the option...@> =
+@<Define the option...@> =
 current_option := 0;
 long_options[current_option].name := 'help';
 long_options[current_option].has_arg := 0;
@@ -613,7 +613,7 @@ incr (current_option);
 @ Another of the standard options.
 @.-version@>
 
-@<Define \(t)the option...@> =
+@<Define the option...@> =
 long_options[current_option].name := 'version';
 long_options[current_option].has_arg := 0;
 long_options[current_option].flag := 0;
@@ -623,7 +623,7 @@ incr (current_option);
 @ Print progress information?
 @.-verbose@>
 
-@<Define \(t)the option...@> =
+@<Define the option...@> =
 long_options[current_option].name := 'verbose';
 long_options[current_option].has_arg := 0;
 long_options[current_option].flag := address_of (verbose);
@@ -644,7 +644,7 @@ verbose := false;
 @ Here is an option to change how we output character codes.
 @.-charcode-format@>
 
-@<Define \(t)the option...@> =
+@<Define the option...@> =
 long_options[current_option].name := 'charcode-format';
 long_options[current_option].has_arg := 1;
 long_options[current_option].flag := 0;
@@ -672,7 +672,7 @@ charcode_format := charcode_default;
 
 @ An element with all zeros always ends the list.
 
-@<Define \(t)the option...@> =
+@<Define the option...@> =
 long_options[current_option].name := 0;
 long_options[current_option].has_arg := 0;
 long_options[current_option].flag := 0;

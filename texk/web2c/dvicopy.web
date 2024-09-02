@@ -22,6 +22,7 @@
 %             bug fix (not for Web2C) and some typos (May 2014)
 %               from Udo Wermuth (u.wermuth@@icloud.com).
 % 17 July 2018, still version 1.6: typos corrected, no code changes.
+% 02 Sep 2024, still version 1.6: fix sorting order of names-of-sections.
 
 % Here is TeX material that gets inserted after \input webmac
 \def\hang{\hangindent 3em\indent\ignorespaces}
@@ -32,7 +33,7 @@
 \def\MF{{\logo META}\-{\logo FONT}}
 \mathchardef\RA="3221 % right arrow
 
-\def\(#1){} % this is used to make section names sort themselves better
+\def\({} % this is used to make section names sort themselves better
 \def\9#1{} % this is used for sort keys in the index
 
 \def\title{DVI\lowercase{copy}} % don't change this line!
@@ -1747,7 +1748,7 @@ begin new_line;
 case font_type(cur_fnt) of
   defined_font: confusion(str_fonts);
   loaded_font: bad_tfm;
-  @<Cases for |bad_font|@>@;@/
+  @<Cases for \(|bad_font|@>@;@/
   othercases abort('internal error');
   endcases;
 end;
@@ -2470,7 +2471,7 @@ id3(".")("V")("F")(vf_ext); {file name extension for \.{VF} files}
 gives an error message which refers the user to \.{VFtoVP} and \.{VPtoVF},
 and terminates \.{\title}.
 
-@<Cases for |bad_font|@>=
+@<Cases for \(|bad_font|@>=
 vf_font_type: begin print('Bad VF file'); print_font(cur_fnt);
 @.Bad VF file@>
   print_ln(' loc=',vf_loc:1);
@@ -3523,7 +3524,7 @@ routine determines whether a page shall be processed or skipped and sets
 the variable |type_setting| accordingly.
 
 @p procedure do_bop;@/
-@<OUT: Declare additional local variables |do_bop|@>@;
+@<OUT: Declare additional local variables for |do_bop|@>@;
 @!i,@!j:0..9; {indices into |count|}
 begin @<Determine whether this page should be processed or skipped@>;
 print('DVI: ');
@@ -3642,7 +3643,7 @@ be updated (\\{set} commands).
 The |do_rule| procedure is called in order to typeset a rule.
 
 @p procedure do_rule;@/
-@<OUT: Declare additional local variables |do_rule|@>@;
+@<OUT: Declare additional local variables for |do_rule|@>@;
 @!visible:boolean;
 begin h_rule_pixels@;
 if (cur_h_dimen>0)and(cur_v_dimen>0) then
@@ -3663,7 +3664,7 @@ character~|cur_res| with extension~|cur_ext| from the real font~|cur_fnt|.
 
 @p procedure do_char;@/
 @<OUT: Declare local variables (if any) for |do_char|@>@;
-begin @<OUT: Typeset a |char|@>@;
+begin @<OUT: Typeset a \(|char|@>@;
 if cur_upd then
   begin h_upd_char(widths[cur_wp])(char_pixels[cur_cp]);
   @<OUT: Move right@>@;
@@ -4284,7 +4285,7 @@ for r:=p to q-1 do out_one(bo(byte_mem[r]));
 @ These are the additional local variables (if any) needed for |do_bop|;
 the variables |@!i| and |@!j| are already declared.
 
-@<OUT: Declare additional local variables |do_bop|@>=
+@<OUT: Declare additional local variables for |do_bop|@>=
 var
 
 @ And here is the device dependent code for |do_bop|.
@@ -4378,7 +4379,7 @@ out_four(width_dimen); out_four(cur_h_dimen);
 @ These are the additional local variables (if any) needed for |do_rule|;
 the variable |@!visible| is already declared.
 
-@<OUT: Declare additional local variables |do_rule|@>=
+@<OUT: Declare additional local variables for |do_rule|@>=
 var
 
 @ And here is the device dependent code for |do_rule|.
@@ -4421,7 +4422,7 @@ out_fnt_def(cur_fnt);
 
 @ And here is the device dependent code for |do_char|.
 
-@<OUT: Typeset a |char|@>=
+@<OUT: Typeset a \(|char|@>=
 @!debug if font_type(cur_fnt)<>out_font_type then confusion(str_fonts);
 gubed @;
 if cur_fnt<>out_fnt then

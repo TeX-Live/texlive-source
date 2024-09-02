@@ -5,14 +5,6 @@
 %		 properly---it is hard to test without more information.
 % 03/23/88 (ETM) Brought up to date, converted for use with WEB to C.
 
-@x [0] l.13
-\def\PASCAL{Pascal}
-@y
-\def\PASCAL{Pascal}
-
-\def\({} % this is used to make section names sort themselves better
-@z
-
 @x [0] Extend program title.
 \def\title{PATGEN}
 @y

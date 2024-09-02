@@ -1,5 +1,11 @@
 % vptovf.ch for C compilation with web2c.
 
+@x [0] l.19
+\def\(#1){} % this is used to make section names sort themselves better
+@y
+\def\({} % this is used to make section names sort themselves better
+@z
+
 @x [0] l.22
 \def\title{VP\lowercase{to}VF}
 @y

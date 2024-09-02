@@ -8,12 +8,6 @@
 %  Mar 20 91 THD  Updated to dvicopy 1.2
 % (more recent changes in the ChangeLog)
 
-@x [0] l.35
-\def\(#1){} % this is used to make section names sort themselves better
-@y
-\def\({} % this is used to make section names sort themselves better
-@z
-
 @x [0] l.59 WEAVE: print changes only
 \pageno=\contentspagenumber \advance\pageno by 1
 @y

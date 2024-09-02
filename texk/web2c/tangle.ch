@@ -302,6 +302,12 @@ the replacement text.
       chopped_id[s]:=buffer[i]+@'40
 @z
 
+@x [1.2] l.3
+else @<Define and output a new string of the pool@>;
+@y
+else @<Define \(and output a new string of the pool@>;
+@z
+
 @x [6.63] l.1102 - Case smashing options/strict checking.
   if c<>"_" then
     begin if c>="a" then c:=c-@'40; {merge lowercase with uppercase}
@@ -321,7 +327,7 @@ if l-double_chars=2 then {this string is for a single character}
 else  begin equiv[p]:=string_ptr+@'100000;
   l:=l-double_chars-1;
 @y
-@<Define and output a new string...@>=
+@<Define \(and output a new string...@>=
 begin ilk[p]:=numeric; {strings are like numeric macros}
 if l-double_chars=2 then {this string is for a single character}
   equiv[p]:=buffer[id_first+1]+@'10000000000

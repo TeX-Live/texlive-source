@@ -12,12 +12,6 @@
 % gf and pk formats.  PKtoGF runs silently unless it is given the
 % -v switch in the command line.
 
-@x [0] l.19
-\def\(#1){} % this is used to make section names sort themselves better
-@y
-\def\({} % this is used to make section names sort themselves better
-@z
-
 @x [0] l.21
 \def\title{PKtoGF}
 @y

@@ -1,21 +1,25 @@
-2024-09-01  Andreas Scherer  <https://ascherer.github.io>
+2024-09-02  Andreas Scherer  <https://ascherer.github.io>
 
 	* bibtex.ch,
-	* dvicopy.ch,
 	* dvitype.ch,
 	* gftodvi.ch,
 	* gftopk.ch,
 	* gftype.ch,
 	* mft.ch,
-	* patgen.ch,
-	* pktogf.ch,
 	* pktype.ch,
 	* pltotf.ch,
 	* pooltype.ch,
 	* tangle.ch,
 	* tftopl.ch,
+	* vftovp.ch,
 	* vptovf.ch,
 	* weave.ch: Flip two section names in the index.
+	* dvicopy.ch,
+	* dvicopy.web,
+	* patgen.ch,
+	* patgen.web,
+	* pktogf.ch,
+	* pktogf.web: Fix sorting order in 'other' WEB codees.
 
 2024-08-31  Andreas Scherer  <https://ascherer.github.io>
 
