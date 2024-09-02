@@ -13,6 +13,12 @@
 % 03/09/90	`int' is a bad variable name for C.
 % (more recent changes in the ChangeLog)
 
+@x [0]
+\def\(#1){} % this is used to make section names sort themselves better
+@y
+\def\({} % this is used to make section names sort themselves better
+@z
+
 % [0] Let bibtex.tex work with latest webmac (which defines \ET, hence
 % making E active loses).
 @x
@@ -104,7 +110,7 @@ begin
 initialize;
 print_ln(banner);@/
 @y
-@<Define |parse_arguments|@>
+@<Define \(|parse_arguments|@>
 begin
 standard_input := stdin;
 standard_output := stdout;
@@ -1633,7 +1639,7 @@ itself will get a new section number.
 @y
 @d argument_is (#) == (strcmp (long_options[option_index].name, #) = 0)
 
-@<Define |parse_arguments|@> =
+@<Define \(|parse_arguments|@> =
 procedure parse_arguments;
 const n_options = 4; {Pascal won't count array lengths for us.}
 var @!long_options: array[0..n_options] of getopt_struct;

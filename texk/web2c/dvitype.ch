@@ -20,6 +20,12 @@
 % 01/16/90 (SR)  To version 3.2.
 % (more recent changes in the ChangeLog)
 
+@x [0] l.29
+\def\(#1){} % this is used to make section names sort themselves better
+@y
+\def\({} % this is used to make section names sort themselves better
+@z
+
 @x [0] l.32
 \def\title{DVI$\,$\lowercase{type}}
 @y
@@ -55,7 +61,7 @@ procedure initialize; {this procedure gets things started properly}
   var i:integer; {loop index for initializations}
   begin print_ln(banner);@/
 @y
-@<Define |parse_arguments|@>
+@<Define \(|parse_arguments|@>
 procedure initialize; {this procedure gets things started properly}
   var i:integer; {loop index for initializations}
   begin
@@ -535,7 +541,7 @@ Parse a Unix-style command line.
 
 @d argument_is (#) == (strcmp (long_options[option_index].name, #) = 0)
 
-@<Define |parse_arguments|@> =
+@<Define \(|parse_arguments|@> =
 procedure parse_arguments;
 const n_options = 8; {Pascal won't count array lengths for us.}
 var @!long_options: array[0..n_options] of getopt_struct;

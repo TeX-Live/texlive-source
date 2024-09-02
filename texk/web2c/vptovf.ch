@@ -34,7 +34,7 @@ procedure initialize; {this procedure gets things started properly}
   var @<Local variables for initialization@>@/
   begin print_ln(banner);@/
 @y
-@<Define |parse_arguments|@>
+@<Define \(|parse_arguments|@>
 procedure initialize; {this procedure gets things started properly}
   var @<Local variables for initialization@>@/
   begin kpse_set_program_name (argv[0], my_name);
@@ -237,7 +237,7 @@ Parse a Unix-style command line.
 
 @d argument_is (#) == (strcmp (long_options[option_index].name, #) = 0)
 
-@<Define |parse_arguments|@> =
+@<Define \(|parse_arguments|@> =
 procedure parse_arguments;
 const n_options = 3; {Pascal won't count array lengths for us.}
 var @!long_options: array[0..n_options] of getopt_struct;

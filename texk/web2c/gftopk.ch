@@ -11,6 +11,12 @@
 % on the origin of fonts in both gf and pk formats.  The program runs
 % silently unless it is given the -v switch in the command line.
 
+@x [0] l.41
+\def\(#1){} % this is used to make section names sort themselves better
+@y
+\def\({} % this is used to make section names sort themselves better
+@z
+
 @x [0] l.44
 \def\title{GFtoPK}
 @y
@@ -63,7 +69,7 @@ produced only when the \.{-v} command line flag is presented.
 const @<Constants in the outer block@>@/
 type @<Types in the outer block@>@/
 var @<Globals in the outer block@>@/
-@<Define |parse_arguments|@>
+@<Define \(|parse_arguments|@>
 procedure initialize; {this procedure gets things started properly}
   var i:integer; {loop index for initializations}
 begin
@@ -414,7 +420,7 @@ Parse a Unix-style command line.
 @d argument_is (#) == (strcmp (long_options[option_index].name, #) = 0)
 @d do_nothing ==        {empty statement}
 
-@<Define |parse_arguments|@> =
+@<Define \(|parse_arguments|@> =
 procedure parse_arguments;
 const n_options = 3; {Pascal won't count array lengths for us.}
 var @!long_options: array[0..n_options] of getopt_struct;

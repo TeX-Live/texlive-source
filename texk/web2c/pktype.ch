@@ -8,6 +8,12 @@
 % There is no terminal input to this program.
 % Output is to stdout, and may, of course, be redirected.
 
+@x [0] l.25
+\def\(#1){} % this is used to make section names sort themselves better
+@y
+\def\({} % this is used to make section names sort themselves better
+@z
+
 @x [0] l.27
 \def\title{PKtype}
 @y
@@ -46,7 +52,7 @@ procedure initialize; {this procedure gets things started properly}
 @y
 type @<Types in the outer block@>@/
 var @<Globals in the outer block@>@/
-@<Define |parse_arguments|@>
+@<Define \(|parse_arguments|@>
 procedure initialize; {this procedure gets things started properly}
   var i:integer; {loop index for initializations}
 begin
@@ -335,7 +341,7 @@ Parse a Unix-style command line.
 
 @d argument_is (#) == (strcmp (long_options[option_index].name, #) = 0)
 
-@<Define |parse_arguments|@> =
+@<Define \(|parse_arguments|@> =
 procedure parse_arguments;
 const n_options = 2; {Pascal won't count array lengths for us.}
 var @!long_options: array[0..n_options] of getopt_struct;

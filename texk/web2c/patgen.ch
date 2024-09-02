@@ -5,6 +5,14 @@
 %		 properly---it is hard to test without more information.
 % 03/23/88 (ETM) Brought up to date, converted for use with WEB to C.
 
+@x [0] l.13
+\def\PASCAL{Pascal}
+@y
+\def\PASCAL{Pascal}
+
+\def\({} % this is used to make section names sort themselves better
+@z
+
 @x [0] Extend program title.
 \def\title{PATGEN}
 @y
@@ -53,7 +61,7 @@ procedure initialize; {this procedure gets things started properly}
   var @<Local variables for initialization@>@/
   begin print_ln(banner);@/
 @y
-@<Define |parse_arguments|@>
+@<Define \(|parse_arguments|@>
 procedure initialize; {this procedure gets things started properly}
   var @<Local variables for initialization@>@/
 begin
@@ -97,11 +105,11 @@ error message about what caused the error.
 % machines, from Johannes Hielscher, 10 Jul 2019 00:00:03 (tex-live list),
 % and later from Mojca Miklavec, 23 Sep 2019 21:21:42.
 % It seems hopeless, so went back to the original values (10000000/500000).
-% 
+%
 % The real solution is to provide a way to allocate the arrays
 % dynamically, so that the large arrays can be used by those who need
 % them but other are not affected.
-% 
+%
 % If the values here are still too big, you can probably get it to work
 % by adding swap or zram; or write a patch to allocate the arrays dynamically.
 @x [27]
@@ -243,7 +251,7 @@ Parse a Unix-style command line.
 
 @d argument_is (#) == (strcmp (long_options[option_index].name, #) = 0)
 
-@<Define |parse_arguments|@> =
+@<Define \(|parse_arguments|@> =
 procedure parse_arguments;
 const n_options = 2; {Pascal won't count array lengths for us.}
 var @!long_options: array[0..n_options] of getopt_struct;

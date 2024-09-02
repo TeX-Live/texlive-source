@@ -15,6 +15,12 @@
 % 01/16/90 (SR)  Version 3.1.
 % (more recent changes in the ChangeLog)
 
+@x [0] l.25
+\def\(#1){} % this is used to make section names sort themselves better
+@y
+\def\({} % this is used to make section names sort themselves better
+@z
+
 @x [0] l.28
 \def\title{TF\lowercase{to}PL}
 @y
@@ -64,7 +70,7 @@ label @<Labels in the outer block@>@/
 procedure initialize; {this procedure gets things started properly}
   begin print_ln(banner);@/
 @y
-@<Define |parse_arguments|@>
+@<Define \(|parse_arguments|@>
 procedure initialize; {this procedure gets things started properly}
   begin
     kpse_set_program_name (argv[0], my_name);
@@ -186,6 +192,18 @@ strcat (ASCII_all, '`abcdefghijklmnopqrstuvwxyz{|}~');@/
 MBL_string:=' MBL'; RI_string:=' RI '; RCE_string:=' RCE';
 @z
 
+@x [36] l.680
+while l>0 do @<Reduce \(1)|l| by one, preserving the invariants@>;
+@y
+while l>0 do @<Reduce \(|l| by one, preserving the invariants@>;
+@z
+
+@x [37] l.687
+@ @<Reduce \(1)|l|...@>=
+@y
+@ @<Reduce \(|l|...@>=
+@z
+
 % [38] How we output the character code depends on |charcode_format|.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 @x
@@ -226,6 +244,18 @@ else  begin tfm[0]:=c; out_octal(0,1);
   put_byte(MBL_string[1+(b mod 3)], pl_file);
   put_byte(RI_string[1+s], pl_file);
   put_byte(RCE_string[1+(b div 3)], pl_file);
+@z
+
+@x [40] l.751
+if a>@'3777 then @<Reduce \(2)negative to positive@>;
+@y
+if a>@'3777 then @<Reduce negative to positive@>;
+@z
+
+@x [43] l.775
+@ @<Reduce \(2)negative to positive@>=
+@y
+@ @<Reduce negative to positive@>=
 @z
 
 % [78] No progress reports unless verbose.
@@ -338,7 +368,7 @@ Parse a Unix-style command line.
 
 @d argument_is (#) == (strcmp (long_options[option_index].name, #) = 0)
 
-@<Define |parse_arguments|@> =
+@<Define \(|parse_arguments|@> =
 procedure parse_arguments;
 const n_options = 4; {Pascal won't count array lengths for us.}
 var @!long_options: array[0..n_options] of getopt_struct;

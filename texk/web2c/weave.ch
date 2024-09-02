@@ -81,7 +81,7 @@ procedure initialize;
 const @<Constants in the outer block@>@/
 type @<Types in the outer block@>@/
 var @<Globals in the outer block@>@/
-@<Define |parse_arguments|@>@/
+@<Define \(|parse_arguments|@>@/
 @<Error handling procedures@>@/
 procedure initialize;
   var @<Local variables for initialization@>@/
@@ -562,7 +562,7 @@ Parse a Unix-style command line.
 
 @d argument_is (#) == (strcmp (long_options[option_index].name, #) = 0)
 
-@<Define |parse_arguments|@> =
+@<Define \(|parse_arguments|@> =
 procedure parse_arguments;
 const n_options = 4; {Pascal won't count array lengths for us.}
 var @!long_options: array[0..n_options] of getopt_struct;
