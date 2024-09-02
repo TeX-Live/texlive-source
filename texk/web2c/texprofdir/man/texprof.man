@@ -1,0 +1,345 @@
+.TH TEXPROF 1 "2 September 2024" "Version 1.0"
+.\"=====================================================================
+.if n .ds MF Metafont
+.if t .ds MF Metafont
+.if t .ds TX \fRT\\h'-0.1667m'\\v'0.20v'E\\v'-0.20v'\\h'-0.125m'X\fP
+.if n .ds TX TeX
+.ie t .ds OX \fIT\v'+0.25m'E\v'-0.25m'X\fP
+.el .ds OX TeX
+.\" BX definition must follow TX so BX can use TX
+.if t .ds BX \fRB\s-2IB\s0\fP\*(TX
+.if n .ds BX BibTeX
+.\" LX definition must follow TX so LX can use TX
+.if t .ds LX \fRL\\h'-0.36m'\\v'-0.15v'\s-2A\s0\\h'-0.15m'\\v'0.15v'\fP\*(TX
+.if n .ds LX LaTeX
+.if t .ds AX \fRA\\h'-0.1667m'\\v'0.20v'M\\v'-0.20v'\\h'-0.125m'S\fP\*(TX
+.if n .ds AX AmSTeX
+.if t .ds AY \fRA\\h'-0.1667m'\\v'0.20v'M\\v'-0.20v'\\h'-0.125m'S\fP\*(LX
+.if n .ds AY AmSLaTeX
+.if n .ds WB Web
+.if t .ds WB W\s-2EB\s0
+.\"=====================================================================
+.SH NAME
+texprof \- A profiler for TeX source files
+.SH SYNOPSIS
+.B texprof
+.RI [ options ]
+.RI [ \fB&\fPformat ]
+.RI [ file | \fB\e\fPcommands ]
+.\"=====================================================================
+.SH DESCRIPTION
+Run the \*(TX profiler on
+.IR file ,
+usually creating
+.IR file.dvi
+and
+.IR file.tprof .
+If the
+.IR file 
+argument has no extension, ".tex" will be appended to it. 
+Instead of a file name, a list of \*(TX commands can be given, the first
+of which must start with a backslash.
+With a 
+.BI & format
+argument, the \*(TX profiler uses a different set of precompiled commands,
+contained in
+.IR format\fB.fmt\fP ;
+it is usually better to use the
+.B -fmt
+.I format
+option instead.
+.PP
+The \*(TX profiler is a version of \*(TX that measures the time
+\*(TX needs to execute individual input lines or macros.
+It writes the collected data to a file with extension
+.IR .tprof .
+A separate program,
+.B texprofile
+(see 
+.BR texprofile (1)),
+is used to display the content of a
+.IR .tprof
+file in a readable form.
+
+.PP
+The typical use of the \*(TX profiler is with pre generated formats.
+The
+.B texprof
+command uses the equivalent of the plain \*(TX format, and the
+.B latexprof
+command uses the equivalent of the \*(LX format. To investigate
+the timing of macros targeted to
+.B pdftex
+or
+.B pdflatex,
+you can use
+.B pdftexprof
+or
+.B pdflatexprof.
+
+.PP
+The \*(TX profiler's handling of its command-line arguments is similar
+to that of the other \*(TX programs in the
+.I web2c
+implementation.
+
+.\"=====================================================================
+.SH OPTIONS
+This version of the \*(TX profiler understands the following command line
+options.
+.TP
+.BI -cnf-line \ string
+Parse
+.I string
+as a
+.I texmf.cnf
+configuration line.  See the Kpathsea manual.
+.TP
+.B -etex
+Enable the e-\*(TX extensions.  This option is only effective in
+combination with
+.BR -ini .
+See
+.BR etex (1).
+.TP
+.B -file-line-error
+Print error messages in the form
+.I file:line:error
+which is similar to the way many compilers format them.
+.TP
+.B -no-file-line-error
+Disable printing error messages in the
+.I file:line:error
+style.
+.TP
+.BI -fmt \ format
+Use
+.I format
+as the name of the format to be used, instead of the name by which
+the \*(TX profiler was called or a
+.I %&
+line.
+.TP
+.B -help
+Print help message and exit.
+.TP
+.B -ini
+Start in
+.I INI
+mode, which is used to dump formats.  The
+.I INI
+mode can be used for typesetting, but no format is preloaded, and
+basic initializations like setting catcodes may be required.
+.TP
+.BI -interaction \ mode
+Sets the interaction mode.  The mode can be either
+.IR batchmode ,
+.IR nonstopmode ,
+.IR scrollmode ,
+and
+.IR errorstopmode .
+The meaning of these modes is the same as that of the corresponding
+\ecommands.
+.TP
+.BI -jobname \ name
+Use
+.I name
+for the job name, instead of deriving it from the name of the input file.
+.TP
+.BI -kpathsea-debug \ bitmask
+Sets path searching debugging flags according to the bitmask.  See the
+.I Kpathsea
+manual for details.
+.TP
+.B -ltx
+Enable the \*(LX extensions.  This option is only effective in
+combination with
+.BR -ini .
+See
+.BR latex (1).
+.TP
+.BI -mktex \ fmt
+Enable
+.RI mktex fmt ,
+where
+.I fmt
+must be either
+.IR tex ,
+.IR tfm ,
+.IR fmt ,
+or
+.IR pk .
+.TP
+.BI -no-mktex \ fmt
+Disable
+.RI mktex fmt ,
+where
+.I fmt
+must be either
+.IR tex ,
+.IR tfm ,
+.IR fmt ,
+or
+.IR pk .
+.TP
+.BI -output-directory \ directory
+Write output files in
+.I directory
+instead of the current directory.  Look up input files in
+.I directory
+first, then along the normal search path.
+.TP
+.B -parse-first-line
+If the first line of the main input file begins with
+.I %&
+parse it to look for a dump name.
+.TP
+.B -no-parse-first-line
+Disable parsing of the first line of the main input file.
+.TP
+.B -pdf
+Enable the simulation of common
+.B pdftex
+primitives.  This option requires the
+.BR -ini
+option and implies the
+.BR -ltx
+option.
+See
+.BR pdftex (1).
+.TP
+.B -prof
+Enable profiling as soon as \*(TX enters the main loop. If tis option
+it not used, profiling needs to switched on using the \eprofileon
+primitive. Profiling can be switched of with the \eprofileoff
+primitive.
+.TP
+.BI -progname \ name
+Pretend to be program
+.IR name .
+This affects both the format used and the search paths.
+.TP
+.B -version
+Print version information and exit.
+.\"=====================================================================
+.SH ENVIRONMENT
+See the Kpathsea library documentation (e.g., the `Path specifications'
+node) for precise details of how the environment variables are used.
+The
+.B kpsewhich
+utility can be used to query the values of the variables.
+.PP
+.TP
+.B TEXMFOUTPUT
+Normally, \*(TX puts its output files in the current directory.  If
+any output file cannot be opened there, it tries to open it in the
+directory specified in the environment variable TEXMFOUTPUT.
+There is no default value for that variable.  For example, if you say
+.I texprof  paper
+and the current directory is not writable and TEXMFOUTPUT has
+the value
+.IR /tmp ,
+\*(TX attempts to create
+.I /tmp/paper.log ,
+.I /tmp/paper.dvi ,
+and
+.I /tmp/paper.tprof .
+TEXMFOUTPUT is also checked for input
+files, as \*(TX often generates files that need to be subsequently
+read; for input, no suffixes (such as ``.tex'') are added by default,
+the input name is simply checked as given.
+.TP
+.B TEXINPUTS
+Search path for
+.I \einput
+and
+.I \eopenin
+files.
+This normally starts with ``.'', so
+that user files are found before system files.  An empty path
+component will be replaced with the paths defined in the
+.I texmf.cnf
+file.  For example, set TEXINPUTS to ".:/home/user/tex:" to prepend the
+current directory and ``/home/user/tex'' to the standard search path.
+.TP
+.B TEXFORMATS
+Search path for format files.
+.TP
+.B TFMFONTS
+Search path for font metric
+.RI ( .tfm )
+files.
+.TP
+.B SOURCE_DATE_EPOCH
+If set, its value, taken to be in epoch-seconds, will be used for the
+creation date and as the reference moment for the time related 
+primitives of \*(LX. This is useful for making reproducible builds.
+.TP
+.B FORCE_SOURCE_DATE
+If set to the value "1", the time-related \*(TX primitives
+.RI ( \eyear ,
+.IR \emonth ,
+.IR \eday ,
+.IR \etime )
+are also initialized from the value of SOURCE_DATE_EPOCH.  This is not
+recommended if there is any viable alternative.
+.PP
+Many, many more environment variables may be consulted related to path
+searching.  See the Kpathsea manual.
+.\"=====================================================================
+.SH FILES
+The location of the files mentioned below varies from system to
+system.  Use the
+.B kpsewhich
+utility to find their locations.
+.TP
+.I *.tfm
+Metric files for \*(TX's fonts.
+.TP
+.I *.fmt
+Predigested \*(TX format files.
+.TP
+.I *.pk *.pfb
+Font files used by \*(TX.
+.\"=====================================================================
+.SH NOTES
+This manual page is not meant to be exhaustive.  The complete
+documentation for the \*(TX profiler can be found in 
+.IR texprof.pdf .
+Further information can be found in the  manual of the
+.IR "Kpathsea library" .
+.\"=====================================================================
+.SH BUGS
+This version of the \*(TX profiler does not implement all of the
+primitives that pdftex provides, and further, it will not produce
+the same side effects.
+.\"=====================================================================
+.SH AVAILABILITY
+The \*(TX profiler should compile on a large variety of machine architectures
+and operating systems. The function to obtain timing information id POSIX
+specific.
+.PP
+The sources of the \*(TX profiler are hosted at
+.BR https://github.com/ruckertm/HINT
+.\"=====================================================================
+.SH "SEE ALSO"
+.BR texprofiler (1),
+.BR tex (1),
+.BR latex (1),
+.BR pdftex (1),
+.BR pdflatex (1), and
+.BR kpsewhich (1).
+.\"=====================================================================
+.SH AUTHORS
+The primary author of the \*(TX profiler is Martin Ruckert,
+with e\*(TX extensions by Peter Breitenlohner,
+\*(LX extensions by Thierry Laronde,
+and
+the kpathsearch library by Karl Berry.
+.PP
+\*(TX was designed by Donald E. Knuth,
+who implemented it using his \*(WB system for Pascal programs.
+.PP
+Many, many more contributed to the typesetting system now known as \*(TX;
+far too many to name all of them here.
+.\" vim: syntax=nroff
