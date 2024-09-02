@@ -1,3 +1,7 @@
+2023-09-01  Andreas Scherer  <https://ascherer.github.io>
+
+	* tie-w2c.ch: Fix sorting order of names of sections.
+
 2023-09-03  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* tie.test: Make easier to test on Windows.

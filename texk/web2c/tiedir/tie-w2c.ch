@@ -252,6 +252,12 @@ replacement part of a change file, or in an incomplerte check if the
 replacement part of a change file, or in an incomplete check if the
 @z
 
+@x l.663
+   @<Check |c| for |EOF|, |return| if line was empty, otherwise
+@y
+   @<Check \9{c}|c| for |EOF|, |return| if line was empty, otherwise
+@z
+
 @x l.667
    if (c!=@' ' && c!=tab_mark)
 @y
@@ -270,6 +276,12 @@ Section 29
 final line. Of the current line is empty, we just can \&{return}.
 @y
 final line. If the current line is empty, we just can \&{return}.
+@z
+
+@x l.696
+@<Check |c| for |EOF|...@>=
+@y
+@<Check \9{c}|c| for |EOF|...@>=
 @z
 
 Section 31
