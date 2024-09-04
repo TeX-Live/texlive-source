@@ -105,7 +105,9 @@
 \let\mc=\ninerm % medium caps for names like SAIL
 \def\Prote{{\tenrm P\kern-0.1em R\kern-0.15em\raise.11ex\hbox{o}%
   \kern-0.22em T\kern-0.05em E}}
+\def\texprof{{\TeX}prof}  
 \ifpdftex
+\sanitizecommand{\texprof}{TeXprof}
 \sanitizecommand{\eTeX}{eTeX}
 \sanitizecommand{\Prote}{PRoTE}
 \fi
@@ -150,7 +152,7 @@
 
 \let\@@=\relax % we want to be able to \write a \?
 
-\def\title{\eTeX}
+\def\title{\texprof}
 \def\LaTeX{L\kern-.36em\raise.3ex\hbox{\sc A}\kern-.15em\TeX}%
 % system dependent redefinitions of \title should come later
 % and should use:
@@ -219,9 +221,48 @@
 @s to   do
 
 @* Introduction.
-This is \Prote, a program derived from and extending the capabilities
-of \TeX plus \eTeX,
-a document compiler intended to produce typesetting of high
+This is \texprof, an implementation of \TeX\ with an extension providing profiling
+capabilities. To be useful nowadays, the profiling capability is not the only
+extension of Donald Knuth's original implementation of \TeX.
+
+To obtain the present \CEE/ program, Donald Knuth's \PASCAL\ program was 
+modified in a first step using most of the \eTeX\ extensions by 
+Peter Breitenlohner and Phil Taylor.
+@^Breitenlohner, Peter@>
+@^Taylor, Phil@>
+Then further extensions were added using the \Prote\ change file
+of Thierry Laronde. 
+@^Laronde, Thierry@>
+Then the constants defining the size of \TeX's data structures,
+notably the size of the |mem| array, were increased considerable. All these
+changes to the \PASCAL\ program are necessary to run a current \LaTeX\ on the 
+resulting \TeX\ engine. The next important step was then to translate this
+literate \PASCAL\ program to a literate \CEE/ program using the 
+{\tt web2w} source code translator. The use of the \CEE/ based \.{cweb} system
+instead of the \PASCAL\ based \.{WEB} system greatly simplifies the tool chain
+necessary for producing an executable program and allows true source level
+debugging of the resulting program. The latter is indispensable to carry out
+large scale modifications of the \TeX\ program and is of enormous help even
+for smaller modifications.
+The first modification of the resulting \CEE/ program was then the addition 
+of \CEE/ routines from the \TeX\ Live project to enable the use of the 
+kpath search library by Karl Berry. 
+@^Berry, Karl@>
+The last and final step was the addition of profiling capabilities
+which includes, as the latest addition, the definition of numerous
+primitives that enable the \TeX\ profiler to pretend to be \pdfTeX.
+The code used there reuses parts of the  \CEE/ version of \pdfTeX\  by
+H\`an Th\^e\llap{\raise 0.5ex\hbox{\'{}}} Th\`anh.
+@^Th\`anh, H\`an Th\^e\llap{\raise 0.5ex\hbox{\'{}}}@>
+
+All these changes left their traces in the text that follows. 
+No attempt was made to streamline the text and rid it from the traces 
+of its exciting history. 
+So with next the paragraph you can start reading Donald Knuth's
+introduction to his \TeX\ program. Enjoy!
+\medskip
+
+This is \TeX, a document compiler intended to produce typesetting of high
 quality.
 The \PASCAL\ program that follows is the definition of \TeX82, a standard
 @:PASCAL}{\PASCAL@>
