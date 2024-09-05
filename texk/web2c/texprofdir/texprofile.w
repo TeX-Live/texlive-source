@@ -25,8 +25,8 @@
 % dealings in this Software without prior written authorization from the
 % copyright holders.
 
-\input btxmac.tex
-\input hintmac.tex
+%\input btxmac.tex
+\input profilemac.tex
 
 %% defining how to display certain C identifiers
 
@@ -123,9 +123,9 @@ Ruckert, Martin.
 }
 \bigskip
 
-{\raggedright\advance\rightskip 3.5pc
+{\raggedright\advance\rightskip 3.5pc plus 35pt
 \def\:{\discretionary{}{}{}}
-Internet page  {\tt http:\://hint.\:userweb.\:mwn.\:de/}
+The internet page  {\tt http:\://hint.\:userweb.\:mwn.\:de/}
 may contain current information about this book, downloadable software,
 and news. 
 
@@ -234,7 +234,7 @@ to make sure we have a file that is really meant to be read by {\tt texprofile}.
 
 @<read the input file@>=
 if (input_file_name==NULL)
-   explain_usage("no input file given");
+   commandline_error("no input file given");
 in = fopen(input_file_name,"rb");
 if (in==NULL)
 { char *tmp=malloc(strlen(input_file_name)+7);
@@ -622,7 +622,9 @@ int *cmd_freq;
 int cur_depth;
 @
 
-@ @d POP_BIT		0x80
+@
+
+@d POP_BIT		0x80
 
 @<read timing data@>=
 ALLOCATE(file_time,file_num);
@@ -728,8 +730,7 @@ macro_defs[0].l=0;
 
 The table of |cmd_name|s is defined in the appendix.
 
-
-@ @<store pop |d|@>=
+@<store pop |d|@>=
       stamps[i].c=system_macro_pop;
       stamps[i].d=cur_depth-d;
 #ifdef DEBUG
@@ -1248,7 +1249,7 @@ case 'L': opt_lines=true; break;
 case 'p':{ char *endptr;
 	   percent_limit=strtod(option+1, &endptr);
 	   if (endptr==option+1)
-  	     explain_usage("-pMM<n> without a numeric argument <n>");
+  	     commandline_error("-p<n> without a numeric argument <n>");
 	   else
 	     option=endptr-1;  
 	 }
@@ -1317,9 +1318,9 @@ case 'T': opt_top_ten=true;break;
 case 't': { char *endptr;
 	    tt=strtol(option+1, &endptr,10)+1;
 	   if (endptr==option+1)
-  	     explain_usage("-t<n> without a numeric argument <n>");
+  	     commandline_error("-t<n> without a numeric argument <n>");
 	   else if (tt<2 || tt>101)
-	     explain_usage("-t<n> with n out of bounds");
+	     commandline_error("-t<n> with <n> out of bounds");
 	   option=endptr-1;
 	 }
          break;
@@ -1651,16 +1652,6 @@ case 'A': opt_files=opt_summary=
 
 \section{Processing the Command Line}
 
-The proper use of the command line is explained here:
-
-@<explain usage@>=
-"Use: "@;
-"texprofile [-options] <input file>\n"@;
-"options:\n"@;
-@<explain table options@>@;
-"\n"
-@<explain format options@>@;
-@
 
 @<process the command line@>=
 i=1;
@@ -1671,7 +1662,7 @@ while (i<argc)
     while (*option!=0)
     { switch(*option)
       { @<process options@>@;
-	default: explain_usage("unknown option");
+	default: commandline_error("unknown option");
       }
       option++;
     }
@@ -1679,13 +1670,72 @@ while (i<argc)
   else if (input_file_name==NULL)
     input_file_name=argv[i];
   else   
-    explain_usage("multiple input files given");
+    commandline_error("multiple input files given");
   i++;
 }
 @
 
 
+Sometimes an error means that the program should also explain how to use it.
 
+@<functions@>=
+void explain_usage(void)
+{ fprintf(stderr, 
+    "Use: "@;
+    "texprofile [-options] <input file>\n"@;
+    "options:\n"@;
+    @<explain general options@>@;
+    "\n"
+    @<explain table options@>@;
+    "\n"
+    @<explain format options@>@;
+    "\n"
+  );
+  exit(1);
+}
+@
+
+A simple option that most users will use occasionaly is the {\tt -?} option.
+This option can also be look like {\tt --help}, {\tt -help} or {\tt -h}.
+
+@<process options@>=
+case 'h':
+case '?': explain_usage(); break;
+@
+
+@<explain general options@>=
+"-?        display this help and exit\n"@;
+"--help    display this help and exit\n"@;
+@
+
+The help option should also be available as a long option:
+
+@<process options@>=
+case '-':
+  option++;
+  @<process long options@>@;
+  else commandline_error("unknown long option");
+  break;
+@
+
+@<process long options@>=
+ if (strcmp(option,"help")==0) explain_usage();
+@
+
+The only other long option currently supported is the {\tt --version} option.
+
+@d VERSION_STR "texprofile version 1.0" 
+
+@<process long options@>=
+ if (strcmp(option,"version")==0)
+ { printf(VERSION_STR "\n");
+   exit(1);
+ }
+@
+
+@<explain general options@>=
+"--version output version information and exit\n"@;
+@
 
 \section{Error Handling}
 If an error occurs this program will print an error message
@@ -1693,21 +1743,25 @@ and terminate. There is no attempt to recover from errors.
 
 @<error handling@>=
 int error(char *msg)
-{ fprintf(stderr,"ERROR: %s\n", msg);
+{ fprintf(stderr,"texprofile: %s\n", msg);
   exit(1);
   return 0;
 }
 @
 
-Sometimes an error means that the program should also explain how to use it.
+The program is a little bit more verbose if there is an error in the
+command line.
 
-@<functions@>=
-void explain_usage(char *msg)
-{ fprintf(stderr,"ERROR: %s\n", msg);
-  fprintf(stderr,@<explain usage@>@+);
+@<error handling@>=
+int commandline_error(char *msg)
+{ fprintf(stderr,"texprofile: %s\n", msg);
+  fprintf(stderr,"Try 'texprofile --help' for more information.\n");
   exit(1);
+  return 0;
 }
 @
+
+
 
 
 The input file should start with a marker: the ASCII codes of ``TEX PROF''.

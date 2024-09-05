@@ -105,7 +105,7 @@
 \let\mc=\ninerm % medium caps for names like SAIL
 \def\Prote{{\tenrm P\kern-0.1em R\kern-0.15em\raise.11ex\hbox{o}%
   \kern-0.22em T\kern-0.05em E}}
-\def\texprof{{\TeX}prof}  
+\def\texprof{{\TeX}prof}
 \ifpdftex
 \sanitizecommand{\texprof}{TeXprof}
 \sanitizecommand{\eTeX}{eTeX}
@@ -227,13 +227,13 @@ This is \texprof, an implementation of \TeX\ with an extension providing profili
 capabilities. To be useful nowadays, the profiling capability is not the only
 extension of Donald Knuth's original implementation of \TeX.
 
-To obtain the present \CEE/ program, Donald Knuth's \PASCAL\ program was 
-modified in a first step using most of the \eTeX\ extensions by 
+To obtain the present \CEE/ program, Donald Knuth's \PASCAL\ program was
+modified in a first step using most of the \eTeX\ extensions by
 Peter Breitenlohner and Phil Taylor.
 @^Breitenlohner, Peter@>
 @^Taylor, Phil@>
 Then further extensions were added using the \Prote\ change file
-of Thierry Laronde. 
+of Thierry Laronde.
 @^Laronde, Thierry@>
 Then the constants defining the size of \TeX's data structures,
 notably the size of the |mem| array, were increased considerable. All these
