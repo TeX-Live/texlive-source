@@ -178,16 +178,18 @@
   \let\ =\SP % space in a string
   \let\_=\UL % underline in a string
   \let\&=\AM % ampersand in a string
+  \let\^=\CF % circumflex in a string
   #1\kern.05em}}
 \def\&#1{\leavevmode\hbox{\bf\def\_{\UL}%
   #1\/\kern.05em}} % boldface type for reserved words
 \def\\#1{\leavevmode\hbox{\it\def\_{\UL}%
   #1\/\kern.05em}} % italic type for identifiers
 \def\vb#1{{\rm #1}}
-\def\^{\ifmmode\mathchar"222 \else\char`^ \fi} % pointer or hat
+%\def\^{\ifmmode\mathchar"222 \else\char`^ \fi} % pointer or hat
 \def\LQ{{\tt\char'22}} % left quote in a string
 \def\RQ{{\tt\char'23}} % right quote in a string
 \def\UL{{\tt\char`\_}} % underline character in a C identifier
+\def\CF{{\tt\char`^}}
 \def\dotdot{\mathrel{.\,.}} % double dot, used only in math mode
 \setbox\MGbox=\hbox{\kern1pt$\rightarrow$\kern1pt} % C pointer to field
 \def\MG{\copy\MGbox}
@@ -258,7 +260,7 @@ H\`an Th\^e\llap{\raise 0.5ex\hbox{\'{}}} Th\`anh.
 All these changes left their traces in the text that follows. 
 No attempt was made to streamline the text and rid it from the traces 
 of its exciting history. 
-So with next the paragraph you can start reading Donald Knuth's
+So with the next paragraph you can start reading Donald Knuth's
 introduction to his \TeX\ program. Enjoy!
 \medskip
 
