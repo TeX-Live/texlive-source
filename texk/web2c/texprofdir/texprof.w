@@ -1502,7 +1502,7 @@ by changing |wterm|, |wterm_ln|, and |wterm_cr| in this section.
 
 @<Basic printing procedures@>=
 #define @[put(F)@]    @[fwrite(&((F).d)@],@[sizeof((F).d),1,(F).f)@]@;
-#define @[get(F)@]    @[(void)fread(&((F).d),sizeof((F).d),1,(F).f)@]
+#define @[get(F)@]    @[(void)!fread(&((F).d),sizeof((F).d),1,(F).f)@]
 
 #define @[pascal_close(F)@]    @[fclose((F).f)@]
 #define @[eof(F)@]    @[feof((F).f)@]
@@ -32547,8 +32547,6 @@ primitive("pdfcolorstackinit", convert, pdf_colorstack_init_code);@/
   case pdf_escape_name_code: print_esc("pdfescapename");@+break;
   case pdf_escape_hex_code: print_esc("pdfescapehex");@+break;
   case pdf_unescape_hex_code: print_esc("pdfunescapehex");@+break;
-  case pdf_creation_date_code: print_esc("pdfcreationdate");@+break;
-  case pdf_file_mod_date_code: print_esc("pdffilemoddate");@+break;
   case pdf_match_code: print_esc("pdfmatch");@+break;
   case pdf_last_match_code: print_esc("pdflastmatch");@+break;
   case pdf_colorstack_init_code: print_esc("pdfcolorstackinit");@+break;
