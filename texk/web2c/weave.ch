@@ -159,7 +159,6 @@ for i:=@'200 to @'377 do xchr[i]:=chr(i);
 @d term_out==stdout
 @d print(#)==write(term_out,#) {`|print|' means write on the terminal}
 @z
-
 @x [3.20] l.521
 @<Globals...@>=
 @!term_out:text_file; {the terminal as an output file}
@@ -282,7 +281,6 @@ there are programs that need more than 65536 bytes; \TeX\ is one of these
 (and the pdf\TeX\ variant even requires more than twice that amount when
 its ``final'' change file is applied).
 @z
-
 @x [5.37] l.729
 is either 0 or 1. (For generality, the first index is actually allowed to
 run between 0 and |ww-1|, where |ww| is defined to be 2; the program will
@@ -290,7 +288,6 @@ run between 0 and |ww-1|, where |ww| is defined to be 2; the program will
 is either 0, 1 or 2. (For generality, the first index is actually allowed to
 run between 0 and |ww-1|, where |ww| is defined to be 3; the program will
 @z
-
 @x [5.37] l.734
 @d ww=2 {we multiply the byte capacity by approximately this amount}
 @y
@@ -340,7 +337,6 @@ command line), then we use alternative \TeX\ macros from `\.{\\input pwebmac}'.
 @.\\input pwebmac@>
 @.pwebmac@>
 @z
-
 @x [12.124] l.2204
 out_ptr:=1; out_line:=1; out_buf[1]:="c"; write(tex_file,'\input webma');
 @y
@@ -356,7 +352,6 @@ the break.
 preceded by another backslash or a \TeX\ comment marker. In the latter case, a
 |'%'| is output at the break.
 @z
-
 @x [12.127] l.2248 - deal with malign user input
   if (d="\")and(out_buf[k-1]<>"\") then {in this case |k>1|}
 @y
@@ -411,7 +406,6 @@ if cat[pp+1]=close then squash(pp,1,stmt,-2)(43)
 @y
 if cat[pp+1]=close then reduce(pp,0,stmt,-2)(43)
 @z
-
 @x [15.167] l.3277 - Apply 'squash(...,2,...)'.
   begin app(force); app(backup); app2(pp); reduce(pp,2,intro,-3)(44);
 @y
@@ -436,7 +430,6 @@ scrap list.
 scrap list.  This procedure takes advantage of the simplification that
 occurs when |k=0|.
 @z
-
 @x [15.172] l.3330
 begin cat[j]:=c; trans[j]:=text_ptr; freeze_text;
 @y
@@ -446,7 +439,6 @@ if k>0 then
     trans[j]:=text_ptr; freeze_text;
   end;
 @z
-
 @x [15.172] l.3337 - Fix spacing.
 @<Change |pp| to $\max(|scrap_base|,|pp+d|)$@>;
 @y
@@ -466,7 +458,6 @@ procedure takes advantage of the simplification that occurs when |k=1|.
 @ Similarly, the `|squash|' macro invokes a procedure called `|sq|', which
 combines |app|${}_k$ and |red| for matching numbers~|k|.
 @z
-
 @x [15.174] l.3349
 var i:0..max_scraps; {index into scrap memory}
 begin if k=1 then
@@ -488,6 +479,56 @@ begin
   red(j,k,c,d);
 @z
 
+@x [16.185] l.3555
+string,verbatim: @<Append a \(string scrap@>;
+identifier: @<Append an identifier scrap@>;
+TeX_string: @<Append a \TeX\ string scrap@>;
+@y
+string,verbatim: @<Append \(a \(string scrap@>;
+identifier: @<Append \(an identifier scrap@>;
+TeX_string: @<Append \(a \TeX\ string scrap@>;
+@z
+
+@x [16.189] l.3652
+@<Append a \(string scrap@>=
+@y
+@<Append \(a \(string scrap@>=
+@z
+
+@x [16.190] l.3690
+@ @<Append a \TeX\ string scrap@>=
+@y
+@ @<Append \(a \TeX\ string scrap@>=
+@z
+
+@x [16.191] l.3697
+@ @<Append an identifier scrap@>=
+@y
+@ @<Append \(an identifier scrap@>=
+@z
+
+@x [16.193] l.3731
+else_like: begin @<Append |terminator| if not already present@>;
+@y
+else_like: begin @<Append \(|terminator| if not already present@>;
+@z
+@x [16.193] l.3734
+end_like: begin @<Append |term...@>;
+@y
+end_like: begin @<Append \(|term...@>;
+@z
+@x [16.193] l.3752
+until_like: begin @<Append |term...@>;
+@y
+until_like: begin @<Append \(|term...@>;
+@z
+
+@x [16.194] l.3762
+@<Append |termin...@>=
+@y
+@<Append \(|termin...@>=
+@z
+
 @x [19.239] l.4537 - omit index and module names if no_xref set
 @<Phase III: Output the cross-reference index@>=
 @y
@@ -504,7 +545,6 @@ if no_xref then begin
         end
 else begin
 @z
-
 @x [19.239] l.4551
 print('Done.');
 @y
@@ -519,7 +559,6 @@ any error stop will set |debug_cycle| to zero.
 
 @d term_in==stdin
 @z
-
 @x [20.258] l.4790
 @!term_in:text_file; {the user's terminal as an input file}
 @y
@@ -536,7 +575,6 @@ print_ln(banner); {print a ``banner line''}
 print (banner); {print a ``banner line''}
 print_ln (version_string);
 @z
-
 @x [21.261] l.4856
 end_of_WEAVE:
 stat @<Print statistics about memory usage@>;@+tats@;@/
