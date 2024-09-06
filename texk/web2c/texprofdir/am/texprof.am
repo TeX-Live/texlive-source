@@ -1,0 +1,87 @@
+## $Id: texprof.am 65165 2022-12-02 15:51:09Z mruckert $
+## texk/web2c/texprofdir/am/texprof.am: Makefile fragment for TeXprof
+##
+## Copyright 2024 Martin Ruckert <ruckert@cs.hm.edu>
+## You may freely use, modify and/or distribute this file.
+
+if TEXPROF
+bin_PROGRAMS += texprof texprofile
+
+# convenience target to build all the programs here.
+texprofall: texprof texprofile
+
+# At the moment, these are the only man pages handled in the
+# conglomerated web2c/Makefile[.am]. (All the others are in man/.)
+# If that changes, have to set at top level and use +=.
+man1_MANS += texprofdir/man/texprof.man
+# not yet there: texprofdir/man/texprofile.man 
+endif TEXPROF
+
+texprof_CPPFLAGS = $(AM_CPPFLAGS) 
+texprof_CPPFLAGS += -I$(srcdir)/libmd5
+texprof_CPPFLAGS += -DINIT -DSTAT -DWEB2CVERSION="\"${WEB2CVERSION}\""
+# -DDEBUG drops into an interactive debugging session.
+texprof_LDADD = $(KPATHSEA_LIBS) libmd5.a
+texprof_DEPENDENCIES = $(KPATHSEA_DEPEND) libmd5.a
+#
+texprofile_CPPFLAGS = $(AM_CPPFLAGS)
+texprofile_LDADD = 
+texprofile_DEPENDENCIES = 
+#
+# TeXprof CWEB sources
+texprof_web = texprofdir/texprof.w
+texprofile_web = texprofdir/texprofile.w
+
+# Creating several files: need stamp file and two rules with identical recipes
+texprof_ctangle_sh = CWEBINPUTS=$(srcdir)/texprofdir AM_V_P=$(AM_V_P) $(SHELL) ./tangle-sh $@ $(CTANGLE)
+
+# For each cweb (.w) source file, list the files generated.
+texprofile_c = texprofile.c
+texprof_c = texprof.c 
+
+$(texprof_c): texprof-tangle
+$(texprofile_c): texprof-tangle
+
+#
+texprof-tangle: ctangle$(EXEEXT) texprofdir/texprof.w tangle-sh
+	$(texprof_ctangle_sh) texprof
+
+texprofile-tangle: ctangle$(EXEEXT) texprofdir/texprofile.w tangle-sh
+	$(texprof_ctangle_sh) texprofile
+
+# texprof
+nodist_texprof_SOURCES = $(texprof_c) $(texprofile_c)
+
+# By the way, the $(BUILT_SOURCES) suggestion in the Automake manual for
+# this does not work for us, because we want to be able to invoke
+# specific targets (hiall, texprof, hishrink, ...), and $(BUILT_SOURCES)
+# is only a dependency on general targets (all, install, ...).
+
+EXTRA_DIST += texprofdir/ChangeLog $(texprof_web)
+
+DISTCLEANFILES += $(nodist_texprof_SOURCES)
+DISTCLEANFILES += texprofile-tangle texprof-tangle
+
+## TeXprof tests
+#
+#texprof_tests = texprofdir/tests/hello.test \
+#  texprofdir/tests/rule.test
+#
+#texprofdir/tests/hello.log: texprof$(EXEEXT) histretch$(EXEEXT)
+#texprofdir/tests/rule.log: texprof$(EXEEXT) histretch$(EXEEXT) hishrink$(EXEEXT)
+#
+#EXTRA_DIST += $(texprof_tests)
+#
+#if TEXPROF
+#TESTS += $(texprof_tests)
+#endif TEXPROF
+#
+## hello.test
+#EXTRA_DIST += texprofdir/tests/hello.tex 
+#DISTCLEANFILES += hello.log
+
+## rule.test
+#EXTRA_DIST += texprofdir/tests/rule.tex 
+#DISTCLEANFILES += rule.log
+
+# (end of texprof.am)

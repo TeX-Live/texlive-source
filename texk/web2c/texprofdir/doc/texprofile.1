@@ -1,0 +1,179 @@
+'\" t
+.\" Manual page created with latex2man on Fri Sep  6 18:12:14 2024
+.\" NOTE: This file is generated, DO NOT EDIT.
+.de Vb
+.ft CW
+.nf
+..
+.de Ve
+.ft R
+
+.fi
+..
+.TH "TEXPROFILE" "1" "6\-9\-2024" "Displaying TeX profiles " "Displaying TeX profiles "
+.SH NAME
+
+.PP
+texprofile
+\- Displaying the profile data collected by texprof\&.
+.PP
+.SH SYNOPSIS
+
+.PP
+texprofile
+[Options] \fIinputfile\fP
+.PP
+.SH DESCRIPTION
+
+texprofile
+reads the binary \fIinputfile\fP
+as produced by 
+texprof\&.
+The extension \&.tprof
+of the input file can be 
+omitted. It analyses the data and presents the results in a variety of 
+tables, either optimized for human readability or as CSV (comma 
+separated values) files for further processing. 
+The output is written to the standard output stream where it can be redirected 
+to a file or viewed immediately. 
+.PP
+.SH OPTIONS
+
+There are four types of options: general options, table options, selection options, and formatting options. 
+.PP
+The general options: 
+.TP
+\fB\-?\fP \fB\-h\fP \fB\-\-help\fP
+ Display a short help text and exit the program. 
+.TP
+\fB\-\-version\fP
+ Display the version information and exit. 
+.PP
+The table options determine the tables that will be displayed. 
+These options all use upper case letters. 
+If no table option is given, only some global information is shown. 
+.PP
+.TP
+\fB\-T\fP
+ Show the table of the top 10 input lines. 
+.TP
+\fB\-G\fP
+ Show the table of the macro call graph. 
+.TP
+\fB\-C\fP
+ Show the table of times per TeX command. 
+.TP
+\fB\-L\fP
+ Show the table of times per input line. 
+.TP
+\fB\-R\fP
+ Show the table of raw time stamps. 
+.TP
+\fB\-S\fP
+ Show the table of macro stack changes. 
+.TP
+\fB\-F\fP
+ Show the table of all input files. 
+.TP
+\fB\-M\fP
+ Show the table of all macros called. 
+.TP
+\fB\-A\fP
+ Show important tables (equal to \-TGFC) tables. 
+.TP
+\fB\-N\fP
+ Do not show the table of global information. 
+.PP
+The selection options allow to reduce the amount of data that is shown 
+in the table by omitting table entries that contribute little to the 
+overall runtime. 
+.PP
+.TP
+\fB\-p\fP\fIn\fP
+ Do not show information for table entries 
+with cumulative time below \fIn\fP
+percent. The default is 1.0 percent. 
+.TP
+\fB\-t\fP\fIn\fP
+ Limit the number of input lines shown in the 
+table of the ``Top Ten\&'' to \fIn\fP\&.
+This option is only useful 
+with the \fB\-T\fP
+option. 
+.PP
+The formatting option determine the formatting of the information in the tables 
+as well as the selection of information that is shown in the tables. 
+.PP
+.TP
+\fB\-i\fP
+ Add the macros file and line numbers after the macro name. 
+This option is useful to distinguish two macros that share 
+the same name. 
+.TP
+\fB\-m\fP
+ Optimize output for machine readability. When optimized for human readability, 
+times are rounded and given in a short form adding a unit identifier: 
+s for seconds, ms for milliseconds, us for micro seconds, and ns for 
+nanoseconds. This format is inconvenient if you want to import the data 
+for example into a spread\-sheet for further processing. 
+With the \fB\-m\fP
+option times are simply given in nano seconds without units. 
+Similar the combined time for the total time used for a macro and the 
+time used as a sub\-macro from the call graph is given in a single column 
+with a slash separating both numbers is nice for human readers. 
+With the \fB\-m\fP
+option both numbers will simply be given in separate columns. 
+.PP
+.TP
+\fB\-n\fP
+ Show the time stamp numbers. This option is useful together with 
+the \fB\-R\fP
+option, if you import the table into a database or spread\-sheet. 
+If you sort the data by various properties into different 
+categories, the time stamp number can be used to keeping the entries 
+within a category sorted by time. 
+.PP
+.TP
+\fB\-s\fP
+ Show the changes of the macro stack. 
+This option is useful with the \fB\-R\fP
+option if you want to see the changes 
+in the macro stack (see \fB\-S\fP)
+together with the timing information in 
+a single table. 
+.PP
+.SH SEE ALSO
+
+\fItexprof\fP(1)
+.PP
+.SH VERSION
+
+Version: 1.0 of 6-9-2024
+.TP
+Copyright 
+(C)2024, Martin Ruckert,
+.br
+Hochschule München, Lothstrasse 64, D\-80335 München 
+.PP
+.TP
+Distribution 
+texprofile
+is distributed with TeX Live. 
+More recent versions might be found on GitHub 
+\fBhttps://github.com/ruckertm/HINT\fP\&.
+.PP
+.TP
+License 
+This program can be redistributed and/or modified under the 
+terms of the MIT/X11 license. 
+.PP
+.SH AUTHOR
+
+Martin Ruckert 
+.br
+Munich University of Applied Sciences 
+.br
+Email: \fBmartin.ruckert@hm.edu\fP
+.br
+.PP
+.\" NOTE: This file is generated, DO NOT EDIT.

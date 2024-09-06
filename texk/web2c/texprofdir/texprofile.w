@@ -25,8 +25,7 @@
 % dealings in this Software without prior written authorization from the
 % copyright holders.
 
-%\input btxmac.tex
-\input profilemac.tex
+\input texprofilemac.tex
 
 %% defining how to display certain C identifiers
 
