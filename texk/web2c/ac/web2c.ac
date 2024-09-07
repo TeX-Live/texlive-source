@@ -43,6 +43,7 @@ m4_define([kpse_tex_progs], [dnl
 [[luajithbtex], [yes], [],    [LuaHBJITTeX],  [pplib libpng zziplib luajit harfbuzz]],
 [[mp],        [yes], [],    [MetaPost],   [mpfi mpfr cairo libpng]],
 [[pmp],       [yes], [],    [pMetaPost],  [mpfi mpfr cairo libpng ptexenc]],
+[[texprof],   [yes], [],    [TeXprof],    []],
 [[upmp],      [yes], [],    [upMetaPost], [mpfi mpfr cairo libpng ptexenc]],
 [[xetex],     [yes], [yes], [XeTeX],      [pplib libpng freetype2 teckit harfbuzz]],
 ])[]dnl

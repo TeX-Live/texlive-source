@@ -1,5 +1,12 @@
+2024-09-07  Karl Berry  <karl@freefriends.org>
+
+	* am/texprof.am (texprofile_c): depend on texprofile-tangle,
+	not texprof-tangle.
+	(nodist_texprof_SOURCES): not needed, since these programs
+	have one source file; and texprof does not depend on texprofile.
 
 2024-09-02  Martin Ruckert <martin.ruckert@hm.edu>
+
 	Adding the texprofile manual page
 
 2024-09-02  Martin Ruckert <martin.ruckert@hm.edu>

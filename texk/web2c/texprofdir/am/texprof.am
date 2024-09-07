@@ -1,4 +1,4 @@
-## $Id: texprof.am 65165 2022-12-02 15:51:09Z mruckert $
+## $Id$
 ## texk/web2c/texprofdir/am/texprof.am: Makefile fragment for TeXprof
 ##
 ## Copyright 2024 Martin Ruckert <ruckert@cs.hm.edu>
@@ -10,10 +10,8 @@ bin_PROGRAMS += texprof texprofile
 # convenience target to build all the programs here.
 texprofall: texprof texprofile
 
-# At the moment, these are the only man pages handled in the
-# conglomerated web2c/Makefile[.am]. (All the others are in man/.)
-# If that changes, have to set at top level and use +=.
-man1_MANS += texprofdir/man/texprof.man
+# See hitex.am for comments about handling man.
+man1_MANS = texprofdir/man/texprof.man
 # not yet there: texprofdir/man/texprofile.man 
 endif TEXPROF
 
@@ -36,11 +34,11 @@ texprofile_web = texprofdir/texprofile.w
 texprof_ctangle_sh = CWEBINPUTS=$(srcdir)/texprofdir AM_V_P=$(AM_V_P) $(SHELL) ./tangle-sh $@ $(CTANGLE)
 
 # For each cweb (.w) source file, list the files generated.
-texprofile_c = texprofile.c
 texprof_c = texprof.c 
+texprofile_c = texprofile.c
 
 $(texprof_c): texprof-tangle
-$(texprofile_c): texprof-tangle
+$(texprofile_c): texprofile-tangle
 
 #
 texprof-tangle: ctangle$(EXEEXT) texprofdir/texprof.w tangle-sh
@@ -48,14 +46,6 @@ texprof-tangle: ctangle$(EXEEXT) texprofdir/texprof.w tangle-sh
 
 texprofile-tangle: ctangle$(EXEEXT) texprofdir/texprofile.w tangle-sh
 	$(texprof_ctangle_sh) texprofile
-
-# texprof
-nodist_texprof_SOURCES = $(texprof_c) $(texprofile_c)
-
-# By the way, the $(BUILT_SOURCES) suggestion in the Automake manual for
-# this does not work for us, because we want to be able to invoke
-# specific targets (hiall, texprof, hishrink, ...), and $(BUILT_SOURCES)
-# is only a dependency on general targets (all, install, ...).
 
 EXTRA_DIST += texprofdir/ChangeLog $(texprof_web)
 
