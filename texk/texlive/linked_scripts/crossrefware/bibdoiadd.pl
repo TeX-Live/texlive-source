@@ -21,7 +21,7 @@ See below for its format.
 
 =item B<-C> 1|0
 
-Whether to canonize names in the output (1) or not (0).  By default, 1.
+Whether to canonicalize names in the output (1) or not (0).  By default, 1.
 
 =item B<-e>
 
@@ -50,22 +50,31 @@ C<doi=...> added.
 The name of the output file is either set by the B<-o> option or 
 is derived by adding the suffix C<_doi> to the output file.
 
-There are two options for making queries with Crossref: free account
-and paid membership.  In the first case you still must register with
-Crossref and are limited to a small number of queries, see the
-agreement at
-C<http://www.crossref.org/01company/free_services_agreement.html>.  In
-the second case you have a username and password, and can use them for
-automatic queries.  I am not sure whether the use of this script is
-allowed for the free account holders.  Anyway if you try to add DOI
-to a large number of entries, you should register as a paid member.
+Every BibTeX record in the input is parsed, using BibTeX::Parser, but
+only the ones that do not have the C<doi> field (or C<mrnumber> or
+C<zblnumber> for the sibling scripts) are processed. These entries
+without the requested field are written back, as described in
+BibTeX::Parser::Entry.
 
+The bib records that are not processed (because they already have the
+requested field) are written back as-is, without any reformatting.
+
+There are (were?) two options for making queries with Crossref: free
+account and paid membership. In the first case you still must register
+with Crossref and are limited to a small number of queries, see the
+agreement at
+C<http://www.crossref.org/01company/free_services_agreement.html>. In
+the second case you have a username and password, and can use them for
+automatic queries. I am not sure whether the use of this script is
+allowed for the free account holders. At any rate, if you want to add
+DOIs to a large number of entries, you should register as a paid member.
 
 
 =head1 CONFIGURATION FILE 
 
-The configuration file is mostly self-explanatory: it has comments
-(starting with C<#>) and assginments in the form
+The configuration file relates to the Crossref queries, and is mostly
+self-explanatory: it has comments (starting with C<#>) and assginments
+in the form
 
    $field = value ;
 
@@ -85,7 +94,7 @@ Boris Veytsman
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright (C) 2014-2021  Boris Veytsman
+Copyright (C) 2014-2024 Boris Veytsman
 
 This is free software.  You may redistribute copies of it under the
 terms of the GNU General Public License
@@ -113,7 +122,7 @@ $ENV{PERL_LWP_SSL_VERIFY_HOSTNAME}=0;
 
 my $USAGE="USAGE: $0 [-c config] [-C 1|0] [-e 1|0] [-f] [-o output] file\n";
 my $VERSION = <<END;
-bibdoiadd v2.2
+bibdoiadd v2.3
 This is free software.  You may redistribute copies of it under the
 terms of the GNU General Public License
 http://www.gnu.org/licenses/gpl.html.  There is NO WARRANTY, to the
@@ -258,7 +267,7 @@ sub GetDoi {
     if ($entry->has('pages')) {
 	my $pages=$entry->field('pages');
 	$pages =~ s/-.*$//;
-	$url .= "&spage=".uri_escape_utf8($pages);
+       $url .= "&spage=".uri_escape_utf8($pages);
     }    
     if ($entry->has('year')) {
 	$url .= "&date=".uri_escape_utf8($entry->field('year'));
@@ -296,4 +305,3 @@ sub SanitizeText {
     $string =~ s/[\{\}]//g;
     return $string;
 }
-

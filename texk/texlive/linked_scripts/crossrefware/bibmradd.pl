@@ -38,13 +38,14 @@ output file is formed by adding C<_mr> to the input file
 
 =head1 DESCRIPTION
 
-The script reads a BibTeX file.  It checks whether the entries have
-mrnumberss.  If not, tries to contact internet to get the numbers.  The
-result is a BibTeX file with the fields 
-C<mrnumber=...> added.  
+The script reads a BibTeX file. It checks whether the entries have
+mrnumbers. If not, it tries to find the numbers from Internet sites. The
+result is a BibTeX file with C<mrnumber=...> fields added.
 
 The name of the output file is either set by the B<-o> option or 
 is derived by adding the suffix C<_mr> to the output file.
+
+See the C<bibdoiadd> script for more details on the processing.
 
 =head1 AUTHOR
 
@@ -52,7 +53,7 @@ Boris Veytsman
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright (C) 2014-2022  Boris Veytsman
+Copyright (C) 2014-2024 Boris Veytsman
 
 This is free software.  You may redistribute copies of it under the
 terms of the GNU General Public License
@@ -91,7 +92,7 @@ $ENV{PERL_LWP_SSL_VERIFY_HOSTNAME}=0;
 
 my $USAGE="USAGE: $0  [-d] [-e 1|0] [-f] [-o output] file\n";
 my $VERSION = <<END;
-bibmradd v2.2
+bibmradd v2.3
 This is free software.  You may redistribute copies of it under the
 terms of the GNU General Public License
 http://www.gnu.org/licenses/gpl.html.  There is NO WARRANTY, to the
@@ -220,4 +221,3 @@ sub GetMr {
     }
 
 }
-	

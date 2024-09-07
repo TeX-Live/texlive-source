@@ -43,8 +43,10 @@ ignored, and I<latex_file> itself is not read (and need not even exist).
 Each C<.rpi> file specifies the metadata for a single article to be
 uploaded to Crossref (a C<journal_article> element in their schema); an
 example is below. These files are output by the C<resphilosophica>
-package (L<https://ctan.org/pkg/resphilosophica>), but (as always) can
-also be created by hand or by whatever other method you implement.
+package (L<https://ctan.org/pkg/resphilosophica>) and the TUGboat
+publication procedure (L<https://tug.org/TUGboat/repository.html>), but
+(as always) can also be created by hand or by whatever other method you
+implement.
 
 Any C<.bbl> files present are used for the citation information in the
 output XML. See the L<CITATIONS> section below.
@@ -54,18 +56,25 @@ citations), standard TeX control sequences are replaced with plain text
 or UTF-8 or eliminated, as appropriate. The C<LaTeX::ToUnicode::convert>
 routine is used for this (L<https://ctan.org/pkg/bibtexperllibs>).
 Tricky TeX control sequences will almost surely not be handled
-correctly. If C<--rpi-is-xml> is given, the author and title strings
-from the rpi files are output as-is, assuming they are valid XML; no
-checking is done. Citation text from C<.bbl> files is always converted
-from LaTeX to plain text.
+correctly.
 
-This script just writes an XML file. It's up to you to actually do the
+If C<--rpi-is-xml> is given, the author and title strings from the rpi
+files are output as-is, assuming they are valid XML; no checking is
+done.
+
+Citation text from C<.bbl> files is always converted from LaTeX to plain
+text.
+
+This script just writes an XML file. It's up to you to do the
 uploading to Crossref; for example, you can use their Java tool 
 C<crossref-upload-tool.jar>
 (L<https://www.crossref.org/education/member-setup/direct-deposit-xml/https-post>).
-For the definition of their schema, see
-L<https://data.crossref.org/reports/help/schema_doc/4.4.2/index.html>
-(this is the schema version currently followed by this script).
+
+For the definition of the Crossref schema currently output by this
+script, see
+L<https://data.crossref.org/reports/help/schema_doc/5.3.1/index.html>
+with additional links and information at
+L<https://www.crossref.org/documentation/schema-library/metadata-deposit-schema-5-3-1/>.
 
 =head1 CONFIGURATION FILE FORMAT
 
@@ -136,7 +145,8 @@ Any other journal must always specify this.
 The C<%authors> field is split at C<\and> (ignoring whitespace before
 and after), and output as the C<contributors> element, using
 C<sequence="first"> for the first listed, C<sequence="additional"> for
-the remainder.
+the remainder. The authors are parsed using C<BibTeX::Parser::Author>
+(L<https://ctan.org/pkg/bibtexperllibs>).
 
 If the C<%publicationType> is not specified, it defaults to
 C<full_text>, since that has historically been the case; C<full_text>
@@ -148,8 +158,7 @@ from the given C<journal_article> element.
 Each C<.rpi> must contain information for only one article, but multiple
 files can be read in a single run. It would not be difficult to support
 multiple articles in a single C<.rpi> file, but it makes debugging and
-error correction easier when each uploaded XML contains a single
-article.
+error correction easier to keep the input to one article per file.
 
 =head2 MORE ABOUT AUTHOR NAMES
 
@@ -167,7 +176,8 @@ separators are not supported, unlike BibTeX.
 In short, you may almost always use the first form; you shouldn't if
 either there's a Jr part, or the Last part has multiple tokens but
 there's no von part. See the C<btxdoc> (``BibTeXing'' by Oren Patashnik)
-document for details.
+document for details. The authors are parsed using
+C<BibTeX::Parser::Author> (L<https://ctan.org/pkg/bibtexperllibs>).
 
 In the C<%authors> line of a C<.rpi> file, some secondary directives are
 recognized, indicated by C<|> characters. Easiest to explain with an
@@ -230,12 +240,17 @@ this same format.
 
 Feature request: if anyone is interested in figuring out how to generate
 structured citations
-(L<https://data.crossref.org/reports/help/schema_doc/5.3.1/schema_5_3_1.html#citation>)
-instead of these flat text dumps, that would be great. Except the schema
-seems to support much less than described at
-L<https://www.crossref.org/documentation/principles-practices/best-practices/bibliographic/>?
-Anyway, the most viable approach is probably to change tugboat.bst to
-output no-op TeX commands like \tubibauthor, \tubibtitle, etc. (a la
+(L<https://data.crossref.org/reports/help/schema_doc/5.3.1/common5_3_1_xsd.html#citation>),
+that would be great. The schema does not support many useful fields, so
+we also want to keep the unstructured text output.
+
+Norman Gray's beastie program (L<https://heptapod.host/nxg/beastie>)
+supports this, via C<beastie extract-bib.scm -O crossref $(doc).aux>,
+as invoked in the TUGboat C<Common.mak> file. Work in progress.
+
+By the way, if for some reason we have to switch away from using
+beastie, the most viable approach is probably to change C<tugboat.bst>
+to output no-op TeX commands like \tubibauthor, \tubibtitle, etc. (a la
 biblatex), and use those commands to discern the various crossref field
 values. We can't start from the .bib because then we'd have to
 reimplement Bib(La)TeX.
@@ -273,7 +288,7 @@ extent permitted by law.
      # find files relative to our installed location within TeX Live
      chomp(my $TLMaster = `kpsewhich -var-value=TEXMFROOT`); # TL root
      if (length($TLMaster)) {
-	 unshift @INC, "$TLMaster/texmf-dist/scripts/bibtexperllibs";
+         unshift @INC, "$TLMaster/texmf-dist/scripts/bibtexperllibs";
      }
      # find development bibtexperllibs in sibling checkout to this script,
      # even if $0 is a symlink. All irrelevant when using from an installation.
@@ -292,15 +307,17 @@ extent permitted by law.
  my $USAGE = <<END;
 Usage: $0 [-c CONFIG] [-o OUTPUT] [--rpi-is-xml] LTXFILE...
 
-Convert .rpi and (if any are present) .bbl files corresponding to each
-LTXFILE to xml, for submitting to crossref.org. The LTXFILE is not read
-(and need not even exist); any extension it has is replaced by .rpi and
-.bbl.
+Convert .rpi and (if any are present) .bbl and .crbib files
+corresponding to each LTXFILE to xml, for submitting to crossref.org.
+The LTXFILE is not read, and need not even exist; any extension given is
+replaced by .rpi, .bbl, .crbib.
 
 The .rpi files are plain text, with values on lines beginning with %, as
 output by (for example) the resphilosophica LaTeX package. The .bbl
-files are as output by BibTeX. Both are also commonly created by hand.
-The documentation for this script has examples.
+files are as output by BibTeX. The .crbib files are xml files ready for
+incorporation in the final xml, as output by the beastie program. All
+may also be created by other methods. The documentation for this script
+has examples.
 
 The xml is written to standard output by default; the -o (--output)
 option overrides this.
@@ -313,6 +330,8 @@ The usual --help and --version options are also supported.
 For an example of using this script and associatd code, see the TUGboat
 processing at
 https://github.com/TeXUsersGroup/tugboat/tree/trunk/capsules/crossref.
+
+This script depends on https://github.com/borisveytsman/bibtexperllibs.
 
 Development sources, bug tracker: https://github.com/borisveytsman/crossrefware
 Releases: https://ctan.org/pkg/crossrefware
@@ -343,6 +362,7 @@ END
  use utf8;
  binmode(STDOUT, ":utf8");
 
+
  ################################################################
  # Defaults and parameters
  ################################################################
@@ -365,7 +385,7 @@ END
  our $timestamp = strftime("%Y%m%d%H%M%S", gmtime);
  # use timestamp in batchid, since the value is supposed to be unique
  # for every submission to crossref by a given publisher.
- # https://data.crossref.org/reports/help/schema_doc/4.4.2/schema_4_4_2.html#doi_batch_id
+ # https://data.crossref.org/reports/help/schema_doc/5.3.1/common5_3_1_xsd.html#doi_batch_id
  our $batchId="ltx2crossref-$timestamp-$$";
 
  if ($opts{c}) {
@@ -373,9 +393,9 @@ END
          # if config arg is absolute, fine; if not, prepend "./" as slightly
          # less troublesome than putting "." in the @INC path.
          my $rel = (File::Spec->file_name_is_absolute($opts{c}) ? "" : "./");
-	 require "$rel$opts{c}";
+         require "$rel$opts{c}";
      } else {
-	 die "Cannot read config file $opts{c}. Goodbye.";
+         die "Cannot read config file $opts{c}. Goodbye.";
      }
  }
 
@@ -386,30 +406,32 @@ END
  #
  my %papers;
 
+ # Read the papers.
  foreach my $file (@ARGV) {
      AddPaper($file);
  }
 
+ # Write the papers.
  foreach my $year (keys %papers) {
      foreach my $volume (keys %{$papers{$year}}) {
-	 foreach my $issue (keys %{$papers{$year}->{$volume}}) {
-	     PrintIssueHead($year, $volume, $issue);
-	     my $paperList = $papers{$year}->{$volume}->{$issue};
+         foreach my $issue (keys %{$papers{$year}->{$volume}}) {
+             PrintIssueHead($year, $volume, $issue);
+             my $paperList = $papers{$year}->{$volume}->{$issue};
              #warn "papers for year=$year,  volume=$volume, issue=$issue\n";
              # Nice to have the issue.xml in some stable order, so sort
              # by starting page. Doesn't matter if it's not perfect.
-	     foreach my $paper (sort { $a->{startpage} <=> $b->{startpage} }
-				     @{$paperList}) {
-		 PrintPaper($paper);
-	     }
-	 }
+             foreach my $paper (sort { $a->{startpage} <=> $b->{startpage} }
+                                     @{$paperList}) {
+                 PrintPaper($paper);
+             }
+         }
      }
  }
 
  PrintTail();
  exit($ERROR_COUNT);
 
-
+
 #####################################################
 #  Printing the head and the tail
 #####################################################
@@ -422,12 +444,10 @@ sub PrintHead {
         ? "\n$indent<abbrev_title>$abbrevTitle</abbrev_title>"
         : "";
 
-    # as of schema version 4.3.4, crossref renamed the <name> element
-    # inside <depositor> to <depositor_name>. Sigh. Something to take
-    # into account with older schemas.
-    # https://www.crossref.org/education/content-registration/crossrefs-metadata-deposit-schema/schema-versions/
+    # Crossref schema info:
+    # https://www.crossref.org/documentation/schema-library/schema-versions/
     print OUT <<END;
-<doi_batch xmlns="http://www.crossref.org/schema/4.4.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="4.4.2" xsi:schemaLocation="http://www.crossref.org/schema/4.4.2 http://www.crossref.org/schema/deposit/crossref4.4.2.xsd">
+<doi_batch xmlns="http://www.crossref.org/schema/5.3.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="5.3.1" xsi:schemaLocation="http://www.crossref.org/schema/5.3.1 http://www.crossref.org/schema/deposit/crossref5.3.1.xsd">
   <head>
     <doi_batch_id>$batchId</doi_batch_id>
     <timestamp>$timestamp</timestamp>
@@ -440,7 +460,7 @@ sub PrintHead {
   <body><journal>
     <journal_metadata language="en">
       <full_title>$fullTitle</full_title>$abbrev_title_out
-      <issn>$issn</issn>$coden_out	
+      <issn>$issn</issn>$coden_out      
     </journal_metadata>
 END
 }
@@ -454,20 +474,20 @@ END
     return;
 }
 
-
+
 #######################################################
-#  Adding one paper from $file.rpi and .bbl to global %papers.
+#  Adding one paper from $file.rpi and .bbl and .crbib to global %papers.
 #######################################################
 sub AddPaper {
     my $file = shift;
     my ($name,$path,$suffix) = fileparse($file, '\.[^\.]*$');
     my $rpifile = File::Spec->catfile($path, "$name.rpi");
     open (RPI, $rpifile)
-      or die "open($rpifile) failed: $! (did you process $file?)\n";
+      or die "$0: open($rpifile) failed: $! (did you process $file?)\n";
     my %data;
     #warn "reading rpi file: $rpifile\n";
     while (<RPI>) {
-	chomp;
+        chomp;
         if (/^%([^=]*)\s*=\s*(.*)\s*$/) {
            if (exists $data{$1}) {
              warn "$rpifile:$.: already saw data{$1}=$data{$1};"
@@ -479,12 +499,15 @@ sub AddPaper {
     }
     close RPI;
     
-    # look for bibliographies in both the .rpi and any .bbl file.
+    # also look for bibliographies in FILE.bbl and FILE.crbib files.
     my @bibliography;
-    foreach my $bibfile ($file, File::Spec->catfile($path, "$name.bbl")) {
-         @bibliography = (@bibliography, AddBibliography($bibfile));
+    foreach my $bblfile ($rpifile, File::Spec->catfile($path, "$name.bbl")) {
+        push (@bibliography, AddBibliography($bblfile));
     }
     $data{'bibliography'} = \@bibliography;
+    #
+    $data{'crbib'}
+      = AddCrossrefBib (File::Spec->catfile($path, "$name.crbib"));
 
     # Die if the fields we use unconditionally are empty. Not all of
     # them are required by the schema, but we can wait to generalize.
@@ -500,13 +523,15 @@ sub AddPaper {
     push @{$papers{$data{year}}->{$data{volume}}->{$data{issue}}}, \%data;
 }
 
+
 ############################################################## 
-# Reading a list of papers from BIBFILE and adding it to the
+# Read a list of references from BIBFILE and adding it to the
 # bibliography. Each item is assumed to start with
 # \bibitem{KEY} and the whole bib to end with \end{thebibliography}.
 # 
 # We return a list of hashes, each hash with a single key, the citation
-# key, and its value a flat string of the entry.
+# key with an integer (starting at 1), and its value a flat string of
+# the entry.
 # 
 # No conversion of the text is done here.
 ##############################################################
@@ -515,59 +540,59 @@ sub AddBibliography {
     open (BIB, $bibfile) or return;
     
     my $insidebibliography = 0;
-    my $currpaper = ""; # that is, the current bib entry
+    my $currpaper = ""; # the current bib entry
     my $bibno = 0;
     my @result;
     my $key;
     while (<BIB>) {
-	chomp;
-	next if /^\s*%/; # TeX comment line
-	s/[ \t]%.*//;    # remove TeX comment
-	#
-	# allow empty \bibitem key for the sake of handwritten bbls.
-	# Similarly, might be more stuff on the line when handwritten.
-	# Ignore a TeX %comment following.
-	if (s/^\s*\\bibitem(?:\[.*?\])?+\s*\{(.*?)\}\s*(%.*$)?//) {
-	    my $newkey = $1;
-	    if ($insidebibliography) {
-		if ($currpaper) {
+        chomp;
+        next if /^\s*%/; # TeX comment line
+        s/[ \t]%.*//;    # remove TeX comment
+        #
+        # allow empty \bibitem key for the sake of handwritten bbls.
+        # Similarly, might be more stuff on the line when handwritten.
+        # Ignore a TeX %comment following.
+        if (s/^\s*\\bibitem(?:\[.*?\])?+\s*\{(.*?)\}\s*(%.*$)?//) {
+            my $newkey = $1;
+            if ($insidebibliography) {
+                if ($currpaper) {
                     # Append the current sequence number for this citation,
                     # since that's what Crossref recommends (sort of).
                     # For prettiness, if the key is otherwise empty,
                     # don't include a dash beforehand.
-		    $bibno++;
+                    $bibno++;
                     $key .= ($key ? "-" : "") . $bibno;
                     #
                     my %paperhash;
-		    $paperhash{$key} = $currpaper;
-		    push @result, \%paperhash;
-		}
-	    }
-	    # The citation key (required by schema) starts as the bibitem key.
-	    $key = $newkey;
-	    
-	    $currpaper = $_;
-	    $insidebibliography = 1;
-	    next;
-	}
-	if (/^\s*\\end\{thebibliography\}/) {
-	    if ($currpaper) {
-	        $bibno++;
+                    $paperhash{$key} = $currpaper;
+                    push @result, \%paperhash;
+                }
+            }
+            # The citation key (required by schema) starts as the bibitem key.
+            $key = $newkey;
+            
+            $currpaper = $_;
+            $insidebibliography = 1;
+            next;
+        }
+        if (/^\s*\\end\{thebibliography\}/) {
+            if ($currpaper) {
+                $bibno++;
                 $key .= ($key ? "-" : "") . $bibno;
                 #
-		my %paperhash;
-		$paperhash{$key} = $currpaper;
-		push @result, \%paperhash;
-	    }
-	    $currpaper = "";
-	    $insidebibliography = 0;
-	    next;
-	}
-	if ($insidebibliography) {
-	    $currpaper .= " $_";
-	}
+                my %paperhash;
+                $paperhash{$key} = $currpaper;
+                push @result, \%paperhash;
+            }
+            $currpaper = "";
+            $insidebibliography = 0;
+            next;
+        }
+        if ($insidebibliography) {
+            $currpaper .= " $_";
+        }
     }
-    close BIB;
+    close BIB or warn "close($bibfile) failed: $!";
     
     # We look in the .rpi files too, which will generally have none.
     if (@result == 0 && $bibfile =~ /\.bbl$/) {
@@ -580,6 +605,75 @@ sub AddBibliography {
     return @result;
 }
 
+
+############################################################## 
+# Read an XML <citation_list> element from CRBIBFILE, if it exists.
+# No error if it doesn't exist; it often won't, even if there is a bbl file.
+# 
+# Return a hash reference, with each element's key being the citation
+# key plus an integer, the same keys as in AddBibliography from the .bbl
+# file.# Each value is a flat string, the structured citation items for
+# that element.
+# 
+# We ignore any <unstructured_citation> element, since we generate our
+# own (which we prefer).
+# 
+# We don't parse XML, just extract the pieces with regexps.
+# This is generated by Norman Gray's beastie program. Example:
+# <citation_list>
+#   <citation key="bookshelf">
+#     <author>Peter Flynn</author>
+#     <volume_title>The bookshelf package</volume_title>
+#     <cYear>2020</cYear>
+#     <unstructured_citation>Flynn, Peter (manual): The bookshelf package[...]
+#   </citation>
+#   <citation key="Calibre">
+#     <author>Kovid Goyal</author>
+#     <volume_title>calibre User Manual</volume_title>
+#     <cYear>2024</cYear>
+#     <unstructured_citation>Kovid Goyal (manual): calibre User Manual[...]
+#   </citation>
+# </citation_list>
+##############################################################
+sub AddCrossrefBib {
+    my ($crbibfile,$refs) = @_;
+    my %result;
+    
+    #warn "crbibfile=$crbibfile\n";
+    open (CRBIB, $crbibfile) or return;
+    
+    # read whole file.
+    my $crbib_as_string = join("", <CRBIB>);
+    #warn "doing crbib $crbibfile; $crbib_as_string\n";
+    close (CRBIB) or warn "close($crbibfile) failed: $!";
+    
+    my $bibno = 0;
+
+    # We're matching each <citation> here by virtue of .*? to be a
+    # non-greedy match, the /s modifier to treat the whole thing as one
+    # string, and the /g modifier to return an array of all matches.
+    my @crbib = ($crbib_as_string =~ m,<citation\s+(key=.*?)</citation>,sg);
+    for my $crb (@crbib) {
+        $bibno++;
+      
+        # wipe out the unstructured text.
+        $crb =~ s,\s*<unstructured_citation>.*</unstructured_citation>\s*,,;
+      
+        $crb = SanitizeTextNoEntities($crb);
+        
+        # qqq undone - must save by key, then write by key into the xml.
+        # need to be able to clean the text, beastie removes braces.
+        warn "crb $bibno: $crb\n";
+    }
+    
+    if ($bibno == 0) {
+        warn "$0: *** no crossref cites found in: $crbibfile; check if ok\n";
+    }
+    
+    return %result;
+}
+
+
 #################################################################
 #  Printing information about one issue
 #################################################################
@@ -596,8 +690,9 @@ sub PrintIssueHead {
 END
 }
 
+
 ###############################################################
-# Printing information about one paper
+#  Printing information about one paper
 ###############################################################
 sub PrintPaper {
     my $paper = shift;
@@ -617,7 +712,7 @@ END
     my @authors = split /\s*\\and\s*/, $paper->{authors};
     my $seq = 'first';
     foreach my $author (@authors) {
-	PrintAuthor($author, $seq);
+        PrintAuthor($author, $seq);
         $seq = 'additional';
     }
 
@@ -638,15 +733,7 @@ END
 END
 
     if (scalar(@{$paper->{bibliography}})) {
-    print OUT <<END;
-      <citation_list>
-END
-    foreach my $citation (@{$paper->{bibliography}}) {
-	PrintCitation($citation);
-    }
-    print OUT <<END;
-      </citation_list>
-END
+        PrintCitationList($paper->{bibliography}, $paper->{crbib});
     }
 
     print OUT <<END;
@@ -654,16 +741,15 @@ END
 END
 }
 
-
+
 ###############################################################
 # Crossref <title> strings can contain a few so-called "face" HTML
 # commands. Complain if they have anything anything else.
-# schema doc: https://data.crossref.org/reports/help/schema_doc/4.4.2/schema_4_4_2.html#title
-#   face doc: https://www.crossref.org/education/content-registration/crossrefs-metadata-deposit-schema/face-markup/
-# mathml doc: https://www.crossref.org/education/content-registration/crossrefs-metadata-deposit-schema/including-mathml-in-deposits/
+# schema doc: https://data.crossref.org/reports/help/schema_doc/5.3.1/crossref5_3_1_xsd.html#title
+#   face doc: https://www.crossref.org/documentation/schema-library/markup-guide-metadata-segments/face-markup/
 # 
 # We don't technically validate the string, e.g., mismatched tags will
-# go unnoticed here. The real validator at Crossref will catch whatever.
+# go unnoticed here. The real validator at Crossref should catch everything.
 ###############################################################
 sub TitleCheck {
     my $title = shift;
@@ -686,33 +772,7 @@ sub TitleCheck {
     }
 }
 
-###############################################################
-# Simplistic TeX-to-html
-# (no-op for rpi text if --input-is-xml was given).
-###############################################################
-sub SanitizeText {
-    my $string = shift;
-    return $string if $opts{xi}; # do nothing if --rpi-is-xml
-    return SanitizeTextAlways($string);
-}
-
-# Split into two functions so we can sanitize bbl but not rpi.
-sub SanitizeTextAlways {
-    my $string = shift;
-   
-    # pass user hook subroutine if defined.
-    my @hook = (defined(&{"LaTeX_ToUnicode_convert_hook"}))
-               ? ("hook" => \&LaTeX_ToUnicode_convert_hook)
-               : ();
-
-    # conversion of accented control sequences to characters, etc.
-    # Let's use &#uuuu; entities instead of literal UTF-8; Crossref
-    # recommends it, and it's easier for postprocessing.
-    $string = LaTeX::ToUnicode::convert($string, entities => 1, @hook);
-    
-    return $string;
-}
-
+
 ################################################################
 # Printing one author in arg ORIG_AUTHOR, in sequence SEQ.
 ################################################################
@@ -809,27 +869,45 @@ END
 END
 }
 
+
 #############################################################
-#  Printing citations
+#  Print citations in order from BIBLIOGRAPHY, a list reference, and
+#  CRBIB, a hash reference. Each element in BIBLIOGRAPHY is a
+#  one-element hash, with the key being the citation key and the value
+#  the (original) bbl text. We sanitize (de-texify) the text.
+#  Each element in CRBIB has key the citation key (from the same set)
+#  and value the structured citation string from any .crbib file.
+#  
 #############################################################
-sub PrintCitation {
-    my $paperhash=shift;
+sub PrintCitationList {
+    my ($bibliography,$crbib) = shift;
+    
+    print OUT "      <citation_list>\n";
+    foreach my $citation_hash (@$bibliography) {
+        foreach my $citekey (keys (%{$citation_hash})) {  # only one key
+            my $citation_text = $citation_hash->{$citekey};
+            $citation_text = SanitizeTextAlways($citation_text);
 
-    foreach my $key (keys (%{$paperhash})) {
-	my $citation = $paperhash->{$key};
-	$citation = SanitizeTextAlways($citation);
-
-	print OUT <<END;
-        <citation key="$key"><unstructured_citation>
-          $citation
-        </unstructured_citation></citation>
+            #warn "  printing citation $citekey: $citation_text\n";
+            my $structured_citation = "";
+            if ($crbib->{$citekey}) {
+                $structured_citation = "\n" . " "x10 . $crbib->{$citekey};
+                warn "    with structured citation: $structured_citation\n";
+            }
+            print OUT <<END;
+        <citation key="$citekey">$structured_citation
+          <unstructured_citation>$citation_text</unstructured_citation>
+        </citation>
 END
+        }
     }
+    print OUT "      </citation_list>\n";
 }
 
+
 ##############################################################
 #  Return publication_type attribute for <journal_article>, given $PUBTYPE.
-#  https://data.crossref.org/reports/help/schema_doc/4.4.2/schema_4_4_2.html#publication_type.atts
+#  https://data.crossref.org/reports/help/schema_doc/5.3.1/crossref5_3_1_xsd.html#publication_type.atts_publication_type
 #  
 #  If not specified in input, return " publication_type=full_text" since
 #  it was hardwired that way before. If set to "omit", return empty
@@ -862,11 +940,11 @@ sub GetURL {
 
     my $result;
     if ($paper->{paperUrl}) {
-	$result = $paper->{paperUrl}
+        $result = $paper->{paperUrl}
 
     } elsif ($paper->{doi} =~ m,^10\.11612/resphil,) {
-	my $doi = $paper->{doi};
-	$result = 'http://www.pdcnet.org/oom/service?url_ver=Z39.88-2004&rft_val_fmt=&rft.imuse_synonym=resphilosophica&rft.DOI='.$doi.'&svc_id=info:www.pdcnet.org/collection';
+        my $doi = $paper->{doi};
+        $result = 'http://www.pdcnet.org/oom/service?url_ver=Z39.88-2004&rft_val_fmt=&rft.imuse_synonym=resphilosophica&rft.DOI='.$doi.'&svc_id=info:www.pdcnet.org/collection';
 
     } else {
         die ("$0: paperUrl field is required\n  "
@@ -877,7 +955,41 @@ sub GetURL {
     return $result;
 }
 
+
+###############################################################
+# Simplistic TeX-to-html
+# (no-op for rpi text if --input-is-xml was given).
+###############################################################
+sub SanitizeText {
+    my $string = shift;
+    return $string if $opts{xi}; # do nothing if --rpi-is-xml
+    return SanitizeTextEntities($string);
+}
 
+# Conversion of accented control sequences to characters, etc.
+# This uses &#uuuu; entities instead of literal UTF-8; Crossref
+# recommends it, and it's easier for postprocessing.
+#
+sub SanitizeTextEntities {
+    my $string = shift;
+    return SanitizeTextNoEntities($string, entities => 1, @_);
+}
+
+# Generic sanitize text.
+sub SanitizeTextNoEntities {
+    my $string = shift;
+   
+    # pass user hook subroutine if defined.
+    my @hook = (defined(&{"LaTeX_ToUnicode_convert_hook"}))
+               ? ("hook" => \&LaTeX_ToUnicode_convert_hook)
+               : ();
+
+    $string = LaTeX::ToUnicode::convert($string, @hook, @_);
+    
+    return $string;
+}
+
+
 ##############################################################
 #  debug_hash_as_string($LABEL, HASH)
 #
