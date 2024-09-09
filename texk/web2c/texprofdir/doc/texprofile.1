@@ -1,5 +1,5 @@
 '\" t
-.\" Manual page created with latex2man on Fri Sep  6 18:12:14 2024
+.\" Manual page created with latex2man on Mon Sep  9 09:52:24 2024
 .\" NOTE: This file is generated, DO NOT EDIT.
 .de Vb
 .ft CW
@@ -34,12 +34,14 @@ of the input file can be
 omitted. It analyses the data and presents the results in a variety of 
 tables, either optimized for human readability or as CSV (comma 
 separated values) files for further processing. 
+.PP
 The output is written to the standard output stream where it can be redirected 
 to a file or viewed immediately. 
 .PP
 .SH OPTIONS
 
-There are four types of options: general options, table options, selection options, and formatting options. 
+There are four types of options: general options, table options, 
+selection options, and formatting options. 
 .PP
 The general options: 
 .TP
@@ -141,6 +143,239 @@ option if you want to see the changes
 in the macro stack (see \fB\-S\fP)
 together with the timing information in 
 a single table. 
+.PP
+.SH DATA FORMATS
+
+.SS FILE NUMBERS
+While texprof
+is running, every TeX input file is given a 
+unique file number. The file name alone is often not unique because 
+two files in different directories might have the same file 
+name. Displaying the full file name with the complete path is however often 
+not very 
+convenient. So if you observe the same file name together with 
+different file numbers, you can use the option \fB\-F\fP
+to get a table of all 
+file numbers and their full file names. 
+.PP
+But even within the same 
+directory, TeX can read different files with the same name during one 
+run: TeX can open a file for writing, write content to the file, close 
+it, open it for reading, read it and close it again. Then TeX might 
+repeat this process a second time, or multiple times, reusing the same 
+file name over and over again. texprof
+will assign a new file 
+number to this file each time it is opened for reading. So you can 
+tell from the sequence of file numbers which one was the first, the 
+second, or the third. 
+.PP
+Last not least, there are some special file 
+numbers: 
+.TP
+0 \- unknown 
+If the file is unknown, which should rarely happen, 
+the file number 0 is used. 
+.TP
+1\- system 
+texprof
+will map 
+time intervals that are used to execute certain system routines 
+to the ``system\&'' pseudo file 
+using the line numbers to identify the specific routine 
+like producing the output DVI file (shipout), breaking 
+a paragraph into lines (linebrk), or breaking the 
+document into pages (buildpg). These times do not depend on the 
+use of macros but simply on the size of the document. 
+.TP
+2 \- terminal 
+TeX commands entered on the command line or interactively are mapped 
+to file number 2. 
+.PP
+.SS TIME
+If the option \fB\-m\fP
+is given times are given as nanoseconds. 
+Otherwise, times are rounded to at most 4 digits precission and displayed 
+with a unit: seconds (s), milliseconds (ms), microseconds (um), or nanoseconds (ns). 
+.PP
+.SS MACRO NAMES
+Macro names are shown with the leading backslash. 
+Since macro names are often not unique, the command line option \fB\-i\fP
+can be used to show after the macro name in square brackets the file number 
+and the line number where the macro is defined. 
+Unless two macros with the same name are 
+defined in the same file and line this is sufficient to uniquely 
+identify a macro. A macro defined with ``let\&'' results in a complet copy 
+of the original macro. Therefore it will not reference 
+the file and line of the ``let\&'' command but the same file and line as 
+the original macro. 
+.PP
+.SH EXAMPLES
+
+Let\&'s assume that you issue the command texprof
+\fB\-prof\fP
+\fIhello.tex\fP\&.
+This will run texprof
+on the input file \fIhello.tex\fP
+with option \fB\-prof\fP\&.
+The program texprof
+will load the plain TeX format and then 
+process hello.tex
+to produce hello.log
+and hello.dvi\&.
+It will execute exactly the same steps that TeX would execute if you had 
+issued the command tex
+\fIhello.tex\fP\&.
+.PP
+In addition to hello.log
+and hello.dvi,
+texprof
+will 
+also produce the file hello.tprof
+containing time measurements 
+made while texprof
+was running. 
+The option \fB\-prof\fP
+will switch on the gathering of 
+timing data as soon as texprof
+enters its main control procedure; 
+The file hello.tprof
+will contain a time measurement, called a time 
+stamp, for every command that TeX executed while processing the input. 
+A binary format is used to store all that data in a simple and compact 
+form. Still the file hello.tprof
+might become very big. 
+.PP
+The program texprofile
+is used to extract and analyse the 
+data contained in hello.tprof
+and produce useful output. 
+Here are some examples: 
+.PP
+.TP
+texprofile \fIhello\fP
+ Without further options texprofile
+will write some general 
+information to the standard output, like the total time measured, 
+the number of samples, the average time per sample, etc. 
+The general information is always given unless explicitely disabled 
+with the \fB\-N\fP
+option or with the \fB\-m\fP
+option. 
+.PP
+.TP
+texprofile \fB\-T\fP \fIhello\fP
+ With the option \fB\-T\fP,
+texprofile
+will map each time stamp 
+to a specific line of input, add up the time intervalls for each input 
+line separately, and output a table showing the ten lines that have 
+the highest cummulative time. 
+The table has the following seven columns: 
+.RS
+.TP
+1. file 
+The first column contains the input file number as explained above. 
+The input file name if shown in column 7. 
+.RS
+.PP
+.RE
+.TP
+2. line 
+The line number. 
+.TP
+3. percent 
+The time spent in this line and file as a percentage of the total 
+time measured as given as part of the general information. 
+.TP
+4. absolute 
+The absolute time spent in this line and file. 
+.TP
+5. count 
+The number of times the execution path entered this line. 
+Note, that a 
+macro call usually redirects the execution path to another line 
+from where the execution will return after the macro call has completed. 
+Reentering the line after such an excursion to an other line will 
+cause this counter to be incremented. In summary, this counter might 
+reflect the number of partial executions of a line not the number 
+of full executions of the entire line. 
+.TP
+6. average 
+The average time spent in the line is simply computed by dividing the 
+value in column 4 by the value in column 5. 
+.TP
+7. file 
+The input file name. The corresponding file number is shown in column 1. 
+.RE
+.RS
+.PP
+.RE
+.TP
+texprofile \fB\-G\fP \fIhello\fP
+ With the option \fB\-G\fP,
+texprofile
+will map each time stamp 
+either to file input or to a macro body. 
+The table shown is divided into several sections, the first section 
+is devoted to file input, each of the following section is devoted 
+to a specific macro. 
+.br
+Each section starts with a header. The header of the 
+first section is ``File\&'' the header of a later section is the macro name. 
+.br
+The first line after the header gives the total time spent in the section 
+in column 1 and 3 in different formats: 
+.RS
+.TP
+1. time 
+Column 1 gives it as an absolut time. 
+.TP
+3. percentage 
+Column 3 gives it as a percentage of the total time measured. 
+.RE
+.RS
+.PP
+For the first section with the header ``File\&'', the absolute time 
+will be equal to the total time measured because texprof
+did spent all the time processing the file \fIhello\fP\&.
+And consequently the value in column 3 will be 100%\&. 
+.br
+To accomplish a task, a macro usually calls other 
+macros, that we call child macros in the following. 
+The following lines will give a breakdown of the time shown in the 
+first line. 
+The next line after the header gives the time spent in the section 
+excluding the time spent in child macros. It adds in column 4 the number 
+of times the macro was called. 
+.RS
+.RE
+.TP
+1. time 
+Column 1 gives the absolut time spent in the section excluding the time 
+spent in child macros 
+.TP
+3. percentage 
+Column 3 gives the time from column 1 as a percentage of the total time 
+spent in this section as given in the previous line. 
+.TP
+4. count/total 
+Column 4 gives the number of times the section was called. 
+.RE
+.RS
+.PP
+.RE
+.PP
+.SH BUGS
+
+If the last command in a macro body is a macro call, we call this a tail call. 
+If such a tail call reads ahead to scan the following input 
+for possible arguments, the look\-ahead mechaism of TeX might push further 
+macros or new input files on TeX\&'s input stack. 
+These entries will remain on top of TeXprof\&'s macro nesting stack, 
+even if TeX backs up all these tokens on its input stack. 
+This can cause an attribution of runtime to those entries as sub entries 
+of the tail call. If this explanation sounds complicated to you, it is 
+because the situation is indeed complicated. 
 .PP
 .SH SEE ALSO
 

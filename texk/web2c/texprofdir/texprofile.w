@@ -741,10 +741,11 @@ The table of |cmd_name|s is defined in the appendix.
 
 
 @<read a macro call@>=
-      int f=fget1();
-      int l=fget2();
-      int n=fget2();
-      int m=get_macro_def(f, l, n);
+      int f,l,n,m;
+      f=fget1();
+      l=fget2();
+      n=fget2();
+      m=get_macro_def(f, l, n);
       stamps[i].c=system_macro_push;
       stamps[i].f=f;
       stamps[i].l=l;
