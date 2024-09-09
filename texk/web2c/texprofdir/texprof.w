@@ -1,3 +1,7 @@
+% TeXprof is copyright (C) 2024 by Martin Ruckert
+% Hochschule Muenchen, Lothstrasse 64, 80336 Muenchen
+% and put under the MIT/X11 license.
+%
 % Prote is copyright (C) 2021 by Thierry Laronde and put under
 % the MIT/X11 license.
 %

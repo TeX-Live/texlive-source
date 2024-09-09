@@ -1,5 +1,5 @@
 % This file is part of HINT
-% Copyright 2017-2021 Martin Ruckert,
+% Copyright 2017-2024 Martin Ruckert,
 % Hochschule Muenchen, Lothstrasse 64, 80336 Muenchen
 %
 % Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -150,7 +150,6 @@ Germany.
 %ISBN-13: 979-854992684-4\par
 \medskip
 %First printing: August 2019\par
-%Second edition: August 2021\par
 \medskip
 %Last commit: \input lastcommit.tex
 \par
