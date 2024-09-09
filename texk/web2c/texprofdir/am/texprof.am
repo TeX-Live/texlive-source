@@ -11,8 +11,7 @@ bin_PROGRAMS += texprof texprofile
 texprofall: texprof texprofile
 
 # See hitex.am for comments about handling man.
-man1_MANS = texprofdir/man/texprof.man
-# not yet there: texprofdir/man/texprofile.man 
+man1_MANS = texprofdir/man/texprof.man texprofdir/man/texprofile.man 
 endif TEXPROF
 
 texprof_CPPFLAGS = $(AM_CPPFLAGS) 

@@ -1,5 +1,5 @@
 '\" t
-.\" Manual page created with latex2man on Mon Sep  9 10:03:20 2024
+.\" Manual page created with latex2man on Mon Sep  9 16:27:26 2024
 .\" NOTE: This file is generated, DO NOT EDIT.
 .de Vb
 .ft CW
@@ -194,18 +194,19 @@ to file number 2.
 .SS TIME
 If the option \fB\-m\fP
 is given times are given as nanoseconds. 
-Otherwise, times are rounded to at most 4 digits precission and displayed 
-with a unit: seconds (s), milliseconds (ms), microseconds (um), or nanoseconds (ns). 
+Otherwise, times are rounded to at most 4 digits precission and 
+displayed with a unit: seconds (s), milliseconds (ms), microseconds 
+(um), or nanoseconds (ns). 
 .PP
 .SS MACRO NAMES
-Macro names are shown with the leading backslash. 
-Since macro names are often not unique, the command line option \fB\-i\fP
-can be used to show after the macro name in square brackets the file number 
-and the line number where the macro is defined. 
-Unless two macros with the same name are 
-defined in the same file and line this is sufficient to uniquely 
-identify a macro. A macro defined with ``let\&'' results in a complet copy 
-of the original macro. Therefore it will not reference 
+Macro names are shown with the leading backslash. Since macro names 
+are often not unique, the command line option \fB\-i\fP
+can be used to 
+show after the macro name in square brackets the file number and the 
+line number where the macro is defined. Unless two macros with the 
+same name are defined in the same file and line this is sufficient to 
+uniquely identify a macro. A macro defined with ``let\&'' results in a 
+complet copy of the original macro. Therefore it will not reference 
 the file and line of the ``let\&'' command but the same file and line as 
 the original macro. 
 .PP
@@ -215,30 +216,31 @@ Let\&'s assume that you issue the command texprof
 \fB\-prof\fP
 \fIhello.tex\fP\&.
 This will run texprof
-on the input file \fIhello.tex\fP
+on the input file 
+\fIhello.tex\fP
 with option \fB\-prof\fP\&.
 The program texprof
-will load the plain TeX format and then 
-process hello.tex
-to produce hello.log
+will load the plain TeX format and then process hello.tex
+to 
+produce hello.log
 and hello.dvi\&.
-It will execute exactly the same steps that TeX would execute if you had 
-issued the command tex
+It will execute 
+exactly the same steps that TeX would execute if you had issued the 
+command tex
 \fIhello.tex\fP\&.
 .PP
 In addition to hello.log
 and hello.dvi,
 texprof
-will 
-also produce the file hello.tprof
-containing time measurements 
-made while texprof
-was running. 
-The option \fB\-prof\fP
-will switch on the gathering of 
-timing data as soon as texprof
-enters its main control procedure; 
-The file hello.tprof
+will also produce the file hello.tprof
+containing time 
+measurements made while texprof
+was running. The option 
+\fB\-prof\fP
+will switch on the gathering of timing data as soon as 
+texprof
+enters its main control procedure; The file 
+hello.tprof
 will contain a time measurement, called a time 
 stamp, for every command that TeX executed while processing the input. 
 A binary format is used to store all that data in a simple and compact 
@@ -246,10 +248,10 @@ form. Still the file hello.tprof
 might become very big. 
 .PP
 The program texprofile
-is used to extract and analyse the 
-data contained in hello.tprof
-and produce useful output. 
-Here are some examples: 
+is used to extract and analyse the data 
+contained in hello.tprof
+and produce useful output. Here are 
+some examples: 
 .PP
 .TP
 texprofile \fIhello\fP
@@ -276,9 +278,6 @@ The table has the following seven columns:
 1. file 
 The first column contains the input file number as explained above. 
 The input file name if shown in column 7. 
-.RS
-.PP
-.RE
 .TP
 2. line 
 The line number. 
@@ -317,14 +316,14 @@ texprofile
 will map each time stamp 
 either to file input or to a macro body. 
 The table shown is divided into several sections, the first section 
-is devoted to file input, each of the following section is devoted 
+is devoted to file input, each of the following sections is devoted 
 to a specific macro. 
 .br
 Each section starts with a header. The header of the 
 first section is ``File\&'' the header of a later section is the macro name. 
 .br
 The first line after the header gives the total time spent in the section 
-in column 1 and 3 in different formats: 
+in two different formats: 
 .RS
 .TP
 1. time 
@@ -341,11 +340,11 @@ did spent all the time processing the file \fIhello\fP\&.
 And consequently the value in column 3 will be 100%\&. 
 .br
 To accomplish a task, a macro usually calls other 
-macros, that we call child macros in the following. 
-The following lines will give a breakdown of the time shown in the 
-first line. 
-The next line after the header gives the time spent in the section 
-excluding the time spent in child macros. It adds in column 4 the number 
+macros that we call child macros in the following. 
+The following lines in the table will give a breakdown 
+of the time shown in the first line. 
+The breakdown starts with a line showing the time spent in the section 
+excluding the time spent in child macros. It shows in column 4 the number 
 of times the macro was called. 
 .RS
 .RE
@@ -363,6 +362,189 @@ Column 4 gives the number of times the section was called.
 .RE
 .RS
 .PP
+The lines that follow in the table show the time spent in one of 
+the child macros. Column 2, 4, and 5 need some explanation. 
+.RS
+.RE
+.TP
+2. loop 
+The only case where column 2 is not empty is the case of a 
+recursive macro. A recursive macro is a macro that along the 
+chain of macro calls eventually calls itself creating a 
+recursive loop. At this point, a macro becomesits own descendant 
+and at the same time its own ancestor. 
+.br
+Therefore texprofile
+maintains for each child macro two 
+accumulators for the elapsed time: For the time shown in 
+column 2 labeled ``loop\&'', texprofile
+adds up the time 
+differences observed at the return of a child macro. For the 
+time shown in the column labeled ``time\&'' and ``percent\&'', it 
+subtracts from the time differences observed at the return of a 
+child macro all those time differences that were already added 
+to one of the other lines in the time breakdown: the macro itself 
+or one of the other child macros. 
+So the times shown in column 1 of line 2 and the following lines 
+will add up to the time shown in column 1 of the line 1; 
+and the percentages shown in column 3 of line 2 and the following lines 
+will add up to 100%\&. 
+The time shown in column 3 will show show the total time needed 
+to accomplish the sub task assigned to the respective child macro. 
+.TP
+4. count/total 
+Column 4 shows two counts n/m for the macro named in column 5. 
+m is the total number of calls to the macro and n is the number of 
+calls as a child macro in the current section. The number n will 
+always be less or equal to m\&. 
+.RS
+.PP
+.RE
+.TP
+5. child 
+Column 5 shows the name of the child macro as explained above. 
+.RE
+.RS
+.PP
+.RE
+.TP
+texprofile \fB\-G\fP \fB\-m\fP \fIhello\fP
+ This table will contain the same data as the previous example 
+but this time the \fB\-m\fP
+option will optimize the output for 
+machine readability. 
+.RS
+.TP
+.B *
+There are no column headers. 
+.TP
+.B *
+The times in column 1 ``time\&'' and column 2 ``loop\&'' 
+are given in nanoseconds without a unit identifier. 
+.TP
+.B *
+The numbers n/m in column 4 are now shown in two separate 
+columns 4 and 5; the macro name moves from column 5 to column 6. 
+.RE
+.RS
+.PP
+.RE
+.TP
+texprofile \fB\-F\fP \fIhello\fP
+ With the option \fB\-F\fP,
+texprofile
+outputs the table 
+of all of TeX\&'s input files using 5 columns: 
+.RS
+.TP
+1. file 
+The file number as explained above. 
+.TP
+2. lines 
+The difference between the highest and the lowest 
+line number found in the profile data for this file. This is 
+usually only a subset of all the lines of the file. 
+.TP
+3. percent 
+The percentage of the total time measured that is attibuted to the file. 
+.TP
+4. time 
+The absolute time that is attibuted to the file. 
+.TP
+5. name 
+The full file name of the file. 
+.RE
+.RS
+.PP
+.RE
+.TP
+texprofile \fB\-C\fP \fIhello\fP
+ With the option \fB\-C\fP,
+texprofile
+outputs the table 
+of all TeX commands executed while profiling 
+using 6 columns: 
+.RS
+.TP
+1. cmd 
+The command code used internaly by TeX. 
+Usually the same number is used by TeX for several 
+closely related tasks. 
+There is a special command code 101 which is used to 
+for the time that is spend on system routines that are 
+mapped to the system file as explained above. 
+.TP
+2. time 
+The total time used for the command. 
+.TP
+3. percent 
+The percentage of the total time measured used for the command. 
+.TP
+4. count 
+The number of times this command was executed. 
+.TP
+5. average 
+The average time needed to execute the command. 
+This is simpy the value in column 2 divided by the value in column 4. 
+.TP
+6. name 
+A verbal description of the command or commands that share this 
+command code. 
+.RE
+.RS
+.PP
+.RE
+.TP
+texprofile \fB\-R\fP \fB\-m\fP \fB\-n\fP \fIhello\fP
+ With the options \fB\-R\fP
+\fB\-m\fP,
+texprofile
+outputs the table 
+of raw time measurements as observed by texprof
+optimized for machine 
+readability. The option \fB\-n\fP
+adds a column for the number 
+of each time measurements. 
+Because of the \fB\-m\fP
+option, the table has no column headers. 
+The table has 7 columns: 
+.RS
+.TP
+1. number 
+The number of the time measurment. 
+These numbers are strictly increasing but not necessarily consecutive. 
+They can be used to keep the measurements sorted in the order in which 
+they were made. 
+.TP
+2. file 
+The file number as explained above. 
+.TP
+3. line 
+The line number as explained above. 
+.TP
+4. time 
+The time interval in nano seconds. 
+.TP
+5. command 
+The command name as given in column 6 of the previous example. 
+.TP
+6. level  
+The nesting level of the macro call stack. 
+.TP
+7. macro 
+The macro name. 
+.RE
+.RS
+.PP
+This table contains all the timing information gathered during the run 
+of texprof\&.
+Some information about macro calls is contained in 
+column 6. More information about macro calls could be added 
+by using the \fB\-s\fP
+option. The information about macro returns 
+can be obtained from column 6. 
+The table can be imported to a spread\-sheet or a database for further 
+analysis. 
 .RE
 .PP
 .SH BUGS

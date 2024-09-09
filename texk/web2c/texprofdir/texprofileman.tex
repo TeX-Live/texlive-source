@@ -117,7 +117,7 @@ as well as the selection of information that is shown in the tables.
   the \Opt{-R} option, if you import the table into a database or spread-sheet.
   If you sort the data by various properties into different
   categories, the time stamp number can be used to keeping the entries
-   within a category sorted by time.
+  within a category sorted by time.
   
 \item[\Opt{-s}]
   Show the changes of the macro stack.
@@ -169,43 +169,44 @@ use of macros but simply on the size of the document.
 \end{description}
 
 \subsection{Time}
- If the option \Opt{-m} is given times are given as nanoseconds.
- Otherwise, times are rounded to at most 4 digits precission and displayed
- with a unit: seconds (s), milliseconds (ms), microseconds (um), or nanoseconds (ns).
+If the option \Opt{-m} is given times are given as nanoseconds.
+Otherwise, times are rounded to at most 4 digits precission and
+displayed with a unit: seconds (s), milliseconds (ms), microseconds
+(um), or nanoseconds (ns).
 
- \subsection{Macro Names}
-  Macro names are shown with the leading backslash.
-  Since macro names are often not unique, the command line option \Opt{-i}
-  can be used to show after the macro name in square brackets the file number
-  and the line number where the macro is defined.
-  Unless two macros with the same name are
-  defined in the same file and line this is sufficient to uniquely
-  identify a macro. A macro defined with ``let'' results in a complet copy
-  of the original macro. Therefore it  will not reference
-  the file and line of the ``let'' command but the same file and line as
-  the original macro.
+\subsection{Macro Names}
+Macro names are shown with the leading backslash.  Since macro names
+are often not unique, the command line option \Opt{-i} can be used to
+show after the macro name in square brackets the file number and the
+line number where the macro is defined.  Unless two macros with the
+same name are defined in the same file and line this is sufficient to
+uniquely identify a macro. A macro defined with ``let'' results in a
+complet copy of the original macro. Therefore it will not reference
+the file and line of the ``let'' command but the same file and line as
+the original macro.
 
 \section{Examples}
-  Let's assume that you issue the command \Prog{texprof} \Opt{-prof} \Arg{hello.tex}.
-  This will run \Prog{texprof} on the input file \Arg{hello.tex} with option \Opt{-prof}.
-  The program \Prog{texprof} will load the plain TeX format and then
-  process \File{hello.tex} to produce \File{hello.log} and \File{hello.dvi}.
-  It will execute  exactly the same steps that TeX would execute if you had
-  issued the command \Prog{tex} \Arg{hello.tex}.
+Let's assume that you issue the command \Prog{texprof} \Opt{-prof}
+\Arg{hello.tex}.  This will run \Prog{texprof} on the input file
+\Arg{hello.tex} with option \Opt{-prof}.  The program \Prog{texprof}
+will load the plain TeX format and then process \File{hello.tex} to
+produce \File{hello.log} and \File{hello.dvi}.  It will execute
+exactly the same steps that TeX would execute if you had issued the
+command \Prog{tex} \Arg{hello.tex}.
 
-  In addition to \File{hello.log} and \File{hello.dvi}, \Prog{texprof} will
-  also produce the file \File{hello.tprof} containing time measurements
-  made while  \Prog{texprof} was running. 
-  The option \Opt{-prof} will switch on the gathering of
-  timing data as soon as \Prog{texprof} enters its main control procedure;
-  The file \File{hello.tprof} will contain a time measurement, called a time
-  stamp, for every command that TeX executed while processing the input.
-  A binary format is used to store all that data in a simple and compact
-  form. Still the file \File{hello.tprof} might become very big.
+In addition to \File{hello.log} and \File{hello.dvi}, \Prog{texprof}
+will also produce the file \File{hello.tprof} containing time
+measurements made while \Prog{texprof} was running.  The option
+\Opt{-prof} will switch on the gathering of timing data as soon as
+\Prog{texprof} enters its main control procedure; The file
+\File{hello.tprof} will contain a time measurement, called a time
+stamp, for every command that TeX executed while processing the input.
+A binary format is used to store all that data in a simple and compact
+form. Still the file \File{hello.tprof} might become very big.
 
-  The program \Prog{texprofile} is used to extract and analyse the
-  data contained in \File{hello.tprof} and produce useful output.
-  Here are some examples:
+The program \Prog{texprofile} is used to extract and analyse the data
+contained in \File{hello.tprof} and produce useful output.  Here are
+some examples:
   
 \begin{description}
 \item[\Prog{texprofile} \Arg{hello}]
@@ -225,7 +226,6 @@ use of macros but simply on the size of the document.
   \item[1. file]
     The first column contains the input file number as explained above.
     The input file name if shown in column 7.
-
   \item[2. line]
     The line number.
   \item[3. percent]
@@ -253,14 +253,14 @@ use of macros but simply on the size of the document.
   With the option \Opt{-G}, \Prog{texprofile} will map each time stamp
   either to file input or to a macro body.
   The table shown is divided into several sections, the first section
-  is devoted to file input, each of the following section is devoted
-  to a specific macro.
+  is devoted to file input, each of the following sections is devoted
+  to a specific macro.  
   \\
   Each section starts with a header. The header of the
   first section is ``File'' the header of a later section is the macro name.
   \\
   The first line after the header gives the total time spent in the section
-  in column 1 and 3 in different formats:
+  in two different formats:
   \begin{description}
     \item[1. time]
       Column 1 gives it as an absolut time.
@@ -273,11 +273,11 @@ use of macros but simply on the size of the document.
   And consequently the value in column 3 will be 100\%.
   \\
   To accomplish a task, a macro usually calls other
-  macros, that we call child macros in the following.
-  The following lines will give a breakdown of the time shown in the
-  first line.
-  The next line after the header gives the time spent in the section
-  excluding the time spent in child macros. It adds in column 4 the number
+  macros that we call child macros in the following.
+  The following lines in the table will give a breakdown
+  of the time shown in the first line.
+  The breakdown starts with a line showing the time spent in the section
+  excluding the time spent in child macros. It shows in column 4 the number
   of times the macro was called.
   \begin{description}
     \item[1. time]
@@ -289,9 +289,117 @@ use of macros but simply on the size of the document.
     \item[4. count/total]
       Column 4 gives the number of times the section was called.
   \end{description}
+  The lines that follow in the table show the time spent in one of
+  the child macros. Column 2, 4, and 5 need some explanation.
+    \begin{description}
+    \item[2. loop]
+      The only case where column 2 is not empty is the case of a
+      recursive macro. A recursive macro is a macro that along the
+      chain of macro calls eventually calls itself creating a
+      recursive loop. At this point, a macro becomesits own descendant
+      and at the same time its own ancestor.
+      \\
+      Therefore \Prog{texprofile} maintains for each child macro two
+      accumulators for the elapsed time: For the time shown in 
+      column 2 labeled ``loop'', \Prog{texprofile} adds up the time
+      differences observed at the return of a child macro.  For the
+      time shown in the column labeled ``time'' and ``percent'', it
+      subtracts from the time differences observed at the return of a
+      child macro all those time differences that were already added
+      to one of the other lines in the time breakdown: the macro itself
+      or one of the other child macros.
+      So the times shown in column 1 of line 2 and the following lines
+      will add up to the time shown in column 1 of the line 1;
+      and the percentages shown in column 3 of line 2 and the following lines
+      will add up to 100\%.
+      The time shown in column 3 will show show the total time needed
+      to accomplish the sub task assigned to the respective child macro.
+    \item[4. count/total]
+      Column 4 shows two counts $n/m$ for the macro named in column 5.
+      $m$ is the total number of calls to the macro and $n$ is the number of
+      calls as a child macro in the current section. The number $n$ will
+      always be less or equal to $m$.
 
-  
+    \item[5. child]
+      Column 5 shows the name of the child macro as explained above.
+  \end{description}
+\item[\Prog{texprofile} \Opt{-G} \Opt{-m} \Arg{hello}]
+  This table will contain the same data as the previous example
+  but this time the \Opt{-m} option will optimize the output for
+  machine readability.
+  \begin{itemize}
+    \item There are no column headers.
+    \item The times in column 1 ``time'' and column 2 ``loop''
+      are given in nanoseconds without a unit identifier.
+    \item The numbers $n/m$ in column 4 are now shown in two separate
+      columns 4 and 5; the macro name moves from column 5 to column 6.
+  \end{itemize}
 
+\item[\Prog{texprofile} \Opt{-F} \Arg{hello}]
+  With the option \Opt{-F}, \Prog{texprofile} outputs the table
+  of all of TeX's input files using 5 columns: 
+    \begin{description}
+    \item[1. file] The file number as explained above.
+    \item[2. lines] The difference between the highest and the lowest
+      line number found in the profile data for this file. This is
+      usually only a subset of all the lines of the file.
+    \item[3. percent]
+      The percentage of the total time measured that is attibuted to the file.
+    \item[4. time]
+      The absolute time that is attibuted to the file.
+    \item[5. name]
+      The full file name of the file.
+    \end{description}
+\item[\Prog{texprofile} \Opt{-C} \Arg{hello}]
+   With the option \Opt{-C}, \Prog{texprofile} outputs the table
+   of all TeX commands executed while profiling
+   using 6 columns: 
+    \begin{description}
+    \item[1. cmd] The command code used internaly by TeX.
+      Usually the same number is used by TeX for several
+      closely related tasks.
+      There is a special command code 101 which is used to
+      for the time that is spend on system routines that are
+      mapped to the system file as explained above.
+    \item[2. time]
+      The total time used for the command.
+    \item[3. percent]
+      The percentage of the total time measured used for the command.
+    \item[4. count]
+      The number of times this command was executed.
+    \item[5. average]
+      The average time needed to execute the command.
+      This is simpy the value in column 2 divided by the value in column 4.
+    \item[6. name]
+      A verbal description of the command or commands that share this
+      command code.
+    \end{description}
+\item[\Prog{texprofile} \Opt{-R} \Opt{-m} \Opt{-n} \Arg{hello}]
+  With the options \Opt{-R} \Opt{-m}, \Prog{texprofile} outputs the table
+  of raw time measurements as observed by \Prog{texprof} optimized for machine
+  readability. The option \Opt{-n} adds a column for the number
+  of each time measurements.
+  Because of the \Opt{-m} option, the table has no column headers.
+  The table has  7 columns:
+  \begin{description}
+  \item[1. number] The number of the time measurment.
+    These numbers are strictly increasing but not necessarily consecutive.
+    They can be used to keep the measurements sorted in the order in which
+    they were made.
+    \item[2. file] The file number as explained above.
+    \item[3. line] The line number as explained above.
+    \item[4. time] The time interval in nano seconds.
+    \item[5. command] The command name as given in column 6 of the previous example.
+    \item[6. level ] The nesting level of the macro call stack.
+    \item[7. macro] The macro name.
+  \end{description}
+  This table contains all the timing information gathered during the run
+  of \Prog{texprof}. Some information about macro calls is contained in
+  column 6. More information about macro calls could be added
+  by using the \Opt{-s} option. The information about macro returns
+  can be obtained from column 6.
+  The table can be imported to a spread-sheet or a database for further
+  analysis.
 \end{description}
 
 
