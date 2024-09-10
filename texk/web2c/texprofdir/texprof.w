@@ -31241,14 +31241,18 @@ Currently we use |timespec_get| under Windows and |clock_gettime|
 with a tread specific clock otherwise.
 
 @<get current time@>= 
+#ifdef GETTIME
 #if GETTIME==0
-   time_error=clock_gettime(CLOCK_THREAD_CPUTIME_ID, &ts);
+     time_error=clock_gettime(CLOCK_THREAD_CPUTIME_ID, &ts);
 #elif GETTIME==1
-   time_error=clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &ts);
+     time_error=clock_gettime(CLOCK_PROCESS_CPUTIME_ID, &ts);
 #elif GETTIME==2
-   time_error=clock_gettime(CLOCK_MONOTONIC_RAW, &ts);
+     time_error=clock_gettime(CLOCK_MONOTONIC_RAW, &ts);
 #elif GETTIME==3
-   time_error=clock_gettime(CLOCK_MONOTONIC, &ts);
+     time_error=clock_gettime(CLOCK_MONOTONIC, &ts);
+#else
+   time_error=clock_gettime(CLOCK_THREAD_CPUTIME_ID, &ts);
+#endif
 #else
 /* guess a default */
 #ifdef _WIN32
@@ -31257,6 +31261,7 @@ with a tread specific clock otherwise.
    time_error=clock_gettime(CLOCK_THREAD_CPUTIME_ID, &ts);
 #endif
 #endif
+
 
 @ To record the timing information, we compute the time difference in
 nano seconds, assuming that it fits into unsigned 32 bit which means
