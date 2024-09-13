@@ -1,3 +1,8 @@
+2024-09-13 Akira Kakuto  <kakuto@jcom.zaq.ne.jp>
+
+	Import libpng-1.6.44.
+	* version.ac: Adjust.
+
 2024-04-07  Karl Berry  <karl@freefriends.org>
 
 	* configure.ac (AM_PROG_AR): include for cosmopolitan, from Luigi.
