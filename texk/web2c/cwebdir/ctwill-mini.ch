@@ -1589,9 +1589,9 @@ Section 212--213.
 Section 215.
 
 @x
-@<Append a string or...@>={@+ int count=-1; /* characters remaining before string break */
+@<Append a \9{s}string or...@>={@+ int count=-1; /* characters remaining before string break */
 @y
-@<Append a string or...@>={int count=-1; /* characters remaining before string break */
+@<Append a \9{s}string or...@>={@+ int count=-1; /* characters remaining before string break */
 @z
 
 Section 220.
@@ -1819,12 +1819,12 @@ Section 247.
 
 @x
 @ @d usage_sentinel (struct perm_meaning *)1
-@<Translate the current section@>= {
+@<Translate the \9{c}current section@>= {
 @y
 @ @d usage_sentinel (struct perm_meaning *)1
 @-usage_sentinel@>
 @$usage_sentinel {CTWILL}247 =(\&{struct} \&{perm\_meaning} ${}{*}{}$) \T{1}@>
-@<Translate the current section@>=@+ {
+@<Translate the \9{c}current section@>= {
 @z
 
 Section 251.
@@ -1851,9 +1851,9 @@ Section 252.
 Section 254.
 
 @x
-@ @<Start a format...@>= {
+@ @<Start \9{a}a format...@>= {
 @y
-@r @ @<Start a format...@>= {
+@r @ @<Start \9{a}a format...@>= {
 @z
 
 Section 255.

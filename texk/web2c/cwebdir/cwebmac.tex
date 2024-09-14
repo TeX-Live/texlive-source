@@ -132,16 +132,6 @@
   \def\Blue{\pdfliteral{\pdflinkcolor\space rg \pdflinkcolor\space RG}}
 \fi
 \input cwebacromac % load hypertext macros
-\def\pdfURL#1#2{\ifpdf \ifpdflua\pdfannotlink height \theheight depth \thedepth
-    attr {/Border [0 0 0]} user { /Type /Annot /Subtype /Link /A
-      << /S /URI /URI (#2) >>}\Blue #1\Black \pdfendlink % changed in 3.69
-  \else {\setbox0=\hbox{\special{pdf: bc [ \pdflinkcolor ]}{#1}%
-    \special{pdf: ec}}\special{pdf: ann width \thewidth height \theheight
-      depth \thedepth << /Border [0 0 0] /Type /Annot /Subtype /Link /A
-      << /S /URI /URI (#2) >> >>}\box0\relax}\fi
-  \else #1 ({\tt#2})\fi}
-{\catcode`\~=12 \gdef\TILDE/{~}} % ~ in a URL
-{\catcode`\_=12 \gdef\UNDER/{_}} % _ in a URL
 
 \def\lapstar{\rlap{*}}
 \def\stsec{\rightskip=0pt % get out of C mode (cf. \B)
@@ -242,9 +232,8 @@
 \def\p#1{\cdot 2^{#1}} % power of two (hex exponent)
 
 \def\onmaybe{\let\ifon=\maybe} \let\maybe=\iftrue
-\newif\ifon \newif\iftitle \newif\ifpagesaved
+\newif\ifon \newif\iftitle \newif\ifpagesaved \newif\ifheader
 
-\newif\ifheader
 \def\lheader{\headertrue\mainfont\the\pageno\eightrm\qquad\grouptitle
   \hfill\title\qquad\mainfont\topsecno} % top line on left-hand pages
 \def\rheader{\headertrue\mainfont\topsecno\eightrm\qquad\title\hfill

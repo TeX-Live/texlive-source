@@ -93,7 +93,7 @@ char **av) /* argument values */
   program=cweave;
   @<Set initial values@>@;
   common_init();
-  @<Start \TEX/ output@>@;
+  @<Start \9{t}\TEX/ output@>@;
   if (show_banner) puts(banner); /* print a ``banner line'' */
   @<Store all the reserved words@>@;
   phase_one(); /* read all the user's text and store the cross-references */
@@ -1076,9 +1076,9 @@ phase_one(void) {
     printf("*%d",(int)section_count);
     update_terminal(); /* print a progress report */
   }
-  @<Store cross-references in the \TEX/ part of a section@>@;
-  @<Store cross-references in the definition part of a section@>@;
-  @<Store cross-references in the \CEE/ part of a section@>@;
+  @<Store cross-references in the \9{t}\TEX/ part of a section@>@;
+  @<Store cross-references in the \9{d}definition part of a section@>@;
+  @<Store cross-references in the \9{c}\CEE/ part of a section@>@;
   if (changed_section[section_count]) change_exists=true;
 }
 
@@ -1155,7 +1155,7 @@ the identifiers in \CEE/ texts enclosed in \pb, or for control texts
 enclosed in \.{@@\^}$\,\ldots\,$\.{@@>} or \.{@@.}$\,\ldots\,$\.{@@>}
 or \.{@@:}$\,\ldots\,$\.{@@>}.
 
-@<Store cross-references in the \T...@>=
+@<Store cross-references in the \9{t}\T...@>=
 while (true) {
   switch (next_control=skip_TeX()) {
     case translit_code: err_print("! Use @@l in limbo only"); continue;
@@ -1204,7 +1204,7 @@ static name_pointer res_wd_end; /* pointer to the first nonreserved identifier *
 
 @ When we get to the following code we have |next_control>=format_code|.
 
-@<Store cross-references in the d...@>=
+@<Store cross-references in the \9{d}d...@>=
 while (next_control<=definition) { /* |format_code| or |definition| */
   if (next_control==definition) {
     xref_switch=def_flag; /* implied \.{@@!} */
@@ -1261,7 +1261,7 @@ else {
 @ Finally, when the \TEX/ and definition parts have been treated, we have
 |next_control>=begin_C|.
 
-@<Store cross-references in the \CEE/...@>=
+@<Store cross-references in the \9{c}\CEE/...@>=
 if (next_control<=section_name) { /* |begin_C| or |section_name| */
   if (next_control==begin_C) section_xref_switch=0;
   else {
@@ -1398,7 +1398,7 @@ beginning of phase two. We initialize the output variables in a slightly
 tricky way so that the first line of the output file will be
 `\.{\\input cwebmac}'.
 
-@<Start \TEX/...@>=
+@<Start \9{t}\TEX/...@>=
 out_ptr=out_buf+1; out_line=1; active_file=tex_file;
 tex_printf("\\input cwebma"); *out_ptr='c';
 
@@ -3420,10 +3420,10 @@ switch (next_control) {
     app_scrap(section_scrap,maybe_math);@+
     app_scrap(exp,yes_math);@+break;
   case string: case constant: case verbatim:
-    @<Append a string or constant@>@;@+break;
+    @<Append a \9{s}string or constant@>@;@+break;
   case identifier: app_cur_id(true);@+break;
   case TeX_string:
-    @<Append a \TEX/ string, without forming a scrap@>@;@+break;
+    @<Append a \9{t}\TEX/ string, without forming a scrap@>@;@+break;
   case '/': case '.':
     app(next_control);@+app_scrap(binop,yes_math);@+break;
   case '<': app_str("\\langle");@+app_scrap(prelangle,yes_math);@+break;
@@ -3545,7 +3545,7 @@ Many of the special characters in a string must be prefixed by `\.\\' so that
 \TEX/ will print them properly.
 @^special string characters@>
 
-@<Append a string or...@>={@+ int count=-1; /* characters remaining before string break */
+@<Append a \9{s}string or...@>={@+ int count=-1; /* characters remaining before string break */
 switch (next_control) {
   case constant: app_str("\\T{"@q}@>); break;
 @.\\T@>
@@ -3611,7 +3611,7 @@ this bug is probably to enclose the \.{@@t...@@>} in \.{@@[...@@]} so that
 the \TEX/ string is treated as an expression.
 @^bug, known@>
 
-@<Append a \TEX/ string, without forming a scrap@>=
+@<Append a \9{t}\TEX/ string, without forming a scrap@>=
 app_str("\\hbox{"@q}@>);
 @^high-bit character handling@>
 while (id_first<id_loc) {
@@ -4183,7 +4183,7 @@ if (show_progress) printf("%s","\nWriting the output file...");
 section_count=0; format_visible=true; copy_limbo();
 finish_line(); flush_buffer(out_buf,false,false);
   /* insert a blank line, it looks nice */
-while (!input_has_ended) @<Translate the current section@>@;
+while (!input_has_ended) @<Translate the \9{c}current section@>@;
 }
 
 @ @<Predecl...@>=@+static void phase_two(void);
@@ -4211,13 +4211,13 @@ static boolean format_visible; /* should the next format declaration be output? 
 static boolean doing_format=false; /* are we outputting a format declaration? */
 static boolean group_found=false; /* has a starred section occurred? */
 
-@ @<Translate the current section@>= {
+@ @<Translate the \9{c}current section@>= {
   section_count++;
   @<Output the code for the beginning of a new section@>@;
   save_position();
-  @<Translate the \TEX/ part of the current section@>@;
-  @<Translate the definition part of the current section@>@;
-  @<Translate the \CEE/ part of the current section@>@;
+  @<Translate the \9{t}\TEX/ part of the current section@>@;
+  @<Translate the \9{d}definition part of the current section@>@;
+  @<Translate the \9{c}\CEE/ part of the current section@>@;
   @<Show cross-references to this section@>@;
   @<Output the code for the end of a section@>@;
 }
@@ -4257,7 +4257,7 @@ out('{'); out_section(section_count); out('}');
 @ In the \TEX/ part of a section, we simply copy the source text, except that
 index entries are not copied and \CEE/ text within \pb\ is translated.
 
-@<Translate the \T...@>= do
+@<Translate the \9{t}\T...@>= do
   switch (next_control=copy_TeX()) {
     case '|': init_stack(); output_C(); break;
     case '@@': out('@@'); break;
@@ -4279,12 +4279,12 @@ while (next_control<format_code);
 @ When we get to the following code we have |next_control>=format_code|, and
 the token memory is in its initial empty state.
 
-@<Translate the d...@>=
+@<Translate the \9{d}d...@>=
 space_checked=false;
 while (next_control<=definition) { /* |format_code| or |definition| */
   init_stack();
-  if (next_control==definition) @<Start a macro definition@>@;
-  else @<Start a format definition@>@;
+  if (next_control==definition) @<Start \9{a}a macro definition@>@;
+  else @<Start \9{a}a format definition@>@;
   outer_parse(); finish_C(format_visible); format_visible=true;
   doing_format=false;
 }
@@ -4337,7 +4337,7 @@ if the identifier is not followed by `\.(' at all, the replacement
 text starts immediately after the identifier.  In the former case,
 it starts after we scan the matching `\.)'.
 
-@<Start a macro...@>= {
+@<Start \9{a}a macro...@>= {
   if (save_line!=out_line || save_place!=out_ptr || space_checked) app(backup);
   if(!space_checked){emit_space_if_needed();save_position();}
   app_str("\\D"); /* this will produce `\#\&{define }' */
@@ -4366,7 +4366,7 @@ it starts after we scan the matching `\.)'.
   }
 }
 
-@ @<Start a format...@>= {
+@ @<Start \9{a}a format...@>= {
   doing_format=true;
   if(*(loc-1)=='s' || *(loc-1)=='S') format_visible=false;
   if(!space_checked){emit_space_if_needed();save_position();}
@@ -4394,7 +4394,7 @@ point to the current section name, if it has a name.
 @<Private...@>=
 static name_pointer this_section; /* the current section name, or zero */
 
-@ @<Translate the \CEE/...@>=
+@ @<Translate the \9{c}\CEE/...@>=
 this_section=name_dir;
 if (next_control<=section_name) {
   emit_space_if_needed(); init_stack();

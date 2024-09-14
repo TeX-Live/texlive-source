@@ -466,7 +466,7 @@ beginning of phase two. We initialize the output variables in a slightly
 tricky way so that the first line of the output file will be
 `\.{\\input cwebmac}'.
 
-@<Start \TEX/...@>=
+@<Start \9{t}\TEX/...@>=
 out_ptr=out_buf+1; out_line=1; active_file=tex_file;
 tex_printf("\\input cwebma"); *out_ptr='c';
 @y
@@ -486,7 +486,7 @@ debugging mini-index entries.
 
 @d proofing flags['P']
 
-@<Start \TEX/...@>=
+@<Start \9{t}\TEX/...@>=
 out_ptr=out_buf+1; out_line=1; active_file=tex_file;
 tex_puts("\\input ");
 tex_printf(use_language);
@@ -952,7 +952,7 @@ section_count=0; format_visible=true; right_start_switch=false; copy_limbo();
 @x [12.229] l.4212
 static boolean group_found=false; /* has a starred section occurred? */
 
-@ @<Translate the current section@>= {
+@ @<Translate the \9{c}current section@>= {
   section_count++;
 @y
 static boolean group_found=false; /* has a starred section occurred? */
@@ -960,7 +960,7 @@ static boolean right_start_switch; /* has `\.{@@r}' occurred recently? */
 static boolean temp_switch; /* has `\.{@@\%}' occurred recently? */
 
 @ @d usage_sentinel (struct perm_meaning *)1
-@<Translate the current section@>= {
+@<Translate the \9{c}current section@>= {
   section_count++;
   temp_switch=false; temp_meaning_ptr=temp_meaning_stack;
   top_usage=usage_sentinel;
@@ -1040,9 +1040,9 @@ flush_buffer(out_ptr,false,false);
 @z
 
 @x [12.236] l.4340
-@<Start a macro...@>= {
+@<Start \9{a}a macro...@>= {
 @y
-@<Start a macro...@>= {
+@<Start \9{a}a macro...@>= {
   is_macro=true;
 @z
 
@@ -1073,10 +1073,10 @@ flush_buffer(out_ptr,false,false);
 @z
 
 @x [12.237] l.4369
-@ @<Start a format...@>= {
+@ @<Start \9{a}a format...@>= {
   doing_format=true;
 @y
-@ @<Start a format...@>= {
+@ @<Start \9{a}a format...@>= {
   doing_format=true;
   is_macro=false;
 @z

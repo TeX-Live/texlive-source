@@ -195,7 +195,7 @@ beginning of phase two. We initialize the output variables in a slightly
 tricky way so that the first line of the output file will be
 `\.{\\input cwebmac}'.
 
-@<Start \TEX/...@>=
+@<Start \9{t}\TEX/...@>=
 out_ptr=out_buf+1; out_line=1; active_file=tex_file;
 tex_printf("\\input cwebma"); *out_ptr='c';
 @y
@@ -210,7 +210,7 @@ prepended to `\.{cwebmac.tex}', e.g., if you call \.{CWEAVE} with
 Without this option the first line of the output file will be
 `\.{\\input cwebmac}'.
 
-@<Start \TEX/...@>=
+@<Start \9{t}\TEX/...@>=
 out_ptr=out_buf+1; out_line=1; active_file=tex_file;
 tex_puts("\\input ");
 tex_printf(use_language);

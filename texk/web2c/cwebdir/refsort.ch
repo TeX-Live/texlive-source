@@ -45,10 +45,22 @@ int main()
   item *x, **y;
 @z
 
+@x [4] l.83
+  @<Copy |buf| to item |x|@>;
+@y
+  @<Copy \9{b}|buf| to item |x|@>;
+@z
+
 @x [5] l.89 variable not used
 { register int k;
 @y
 {
+@z
+
+@x [6] l.99
+@<Copy |buf|...@>=
+@y
+@<Copy \9{b}|buf|...@>=
 @z
 
 @x [9] l.149 'register' removed in C++17

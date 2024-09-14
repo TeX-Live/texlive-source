@@ -17,6 +17,16 @@
 \let\pdfoutput=\outputmode
 \fi % end of LuaTeX->pdfTeX redirection macros
 
+\def\pdfURL#1#2{\ifpdf \ifpdflua\pdfannotlink height \theheight depth \thedepth
+    attr {/Border [0 0 0]} user { /Type /Annot /Subtype /Link /A
+      << /S /URI /URI (#2) >>}\Blue #1\Black \pdfendlink % changed in 3.69
+  \else {\setbox0=\hbox{\special{pdf: bc [ \pdflinkcolor ]}{#1}%
+    \special{pdf: ec}}\special{pdf: ann width \thewidth height \theheight
+      depth \thedepth << /Border [0 0 0] /Type /Annot /Subtype /Link /A
+      << /S /URI /URI (#2) >> >>}\box0\relax}\fi
+  \else #1 ({\tt#2})\fi}
+{\catcode`\~=12 \gdef\TILDE/{~}} % ~ in a URL
+{\catcode`\_=12 \gdef\UNDER/{_}} % _ in a URL
 \def\tocpages{1} % Most programs have one-page Table-of-Contents
 \def\startpdf{\def\pagemode{/PageMode /UseOutlines}
   \ifnum\contentspagenumber=0 \advance \pageno by -\tocpages
@@ -66,8 +76,7 @@
     \fi
   \else \addtokens\toksC{\the\toksD}\global\havenumtrue
   \fi
-  \next
-}
+  \next}
 \def\makenote{\addtokens\toksB
     {\noexpand\pdflink{\the\toksC}}\toksC={}\global\havenumfalse}
 \def\maketoksdone{\edef\st{\global\noexpand\toksA={\the\toksB}}\st}
@@ -99,6 +108,7 @@
   \afterassignment\makeolproctok\let\nxt= }
 \def\makeolnexttok{\afterassignment\makeolproctok\let\nxt= }
 \def\makeolgobbletok{\afterassignment\makeolnexttok\let\nxt= }
+\def\makeolgobbletokk{\afterassignment\makeolgobbletok\let\nxt= }
 \def\addF#1{\addtokens\toksF{#1}\tokprocessedtrue}
 % now comes a routine to "sanitize" section names, for pdf outlines
 \def\makeolproctok{\tokprocessedfalse
@@ -109,8 +119,7 @@
   \else\ifx^\nxt \addF^\else\ifx_\nxt \addF_% sanitize ^ and _
   \else\ifx\nxt\spacechar \addF\space
   \else\if\noexpand\nxt\relax % we have a control sequence; is it one we know?
-    \ifx\nxt~\addF\space
-    \else\ifx\nxt\onespace\addF\space
+    \ifx\nxt~\addF\space \else\ifx\nxt\onespace\addF\space
     \else\the\sanitizer
       \iftokprocessed\else\makeolproctokctli
       \iftokprocessed\else\makeolproctokctlii
@@ -124,8 +133,7 @@
     \else\expandafter\makeolproctokchar\meaning\nxt
     \fi\fi\fi\fi\fi
   \fi\fi\fi\fi\fi \fi\fi\fi
-  \next
-}
+  \next}
 \def\makeolproctokchar#1 #2 #3{\addF{#3}}
 \def\makeolproctokctli{%
   \ifx\nxt\CEE\addF{C}\let\next\makeolgobbletok % \CEE/
@@ -133,8 +141,9 @@
   \else\ifx\nxt\TEX\addF{TeX}\let\next\makeolgobbletok % \TEX/
   \else\ifx\nxt\TeX\addF{TeX}\else\ifx\nxt\LaTeX\addF{LaTeX}%
   \else\ifx\nxt\CPLUSPLUS\addF{C++}\let\next\makeolgobbletok % \CPLUSPLUS/
-  \else\ifx\nxt\Cee\addF{C}%
+  \else\ifx\nxt\Cee\addF{C}\else\ifx\nxt\dots\addF{...\space}%
   \else\ifx\nxt\PB \let\next\makeolgobbletok \tokprocessedtrue % \PB{...}
+  \else\ifx\nxt\9 \expandafter\nxt\relax \let\next\makeolgobbletokk % \9{#1}
   \else\ifx\nxt\.\tokprocessedtrue\instrtrue % \.{...}
       % skip \|
   \else\ifx\nxt\\\ifinstr\addF{\bschar\bschar}\else\tokprocessedtrue\fi
@@ -149,7 +158,7 @@
   \else\ifx\nxt\PP\addF{++}\else\ifx\nxt\MM\addF{--}%
   \fi\fi\fi\fi\fi \fi\fi\fi\fi\fi
   \fi\fi\fi\fi\fi \fi\fi\fi\fi\fi
-  \fi\fi
+  \fi\fi\fi\fi
 }
 \def\makeolproctokctlii{%
   \ifx\nxt\MG\addF{->}\else\ifx\nxt\GG\addF{>>}%
