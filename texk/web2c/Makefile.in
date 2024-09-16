@@ -3270,6 +3270,14 @@ EXTRA_DIST = PROJECTS cftests cpascal.h help.h w2c/config.h \
 	ptexdir/tests/chcode-euc.pl ptexdir/tests/chcode-sjis.pl \
 	ptexdir/tests/skipjfmp.pl ptexdir/tests/skipjfmp.tfm \
 	ptexdir/ptrip/ptrip.diffs ptexdir/ptrip/texmf.cnf \
+	ptexdir/tests/ctrlsym.tex ptexdir/tests/ctrlsym.log \
+	ptexdir/tests/endlinechar.tex ptexdir/tests/endline.log \
+	ptexdir/tests/control-symbol.tex ptexdir/tests/jctrlsym.log \
+	ptexdir/tests/p-endlinea.typ ptexdir/tests/p-jctrlsyma.typ \
+	ptexdir/tests/printkanji.tex ptexdir/tests/pknj-s.log \
+	ptexdir/tests/pknj-e.log ptexdir/tests/p-pknj-sa.typ \
+	ptexdir/tests/p-pknj-ea.typ ptexdir/tests/ucs.tex \
+	ptexdir/tests/ucs-s.log ptexdir/tests/ucs-e.log \
 	$(uptex_web_srcs) $(uptex_ch_srcs) uptexdir/uptex.defines \
 	uptexdir/upbibtex.ch uptexdir/updvitype.ch \
 	uptexdir/uppltotf.ch uptexdir/uptftopl.ch uptexdir/COPYRIGHT \
@@ -3609,21 +3617,22 @@ DISTCLEANFILES = CXXLD.sh tangle.c tangle.h tangle.p tangle-web2c \
 	ptests/memtest.bib ptests/memtest?.* ptests/xstory.dvityp \
 	ptests/xpagenum.typ ptests/xptex[34]*.typ ptests/xcmr10.tfm \
 	ptests/xcmr10.pl ptests/xsample*.typ ptests/x*min10.* \
-	ptests/xchcode*.* ptests/xskipjfmp.* ptrip.diffs \
-	$(nodist_uptex_SOURCES) uptex.web uptex.ch uptex-web2c uptex.p \
-	uptex.pool uptex-tangle $(upweb_programs:=.c) \
-	$(upweb_programs:=.h) $(upweb_programs:=.p) \
-	$(upweb_programs:=-web2c) $(upweb_programs:=.web) \
-	uptests/nissya_bib.* uptests/xexampl.aux uptests/xexampl.bbl \
-	uptests/xexampl.blg uptests/xenc*.* uptests/fn*.* \
-	uptests/memtest.bib uptests/memtest?.* uptests/xstory.dvityp \
-	uptests/xpagenum.typ uptests/x*ptex[345]*.typ \
-	uptests/xcmr10.tfm uptests/xcmr10.pl uptests/xsample*.typ \
-	uptests/x*min10.* uptests/xchcode*.* uptests/xtestnewu*.* \
-	uptests/xuparse.* uptests/yuparse.* uptests/ygkhuge*.* \
-	uptests/ygk256*.* uptests/xskipjfmp.* uptrip.diffs \
-	$(nodist_euptex_SOURCES) euptex.web euptex.ch euptex-web2c \
-	euptex.p euptex.pool euptex-tangle euptrip.diffs \
+	ptests/xchcode*.* ptests/xskipjfmp.* ptrip.diffs p-ctrlsym.log \
+	p-ctrlsym.out p-ctrlsym.tex p-endline*.* p-jctrlsym*.* \
+	p-pknj-*.* p-ucs*.* $(nodist_uptex_SOURCES) uptex.web uptex.ch \
+	uptex-web2c uptex.p uptex.pool uptex-tangle \
+	$(upweb_programs:=.c) $(upweb_programs:=.h) \
+	$(upweb_programs:=.p) $(upweb_programs:=-web2c) \
+	$(upweb_programs:=.web) uptests/nissya_bib.* \
+	uptests/xexampl.aux uptests/xexampl.bbl uptests/xexampl.blg \
+	uptests/xenc*.* uptests/fn*.* uptests/memtest.bib \
+	uptests/memtest?.* uptests/xstory.dvityp uptests/xpagenum.typ \
+	uptests/x*ptex[345]*.typ uptests/xcmr10.tfm uptests/xcmr10.pl \
+	uptests/xsample*.typ uptests/x*min10.* uptests/xchcode*.* \
+	uptests/xtestnewu*.* uptests/xuparse.* uptests/yuparse.* \
+	uptests/ygkhuge*.* uptests/ygk256*.* uptests/xskipjfmp.* \
+	uptrip.diffs $(nodist_euptex_SOURCES) euptex.web euptex.ch \
+	euptex-web2c euptex.p euptex.pool euptex-tangle euptrip.diffs \
 	pdfprimitive-euptex.* eup-ctrlsym.fmt eup-ctrlsym.log \
 	eup-ctrlsym.out eup-ctrlsym.tex $(nodist_hitex_SOURCES) \
 	$(nodist_hishrink_SOURCES) $(nodist_histretch_SOURCES) \
@@ -4447,7 +4456,10 @@ ptex_ch_srcs = \
 ptex_tests = \
 	ptexdir/ptriptest.test \
 	ptexdir/pver.test \
-	ptexdir/wcfname.test
+	ptexdir/wcfname.test \
+	ptexdir/ptex-ctrlsym.test \
+	ptexdir/ptex-prntknj.test \
+	ptexdir/ptex-ucs.test
 
 uptex_cppflags = $(PTEXENC_INCLUDES) $(AM_CPPFLAGS) $(ZLIB_INCLUDES)
 uptex_ldadd = libukanji.a $(pproglib) $(PTEXENC_LIBS) $(LDADD) $(ZLIB_LIBS)
@@ -4585,7 +4597,7 @@ euptex_tests = \
 
 
 # See hitex.am for comments about handling man.
-@TEXPROF_TRUE@man1_MANS = texprofdir/man/texprof.man
+@TEXPROF_TRUE@man1_MANS = texprofdir/man/texprof.man texprofdir/man/texprofile.man 
 hitex_CPPFLAGS = $(AM_CPPFLAGS) $(ZLIB_INCLUDES) -I$(srcdir)/libmd5 \
 	-DINIT -DSTAT -DWEB2CVERSION="\"${WEB2CVERSION}\""
 # -DDEBUG drops into an interactive debugging session.
@@ -5362,7 +5374,6 @@ libluaharfbuzz_a_SOURCES = \
 	luatexdir/luaharfbuzz/src/luaharfbuzz/variation.c
 
 libluajitharfbuzz_a_SOURCES = $(libluaharfbuzz_a_SOURCES)
-# not yet there: texprofdir/man/texprofile.man 
 texprof_CPPFLAGS = $(AM_CPPFLAGS) -I$(srcdir)/libmd5 -DINIT -DSTAT \
 	-DWEB2CVERSION="\"${WEB2CVERSION}\""
 # -DDEBUG drops into an interactive debugging session.
@@ -22005,7 +22016,10 @@ ptex.web: tie$(EXEEXT) $(ptex_web_srcs)
 ptex.ch: tie$(EXEEXT) ptex.web $(ptex_ch_srcs)
 	$(tie_c) ptex.web $(ptex_ch_srcs)
 ptexdir/ptriptest.log: ptex$(EXEEXT) dvitype$(EXEEXT) pltotf$(EXEEXT) tftopl$(EXEEXT)
-ptexdir/pver.log ptexdir/wcfname.log: ptex$(EXEEXT)
+ptexdir/pver.log ptexdir/wcfname.log \
+	ptexdir/ptex-ctrlsym.log ptexdir/ptex-prntknj.log \
+	ptexdir/ptex-ucs.log: ptex$(EXEEXT)
+
 ptrip.diffs: ptex$(EXEEXT) dvitype$(EXEEXT) pltotf$(EXEEXT) tftopl$(EXEEXT)
 	$(triptrap_diffs) $@
 .PHONY: ptrip-clean
@@ -22088,6 +22102,7 @@ uptexdir/sample.log: updvitype$(EXEEXT)
 uptexdir/yokotate.log uptexdir/skipjfmp.log \
 	uptexdir/newjfm.log uptexdir/uparse.log \
 	uptexdir/gkhuge.log uptexdir/gk256.log: uppltotf$(EXEEXT) uptftopl$(EXEEXT)
+
 uptrip.diffs: uptex$(EXEEXT) dvitype$(EXEEXT) pltotf$(EXEEXT) tftopl$(EXEEXT)
 	$(triptrap_diffs) $@
 .PHONY: uptrip-clean

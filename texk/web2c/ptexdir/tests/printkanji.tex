@@ -2,7 +2,16 @@
 \tracingstats=1000
 \noautoxspacing
 \newlinechar=`\^^J
-\font\x=ec-lmtt10 \x
+\font\x=ec-lmr10 \x
+\ifx\kanjiskip\undefined\else
+  \ifnum\jis"2121="3000
+    \jfont\jpy=umin10 at 10pt\jpy
+  \else
+    \jfont\jpy=min10 at 10pt\jpy
+  \fi
+\fi
+
+
 \immediate\openout1=\jobname.out
 \def\MSG#1{%
   \message{\string{MSG #1\string}}%
@@ -135,7 +144,6 @@ A: \A
 \catcode`\^^bf=11
 \catcode`\^^bd=11
 \catcode`\^^ff=11
-\font\x=ec-lmtt10 \x\scrollmode
 
 \def\^^c5^^bf{a}
 \def\顛{b}

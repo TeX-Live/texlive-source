@@ -1,23 +1,23 @@
-\font\x=ecrm1000 \x
+\font\x=ec-lmr10 \x
 \parindent0pt\noautoxspacing
 \output{\shipout\box255}
-\def\あ{ア}
-\def\，{イ}
+\def\あ{PPP}
+\def\，{QQQ}
 
 1a\，
-% --> 1aイ
+% --> 1aQQQ
 
 2a\あ
-% --> 2aア
+% --> 2aPPP
 
 \endlinechar=-1\relax
 
 3a\，
-% --> 3aイ
+% --> 3aQQQ
 % previous pTeX, upTeX: Undefined cs.
 
 4a\あ
-% --> 4aア
+% --> 4aPPP
 % prev. pTeX: Undefined cs.
 
 5a，
@@ -36,18 +36,22 @@
   \catcode"81=11\relax
   \catcode"82=11\relax
   8a\^^e3^^81^^82
-  % --> 8aア
+  % (p3.10.0-u1.27) --> 8aPPP
+  % (p4.0.0-u1.27)  --> エラー 8a
   \kcatcode`あ=15\relax
   9a\あ
-  % == 9a\^^e3^^81^^82. --> 9aア
-  \def\^^e3^^81^^82{ウ}
+  % == 9a\^^e3^^81^^82.
+  % (p3.10.0-u1.27) --> 9aPPP
+  % (p4.0.0-u1.27)  --> エラー 9a
+  \def\^^e3^^81^^82{RRR}
   10a\あ b\あ
-  % == 10a\^^e3^^81^^82 b\^^e3^^81^^82. --> 10aウbウ
+  % == 10a\^^e3^^81^^82 b\^^e3^^81^^82. --> 10aRRRbRRR
   \kcatcode12354=16\relax
   11a\あ b\あ
-  % == 10a\^^e3^^81^^82 b\^^e3^^81^^82. --> 11aウbウ
+  % == 11a\^^e3^^81^^82 b\^^e3^^81^^82.
+  % (p3.10.0-u1.27) --> 11aRRRbRRR
+  % (p4.0.0-u1.27)  --> 11aPPPbPPP
 \fi
 
 \bye
-
 

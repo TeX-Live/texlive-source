@@ -263,12 +263,12 @@ DISTCLEANFILES += uptests/ygk256*.*
 DISTCLEANFILES += uptests/xskipjfmp.*
 ## uptexdir/uptriptest
 EXTRA_DIST += uptexdir/uptrip/uptrip.diffs uptexdir/uptrip/texmf.cnf
+DISTCLEANFILES += uptrip.diffs
+
 uptrip.diffs: uptex$(EXEEXT) dvitype$(EXEEXT) pltotf$(EXEEXT) tftopl$(EXEEXT)
 	$(triptrap_diffs) $@
 .PHONY: uptrip-clean
 uptrip-clean:
 	rm -rf uptripdir
-
-DISTCLEANFILES += uptrip.diffs
 
 # (end of uptex.am)

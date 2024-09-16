@@ -1,5 +1,14 @@
 \scrollmode
 % plain TeX ソース
+\font\cmr=cmr10\cmr
+\ifx\kanjiskip\undefined\else
+  \ifnum\jis"2121="3000
+    \jfont\jpy=umin10 at 10pt\jpy
+  \else
+    \jfont\jpy=min10 at 10pt\jpy
+  \fi
+\fi
+
 \def\+{A}
 \def\＋{A}
 \def\X{\+}
@@ -95,7 +104,5 @@
 4. \】 ◇, \@ ◇
 
 
-
 \end
-
 

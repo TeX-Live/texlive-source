@@ -1523,6 +1523,9 @@ primitive("ptextracingfonts",assign_int,int_base+ptex_tracing_fonts_code);@/
 @d v_offset==dimen_par(v_offset_code)
 @d t_baseline_shift==dimen_par(t_baseline_shift_code)
 @d y_baseline_shift==dimen_par(y_baseline_shift_code)
+@#
+@d enc_jis=1
+@d enc_ucs=2
 @z
 
 @x l.5542 - pTeX:
@@ -1660,8 +1663,8 @@ procedure print_font_dir_and_enc(f:internal_font_number);
 begin
   if font_dir[f]=dir_tate then print("/TATE")
   else if font_dir[f]=dir_yoko then print("/YOKO");
-  if font_enc[f]=2 then print("+Unicode")
-  else if font_enc[f]=1 then print("+JIS");
+  if font_enc[f]=enc_ucs then print("+Unicode")
+  else if font_enc[f]=enc_jis then print("+JIS");
 end;
 @z
 
@@ -3324,9 +3327,9 @@ if jfm_flag<>dir_default then
   for k:=ctype_base[f] to ctype_base[f]+nt-1 do
     begin
     fget; read_twentyfourx(cx);
-    if jfm_enc=2 then {Unicode TFM}
+    if jfm_enc=enc_ucs then {Unicode TFM}
       font_info[k].hh.rh:=toDVI(fromUCS(cx))
-    else if jfm_enc=1 then {JIS-encoded TFM}
+    else if jfm_enc=enc_jis then {JIS-encoded TFM}
       font_info[k].hh.rh:=toDVI(fromJIS(cx))
     else
       font_info[k].hh.rh:=tokanji(cx); {|kchar_code|}
@@ -3584,9 +3587,9 @@ continue:
       end;
     p:=link(p);
     jc:=KANJI(info(p));
-    if font_enc[f]=2 then {Unicode TFM}
+    if font_enc[f]=enc_ucs then {Unicode TFM}
       jc:=toUCS(jc)
-    else if font_enc[f]=1 then {JIS-encoded TFM}
+    else if font_enc[f]=enc_jis then {JIS-encoded TFM}
       begin if toJIS(jc)=0 then char_warning_jis(f,jc);
       jc:=toJIS(jc); end
     else
@@ -7075,8 +7078,8 @@ exit:end;
 @ @<Scan the font encoding specification@>=
 begin jfm_enc:=0;
 if scan_keyword_noexpand("in") then
-  if scan_keyword_noexpand("jis") then jfm_enc:=1
-  else if scan_keyword_noexpand("ucs") then jfm_enc:=2
+  if scan_keyword_noexpand("jis") then jfm_enc:=enc_jis
+  else if scan_keyword_noexpand("ucs") then jfm_enc:=enc_ucs
   else begin
     print_err("Unknown TFM encoding");
 @.Unknown TFM encoding@>
