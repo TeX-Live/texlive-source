@@ -1,6 +1,7 @@
 2024-09-16  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
-	* tests/ec-lmr10.tfm: Add for tests of pTeX family
+	* tests/ec-lmr10.tfm, tests/dump-basic.tex:
+	Add for tests of pTeX family
 
 2024-09-07  Karl Berry  <karl@freefriends.org>
 
