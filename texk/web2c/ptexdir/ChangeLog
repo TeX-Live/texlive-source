@@ -6,6 +6,8 @@
 	* ptex-ctrlsym.test, tests/{ptexlineendmode,ucs}.tex,
 	(chartoken,ucs-{e,s}}.log, p-lineenda.typ:
 	Add more regression tests.
+	* tests/{free_{ixsp,pena},inhibitglue,kinsoku_{search,table},
+	postpena}.tex: Move to ../euptexdir/tests .
 	* am/ptex.am: Adjust.
 
 2024-09-16  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>

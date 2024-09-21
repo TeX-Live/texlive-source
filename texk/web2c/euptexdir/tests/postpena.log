@@ -1,0 +1,43 @@
+entering extended mode
+ restricted \write18 enabled.
+ %&-line parsing enabled.
+**eup-postpena.tex
+(./eup-postpena.tex
+
+### yoko direction, restricted horizontal mode entered at line 15
+\displace 0.0
+\jpy ＃
+\penalty 200(for kinsoku)
+\jpy 」
+\glue(refer from jfm) 4.58203 minus 2.291
+\jpy 「
+\penalty -1000
+spacefactor 1000
+### yoko direction, vertical mode entered at line 0
+prevdepth ignored
+
+! OK.
+<recently read> \showlists 
+                           
+l.15 ...ox0=\hbox{＃」「\penalty-1000\showlists
+                                                  }
+
+
+### yoko direction, restricted horizontal mode entered at line 18
+\displace 0.0
+\jpy ＃
+\jpy 」
+\glue(refer from jfm) 4.58203 minus 2.291
+\cmr a
+\penalty 200(for kinsoku)
+\jpy あ
+spacefactor 1000
+### yoko direction, vertical mode entered at line 0
+prevdepth ignored
+
+! OK.
+l.18 ...box{＃\unpenalty 」a\relax あ\showlists
+                                                  }
+
+ )
+No pages of output.

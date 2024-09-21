@@ -1,0 +1,43 @@
+#! /bin/sh -vx
+# Copyright 2024 Japanese TeX Development Community <issue@texjp.org>
+# You may freely use, modify and/or distribute this file.
+
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_euptex=$BinDir/euptex$ExeExt
+
+LC_ALL=C; export LC_ALL;  LANGUAGE=C; export LANGUAGE
+
+TEXMFCNF=$srcdir/../kpathsea;export TEXMFCNF
+OFMFONTS=".;$srcdir/tests"; export OFMFONTS
+TEXINPUTS=".;$srcdir/tests"; export TEXINPUTS
+TEXFORMATS=.; export TEXFORMATS
+
+rm -f eup-ucs*.*
+$LN_S $srcdir/euptexdir/tests/ucs.tex ./eup-ucs.tex
+
+if test ! -f ./eup-basic.tex; then
+  cp $srcdir/tests/dump-basic.tex ./eup-basic.tex
+fi
+if test ! -f ./eup-basic-sjis.fmt; then
+  $_euptex -ini -etex -kanji-internal=sjis  -jobname=eup-basic-sjis eup-basic || exit 1
+fi
+if test ! -f ./eup-basic-euc.fmt; then
+  $_euptex -ini -etex -kanji-internal=euc   -jobname=eup-basic-euc  eup-basic || exit 2
+fi
+if test ! -f ./eup-basic.fmt; then
+  $_euptex -ini -etex -kanji-internal=uptex -jobname=eup-basic      eup-basic || exit 3
+fi
+
+$_euptex -fmt=eup-basic-sjis -kanji-internal=sjis -jobname=eup-ucs-s -interaction=batchmode eup-ucs || exit 4
+$_euptex -fmt=eup-basic-euc  -kanji-internal=euc  -jobname=eup-ucs-e -interaction=batchmode eup-ucs || exit 5
+$_euptex -fmt=eup-basic                           -jobname=eup-ucs-u -interaction=batchmode eup-ucs || exit 6
+
+sed 1d eup-ucs-s.log >eup-ucs-s.out
+sed 1d eup-ucs-e.log >eup-ucs-e.out
+sed 1d eup-ucs-u.log >eup-ucs-u.out
+
+diff $srcdir/euptexdir/tests/ucs-s.log eup-ucs-s.out || exit 10
+diff $srcdir/euptexdir/tests/ucs-e.log eup-ucs-e.out || exit 11
+diff $srcdir/euptexdir/tests/ucs-u.log eup-ucs-u.out || exit 12
+

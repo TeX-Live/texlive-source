@@ -1,7 +1,15 @@
 %#!eptex -ini -etex
-\let\dump\relax
-\batchmode
-\input plain
+%\let\dump\relax
+%\batchmode
+%\input plain
+\font\cmr=cmr10\cmr
+\ifx\kanjiskip\undefined\else
+  \ifnum\jis"2121="3000
+    \jfont\jpy=umin10 at 10pt\jpy
+  \else
+    \jfont\jpy=min10 at 10pt\jpy
+  \fi
+\fi
 
 \errorstopmode
 \catcode`@=11
@@ -24,7 +32,7 @@
 \loop
   \MYCHAR\CNT
   \message{\the\CNT.}
-  \inhibitxspcode\CNTA=1\relax
+  \prebreakpenalty\CNTA=\numexpr\CNT+1\relax
   \advance\CNT1\relax
   \ifnum\CNT<\LIM
 \repeat
@@ -33,20 +41,19 @@
 
 \loop
   \MYCHAR\CNTB
-  \global\inhibitxspcode\CNTA=3
+  \global\prebreakpenalty\CNTA=0
 {%
 \CNT=0
 \loop
   \MYCHAR\CNT
-  \count@=\numexpr 1-\inhibitxspcode\CNTA\relax
-  \ifnum\count@=0\else\ifnum\CNTB=\CNT\else
-    \errmessage{<\the\CNTB, \the\CNT, \the\inhibitxspcode\CNTA>}\fi\fi
+  \count@=\numexpr -\CNT-1+\prebreakpenalty\CNTA\relax
+  \ifnum\count@=0\else\ifnum\CNTB=\CNT\else\errmessage{<\the\CNTB, \the\CNT>}\fi\fi
   \advance\CNT1\relax
   \ifnum\CNT<\LIM
 \repeat
 }
   \MYCHAR\CNTB
-  \global\inhibitxspcode\CNTA=1\relax
+  \global\prebreakpenalty\CNTA=\numexpr\CNTB+1\relax
   \advance\CNTB1\relax
   \ifnum\CNTB<\LIM
 \repeat

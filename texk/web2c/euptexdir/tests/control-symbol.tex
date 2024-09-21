@@ -1,0 +1,108 @@
+\scrollmode
+% plain TeX ソース
+\font\cmr=cmr10\cmr
+\ifx\kanjiskip\undefined\else
+  \ifnum\jis"2121="3000
+    \jfont\jpy=umin10 at 10pt\jpy
+  \else
+    \jfont\jpy=min10 at 10pt\jpy
+  \fi
+\fi
+
+\def\+{A}
+\def\＋{A}
+\def\X{\+}
+\def\Y{\＋}
+
+\message{■control symbol}
+% 記号類扱いの単文字命令 → control symbol
+% （この時の和文文字の挙動が tex-jp-build#37 の問題）
+\ifx\kanjiskip\undefined
+  \catcode`\+=12
+  \catcode`\＋=12
+\else
+  \catcode`\+=12
+  \kcatcode`＋=18
+\fi
+\show\X\relax\message{(\meaning\X)}
+\show\Y\relax\message{(\meaning\Y)}
+
+\message{■control word}
+% 普通の文字扱いの単文字命令 → control word
+\ifx\kanjiskip\undefined
+  \catcode`\+=11
+  \catcode`\＋=11
+\else
+  \catcode`\+=11
+  \kcatcode`＋=17
+\fi
+\show\X\relax\message{(\meaning\X)}
+\show\Y\relax\message{(\meaning\Y)}
+
+\message{■control word}
+% 複数文字命令 → control word
+\def\ABC{A}
+\def\あいう{A}
+\def\X{\ABC}
+\def\Y{\あいう}
+\show\X\relax\message{(\meaning\X)}
+\show\Y\relax\message{(\meaning\Y)}
+
+% csname
+\ifx\protected\undefined\else
+\catcode`\:=12
+\ifx\kanjiskip\undefined\else
+\kcatcode`！=18
+\fi
+\message{■csname}
+\protected\expandafter\def\csname :AB\endcsname{A}
+\protected\expandafter\def\csname ！あい\endcsname{A}
+\edef\X{\csname :AB\endcsname}
+\edef\Y{\csname ！あい\endcsname}
+\show\X\relax\message{(\meaning\X)}
+\show\Y\relax\message{(\meaning\Y)}
+
+\protected\expandafter\def\csname AB:\endcsname{A}
+\protected\expandafter\def\csname あい！\endcsname{A}
+\edef\X{\csname AB:\endcsname}
+\edef\Y{\csname あい！\endcsname}
+\show\X\relax\message{(\meaning\X)}
+\show\Y\relax\message{(\meaning\Y)}
+
+\ifx\enablecjktoken\undefined\else
+\message{■not_cjk}
+\kcatcode`ア=15
+\kcatcode`！=15
+\catcode"8A=12\relax
+\protected\expandafter\def\csname ア\endcsname{A}
+\protected\expandafter\def\csname ！\endcsname{A}
+\edef\X{\csname ア\endcsname}
+\edef\Y{\csname ！\endcsname}
+\show\X\relax\message{(\meaning\X)}
+\show\Y\relax\message{(\meaning\Y)}
+\fi
+\fi
+
+\message{■行末の和文コントロールシンボル}
+
+
+\kcatcode`】=18
+
+\def\】{◆}
+\def\@{◆}
+
+1. \】◇，\@◇
+
+2. \】%
+◇, \@%
+◇
+
+3. \】
+◇, \@
+◇
+
+4. \】 ◇, \@ ◇
+
+
+\end
+

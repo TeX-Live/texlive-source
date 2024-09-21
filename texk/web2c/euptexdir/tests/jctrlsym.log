@@ -1,0 +1,85 @@
+entering extended mode
+ restricted \write18 enabled.
+ %&-line parsing enabled.
+**eup-jctrlsym.tex
+(./eup-jctrlsym.tex
+■control symbol
+> \X=macro:
+->\+.
+l.27 \show\X
+            \relax\message{(\meaning\X)}
+
+(macro:->\+)
+> \Y=macro:
+->\＋.
+l.28 \show\Y
+            \relax\message{(\meaning\Y)}
+
+(macro:->\＋) ■control word
+> \X=macro:
+->\+ .
+l.39 \show\X
+            \relax\message{(\meaning\X)}
+
+(macro:->\+ )
+> \Y=macro:
+->\＋ .
+l.40 \show\Y
+            \relax\message{(\meaning\Y)}
+
+(macro:->\＋ ) ■control word
+> \X=macro:
+->\ABC .
+l.48 \show\X
+            \relax\message{(\meaning\X)}
+
+(macro:->\ABC )
+> \Y=macro:
+->\あいう .
+l.49 \show\Y
+            \relax\message{(\meaning\Y)}
+
+(macro:->\あいう ) ■csname
+> \X=macro:
+->\:AB .
+l.62 \show\X
+            \relax\message{(\meaning\X)}
+
+(macro:->\:AB )
+> \Y=macro:
+->\！あい .
+l.63 \show\Y
+            \relax\message{(\meaning\Y)}
+
+(macro:->\！あい )
+> \X=macro:
+->\AB: .
+l.69 \show\X
+            \relax\message{(\meaning\X)}
+
+(macro:->\AB: )
+> \Y=macro:
+->\あい！ .
+l.70 \show\Y
+            \relax\message{(\meaning\Y)}
+
+(macro:->\あい！ ) ■not_cjk
+> \X=macro:
+->\^^e3^^82^^a2 .
+l.81 \show\X
+            \relax\message{(\meaning\X)}
+
+(macro:->\^^e3^^82^^a2 )
+> \Y=macro:
+->\^^ef^^bc^^81 .
+l.82 \show\Y
+            \relax\message{(\meaning\Y)}
+
+(macro:->\^^ef^^bc^^81 ) ■行末の和文^^e3^^82^^b3^^e3^^83^^b3^^e3^^83^^88
+^^e3^^83^^ad^^e3^^83^^bc^^e3^^83^^ab^^e3^^82^^b7^^e3^^83^^b3^^e3^^83^^9c^^e3^^8
+3^^ab
+Missing character: There is no ^^ef in font cmr10!
+Missing character: There is no ^^bc in font cmr10!
+Missing character: There is no ^^8c in font cmr10!
+ [1] )
+Output written on eup-jctrlsym.dvi (1 page, 372 bytes).

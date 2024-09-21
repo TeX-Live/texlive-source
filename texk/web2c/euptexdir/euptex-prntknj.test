@@ -1,0 +1,57 @@
+#! /bin/sh -vx
+# Copyright 2024 Japanese TeX Development Community <issue@texjp.org>
+# You may freely use, modify and/or distribute this file.
+
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_euptex=$BinDir/euptex$ExeExt
+_updvitype=$BinDir/updvitype$ExeExt
+
+LC_ALL=C; export LC_ALL;  LANGUAGE=C; export LANGUAGE
+
+TEXMFCNF=$srcdir/../kpathsea;export TEXMFCNF
+OFMFONTS=".;$srcdir/tests"; export OFMFONTS
+TFMFONTS=".;$srcdir//tests"; export TFMFONTS
+TEXINPUTS=".;$srcdir/tests"; export TEXINPUTS
+TEXFORMATS=.; export TEXFORMATS
+
+rm -f eup-pknj-*.*
+$LN_S $srcdir/euptexdir/tests/printkanji.tex ./printkanji.tex
+
+if test ! -f ./eup-basic.tex; then
+  cp $srcdir/tests/dump-basic.tex ./eup-basic.tex
+fi
+if test ! -f ./eup-basic-sjis.fmt; then
+  $_euptex -ini -etex -kanji-internal=sjis  -jobname=eup-basic-sjis eup-basic || exit 1
+fi
+if test ! -f ./eup-basic-euc.fmt; then
+  $_euptex -ini -etex -kanji-internal=euc   -jobname=eup-basic-euc  eup-basic || exit 2
+fi
+if test ! -f ./eup-basic.fmt; then
+  $_euptex -ini -etex -kanji-internal=uptex -jobname=eup-basic      eup-basic || exit 3
+fi
+
+$_euptex -fmt=eup-basic-sjis -kanji-internal=sjis -jobname=eup-pknj-s -interaction=batchmode printkanji || :
+$_euptex -fmt=eup-basic-euc  -kanji-internal=euc  -jobname=eup-pknj-e -interaction=batchmode printkanji || :
+$_euptex -fmt=eup-basic                           -jobname=eup-pknj-u -interaction=batchmode printkanji || :
+
+sed "1d;s/strings out of 497[67]..$/strings out of 497XXX/;s/characters out of 6215[789]..$/characters out of 6215XXX/" eup-pknj-s.log >eup-pknj-s.out
+sed "1d;s/strings out of 497[67]..$/strings out of 497XXX/;s/characters out of 6215[789]..$/characters out of 6215XXX/" eup-pknj-e.log >eup-pknj-e.out
+sed "1d;s/strings out of 497[67]..$/strings out of 497XXX/;s/characters out of 6215[789]..$/characters out of 6215XXX/" eup-pknj-u.log >eup-pknj-u.out
+
+diff $srcdir/euptexdir/tests/pknj-s.log eup-pknj-s.out || exit 10
+diff $srcdir/euptexdir/tests/pknj-e.log eup-pknj-e.out || exit 11
+diff $srcdir/euptexdir/tests/pknj-u.log eup-pknj-u.out || exit 12
+
+$_updvitype ./eup-pknj-s.dvi >euptests/xeup-pknj-s.typ
+$_updvitype ./eup-pknj-e.dvi >euptests/xeup-pknj-e.typ
+$_updvitype ./eup-pknj-u.dvi >euptests/xeup-pknj-u.typ
+
+sed "1d;s/TeX output 20[23].\...\...:.*'/TeX output 20XX.XX.XX'/" euptests/xeup-pknj-s.typ >euptests/xeup-pknj-sa.typ
+sed "1d;s/TeX output 20[23].\...\...:.*'/TeX output 20XX.XX.XX'/" euptests/xeup-pknj-e.typ >euptests/xeup-pknj-ea.typ
+sed "1d;s/TeX output 20[23].\...\...:.*'/TeX output 20XX.XX.XX'/" euptests/xeup-pknj-u.typ >euptests/xeup-pknj-ua.typ
+
+diff $srcdir/euptexdir/tests/eup-pknj-sa.typ euptests/xeup-pknj-sa.typ || exit 20
+diff $srcdir/euptexdir/tests/eup-pknj-ea.typ euptests/xeup-pknj-ea.typ || exit 21
+diff $srcdir/euptexdir/tests/eup-pknj-ua.typ euptests/xeup-pknj-ua.typ || exit 22
+

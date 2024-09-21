@@ -1,0 +1,68 @@
+#! /bin/sh -vx
+# Copyright 2024 Japanese TeX Development Community <issue@texjp.org>
+# You may freely use, modify and/or distribute this file.
+
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_euptex=$BinDir/euptex$ExeExt
+_updvitype=$BinDir/updvitype$ExeExt
+
+LC_ALL=C; export LC_ALL;  LANGUAGE=C; export LANGUAGE
+
+TEXMFCNF=$srcdir/../kpathsea;export TEXMFCNF
+TEXINPUTS=".;$srcdir/tests"; export TEXINPUTS
+TEXFONTS=".;$srcdir//tests"; export TEXFONTS
+TEXFORMATS=.; export TEXFORMATS
+
+rm -f eup-postpena*.* eup-free_*.* eup-inhibitglue*.* eup-kinsoku*.*
+
+if test ! -f ./eup-basic.tex; then
+  cp $srcdir/tests/dump-basic.tex ./eup-basic.tex
+fi
+if test ! -f ./eup-basic.fmt; then
+  $_euptex -ini -etex eup-basic || exit 1
+fi
+
+# postpena.tex
+$LN_S $srcdir/euptexdir/tests/postpena.tex ./eup-postpena.tex
+$_euptex -fmt=eup-basic -interaction=batchmode eup-postpena.tex || :
+
+sed 1d eup-postpena.log >eup-postpena.out
+
+diff $srcdir/euptexdir/tests/postpena.log eup-postpena.out || exit 3
+
+
+# free_ixsp.tex, free_pena.tex
+$LN_S $srcdir/euptexdir/tests/free_ixsp.tex ./eup-free_ixsp.tex
+$LN_S $srcdir/euptexdir/tests/free_pena.tex ./eup-free_pena.tex
+$_euptex -fmt=eup-basic -interaction=batchmode eup-free_ixsp.tex || :
+$_euptex -fmt=eup-basic -interaction=batchmode eup-free_pena.tex || :
+
+sed 1d eup-free_ixsp.log >eup-free_ixsp.out
+sed 1d eup-free_pena.log >eup-free_pena.out
+
+diff $srcdir/euptexdir/tests/free_ixsp.log eup-free_ixsp.out || exit 4
+diff $srcdir/euptexdir/tests/free_pena.log eup-free_pena.out || exit 5
+
+
+# inhibitglue.tex
+$LN_S $srcdir/euptexdir/tests/inhibitglue.tex ./eup-inhibitglue.tex
+$_euptex -fmt=eup-basic -interaction=batchmode eup-inhibitglue.tex || :
+
+$_updvitype ./eup-inhibitglue.dvi >euptests/xeup-inhibitglue.typ
+sed "1d;s/TeX output 20[23].\...\...:.*'/TeX output 20XX.XX.XX'/" euptests/xeup-inhibitglue.typ >euptests/xeup-inhibitgluea.typ
+diff $srcdir/euptexdir/tests/eup-inhibitgluea.typ euptests/xeup-inhibitgluea.typ || exit 7
+
+
+# kinsoku_table.tex, kinsoku_search.tex
+$LN_S $srcdir/euptexdir/tests/kinsoku_table.tex ./eup-kinsoku_table.tex
+$LN_S $srcdir/euptexdir/tests/kinsoku_search.tex ./eup-kinsoku_search.tex
+$_euptex -fmt=eup-basic -interaction=batchmode eup-kinsoku_table.tex || :
+$_euptex -fmt=eup-basic -interaction=batchmode eup-kinsoku_search.tex || :
+
+sed 1d eup-kinsoku_table.log >eup-kinsoku_table.out
+sed 1d eup-kinsoku_search.log >eup-kinsoku_search.out
+
+diff $srcdir/euptexdir/tests/kinsoku_table.log eup-kinsoku_table.out || exit 8
+diff $srcdir/euptexdir/tests/kinsoku_search.log eup-kinsoku_search.out || exit 9
+

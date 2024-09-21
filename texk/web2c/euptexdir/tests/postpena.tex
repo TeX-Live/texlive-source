@@ -1,4 +1,12 @@
 %% plain pTeX
+\font\cmr=cmr10\cmr
+\ifx\kanjiskip\undefined\else
+  \ifnum\jis"2121="3000
+    \jfont\jpy=umin10 at 10pt\jpy
+  \else
+    \jfont\jpy=min10 at 10pt\jpy
+  \fi
+\fi
 \postbreakpenalty`＃=200
 \postbreakpenalty`a=200
 \showboxdepth10000

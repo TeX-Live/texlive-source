@@ -1,0 +1,84 @@
+entering extended mode
+ restricted \write18 enabled.
+ %&-line parsing enabled.
+**eup-kinsoku_search.tex
+(./eup-kinsoku_search.tex{into \tracingassigns=1}
+{changing kinsoku table 1, type=no, code=0}
+{into kinsoku table 1, type=pre, code=12289}
+{changing kinsoku table 1, penalty=0}
+{into kinsoku table 1, penalty=10000}
+{changing kinsoku table 2, type=no, code=0}
+{into kinsoku table 2, type=pre, code=12290}
+{changing kinsoku table 2, penalty=0}
+{into kinsoku table 2, penalty=10000}
+{changing kinsoku table 3, type=no, code=0}
+{into kinsoku table 3, type=pre, code=12353}
+{changing kinsoku table 3, penalty=0}
+{into kinsoku table 3, penalty=150}
+{changing kinsoku table 4, type=no, code=0}
+{into kinsoku table 4, type=pre, code=12355}
+{changing kinsoku table 4, penalty=0}
+{into kinsoku table 4, penalty=150}
+> 0.
+l.11 \showthe\currentgrouplevel
+                                % > 0.
+
+> 150.
+l.12 \showthe\prebreakpenalty`ぃ 
+                                  % > 150.
+
+{changing kinsoku table 4, type=pre, code=12355}
+{into kinsoku table 4, type=unused, code=0}
+> 0.
+l.15 \showthe\prebreakpenalty`ぃ 
+                                  % > 0. ← OK（hash=4読出）
+
+{changing kinsoku table 4, type=unused, code=0}
+{into kinsoku table 4, type=pre, code=12355}
+{changing kinsoku table 4, penalty=150}
+{into kinsoku table 4, penalty=123}
+> 123.
+l.18 \showthe\prebreakpenalty`ぃ 
+                                  % > 123. ← OK（hash=4読出）
+
+{changing kinsoku table 3, type=pre, code=12353}
+{into kinsoku table 3, type=unused, code=0}
+> 123.
+l.21 \showthe\prebreakpenalty`ぃ 
+                                  % > 123. ← OK（hash=4読出）
+
+{changing kinsoku table 4, type=pre, code=12355}
+{into kinsoku table 4, type=unused, code=0}
+> 0.
+l.27 \showthe\prebreakpenalty`ぃ 
+                                  % > 0. ← 修正（削除済み）
+
+{changing kinsoku table 3, type=unused, code=0}
+{into kinsoku table 3, type=pre, code=12355}
+{changing kinsoku table 3, penalty=150}
+{into kinsoku table 3, penalty=234}
+> 234.
+l.30 \showthe\prebreakpenalty`ぃ 
+                                  % > 234. ← OK（hash=3読出）
+
+{changing kinsoku table 3, type=pre, code=12355}
+{into kinsoku table 3, type=unused, code=0}
+> 0.
+l.33 \showthe\prebreakpenalty`ぃ 
+                                  % > 0. ← 修正（削除済み）
+
+{changing kinsoku table 3, type=unused, code=0}
+{into kinsoku table 3, type=pre, code=12353}
+{changing kinsoku table 3, penalty=234}
+{into kinsoku table 3, penalty=345}
+> 0.
+l.36 \showthe\prebreakpenalty`ぃ 
+                                  % > 0. ← 修正（削除済み）
+
+{reassigning kinsoku table 4, type=unused, code=0}
+> 0.
+l.41 \showthe\prebreakpenalty`ぃ 
+                                  % > 0. ← OK（削除済み）
+
+ )
+No pages of output.

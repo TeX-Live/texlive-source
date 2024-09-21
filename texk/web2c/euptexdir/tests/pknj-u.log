@@ -1,0 +1,224 @@
+entering extended mode
+ restricted \write18 enabled.
+ %&-line parsing enabled.
+**printkanji
+(./printkanji.tex
+\openout1 = `eup-pknj-u.out'.
+
+
+{MSG ^^c5^^bf ^^c5^^bf 顛 }
+{TOT ^^c5^^bf ^^c5^^bf 顛 }
+> \A=macro:
+->^^c5^^bf ^^c5^^bf 顛 .
+l.29 \show\A
+            
+
+■\meaning. {MSG macro:->macro:->^^c5^^bf ^^c5^^bf 顛 }
+{TOT macro:->macro:->^^c5^^bf ^^c5^^bf 顛 }
+> \B=macro:
+->macro:->^^c5^^bf ^^c5^^bf 顛 .
+l.40 \show\B
+            
+
+■\jobname. {MSG *あ*eup-pknj-u*:eup-pknj-u:*macro:->:eup-pknj-u:*}
+{TOT *あ*eup-pknj-u*:eup-pknj-u:*macro:->:eup-pknj-u:*}
+
+■oneletter. {MSG \catcode`\^^c5= 197}
+{TOT \catcode`\^^c5= 197}
+{MSG \catcode`^^c5 = 197}
+{TOT \catcode`^^c5 = 197}
+{MSG \catcode`^^c5^^bf = 197}
+{TOT \catcode`^^c5^^bf = 197}
+{MSG \catcode`顛 = 39003}
+{TOT \catcode`顛 = 39003}
+■csname1.
+> \顛=macro:
+->hoge.
+l.72 \show\顛
+              
+
+> \^^c5^^bf=macro:
+->piyo.
+l.73 \show\^^c5^^bf
+                   
+
+> \^^c5^^bf=macro:
+->piyo.
+<recently read> \^^c5^^bf 
+                          
+l.74 \expandafter\show\csname ^^c5^^bf\endcsname
+                                                
+
+{MSG \顛=>macro:->hoge}
+{TOT \顛=>macro:->hoge}
+{MSG \^^c5^^bf=>macro:->piyo}
+{TOT \^^c5^^bf=>macro:->piyo}
+{MSG \^^c5^^bf=>macro:->piyo}
+{TOT \^^c5^^bf=>macro:->piyo}
+{MSG \^^c5^^bf, \^^c5^^bf, \^^c5^^bf, \顛.}
+{TOT \^^c5^^bf, \^^c5^^bf, \^^c5^^bf, \顛.}
+
+{MSG \あ=> hoge, \^^e3^^81^^82=> piyo. \^^e3^^81^^82=> piyo. }
+{TOT \あ=> hoge, \^^e3^^81^^82=> piyo. \^^e3^^81^^82=> piyo. }
+■0xFF. 
+{MSG あ, ^^c5^^bf ^^c5^^bf 顛 , \^^ff^^c5^^ff^^bf, macro:->(\^^ff^^c5^^ff^^bf
+:macro:->あ).}
+{TOT あ, ^^c5^^bf ^^c5^^bf 顛 , \^^ff^^c5^^ff^^bf, macro:->(\^^ff^^c5^^ff^^bf
+:macro:->あ).}
+{MSG い, (\^^ff:macro:->い), \^^ff, macro:->(\^^ff:macro:->い).}
+{TOT い, (\^^ff:macro:->い), \^^ff, macro:->(\^^ff:macro:->い).}
+■contexts.
+! Undefined control sequence.
+\@->\A \undefined 
+                  
+\a ->^^c5^^bf a^^c5^^bf ^^c5^^bf 顛 \@
+                                        ^^c5^^bf 顛 
+\+#1->\^^c5^^bf \顛 \^^ff^^c5^^ff^^bf #1
+                                          \^^ff macro:->^^c5^^bf ^^c5^^bf ...
+l.136 \+\a
+          
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+! Undefined control sequence.
+\@->\A \undefined 
+                  
+\a ->^^c5^^bf a^^c5^^bf ^^c5^^bf 顛 \@
+                                        ^^c5^^bf 顛 
+l.138 ...^^ff^^bf ^^c5^^bf \^^c5^^bf ^^c5^^bf顛\a
+                                                   \^^ff ^^ff\^^c5^^bf
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+! Undefined control sequence.
+l.140 \^^c5
+           \^^ff\^^c4\^^fe
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+! Undefined control sequence.
+l.140 \^^c5\^^ff\^^c4
+                     \^^fe
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+! Undefined control sequence.
+l.140 \^^c5\^^ff\^^c4\^^fe
+                          
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+\^^c5^^bf\^^ff^^c5
+! Undefined control sequence.
+\b ->\^^c5^^be 
+               .\^^c5^^bf .\^^c5^^bd ..\転 .\顛 .\貼 .
+l.154 \b
+        
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+! Undefined control sequence.
+\b ->\^^c5^^be .\^^c5^^bf .\^^c5^^bd 
+                                     ..\転 .\顛 .\貼 .
+l.154 \b
+        
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+! Undefined control sequence.
+\b ...be .\^^c5^^bf .\^^c5^^bd ..\転 .\顛 .\貼 
+                                                  .
+l.154 \b
+        
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+! Undefined control sequence.
+l.156 \^^c5^^be
+               .\ſ.\Ž..\転.\顛.\貼.
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+! Undefined control sequence.
+l.156 \^^c5^^be.\^^c5^^bf.\^^c5^^bd
+                                   ..\転.\顛.\貼.
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+! Undefined control sequence.
+l.156 ...5^^be.\^^c5^^bf.\^^c5^^bd..\転.\顛.\貼
+                                                  .
+The control sequence at the end of the top line
+of your error message was never \def'ed. If you have
+misspelled it (e.g., `\hobx'), type `I' and the correct
+spelling (e.g., `I\hbox'). Otherwise just continue,
+and I'll forget about whatever was undefined.
+
+■csname2.
+> \^^c5^^bf=macro:
+->a.
+l.162 SHOW \show\^^c5^^bf
+                         .\show\顛.%
+
+> \顛=macro:
+->b.
+l.162 SHOW \show\^^c5^^bf.\show\顛
+                                   .%
+
+> \^^c5^^bf=macro:
+->a.
+<recently read> \^^c5^^bf 
+                          
+l.163 \expandafter\show\csname ^^c5^^bf\endcsname
+                                                 .%
+
+> \顛=macro:
+->b.
+<recently read> \顛 
+                     
+l.164 \expandafter\show\csname 顛\endcsname
+                                            
+
+\^^e3^^81^^82\あ [39003]
+Memory usage before: 1798&5518; after: 130&5081; still untouched: 4992449
+ ) 
+Here is how much of TeX's memory you used:
+ 24 strings out of 497XXX
+ 146 string characters out of 6215XXX
+ 7551 words of memory out of 5000000
+ 1089 multiletter control sequences out of 15000+600000
+ 3297 words of font info for 2 fonts, out of 8000000 for 9000
+ 0 hyphenation exceptions out of 8191
+ 6i,4n,2p,97b,26s stack positions out of 10000i,1000n,20000p,200000b,200000s
+
+Output written on eup-pknj-u.dvi (1 page, 1148 bytes).

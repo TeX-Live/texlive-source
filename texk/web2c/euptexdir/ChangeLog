@@ -1,3 +1,19 @@
+2024-09-21  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* eptex.ech, pdfutils.ch:
+	Better support for kcatcode=20 (modifier).
+	* euptex-{ctrlsym,kinsoku,prntknj,ucs}.test,
+	tests/{control-symbol,ctrlsym.tex,endlinechar,free_{ixsp,pena},
+	inhibitglue,kinsoku_{search,table},postpena,printkanji,ucs}.tex,
+	tests/eup-{endline,inhibitglue,jctrlsym,pknj-{e,s,u}}a.typ,
+	tests/{endline,free_{ixsp,pena},jctrlsym,kinsoku_{search,table},
+	pknj-{e,s,u},postpena,ucs-{e,s,u}}.log:
+	Add regression tests by using Kitagawa-san's and
+	Yamashita-san's sample files.
+	* tests/{free_{ixsp,pena},inhibitglue,kinsoku_{search,table},
+	postpena}.tex: Move from ../ptexdir/tests .
+	* am/euptex.am: Adjust.
+
 2024-06-04  Akira Kakuto  <kakuto@jcom.zaq.ne.jp>
 
 	* unbalanced-braces-eptex.ch, suppresserrors.ch: sync with the upstream

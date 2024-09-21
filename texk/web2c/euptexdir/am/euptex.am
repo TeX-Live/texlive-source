@@ -98,16 +98,21 @@ EXTRA_DIST += \
 euptex_tests = \
 	euptexdir/euptriptest.test euptexdir/eptriptest.test \
 	euptexdir/pdfprimitive.test \
-	euptexdir/euptex-ctrlsym.test \
 	euptexdir/eupver.test \
 	euptexdir/upkcat.test \
-	euptexdir/wcfname.test euptexdir/wcfname0.test
+	euptexdir/wcfname.test euptexdir/wcfname0.test \
+	euptexdir/euptex-ctrlsym.test \
+	euptexdir/euptex-prntknj.test \
+	euptexdir/euptex-kinsoku.test \
+	euptexdir/euptex-ucs.test
 euptexdir/euptriptest.log euptexdir/eptriptest.log: \
 	euptex$(EXEEXT) dvitype$(EXEEXT) pltotf$(EXEEXT) tftopl$(EXEEXT)
 euptexdir/pdfprimitive.log: euptex$(EXEEXT)
-euptexdir/euptex-ctrlsym.log \
-	euptexdir/eupver.log euptexdir/upkcat.log \
-	euptexdir/wcfname.log euptexdir/wcfname0.log: euptex$(EXEEXT)
+euptexdir/eupver.log euptexdir/upkcat.log \
+	euptexdir/wcfname.log euptexdir/wcfname0.log \
+	euptexdir/euptex-ctrlsym.log euptexdir/euptex-prntknj.log \
+	euptexdir/euptex-kinsoku.log \
+	euptexdir/euptex-ucs.log: euptex$(EXEEXT)
 
 EXTRA_DIST += $(euptex_tests)
 
@@ -125,11 +130,6 @@ EXTRA_DIST += \
 	euptexdir/eptrip/eptrip.tex \
 	euptexdir/euptrip/euptrip.diffs \
 	euptexdir/euptrip/texmf.cnf
-euptrip.diffs: euptex$(EXEEXT) dvitype$(EXEEXT) pltotf$(EXEEXT) tftopl$(EXEEXT)
-	$(triptrap_diffs) $@
-.PHONY: euptrip-clean
-euptrip-clean:
-	rm -rf euptripdir
 DISTCLEANFILES += euptrip.diffs
 ## euptexdir/pdfprimitive.test
 EXTRA_DIST += \
@@ -139,7 +139,35 @@ EXTRA_DIST += \
 DISTCLEANFILES += pdfprimitive-euptex.*
 
 ## euptex-ctrlsym.test
-EXTRA_DIST += euptexdir/tests/ctrlsym.log euptexdir/tests/ctrlsym.tex
-DISTCLEANFILES += eup-ctrlsym.fmt eup-ctrlsym.log eup-ctrlsym.out eup-ctrlsym.tex
+EXTRA_DIST += euptexdir/tests/ctrlsym.tex euptexdir/tests/ctrlsym.log \
+	euptexdir/tests/endlinechar.tex euptexdir/tests/endline.log \
+	euptexdir/tests/control-symbol.tex euptexdir/tests/jctrlsym.log \
+	euptexdir/tests/eup-endlinea.typ euptexdir/tests/eup-jctrlsyma.typ
+DISTCLEANFILES += eup-ctrlsym.log eup-ctrlsym.out eup-ctrlsym.tex \
+	eup-endline*.* eup-jctrlsym*.*
+## euptex-prntknj.test
+EXTRA_DIST += euptexdir/tests/printkanji.tex euptexdir/tests/pknj-s.log \
+	euptexdir/tests/pknj-e.log euptexdir/tests/pknj-u.log \
+	euptexdir/tests/eup-pknj-sa.typ euptexdir/tests/eup-pknj-ea.typ \
+	euptexdir/tests/eup-pknj-ua.typ
+DISTCLEANFILES += eup-pknj-*.*
+## euptex-kinsoku.test
+EXTRA_DIST += euptexdir/tests/postpena.tex euptexdir/tests/postpena.log \
+	euptexdir/tests/free_ixsp.tex euptexdir/tests/free_ixsp.log \
+	euptexdir/tests/free_pena.tex euptexdir/tests/free_pena.log \
+	euptexdir/tests/inhibitglue.tex euptexdir/tests/eup-inhibitgluea.typ \
+	euptexdir/tests/kinsoku-table.tex euptexdir/tests/kinsoku-table.log \
+	euptexdir/tests/kinsoku-search.tex euptexdir/tests/kinsoku-search.log
+DISTCLEANFILES += eup-postpena*.* eup-free_*.* eup-inhibitglue*.* eup-kinsoku*.*
+## euptex-ucs.test
+EXTRA_DIST += euptexdir/tests/ucs.tex euptexdir/tests/ucs-s.log \
+	euptexdir/tests/ucs-e.log euptexdir/tests/ucs-u.log
+DISTCLEANFILES += eup-ucs*.*
+
+euptrip.diffs: euptex$(EXEEXT) dvitype$(EXEEXT) pltotf$(EXEEXT) tftopl$(EXEEXT)
+	$(triptrap_diffs) $@
+.PHONY: euptrip-clean
+euptrip-clean:
+	rm -rf euptripdir
 
 # (end of euptex.am)

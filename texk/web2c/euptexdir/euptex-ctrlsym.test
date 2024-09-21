@@ -5,24 +5,55 @@
 BinDir=${BinDir:-.}
 ExeExt=${ExeExt:-}
 _euptex=$BinDir/euptex$ExeExt
+_updvitype=$BinDir/updvitype$ExeExt
 
 LC_ALL=C; export LC_ALL;  LANGUAGE=C; export LANGUAGE
 
 TEXMFCNF=$srcdir/../kpathsea;export TEXMFCNF
 TEXINPUTS=".;$srcdir/tests"; export TEXINPUTS
+TEXFONTS=".;$srcdir//tests"; export TEXFONTS
 TEXFORMATS=.; export TEXFORMATS
 
-# get same filename in log
-rm -f eup-ctrlsym.tex
+rm -f eup-ctrlsym.* eup-endline*.* eup-jctrlsym*.*
+
+if test ! -f ./eup-basic.tex; then
+  cp $srcdir/tests/dump-basic.tex ./eup-basic.tex
+fi
+if test ! -f ./eup-basic.fmt; then
+  $_euptex -ini -etex eup-basic || exit 1
+fi
+
+# ctrlsym.tex
 $LN_S $srcdir/euptexdir/tests/ctrlsym.tex ./eup-ctrlsym.tex
-
-#exit 77
-
-$_euptex -ini -etex eup-ctrlsym || exit 1
-
-$_euptex -etex -fmt=eup-ctrlsym eup-ctrlsym || exit 2
+$_euptex -etex -fmt=eup-basic eup-ctrlsym || exit 2
 
 sed 1d eup-ctrlsym.log >eup-ctrlsym.out
 
 diff $srcdir/euptexdir/tests/ctrlsym.log eup-ctrlsym.out || exit 3
+
+
+# endlinchar.tex
+$LN_S $srcdir/euptexdir/tests/endlinechar.tex ./eup-endline.tex
+$_euptex -fmt=eup-basic -interaction=batchmode eup-endline.tex || :
+
+sed 1d eup-endline.log >eup-endline.out
+
+diff $srcdir/euptexdir/tests/endline.log eup-endline.out || exit 4
+
+$_updvitype ./eup-endline.dvi >euptests/xeup-endline.typ
+sed "1d;s/TeX output 20[23].\...\...:.*'/TeX output 20XX.XX.XX'/" euptests/xeup-endline.typ >euptests/xeup-endlinea.typ
+diff $srcdir/euptexdir/tests/eup-endlinea.typ euptests/xeup-endlinea.typ || exit 5
+
+
+# control-symbol.tex
+$LN_S $srcdir/euptexdir/tests/control-symbol.tex ./eup-jctrlsym.tex
+$_euptex -fmt=eup-basic -interaction=batchmode eup-jctrlsym.tex || :
+
+sed 1d eup-jctrlsym.log >eup-jctrlsym.out
+
+diff $srcdir/euptexdir/tests/jctrlsym.log eup-jctrlsym.out || exit 6
+
+$_updvitype ./eup-jctrlsym.dvi >euptests/xeup-jctrlsym.typ
+sed "1d;s/TeX output 20[23].\...\...:.*'/TeX output 20XX.XX.XX'/" euptests/xeup-jctrlsym.typ >euptests/xeup-jctrlsyma.typ
+diff $srcdir/euptexdir/tests/eup-jctrlsyma.typ euptests/xeup-jctrlsyma.typ || exit 7
 

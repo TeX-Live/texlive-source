@@ -1,7 +1,8 @@
 %#!eptex -ini -etex
-\let\dump\relax
-\batchmode
-\input plain
+%\let\dump\relax
+%\batchmode
+%\input plain
+\font\cmr=cmr10\cmr
 
 \errorstopmode
 \catcode`@=11
@@ -24,7 +25,7 @@
 \loop
   \MYCHAR\CNT
   \message{\the\CNT.}
-  \prebreakpenalty\CNTA=\numexpr\CNT+1\relax
+  \inhibitxspcode\CNTA=1\relax
   \advance\CNT1\relax
   \ifnum\CNT<\LIM
 \repeat
@@ -33,19 +34,20 @@
 
 \loop
   \MYCHAR\CNTB
-  \global\prebreakpenalty\CNTA=0
+  \global\inhibitxspcode\CNTA=3
 {%
 \CNT=0
 \loop
   \MYCHAR\CNT
-  \count@=\numexpr -\CNT-1+\prebreakpenalty\CNTA\relax
-  \ifnum\count@=0\else\ifnum\CNTB=\CNT\else\errmessage{<\the\CNTB, \the\CNT>}\fi\fi
+  \count@=\numexpr 1-\inhibitxspcode\CNTA\relax
+  \ifnum\count@=0\else\ifnum\CNTB=\CNT\else
+    \errmessage{<\the\CNTB, \the\CNT, \the\inhibitxspcode\CNTA>}\fi\fi
   \advance\CNT1\relax
   \ifnum\CNT<\LIM
 \repeat
 }
   \MYCHAR\CNTB
-  \global\prebreakpenalty\CNTA=\numexpr\CNTB+1\relax
+  \global\inhibitxspcode\CNTA=1\relax
   \advance\CNTB1\relax
   \ifnum\CNTB<\LIM
 \repeat

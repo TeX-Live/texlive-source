@@ -1,4 +1,14 @@
 %#!ptex2pdf -e inhibitglue.tex
+\font\cmr=cmr10\cmr
+\font\tentt=cmtt10\tentt
+\ifx\kanjiskip\undefined\else
+  \ifnum\jis"2121="3000
+    \jfont\jpy=umin10 at 10pt\jpy
+  \else
+    \jfont\jpy=min10 at 10pt\jpy
+  \fi
+\fi
+
 \parindent0pt
 \def\head#1{\par\noindent{\tentt ■\string#1}\par}
 \noautospacing \noautoxspacing
@@ -82,13 +92,13 @@
 あ）\adj\inhibitglue\adj （あ\par     % 全角【TL17二分】
 あ）\adj （あ\par                     % 全角
 
-\head{\math}
-\def\math{$ $}
-あ）\inhibitglue （あ\par             % ベタ
-あ）\inhibitglue\math （あ\par        % 二分
-あ）\math\inhibitglue （あ\par        % 二分
-あ）\math\inhibitglue\math （あ\par   % 全角【TL17二分】
-あ）\math （あ\par                    % 全角
+%\head{\math}
+%\def\math{$ $}
+%あ）\inhibitglue （あ\par             % ベタ
+%あ）\inhibitglue\math （あ\par        % 二分
+%あ）\math\inhibitglue （あ\par        % 二分
+%あ）\math\inhibitglue\math （あ\par   % 全角【TL17二分】
+%あ）\math （あ\par                    % 全角
 
 %%% unexpandable tokens with discardable nodes (glue, kern, penalty)
 
