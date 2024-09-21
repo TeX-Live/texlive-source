@@ -443,6 +443,7 @@ texmf_other_scripts = \
 	runtexshebang/runtexshebang.lua \
 	spix/spix.py \
 	splitindex/splitindex.pl \
+	sqltex/sqltex \
 	srcredact/srcredact.pl \
 	sty2dtx/sty2dtx.pl \
 	svn-multi/svn-multi.pl \
