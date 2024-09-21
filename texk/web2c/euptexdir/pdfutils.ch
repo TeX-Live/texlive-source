@@ -1176,7 +1176,7 @@ Ucharcat_convert_code:
         and (illegal_Ucharcat_wchar_catcode(cur_val)) then
         begin print_err("Invalid code ("); print_int(cur_val);
 @.Invalid code@>
-        print("), should be in the ranges 1..4, 6..8, 10..13, 16..19");
+        print("), should be in the ranges 1..4, 6..8, 10..13, 16..20");
         help1("I'm going to use 12 instead of that illegal code value.");@/
         error; cat:=12;
       end else cat:=cur_val;
@@ -1184,7 +1184,7 @@ Ucharcat_convert_code:
       begin if illegal_Ucharcat_wchar_catcode(cur_val) then
         begin print_err("Invalid code ("); print_int(cur_val);
 @.Invalid code@>
-        print("), should be in the ranges 16..19");
+        print("), should be in the ranges 16..20");
         help1("I'm going to use 18 instead of that illegal code value.");@/
         error; cat:=other_kchar;
       end else cat:=cur_val;
