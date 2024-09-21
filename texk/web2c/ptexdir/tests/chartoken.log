@@ -1,0 +1,41 @@
+ restricted \write18 enabled.
+ %&-line parsing enabled.
+**p-chartoken.tex
+(./p-chartoken.tex
+\x=\count26
+
+! Improper alphabetic or KANJI constant.
+<to be read again> 
+                   \aaa 
+\T #1->\x =`#1
+               \message {\the \x }
+l.6 \def\aaa{西}\T{\aaa}
+                        % err
+A one-character control sequence belongs after a ` mark.
+So I'm essentially inserting \0 here.
+
+48
+! Improper alphabetic or KANJI constant.
+<to be read again> 
+                   \AAA 
+\T #1->\x =`#1
+               \message {\the \x }
+l.7 \def\AAA{s}\T{\AAA}
+                        % err
+A one-character control sequence belongs after a ` mark.
+So I'm essentially inserting \0 here.
+
+Missing character: There is no s in font nullfont!
+48
+! Improper alphabetic or KANJI constant.
+<to be read again> 
+                   \ccc 
+\T #1->\x =`#1
+               \message {\the \x }
+l.8 \let\ccc=西\relax\T{\ccc}
+                              % err
+A one-character control sequence belongs after a ` mark.
+So I'm essentially inserting \0 here.
+
+48 126 97 46273 46273 [1] )
+Output written on p-chartoken.dvi (1 page, 152 bytes).

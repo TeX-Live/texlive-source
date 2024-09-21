@@ -1,4 +1,12 @@
-\font\fn=ec-lmr10\fn\catcode`\^^9f=11
+\font\fn=ec-lmr10\fn
+\ifx\kanjiskip\undefined\else
+  \ifnum\jis"2121="3000
+    \jfont\jpy=umin10 at 10pt\jpy
+  \else
+    \jfont\jpy=min10 at 10pt\jpy
+  \fi
+\fi
+\catcode`\^^9f=11
 \def\◆{◇}\def\漢{◇}\def\^^9f{S}
 
 \ptexlineendmode=0 % p4.0.0標準

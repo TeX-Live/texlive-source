@@ -177,10 +177,12 @@ DISTCLEANFILES += ptrip.diffs
 EXTRA_DIST += ptexdir/tests/ctrlsym.tex ptexdir/tests/ctrlsym.log \
 	ptexdir/tests/endlinechar.tex ptexdir/tests/endline.log \
 	ptexdir/tests/control-symbol.tex ptexdir/tests/jctrlsym.log \
-	ptexdir/tests/p-endlinea.typ ptexdir/tests/p-jctrlsyma.typ
+	ptexdir/tests/p-endlinea.typ ptexdir/tests/p-jctrlsyma.typ \
+	ptexdir/tests/let_char_token.tex ptexdir/tests/chartoken.log \
+	ptexdir/tests/ptexlineendmode.tex ptexdir/tests/p-lineenda.typ
 DISTCLEANFILES += p-ctrlsym.log p-ctrlsym.out p-ctrlsym.tex \
-	p-endline*.* p-jctrlsym*.*
-## ptexdir/ptex-prntknj.test
+	p-endline*.* p-jctrlsym*.* p-chartoken.* p-lineend.*
+## ptex-prntknj.test
 EXTRA_DIST += ptexdir/tests/printkanji.tex \
 	ptexdir/tests/pknj-s.log ptexdir/tests/pknj-e.log \
 	ptexdir/tests/p-pknj-sa.typ ptexdir/tests/p-pknj-ea.typ
