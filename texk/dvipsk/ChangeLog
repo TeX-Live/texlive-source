@@ -1,3 +1,11 @@
+2024-09-22  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* {virtualfont,dopage,tfmload}.c, dvips.h:
+	More strict check to interpret OFM FONTDIR
+	as pTeX vertical writing.
+	https://github.com/texjporg/tex-jp-build/issues/170#issuecomment-2295037307
+	https://github.com/texjporg/tex-jp-build/issues/99
+
 2024-03-10  Karl Berry  <karl@tug.org>
 
 	* TL'24 release.
