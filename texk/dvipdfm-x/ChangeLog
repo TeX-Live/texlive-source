@@ -1,3 +1,11 @@
+2024-09-22  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* tfm.c: More strict check to interpret OFM FONTDIR
+	as pTeX vertical writing.
+	https://github.com/texjporg/tex-jp-build/issues/170#issuecomment-2295037307
+	https://github.com/texjporg/tex-jp-build/issues/99
+	* configure.ac: version 20240922.
+
 2024-05-18  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* dvi.c: Remove obsolete comments.
