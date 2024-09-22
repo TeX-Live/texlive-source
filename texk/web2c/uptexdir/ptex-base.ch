@@ -74,6 +74,8 @@
 % (2022-10-24) HY  pTeX p4.1.0 Add new syntax \font [in jis/ucs].
 %                  New primitives: \tojis, \ptextracingfonts and \ptexfontname.
 % (2023-09-17) HY  pTeX p4.1.1 Support more than 256 different glue/kern.
+% (2024-09-22) HK  pTeX p4.1.2 Enable to get character codes
+%                  from control symbols by using backquote.
 
 @x
 % Here is TeX material that gets inserted after \input webmac
@@ -88,8 +90,8 @@
 @y
 @d pTeX_version=4
 @d pTeX_minor_version=1
-@d pTeX_revision==".1"
-@d pTeX_version_string=='-p4.1.1' {current \pTeX\ version}
+@d pTeX_revision==".2"
+@d pTeX_version_string=='-p4.1.2' {current \pTeX\ version}
 @#
 @d pTeX_banner=='This is pTeX, Version 3.141592653',pTeX_version_string
 @d pTeX_banner_k==pTeX_banner
