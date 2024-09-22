@@ -9,7 +9,7 @@
 -----------------------------------------------------------------------
 
         xindex = xindex or { }
- local version = 0.60
+ local version = 0.61
 xindex.version = version
 --xindex.self = "xindex"
 
@@ -331,18 +331,17 @@ else
 end  
 
 
-
 esc_char = args.escapechar
 esc_char2 = esc_char..esc_char  
 writeLog(2,"Escapechar = "..esc_char.."\n",1)
 escape_chars = { -- by default " is the escape char
-  {esc_char2,     '//escaped2//', esc_char    },
-  {esc_char..'@', '//escapedat//',    '@'    },
-  {esc_char..'|', '//escapedvert//',  '|'    },
-  {esc_char..'!', '//escapedexcl//',  '!'    },
-  {'',            '\\textbar',        '|'    },  
-  {'',            '\\braceLeft',      '{'    },  
-  {'',            '\\braceRight',     '}'    }
+  {esc_char2,     '//escaped2//', esc_char   },
+  {esc_char..'@', '//escapedat//',     '@'   },
+  {esc_char..'|', '//escapedvert//',   '|'   },
+  {esc_char..'!', '//escapedexcl//',   '!'   },
+  {'',            '\\textbar',         '|'   },  
+  {'',            '\\braceLeft',       '{'   },  
+  {'',            '\\braceRight',      '}'   }
 }
 
 no_caseSensitive = args["no_casesensitive"]
