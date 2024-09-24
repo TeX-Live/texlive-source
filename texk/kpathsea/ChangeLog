@@ -1,3 +1,8 @@
+2024-09-25  Karl Berry  <karl@tug.org>
+
+	* texmf.cnf (shell_escape_commands): add latexminted for minted 3.0,
+	after various reviews via tlsecurity, etc.
+
 2024-08-19  Karl Berry  <karl@freefriends.org>
 
 	* tex-file.c (kpathsea_name_ok) <not_ok>: avoid spurious double space

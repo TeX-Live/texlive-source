@@ -653,6 +653,7 @@ extractbb,\
 gregorio,\
 kpsewhich,\
 l3sys-query,\
+latexminted,\
 makeindex,\
 memoize-extract.pl,\
 memoize-extract.py,\
