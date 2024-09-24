@@ -1,5 +1,5 @@
-Changes applied to the harfbuzz-9.0.0/ tree as obtained from:
-	https://github.com/harfbuzz/harfbuzz/releases/download/9.0.0/
+Changes applied to the harfbuzz-10.0.0/ tree as obtained from:
+	https://github.com/harfbuzz/harfbuzz/releases/download/10.0.0/
 
 Removed:
 	.clang-format

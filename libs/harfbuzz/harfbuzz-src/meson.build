@@ -1,6 +1,6 @@
 project('harfbuzz', 'c', 'cpp',
   meson_version: '>= 0.55.0',
-  version: '9.0.0',
+  version: '10.0.0',
   default_options: [
     'cpp_eh=none',          # Just to support msvc, we are passing -fno-exceptions also anyway
     # 'cpp_rtti=false',     # Do NOT enable, wraps inherit it and ICU needs RTTI
@@ -186,7 +186,8 @@ else
 endif
 
 if icu_dep.found() and icu_dep.version().version_compare('>=75.1') and (get_option('cpp_std') == 'c++11' or get_option('cpp_std') == 'c++14')
-  add_project_arguments('-std=c++17', language: 'cpp')
+  cpp17_arg = cpp.get_argument_syntax() == 'msvc' ? '/std:c++17' : '-std=c++17'
+  add_project_arguments(cpp17_arg, language: 'cpp')
 endif
 
 if icu_dep.found() and icu_dep.type_name() == 'pkgconfig'

@@ -1,3 +1,8 @@
+2024-09-24  Akira Kakuto  <kakuto@jcom.zaq.ne.jp>
+
+	Import harfbuzz-10.0.0.
+	* version.ac: Adjusted.
+
 2024-08-27  Akira Kakuto  <kakuto@jcom.zaq.ne.jp>
 
 	* Makefile.am: Use amalgam harfbuzz.cc, since it is easy to
