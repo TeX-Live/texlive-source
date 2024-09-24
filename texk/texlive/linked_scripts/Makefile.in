@@ -411,6 +411,7 @@ texmf_other_scripts = \
 	memoize/memoize-extract.pl \
 	memoize/memoize-extract.py \
 	mf2pt1/mf2pt1.pl \
+	minted/latexminted.py \
 	mkgrkindex/mkgrkindex \
 	mkjobtexmf/mkjobtexmf.pl \
 	mkpic/mkpic \
