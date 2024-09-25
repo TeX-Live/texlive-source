@@ -799,6 +799,7 @@ enable_luahbtex
 enable_luajithbtex
 enable_mp
 enable_pmp
+enable_texprof
 enable_upmp
 enable_xetex
 enable_xetex_synctex
@@ -1599,6 +1600,7 @@ Optional Features:
   --disable-luajithbtex     do not compile and install LuaHBJITTeX
   --disable-mp              do not compile and install MetaPost
   --disable-pmp             do not compile and install pMetaPost
+  --disable-texprof         do not compile and install TeXprof
   --disable-upmp            do not compile and install upMetaPost
   --disable-xetex           do not compile and install XeTeX
   --disable-xetex-synctex     build XeTeX without SyncTeX support
@@ -5028,6 +5030,17 @@ test "x$enable_web2c:$enable_pmp" = xyes:yes && {
   need_libpng=yes
   need_ptexenc=yes
 }
+# Check whether --enable-texprof was given.
+if test ${enable_texprof+y}
+then :
+  enableval=$enable_texprof;
+fi
+case $enable_texprof in #(
+  yes | no) :
+     ;; #(
+  *) :
+    enable_texprof=yes ;;
+esac
 # Check whether --enable-upmp was given.
 if test ${enable_upmp+y}
 then :
