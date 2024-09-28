@@ -1,3 +1,13 @@
+2024-09-28  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* uptex-m.ch, upbibtex.ch, kanji.c:
+	Update reference of Unicode blocks to
+	"Blocks-16.0.0.txt Date: 2024-02-22".
+	Also add a new block
+	"CJK Unified Ideographs Extension J"
+	which is approved in Unicode 17.0, 2025.
+	* tests/unibib.{tex,bib,bbl}: Update a test.
+
 2024-09-22  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* ptex-base.ch, ptex_version.h: Version p4.1.2.

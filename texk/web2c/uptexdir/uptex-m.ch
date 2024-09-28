@@ -283,12 +283,12 @@ if (isinternalUPTEX) then begin
   @t\hskip10pt@>kcat_code(@"99):=kanji; { CJK Compatibility Ideographs }
   @t\hskip10pt@>kcat_code(@"9C):=modifier; { Variation Selectors }
   { \hskip10pt|kcat_code(@"A2):=other_kchar;| Halfwidth and Fullwidth Forms }
-  @+@t\1@>for k:=@"10D to @"110 do kcat_code(k):=kana; { Kana Extended-B .. Small Kana Extension }
-  @+@t\1@>for k:=@"13B to @"143 do kcat_code(k):=kanji; { CJK Unified Ideographs Extension B .. H }
-  @t\hskip10pt@>kcat_code(@"150):=modifier; { Variation Selectors Supplement }
-  @+@t\1@>for k:=@"165 to @"166 do kcat_code(k):=kana; { Kana with (Semi-)Voiced Sound Mark }
-  @t\hskip10pt@>kcat_code(@"16A):=kanji; { Standardized Variation Sequence }
-  @+@t\1@>for k:=@"16C to @"16D do kcat_code(k):=kanji; { Ideographic Variation Sequence }
+  @+@t\1@>for k:=@"115 to @"118 do kcat_code(k):=kana; { Kana Extended-B .. Small Kana Extension }
+  @+@t\1@>for k:=@"145 to @"14F do kcat_code(k):=kanji; { CJK Unified Ideographs Extension B .. J }
+  @t\hskip10pt@>kcat_code(@"15B):=modifier; { Variation Selectors Supplement }
+  @+@t\1@>for k:=@"170 to @"171 do kcat_code(k):=kana; { Kana with (Semi-)Voiced Sound Mark }
+  @t\hskip10pt@>kcat_code(@"175):=kanji; { Standardized Variation Sequence }
+  @+@t\1@>for k:=@"177 to @"178 do kcat_code(k):=kanji; { Ideographic Variation Sequence }
   @+@t\1@>for k:=@"1F9 to @"1FC do kcat_code(k):=modifier;
     { Combining Katakana-Hiragana (Semi-)Voiced Sound Mark .. Emoji Modifier Fitzpatrick }
   @t\hskip10pt@>kcat_code(@"1FD):=not_cjk; { Latin-1 Letters }
