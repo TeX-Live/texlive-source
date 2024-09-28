@@ -40,9 +40,11 @@ sed 1d eup-endline.log >eup-endline.out
 
 diff $srcdir/euptexdir/tests/endline.log eup-endline.out || exit 4
 
-$_updvitype ./eup-endline.dvi >euptests/xeup-endline.typ
-sed "1d;s/TeX output 20[23].\...\...:.*'/TeX output 20XX.XX.XX'/" euptests/xeup-endline.typ >euptests/xeup-endlinea.typ
-diff $srcdir/euptexdir/tests/eup-endlinea.typ euptests/xeup-endlinea.typ || exit 5
+if test -f $_updvitype; then
+  $_updvitype ./eup-endline.dvi >euptests/xeup-endline.typ
+  sed "1d;s/TeX output 20[23].\...\...:.*'/TeX output 20XX.XX.XX'/" euptests/xeup-endline.typ >euptests/xeup-endlinea.typ
+  diff $srcdir/euptexdir/tests/eup-endlinea.typ euptests/xeup-endlinea.typ || exit 5
+fi
 
 
 # control-symbol.tex
@@ -53,7 +55,9 @@ sed 1d eup-jctrlsym.log >eup-jctrlsym.out
 
 diff $srcdir/euptexdir/tests/jctrlsym.log eup-jctrlsym.out || exit 6
 
-$_updvitype ./eup-jctrlsym.dvi >euptests/xeup-jctrlsym.typ
-sed "1d;s/TeX output 20[23].\...\...:.*'/TeX output 20XX.XX.XX'/" euptests/xeup-jctrlsym.typ >euptests/xeup-jctrlsyma.typ
-diff $srcdir/euptexdir/tests/eup-jctrlsyma.typ euptests/xeup-jctrlsyma.typ || exit 7
+if test -f $_updvitype; then
+  $_updvitype ./eup-jctrlsym.dvi >euptests/xeup-jctrlsym.typ
+  sed "1d;s/TeX output 20[23].\...\...:.*'/TeX output 20XX.XX.XX'/" euptests/xeup-jctrlsym.typ >euptests/xeup-jctrlsyma.typ
+  diff $srcdir/euptexdir/tests/eup-jctrlsyma.typ euptests/xeup-jctrlsyma.typ || exit 7
+fi
 

@@ -43,6 +43,10 @@ diff $srcdir/euptexdir/tests/pknj-s.log eup-pknj-s.out || exit 10
 diff $srcdir/euptexdir/tests/pknj-e.log eup-pknj-e.out || exit 11
 diff $srcdir/euptexdir/tests/pknj-u.log eup-pknj-u.out || exit 12
 
+if test ! -f $_updvitype; then
+  exit 0
+fi
+
 $_updvitype ./eup-pknj-s.dvi >euptests/xeup-pknj-s.typ
 $_updvitype ./eup-pknj-e.dvi >euptests/xeup-pknj-e.typ
 $_updvitype ./eup-pknj-u.dvi >euptests/xeup-pknj-u.typ
