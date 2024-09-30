@@ -729,7 +729,6 @@ if j=1 then
     if (multistrlen(ustringcast(buffer), limit+1,loc)>1)and
          check_kcat_code(cur_tok,cur_chr) then
       begin if (cur_tok=not_cjk) then cur_tok:=other_kchar;
-        if (cur_tok=latin_ucs) then cur_tok:=other_token;
         cur_tok:=cur_chr+cur_tok*max_cjk_val;
         loc:=loc+multistrlen(ustringcast(buffer), limit+1,loc);
       end
