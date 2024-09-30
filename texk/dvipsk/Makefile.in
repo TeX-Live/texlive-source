@@ -782,7 +782,11 @@ EXTRA_DIST = $(dist_prologues) texc.script $(TESTS) testdata/8r.enc \
 	testdata/upjv-r00.ofm testdata/upjf1-r.pl testdata/upjf1-r.tfm \
 	testdata/upjf1_full.zvp0 testdata/upjf1_full.vf \
 	testdata/upjf1_omit.zvp0 testdata/upjf1_omit.vf \
-	testdata/upjf_full.cnf testdata/upjf_omit.cnf NEWS TODO \
+	testdata/upjf_full.cnf testdata/upjf_omit.cnf \
+	testdata/upjf2.tex testdata/upjf2.dvi testdata/upjf-c.pl \
+	testdata/upjf-c.tfm testdata/upjv-c.pl testdata/upjv-c.tfm \
+	testdata/upjf2_full.zvp0 testdata/upjf2_full.vf \
+	testdata/upjv2_full.zvp0 testdata/upjv2_full.vf NEWS TODO \
 	testdata/intoverflow.dvi testdata/vfnameoverflow.dvi atari \
 	cmfonts.map config.ps contrib/afm-extra contrib/colorsep.lpro \
 	contrib/configs contrib/crop.lpr contrib/latex209 \
@@ -795,7 +799,7 @@ TEST_EXTENSIONS = .pl .test
 TESTS = test-afm2tfm.test beginfontk1.test eepic-nan.test pfbincl.test \
 	quotecmd-test.pl same-name.test test-dvips.test \
 	test-missing-image.test test-overflow-buffers.test \
-	uptex-vf.test
+	uptex-vf.test uptex-upjf2.test
 AM_TESTS_ENVIRONMENT = TEXMFCNF=$(srcdir)/../kpathsea; export \
 	TEXMFCNF; TEXCONFIG=$(srcdir)/testdata; export TEXCONFIG; \
 	TEXFONTS=$(srcdir)/testdata; export TEXFONTS; \
@@ -2046,7 +2050,9 @@ squeeze/stamp-squeeze:
 test-afm2tfm-test.log: afm2tfm$(EXEEXT)
 beginfontk1.log eepic-nan.log pfbincl.log \
 	quotecmd-test.log same-name.log test-dvips.log \
-	test-overflow-buffers.log: dvips$(EXEEXT)
+	test-missing-image.log test-overflow-buffers.log \
+	uptex-vf.log uptex-upjf2.log \
+	: dvips$(EXEEXT)
 dist-hook:
 	cd "$(distdir)" && rm -rf $(NEVER_DIST)
 

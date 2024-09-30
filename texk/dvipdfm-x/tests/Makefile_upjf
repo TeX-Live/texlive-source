@@ -41,12 +41,14 @@ upjv-r00.ofm:
 upjf1-r.tfm:
 	uppltotf upjf1-r.pl
 
+# test for different mapping
 upjf1_full.vf: upjf1_full.zvp0
 	jfmutil zvp02vf upjf1_full.zvp0
 
 upjf1_omit.vf: upjf1_omit.zvp0
 	jfmutil zvp02vf upjf1_omit.zvp0
 
+# test for variation selector, compound character
 upjf2_full.vf: upjf2_full.zvp0
 	jfmutil zvp02vf upjf2_full.zvp0
 

@@ -1,0 +1,26 @@
+#! /bin/sh -vx
+# $Id$
+# Public domain.
+# You may freely use, modify and/or distribute this file.
+
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_dvips=$BinDir/dvips$ExeExt
+
+TEXFONTS="./tmp001;$srcdir/testdata"
+SOURCE_DATE_EPOCH=1588474800
+export TEXFONTS SOURCE_DATE_EPOCH
+
+rm -f upjf-g.ofm upjv-g.ofm upjf-r.ofm upjv-r.ofm
+
+rc=0
+
+test -d tmp001 || mkdir -p tmp001
+
+cp $srcdir/testdata/upjf2_full.vf ./tmp001/upjf.vf && \
+cp $srcdir/testdata/upjv2_full.vf ./tmp001/upjv.vf && \
+$_dvips -d 4 $srcdir/testdata/upjf2.dvi -o upjf2.ps -u $srcdir/testdata/upjf.map && \
+mv upjf2.ps upjf2_full.ps || rc=6
+
+
+exit $rc

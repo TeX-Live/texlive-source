@@ -1,0 +1,2979 @@
+(VTITLE )
+(DESIGNSIZE R 10.0)
+(CHECKSUM O 0)
+(MAPFONT D 0
+   (FONTNAME upjf-r)
+   (FONTCHECKSUM O 0)
+   (FONTAT R 1.0)
+   (FONTDSIZE R 10.0)
+   )
+(MAPFONT D 1
+   (FONTNAME upjf-g)
+   (FONTCHECKSUM O 0)
+   (FONTAT R 1.0)
+   (FONTDSIZE R 10.0)
+   )
+(MAPFONT D 2
+   (FONTNAME upjf-c)
+   (FONTCHECKSUM O 0)
+   (FONTAT R 1.0)
+   (FONTDSIZE R 10.0)
+   )
+(CHARACTER H A7
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 0)
+      (SETCHAR H A7)
+      )
+   )
+(CHARACTER H D7
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H D7)
+      )
+   )
+(CHARACTER H F7
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H F7)
+      )
+   )
+(CHARACTER H 2018
+   (CHARWD R 0.5)
+   (MAP
+      (MOVERIGHT R -0.5)
+      (SELECTFONT D 2)
+      (SETCHAR H 29E)
+      )
+   )
+(CHARACTER H 2019
+   (CHARWD R 0.5)
+   (MAP
+      (SELECTFONT D 2)
+      (SETCHAR H 29F)
+      )
+   )
+(CHARACTER H 201C
+   (CHARWD R 0.5)
+   (MAP
+      (MOVERIGHT R -0.5)
+      (SELECTFONT D 2)
+      (SETCHAR H 2A0)
+      )
+   )
+(CHARACTER H 201D
+   (CHARWD R 0.5)
+   (MAP
+      (SELECTFONT D 2)
+      (SETCHAR H 2A1)
+      )
+   )
+(CHARACTER H 2600
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 2600)
+      )
+   )
+(CHARACTER H 2603
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 2603)
+      )
+   )
+(CHARACTER H 3000
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 3000)
+      )
+   )
+(CHARACTER H 3001
+   (CHARWD R 0.5)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 3001)
+      )
+   )
+(CHARACTER H 3002
+   (CHARWD R 0.5)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 3002)
+      )
+   )
+(CHARACTER H 3003
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 3003)
+      )
+   )
+(CHARACTER H 3004
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 3004)
+      )
+   )
+(CHARACTER H 3005
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 3005)
+      )
+   )
+(CHARACTER H 3006
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 3006)
+      )
+   )
+(CHARACTER H 3007
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 3007)
+      )
+   )
+(CHARACTER H 3008
+   (CHARWD R 0.5)
+   (MAP
+      (MOVERIGHT R -0.5)
+      (SELECTFONT D 1)
+      (SETCHAR H 3008)
+      )
+   )
+(CHARACTER H 3009
+   (CHARWD R 0.5)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 3009)
+      )
+   )
+(CHARACTER H 300A
+   (CHARWD R 0.5)
+   (MAP
+      (MOVERIGHT R -0.5)
+      (SELECTFONT D 1)
+      (SETCHAR H 300A)
+      )
+   )
+(CHARACTER H 300B
+   (CHARWD R 0.5)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 300B)
+      )
+   )
+(CHARACTER H 300C
+   (CHARWD R 0.5)
+   (MAP
+      (MOVERIGHT R -0.5)
+      (SELECTFONT D 1)
+      (SETCHAR H 300C)
+      )
+   )
+(CHARACTER H 300D
+   (CHARWD R 0.5)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 300D)
+      )
+   )
+(CHARACTER H 300E
+   (CHARWD R 0.5)
+   (MAP
+      (MOVERIGHT R -0.5)
+      (SELECTFONT D 1)
+      (SETCHAR H 300E)
+      )
+   )
+(CHARACTER H 300F
+   (CHARWD R 0.5)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 300F)
+      )
+   )
+(CHARACTER H 3010
+   (CHARWD R 0.5)
+   (MAP
+      (MOVERIGHT R -0.5)
+      (SELECTFONT D 1)
+      (SETCHAR H 3010)
+      )
+   )
+(CHARACTER H 3011
+   (CHARWD R 0.5)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 3011)
+      )
+   )
+(CHARACTER H 3012
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 3012)
+      )
+   )
+(CHARACTER H 3013
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 3013)
+      )
+   )
+(CHARACTER H 3014
+   (CHARWD R 0.5)
+   (MAP
+      (MOVERIGHT R -0.5)
+      (SELECTFONT D 1)
+      (SETCHAR H 3014)
+      )
+   )
+(CHARACTER H 3015
+   (CHARWD R 0.5)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 3015)
+      )
+   )
+(CHARACTER H 3016
+   (CHARWD R 0.5)
+   (MAP
+      (MOVERIGHT R -0.5)
+      (SELECTFONT D 1)
+      (SETCHAR H 3016)
+      )
+   )
+(CHARACTER H 3017
+   (CHARWD R 0.5)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 3017)
+      )
+   )
+(CHARACTER H 3018
+   (CHARWD R 0.5)
+   (MAP
+      (MOVERIGHT R -0.5)
+      (SELECTFONT D 1)
+      (SETCHAR H 3018)
+      )
+   )
+(CHARACTER H 3019
+   (CHARWD R 0.5)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 3019)
+      )
+   )
+(CHARACTER H 301A
+   (CHARWD R 0.5)
+   (MAP
+      (MOVERIGHT R -0.5)
+      (SELECTFONT D 1)
+      (SETCHAR H 301A)
+      )
+   )
+(CHARACTER H 301B
+   (CHARWD R 0.5)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 301B)
+      )
+   )
+(CHARACTER H 301C
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 301C)
+      )
+   )
+(CHARACTER H 301D
+   (CHARWD R 0.5)
+   (MAP
+      (MOVERIGHT R -0.5)
+      (SELECTFONT D 1)
+      (SETCHAR H 301D)
+      )
+   )
+(CHARACTER H 301E
+   (CHARWD R 0.5)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 301E)
+      )
+   )
+(CHARACTER H 301F
+   (CHARWD R 0.5)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 301F)
+      )
+   )
+(CHARACTER H 3020
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 3020)
+      )
+   )
+(CHARACTER H 3021
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 3021)
+      )
+   )
+(CHARACTER H 3022
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 3022)
+      )
+   )
+(CHARACTER H 3023
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 3023)
+      )
+   )
+(CHARACTER H 3024
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 3024)
+      )
+   )
+(CHARACTER H 3025
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 3025)
+      )
+   )
+(CHARACTER H 3026
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 3026)
+      )
+   )
+(CHARACTER H 3027
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 3027)
+      )
+   )
+(CHARACTER H 3028
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 3028)
+      )
+   )
+(CHARACTER H 3029
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 3029)
+      )
+   )
+(CHARACTER H 302A
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 302A)
+      )
+   )
+(CHARACTER H 302B
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 302B)
+      )
+   )
+(CHARACTER H 302C
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 302C)
+      )
+   )
+(CHARACTER H 302D
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 302D)
+      )
+   )
+(CHARACTER H 302E
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 302E)
+      )
+   )
+(CHARACTER H 302F
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 302F)
+      )
+   )
+(CHARACTER H 3030
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 3030)
+      )
+   )
+(CHARACTER H 3031
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 3031)
+      )
+   )
+(CHARACTER H 3032
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 3032)
+      )
+   )
+(CHARACTER H 3033
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 3033)
+      )
+   )
+(CHARACTER H 3034
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 3034)
+      )
+   )
+(CHARACTER H 3035
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 3035)
+      )
+   )
+(CHARACTER H 3036
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 3036)
+      )
+   )
+(CHARACTER H 3037
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 3037)
+      )
+   )
+(CHARACTER H 3038
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 3038)
+      )
+   )
+(CHARACTER H 3039
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 3039)
+      )
+   )
+(CHARACTER H 303A
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 303A)
+      )
+   )
+(CHARACTER H 303B
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 303B)
+      )
+   )
+(CHARACTER H 303C
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 303C)
+      )
+   )
+(CHARACTER H 303D
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 303D)
+      )
+   )
+(CHARACTER H 303E
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 303E)
+      )
+   )
+(CHARACTER H 303F
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 303F)
+      )
+   )
+(CHARACTER H 3040
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 3040)
+      )
+   )
+(CHARACTER H 3041
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 3041)
+      )
+   )
+(CHARACTER H 3042
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 3042)
+      )
+   )
+(CHARACTER H 3043
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 3043)
+      )
+   )
+(CHARACTER H 3044
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 3044)
+      )
+   )
+(CHARACTER H 3045
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 3045)
+      )
+   )
+(CHARACTER H 3046
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 3046)
+      )
+   )
+(CHARACTER H 3047
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 3047)
+      )
+   )
+(CHARACTER H 3048
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 3048)
+      )
+   )
+(CHARACTER H 3049
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 3049)
+      )
+   )
+(CHARACTER H 304A
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 304A)
+      )
+   )
+(CHARACTER H 304B
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 304B)
+      )
+   )
+(CHARACTER H 304C
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 304C)
+      )
+   )
+(CHARACTER H 304D
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 304D)
+      )
+   )
+(CHARACTER H 304E
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 304E)
+      )
+   )
+(CHARACTER H 304F
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 304F)
+      )
+   )
+(CHARACTER H 3050
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 3050)
+      )
+   )
+(CHARACTER H 3051
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 3051)
+      )
+   )
+(CHARACTER H 3052
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 3052)
+      )
+   )
+(CHARACTER H 3053
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 3053)
+      )
+   )
+(CHARACTER H 3054
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 3054)
+      )
+   )
+(CHARACTER H 3055
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 3055)
+      )
+   )
+(CHARACTER H 3056
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 3056)
+      )
+   )
+(CHARACTER H 3057
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 3057)
+      )
+   )
+(CHARACTER H 3058
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 3058)
+      )
+   )
+(CHARACTER H 3059
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 3059)
+      )
+   )
+(CHARACTER H 305A
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 305A)
+      )
+   )
+(CHARACTER H 305B
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 305B)
+      )
+   )
+(CHARACTER H 305C
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 305C)
+      )
+   )
+(CHARACTER H 305D
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 305D)
+      )
+   )
+(CHARACTER H 305E
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 305E)
+      )
+   )
+(CHARACTER H 305F
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 305F)
+      )
+   )
+(CHARACTER H 3060
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 3060)
+      )
+   )
+(CHARACTER H 3061
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 3061)
+      )
+   )
+(CHARACTER H 3062
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 3062)
+      )
+   )
+(CHARACTER H 3063
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 3063)
+      )
+   )
+(CHARACTER H 3064
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 3064)
+      )
+   )
+(CHARACTER H 3065
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 3065)
+      )
+   )
+(CHARACTER H 3066
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 3066)
+      )
+   )
+(CHARACTER H 3067
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 3067)
+      )
+   )
+(CHARACTER H 3068
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 3068)
+      )
+   )
+(CHARACTER H 3069
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 3069)
+      )
+   )
+(CHARACTER H 306A
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 306A)
+      )
+   )
+(CHARACTER H 306B
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 306B)
+      )
+   )
+(CHARACTER H 306C
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 306C)
+      )
+   )
+(CHARACTER H 306D
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 306D)
+      )
+   )
+(CHARACTER H 306E
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 306E)
+      )
+   )
+(CHARACTER H 306F
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 306F)
+      )
+   )
+(CHARACTER H 3070
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 3070)
+      )
+   )
+(CHARACTER H 3071
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 3071)
+      )
+   )
+(CHARACTER H 3072
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 3072)
+      )
+   )
+(CHARACTER H 3073
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 3073)
+      )
+   )
+(CHARACTER H 3074
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 3074)
+      )
+   )
+(CHARACTER H 3075
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 3075)
+      )
+   )
+(CHARACTER H 3076
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 3076)
+      )
+   )
+(CHARACTER H 3077
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 3077)
+      )
+   )
+(CHARACTER H 3078
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 3078)
+      )
+   )
+(CHARACTER H 3079
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 3079)
+      )
+   )
+(CHARACTER H 307A
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 307A)
+      )
+   )
+(CHARACTER H 307B
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 307B)
+      )
+   )
+(CHARACTER H 307C
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 307C)
+      )
+   )
+(CHARACTER H 307D
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 307D)
+      )
+   )
+(CHARACTER H 307E
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 307E)
+      )
+   )
+(CHARACTER H 307F
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 307F)
+      )
+   )
+(CHARACTER H 3080
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 3080)
+      )
+   )
+(CHARACTER H 3081
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 3081)
+      )
+   )
+(CHARACTER H 3082
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 3082)
+      )
+   )
+(CHARACTER H 3083
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 3083)
+      )
+   )
+(CHARACTER H 3084
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 3084)
+      )
+   )
+(CHARACTER H 3085
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 3085)
+      )
+   )
+(CHARACTER H 3086
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 3086)
+      )
+   )
+(CHARACTER H 3087
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 3087)
+      )
+   )
+(CHARACTER H 3088
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 3088)
+      )
+   )
+(CHARACTER H 3089
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 3089)
+      )
+   )
+(CHARACTER H 308A
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 308A)
+      )
+   )
+(CHARACTER H 308B
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 308B)
+      )
+   )
+(CHARACTER H 308C
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 308C)
+      )
+   )
+(CHARACTER H 308D
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 308D)
+      )
+   )
+(CHARACTER H 308E
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 308E)
+      )
+   )
+(CHARACTER H 308F
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 308F)
+      )
+   )
+(CHARACTER H 3090
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 3090)
+      )
+   )
+(CHARACTER H 3091
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 3091)
+      )
+   )
+(CHARACTER H 3092
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 3092)
+      )
+   )
+(CHARACTER H 3093
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 3093)
+      )
+   )
+(CHARACTER H 3094
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 3094)
+      )
+   )
+(CHARACTER H 3095
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 3095)
+      )
+   )
+(CHARACTER H 3096
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 3096)
+      )
+   )
+(CHARACTER H 3097
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 3097)
+      )
+   )
+(CHARACTER H 3098
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 3098)
+      )
+   )
+(CHARACTER H 3099
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 3099)
+      )
+   )
+(CHARACTER H 309A
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 309A)
+      )
+   )
+(CHARACTER H 309B
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 309B)
+      )
+   )
+(CHARACTER H 309C
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 309C)
+      )
+   )
+(CHARACTER H 309D
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 309D)
+      )
+   )
+(CHARACTER H 309E
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 309E)
+      )
+   )
+(CHARACTER H 309F
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 309F)
+      )
+   )
+(CHARACTER H 537F
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 0)
+      (SETCHAR H 537F)
+      )
+   )
+(CHARACTER H 6674
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 0)
+      (SETCHAR H 6674)
+      )
+   )
+(CHARACTER H 96EA
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 0)
+      (SETCHAR H 96EA)
+      )
+   )
+(CHARACTER H FF00
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF00)
+      )
+   )
+(CHARACTER H FF01
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF01)
+      )
+   )
+(CHARACTER H FF02
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF02)
+      )
+   )
+(CHARACTER H FF03
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF03)
+      )
+   )
+(CHARACTER H FF04
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF04)
+      )
+   )
+(CHARACTER H FF05
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF05)
+      )
+   )
+(CHARACTER H FF06
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF06)
+      )
+   )
+(CHARACTER H FF07
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF07)
+      )
+   )
+(CHARACTER H FF08
+   (CHARWD R 0.5)
+   (MAP
+      (MOVERIGHT R -0.5)
+      (SELECTFONT D 1)
+      (SETCHAR H FF08)
+      )
+   )
+(CHARACTER H FF09
+   (CHARWD R 0.5)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF09)
+      )
+   )
+(CHARACTER H FF0A
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF0A)
+      )
+   )
+(CHARACTER H FF0B
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF0B)
+      )
+   )
+(CHARACTER H FF0C
+   (CHARWD R 0.5)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF0C)
+      )
+   )
+(CHARACTER H FF0D
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF0D)
+      )
+   )
+(CHARACTER H FF0E
+   (CHARWD R 0.5)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF0E)
+      )
+   )
+(CHARACTER H FF0F
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF0F)
+      )
+   )
+(CHARACTER H FF10
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF10)
+      )
+   )
+(CHARACTER H FF11
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF11)
+      )
+   )
+(CHARACTER H FF12
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF12)
+      )
+   )
+(CHARACTER H FF13
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF13)
+      )
+   )
+(CHARACTER H FF14
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF14)
+      )
+   )
+(CHARACTER H FF15
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF15)
+      )
+   )
+(CHARACTER H FF16
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF16)
+      )
+   )
+(CHARACTER H FF17
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF17)
+      )
+   )
+(CHARACTER H FF18
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF18)
+      )
+   )
+(CHARACTER H FF19
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF19)
+      )
+   )
+(CHARACTER H FF1A
+   (CHARWD R 0.5)
+   (MAP
+      (MOVERIGHT R -0.25)
+      (SELECTFONT D 1)
+      (SETCHAR H FF1A)
+      )
+   )
+(CHARACTER H FF1B
+   (CHARWD R 0.5)
+   (MAP
+      (MOVERIGHT R -0.25)
+      (SELECTFONT D 1)
+      (SETCHAR H FF1B)
+      )
+   )
+(CHARACTER H FF1C
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF1C)
+      )
+   )
+(CHARACTER H FF1D
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF1D)
+      )
+   )
+(CHARACTER H FF1E
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF1E)
+      )
+   )
+(CHARACTER H FF1F
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF1F)
+      )
+   )
+(CHARACTER H FF20
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF20)
+      )
+   )
+(CHARACTER H FF21
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF21)
+      )
+   )
+(CHARACTER H FF22
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF22)
+      )
+   )
+(CHARACTER H FF23
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF23)
+      )
+   )
+(CHARACTER H FF24
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF24)
+      )
+   )
+(CHARACTER H FF25
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF25)
+      )
+   )
+(CHARACTER H FF26
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF26)
+      )
+   )
+(CHARACTER H FF27
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF27)
+      )
+   )
+(CHARACTER H FF28
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF28)
+      )
+   )
+(CHARACTER H FF29
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF29)
+      )
+   )
+(CHARACTER H FF2A
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF2A)
+      )
+   )
+(CHARACTER H FF2B
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF2B)
+      )
+   )
+(CHARACTER H FF2C
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF2C)
+      )
+   )
+(CHARACTER H FF2D
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF2D)
+      )
+   )
+(CHARACTER H FF2E
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF2E)
+      )
+   )
+(CHARACTER H FF2F
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF2F)
+      )
+   )
+(CHARACTER H FF30
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF30)
+      )
+   )
+(CHARACTER H FF31
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF31)
+      )
+   )
+(CHARACTER H FF32
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF32)
+      )
+   )
+(CHARACTER H FF33
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF33)
+      )
+   )
+(CHARACTER H FF34
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF34)
+      )
+   )
+(CHARACTER H FF35
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF35)
+      )
+   )
+(CHARACTER H FF36
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF36)
+      )
+   )
+(CHARACTER H FF37
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF37)
+      )
+   )
+(CHARACTER H FF38
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF38)
+      )
+   )
+(CHARACTER H FF39
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF39)
+      )
+   )
+(CHARACTER H FF3A
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF3A)
+      )
+   )
+(CHARACTER H FF3B
+   (CHARWD R 0.5)
+   (MAP
+      (MOVERIGHT R -0.5)
+      (SELECTFONT D 1)
+      (SETCHAR H FF3B)
+      )
+   )
+(CHARACTER H FF3C
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF3C)
+      )
+   )
+(CHARACTER H FF3D
+   (CHARWD R 0.5)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF3D)
+      )
+   )
+(CHARACTER H FF3E
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF3E)
+      )
+   )
+(CHARACTER H FF3F
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF3F)
+      )
+   )
+(CHARACTER H FF40
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF40)
+      )
+   )
+(CHARACTER H FF41
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF41)
+      )
+   )
+(CHARACTER H FF42
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF42)
+      )
+   )
+(CHARACTER H FF43
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF43)
+      )
+   )
+(CHARACTER H FF44
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF44)
+      )
+   )
+(CHARACTER H FF45
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF45)
+      )
+   )
+(CHARACTER H FF46
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF46)
+      )
+   )
+(CHARACTER H FF47
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF47)
+      )
+   )
+(CHARACTER H FF48
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF48)
+      )
+   )
+(CHARACTER H FF49
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF49)
+      )
+   )
+(CHARACTER H FF4A
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF4A)
+      )
+   )
+(CHARACTER H FF4B
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF4B)
+      )
+   )
+(CHARACTER H FF4C
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF4C)
+      )
+   )
+(CHARACTER H FF4D
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF4D)
+      )
+   )
+(CHARACTER H FF4E
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF4E)
+      )
+   )
+(CHARACTER H FF4F
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF4F)
+      )
+   )
+(CHARACTER H FF50
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF50)
+      )
+   )
+(CHARACTER H FF51
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF51)
+      )
+   )
+(CHARACTER H FF52
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF52)
+      )
+   )
+(CHARACTER H FF53
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF53)
+      )
+   )
+(CHARACTER H FF54
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF54)
+      )
+   )
+(CHARACTER H FF55
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF55)
+      )
+   )
+(CHARACTER H FF56
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF56)
+      )
+   )
+(CHARACTER H FF57
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF57)
+      )
+   )
+(CHARACTER H FF58
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF58)
+      )
+   )
+(CHARACTER H FF59
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF59)
+      )
+   )
+(CHARACTER H FF5A
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF5A)
+      )
+   )
+(CHARACTER H FF5B
+   (CHARWD R 0.5)
+   (MAP
+      (MOVERIGHT R -0.5)
+      (SELECTFONT D 1)
+      (SETCHAR H FF5B)
+      )
+   )
+(CHARACTER H FF5C
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF5C)
+      )
+   )
+(CHARACTER H FF5D
+   (CHARWD R 0.5)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF5D)
+      )
+   )
+(CHARACTER H FF5E
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF5E)
+      )
+   )
+(CHARACTER H FF5F
+   (CHARWD R 0.5)
+   (MAP
+      (MOVERIGHT R -0.5)
+      (SELECTFONT D 1)
+      (SETCHAR H FF5F)
+      )
+   )
+(CHARACTER H FF60
+   (CHARWD R 0.5)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF60)
+      )
+   )
+(CHARACTER H FF61
+   (CHARWD R 0.5)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF61)
+      )
+   )
+(CHARACTER H FF62
+   (CHARWD R 0.5)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF62)
+      )
+   )
+(CHARACTER H FF63
+   (CHARWD R 0.5)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF63)
+      )
+   )
+(CHARACTER H FF64
+   (CHARWD R 0.5)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF64)
+      )
+   )
+(CHARACTER H FF65
+   (CHARWD R 0.5)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF65)
+      )
+   )
+(CHARACTER H FF66
+   (CHARWD R 0.5)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF66)
+      )
+   )
+(CHARACTER H FF67
+   (CHARWD R 0.5)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF67)
+      )
+   )
+(CHARACTER H FF68
+   (CHARWD R 0.5)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF68)
+      )
+   )
+(CHARACTER H FF69
+   (CHARWD R 0.5)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF69)
+      )
+   )
+(CHARACTER H FF6A
+   (CHARWD R 0.5)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF6A)
+      )
+   )
+(CHARACTER H FF6B
+   (CHARWD R 0.5)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF6B)
+      )
+   )
+(CHARACTER H FF6C
+   (CHARWD R 0.5)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF6C)
+      )
+   )
+(CHARACTER H FF6D
+   (CHARWD R 0.5)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF6D)
+      )
+   )
+(CHARACTER H FF6E
+   (CHARWD R 0.5)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF6E)
+      )
+   )
+(CHARACTER H FF6F
+   (CHARWD R 0.5)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF6F)
+      )
+   )
+(CHARACTER H FF70
+   (CHARWD R 0.5)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF70)
+      )
+   )
+(CHARACTER H FF71
+   (CHARWD R 0.5)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF71)
+      )
+   )
+(CHARACTER H FF72
+   (CHARWD R 0.5)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF72)
+      )
+   )
+(CHARACTER H FF73
+   (CHARWD R 0.5)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF73)
+      )
+   )
+(CHARACTER H FF74
+   (CHARWD R 0.5)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF74)
+      )
+   )
+(CHARACTER H FF75
+   (CHARWD R 0.5)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF75)
+      )
+   )
+(CHARACTER H FF76
+   (CHARWD R 0.5)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF76)
+      )
+   )
+(CHARACTER H FF77
+   (CHARWD R 0.5)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF77)
+      )
+   )
+(CHARACTER H FF78
+   (CHARWD R 0.5)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF78)
+      )
+   )
+(CHARACTER H FF79
+   (CHARWD R 0.5)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF79)
+      )
+   )
+(CHARACTER H FF7A
+   (CHARWD R 0.5)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF7A)
+      )
+   )
+(CHARACTER H FF7B
+   (CHARWD R 0.5)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF7B)
+      )
+   )
+(CHARACTER H FF7C
+   (CHARWD R 0.5)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF7C)
+      )
+   )
+(CHARACTER H FF7D
+   (CHARWD R 0.5)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF7D)
+      )
+   )
+(CHARACTER H FF7E
+   (CHARWD R 0.5)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF7E)
+      )
+   )
+(CHARACTER H FF7F
+   (CHARWD R 0.5)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF7F)
+      )
+   )
+(CHARACTER H FF80
+   (CHARWD R 0.5)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF80)
+      )
+   )
+(CHARACTER H FF81
+   (CHARWD R 0.5)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF81)
+      )
+   )
+(CHARACTER H FF82
+   (CHARWD R 0.5)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF82)
+      )
+   )
+(CHARACTER H FF83
+   (CHARWD R 0.5)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF83)
+      )
+   )
+(CHARACTER H FF84
+   (CHARWD R 0.5)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF84)
+      )
+   )
+(CHARACTER H FF85
+   (CHARWD R 0.5)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF85)
+      )
+   )
+(CHARACTER H FF86
+   (CHARWD R 0.5)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF86)
+      )
+   )
+(CHARACTER H FF87
+   (CHARWD R 0.5)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF87)
+      )
+   )
+(CHARACTER H FF88
+   (CHARWD R 0.5)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF88)
+      )
+   )
+(CHARACTER H FF89
+   (CHARWD R 0.5)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF89)
+      )
+   )
+(CHARACTER H FF8A
+   (CHARWD R 0.5)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF8A)
+      )
+   )
+(CHARACTER H FF8B
+   (CHARWD R 0.5)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF8B)
+      )
+   )
+(CHARACTER H FF8C
+   (CHARWD R 0.5)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF8C)
+      )
+   )
+(CHARACTER H FF8D
+   (CHARWD R 0.5)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF8D)
+      )
+   )
+(CHARACTER H FF8E
+   (CHARWD R 0.5)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF8E)
+      )
+   )
+(CHARACTER H FF8F
+   (CHARWD R 0.5)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF8F)
+      )
+   )
+(CHARACTER H FF90
+   (CHARWD R 0.5)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF90)
+      )
+   )
+(CHARACTER H FF91
+   (CHARWD R 0.5)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF91)
+      )
+   )
+(CHARACTER H FF92
+   (CHARWD R 0.5)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF92)
+      )
+   )
+(CHARACTER H FF93
+   (CHARWD R 0.5)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF93)
+      )
+   )
+(CHARACTER H FF94
+   (CHARWD R 0.5)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF94)
+      )
+   )
+(CHARACTER H FF95
+   (CHARWD R 0.5)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF95)
+      )
+   )
+(CHARACTER H FF96
+   (CHARWD R 0.5)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF96)
+      )
+   )
+(CHARACTER H FF97
+   (CHARWD R 0.5)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF97)
+      )
+   )
+(CHARACTER H FF98
+   (CHARWD R 0.5)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF98)
+      )
+   )
+(CHARACTER H FF99
+   (CHARWD R 0.5)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF99)
+      )
+   )
+(CHARACTER H FF9A
+   (CHARWD R 0.5)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF9A)
+      )
+   )
+(CHARACTER H FF9B
+   (CHARWD R 0.5)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF9B)
+      )
+   )
+(CHARACTER H FF9C
+   (CHARWD R 0.5)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF9C)
+      )
+   )
+(CHARACTER H FF9D
+   (CHARWD R 0.5)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF9D)
+      )
+   )
+(CHARACTER H FF9E
+   (CHARWD R 0.5)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF9E)
+      )
+   )
+(CHARACTER H FF9F
+   (CHARWD R 0.5)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FF9F)
+      )
+   )
+(CHARACTER H FFA0
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FFA0)
+      )
+   )
+(CHARACTER H FFA1
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FFA1)
+      )
+   )
+(CHARACTER H FFA2
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FFA2)
+      )
+   )
+(CHARACTER H FFA3
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FFA3)
+      )
+   )
+(CHARACTER H FFA4
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FFA4)
+      )
+   )
+(CHARACTER H FFA5
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FFA5)
+      )
+   )
+(CHARACTER H FFA6
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FFA6)
+      )
+   )
+(CHARACTER H FFA7
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FFA7)
+      )
+   )
+(CHARACTER H FFA8
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FFA8)
+      )
+   )
+(CHARACTER H FFA9
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FFA9)
+      )
+   )
+(CHARACTER H FFAA
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FFAA)
+      )
+   )
+(CHARACTER H FFAB
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FFAB)
+      )
+   )
+(CHARACTER H FFAC
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FFAC)
+      )
+   )
+(CHARACTER H FFAD
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FFAD)
+      )
+   )
+(CHARACTER H FFAE
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FFAE)
+      )
+   )
+(CHARACTER H FFAF
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FFAF)
+      )
+   )
+(CHARACTER H FFB0
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FFB0)
+      )
+   )
+(CHARACTER H FFB1
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FFB1)
+      )
+   )
+(CHARACTER H FFB2
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FFB2)
+      )
+   )
+(CHARACTER H FFB3
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FFB3)
+      )
+   )
+(CHARACTER H FFB4
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FFB4)
+      )
+   )
+(CHARACTER H FFB5
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FFB5)
+      )
+   )
+(CHARACTER H FFB6
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FFB6)
+      )
+   )
+(CHARACTER H FFB7
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FFB7)
+      )
+   )
+(CHARACTER H FFB8
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FFB8)
+      )
+   )
+(CHARACTER H FFB9
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FFB9)
+      )
+   )
+(CHARACTER H FFBA
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FFBA)
+      )
+   )
+(CHARACTER H FFBB
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FFBB)
+      )
+   )
+(CHARACTER H FFBC
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FFBC)
+      )
+   )
+(CHARACTER H FFBD
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FFBD)
+      )
+   )
+(CHARACTER H FFBE
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FFBE)
+      )
+   )
+(CHARACTER H FFBF
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FFBF)
+      )
+   )
+(CHARACTER H FFC0
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FFC0)
+      )
+   )
+(CHARACTER H FFC1
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FFC1)
+      )
+   )
+(CHARACTER H FFC2
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FFC2)
+      )
+   )
+(CHARACTER H FFC3
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FFC3)
+      )
+   )
+(CHARACTER H FFC4
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FFC4)
+      )
+   )
+(CHARACTER H FFC5
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FFC5)
+      )
+   )
+(CHARACTER H FFC6
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FFC6)
+      )
+   )
+(CHARACTER H FFC7
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FFC7)
+      )
+   )
+(CHARACTER H FFC8
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FFC8)
+      )
+   )
+(CHARACTER H FFC9
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FFC9)
+      )
+   )
+(CHARACTER H FFCA
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FFCA)
+      )
+   )
+(CHARACTER H FFCB
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FFCB)
+      )
+   )
+(CHARACTER H FFCC
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FFCC)
+      )
+   )
+(CHARACTER H FFCD
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FFCD)
+      )
+   )
+(CHARACTER H FFCE
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FFCE)
+      )
+   )
+(CHARACTER H FFCF
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FFCF)
+      )
+   )
+(CHARACTER H FFD0
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FFD0)
+      )
+   )
+(CHARACTER H FFD1
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FFD1)
+      )
+   )
+(CHARACTER H FFD2
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FFD2)
+      )
+   )
+(CHARACTER H FFD3
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FFD3)
+      )
+   )
+(CHARACTER H FFD4
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FFD4)
+      )
+   )
+(CHARACTER H FFD5
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FFD5)
+      )
+   )
+(CHARACTER H FFD6
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FFD6)
+      )
+   )
+(CHARACTER H FFD7
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FFD7)
+      )
+   )
+(CHARACTER H FFD8
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FFD8)
+      )
+   )
+(CHARACTER H FFD9
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FFD9)
+      )
+   )
+(CHARACTER H FFDA
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FFDA)
+      )
+   )
+(CHARACTER H FFDB
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FFDB)
+      )
+   )
+(CHARACTER H FFDC
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FFDC)
+      )
+   )
+(CHARACTER H FFDD
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FFDD)
+      )
+   )
+(CHARACTER H FFDE
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FFDE)
+      )
+   )
+(CHARACTER H FFDF
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FFDF)
+      )
+   )
+(CHARACTER H FFE0
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FFE0)
+      )
+   )
+(CHARACTER H FFE1
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FFE1)
+      )
+   )
+(CHARACTER H FFE2
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FFE2)
+      )
+   )
+(CHARACTER H FFE3
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FFE3)
+      )
+   )
+(CHARACTER H FFE4
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FFE4)
+      )
+   )
+(CHARACTER H FFE5
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FFE5)
+      )
+   )
+(CHARACTER H FFE6
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FFE6)
+      )
+   )
+(CHARACTER H FFE7
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FFE7)
+      )
+   )
+(CHARACTER H FFE8
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FFE8)
+      )
+   )
+(CHARACTER H FFE9
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FFE9)
+      )
+   )
+(CHARACTER H FFEA
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FFEA)
+      )
+   )
+(CHARACTER H FFEB
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FFEB)
+      )
+   )
+(CHARACTER H FFEC
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FFEC)
+      )
+   )
+(CHARACTER H FFED
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FFED)
+      )
+   )
+(CHARACTER H FFEE
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FFEE)
+      )
+   )
+(CHARACTER H FFEF
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H FFEF)
+      )
+   )
+(CHARACTER H 20B9F
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 0)
+      (SETCHAR H 20B9F)
+      )
+   )
+(CHARACTER H 2F833
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 0)
+      (SETCHAR H 2F833)
+      )
+   )
+(CHARACTER H 24304B
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 2)
+      (SETCHAR H 3F51)
+      )
+   )
+(CHARACTER H 2431F7
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 2)
+      (SETCHAR H 3F76)
+      )
+   )
+(CHARACTER H 48537F
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 0)
+      (SETCHAR H 2F833)
+      )
+   )
+(CHARACTER H 80537F
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 2)
+      (SETCHAR H 3597)
+      )
+   )
+(CHARACTER H 84537F
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 2)
+      (SETCHAR H 6A2)
+      )
+   )
+(CHARACTER H 88537F
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 2)
+      (SETCHAR H 1DED)
+      )
+   )

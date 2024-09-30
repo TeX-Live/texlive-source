@@ -117,10 +117,13 @@ TESTS = test-afm2tfm.test
 test-afm2tfm-test.log: afm2tfm$(EXEEXT)
 TESTS += beginfontk1.test eepic-nan.test pfbincl.test \
 	quotecmd-test.pl same-name.test test-dvips.test \
-	test-missing-image.test test-overflow-buffers.test uptex-vf.test
+	test-missing-image.test test-overflow-buffers.test \
+	uptex-vf.test uptex-upjf2.test
 beginfontk1.log eepic-nan.log pfbincl.log \
 	quotecmd-test.log same-name.log test-dvips.log \
-	test-overflow-buffers.log: dvips$(EXEEXT)
+	test-missing-image.log test-overflow-buffers.log \
+	uptex-vf.log uptex-upjf2.log \
+	: dvips$(EXEEXT)
 
 AM_TESTS_ENVIRONMENT  = TEXMFCNF=$(srcdir)/../kpathsea; export TEXMFCNF;
 AM_TESTS_ENVIRONMENT += TEXCONFIG=$(srcdir)/testdata; export TEXCONFIG;
@@ -165,7 +168,7 @@ DISTCLEANFILES += beginfontk1.ps
 EXTRA_DIST += testdata/eepic-nan.dvi testdata/eepic-nan.tex
 DISTCLEANFILES += eepic-nan.ps
 ## pfbincl.test
-EXTRA_DIST += testdata/pfbincl.eps testdata/pfbincl.tex testdata/pfbincl.xdv testdata/pfbincl.xps 
+EXTRA_DIST += testdata/pfbincl.eps testdata/pfbincl.tex testdata/pfbincl.xdv testdata/pfbincl.xps
 DISTCLEANFILES += pfbincl.ps
 ## quotecmd-test.pl
 EXTRA_DIST += testdata/quotecmd.dvi testdata/quotecmd.tex 
@@ -199,7 +202,14 @@ EXTRA_DIST += testdata/Makefile_upjf testdata/upjf.tex testdata/upjf.dvi testdat
               testdata/upjf1_full.zvp0 testdata/upjf1_full.vf \
               testdata/upjf1_omit.zvp0 testdata/upjf1_omit.vf \
               testdata/upjf_full.cnf testdata/upjf_omit.cnf
-DISTCLEANFILES += upjf.vf upjv.vf upjf-*.ofm upjv-*.ofm upjf-*.tfm upjf*_full.ps upjf*_omit*.ps
+DISTCLEANFILES += upjf.vf upjv.vf upjf-*.ofm upjv-*.ofm upjf-*.tfm \
+              upjf*_full.ps upjf*_omit*.ps
+## uptex-upjf2.test
+EXTRA_DIST += testdata/upjf2.tex testdata/upjf2.dvi \
+              testdata/upjf-c.pl testdata/upjf-c.tfm \
+              testdata/upjv-c.pl testdata/upjv-c.tfm \
+              testdata/upjf2_full.zvp0 testdata/upjf2_full.vf \
+              testdata/upjv2_full.zvp0 testdata/upjv2_full.vf
 
 EXTRA_DIST += \
 	NEWS \

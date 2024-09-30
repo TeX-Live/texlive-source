@@ -1,6 +1,18 @@
+2024-09-30  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* uptex-upjf2.test, testdata/upjf2.{tex,dvi},
+	testdata/upj{f,v}-c.{pl,tfm},
+	testdata/upj{f,v}2_full.{vf,zvp0}, testdata/upjf.map,
+	testdata/Makefile_upjf, Makefile.am:
+	Add a test for upTeX new encoding.
+	https://github.com/texjporg/tex-jp-build/issues/46
+
 2024-09-22  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
-	* {virtualfont,dopage,tfmload}.c, dvips.h:
+	* virtualfont.c, dvips.h: Support upTeX new encoding
+	for combining characters via virtual fonts.
+	https://github.com/texjporg/tex-jp-build/issues/46
+	* {virtualfont,dopage,tfmload}.c:
 	More strict check to interpret OFM FONTDIR
 	as pTeX vertical writing.
 	https://github.com/texjporg/tex-jp-build/issues/170#issuecomment-2295037307
