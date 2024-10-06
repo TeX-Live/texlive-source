@@ -37,6 +37,7 @@ additional material specific to \.{CTWILL}. % FIXME
 Until then, \.{CWEAVE}'s sequence of sections will be preserved.
 
 The ``banner line'' defined here should be changed whenever \.{CTWILL} is
+modified. The version number parallels the corresponding version of \.{CWEAVE}.
 @y
 A kind of ``user manual'' for \.{CTWILL} can be found in section~%
 \X287:Mogrify {\tentex CWEAVE} into {\tentex CTWILL}\X~and beyond,
@@ -58,6 +59,7 @@ faithful overall rendering of {\itt CTWILL}'s code, though. \hfill
 ---Enjoy!\par}
 \bigskip
 The ``banner line'' defined here should be changed whenever \.{CTWILL} is
+modified. The version number parallels the corresponding version of \.{CWEAVE}.
 @-banner@>
 @$banner {CTWILL}1 =\.{"This\ is\ CTWILL"}@>
 

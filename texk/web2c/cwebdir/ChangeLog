@@ -1,6 +1,10 @@
+2024-10-06  Andreas Scherer  <https://ascherer.github.io>
+
+	* ctwill-mini.ch: Fix line/paragraph break.
+
 2024-09-14  Andreas Scherer  <https://ascherer.github.io>
 
-	* ctwill-mini.c,
+	* ctwill-mini.ch,
 	* ctwill-w2c.ch,
 	* cweav-w2c.ch,
 	* cweave.w,
