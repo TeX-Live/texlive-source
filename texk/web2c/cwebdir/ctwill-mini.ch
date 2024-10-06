@@ -1817,16 +1817,24 @@ Section 245.
 @-phase_two@>
 @z
 
+Section 246.
+
+@x
+@d save_position() save_line=out_line; save_place=out_ptr
+@y
+@d usage_sentinel (struct perm_meaning *)1
+@-usage_sentinel@>
+@$usage_sentinel {CTWILL}247 =(\&{struct} \&{perm\_meaning} ${}{*}{}$) \T{1}@>
+@d save_position() save_line=out_line; save_place=out_ptr
+@z
+
 Section 247.
 
 @x
 @ @d usage_sentinel (struct perm_meaning *)1
 @<Translate the \9{c}current section@>= {
 @y
-@ @d usage_sentinel (struct perm_meaning *)1
-@-usage_sentinel@>
-@$usage_sentinel {CTWILL}247 =(\&{struct} \&{perm\_meaning} ${}{*}{}$) \T{1}@>
-@<Translate the \9{c}current section@>= {
+@ @<Translate the \9{c}current section@>= @+ {
 @z
 
 Section 251.
