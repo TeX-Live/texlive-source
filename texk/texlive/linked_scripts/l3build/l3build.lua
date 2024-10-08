@@ -25,7 +25,7 @@ for those people who are interested.
 --]]
 
 -- Version information
-release_date = "2024-05-27"
+release_date = "2024-10-08"
 
 -- File operations are aided by the LuaFileSystem module
 local lfs = require("lfs")
@@ -128,7 +128,7 @@ if forcecheckepoch then
 end
 if forcedocepoch then
   if match(typesetexe,"luatex") or match(typesetexe,"lualatex") then
-    typesetopts = typsetopts .. " -utc"
+    typesetopts = typesetopts .. " -utc"
   end
 end
 
