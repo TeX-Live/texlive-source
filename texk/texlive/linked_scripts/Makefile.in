@@ -333,6 +333,8 @@ texmf_other_scripts = \
 	bib2gls/convertgls2bib.sh \
 	bibcop/bibcop.pl \
 	bibtexperllibs/ltx2unitxt \
+	bookshelf/bookshelf-listallfonts \
+	bookshelf/bookshelf-mkfontsel \
 	bundledoc/arlatex \
 	bundledoc/bundledoc \
 	cachepic/cachepic.tlu \
