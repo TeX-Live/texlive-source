@@ -1,3 +1,8 @@
+2024-10-08   Luigi Scarso <luigi.scarso@gmail.com>
+	* Fixed a typo in the svg backend that was confusing the draw attributes --
+	see metapost ml  Missing stroke-linejoin attribute in SVG output for filldraw command
+	(thanks to joshua@kraemer.link).
+
 2024-05-19   Luigi Scarso <luigi.scarso@gmail.com>
         * Sync with https://github.com/ascherer/mplibdir commit c21f82c1990d1cdb86f51a00b5c81d0088e12454.
 
