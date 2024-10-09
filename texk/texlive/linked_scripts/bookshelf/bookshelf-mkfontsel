@@ -30,6 +30,10 @@ Print version information
 
 Print usage information
 
+=item B<-m>
+
+Print manual page
+
 =back
 
 =head1 AUTHOR
@@ -44,21 +48,26 @@ LPPL 1.3c
 
 
 use strict;
-use Getopt::Std;
+use Getopt::Long;
+use Pod::Usage;
 use open qw( :std :encoding(UTF-8) );
 my $VERSION = "1.0";
-my $USAGE="$0 FILELIST";
 
-our(%opts);
+my $help=0;
+my $man=0;
+my $vrs=0;
 
-getopts('df:x:vh', \%opts) or die "$USAGE\n";
+GetOptions(
+    "help|?" => \$help,
+    "man" => \$man,
+    "version" => \$vrs
+    ) or pod2usage(2);
 
-if (exists($opts{h})) {
-    die "$USAGE\n";
-}
-if (exists($opts{v})) {
-    die "$0, Version $VERSION, LPPL1.3c license\n";
-}
+pod2usage(1) if $help;
+pod2usage(-exitval => 0, -verbose=>2) if $man;
+die ("$0, version $VERSION, License: LPPL 1.3c\n") if $vrs;
+
+
 
 
 `mkdir -p fontsel`;

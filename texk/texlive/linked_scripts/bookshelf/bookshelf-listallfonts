@@ -14,6 +14,8 @@ bookshelf-listallfonts -h
 
 bookshelf-listallfonts -v
 
+bookshelf-listallfonts -m
+
 =head1 DESCRIPTION
 
 List all fonts known to LuaTeX adding "interesting" features to the
@@ -57,6 +59,10 @@ Print version information
 
 Print usage information
 
+=item B<-m>
+
+Print manual page
+
 =back
 
 =head1 AUTHOR
@@ -70,29 +76,34 @@ LPPL 1.3c
 =cut
 
 use strict;
-use Getopt::Std;
+use Getopt::Long;
+use Pod::Usage;
 use open qw( :std :encoding(UTF-8) );
 my $VERSION = "1.0";
-my $USAGE="$0 [-d] [-f FEATURES_FILE] [-x EXCLUDED_PATTERNS_FILE]";
-our(%opts);
-
-getopts('df:x:vh', \%opts) or die "$USAGE\n";
-
-if (exists($opts{h})) {
-    die "$USAGE\n";
-}
-if (exists($opts{v})) {
-    die "$0, Version $VERSION, LPPL1.3c license\n";
-}
-
+my $featuresFile ="";
+my $excludedPatternsFile = "";
 my $DEBUG=0;
-if (exists($opts{'d'})) {
-    $DEBUG=1;
-}
+my $help=0;
+my $man=0;
+my $vrs=0;
+
+GetOptions(
+    "debug" => \$DEBUG,
+    "features|f=s" => \$featuresFile,
+    "excluded|x=s" => \$excludedPatternsFile,
+    "help|?" => \$help,
+    "man" => \$man,
+    "version" => \$vrs
+    ) or pod2usage(2);
+
+pod2usage(1) if $help;
+pod2usage(-exitval => 0, -verbose=>2) if $man;
+die ("$0, version $VERSION, License: LPPL 1.3c\n") if $vrs;
+
 
 my @features;
-if (exists $opts{f}) {
-    open(FEATURES, $opts{f}) or die ("Cannot open $opts{f}");
+if ($featuresFile) {
+    open(FEATURES, $featuresFile) or die ("Cannot open file $featuresFile\n");
     while (<FEATURES>) {
 	chomp;
 	if (length($_)) {
@@ -114,8 +125,8 @@ if (exists $opts{f}) {
 }
 
 my @excluded;
-if (exists $opts{x}) {
-    open(PATTERNS, $opts{x}) or die ("Cannot open $opts{x}");
+if ($excludedPatternsFile) {
+    open(PATTERNS, $excludedPatternsFile) or die ("Cannot open file $excludedPatternsFile\n");
     while (<PATTERNS>) {
 	chomp;
 	if (length($_)) {
