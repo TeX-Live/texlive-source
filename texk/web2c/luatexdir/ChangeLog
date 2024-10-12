@@ -1,3 +1,12 @@
+2024-10-12  Luigi Scarso <luigi.scarso@gmail.com>
+	* Handle token combiners in immediate assignments (H.Hagen)
+	* LuaTeX 1.19.0
+
+
+2024-09-15  Luigi Scarso <luigi.scarso@gmail.com>
+	* Fixed a typo in texfont.c (thanks to Josef Friedrich)
+
+
 2024-09-01  Luigi Scarso <luigi.scarso@gmail.com>
         * Changed char utf8word[(4 * MAX_WORD_LEN) + 1] = { 0 };
 	in char utf8word[(4 * MAX_WORD_LEN) + 1] ;

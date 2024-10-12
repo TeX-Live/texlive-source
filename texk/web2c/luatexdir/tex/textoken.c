@@ -882,7 +882,7 @@ void check_outer_validity(void)
     halfword q;
     if (suppress_outer_error_par)
         return;
-    if (   OK_to_interrupt  && (scanner_status != normal)) {
+    if (scanner_status != normal) {
         deletions_allowed = false;
         /*tex
 
@@ -2907,7 +2907,10 @@ void conv_toks(void)
                 /*tex one-step do_assignment */
                 if (cur_cmd > max_non_prefixed_command) {
                     set_box_allowed = false;
-                    prefixed_command();
+                    if (cur_cmd == combine_toks_cmd)
+                        combine_the_toks();
+                    else
+                        prefixed_command();
                     set_box_allowed = true;
                 }
                 /*tex done */
@@ -2922,7 +2925,10 @@ void conv_toks(void)
                             break;
                         } else {
                             set_box_allowed = false;
-                            prefixed_command();
+                            if (cur_cmd == combine_toks_cmd)
+                                combine_the_toks();
+                            else
+                                prefixed_command();
                             set_box_allowed = true;
                         }
                     }
