@@ -1,0 +1,10 @@
+entering extended mode
+ restricted \write18 enabled.
+ %&-line parsing enabled.
+**eup-prim
+(./eup-prim.tex 
+15: \^^c5^^93. \^^c5^^93.  
+18: \œ. \œ.  
+15: \^^c3^^a6. \^^c3^^a6. 195^^a6. 
+18: \æ. \æ. 230. )
+No pages of output.

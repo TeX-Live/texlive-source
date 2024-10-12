@@ -3298,8 +3298,9 @@ EXTRA_DIST = PROJECTS cftests cpascal.h help.h w2c/config.h \
 	uptexdir/tests/gkhugeok.tfm uptexdir/tests/gkhugeng.tfm \
 	uptexdir/tests/gkhugeng.err uptexdir/tests/gk256g.tfm \
 	uptexdir/tests/gk256k.tfm uptexdir/uptrip/uptrip.diffs \
-	uptexdir/uptrip/texmf.cnf $(euptex_web_srcs) $(euptex_ch_srcs) \
-	euptexdir/euptex.defines euptexdir/COPYRIGHT \
+	uptexdir/uptrip/texmf.cnf uptexdir/tests/up-prim.tex \
+	uptexdir/tests/up-prim.log $(euptex_web_srcs) \
+	$(euptex_ch_srcs) euptexdir/euptex.defines euptexdir/COPYRIGHT \
 	euptexdir/COPYRIGHT.jis euptexdir/ChangeLog \
 	euptexdir/EUPTEX.txt $(euptex_tests) \
 	euptexdir/eptrip/eptrip.log euptexdir/eptrip/eptrip.tex \
@@ -3324,24 +3325,26 @@ EXTRA_DIST = PROJECTS cftests cpascal.h help.h w2c/config.h \
 	euptexdir/tests/kinsoku-table.tex \
 	euptexdir/tests/kinsoku-table.log \
 	euptexdir/tests/kinsoku-search.tex \
-	euptexdir/tests/kinsoku-search.log euptexdir/tests/ucs.tex \
-	euptexdir/tests/ucs-s.log euptexdir/tests/ucs-e.log \
-	euptexdir/tests/ucs-u.log hitexdir/ChangeLog $(hitex_web) \
-	$(hitex_tests) hitexdir/tests/hello.tex \
-	hitexdir/tests/rule.tex pdftexdir/regex/COPYING.LIB \
-	pdftexdir/regex/README $(pdftex_ch_srcs) \
-	pdftexdir/pdftex.defines pdftexdir/ChangeLog pdftexdir/NEWS \
-	pdftexdir/README pdftexdir/change-files.txt $(pdftex_tests) \
-	tests/wprob.tex pdftexdir/tests/pdfimage.tex tests/1-4.jpg \
-	tests/B.pdf tests/basic.tex tests/lily-ledger-broken.png \
-	tests/expanded.tex tests/expanded.txt tests/cnfline.tex \
-	tests/partoken-ok.tex tests/partoken-xfail.tex \
-	$(ttf2afm_tests) pdftexdir/tests/postV3.afm \
-	pdftexdir/tests/postV3.ttf pdftexdir/tests/postV7.afm \
-	pdftexdir/tests/postV7.ttf $(pdftosrc_tests) \
-	pdftexdir/tests/test-13.pdf pdftexdir/tests/test-13.xref \
-	pdftexdir/tests/test-15.pdf pdftexdir/tests/test-15.xref \
-	$(libluasocket_sources) luatexdir/luasocket/src/ftp_lua.c \
+	euptexdir/tests/kinsoku-search.log \
+	euptexdir/tests/eup-prim.tex euptexdir/tests/eup-prim.log \
+	euptexdir/tests/ucs.tex euptexdir/tests/ucs-s.log \
+	euptexdir/tests/ucs-e.log euptexdir/tests/ucs-u.log \
+	hitexdir/ChangeLog $(hitex_web) $(hitex_tests) \
+	hitexdir/tests/hello.tex hitexdir/tests/rule.tex \
+	pdftexdir/regex/COPYING.LIB pdftexdir/regex/README \
+	$(pdftex_ch_srcs) pdftexdir/pdftex.defines pdftexdir/ChangeLog \
+	pdftexdir/NEWS pdftexdir/README pdftexdir/change-files.txt \
+	$(pdftex_tests) tests/wprob.tex pdftexdir/tests/pdfimage.tex \
+	tests/1-4.jpg tests/B.pdf tests/basic.tex \
+	tests/lily-ledger-broken.png tests/expanded.tex \
+	tests/expanded.txt tests/cnfline.tex tests/partoken-ok.tex \
+	tests/partoken-xfail.tex $(ttf2afm_tests) \
+	pdftexdir/tests/postV3.afm pdftexdir/tests/postV3.ttf \
+	pdftexdir/tests/postV7.afm pdftexdir/tests/postV7.ttf \
+	$(pdftosrc_tests) pdftexdir/tests/test-13.pdf \
+	pdftexdir/tests/test-13.xref pdftexdir/tests/test-15.pdf \
+	pdftexdir/tests/test-15.xref $(libluasocket_sources) \
+	luatexdir/luasocket/src/ftp_lua.c \
 	luatexdir/luasocket/src/headers_lua.c \
 	luatexdir/luasocket/src/http_lua.c \
 	luatexdir/luasocket/src/ltn12_lua.c \
@@ -3651,45 +3654,46 @@ DISTCLEANFILES = CXXLD.sh tangle.c tangle.h tangle.p tangle-web2c \
 	uptests/xcmr10.tfm uptests/xcmr10.pl uptests/xsample*.typ \
 	uptests/x*min10.* uptests/xchcode*.* uptests/xtestnewu*.* \
 	uptests/xuparse.* uptests/yuparse.* uptests/ygkhuge*.* \
-	uptests/ygk256*.* uptests/xskipjfmp.* uptrip.diffs \
+	uptests/ygk256*.* uptests/xskipjfmp.* uptrip.diffs up-prim.* \
 	$(nodist_euptex_SOURCES) euptex.web euptex.ch euptex-web2c \
 	euptex.p euptex.pool euptex-tangle euptrip.diffs \
 	pdfprimitive-euptex.* eup-ctrlsym.log eup-ctrlsym.out \
 	eup-ctrlsym.tex eup-endline*.* eup-jctrlsym*.* eup-pknj-*.* \
 	eup-postpena*.* eup-free_*.* eup-inhibitglue*.* eup-kinsoku*.* \
-	eup-ucs*.* $(nodist_hitex_SOURCES) $(nodist_hishrink_SOURCES) \
-	$(nodist_histretch_SOURCES) hiformat-tangle hitex-tangle \
-	hello.log rule.log $(nodist_pdftex_SOURCES) pdftex-final.ch \
-	pdftex-web2c pdftex.p pdftex.pool pdftex-tangle pwprob.log \
-	pwprob.tex pdfimage.fmt pdfimage.log pdfimage.pdf expanded.log \
-	cnfline.log partoken-ok.log partoken-xfail.log pdftests/fn*.* \
-	postV3.afm postV7.afm test-13.pdf test-13.xref test-15.pdf \
-	test-15.xref $(nodist_libluatex_sources) luaimage.* \
-	luajitimage.* $(nodist_texprof_SOURCES) texprofile-tangle \
-	texprof-tangle $(nodist_xetex_SOURCES) xetex.web \
-	xetex-final.ch xetex-web2c xetex.p xetex.pool xetex-tangle \
-	bug73.fmt bug73.log bug73.out bug73.tex filedump.log \
-	filedump.out filedump.tex xe-ctrlsym.fmt xe-ctrlsym.log \
-	xe-ctrlsym.out xe-ctrlsym.tex xetests/fn*.* \
-	$(omegaware_programs:=.c) $(omegaware_programs:=.h) \
-	$(omegaware_programs:=.p) $(omegaware_programs:=-web2c) \
-	ofm2opl.web opl2ofm.web ovf2ovp.web ovp2ovf.web \
-	omegaware/bad*.* omegaware/tests/charwdr.* \
-	omegaware/tests/charwdv.* omegaware/tests/xcheck* \
-	omegaware/tests/xlevel1.* omegaware/tests/xlig*.* ofont*vf \
-	omegaware/tests/xpagenum.* omegaware/tests/xofont* \
-	omegaware/tests/Cherokee.tfm omegaware/tests/OCherokee.ofm \
-	omegaware/tests/OCherokee.opl omegaware/tests/OCherokee.ovf \
-	omegaware/tests/xCherokee.* omegaware/tests/xOCherokee.* \
-	ocftest.* omegaware/tests/xinbmp* omegaware/tests/xoverbmp* \
-	omegaware/tests/xrealnum.* omegaware/tests/xrepeated.* \
-	omegaware/tests/sample*.ofm omegaware/tests/sample*.ovf \
-	omegaware/tests/sample1-h.opl omegaware/tests/xsample*.out \
-	omegaware/tests/shortend.* omegaware/tests/specialhex.ofm \
-	omegaware/tests/specialhex.opl omegaware/tests/specialhex.ovf \
-	omegaware/tests/xspecialhex.* omegaware/tests/yrepeat* \
-	omegaware/tests/*yarabic* $(nodist_aleph_SOURCES) aleph.web \
-	aleph.ch aleph-web2c aleph.p aleph.pool aleph-tangle
+	eup-prim.* eup-ucs*.* $(nodist_hitex_SOURCES) \
+	$(nodist_hishrink_SOURCES) $(nodist_histretch_SOURCES) \
+	hiformat-tangle hitex-tangle hello.log rule.log \
+	$(nodist_pdftex_SOURCES) pdftex-final.ch pdftex-web2c pdftex.p \
+	pdftex.pool pdftex-tangle pwprob.log pwprob.tex pdfimage.fmt \
+	pdfimage.log pdfimage.pdf expanded.log cnfline.log \
+	partoken-ok.log partoken-xfail.log pdftests/fn*.* postV3.afm \
+	postV7.afm test-13.pdf test-13.xref test-15.pdf test-15.xref \
+	$(nodist_libluatex_sources) luaimage.* luajitimage.* \
+	$(nodist_texprof_SOURCES) texprofile-tangle texprof-tangle \
+	$(nodist_xetex_SOURCES) xetex.web xetex-final.ch xetex-web2c \
+	xetex.p xetex.pool xetex-tangle bug73.fmt bug73.log bug73.out \
+	bug73.tex filedump.log filedump.out filedump.tex \
+	xe-ctrlsym.fmt xe-ctrlsym.log xe-ctrlsym.out xe-ctrlsym.tex \
+	xetests/fn*.* $(omegaware_programs:=.c) \
+	$(omegaware_programs:=.h) $(omegaware_programs:=.p) \
+	$(omegaware_programs:=-web2c) ofm2opl.web opl2ofm.web \
+	ovf2ovp.web ovp2ovf.web omegaware/bad*.* \
+	omegaware/tests/charwdr.* omegaware/tests/charwdv.* \
+	omegaware/tests/xcheck* omegaware/tests/xlevel1.* \
+	omegaware/tests/xlig*.* ofont*vf omegaware/tests/xpagenum.* \
+	omegaware/tests/xofont* omegaware/tests/Cherokee.tfm \
+	omegaware/tests/OCherokee.ofm omegaware/tests/OCherokee.opl \
+	omegaware/tests/OCherokee.ovf omegaware/tests/xCherokee.* \
+	omegaware/tests/xOCherokee.* ocftest.* omegaware/tests/xinbmp* \
+	omegaware/tests/xoverbmp* omegaware/tests/xrealnum.* \
+	omegaware/tests/xrepeated.* omegaware/tests/sample*.ofm \
+	omegaware/tests/sample*.ovf omegaware/tests/sample1-h.opl \
+	omegaware/tests/xsample*.out omegaware/tests/shortend.* \
+	omegaware/tests/specialhex.ofm omegaware/tests/specialhex.opl \
+	omegaware/tests/specialhex.ovf omegaware/tests/xspecialhex.* \
+	omegaware/tests/yrepeat* omegaware/tests/*yarabic* \
+	$(nodist_aleph_SOURCES) aleph.web aleph.ch aleph-web2c aleph.p \
+	aleph.pool aleph-tangle
 CLEANFILES = $(EXTRA_PROGRAMS) $(EXTRA_LIBRARIES) $(EXTRA_LTLIBRARIES)
 TRIPTRAP_CLEAN = $(am__append_8) $(am__append_18) $(am__append_27) \
 	$(am__append_36) $(am__append_44) $(am__append_60) \
@@ -4544,7 +4548,8 @@ uptex_tests = \
 	uptexdir/uptriptest.test uptexdir/ptriptest.test \
 	uptexdir/upver.test \
 	uptexdir/upkcat.test \
-	uptexdir/wcfname.test uptexdir/wcfname0.test
+	uptexdir/wcfname.test uptexdir/wcfname0.test \
+	uptexdir/uptex-prim.test
 
 # uppPLtoTF/upTFtoPL
 upweb_tests = uptexdir/upbibtex.test uptexdir/updvitype.test \
@@ -4611,6 +4616,7 @@ euptex_tests = \
 	euptexdir/euptex-ctrlsym.test \
 	euptexdir/euptex-prntknj.test \
 	euptexdir/euptex-kinsoku.test \
+	euptexdir/euptex-prim.test \
 	euptexdir/euptex-ucs.test
 
 
@@ -22115,7 +22121,8 @@ uptftopl.web: tie$(EXEEXT) tftopl.web tftopl.ch
 uptexdir/uptriptest.log uptexdir/ptriptest.log: \
 	uptex$(EXEEXT) dvitype$(EXEEXT) pltotf$(EXEEXT) tftopl$(EXEEXT)
 uptexdir/upver.log uptexdir/upkcat.log \
-	uptexdir/wcfname.log uptexdir/wcfname0.log: uptex$(EXEEXT)
+	uptexdir/wcfname.log uptexdir/wcfname0.log \
+	uptexdir/uptex-prim.log: uptex$(EXEEXT)
 uptexdir/upbibtex.log: upbibtex$(EXEEXT)
 uptexdir/updvitype.log: updvitype$(EXEEXT)
 uptexdir/uppltotf.log: uppltotf$(EXEEXT)
@@ -22165,6 +22172,7 @@ euptexdir/eupver.log euptexdir/upkcat.log \
 	euptexdir/wcfname.log euptexdir/wcfname0.log \
 	euptexdir/euptex-ctrlsym.log euptexdir/euptex-prntknj.log \
 	euptexdir/euptex-kinsoku.log \
+	euptexdir/euptex-prim.log \
 	euptexdir/euptex-ucs.log: euptex$(EXEEXT)
 
 euptrip.diffs: euptex$(EXEEXT) dvitype$(EXEEXT) pltotf$(EXEEXT) tftopl$(EXEEXT)

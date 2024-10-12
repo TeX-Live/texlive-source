@@ -1,0 +1,30 @@
+#! /bin/sh -vx
+# Copyright 2024 Japanese TeX Development Community <issue@texjp.org>
+# You may freely use, modify and/or distribute this file.
+
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_uptex=$BinDir/uptex$ExeExt
+
+LC_ALL=C; export LC_ALL;  LANGUAGE=C; export LANGUAGE
+
+TEXMFCNF=$srcdir/../kpathsea;export TEXMFCNF
+OFMFONTS=".;$srcdir/tests"; export OFMFONTS
+TEXINPUTS=".;$srcdir/tests"; export TEXINPUTS
+TEXFORMATS=.; export TEXFORMATS
+
+# get same filename in log
+rm -f up-prim.*
+$LN_S $srcdir/uptexdir/tests/up-prim.tex ./up-prim.tex
+
+if test ! -f ./up-basic.fmt; then
+  cp $srcdir/tests/dump-basic.tex ./up-basic.tex
+  $_uptex -ini up-basic || exit 1
+fi
+
+$_uptex -fmt=up-basic -interaction=batchmode up-prim || :
+
+sed 1d up-prim.log >up-prim.out
+
+diff $srcdir/uptexdir/tests/up-prim.log up-prim.out || exit 3
+

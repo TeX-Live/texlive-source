@@ -213,7 +213,7 @@ Memory usage before: 1274&5515; after: 118&5078; still untouched: 4992456
  ) 
 Here is how much of TeX's memory you used:
  24 strings out of 497935
- 135 string characters out of 6219475
+ 135 string characters out of 6219474
  7544 words of memory out of 5000000
  968 multiletter control sequences out of 15000+600000
  3271 words of font info for 2 fonts, out of 8000000 for 9000

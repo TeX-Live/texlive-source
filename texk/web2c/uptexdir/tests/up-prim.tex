@@ -1,0 +1,33 @@
+% Copyright 2024 Japanese TeX Development Community <issue@texjp.org>
+% You may freely use, modify and/or distribute this file.
+%
+\tracingmacros=2
+\tracingonline=1
+%----
+\newlinechar=10
+
+%\catcode"0153=12
+\kcatcode"0153=15\relax
+\message{^^J\the\kcatcode"153:
+  \string\œ. \expandafter\string\csname œ\endcsname. %
+  }
+
+\kcatcode"0153=18\relax
+\message{^^J\the\kcatcode"153:
+  \string\œ. \expandafter\string\csname œ\endcsname. %
+  }
+
+%\catcode"E6=12
+\kcatcode"E6=15\relax
+\message{^^J\the\kcatcode"E6:
+  \string\æ. \expandafter\string\csname æ\endcsname. %
+  }
+
+\kcatcode"E6=18\relax
+\message{^^J\the\kcatcode"E6:
+  \string\æ. \expandafter\string\csname æ\endcsname. %
+  }
+%----
+\setbox0=\vbox{} % no dvi output
+
+\end

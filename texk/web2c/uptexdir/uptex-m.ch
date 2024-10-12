@@ -48,7 +48,7 @@
 % (2022-07-23) TTK  upTeX u1.29
 % (2022-12-09) HK   Hironori Kitagawa fixed a bug in \char, \kchar.
 % (2023-09-16) TTK  upTeX u1.30
-% (2024-05-01) TTK  upTeX u1.35
+% (2024-09-30) TTK  upTeX u1.35
 
 @x
 \def\pTeX{p\kern-.15em\TeX}

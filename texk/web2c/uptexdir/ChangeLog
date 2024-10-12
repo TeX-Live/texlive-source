@@ -1,3 +1,10 @@
+2024-10-12  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* uptex-prim.test, tests/up-prim.{tex,log},
+	am/uptex.am: Add a test.
+	* uptex-m.ch: revision date.
+	* COPYRIGHT.ja: copyright year.
+
 2024-09-30  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* uptex-m.ch: kcatcode (latin_ucs(14)) is removed

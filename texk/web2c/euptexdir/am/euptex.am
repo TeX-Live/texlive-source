@@ -104,6 +104,7 @@ euptex_tests = \
 	euptexdir/euptex-ctrlsym.test \
 	euptexdir/euptex-prntknj.test \
 	euptexdir/euptex-kinsoku.test \
+	euptexdir/euptex-prim.test \
 	euptexdir/euptex-ucs.test
 euptexdir/euptriptest.log euptexdir/eptriptest.log: \
 	euptex$(EXEEXT) dvitype$(EXEEXT) pltotf$(EXEEXT) tftopl$(EXEEXT)
@@ -112,6 +113,7 @@ euptexdir/eupver.log euptexdir/upkcat.log \
 	euptexdir/wcfname.log euptexdir/wcfname0.log \
 	euptexdir/euptex-ctrlsym.log euptexdir/euptex-prntknj.log \
 	euptexdir/euptex-kinsoku.log \
+	euptexdir/euptex-prim.log \
 	euptexdir/euptex-ucs.log: euptex$(EXEEXT)
 
 EXTRA_DIST += $(euptex_tests)
@@ -159,6 +161,9 @@ EXTRA_DIST += euptexdir/tests/postpena.tex euptexdir/tests/postpena.log \
 	euptexdir/tests/kinsoku-table.tex euptexdir/tests/kinsoku-table.log \
 	euptexdir/tests/kinsoku-search.tex euptexdir/tests/kinsoku-search.log
 DISTCLEANFILES += eup-postpena*.* eup-free_*.* eup-inhibitglue*.* eup-kinsoku*.*
+## euptex-prim.test
+EXTRA_DIST += euptexdir/tests/eup-prim.tex euptexdir/tests/eup-prim.log
+DISTCLEANFILES += eup-prim.*
 ## euptex-ucs.test
 EXTRA_DIST += euptexdir/tests/ucs.tex euptexdir/tests/ucs-s.log \
 	euptexdir/tests/ucs-e.log euptexdir/tests/ucs-u.log
