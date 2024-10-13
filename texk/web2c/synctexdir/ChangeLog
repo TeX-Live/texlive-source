@@ -1,3 +1,18 @@
+2024-10-13  <user202729@protonmail.com>
+
+	* synctex_record_node_kern: pass "kern" instead of "glue"
+	as SYNCTEX_TAG_MODEL and SYNCTEX_LINE_MODEL.
+	https://tug.org/pipermail/luatex/2024-September/008006.html
+
+	Forwarded by Luigi, confirmed by Jerome, committed by Karl.
+	Jerome adds:
+           This bug only affects engines for which kern node and glue
+           nodes do not have the same size, aka none.
+           The kern problem is well known for luatex since a long time but
+           it does not affect other engines. While this patch is necessary
+           to make the synctex code cleaner, it does not change anything
+           for the engines concerned by the code.
+
 2024-04-14  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* am/synctex.am: Remove eptex.
