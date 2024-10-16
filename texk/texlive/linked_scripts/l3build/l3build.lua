@@ -25,7 +25,7 @@ for those people who are interested.
 --]]
 
 -- Version information
-release_date = "2024-10-08"
+release_date = "2024-10-16"
 
 -- File operations are aided by the LuaFileSystem module
 local lfs = require("lfs")
@@ -129,6 +129,14 @@ end
 if forcedocepoch then
   if match(typesetexe,"luatex") or match(typesetexe,"lualatex") then
     typesetopts = typesetopts .. " -utc"
+  end
+end
+-- Allow for LaTeX "dev" release
+if options["dev"] then
+  if checkformat == "latex" then
+    checkformat = "latex-dev"
+  elseif checkformat ~= "latex-dev" then
+    print("Ignoring --dev option with non-LaTeX format")
   end
 end
 
