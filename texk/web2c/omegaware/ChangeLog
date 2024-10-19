@@ -1,3 +1,8 @@
+2024-10-19  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* tests/inbmp.opl, tests/overbmp.{opl,ovp}:
+	Sync with omegafonts.
+
 2023-08-26  Karl Berry  <karl@freefriends.org>
 
 	* ligkern.test: protect against $rc being defined in the environment.

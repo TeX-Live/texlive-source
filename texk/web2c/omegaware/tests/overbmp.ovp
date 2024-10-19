@@ -47,3 +47,17 @@
       (SETCHAR H 53F1)
       )
    )
+(CHARACTER H 242EE
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 242EE)
+      )
+   )
+(CHARACTER H 2F9DE
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 2F9DE)
+      )
+   )
