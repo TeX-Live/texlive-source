@@ -11,8 +11,6 @@ TEXFONTS="./tmp001;$srcdir/testdata"
 SOURCE_DATE_EPOCH=1588474800
 export TEXFONTS SOURCE_DATE_EPOCH
 
-rm -f upjf-g.ofm upjv-g.ofm upjf-r.ofm upjv-r.ofm
-
 rc=0
 
 test -d tmp001 || mkdir -p tmp001

@@ -55,12 +55,14 @@ upjf2_full.vf: upjf2_full.zvp0
 upjv2_full.vf: upjv2_full.zvp0
 	jfmutil zvp02vf upjv2_full.zvp0
 
+# test for hentaigana with noto font
 upjf3_full.vf: upjf3_full.zvp0
 	jfmutil zvp02vf upjf3_full.zvp0
 
 upjv3_full.vf: upjv3_full.zvp0
 	jfmutil zvp02vf upjv3_full.zvp0
 
+# test for hentaigana with IPA MJ Mincho
 upjf4_full.vf: upjf4_full.zvp0
 	jfmutil zvp02vf upjf4_full.zvp0
 

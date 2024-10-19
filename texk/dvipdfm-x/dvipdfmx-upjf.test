@@ -85,6 +85,8 @@ echo "*** dvipdfmx: test for upjf1_omit2.pdf" && echo \
 
 cmp ./upjf1_full.pdf ./upjf1_omit2.pdf || failed="$failed dvipdfmx-upjf1-cmp2"
 
+rm -f upjf-r.ofm upjv-r.ofm
+
 
 test -z "$failed" && exit 0
 echo

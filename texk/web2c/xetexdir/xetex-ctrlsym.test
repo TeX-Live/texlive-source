@@ -16,11 +16,14 @@ TEXFORMATS=.; export TEXFORMATS
 rm -f xe-ctrlsym.tex
 $LN_S $srcdir/xetexdir/tests/ctrlsym.tex ./xe-ctrlsym.tex
 
-#exit 77
+if test ! -f ./xe-basic.tex; then
+  cp $srcdir/tests/dump-basic.tex ./xe-basic.tex
+fi
+if test ! -f ./xe-basic.fmt; then
+  $_xetex -ini -etex xe-basic || exit 1
+fi
 
-$_xetex -ini -etex xe-ctrlsym || exit 1
-
-$_xetex -etex -fmt=xe-ctrlsym xe-ctrlsym || exit 2
+$_xetex -etex -fmt=xe-basic xe-ctrlsym || exit 2
 
 sed 1d xe-ctrlsym.log >xe-ctrlsym.out
 

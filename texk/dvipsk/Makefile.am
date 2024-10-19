@@ -171,7 +171,7 @@ DISTCLEANFILES += eepic-nan.ps
 EXTRA_DIST += testdata/pfbincl.eps testdata/pfbincl.tex testdata/pfbincl.xdv testdata/pfbincl.xps
 DISTCLEANFILES += pfbincl.ps
 ## quotecmd-test.pl
-EXTRA_DIST += testdata/quotecmd.dvi testdata/quotecmd.tex 
+EXTRA_DIST += testdata/quotecmd.dvi testdata/quotecmd.tex
 DISTCLEANFILES += *badnews*
 ## same-name.test
 DISTCLEANFILES += same-name.out

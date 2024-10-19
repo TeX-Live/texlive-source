@@ -1,8 +1,8 @@
 upjf-r   UPJF-UTF16-H    HaranoAjiMincho-Regular.otf
-upjf-g   UPJF-UTF16-H    HaranoAjiGothic-Regular.otf
+upjf-g   UPJF-UTF16-H    HaranoAjiGothic-Normal.otf
 upjf-c   Identity-H      HaranoAjiMincho-Regular.otf
 upjv-r   UPJF-UTF16-V    HaranoAjiMincho-Regular.otf
-upjv-g   UPJF-UTF16-V    HaranoAjiGothic-Regular.otf
+upjv-g   UPJF-UTF16-V    HaranoAjiGothic-Normal.otf
 upjv-c   Identity-V      HaranoAjiMincho-Regular.otf
 
 %upjf-r   UniJIS-UTF16-H  !Ryumin-Light
