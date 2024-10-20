@@ -26,6 +26,9 @@ extern long UVS_get_codepoint_in_sequence(long ucv, int n);
 extern long UVS_combine_code(long ucv, long uvs);
 extern long UVS_divide_code(long code, long* uvs);
 
+extern long ptenc_ucs_to_8bit_code(short enc, long uch);
+extern long ptenc_8bit_code_to_ucs(short enc, long ech);
+
 #define LONG(a,b,c,d) ( ((long)(a)<<24) | ((long)(b)<<16) | ((c)<<8) | (d) )
 #define BYTE1(x) (((x)>>24) & 0xff)
 #define BYTE2(x) (((x)>>16) & 0xff)

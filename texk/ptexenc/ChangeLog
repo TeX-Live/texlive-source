@@ -1,3 +1,12 @@
+2024-10-20  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* unicode.c, ptexenc/unicode.h, tex8benc.h:
+	Add new functions of encoding conversion between
+	TeX 8bit encoding and Unicode to support
+	Unicode for Latin characters in upTeX ver2.00.
+	* version.ac: Bump to 1.5.1/dev.
+	https://github.com/texjporg/tex-jp-build/issues/170
+
 2024-05-11  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* unicode.c, ptexenc.c:
