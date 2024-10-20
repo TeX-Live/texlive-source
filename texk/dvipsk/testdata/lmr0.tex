@@ -1,0 +1,107 @@
+%% plain Aleph or plain upTeX
+% You may freely use, modify and/or distribute this file.
+%
+\parindent=0pt
+
+\font\eulmr=eu3-lmr10
+\font\eclmr=ec-lmr10
+\font\lylmr=texnansi-lmr10
+
+% for aleph
+\ifx\ocp\undefined\else
+ \ocp\ORGin=inutf8
+ \InputTranslation currentfile \ORGin
+\fi
+
+% for {,e}uptex
+\ifx\kcatcode\undefined\else
+ \kcatcode"C6=14
+ \kcatcode"110=14
+ \kcatcode"152=14
+ \kcatcode"237=14
+ \kcatcode"2039=14
+ \kcatcode"2423=14
+ \kcatcode"AB=14
+\fi
+
+\catcode"C6=11  % Æ
+\catcode"E6=11  % æ
+\catcode"152=11 % Œ
+\catcode"153=11 % œ
+\catcode"131=11 % ı
+\catcode"132=11 % Ĳ
+\catcode"133=11 % ĳ
+\catcode"237=11 % ȷ
+\catcode"D0=11  % Ð
+\catcode"F0=11  % ð
+\catcode"110=11 % Đ
+\catcode"111=11 % đ
+\catcode"2018=12 % ‘
+\catcode"2019=12 % ’
+\catcode"201C=12 % “
+\catcode"201D=12 % ”
+\catcode"2039=12 % ‹
+\catcode"203A=12 % ›
+\catcode"AB=12  % «
+\catcode"BB=12  % »
+\catcode"2423=12 % ␣
+
+\eulmr
+
+Ææ Œœ Ĳĳ ıȷ
+
+dh:Ðð   dj:Đđ
+
+ff fi fl ffi ffl ``'' `' !`!  ?`?
+
+‹› «» ␣
+
+{
+\eclmr
+
+^^c6^^e6 ^^d7^^f7 ^^9c^^bc ^^19^^1a
+
+dh:^^d0^^f0   dj:^^d0^^9e
+
+ff fi fl ffi ffl ``'' `' !`!  ?`?
+
+^^0e^^0f ^^13^^14 %
+\catcode"20=12 ^^20
+}
+
+% for {,e}uptex
+\ifx\kcatcode\undefined\else
+ \kcatcode"86=14
+ \kcatcode"A5=14
+ \kcatcode"192=14
+\fi
+
+\catcode"A2=12  % ¢
+\catcode"A5=12  % ¥
+\catcode"A7=12  % §
+\catcode"D7=12  % ×
+\catcode"F7=12  % ÷
+\catcode"192=12 % ƒ
+\catcode"2020=12 % †
+\catcode"2021=12 % ‡
+
+×÷§ ¢¥ƒ †‡
+
+{
+\lylmr
+
+^^d7^^f7^^a7 ^^a2^^a5^^83 ^^86^^87
+}
+
+\ifx\kcatcode\undefined\else
+ \font\upjf=upjf at 10pt
+ \upjf
+
+ \kcatcode"86=18
+ \kcatcode"A5=18
+ \kcatcode"2018=18
+
+ ×÷§ “” ‘’
+\fi
+
+\bye

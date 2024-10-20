@@ -1,0 +1,28 @@
+#! /bin/sh -vx
+# $Id$
+# Public domain.
+# You may freely use, modify and/or distribute this file.
+
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_dvips=$BinDir/dvips$ExeExt
+
+TEXFONTS="$srcdir/testdata;$srcdir/../web2c/tests"
+VFFONTS="./tmp100"
+TEXPSHEADERS=".;$srcdir/testdata;$srcdir/../web2c/tests"
+SOURCE_DATE_EPOCH=1588474800
+export TEXFONTS VFFONTS TEXPSHEADERS SOURCE_DATE_EPOCH
+
+rc=0
+
+$_dvips -d 4 $srcdir/testdata/lmr0-al.dvi -o lmr0-al.ps -u $srcdir/testdata/lm.map || rc=1
+
+
+test -d tmp100 || mkdir -p tmp100
+
+if test ! -f ./tmp100/upjf.vf; then
+  cp $srcdir/testdata/upjf_omit.vf ./tmp100/upjf.vf
+fi
+$_dvips -d 4 $srcdir/testdata/lmr0-up.dvi -o lmr0-up.ps -u $srcdir/testdata/upjf_ucs2.map || rc=2
+
+exit $rc

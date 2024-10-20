@@ -2,6 +2,11 @@
 % You may freely use, modify and/or distribute this file.
 
 CHARSET	%
++	00A7,% §
++	00D7,% ×
++	00F7,% ÷
++	2018..2019,% ‘’
++	201C..201D,% “”
 +	2600,% ☀
 +	2603,% ☃
 +	3000..303F,% CJK Symbols and Punctuation

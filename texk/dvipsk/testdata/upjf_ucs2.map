@@ -1,0 +1,9 @@
+upjf-r   Ryumin-Light-UniJIS-UCS2-H
+upjf-g   GothicBBB-Medium-UniJIS-UCS2-H
+upjv-r   Ryumin-Light-UniJIS-UCS2-V
+upjv-g   GothicBBB-Medium-UniJIS-UCS2-V
+
+cmr10 <cmr10.pfb
+
+ec-lmr10 LMRoman10-Regular "enclmec ReEncodeFont" <lm-ec.enc <lmr10.pfb
+texnansi-lmr10 LMRoman10-Regular "enclmtexnansi ReEncodeFont" <lm-texnansi.enc <lmr10.pfb

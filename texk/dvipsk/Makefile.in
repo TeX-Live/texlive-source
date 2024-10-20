@@ -736,7 +736,8 @@ DISTCLEANFILES = $(DVIS) $(PSS) beginfontk1.ps eepic-nan.ps pfbincl.ps \
 	*badnews* same-name.out afmtest.tfm dvipstst.ps missfont.log \
 	mtest.ps missing-image.ps overflow-color-push.ps \
 	overflow-epsfile.ps overflow-psbox.ps upjf.vf upjv.vf \
-	upjf-*.ofm upjv-*.ofm upjf-*.tfm upjf*_full.ps upjf*_omit*.ps
+	upjf-*.ofm upjv-*.ofm upjf-*.tfm upjv-*.tfm upjf*_full.ps \
+	upjf*_omit*.ps lmr0*.ps
 enc_DATA = dvips-all.enc
 prolog_DATA = $(prologues)
 dist_prologues = \
@@ -786,7 +787,9 @@ EXTRA_DIST = $(dist_prologues) texc.script $(TESTS) testdata/8r.enc \
 	testdata/upjf2.tex testdata/upjf2.dvi testdata/upjf-c.pl \
 	testdata/upjf-c.tfm testdata/upjv-c.pl testdata/upjv-c.tfm \
 	testdata/upjf2_full.zvp0 testdata/upjf2_full.vf \
-	testdata/upjv2_full.zvp0 testdata/upjv2_full.vf NEWS TODO \
+	testdata/upjv2_full.zvp0 testdata/upjv2_full.vf \
+	testdata/lmr0.tex testdata/lmr0-al.dvi testdata/lmr0-up.dvi \
+	testdata/lm.map testdata/upjf_ucs2.map NEWS TODO \
 	testdata/intoverflow.dvi testdata/vfnameoverflow.dvi atari \
 	cmfonts.map config.ps contrib/afm-extra contrib/colorsep.lpro \
 	contrib/configs contrib/crop.lpr contrib/latex209 \
@@ -799,7 +802,7 @@ TEST_EXTENSIONS = .pl .test
 TESTS = test-afm2tfm.test beginfontk1.test eepic-nan.test pfbincl.test \
 	quotecmd-test.pl same-name.test test-dvips.test \
 	test-missing-image.test test-overflow-buffers.test \
-	uptex-vf.test uptex-upjf2.test
+	uptex-vf.test uptex-upjf2.test ofm-lmr.test
 AM_TESTS_ENVIRONMENT = TEXMFCNF=$(srcdir)/../kpathsea; export \
 	TEXMFCNF; TEXCONFIG=$(srcdir)/testdata; export TEXCONFIG; \
 	TEXFONTS=$(srcdir)/testdata; export TEXFONTS; \
@@ -2051,7 +2054,7 @@ test-afm2tfm-test.log: afm2tfm$(EXEEXT)
 beginfontk1.log eepic-nan.log pfbincl.log \
 	quotecmd-test.log same-name.log test-dvips.log \
 	test-missing-image.log test-overflow-buffers.log \
-	uptex-vf.log uptex-upjf2.log \
+	uptex-vf.log uptex-upjf2.log ofm-lmr.log \
 	: dvips$(EXEEXT)
 dist-hook:
 	cd "$(distdir)" && rm -rf $(NEVER_DIST)

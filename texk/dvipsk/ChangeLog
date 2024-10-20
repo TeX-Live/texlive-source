@@ -1,3 +1,12 @@
+2024-10-20  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* ofm-lmr.test, testdata/lm.map, testdata/upjf_ucs2.map,
+	testdata/lmr0.tex, testdata/lmr0-{al,up}.dvi,
+	upjf_{full,omit}.{cnf,vf}, upjf1_{full,omit}.{vf,zvp0},
+	upjv_{full,omit}.vf, Makefile.am:
+	Add tests for upTeX and OFM.
+	https://github.com/texjporg/tex-jp-build/issues/170
+
 2024-09-30  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* uptex-upjf2.test, testdata/upjf2.{tex,dvi},

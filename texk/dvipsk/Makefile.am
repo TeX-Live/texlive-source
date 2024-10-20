@@ -118,11 +118,11 @@ test-afm2tfm-test.log: afm2tfm$(EXEEXT)
 TESTS += beginfontk1.test eepic-nan.test pfbincl.test \
 	quotecmd-test.pl same-name.test test-dvips.test \
 	test-missing-image.test test-overflow-buffers.test \
-	uptex-vf.test uptex-upjf2.test
+	uptex-vf.test uptex-upjf2.test ofm-lmr.test
 beginfontk1.log eepic-nan.log pfbincl.log \
 	quotecmd-test.log same-name.log test-dvips.log \
 	test-missing-image.log test-overflow-buffers.log \
-	uptex-vf.log uptex-upjf2.log \
+	uptex-vf.log uptex-upjf2.log ofm-lmr.log \
 	: dvips$(EXEEXT)
 
 AM_TESTS_ENVIRONMENT  = TEXMFCNF=$(srcdir)/../kpathsea; export TEXMFCNF;
@@ -202,7 +202,7 @@ EXTRA_DIST += testdata/Makefile_upjf testdata/upjf.tex testdata/upjf.dvi testdat
               testdata/upjf1_full.zvp0 testdata/upjf1_full.vf \
               testdata/upjf1_omit.zvp0 testdata/upjf1_omit.vf \
               testdata/upjf_full.cnf testdata/upjf_omit.cnf
-DISTCLEANFILES += upjf.vf upjv.vf upjf-*.ofm upjv-*.ofm upjf-*.tfm \
+DISTCLEANFILES += upjf.vf upjv.vf upjf-*.ofm upjv-*.ofm upjf-*.tfm upjv-*.tfm \
               upjf*_full.ps upjf*_omit*.ps
 ## uptex-upjf2.test
 EXTRA_DIST += testdata/upjf2.tex testdata/upjf2.dvi \
@@ -210,6 +210,10 @@ EXTRA_DIST += testdata/upjf2.tex testdata/upjf2.dvi \
               testdata/upjv-c.pl testdata/upjv-c.tfm \
               testdata/upjf2_full.zvp0 testdata/upjf2_full.vf \
               testdata/upjv2_full.zvp0 testdata/upjv2_full.vf
+## ofm-lmr.test
+EXTRA_DIST += testdata/lmr0.tex testdata/lmr0-al.dvi testdata/lmr0-up.dvi \
+              testdata/lm.map testdata/upjf_ucs2.map
+DISTCLEANFILES += lmr0*.ps
 
 EXTRA_DIST += \
 	NEWS \
