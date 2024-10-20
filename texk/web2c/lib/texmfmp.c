@@ -1107,6 +1107,9 @@ maininit (int ac, string *av)
 #else /* !Aleph */
   kpse_set_program_enabled (kpse_tfm_format, MAKE_TEX_TFM_BY_DEFAULT,
                             kpse_src_compile);
+#if (IS_upTeX)
+  kpse_set_program_enabled (kpse_ofm_format, false, kpse_src_compile);
+#endif
 #endif /* !Aleph */
   kpse_set_program_enabled (kpse_tex_format, MAKE_TEX_TEX_BY_DEFAULT,
                             kpse_src_compile);

@@ -1,0 +1,40 @@
+#! /bin/sh -vx
+# Copyright 2024 Japanese TeX Development Community <issue@texjp.org>
+# You may freely use, modify and/or distribute this file.
+
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_uptex=$BinDir/uptex$ExeExt
+
+LC_ALL=C; export LC_ALL;  LANGUAGE=C; export LANGUAGE
+
+TEXMFCNF=$srcdir/../kpathsea;export TEXMFCNF
+OFMFONTS=".;$srcdir/tests"; export OFMFONTS
+TEXINPUTS=".;$srcdir/tests"; export TEXINPUTS
+TEXFORMATS=.; export TEXFORMATS
+
+# get same filename in log
+rm -f up-lmr*.*
+$LN_S $srcdir/uptexdir/tests/lmr1.tex ./up-lmr1.tex
+$LN_S $srcdir/uptexdir/tests/lmr2.tex ./up-lmr2.tex
+
+if test ! -f ./up-basic.tex; then
+  cp $srcdir/tests/dump-basic.tex ./up-basic.tex
+fi
+if test ! -f ./up-basic.fmt; then
+  cp $srcdir/tests/dump-basic.tex ./up-basic.tex
+  $_uptex -ini up-basic || exit 1
+fi
+
+$_uptex -fmt=up-basic -interaction=batchmode up-lmr1.tex || :
+
+sed 1d up-lmr1.log >up-lmr1.out
+
+diff $srcdir/uptexdir/tests/up-lmr1.log up-lmr1.out || exit 3
+
+$_uptex -fmt=up-basic -interaction=batchmode up-lmr2.tex || :
+
+sed 1d up-lmr2.log >up-lmr2.out
+
+diff $srcdir/uptexdir/tests/up-lmr2.log up-lmr2.out || exit 4
+

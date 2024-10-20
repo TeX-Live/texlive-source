@@ -3,8 +3,10 @@ entering extended mode
  %&-line parsing enabled.
 **eup-prim
 (./eup-prim.tex 
-15: \^^c5^^93. \^^c5^^93.  
-18: \œ. \œ.  
+15: \^^c5^^93. \^^c5^^93. 197^^93. 
+14: \œ. \œ. 339. 
+18: \œ. \œ. 339. 
 15: \^^c3^^a6. \^^c3^^a6. 195^^a6. 
+14: \æ. \æ. 230. 
 18: \æ. \æ. 230. )
 No pages of output.

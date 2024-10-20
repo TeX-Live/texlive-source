@@ -240,6 +240,9 @@ DISTCLEANFILES += pooltype.tex
 ## {pdftexdir,xetexdir,ptexdir,uptexdir}/wcfname.test
 EXTRA_DIST += tests/fn-generate.perl
 EXTRA_DIST += tests/fn-utf8.txt tests/fn-euc.txt tests/fn-sjis.txt
+## uptexdir/uptex-ofm.test, euptexdir/euptex-ofm.test
+EXTRA_DIST += tests/uctt10x.opl tests/uctt10x.ofm
+EXTRA_DIST += tests/uctt10x.ovp tests/uctt10x.ovf
 
 ## Test data
 ##

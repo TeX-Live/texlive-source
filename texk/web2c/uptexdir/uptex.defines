@@ -34,6 +34,8 @@
 @define function UVScombinecode ();
 @define function UVSgetcodepointlength ();
 @define function UVSgetcodepointinsequence ();
+@define function ptencucsto8bitcode ();
+@define function ptenc8bitcodetoucs ();
 
 @define function fromJIS ();
 @define function fromEUC ();

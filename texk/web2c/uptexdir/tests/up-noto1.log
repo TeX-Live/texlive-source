@@ -1,0 +1,8 @@
+ restricted \write18 enabled.
+ %&-line parsing enabled.
+**up-noto1.tex
+(./up-noto1.tex
+\ChrA=\count26
+\ChrB=\count27
+[1] )
+Output written on up-noto1.dvi (1 page, 2700 bytes).

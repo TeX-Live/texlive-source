@@ -1,0 +1,32 @@
+#! /bin/sh -vx
+# Copyright 2024 Japanese TeX Development Community <issue@texjp.org>
+# You may freely use, modify and/or distribute this file.
+
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_euptex=$BinDir/euptex$ExeExt
+
+LC_ALL=C; export LC_ALL;  LANGUAGE=C; export LANGUAGE
+
+TEXMFCNF=$srcdir/../kpathsea;export TEXMFCNF
+OFMFONTS=".;$srcdir/tests"; export OFMFONTS
+TEXINPUTS=".;$srcdir/tests"; export TEXINPUTS
+TEXFORMATS=.; export TEXFORMATS
+
+# get same filename in log
+rm -f eup-ofm.*
+$LN_S $srcdir/euptexdir/tests/eup-ofm.tex ./eup-ofm.tex
+
+if test ! -f ./eup-basic.tex; then
+  cp $srcdir/tests/dump-basic.tex ./eup-basic.tex
+fi
+if test ! -f ./eup-basic.fmt; then
+  $_euptex -ini -etex eup-basic || exit 1
+fi
+
+$_euptex -fmt=eup-basic -interaction=batchmode eup-ofm || :
+
+sed 1d eup-ofm.log >eup-ofm.out
+
+diff $srcdir/euptexdir/tests/eup-ofm.log eup-ofm.out || exit 3
+

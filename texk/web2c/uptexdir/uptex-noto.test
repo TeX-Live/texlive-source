@@ -1,0 +1,52 @@
+#! /bin/sh -vx
+# Copyright 2024 Japanese TeX Development Community <issue@texjp.org>
+# You may freely use, modify and/or distribute this file.
+
+KpsDir=${KpsDir:-../kpathsea}
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_kpsewhich=$KpsDir/kpsewhich$ExeExt
+_uptex=$BinDir/uptex$ExeExt
+
+LC_ALL=C; export LC_ALL;  LANGUAGE=C; export LANGUAGE
+
+if type kpsewhich > /dev/null 2>&1; then
+    tfmpath=".//;"`kpsewhich -show-path=tfm`
+    tfmpath=`echo $tfmpath | sed -e 's,!!,,g'`
+fi
+
+TEXMFCNF=$srcdir/../kpathsea;export TEXMFCNF
+OFMFONTS=".;$srcdir/tests"; export OFMFONTS
+TEXINPUTS=".;$srcdir/tests"; export TEXINPUTS
+TEXFORMATS=.; export TEXFORMATS
+
+if type kpsewhich > /dev/null 2>&1; then
+    echo $tfmpath
+else
+    tfmpath=".//;"`$_kpsewhich -show-path=tfm`
+    echo $tfmpath
+fi
+TFMFONTS=`$_kpsewhich "--cnf-line=TFMFONTS=$tfmpath" -show-path=tfm`
+export TFMFONTS
+echo "TFMFONTS::" $TFMFONTS
+
+#####  following tests require NOTO fonts  #####
+
+$_kpsewhich NotoSerif-Regular-lf-t1.tfm || exit 77
+
+rm -f up-noto*.*
+$LN_S $srcdir/uptexdir/tests/noto1.tex ./up-noto1.tex
+
+if test ! -f ./up-basic.tex; then
+  cp $srcdir/tests/dump-basic.tex ./up-basic.tex
+fi
+if test ! -f ./up-basic.fmt; then
+  cp $srcdir/tests/dump-basic.tex ./up-basic.tex
+  $_uptex -ini up-basic || exit 1
+fi
+
+$_uptex -fmt=up-basic -interaction=batchmode up-noto1.tex || :
+
+sed 1d up-noto1.log >up-noto1.out
+
+diff $srcdir/uptexdir/tests/up-noto1.log up-noto1.out || exit 3

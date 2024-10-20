@@ -1,0 +1,199 @@
+%!uptex
+
+% Copyright 2024 Japanese TeX Development Community <issue@texjp.org>
+% You may freely use, modify and/or distribute this file.
+%
+\parindent=0pt
+
+\font\eulmr=eu3-lmr10
+\font in T1\eclmr=ec-lmr10
+\eulmr
+
+\kcatcode"A7=14
+\kcatcode"C0=14
+\kcatcode"100=14
+\kcatcode"180=14
+\kcatcode"1E00=14
+
+\catcode"C0=11
+
+\newcount\ChrA\newcount\ChrB
+\def\SetCatCode#1{%
+ \loop\ifnum\ChrA<\ChrB
+  \catcode\ChrA=#1
+  \sfcode\ChrA=1000
+  \advance\ChrA 1\relax \repeat
+}
+
+\ChrA="100 \ChrB="180
+\SetCatCode{11}
+
+ĂăĄą ĆćČč ĎďĐđ ĘęĚě Ğğ İıĲĳ ĹĺĽľŁł ŃńŇňŊŋ
+ŐőŒœ ŔŕŘř ŚśŞşŠš ŢţŤť ŮůŰű Ÿ ŹźŻżŽž
+
+eu3-lmr10:
+
+AT AŤ AY AÝ AŸ AV AW Av Aw Ay Aý Aÿ
+
+ÀT ÀŤ ÀY ÀÝ ÀŸ ÀV ÀW Àv Àw Ày Àý Àÿ
+
+ÁT ÁŤ ÁY ÁÝ ÁŸ ÁV ÁW Áv Áw Áy Áý Áÿ
+
+ÂT ÂŤ ÂY ÂÝ ÂŸ ÂV ÂW Âv Âw Ây Âý Âÿ
+
+ÃT ÃŤ ÃY ÃÝ ÃŸ ÃV ÃW Ãv Ãw Ãy Ãý Ãÿ
+
+ÄT ÄŤ ÄY ÄÝ ÄŸ ÄV ÄW Äv Äw Äy Äý Äÿ
+
+ÅT ÅŤ ÅY ÅÝ ÅŸ ÅV ÅW Åv Åw Åy Åý Åÿ
+
+ĂT ĂŤ ĂY ĂÝ ĂŸ ĂV ĂW Ăv Ăw Ăy Ăý Ăÿ
+
+ĄT ĄŤ ĄY ĄÝ ĄŸ ĄV ĄW Ąv Ąw Ąy Ąý Ąÿ
+
+{
+\eclmr
+
+ec-lmr10:
+
+AT AŤ AY AÝ AŸ AV AW Av Aw Ay Aý Aÿ
+
+ÅT ÅŤ ÅY ÅÝ ÅŸ ÅV ÅW Åv Åw Åy Åý Åÿ
+
+ĄT ĄŤ ĄY ĄÝ ĄŸ ĄV ĄW Ąv Ąw Ąy Ąý Ąÿ
+}
+
+eu3-lmr10:
+
+FA FÀ FÁ FÂ FÃ FÄ FÅ FĂ FĄ FÆ FŒ Fa Fą Fæ Fc Fç Fd Fe Fm Fn Fo Fø Fp Fr Fs Fş Fu Fv Fw Fy Fz
+
+\setbox0\hbox{YA}
+\showbox0
+\setbox1\hbox{YĄ}
+\showbox1
+\setbox2\hbox{ŸĄ}
+\showbox2
+\setbox3\hbox{ÝÅ}
+\showbox3
+
+{
+\eclmr
+
+ec-lmr10:
+
+FA FÀ FÁ FÂ FÃ FÄ FÅ FĂ FĄ FÆ FŒ Fa Fą Fæ Fc Fç Fd Fe Fm Fn Fo Fø Fp Fr Fs Fş Fu Fv Fw Fy Fz
+
+\setbox0\hbox{YA}
+\showbox0
+\setbox1\hbox{YĄ}
+\showbox1
+\setbox2\hbox{ŸĄ}
+\showbox2
+\setbox3\hbox{ÝÅ}
+\showbox3
+}
+
+eu3-lmr10:
+
+TA TÀ TÁ TÂ TÃ TÄ TÅ TĂ TĄ TÆ
+
+ŤA ŤÀ ŤÁ ŤÂ ŤÃ ŤÄ ŤÅ ŤĂ ŤĄ ŤÆ
+
+{
+\eclmr
+
+ec-lmr10:
+
+TA TÀ TÁ TÂ TÃ TÄ TÅ TĂ TĄ TÆ
+
+ŤA ŤÀ ŤÁ ŤÂ ŤÃ ŤÄ ŤÅ ŤĂ ŤĄ ŤÆ
+}
+
+eu3-lmr10:
+
+Ta Tæ Tą Tc Tç Td Tđ Tı Te Tę Tg Tn To Tœ Tø Tp Tr Ts Tu Tv Tw Tx Tz
+
+Ťa Ťæ Ťą Ťc Ťç Ťd Ťđ Ťı Ťe Ťę Ťg Ťn Ťo Ťœ Ťø Ťp Ťr Ťs Ťu Ťv Ťw Ťx Ťz
+
+{
+\eclmr
+
+ec-lmr10:
+
+Ta Tæ Tą Tc Tç Td Tđ Tı Te Tę Tg Tn To Tœ Tø Tp Tr Ts Tu Tv Tw Tx Tz
+
+Ťa Ťæ Ťą Ťc Ťç Ťd Ťđ Ťı Ťe Ťę Ťg Ťn Ťo Ťœ Ťø Ťp Ťr Ťs Ťu Ťv Ťw Ťx Ťz
+}
+
+eu3-lmr10:
+
+YA YÀ YÁ YÂ YÃ YÄ YÅ YĂ YĄ YÆ
+
+ÝA ÝÀ ÝÁ ÝÂ ÝÃ ÝÄ ÝÅ ÝĂ ÝĄ ÝÆ
+
+ŸA ŸÀ ŸÁ ŸÂ ŸÃ ŸÄ ŸÅ ŸĂ ŸĄ ŸÆ
+
+{
+\eclmr
+
+ec-lmr10:
+
+YA YÀ YÁ YÂ YÃ YÄ YÅ YĂ YĄ YÆ
+
+ÝA ÝÀ ÝÁ ÝÂ ÝÃ ÝÄ ÝÅ ÝĂ ÝĄ ÝÆ
+
+ŸA ŸÀ ŸÁ ŸÂ ŸÃ ŸÄ ŸÅ ŸĂ ŸĄ ŸÆ
+}
+
+eu3-lmr10:
+
+Ya Yæ Yą Yc Yç Yd Yđ Yı Ye Yę Yg Yn Yo Yœ Yø Yp Yr Ys Yu Yv Yw Yx Yz
+
+Ýa Ýæ Ýą Ýc Ýç Ýd Ýđ Ýı Ýe Ýę Ýg Ýn Ýo Ýœ Ýø Ýp Ýr Ýs Ýu Ýv Ýw Ýx Ýz
+
+Ÿa Ÿæ Ÿą Ÿc Ÿç Ÿd Ÿđ Ÿı Ÿe Ÿę Ÿg Ÿn Ÿo Ÿœ Ÿø Ÿp Ÿr Ÿs Ÿu Ÿv Ÿw Ÿx Ÿz
+
+{
+\eclmr
+
+ec-lmr10:
+
+Ya Yæ Yą Yc Yç Yd Yđ Yı Ye Yę Yg Yn Yo Yœ Yø Yp Yr Ys Yu Yv Yw Yx Yz
+
+Ýa Ýæ Ýą Ýc Ýç Ýd Ýđ Ýı Ýe Ýę Ýg Ýn Ýo Ýœ Ýø Ýp Ýr Ýs Ýu Ýv Ýw Ýx Ýz
+
+Ÿa Ÿæ Ÿą Ÿc Ÿç Ÿd Ÿđ Ÿı Ÿe Ÿę Ÿg Ÿn Ÿo Ÿœ Ÿø Ÿp Ÿr Ÿs Ÿu Ÿv Ÿw Ÿx Ÿz
+}
+
+\sfcode"C6=999
+\sfcode"152=999
+\lccode"C6="E6 % Æ -> æ
+\lccode"152="153 % Œ -> œ
+\lccode"153="153
+
+% do not use U+BF, U+2019, U+201C, U+201D
+``?`But aren't Kafka's Schloß and Æsop's Œuvres
+often naïve vis-à-vis the dæmonic phœnix's official rôle
+in fluffy soufflés?''
+
+\kcatcode"2019=14
+\catcode"2019=11
+\catcode"201C=11
+\catcode"201D=11
+
+“¿But aren’t Kafka’s Schloß and Æsop’s Œuvres
+often naïve vis-à-vis the dæmonic phœnix’s official rôle
+in fluffy soufflés?”
+
+{
+\eclmr
+\sfcode"D7=999
+\lccode"D7="F7 % Œ -> œ in T1 encoding
+\lccode"F7="F7
+
+“¿But aren’t Kafka’s Schloß and Æsop’s Œuvres
+often naïve vis-à-vis the dæmonic phœnix’s official rôle
+in fluffy soufflés?”
+}
+
+\bye

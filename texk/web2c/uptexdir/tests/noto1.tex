@@ -1,0 +1,113 @@
+%!uptex
+
+% Copyright 2024 Japanese TeX Development Community <issue@texjp.org>
+% You may freely use, modify and/or distribute this file.
+%
+\parindent=0pt
+\spaceskip 0.32em plus 0.16em minus 0.14em
+
+\kcatcode"A7=14
+\kcatcode"C0=14
+\kcatcode"100=14
+\kcatcode"180=14
+\kcatcode"370=14
+\kcatcode"400=14
+\kcatcode"1F00=14
+\kcatcode"2000=14
+\kcatcode"20A0=14
+\kcatcode"2100=14
+\kcatcode"2400=14
+\kcatcode"2E00=14
+
+\newcount\ChrA\newcount\ChrB
+\def\SetCatCode#1{%
+ \loop\ifnum\ChrA<\ChrB
+  \catcode\ChrA=#1
+  \sfcode\ChrA=1000
+  \lccode\ChrA=\ChrA
+  \advance\ChrA 1\relax \repeat
+}
+
+\ChrA="A0   \ChrB="250  \SetCatCode{11}
+\ChrA="370  \ChrB="530  \SetCatCode{11}
+\ChrA="1F00 \ChrB="2000 \SetCatCode{11}
+\ChrA="2000 \ChrB="2070 \SetCatCode{11}
+\ChrA="20A0 \ChrB="20D0 \SetCatCode{11}
+\ChrA="2100 \ChrB="2150 \SetCatCode{11}
+\ChrA="2400 \ChrB="2440 \SetCatCode{11}
+\ChrA="2E00 \ChrB="2E80 \SetCatCode{11}
+
+\font in T1\ToneNotoSrfR=NotoSerif-Regular-lf-t1
+\font in TS1\TSoneNotoSrfR=NotoSerif-Regular-lf-ts1
+\font in LY1\LYoneNotoSrfR=NotoSerif-Regular-lf-ly1
+\font in T2A\TtwoaNotoSrfR=NotoSerif-Regular-lf-t2a
+\font in T2B\TtwobNotoSrfR=NotoSerif-Regular-lf-t2b
+\font in T2C\TtwocNotoSrfR=NotoSerif-Regular-lf-t2c
+\font in LGR\LgrNotoSrfR=NotoSerif-Regular-lf-lgr
+
+\def\vs{\vskip 1.5ex}
+
+\ToneNotoSrfR
+
+ĂăĄą ĆćČč ĎďĐđ ĘęĚě Ğğ İıĲĳȷ ĹĺĽľŁł ŃńŇňŊŋ
+ŐőŒœ ŔŕŘř ŚśŞşŠš ŢţŤť ŮůŰű Ÿ ŹźŻżŽž
+
+{
+\TSoneNotoSrfR
+
+ƒ ‖†‡•‰‱※ ‽⸘ ₡₤₩₫€ ℃№™Ω℧␢
+}
+\vs
+
+\hyphenation{svě-domím}
+{
+NotoSerif-Regular-lf-t1 in T1:
+\ToneNotoSrfR
+
+Všichni lidé rodí se svobodní a sobě rovní co do důstojnosti a práv.
+Jsou nadáni rozumem a svědomím a mají spolu jednat v duchu bratrství.
+}\vs
+
+\hyphenation{sam-vit-tighed}
+{
+NotoSerif-Regular-lf-ly1 in LY1:
+\LYoneNotoSrfR
+
+Alle mennesker er født frie og lige i værdighed og rettigheder.
+De er udstyret med fornuft og samvittighed, og de bør handle mod hverandre i en broderskabets ånd.
+}\vs
+
+{
+NotoSerif-Regular-lf-t2a in T2A:
+\TtwoaNotoSrfR
+
+Cвa људскa бићa рaђajу сe слoбoднa и jeднaкa у дoстojaнству и прaвимa.
+Oнa су oбдaрeнa рaзумoм и свeшћу и трeбajeдни прeмa другимa дa пoступajу у духу брaтствa.
+}\vs
+
+{
+NotoSerif-Regular-lf-t2b in T2B:
+\TtwobNotoSrfR
+
+Усе людзi нараджаюцца свабоднымi i роўнымi ў сваёй годнасцi i правах.
+Яны надзелены розумам i сумленнем i павiнны ставiцца адзiн да аднаго ў духу брацтва.
+}\vs
+
+{
+NotoSerif-Regular-lf-t2c in T2C:
+\TtwocNotoSrfR
+
+Все люди рождаются свободными и равными в своем достоинстве и правах.
+Они наделены разумом и совестью и должны поступать в отношении друг друга в духе братства.
+}\vs
+
+\hyphenation{αδελφο-σύνης προι-κι-σμέ-ν-οι}
+{
+NotoSerif-Regular-lf-lgr in LGR:
+\LgrNotoSrfR
+
+'Ολοι οι άνθρωποι γεννιούνται ελεύθεροι και ίσοι στην αξιοπρέπεια και τα δικαιώματα.
+Είναι προικισμένοι με λογική και συνείδηση, και οφείλουν να συμπεριφέρονται μεταξύ τους με πνεύμα αδελφοσύνης.
+}
+
+\bye

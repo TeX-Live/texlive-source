@@ -1,0 +1,103 @@
+% Copyright 2024 Japanese TeX Development Community <issue@texjp.org>
+% You may freely use, modify and/or distribute this file.
+%
+\ifx\fmtname\undefined
+  \input basic
+  \def\fmtname{basic}
+  \expandafter\dump
+\fi
+%==================
+\begingroup % Just there to minimize tracing output
+  \tracingmacros=2
+  \tracingonline=1
+%----
+\message{cmtt10}
+\font\cmtt=cmtt10
+\cmtt
+\char"21\char"22\char"23\char"24\char"25
+
+\char"30\char"31\char"32\char"33 \char"41\char"42\char"43 \char"64\char"65\char"66
+
+0123 ABC def
+
+
+\message{uctt10x}
+\font\uctt=uctt10x
+\uctt
+\char"21\char"22\char"23\char"24\char"25
+
+\char"30\char"31\char"32\char"33 \char"41\char"42\char"43 \char"64\char"65\char"66
+
+0123 ABC def
+
+
+\kcatcode"C6=14 % latin_ucs: not cjk in ucs code
+\catcode"C6=11  \catcode"D8=11  \catcode"DF=11
+\catcode"E6=11  \catcode"F8=11
+
+\char"C6\char"D8\char"DF^^e6^^^^00f8
+
+ÆØßæø
+
+\setbox0\hbox{【Æ】}
+\showbox0
+
+\kcatcode"A1=15 % not_cjk: not cjk in legacy encoding
+\kcatcode"C6=15
+\kcatcode"1A1=15
+\kcatcode"2DA=15
+\catcode"2DA=11
+
+\char"C6\char"A1^^c6\char"BF^^^^02da
+
+ơ% U+01A1 :: UTF-8 0xC6 0xA1
+ƿ% U+01BF :: UTF-8 0xC6 0xBF
+
+\setbox0\hbox{【ơ】}
+\showbox0
+
+\def\AAA{ơ ^^c6^^a1 ^^^^02da}\AAA
+\edef\mAAA{\meaning\AAA}\mAAA
+
+\kcatcode"A1=14
+\kcatcode"C6=14
+\kcatcode"123=14
+\catcode"123=11  \catcode"131=11  \catcode"152=11
+\catcode"153=11
+\kcatcode"2DA=14
+\catcode"2DA=11
+
+\char"123\char"131\char"152\char"153^^^^02da
+
+ģıŒœ˚
+
+\def\AAA{Œ ^^^^0152 ^^c6^^a1 ^^^^02da}\AAA
+\edef\mAAA{\meaning\AAA}\mAAA
+
+\kcatcode`Γ=14 % Γ: U+0393
+\catcode"393=11  \catcode"394=11  \catcode"398=11
+\catcode"39B=11  \catcode"39E=11
+
+\char"393\char"394\char`Θ\char"39B^^^^039e
+
+ΓΔΘΛΞ
+
+\kcatcode"2010=14
+\catcode"2010=11  \catcode"2018=11  \catcode"2019=11
+
+\char"2010\char"2018^^^^2019
+
+‐‘’
+
+\lccode"C6="E6
+\uccode"E6="C6
+\lccode`Œ=`œ
+\uccode`œ=`Œ
+
+\uppercase{[aeoe æœ]}
+\lowercase{[AEOE ÆŒ]}
+
+%----
+\setbox0=\vbox{} % no dvi output
+\endgroup
+\end

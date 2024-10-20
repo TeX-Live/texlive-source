@@ -1,3 +1,16 @@
+2024-10-20  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* eptex.ech, etex.ch{0,1}, fam256,ch,
+	pdfutils.ch, char-warnings-euptex.ch:
+	Support Latin Unicode and 16bit OFM Level-0.
+	Implement new kcatcode (latin_ucs(14)).
+	* euptex-ofm.test, tests/eup-prim.{tex,log},
+	tests/eup-ofm.{tex,log}, am/euptex.am:
+	Add and update tests.
+	* eptex_version.h, eptex.ech:
+	Bump version to 241020.
+	https://github.com/texjporg/tex-jp-build/issues/170
+
 2024-10-12  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* euptex-prim.test, tests/eup-prim.{tex,log},

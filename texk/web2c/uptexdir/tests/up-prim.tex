@@ -6,8 +6,13 @@
 %----
 \newlinechar=10
 
-%\catcode"0153=12
+\catcode"0153=12
 \kcatcode"0153=15\relax
+\message{^^J\the\kcatcode"153:
+  \string\œ. \expandafter\string\csname œ\endcsname. %
+  }
+
+\kcatcode"0153=14\relax
 \message{^^J\the\kcatcode"153:
   \string\œ. \expandafter\string\csname œ\endcsname. %
   }
@@ -19,6 +24,11 @@
 
 %\catcode"E6=12
 \kcatcode"E6=15\relax
+\message{^^J\the\kcatcode"E6:
+  \string\æ. \expandafter\string\csname æ\endcsname. %
+  }
+
+\kcatcode"E6=14\relax
 \message{^^J\the\kcatcode"E6:
   \string\æ. \expandafter\string\csname æ\endcsname. %
   }

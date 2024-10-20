@@ -1,0 +1,210 @@
+%!uptex
+
+% Copyright 2024 Japanese TeX Development Community <issue@texjp.org>
+% You may freely use, modify and/or distribute this file.
+%
+\parindent=0pt
+
+\font\eulmr=eu3-lmr10
+\font\eclmr=ec-lmr10
+\eulmr
+
+\kcatcode"A7=14
+\kcatcode"C0=14
+\kcatcode"100=14
+\kcatcode"180=14
+\kcatcode"1E00=14
+
+\catcode"C0=11
+
+\newcount\ChrA\newcount\ChrB
+\def\SetCatCode#1{%
+ \loop\ifnum\ChrA<\ChrB
+  \catcode\ChrA=#1
+  \sfcode\ChrA=1000
+  \advance\ChrA 1\relax \repeat
+}
+
+\ChrA="100 \ChrB="180
+\SetCatCode{11}
+
+ĂăĄą ĆćČč ĎďĐđ ĘęĚě Ğğ İıĲĳ ĹĺĽľŁł ŃńŇňŊŋ
+ŐőŒœ ŔŕŘř ŚśŞşŠš ŢţŤť ŮůŰű Ÿ ŹźŻżŽž
+
+eu3-lmr10:
+
+AT AŤ AY AÝ AŸ AV AW Av Aw Ay Aý Aÿ
+
+ÀT ÀŤ ÀY ÀÝ ÀŸ ÀV ÀW Àv Àw Ày Àý Àÿ
+
+ÁT ÁŤ ÁY ÁÝ ÁŸ ÁV ÁW Áv Áw Áy Áý Áÿ
+
+ÂT ÂŤ ÂY ÂÝ ÂŸ ÂV ÂW Âv Âw Ây Âý Âÿ
+
+ÃT ÃŤ ÃY ÃÝ ÃŸ ÃV ÃW Ãv Ãw Ãy Ãý Ãÿ
+
+ÄT ÄŤ ÄY ÄÝ ÄŸ ÄV ÄW Äv Äw Äy Äý Äÿ
+
+ÅT ÅŤ ÅY ÅÝ ÅŸ ÅV ÅW Åv Åw Åy Åý Åÿ
+
+ĂT ĂŤ ĂY ĂÝ ĂŸ ĂV ĂW Ăv Ăw Ăy Ăý Ăÿ
+
+ĄT ĄŤ ĄY ĄÝ ĄŸ ĄV ĄW Ąv Ąw Ąy Ąý Ąÿ
+
+{
+\eclmr
+\kcatcode"A7=15
+\kcatcode"C0=15
+
+ec-lmr10:
+
+AT A^^94 AY A^^dd A^^98 AV AW Av Aw Ay A^^fd A^^b8
+
+^^c5T ^^c5^^94 ^^c5Y ^^c5^^dd ^^c5^^98 ^^c5V ^^c5W ^^c5v ^^c5w ^^c5y ^^c5^^fd ^^c5^^b8
+
+^^81T ^^81^^94 ^^81Y ^^81^^dd ^^81^^98 ^^81V ^^81W ^^81v ^^81w ^^81y ^^81^^fd ^^81^^b8
+}
+
+eu3-lmr10:
+
+FA FÀ FÁ FÂ FÃ FÄ FÅ FĂ FĄ FÆ FŒ Fa Fą Fæ Fc Fç Fd Fe Fm Fn Fo Fø Fp Fr Fs Fş Fu Fv Fw Fy Fz
+
+\setbox0\hbox{YA}
+\showbox0
+\setbox1\hbox{YĄ}
+\showbox1
+\setbox2\hbox{ŸĄ}
+\showbox2
+\setbox3\hbox{ÝÅ}
+\showbox3
+
+{
+\eclmr
+\kcatcode"A7=15
+\kcatcode"C0=15
+
+ec-lmr10:
+
+FA F^^c0 F^^c1 F^^c2 F^^c3 F^^c4 F^^c5 F^^80 F^^81 F^^c6 F^^d7 Fa F^^a1 F^^e6 Fc F^^e7 Fd Fe Fm Fn Fo F^^f8 Fp Fr Fs F^^b3 Fu Fv Fw Fy Fz
+
+\setbox0\hbox{YA}
+\showbox0
+\setbox1\hbox{Y^^81}
+\showbox1
+\setbox2\hbox{^^98^^81}
+\showbox2
+\setbox3\hbox{^^dd^^c5}
+\showbox3
+}
+
+eu3-lmr10:
+
+TA TÀ TÁ TÂ TÃ TÄ TÅ TĂ TĄ TÆ
+
+ŤA ŤÀ ŤÁ ŤÂ ŤÃ ŤÄ ŤÅ ŤĂ ŤĄ ŤÆ
+
+{
+\eclmr
+\kcatcode"A7=15
+\kcatcode"C0=15
+
+ec-lmr10:
+
+TA T^^c0 T^^c1 T^^c2 T^^c3 T^^c4 T^^c5 T^^80 T^^81 T^^c6
+
+^^94A ^^94^^c0 ^^94^^c1 ^^94^^c2 ^^94^^c3 ^^94^^c4 ^^94^^c5 ^^94^^80 ^^94^^81 ^^94^^c6
+}
+
+eu3-lmr10:
+
+Ta Tæ Tą Tc Tç Td Tđ Tı Te Tę Tg Tn To Tœ Tø Tp Tr Ts Tu Tv Tw Tx Tz
+
+Ťa Ťæ Ťą Ťc Ťç Ťd Ťđ Ťı Ťe Ťę Ťg Ťn Ťo Ťœ Ťø Ťp Ťr Ťs Ťu Ťv Ťw Ťx Ťz
+
+{
+\eclmr
+\kcatcode"A7=15
+\kcatcode"C0=15
+
+ec-lmr10:
+
+Ta T^^e6 T^^a1 Tc T^^e7 Td T^^9e T^^19 Te T^^a6 Tg Tn To T^^f7 T^^f8 Tp Tr Ts Tu Tv Tw Tx Tz
+
+^^94a ^^94^^e6 ^^94^^a1 ^^94c ^^94^^e7 ^^94d ^^94^^9e ^^94^^19 ^^94e ^^94^^a6 ^^94g ^^94n ^^94o ^^94^^f7 ^^94^^f8 ^^94p ^^94r ^^94s ^^94u ^^94v ^^94w ^^94x ^^94z
+}
+
+eu3-lmr10:
+
+YA YÀ YÁ YÂ YÃ YÄ YÅ YĂ YĄ YÆ
+
+ÝA ÝÀ ÝÁ ÝÂ ÝÃ ÝÄ ÝÅ ÝĂ ÝĄ ÝÆ
+
+ŸA ŸÀ ŸÁ ŸÂ ŸÃ ŸÄ ŸÅ ŸĂ ŸĄ ŸÆ
+
+{
+\eclmr
+\kcatcode"A7=15
+\kcatcode"C0=15
+
+ec-lmr10:
+
+YA Y^^c0 Y^^c1 Y^^c2 Y^^c3 Y^^c4 Y^^c5 Y^^80 Y^^81 Y^^c6
+
+^^ddA ^^dd^^c0 ^^dd^^c1 ^^dd^^c2 ^^dd^^c3 ^^dd^^c4 ^^dd^^c5 ^^dd^^80 ^^dd^^81 ^^dd^^c6
+
+^^98A ^^98^^c0 ^^98^^c1 ^^98^^c2 ^^98^^c3 ^^98^^c4 ^^98^^c5 ^^98^^80 ^^98^^81 ^^98^^c6
+}
+
+eu3-lmr10:
+
+Ya Yæ Yą Yc Yç Yd Yđ Yı Ye Yę Yg Yn Yo Yœ Yø Yp Yr Ys Yu Yv Yw Yx Yz
+
+Ýa Ýæ Ýą Ýc Ýç Ýd Ýđ Ýı Ýe Ýę Ýg Ýn Ýo Ýœ Ýø Ýp Ýr Ýs Ýu Ýv Ýw Ýx Ýz
+
+Ÿa Ÿæ Ÿą Ÿc Ÿç Ÿd Ÿđ Ÿı Ÿe Ÿę Ÿg Ÿn Ÿo Ÿœ Ÿø Ÿp Ÿr Ÿs Ÿu Ÿv Ÿw Ÿx Ÿz
+
+{
+\eclmr
+\kcatcode"A7=15
+\kcatcode"C0=15
+
+ec-lmr10:
+
+Ya Y^^e6 Y^^a1 Yc Y^^e7 Yd Y^^9e Y^^19 Ye Y^^a6 Yg Yn Yo Y^^f7 Y^^f8 Yp Yr Ys Yu Yv Yw Yx Yz
+
+^^dda ^^dd^^e6 ^^dd^^a1 ^^ddc ^^dd^^e7 ^^ddd ^^dd^^9e ^^dd^^19 ^^dde ^^dd^^a6 ^^ddg ^^ddn ^^ddo ^^dd^^f7 ^^dd^^f8 ^^ddp ^^ddr ^^dds ^^ddu ^^ddv ^^ddw ^^ddx ^^ddz
+
+^^98a ^^98^^e6 ^^98^^a1 ^^98c ^^98^^e7 ^^98d ^^98^^9e ^^98^^19 ^^98e ^^98^^a6 ^^98g ^^98n ^^98o ^^98^^f7 ^^98^^f8 ^^98p ^^98r ^^98s ^^98u ^^98v ^^98w ^^98x ^^98z
+}
+
+\sfcode"C6=999
+\sfcode"152=999
+\lccode"C6="E6 % Æ -> æ
+\lccode"152="153 % Œ -> œ
+\lccode"153="153
+
+% do not use U+BF, U+2019, U+201C, U+201D
+``?`But aren't Kafka's Schloß and Æsop's Œuvres
+often naïve vis-à-vis the dæmonic phœnix's official rôle
+in fluffy soufflés?''
+
+\kcatcode"2019=14
+\catcode"2019=11
+\catcode"201C=11
+\catcode"201D=11
+
+“¿But aren’t Kafka’s Schloß and Æsop’s Œuvres
+often naïve vis-à-vis the dæmonic phœnix’s official rôle
+in fluffy soufflés?”
+
+{
+\eclmr
+\lccode"D7="F7 % Œ -> œ in T1 encoding
+\lccode"F7="F7
+
+``?`But aren't Kafka's Schlo^^ff and ^^c6sop's ^^d7uvres
+often na^^efve vis-^^e0-vis the d^^e6monic ph^^f7nix's official r^^f4le
+in fluffy souffl^^e9s?''
+}
+
+\bye

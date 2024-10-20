@@ -1,0 +1,96 @@
+ restricted \write18 enabled.
+ %&-line parsing enabled.
+**up-lmr1.tex
+(./up-lmr1.tex
+\ChrA=\count26
+\ChrB=\count27
+> \box0=
+\hbox(6.88875+0.0)x14.16666, yoko direction
+.\displace 0.0
+.\eulmr Y
+.\kern-0.83334
+.\eulmr A
+
+! OK.
+l.73 \showbox0
+              
+
+> \box1=
+\hbox(6.88875+1.94443)x14.16666, yoko direction
+.\displace 0.0
+.\eulmr Y
+.\kern-0.83334
+.\eulmr Ą
+
+! OK.
+l.75 \showbox1
+              
+
+> \box2=
+\hbox(8.29999+1.94443)x14.16666, yoko direction
+.\displace 0.0
+.\eulmr Ÿ
+.\kern-0.83334
+.\eulmr Ą
+
+! OK.
+l.77 \showbox2
+              
+
+> \box3=
+\hbox(9.20499+0.0)x14.16666, yoko direction
+.\displace 0.0
+.\eulmr Ý
+.\kern-0.83334
+.\eulmr Å
+
+! OK.
+l.79 \showbox3
+              
+
+> \box0=
+\hbox(6.88875+0.0)x14.16666, yoko direction
+.\displace 0.0
+.\eclmr Y
+.\kern-0.83334
+.\eclmr A
+
+! OK.
+l.91 \showbox0
+              
+
+> \box1=
+\hbox(6.88875+1.94443)x14.16666, yoko direction
+.\displace 0.0
+.\eclmr Y
+.\kern-0.83334
+.\eclmr ^^81
+
+! OK.
+l.93 \showbox1
+              
+
+> \box2=
+\hbox(8.29999+1.94443)x14.16666, yoko direction
+.\displace 0.0
+.\eclmr ^^98
+.\kern-0.83334
+.\eclmr ^^81
+
+! OK.
+l.95 \showbox2
+              
+
+> \box3=
+\hbox(9.20499+0.0)x14.16666, yoko direction
+.\displace 0.0
+.\eclmr ^^dd
+.\kern-0.83334
+.\eclmr ^^c5
+
+! OK.
+l.97 \showbox3
+              
+
+[1] )
+Output written on up-lmr1.dvi (1 page, 4324 bytes).

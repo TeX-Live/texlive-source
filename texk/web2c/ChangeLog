@@ -1,3 +1,13 @@
+2024-10-20  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* lib/texmfmp.c (maininit): Support ofm in {,e}upTeX.
+	https://github.com/texjporg/tex-jp-build/issues/170
+	* tests/eu3-lmr10.{ofm,ovf,ovp}, tests/eu3-lmr10_eu3.ovf,
+	tests/eu3-lmr10_ucs.{ofm,ovp}, tests/lm-{ec,texnansi}.enc,
+	tests/lmr10.pfb, tests/texnansi-lmr10.tfm,
+	tests/uctt10x.{opl,ofm,ovp,ovf}, am/web.am:
+	Add for tests of upTeX and OFM.
+
 2024-09-16  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* tests/ec-lmr10.tfm, tests/dump-basic.tex:
