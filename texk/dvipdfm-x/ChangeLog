@@ -1,3 +1,13 @@
+2024-10-20  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* dvipdfmx-lmr{0,1}.test, tests/UPJF-UTF16-{H,V},
+	tests/lm.map, tests/psfonts.map,
+	tests/lmr0.tex, tests/lmr0-{al,up}.dvi,
+	upjf_{full,omit}.{cnf,vf}, upjf1_{full,omit}.{vf,zvp0},
+	upjf2_full.{vf,zvp0}, upjv_{full,omit}.vf, Makefile.am:
+	Add tests for upTeX and OFM.
+	https://github.com/texjporg/tex-jp-build/issues/170
+
 2024-10-19  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* dvipdfmx-upjf{,2,3}.test, tests/upjf.tex,

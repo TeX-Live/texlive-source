@@ -1,0 +1,69 @@
+#! /bin/sh -vx
+# $Id$
+# Copyright 2024 Japanese TeX Development Community <issue@texjp.org>
+# You may freely use, modify and/or distribute this file.
+
+KpsDir=${KpsDir:-../kpathsea}
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_kpsewhich=$KpsDir/kpsewhich$ExeExt
+_xdvipdfmx=$BinDir/xdvipdfmx$ExeExt
+
+if type kpsewhich > /dev/null 2>&1; then
+    otfpath=".//;"`kpsewhich -show-path='opentype fonts'`
+    otfpath=`echo $otfpath | sed -e 's,!!,,g'`
+fi
+
+TEXMFCNF=$srcdir/../kpathsea
+TFMFONTS=".;$srcdir/tests;$srcdir/data;$srcdir/../web2c/tests"
+T1FONTS="$srcdir/tests;$srcdir/data;$srcdir/../web2c/tests"
+TEXFONTMAPS="$srcdir/tests;$srcdir/data"
+DVIPDFMXINPUTS="$srcdir/tests;$srcdir/data"
+TEXPICTS=$srcdir/tests
+TEXFONTS="./tmp101;$srcdir/tests;$srcdir/../web2c/tests"
+SOURCE_DATE_EPOCH=1588474800
+export TEXMFCNF TFMFONTS T1FONTS TEXFONTMAPS DVIPDFMXINPUTS TEXPICTS TEXFONTS SOURCE_DATE_EPOCH
+
+if type kpsewhich > /dev/null 2>&1; then
+    echo $otfpath
+else
+    otfpath=".//;"`$_kpsewhich -show-path='opentype fonts'`
+    echo $otfpath
+fi
+OPENTYPEFONTS=`$_kpsewhich "--cnf-line=OPENTYPEFONTS=$otfpath" -show-path='opentype fonts'`
+export OPENTYPEFONTS
+echo "OPENTYPEFONTS::" $OPENTYPEFONTS
+
+failed=
+
+test -d tmp101 || mkdir -p tmp101
+
+rm -f ./tmp101/eu3-lmr10*.ovf ./tmp101/eu3-lmr10*.ofm
+
+#####  following tests require Latin Modern OpenType fonts  #####
+
+$_kpsewhich lmroman10-regular.otf || exit 77
+
+echo "*** dvipdfmx: test for lmr0-al-ucs.pdf" && echo \
+	&& cp $srcdir/../web2c/tests/eu3-lmr10.ovf ./tmp101/eu3-lmr10.ovf \
+	&& cp $srcdir/../web2c/tests/eu3-lmr10.ofm ./tmp101/eu3-lmr10.ofm \
+	&& cp $srcdir/tests/upjf_omit.vf ./tmp101/upjf.vf \
+	&& $_xdvipdfmx --dvipdfmx -vv -f lm.map -o lmr0-al-ucs.pdf $srcdir/tests/lmr0-al.dvi \
+	&& echo && echo "dvipdfmx-lmr0-al-ucs tests OK" && echo \
+	|| failed="$failed dvipdfmx-lmr0-al-ucs"
+
+#####  following tests require HaranoAji fonts  #####
+
+$_kpsewhich HaranoAjiMincho-Regular.otf || exit 77
+$_kpsewhich HaranoAjiGothic-Normal.otf || exit 77
+
+echo "*** dvipdfmx: test for lmr0-up-ucs.pdf" && echo \
+	&& $_xdvipdfmx --dvipdfmx -vv -f lm.map -f upjf-hara.map -o lmr0-up-ucs.pdf $srcdir/tests/lmr0-up.dvi \
+	&& echo && echo "dvipdfmx-lmr0-up-ucs tests OK" && echo \
+	|| failed="$failed dvipdfmx-lmr0-up-ucs"
+
+
+test -z "$failed" && exit 0
+echo
+echo "failed tests:$failed"
+exit 1

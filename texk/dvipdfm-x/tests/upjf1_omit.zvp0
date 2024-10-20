@@ -13,6 +13,50 @@
    (FONTAT R 1.0)
    (FONTDSIZE R 10.0)
    )
+(CHARACTER H D7
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H D7)
+      )
+   )
+(CHARACTER H F7
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H F7)
+      )
+   )
+(CHARACTER H 2018
+   (CHARWD R 0.5)
+   (MAP
+      (MOVERIGHT R -0.5)
+      (SELECTFONT D 0)
+      (SETCHAR H 2018)
+      )
+   )
+(CHARACTER H 2019
+   (CHARWD R 0.5)
+   (MAP
+      (SELECTFONT D 0)
+      (SETCHAR H 2019)
+      )
+   )
+(CHARACTER H 201C
+   (CHARWD R 0.5)
+   (MAP
+      (MOVERIGHT R -0.5)
+      (SELECTFONT D 0)
+      (SETCHAR H 201C)
+      )
+   )
+(CHARACTER H 201D
+   (CHARWD R 0.5)
+   (MAP
+      (SELECTFONT D 0)
+      (SETCHAR H 201D)
+      )
+   )
 (CHARACTER H 2600
    (CHARWD R 1.0)
    (MAP

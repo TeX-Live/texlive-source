@@ -1,0 +1,45 @@
+#! /bin/sh -vx
+# $Id$
+# Copyright 2024 Japanese TeX Development Community <issue@texjp.org>
+# You may freely use, modify and/or distribute this file.
+
+KpsDir=${KpsDir:-../kpathsea}
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_kpsewhich=$KpsDir/kpsewhich$ExeExt
+_xdvipdfmx=$BinDir/xdvipdfmx$ExeExt
+
+TEXMFCNF=$srcdir/../kpathsea
+TFMFONTS=".;$srcdir/tests;$srcdir/data;$srcdir/../web2c/tests"
+T1FONTS="$srcdir/tests;$srcdir/data;$srcdir/../web2c/tests"
+TEXFONTMAPS="$srcdir/tests;$srcdir/data"
+DVIPDFMXINPUTS="$srcdir/tests;$srcdir/data"
+TEXPICTS=$srcdir/tests
+TEXFONTS="./tmp100;$srcdir/tests;$srcdir/../web2c/tests"
+SOURCE_DATE_EPOCH=1588474800
+export TEXMFCNF TFMFONTS T1FONTS TEXFONTMAPS DVIPDFMXINPUTS TEXPICTS TEXFONTS SOURCE_DATE_EPOCH
+
+failed=
+
+test -d tmp100 || mkdir -p tmp100
+
+rm -f ./tmp100/eu3-lmr10*.ovf ./tmp100/eu3-lmr10*.ofm
+
+echo "*** dvipdfmx: test for lmr0-al-8bit.pdf" && echo \
+	&& cp $srcdir/../web2c/tests/eu3-lmr10.ovf ./tmp100/eu3-lmr10.ovf \
+	&& cp $srcdir/../web2c/tests/eu3-lmr10.ofm ./tmp100/eu3-lmr10.ofm \
+	&& $_xdvipdfmx --dvipdfmx -vv -o lmr0-al-8bit.pdf $srcdir/tests/lmr0-al.dvi \
+	&& echo && echo "dvipdfmx-lmr0-al-8bit tests OK" && echo \
+	|| failed="$failed dvipdfmx-lmr0-al-8bit"
+
+echo "*** dvipdfmx: test for lmr0-up-8bit.pdf" && echo \
+	&& cp $srcdir/tests/upjf_omit.vf ./tmp100/upjf.vf \
+	&& $_xdvipdfmx --dvipdfmx -vv -f upjf.map -o lmr0-up-8bit.pdf $srcdir/tests/lmr0-up.dvi \
+	&& echo && echo "dvipdfmx-lmr0-up-8bit tests OK" && echo \
+	|| failed="$failed dvipdfmx-lmr0-up-8bit"
+
+
+test -z "$failed" && exit 0
+echo
+echo "failed tests:$failed"
+exit 1

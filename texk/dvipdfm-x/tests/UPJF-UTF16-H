@@ -39,7 +39,10 @@ endcodespacerange
 <0000> <001f> 1
 endnotdefrange
 
-7 begincidchar
+10 begincidchar
+<00a7> 720
+<00d7> 695
+<00f7> 696
 <31f7> 16243
 <537f> 1698
 <6674> 2646
@@ -49,7 +52,9 @@ endnotdefrange
 <d87edc33> 13719
 endcidchar
 
-14 begincidrange
+16 begincidrange
+<2018> <2019> 670
+<201C> <201D> 672
 <2600> <2603> 8215
 <3000> <3002> 633
 <3005> <3007> 657
