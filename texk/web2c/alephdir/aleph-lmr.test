@@ -1,0 +1,33 @@
+#! /bin/sh -vx
+# Copyright 2024 Japanese TeX Development Community <issue@texjp.org>
+# You may freely use, modify and/or distribute this file.
+
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_aleph=$BinDir/aleph$ExeExt
+
+LC_ALL=C; export LC_ALL;  LANGUAGE=C; export LANGUAGE
+
+TEXMFCNF=$srcdir/../kpathsea;export TEXMFCNF
+OFMFONTS=".;$srcdir/tests"; export OFMFONTS
+TEXINPUTS=".;$srcdir/tests"; export TEXINPUTS
+OCPINPUTS=".;$srcdir/alephdir/tests"; export OCPINPUTS
+TEXFORMATS=.; export TEXFORMATS
+
+# get same filename in log
+rm -f al-lmr*.*
+$LN_S $srcdir/alephdir/tests/lmr1.tex ./al-lmr1.tex
+
+if test ! -f ./al-basic.tex; then
+  cp $srcdir/tests/dump-basic.tex ./al-basic.tex
+fi
+if test ! -f ./al-basic.fmt; then
+  $_aleph -ini -etex al-basic || exit 1
+fi
+
+$_aleph -fmt=al-basic -interaction=batchmode al-lmr1.tex || :
+
+sed '1d;3d;4d' al-lmr1.log >al-lmr1.out
+
+diff $srcdir/alephdir/tests/al-lmr1.log al-lmr1.out || exit 3
+

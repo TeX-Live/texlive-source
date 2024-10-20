@@ -1,0 +1,26 @@
+ restricted \write18 enabled.
+Copyright (C) 1994--2000 John Plaice and Yannis Haralambous
+Copyright (C) 2002--2021 Aleph task force
+entering extended mode
+**al-ofm
+(al-ofm.tex cmtt10 uctt10x
+> \box0=
+\hbox(6.94+0.0)x15.74995, direction TLT
+.\uctt [
+.\uctt ^^c6
+.\uctt ]
+
+! OK.
+l.44 \showbox0
+              
+
+
+\AAA ->^^c6^^a1
+
+\mAAA ->macro:->^^c6^^a1
+
+\AAA ->^^^^0152 ^^^^0152 ^^c6^^a1
+
+\mAAA ->macro:->^^^^0152 ^^^^0152 ^^c6^^a1
+We have "2010. We do not have "2014. [1] )
+Output written on al-ofm.dvi (1 page, 884 bytes).

@@ -104,10 +104,20 @@ EXTRA_DIST += \
 
 # Aleph Tests
 #
-aleph_tests = alephdir/aleph.test
-alephdir/aleph.log: aleph$(EXEEXT)
+aleph_tests = alephdir/aleph.test \
+	alephdir/aleph-ofm.test alephdir/aleph-lmr.test
+alephdir/aleph.log \
+	alephdir/aleph-ofm.log alephdir/aleph-lmr.log \
+	: aleph$(EXEEXT)
 
 EXTRA_DIST += $(aleph_tests)
+
+## alephdir/aleph-ofm.test
+EXTRA_DIST += alephdir/tests/al-ofm.tex alephdir/tests/al-ofm.log
+DISTCLEANFILES += al-ofm.*
+## alephdir/aleph-lmr.test
+EXTRA_DIST += alephdir/tests/lmr1.tex alephdir/tests/al-lmr1.log
+DISTCLEANFILES += al-lmr*.*
 
 if ALEPH
 TESTS += $(aleph_tests)

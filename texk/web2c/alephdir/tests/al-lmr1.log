@@ -1,0 +1,90 @@
+ restricted \write18 enabled.
+Copyright (C) 1994--2000 John Plaice and Yannis Haralambous
+Copyright (C) 2002--2021 Aleph task force
+entering extended mode
+**al-lmr1.tex
+(al-lmr1.tex
+\ChrA=\count26
+\ChrB=\count27
+> \box0=
+\hbox(6.88875+0.0)x14.16666, direction TLT
+.\eulmr Y
+.\kern-0.83334
+.\eulmr A
+
+! OK.
+l.67 \showbox0
+              
+
+> \box1=
+\hbox(6.88875+1.94443)x14.16666, direction TLT
+.\eulmr Y
+.\kern-0.83334
+.\eulmr ^^^^0104
+
+! OK.
+l.69 \showbox1
+              
+
+> \box2=
+\hbox(8.29999+1.94443)x14.16666, direction TLT
+.\eulmr ^^^^0178
+.\kern-0.83334
+.\eulmr ^^^^0104
+
+! OK.
+l.71 \showbox2
+              
+
+> \box3=
+\hbox(9.20499+0.0)x14.16666, direction TLT
+.\eulmr ^^dd
+.\kern-0.83334
+.\eulmr ^^c5
+
+! OK.
+l.73 \showbox3
+              
+
+> \box0=
+\hbox(6.88875+0.0)x14.16666, direction TLT
+.\eclmr Y
+.\kern-0.83334
+.\eclmr A
+
+! OK.
+l.83 \showbox0
+              
+
+> \box1=
+\hbox(6.88875+1.94443)x14.16666, direction TLT
+.\eclmr Y
+.\kern-0.83334
+.\eclmr ^^81
+
+! OK.
+l.85 \showbox1
+              
+
+> \box2=
+\hbox(8.29999+1.94443)x14.16666, direction TLT
+.\eclmr ^^98
+.\kern-0.83334
+.\eclmr ^^81
+
+! OK.
+l.87 \showbox2
+              
+
+> \box3=
+\hbox(9.20499+0.0)x14.16666, direction TLT
+.\eclmr ^^dd
+.\kern-0.83334
+.\eclmr ^^c5
+
+! OK.
+l.89 \showbox3
+              
+
+[1] )
+Output written on al-lmr1.dvi (1 page, 7960 bytes).

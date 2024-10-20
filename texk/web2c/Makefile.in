@@ -3588,6 +3588,8 @@ EXTRA_DIST = PROJECTS cftests cpascal.h help.h w2c/config.h \
 	omegaware/tests/arabic.ovp $(aleph_web_srcs) $(aleph_ch_srcs) \
 	alephdir/ChangeLog alephdir/aleph.defines \
 	alephdir/aleph.version $(aleph_tests) \
+	alephdir/tests/al-ofm.tex alephdir/tests/al-ofm.log \
+	alephdir/tests/lmr1.tex alephdir/tests/al-lmr1.log \
 	synctexdir/synctex_parser_c-auto.h synctexdir/ChangeLog \
 	synctexdir/README.txt synctexdir/synctex_parser_readme.txt \
 	synctexdir/synctex_parser_version.txt synctexdir/tests \
@@ -3698,7 +3700,8 @@ DISTCLEANFILES = CXXLD.sh tangle.c tangle.h tangle.p tangle-web2c \
 	omegaware/tests/specialhex.opl omegaware/tests/specialhex.ovf \
 	omegaware/tests/xspecialhex.* omegaware/tests/yrepeat* \
 	omegaware/tests/*yarabic* $(nodist_aleph_SOURCES) aleph.web \
-	aleph.ch aleph-web2c aleph.p aleph.pool aleph-tangle
+	aleph.ch aleph-web2c aleph.p aleph.pool aleph-tangle al-ofm.* \
+	al-lmr*.*
 CLEANFILES = $(EXTRA_PROGRAMS) $(EXTRA_LIBRARIES) $(EXTRA_LTLIBRARIES)
 TRIPTRAP_CLEAN = $(am__append_8) $(am__append_18) $(am__append_27) \
 	$(am__append_36) $(am__append_44) $(am__append_60) \
@@ -5596,7 +5599,9 @@ aleph_ch_srcs = \
 
 # Aleph Tests
 #
-aleph_tests = alephdir/aleph.test
+aleph_tests = alephdir/aleph.test \
+	alephdir/aleph-ofm.test alephdir/aleph-lmr.test
+
 synctex_SOURCES = \
 	synctexdir/synctex_main.c
 
@@ -22526,7 +22531,9 @@ aleph.web: tie$(EXEEXT) $(aleph_web_srcs)
 	$(tie_m) $(aleph_web_srcs)
 aleph.ch: tie$(EXEEXT) aleph.web $(aleph_ch_srcs)
 	$(tie_c) aleph.web $(aleph_ch_srcs)
-alephdir/aleph.log: aleph$(EXEEXT)
+alephdir/aleph.log \
+	alephdir/aleph-ofm.log alephdir/aleph-lmr.log \
+	: aleph$(EXEEXT)
 
 # (end of aleph.am)
 
