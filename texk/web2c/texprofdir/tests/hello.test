@@ -1,0 +1,26 @@
+#!/bin/sh -vx
+# $Id: hello.test 61117 2021-11-22 16:45:58Z mruckert $
+# Public domain. Originally written by Martin Ruckert
+# Basic check that hello.tex can be profiled 
+
+LC_ALL=C; export LC_ALL;  LANGUAGE=C; export LANGUAGE
+
+TEXMFCNF=$srcdir/../kpathsea; export TEXMFCNF
+TEXINPUTS=$srcdir/texprofdir/tests; export TEXINPUTS
+TFMFONTS=$srcdir/tests; export TFMFONTS
+T1FONTS=$srcdir/tests; export T1FONTS
+
+# separate from texprofdir/tests because automake writes hello.log
+# in texprofdir/tests (so it already exists).
+OUTDIR=./texprofdir/tests/outdir; mkdir $OUTDIR
+
+#./texprof --help >/dev/null  || exit $?
+./texprof --version || exit $?
+./texprofile --version || exit $?
+
+./texprof -prof -ini -interaction=nonstopmode -output-directory=$OUTDIR hello.tex \
+    || exit $?
+
+./texprofile hello.tprof || exit $?
+
+exit 0

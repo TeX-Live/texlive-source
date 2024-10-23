@@ -46,31 +46,25 @@ texprof-tangle: ctangle$(EXEEXT) texprofdir/texprof.w tangle-sh
 texprofile-tangle: ctangle$(EXEEXT) texprofdir/texprofile.w tangle-sh
 	$(texprof_ctangle_sh) texprofile
 
-EXTRA_DIST += texprofdir/ChangeLog $(texprof_web)
+EXTRA_DIST += texprofdir/ChangeLog $(texprof_web) $(texprofile_web) 
 
 DISTCLEANFILES += $(nodist_texprof_SOURCES)
 DISTCLEANFILES += texprofile-tangle texprof-tangle
 
 ## TeXprof tests
 #
-#texprof_tests = texprofdir/tests/hello.test \
-#  texprofdir/tests/rule.test
-#
-#texprofdir/tests/hello.log: texprof$(EXEEXT) histretch$(EXEEXT)
-#texprofdir/tests/rule.log: texprof$(EXEEXT) histretch$(EXEEXT) hishrink$(EXEEXT)
-#
-#EXTRA_DIST += $(texprof_tests)
-#
-#if TEXPROF
-#TESTS += $(texprof_tests)
-#endif TEXPROF
-#
-## hello.test
-#EXTRA_DIST += texprofdir/tests/hello.tex 
-#DISTCLEANFILES += hello.log
+texprof_tests = texprofdir/tests/hello.test 
 
-## rule.test
-#EXTRA_DIST += texprofdir/tests/rule.tex 
-#DISTCLEANFILES += rule.log
+texprofdir/tests/hello.log: texprof$(EXEEXT) texprofile$(EXEEXT)
+
+EXTRA_DIST += $(texprof_tests)
+
+if TEXPROF
+TESTS += $(texprof_tests)
+endif TEXPROF
+
+## hello.test
+EXTRA_DIST += texprofdir/tests/hello.tex 
+DISTCLEANFILES += hello.log
 
 # (end of texprof.am)
