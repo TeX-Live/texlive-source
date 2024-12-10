@@ -6158,8 +6158,6 @@ fi
 eval kpse_build_alias=\${build_alias-$build}
 
 
-MPFI_CONFIGS
-
  if test "x$enable_build" != xno; then
   build_TRUE=
   build_FALSE='#'

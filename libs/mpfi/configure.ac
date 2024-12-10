@@ -26,8 +26,6 @@ AC_CONFIG_HEADERS([mpfi_config.h])
 
 KPSE_CANONICAL_HOST
 
-MPFI_CONFIGS
-
 AM_CONDITIONAL([build], [test "x$enable_build" != xno])
 
 KPSE_GMP_FLAGS
