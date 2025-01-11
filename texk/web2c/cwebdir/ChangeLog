@@ -1,3 +1,7 @@
+2025-01-11  Andreas Scherer  <https://ascherer.github.io>
+
+	* ctwill-proofsort: Support multiple definitions of identifiers.
+
 2025-01-01  Andreas Scherer  <https://ascherer.github.io>
 
 	* Makefile,

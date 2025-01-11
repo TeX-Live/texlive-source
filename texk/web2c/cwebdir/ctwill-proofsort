@@ -64,15 +64,18 @@ foreach my $line (<STDIN>)
 		foreach my $key ($collator ?
 			$collator->sort(keys %mini_index) :
 			sort {"\L$a" cmp "\L$b"} keys %mini_index) {
-			print $mini_index{$key};
+			print join "\n", @{ $mini_index{$key} };
 		}
 		$print_index = 0;
 	} elsif ($print_index) { # mini-index entry
-		my (undef,$key) = split / /, $line; # 2nd column is the key
+		my (undef,$key,$type) = split / /, $line,3;
+		# 1st column is the section number (internal or external)
+		# 2nd column is the identifier
+		# the rest is the type of the identifier
 		$key =~ s/\\//g; # strip internal TeX escape(s)
 		$key =~ m/\w*\{(\w+)\}/; # extract plain key from control seq.
 		$key =~ m/\$(\w+)\$/ unless defined $1; # extract @f TeX key
-		$mini_index{$1} = $line; # store index entry
+		push @{ $mini_index{$1} }, $line; # store index entry
 		next; # print later
 	}
 
