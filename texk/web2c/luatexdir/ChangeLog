@@ -1,6 +1,13 @@
 2025-01-04 Luigi Scarso <luigi.scarso@gmail.com>
+	* fixed "unexpected delimiter construction with classic tfm cmex font", 
+	  see https://tex.stackexchange.com/a/734734/1090 (HH)
+	* LuaTeX 1.20.4
+
+
+2025-01-04 Luigi Scarso <luigi.scarso@gmail.com>
 	* replaced # error with # define UNSUPPORTED_ARCH in ffi.[ch]
 	* LuaTeX 1.20.3
+
 
 2025-01-04 Luigi Scarso <luigi.scarso@gmail.com>
 	* ffi.h: do not assume that struct cdata is aligned(16). 
