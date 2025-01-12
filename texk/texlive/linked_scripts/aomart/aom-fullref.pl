@@ -4,11 +4,41 @@
 # perl fullref.pl original.tex > converted.tex
 #
 #
-# Copyright (C) 2010-2021 Annals of Mathematics.  Licenses under CC0
 #
 # Author: Boris Veytsman
 #
-# Version: 0.9, 2010/12/04
+# Version: 1.0, 2025/01/08
+
+=pod
+
+=head1 NAME
+
+aom-fullref.pl - confert references to aomart fullref commands
+
+=head1 SYNOPSIS
+
+aom-fullref.pl INPUT > OUTPUT
+
+
+=head1 DESCRIPTION
+
+Aomart class L<https://ctan.org/pkg/aomart> uses commands like
+C<\fullref{Theorem}{ref}> to generate clickable reference to constructions
+like ``Theorem 7'' or ``Equation 4''.  This script changes all C<\ref> and
+C<\pageref> commands into C<\fullref> and C<\pfullref> commands suitable
+for use with aomart.
+
+
+=head1 AUTHOR
+
+Boris Veytsman
+
+=head1 COPYRIGHT AND LICENSE
+
+This work is in public domain and licensed under CC0 1.0
+
+=cut
+
 
 use strict;
 
