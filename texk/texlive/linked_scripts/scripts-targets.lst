@@ -46,6 +46,7 @@ texmf-dist/scripts/accfonts/mkt1font mkt1font
 texmf-dist/scripts/accfonts/vpl2ovp vpl2ovp
 texmf-dist/scripts/accfonts/vpl2vpl vpl2vpl
 texmf-dist/scripts/albatross/albatross.sh albatross
+texmf-dist/scripts/aomart/aom-fullref.pl aom-fullref
 texmf-dist/scripts/arara/arara.sh arara
 texmf-dist/scripts/attachfile2/pdfatfi.pl pdfatfi
 texmf-dist/scripts/authorindex/authorindex authorindex
