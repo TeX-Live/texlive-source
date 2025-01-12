@@ -2,7 +2,7 @@
 ** PsSpecialHandler.hpp                                                 **
 **                                                                      **
 ** This file is part of dvisvgm -- a fast DVI to SVG converter          **
-** Copyright (C) 2005-2024 Martin Gieseking <martin.gieseking@uos.de>   **
+** Copyright (C) 2005-2025 Martin Gieseking <martin.gieseking@uos.de>   **
 **                                                                      **
 ** This program is free software; you can redistribute it and/or        **
 ** modify it under the terms of the GNU General Public License as       **
@@ -107,7 +107,6 @@ class PsSpecialHandler : public SpecialHandler, protected PSActions {
 		static int SHADING_SEGMENT_SIZE;
 		static double SHADING_SIMPLIFY_DELTA;
 		static std::string BITMAP_FORMAT;
-		static bool EMBED_BITMAP_DATA;
 
 	protected:
 		void initialize ();

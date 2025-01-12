@@ -2,7 +2,7 @@
 ** PDFToSVG.cpp                                                         **
 **                                                                      **
 ** This file is part of dvisvgm -- a fast DVI to SVG converter          **
-** Copyright (C) 2005-2024 Martin Gieseking <martin.gieseking@uos.de>   **
+** Copyright (C) 2005-2025 Martin Gieseking <martin.gieseking@uos.de>   **
 **                                                                      **
 ** This program is free software; you can redistribute it and/or        **
 ** modify it under the terms of the GNU General Public License as       **
@@ -86,7 +86,7 @@ void PDFToSVG::convert (int pageno) {
 		ImageToSVG::convert(pageno);
 	else {
 		Message::mstream().indent(0);
-		Message::mstream(false, Message::MC_PAGE_NUMBER) << "processing PDF file\n";
+		Message::mstream(false, Message::MC_PAGE_NUMBER) << "processing page " << pageno << "\n";
 		Message::mstream().indent(1);
 		_pdfHandler.convert(filename(), pageno);
 		embed(_pdfHandler.bbox());

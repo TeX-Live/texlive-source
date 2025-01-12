@@ -1,5 +1,5 @@
---- dvisvgm-3.2.2/./Makefile.am	2024-03-07 03:04:19.000000000 -0800
-+++ dvisvgm-src/./Makefile.am	2024-03-07 14:43:29.913090622 -0800
+--- dvisvgm-3.4.3/./Makefile.am	2025-01-04 03:38:04.000000000 -0800
++++ dvisvgm-src/./Makefile.am	2025-01-11 10:13:34.973835948 -0800
 @@ -4,5 +4,5 @@
  ## Process this file with automake.
  

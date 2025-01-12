@@ -2,7 +2,7 @@
 ** SVGTree.hpp                                                          **
 **                                                                      **
 ** This file is part of dvisvgm -- a fast DVI to SVG converter          **
-** Copyright (C) 2005-2024 Martin Gieseking <martin.gieseking@uos.de>   **
+** Copyright (C) 2005-2025 Martin Gieseking <martin.gieseking@uos.de>   **
 **                                                                      **
 ** This program is free software; you can redistribute it and/or        **
 ** modify it under the terms of the GNU General Public License as       **
@@ -66,11 +66,13 @@ class SVGTree {
 		void setX (double x)                {_charHandler->notifyXAdjusted();}
 		void setY (double y)                {_charHandler->notifyYAdjusted();}
 		void setMatrix (const Matrix &m)    {_charHandler->setMatrix(m);}
-		void setColor (const Color &c);
+		void setFillColor (const Color &c);
+		void setStrokeColor (const Color &c);
 		void setOpacity (const Opacity &op) {_charHandler->setOpacity(op);}
 		void setVertical (bool state)       {_charHandler->setVertical(state);}
 		void transformPage (const Matrix &m);
-		Color getColor () const             {return _charHandler->getColor();}
+		Color getFillColor () const         {return _charHandler->getFillColor();}
+		Color getStrokeColor () const       {return _charHandler->getStrokeColor();}
 		const Opacity& getOpacity () const  {return _charHandler->getOpacity();}
 		const Matrix& getMatrix () const    {return _charHandler->getMatrix();}
 		XMLElement* rootNode () const       {return _root;}
@@ -89,6 +91,7 @@ class SVGTree {
 		static bool MERGE_CHARS;         ///< whether to merge chars with common properties into the same <text> tag
 		static bool ADD_COMMENTS;        ///< add comments with additional information
 		static double ZOOM_FACTOR;       ///< factor applied to width/height attribute
+		static bool EMBED_BITMAP_DATA;   ///< if true, bitmaps are embedded into the SVG document
 
 	private:
 		XMLDocument _doc;

@@ -2,7 +2,7 @@
 ** Unicode.cpp                                                          **
 **                                                                      **
 ** This file is part of dvisvgm -- a fast DVI to SVG converter          **
-** Copyright (C) 2005-2024 Martin Gieseking <martin.gieseking@uos.de>   **
+** Copyright (C) 2005-2025 Martin Gieseking <martin.gieseking@uos.de>   **
 **                                                                      **
 ** This program is free software; you can redistribute it and/or        **
 ** modify it under the terms of the GNU General Public License as       **
@@ -124,7 +124,7 @@ uint32_t Unicode::utf8ToCodepoint (const string &utf8) {
 	auto len = utf8.length();
 	if (len > 0) {
 		unsigned char c0 = utf8[0];
-		if (c0 >= 0 && c0 <= 127)
+		if (c0 <= 127)
 			return c0;
 		if (len > 1) {
 			unsigned char c1 = utf8[1];
@@ -242,7 +242,7 @@ static int32_t extract_codepoint_from_name (const string &name) {
 	if (hexstr.length() < 4 || (offset == 3 && hexstr.length() % 4 != 0))
 		return 0;
 	if (offset == 3)
-		hexstr = hexstr.substr(0, 4);
+		hexstr.resize(4);
 	int32_t codepoint;
 	istringstream iss(hexstr);
 	iss >> hex >> codepoint;

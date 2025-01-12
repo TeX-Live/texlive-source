@@ -2,7 +2,7 @@
 ** CLOption.hpp                                                         **
 **                                                                      **
 ** This file is part of dvisvgm -- a fast DVI to SVG converter          **
-** Copyright (C) 2005-2024 Martin Gieseking <martin.gieseking@uos.de>   **
+** Copyright (C) 2005-2025 Martin Gieseking <martin.gieseking@uos.de>   **
 **                                                                      **
 ** This program is free software; you can redistribute it and/or        **
 ** modify it under the terms of the GNU General Public License as       **
@@ -27,8 +27,7 @@
 
 namespace CL {
 
-class Option
-{
+class Option {
 	friend class CommandLine;
 	public:
 		enum class ArgMode {NONE, OPTIONAL, REQUIRED};
@@ -122,11 +121,10 @@ inline std::string parseValue (std::istream &is) {
 
 
 template <typename T, Option::ArgMode mode>
-class TypedOption : public Option
-{
+class TypedOption : public Option {
 	public:
 		TypedOption (const char *longName, char shortName, const char *argName, T val, const char *summary)
-			: Option(longName, shortName, summary), _argName(argName), _value(val) {}
+			: Option(longName, shortName, summary), _argName(argName), _value(std::move(val)) {}
 
 		TypedOption (const char *longName, char shortName, const char *argName, const char *summary)
 			: Option(longName, shortName, summary), _argName(argName), _value() {}
@@ -158,8 +156,7 @@ class TypedOption : public Option
 
 
 template <Option::ArgMode mode>
-class TypedOption<bool, mode> : public Option
-{
+class TypedOption<bool, mode> : public Option {
 	public:
 		TypedOption (const char *longName, char shortName, const char *argName, bool val, const char *summary)
 			: Option(longName, shortName, summary), _argName(argName), _value(val) {}

@@ -2,7 +2,7 @@
 ** StreamInputBufferTest.cpp                                            **
 **                                                                      **
 ** This file is part of dvisvgm -- a fast DVI to SVG converter          **
-** Copyright (C) 2005-2024 Martin Gieseking <martin.gieseking@uos.de>   **
+** Copyright (C) 2005-2025 Martin Gieseking <martin.gieseking@uos.de>   **
 **                                                                      **
 ** This program is free software; you can redistribute it and/or        **
 ** modify it under the terms of the GNU General Public License as       **
@@ -40,6 +40,27 @@ TEST(StreamInputBufferTest, get) {
 		EXPECT_EQ(in.get(), 'a'+i);
 		ok = (i < 26);
 	}
+}
+
+
+TEST(StreamInputBufferTest, read) {
+	istringstream iss("abcdefghijklmnopqrst");
+	StreamInputReader ir(iss);
+	char buf[10];
+	auto count = ir.read(buf, 9);
+	ASSERT_EQ(count, 9);
+	buf[count] = 0;
+	EXPECT_EQ(string(buf), "abcdefghi");
+
+	count = ir.read(buf, 9);
+	ASSERT_EQ(count, 9);
+	buf[count] = 0;
+	EXPECT_EQ(string(buf), "jklmnopqr");
+
+	count = ir.read(buf, 9);
+	ASSERT_EQ(count, 2);
+	buf[count] = 0;
+	EXPECT_EQ(string(buf), "st");
 }
 
 

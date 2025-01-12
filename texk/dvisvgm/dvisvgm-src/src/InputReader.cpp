@@ -2,7 +2,7 @@
 ** InputReader.cpp                                                      **
 **                                                                      **
 ** This file is part of dvisvgm -- a fast DVI to SVG converter          **
-** Copyright (C) 2005-2024 Martin Gieseking <martin.gieseking@uos.de>   **
+** Copyright (C) 2005-2025 Martin Gieseking <martin.gieseking@uos.de>   **
 **                                                                      **
 ** This program is free software; you can redistribute it and/or        **
 ** modify it under the terms of the GNU General Public License as       **
@@ -409,4 +409,19 @@ int StreamInputReader::peek (size_t n) const {
 	for (int i=n-1; i >= 0; i--)
 		_is.putback(chars[i]);
 	return ret;
+}
+
+
+streamsize StreamInputReader::read (char *buf, streamsize size) {
+	_is.read(buf, size);
+	return _is.gcount();
+}
+
+
+streamsize BufferInputReader::read (char *buf, streamsize size) {
+	char *p = buf;
+	int c = get();
+	while (c >= 0 && size-- > 0)
+		*p++ = char(c);
+	return p-buf;
 }

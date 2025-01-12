@@ -2,7 +2,7 @@
 ** TTFWriter.cpp                                                        **
 **                                                                      **
 ** This file is part of dvisvgm -- a fast DVI to SVG converter          **
-** Copyright (C) 2005-2024 Martin Gieseking <martin.gieseking@uos.de>   **
+** Copyright (C) 2005-2025 Martin Gieseking <martin.gieseking@uos.de>   **
 **                                                                      **
 ** This program is free software; you can redistribute it and/or        **
 ** modify it under the terms of the GNU General Public License as       **
@@ -63,7 +63,7 @@ class TTFHeader : public TTFTable {
 		void write (ostream &os) const override {
 			writeUInt32(os, 0x00010000);  // sfntVersion
 			writeUInt16(os, _numTables);
-			uint16_t entrySelector = util::ilog2(_numTables);
+			uint16_t entrySelector = max(0, util::ilog2(_numTables));
 			uint16_t searchRange = (1 << entrySelector)*16;
 			writeUInt16(os, searchRange);
 			writeUInt16(os, entrySelector);

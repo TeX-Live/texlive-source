@@ -2,7 +2,7 @@
 ** ColorSpecialHandler.hpp                                              **
 **                                                                      **
 ** This file is part of dvisvgm -- a fast DVI to SVG converter          **
-** Copyright (C) 2005-2024 Martin Gieseking <martin.gieseking@uos.de>   **
+** Copyright (C) 2005-2025 Martin Gieseking <martin.gieseking@uos.de>   **
 **                                                                      **
 ** This program is free software; you can redistribute it and/or        **
 ** modify it under the terms of the GNU General Public License as       **
@@ -29,6 +29,12 @@
 
 
 class ColorSpecialHandler : public SpecialHandler {
+	private:
+		struct ColorPair {
+			Color fillColor;
+			Color strokeColor;
+		};
+
 	public:
 		bool process (const std::string &prefix, std::istream &is, SpecialActions &actions) override;
 		static Color readColor (std::istream &is);
@@ -37,9 +43,16 @@ class ColorSpecialHandler : public SpecialHandler {
 		static const char* handlerName ()  {return "color";}
 		const char* info () const override {return "complete support of color specials";}
 		std::vector<const char*> prefixes () const override;
+		size_t stackSize () const {return _colorStack.size();}
+
+	protected:
+		char processPush (std::istream &is);
+		char processSet (std::istream &is);
 
 	private:
-		std::stack<Color> _colorStack;
+		Color _defaultFillColor = Color::BLACK;
+		Color _defaultStrokeColor = Color::BLACK;
+		std::vector<ColorPair> _colorStack;
 };
 
 #endif

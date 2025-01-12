@@ -1,5 +1,5 @@
 ## This file is part of dvisvgm
-## Copyright (C) 2005-2024 Martin Gieseking <martin.gieseking@uos.de>
+## Copyright (C) 2005-2025 Martin Gieseking <martin.gieseking@uos.de>
 ##
 ## Process this file with automake.
 
@@ -12,6 +12,7 @@ libgtest_la_LDFLAGS = -pthread
 EXTRA_DIST = gtest/LICENSE \
 	gtest/include \
 	gtest/src/gtest.cc \
+	gtest/src/gtest-assertion-result.cc \
 	gtest/src/gtest-death-test.cc \
 	gtest/src/gtest-filepath.cc \
 	gtest/src/gtest-internal-inl.h \

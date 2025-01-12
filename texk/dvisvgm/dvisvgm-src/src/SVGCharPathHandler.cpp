@@ -2,7 +2,7 @@
 ** SVGCharPathHandler.cpp                                               **
 **                                                                      **
 ** This file is part of dvisvgm -- a fast DVI to SVG converter          **
-** Copyright (C) 2005-2024 Martin Gieseking <martin.gieseking@uos.de>   **
+** Copyright (C) 2005-2025 Martin Gieseking <martin.gieseking@uos.de>   **
 **                                                                      **
 ** This program is free software; you can redistribute it and/or        **
 ** modify it under the terms of the GNU General Public License as       **
@@ -54,12 +54,12 @@ void SVGCharPathHandler::appendChar (uint32_t c, double x, double y) {
 	if (_font.changed()) {
 		_fontColor.set(_font.get()->color());
 		if (_fontColor.changed() && _fontColor.get() != Color::BLACK)
-			_color.changed(true); // ensure application of text color when resetting the font color to black
+			_fillColor.changed(true); // ensure application of text color when resetting the font color to black
 		_font.changed(false);
 	}
 	// Apply text color changes only if the color of the entire font is black.
 	// Glyphs of non-black fonts (e.g. defined in a XeTeX document) can't change their color.
-	CharProperty<Color> &color = (_fontColor.get() != Color::BLACK) ? _fontColor : _color;
+	CharProperty<Color> &color = (_fontColor.get() != Color::BLACK) ? _fontColor : _fillColor;
 	bool applyColor = color.get() != Color::BLACK || (SVGElement::USE_CURRENTCOLOR && SVGElement::CURRENTCOLOR == Color::BLACK);
 	bool applyMatrix = !_matrix->isIdentity();
 	bool applyOpacity = !_opacity->isFillDefault();

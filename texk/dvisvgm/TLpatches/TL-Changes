@@ -42,7 +42,7 @@ diff -u2 dvisvgm-{prev,$ver}/configure.ac
 patch -d dvisvgm-src -p1 <TLpatches/patch-08-makefiles 
 
 # remake autostuff (then make, etc., with fingers crossed).
-autoreconf
+autoreconf # will get warnings about POTRACE_LIBS, seemingly unavoidable
 
 # try build. Might need full rebuild due to C++.
 make -C ../../Work/texk/dvisvgm
@@ -66,6 +66,9 @@ make -C ../../Work/texk/dvisvgm check
 diff -u2 dvisvgm-$ver/configure.ac ./ >TLpatches/patch-04-configure
 for m in `(cd ./dvisvgm-src && find -name Makefile.am -o -name defs.am)`; do \
   diff -u2 dvisvgm-{$ver,src}/$m; done >TLpatches/patch-08-makefiles
+
+# check changes:
+svn diff TLpatches
 
 # commit:
 svn commit -m"dvisvgm $ver" . ../README

@@ -2,7 +2,7 @@
 ** TpicSpecialTest.cpp                                                  **
 **                                                                      **
 ** This file is part of dvisvgm -- a fast DVI to SVG converter          **
-** Copyright (C) 2005-2024 Martin Gieseking <martin.gieseking@uos.de>   **
+** Copyright (C) 2005-2025 Martin Gieseking <martin.gieseking@uos.de>   **
 **                                                                      **
 ** This program is free software; you can redistribute it and/or        **
 ** modify it under the terms of the GNU General Public License as       **
@@ -39,8 +39,8 @@ class TpicSpecialTest : public ::testing::Test {
 				void setY (double yy) override               {x = yy;}
 				double getX () const override                {return x;}
 				double getY () const override                {return y;}
-				Color getColor () const override             {return color;}
-				void setColor (const Color &c) override      {color = c;}
+				Color getFillColor () const override         {return color;}
+				void setFillColor (const Color &c) override  {color = c;}
 				const Matrix& getMatrix () const override    {static Matrix m(1); return m;}
 
 				string getXMLSnippet () const {

@@ -2,7 +2,7 @@
 ** MetafontWrapper.cpp                                                  **
 **                                                                      **
 ** This file is part of dvisvgm -- a fast DVI to SVG converter          **
-** Copyright (C) 2005-2024 Martin Gieseking <martin.gieseking@uos.de>   **
+** Copyright (C) 2005-2025 Martin Gieseking <martin.gieseking@uos.de>   **
 **                                                                      **
 ** This program is free software; you can redistribute it and/or        **
 ** modify it under the terms of the GNU General Public License as       **
@@ -75,7 +75,7 @@ bool MetafontWrapper::call (const string &mode, double mag) {
 		"batchmode;"                     // don't halt on errors and don't print informational messages
 		"input " << _fontname << "\"";   // load font description
 	Message::mstream(false, Message::MC_STATE) << "\nrunning Metafont for " << _fontname << '\n';
-	Process mf_process(mfName, oss.str());
+	Process mf_process(std::move(mfName), oss.str());
 	string mf_messages;
 	mf_process.run(_dir, &mf_messages);
 
@@ -119,7 +119,8 @@ int MetafontWrapper::getResolution (const string &mfMessage) const {
 			if (line.substr(0, 18) == "Output written on ") {
 				line = line.substr(18);
 				auto pos = line.find(' ');
-				line = line.substr(0, pos);
+				if (pos != string::npos)
+					line.resize(pos);
 				pos = line.rfind('.');
 				if (pos != string::npos && line.substr(line.length()-2) == "gf") {
 					line.pop_back();

@@ -2,7 +2,7 @@
 ** Directory.cpp                                                        **
 **                                                                      **
 ** This file is part of dvisvgm -- a fast DVI to SVG converter          **
-** Copyright (C) 2005-2024 Martin Gieseking <martin.gieseking@uos.de>   **
+** Copyright (C) 2005-2025 Martin Gieseking <martin.gieseking@uos.de>   **
 **                                                                      **
 ** This program is free software; you can redistribute it and/or        **
 ** modify it under the terms of the GNU General Public License as       **
@@ -48,9 +48,11 @@ Directory::~Directory () {
 bool Directory::open (string dirname) {
 	_dirname = dirname;
 #ifdef _WIN32
+	if (dirname.empty())
+		return false;
 	_firstread = true;
-	if (dirname[dirname.length()-1] == '/' || dirname[dirname.length()-1] == '\\')
-		dirname = dirname.substr(0, dirname.length()-1);
+	if (dirname.back() == '/' || dirname.back() == '\\')
+		dirname.pop_back();
 	dirname += "\\*";
 	_handle = FindFirstFile(dirname.c_str(), &_fileData);
 	return _handle != INVALID_HANDLE_VALUE;

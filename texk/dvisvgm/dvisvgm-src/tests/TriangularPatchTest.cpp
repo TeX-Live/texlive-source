@@ -2,7 +2,7 @@
 ** TriangularPatchTest.cpp                                              **
 **                                                                      **
 ** This file is part of dvisvgm -- a fast DVI to SVG converter          **
-** Copyright (C) 2005-2024 Martin Gieseking <martin.gieseking@uos.de>   **
+** Copyright (C) 2005-2025 Martin Gieseking <martin.gieseking@uos.de>   **
 **                                                                      **
 ** This program is free software; you can redistribute it and/or        **
 ** modify it under the terms of the GNU General Public License as       **
@@ -102,17 +102,6 @@ TEST(TriangularPatchTest, colorAt) {
 	EXPECT_EQ(tp1.colorAt(0, 0), Color(1.0, 1.0, 0.0));
 	EXPECT_EQ(tp1.colorAt(1, 0), Color(1.0, 0.0, 1.0));
 	EXPECT_EQ(tp1.colorAt(0, 1), Color(0.0, 1.0, 1.0));
-}
-
-
-TEST(TriangularPatchTest, averageColor) {
-	vector<DPair> points(3);
-	vector<Color> colors(3);
-	colors[0] = Color(1.0, 0.0, 0.0);
-	colors[1] = Color(0.0, 1.0, 0.0);
-	colors[2] = Color(0.0, 0.0, 1.0);
-	TriangularPatch tp(points, colors, Color::ColorSpace::RGB, 0, 0);
-	EXPECT_EQ(tp.averageColor(), Color(uint8_t(85), uint8_t(85), uint8_t(85)));
 }
 
 

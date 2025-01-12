@@ -2,7 +2,7 @@
 ** TensorProductPatchTest.cpp                                           **
 **                                                                      **
 ** This file is part of dvisvgm -- a fast DVI to SVG converter          **
-** Copyright (C) 2005-2024 Martin Gieseking <martin.gieseking@uos.de>   **
+** Copyright (C) 2005-2025 Martin Gieseking <martin.gieseking@uos.de>   **
 **                                                                      **
 ** This program is free software; you can redistribute it and/or        **
 ** modify it under the terms of the GNU General Public License as       **
@@ -68,7 +68,7 @@ class TensorProductPatchTest : public ::testing::Test {
 			_points[13] = DPair(40, 80);
 			_points[14] = DPair(60, 70);
 			_points[15] = DPair(40, 40);
-			_patch.setPoints(_points, 0, 0);
+			_patch.setPoints(_points, 0, nullptr);
 
 			vector<Color> colors(4);
 			colors[0].setRGB(1.0, 0.0, 0.0);
@@ -136,38 +136,32 @@ TEST_F(TensorProductPatchTest, valueAt) {
 	EXPECT_EQ(tpp3.valueAt(1, 1), DPair(20, 40));
 
 	colors.resize(4);
-	CoonsPatch cp1(points, colors, Color::ColorSpace::RGB, 0, 0);
-	EXPECT_EQ(cp1.valueAt(0, 0), DPair(10, 70));
-	EXPECT_EQ(cp1.valueAt(0, 1), DPair(10, 10));
-	EXPECT_EQ(cp1.valueAt(1, 0), DPair(100, 70));
-	EXPECT_EQ(cp1.valueAt(1, 1), DPair(70, 20));
+	CoonsPatch cp1(points, colors, Color::ColorSpace::RGB, 0, nullptr);
+	EXPECT_EQ(cp1.valueAt(0, 0), DPair(10, 10));
+	EXPECT_EQ(cp1.valueAt(0, 1), DPair(10, 70));
+	EXPECT_EQ(cp1.valueAt(1, 0), DPair(70, 20));
+	EXPECT_EQ(cp1.valueAt(1, 1), DPair(100, 70));
 
 	points.resize(8);
 	colors.resize(2);
 	CoonsPatch cp2(points, colors, Color::ColorSpace::RGB, 1, &cp1);
-	EXPECT_EQ(cp2.valueAt(0, 0), DPair(100, 70));
-	EXPECT_EQ(cp2.valueAt(0, 1), DPair(10, 70));
-	EXPECT_EQ(cp2.valueAt(1, 0), DPair(20, 40));
-	EXPECT_EQ(cp2.valueAt(1, 1), DPair(70, 100));
+	EXPECT_EQ(cp2.valueAt(0, 0), DPair(10, 70));
+	EXPECT_EQ(cp2.valueAt(0, 1), DPair(100, 70));
+	EXPECT_EQ(cp2.valueAt(1, 0), DPair(70, 100));
+	EXPECT_EQ(cp2.valueAt(1, 1), DPair(20, 40));
 
 	CoonsPatch cp3(points, colors, Color::ColorSpace::RGB, 2, &cp1);
-	EXPECT_EQ(cp3.valueAt(0, 0), DPair(70, 20));
-	EXPECT_EQ(cp3.valueAt(0, 1), DPair(100, 70));
-	EXPECT_EQ(cp3.valueAt(1, 0), DPair(20, 40));
-	EXPECT_EQ(cp3.valueAt(1, 1), DPair(70, 100));
+	EXPECT_EQ(cp3.valueAt(0, 0), DPair(100, 70));
+	EXPECT_EQ(cp3.valueAt(0, 1), DPair(70, 20));
+	EXPECT_EQ(cp3.valueAt(1, 0), DPair(70, 100));
+	EXPECT_EQ(cp3.valueAt(1, 1), DPair(20, 40));
 
 	CoonsPatch cp4(points, colors, Color::ColorSpace::RGB, 3, &cp1);
-	EXPECT_EQ(cp4.valueAt(0, 0), DPair(10, 10));
-	EXPECT_EQ(cp4.valueAt(0, 1), DPair(70, 20));
-	EXPECT_EQ(cp4.valueAt(1, 0), DPair(20, 40));
-	EXPECT_EQ(cp4.valueAt(1, 1), DPair(70, 100));
+	EXPECT_EQ(cp4.valueAt(0, 0), DPair(70, 20));
+	EXPECT_EQ(cp4.valueAt(0, 1), DPair(10, 10));
+	EXPECT_EQ(cp4.valueAt(1, 0), DPair(70, 100));
+	EXPECT_EQ(cp4.valueAt(1, 1), DPair(20, 40));
 }
-
-
-TEST_F(TensorProductPatchTest, averageColor) {
-	EXPECT_EQ(_patch.averageColor().rgbString(), "#bf8040");
-}
-
 
 
 TEST_F(TensorProductPatchTest, vertices) {
@@ -185,13 +179,13 @@ TEST_F(TensorProductPatchTest, vertices) {
 
 TEST_F(TensorProductPatchTest, curves) {
 	CubicBezier bezier;
-	_patch.horizontalCurve(0, bezier);
+	bezier = _patch.horizontalCurve(0);
 	CHECK_BEZIER_POINTS("A", bezier, DPair(10, 10), DPair(20, 0), DPair(50, 30), DPair(70, 20));
-	_patch.horizontalCurve(1, bezier);
+	bezier = _patch.horizontalCurve(1);
 	CHECK_BEZIER_POINTS("B", bezier, DPair(10, 70), DPair(20, 100), DPair(70, 100), DPair(100, 70));
-	_patch.verticalCurve(0, bezier);
+	bezier = _patch.verticalCurve(0);
 	CHECK_BEZIER_POINTS("C", bezier, DPair(10, 10), DPair(0, 30), DPair(20, 40), DPair(10, 70));
-	_patch.verticalCurve(1, bezier);
+	bezier = _patch.verticalCurve(1);
 	CHECK_BEZIER_POINTS("D", bezier, DPair(70, 20), DPair(80, 50), DPair(90, 60), DPair(100, 70));
 }
 
@@ -267,7 +261,7 @@ TEST_F(TensorProductPatchTest, bbox) {
 
 class Callback : public ShadingPatch::Callback {
 	public:
-		void patchSegment (GraphicsPath<double> &path, const Color &color) {
+		void patchSegment (GraphicsPath<double> &path, const Color &color) override {
 			ostringstream oss;
 			path.writeSVG(oss, false);
 			_pathstr += oss.str();
@@ -286,10 +280,15 @@ class Callback : public ShadingPatch::Callback {
 TEST_F(TensorProductPatchTest, approximate) {
 	Callback callback;
 	vector<Color> colors(4);
-	TensorProductPatch tpp(_points, colors, Color::ColorSpace::RGB, 0, 0);
+	TensorProductPatch tpp(_points, colors, Color::ColorSpace::RGB, 0, nullptr);
 	tpp.approximate(2, false, 0.1, callback);
-	EXPECT_EQ(callback.pathstr(), "M10 10C20 0 50 30 70 20C80 50 90 60 100 70C70 100 20 100 10 70C20 40 0 30 10 10Z");
-	EXPECT_EQ(callback.colorstr(), "#000");
+	EXPECT_EQ(callback.pathstr(),
+		"M10 10C15 5 25 10 36.25 15C36.25 27.5 40 40.9375 43.28125 54.21875C31.25 52.1875 20.625 46.875 10 36.25"
+		"C7.5 27.5 5 20 10 10ZM36.25 15C47.5 20 60 25 70 20C75 35 80 45 85 52.5C68.75 55 55.3125 56.25 43.28125 54.21875"
+		"C40 40.9375 36.25 27.5 36.25 15ZM10 36.25C20.625 46.875 31.25 52.1875 43.28125 54.21875C46.5625 67.5 49.375 80.625 47.5 92.5"
+		"C30 92.5 15 85 10 70C15 55 12.5 45 10 36.25ZM43.28125 54.21875C55.3125 56.25 68.75 55 85 52.5C90 60 95 65 100 70"
+		"C85 85 65 92.5 47.5 92.5C49.375 80.625 46.5625 67.5 43.28125 54.21875Z");
+	EXPECT_EQ(callback.colorstr(), "#000#000#000#000");
 
 	callback.reset();
 	_patch.approximate(2, false, 0.1, callback);
@@ -299,33 +298,32 @@ TEST_F(TensorProductPatchTest, approximate) {
 		"M36.25 15C47.5 20 60 25 70 20C75 35 80 45 85 52.5C68.75 55 55.3125 56.25 43.28125 54.21875C40 40.9375 36.25 27.5 36.25 15Z"
 		"M10 36.25C20.625 46.875 31.25 52.1875 43.28125 54.21875C46.5625 67.5 49.375 80.625 47.5 92.5C30 92.5 15 85 10 70C15 55 12.5 45 10 36.25Z"
 		"M43.28125 54.21875C55.3125 56.25 68.75 55 85 52.5C90 60 95 65 100 70C85 85 65 92.5 47.5 92.5C49.375 80.625 46.5625 67.5 43.28125 54.21875Z");
-	EXPECT_EQ(callback.colorstr(), "#cf6010#70a030#efa030#cf6090");
+	EXPECT_EQ(callback.colorstr(), "#cf6010#709f30#ef9f30#cf608f");
 }
-
 
 
 TEST_F(TensorProductPatchTest, fail) {
 	// edge flag == 0
 	vector<DPair> points(15);
-	EXPECT_THROW(_patch.setPoints(points, 0, 0), ShadingException);
+	EXPECT_THROW(_patch.setPoints(points, 0, nullptr), ShadingException);
 	points.resize(17);  // too many points
-	EXPECT_THROW(_patch.setPoints(points, 0, 0), ShadingException);
+	EXPECT_THROW(_patch.setPoints(points, 0, nullptr), ShadingException);
 
 	vector<Color> colors(2); // too few colors
-	EXPECT_THROW(_patch.setColors(colors, 0, 0), ShadingException);
+	EXPECT_THROW(_patch.setColors(colors, 0, nullptr), ShadingException);
 	colors.resize(5);  // too many colors
-	EXPECT_THROW(_patch.setColors(colors, 0, 0), ShadingException);
+	EXPECT_THROW(_patch.setColors(colors, 0, nullptr), ShadingException);
 
 	// edge flag > 0
 	points.resize(16);
-	EXPECT_THROW(_patch.setPoints(points, 1, 0), ShadingException);
+	EXPECT_THROW(_patch.setPoints(points, 1, nullptr), ShadingException);
 	points.resize(11);  // too few points
 	EXPECT_THROW(_patch.setPoints(points, 1, &_patch), ShadingException);
 	points.resize(13);  // too many points
 	EXPECT_THROW(_patch.setPoints(points, 1, &_patch), ShadingException);
 
 	colors.resize(4);
-	EXPECT_THROW(_patch.setColors(colors, 1, 0), ShadingException);
+	EXPECT_THROW(_patch.setColors(colors, 1, nullptr), ShadingException);
 	colors.resize(1);  // too few colors
 	EXPECT_THROW(_patch.setColors(colors, 1, &_patch), ShadingException);
 	colors.resize(3);  // too many colors
@@ -333,11 +331,11 @@ TEST_F(TensorProductPatchTest, fail) {
 
 	CoonsPatch cp;
 	points.resize(8);
-	EXPECT_THROW(cp.setPoints(points, 1, 0), ShadingException);
+	EXPECT_THROW(cp.setPoints(points, 1, nullptr), ShadingException);
 	points.resize(11);
-	EXPECT_THROW(cp.setPoints(points, 0, 0), ShadingException);
+	EXPECT_THROW(cp.setPoints(points, 0, nullptr), ShadingException);
 	colors.resize(2);
-	EXPECT_THROW(cp.setColors(colors, 1, 0), ShadingException);
+	EXPECT_THROW(cp.setColors(colors, 1, nullptr), ShadingException);
 	colors.resize(5);
-	EXPECT_THROW(cp.setColors(colors, 0, 0), ShadingException);
+	EXPECT_THROW(cp.setColors(colors, 0, nullptr), ShadingException);
 }

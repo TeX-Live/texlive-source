@@ -1,3 +1,7 @@
+2025-01-11  Karl Berry  <karl@freefriends.org>
+
+	* Import dvisvgm-3.4.3, patch from Martin.
+
 2024-01-27  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* tests/dvisvgm-{uptex,hara}.test:

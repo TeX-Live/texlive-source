@@ -1,16 +1,16 @@
---- dvisvgm-3.2.2/configure.ac	2024-03-07 03:07:02.000000000 -0800
-+++ ./configure.ac	2024-03-07 14:41:00.745785681 -0800
+--- dvisvgm-3.4.3/configure.ac	2025-01-04 03:40:14.000000000 -0800
++++ ./configure.ac	2025-01-11 10:11:01.398834796 -0800
 @@ -1,18 +1,31 @@
 -# This file is part of dvisvgm
--# Copyright (C) 2005-2024 Martin Gieseking <martin.gieseking@uos.de>
+-# Copyright (C) 2005-2025 Martin Gieseking <martin.gieseking@uos.de>
 -#
 -# Process this file with autoconf to produce a configure script.
 -
-+dnl $Id: configure.ac 70431 2024-03-05 23:23:42Z karl $
++dnl $Id: configure.ac 70487 2024-03-07 22:55:09Z karl $
 +dnl Process this file with autoconf to produce a configure script
 +dnl for dvisvgm in TeX Live.
 +dnl
-+dnl   Copyright 2015-2024 Karl Berry <tex-live@tug.org>
++dnl   Copyright 2015-2025 Karl Berry <tex-live@tug.org>
 +dnl   Copyright 2009-2014 Peter Breitenlohner <tex-live@tug.org>
 +dnl
 +dnl   This file is free software; the copyright holder
@@ -18,13 +18,13 @@
 +dnl   with or without modifications, as long as this notice is preserved.
 +dnl
 +dnl  Adapted for TeX Live from original dvisvgm configure.ac
-+dnl  Copyright 2005-2024 Martin Gieseking
++dnl  Copyright 2005-2025 Martin Gieseking
 +dnl
  AC_PREREQ([2.69])
--AC_INIT([dvisvgm],[3.2.2],[martin.gieseking@uos.de])
+-AC_INIT([dvisvgm],[3.4.3],[martin.gieseking@uos.de])
 +m4_include([version.ac])[] dnl define dvisvgm_version
 +AC_INIT([dvisvgm (TeX Live)], dvisvgm_version, [tex-k@tug.org])
- DATE="March 2024"
+ DATE="January 2025"
 -AC_CONFIG_SRCDIR(src)
 +AC_CONFIG_SRCDIR([dvisvgm-src/src/dvisvgm.cpp])
  AC_CONFIG_HEADERS([config.h])

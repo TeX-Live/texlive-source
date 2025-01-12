@@ -1,11 +1,11 @@
 # This file is part of dvisvgm
-# Copyright (C) 2005-2024 Martin Gieseking <martin.gieseking@uos.de>
+# Copyright (C) 2005-2025 Martin Gieseking <martin.gieseking@uos.de>
 #
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.69])
-AC_INIT([dvisvgm],[3.2.2],[martin.gieseking@uos.de])
-DATE="March 2024"
+AC_INIT([dvisvgm],[3.4.3],[martin.gieseking@uos.de])
+DATE="January 2025"
 AC_CONFIG_SRCDIR(src)
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_MACRO_DIR([m4])
