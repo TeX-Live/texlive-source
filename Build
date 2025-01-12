@@ -62,14 +62,27 @@ fi
 
 # allow adding environment setting for build.
 : ${TL_BUILD_ENV=}; export TL_BUILD_ENV
-if test "x$1" = x--debug || test "x$1" = x-g; then
+if echo "$1" | grep '^--debug' >/dev/null || test "x$1" = x-g; then
+  debug_option=$1
   shift
   # The idea is that with Build -g, you can set TL_COMPILER_GFLAGS in
   # the environment with options common to all compilers --
   # not necessarily anything to do with debugging, e.g., -mcpu=sparvc9.
   # Or you can set TL_{C,CXX,OBJCXX}FLAGS for per-language flags,
   # notably TL_CFLAGS=-Wdeclaration-after-statement.
-  : ${TL_COMPILER_GFLAGS=-g}; export TL_COMPILER_CFLAGS
+  # 
+  # See https://tug.org/texlive/build.html for some discussion.
+  # 
+  if test "x$debug_option" = x--debug || test "x$debug_option" = x-g; then
+    : ${TL_COMPILER_GFLAGS=-g}
+  elif test "x$debug_option" = x--debug-more; then
+    : ${TL_COMPILER_GFLAGS=-g -Og -ggdb3}
+  else
+    echo "$0: unknown debugging option: $debug_option" >&2
+    exit 1
+  fi
+  export TL_COMPILER_CFLAGS
+  #
   c="CFLAGS='$TL_COMPILER_GFLAGS $TL_CFLAGS'"
   cxx="CXXFLAGS='$TL_COMPILER_GFLAGS $TL_CXXFLAGS'"
   objcxx="OBJCXXFLAGS='$TL_COMPILER_GFLAGS $TL_OBJCXXFLAGS'" # only for macs

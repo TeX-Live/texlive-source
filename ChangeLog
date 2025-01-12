@@ -1,3 +1,8 @@
+2025-01-12  Karl Berry  <karl@tug.org>
+
+	* Build: also support --debug-more for -g -Og -ggdb3,
+	per Luigi, as described on https://tug.org/texlive/build.html.
+
 2024-07-12  Karl Berry  <karl@freefriends.org>
 
 	* reautoconf with automake 1.17.
