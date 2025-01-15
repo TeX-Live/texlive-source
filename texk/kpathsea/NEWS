@@ -1,6 +1,9 @@
 $Id$
 This file records noteworthy changes.  (Public domain.)
 
+* kpsewhich outputs a blank line when a given file cannot be found,
+  if more than one file to search for is specified.  
+
 * A file named ".tex" can no longer be written from TeX; previously this
   was allowed as a special case.  (The LaTeX 2024-11-01 release changes
   their build process so as not to write it from TeX.)

@@ -3,12 +3,12 @@
 @settitle Kpathsea: A library for path searching
 
 @set version 6.4.0
-@set month-year November 2024
+@set month-year January 2025
 
 @copying
 This file documents the Kpathsea library for path searching.
 
-Copyright @copyright{} 1996--2024 Karl Berry & Olaf Weber.
+Copyright @copyright{} 1996--2025 Karl Berry & Olaf Weber.
 
 Permission is granted to make and distribute verbatim copies of this
 manual provided the copyright notice and this permission notice are
@@ -1516,7 +1516,15 @@ The options and filename(s) to look up can be intermixed.
 Options can start with either @samp{-} or @samp{--}, and any unambiguous
 abbreviation is accepted.
 
+Kpsewhich looks up each non-option argument on the command line as a
+filename, and outputs (by default) the first file found to standard
+output. If a file is not found, and more than @var{filename} is given,
+a blank line is output for that file. See examples below.
+
+The exit status is zero if all files were found, nonzero otherwise.
+
 @menu
+* kpsewhich examples::          Simple examples of running kpsewhich.
 * Path searching options::      Changing the mode, resolution, etc.
 * Specially-recognized files::  Default formats for texmf.cnf, etc.
 * Auxiliary tasks::             Path and variable expansion, etc.
@@ -1524,15 +1532,45 @@ abbreviation is accepted.
 @end menu
 
 
+@node kpsewhich examples
+@subsection @code{kpsewhich} examples
+
+@cindex @code{kpsewhich} examples
+@cindex examples, of running @code{kpsewhich} 
+
+Some examples of running @code{kpsewhich} with a typical @TeX{} tree.
+A basic successful search (exit status 0):
+
+@example
+$ kpsewhich plain.tex
+/usr/local/texlive/2024/texmf-dist/tex/plain/base/plain.tex
+@end example
+
+Searching for multiple files, one of which is not found (exit status
+is 1 for this):
+
+@example
+$ kpsewhich plain.tex foobar plain.mf
+/usr/local/texlive/2024/texmf-dist/tex/plain/base/plain.tex
+
+/usr/local/texlive/2024/texmf-dist/metafont/base/plain.mf
+@end example
+
+Using @code{--all} to see all files by the same name (exit status 0):
+
+@example
+$ kpsewhich --all language.dat
+/usr/local/texlive/2024/texmf-dist/tex/generic/config/language.dat
+/usr/local/texlive/2024/texmf-dist/lambda/generic/config/language.dat
+@end example
+
 @node Path searching options
 @subsection Path searching options
 
 @cindex path searching options
 
-Kpsewhich looks up each non-option argument on the command line as a
-filename, and returns the first file found.
-
-Various options alter the path searching behavior:
+Various options alter the path searching behavior. Options apply to
+all lookups.
 
 @table @samp
 @item --all
@@ -1542,6 +1580,10 @@ Report all matches found, one per line.  By default, if there is more
 than one match, just one will be reported (chosen effectively at
 random).  Exception: with the glyph formats (@code{pk}, @code{gf}),
 this option has no effect and only the first match is returned.
+
+With both @code{-all} and multiple input files, there's no easy way to
+discern which matches belong to which files; you have to check the
+basename of the output.  This could be improved, if there is any demand.
 
 @item --casefold-search
 @itemx --no-casefold-search

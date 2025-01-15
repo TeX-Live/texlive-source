@@ -1,3 +1,14 @@
+2025-01-15  Karl Berry  <karl@freefriends.org>
+
+	* kpsewhich.c (main): output blank line for search files that are
+	not found, if more than one search file is specified.
+	Suggestion from Norbert and Deyan, thread starting at
+	https://tug.org/pipermail/texhax/2024-July/026506.html
+	(USAGE): mention this.
+	* doc/kpathsea.texi (Invoking kpsewhich): mention this,
+	and the exit status.
+	(kpsewhich examples): new node.
+
 2024-11-06  Karl Berry  <karl@freefriends.org>
 
 	* tex-file.c (kpathsea_name_ok): don't allow writing to the

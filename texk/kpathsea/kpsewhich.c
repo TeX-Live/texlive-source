@@ -1,7 +1,7 @@
 /* kpsewhich -- standalone path lookup and variable expansion for Kpathsea.
    Ideas from Thomas Esser, Pierre MacKay, and many others.
 
-   Copyright 1995-2024 Karl Berry & Olaf Weber.
+   Copyright 1995-2025 Karl Berry & Olaf Weber.
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -477,13 +477,18 @@ Standalone path lookup and expansion for the Kpathsea library.\n\
 The default is to look up each FILENAME in turn and report its\n\
 first match (if any) to standard output.\n\
 \n\
+If multiple FILENAMEs are given and a given file is not found, a blank\n\
+line is written to standard output.\n\
+\n\
 When looking up format (.fmt/.base/.mem) files, it is usually necessary\n\
 to also use -engine, or nothing will be returned; in particular,\n\
 -engine=/ will return matching format files for any engine.\n\
 \n\
+The exit status is 0 if all files are found, nonzero otherwise.\n\
+\n\
 -all                   output all matches, one per line (no effect with pk/gf).\n\
 [-no]-casefold-search  fall back to case-insensitive search if no exact match.\n\
--cnf-line=STRING       parse STRING as a configuration file line.\n\
+-cnf-line=STRING       handle STRING as a configuration file line.\n\
 -debug=NUM             set debugging flags.\n\
 -D, -dpi=NUM           use a base resolution of NUM; default 600.\n\
 -engine=STRING         set engine name to STRING.\n\
@@ -501,13 +506,13 @@ to also use -engine, or nothing will be returned; in particular,\n\
 -progname=STRING       set program name to STRING.\n\
 -safe-in-name=STRING   check if STRING is ok to open for input.\n\
 -safe-out-name=STRING  check if STRING is ok to open for output.\n\
--safe-extended-in-name=STRING   also check TEXMF[SYS]VAR].\n\
--safe-extended-out-name=STRING  also check TEXMF[SYS]VAR].\n\
+-safe-extended-in-name=STRING   also check TEXMF[SYS]VAR.\n\
+-safe-extended-out-name=STRING  also check TEXMF[SYS]VAR.\n\
 -show-path=TYPE        output search path for file type TYPE\n\
                          (list shown by -help-formats).\n\
 -subdir=STRING         only output matches whose directory ends with STRING.\n\
--var-brace-value=STRING output brace-expanded value of variable $STRING.\n\
--var-value=STRING       output variable-expanded value of variable $STRING.\n\
+-var-brace-value=STRING output brace-expanded value of variable STRING.\n\
+-var-value=STRING       output variable-expanded value of variable STRING.\n\
 -version               display version information number and exit.\n \
 "
 
@@ -951,7 +956,14 @@ main (int argc,  string *argv)
 
   /* Usual case: look up each given filename.  */
   for (; optind < argc; optind++) {
-    unfound += lookup (kpse, argv[optind]);
+    unsigned status = lookup (kpse, argv[optind]);
+    unfound += status;
+    if (status == 1 && optind + 1 < argc) {
+      /* If not found, and more than one input file is specified,
+         output blank line so the return strings can be matched
+         up with the input strings. */
+      puts ("");
+    }
   }
 
   if (interactive) {
