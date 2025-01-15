@@ -1,3 +1,9 @@
+2025-01-15  J. Neusch\"afer  <j.ne@posteo.net>
+
+	* ac/withenable.ac: just KPSE_WITH_LIB([luajit]), no more [tree].
+	* ac/luajit.ac: new file for KPSE_TRY_LIB.
+	https://tug.org/pipermail/tex-live/2025-January/051043.html
+
 2023-08-23  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* luajiterr.test: Make easier to test on Windows.
@@ -15,7 +21,6 @@
 
 	Import LuaJIT-2.1.0-beta3.
 	* version.ac: Adjust.
-
 
 2016-03-09 Luigi Scarso <luigi.scarso@gmail.com>
 

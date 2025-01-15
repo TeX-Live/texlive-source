@@ -1,3 +1,12 @@
+2025-01-15  J. Neusch\"afer  <j.ne@posteo.net>
+
+	configure support for system luajit library.
+	* kpse-luajit-flags.m4 (KPSE_LUAJIT_FLAGS): just [lt], not [lt tree].
+	(KPSE_LUAJIT_OPTIONS, KPSE_LUAJIT_SYSTEM_FLAGS): new defuns.
+	* kpse-pkgs.m4 (KPSE_ALL_SYSTEM_FLAGS): include 
+	KPSE_LUAJIT_SYSTEM_FLAGS.
+	https://tug.org/pipermail/tex-live/2025-January/051043.html
+
 2024-04-28  Karl Berry  <karl@freefriends.org>
 
 	* kpse-common.m4 (KPSE_BASIC): 

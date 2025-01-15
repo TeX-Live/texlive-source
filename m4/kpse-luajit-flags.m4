@@ -1,6 +1,6 @@
 # $Id$
 # Public macros for the TeX Live (TL) tree.
-# Copyright 2019 Karl Berry <tex-live@tug.org>
+# Copyright 2019-2025 Karl Berry <tex-live@tug.org>
 # Copyright 2014 Peter Breitenlohner <tex-live@tug.org>
 #
 # This file is free software; the copyright holder
@@ -13,7 +13,7 @@
 # LIBS required for the `-ltexluajit' library in libs/luajit/ of the TL tree.
 AC_DEFUN([KPSE_LUAJIT_FLAGS], [dnl
 echo 'tldbg:[$0] called.' >&AS_MESSAGE_LOG_FD
-_KPSE_LIB_FLAGS([luajit], [texluajit], [lt tree],
+_KPSE_LIB_FLAGS([luajit], [texluajit], [lt],
                 [-IBLD/libs/luajit/include],
                 [BLD/libs/luajit/libtexluajit.la],
                 [],
@@ -60,6 +60,14 @@ AC_LINK_IFELSE(
 esac
 echo 'tldbg:[$0] done.' >&AS_MESSAGE_LOG_FD
 ]) # KPSE_LUAJIT_FLAGS
+
+# KPSE_LUAJIT_OPTIONS([WITH-SYSTEM])
+# ----------------------------------
+AC_DEFUN([KPSE_LUAJIT_OPTIONS], [_KPSE_LIB_OPTIONS([luajit], [$1], [pkg-config])])
+
+# KPSE_LUAJIT_SYSTEM_FLAGS
+# ------------------------
+AC_DEFUN([KPSE_LUAJIT_SYSTEM_FLAGS], [_KPSE_PKG_CONFIG_FLAGS([luajit], [luajit])])
 
 # KPSE_LUAJIT_DEFINES
 # -------------------

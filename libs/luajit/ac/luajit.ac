@@ -1,0 +1,10 @@
+dnl $Id$
+## libs/luajit/ac/luajit.ac: configure.ac fragment for the TeX Live subdirectory libs/luajit/
+dnl
+dnl Copyright 2025 Karl Berry <tex-live@tug.org>
+dnl You may freely use, modify and/or distribute this file.
+dnl
+## basic check of system luajit
+KPSE_TRY_LIB([luajit],
+             [#include <luajit.h>],
+             [const char *v = LUAJIT_VERSION;])
