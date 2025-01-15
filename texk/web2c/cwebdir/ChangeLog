@@ -1,3 +1,7 @@
+2025-01-15  Andreas Scherer  <https://ascherer.github.io>
+
+	* ctwill-mini.ch: Don't mess with /PageLabels in CTWILL output.
+
 2025-01-14  Andreas Scherer  <https://ascherer.github.io>
 
 	* texinputs/pdfctwimac.tex: Switch on PDF outlines.

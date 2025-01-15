@@ -25,6 +25,9 @@ Section 1.
   \pdfpageheight=\pageheight \advance\pdfpageheight by 5cm
   \ifpdflua \pdfhorigin=1cm \pdfvorigin=1cm
   \else \global\hoffset=-1.54cm \global\voffset=-1.54cm \fi
+  \def\startpdf{\def\pagemode{/PageMode /UseOutlines}
+    \ifpdflua\pdfcatalog{\pagemode}
+    \else\special{pdf: docview << \pagemode >>}\fi}
 \fi
 
 @** Introduction.
