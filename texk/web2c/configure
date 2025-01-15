@@ -1081,6 +1081,7 @@ with_system_ptexenc
 with_system_zlib
 with_zlib_includes
 with_zlib_libdir
+with_system_luajit
 with_system_libpng
 with_system_freetype2
 with_system_pixman
@@ -1850,6 +1851,8 @@ Optional Packages:
   --with-zlib-includes=DIR
                           zlib headers installed in DIR
   --with-zlib-libdir=DIR  zlib library installed in DIR
+  --with-system-luajit    use installed luajit headers and library (requires
+                          pkg-config)
   --with-system-libpng    use installed libpng headers and library (requires
                           pkg-config)
   --with-system-freetype2 use installed freetype2 headers and library
@@ -29053,8 +29056,22 @@ ${top_builddir}/../../libs/lua52/include/lua.h:
 
 echo 'tldbg:KPSE_LUAJIT_FLAGS called.' >&5
 ##tldbg _KPSE_LIB_FLAGS: Setup luajit (-ltexluajit) flags.
-echo 'tldbg:_KPSE_LIB_FLAGS called: libdir=luajit, libname=texluajit, options=lt tree, tlincl=-IBLD/libs/luajit/include, tllib=BLD/libs/luajit/libtexluajit.la, tlextra=, rebuildsrcdeps=, rebuildblddeps=${top_builddir}/../../libs/luajit/include/luajit.h.' >&5
-##tldbg _KPSE_LIB_FLAGS_TL: luajit (texluajit) lt tree.
+echo 'tldbg:_KPSE_LIB_FLAGS called: libdir=luajit, libname=texluajit, options=lt, tlincl=-IBLD/libs/luajit/include, tllib=BLD/libs/luajit/libtexluajit.la, tlextra=, rebuildsrcdeps=, rebuildblddeps=${top_builddir}/../../libs/luajit/include/luajit.h.' >&5
+##tldbg _KPSE_LIB_FLAGS_TL: luajit (texluajit) lt.
+
+# Check whether --with-system-luajit was given.
+if test ${with_system_luajit+y}
+then :
+  withval=$with_system_luajit;
+fi
+if test "x$with_system_luajit" = xyes; then
+  if $PKG_CONFIG luajit; then
+  LUAJIT_INCLUDES=`$PKG_CONFIG luajit --cflags`
+  LUAJIT_LIBS=`$PKG_CONFIG luajit --libs`
+elif test "x$need_luajit:$with_system_luajit" = xyes:yes; then
+  as_fn_error $? "did not find luajit" "$LINENO" 5
+fi
+else
   LUAJIT_INCLUDES="-I$kpse_BLD/libs/luajit/include"
   LUAJIT_LIBS="$kpse_BLD/libs/luajit/libtexluajit.la"
   LUAJIT_DEPEND='${top_builddir}/../../libs/luajit/libtexluajit.la'
@@ -29063,6 +29080,7 @@ $(LUAJIT_DEPEND): ${top_builddir}/../../libs/luajit/include/luajit.h
 	cd ${top_builddir}/../../libs/luajit && $(MAKE) $(AM_MAKEFLAGS) rebuild
 ${top_builddir}/../../libs/luajit/include/luajit.h:
 	cd ${top_builddir}/../../libs/luajit && $(MAKE) $(AM_MAKEFLAGS) rebuild'
+fi
 #
 # checking for openbsd for additional jit libraries needed, which is the
 # case for clang; no point in going to the trouble elsewhere since no

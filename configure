@@ -954,6 +954,7 @@ with_system_libpng
 with_system_libpaper
 with_libpaper_includes
 with_libpaper_libdir
+with_system_luajit
 with_system_zlib
 with_zlib_includes
 with_zlib_libdir
@@ -1845,6 +1846,8 @@ Optional Packages:
                           libpaper headers installed in DIR
   --with-libpaper-libdir=DIR
                           libpaper library installed in DIR
+  --with-system-luajit    use installed luajit headers and library (requires
+                          pkg-config)
   --with-system-zlib      use installed zlib headers and library
   --with-zlib-includes=DIR
                           zlib headers installed in DIR
@@ -7701,6 +7704,34 @@ fi
 
 ## libs/luajit/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory libs/luajit/
 ## configure options and TL libraries required for luajit
+
+# Check whether --with-system-luajit was given.
+if test ${with_system_luajit+y}
+then :
+  withval=$with_system_luajit;
+fi
+if test "x$with_system_luajit" = x; then
+  if test -f $srcdir/libs/luajit/configure; then
+    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: Assuming \`luajit' headers and library from TL tree" >&5
+printf "%s\n" "$as_me: Assuming \`luajit' headers and library from TL tree" >&6;}
+    with_system_luajit=no
+  else
+    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: Assuming installed \`luajit' headers and library" >&5
+printf "%s\n" "$as_me: Assuming installed \`luajit' headers and library" >&6;}
+    with_system_luajit=yes
+  fi
+  ac_configure_args="$ac_configure_args '--with-system-luajit=$with_system_luajit'"
+elif test "x$with_system_luajit" = xyes; then
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: Using installed \`luajit' headers and library" >&5
+printf "%s\n" "$as_me: Using installed \`luajit' headers and library" >&6;}
+else
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: Using \`luajit' headers and library from TL tree" >&5
+printf "%s\n" "$as_me: Using \`luajit' headers and library from TL tree" >&6;}
+  if test "x$with_system_luajit" != xno; then
+    with_system_luajit=no
+    ac_configure_args="$ac_configure_args '--without-system-luajit'"
+  fi
+fi
 
 ## libs/lua53/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory libs/lua53/
 ## configure options and TL libraries required for lua53
@@ -25426,6 +25457,13 @@ elif test "x$need_harfbuzz:$with_system_harfbuzz" = xyes:yes; then
   as_fn_error $? "did not find harfbuzz" "$LINENO" 5
 fi
 
+if $PKG_CONFIG luajit; then
+  LUAJIT_INCLUDES=`$PKG_CONFIG luajit --cflags`
+  LUAJIT_LIBS=`$PKG_CONFIG luajit --libs`
+elif test "x$need_luajit:$with_system_luajit" = xyes:yes; then
+  as_fn_error $? "did not find luajit" "$LINENO" 5
+fi
+
 
 
 
@@ -25512,6 +25550,37 @@ main (void)
 z_stream stream;
 const char *version = zlibVersion();
 deflate(&stream, 0);
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_link "$LINENO"
+then :
+  syslib_used=yes kpse_res=ok
+else case e in #(
+  e) syslib_status=no kpse_res=failed ;;
+esac
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.beam \
+    conftest$ac_exeext conftest.$ac_ext
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $kpse_res" >&5
+printf "%s\n" "$kpse_res" >&6; }
+fi
+
+## libs/luajit/ac/luajit.ac: configure.ac fragment for the TeX Live subdirectory libs/luajit/
+## basic check of system luajit
+if test "x$need_luajit:$with_system_luajit" = xyes:yes; then
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking requested system \`luajit' library" >&5
+printf %s "checking requested system \`luajit' library... " >&6; }
+  CPPFLAGS="$LUAJIT_INCLUDES $CPPFLAGS"
+  LIBS="$LUAJIT_LIBS $LIBS"
+  cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+#include <luajit.h>
+int
+main (void)
+{
+const char *v = LUAJIT_VERSION;
   ;
   return 0;
 }

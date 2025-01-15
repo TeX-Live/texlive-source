@@ -3,7 +3,7 @@
 # This "reautoconf" script at the root of the TeX Live source tree 
 # runs autoreconf (from PATH) in all relevant TL directories.
 #
-# Copyright 2008-2023 Karl Berry.
+# Copyright 2008-2025 Karl Berry.
 # Copyright 2004-2009 Peter Breitenlohner.
 # Copyright 2005 Olaf Weber.
 #
@@ -85,6 +85,7 @@ echo "$0: using `autoheader --version | sed 1q`"
 echo "$0: using `autom4te --version | sed 1q`"
 echo "$0: using `automake --version | sed 1q`"
 echo "$0: using `aclocal --version | sed 1q`"
+echo "$0: using `libtool --version | sed 1q`"
 echo "$0:       if you want to use different versions, set PATH."
 
 # Give users a chance to quit here.

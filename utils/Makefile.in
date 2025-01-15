@@ -104,6 +104,7 @@ am__aclocal_m4_deps = $(top_srcdir)/../m4/kpse-cairo-flags.m4 \
 	$(top_srcdir)/../m4/kpse-libpaper-flags.m4 \
 	$(top_srcdir)/../m4/kpse-libpng-flags.m4 \
 	$(top_srcdir)/../m4/kpse-lt-hack.m4 \
+	$(top_srcdir)/../m4/kpse-luajit-flags.m4 \
 	$(top_srcdir)/../m4/kpse-mktex.m4 \
 	$(top_srcdir)/../m4/kpse-mpfi-flags.m4 \
 	$(top_srcdir)/../m4/kpse-mpfr-flags.m4 \

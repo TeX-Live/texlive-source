@@ -104,6 +104,7 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/kpse-cairo-flags.m4 \
 	$(top_srcdir)/m4/kpse-libpaper-flags.m4 \
 	$(top_srcdir)/m4/kpse-libpng-flags.m4 \
 	$(top_srcdir)/m4/kpse-lt-hack.m4 \
+	$(top_srcdir)/m4/kpse-luajit-flags.m4 \
 	$(top_srcdir)/m4/kpse-mktex.m4 \
 	$(top_srcdir)/m4/kpse-mpfi-flags.m4 \
 	$(top_srcdir)/m4/kpse-mpfr-flags.m4 \
@@ -204,6 +205,7 @@ am__aclocal_m4_deps = $(top_srcdir)/m4/kpse-cairo-flags.m4 \
 	$(top_srcdir)/texk/kpathsea/ac/kpathsea.ac \
 	$(top_srcdir)/texk/ptexenc/ac/ptexenc.ac \
 	$(top_srcdir)/libs/zlib/ac/zlib.ac \
+	$(top_srcdir)/libs/luajit/ac/luajit.ac \
 	$(top_srcdir)/libs/libpaper/ac/libpaper.ac \
 	$(top_srcdir)/libs/libpng/ac/libpng.ac \
 	$(top_srcdir)/libs/freetype2/ac/freetype2.ac \
