@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 72848 2024-11-14 15:14:04Z karl $
+# $Id: tlmgr.pl 73459 2025-01-15 04:24:52Z preining $
 # Copyright 2008-2024 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
@@ -8,8 +8,8 @@
 
 use strict; use warnings;
 
-my $svnrev = '$Revision: 72848 $';
-my $datrev = '$Date: 2024-11-14 16:14:04 +0100 (Thu, 14 Nov 2024) $';
+my $svnrev = '$Revision: 73459 $';
+my $datrev = '$Date: 2025-01-15 05:24:52 +0100 (Wed, 15 Jan 2025) $';
 my $tlmgrrevision;
 my $tlmgrversion;
 my $prg;
@@ -213,6 +213,7 @@ my %action_specification = (
       "list" => 1, 
       "only-installed" => 1,
       "only-remote" => 1,
+      "only-files" => 1,
       "json" => 1
     },
     "run-post" => 0,
@@ -4368,6 +4369,17 @@ sub show_one_package_detail {
       }
     }
   }
+  if ($opts{"only-files"}) {
+    print "$pkg\n";
+    return show_one_package_detail3($tlpdb, $pkg, $tlp, $source_found, $installed, 1, @colls);
+  } else {
+    return show_one_package_detail2($tlpdb, $pkg, $tlp, $source_found, $installed, 0, @colls);
+  }
+}
+
+sub show_one_package_detail2 {
+  my ($tlpdb, $pkg, $tlp, $source_found, $installed, @colls) = @_;
+  my $ret = $F_OK;
   # {
   #   require Data::Dumper;
   #   print Data::Dumper->Dump([\$tlp], [qw(tlp)]);
@@ -4464,48 +4476,55 @@ sub show_one_package_detail {
       }
     }
     print "Included files, by type:\n";
-    # if the package has a .ARCH dependency we also list the files for
-    # those packages
-    my @todo = $tlpdb->expand_dependencies("-only-arch", $tlpdb, ($pkg));
-    for my $d (sort @todo) {
-      my $foo = $tlpdb->get_package($d);
-      if (!$foo) {
-        tlwarn ("$prg: Should not happen, no dependent package $d\n");
-        return($F_WARNING);
-      }
-      if ($d ne $pkg) {
-        print "depending package $d:\n";
-      }
-      if ($foo->runfiles) {
-        print "run files:\n";
-        for my $f (sort $foo->runfiles) { print "  $f\n"; }
-      }
-      if ($foo->srcfiles) {
-        print "source files:\n";
-        for my $f (sort $foo->srcfiles) { print "  $f\n"; }
-      }
-      if ($foo->docfiles) {
-        print "doc files:\n";
-        for my $f (sort $foo->docfiles) {
-          print "  $f";
-          my $dfd = $foo->docfiledata;
-          if (defined($dfd->{$f})) {
-            for my $k (keys %{$dfd->{$f}}) {
-              print " $k=\"", $dfd->{$f}->{$k}, '"';
-            }
-          }
-          print "\n";
-        }
-      }
-      # in case we have them
-      if ($foo->allbinfiles) {
-        print "bin files (all platforms):\n";
-      for my $f (sort $foo->allbinfiles) { print " $f\n"; }
-      }
-    }
+    $ret |= show_one_package_detail3($tlpdb, $pkg, $tlp, $source_found, $installed, 0, @colls);
   }
   print "\n";
   return($ret);
+}
+
+sub show_one_package_detail3 {
+  my ($tlpdb, $pkg, $tlp, $source_found, $installed, $silent, @colls) = @_;
+  my $ret = $F_OK;
+  # if the package has a .ARCH dependency we also list the files for
+  # those packages
+  my @todo = $tlpdb->expand_dependencies("-only-arch", $tlpdb, ($pkg));
+  for my $d (sort @todo) {
+    my $foo = $tlpdb->get_package($d);
+    if (!$foo) {
+      tlwarn ("$prg: Should not happen, no dependent package $d\n");
+      return($F_WARNING);
+    }
+    if ($d ne $pkg && !$silent) {
+      print "depending package $d:\n";
+    }
+    if ($foo->runfiles) {
+      print "run files:\n" if (!$silent);
+      for my $f (sort $foo->runfiles) { print "  $f\n"; }
+    }
+    if ($foo->srcfiles) {
+      print "source files:\n" if (!$silent);
+      for my $f (sort $foo->srcfiles) { print "  $f\n"; }
+    }
+    if ($foo->docfiles) {
+      print "doc files:\n" if (!$silent);
+      for my $f (sort $foo->docfiles) {
+        print "  $f";
+        my $dfd = $foo->docfiledata;
+        if (defined($dfd->{$f})) {
+          for my $k (keys %{$dfd->{$f}}) {
+            print " $k=\"", $dfd->{$f}->{$k}, '"';
+          }
+        }
+        print "\n";
+      }
+    }
+    # in case we have them
+    if ($foo->allbinfiles) {
+      print "bin files (all platforms):\n" if (!$silent);
+      for my $f (sort $foo->allbinfiles) { print "  $f\n"; }
+    }
+  }
+  return $ret;
 }
 
 #  PINNING
@@ -8818,6 +8837,11 @@ files is also shown, including those for platform-specific dependencies.
 When given with schemes and collections, C<--list> outputs their
 dependencies in a similar way.
 
+=item B<--only-files>
+
+If this option is given, only the files for a given package are listed,
+no further information.
+
 =item B<--only-installed>
 
 If this option is given, the installation source will not be used; only
@@ -10591,7 +10615,7 @@ This script and its documentation were written for the TeX Live
 distribution (L<https://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 72848 2024-11-14 15:14:04Z karl $
+$Id: tlmgr.pl 73459 2025-01-15 04:24:52Z preining $
 =cut
 
 # test HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html
