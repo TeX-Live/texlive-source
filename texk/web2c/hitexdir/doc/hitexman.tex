@@ -403,7 +403,7 @@ the primitive \ctl{HINTcolor}. It syntax is
 Before we give the complete definition of a  \sym{color specification},
 we start with some examples.
 In its simplest form this primitive just specifies a single color.
-For example \ctl{HINTcolor}\.{\{fg\{ 0 0 0\}\}} specifies
+For example \ctl{HINTcolor}\.{\{fg\{0 0 0\}\}} specifies
 the foreground color black which is then used for rules and glyphs.
 In addition to the foreground color, you can specify a background color.
 For example, black text on white background is specified by
@@ -523,11 +523,11 @@ Here is an example:
 Suppose we want the \TeX\ logo to be rendered in light red,
 and notes in dark green. You can write
 \medskip
+{\tt\parindent 0pt\rightskip=0pt plus 160pt
 \verbatim/\def\redTeX{\HINTcolor{fg{1 0.3 0.3}}\TeX\HINTendcolor}
 \def\beginnote{\HINTcolor{fg{0 0.5 0}}}
 \def\endnote{\HINTendcolor}/
 \medskip
-{\tt\parindent 0pt\rightskip=0pt plus 160pt
 This is an example showing the \ctl{redTeX}\BS\ logo in red color.
 \ctl{beginnote}\ Note how the \ctl{redTeX}\BS\ logo is still red inside
 this note.\ctl{endnote}\par}
@@ -537,7 +537,6 @@ After the first occurrence of the red \TeX\ logo, the color will be switched
 back to normal black, while after the second occurrence the color will
 be switched back to dark green. The color switching will work as intended
 even if the paragraph is spread over several lines by the line breaking routine.
-
 
 \subsubsection{Colors for Pages}
 When a page get rendered in the \HINT\ file viewer,
@@ -609,6 +608,134 @@ the link in the same box or it will restore the
 color in the outer box, or it will be ignored.
 In effect, the color changes inside a link stay local to the link.
 
+\subsection{\LaTeX\ Support}
+Starting with \TeX\ Live 2025, there is a limited support for the \.{xcolor}
+package.
+
+After \ctl{usepackage}\.{\{xcolor\}} you can use the predefined standard colors;
+for example \ctl{color}\.{\{red\}}. If you add one (or several) of the named colors
+options \.{x11names}, \.{svgnames}, or \.{dvipsnames} to the package,
+you can also use commands like
+\ctl{color}\.{\{Tomato4\}} (x11),
+\ctl{color}\.{\{BlanchedAlmond\}} (svg), or
+\ctl{color}\.{\{Plum\}} (dvips).
+
+
+To define your own colors you can use for example
+
+\ctl{definecolor}\.{\{mypink1\}\{rgb\}\{0.858, 0.188, 0.478\}},
+
+\ctl{definecolor}\.{\{mypink2\}\{RGB\}\{219, "30, 122\}},
+
+\ctl{definecolor}\.{\{mypink3\}\{cmyk\}\{0, 0.7808, 0.4429, 0.1412\}}, or
+
+\ctl{definecolor}\.{\{mygray\}\{gray\}\{0.2\}}.
+
+The mixing of colors is supported as well. For example a
+mixture of 40\% green and 60\% yellow look is produced by
+\ctl{color}\.{\{green!40!yellow\}}.
+
+The colors for links and other references can be given as options
+to the \.{hyperref} package. For example as in
+
+\ctl{usepackage}\.{[linkcolor=green,urlcolor=red]\{hyperref\}}
+
+\subsection{Differences between \LaTeX\ and Hi\LaTeX}
+
+\subsubsection{Colors and Groups}
+In \LaTeX, colors are local to the group. So by writing
+``\.{text 1} \.{\{}\ctl{color}\.{\{blue\}} \.{text 2} \.{\}} \.{text 3}''
+after \.{text 1} the color of \.{text 2} will change to  blue and after \.{\}}
+marking the end of the group, the color of \.{text 3} will revert to the
+color of \.{text 1}.
+
+The scoping rules of colors in Hi\TeX\ and Hi\LaTeX\ are however slightly
+different from the normal scoping rules when it comes to paragraphs.
+In \TeX\ and \LaTeX, boxes and references all have there own group,
+while this is not true for paragraphs.
+So \TeX or \LaTeX\ will allow you to start a new group in one paragraph and
+end the group in the next paragraph, while it is not possible to start a
+group in one box and end the group in another box. As a consequence,
+you can switch to blue text color in the middle of a paragraph and end the blue
+color in the middle of the next paragraph.
+In Hi\TeX, on the other hand, when it comes to colors,
+paragraphs behave pretty much like boxes: The effect of a color change inside
+a paragraph will not extend past the end of the paragraph. The closing of the
+group in the next paragraph will then have no effect.
+
+\subsubsection{Colors in vertical Lists}
+The \HINT\ file format allows color specifications in horizontal boxes
+and---unlike the \PDF\ file format---in vertical boxes as well.
+Together with the mode switching of \TeX, which goes into horizontal mode
+when it sees the beginning of a paragraph and back into vertical mode at
+the end of the paragraph, this can cause unexpected color effects.
+
+There is for example a big difference between
+
+\medskip
+\verbatim/\color{blue}
+The first paragraph ...
+
+The second paragraph ...
+/
+\medskip
+and
+\medskip
+\verbatim/\indent
+\color{blue}
+The first paragraph ...
+
+The second paragraph ...
+/
+\medskip
+
+In the first case, the color change is part of the vertical list
+and the letter ``\.T'' starts the paragraph. 
+As a consequence, the color change is still in effect when the second
+paragraph starts.
+In the second case, the \ctl{indent} command puts \TeX\ into horizontal mode
+and the color change becomes part of the first paragraph.
+As a consequence, the color change will end with the first paragraph, as explained
+in the previous section.
+
+Even more surprising is this:
+\medskip
+\verbatim/{\color{blue} Blue} The first paragraph ...
+
+The second paragraph ...
+/
+\medskip
+
+
+\TeX finds the begining of the group \.{\{} and the color change in vertical mode
+and it puts the color change into the vertical list. Then it finds the letter
+``\.B'' and starts the paragraph. When \TeX\ encounters the end of the group,
+there is no local color change {\it inside} the paragraph and the text
+continues to be blue. Even the second paragraph and all following paragraphs
+will continue in blue ink until the end of the vertical list.
+
+The confusion that such behaviour might create has its root in \TeX's
+mode switching which is not synchronized with \TeX's grouping.
+While grouping is typically visible in the source text, the mode
+switching remains largely invisible. 
+
+
+\subsection{Future Changes}
+
+While it may be questionable, whether all the color changes shown above
+makes sense, it is definitely undesirable if Hi\LaTeX\ and \LaTeX\
+behave differently.
+As a consequence,  Hi\LaTeX\ might very well change in this respect in a
+later version, so that  Hi\TeX\ will no longer treat the begining
+and ending of paragraphs as the beginning and ending of a group.
+
+\subsection{Default Colors}
+Because complete color specifications are pretty long. It is important
+to provide usefull defaults. Currently missing elements of a color specification
+are taken from a single default color specification. It might be convenient
+to be able to provide a way to define color specifications using the
+current color as a basis for missing elements.
+
 \subsubsection{Color Numbers}
 The \HINT\ file format references a color set by a number in the range
 0 to 254.
@@ -621,13 +748,15 @@ expand to the number $n$ of the current color set and
 \ctl{HINTcolor}$n$ would be equivalent to a use of \ctl{HINTcolor}
 with a full color specification that is equivalent to the color specification
 belonging to $n$.
-This would be much more efficient, because it would not be necessary
+This would be more efficient, because it would not be necessary
 to scan the color specification and search the existing color specifications
 for the matching specification with number $n$.
-But because for \TeX\ storing the number or storing the color specification
-as a macro does not make much of a difference, this extension is just
-a matter of efficiency. So currently, there are no plans to implement
-this extension.
+
+The \LaTeX\ named colors are stored as macros, which has the advantage that
+loading a whole package of color names does not use any of Hi\TeX's
+color numbers. Only colors that actually get used (probably only a few)
+will get a color number. This works well in practice.
+So currently, there are no plans to implement this extension.
 
 \subsection{Links, Labels, and Outlines}\label{llo}
 A link\index{link} in a \HINT\ document refers to another location in the same document.

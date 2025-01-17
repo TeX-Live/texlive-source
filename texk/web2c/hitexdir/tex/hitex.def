@@ -18,19 +18,67 @@
 \ProvidesFile{hitex.def}
   [2023/04/17 v0.1a Graphics/color driver for hitex]
 
+\def\c@lor@arg#1{%
+  \dimen@#1\p@
+  \ifdim\dimen@<\z@\dimen@\maxdimen\fi
+  \ifdim\dimen@>\p@
+    \PackageError{color}{Argument `#1' not in range [0,1]}\@ehd
+  \fi}
 
-\def\set@color{%
- \special{}%
- \hi@color@warn
+\global\def\current@color{0 0 0}
+\def\set@color{%\message{Set:\current@color.}
+ \HINTcolor{\current@color}%
  \aftergroup\reset@color}
-\def\reset@color{\special{}}%
+\def\set@page@color{%\message{Set page:\current@color.}
+ \HINTcolor{\current@color}%
+ \aftergroup\reset@color}
+\def\reset@color{%\message{Reset()}
+  \HINTendcolor}%
 
 \def\hi@color@warn{%
   \PackageWarning{color}{color not supported\@gobble}%
   \global\let\hi@color@warn\relax}
-  
 
-\def\color@rgb#1#2{\def#1{}}
+% Thanks to Ulrike Fischer
+\def\color@named#1#2{\c@lor@@named#2,,\@@#1}
+\def\define@color@named#1#2%
+    {\let\@@cls\@empty\@namedef{\@backslashchar color@#1}{{}{}{#2}{}{}}}
+\def\c@lor@@named#1,#2,#3\@@#4%
+    {\edef#4{\expandafter\expandafter\expandafter\@thirdoffive
+             \csname\@backslashchar color@#1\endcsname}}
+    
+
+\def\color@rgb#1#2{\c@lor@@rgb#2\@@#1}
+\def\c@lor@@rgb#1,#2,#3\@@#4{%
+  \c@lor@arg{#1}%
+  \c@lor@arg{#2}%
+  \c@lor@arg{#3}%
+  \edef#4{fg{#1 #2 #3}}%
+  }
+
+\def\color@RGB#1#2{\c@lor@@RGB#2\@@#1}
+\def\c@lor@@RGB#1,#2,#3\@@#4{%
+  \c@lor@arg{#1}%
+  \c@lor@arg{#2}%
+  \c@lor@arg{#3}%
+  \edef#4{FG{#1 #2 #3}}%
+  }
+
+
+\def\color@cmyk#1#2{\c@lor@@cmyk#2\@@#1}
+\def\c@lor@@cmyk#1,#2,#3,#4\@@#5{%
+  \c@lor@arg{#4}%
+  \c@lor@arg{#1}%
+  \c@lor@arg{#2}%
+  \c@lor@arg{#3}%
+  \edef#5{fg{cmyk #1 #2 #3 #4}}%
+  }
+  
+\def\color@gray#1#2{%
+  \c@lor@arg{#2}%
+  \edef#1{fg{#2 #2 #2}}%
+  }
+
 
 \def\Gin@extensions{.png,.jpg}
 \@namedef{Gin@rule@.png}#1{{png}{.png}{#1}}

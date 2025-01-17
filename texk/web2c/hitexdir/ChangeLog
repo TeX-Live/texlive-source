@@ -1,8 +1,11 @@
+2025-01-17  Martin Ruckert <ruckert@cs.hm.edu>
+	* Adding limited LaTeX color support
+
 2024-11-11  Martin Ruckert <ruckert@cs.hm.edu>
 
 	* Adding the color extensions
 	* Moving to version 2.1 of hitex and the HINT file format
-	
+
 2024-03-10  Karl Berry  <karl@tug.org>
 
 	* TL'24 release.

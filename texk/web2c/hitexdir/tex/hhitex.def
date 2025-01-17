@@ -162,6 +162,15 @@
   }\Hy@testname
   \expandafter\Hy@colorlink\csname @#1color\endcsname
 }
+
+\Hy@AtBeginDocument{%
+    \def\Hy@colorlink#1{%
+       \HyColor@UseColor#1%
+    }%
+    \def\Hy@endcolorlink{%
+    }%
+}
+
 \def\Hy@StartlinkName#1#2{%
   \HINTstartlink goto name{#2}\relax
 }
@@ -183,11 +192,7 @@
 }
 \def\hyper@linkstart#1#2{%
   \Hy@VerboseLinkStart{#1}{#2}%
-  \ltx@IfUndefined{@#1bordercolor}{%
-    \let\CurrentBorderColor\relax
-  }{%
-    \edef\CurrentBorderColor{\csname @#1bordercolor\endcsname}%
-  }%
+  \let\CurrentBorderColor\relax
   \find@pdflink{#1}{#2}%
 }
 \def\hyper@linkend{\close@pdflink}
@@ -202,9 +207,12 @@
   \close@pdflink
 }
 \let\CurrentBorderColor\@linkbordercolor
-\def\hyper@linkurl#1#2{}%
-\def\hyper@linkfile#1#2#3{}% anchor text, filename, linkname
-\def\@hyper@launch run:#1\\#2#3{}% filename, anchor text linkname
+\def\hyper@linkurl#1#2{%
+    \Hy@colorlink\@urlcolor#2\HINTendcolor}%
+\def\hyper@linkfile#1#2#3{% anchor text, filename, linkname
+    \Hy@colorlink\@filecolor#2\HINTendcolor}%
+\def\@hyper@launch run:#1\\#2#3{% filename, anchor text linkname
+    \Hy@colorlink\@runcolor#1\HINTendcolor}%
 \def\PDF@SetupDoc{}
 \def\PDF@FinishDoc{}%
  
