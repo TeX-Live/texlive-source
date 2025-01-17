@@ -4,6 +4,8 @@
     entries use an _ instead of ., as in PTEX_Fullbanner.
 - bugfixes:
   - increase tolerance for detecting interword spaces in overfull lines.
+  - ignore tiny resolutions like 1x1 embedded in images instead of
+    exceeding \maxdimen.
 
 pdfTeX 3.141592653-2.6-1.40.26 (TeX Live 2024)
 - bugfixes:

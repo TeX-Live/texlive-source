@@ -1,3 +1,10 @@
+2025-01-17  Max Chernoff  <tex@maxchernoff.ca>
+
+	* pdftex.web (Glob..., Set init...): new global
+	resolution_ratio==226.
+	(scale_image): use it to report a warning for too-small resolutions
+	(e.g., 1px x 1px). https://tex.stackexchange.com/questions/734919
+
 2024-08-04  Thanh Han The  <hanthethanh@gmail.com>
 
 	* pdftoepdf.cc (write_epdf): reversed sep and pdfkeyprefix.
