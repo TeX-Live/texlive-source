@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 73476 2025-01-16 02:10:58Z preining $
+# $Id: tlmgr.pl 73493 2025-01-17 22:28:29Z karl $
 # Copyright 2008-2024 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
@@ -8,8 +8,8 @@
 
 use strict; use warnings;
 
-my $svnrev = '$Revision: 73476 $';
-my $datrev = '$Date: 2025-01-16 03:10:58 +0100 (Thu, 16 Jan 2025) $';
+my $svnrev = '$Revision: 73493 $';
+my $datrev = '$Date: 2025-01-17 23:28:29 +0100 (Fri, 17 Jan 2025) $';
 my $tlmgrrevision;
 my $tlmgrversion;
 my $prg;
@@ -8843,7 +8843,8 @@ dependencies in a similar way.
 =item B<--only-files>
 
 If this option is given, only the files for a given package are listed,
-no further information.
+no further information. If more than one package name is given, each
+file list is preceded by the package name.
 
 =item B<--only-installed>
 
@@ -10618,7 +10619,7 @@ This script and its documentation were written for the TeX Live
 distribution (L<https://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 73476 2025-01-16 02:10:58Z preining $
+$Id: tlmgr.pl 73493 2025-01-17 22:28:29Z karl $
 =cut
 
 # test HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html
