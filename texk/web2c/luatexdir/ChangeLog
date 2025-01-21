@@ -1,3 +1,12 @@
+2025-01-19 Luigi Scarso <luigi.scarso@gmail.com>
+	* Fixed \shapemode does not reset at end of paragraphs (thanks to udifoglle@gmail.com)
+
+
+2025-01-18 Luigi Scarso <luigi.scarso@gmail.com>
+	* In output_name_tree, sort_dest_names now compares literal strings or hexdecimal strings. 
+	* LuaTeX 1.20.5
+
+
 2025-01-04 Luigi Scarso <luigi.scarso@gmail.com>
 	* fixed "unexpected delimiter construction with classic tfm cmex font", 
 	  see https://tex.stackexchange.com/a/734734/1090 (HH)
