@@ -104,7 +104,9 @@ upbibtex.p: tangle$(EXEEXT) upbibtex.web uptexdir/upbibtex.ch
 upbibtex.web: tie$(EXEEXT) bibtex.web bibtex.ch
 	$(tie_m) bibtex.web bibtex.ch
 EXTRA_DIST += uptexdir/upbibtex.ch
+if UPWEB
 bin_links += upbibtex$(EXEEXT):pbibtex
+endif # UPWEB
 
 ## upDVItype
 ##
@@ -122,7 +124,9 @@ updvitype.p: tangle$(EXEEXT) updvitype.web uptexdir/updvitype.ch
 updvitype.web: tie$(EXEEXT) dvitype.web dvitype.ch
 	$(tie_m) dvitype.web dvitype.ch
 EXTRA_DIST += uptexdir/updvitype.ch
+if UPWEB
 bin_links += updvitype$(EXEEXT):pdvitype
+endif # UPWEB
 
 ## upPLtoTF
 ##
@@ -140,7 +144,9 @@ uppltotf.p: tangle$(EXEEXT) uppltotf.web uptexdir/uppltotf.ch
 uppltotf.web: tie$(EXEEXT) pltotf.web pltotf.ch
 	$(tie_m) pltotf.web pltotf.ch
 EXTRA_DIST += uptexdir/uppltotf.ch
+if UPWEB
 bin_links += uppltotf$(EXEEXT):ppltotf
+endif # UPWEB
 
 ## upTFtoPL
 ##
@@ -158,7 +164,9 @@ uptftopl.p: tangle$(EXEEXT) uptftopl.web uptexdir/uptftopl.ch
 uptftopl.web: tie$(EXEEXT) tftopl.web tftopl.ch
 	$(tie_m) tftopl.web tftopl.ch
 EXTRA_DIST += uptexdir/uptftopl.ch
+if UPWEB
 bin_links += uptftopl$(EXEEXT):ptftopl
+endif # UPWEB
 
 ##
 EXTRA_DIST += \

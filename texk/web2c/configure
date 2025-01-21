@@ -24331,7 +24331,8 @@ fi
 
 
 
-{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for Mac OS X ApplicationServices framework" >&5
+if test "x$enable_xetex" = xyes; then
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for Mac OS X ApplicationServices framework" >&5
 printf %s "checking for Mac OS X ApplicationServices framework... " >&6; }
 if test ${kpse_cv_have_ApplicationServices+y}
 then :
@@ -24367,7 +24368,7 @@ printf "%s\n" "#define HAVE_APPLICATIONSERVICES 1" >>confdefs.h
 
 fi
 
-if test -n "$ac_tool_prefix"; then
+  if test -n "$ac_tool_prefix"; then
   # Extract the first word of "${ac_tool_prefix}pkg-config", so it can be a program name with args.
 set dummy ${ac_tool_prefix}pkg-config; ac_word=$2
 { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
@@ -24542,7 +24543,7 @@ fi
 
 
 
-if test "x$kpse_cv_have_ApplicationServices:$kpse_cv_have_fontconfig" = xno:no
+  if test "x$kpse_cv_have_ApplicationServices:$kpse_cv_have_fontconfig" = xno:no
 then :
   if test "x$enable_xetex" = xyes
 then :
@@ -24556,6 +24557,7 @@ fi
                        enable_xetex=no
 fi
 
+fi
 fi
  if test "x$kpse_cv_have_ApplicationServices" = xyes; then
   XETEX_MACOSX_TRUE=
@@ -29710,9 +29712,10 @@ ${top_builddir}/../../libs/teckit/include/teckit/TECkit_Common.h:
 fi
 
 
-# LuaTeX and XeTeX need harfbuzz.
+# XeTeX and lua[jit]hbtex need harfbuzz, but not regular luatex[53].
 if test "x$enable_xetex" = xyes \
-   || test "x$enable_luatex" = xyes || test "x$enable_luatex53" = xyes; then
+   || test "x$enable_luahbtex" = xyes \
+   || test "x$enable_luajithbtex" = xyes; then
   ##tldbg _KPSE_LIB_FLAGS: Setup graphite2 (-lgraphite2) flags.
 echo 'tldbg:_KPSE_LIB_FLAGS called: libdir=graphite2, libname=graphite2, options=, tlincl=-IBLD/libs/graphite2/include -DGRAPHITE2_STATIC, tllib=BLD/libs/graphite2/libgraphite2.a, tlextra=, rebuildsrcdeps=, rebuildblddeps=${top_builddir}/../../libs/graphite2/include/graphite2/Font.h.' >&5
 ##tldbg _KPSE_LIB_FLAGS_TL: graphite2 (graphite2) .

@@ -20615,8 +20615,7 @@ then :
 fi
 
 
-if test "x$enable_bibtexu" != xno; then
-    kpse_save_CPPFLAGS=$CPPFLAGS
+kpse_save_CPPFLAGS=$CPPFLAGS
 kpse_save_LIBS=$LIBS
 
 ##tldbg _KPSE_INIT: Initialize TL infrastructure.
@@ -22366,7 +22365,9 @@ then :
   KPATHSEA_INCLUDES="$KPATHSEA_INCLUDES -DNO_DEBUG"
 fi
 
-kpse_search_save_LIBS=$LIBS
+
+if test "x$enable_bibtexu" != xno; then
+    kpse_search_save_LIBS=$LIBS
 { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for library containing pthread_create" >&5
 printf %s "checking for library containing pthread_create... " >&6; }
 if test ${ac_cv_search_pthread_create+y}

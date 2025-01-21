@@ -1,7 +1,7 @@
 dnl $Id$
 ## libs/xpdf/ac/xpdf.ac: configure.ac fragment for the TeX Live subdirectory libs/xpdf/
 dnl
-dnl Copyright 2015-2020 Karl Berry <tex-live@tug.org>
+dnl Copyright 2015-2025 Karl Berry <tex-live@tug.org>
 dnl Copyright 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 dnl You may freely use, modify and/or distribute this file.
 dnl
@@ -9,4 +9,4 @@ dnl
 ## TL sources)
 KPSE_TRY_LIBXX([xpdf],
                [#include <GfxFont.h>],
-               [GfxFont *gfxFont; gfxFont->decRefCnt();])
+               [GfxFont *gfxFont; gfxFont->isOk();])

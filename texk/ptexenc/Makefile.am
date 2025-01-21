@@ -1,5 +1,7 @@
+## $Id$
 ## Makefile.am for the TeX Live subdirectory texk/ptexenc/
 ##
+## Copyright (C) 2015-2025 Karl Berry <tex-live@tug.org>
 ## Copyright (C) 2010-2014 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
@@ -32,7 +34,8 @@ libptexenc_la_LIBADD = $(KPATHSEA_LIBS)
 
 nobase_include_HEADERS = \
 	ptexenc/ptexenc.h \
-	ptexenc/unicode.h
+	ptexenc/unicode.h \
+	ptexenc/unicode-jp.h
 
 pkgconfigdir = ${libdir}/pkgconfig
 

@@ -156,11 +156,15 @@ AM_CONDITIONAL([USE_DLOPEN], [test "x$ac_cv_header_dlfcn_h" = xyes])
 AC_SUBST([lua_socketlibs])
 AC_SUBST([ipc_socketlibs])
 
-KPSE_CHECK_FRAMEWORK([ApplicationServices], [CTFontRef font])
-KPSE_FONTCONFIG_FLAGS
-AS_IF([test "x$kpse_cv_have_ApplicationServices:$kpse_cv_have_fontconfig" = xno:no],
-      [WEB2C_DISABLE([xetex], [neither ApplicationServices framework nor fontconfig library])])
-AM_CONDITIONAL([XETEX_MACOSX], [test "x$kpse_cv_have_ApplicationServices" = xyes])
+if test "x$enable_xetex" = xyes; then
+  KPSE_CHECK_FRAMEWORK([ApplicationServices], [CTFontRef font])
+  KPSE_FONTCONFIG_FLAGS
+  AS_IF([test "x$kpse_cv_have_ApplicationServices:$kpse_cv_have_fontconfig" = xno:no],
+        [WEB2C_DISABLE([xetex],
+              [neither ApplicationServices framework nor fontconfig library])])
+fi
+AM_CONDITIONAL([XETEX_MACOSX],
+               [test "x$kpse_cv_have_ApplicationServices" = xyes])
 
 dnl Generate *TEX and ALEPH conditionals.
 m4_foreach([Kpse_Prog], [kpse_tex_progs],
@@ -279,9 +283,10 @@ KPSE_XPDF_FLAGS
 KPSE_ZZIPLIB_FLAGS
 KPSE_TECKIT_FLAGS
 
-# LuaTeX and XeTeX need harfbuzz.
+# XeTeX and lua[jit]hbtex need harfbuzz, but not regular luatex[53].
 if test "x$enable_xetex" = xyes \
-   || test "x$enable_luatex" = xyes || test "x$enable_luatex53" = xyes; then
+   || test "x$enable_luahbtex" = xyes \
+   || test "x$enable_luajithbtex" = xyes; then
   KPSE_HARFBUZZ_FLAGS
 fi # end xetex/luatex for harfbuzz
 

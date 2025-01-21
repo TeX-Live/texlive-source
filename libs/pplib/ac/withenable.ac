@@ -4,4 +4,4 @@ dnl Copyright (C) 2013 Peter Breitenlohner <tex-live@tug.org>
 dnl You may freely use, modify and/or distribute this file.
 dnl
 ## configure options and TL libraries required for pplib
-KPSE_WITH_LIB([pplib], , [tree])
+KPSE_WITH_LIB([pplib], [zlib], [tree])

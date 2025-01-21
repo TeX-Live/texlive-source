@@ -1,3 +1,9 @@
+2025-01-21  Vincenzo Mantova <vlmantova@gmail.com>
+
+	* ac/withenable.ac (KPSE_WITH_LIB): dependencies are
+	[mpfr gmp], no third option. (KPSE_WITH_LIB fails to check.)
+	https://tug.org/pipermail/tlbuild/2024q2/005555.html
+
 2024-12-10  Florian Schmaus  <flo@geekplace.eu>
 
 	* configure.ac: remove MPFI_CONFIGS, not defined anywhere.

@@ -1,3 +1,15 @@
+2025-01-21  Vincenzo Mantova <vlmantova@gmail.com>
+
+	* configure.ac (KPSE_HARFBUZZ_FLAGS): needed for lua[jit]hbtex,
+	not luatex[53].
+	(KPSE_CHECK_FRAMEWORK, KPSE_FONTCONFIG_FLAGS) [enable_xetex]:
+	make checks conditional.
+	https://tug.org/pipermail/tlbuild/2024q2/005555.html
+
+2025-01-19  Karl Berry  <karl@freefriends.org>
+
+	* configure.ac (LIBS): 
+
 2025-01-01  Andreas Scherer  <https://ascherer.github.io>
 
 	* ctangleboot.cin: CWEB 4.12.1 release.

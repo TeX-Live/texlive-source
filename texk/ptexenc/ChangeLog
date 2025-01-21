@@ -1,3 +1,8 @@
+2025-01-21  Vincenzo Mantova <vlmantova@gmail.com>
+
+	* Makefile.am (nobase_include_HEADERS): include ptexenc/unicode-jp.h.
+	https://tug.org/pipermail/tlbuild/2024q2/005555.html
+
 2024-10-20  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* unicode.c, ptexenc/unicode.h, tex8benc.h:

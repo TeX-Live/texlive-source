@@ -1,3 +1,8 @@
+2025-01-21  Vincenzo Mantova <vlmantova@gmail.com>
+
+	* configure.ac (KPSE_KPATHSEA_FLAGS): call even if bibtexu is disabled.
+	https://tug.org/pipermail/tlbuild/2024q2/005555.html
+
 2024-01-27  Karl Berry  <karl@freefriends.org>
 
 	* tests/bibtexu-iscjk.test: sed -E is not portable to Solaris 10

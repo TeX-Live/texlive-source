@@ -1,3 +1,8 @@
+2025-01-21  Vincenzo Mantova <vlmantova@gmail.com>
+
+	* ac/withenable.ac (KPSE_WITH_LIB): depend on zlib.
+	https://tug.org/pipermail/tlbuild/2024q2/005555.html
+
 2023-12-23  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* pplib-src/src/util/README.md,

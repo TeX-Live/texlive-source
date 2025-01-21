@@ -1,3 +1,8 @@
+2025-01-21  Vincenzo Mantova <vlmantova@gmail.com>
+
+	* ac/xpdf.ac call gfxFont->isOk(), which is defined by vendor xpdf.
+	https://tug.org/pipermail/tlbuild/2024q2/005555.html
+
 2022-04-24  Akira Kakuto  <kakuto@jcom.zaq.ne.jp>
 
 	* Import xpdf-4.04.

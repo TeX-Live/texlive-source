@@ -1,3 +1,8 @@
+2025-01-21  Vincenzo Mantova <vlmantova@gmail.com>
+
+	* configure.ac (bin_links) [UPWEB]: make up...->p... links conditional.
+	https://tug.org/pipermail/tlbuild/2024q2/005555.html
+
 2025-01-02  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* kanji.c, uptex-m.ch:

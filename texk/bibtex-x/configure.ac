@@ -1,7 +1,7 @@
 dnl $Id$
 dnl Process this file with autoconf to produce a configure script.
 dnl
-dnl   Copyright 2015-2022 Karl Berry <tex-live@tug.org>
+dnl   Copyright 2015-2025 Karl Berry <tex-live@tug.org>
 dnl   Copyright 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 dnl
 dnl   This file is free software; the copyright holder
@@ -30,10 +30,12 @@ KPSE_CXX_HACK
 
 AC_SEARCH_LIBS([pow], [m])
 
+dnl BibTeX8 needs kpathsea even if bibtexu is disabled.
+KPSE_KPATHSEA_FLAGS
+
 if test "x$enable_bibtexu" != xno; then
   dnl As of ICU 65.1, ICU requires -lpthread on x86_64-linux and, most
   dnl likely, on other platforms. See upmendex/configure.ac for more info.
-KPSE_KPATHSEA_FLAGS
 KPSE_SEARCH_LIBS([PTHREAD_LIB], [pthread_create], [pthread])
 KPSE_ICU_FLAGS([icuio icui18n], [--ldflags-icuio])
 fi

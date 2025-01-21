@@ -602,7 +602,8 @@ libptexenc_la_SOURCES = \
 libptexenc_la_LIBADD = $(KPATHSEA_LIBS)
 nobase_include_HEADERS = \
 	ptexenc/ptexenc.h \
-	ptexenc/unicode.h
+	ptexenc/unicode.h \
+	ptexenc/unicode-jp.h
 
 pkgconfigdir = ${libdir}/pkgconfig
 pkgconfig_DATA = ptexenc.pc
