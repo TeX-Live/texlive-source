@@ -171,18 +171,21 @@ class ChangeReader:
             new_line = self._lines[self._chunk_start]
 
             new_line = re.sub(
-                    "\\[\\d+\\.\\d+\\]", f"[{part}.{section}]", new_line, 1)
+                    "\\[\\d+\\.\\d+\\]", f"[{part}.{section}]",
+                    new_line, count=1)
             new_line = re.sub(
-                    "^@x \\[\\d+\\]", f"@x [{section}]", new_line, 1)
+                    "^@x \\[\\d+\\]", f"@x [{section}]",
+                    new_line, count=1)
             new_line = re.sub(
-                    "l\\.\\d+", f"l.{line_number}", new_line, 1)
+                    "l\\.\\d+", f"l.{line_number}",
+                    new_line, count=1)
 
             # Force '[part.section] l.line' tag after '@x'; useful for untagged
             # change files, e.g., CWEB's '*-w2c.ch' monsters.
             if opt_handler.init_b:
                 new_line = re.sub(
                         "^@x", f"@x [{part}.{section}] l.{line_number}",
-                        new_line, 1)
+                        new_line, count=1)
 
             ch_line = self._lines[self._chunk_start]
             if new_line[:10] != ch_line[:10]:
