@@ -1,5 +1,5 @@
 '\" t
-.\" Manual page created with latex2man on Fri Nov 15 16:53:23 2024
+.\" Manual page created with latex2man on Mon Jan 20 11:11:40 2025
 .\" NOTE: This file is generated, DO NOT EDIT.
 .de Vb
 .ft CW
