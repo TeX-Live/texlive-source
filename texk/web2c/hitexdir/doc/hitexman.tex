@@ -46,7 +46,6 @@
 \hyphenation{HINT-before}
 \hyphenation{HINT-after}
 
-
 \makeindex
 \maketoc
 
@@ -115,7 +114,7 @@ Germany.
 \medskip
 {\tt ruckert\:@cs.hm.edu}
 \medskip
-Last commit: Tue Nov 26 15:28:24 2024
+Last commit: Tue Jan 21 19:09:13 2025
 \par
 }
 \eject
@@ -309,27 +308,29 @@ It is considered an error if valid settings for the image's width and height
 can not be obtained.
 
 \subsection{Colors}
-Since Hi\TeX\ is designed to produce files for on-screen viewing,
+Since the \HINT\ file format is designed for on-screen viewing,
 the only color model supported is the RGBA model, where a color is
 specified by four values: the red, the green, the blue, and the alpha
 value. The first three determine the light intensity of the red,
 green, and blue component of a pixel; the alpha value determines
 the relative share of a color when displaying
-one color on top of another color. 
+one color on top of another color.
+Because in practice most display devices use one byte for
+each of the four values that define a color, the \HINT file
+format stores the four color
+components using integer values in the range 0 to 255.
+Independent of the input format, Hi\TeX\ will convert all
+colors to this format when storing them in the output file.
 
 \subsubsection{Foreground Color}
 The most common color specification is the specification of a
 foreground color. (We will consider background colors below.)
-Because in practice most display devices use one byte for
-each of the four values that define a color,
-it is common to specify the four color
-components using integer values in the range 0 to 255.
-Using this representation, a foreground color can be specified using
+A foreground color can be specified using
 the following syntax:
 
 \medskip
 \rule\sym{foreground}\index{foreground+\sym{foreground}}:
-   \.{FG} \.{\{} \sym{integer} \sym{integer} \sym{integer} \opt{\sym{integer}} \.{\}}.
+   \.{FG\{} \sym{integer} \sym{integer} \sym{integer} \opt{\sym{integer}} \.{\}}.
 \medskip
 
 Note that for convenience, the alpha value
@@ -357,10 +358,10 @@ keyword \.{fg} instead of \.{FG}. Here is the syntax:
 
 \medskip
 \rule\sym{foreground}\index{foreground+\sym{foreground}}:
-\.{fg} \.{\{} \sym{number} \sym{number} \sym{number} \opt{\sym{number}} \.{\}}.
+\.{fg\{} \sym{number} \sym{number} \sym{number} \opt{\sym{number}} \.{\}}.
 \medskip
 
-Using the new syntax the colors above are written
+Using the new syntax, the colors above are written
 \.{fg\{1 0 0\}}, \.{fg\{1 0 0 1\}},
 \.{fg\{0 0 1\}} and \.{fg\{1 1 0 0.5\}}.
 Values greater than 1 and less than 0 are not allowed.
@@ -368,9 +369,10 @@ Note that \.{fg\{1 1 1\}} is pure white while  \.{FG\{1 1 1\}} is
 the darkest possible gray, which on most devices is indistinguishable
 from pure black.
 
-While specifying colors using red, green, and blue components is natural for
-computer screens, for printing on paper, the specification using cyan, magenta, yellow,
-and black is the default. Since collections of named colors using the latter format
+When specifying colors for computer screen, using red, green, and blue
+components is natural. For printing on paper, the specification using
+cyan, magenta, yellow, and black is the default.
+Since collections of named colors using the latter format
 are common, Hi\TeX\ allows the use of this format by prefixing the numbers with
 the keyword \.{cmyk}. Specifying the keyword \.{rgb} is also possible and has the
 same effect as giving no keyword. Using the new syntax the transparent yellow
@@ -381,24 +383,21 @@ The additional syntax rules are:
 
 \medskip
 \rule\sym{foreground}\index{foreground+\sym{foreground}}:
-\.{fg} \.{\{ rgb} \sym{number} \sym{number} \sym{number} \opt{\sym{number}} \.{\}}.
+\.{fg\{ rgb \sym{number} \sym{number} \sym{number} \opt{\sym{number}} \}}.
 \rule\sym{foreground}\index{foreground+\sym{foreground}}:
-\.{fg} \.{\{ cmyk} \sym{number} \sym{number} \sym{number} \sym{number} \opt{\sym{number}} \.{\}}.
+\.{fg\{ cmyk \sym{number} \sym{number} \sym{number} \sym{number} \opt{\sym{number}} \}}.
 \rule\sym{foreground}\index{foreground+\sym{foreground}}:
-   \.{FG} \.{\{ rgb} \sym{integer} \sym{integer} \sym{integer} \opt{\sym{integer}} \.{\}}.
+   \.{FG\{ rgb \sym{integer} \sym{integer} \sym{integer} \opt{\sym{integer}} \}}.
 \rule\sym{foreground}\index{foreground+\sym{foreground}}:
-   \.{FG} \.{\{ cmyk} \sym{integer} \sym{integer} \sym{integer} \sym{integer} \opt{\sym{integer}} \.{\}}.
+   \.{FG\{ cmyk \sym{integer} \sym{integer} \sym{integer} \sym{integer} \opt{\sym{integer}} \}}.
 \medskip
-
-
-
 
 \subsubsection{Defining and Using Colors}
 As we will see, colors come in whole sets of colors.
 To define such a set of colors, Hi\TeX\ provides
 the primitive \ctl{HINTcolor}. It syntax is
 \medskip
-\prim\ctl{HINTcolor} \.{\{} \sym{color specification} \.{\}}.
+\prim\ctl{HINTcolor} \.{\{ \sym{color specification} \}}.
 \medskip
 Before we give the complete definition of a  \sym{color specification},
 we start with some examples.
@@ -413,7 +412,7 @@ For example, black text on white background is specified by
 The viewer for \HINT\ files may provide a ``dark'' mode, and as a document
 author, you can specify the colors also for dark mode.
 If you like white letters on dark blue background you can write
-\ctl{HINTcolor}\.{\{fg\{0 0 0\}} \.{bg\{ 1 1 1\}}
+\ctl{HINTcolor}\.{\{fg\{0 0 0\}} \.{bg\{1 1 1\}}
 \.{dark} \.{fg\{1 1 1\}} \.{bg\{0 0 0.3\}\}}.
 
 There are two more colors that an author might care about: When searching
@@ -433,13 +432,13 @@ Here are the remaining rules that complete the \sym{color specification}:
 \rule\sym{color}\index{color+\sym{color}}:
     \sym{foreground} \opt{\sym{background}}.
 \rule\sym{background}\index{foreground+\sym{foreground}}:
-   \.{FG} \.{\{} \opt{\.{rgb}} \sym{integer} \sym{integer} \sym{integer} \opt{\sym{integer}} \.{\}}.
+   \.{FG\{ \opt{\.{rgb}} \sym{integer} \sym{integer} \sym{integer} \opt{\sym{integer}} \}}.
 \rule\sym{background}\index{foreground+\sym{foreground}}:
-   \.{fg} \.{\{} \opt{\.{rgb}} \sym{number} \sym{number} \sym{number} \opt{\sym{number}} \.{\}}.
+   \.{fg\{ \opt{\.{rgb}} \sym{number} \sym{number} \sym{number} \opt{\sym{number}} \}}.
 \rule\sym{background}\index{foreground+\sym{foreground}}:
-   \.{FG} \.{\{ cmyk} \sym{integer} \sym{integer} \sym{integer} \sym{integer} \opt{\sym{integer}} \.{\}}.
+   \.{FG\{ cmyk \sym{integer} \sym{integer} \sym{integer} \sym{integer} \opt{\sym{integer}} \}}.
 \rule\sym{background}\index{foreground+\sym{foreground}}:
-  \.{fg} \.{\{ cmyk} \sym{number} \sym{number} \sym{number} \sym{number} \opt{\sym{number}} \.{\}}.
+  \.{fg\{ cmyk \sym{number} \sym{number} \sym{number} \sym{number} \opt{\sym{number}} \}}.
 \medskip
 If some of the optional parts in the \sym{color specification} are missing,
 the corresponding colors from the set of default colors, as described below,
@@ -452,7 +451,7 @@ limits the total number of different color specifications in a document to 255.
 
 
 The colors given in \ctl{HINTcolor} will have an immediate effect
-on all following rules and glyphs and the background in the enclosing box.
+on all following rules and glyphs and the background of the enclosing box.
 The effect will persist until the next change of colors or until
 the end of the box---whatever occurs first.
 
@@ -477,7 +476,7 @@ a fixed height and depth of horizontal boxes.
 
 
 \subsubsection{Default Colors}
-The \HINT\ file format specifies default values for all colors in a set.
+The \HINT\ file format specifies default values for all colors.
 Hi\TeX\ provides the primitive \ctl{HINTdefaultcolor} to overwrite these
 default colors. This primitive must not be used after defining any custom
 colors using \ctl{HINTcolor}. Its syntax is
@@ -525,7 +524,7 @@ and notes in dark green. You can write
 \medskip
 {\tt\parindent 0pt\rightskip=0pt plus 160pt
 \verbatim/\def\redTeX{\HINTcolor{fg{1 0.3 0.3}}\TeX\HINTendcolor}
-\def\beginnote{\HINTcolor{fg{0 0.5 0}}}
+\def\beginnote{\HINTcolor{fg{0 0.5 0}}}% dark green
 \def\endnote{\HINTendcolor}/
 \medskip
 This is an example showing the \ctl{redTeX}\BS\ logo in red color.
@@ -548,7 +547,7 @@ In a vertical box, the color stack of Hi\TeX\ has a similar effect as in
 a horizontal box. Similar to the precautions in the line breaking routine,
 Hi\TeX\ will insert color changes when splitting a vertical box with \ctl{vsplit}.
 Complications arise from color changes in the top level vertical list
-which is split into pages in the \HINT\ file viewer at runtime.
+which is split into pages in the \HINT\ viewer at runtime.
 Because the page builder in the viewer has no global information and
 should not need global information, Hi\TeX\ will insert copies of the
 local color information after every possible breakpoint in the top
@@ -578,9 +577,8 @@ The syntax is:
 \medskip
 
 For convenience, the \HINT\ file format specifies default colors
-for links as well: for normal text instead of black links use
-dark blue \.{FG\{0 0 "EE\}};  in dark mode instead of white
-links use light blue \.{FG\{"11 "11 "FF\}}.
+for links as well: links use dark blue \.{FG\{0 0 "EE\}} and in dark mode
+light blue \.{FG\{"11 "11 "FF\}}.
 The primitive \ctl{HINTdefaultlinkcolor} is used
 to partly or completely redefine these defaults.
 
@@ -608,12 +606,13 @@ the link in the same box or it will restore the
 color in the outer box, or it will be ignored.
 In effect, the color changes inside a link stay local to the link.
 
-\subsection{\LaTeX\ Support}
+\subsubsection{\LaTeX\ Support}
 Starting with \TeX\ Live 2025, there is a limited support for the \.{xcolor}
 package.
 
 After \ctl{usepackage}\.{\{xcolor\}} you can use the predefined standard colors;
-for example \ctl{color}\.{\{red\}}. If you add one (or several) of the named colors
+for example \ctl{color}\.{\{red\}}.
+If you add one (or several) of the named color
 options \.{x11names}, \.{svgnames}, or \.{dvipsnames} to the package,
 you can also use commands like
 \ctl{color}\.{\{Tomato4\}} (x11),
@@ -640,20 +639,22 @@ to the \.{hyperref} package. For example as in
 
 \ctl{usepackage}\.{[linkcolor=green,urlcolor=red]\{hyperref\}}
 
-\subsection{Differences between \LaTeX\ and Hi\LaTeX}
+\subsubsection{Differences between \LaTeX\ and Hi\LaTeX}
 
-\subsubsection{Colors and Groups}
+\noindent{\bf Colors and Groups}\par\smallskip\noindent
 In \LaTeX, colors are local to the group. So by writing
 ``\.{text 1} \.{\{}\ctl{color}\.{\{blue\}} \.{text 2} \.{\}} \.{text 3}''
-after \.{text 1} the color of \.{text 2} will change to  blue and after \.{\}}
-marking the end of the group, the color of \.{text 3} will revert to the
-color of \.{text 1}.
+after \.{text~1} the color of \.{text~2} will change to  blue and after \.{\}}
+marking the end of the group, the color of \.{text~3} will revert to the
+color of \.{text~1}. Hi\LaTeX\ emulates this behaviour by inserting
+\ctl{HINTendcolor} at the end of the group.
 
-The scoping rules of colors in Hi\TeX\ and Hi\LaTeX\ are however slightly
-different from the normal scoping rules when it comes to paragraphs.
+When it comes to paragraphs,
+the scoping rules of colors in Hi\LaTeX\ are however slightly
+different from the \LaTeX\ scoping rules.
 In \TeX\ and \LaTeX, boxes and references all have there own group,
-while this is not true for paragraphs.
-So \TeX or \LaTeX\ will allow you to start a new group in one paragraph and
+but this is not true for paragraphs.
+So \TeX\ or \LaTeX\ will allow you to start a new group in one paragraph and
 end the group in the next paragraph, while it is not possible to start a
 group in one box and end the group in another box. As a consequence,
 you can switch to blue text color in the middle of a paragraph and end the blue
@@ -663,7 +664,7 @@ paragraphs behave pretty much like boxes: The effect of a color change inside
 a paragraph will not extend past the end of the paragraph. The closing of the
 group in the next paragraph will then have no effect.
 
-\subsubsection{Colors in vertical Lists}
+\bigskip\noindent{\bf Colors in vertical Lists}\par\smallskip\noindent
 The \HINT\ file format allows color specifications in horizontal boxes
 and---unlike the \PDF\ file format---in vertical boxes as well.
 Together with the mode switching of \TeX, which goes into horizontal mode
@@ -707,12 +708,12 @@ The second paragraph ...
 \medskip
 
 
-\TeX finds the begining of the group \.{\{} and the color change in vertical mode
+\TeX\ finds the begining of the group \.{\{} and the color change in vertical mode
 and it puts the color change into the vertical list. Then it finds the letter
 ``\.B'' and starts the paragraph. When \TeX\ encounters the end of the group,
 there is no local color change {\it inside} the paragraph and the text
 continues to be blue. Even the second paragraph and all following paragraphs
-will continue in blue ink until the end of the vertical list.
+will continue in blue until the end of the vertical list.
 
 The confusion that such behaviour might create has its root in \TeX's
 mode switching which is not synchronized with \TeX's grouping.
@@ -720,23 +721,35 @@ While grouping is typically visible in the source text, the mode
 switching remains largely invisible. 
 
 
-\subsection{Future Changes}
-
-While it may be questionable, whether all the color changes shown above
+\bigskip\noindent{\bf Future Changes}\par\smallskip\noindent
+While it may be questionable whether all the color changes shown above
 makes sense, it is definitely undesirable if Hi\LaTeX\ and \LaTeX\
 behave differently.
 As a consequence,  Hi\LaTeX\ might very well change in this respect in a
 later version, so that  Hi\TeX\ will no longer treat the begining
 and ending of paragraphs as the beginning and ending of a group.
+It is an open question how Hi\TeX\ should handle the end of a group
+in the middle of a paragraph ending a color change that started in
+the enclosing vertical list. Currently a \ctl{HINTendcolor} at that
+position would be silently ignored because it can only undo local
+changes {\it inside} the paragraph. Should Hi\TeX\ instead change the color
+of the enclosing vertical box immediately? What does
+it mean to do this change immediately? At the baseline?
+Before the next interline glue? What are the implications for the
+rendering engine? How complicated can it be to look ahead
+for color changes that occur depply nested inside a vertical list?
+Would it not be better to demand the use of \ctl{vadjust} for such an effect?
+Should Hi\TeX\ postpone the color change in the enclosing vertical
+box until the end of the paragraph?
 
-\subsection{Default Colors}
+\bigskip\noindent{\bf Default Colors}\par\smallskip\noindent
 Because complete color specifications are pretty long. It is important
 to provide usefull defaults. Currently missing elements of a color specification
 are taken from a single default color specification. It might be convenient
 to be able to provide a way to define color specifications using the
 current color as a basis for missing elements.
 
-\subsubsection{Color Numbers}
+\bigskip\noindent{\bf Color Numbers}\par\smallskip\noindent
 The \HINT\ file format references a color set by a number in the range
 0 to 254.
 So Hi\TeX\ assigns each color specification a number, using the same
@@ -748,7 +761,7 @@ expand to the number $n$ of the current color set and
 \ctl{HINTcolor}$n$ would be equivalent to a use of \ctl{HINTcolor}
 with a full color specification that is equivalent to the color specification
 belonging to $n$.
-This would be more efficient, because it would not be necessary
+This would be quite efficient; it would not be necessary
 to scan the color specification and search the existing color specifications
 for the matching specification with number $n$.
 

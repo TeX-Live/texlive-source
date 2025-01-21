@@ -235,17 +235,17 @@
 \def\see#1#2{\hskip 0pt plus 100pt\penalty 0\hskip 0 pt plus -100pt{\it see\/} #1}
 
 % typewriter type for strings
-\def\.#1{{\tt
-  \let\\=\BS % backslash in a string
-  \let\{=\LB % left brace in a string
-  \let\}=\RB % right brace in a string
-  \let\~=\TL % tilde in a string
-  \let\ =\SP % space in a string
-  \let\_=\UL % underline in a string
-  \let\&=\AM % ampersand in a string
-  \let\^=\CF % circumflex in a string
-  \let\|=\VB % vertical bar in a string
-  #1\kern.05em}}
+\def\.#1{{\tentex\spaceskip=0.333em minus 0.1em\relax
+\let\\=\BS% backslash in a string
+\let\{=\LB% left brace in a string
+\let\}=\RB% right brace in a string
+\let\~=\TL% tilde in a string
+\let\ =\SP% space in a string
+\let\_=\UL% underline in a string
+\let\&=\AM% ampersand in a string
+\let\^=\CF% circumflex in a string
+\let\|=\VB% vertical bar in a string
+\ifmmode\hbox{#1\kern.05em}\else #1\kern.05em\fi}}
 
 %{\rm\gdef\strutdepth{\dp\strutbox}}
 
@@ -674,8 +674,7 @@
 \vskip\abovesubsecskip%   space above the subsection
 \secno% The subsubsection title
 \nobreak\vskip\belowsubsecskip% space after subsection
-%\everypar{{\setbox0=\lastbox}\everypar{}}% no indentation in the next paragraph
-%\noindent
+\everypar{{\setbox0=\lastbox}\everypar{}}% no indentation in the next paragraph
 \ignorespaces}
 
 %%
