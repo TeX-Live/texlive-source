@@ -15784,10 +15784,10 @@ accuracy.
 @!one_bp: scaled; {scaled value corresponds to 1bp}
 @!one_hundred_bp: scaled; {scaled value corresponds to 100bp}
 @!one_hundred_inch: scaled; {scaled value corresponds to 100in}
+@!one_inch: integer; {(1in in sp)/|maxdimen|}
 @!ten_pow: array[0..9] of integer; {$10^0..10^9$}
 @!scaled_out: integer; {amount of |scaled| that was taken out in
 |divide_scaled|}
-@!resolution_ratio: integer; {(1in in sp)/|maxdimen|}
 @!init_pdf_output: boolean;
 @!adv_char_width_s: integer; {to save result of calculation done in |adv_char_width| }
 @!adv_char_width_s_out: scaled;
@@ -15796,7 +15796,7 @@ accuracy.
 one_bp := 65782; {65781.76}
 one_hundred_bp := 6578176;
 one_hundred_inch := 473628672;
-resolution_ratio := 226;
+one_inch := 226;
 ten_pow[0] := 1;
 for i := 1 to 9 do
     ten_pow[i] := 10*ten_pow[i - 1];
@@ -34431,7 +34431,7 @@ begin
     end;
     if (x <= 0) or (y <= 0) or (xr < 0) or (yr < 0) then
         pdf_error("ext1", "invalid image dimensions");
-    if (x / resolution_ratio >= xr) or (y / resolution_ratio >= yr) then begin
+    if (x / one_inch >= xr) or (y / one_inch >= yr) then begin
         {It's better to warn and ignore too-small resolutions given in
          the image file, usually 1dpi x 1dpi, to avoid arithmetic overflow.}
         xr := 0;

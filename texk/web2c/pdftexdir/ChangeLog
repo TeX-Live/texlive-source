@@ -1,3 +1,7 @@
+2025-01-22  Thanh Han The  <hanthethanh@gmail.com>
+
+	* pdftex.web (scale_image): rename resolution_ratio to one_inch.
+
 2025-01-18  Andreas Scherer  <https://ascherer.github.io>
 
 	* pdftex.web: Purge backslash from |maxdimen|.
