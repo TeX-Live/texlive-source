@@ -21,7 +21,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-# 2025/01/21 0.0.24
+# 2025/01/22 0.0.25
 package bibcop;
 
 use warnings;
@@ -37,12 +37,12 @@ my %args = map { $_ => 1 } @ARGV;
 
 # Only these tags are allowed and only these types of entries.
 my %blessed = (
-  'article' => ['doi', 'year', 'title', 'author', 'journal', 'volume', 'number', 'month?', 'publisher?', 'pages?'],
+  'article' => ['doi', 'year', 'title', 'author', 'journal', 'volume', 'number', 'month?', 'pages?'],
   'inproceedings' => ['doi', 'booktitle', 'title', 'author', 'year', 'pages?', 'month?', 'organization?', 'volume?'],
   'incollection' => ['doi', 'booktitle', 'title', 'author', 'year', 'editor', 'pages?', 'month?', 'volume?', 'publisher?'],
   'book' => ['title', 'author', 'year', 'publisher', 'doi?', 'edition?'],
   'phdthesis' => ['title', 'author', 'year', 'school', 'doi?'],
-  'misc' => ['title', 'author', 'year', 'eprint?', 'archiveprefix?', 'primaryclass?', 'month?', 'publisher?', 'organization?', 'doi?', 'howpublished?', 'note?'],
+  'misc' => ['title', 'author', 'year', 'eprint?', 'archiveprefix?', 'primaryclass?', 'month?', 'organization?', 'doi?', 'howpublished?', 'note?'],
 );
 
 # See https://research.arizona.edu/faq/what-do-you-mean-when-you-say-use-title-case-proposalproject-titles
@@ -1109,7 +1109,7 @@ if (@ARGV+0 eq 0 or exists $args{'--help'} or exists $args{'-?'}) {
     "      --latex     Report errors in LaTeX format using the \\PackageWarningNoLine command\n\n" .
     "If any issues, please, report to GitHub: https://github.com/yegor256/bibcop");
 } elsif (exists $args{'--version'} or exists $args{'-v'}) {
-  info('0.0.24 2025/01/21');
+  info('0.0.25 2025/01/22');
 } else {
   my ($file) = grep { not($_ =~ /^-.*$/) } @ARGV;
   if (not $file) {
