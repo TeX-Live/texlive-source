@@ -3,6 +3,7 @@
     if \pdfmajorversion >= 2, the PTEX.Fullbanner and other dictionary
     entries use an _ instead of ., as in PTEX_Fullbanner.
 - bugfixes:
+  - don't omit real spaces just because the font changes.
   - increase tolerance for detecting interword spaces in overfull lines.
   - ignore tiny resolutions like 1x1 embedded in images instead of
     exceeding \maxdimen.

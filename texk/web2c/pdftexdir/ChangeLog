@@ -1,6 +1,19 @@
-2025-01-22  Thanh Han The  <hanthethanh@gmail.com>
+2025-01-23  Thanh Han The  <hanthethanh@gmail.com>
+
+	* pdftex.web (Glob...): remove pdf_last_f; remove uses.
+	(pdf_set_f): test and set pdf_f.
+	(pdf_begin_string): new variable move_by_tm.
+	Test gen_faked_interword_space and new move_by_tm to determine
+	when to insert a space.
+	Report from Ulrike Fischer:
+	  https://tug.org/pipermail/pdftex/2024-July/009424.html
+	with followup from Ross Moore:
+	  https://tug.org/pipermail/pdftex/2025-January/009426.html
+
+2025-01-22  Karl Berry  <hanthethanh@gmail.com>
 
 	* pdftex.web (scale_image): rename resolution_ratio to one_inch.
+	Suggestion from Thanh.
 
 2025-01-18  Andreas Scherer  <https://ascherer.github.io>
 

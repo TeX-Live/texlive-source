@@ -15976,7 +15976,6 @@ DVI}
 @!pdf_draftmode_value: integer;
 @!pdf_cur_Tm_a: integer; {|a| value of the current text matrix, i.e., the current
                           horizontal scaling factor}
-@!pdf_last_f: internal_font_number; {last font in PDF output page}
 @!pdf_last_fs: internal_font_number; {last font size in PDF output page}
 @!pdf_dummy_font: internal_font_number; {font used to insert artificial interword spaces}
 
@@ -16162,7 +16161,7 @@ begin
     end;
     pdf_append_list(f)(pdf_font_list); {|f| not found in |pdf_font_list|, append it now}
 found:
-    if (k = pdf_last_f) and (font_size[f] = pdf_last_fs) then
+    if (k = pdf_f) and (font_size[f] = pdf_last_fs) then
         return;
     pdf_print("/F");
     pdf_print_int(k);
@@ -16170,7 +16169,7 @@ found:
     pdf_out(" ");
     pdf_print_real(divide_scaled(font_size[f], one_hundred_bp, 6), 4);
     pdf_print(" Tf");
-    pdf_last_f := k;
+    pdf_f := k;
     pdf_last_fs := font_size[f];
 end;
 
@@ -16180,7 +16179,6 @@ begin
     pdf_print_ln("BT");
     pdf_doing_text := true;
     pdf_f := null_font;
-    pdf_last_f := null_font;
     pdf_last_fs := 0;
     pdf_doing_string := false;
     pdf_cur_Tm_a := 0;
@@ -16209,10 +16207,14 @@ var s_out, v, v_out: scaled;
     s: integer;
     must_end_string: boolean;  {must we end the current string?}
     must_insert_space: boolean;  {must we insert an interword space?}
+    move_by_tm: boolean;  {movement must be set using Tm operator}
+
 begin
     if not pdf_doing_text then
         pdf_begin_text;
-    if f <> pdf_f then begin
+   if (not gen_faked_interword_space and pdf_f <> f)
+      or (gen_faked_interword_space and not (font_used[f] and font_used[pdf_f]))
+    then begin
         pdf_end_string;
         pdf_set_font(f);
     end;
@@ -16246,23 +16248,22 @@ begin
 
     must_insert_space := false;
     must_end_string := false;
+    move_by_tm := (v <> 0) or (abs(s) >= @'100000);
 
-    if (f <> pdf_f) or (v <> 0) or (abs(s) >= @'100000) then begin
+    if move_by_tm then begin
         must_end_string := true;
     end;
 
     if gen_faked_interword_space
-        and pdf_doing_string
-        and (not must_end_string)
+        and (not move_by_tm)
         and (s_out > space(f) - space_shrink(f) - 65536)
-        and (v = 0)
     then begin
         must_insert_space := true;
     end;
 
     if (must_insert_space) then begin
         {insert a real space char from the font when possible}
-        if pdf_font_has_space_char[f]  then begin
+        if pdf_font_has_space_char[f] and pdf_doing_string then begin
             pdf_out(" ");
             save_pdf_delta_h := pdf_delta_h;
             adv_char_width(f, 32, 3); { to get |adv_char_width_s| and |adv_char_width_s_out|}
@@ -16282,7 +16283,6 @@ begin
             pdf_set_font(f);
         end;
         pdf_set_textmatrix(v, v_out, f);
-        pdf_f := f;
         s := 0;
     end;
 
