@@ -672,6 +672,10 @@ CTANGLEBOOT
 TANGLE
 TANGLEBOOT
 KPATHSEA_PATHS_H
+XETEX_MACOSX_FALSE
+XETEX_MACOSX_TRUE
+FONTCONFIG_LIBS
+FONTCONFIG_INCLUDES
 ICU_RULE
 ICU_DEPEND
 ICU_LIBS
@@ -758,6 +762,7 @@ KPATHSEA_RULE
 KPATHSEA_DEPEND
 KPATHSEA_LIBS
 KPATHSEA_INCLUDES
+PKG_CONFIG
 LEXLIB
 LEX_OUTPUT_ROOT
 LEX
@@ -842,11 +847,6 @@ TEX_SYNCTEX_FALSE
 TEX_SYNCTEX_TRUE
 TEX_FALSE
 TEX_TRUE
-XETEX_MACOSX_FALSE
-XETEX_MACOSX_TRUE
-FONTCONFIG_LIBS
-FONTCONFIG_INCLUDES
-PKG_CONFIG
 ipc_socketlibs
 lua_socketlibs
 USE_DLOPEN_FALSE
@@ -1073,8 +1073,6 @@ enable_unitermwin
 enable_web_progs
 enable_synctex
 enable_missing
-with_fontconfig_includes
-with_fontconfig_libdir
 with_x
 with_system_kpathsea
 with_system_ptexenc
@@ -1103,6 +1101,8 @@ with_system_teckit
 with_system_graphite2
 with_system_harfbuzz
 with_system_icu
+with_fontconfig_includes
+with_fontconfig_libdir
 enable_year2038
 '
       ac_precious_vars='build_alias
@@ -1838,10 +1838,6 @@ Optional Packages:
   --with-editor=CMD       invoke CMD from the `e' option [vi +%d '%s'] or
                           [texworks --position=%d "%s"]
   --with-mf-x-toolkit     use X toolkit for METAFONT
-  --with-fontconfig-includes=DIR
-                          fontconfig headers installed in DIR
-  --with-fontconfig-libdir=DIR
-                          fontconfig library installed in DIR
   --with-x                use the X Window System
   --with-system-kpathsea  use installed kpathsea headers and library (requires
                           pkg-config)
@@ -1887,6 +1883,10 @@ Optional Packages:
                           pkg-config)
   --with-system-icu       use installed ICU headers and libraries (requires
                           pkg-config or icu-config)
+  --with-fontconfig-includes=DIR
+                          fontconfig headers installed in DIR
+  --with-fontconfig-libdir=DIR
+                          fontconfig library installed in DIR
 
 Some influential environment variables:
   CC          C compiler command
@@ -24331,243 +24331,6 @@ fi
 
 
 
-if test "x$enable_xetex" = xyes; then
-  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for Mac OS X ApplicationServices framework" >&5
-printf %s "checking for Mac OS X ApplicationServices framework... " >&6; }
-if test ${kpse_cv_have_ApplicationServices+y}
-then :
-  printf %s "(cached) " >&6
-else case e in #(
-  e) cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-#include <ApplicationServices/ApplicationServices.h>
-int
-main (void)
-{
-CTFontRef font
-  ;
-  return 0;
-}
-_ACEOF
-if ac_fn_c_try_compile "$LINENO"
-then :
-  kpse_cv_have_ApplicationServices=yes
-else case e in #(
-  e) kpse_cv_have_ApplicationServices=no ;;
-esac
-fi
-rm -f core conftest.err conftest.$ac_objext conftest.beam conftest.$ac_ext ;;
-esac
-fi
-{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $kpse_cv_have_ApplicationServices" >&5
-printf "%s\n" "$kpse_cv_have_ApplicationServices" >&6; }
-if test "x$kpse_cv_have_ApplicationServices" = xyes
-then :
-
-printf "%s\n" "#define HAVE_APPLICATIONSERVICES 1" >>confdefs.h
-
-fi
-
-  if test -n "$ac_tool_prefix"; then
-  # Extract the first word of "${ac_tool_prefix}pkg-config", so it can be a program name with args.
-set dummy ${ac_tool_prefix}pkg-config; ac_word=$2
-{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
-printf %s "checking for $ac_word... " >&6; }
-if test ${ac_cv_prog_PKG_CONFIG+y}
-then :
-  printf %s "(cached) " >&6
-else case e in #(
-  e) if test -n "$PKG_CONFIG"; then
-  ac_cv_prog_PKG_CONFIG="$PKG_CONFIG" # Let the user override the test.
-else
-as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
-for as_dir in $PATH
-do
-  IFS=$as_save_IFS
-  case $as_dir in #(((
-    '') as_dir=./ ;;
-    */) ;;
-    *) as_dir=$as_dir/ ;;
-  esac
-    for ac_exec_ext in '' $ac_executable_extensions; do
-  if as_fn_executable_p "$as_dir$ac_word$ac_exec_ext"; then
-    ac_cv_prog_PKG_CONFIG="${ac_tool_prefix}pkg-config"
-    printf "%s\n" "$as_me:${as_lineno-$LINENO}: found $as_dir$ac_word$ac_exec_ext" >&5
-    break 2
-  fi
-done
-  done
-IFS=$as_save_IFS
-
-fi ;;
-esac
-fi
-PKG_CONFIG=$ac_cv_prog_PKG_CONFIG
-if test -n "$PKG_CONFIG"; then
-  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $PKG_CONFIG" >&5
-printf "%s\n" "$PKG_CONFIG" >&6; }
-else
-  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
-printf "%s\n" "no" >&6; }
-fi
-
-
-fi
-if test -z "$ac_cv_prog_PKG_CONFIG"; then
-  ac_ct_PKG_CONFIG=$PKG_CONFIG
-  # Extract the first word of "pkg-config", so it can be a program name with args.
-set dummy pkg-config; ac_word=$2
-{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
-printf %s "checking for $ac_word... " >&6; }
-if test ${ac_cv_prog_ac_ct_PKG_CONFIG+y}
-then :
-  printf %s "(cached) " >&6
-else case e in #(
-  e) if test -n "$ac_ct_PKG_CONFIG"; then
-  ac_cv_prog_ac_ct_PKG_CONFIG="$ac_ct_PKG_CONFIG" # Let the user override the test.
-else
-as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
-for as_dir in $PATH
-do
-  IFS=$as_save_IFS
-  case $as_dir in #(((
-    '') as_dir=./ ;;
-    */) ;;
-    *) as_dir=$as_dir/ ;;
-  esac
-    for ac_exec_ext in '' $ac_executable_extensions; do
-  if as_fn_executable_p "$as_dir$ac_word$ac_exec_ext"; then
-    ac_cv_prog_ac_ct_PKG_CONFIG="pkg-config"
-    printf "%s\n" "$as_me:${as_lineno-$LINENO}: found $as_dir$ac_word$ac_exec_ext" >&5
-    break 2
-  fi
-done
-  done
-IFS=$as_save_IFS
-
-fi ;;
-esac
-fi
-ac_ct_PKG_CONFIG=$ac_cv_prog_ac_ct_PKG_CONFIG
-if test -n "$ac_ct_PKG_CONFIG"; then
-  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $ac_ct_PKG_CONFIG" >&5
-printf "%s\n" "$ac_ct_PKG_CONFIG" >&6; }
-else
-  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
-printf "%s\n" "no" >&6; }
-fi
-
-  if test "x$ac_ct_PKG_CONFIG" = x; then
-    PKG_CONFIG="false"
-  else
-    case $cross_compiling:$ac_tool_warned in
-yes:)
-{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: using cross tools not prefixed with host triplet" >&5
-printf "%s\n" "$as_me: WARNING: using cross tools not prefixed with host triplet" >&2;}
-ac_tool_warned=yes ;;
-esac
-    PKG_CONFIG=$ac_ct_PKG_CONFIG
-  fi
-else
-  PKG_CONFIG="$ac_cv_prog_PKG_CONFIG"
-fi
-
-
-# Check whether --with-fontconfig-includes was given.
-if test ${with_fontconfig_includes+y}
-then :
-  withval=$with_fontconfig_includes;
-fi
-
-# Check whether --with-fontconfig-libdir was given.
-if test ${with_fontconfig_libdir+y}
-then :
-  withval=$with_fontconfig_libdir;
-fi
-{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for installed fontconfig headers and library" >&5
-printf %s "checking for installed fontconfig headers and library... " >&6; }
-if test ${kpse_cv_have_fontconfig+y}
-then :
-  printf %s "(cached) " >&6
-else case e in #(
-  e) kpse_save_CPPFLAGS=$CPPFLAGS
-kpse_save_LIBS=$LIBS
-kpse_cv_fontconfig_includes=
-kpse_cv_fontconfig_libs='-lfontconfig'
-if test "x$with_fontconfig_includes:$with_fontconfig_libdir" != x:; then
-  if test "x$with_fontconfig_includes" != x; then
-    kpse_cv_fontconfig_includes="-I$with_fontconfig_includes"
-  fi
-  if test "x$with_fontconfig_libdir" != x; then
-    kpse_cv_fontconfig_libs="-L$with_fontconfig_libdir $kpse_cv_fontconfig_libs"
-  fi
-elif $PKG_CONFIG fontconfig; then
-  kpse_cv_fontconfig_includes=`$PKG_CONFIG fontconfig --cflags`
-  kpse_cv_fontconfig_libs=`$PKG_CONFIG fontconfig --libs`
-fi
-CPPFLAGS="$kpse_cv_fontconfig_includes $CPPFLAGS"
-LIBS="$kpse_cv_fontconfig_libs $LIBS"
-cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-#include <fontconfig/fontconfig.h>
-int
-main (void)
-{
-FcObjectSet *os; FcInit();
-  ;
-  return 0;
-}
-_ACEOF
-if ac_fn_c_try_link "$LINENO"
-then :
-  kpse_cv_have_fontconfig=yes
-else case e in #(
-  e) kpse_cv_have_fontconfig=no ;;
-esac
-fi
-rm -f core conftest.err conftest.$ac_objext conftest.beam \
-    conftest$ac_exeext conftest.$ac_ext
-CPPFLAGS=$kpse_save_CPPFLAGS
-LIBS=$kpse_save_LIBS ;;
-esac
-fi
-{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $kpse_cv_have_fontconfig" >&5
-printf "%s\n" "$kpse_cv_have_fontconfig" >&6; }
-if test "x$kpse_cv_have_fontconfig" = xyes; then
-  FONTCONFIG_INCLUDES=$kpse_cv_fontconfig_includes
-  FONTCONFIG_LIBS=$kpse_cv_fontconfig_libs
-
-printf "%s\n" "#define HAVE_LIBFONTCONFIG 1" >>confdefs.h
-
-fi
-
-
-
-  if test "x$kpse_cv_have_ApplicationServices:$kpse_cv_have_fontconfig" = xno:no
-then :
-  if test "x$enable_xetex" = xyes
-then :
-  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Sorry, neither ApplicationServices framework nor fontconfig library: disabling xetex" >&5
-printf "%s\n" "$as_me: WARNING: Sorry, neither ApplicationServices framework nor fontconfig library: disabling xetex" >&2;}
-if test "x$enable_missing" = xno
-then :
-  as_fn_error $? "terminating." "$LINENO" 5
-fi
-
-                       enable_xetex=no
-fi
-
-fi
-fi
- if test "x$kpse_cv_have_ApplicationServices" = xyes; then
-  XETEX_MACOSX_TRUE=
-  XETEX_MACOSX_FALSE='#'
-else
-  XETEX_MACOSX_TRUE='#'
-  XETEX_MACOSX_FALSE=
-fi
-
-
  if test "x$enable_tex" = xyes; then
   TEX_TRUE=
   TEX_FALSE='#'
@@ -25933,7 +25696,7 @@ fi
 
 printf "%s\n" "#define X11WIN 1" >>confdefs.h
 
-fi
+fi # have X
  if test "x$with_mf_x_toolkit" = xyes; then
   MFXT_TRUE=
   MFXT_FALSE='#'
@@ -27252,6 +27015,8 @@ printf "%s\n" "#define RETSIGTYPE $ac_cv_type_signal" >>confdefs.h
 
 
 
+# kpse_kpathsea_flags needs to pull in pkg-config, in case of a system
+# kpathsea being used. So nothing above should use pkg-config.
 kpse_save_CPPFLAGS=$CPPFLAGS
 kpse_save_LIBS=$LIBS
 
@@ -28841,6 +28606,110 @@ ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $
 ac_compiler_gnu=$ac_cv_c_compiler_gnu
 ac_link="./libtool --mode=link --tag=CC $ac_link"
 
+if test -n "$ac_tool_prefix"; then
+  # Extract the first word of "${ac_tool_prefix}pkg-config", so it can be a program name with args.
+set dummy ${ac_tool_prefix}pkg-config; ac_word=$2
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+printf %s "checking for $ac_word... " >&6; }
+if test ${ac_cv_prog_PKG_CONFIG+y}
+then :
+  printf %s "(cached) " >&6
+else case e in #(
+  e) if test -n "$PKG_CONFIG"; then
+  ac_cv_prog_PKG_CONFIG="$PKG_CONFIG" # Let the user override the test.
+else
+as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+for as_dir in $PATH
+do
+  IFS=$as_save_IFS
+  case $as_dir in #(((
+    '') as_dir=./ ;;
+    */) ;;
+    *) as_dir=$as_dir/ ;;
+  esac
+    for ac_exec_ext in '' $ac_executable_extensions; do
+  if as_fn_executable_p "$as_dir$ac_word$ac_exec_ext"; then
+    ac_cv_prog_PKG_CONFIG="${ac_tool_prefix}pkg-config"
+    printf "%s\n" "$as_me:${as_lineno-$LINENO}: found $as_dir$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+  done
+IFS=$as_save_IFS
+
+fi ;;
+esac
+fi
+PKG_CONFIG=$ac_cv_prog_PKG_CONFIG
+if test -n "$PKG_CONFIG"; then
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $PKG_CONFIG" >&5
+printf "%s\n" "$PKG_CONFIG" >&6; }
+else
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
+printf "%s\n" "no" >&6; }
+fi
+
+
+fi
+if test -z "$ac_cv_prog_PKG_CONFIG"; then
+  ac_ct_PKG_CONFIG=$PKG_CONFIG
+  # Extract the first word of "pkg-config", so it can be a program name with args.
+set dummy pkg-config; ac_word=$2
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
+printf %s "checking for $ac_word... " >&6; }
+if test ${ac_cv_prog_ac_ct_PKG_CONFIG+y}
+then :
+  printf %s "(cached) " >&6
+else case e in #(
+  e) if test -n "$ac_ct_PKG_CONFIG"; then
+  ac_cv_prog_ac_ct_PKG_CONFIG="$ac_ct_PKG_CONFIG" # Let the user override the test.
+else
+as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+for as_dir in $PATH
+do
+  IFS=$as_save_IFS
+  case $as_dir in #(((
+    '') as_dir=./ ;;
+    */) ;;
+    *) as_dir=$as_dir/ ;;
+  esac
+    for ac_exec_ext in '' $ac_executable_extensions; do
+  if as_fn_executable_p "$as_dir$ac_word$ac_exec_ext"; then
+    ac_cv_prog_ac_ct_PKG_CONFIG="pkg-config"
+    printf "%s\n" "$as_me:${as_lineno-$LINENO}: found $as_dir$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+  done
+IFS=$as_save_IFS
+
+fi ;;
+esac
+fi
+ac_ct_PKG_CONFIG=$ac_cv_prog_ac_ct_PKG_CONFIG
+if test -n "$ac_ct_PKG_CONFIG"; then
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $ac_ct_PKG_CONFIG" >&5
+printf "%s\n" "$ac_ct_PKG_CONFIG" >&6; }
+else
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
+printf "%s\n" "no" >&6; }
+fi
+
+  if test "x$ac_ct_PKG_CONFIG" = x; then
+    PKG_CONFIG="false"
+  else
+    case $cross_compiling:$ac_tool_warned in
+yes:)
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: using cross tools not prefixed with host triplet" >&5
+printf "%s\n" "$as_me: WARNING: using cross tools not prefixed with host triplet" >&2;}
+ac_tool_warned=yes ;;
+esac
+    PKG_CONFIG=$ac_ct_PKG_CONFIG
+  fi
+else
+  PKG_CONFIG="$ac_cv_prog_PKG_CONFIG"
+fi
+
 ##tldbg _KPSE_LIB_FLAGS: Setup kpathsea (-lkpathsea) flags.
 echo 'tldbg:_KPSE_LIB_FLAGS called: libdir=kpathsea, libname=kpathsea, options=lt, tlincl=-IBLD/texk -ISRC/texk, tllib=BLD/texk/kpathsea/libkpathsea.la, tlextra=, rebuildsrcdeps=${top_srcdir}/../kpathsea/*.[ch], rebuildblddeps=${top_builddir}/../kpathsea/paths.h.' >&5
 ##tldbg _KPSE_LIB_FLAGS_TL: kpathsea (kpathsea) lt.
@@ -28908,6 +28777,7 @@ if test "x$kpse_cv_kpse_debug" != xyes
 then :
   KPATHSEA_INCLUDES="$KPATHSEA_INCLUDES -DNO_DEBUG"
 fi
+
 
 ##tldbg _KPSE_LIB_FLAGS: Setup ptexenc (-lptexenc) flags.
 echo 'tldbg:_KPSE_LIB_FLAGS called: libdir=ptexenc, libname=ptexenc, options=lt, tlincl=-IBLD/texk/ptexenc -ISRC/texk/ptexenc, tllib=BLD/texk/ptexenc/libptexenc.la, tlextra=, rebuildsrcdeps=${top_srcdir}/../ptexenc/*.c ${top_srcdir}/../ptexenc/ptexenc/*.h, rebuildblddeps=.' >&5
@@ -30045,7 +29915,142 @@ ${top_builddir}/../../libs/graphite2/include/graphite2/Font.h:
 	cd ${top_builddir}/../../libs/graphite2 && $(MAKE) $(AM_MAKEFLAGS) rebuild'
 fi
 
-fi # end xetex for icu/graphite
+
+  # XeTeX also needs fontconfig or the Mac ApplicationServices.
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for Mac OS X ApplicationServices framework" >&5
+printf %s "checking for Mac OS X ApplicationServices framework... " >&6; }
+if test ${kpse_cv_have_ApplicationServices+y}
+then :
+  printf %s "(cached) " >&6
+else case e in #(
+  e) cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+#include <ApplicationServices/ApplicationServices.h>
+int
+main (void)
+{
+CTFontRef font
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_compile "$LINENO"
+then :
+  kpse_cv_have_ApplicationServices=yes
+else case e in #(
+  e) kpse_cv_have_ApplicationServices=no ;;
+esac
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.beam conftest.$ac_ext ;;
+esac
+fi
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $kpse_cv_have_ApplicationServices" >&5
+printf "%s\n" "$kpse_cv_have_ApplicationServices" >&6; }
+if test "x$kpse_cv_have_ApplicationServices" = xyes
+then :
+
+printf "%s\n" "#define HAVE_APPLICATIONSERVICES 1" >>confdefs.h
+
+fi
+
+
+# Check whether --with-fontconfig-includes was given.
+if test ${with_fontconfig_includes+y}
+then :
+  withval=$with_fontconfig_includes;
+fi
+
+# Check whether --with-fontconfig-libdir was given.
+if test ${with_fontconfig_libdir+y}
+then :
+  withval=$with_fontconfig_libdir;
+fi
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for installed fontconfig headers and library" >&5
+printf %s "checking for installed fontconfig headers and library... " >&6; }
+if test ${kpse_cv_have_fontconfig+y}
+then :
+  printf %s "(cached) " >&6
+else case e in #(
+  e) kpse_save_CPPFLAGS=$CPPFLAGS
+kpse_save_LIBS=$LIBS
+kpse_cv_fontconfig_includes=
+kpse_cv_fontconfig_libs='-lfontconfig'
+if test "x$with_fontconfig_includes:$with_fontconfig_libdir" != x:; then
+  if test "x$with_fontconfig_includes" != x; then
+    kpse_cv_fontconfig_includes="-I$with_fontconfig_includes"
+  fi
+  if test "x$with_fontconfig_libdir" != x; then
+    kpse_cv_fontconfig_libs="-L$with_fontconfig_libdir $kpse_cv_fontconfig_libs"
+  fi
+elif $PKG_CONFIG fontconfig; then
+  kpse_cv_fontconfig_includes=`$PKG_CONFIG fontconfig --cflags`
+  kpse_cv_fontconfig_libs=`$PKG_CONFIG fontconfig --libs`
+fi
+CPPFLAGS="$kpse_cv_fontconfig_includes $CPPFLAGS"
+LIBS="$kpse_cv_fontconfig_libs $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+#include <fontconfig/fontconfig.h>
+int
+main (void)
+{
+FcObjectSet *os; FcInit();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_link "$LINENO"
+then :
+  kpse_cv_have_fontconfig=yes
+else case e in #(
+  e) kpse_cv_have_fontconfig=no ;;
+esac
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.beam \
+    conftest$ac_exeext conftest.$ac_ext
+CPPFLAGS=$kpse_save_CPPFLAGS
+LIBS=$kpse_save_LIBS ;;
+esac
+fi
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $kpse_cv_have_fontconfig" >&5
+printf "%s\n" "$kpse_cv_have_fontconfig" >&6; }
+if test "x$kpse_cv_have_fontconfig" = xyes; then
+  FONTCONFIG_INCLUDES=$kpse_cv_fontconfig_includes
+  FONTCONFIG_LIBS=$kpse_cv_fontconfig_libs
+
+printf "%s\n" "#define HAVE_LIBFONTCONFIG 1" >>confdefs.h
+
+fi
+
+
+
+  if test "x$kpse_cv_have_ApplicationServices:$kpse_cv_have_fontconfig" = xno:no
+then :
+  if test "x$enable_xetex" = xyes
+then :
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Sorry, neither ApplicationServices framework nor fontconfig library: disabling xetex" >&5
+printf "%s\n" "$as_me: WARNING: Sorry, neither ApplicationServices framework nor fontconfig library: disabling xetex" >&2;}
+if test "x$enable_missing" = xno
+then :
+  as_fn_error $? "terminating." "$LINENO" 5
+fi
+
+                       enable_xetex=no
+fi
+
+fi
+
+fi # end xetex for icu/graphite and fontconfig/mac font lookups.
+
+# Are we building XeTeX on Mac? Automake conditional required regardless.
+ if test "x$kpse_cv_have_ApplicationServices" = xyes; then
+  XETEX_MACOSX_TRUE=
+  XETEX_MACOSX_FALSE='#'
+else
+  XETEX_MACOSX_TRUE='#'
+  XETEX_MACOSX_FALSE=
+fi
+
 
 # Check size of off_t (using <kpathsea/config.h>)
 eval CPPFLAGS=\"$KPATHSEA_INCLUDES \$CPPFLAGS\"
@@ -30798,10 +30803,6 @@ if test -z "${USE_DLOPEN_TRUE}" && test -z "${USE_DLOPEN_FALSE}"; then
   as_fn_error $? "conditional \"USE_DLOPEN\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
-if test -z "${XETEX_MACOSX_TRUE}" && test -z "${XETEX_MACOSX_FALSE}"; then
-  as_fn_error $? "conditional \"XETEX_MACOSX\" was never defined.
-Usually this means the macro was only invoked conditionally." "$LINENO" 5
-fi
 if test -z "${TEX_TRUE}" && test -z "${TEX_FALSE}"; then
   as_fn_error $? "conditional \"TEX\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
@@ -30943,6 +30944,10 @@ if test -z "${UPWEB_TRUE}" && test -z "${UPWEB_FALSE}"; then
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 
+if test -z "${XETEX_MACOSX_TRUE}" && test -z "${XETEX_MACOSX_FALSE}"; then
+  as_fn_error $? "conditional \"XETEX_MACOSX\" was never defined.
+Usually this means the macro was only invoked conditionally." "$LINENO" 5
+fi
 if test -z "${SYNCTEX_TRUE}" && test -z "${SYNCTEX_FALSE}"; then
   as_fn_error $? "conditional \"SYNCTEX\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5

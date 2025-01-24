@@ -1,9 +1,18 @@
+2025-01-24  Karl Berry  <karl@freefriends.org>
+
+	* configure.ac (KPSE_CHECK_FRAMEWORK, KPSE_FONTCONFIG_FLAGS)
+	[enable_xetex]: move these checks to below KPSE_KPATHSEA_FLAGS,
+	so that --with-system-kpathsea --without-xetex build will not
+	result in pkg-config not being checked for.
+	Report from balducci@units.it,
+	https://tug.org/pipermail/tex-k/2025-January/004147.html
+
 2025-01-21  Vincenzo Mantova <vlmantova@gmail.com>
 
 	* configure.ac (KPSE_HARFBUZZ_FLAGS): needed for lua[jit]hbtex,
 	not luatex[53].
 	(KPSE_CHECK_FRAMEWORK, KPSE_FONTCONFIG_FLAGS) [enable_xetex]:
-	make checks conditional.
+	make these checks conditional.
 	https://tug.org/pipermail/tlbuild/2024q2/005555.html
 
 2025-01-19  Karl Berry  <karl@freefriends.org>
