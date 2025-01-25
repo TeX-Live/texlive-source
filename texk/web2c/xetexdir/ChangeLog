@@ -4,8 +4,8 @@
 	(ignore_primitive_error_code, ignore_primitive_error): new primitive
 	\ignoreprimitiveerror.
 	(is_bit_set): new fn.
-	(finite_shrink): if it's set, make "Infinite glue shrinkage"
-	error into warning.
+	(finite_shrink): if it's set, make "Infinite glue shrinkage
+	found in box being split" error into warning.
 	(Generate all \eTeX): define it.
 	(Cases for |print_param|): print it.
 	Same code as for pdfTeX; merged into XeTeX by karl.

@@ -7,7 +7,7 @@ use strict; use warnings;
 
 package TeXLive::TLUtils;
 
-my $svnrev = '$Revision: 71593 $';
+my $svnrev = '$Revision: 73556 $';
 my $_modulerevision = ($svnrev =~ m/: ([0-9]+) /) ? $1 : "unknown";
 sub module_revision { return $_modulerevision; }
 
@@ -3676,68 +3676,105 @@ sub _create_config_files {
   close(OUTFILE) || warn "close(>$dest) failed: $!";
 }
 
+# 
 sub parse_AddHyphen_line {
   my $line = shift;
   my %ret;
   # default values
-  my $default_lefthyphenmin = 2;
-  my $default_righthyphenmin = 3;
-  $ret{"lefthyphenmin"} = $default_lefthyphenmin;
-  $ret{"righthyphenmin"} = $default_righthyphenmin;
+  my $default_lefthyphenmin = -1;
+  my $default_righthyphenmin = -1;
   $ret{"synonyms"} = [];
   for my $p (quotewords('\s+', 0, "$line")) {
     my ($a, $b) = split /=/, $p;
     if ($a eq "name") {
       if (!$b) {
-        $ret{"error"} = "AddHyphen line needs name=something";
+        $ret{"error"} = "AddHyphen line needs name=something: $line";
         return %ret;
       }
       $ret{"name"} = $b;
       next;
     }
     if ($a eq "lefthyphenmin") {
-      $ret{"lefthyphenmin"} = ( $b ? $b : $default_lefthyphenmin );
+      if (! defined $b) {
+        $ret{"error"} = "AddHyphen line needs lefthyphenmin=something: $line";
+        return %ret;
+      }
+      $ret{"lefthyphenmin"} = $b;
       next;
     }
     if ($a eq "righthyphenmin") {
-      $ret{"righthyphenmin"} = ( $b ? $b : $default_righthyphenmin );
+      if (! defined $b) {
+        $ret{"error"} = "AddHyphen line needs righthyphenmin=something: $line";
+        return %ret;
+      }
+      $ret{"righthyphenmin"} = $b;
       next;
     }
     if ($a eq "file") {
       if (!$b) {
-        $ret{"error"} = "AddHyphen line needs file=something";
+        $ret{"error"} = "AddHyphen line needs file=something: $line ";
         return %ret;
       }
       $ret{"file"} = $b;
       next;
     }
     if ($a eq "file_patterns") {
-        $ret{"file_patterns"} = $b;
-        next;
+      # many are blank in hyph-utf8, don't check.
+      $ret{"file_patterns"} = $b;
+      next;
     }
     if ($a eq "file_exceptions") {
-        $ret{"file_exceptions"} = $b;
-        next;
+      # many are blank in hyph-utf8, don't check.
+      $ret{"file_exceptions"} = $b;
+      next;
     }
     if ($a eq "luaspecial") {
-        $ret{"luaspecial"} = $b;
-        next;
+      if (!$b) {
+        $ret{"error"} = "AddHyphen line needs luaspecial=something: $line";
+        return %ret;
+      }
+      $ret{"luaspecial"} = $b;
+      next;
     }
     if ($a eq "databases") {
+      if (!$b) {
+        $ret{"error"} = "AddHyphen line needs databases=something: $line";
+        return %ret;
+      }
       @{$ret{"databases"}} = split /,/, $b;
       next;
     }
     if ($a eq "synonyms") {
+      if (!$b) {
+        $ret{"error"} = "AddHyphen line needs synonyms=something: $line";
+        return %ret;
+      }
       @{$ret{"synonyms"}} = split /,/, $b;
       next;
     }
     if ($a eq "comment") {
-        $ret{"comment"} = $b;
-        next;
+      $ret{"comment"} = $b;
+      next;
     }
     # should not be reached at all
-    $ret{"error"} = "Unknown language directive $a";
+    $ret{"error"} = "Unknown AddHyphen directive $a: $line";
     return %ret;
+  }
+  if (! $ret{"name"}) {
+    $ret{"error"} = "AddHyphen is missing name setting: $line";
+    return %ret;    
+  }
+  if ($ret{"lefthyphenmin"} !~ /^[0-9]$/) {
+    $ret{"lefthyphenmin"} = "" if ! $ret{"lefthyphenmin"}; #undef warning
+    $ret{"error"} = "AddHyphen has missing or bad "
+                    . " lefthyphenmin ($ret{lefthyphenmin}): $line";
+    return %ret;    
+  }
+  if ($ret{"righthyphenmin"} !~ /^[0-9]$/) {
+    $ret{"righthyphenmin"} = "" if ! $ret{"righthyphenmin"}; #undef warning
+    $ret{"error"} = "AddHyphen has missing or bad "
+                    . " righthyphenmin ($ret{righthyphenmin}): $line";
+    return %ret;    
   }
   # this default value couldn't be set earlier
   if (not defined($ret{"databases"})) {
