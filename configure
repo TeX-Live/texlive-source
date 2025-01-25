@@ -7282,10 +7282,19 @@ printf "%s\n" "$as_me:   ->  installed \`mpfr' headers and library" >&6;}
   elif test "x$with_system_mpfr" != xyes; then
     as_fn_error $? "Sorry, \`--with-system-mpfi' requires \`--with-system-mpfr'" "$LINENO" 5
   fi
+  if test "x$with_system_gmp" = x; then
+    { printf "%s\n" "$as_me:${as_lineno-$LINENO}:   ->  installed \`gmp' headers and library" >&5
+printf "%s\n" "$as_me:   ->  installed \`gmp' headers and library" >&6;}
+    with_system_gmp=yes
+    ac_configure_args="$ac_configure_args '--with-system-gmp'"
+  elif test "x$with_system_gmp" != xyes; then
+    as_fn_error $? "Sorry, \`--with-system-mpfi' requires \`--with-system-gmp'" "$LINENO" 5
+  fi
 fi
 
 test "x$need_mpfi" = xyes && {
   need_mpfr=yes
+  need_gmp=yes
 }
 
 ## libs/mpfr/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory libs/mpfr/
@@ -25904,7 +25913,7 @@ printf %s "checking requested system \`xpdf' library... " >&6; }
 int
 main (void)
 {
-GfxFont *gfxFont; gfxFont->decRefCnt();
+GfxFont *gfxFont; gfxFont->isOk();
   ;
   return 0;
 }
@@ -28750,11 +28759,11 @@ msg_compiling="$msg_compiling
 test "x$srcdir" = x. || msg_compiling="$msg_compiling
       from sources in $kpse_src"
 { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result:
-** Configuration summary for $PACKAGE_STRING (2025/dev$with_banner_add):
+** Configuration summary for $PACKAGE_STRING (2025$with_banner_add):
 
    $msg_compiling" >&5
 printf "%s\n" "
-** Configuration summary for $PACKAGE_STRING (2025/dev$with_banner_add):
+** Configuration summary for $PACKAGE_STRING (2025$with_banner_add):
 
    $msg_compiling" >&6; }
 case $kpse_src$kpse_bld in

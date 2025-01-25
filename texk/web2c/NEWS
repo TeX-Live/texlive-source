@@ -9,6 +9,9 @@ which affects calculation of a few pen polygons in a small way; we don't
 know if any extant fonts are impacted.
 
 
+2025 (for TeX Live 2025)
+
+
 2024 (for TeX Live 2024, 10 March 2024)
 
 * For all engines: if the --output-directory option is given, its value

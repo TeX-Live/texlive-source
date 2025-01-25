@@ -1,3 +1,10 @@
+2025-01-25  Karl Berry  <karl@freefriends.org>
+
+        * NEWS,
+        * pdftex_version.h,
+        * pdftex.web (pdftex_revision, pdftex_version_string):
+        version [1.40.]27 for TL25.
+
 2025-01-25  Thanh Han The  <hanthethanh@gmail.com>
 
 	* pdftex.web (print_ignored_err): new @d.

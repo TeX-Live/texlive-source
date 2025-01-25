@@ -1,3 +1,8 @@
+2025-01-25  Karl Berry  <karl@freefriends.org>
+
+	* version.ac (kpse_dev): no more /dev.
+	* NEWS: copyright 2023.
+
 2025-01-15  Karl Berry  <karl@freefriends.org>
 
 	* kpsewhich.c (main): output blank line for search files that are

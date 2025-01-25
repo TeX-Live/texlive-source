@@ -1,3 +1,8 @@
+2025-01-25  Karl Berry  <karl@freefriends.org>
+
+	* COPYRIGHT,
+	* main.c: 2025.
+
 2024-11-09  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* configure.ac, version.h:

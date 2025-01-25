@@ -1,3 +1,4 @@
+pdfTeX 3.141592653-2.6-1.40.27 (TeX Live 2025)
 - changes:
   - new primitive \pdfptexuseunderscore: if positive or
     if \pdfmajorversion >= 2, PTEX.Fullbanner and other dictionary
@@ -11,12 +12,14 @@
   - ignore tiny resolutions like 1x1 embedded in images instead of
     exceeding \maxdimen.
 
-pdfTeX 3.141592653-2.6-1.40.26 (TeX Live 2024)
+-----------------------------------------------------------------------------
+pdfTeX 3.141592653-2.6-1.40.26 (TeX Live 2024) (March 10, 2023)
 - bugfixes:
   - more reliable text extraction on BigEndian systems.
   - more checks against corrupt pfb, fmt, pdf, files.
   - avoid writing a corrupt pdf given unusual pdf inclusions.
 
+-----------------------------------------------------------------------------
 pdfTeX 3.141592653-2.6-1.40.25 (TeX Live 2023) (March 9, 2023)
 - changes:
   - new keyword `shipout' for \special and \pdfliteral, delaying
@@ -41,12 +44,14 @@ pdfTeX 3.141592653-2.6-1.40.25 (TeX Live 2023) (March 9, 2023)
   - include base and accent glyph in /CharSet when the Type 1 seac
     operator is used (e.g., Lucida, DejaVu Serif).
 
+-----------------------------------------------------------------------------
 pdfTeX 3.141592653-2.6-1.40.24 (TeX Live 2022) (March 21, 2021)
 - changes:
   - new primitive \showstream to redirect \show output.
   - new primitives \partokenname, \partokencontext to control \par insertion.
   - support structured destinations from PDF 2.0.
 
+-----------------------------------------------------------------------------
 pdfTeX 3.141592653-2.6-1.40.23 (TeX Live 2021 post-release) (June 28, 2021)
 - changes:
   - for letterspaced fonts, use explicit \fontdimen6 if specified.
@@ -58,6 +63,7 @@ pdfTeX 3.141592653-2.6-1.40.23 (TeX Live 2021 post-release) (June 28, 2021)
   - for characters with autokern (\pdfappendkern and \pdfprependkern),
     still do protrusion; likewise autokern implicit and explicit hyphens.
   
+-----------------------------------------------------------------------------
 pdfTeX 3.141592653-2.6-1.40.22 (TeX Live 2021) (March 23, 2021)
 - changes:
   - new primitives \pdfrunninglinkoff and \pdfrunninglinkon; e.g., for
@@ -81,6 +87,7 @@ pdfTeX 3.141592653-2.6-1.40.22 (TeX Live 2021) (March 23, 2021)
   with upstream. In native TL, pdftex has always used libs/xpdf,
   which is cut-down and adapted code from xpdf.
 
+-----------------------------------------------------------------------------
 pdfTeX 3.14159265-2.6-1.40.21 (TeX Live 2020) (March 27, 2020)
 - changes:
   - new primitive \pdfmajorversion; this merely changes the version
@@ -90,6 +97,7 @@ pdfTeX 3.14159265-2.6-1.40.21 (TeX Live 2020) (March 27, 2020)
   - new option --cnf-line (cross-engine).
   - (un)compress .fmt files with zlib (cross-engine).
   
+-----------------------------------------------------------------------------
 pdfTeX 3.14159265-2.6-1.40.20 (TeX Live 2019)
 - changes:
   - new primitive \expanded (from unreleased pdftex 1.50 branch + luatex).
@@ -100,6 +108,7 @@ pdfTeX 3.14159265-2.6-1.40.20 (TeX Live 2019)
     it, since it cannot feasibly be guaranteed correct as the PDF/A-2
     and /A-3 standards require.
 
+-----------------------------------------------------------------------------
 pdfTeX 3.14159265-2.6-1.40.19 (TeX Live 2018)  (April 14, 2018)
 - changes:
   - do not hash current directory into PDF ID, for more reproducible builds

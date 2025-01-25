@@ -1,3 +1,10 @@
+2025-01-25  Karl Berry  <karl@freefriends.org>
+
+        * NEWS,
+        * xetex_version.h,
+        * xetex.web (xetex_revision, xetex_version_string):
+        version 0.999997 for TL25.
+
 2025-01-25  Thanh Han The  <hanthethanh@gmail.com>
 
 	* pdftex.web (print_ignored_err): new @d.

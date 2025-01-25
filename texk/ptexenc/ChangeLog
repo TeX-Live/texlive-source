@@ -1,3 +1,7 @@
+2025-01-25  Karl Berry  <karl@freefriends.org>
+
+	* version.ac: remove /dev, for TL25.
+
 2025-01-21  Vincenzo Mantova <vlmantova@gmail.com>
 
 	* Makefile.am (nobase_include_HEADERS): include ptexenc/unicode-jp.h.
