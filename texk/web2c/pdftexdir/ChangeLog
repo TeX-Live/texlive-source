@@ -1,3 +1,15 @@
+2025-01-25  Thanh Han The  <hanthethanh@gmail.com>
+
+	* pdftex.web (print_ignored_err): new @d.
+	(ignore_primitive_error_code, ignore_primitive_error): new primitive
+	\ignoreprimitiveerror.
+	(is_bit_set): new fn.
+	(finite_shrink): if it's set, make "Infinite glue shrinkage"
+	error into warning.
+	(Generate all \eTeX): define it.
+	(Cases for |print_param|): print it.
+	Request from Frank Mittelbach, 22 Jul 2024 22:37:26 (private mail).
+
 2025-01-23  Thanh Han The  <hanthethanh@gmail.com>
 
 	* pdftex.web (Glob...): remove pdf_last_f; remove uses.

@@ -1,7 +1,10 @@
 - changes:
   - new primitive \pdfptexuseunderscore: if positive or
-    if \pdfmajorversion >= 2, the PTEX.Fullbanner and other dictionary
-    entries use an _ instead of ., as in PTEX_Fullbanner.
+    if \pdfmajorversion >= 2, PTEX.Fullbanner and other dictionary
+    entry names use _ instead of ., as in "PTEX_Fullbanner".
+  - new primitive \ignoreprimitiveerror, enabled with -etex: if set
+    to 1, the error "Infinite glue shrinkage" becomes a warning
+    (exit status remains 0). Other values reserved for future use.
 - bugfixes:
   - don't omit real spaces just because the font changes.
   - increase tolerance for detecting interword spaces in overfull lines.

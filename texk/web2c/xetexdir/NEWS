@@ -1,3 +1,7 @@
+* new primitive \ignoreprimitiveerror, enabled with -etex: if set
+  to 1, the error "Infinite glue shrinkage" becomes a warning
+  (exit status remains 0). Other values reserved for future use.
+
 ==============================================================
 XeTeX 0.999996 (February 2024)
 
