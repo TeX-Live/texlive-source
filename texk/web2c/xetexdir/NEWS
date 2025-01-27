@@ -5,6 +5,9 @@ XeTeX 0.999997
   to 1, the error "Infinite glue shrinkage" becomes a warning
   (exit status remains 0). Other values reserved for future use.
 
+* scaling fonts to >= 2048pt now results in an error message, instead of
+  (unhandled) arithmetic overflow or silent changing of the user's value.
+
 ==============================================================
 XeTeX 0.999996 (February 2024)
 

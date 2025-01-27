@@ -10,6 +10,9 @@ know if any extant fonts are impacted.
 
 
 2025 (for TeX Live 2025)
+* For all engines: scaling fonts to >= 2048pt now results in an error
+  message, instead of (unhandled) arithmetic overflow or silent changing
+  of the user's value.
 
 
 2024 (for TeX Live 2024, 10 March 2024)

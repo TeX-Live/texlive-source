@@ -11,6 +11,9 @@ pdfTeX 3.141592653-2.6-1.40.27 (TeX Live 2025)
   - increase tolerance for detecting interword spaces in overfull lines.
   - ignore tiny resolutions like 1x1 embedded in images instead of
     exceeding \maxdimen.
+  - scaling fonts to >= 2048pt now results in an error
+    message, instead of (unhandled) arithmetic overflow or silent changing
+    of the user's value.
 
 -----------------------------------------------------------------------------
 pdfTeX 3.141592653-2.6-1.40.26 (TeX Live 2024) (March 10, 2023)
