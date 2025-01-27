@@ -1,4 +1,4 @@
-% Copyright 1996-2023 Han The Thanh, <thanh@pdftex.org>
+% Copyright 1996-2025 Han The Thanh, <thanh@pdftex.org>
 %
 % This file is part of pdfTeX.
 %
@@ -145,23 +145,30 @@ label reswitch, move_past, fin_rule, next_p, found, continue;
 continue:
 @z
 
-@x [49.1259]
+% this @x code is modified from tex.web by tex.ch.
+@x [49.1259] omit block if pdf_font_step[f] is nonzero; preserve indentation
     begin if s>0 then
       begin if s=font_size[f] then goto common_ending;
       end
-    else if font_size[f]=xn_over_d(font_dsize[f],-s,1000) then
-      goto common_ending;
+    else begin arith_error:=false;
+      if font_size[f]=xn_over_d(font_dsize[f],-s,1000)
+      then if not arith_error
+        then goto common_ending;
+      end;
     end
 @y
-    begin
-    if pdf_font_step[f] = 0 then begin
-       if s>0 then
-         begin if s=font_size[f] then goto common_ending;
-         end
-       else if font_size[f]=xn_over_d(font_dsize[f],-s,1000) then
-         goto common_ending;
-       end
+  begin {preserved}
+  if pdf_font_step[f] = 0 then begin
+    if s>0 then
+      begin if s=font_size[f] then goto common_ending;
+      end
+    else begin arith_error:=false;
+      if font_size[f]=xn_over_d(font_dsize[f],-s,1000)
+      then if not arith_error
+        then goto common_ending;
+      end;
     end
+  end
 @z
 
 @x (WEB2C!)

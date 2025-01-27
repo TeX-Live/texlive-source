@@ -1,0 +1,16 @@
+% $Id$
+% Test file (runs with initex) for scaling fonts so much that overflow
+% or silent transformation of user's value occurs. Public domain.
+% See "scaling fonts to 2048pt" in tex.ch.
+%
+% These fonts are also in the web2c/tests directory, siblings to this file.
+
+\font\x=./fonttoobig-ds1024 scaled 32000
+\show\x % without fix, get \x=select font bug at 1000.0pt.
+
+\font\x=./fonttoobig-ds256 scaled 8000 % fpe
+
+\font\x=./io scaled 16000 \x 0 % fpe per igor tex-k  25 Jun 2021 10:27:28
+\font\x=./io scaled 15999 \x 0 % ok
+\end
+

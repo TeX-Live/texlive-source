@@ -1,6 +1,15 @@
 2025-01-27  Karl Berry  <karl@freefriends.org>
 
+	* tex.ch (30.568, 49.1260): avoid scaling fonts to 2048pt or more.
+	Reports from
+	Igor Liferenko (https://tug.org/pipermail/tex-k/2021-June/003604.html)
+	Tyge Tiessen (https://tug.org/pipermail/tex-k/2022-January/003752.html)
+	and patch from Tyge.
+
+2025-01-27  Karl Berry  <karl@freefriends.org>
+
 	* am/texmf.am (tex-pool.c, mf-pool.c): exit 1 if makecpool failed.
+	(tex-final.ch, mf-final.ch): remove $@ and exit 1 if tie failed.
 
 2025-01-24  Karl Berry  <karl@freefriends.org>
 

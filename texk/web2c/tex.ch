@@ -2428,6 +2428,23 @@ pack_file_name(nom,aire,"");
 @d fbyte==tfm_temp
 @z
 
+% Too much font scaling can cause overflows and silently changing the
+% user's value. See tests/fonttoobig.tex for examples. Reports from
+% Igor Liferenko (https://tug.org/pipermail/tex-k/2021-June/003604.html)
+% and Tyge Tiessen (https://tug.org/pipermail/tex-k/2022-January/003752.html).
+% Patch from Tyge.
+% [30.568] Avoid scaling fonts to >= 2048pt, which can cause overflow.
+@x [30.568] l.11072 - Avoid scaling fonts to 2048pt or more.
+  else z:=xn_over_d(z,-s,1000);
+@y
+  else begin sw:=z; arith_error:=false; z:=xn_over_d(z,-s,1000);
+    if arith_error or z>=@'1000000000 then begin
+       start_font_error_message; print(" scaled to 2048pt or higher");
+       help1("I will ignore the scaling factor."); error; z:=sw;
+       end;
+    end;
+@z
+
 @x [30.570] l.11100 - MLTeX: fix for bug while loading font
   begin qw:=char_info(f)(d);
 @y
@@ -3417,6 +3434,17 @@ flushable_string:=str_ptr-1;
     if s>0 then
 @y
     begin if s>0 then
+@z
+
+@x [49.1260] l.23418 - Avoid scaling fonts to 2048pt or more (see above).
+    else if font_size[f]=xn_over_d(font_dsize[f],-s,1000) then
+      goto common_ending;
+@y
+    else begin arith_error:=false;
+      if font_size[f]=xn_over_d(font_dsize[f],-s,1000)
+      then if not arith_error
+        then goto common_ending;
+      end;
 @z
 
 @x [49.1265] l.23454 - if batchmode, mktex... scripts should be silent.

@@ -1,6 +1,7 @@
 2025-01-27  Karl Berry  <karl@freefriends.org>
 
 	* am/xetex.am (xetex-pool.c): exit 1 if makecpool failed.
+	(tex-final.ch, mf-final.ch): remove $@ and exit 1 if tie failed.
 
 2025-01-25  Karl Berry  <karl@freefriends.org>
 
