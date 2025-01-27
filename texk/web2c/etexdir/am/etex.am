@@ -1,7 +1,7 @@
 ## $Id$
 ## texk/web2c/etexdir/am/etex.am: Makefile fragment for e-TeX.
 ##
-## Copyright 2015-2022 Karl Berry <tex-live@tug.org>
+## Copyright 2015-2025 Karl Berry <tex-live@tug.org>
 ## Copyright 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
@@ -34,7 +34,7 @@ etex-web2c: etex.p $(web2c_texmf)
 	@$(web2c) etex
 
 etex-pool.c: etex.pool etexd.h $(makecpool_stamp)
-	$(makecpool) etex >$@ || rm -f $@
+	$(makecpool) etex >$@ || { rm -f $@; exit 1; }
 
 # Tangling e-TeX
 etex.p etex.pool: etex-tangle

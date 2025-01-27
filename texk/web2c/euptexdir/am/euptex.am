@@ -1,7 +1,7 @@
 ## $Id$
 ## texk/web2c/euptexdir/am/euptex.am: Makefile fragment for e-upTeX.
 ##
-## Copyright 2015-2024 Karl Berry <tex-live@tug.org>
+## Copyright 2015-2025 Karl Berry <tex-live@tug.org>
 ## Copyright 2011-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
@@ -41,7 +41,7 @@ euptex-web2c: euptex.p $(web2c_texmf) euptexdir/euptex.defines
 	@$(web2c) euptex
 
 euptex-pool.c: euptex.pool euptexd.h $(makecpool_stamp)
-	$(makecpool) euptex >$@ || rm -f $@
+	$(makecpool) euptex >$@ || { rm -f $@; exit 1; }
 
 # Tangling e-upTeX
 euptex.p euptex.pool: euptex-tangle

@@ -1,3 +1,7 @@
+2025-01-27  Karl Berry  <karl@freefriends.org>
+
+	* am/texmf.am (tex-pool.c, mf-pool.c): exit 1 if makecpool failed.
+
 2025-01-24  Karl Berry  <karl@freefriends.org>
 
 	* configure.ac (KPSE_CHECK_FRAMEWORK, KPSE_FONTCONFIG_FLAGS)

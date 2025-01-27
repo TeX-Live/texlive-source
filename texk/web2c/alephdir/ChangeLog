@@ -1,3 +1,7 @@
+2025-01-27  Karl Berry  <karl@freefriends.org>
+
+	* am/aleph.am (aleph-pool.c): exit 1 if makecpool failed.
+
 2024-10-20  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* aleph-{ofm,lmr}.test, tests/lmr1.tex,

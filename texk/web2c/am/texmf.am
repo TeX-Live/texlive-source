@@ -1,7 +1,7 @@
 ## $Id$
 ## texk/web2c/am/texmf.am: Makefile fragment for TeX and MF.
 ##
-## Copyright 2015-2023 Karl Berry <tex-live@tug.org>
+## Copyright 2015-2025 Karl Berry <tex-live@tug.org>
 ## Copyright 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
@@ -50,7 +50,7 @@ tex-web2c: tex.p $(web2c_texmf)
 	@$(web2c) tex
 
 tex-pool.c: tex.pool texd.h $(makecpool_stamp)
-	$(makecpool) tex >$@ || rm -f $@
+	$(makecpool) tex >$@ || { rm -f $@; exit 1; }
 
 # Tangling TeX
 tex.p tex.pool: tex-tangle
@@ -60,7 +60,7 @@ tex-tangle: tangle$(EXEEXT) tex.web tex-final.ch tangle-sh
 
 # Generate tex-final.ch
 tex-final.ch: tie$(EXEEXT) $(tex_ch_srcs)
-	$(tie_c) $(tex_ch_srcs)
+	$(tie_c) $(tex_ch_srcs) || { rm -f $@; exit 1; }
 tex_ch_srcs = \
 	tex.web \
 	tex.ch \
@@ -184,7 +184,7 @@ mf-web2c: mf.p $(web2c_texmf) web2c/cvtmf1.sed web2c/cvtmf2.sed
 	@$(web2c) mf
 
 mf-pool.c: mf.pool mfd.h $(makecpool_stamp)
-	$(makecpool) mf >$@ || rm -f $@
+	$(makecpool) mf >$@ || { rm -f $@; exit 1; }
 
 # Tangling Metafont
 mf.p mf.pool: mf-tangle
@@ -194,7 +194,7 @@ mf-tangle: tangle$(EXEEXT) mf.web mf-final.ch tangle-sh
 
 # Generate mf-final.ch
 mf-final.ch: tie$(EXEEXT) $(mf_ch_src)
-	$(tie_c) $(mf_ch_src)
+	$(tie_c) $(mf_ch_src) || { rm -f $@; exit 1; }
 mf_ch_src = \
 	mf.web \
 	mf.ch \

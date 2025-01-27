@@ -21663,7 +21663,7 @@ tex-web2c: tex.p $(web2c_texmf)
 	@$(web2c) tex
 
 tex-pool.c: tex.pool texd.h $(makecpool_stamp)
-	$(makecpool) tex >$@ || rm -f $@
+	$(makecpool) tex >$@ || { rm -f $@; exit 1; }
 
 # Tangling TeX
 tex.p tex.pool: tex-tangle
@@ -21673,7 +21673,7 @@ tex-tangle: tangle$(EXEEXT) tex.web tex-final.ch tangle-sh
 
 # Generate tex-final.ch
 tex-final.ch: tie$(EXEEXT) $(tex_ch_srcs)
-	$(tie_c) $(tex_ch_srcs)
+	$(tie_c) $(tex_ch_srcs) || { rm -f $@; exit 1; }
 triptest.log: tex$(EXEEXT) dvitype$(EXEEXT) pltotf$(EXEEXT) tftopl$(EXEEXT)
 tests/outputdir.log tests/tex-closeout.log \
   tests/write18-quote-test.log: tex$(EXEEXT)
@@ -21706,7 +21706,7 @@ mf-web2c: mf.p $(web2c_texmf) web2c/cvtmf1.sed web2c/cvtmf2.sed
 	@$(web2c) mf
 
 mf-pool.c: mf.pool mfd.h $(makecpool_stamp)
-	$(makecpool) mf >$@ || rm -f $@
+	$(makecpool) mf >$@ || { rm -f $@; exit 1; }
 
 # Tangling Metafont
 mf.p mf.pool: mf-tangle
@@ -21716,7 +21716,7 @@ mf-tangle: tangle$(EXEEXT) mf.web mf-final.ch tangle-sh
 
 # Generate mf-final.ch
 mf-final.ch: tie$(EXEEXT) $(mf_ch_src)
-	$(tie_c) $(mf_ch_src)
+	$(tie_c) $(mf_ch_src) || { rm -f $@; exit 1; }
 mftraptest.log: mf$(EXEEXT) gftype$(EXEEXT) tftopl$(EXEEXT)
 
 mftrap.diffs: mf$(EXEEXT) gftype$(EXEEXT) tftopl$(EXEEXT)
@@ -21745,7 +21745,7 @@ mflua-web2c: mflua.p $(web2c_texmf) web2c/cvtmf1.sed web2c/cvtmf2.sed mfluadir/m
 	@$(web2c) mflua
 
 mflua-pool.c: mflua.pool mfluad.h $(makecpool_stamp)
-	$(makecpool) mflua >$@ || rm -f $@
+	$(makecpool) mflua >$@ || { rm -f $@; exit 1; }
 
 # Tangling MFLua
 mflua.p mflua.pool: mflua-tangle
@@ -21803,7 +21803,7 @@ mfluajit-web2c: mfluajit.p $(web2c_texmf) web2c/cvtmf1.sed web2c/cvtmf2.sed mflu
 	@$(web2c) mfluajit
 
 mfluajit-pool.c: mfluajit.pool mfluajitd.h $(makecpool_stamp)
-	$(makecpool) mfluajit >$@ || rm -f $@
+	$(makecpool) mfluajit >$@ || { rm -f $@; exit 1; }
 
 # Tangling MFLuaJIT
 mfluajit.p mfluajit.pool: mfluajit-tangle
@@ -22013,7 +22013,7 @@ etex-web2c: etex.p $(web2c_texmf)
 	@$(web2c) etex
 
 etex-pool.c: etex.pool etexd.h $(makecpool_stamp)
-	$(makecpool) etex >$@ || rm -f $@
+	$(makecpool) etex >$@ || { rm -f $@; exit 1; }
 
 # Tangling e-TeX
 etex.p etex.pool: etex-tangle
@@ -22053,7 +22053,7 @@ ptex-web2c: ptex.p $(web2c_texmf) ptexdir/ptex.defines
 	@$(web2c) ptex
 
 ptex-pool.c: ptex.pool ptexd.h $(makecpool_stamp)
-	$(makecpool) ptex >$@ || rm -f $@
+	$(makecpool) ptex >$@ || { rm -f $@; exit 1; }
 
 # Tangling pTeX
 ptex.p ptex.pool: ptex-tangle
@@ -22093,7 +22093,7 @@ uptex-web2c: uptex.p $(web2c_texmf) uptexdir/uptex.defines
 	@$(web2c) uptex
 
 uptex-pool.c: uptex.pool uptexd.h $(makecpool_stamp)
-	$(makecpool) uptex >$@ || rm -f $@
+	$(makecpool) uptex >$@ || { rm -f $@; exit 1; }
 
 # Tangling upTeX
 uptex.p uptex.pool: uptex-tangle
@@ -22179,7 +22179,7 @@ euptex-web2c: euptex.p $(web2c_texmf) euptexdir/euptex.defines
 	@$(web2c) euptex
 
 euptex-pool.c: euptex.pool euptexd.h $(makecpool_stamp)
-	$(makecpool) euptex >$@ || rm -f $@
+	$(makecpool) euptex >$@ || { rm -f $@; exit 1; }
 
 # Tangling e-upTeX
 euptex.p euptex.pool: euptex-tangle
@@ -22255,7 +22255,7 @@ pdftex.p pdftex.pool: pdftex-tangle
 pdftex-tangle: tangle$(EXEEXT) pdftexdir/pdftex.web pdftex-final.ch tangle-sh
 	$(pdf_tangle) pdftex pdftex-final
 pdftex-pool.c: pdftex.pool pdftexd.h $(makecpool_stamp)
-	$(makecpool) pdftex >$@ || rm -f $@
+	$(makecpool) pdftex >$@ || { rm -f $@; exit 1; }
 
 # Extract pdftex version
 $(srcdir)/pdftexdir/pdftex_version.h: @MAINTAINER_MODE_TRUE@ pdftexdir/pdftex.web
@@ -22269,7 +22269,7 @@ $(srcdir)/pdftexdir/etex_version.h: @MAINTAINER_MODE_TRUE@ pdftexdir/pdftex.web
 
 # Generate pdftex-final.ch
 pdftex-final.ch: tie$(EXEEXT) $(pdftex_ch_srcs)
-	$(tie_c) $(pdftex_ch_srcs)
+	$(tie_c) $(pdftex_ch_srcs) || { rm -f $@; exit 1; }
 
 # Convenience target for making the typeset output; not invoked automatically
 pdftex.pdf: pdftex.tex
@@ -22422,7 +22422,7 @@ xetex-web2c: xetex.p $(web2c_texmf) xetexdir/xetex.defines
 	@$(web2c) xetex
 
 xetex-pool.c: xetex.pool xetexd.h $(makecpool_stamp)
-	$(makecpool) xetex >$@ || rm -f $@
+	$(makecpool) xetex >$@ || { rm -f $@; exit 1; }
 
 xetex.p xetex.pool: xetex-tangle
 	$(xe_tangle) xetex xetex-final
@@ -22439,7 +22439,7 @@ $(srcdir)/xetexdir/xetex_version.h: @MAINTAINER_MODE_TRUE@ xetexdir/xetex.web
 	  | sed "s/^.*'-/#define XETEX_VERSION \"/;s/'.*$$/\"/" >$@
 
 xetex-final.ch: tie$(EXEEXT) $(xetex_ch_srcs)
-	$(tie_c) $(xetex_ch_srcs)
+	$(tie_c) $(xetex_ch_srcs) || { rm -f $@; exit 1; }
 $(libxetex_a_OBJECTS): $(libxetex_prereq)
 xetexdir/xetex-filedump.log xetexdir/xetex-bug73.log \
   xetexdir/xetex-ctrlsym.log xetexdir/xetex.log \
@@ -22520,7 +22520,7 @@ $(aleph_c_h): aleph-web2c
 aleph-web2c: aleph.p $(web2c_texmf) alephdir/aleph.defines
 	@$(web2c) aleph
 aleph-pool.c: aleph.pool alephd.h $(makecpool_stamp)
-	$(makecpool) aleph >$@ || rm -f $@
+	$(makecpool) aleph >$@ || { rm -f $@; exit 1; }
 
 # Tangling Aleph
 aleph.p aleph.pool: aleph-tangle

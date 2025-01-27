@@ -1,7 +1,7 @@
 ## $Id$
 ## texk/web2c/alephdir/am/aleph.am: Makefile fragment for Aleph.
 ##
-## Copyright 2015-2023 Karl Berry <tex-live@tug.org>
+## Copyright 2015-2025 Karl Berry <tex-live@tug.org>
 ## Copyright 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
@@ -37,7 +37,7 @@ $(aleph_c_h): aleph-web2c
 aleph-web2c: aleph.p $(web2c_texmf) alephdir/aleph.defines
 	@$(web2c) aleph
 aleph-pool.c: aleph.pool alephd.h $(makecpool_stamp)
-	$(makecpool) aleph >$@ || rm -f $@
+	$(makecpool) aleph >$@ || { rm -f $@; exit 1; }
 
 # Tangling Aleph
 aleph.p aleph.pool: aleph-tangle

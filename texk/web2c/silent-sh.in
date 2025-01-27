@@ -1,7 +1,9 @@
 #! @SHELL@
 # silent-sh: shell script to invoke tie etc in silent rules.
+# $Id$
 #
-#   Copyright (C) 2012 Peter Breitenlohner <tex-live@tug.org>
+#   Copyright 2015-2025 Karl Berry <tex-live@tug.org>
+#   Copyright 2012-2015 Peter Breitenlohner <tex-live@tug.org>
 #
 #   This file is free software; the copyright holder
 #   gives unlimited permission to copy and/or distribute it,
@@ -9,7 +11,7 @@
 #
 # Used as, e.g.,
 #	tex-final.ch: tie$(EXEEXT) $(tex_ch_srcs)
-#		$(tie) -c $@ $(tex_ch_srcs)
+#		$(tie) -c $@ $(tex_ch_srcs) || { rm -f $@; exit 1; }
 # with
 #	tie = $(tie_silent)WEBINPUTS=.:$(srcdir) $(buildenv) $(TIE)
 # and

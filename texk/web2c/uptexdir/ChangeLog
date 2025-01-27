@@ -1,3 +1,7 @@
+2025-01-27  Karl Berry  <karl@freefriends.org>
+
+	* am/uptex.am (uptex-pool.c): exit 1 if makecpool failed.
+
 2025-01-21  Vincenzo Mantova <vlmantova@gmail.com>
 
 	* configure.ac (bin_links) [UPWEB]: make up...->p... links conditional.

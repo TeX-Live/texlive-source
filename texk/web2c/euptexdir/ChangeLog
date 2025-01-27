@@ -1,3 +1,7 @@
+2025-01-27  Karl Berry  <karl@freefriends.org>
+
+	* am/euptex.am (euptex-pool.c): exit 1 if makecpool failed.
+
 2025-01-02  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* upkcat.test: Update tests.

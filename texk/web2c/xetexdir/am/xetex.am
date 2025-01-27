@@ -1,7 +1,7 @@
 ## $Id$
 ## texk/web2c/xetexdir/am/xetex.am: Makefile fragment for XeTeX.
 ##
-## Copyright 2017-2024 Karl Berry <tex-live@tug.org>
+## Copyright 2017-2025 Karl Berry <tex-live@tug.org>
 ## Copyright 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
@@ -88,7 +88,7 @@ xetex-web2c: xetex.p $(web2c_texmf) xetexdir/xetex.defines
 	@$(web2c) xetex
 
 xetex-pool.c: xetex.pool xetexd.h $(makecpool_stamp)
-	$(makecpool) xetex >$@ || rm -f $@
+	$(makecpool) xetex >$@ || { rm -f $@; exit 1; }
 
 ## Tangling XeTeX
 xetex.p xetex.pool: xetex-tangle
@@ -108,7 +108,7 @@ $(srcdir)/xetexdir/xetex_version.h: @MAINTAINER_MODE_TRUE@ xetexdir/xetex.web
 
 ## Generate xetex-final.ch
 xetex-final.ch: tie$(EXEEXT) $(xetex_ch_srcs)
-	$(tie_c) $(xetex_ch_srcs)
+	$(tie_c) $(xetex_ch_srcs) || { rm -f $@; exit 1; }
 xetex_ch_srcs = \
 	xetexdir/xetex.web \
 	xetexdir/tex.ch0 \

@@ -1,6 +1,6 @@
 ## texk/web2c/mfluadir/am/mflua.am: Makefile fragment for MFLua.
 ##
-## Copyright 2016-2022 Karl Berry <tex-live@tug.org>
+## Copyright 2016-2025 Karl Berry <tex-live@tug.org>
 ## Copyright 2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
@@ -72,7 +72,7 @@ mflua-web2c: mflua.p $(web2c_texmf) web2c/cvtmf1.sed web2c/cvtmf2.sed mfluadir/m
 	@$(web2c) mflua
 
 mflua-pool.c: mflua.pool mfluad.h $(makecpool_stamp)
-	$(makecpool) mflua >$@ || rm -f $@
+	$(makecpool) mflua >$@ || { rm -f $@; exit 1; }
 
 # Tangling MFLua
 mflua.p mflua.pool: mflua-tangle

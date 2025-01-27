@@ -1,6 +1,6 @@
 ## texk/web2c/mfluajitdir/am/mfluajit.am: Makefile fragment for MFLuaJIT.
 ##
-## Copyright 2016-2022 Karl Berry <tex-live@tug.org>
+## Copyright 2016-2025 Karl Berry <tex-live@tug.org>
 ## Copyright 2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
@@ -72,7 +72,7 @@ mfluajit-web2c: mfluajit.p $(web2c_texmf) web2c/cvtmf1.sed web2c/cvtmf2.sed mflu
 	@$(web2c) mfluajit
 
 mfluajit-pool.c: mfluajit.pool mfluajitd.h $(makecpool_stamp)
-	$(makecpool) mfluajit >$@ || rm -f $@
+	$(makecpool) mfluajit >$@ || { rm -f $@; exit 1; }
 
 # Tangling MFLuaJIT
 mfluajit.p mfluajit.pool: mfluajit-tangle

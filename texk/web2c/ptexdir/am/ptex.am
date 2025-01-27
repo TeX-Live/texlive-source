@@ -1,7 +1,7 @@
 ## $Id$
 ## texk/web2c/ptexdir/am/ptex.am: Makefile fragment for pTeX.
 ##
-## Copyright 2015-2024 Karl Berry <tex-live@tug.org>
+## Copyright 2015-2025 Karl Berry <tex-live@tug.org>
 ## Copyright 2010-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
@@ -55,7 +55,7 @@ ptex-web2c: ptex.p $(web2c_texmf) ptexdir/ptex.defines
 	@$(web2c) ptex
 
 ptex-pool.c: ptex.pool ptexd.h $(makecpool_stamp)
-	$(makecpool) ptex >$@ || rm -f $@
+	$(makecpool) ptex >$@ || { rm -f $@; exit 1; }
 
 # Tangling pTeX
 ptex.p ptex.pool: ptex-tangle

@@ -1,7 +1,7 @@
 ## $Id$
 ## texk/web2c/pdftexdir/am/pdftex.am: Makefile fragment for pdfTeX.
 ##
-## Copyright 2016-2024 Karl Berry <tex-live@tug.org>
+## Copyright 2016-2025 Karl Berry <tex-live@tug.org>
 ## Copyright 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
@@ -51,7 +51,7 @@ pdftex.p pdftex.pool: pdftex-tangle
 pdftex-tangle: tangle$(EXEEXT) pdftexdir/pdftex.web pdftex-final.ch tangle-sh
 	$(pdf_tangle) pdftex pdftex-final
 pdftex-pool.c: pdftex.pool pdftexd.h $(makecpool_stamp)
-	$(makecpool) pdftex >$@ || rm -f $@
+	$(makecpool) pdftex >$@ || { rm -f $@; exit 1; }
 
 # Extract pdftex version
 $(srcdir)/pdftexdir/pdftex_version.h: @MAINTAINER_MODE_TRUE@ pdftexdir/pdftex.web
@@ -65,7 +65,7 @@ $(srcdir)/pdftexdir/etex_version.h: @MAINTAINER_MODE_TRUE@ pdftexdir/pdftex.web
 
 # Generate pdftex-final.ch
 pdftex-final.ch: tie$(EXEEXT) $(pdftex_ch_srcs)
-	$(tie_c) $(pdftex_ch_srcs)
+	$(tie_c) $(pdftex_ch_srcs) || { rm -f $@; exit 1; }
 pdftex_ch_srcs = \
 	pdftexdir/pdftex.web \
 	pdftexdir/tex.ch0 \
