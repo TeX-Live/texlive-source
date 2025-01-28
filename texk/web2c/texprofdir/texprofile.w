@@ -630,14 +630,16 @@ ALLOCATE(cmd_time,cmd_num);
 ALLOCATE(file_line,file_num+1); 
 ALLOCATE(cmd_freq,cmd_num);
 
-
 cur_depth=-1;
 total_time=0;
 total_num=0;
 macro_defs[0].a=1;
 i=0;
-{ fget1(); /* the initial call */
+
+{ uint8_t c = fget1(); /* the initial call */
   @<read a macro call@>@;
+  if (c!=system_macro_push)
+    error("Timing data must start with an initial push command");
   @<time a push command@>@;
 }
 while (i<stamp_num)
@@ -1723,11 +1725,11 @@ case '-':
 
 The only other long option currently supported is the {\tt --version} option.
 
-@d VERSION_STR "texprofile version 1.0" 
+@d VERSION_STR "1.1" 
 
 @<process long options@>=
  if (strcmp(option,"version")==0)
- { printf(VERSION_STR "\n");
+ { printf("texprofile version " VERSION_STR "\n");
    exit(0);
  }
 @

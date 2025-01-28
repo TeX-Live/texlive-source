@@ -1,5 +1,5 @@
 '\" t
-.\" Manual page created with latex2man on Mon Jan 20 11:11:40 2025
+.\" Manual page created with latex2man on Tue Jan 28 17:56:46 2025
 .\" NOTE: This file is generated, DO NOT EDIT.
 .de Vb
 .ft CW
@@ -10,7 +10,7 @@
 
 .fi
 ..
-.TH "TEXPROFILE" "1" "6\-9\-2024" "Displaying TeX profiles " "Displaying TeX profiles "
+.TH "TEXPROFILE" "1" "28\-1\-2025" "Displaying TeX profiles " "Displaying TeX profiles "
 .SH NAME
 
 .PP
@@ -565,7 +565,7 @@ because the situation is indeed complicated.
 .PP
 .SH VERSION
 
-Version: 1.0 of 6-9-2024
+Version: 1.1 of 28-1-2025
 .TP
 Copyright 
 (C)2024, Martin Ruckert,

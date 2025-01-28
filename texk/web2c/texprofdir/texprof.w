@@ -373,23 +373,29 @@ known as `\Prote'.
 
 @d eTeX_version 2 /* \.{\\eTeXversion} */
 @d eTeX_revision ".6" /* \.{\\eTeXrevision} */
-@d eTeX_version_string "-2.6" /*current \eTeX\ version*/
+@d eTeX_version_string "2.6" /*current \eTeX\ version*/
 @#
-@d TeX_banner "This is TeX, Version 3.141592653" /*printed when \TeX\ starts*/
+@d TeX_version_string "3.141592653"
+@d TeX_banner "This is TeX, Version " TeX_version_string /*printed when \TeX\ starts*/
 @#
 @#
 @d TEX ETEX /*change program name into |ETEX|*/
 @#
 @d eTeX_states 1 /*number of \eTeX\ state variables in |eqtb|*/
 @#
-@d Prote_version_string "3.141592653-2.6-1.1.0" /*current \Prote\ version*/
+@d Prote_version_string "1.1.0" /*current \Prote\ version*/
 @d Prote_version 1 /* \.{\\Proteversion} */
 @d Prote_revision ".1.0" /* \.{\\Proterevision} */
 @#
 @d Prote_banner "This is Prote, Version " Prote_version_string
    /*printed when \Prote\ starts*/
 @#
-@d banner Prote_banner
+
+@d TeXprof_version "1.1"
+@d TeXprof_banner "This is texprof, Version " TeXprof_version 
+   ", using TeX, Version " TeX_version_string 
+
+@d banner TeXprof_banner 
 
 @ Different \PASCAL s have slightly different conventions, and the present
 @!@:PASCAL H}{\ph@>
@@ -30047,8 +30053,10 @@ static int argument_is(struct option *opt, char * s)
 @<handle the options@>=
 if (ARGUMENT_IS("help")) usage_help();
 else if (ARGUMENT_IS("version")){@+
-       printf(TeX_banner@, "\n"@/
-              "Prote version "@, Prote_version_string@, "\n");
+       printf("TeXprof Version "@, TeXprof_version@; "\n"@/
+       "\tis based on TeX Version "@, TeX_version_string@, "\n"@/
+       "\tusing eTeX Version "@, eTeX_version_string@, "\n"@/
+       "\tusing Prote Version "@, Prote_version_string@, "\n");
        exit(0);@+
 }
 
