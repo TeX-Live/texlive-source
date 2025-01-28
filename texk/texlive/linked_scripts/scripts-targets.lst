@@ -130,6 +130,7 @@ texmf-dist/scripts/lwarp/lwarpmk.lua lwarpmk
 texmf-dist/scripts/m-tx/m-tx.lua m-tx
 texmf-dist/scripts/makedtx/makedtx.pl makedtx
 texmf-dist/scripts/make4ht/make4ht make4ht
+texmf-dist/scripts/markdown/markdown2tex.lua markdown2tex
 texmf-dist/scripts/match_parens/match_parens match_parens
 texmf-dist/scripts/mathspic/mathspic.pl mathspic
 texmf-dist/scripts/memoize/memoize-clean.pl memoize-clean.pl

@@ -410,6 +410,7 @@ texmf_other_scripts = \
 	m-tx/m-tx.lua \
 	makedtx/makedtx.pl \
 	make4ht/make4ht \
+	markdown/markdown2tex.lua \
 	match_parens/match_parens \
 	mathspic/mathspic.pl \
 	memoize/memoize-clean.pl \
