@@ -32,23 +32,23 @@
 \def\title{DVI$\,$\lowercase{type} changes for C}
 @z
 
-@x [0] WEAVE: print changes only.
+@x [0] l.50 WEAVE: print changes only.
 \pageno=\contentspagenumber \advance\pageno by 1
 @y
 \pageno=\contentspagenumber \advance\pageno by 1
 \let\maybe=\iffalse
 @z
 
-@x [1] Define my_name
+@x [1.1] l.90 Define my_name
 @d banner=='This is DVItype, Version 3.6' {printed when the program starts}
 @y
 @d my_name=='dvitype'
 @d banner=='This is DVItype, Version 3.6' {printed when the program starts}
 @z
 
-% [3] Specify the output file to simplify web2c, and don't print the
+% [1.3] Specify the output file to simplify web2c, and don't print the
 % banner until later.
-@x
+@x [1.3] l.126
 @d print(#)==write(#)
 @d print_ln(#)==write_ln(#)
 @y
@@ -56,7 +56,7 @@
 @d print_ln(#)==write_ln(stdout, #)
 @z
 
-@x
+@x [1.3] l.134 kpse initialize
 procedure initialize; {this procedure gets things started properly}
   var i:integer; {loop index for initializations}
   begin print_ln(banner);@/
@@ -71,7 +71,7 @@ procedure initialize; {this procedure gets things started properly}
   print_ln (version_string);
 @z
 
-@x [4] Purge non-local 'goto'.
+@x [1.4] l.140 Purge non-local 'goto'.
 @ If the program has to stop prematurely, it goes to the
 `|final_end|'. Another label, |done|, is used when stopping normally.
 
@@ -87,36 +87,40 @@ procedure initialize; {this procedure gets things started properly}
 @<Labels...@>=done;
 @z
 
-% There were no complaints that these values are too small, and adjusting
-% them dynamically requires to resize a large number of arrays and is not
-% worth the effort (if necessary one can recompile with larger values).
-@x [5] Allow more fonts, more widths, no arbitrary filename length. No dialog.
+% There have been no complaints that these values are too small, and adjusting
+% them dynamically requires resizing a large number of arrays, so
+% doesn't seem worth the effort.
+@x [1.5] l.152 More fonts, more widths, no max filename length, no dialog.
 @!max_fonts=100; {maximum number of distinct fonts per \.{DVI} file}
 @!max_widths=10000; {maximum number of different characters among all fonts}
 @y
 @!max_fonts=500; {maximum number of distinct fonts per \.{DVI} file}
 @!max_widths=25000; {maximum number of different characters among all fonts}
 @z
-@x
+
+@x [1.5] l.155
 @!terminal_line_length=150; {maximum number of characters input in a single
   line of input from the terminal}
 @y
 @z
-@x
+
+@x [1.5] l.158
 @!name_size=1000; {total length of all font file names}
 @!name_length=50; {a file name shouldn't be longer than this}
 @y
 @!name_size=10000; {total length of all font file names}
 @z
 
-@x [7] Remove non-local goto.
+@x [1.7] l.172 Remove non-local goto.
 so a procedure called |jump_out| has been introduced. This procedure, which
 simply transfers control to the label |final_end| at the end of the program,
 contains the only non-local |goto| statement in \.{DVItype}.
 @y
-so a procedure called |jump_out| has been introduced.
+so a procedure called |jump_out| has been introduced. We avoid the
+non-local |goto| in the original.
 @z
-@x
+
+@x [1.7] l.177
 @d abort(#)==begin print(' ',#); jump_out;
     end
 @d bad_dvi(#)==abort('Bad DVI file: ',#,'!')
@@ -132,16 +136,16 @@ end;
 @.Bad DVI file@>
 @z
 
-@x [8] Permissive input.
+@x [2.8] l.201 Permissive input.
 @!ASCII_code=" ".."~"; {a subrange of the integers}
 @y
 @!ASCII_code=0..255; {a subrange of the integers}
 @z
 
-% [9] The text_char type is used as an array index into `xord'.  The
+% [2.9] The text_char type is used as an array index into `xord'.  The
 % default type `char' produces signed integers, which are bad array
 % indices in C.
-@x
+@x [2.9] l.221
 @d text_char == char {the data type of characters in text files}
 @d first_text_char=0 {ordinal number of the smallest element of |text_char|}
 @d last_text_char=127 {ordinal number of the largest element of |text_char|}
@@ -151,7 +155,7 @@ end;
 @d last_text_char=255 {ordinal number of the largest element of |text_char|}
 @z
 
-@x [23] Fix up opening the files.
+@x [4.23] l.877] Fix up opening the files.
 @p procedure open_dvi_file; {prepares to read packed bytes in |dvi_file|}
 begin reset(dvi_file);
 cur_loc:=0;
@@ -179,14 +183,14 @@ begin
 end;
 @z
 
-@x [24] No arbitrary limit on filename length.
+@x [4.24] l.894 No arbitrary limit on filename length.
 @!cur_name:packed array[1..name_length] of char; {external name,
   with no lower case letters}
 @y
 @!cur_name:^char; {external name}
 @z
 
-@x [28] dvi_length and move_to_byte.
+@x [4.28] l.987 dvi_length and move_to_byte.
 @p function dvi_length:integer;
 begin set_pos(dvi_file,-1); dvi_length:=cur_pos(dvi_file);
 end;
@@ -209,7 +213,7 @@ begin
 end;
 @z
 
-@x [42/43] Initialize optional variables sooner.
+@x [6.42] l.1300 [42-43] Initialize optional variables sooner.
 @!count:array[0..9] of integer; {the count values on the current page}
 
 @ @<Set init...@>=
@@ -220,7 +224,7 @@ out_mode:=the_works; max_pages:=1000000; start_vals:=0; start_there[0]:=false;
 @ Initializations are done sooner now.
 @z
 
-@x [45] No dialog.
+@x [6.45] l.1317 No dialog.
 @ The |input_ln| routine waits for the user to type a line at his or her
 terminal; then it puts ASCII-code equivalents for the characters on that line
 into the |buffer| array. The |term_in| file is used for terminal input,
@@ -235,7 +239,7 @@ and |term_out| for terminal output.
 @ No dialog.
 @z
 
-@x [47] No input_ln.
+@x [6.47] l.1343 No input_ln.
 @p procedure input_ln; {inputs a line from the terminal}
 var k:0..terminal_line_length;
 begin update_terminal; reset(term_in);
@@ -249,7 +253,7 @@ end;
 @y
 @z
 
-@x [48] No dialog.
+@x [6.48] l.1354 [48] No dialog.
 @ The global variable |buf_ptr| is used while scanning each line of input;
 it points to the first unread character in |buffer|.
 
@@ -259,7 +263,7 @@ it points to the first unread character in |buffer|.
 @ No dialog.
 @z
 
-@x [49] No dialog.
+@x [6.49] l.1360 No dialog.
 @ Here is a routine that scans a (possibly signed) integer and computes
 the decimal value. If no decimal integer starts at |buf_ptr|, the
 value 0 is returned. The integer should be less than $2^{31}$ in
@@ -283,7 +287,7 @@ end;
 @ No dialog.
 @z
 
-@x [50-55] No dialog.
+@x [6.50] l.1379 [50-55] No dialog.
 @ The selected options are put into global variables by the |dialog|
 procedure, which is called just as \.{DVItype} begins.
 @^system dependencies@>
@@ -377,7 +381,7 @@ if buffer[0]<>" " then
 @ No dialog (55).
 @z
 
-@x [56] Fix printing of floating point number.
+@x [6.56] l.1489 Fix printing of floating point number.
 print_ln('  Resolution = ',resolution:12:8,' pixels per inch');
 if new_mag>0 then print_ln('  New magnification factor = ',new_mag/1000:8:3)
 @y
@@ -392,13 +396,13 @@ then begin
 end
 @z
 
-@x [59] We use r for something else.
+@x [7.59] l.1518 We use r for something else.
 @!r:0..name_length; {index into |cur_name|}
 @y
 @!r:0..name_size; {current filename length}
 @z
 
-@x [62] <Load the new font...> close the file when we're done
+@x [7.62] l.1597 <Load the new font...> close the file when we're done
 if out_mode=errors_only then print_ln(' ');
 @y
 if out_mode=errors_only then print_ln(' ');
@@ -407,18 +411,18 @@ if tfm_file then
 free (cur_name); {We |xmalloc|'d this before we got called.}
 @z
 
-@x [64] Don't set default_directory_name.
+@x [7.64] l.1631 Don't set default_directory_name.
 @d default_directory_name=='TeXfonts:' {change this to the correct name}
 @d default_directory_name_length=9 {change this to the correct length}
 
 @<Glob...@>=
 @!default_directory:packed array[1..default_directory_name_length] of char;
 @y
-Under Unix, users have a path searched for fonts, there's no single
+In Web2C, users have a path searched for fonts, there's no single
 default directory.
 @z
 
-@x [65] Remove initialization of default_directory.
+@x [7.65] l.1637 Remove initialization of default_directory.
 @ @<Set init...@>=
 default_directory:=default_directory_name;
 @y
@@ -426,7 +430,7 @@ default_directory:=default_directory_name;
 numbering.)
 @z
 
-@x [66] Don't append `.tfm' here, and keep lowercase.
+@x [7.66] l.1640 Don't append `.tfm' here, and keep lowercase.
 @ The string |cur_name| is supposed to be set to the external name of the
 \.{TFM} file for the current font. This usually means that we need to
 prepend the name of the default directory, and
@@ -474,7 +478,7 @@ end;
 cur_name[r] := 0; {Append null byte for C.}
 @z
 
-@x [75] Diagnose impossible cases.
+@x [9.75] l.1775 Diagnose impossible cases.
 sixty_four_cases(fnt_num_0): first_par:=o-fnt_num_0;
 end;
 @y
@@ -483,7 +487,7 @@ othercases abort('internal error');
 endcases;
 @z
 
-@x [80] (major,minor) optionally show opcode
+@x [9.80] l.1847 (major,minor) optionally show opcode
 @d show(#)==begin flush_text; showing:=true; print(a:1,': ',#);
   end
 @d major(#)==if out_mode>errors_only then show(#)
@@ -499,7 +503,7 @@ endcases;
   if show_opcodes and (o >= 128) then print (' {', o:1, '}');
 @z
 
-@x [99]
+@x [10.99] l.2228 newline after fonts
     begin define_font(first_par(k)); k:=nop;
 @y
     begin define_font(first_par(k));
@@ -507,19 +511,19 @@ endcases;
       k:=nop;
 @z
 
-@x [107] (main) No dialog; remove unused label.
+@x [13.107] l.2404 (main) No dialog; remove unused label.
 dialog; {set up all the options}
 @y
 @<Print all the selected options@>;
 @z
 
-@x
+@x [13.107] l.2421
 final_end:end.
 @y
 end.
 @z
 
-@x [110] Fix another floating point print.
+@x [13.110] l.2469 Fix another floating point print.
 print_ln('magnification=',mag:1,'; ',conv:16:8,' pixels per DVI unit')
 @y
 print ('magnification=', mag:1, '; ');
@@ -527,7 +531,7 @@ print_real (conv, 16, 8);
 print_ln (' pixels per DVI unit')
 @z
 
-@x [112] System-dependent changes.
+@x [14.112] l.2495 System-dependent changes.
 This section should be replaced, if necessary, by changes to the program
 that are necessary to make \.{DVItype} work at a particular installation.
 It is usually best to design your change file so that all changes to

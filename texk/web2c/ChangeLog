@@ -1,3 +1,8 @@
+2025-01-28  Karl Berry  <karl@freefriends.org>
+
+	* dvitype.ch: run tests/fix-changefile-lines.py to get chapter and
+	line numbers, and update module numbers.
+
 2025-01-27  Karl Berry  <karl@freefriends.org>
 
 	* tex.ch (30.568, 49.1260): avoid scaling fonts to 2048pt or more.
