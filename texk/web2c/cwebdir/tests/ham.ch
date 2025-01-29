@@ -55,7 +55,7 @@ Section 2.
 
 Section 3.
 
-@x
+@x l.58
 @ Vertices that have already appeared in the path are ``taken,'' and
 @y
 @ Vertices that have already appeared in the path are ``taken,'' and
