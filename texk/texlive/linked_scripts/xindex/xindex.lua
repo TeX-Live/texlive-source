@@ -9,7 +9,7 @@
 -----------------------------------------------------------------------
 
         xindex = xindex or { }
- local version = 0.62
+ local version = 0.64
 xindex.version = version
 --xindex.self = "xindex"
 
@@ -249,7 +249,7 @@ if check_language then
   print("Detected language: "..language)
 else  
   if args["language"] then
-    language = string.lower(args["language"]):sub(1, 2)
+    language = string.lower(args["language"]:sub(1, 2))
   else
     language = "en"
   end
@@ -315,6 +315,8 @@ end
 
 --print("Sprache:"..language)
 
+language = string.lower(language)
+print("Used language: "..language)
 writeLog(2,"Language = "..language.."\n",1) 
 if (indexheader[language] == nil) then
   writeLog(2,'Corrected the unknown language "'..language..'" to "en"'.."\n",0) 
@@ -332,6 +334,7 @@ end
 
 
 esc_char = args.escapechar
+print("Escape char "..esc_char)
 esc_char2 = esc_char..esc_char  
 writeLog(2,"Escapechar = "..esc_char.."\n",1)
 escape_chars = { -- by default " is the escape char
