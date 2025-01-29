@@ -208,7 +208,7 @@ end;
 % [26] Initialize wants_pixels and wants_mnemonics to false implicitly
 % by virtue of being global variables. Can't do it here, since this is
 % after the option parsing.
-@x
+@x [26]
 wants_mnemonics:=true; wants_pixels:=true;
 @y
 @z

@@ -85,7 +85,7 @@ procedure initialize; {this procedure gets things started properly}
 % [7] Rename the integer types, as they collide with names used by C99.
 % Rather than change the code all over the place, we use macros to do
 % the renaming.  This could also be done at C preprocessor level.
-@x l.245
+@x [7] l.245
 @d int_32 == integer {signed 32~bit integers}
 @y
 @d int_32 == integer {signed 32~bit integers}
@@ -103,7 +103,7 @@ procedure initialize; {this procedure gets things started properly}
 
 % [11] Redirect output, so it can go to either stdout or stderr,
 % depending on where the output dvi file is going.
-@x l.311
+@x [11] l.311
 @d print(#)==write(output,#)
 @d print_ln(#)==write_ln(output,#)
 @d new_line==write_ln(output) {start new line}
@@ -122,7 +122,7 @@ procedure initialize; {this procedure gets things started properly}
 % [15] The text_char type is used as an array index into xord.  The
 % default type `char' produces signed integers, which are bad array
 % indices in C.
-@x l.400
+@x [15] l.400
 @d text_char == char {the data type of characters in text files}
 @d first_text_char=0 {ordinal number of the smallest element of |text_char|}
 @d last_text_char=127 {ordinal number of the largest element of |text_char|}
@@ -229,7 +229,7 @@ to |make_font_name|.
 
 % [67] No conversion of filenames in lower case, and initialize and
 % terminate for C strings.  Eliminate now unused variable.
-@x l.1311
+@x [67] l.1311
 @!c:char; {a character to be appended to |cur_name|}
 @y
 @z

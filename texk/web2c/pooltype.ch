@@ -35,7 +35,7 @@ copied from \TeX82.
 label 9999; {this labels the end of the program}
 @y
 @z
-@x
+@x [2]
 procedure initialize; {this procedure gets things started properly}
   var @<Local variables for initialization@>@;
   begin @<Set initial values of key variables@>@/
@@ -53,7 +53,7 @@ procedure initialize; {this procedure gets things started properly}
 % default type `char' produces signed integers, which are bad array
 % indices in C.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-@x
+@x [6]
 @d text_char == char {the data type of characters in text files}
 @y
 @d text_char == ASCII_code {the data type of characters in text files}
@@ -92,7 +92,7 @@ end.
 
 % [19] The name of the pool file is dynamically determined. We open it at the
 % end of parse_arguments.
-@x
+@x [19]
 reset(pool_file); xsum:=false;
 @y
 xsum:=false;

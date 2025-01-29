@@ -76,7 +76,7 @@ a non-local |goto|\unskip, which we don't use in C.
 
 % [6] No need for |name_length| or |terminal_line_length|.  Since these
 % were the only constants, the <Constants...> module is no longer needed.
-@x
+@x [6]
 @<Constants...@>=
 @!name_length=80; {maximum length of a file name}
 @!terminal_line_length=132; {maximum length of an input line}
@@ -272,7 +272,7 @@ get_32 := a * 65536 + get_16 ; end ;
 
 % [52] web2c can't handle the implied serialism in Pascal write
 % statements.  (From Martyn.Johnson@cl.cam.ac.uk.)
-@x
+@x [52]
           pk_yyy : t_print_ln((pk_loc-1):1,':  Num special: ',get_32:1) ;
 @y
           pk_yyy : begin t_print((pk_loc-1):1);
@@ -326,7 +326,7 @@ dialog ;
 @y
 open_pk_file ;
 @z
-@x
+@x [55]
 final_end :
 @y
 @z

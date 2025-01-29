@@ -104,7 +104,7 @@ contains the only non-local |goto| statement in \.{GFtoPK}.
 @y
 so we might want to |abort| the program with an error message.
 @z
-@x
+@x [8]
 @d abort(#)==begin print(' ',#); jump_out;
     end
 @d bad_gf(#)==abort('Bad GF file: ',#,'!')
@@ -147,7 +147,7 @@ end;
 
 % [40] If the PK filename isn't given on the command line, we construct
 % it from the GF filename.
-@x
+@x [40]
 @p procedure open_pk_file; {prepares to write packed bytes in |pk_file|}
 begin rewrite(pk_file);
 pk_loc := 0 ; pk_open := true ;

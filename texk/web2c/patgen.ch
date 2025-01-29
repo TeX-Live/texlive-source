@@ -11,7 +11,7 @@
 \def\title{PATGEN changes for C}
 @z
 
-@x WEAVE: print changes only
+@x [0] WEAVE: print changes only
 \pageno=\contentspagenumber \advance\pageno by 1
 @y
 \pageno=\contentspagenumber \advance\pageno by 1
@@ -43,7 +43,7 @@
 @d end_of_PATGEN=9999
 @y
 @z
-@x
+@x [3]
 label end_of_PATGEN;
 @y
 @z
@@ -76,7 +76,7 @@ the program.
 @y
 error message about what caused the error.
 @z
-@x Error handling
+@x [10] Error handling
 @d jump_out==goto end_of_PATGEN {terminates \.{PATGEN}}
 @#
 @d error(#)==begin print_ln(#); jump_out; end
@@ -115,7 +115,7 @@ error message about what caused the error.
  |trie_size| and greater than the number of occurrences of any pattern in
  the dictionary}
 @z
-@x
+@x [27]
 @!max_buf_len=80; {maximum length of input lines, must be at least |max_len|}
 @y
 @!max_buf_len=3000; {maximum length of input lines, must be at least |max_len|}
@@ -206,12 +206,12 @@ repeat print('hyph_start, hyph_finish: '); get_input(n1,n2);@/
 @y
 repeat print('hyph_start, hyph_finish: '); input_2ints(n1,n2);@/
 @z
-@x
+@x [94]
   repeat print('pat_start, pat_finish: '); get_input(n1,n2);@/
 @y
   repeat print('pat_start, pat_finish: '); input_2ints(n1,n2);@/
 @z
-@x
+@x [94]
     get_input(n1,n2,n3);@/
 @y
     input_3ints(n1,n2,n3);@/

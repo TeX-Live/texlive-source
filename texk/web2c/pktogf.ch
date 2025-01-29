@@ -84,7 +84,7 @@ a non-local |goto|\unskip, which we don't use in C.
 
 % [6] Remove terminal_line_length, since there is no dialog, and
 % name_length, since there is no maximum size.
-@x
+@x [6]
 @<Constants...@>=
 @!name_length=80; {maximum length of a file name}
 @!terminal_line_length=132; {maximum length of an input line}
@@ -444,7 +444,7 @@ end ;
 dialog ;
 @y
 @z
-@x
+@x [73]
 final_end :
 @y
 @z

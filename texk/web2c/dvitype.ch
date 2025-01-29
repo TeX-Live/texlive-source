@@ -155,7 +155,7 @@ end;
 @d last_text_char=255 {ordinal number of the largest element of |text_char|}
 @z
 
-@x [4.23] l.877] Fix up opening the files.
+@x [4.23] l.877 Fix up opening the files.
 @p procedure open_dvi_file; {prepares to read packed bytes in |dvi_file|}
 begin reset(dvi_file);
 cur_loc:=0;
@@ -253,7 +253,7 @@ end;
 @y
 @z
 
-@x [6.48] l.1354 [48] No dialog.
+@x [6.48] l.1354 No dialog.
 @ The global variable |buf_ptr| is used while scanning each line of input;
 it points to the first unread character in |buffer|.
 

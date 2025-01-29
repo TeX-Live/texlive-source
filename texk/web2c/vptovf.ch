@@ -133,7 +133,7 @@ perfect:=false;
 % [89] `index' is not a good choice for an identifier on Unix systems.
 % Neither is `class', on AIX.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-@x
+@x [89]
 |k|th element of its list.
 @y
 |k|th element of its list.

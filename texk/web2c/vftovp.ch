@@ -34,7 +34,7 @@
 % [2] We need to tell web2c about one special variable.
 % Perhaps it would be better to allow @define's
 % anywhere in a source file, but that seemed just as painful as this.
-@x
+@x [2]
 @p program VFtoVP(@!vf_file,@!tfm_file,@!vpl_file,@!output);
 @y
 @p
@@ -65,7 +65,7 @@ procedure initialize; {this procedure gets things started properly}
 % Also, AIX defines `class' in <math.h>, so let's take this opportunity to
 % define that away.
 % And increase several constants.
-@x
+@x [4]
 @<Constants...@>=
 @!tfm_size=30000; {maximum length of |tfm| data, in bytes}
 @!vf_size=10000; {maximum length of |vf| data, in bytes}
@@ -338,7 +338,7 @@ ASCII_10:=' @@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_';@/
 ASCII_14:=' `abcdefghijklmnopqrstuvwxyz{|}~?';@/
 @z
 
-@x
+@x [50]
 MBL_string:='MBL'; RI_string:='RI '; RCE_string:='RCE';
 @y
 MBL_string:=' MBL'; RI_string:=' RI '; RCE_string:=' RCE';
@@ -402,13 +402,13 @@ else begin tfm[0]:=c; out_octal(0,1);
 % still [112] We can't have a function named `f', because of the local
 % variable in do_simple_things.  It would be better, but harder, to fix
 % web2c.
-@x
+@x [112]
      r:=f(r,(hash[r]-1)div 256,(hash[r]-1)mod 256);
 @y
      r:=lig_f(r,(hash[r]-1)div 256,(hash[r]-1)mod 256);
 @z
 
-@x
+@x [112]
   out('(INFINITE LIGATURE LOOP MUST BE BROKEN!)'); goto final_end;
 @y
   out('(INFINITE LIGATURE LOOP MUST BE BROKEN!)'); uexit(1);
@@ -417,7 +417,7 @@ else begin tfm[0]:=c; out_octal(0,1);
 % [116] web2c can't handle these mutually recursive procedures.
 % But let's do a fake definition of f here, so that it gets into web2c's
 % symbol table...
-@x
+@x [116]
 @p function f(@!h,@!x,@!y:index):index; forward;@t\2@>
   {compute $f$ for arguments known to be in |hash[h]|}
 @y
@@ -428,7 +428,7 @@ function lig_f(@!h,@!x,@!y:index):index; begin end;@t\2@>
 endif('notdef')
 @z
 
-@x
+@x [116]
 else eval:=f(h,x,y);
 @y
 else eval:=lig_f(h,x,y);
@@ -440,7 +440,7 @@ else eval:=lig_f(h,x,y);
 @p function lig_f(@!h,@!x,@!y:index):index;
 @z
 
-@x
+@x [117]
 f:=lig_z[h];
 @y
 lig_f:=lig_z[h];
@@ -492,7 +492,7 @@ begin if o>=set1 then
 label final_end, exit;
 @y
 @z
-@x
+@x [131]
 vf_input:=true; return;
 final_end: vf_input:=false;
 exit: end;
@@ -500,11 +500,11 @@ exit: end;
 vf_input:=true;
 end;
 @z
-@x
+@x [131]
 label final_end, exit;
 @y
 @z
-@x
+@x [131]
 organize:=vf_input; return;
 final_end: organize:=false;
 exit: end;
@@ -517,7 +517,7 @@ end;
 label final_end,exit;
 @y
 @z
-@x
+@x [133]
 do_map:=true; return;
 final_end: do_map:=false;
 exit:end;

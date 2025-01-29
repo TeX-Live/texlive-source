@@ -1,3 +1,21 @@
+2025-01-29  Andreas Scherer  <https://ascherer.github.io>
+
+	* bibtex.ch,
+	* dvicopy.ch,
+	* dvitype.ch,
+	* gftodvi.ch,
+	* gftopk.ch,
+	* gftype.ch,
+	* mft.ch,
+	* patgen.ch,
+	* pktogf.ch,
+	* pktype.ch,
+	* pltotf.ch,
+	* pooltype.ch,
+	* tftopl.ch,
+	* vftovp.ch,
+	* vptovf.ch: Fill a few gaps in the '@x' lines.
+
 2025-01-28  Karl Berry  <karl@freefriends.org>
 
 	* dvitype.ch: run tests/fix-changefile-lines.py to get chapter and
