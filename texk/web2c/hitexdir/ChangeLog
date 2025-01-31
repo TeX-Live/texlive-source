@@ -1,4 +1,9 @@
+2025-01-31  Martin Ruckert <ruckert@cs.hm.edu>
+
+	* Adding the \ignoreprimitiveerror primitive
+	
 2025-01-17  Martin Ruckert <ruckert@cs.hm.edu>
+
 	* Adding limited LaTeX color support
 
 2024-11-11  Martin Ruckert <ruckert@cs.hm.edu>
