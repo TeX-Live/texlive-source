@@ -1,4 +1,13 @@
+2025-01-31  Karl Berry  <karl@freefriends.org>
+
+	* pdftex.ch (l.1891): have print_ignored_error respect
+	--file-line-error; noted by Martin Ruckert.
+	* pdftex.web (etex_int_pars): add eTeX_states, not
+	eTeX_state_code, as it was before; noted by Martin Ruckert.
+
 2025-01-27  Karl Berry  <karl@freefriends.org>
+
+	* NEWS: 2025 font scaling entry; belated 2024 cross-engine entry.
 
 	* am/pdftex.am (pdftex-pool.c): exit 1 if makecpool failed.
 	(pdftex-final.ch): remove $@ and exit 1 if tie failed.
@@ -21,6 +30,7 @@
 	(Generate all \eTeX): define it.
 	(Cases for |print_param|): print it.
 	Request from Frank Mittelbach, 22 Jul 2024 22:37:26 (private mail).
+	* NEWS: mention this.
 
 2025-01-23  Thanh Han The  <hanthethanh@gmail.com>
 

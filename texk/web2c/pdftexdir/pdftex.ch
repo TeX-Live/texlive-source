@@ -23,7 +23,6 @@
 
 % Change file to assist in creating the web2c-specific change file.
 % This one resolves inconsistencies between tex.ch and tex.ech.
-% Public domain.
 
 @x [1] m.2 l.188 - banner
 @d banner==TeX_banner
@@ -33,7 +32,15 @@
 @d banner_k==pdfTeX_banner
 @z
 
-@x [16.215] - e-TeX last_node_type
+@x l.1891 - have print_ignored_error respect --file-line-error
+  print_nl("ignored error: "); print(#);
+@y
+  if file_line_error_style_p then print_file_line
+  else print_nl("");
+  print("ignored error: "); print(#);
+@z
+
+@x [16.215] l.28025 - restore e-TeX last_node_type removed in tex.ch
 last_glue:=max_halfword; last_penalty:=0; last_kern:=0;
 @y
 last_glue:=max_halfword; last_penalty:=0; last_kern:=0;

@@ -16,7 +16,12 @@ pdfTeX 3.141592653-2.6-1.40.27 (TeX Live 2025)
     of the user's value.
 
 -----------------------------------------------------------------------------
-pdfTeX 3.141592653-2.6-1.40.26 (TeX Live 2024) (March 10, 2023)
+pdfTeX 3.141592653-2.6-1.40.26 (TeX Live 2024) (March 10, 2024)
+- changes:
+  - cross-engine update to provide the --output-directory value in
+    TEXMF_OUTPUT_DIRECTORY, and use TEXMF_OUTPUT_DIRECTORY if set when
+    the option is not given.
+
 - bugfixes:
   - more reliable text extraction on BigEndian systems.
   - more checks against corrupt pfb, fmt, pdf, files.

@@ -1,4 +1,11 @@
+2025-01-31  Karl Berry  <karl@freefriends.org>
+
+	* xetex.ch (l.1891): have print_ignored_error respect
+	--file-line-error, a la pdftex.
+
 2025-01-27  Karl Berry  <karl@freefriends.org>
+
+	* NEWS: 2025 font scaling entry.
 
 	* am/xetex.am (xetex-pool.c): exit 1 if makecpool failed.
 	(tex-final.ch, mf-final.ch): remove $@ and exit 1 if tie failed.
@@ -12,7 +19,7 @@
 
 2025-01-25  Thanh Han The  <hanthethanh@gmail.com>
 
-	* pdftex.web (print_ignored_err): new @d.
+	* xetex.web (print_ignored_err): new @d.
 	(ignore_primitive_error_code, ignore_primitive_error): new primitive
 	\ignoreprimitiveerror.
 	(is_bit_set): new fn.
@@ -22,6 +29,7 @@
 	(Cases for |print_param|): print it.
 	Same code as for pdfTeX; merged into XeTeX by karl.
 	Request from Frank Mittelbach, 22 Jul 2024 22:37:26 (private mail).
+	* NEWS: mention this.
 
 2024-05-18  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
             TANAKA Takuji  <ttk@t-lab.opal.ne.jp>

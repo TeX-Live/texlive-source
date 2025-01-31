@@ -5725,7 +5725,7 @@ that will be defined later.
 @d saving_hyph_codes_code=etex_int_base+8 {save hyphenation codes for languages}
 @d ignore_primitive_error_code=etex_int_base+9 {ignore some primitive/engine errors}
 @d eTeX_state_code=etex_int_base+10 {\eTeX\ state variables}
-@d etex_int_pars=eTeX_state_code+eTeX_state_code {total number of \eTeX's integer parameters}
+@d etex_int_pars=eTeX_state_code+eTeX_states {total number of \eTeX's integer parameters}
 @#
 @d int_pars=etex_int_pars {total number of integer parameters}
 @d count_base=int_base+int_pars {256 user \.{\\count} registers}
