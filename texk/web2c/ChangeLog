@@ -1,3 +1,9 @@
+2025-02-01  Karl Berry  <karl@freefriends.org>
+
+	* tex.ch (save_arith_error): declare in Glob...
+	(30.568): save and restore arith_error around the new
+	check for font scaling to >= 2048pt.
+
 2025-01-29  Andreas Scherer  <https://ascherer.github.io>
 
 	* bibtex.ch,

@@ -956,16 +956,22 @@ noreturn procedure confusion(@!s:str_number);
 
 % [7.104] `remainder' is a library routine on some systems, so change
 % its name to avoid conflicts.
-@x [7.104] l.2248 - avoid name conflicts with lib routine remainder()
+@x [7.104] l.2248 - avoid conflict with libc remainder(), save_arith_error
 |remainder|, holds the remainder after a division.
 
 @<Glob...@>=
 @y
-|remainder|, holds the remainder after a division.
+|remainder|, holds the remainder after a division. For Web2C, we rename
+it to |tex_remainder| to avoid conflicts with a system library routine
+named |remainder|.
+
+Also, we define a new variable |save_arith_error| for when we want to
+save and restore |arith_error|, down below.
 
 @d remainder==tex_remainder
 
 @<Glob...@>=
+@!save_arith_error:boolean;
 @z
 
 @x [7.109] l.2373 - Define glue_ratio in C.
@@ -2432,17 +2438,19 @@ pack_file_name(nom,aire,"");
 % user's value. See tests/fonttoobig.tex for examples. Reports from
 % Igor Liferenko (https://tug.org/pipermail/tex-k/2021-June/003604.html)
 % and Tyge Tiessen (https://tug.org/pipermail/tex-k/2022-January/003752.html).
-% Patch from Tyge.
-% [30.568] Avoid scaling fonts to >= 2048pt, which can cause overflow.
+% Original patch from Tyge.
 @x [30.568] l.11072 - Avoid scaling fonts to 2048pt or more.
   else z:=xn_over_d(z,-s,1000);
 @y
-  else begin sw:=z; arith_error:=false; z:=xn_over_d(z,-s,1000);
+  else begin
+    save_arith_error:=arith_error;
+    sw:=z; z:=xn_over_d(z,-s,1000);
     if arith_error or z>=@'1000000000 then begin
        start_font_error_message; print(" scaled to 2048pt or higher");
        help1("I will ignore the scaling factor."); error; z:=sw;
        end;
-    end;
+    arith_error:=save_arith_error;
+  end;
 @z
 
 @x [30.570] l.11100 - MLTeX: fix for bug while loading font
