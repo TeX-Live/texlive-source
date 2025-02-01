@@ -1,5 +1,11 @@
 2025-02-01  Karl Berry  <karl@freefriends.org>
 
+	* tex.ch (24.336): comment out this patch for interactive deletion
+	of \outer tokens, since it has the undesirable side effect of
+	deleting through eof.
+	* tests/outerdel.tex,
+	* tests/outerdelsub.tex: test files and info.
+
 	* tex.ch (save_arith_error): declare in Glob...
 	(30.568): save and restore arith_error around the new
 	check for font scaling to >= 2048pt.

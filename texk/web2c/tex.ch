@@ -1527,11 +1527,14 @@ buffer[0]:=0;
 
 % Original report: https://tug.org/pipermail/tex-k/2024-March/004021.html
 % TeX bug entry:   https://tug.org/texmfbug/newbug.html#B142outer
-@x [24.336] l.7152 - allow interactive deletion of \outer token
-begin if scanner_status<>normal then
-@y
-begin if OK_to_interrupt and(scanner_status<>normal) then
-@z
+% -- but this has the problem that token deletion will now continue
+%    through an eof, which seems undesirable, and not a permissible
+%    change for "TeX". See tests/outerdel.tex.
+%@x [24.336] l.7152 - allow interactive deletion of \outer token
+%begin if scanner_status<>normal then
+%@y
+%begin if OK_to_interrupt and(scanner_status<>normal) then
+%@z
 
 @x [24.338] l.7191 - i18n fix
 print(" while scanning ");

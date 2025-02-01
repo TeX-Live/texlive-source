@@ -1,0 +1,112 @@
+% $Id$
+% Public domain, from Udo Wermuth.
+% 
+% Running TeX on this will provoke an error.
+% Deleting 3 tokens at the interactive prompt should result in
+%   ! File ended while scanning definition of \one.
+% and not delete tokens through eof.
+% Full message from Udo below (files are renamed for inclusion web2c).
+% 
+% BTW, there are no \outer tokens involved in this test, but the original
+% change involved deleting \outer tokens.
+% https://tug.org/pipermail/tex-k/2024-March/004021.html
+
+\catcode`\{=1 \catcode`\}=2 \let\ea=\expandafter
+\def\zero{z}
+\ea\edef\ea\one\ea{\input outerdelsub.tex\relax\zero}
+\show\one\end
+
+%Date: Fri, 7 Jun 2024 18:04:21 +0200
+%From: Udo Wermuth
+%To: Karl Berry <karl@freefriends.org>
+%Subject: Re: skipping tokens through the end of an input file
+%
+%I think now I know what you want me to do; I saw the error
+%report about \outer in an \edef on tex-k.
+%
+%Lets create two files:
+%1) sub.tex (1 line):
+%x\error y\noexpand
+%
+%2) main.tex (4 lines):
+%\let\ea=\expandafter
+%\def\zero{z}
+%\ea\edef\ea\one\ea{\input sub.tex\relax\zero}
+%\show\one\bye
+%
+%
+%tex sub gives an error
+%
+%! Undefined control sequence.
+%l.1 x\error
+%            y\noexpand
+%? 
+%
+%When you delete 1, 2, or 3 tokens at the ?-prompt it works as
+%expected. With 2 you get the *-prompt and you can say \bye.
+%With 3 you get the *-prompt too but now a \bye is deleted as
+%one delete operation is still waiting. At the next *-prompt
+%you can enter a valid \bye.
+%With 1 a \bye at the *-prompt is not expanded and thus doesn't
+%work. Again the next *-prompt accepts the \bye.
+%
+%
+%With tex main you get the error as above.
+%
+%With <return> or 1 the definition is finished as the outerness of the
+%eof is canceled by the \noexpand. With 2 the \noexpand is deleted too
+%and a <return> at the next ?-prompt gives a runaway error:
+%
+%Runaway definition?
+%->x
+%! File ended while scanning definition of \one.
+%<inserted text> 
+%                }
+%<to be read again> 
+%                   \relax 
+%l.4 \ea\edef\ea\one\ea{\input sub.tex\relax
+%                                           \zero}
+%? 
+%
+%Another <return> reports
+%
+%! Too many }'s.
+%l.4 \ea\edef\ea\one\ea{\input sub.tex\relax\zero}
+%                                                 
+%?
+%
+%before the run ends with another <return>. \one is what I expect and a
+%dvi is produced that shows `z' as expected.
+%
+%But with 2 and then a 1 (not a <return>) we get the runaway and with
+%a <return>
+%
+%<inserted text> }
+%                 
+%<to be read again> 
+%                   \relax 
+%l.4 \ea\edef\ea\one\ea{\input sub.tex\relax
+%                                           \zero}
+%?
+%
+%so that the definition can be finished. With 3 instead of 2 the same
+%happens.
+%
+%
+%
+%With the change that inserts OK_to_interrupt things change. When
+%you enter now 2 and 1 or directly 3 you get
+%
+%)
+%<recently read> \relax 
+%                       
+%l.4 \ea\edef\ea\one\ea{\input sub.tex\relax
+%                                           \zero}
+%? 
+%
+%That is y, \noexpand, and \relax are deleted. The outerness of the eof
+%doesn't count now and there is no inserted } anymore.
+%
+%I would consider this wrong. Somewhere the file ended and this end should
+%be treated as \outer. One could say in the last case the file ended with
+%the x.
