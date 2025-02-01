@@ -1,5 +1,5 @@
 #!/bin/sh
-version=4.00
+version=4.1
 #########################################################################
 ##                                                                     ##
 ##  pdfjam: A shell-script interface to the "pdfpages" LaTeX package   ##
@@ -101,7 +101,7 @@ embrace() {
 	value="$1"
 	case "$value" in
 	\{*\}) ;;
-	*,* | *\]*) value="{$value}" ;;
+	*,* | *=* | *\]*) value="{$value}" ;;
 	esac
 	printf %s "$value"
 }
@@ -112,6 +112,40 @@ to_papersize() {
 		\{*\}) value="${value#\{}"; value="${value%\}}"
 	esac
 	printf %s "$value" | sed -E 's/([0-9]{1,}\.{0,1}[0-9]*)(,|$)/\1bp\2/g'
+}
+## Check whether string contains only harmless characters
+is_harmless() {
+	printf %s "$1" | grep -q '^[A-Za-z0-9.-]\+$'
+}
+##  Validate pagespec syntax
+is_valid_pagespec() {
+	# P = [0-9]*|last  is any or no page
+	# P(-P)?  is any or no page range (the latter being an implicit empty page)
+	# (P(-P)?|\{\})  is any page range or an implicit or explicit empty page
+	# (,(P(-P)?|\{\}))*  is any list of page ranges and empty pages separated by and beginning with a comma
+	printf %s ",$1" | grep -qE '^(,(([0-9]*|last)(-([0-9]*|last))?)|\{\})*$'
+}
+##  Get appropriate file extension if input is supported
+get_extension() {
+	extension=
+	if test -n "$checkfiles"; then
+		case "$(file -Lb "$(realpath -- "$1")")" in
+			'PDF document'*) extension=pdf ;;
+			'PostScript document'*) extension=eps ;;
+			'JPEG image data'*) extension=jpg ;;
+			'PNG image data'*) extension=png ;;
+		esac
+	elif test -f "$1" && test -r "$1"; then
+		case "$1" in *.*)
+			case "$(printf %s "${1##*.}" | tr A-Z a-z)" in
+				pdf) extension=pdf ;;
+				jpg|jpeg) extension=jpg ;;
+				png) extension=png ;;
+				ps|eps) extension=eps ;;
+			esac
+		esac
+	fi
+	[ -n "$extension" ] && echo "$extension"
 }
 ##
 ##  Define a function to output verbose comments:
@@ -188,7 +222,12 @@ pdfinfo=$(command -v pdfinfo)
 if [ -z "$pdfinfo" ]; then pdfinfo="not found"; fi
 iconv=$(command -v iconv)
 if [ -z "$iconv" ]; then iconv="not found"; fi
-##
+##  Sanity check the 'file -Lb' utility to identify files if it works;
+##  rely on the file extension otherwise.
+case "$(file -Lb "$0" 2>/dev/null)" in
+	'POSIX shell script'*) checkfiles=checkfiles ;;
+	*) checkfiles=
+esac
 ##
 ##  Defaults
 ##
@@ -196,9 +235,6 @@ outFile="$pwd"      ##  Output to the current working directory
 suffix=pdfjam       ##  Default filename suffix to be used when
 ##                      --outfile is either (a) a directory, or (b)
 ##                      not specified in a --batch call.
-checkfiles=         ##  Don't use the Unix 'file -Lb' utility to
-##                      identify PDF files from their contents;
-##                      rely on the .pdf or .PDF extension instead.
 keepinfo=           ##  Don't try to preserve "pdfinfo" data
 landscape=          ##  Use portrait./Do not switch width and height.
 twoside=            ##  No "twoside" option to documentclass
@@ -310,194 +346,191 @@ pdfjam is a shell-script front end to the LaTeX 'pdfpages' package; see
 https://www.ctan.org/tex-archive/macros/latex/contrib/pdfpages
 
 Usage: pdfjam [OPTIONS] [--] [FILE1 [SEL1]] [FILE2 [SEL2]]...
-where
-* 'FILE1' etc. are PDF files (JPG and PNG files are also allowed).  For
-   input from /dev/stdin, use the special name '/dev/stdin' in place of any
-   of FILE1, FILE2, etc: this can be mixed with 'real' files as needed, to
-   allow input through a pipe (note that if /dev/stdin is connected to tty,
-   an error results).  If 'FILE1' is absent, pdfjam will use '/dev/stdin'
-   (and will use '-' for the page selection -- see next item).
-* 'SEL1' is a page selection for FILE1, etc.
-   To select all pages (the default) use '-'.  See the pdfpages manual for
-   more details.  An example:
-          ... file1 '{},2,4-6,9-' ...
-   makes an empty page, followed by pages 2,4,5,6 of file1, followed by pages
-   9 onwards (up to the end of file1).
-   A page selection can be applied to more than one file, e.g.,
-          ... file1 file2 file3 1-7 ...
-   applies page selection '1-7' to all three files; but for example
-          ... file1 file2 2- file3 1-7 ...
-   would apply the page selection '2-' to file1 and file2, and '1-7'
-   to file3.  A page selection applies to all the files *immediately*
-   preceding it in the argument list.  A missing page selection defaults to
-   '-'; this includes the case where 'FILE1' is absent and so /dev/stdin gets
-   used by default.
-* 'options' are pdfpages specifications in the form '--KEY VALUE' (see
-   below), or
-     --help  (or -h, or -u)
-                  Output this text only; no processing of PDF files.
-     --configpath
-                  Output the 'configpath' variable and exit immediately; no
-                  processing of PDF files.
-     --version (or -V)
-                  Output the version number of pdfjam and exit immediately; no
-                  processing of PDF files.
-     --quiet  (or -q)
-                  Suppress verbose commentary on progress.
-     --batch
-                  Run pdfjam sequentially on each input file in turn, and
-                  produce a separate output file for each input, rather
-                  than the default behaviour (which is a single run of
-                  pdfjam on all of the input files, producing a single
-                  output document).  For the location of output
-                  files, see '--outfile'.  The --batch option cannot be
-                  used in the case of input from stdin.
-     --outfile PATH  (or -o PATH)
-                  Specifies where the output file(s) will go.  If PATH is an
-                  existing directory, pdfjam will attempt to write its
-                  output PDF file(s) there, with name(s) derived from the
-                  input file name(s) and the --suffix option (see below).
-                  Otherwise the output file will be PATH.  If '/dev/stdin'
-                  is the only or last input file, PATH cannot be a directory.
-                  Your current default PATH for output is:
-                  $outFile
-     --suffix STRING
-                  Specifies a suffix for output file names, to be used when
-                  --outfile is either (a) a directory, or
-                                      (b) not specified in a --batch call.
-                  A good STRING should be descriptive: for example,
-                           --suffix 'rotated'
-                  would append the text '-rotated' to the name of the input
-                  file in order to make the output file name, as in
-                  'myfile-rotated.pdf'.  The STRING must not have zero
-                  length.
-                  [Default for you at this site: suffix=$suffix]
-     --checkfiles
-     --no-checkfiles
-                  If the Unix 'file' utility is available, with options
-                  -L and -b, the output of 'file -Lb FILE1' should be
-                  'PDF document...' where '...' gives version information.
-                  If this is the case on your system you should use
-                  '--checkfiles'; otherwise use '--no-checkfiles',
-                  in which case all input PDF files must have .pdf or .PDF
-                  as their name extension.
-                  [Default for you at this site: checkfiles=$checkfiles]
-     --preamble STRING
-                  Append the supplied STRING to the preamble of the LaTeX
-                  source file(s), immediately before the '\begin{document}'
-                  line.  An example:
-                      pdfjam --nup 2x2 myfile.pdf -o myfile-4up.pdf \\
-                          --preamble '\usepackage{fancyhdr} \pagestyle{fancy}'
-                  The '--preamble' option can be used, for example, to load
-                  LaTeX packages and/or to set global options.  If '--preamble'
-                  is used more than once in the call, the supplied preamble
-                  strings are simply concatenated.  For a note on avoiding
-                  clashes, see the README file, also available at
-                  https://github.com/pdfjam/pdfjam
-     --keepinfo
-     --no-keepinfo
-                  Preserve (or not) Title, Author, Subject and Keywords
-                  (from the last input PDF file, if more than one) in the
-                  output PDF file.  This requires the pdfinfo utility, from
-                  the xpdf package, and the LaTeX 'hyperref' package; if
-                  either of those is not available, '--keepinfo' is ignored.
-                  [Default for you at this site: keepinfo=$keepinfo]
-     --pdftitle STRING
-     --pdfauthor STRING
-     --pdfsubject STRING
-     --pdfkeywords STRING
-                  Provide text for the  Title, Author, Subject and Keywords
-                  in the output PDF file.  Requires the  LaTeX 'hyperref'
-                  package.  These options, individually, over-ride --keepinfo.
-     --otheredge
-     --no-otheredge
-                  Rotate every odd page by 180 degrees (or not).  Thus changes
-                  along which edge the pages are flipped in duplex printing.
-     --landscape
-     --no-landscape
-                  Specify landscape page orientation (or not) in the
-                  output PDF file.
-                  [Default for you at this site: landscape=$landscape]
-     --twoside
-     --no-twoside
-                  Specify (or not) the 'twoside' document class option.
-                  [Default for you at this site: twoside=$twoside]
-     --paper PAPERSPEC  (or simply --PAPERSPEC)
-                  Specify a LaTeX paper size, for example
-                  '--paper a4' or simply '--a4paper' for ISO A4 paper.
-                  A wide range of paper sizes is available thanks to the
-                  LaTeX 'geometry' package.  For details see documentation
-                  for LaTeX and/or the 'geometry' package.
-                  If no default value is set and libpaper is not available,
-                  A4 is used.
-                  [Default for you at this site: paper=$paper]
-     --papersize 'WIDTH,HEIGHT'
-                  Specify a custom paper size in points = 1/72 inch (known as
-                  bp in LaTeX and as pt in other software), e.g.
-                      --papersize 612,792
-                  Units may also be specified explicitly, e.g.
-                      --papersize 10in,18cm
-                  [Default for you at this site: papersize=$papersize]
-     --pagecolor RGBSPEC
-                  Specify a background colour for the output pages.  The
-                  RGBSPEC must be a comma-separated trio of integers
-                  between 0 and 255.  An example:
-                         --pagecolor 150,200,150
-                  [Default is no background colour]
-     --tidy
-     --no-tidy
-                  Specify whether the temporary directory created by
-                  pdfjam should be deleted.  Use '--no-tidy' or '--builddir'
-                  below to help debug most errors.
-                  [Default for you at this site: tidy=$tidy]
-     --builddir PATH
-                  Specifies a build directory to be used in place of a
-                  temporary one. Existing files inside will be overwritten.
-     --latex PATHTOLATEX
-                  Specify the LaTeX engine to be used (one of pdflatex,
-                  xelatex, lualatex).  The PATHTOLATEX string must be
-                  the full path to a suitable LaTeX executable (for example
-                  /usr/bin/xelatex on many unix systems).
-                  [Default for you at this site: latex=$latex]
-     --runs N
-                  Run latex N times, for each output document made.
-                  [Default for you at this site: runs=$runs]
-     --vanilla
-                  Suppress the reading of any pdfjam configuration files.
-     --enc
-                  Specify a command-line encoding
-                  [Default for you at this site: enc=$enc]
-     --KEY VALUE
-                  Specify options to '\includepdfmerge', in the LaTeX
-                  'pdfpages' package.  See the the pdfpages documentation
-                  (usually 'texdoc pdfpages') for more information.
-                  Here KEY is the name of any of the many options for
-                  '\includepdfmerge', and VALUE is a corresponding value.
-                  Examples:
-                      --nup 2x1     (for 2-up side-by-side imposition)
-                      --scale 0.7   (to scale all input pages to 70% size)
-                      --offset '1cm 0.5cm'
-                                    (to offset all pages -- note the quotes!)
-                      --frame true  (to put a frame round each input page)
-                      --booklet true (to reorder the pages in signatures,
-                                      generally useful with --nup)
-                      --signature N (specify the signature size, as the
-                                     number of original pages in a signature
-                                     in the final document. Caveat: booklet
-                                     is a short form for signature, so if
-                                     you use booklet true, signature will be
-                                     ignored)
-                      --trim '1cm 2cm 1cm 2cm' --clip true
-                                    (to trim those amounts from left, bottom,
-                                     right and top, respectively, of input
-                                     pages)
-                      --angle NNN (The angle of rotation in degrees. Angles
-                                   that are not either 90, 180 or 270 will
-                                   still create straight rectangular pages,
-                                   only the content will be rotated.)
-                  etc., etc.  For more information see the manual for
-                  the 'pdfpages' package, at
-                  https://www.ctan.org/tex-archive/macros/latex/contrib/pdfpages
+
+'FILE1' etc. are PDF files (JPG and PNG files are also allowed).  For
+input from /dev/stdin, use the special name '/dev/stdin' in place of any
+of FILE1, FILE2, etc: this can be mixed with 'real' files as needed, to
+allow input through a pipe (note that if /dev/stdin is connected to tty,
+an error results).  If 'FILE1' is absent, pdfjam will use '/dev/stdin'
+(and will use '-' for the page selection -- see next item).
+
+'SEL1' is a page selection for FILE1, etc.
+To select all pages (the default) use '-'.  See the pdfpages manual for
+more details.  An example:
+       ... file1 '{},2,4-6,9-' ...
+makes an empty page, followed by pages 2,4,5,6 of file1, followed by pages
+9 onwards (up to the end of file1).
+A page selection can be applied to more than one file, e.g.,
+       ... file1 file2 file3 1-7 ...
+applies page selection '1-7' to all three files; but for example
+       ... file1 file2 2- file3 1-7 ...
+would apply the page selection '2-' to file1 and file2, and '1-7'
+to file3.  A page selection applies to all the files *immediately*
+preceding it in the argument list.  A missing page selection defaults to
+'-'; this includes the case where 'FILE1' is absent and so /dev/stdin gets
+used by default.
+
+'options' are pdfpages specifications in the form '--KEY VALUE' (see
+below), or
+
+  -h, --help
+               Output this text only; no processing of PDF files.
+  --configpath
+               Output the 'configpath' variable and exit immediately; no
+               processing of PDF files.
+  -V, --version
+               Output the version number of pdfjam and exit immediately; no
+               processing of PDF files.
+  -q, --quiet
+               Suppress verbose commentary on progress.
+  --batch
+               Run pdfjam sequentially on each input file in turn, and
+               produce a separate output file for each input, rather
+               than the default behaviour (which is a single run of
+               pdfjam on all of the input files, producing a single
+               output document).  For the location of output
+               files, see '--outfile'.  The --batch option cannot be
+               used in the case of input from stdin.
+  -o, --outfile PATH
+               Specifies where the output file(s) will go.  If PATH is an
+               existing directory, pdfjam will attempt to write its
+               output PDF file(s) there, with name(s) derived from the
+               input file name(s) and the --suffix option (see below).
+               Otherwise the output file will be PATH.  If '/dev/stdin'
+               is the only or last input file, PATH cannot be a directory.
+               Your current default PATH for output is:
+               $outFile
+  --suffix STRING
+               Specifies a suffix for output file names, to be used when
+               --outfile is either (a) a directory, or
+                                   (b) not specified in a --batch call.
+               A good STRING should be descriptive: for example,
+                        --suffix 'rotated'
+               would append the text '-rotated' to the name of the input
+               file in order to make the output file name, as in
+               'myfile-rotated.pdf'.  The STRING must not have zero
+               length.
+               [Default for you at this site: suffix=$suffix]
+  --checkfiles, --no-checkfiles
+               If the Unix 'file' utility is available, with options
+               -L and -b, the output of 'file -Lb FILE1' should be
+               'PDF document...' where '...' gives version information.
+               If this is the case on your system you should use
+               '--checkfiles'; otherwise use '--no-checkfiles',
+               in which case all input PDF files must have .pdf or .PDF
+               as their name extension.
+               [Default for you at this site: checkfiles=$checkfiles]
+  --preamble STRING
+               Append the supplied STRING to the preamble of the LaTeX
+               source file(s), immediately before the '\begin{document}'
+               line.  An example:
+                   pdfjam --nup 2x2 myfile.pdf -o myfile-4up.pdf \\
+                       --preamble '\usepackage{fancyhdr} \pagestyle{fancy}'
+               The '--preamble' option can be used, for example, to load
+               LaTeX packages and/or to set global options.  If '--preamble'
+               is used more than once in the call, the supplied preamble
+               strings are simply concatenated.  For a note on avoiding
+               clashes, see the README file, also available at
+               https://github.com/pdfjam/pdfjam
+  --keepinfo, --no-keepinfo
+               Preserve (or not) Title, Author, Subject and Keywords
+               (from the last input PDF file, if more than one) in the
+               output PDF file.  This requires the pdfinfo utility, from
+               the xpdf package, and the LaTeX 'hyperref' package; if
+               either of those is not available, '--keepinfo' is ignored.
+               [Default for you at this site: keepinfo=$keepinfo]
+  --pdftitle STRING
+  --pdfauthor STRING
+  --pdfsubject STRING
+  --pdfkeywords STRING
+               Provide text for the  Title, Author, Subject and Keywords
+               in the output PDF file.  Requires the  LaTeX 'hyperref'
+               package.  These options, individually, over-ride --keepinfo.
+  --otheredge, --no-otheredge
+               Rotate every odd page by 180 degrees (or not).  Thus changes
+               along which edge the pages are flipped in duplex printing.
+  --landscape, --no-landscape
+               Specify landscape page orientation (or not) in the
+               output PDF file.
+               [Default for you at this site: landscape=$landscape]
+  --twoside, --no-twoside
+               Specify (or not) the 'twoside' document class option.
+               [Default for you at this site: twoside=$twoside]
+  --paper PAPERSPEC  (or simply --PAPERSPEC)
+               Specify a LaTeX paper size, for example
+               '--paper a4' or simply '--a4paper' for ISO A4 paper.
+               A wide range of paper sizes is available thanks to the
+               LaTeX 'geometry' package.  For details see documentation
+               for LaTeX and/or the 'geometry' package.
+               If no default value is set and libpaper is not available,
+               A4 is used.
+               [Default for you at this site: paper=$paper]
+  --papersize WIDTH,HEIGHT
+               Specify a custom paper size in points = 1/72 inch (known as
+               bp in LaTeX and as pt in other software), e.g.
+                   --papersize 612,792
+               Units may also be specified explicitly, e.g.
+                   --papersize 10in,18cm
+               [Default for you at this site: papersize=$papersize]
+  --pagecolor RGBSPEC
+               Specify a background colour for the output pages.  The
+               RGBSPEC must be a comma-separated trio of integers
+               between 0 and 255.  An example:
+                      --pagecolor 150,200,150
+               [Default is no background colour]
+  --tidy, --no-tidy
+               Specify whether the temporary directory created by
+               pdfjam should be deleted.  Use '--no-tidy' or '--builddir'
+               below to help debug most errors.
+               [Default for you at this site: tidy=$tidy]
+  --builddir PATH
+               Specifies a build directory to be used in place of a
+               temporary one. Existing files inside will be overwritten.
+  --latex PATHTOLATEX
+               Specify the LaTeX engine to be used (one of pdflatex,
+               xelatex, lualatex).  The PATHTOLATEX string must be
+               the full path to a suitable LaTeX executable (for example
+               /usr/bin/xelatex on many unix systems).
+               [Default for you at this site: latex=$latex]
+  --runs N
+               Run latex N times, for each output document made.
+               [Default for you at this site: runs=$runs]
+  --vanilla
+               Suppress the reading of any pdfjam configuration files.
+  --enc
+               Specify a command-line encoding
+               [Default for you at this site: enc=$enc]
+  --KEY VALUE
+               Specify options to '\includepdfmerge', in the LaTeX
+               'pdfpages' package.  See the the pdfpages documentation
+               (usually 'texdoc pdfpages') for more information.
+               Here KEY is the name of any of the many options for
+               '\includepdfmerge', and VALUE is a corresponding value.
+               Examples:
+                   --nup 2x1     (for 2-up side-by-side imposition)
+                   --scale 0.7   (to scale all input pages to 70% size)
+                   --offset '1cm 0.5cm'
+                                 (to offset all pages -- note the quotes!)
+                   --frame true  (to put a frame round each input page)
+                   --booklet true (to reorder the pages in signatures,
+                                   generally useful with --nup)
+                   --signature N (specify the signature size, as the
+                                  number of original pages in a signature
+                                  in the final document. Caveat: booklet
+                                  is a short form for signature, so if
+                                  you use booklet true, signature will be
+                                  ignored)
+                   --trim '1cm 2cm 1cm 2cm' --clip true
+                                 (to trim those amounts from left, bottom,
+                                  right and top, respectively, of input
+                                  pages)
+                   --angle NNN (The angle of rotation in degrees. Angles
+                                that are not either 90, 180 or 270 will
+                                still create straight rectangular pages,
+                                only the content will be rotated.)
+               etc., etc.  For more information see the manual for
+               the 'pdfpages' package, at
+               https://www.ctan.org/tex-archive/macros/latex/contrib/pdfpages
 * '--' can be used to signal that there are no more options to come.
 
 Defaults for the options '--suffix', '--keepinfo', '--paper', '--outfile',
@@ -575,13 +608,13 @@ optionsFinished=""
 ##  First note any '--checkfiles' or '--no-checkfiles' option
 ##
 for arg; do
-	case $arg in
+	case "$arg" in
 	--checkfiles)
 		checkfiles=checkfiles
-		callOptions="$callOptions $1";;
+		callOptions="$callOptions $arg";;
 	--no-checkfiles)
 		checkfiles=
-		callOptions="$callOptions $1";;
+		callOptions="$callOptions $arg";;
 	esac
 done
 while test -n "$1$2"; do
@@ -689,6 +722,15 @@ while test -n "$1$2"; do
 				otheredge=
 				callOptions="$callOptions --no-otheredge"
 				;;
+			--templatesize)  ##  provide more friendly syntax
+				case "$2" in
+					\{*\}) value="$2" ;;
+					*) value="{${2%%,*}}{${2#*,}}" ;;
+				esac
+				miscOptions="$miscOptions,${1#--}=$value"
+				callOptions="$callOptions ${1} $(enquote "$2")"
+				shift
+				;;
 			--*) ##  miscellaneous options for \includepdfmerge
 				miscOptions="$miscOptions,${1#--}=$(embrace "$2")"
 				callOptions="$callOptions ${1} $(enquote "$2")"
@@ -704,76 +746,35 @@ while test -n "$1$2"; do
 	if test "$optionsFinished" = true || test "$argUnmatched" = true; then
 		case "$1" in
 		"" | /dev/stdin)
-			fileSpec="$fileSpec$newline/dev/stdin|awaited"
+			fileSpec="$fileSpec$newline/dev/stdin|unknown|awaited"
 			pageSpecAwaited=true
 			inputFromStdin=true
 			;;
-		-)
-			if test "$pageSpecAwaited" = true; then
-				fileSpec=$(printf %s "$fileSpec" | sed 's/|awaited/|-/g')
-				pageSpecAwaited=false
+		*) ##  All other args should be source files or page selections; if not, we'll quit
+			if ! [ -e "$1" ]; then
+				valid_input=
+			elif extension="$(get_extension "$1")"; then
+				valid_input=input
 			else
-				error_exit "no PDF/JPG/PNG file found at ${1}" \
-					$E_NOINPUT
+				valid_input=path
 			fi
-			;;
-		*) ##  All other args should be PDF (or JPG/PNG)
-			##  source files and page selections; if not, we'll quit
-			if test -n "$checkfiles"; then ## not always available
-				case $(file -Lb -- "$1") in
-				"PDF document"* | "JPEG image data"* | "PNG image"*)
-					##  it's a PDF file (or JPG/PNG) as expected
-					fileSpec="$fileSpec$newline$1|awaited"
-					pageSpecAwaited=true
-					;;
-				*)
-					case ${1} in
-					*.[pP][dD][fF] | *.[jJ][pP][eE][gG] | \
-						*.[jJ][pP][gG] | *.[pP][nN][gG])
-						## should be PDF/JPG/PNG file, but isn't
-						error_exit "no PDF/JPG/PNG file found at ${1}" \
-							$E_NOINPUT
-						;;
-					*) ##  if page spec needed, assume this is it;
-						##  otherwise something is wrong
-						if test "$pageSpecAwaited" = true; then
-							escapedFilePath=$(printf '%s' "$1" | sed -e 's#/#\\/#g')
-							fileSpec=$(printf "%s" "$fileSpec" \
-								| sed "s/|awaited/|${escapedFilePath}/g")
-							pageSpecAwaited=false
-						else
-							error_exit "no PDF/JPG/PNG file found at ${1}" \
-								$E_NOINPUT
-						fi
-						;;
-					esac
-					;;
-				esac
-			else ## no checking of file contents; rely on .pdf extension
-				case ${1} in
-				*.[pP][dD][fF] | *.[jJ][pP][eE][gG] | \
-					*.[jJ][pP][gG] | *.[pP][nN][gG])
-					## assume it's a PDF/JPG/PNG file
-					test -f "${1}" || error_exit \
-						"${1} not found" $E_NOINPUT
-					fileSpec="$fileSpec"$newline${1}"|"awaited
-					pageSpecAwaited=true
-					;;
-				*) ##  if page spec needed, assume this is it;
-					##  otherwise something is wrong
-					if test "$pageSpecAwaited" = true; then
-						escapedFilePath=$(printf '%s' "$1" | sed -e 's#/#\\/#g')
-						fileSpec=$(printf "%s" "$fileSpec" \
-							| sed "s/|awaited/|${escapedFilePath}/g")
-						pageSpecAwaited=false
-					else
-						error_exit "no PDF/JPG/PNG file found at ${1}" \
-							$E_NOINPUT
-					fi
-					;;
-				esac
-			fi
-			;;
+			if is_valid_pagespec "$1"; then valid_pagespec=pagespec; else valid_pagespec=; fi
+			case "$valid_input-$valid_pagespec-$pageSpecAwaited" in
+				##  12 combinations: 6 erroneous and 6 working.
+				##  Of the working combinations 1 is ambiguous and 1 dubious.
+				input-pagespec-true) prattle "Ambiguous argument '$1' interpreted as pagespec. If you meant the file, please write './$1' instead." ;;
+				input-pagespec-false) prattle "Dubious argument '$1' interpreted as file due to its position. (Write './$1' for extra clarity.)" ;;
+				path-pagespec-false) error_exit "The argument '$1' is both a valid path and a pagespec but a valid PDF/EPS/JPG/PNG file was expected." $E_NOINPUT ;;
+				path--false) error_exit "The argument '$1' is a valid path but not a valid PDF/EPS/JPG/PNG file." $E_NOINPUT ;;
+				path--true) error_exit "The argument '$1' is a valid path but not a valid PDF/EPS/JPG/PNG file or pagespec." $E_USAGE ;;
+				-pagespec-false) error_exit "The argument '$1' is a valid pagespec but not a valid PDF/EPS/JPG/PNG file." $E_NOINPUT ;;
+				--true) error_exit "Input file or pagespec expected, but '$1' neither exists in your file system nor is it a pagespec." $E_USAGE ;;
+				--false) error_exit "Input file expected, but '$1' not even exists in your file system." $E_NOINPUT ;;
+			esac
+			case "$valid_input-$valid_pagespec-$pageSpecAwaited" in  ##  The 6=3+3 working combinations
+				*-pagespec-true) fileSpec="${fileSpec%|awaited}|$1"; pageSpecAwaited=false ;;
+				input-*-*) fileSpec="$fileSpec$newline$1|$extension|awaited"; pageSpecAwaited=true ;;
+			esac
 		esac
 	fi
 	shift
@@ -789,8 +790,8 @@ if test "$PDFJAM_CALL_NUMBER" -eq 0 && test "$inputFromStdin" != true; then
 	if test -z "$fileSpec"; then
 		## no argument specifying a PDF source was given
 		inputFromStdin=true
-		fileSpec="/dev/stdin|-"
-		prattle "No PDF/JPG/PNG source specified: input is from stdin."
+		fileSpec="/dev/stdin|unknown|-"
+		prattle "No PDF/EPS/JPG/PNG source specified: input is from stdin."
 	fi
 fi
 ## Massage options
@@ -983,7 +984,7 @@ fi
 ##
 if test "$batch" = true; then
 	if test "$fileSpec" = ""; then
-		error_exit "--batch was used, but no PDF/JPG/PNG source file(s) specified" \
+		error_exit "--batch was used, but no PDF/EPS/JPG/PNG source file(s) specified" \
 			$E_USAGE
 	fi
 	if test "$inputFromStdin" = true; then
@@ -991,14 +992,13 @@ if test "$batch" = true; then
 			$E_USAGE
 	fi
 	IFS="$newline"
-	for k in $fileSpec; do
-		sourcePath=$(printf "%s" "$k" | sed 's/|[^|]*$//')
-		pageSpec=$(printf "%s" "$k" | sed 's/.*|//')
+	for k in $fileSpec; do # TODO
+		sourcePath=$(enquote "${k%|*|*}")
+		pageSpec=${k##*|}
 		callNumber=$((PDFJAM_CALL_NUMBER + 1))
 		prattle "--"
-		prattle "Processing file ${callNumber}, '$sourcePath'..."
+		prattle "Processing file ${callNumber}: $sourcePath ..."
 		prattle "Page spec is '$pageSpec'."
-		sourcePath=$(enquote "$sourcePath")
 		PDFJAM_EFFECTIVE_CALL="$0 $callOptions -- $sourcePath $pageSpec"
 		export PDFJAM_EFFECTIVE_CALL
 		PDFJAM_CALL_NUMBER=$callNumber
@@ -1029,11 +1029,8 @@ else
 	filePageSpec=""
 	IFS="$newline"
 	for k in $fileSpec; do
-		##  Last substitution on next line is needed for silly characters in
-		##  file names...
-		sourcePath=$(printf "%s" "$k" | sed 's/|[^|]*$//')
-		sourcePath=$(enquote "$sourcePath")
-		pageSpec=$(printf "%s" "$k" | sed 's/.*|//')
+		sourcePath=$(enquote "${k%|*|*}")
+		pageSpec=${k##*|}
 		filePageSpec="$filePageSpec$sourcePath $pageSpec "
 	done
 	IFS="$OIFS"
@@ -1047,8 +1044,9 @@ prattle "$theCall" 1
 ##
 ##  NOW MAKE THE INPUT FILE ETC., READY FOR LATEX
 ##
-filePageList=""  ## initialize a string to supply to \includepdfmerge
-counter=0
+## initialize a string to supply to \includepdfmerge, forbid basename 'a'.
+filePageList=",a."
+counter=0  ## for name generation for non-harmless names
 ##
 ##  Make symbolic link(s) to the source file(s) in the temporary dir,
 ##  and make the $filePageList string for input to \includepdfmerge
@@ -1056,22 +1054,14 @@ counter=0
 stdinUnread=true
 IFS="$newline"
 for k in ${fileSpec}; do
-	counter=$((counter + 1))
-	sourcePath=$(printf "%s" "$k" | sed 's/|[^|]*$//')
-	pageSpec=$(printf "%s" "$k" | sed 's/.*|//')
-	##  Check, though not exhaustively, for problems with the
-	##  page spec: leading or trailing comma, double comma or
-	##  double dash, alphabetic characters other than the word "last",
-	##  braces not paired as {} with nothing inbetween.  A fully
-	##  specified pattern for valid \includepdfmerge page spec would
-	##  be better here; but life is too short...
-	if printf "%s" "$pageSpec" | sed 's/last/99/g' \
-		| grep '^,.*\|,$\|,,\|--\|[A-Za-z]\|{[^}]\|[^{]}' 1>/dev/null; then
-		error_exit "invalid page spec $pageSpec" $E_USAGE
+	sourcePath="${k%|*|*}"
+	pageSpec=${k##*|}
+	if ! is_valid_pagespec "$pageSpec"; then
+		error_exit "Bug: Somehow an invalid page spec got here: $pageSpec" $E_SOFTWARE
 	fi
-	case $sourcePath in
+	case "$sourcePath" in
 	/dev/stdin)
-		uniqueName=stdin.pdf
+		uniqueName=stdin
 		if test "$stdinUnread" = true; then
 			if tty -s; then
 				error_exit \
@@ -1079,17 +1069,32 @@ for k in ${fileSpec}; do
 					$E_NOINPUT
 			fi
 			cat >"$PDFJAM_TEMP_DIR/$uniqueName"
+			# Figure out the correct extension right now.
+			if extension="$(get_extension "$PDFJAM_TEMP_DIR/$uniqueName")"; then
+				mv "$PDFJAM_TEMP_DIR/$uniqueName" "$PDFJAM_TEMP_DIR/$uniqueName.$extension"
+				uniqueName="$uniqueName.$extension"
+			else
+				error_exit "Input from stdin is no legid PDF/EPS/JPG/PNG file." $E_NOINPUT
+			fi
 			stdinUnread=false
 		fi
 		;;
 	*)
-		pdfName=$(basename -- "$sourcePath")
-		sourceDir=$(dirname -- "$sourcePath") ## zsh on Mac OS 10.5 chokes here
-		cd "$sourceDir" || exit 1  ##  just to get the full path
-		sourceDir=$(pwd)
-		cd "$pwd" || exit 1
-		sourceFullPath="$sourceDir/$pdfName"
-		uniqueName="source-$counter.pdf"
+		extension="${k%|*}"
+		extension="${extension##*|}"
+		case "$extension" in
+			pdf|eps|jpg|png) ;;
+			*) error_exit "Bug: Somehow an invalid extension got here." $E_SOFTWARE
+		esac
+		sourceFullPath="$(realpath -- "$sourcePath")"
+		tmpName="$(basename -- "$sourcePath")"
+		tmpName="${tmpName%.*}"
+		if is_harmless "$tmpName" && [ -n "${filePageList##*,"$tmpName".*}" ]; then
+			uniqueName="$tmpName.$extension"
+		else
+			counter=$((counter + 1))
+			uniqueName="source-$counter.$extension"
+		fi
 		if using_non_cygwin_latex_from_cygwin; then
 			cp -f "$sourceFullPath" "$PDFJAM_TEMP_DIR/$uniqueName"
 		else
@@ -1100,7 +1105,7 @@ for k in ${fileSpec}; do
 	filePageList="$filePageList,$uniqueName,$pageSpec"
 done
 IFS="$OIFS"
-filePageList="${filePageList#,}"
+filePageList="${filePageList#,a.,}"
 if using_non_cygwin_latex_from_cygwin; then
 	filePageList=$(printf %s "$filePageList" | tr \\\\ /)
 fi
