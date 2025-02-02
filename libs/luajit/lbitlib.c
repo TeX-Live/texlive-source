@@ -7,6 +7,7 @@
 #define lbitlib_c
 #define LUA_LIB
 
+#include <limits.h>
 #include "lua.h"
 
 #include "lauxlib.h"

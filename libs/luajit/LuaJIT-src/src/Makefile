@@ -7,12 +7,11 @@
 # Also works with MinGW and Cygwin on Windows.
 # Please check msvcbuild.bat for building with MSVC on Windows.
 #
-# Copyright (C) 2005-2017 Mike Pall. See Copyright Notice in luajit.h
+# Copyright (C) 2005-2025 Mike Pall. See Copyright Notice in luajit.h
 ##############################################################################
 
 MAJVER=  2
 MINVER=  1
-RELVER=  0
 ABIVER=  5.1
 NODOTABIVER= 51
 
@@ -110,8 +109,8 @@ XCFLAGS+= -DLUAJIT_ENABLE_LUA52COMPAT
 #XCFLAGS+= -DLUAJIT_NUMMODE=1
 #XCFLAGS+= -DLUAJIT_NUMMODE=2
 #
-# Enable GC64 mode for x64.
-#XCFLAGS+= -DLUAJIT_ENABLE_GC64
+# Disable LJ_GC64 mode for x64.
+#XCFLAGS+= -DLUAJIT_DISABLE_GC64
 #
 ##############################################################################
 
@@ -132,7 +131,6 @@ XCFLAGS+= -DLUAJIT_ENABLE_LUA52COMPAT
 #
 # This define is required to run LuaJIT under Valgrind. The Valgrind
 # header files must be installed. You should enable debug information, too.
-# Use --suppressions=lj.supp to avoid some false positives.
 #XCFLAGS+= -DLUAJIT_USE_VALGRIND
 #
 # This is the client for the GDB JIT API. GDB 7.0 or higher is required
@@ -158,10 +156,13 @@ XCFLAGS+= -DLUAJIT_ENABLE_LUA52COMPAT
 
 ifeq (Windows,$(findstring Windows,$(OS))$(MSYSTEM)$(TERM))
   HOST_SYS= Windows
-  HOST_RM= del
 else
   HOST_SYS:= $(shell uname -s)
   ifneq (,$(findstring MINGW,$(HOST_SYS)))
+    HOST_SYS= Windows
+    HOST_MSYS= mingw
+  endif
+  ifneq (,$(findstring MSYS,$(HOST_SYS)))
     HOST_SYS= Windows
     HOST_MSYS= mingw
   endif
@@ -191,7 +192,7 @@ CCOPTIONS= $(CCDEBUG) $(ASOPTIONS)
 LDOPTIONS= $(CCDEBUG) $(LDFLAGS)
 
 HOST_CC= $(CC)
-HOST_RM= rm -f
+HOST_RM?= rm -f
 # If left blank, minilua is built and used. You can supply an installed
 # copy of (plain) Lua 5.1 or 5.2, plus Lua BitOp. E.g. with: HOST_LUA=lua
 HOST_LUA=
@@ -209,7 +210,7 @@ TARGET_CC= $(STATIC_CC)
 TARGET_STCC= $(STATIC_CC)
 TARGET_DYNCC= $(DYNAMIC_CC)
 TARGET_LD= $(CROSS)$(CC)
-TARGET_AR= $(CROSS)ar rcus 2>/dev/null
+TARGET_AR= $(CROSS)ar rcus
 TARGET_STRIP= $(CROSS)strip
 
 TARGET_LIBPATH= $(or $(PREFIX),/usr/local)/$(or $(MULTILIB),lib)
@@ -217,6 +218,7 @@ TARGET_SONAME= libluajit-$(ABIVER).so.$(MAJVER)
 TARGET_DYLIBNAME= libluajit-$(ABIVER).$(MAJVER).dylib
 TARGET_DYLIBPATH= $(TARGET_LIBPATH)/$(TARGET_DYLIBNAME)
 TARGET_DLLNAME= lua$(NODOTABIVER).dll
+TARGET_DLLDOTANAME= libluajit-$(ABIVER).dll.a
 TARGET_XSHLDFLAGS= -shared -fPIC -Wl,-soname,$(TARGET_SONAME)
 TARGET_DYNXLDOPTS=
 
@@ -231,7 +233,7 @@ TARGET_ALDFLAGS= $(LDOPTIONS) $(TARGET_XLDFLAGS) $(TARGET_FLAGS) $(TARGET_LDFLAG
 TARGET_ASHLDFLAGS= $(LDOPTIONS) $(TARGET_XSHLDFLAGS) $(TARGET_FLAGS) $(TARGET_SHLDFLAGS)
 TARGET_ALIBS= $(TARGET_XLIBS) $(LIBS) $(TARGET_LIBS)
 
-TARGET_TESTARCH=$(shell $(TARGET_CC) $(TARGET_TCFLAGS) -E lj_arch.h -dM)
+TARGET_TESTARCH:=$(shell $(TARGET_CC) $(TARGET_TCFLAGS) -E lj_arch.h -dM)
 ifneq (,$(findstring LJ_TARGET_X64 ,$(TARGET_TESTARCH)))
   TARGET_LJARCH= x64
 else
@@ -297,6 +299,9 @@ endif
 ifneq (,$(LMULTILIB))
   TARGET_XCFLAGS+= -DLUA_LMULTILIB=\"$(LMULTILIB)\"
 endif
+ifneq (,$(INSTALL_LJLIBD))
+  TARGET_XCFLAGS+= -DLUA_LJDIR=\"$(INSTALL_LJLIBD)\"
+endif
 
 ##############################################################################
 # Target system detection.
@@ -305,34 +310,39 @@ endif
 TARGET_SYS?= $(HOST_SYS)
 ifeq (Windows,$(TARGET_SYS))
   TARGET_STRIP+= --strip-unneeded
-  TARGET_XSHLDFLAGS= -shared
+  TARGET_XSHLDFLAGS= -shared -Wl,--out-implib,$(TARGET_DLLDOTANAME)
   TARGET_DYNXLDOPTS=
 else
+  TARGET_AR+= 2>/dev/null
 ifeq (,$(shell $(TARGET_CC) -o /dev/null -c -x c /dev/null -fno-stack-protector 2>/dev/null || echo 1))
   TARGET_XCFLAGS+= -fno-stack-protector
 endif
 ifeq (Darwin,$(TARGET_SYS))
   ifeq (,$(MACOSX_DEPLOYMENT_TARGET))
-    export MACOSX_DEPLOYMENT_TARGET=10.4
+    $(error missing: export MACOSX_DEPLOYMENT_TARGET=XX.YY)
   endif
   TARGET_STRIP+= -x
-  TARGET_XSHLDFLAGS= -dynamiclib -single_module -undefined dynamic_lookup -fPIC
+  TARGET_XCFLAGS+= -DLUAJIT_UNWIND_EXTERNAL
+  TARGET_XSHLDFLAGS= -dynamiclib -undefined dynamic_lookup -fPIC
   TARGET_DYNXLDOPTS=
-  TARGET_XSHLDFLAGS+= -install_name $(TARGET_DYLIBPATH) -compatibility_version $(MAJVER).$(MINVER) -current_version $(MAJVER).$(MINVER).$(RELVER)
-  ifeq (x64,$(TARGET_LJARCH))
-    TARGET_XLDFLAGS+= -pagezero_size 10000 -image_base 100000000
-    TARGET_XSHLDFLAGS+= -image_base 7fff04c4a000
-  endif
+  TARGET_XSHLDFLAGS+= -install_name $(TARGET_DYLIBPATH) -compatibility_version $(MAJVER).$(MINVER) -current_version $(MAJVER).$(MINVER).255
 else
 ifeq (iOS,$(TARGET_SYS))
   TARGET_STRIP+= -x
-  TARGET_XSHLDFLAGS= -dynamiclib -single_module -undefined dynamic_lookup -fPIC
+  TARGET_XSHLDFLAGS= -dynamiclib -undefined dynamic_lookup -fPIC
   TARGET_DYNXLDOPTS=
-  TARGET_XSHLDFLAGS+= -install_name $(TARGET_DYLIBPATH) -compatibility_version $(MAJVER).$(MINVER) -current_version $(MAJVER).$(MINVER).$(RELVER)
+  TARGET_XSHLDFLAGS+= -install_name $(TARGET_DYLIBPATH) -compatibility_version $(MAJVER).$(MINVER) -current_version $(MAJVER).$(MINVER).255
   ifeq (arm64,$(TARGET_LJARCH))
     TARGET_XCFLAGS+= -fno-omit-frame-pointer
   endif
 else
+  ifeq (,$(findstring LJ_NO_UNWIND 1,$(TARGET_TESTARCH)))
+    # Find out whether the target toolchain always generates unwind tables.
+    TARGET_TESTUNWIND=$(shell exec 2>/dev/null; echo 'extern void b(void);int a(void){b();return 0;}' | $(TARGET_CC) -c -x c - -o tmpunwind.o && { grep -qa -e eh_frame -e __unwind_info tmpunwind.o || grep -qU -e eh_frame -e __unwind_info tmpunwind.o; } && echo E; rm -f tmpunwind.o)
+    ifneq (,$(findstring E,$(TARGET_TESTUNWIND)))
+      TARGET_XCFLAGS+= -DLUAJIT_UNWIND_EXTERNAL
+    endif
+  endif
   ifneq (SunOS,$(TARGET_SYS))
     ifneq (PS3,$(TARGET_SYS))
       TARGET_XLDFLAGS+= -Wl,-E
@@ -359,7 +369,7 @@ ifneq ($(HOST_SYS),$(TARGET_SYS))
     HOST_XCFLAGS+= -DLUAJIT_OS=LUAJIT_OS_OSX
   else
   ifeq (iOS,$(TARGET_SYS))
-    HOST_XCFLAGS+= -DLUAJIT_OS=LUAJIT_OS_OSX
+    HOST_XCFLAGS+= -DLUAJIT_OS=LUAJIT_OS_OSX -DTARGET_OS_IPHONE=1
   else
     HOST_XCFLAGS+= -DLUAJIT_OS=LUAJIT_OS_OTHER
   endif
@@ -380,10 +390,11 @@ MINILUA_O= host/minilua.o
 MINILUA_LIBS= -lm
 MINILUA_T= host/minilua
 MINILUA_X= $(MINILUA_T)
+MINILUA_DEP=
 
 ifeq (,$(HOST_LUA))
   HOST_LUA= $(MINILUA_X)
-  DASM_DEP= $(MINILUA_T)
+  MINILUA_DEP= $(MINILUA_T)
 endif
 
 DASM_DIR= ../dynasm
@@ -425,6 +436,10 @@ ifneq (,$(findstring LJ_NO_UNWIND 1,$(TARGET_TESTARCH)))
   DASM_AFLAGS+= -D NO_UNWIND
   TARGET_ARCH+= -DLUAJIT_NO_UNWIND
 endif
+ifneq (,$(findstring LJ_ABI_PAUTH 1,$(TARGET_TESTARCH)))
+  DASM_AFLAGS+= -D PAUTH
+  TARGET_ARCH+= -DLJ_ABI_PAUTH=1
+endif
 DASM_AFLAGS+= -D VER=$(subst LJ_ARCH_VERSION_,,$(filter LJ_ARCH_VERSION_%,$(subst LJ_ARCH_VERSION ,LJ_ARCH_VERSION_,$(TARGET_TESTARCH))))
 ifeq (Windows,$(TARGET_SYS))
   DASM_AFLAGS+= -D WIN
@@ -439,6 +454,9 @@ ifeq (arm,$(TARGET_LJARCH))
     DASM_AFLAGS+= -D IOS
   endif
 else
+ifneq (,$(findstring LJ_TARGET_MIPSR6 ,$(TARGET_TESTARCH)))
+  DASM_AFLAGS+= -D MIPSR6
+endif
 ifeq (ppc,$(TARGET_LJARCH))
   ifneq (,$(findstring LJ_ARCH_SQRT 1,$(TARGET_TESTARCH)))
     DASM_AFLAGS+= -D SQRT
@@ -452,15 +470,20 @@ ifeq (ppc,$(TARGET_LJARCH))
   ifeq (PS3,$(TARGET_SYS))
     DASM_AFLAGS+= -D PPE -D TOC
   endif
-  ifneq (,$(findstring LJ_ARCH_PPC64 ,$(TARGET_TESTARCH)))
-    DASM_ARCH= ppc64
-  endif
 endif
 endif
 endif
 
 DASM_FLAGS= $(DASM_XFLAGS) $(DASM_AFLAGS)
 DASM_DASC= vm_$(DASM_ARCH).dasc
+
+GIT= git
+ifeq (Windows,$(HOST_SYS)$(HOST_MSYS))
+  GIT_RELVER= if exist ..\.git ( $(GIT) show -s --format=%%ct >luajit_relver.txt ) else ( type ..\.relver >luajit_relver.txt )
+else
+  GIT_RELVER= [ -e ../.git ] && $(GIT) show -s --format=%ct >luajit_relver.txt 2>/dev/null || cat ../.relver >luajit_relver.txt 2>/dev/null || :
+endif
+GIT_DEP= $(wildcard ../.git/HEAD ../.git/refs/heads/*)
 
 BUILDVM_O= host/buildvm.o host/buildvm_asm.o host/buildvm_peobj.o \
 	   host/buildvm_lib.o host/buildvm_fold.o
@@ -476,13 +499,15 @@ LJVM_BOUT= $(LJVM_S)
 LJVM_MODE= elfasm
 
 LJLIB_O= lib_base.o lib_math.o lbitlib.o lib_bit.o lib_string.o lib_table.o \
-	 lib_io.o lib_os.o lib_package.o lib_debug.o lib_jit.o lib_ffi.o
+	 lib_io.o lib_os.o lib_package.o lib_debug.o lib_jit.o lib_ffi.o \
+	 lib_buffer.o
 LJLIB_C= $(LJLIB_O:.o=.c)
 
-LJCORE_O= lj_gc.o lj_err.o lj_char.o lj_bc.o lj_obj.o lj_buf.o \
+LJCORE_O= lj_assert.o lj_gc.o lj_err.o lj_char.o lj_bc.o lj_obj.o lj_buf.o \
 	  lj_str.o lj_tab.o lj_func.o lj_udata.o lj_meta.o lj_debug.o \
-	  lj_state.o lj_dispatch.o lj_vmevent.o lj_vmmath.o lj_strscan.o \
-	  lj_strfmt.o lj_strfmt_num.o lj_api.o lj_profile.o \
+	  lj_prng.o lj_state.o lj_dispatch.o lj_vmevent.o lj_vmmath.o \
+	  lj_strscan.o lj_strfmt.o lj_strfmt_num.o lj_serialize.o \
+	  lj_api.o lj_profile.o \
 	  lj_lex.o lj_parse.o lj_bcread.o lj_bcwrite.o lj_load.o \
 	  lj_ir.o lj_opt_mem.o lj_opt_fold.o lj_opt_narrow.o \
 	  lj_opt_dce.o lj_opt_loop.o lj_opt_split.o lj_opt_sink.o \
@@ -506,8 +531,8 @@ LUAJIT_T= luajit
 
 ALL_T= $(LUAJIT_T) $(LUAJIT_A) $(LUAJIT_SO) $(HOST_T)
 ALL_HDRGEN= lj_bcdef.h lj_ffdef.h lj_libdef.h lj_recdef.h lj_folddef.h \
-	    host/buildvm_arch.h
-ALL_GEN= $(LJVM_S) $(ALL_HDRGEN) $(LIB_VMDEFP)
+	    host/buildvm_arch.h luajit.h
+ALL_GEN= $(LJVM_S) $(ALL_HDRGEN) luajit_relver.txt $(LIB_VMDEFP)
 WIN_RM= *.obj *.lib *.exp *.dll *.exe *.manifest *.pdb *.ilk
 ALL_RM= $(ALL_T) $(ALL_GEN) *.o host/*.o $(WIN_RM)
 
@@ -557,6 +582,7 @@ ifeq (Windows,$(HOST_SYS))
     MINILUA_X= host\minilua
     BUILDVM_X= host\buildvm
     ALL_RM:= $(subst /,\,$(ALL_RM))
+    HOST_RM= del
   endif
 endif
 
@@ -597,7 +623,6 @@ E= @echo
 default all:	$(TARGET_T)
 
 amalg:
-	@grep "^[+|]" ljamalg.c
 	$(MAKE) all "LJCORE_O=ljamalg.o"
 
 clean:
@@ -631,7 +656,12 @@ $(MINILUA_T): $(MINILUA_O)
 	$(E) "HOSTLINK  $@"
 	$(Q)$(HOST_CC) $(HOST_ALDFLAGS) -o $@ $(MINILUA_O) $(MINILUA_LIBS) $(HOST_ALIBS)
 
-host/buildvm_arch.h: $(DASM_DASC) $(DASM_DEP) $(DASM_DIR)/*.lua
+luajit.h: $(MINILUA_DEP) $(GIT_DEP) luajit_rolling.h
+	$(E) "VERSION   $@"
+	$(Q)$(GIT_RELVER)
+	$(Q)$(HOST_LUA) host/genversion.lua
+
+host/buildvm_arch.h: $(DASM_DASC) $(MINILUA_DEP) lj_arch.h lua.h luaconf.h
 	$(E) "DYNASM    $@"
 	$(Q)$(DASM) $(DASM_FLAGS) -o $@ $(DASM_DASC)
 

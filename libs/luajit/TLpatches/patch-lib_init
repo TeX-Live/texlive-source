@@ -1,0 +1,11 @@
+diff -bu a/source/libs/luajit/LuaJIT-src/src/lib_init.c  b/source/libs/luajit/LuaJIT-src/src/lib_init.c 
+--- a/source/libs/luajit/LuaJIT-src/src/lib_init.c
++++ b/source/libs/luajit/LuaJIT-src/src/lib_init.c
+@@ -26,6 +26,7 @@
+   { LUA_DBLIBNAME,	luaopen_debug },
+   { LUA_BITLIBNAME,	luaopen_bit },
+   { LUA_JITLIBNAME,	luaopen_jit },
++  { LUA_BITLIBNAME_32,	luaopen_bit32 },
+   { NULL,		NULL }
+ };
+ 

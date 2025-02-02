@@ -1,6 +1,6 @@
 /*
 ** Definitions for ARM64 CPUs.
-** Copyright (C) 2005-2017 Mike Pall. See Copyright Notice in luajit.h
+** Copyright (C) 2005-2025 Mike Pall. See Copyright Notice in luajit.h
 */
 
 #ifndef _LJ_TARGET_ARM64_H
@@ -31,6 +31,8 @@ enum {
 
   /* Calling conventions. */
   RID_RET = RID_X0,
+  RID_RETLO = RID_X0,
+  RID_RETHI = RID_X1,
   RID_FPRET = RID_D0,
 
   /* These definitions must match with the *.dasc file(s): */
@@ -132,9 +134,9 @@ static LJ_AINLINE uint32_t *exitstub_trace_addr_(uint32_t *p, uint32_t exitno)
 #define A64F_IMMR(x)	((x) << 16)
 #define A64F_U16(x)	((x) << 5)
 #define A64F_U12(x)	((x) << 10)
-#define A64F_S26(x)	(x)
+#define A64F_S26(x)	(((uint32_t)(x) & 0x03ffffffu))
 #define A64F_S19(x)	(((uint32_t)(x) & 0x7ffffu) << 5)
-#define A64F_S14(x)	((x) << 5)
+#define A64F_S14(x)	(((uint32_t)(x) & 0x3fffu) << 5)
 #define A64F_S9(x)	((x) << 12)
 #define A64F_BIT(x)	((x) << 19)
 #define A64F_SH(sh, x)	(((sh) << 22) | ((x) << 10))
@@ -144,6 +146,9 @@ static LJ_AINLINE uint32_t *exitstub_trace_addr_(uint32_t *p, uint32_t exitno)
 #define A64F_CC(cc)	((cc) << 12)
 #define A64F_LSL16(x)	(((x) / 16) << 21)
 #define A64F_BSH(sh)	((sh) << 10)
+
+/* Check for valid field range. */
+#define A64F_S_OK(x, b)	((((x) + (1 << (b-1))) >> (b)) == 0)
 
 typedef enum A64Ins {
   A64I_S = 0x20000000,
@@ -207,6 +212,8 @@ typedef enum A64Ins {
 
   A64I_EXTRw = 0x13800000,
   A64I_EXTRx = 0x93c00000,
+  A64I_BFMw = 0x33000000,
+  A64I_BFMx = 0xb3400000,
   A64I_SBFMw = 0x13000000,
   A64I_SBFMx = 0x93400000,
   A64I_SXTBw = 0x13001c00,
@@ -227,6 +234,8 @@ typedef enum A64Ins {
   A64I_MOVZx = 0xd2800000,
   A64I_MOVNw = 0x12800000,
   A64I_MOVNx = 0x92800000,
+  A64I_ADR = 0x10000000,
+  A64I_ADRP = 0x90000000,
 
   A64I_LDRB = 0x39400000,
   A64I_LDRH = 0x79400000,
@@ -253,6 +262,9 @@ typedef enum A64Ins {
   A64I_CBZ = 0x34000000,
   A64I_CBNZ = 0x35000000,
 
+  A64I_BRAAZ = 0xd61f081f,
+  A64I_BLRAAZ = 0xd63f081f,
+
   A64I_NOP = 0xd503201f,
 
   /* FP */
@@ -269,6 +281,7 @@ typedef enum A64Ins {
   A64I_FSQRTd = 0x1e61c000,
   A64I_LDRs = 0xbd400000,
   A64I_LDRd = 0xfd400000,
+  A64I_LDRLd = 0x5c000000,
   A64I_STRs = 0xbd000000,
   A64I_STRd = 0xfd000000,
   A64I_LDPs = 0x2d400000,
@@ -308,7 +321,11 @@ typedef enum A64Ins {
   A64I_FMOV_R_D = 0x9e660000,
   A64I_FMOV_D_R = 0x9e670000,
   A64I_FMOV_DI = 0x1e601000,
+  A64I_MOVI_DI = 0x2f000400,
 } A64Ins;
+
+#define A64I_BR_AUTH	(LJ_ABI_PAUTH ? A64I_BRAAZ : A64I_BR)
+#define A64I_BLR_AUTH	(LJ_ABI_PAUTH ? A64I_BLRAAZ : A64I_BLR)
 
 typedef enum A64Shift {
   A64SH_LSL, A64SH_LSR, A64SH_ASR, A64SH_ROR

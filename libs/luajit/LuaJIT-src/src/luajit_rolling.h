@@ -1,7 +1,7 @@
 /*
-** LuaJIT -- a Just-In-Time Compiler for Lua. http://luajit.org/
+** LuaJIT -- a Just-In-Time Compiler for Lua. https://luajit.org/
 **
-** Copyright (C) 2005-2017 Mike Pall. All rights reserved.
+** Copyright (C) 2005-2025 Mike Pall. All rights reserved.
 **
 ** Permission is hereby granted, free of charge, to any person obtaining
 ** a copy of this software and associated documentation files (the
@@ -22,7 +22,7 @@
 ** TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 ** SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 **
-** [ MIT license: http://www.opensource.org/licenses/mit-license.php ]
+** [ MIT license: https://www.opensource.org/licenses/mit-license.php ]
 */
 
 #ifndef _LUAJIT_H
@@ -30,11 +30,11 @@
 
 #include "lua.h"
 
-#define LUAJIT_VERSION		"LuaJIT 2.1.0-beta3"
-#define LUAJIT_VERSION_NUM	20100  /* Version 2.1.0 = 02.01.00. */
-#define LUAJIT_VERSION_SYM	luaJIT_version_2_1_0_beta3
-#define LUAJIT_COPYRIGHT	"Copyright (C) 2005-2017 Mike Pall"
-#define LUAJIT_URL		"http://luajit.org/"
+#define LUAJIT_VERSION		"LuaJIT 2.1.ROLLING"
+#define LUAJIT_VERSION_NUM	20199  /* Deprecated. */
+#define LUAJIT_VERSION_SYM	luaJIT_version_2_1_ROLLING
+#define LUAJIT_COPYRIGHT	"Copyright (C) 2005-2025 Mike Pall"
+#define LUAJIT_URL		"https://luajit.org/"
 
 /* Modes for luaJIT_setmode. */
 #define LUAJIT_MODE_MASK	0x00ff
@@ -76,4 +76,5 @@ LUA_API const char *luaJIT_profile_dumpstack(lua_State *L, const char *fmt,
 /* Enforce (dynamic) linker error for version mismatches. Call from main. */
 LUA_API void LUAJIT_VERSION_SYM(void);
 
+#error "DO NOT USE luajit_rolling.h -- only include build-generated luajit.h"
 #endif

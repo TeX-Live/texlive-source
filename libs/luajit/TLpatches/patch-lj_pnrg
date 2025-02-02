@@ -1,0 +1,15 @@
+diff -bu a/source/libs/luajit/LuaJIT-src/src/lj_prng.c  b/source/libs/luajit/LuaJIT-src/src/lj_prng.c 
+--- a/source/libs/luajit/LuaJIT-src/src/lj_prng.c
++++ b/source/libs/luajit/LuaJIT-src/src/lj_prng.c
+@@ -227,7 +227,11 @@
+   ** or the OS ran out of file descriptors.
+   */
+   {
++#ifdef O_CLOEXEC
+     int fd = open("/dev/urandom", O_RDONLY|O_CLOEXEC);
++#else
++    int fd = open("/dev/urandom", O_RDONLY);
++#endif
+     if (fd != -1) {
+       ssize_t n = read(fd, rs->u, sizeof(rs->u));
+       (void)close(fd);

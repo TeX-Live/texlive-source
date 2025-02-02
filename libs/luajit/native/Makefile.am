@@ -8,7 +8,7 @@ AM_CFLAGS = -Wall
 
 EXTRA_PROGRAMS = buildvm minilua
 
-all-local: buildvm-stamp
+all-local: buildvm-stamp luajit.h
 
 buildvm-stamp: buildvm$(EXEEXT)
 	$(AM_V_at)echo timestamp >$@
@@ -21,7 +21,13 @@ nodist_buildvm_SOURCES = \
 	@LUAJIT_TREE@/src/host/buildvm_fold.c \
 	@LUAJIT_TREE@/src/host/buildvm_lib.c \
 	@LUAJIT_TREE@/src/host/buildvm_peobj.c
-$(buildvm_OBJECTS): buildvm_arch.h
+$(buildvm_OBJECTS): buildvm_arch.h luajit.h
+
+
+luajit.h: minilua$(EXEEXT)
+	$(AM_V_GEN)./minilua$(EXEEXT) $(srcdir)/$(LUAJIT_TREE)/src/host/genversion.lua $(srcdir)/$(LUAJIT_TREE)/src/luajit_rolling.h $(srcdir)/$(LUAJIT_TREE)/.relver
+#	$(LN_S)	 luajit.h ../
+
 
 buildvm_arch.h: minilua$(EXEEXT) $(LUAJIT_TREE)/dynasm/dynasm.lua
 	$(AM_V_GEN)./minilua $(srcdir)/$(LUAJIT_TREE)/dynasm/dynasm.lua \
@@ -33,5 +39,5 @@ nodist_minilua_SOURCES = \
 	@LUAJIT_TREE@/src/host/minilua.c
 minilua_LDADD = $(MATH_LIB)
 
-CLEANFILES = buildvm-stamp buildvm_arch.h
+CLEANFILES = buildvm-stamp buildvm_arch.h luajit.h
 

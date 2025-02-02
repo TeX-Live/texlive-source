@@ -1,6 +1,6 @@
 /*
 ** Assembler VM interface definitions.
-** Copyright (C) 2005-2017 Mike Pall. See Copyright Notice in luajit.h
+** Copyright (C) 2005-2025 Mike Pall. See Copyright Notice in luajit.h
 */
 
 #ifndef _LJ_VM_H
@@ -26,6 +26,9 @@ LJ_ASMF void lj_vm_unwind_ff_eh(void);
 #if LJ_TARGET_X86ORX64
 LJ_ASMF void lj_vm_unwind_rethrow(void);
 #endif
+#if LJ_TARGET_MIPS
+LJ_ASMF void lj_vm_unwind_stub(void);
+#endif
 
 /* Miscellaneous functions. */
 #if LJ_TARGET_X86ORX64
@@ -48,10 +51,11 @@ LJ_ASMF void lj_vm_inshook(void);
 LJ_ASMF void lj_vm_rethook(void);
 LJ_ASMF void lj_vm_callhook(void);
 LJ_ASMF void lj_vm_profhook(void);
+LJ_ASMF void lj_vm_IITERN(void);
 
 /* Trace exit handling. */
-LJ_ASMF void lj_vm_exit_handler(void);
-LJ_ASMF void lj_vm_exit_interp(void);
+LJ_ASMF char lj_vm_exit_handler[];
+LJ_ASMF char lj_vm_exit_interp[];
 
 /* Internal math helper functions. */
 #if LJ_TARGET_PPC || LJ_TARGET_ARM64 || (LJ_TARGET_MIPS && LJ_ABI_SOFTFP)
@@ -79,10 +83,6 @@ LJ_ASMF int32_t LJ_FASTCALL lj_vm_modi(int32_t, int32_t);
 LJ_ASMF void lj_vm_floor_sse(void);
 LJ_ASMF void lj_vm_ceil_sse(void);
 LJ_ASMF void lj_vm_trunc_sse(void);
-LJ_ASMF void lj_vm_powi_sse(void);
-#define lj_vm_powi	NULL
-#else
-LJ_ASMF double lj_vm_powi(double, int32_t);
 #endif
 #if LJ_TARGET_PPC || LJ_TARGET_ARM64
 #define lj_vm_trunc	trunc
@@ -92,14 +92,10 @@ LJ_ASMF double lj_vm_trunc(double);
 LJ_ASMF double lj_vm_trunc_sf(double);
 #endif
 #endif
-#ifdef LUAJIT_NO_EXP2
-LJ_ASMF double lj_vm_exp2(double);
-#else
-#define lj_vm_exp2	exp2
-#endif
 #if LJ_HASFFI
 LJ_ASMF int lj_vm_errno(void);
 #endif
+LJ_ASMF TValue *lj_vm_next(GCtab *t, uint32_t idx);
 #endif
 
 /* Continuations for metamethods. */
@@ -115,6 +111,6 @@ LJ_ASMF void lj_cont_stitch(void);  /* Trace stitching. */
 LJ_ASMF char lj_vm_asm_begin[];
 
 /* Bytecode offsets are relative to lj_vm_asm_begin. */
-#define makeasmfunc(ofs)	((ASMFunction)(lj_vm_asm_begin + (ofs)))
+#define makeasmfunc(ofs) lj_ptr_sign((ASMFunction)(lj_vm_asm_begin + (ofs)), 0)
 
 #endif

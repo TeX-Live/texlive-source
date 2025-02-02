@@ -35,9 +35,12 @@ AS_IF([grep 'LJ_TARGET_X64 ' conftest.i >/dev/null 2>&1],
                  [echo '-DLJ_ARCH_ENDIAN=LUAJIT_LE' >>native_flags],
                  [echo '-DLJ_ARCH_ENDIAN=LUAJIT_BE' >>native_flags])],
       [grep 'LJ_TARGET_MIPS ' conftest.i >/dev/null 2>&1],
-        [LJARCH=mips
+        [LJARCH=mips],
+      [grep 'LJ_TARGET_MIPS64 ' conftest.i >/dev/null 2>&1],
+        [LJARCH=mips64 
          AS_IF([grep 'MIPSEL ' conftest.i >/dev/null 2>&1],
-                 [echo '-D__MIPSEL__=1' >>native_flags])],
+                 [echo '-D__MIPSEL__=1' >>native_flags])
+	],
         [AC_MSG_ERROR([Sorry, unsupported architecture])])
 AS_IF([grep 'LJ_TARGET_PS3 1'conftest.i >/dev/null 2>&1],
         [LJHOST='PS3'
@@ -68,6 +71,9 @@ AS_IF([grep 'LJ_ABI_SOFTFP 1' conftest.i >/dev/null 2>&1],
         [echo '-DDLJ_ABI_SOFTFP=1' >>native_flags],
         [echo '-D HFABI' >>dynasm_flags
          echo '-DLJ_ABI_SOFTFP=0' >>native_flags])
+AS_IF([grep 'LJ_ABI_PAUTH 1' conftest.i >/dev/null 2>&1],
+        [echo '-D PAUTH' >>dynasm_flags
+	 echo '-DLJ_ABI_PAUTH=1' >>native_flags])
 echo '-D VER='`grep 'LJ_ARCH_VERSION ' conftest.i 2>&1 | \
                sed 's/^.*LJ_ARCH_VERSION //'` >>dynasm_flags
 AS_IF([test "x$LJHOST" = xWindows],
@@ -91,7 +97,7 @@ AS_CASE([$LJARCH],
 
 AS_IF([test "x$build" != "x$host"],
  [AS_CASE([$LJHOST],
-        [Windows], [echo '-DLUAJIT_OS=LUAJIT_OS_WINDOWS' >>native_flags],
+        [Windows], [echo '-malign-double -DLUAJIT_OS=LUAJIT_OS_WINDOWS' >>native_flags],
         [Darwin | iOS], [echo '-DLUAJIT_OS=LUAJIT_OS_OSX' >>native_flags],
         [Linux], [echo '-DLUAJIT_OS=LUAJIT_OS_LINUX' >>native_flags],
         [echo '-DLUAJIT_OS=LUAJIT_OS_OTHER' >>native_flags])])

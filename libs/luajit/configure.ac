@@ -10,7 +10,7 @@ dnl
 m4_include([version.ac])[] dnl define luajit_version
 AC_INIT([luajit for TeX Live], luajit_version, [tex-k@tug.org])
 AC_PREREQ([2.65])
-AC_CONFIG_SRCDIR([LuaJIT-src/src/luajit.h])
+AC_CONFIG_SRCDIR([LuaJIT-src/src/luajit_rolling.h])
 AC_CONFIG_AUX_DIR([../../build-aux])
 AC_CONFIG_MACRO_DIRS([../../m4 m4])
 
@@ -53,6 +53,13 @@ AS_CASE([$LJHOST],
                     LUAJIT_CFLAGS="$LUAJIT_CFLAGS -malign-double"],
         [Darwin | iOS], [LJVM_MODE=machasm],
                         [LJVM_MODE=elfasm])
+
+dnl Original test, adapted.
+dnl AS_IF([ echo 'extern void b(void);int a(void){b();return 0;}' | $CC -c -x c - -o tmpunwind.o && { grep -qa -e eh_frame -e __unwind_info tmpunwind.o || grep -qU -e eh_frame -e __unwind_info tmpunwind.o; }],
+AS_IF([ echo 'extern void b(void);int a(void){b();return 0;}' | $CC -c -x c - -o tmpunwind.o && { sed -n /eh_frame/p tmpunwind.o >tmpunwind_test || sed -n /__unwind_info/p tmpunwind.o >>tmpunwind_test && test -s tmpunwind_test; }],
+      [LUAJIT_CFLAGS="$LUAJIT_CFLAGS -DLUAJIT_UNWIND_EXTERNAL"
+       rm tmpunwind.o tmpunwind_test],
+       [rm  tmpunwind.o tmpunwind_test])
 lj_save_CFLAGS=$CFLAGS
 CFLAGS="$CFLAGS -fno-stack-protector"
 AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[]],[[]])],

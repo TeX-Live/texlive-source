@@ -8,6 +8,9 @@
 ##
 LUAJIT_SRC = $(top_srcdir)/$(LUAJIT_TREE)/src
 
+#luajit.h: ../native/luajit.h
+#	$(LN_S) ../native/luajit.h
+
 hdr_links = \
 	$(LUAJIT_SRC)/lauxlib.h \
 	$(LUAJIT_SRC)/lj_arch.h \
@@ -17,7 +20,8 @@ hdr_links = \
 	$(LUAJIT_SRC)/lua.h \
 	$(LUAJIT_SRC)/luaconf.h \
 	$(LUAJIT_SRC)/luajit.h \
-	$(LUAJIT_SRC)/lualib.h
+	$(LUAJIT_SRC)/lualib.h \
+	../native/luajit.h
 
 include $(top_srcdir)/../../am/hdr_links.am
 

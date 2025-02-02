@@ -1,3 +1,7 @@
+2025-02-02 Luigi Scarso <luigi.scarso@gmail.com>
+	* LuaJIT 2.1.1736781742
+
+
 2017-20-06 Luigi Scarso <luigi.scarso@gmail.com>
 	* Luajit-2.1.0-beta3
 	* Removed lj_bcdef.h, lj_ffdef.h, lj_folddef.h, lj_libdef.h

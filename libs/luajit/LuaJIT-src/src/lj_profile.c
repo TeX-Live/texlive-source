@@ -1,6 +1,6 @@
 /*
 ** Low-overhead profiling.
-** Copyright (C) 2005-2017 Mike Pall. See Copyright Notice in luajit.h
+** Copyright (C) 2005-2025 Mike Pall. See Copyright Notice in luajit.h
 */
 
 #define lj_profile_c
@@ -153,7 +153,7 @@ static void profile_trigger(ProfileState *ps)
   profile_lock(ps);
   ps->samples++;  /* Always increment number of samples. */
   mask = g->hookmask;
-  if (!(mask & (HOOK_PROFILE|HOOK_VMEVENT))) {  /* Set profile hook. */
+  if (!(mask & (HOOK_PROFILE|HOOK_VMEVENT|HOOK_GC))) {  /* Set profile hook. */
     int st = g->vmstate;
     ps->vmstate = st >= 0 ? 'N' :
 		  st == ~LJ_VMST_INTERP ? 'I' :
@@ -185,7 +185,11 @@ static void profile_timer_start(ProfileState *ps)
   tm.it_value.tv_sec = tm.it_interval.tv_sec = interval / 1000;
   tm.it_value.tv_usec = tm.it_interval.tv_usec = (interval % 1000) * 1000;
   setitimer(ITIMER_PROF, &tm, NULL);
+#if LJ_TARGET_QNX
+  sa.sa_flags = 0;
+#else
   sa.sa_flags = SA_RESTART;
+#endif
   sa.sa_handler = profile_signal;
   sigemptyset(&sa.sa_mask);
   sigaction(SIGPROF, &sa, &ps->oldsa);
@@ -247,7 +251,7 @@ static DWORD WINAPI profile_thread(void *psx)
 {
   ProfileState *ps = (ProfileState *)psx;
   int interval = ps->interval;
-#if LJ_TARGET_WINDOWS
+#if LJ_TARGET_WINDOWS && !LJ_TARGET_UWP
   ps->wmm_tbp(interval);
 #endif
   while (1) {
@@ -255,7 +259,7 @@ static DWORD WINAPI profile_thread(void *psx)
     if (ps->abort) break;
     profile_trigger(ps);
   }
-#if LJ_TARGET_WINDOWS
+#if LJ_TARGET_WINDOWS && !LJ_TARGET_UWP
   ps->wmm_tep(interval);
 #endif
   return 0;
@@ -264,9 +268,9 @@ static DWORD WINAPI profile_thread(void *psx)
 /* Start profiling timer thread. */
 static void profile_timer_start(ProfileState *ps)
 {
-#if LJ_TARGET_WINDOWS
+#if LJ_TARGET_WINDOWS && !LJ_TARGET_UWP
   if (!ps->wmm) {  /* Load WinMM library on-demand. */
-    ps->wmm = LoadLibraryExA("winmm.dll", NULL, 0);
+    ps->wmm = LJ_WIN_LOADLIBA("winmm.dll");
     if (ps->wmm) {
       ps->wmm_tbp = (WMM_TPFUNC)GetProcAddress(ps->wmm, "timeBeginPeriod");
       ps->wmm_tep = (WMM_TPFUNC)GetProcAddress(ps->wmm, "timeEndPeriod");
@@ -346,8 +350,7 @@ LUA_API void luaJIT_profile_stop(lua_State *L)
     lj_trace_flushall(L);
 #endif
     lj_buf_free(g, &ps->sb);
-    setmref(ps->sb.b, NULL);
-    setmref(ps->sb.e, NULL);
+    ps->sb.w = ps->sb.e = NULL;
     ps->g = NULL;
   }
 }
@@ -362,7 +365,7 @@ LUA_API const char *luaJIT_profile_dumpstack(lua_State *L, const char *fmt,
   lj_buf_reset(sb);
   lj_debug_dumpstack(L, sb, fmt, depth);
   *len = (size_t)sbuflen(sb);
-  return sbufB(sb);
+  return sb->b;
 }
 
 #endif

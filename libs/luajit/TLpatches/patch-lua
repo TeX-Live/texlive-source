@@ -1,17 +1,17 @@
-diff -bur LuaJIT-2.1.0-beta3-orig/src/lua.h LuaJIT-2.1.0-beta3/src/lua.h
---- LuaJIT-2.1.0-beta3-orig/src/lua.h	2017-05-01 21:05:00.000000000 +0200
-+++ LuaJIT-2.1.0-beta3/src/lua.h	2017-06-19 18:26:51.143299683 +0200
-@@ -103,7 +103,8 @@
- /* type for integer functions */
+diff -bu a/source/libs/luajit/LuaJIT-src/src/lua.h  b/source/libs/luajit/LuaJIT-src/src/lua.h 
+--- a/source/libs/luajit/LuaJIT-src/src/lua.h
++++ b/source/libs/luajit/LuaJIT-src/src/lua.h
+@@ -104,6 +104,9 @@
  typedef LUA_INTEGER lua_Integer;
  
--
+ 
 +/* communication with LuaJiTTeX */
 +LUA_API int luajittex_choose_hash_function; 
++
  
  /*
  ** state manipulation
-@@ -353,6 +354,14 @@
+@@ -353,6 +356,15 @@
  LUA_API lua_Number lua_tonumberx (lua_State *L, int idx, int *isnum);
  LUA_API lua_Integer lua_tointegerx (lua_State *L, int idx, int *isnum);
  
@@ -20,8 +20,9 @@ diff -bur LuaJIT-2.1.0-beta3-orig/src/lua.h LuaJIT-2.1.0-beta3/src/lua.h
 +#define LUA_OPLT 1
 +#define LUA_OPLE 2
 + 
-+/* see http://comments.gmane.org/gmane.comp.programming.swig/18673 */
++/* see https://sourceforge.net/p/swig/mailman/swig-user/thread/4FB2AEBE.9010807%40fultondesigns.co.uk/#msg29268198 */
 +# define lua_rawlen lua_objlen 
++
 +
  /* From Lua 5.3. */
  LUA_API int lua_isyieldable (lua_State *L);

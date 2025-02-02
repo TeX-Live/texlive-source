@@ -14,6 +14,8 @@ EXTRA_DIST = $(LUAJIT_TREE)
 ##
 EXTRA_DIST += TLpatches
 
+
+
 # Files not to be distributed
 include $(srcdir)/../../am/dist_hook.am
 NEVER_NAMES += $(NEVER_NAMES_SUB) $(NEVER_NAMES_LT)
@@ -21,6 +23,7 @@ NEVER_NAMES += $(NEVER_NAMES_SUB) $(NEVER_NAMES_LT)
 AM_CPPFLAGS = -I$(srcdir)/$(LUAJIT_TREE)/src $(LUAJIT_DEFINES) -U_FORTIFY_SOURCE
 AM_CFLAGS = $(LUAJIT_CFLAGS) $(LUAJIT_HAS_NOT_LOG2) -Wall
 AM_CCASFLAGS = $(LUAJIT_CFLAGS) $(LUAJIT_HAS_NOT_LOG2)
+
 
 SUBDIRS = . native include
 
@@ -31,20 +34,34 @@ libtexluajit_la_LDFLAGS = -bindir @bindir@ -no-undefined -version-info $(LUAJIT_
 dist_libtexluajit_la_SOURCES = \
 	lbitlib.c
 
+
 nodist_libtexluajit_la_SOURCES = \
 	$(ljlib_sources) \
 	@LUAJIT_TREE@/src/lib_aux.c \
+	@LUAJIT_TREE@/src/lib_base.c \
+	@LUAJIT_TREE@/src/lib_bit.c \
+	@LUAJIT_TREE@/src/lib_buffer.c \
+	@LUAJIT_TREE@/src/lib_debug.c \
+	@LUAJIT_TREE@/src/lib_ffi.c \
 	@LUAJIT_TREE@/src/lib_init.c \
+	@LUAJIT_TREE@/src/lib_io.c \
+	@LUAJIT_TREE@/src/lib_jit.c \
+	@LUAJIT_TREE@/src/lib_math.c \
+	@LUAJIT_TREE@/src/lib_os.c \
+	@LUAJIT_TREE@/src/lib_package.c \
+	@LUAJIT_TREE@/src/lib_string.c \
+	@LUAJIT_TREE@/src/lib_table.c \
 	@LUAJIT_TREE@/src/lj_alloc.c \
 	@LUAJIT_TREE@/src/lj_api.c \
 	@LUAJIT_TREE@/src/lj_asm.c \
+	@LUAJIT_TREE@/src/lj_assert.c \
 	@LUAJIT_TREE@/src/lj_bc.c \
 	@LUAJIT_TREE@/src/lj_bcread.c \
 	@LUAJIT_TREE@/src/lj_bcwrite.c \
 	@LUAJIT_TREE@/src/lj_buf.c \
 	@LUAJIT_TREE@/src/lj_carith.c \
-	@LUAJIT_TREE@/src/lj_ccall.c \
 	@LUAJIT_TREE@/src/lj_ccallback.c \
+	@LUAJIT_TREE@/src/lj_ccall.c \
 	@LUAJIT_TREE@/src/lj_cconv.c \
 	@LUAJIT_TREE@/src/lj_cdata.c \
 	@LUAJIT_TREE@/src/lj_char.c \
@@ -74,8 +91,10 @@ nodist_libtexluajit_la_SOURCES = \
 	@LUAJIT_TREE@/src/lj_opt_sink.c \
 	@LUAJIT_TREE@/src/lj_opt_split.c \
 	@LUAJIT_TREE@/src/lj_parse.c \
+	@LUAJIT_TREE@/src/lj_prng.c \
 	@LUAJIT_TREE@/src/lj_profile.c \
 	@LUAJIT_TREE@/src/lj_record.c \
+	@LUAJIT_TREE@/src/lj_serialize.c \
 	@LUAJIT_TREE@/src/lj_snap.c \
 	@LUAJIT_TREE@/src/lj_state.c \
 	@LUAJIT_TREE@/src/lj_str.c \
@@ -86,7 +105,16 @@ nodist_libtexluajit_la_SOURCES = \
 	@LUAJIT_TREE@/src/lj_trace.c \
 	@LUAJIT_TREE@/src/lj_udata.c \
 	@LUAJIT_TREE@/src/lj_vmevent.c \
-	@LUAJIT_TREE@/src/lj_vmmath.c
+	@LUAJIT_TREE@/src/lj_vmmath.c \
+	@LUAJIT_TREE@/src/luajit.c \
+	@LUAJIT_TREE@/src/vm_arm64.dasc \
+	@LUAJIT_TREE@/src/vm_arm.dasc \
+	@LUAJIT_TREE@/src/vm_mips64.dasc \
+	@LUAJIT_TREE@/src/vm_mips.dasc \
+	@LUAJIT_TREE@/src/vm_ppc.dasc \
+	@LUAJIT_TREE@/src/vm_x64.dasc \
+	@LUAJIT_TREE@/src/vm_x86.dasc
+
 
 if PEOBJ
 libtexluajit_la_LIBADD = lj_vm_obj.lo
@@ -95,17 +123,21 @@ nodist_libtexluajit_la_SOURCES += lj_vm_asm.S
 endif !PEOBJ
 
 ljlib_sources = \
+	lib_aux.c \
 	lib_base.c \
-	lib_math.c \
 	lib_bit.c \
-	lib_string.c \
-	lib_table.c \
+	lib_buffer.c \
+	lib_debug.c \
+	lib_ffi.c \
+	lib_init.c \
 	lib_io.c \
+	lib_jit.c \
+	lib_math.c \
 	lib_os.c \
 	lib_package.c \
-	lib_debug.c \
-	lib_jit.c \
-	lib_ffi.c
+	lib_string.c \
+	lib_table.c
+
 
 $(libtexluajit_la_OBJECTS): $(HDRGEN)
 
@@ -114,7 +146,15 @@ $(libtexluajit_la_OBJECTS): $(HDRGEN)
 native/buildvm-stamp: $(ljlib_sources) lj_opt_fold.c
 	cd native && $(MAKE) $(AM_MAKEFLAGS) buildvm-stamp
 
-HDRGEN = lj_bcdef.h lj_ffdef.h lj_libdef.h lj_recdef.h lj_folddef.h
+native/luajit.h: 
+		cd native && $(MAKE) $(AM_MAKEFLAGS) luajit.h 
+
+
+HDRGEN = lj_bcdef.h lj_ffdef.h lj_libdef.h lj_recdef.h lj_folddef.h luajit.h
+
+luajit.h: native/luajit.h
+	$(LN_S) native/luajit.h	
+
 
 lj_bcdef.h: native/buildvm-stamp
 	$(AM_V_GEN)native/buildvm -m bcdef -o $@ $(ljlib_sources)
@@ -154,8 +194,8 @@ luajitincludedir = ${includedir}/texluajit
 luajitinclude_HEADERS = \
 	$(LUAJIT_TREE)/src/lauxlib.h \
 	$(LUAJIT_TREE)/src/luaconf.h \
-	$(LUAJIT_TREE)/src/luajit.h \
 	$(LUAJIT_TREE)/src/lua.h \
+	$(LUAJIT_TREE)/src/luajit_rolling.h \
 	$(LUAJIT_TREE)/src/lua.hpp \
 	$(LUAJIT_TREE)/src/lualib.h
 

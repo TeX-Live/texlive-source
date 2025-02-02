@@ -1,0 +1,11 @@
+diff -bu a/source/libs/luajit/LuaJIT-src/src/lj_str.c  b/source/libs/luajit/LuaJIT-src/src/lj_str.c 
+--- a/source/libs/luajit/LuaJIT-src/src/lj_str.c
++++ b/source/libs/luajit/LuaJIT-src/src/lj_str.c
+@@ -310,6 +310,7 @@
+   return s;  /* Return newly interned string. */
+ }
+ 
++int luajittex_choose_hash_function = 0 ;
+ /* Intern a string and return string object. */
+ GCstr *lj_str_new(lua_State *L, const char *str, size_t lenx)
+ {

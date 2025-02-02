@@ -92,7 +92,6 @@ LUALIB_API void *(luaL_testudata) (lua_State *L, int ud, const char *tname);
 LUALIB_API void (luaL_setmetatable) (lua_State *L, const char *tname);
 
 
-
 /*
 ** {======================================================
 ** File handles for IO library
@@ -114,6 +113,7 @@ typedef struct luaL_Stream {
 } luaL_Stream;
 
 /* }====================================================== */
+
 
 
 
@@ -180,7 +180,7 @@ LUALIB_API void (luaL_addstring) (luaL_Buffer *B, const char *s);
 LUALIB_API void (luaL_addvalue) (luaL_Buffer *B);
 LUALIB_API void (luaL_pushresult) (luaL_Buffer *B);
 
-/* -- Luajittex needs this one because it's faster than make it Lua  -- */
+/* -- Luajittex needs this one because it's faster than make it with Lua  -- */
 LUA_API int (RESERVED_lua_dump) (lua_State *L, lua_Writer writer, void *data, int strip);
 /* Luajittex needs this one because it overloads loadfile */
 LUALIB_API int (RESERVED_load_aux_JIT) (lua_State *L, int status, int envarg);

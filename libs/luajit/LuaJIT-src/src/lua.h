@@ -1,7 +1,7 @@
 /*
 ** $Id: lua.h,v 1.218.1.5 2008/08/06 13:30:12 roberto Exp $
 ** Lua - An Extensible Extension Language
-** Lua.org, PUC-Rio, Brazil (http://www.lua.org)
+** Lua.org, PUC-Rio, Brazil (https://www.lua.org)
 ** See Copyright Notice at the end of this file
 */
 
@@ -103,8 +103,10 @@ typedef LUA_NUMBER lua_Number;
 /* type for integer functions */
 typedef LUA_INTEGER lua_Integer;
 
+
 /* communication with LuaJiTTeX */
 LUA_API int luajittex_choose_hash_function; 
+
 
 /*
 ** state manipulation
@@ -353,14 +355,15 @@ LUA_API const lua_Number *lua_version (lua_State *L);
 LUA_API void lua_copy (lua_State *L, int fromidx, int toidx);
 LUA_API lua_Number lua_tonumberx (lua_State *L, int idx, int *isnum);
 LUA_API lua_Integer lua_tointegerx (lua_State *L, int idx, int *isnum);
-
+ 
 
 #define LUA_OPEQ 0
 #define LUA_OPLT 1
 #define LUA_OPLE 2
  
-/* see http://comments.gmane.org/gmane.comp.programming.swig/18673 */
+/* see https://sourceforge.net/p/swig/mailman/swig-user/thread/4FB2AEBE.9010807%40fultondesigns.co.uk/#msg29268198 */
 # define lua_rawlen lua_objlen 
+
 
 /* From Lua 5.3. */
 LUA_API int lua_isyieldable (lua_State *L);

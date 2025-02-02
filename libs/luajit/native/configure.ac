@@ -9,7 +9,7 @@ dnl
 m4_include([../version.ac])[] dnl define luajit_version
 AC_INIT([luajit native], luajit_version, [tex-k@tug.org])
 AC_PREREQ([2.63])
-AC_CONFIG_SRCDIR([../LuaJIT-src/src/luajit.h])
+AC_CONFIG_SRCDIR([../LuaJIT-src/src/luajit_rolling.h])
 AC_CONFIG_AUX_DIR([../../../build-aux])
 AC_CONFIG_MACRO_DIR([../../../m4])
 

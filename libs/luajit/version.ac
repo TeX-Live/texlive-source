@@ -8,4 +8,7 @@ dnl
 dnl --------------------------------------------------------
 dnl
 dnl  m4-include this file to define the current luajit version
-m4_define([luajit_version], [2.1.0-beta3])
+dnl m4_define([luajit_version], [2.1.1736781742])
+dnl libtool:   error: REVISION '1736781742' must be a nonnegative integer
+dnl libtool:   error: '3:1736781742:1' is not valid version information
+m4_define([luajit_version], [2.1.81742])
