@@ -1,0 +1,69 @@
+#! /bin/sh -vx
+# $Id$
+# Copyright 2024 Japanese TeX Development Community <issue@texjp.org>
+# You may freely use, modify and/or distribute this file.
+
+KpsDir=${KpsDir:-../kpathsea}
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_kpsewhich=$KpsDir/kpsewhich$ExeExt
+_xdvipdfmx=$BinDir/xdvipdfmx$ExeExt
+
+if type kpsewhich > /dev/null 2>&1; then
+    ttfpath=".//;"`kpsewhich -show-path='truetype fonts'`
+    ttfpath=`echo $ttfpath | sed -e 's,!!,,g'`
+    tfmpath=".//;"`kpsewhich -show-path='tfm'`
+    tfmpath=`echo $tfmpath | sed -e 's,!!,,g'`
+    encpath=".//;"`kpsewhich -show-path='enc files'`
+    encpath=`echo $encpath | sed -e 's,!!,,g'`
+fi
+
+TEXMFCNF=$srcdir/../kpathsea
+T1FONTS="$srcdir/tests;$srcdir/data"
+TEXFONTMAPS="$srcdir/tests;$srcdir/data"
+DVIPDFMXINPUTS="$srcdir/tests;$srcdir/data"
+TEXPICTS=$srcdir/tests
+TEXFONTS=".;$srcdir/tests"
+SOURCE_DATE_EPOCH=1588474800
+export TEXMFCNF T1FONTS TEXFONTMAPS DVIPDFMXINPUTS TEXPICTS TEXFONTS SOURCE_DATE_EPOCH
+
+if type kpsewhich > /dev/null 2>&1; then
+    echo $ttfpath
+    echo $tfmpath
+    echo $encpath
+else
+    ttfpath=".//;"`$_kpsewhich -show-path='truetype fonts'`
+    echo $ttfpath
+    tfmpath=".//;"`$_kpsewhich -show-path='tfm'`
+    echo $tfmpath
+    encpath=".//;"`$_kpsewhich -show-path='enc files'`
+    echo $encpath
+fi
+TTFONTS=`$_kpsewhich "--cnf-line=TTFONTS=$ttfpath" -show-path='truetype fonts'`
+export TTFONTS
+echo "TTFONTS::" $TTFONTS
+TFMFONTS=`$_kpsewhich "--cnf-line=TFMFONTS=$tfmpath" -show-path='tfm'`
+export TFMFONTS
+echo "TFMFONTS::" $TFMFONTS
+ENCFONTS=`$_kpsewhich "--cnf-line=ENCFONTS=$encpath" -show-path='enc files'`
+export ENCFONTS
+echo "ENCFONTS::" $ENCFONTS
+
+failed=
+
+#####  following tests require Cuprum fonts  #####
+
+$_kpsewhich Cuprum-Regular.ttf || exit 77
+$_kpsewhich cprmn8t.tfm || exit 77
+$_kpsewhich T1-WGL4.enc || exit 77
+
+echo "*** dvipdfmx: test for cprm00.pdf" && echo \
+	&& $_xdvipdfmx --dvipdfmx -vv -o cprm00.pdf $srcdir/tests/cprm00.dvi \
+	&& echo && echo "dvipdfmx-ttf0 tests OK" && echo \
+	|| failed="$failed dvipdfmx-ttf0"
+
+
+test -z "$failed" && exit 0
+echo
+echo "failed tests:$failed"
+exit 1

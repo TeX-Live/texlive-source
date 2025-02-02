@@ -247,11 +247,13 @@ TESTS += xdvipdfm-bkm.test xdvipdfm-psz.test xdvipdfm-ptx.test xdvipdfm-res.test
 TESTS += xdvipdfm-rev.test xdvipdfm-ttc.test
 TESTS += dvipdfmx-upjf.test dvipdfmx-upjf2.test dvipdfmx-upjf3.test dvipdfmx-incl.test
 TESTS += dvipdfmx-lmr0.test dvipdfmx-lmr1.test
+TESTS += dvipdfmx-ttf0.test
 xdvipdfmx.log xdvipdfm-ann.log xdvipdfm-bad.log xdvipdfm-bb.log \
 	xdvipdfm-bkm.log xdvipdfm-psz.log xdvipdfm-ptx.log xdvipdfm-res.log \
 	xdvipdfm-rev.log xdvipdfm-ttc.log \
 	dvipdfmx-upjf.log dvipdfmx-upjf2.log dvipdfmx-upjf3.log dvipdfmx-incl.log \
-	dvipdfmx-lmr0.log dvipdfmx-lmr1.log: \
+	dvipdfmx-lmr0.log dvipdfmx-lmr1.log \
+	dvipdfmx-ttf0.log: \
 	xdvipdfmx$(EXEEXT)
 EXTRA_DIST = $(TESTS)
 ## xdvipdfmx.test
@@ -329,5 +331,8 @@ DISTCLEANFILES += multi_incl.pdf
 ## dvipdfmx-lmr0.test, dvipdfmx-lmr1.test
 EXTRA_DIST += tests/lmr0.tex tests/lmr0-al.dvi tests/lmr0-up.dvi
 DISTCLEANFILES += lmr0-*.pdf
+## dvipdfmx-ttf0.test
+EXTRA_DIST += tests/cprm00.tex tests/cprm00.dvi
+DISTCLEANFILES += cprm*.pdf
 ##
 EXTRA_DIST += tests/fullmap.dvi tests/fullmap.tex

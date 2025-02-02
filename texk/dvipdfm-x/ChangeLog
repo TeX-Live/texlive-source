@@ -1,3 +1,15 @@
+2025-02-02  Yukimasa Morimi  <h20y6m@yahoo.co.jp>
+
+	* truetype.c: Fixed issues in embedded TrueType fonts (not CIDFont)
+	where incorrect character widths occurred when using 127 or more
+	glyphs, and where the 256th glyph was not displayed when using
+	full 256 glyphs.
+	* dvipdfmx-ttf0.test, cprm00.{dvi,tex}:
+	Add tests for TrueType fonts
+	from TANAKA Takuji <ttk@t-lab.opal.ne.jp>.
+	https://github.com/texjporg/tex-jp-build/issues/172
+	* configure.ac: version 20250202.
+
 2024-11-18  Karl Berry  <karl@freefriends.org>
 
 	* Makefile.am (bin_links): no longer make symlinks for ebb and

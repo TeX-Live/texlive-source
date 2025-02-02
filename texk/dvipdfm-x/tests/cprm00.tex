@@ -1,0 +1,11 @@
+% plain TeX
+\special{pdf:mapline cprmn8t T1-WGL4 Cuprum-Regular.ttf}
+\font\testfont=cprmn8t \relax
+\def\TEST#1{\vrule width 4pt{\testfont {#1}{#1}{#1}{#1}{#1}{#1}{#1}{#1}{#1}{#1}{#1}{#1}{#1}{#1}{#1}{#1}{#1}{#1}{#1}{#1}}\vrule width 4pt \par}
+\newcount\cnt \cnt="00
+\loop\ifnum\cnt<"100
+  \the\cnt : \TEST{\char\cnt}
+  \advance\cnt1
+\repeat
+\end
+

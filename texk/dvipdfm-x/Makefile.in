@@ -831,13 +831,13 @@ DISTCLEANFILES = config.force image*.pdf xbmc*.pdf annot*.pdf pic*.* \
 	bookm*.pdf paper*.pdf ptex*.pdf resrc*.pdf reverse.pdf \
 	ttc*.pdf upjf.vf upjv.vf upjf-*.ofm upjv-*.ofm upjf-*.tfm \
 	upjf_*.pdf upjf1_*.pdf upjf2_*.pdf upjf3_*.pdf multi_incl.pdf \
-	lmr0-*.pdf
+	lmr0-*.pdf cprm*.pdf
 TESTS = xdvipdfmx.test xdvipdfm-ann.test xdvipdfm-bad.test \
 	xdvipdfm-bb.test xdvipdfm-bkm.test xdvipdfm-psz.test \
 	xdvipdfm-ptx.test xdvipdfm-res.test xdvipdfm-rev.test \
 	xdvipdfm-ttc.test dvipdfmx-upjf.test dvipdfmx-upjf2.test \
 	dvipdfmx-upjf3.test dvipdfmx-incl.test dvipdfmx-lmr0.test \
-	dvipdfmx-lmr1.test
+	dvipdfmx-lmr1.test dvipdfmx-ttf0.test
 EXTRA_DIST = $(TESTS) tests/dvipdfmx.cfg tests/psfonts.map \
 	tests/cmr10.pfb tests/cmr10.tfm tests/image.dvi \
 	tests/image.tex tests/xbmc.dvi tests/xbmc.tex \
@@ -875,7 +875,7 @@ EXTRA_DIST = $(TESTS) tests/dvipdfmx.cfg tests/psfonts.map \
 	tests/upjf-noto.map tests/upjf-ipa.map tests/multi_incl.dvi \
 	tests/multi_incl.tex tests/sue-mp.pdf tests/lmr0.tex \
 	tests/lmr0-al.dvi tests/lmr0-up.dvi tests/fullmap.dvi \
-	tests/fullmap.tex
+	tests/cprm00.tex tests/cprm00.dvi tests/fullmap.tex
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-am
 
@@ -2059,7 +2059,7 @@ xdvipdfmx.log xdvipdfm-ann.log xdvipdfm-bad.log xdvipdfm-bb.log \
 	xdvipdfm-bkm.log xdvipdfm-psz.log xdvipdfm-ptx.log xdvipdfm-res.log \
 	xdvipdfm-rev.log xdvipdfm-ttc.log \
 	dvipdfmx-upjf.log dvipdfmx-upjf2.log dvipdfmx-upjf3.log dvipdfmx-incl.log \
-	dvipdfmx-lmr0.log dvipdfmx-lmr1.log: \
+	dvipdfmx-lmr0.log dvipdfmx-lmr1.log dvipdfmx-ttf0.log: \
 	xdvipdfmx$(EXEEXT)
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
