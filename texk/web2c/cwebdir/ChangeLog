@@ -1,3 +1,7 @@
+2025-02-02  Andreas Scherer  <https://ascherer.github.io>
+
+	* ctwill-mini.ch: Avoid several 'Overfull \vbox'es.
+
 2025-01-29  Andreas Scherer  <https://ascherer.github.io>
 
 	* tests/ham.ch: Add line information.
