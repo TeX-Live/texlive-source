@@ -1,3 +1,28 @@
+2025-02-01 Luigi Scarso <luigi.scarso@gmail.com>
+	* LuaJIT 2.1.1736781742 (work in progress)
+	* LuaTeX 1.21.0
+
+
+2025-02-01 Luigi Scarso <luigi.scarso@gmail.com>
+	* Again on missing displacement when leqno is used in rtl paragraph (thanks to udifoglle@gmail.com)
+	* LuaTeX 1.20.8
+
+
+2025-02-01 Luigi Scarso <luigi.scarso@gmail.com>
+	* Fix getdisc tail fields and some related sanity check cleanup (HH)
+	* LuaTeX 1.20.7
+
+
+2025-02-01 Luigi Scarso <luigi.scarso@gmail.com>
+	* Fixed missing displacement when leqno is used in rtl paragraph (thanks to udifoglle@gmail.com)
+	* LuaTeX 1.20.6
+
+
+2025-01-31 Luigi Scarso <luigi.scarso@gmail.com>
+	* In read_tfm_info avoid scaling fonts to >= 2048pt, which can cause overflow (TeXLive rev. 73614)
+	* \ignoreprimitiveerror as in pdftex
+
+
 2025-01-19 Luigi Scarso <luigi.scarso@gmail.com>
 	* Fixed \shapemode does not reset at end of paragraphs (thanks to udifoglle@gmail.com)
 
@@ -7,29 +32,29 @@
 	* LuaTeX 1.20.5
 
 
-2025-01-04 Luigi Scarso <luigi.scarso@gmail.com>
+2025-01-11 Luigi Scarso <luigi.scarso@gmail.com>
 	* fixed "unexpected delimiter construction with classic tfm cmex font", 
 	  see https://tex.stackexchange.com/a/734734/1090 (HH)
 	* LuaTeX 1.20.4
 
 
-2025-01-04 Luigi Scarso <luigi.scarso@gmail.com>
+2025-01-09 Luigi Scarso <luigi.scarso@gmail.com>
 	* replaced # error with # define UNSUPPORTED_ARCH in ffi.[ch]
 	* LuaTeX 1.20.3
 
 
-2025-01-04 Luigi Scarso <luigi.scarso@gmail.com>
+2025-01-06 Luigi Scarso <luigi.scarso@gmail.com>
 	* ffi.h: do not assume that struct cdata is aligned(16). 
 	* More fixes for luaffi.
 	* LuaTeX 1.20.2
 
 
-2025-01-06 Luigi Scarso <luigi.scarso@gmail.com>
+2025-01-04 Luigi Scarso <luigi.scarso@gmail.com>
 	* Clean-up ffi.h
 	* LuaTeX 1.20.1
 
 
-2025-01-01 Luigi Scarso <luigi.scarso@gmail.com>
+2025-01-02 Luigi Scarso <luigi.scarso@gmail.com>
 	* New luaffi, support for aarch64.
 	* LuaTeX 1.20.0
 
