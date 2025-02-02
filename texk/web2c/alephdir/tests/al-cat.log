@@ -1,0 +1,28 @@
+ restricted \write18 enabled.
+Copyright (C) 1994--2000 John Plaice and Yannis Haralambous
+Copyright (C) 2002--2021 Aleph task force
+entering extended mode
+**al-cat.tex
+(al-cat.tex
+begin-group character ^^c1; end-group character ^^c2.
+math shift character ^^c3.
+alignment tab character ^^c4.
+macro parameter character ^^c5.
+superscript character ^^c6.
+subscript character ^^c7.
+the letter ^^c8.
+the character ^^c9.
+begin-group character ^^^^0101; end-group character ^^^^0102.
+math shift character ^^^^0103.
+alignment tab character ^^^^0104.
+macro parameter character ^^^^0105.
+superscript character ^^^^0106.
+subscript character ^^^^0107.
+the letter ^^^^0108.
+the character ^^^^0109.
+math shift character ^^fc.
+math shift character ^^^^010c.
+superscript character ^^fe.
+subscript character ^^ff.
+[1] )
+Output written on al-cat.dvi (1 page, 580 bytes).

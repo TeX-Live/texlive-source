@@ -1,5 +1,5 @@
 #! /bin/sh -vx
-# Copyright 2024-2025 Japanese TeX Development Community <issue@texjp.org>
+# Copyright 2025 Japanese TeX Development Community <issue@texjp.org>
 # You may freely use, modify and/or distribute this file.
 
 BinDir=${BinDir:-.}
@@ -15,8 +15,8 @@ OCPINPUTS=".;$srcdir/alephdir/tests"; export OCPINPUTS
 TEXFORMATS=.; export TEXFORMATS
 
 # get same filename in log
-rm -f al-ofm.*
-$LN_S $srcdir/alephdir/tests/al-ofm.tex ./al-ofm.tex
+rm -f al-cat.*
+$LN_S $srcdir/alephdir/tests/catcd.tex ./al-cat.tex
 
 if test ! -f ./al-basic.tex; then
   cp $srcdir/tests/dump-basic.tex ./al-basic.tex
@@ -25,9 +25,9 @@ if test ! -f ./al-basic.fmt; then
   $_aleph -ini -etex al-basic || exit 1
 fi
 
-$_aleph -fmt=al-basic -interaction=batchmode al-ofm || :
+$_aleph -fmt=al-basic -interaction=batchmode al-cat.tex || :
 
-sed '1d;3d;4d' al-ofm.log >al-ofm.out
+sed '1d;3d;4d' al-cat.log >al-cat.out
 
-diff $srcdir/alephdir/tests/al-ofm.log al-ofm.out || exit 3
+diff $srcdir/alephdir/tests/al-cat.log al-cat.out || exit 3
 

@@ -3311,6 +3311,7 @@ EXTRA_DIST = PROJECTS cftests cpascal.h help.h w2c/config.h \
 	uptexdir/tests/up-prim.tex uptexdir/tests/up-prim.log \
 	uptexdir/tests/lmr1.tex uptexdir/tests/up-lmr1.log \
 	uptexdir/tests/lmr2.tex uptexdir/tests/up-lmr2.log \
+	uptexdir/tests/catcd.tex uptexdir/tests/up-cat.log \
 	uptexdir/tests/noto1.tex uptexdir/tests/up-noto1.log \
 	uptexdir/tests/jchwidow.tex uptexdir/tests/up-jchwidow.log \
 	$(euptex_web_srcs) $(euptex_ch_srcs) euptexdir/euptex.defines \
@@ -3600,6 +3601,7 @@ EXTRA_DIST = PROJECTS cftests cpascal.h help.h w2c/config.h \
 	alephdir/aleph.version $(aleph_tests) \
 	alephdir/tests/al-ofm.tex alephdir/tests/al-ofm.log \
 	alephdir/tests/lmr1.tex alephdir/tests/al-lmr1.log \
+	alephdir/tests/catcd.tex alephdir/tests/al-cat.log \
 	synctexdir/synctex_parser_c-auto.h synctexdir/ChangeLog \
 	synctexdir/README.txt synctexdir/synctex_parser_readme.txt \
 	synctexdir/synctex_parser_version.txt synctexdir/tests \
@@ -3672,7 +3674,7 @@ DISTCLEANFILES = CXXLD.sh tangle.c tangle.h tangle.p tangle-web2c \
 	uptests/x*min10.* uptests/xchcode*.* uptests/xtestnewu*.* \
 	uptests/xuparse.* uptests/yuparse.* uptests/ygkhuge*.* \
 	uptests/ygk256*.* uptests/xskipjfmp.* uptrip.diffs up-ofm.* \
-	up-prim.* up-lmr*.* up-noto*.* up-jchwidow.* \
+	up-prim.* up-lmr*.* up-cat.* up-noto*.* up-jchwidow.* \
 	$(nodist_euptex_SOURCES) euptex.web euptex.ch euptex-web2c \
 	euptex.p euptex.pool euptex-tangle euptrip.diffs \
 	pdfprimitive-euptex.* eup-ctrlsym.log eup-ctrlsym.out \
@@ -3712,7 +3714,7 @@ DISTCLEANFILES = CXXLD.sh tangle.c tangle.h tangle.p tangle-web2c \
 	omegaware/tests/xspecialhex.* omegaware/tests/yrepeat* \
 	omegaware/tests/*yarabic* $(nodist_aleph_SOURCES) aleph.web \
 	aleph.ch aleph-web2c aleph.p aleph.pool aleph-tangle al-ofm.* \
-	al-lmr*.*
+	al-lmr*.* al-cat.*
 CLEANFILES = $(EXTRA_PROGRAMS) $(EXTRA_LIBRARIES) $(EXTRA_LTLIBRARIES)
 TRIPTRAP_CLEAN = $(am__append_8) $(am__append_18) $(am__append_27) \
 	$(am__append_36) $(am__append_44) $(am__append_60) \
@@ -4568,8 +4570,8 @@ uptex_tests = \
 	uptexdir/upkcat.test \
 	uptexdir/wcfname.test uptexdir/wcfname0.test \
 	uptexdir/uptex-ofm.test uptexdir/uptex-prim.test \
-	uptexdir/uptex-lmr.test uptexdir/uptex-noto.test \
-	uptexdir/uptex-widow.test
+	uptexdir/uptex-lmr.test uptexdir/uptex-cat.test \
+	uptexdir/uptex-noto.test uptexdir/uptex-widow.test
 
 # uppPLtoTF/upTFtoPL
 upweb_tests = uptexdir/upbibtex.test uptexdir/updvitype.test \
@@ -5616,7 +5618,8 @@ aleph_ch_srcs = \
 # Aleph Tests
 #
 aleph_tests = alephdir/aleph.test \
-	alephdir/aleph-ofm.test alephdir/aleph-lmr.test
+	alephdir/aleph-ofm.test alephdir/aleph-lmr.test \
+	alephdir/aleph-cat.test
 
 synctex_SOURCES = \
 	synctexdir/synctex_main.c
@@ -22150,8 +22153,8 @@ uptexdir/uptriptest.log uptexdir/ptriptest.log: \
 uptexdir/upver.log uptexdir/upkcat.log \
 	uptexdir/wcfname.log uptexdir/wcfname0.log \
 	uptexdir/uptex-ofm.log uptexdir/uptex-prim.log \
-	uptexdir/uptex-lmr.log uptexdir/uptex-noto.log \
-	uptexdir/uptex-widow.log: uptex$(EXEEXT)
+	uptexdir/uptex-lmr.log uptexdir/uptex-cat.log \
+	uptexdir/uptex-noto.log uptexdir/uptex-widow.log: uptex$(EXEEXT)
 uptexdir/upbibtex.log: upbibtex$(EXEEXT)
 uptexdir/updvitype.log: updvitype$(EXEEXT)
 uptexdir/uppltotf.log: uppltotf$(EXEEXT)
@@ -22533,6 +22536,7 @@ aleph.ch: tie$(EXEEXT) aleph.web $(aleph_ch_srcs)
 	$(tie_c) aleph.web $(aleph_ch_srcs)
 alephdir/aleph.log \
 	alephdir/aleph-ofm.log alephdir/aleph-lmr.log \
+	alephdir/aleph-cat.log \
 	: aleph$(EXEEXT)
 
 # (end of aleph.am)

@@ -1,0 +1,114 @@
+%% (e)uptex or aleph
+
+% Copyright 2025 Japanese TeX Development Community <issue@texjp.org>
+% You may freely use, modify and/or distribute this file.
+
+\ifx\kcatcode\undefined\else
+% for (e)upTeX
+  \kcatcode"C0=14  % Latin-1 Supplement
+  \kcatcode"100=14 % Latin Extended-A
+\fi
+\ifx\ocp\undefined\else
+% for aleph
+  \ocp\ORGin=inutf8
+  \InputTranslation currentfile \ORGin
+\fi
+\font\x=eu3-lmr10 \x
+\parindent0pt
+
+% Latin-1 Supplement
+\catcode"C1=1
+\catcode"C2=2
+\catcode"C3=3
+\catcode"C4=4
+\catcode"C5=6
+\catcode"C6=7
+\catcode"C7=8
+\catcode"C8=11
+\catcode"C9=12
+\immediate\write16{\meaning Á; % begin-group character
+                   \meaning Â.}% end-group character
+\immediate\write16{\meaning Ã.}% math shift character
+\immediate\write16{\meaning Ä.}% alignment tab character
+\immediate\write16{\meaning Å.}% macro parameter character
+\immediate\write16{\meaning Æ.}% superscript character
+\immediate\write16{\meaning Ç.}% subscript character
+\immediate\write16{\meaning È.}% the letter
+\immediate\write16{\meaning É.}% the characer
+
+% Latin Extended-A
+\catcode"101=1
+\catcode"102=2
+\catcode"103=3
+\catcode"104=4
+\catcode"105=6
+\catcode"106=7
+\catcode"107=8
+\catcode"108=11
+\catcode"109=12
+\immediate\write16{\meaning ā; % begin-group character
+                   \meaning Ă.}% end-group character
+\immediate\write16{\meaning ă.}% math shift character
+\immediate\write16{\meaning Ą.}% alignment tab character
+\immediate\write16{\meaning ą.}% macro parameter character
+\immediate\write16{\meaning Ć.}% superscript character
+\immediate\write16{\meaning ć.}% subscript character
+\immediate\write16{\meaning Ĉ.}% the letter
+\immediate\write16{\meaning ĉ.}% the characer
+
+
+% catcode 1,2 : begin-group, end-group character
+\catcode"F2=1  % ò
+\catcode"F3=2  % ó
+\catcode"102=1 % Ă
+\catcode"103=2 % ă
+òabcó Ădefă {ghió òjkl} {mnoă Ăpqr}
+
+% catcode 11,12 : the letter, the characer
+\catcode"F2=11
+\catcode"F3=12
+\catcode"102=11
+\catcode"103=12
+òabcó Ădefă {ghió òjkl} {mnoă Ăpqr}
+
+% catcode 3 : math shift character
+\catcode"FC=3  % ü
+\catcode"10C=3 % Č
+\immediate\write16{\meaning ü.}% math shift character
+\immediate\write16{\meaning Č.}% math shift character
+% Setting for math fonts is required.
+%$d^nx/dt^n$ $d^nx/dt^nü Čd^nx/dt^n$ üd^nx/dt^nČ
+
+% catcode 7,8 : superscript, subscript character
+\catcode"FE=7  % þ
+\catcode"FF=8  % ÿ
+\catcode"10E=7 % Ď
+\catcode"10F=8 % ď
+\immediate\write16{\meaning þ.}% math shift character
+\immediate\write16{\meaning ÿ.}% math shift character
+% Setting for math fonts is required.
+%$a_nx^m$ $aÿnxþm$ $aďnxĎm$
+
+% catcode 4 : alignment tab character
+\catcode"F4=4  % ô
+\catcode"104=4 % Ą
+\halign{# & # & # \cr
+  aaa & bbb & ccc \cr
+  ddd ô eee ô fff \cr
+  ggg Ą hhh Ą iii \cr}
+
+% (e)uptex makes erros for following.
+\ifx\kcatcode\undefined\else\end\fi
+
+% catcode 6 : macro parameter character
+\catcode"F5=6  % õ
+\catcode"105=6 % ą
+\def\oWz#1{o{#1}z}\relax
+\oWz{r}
+\def\oXzõ1{o{õ1}z}\relax
+\oXz{r}
+\def\oYzą1{o{ą1}z}\relax
+\oYz{r}
+
+\end
+

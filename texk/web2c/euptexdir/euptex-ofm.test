@@ -1,5 +1,5 @@
 #! /bin/sh -vx
-# Copyright 2024 Japanese TeX Development Community <issue@texjp.org>
+# Copyright 2024-2025 Japanese TeX Development Community <issue@texjp.org>
 # You may freely use, modify and/or distribute this file.
 
 BinDir=${BinDir:-.}

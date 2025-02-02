@@ -181,15 +181,15 @@ uptex_tests = \
 	uptexdir/upkcat.test \
 	uptexdir/wcfname.test uptexdir/wcfname0.test \
 	uptexdir/uptex-ofm.test uptexdir/uptex-prim.test \
-	uptexdir/uptex-lmr.test uptexdir/uptex-noto.test \
-	uptexdir/uptex-widow.test
+	uptexdir/uptex-lmr.test uptexdir/uptex-cat.test \
+	uptexdir/uptex-noto.test uptexdir/uptex-widow.test
 uptexdir/uptriptest.log uptexdir/ptriptest.log: \
 	uptex$(EXEEXT) dvitype$(EXEEXT) pltotf$(EXEEXT) tftopl$(EXEEXT)
 uptexdir/upver.log uptexdir/upkcat.log \
 	uptexdir/wcfname.log uptexdir/wcfname0.log \
 	uptexdir/uptex-ofm.log uptexdir/uptex-prim.log \
-	uptexdir/uptex-lmr.log uptexdir/uptex-noto.log \
-	uptexdir/uptex-widow.log: uptex$(EXEEXT)
+	uptexdir/uptex-lmr.log uptexdir/uptex-cat.log \
+	uptexdir/uptex-noto.log uptexdir/uptex-widow.log: uptex$(EXEEXT)
 upweb_tests = \
 	uptexdir/upbibtex.test \
 	uptexdir/updvitype.test \
@@ -290,6 +290,9 @@ DISTCLEANFILES += up-prim.*
 EXTRA_DIST += uptexdir/tests/lmr1.tex uptexdir/tests/up-lmr1.log \
 	uptexdir/tests/lmr2.tex uptexdir/tests/up-lmr2.log
 DISTCLEANFILES += up-lmr*.*
+## uptexdir/uptex-cat.test
+EXTRA_DIST += uptexdir/tests/catcd.tex uptexdir/tests/up-cat.log
+DISTCLEANFILES += up-cat.*
 ## uptexdir/uptex-noto.test
 EXTRA_DIST += uptexdir/tests/noto1.tex uptexdir/tests/up-noto1.log
 DISTCLEANFILES += up-noto*.*

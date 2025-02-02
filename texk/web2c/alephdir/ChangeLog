@@ -1,3 +1,10 @@
+2025-02-02  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* aleph-cat.test, tests/catcd.tex, tests/al-cat.log,
+	am/aleph.am: Add test for catcode of 16bit latin character.
+	* aleph-ofm.test, tests/al-ofm.tex, tests/al-ofm.log:
+	Update tests.
+
 2025-01-27  Karl Berry  <karl@freefriends.org>
 
 	* am/aleph.am (aleph-pool.c): exit 1 if makecpool failed.

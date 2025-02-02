@@ -98,7 +98,20 @@
 \lowercase{[AEOE ÆŒ]}
 
 \message{We}\iffontchar\font"2010\else\message{do not}\fi\message{have "2010.}
+\iffontchar\font"2010%
+\message{%
+  wd:\the\fontcharwd\font"2010,
+  ht:\the\fontcharht\font"2010,
+  dp:\the\fontchardp\font"2010,
+  ic:\the\fontcharic\font"2010.}\fi
+
 \message{We}\iffontchar\font"2014\else\message{do not}\fi\message{have "2014.}
+\iffontchar\font"2014%
+\message{%
+  wd:\the\fontcharwd\font"2014,
+  ht:\the\fontcharht\font"2014,
+  dp:\the\fontchardp\font"2014,
+  ic:\the\fontcharic\font"2014.}\fi
 
 %----
 \setbox0=\vbox{} % no dvi output

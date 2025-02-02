@@ -1,3 +1,11 @@
+2025-02-02  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* uptex-m.ch: Improve treatment for catcode of
+	16bit latin character.
+	* uptex-cat.test, tests/catcd.tex, tests/up-cat.log,
+	am/uptex.am: Add test for catcode of 16bit latin character.
+	https://github.com/texjporg/tex-jp-build/issues/170
+
 2025-01-27  Karl Berry  <karl@freefriends.org>
 
 	* am/uptex.am (uptex-pool.c): exit 1 if makecpool failed.

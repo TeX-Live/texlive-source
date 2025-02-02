@@ -1,0 +1,33 @@
+#! /bin/sh -vx
+# Copyright 2025 Japanese TeX Development Community <issue@texjp.org>
+# You may freely use, modify and/or distribute this file.
+
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_uptex=$BinDir/uptex$ExeExt
+
+LC_ALL=C; export LC_ALL;  LANGUAGE=C; export LANGUAGE
+
+TEXMFCNF=$srcdir/../kpathsea;export TEXMFCNF
+OFMFONTS=".;$srcdir/tests"; export OFMFONTS
+TEXINPUTS=".;$srcdir/tests"; export TEXINPUTS
+TEXFORMATS=.; export TEXFORMATS
+
+# get same filename in log
+rm -f up-cat.*
+$LN_S $srcdir/uptexdir/tests/catcd.tex ./up-cat.tex
+
+if test ! -f ./up-basic.tex; then
+  cp $srcdir/tests/dump-basic.tex ./up-basic.tex
+fi
+if test ! -f ./up-basic.fmt; then
+  cp $srcdir/tests/dump-basic.tex ./up-basic.tex
+  $_uptex -ini up-basic || exit 1
+fi
+
+$_uptex -fmt=up-basic -interaction=batchmode up-cat.tex || :
+
+sed 1d up-cat.log >up-cat.out
+
+diff $srcdir/uptexdir/tests/up-cat.log up-cat.out || exit 3
+

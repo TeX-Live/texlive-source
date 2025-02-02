@@ -1,5 +1,5 @@
 #! /bin/sh -vx
-# Copyright 2024 Japanese TeX Development Community <issue@texjp.org>
+# Copyright 2024-2025 Japanese TeX Development Community <issue@texjp.org>
 # You may freely use, modify and/or distribute this file.
 
 BinDir=${BinDir:-.}
@@ -35,9 +35,9 @@ $_euptex -fmt=eup-basic-sjis -kanji-internal=sjis -jobname=eup-pknj-s -interacti
 $_euptex -fmt=eup-basic-euc  -kanji-internal=euc  -jobname=eup-pknj-e -interaction=batchmode printkanji || :
 $_euptex -fmt=eup-basic                           -jobname=eup-pknj-u -interaction=batchmode printkanji || :
 
-sed "1d;s/strings out of 497[67]..$/strings out of 497XXX/;s/characters out of 6215[789]..$/characters out of 6215XXX/" eup-pknj-s.log >eup-pknj-s.out
-sed "1d;s/strings out of 497[67]..$/strings out of 497XXX/;s/characters out of 6215[789]..$/characters out of 6215XXX/" eup-pknj-e.log >eup-pknj-e.out
-sed "1d;s/strings out of 497[67]..$/strings out of 497XXX/;s/characters out of 6215[789]..$/characters out of 6215XXX/" eup-pknj-u.log >eup-pknj-u.out
+sed "1d;s/strings out of 497[67]..$/strings out of 497XXX/;s/characters out of 6215[789]..$/characters out of 6215XXX/;s/10[89]. multiletter/10XX multiletter/" eup-pknj-s.log >eup-pknj-s.out
+sed "1d;s/strings out of 497[67]..$/strings out of 497XXX/;s/characters out of 6215[789]..$/characters out of 6215XXX/;s/10[89]. multiletter/10XX multiletter/" eup-pknj-e.log >eup-pknj-e.out
+sed "1d;s/strings out of 497[67]..$/strings out of 497XXX/;s/characters out of 6215[789]..$/characters out of 6215XXX/;s/10[89]. multiletter/10XX multiletter/" eup-pknj-u.log >eup-pknj-u.out
 
 diff $srcdir/euptexdir/tests/pknj-s.log eup-pknj-s.out || exit 10
 diff $srcdir/euptexdir/tests/pknj-e.log eup-pknj-e.out || exit 11
