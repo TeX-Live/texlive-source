@@ -212,8 +212,8 @@ l.164 \expandafter\show\csname 顛\endcsname
 Memory usage before: 1270&5512; after: 118&5077; still untouched: 4992459
  ) 
 Here is how much of TeX's memory you used:
- 25 strings out of 497935
- 137 string characters out of 621947X
+ 25 strings out of 4979XX
+ 137 string characters out of 62194XX
  7541 words of memory out of 5000000
  969 multiletter control sequences out of 15000+600000
  3271 words of font info for 2 fonts, out of 8000000 for 9000

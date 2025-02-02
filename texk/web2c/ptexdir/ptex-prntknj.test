@@ -1,5 +1,5 @@
 #! /bin/sh -vx
-# Copyright 2024 Japanese TeX Development Community <issue@texjp.org>
+# Copyright 2024-2025 Japanese TeX Development Community <issue@texjp.org>
 # You may freely use, modify and/or distribute this file.
 
 BinDir=${BinDir:-.}
@@ -31,8 +31,8 @@ fi
 $_ptex -fmt=p-basic-sjis -kanji-internal=sjis -jobname=p-pknj-s -interaction=batchmode printkanji || :
 $_ptex -fmt=p-basic-euc  -kanji-internal=euc  -jobname=p-pknj-e -interaction=batchmode printkanji || :
 
-sed "1d;s/characters out of 621947.$/characters out of 621947X/" p-pknj-s.log >p-pknj-s.out
-sed "1d;s/characters out of 621947.$/characters out of 621947X/" p-pknj-e.log >p-pknj-e.out
+sed "1d;s/strings out of 4979..$/strings out of 4979XX/;s/characters out of 62194..$/characters out of 62194XX/" p-pknj-s.log >p-pknj-s.out
+sed "1d;s/strings out of 4979..$/strings out of 4979XX/;s/characters out of 62194..$/characters out of 62194XX/" p-pknj-e.log >p-pknj-e.out
 
 diff $srcdir/ptexdir/tests/pknj-s.log p-pknj-s.out || exit 10
 diff $srcdir/ptexdir/tests/pknj-e.log p-pknj-e.out || exit 11

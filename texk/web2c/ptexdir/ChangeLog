@@ -1,3 +1,7 @@
+2025-02-02  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* ptex-prntknj.test, tests/pknj-{e,s}.log: Update tests.
+
 2025-01-27  Karl Berry  <karl@freefriends.org>
 
 	* am/ptex.am (ptex-pool.c): exit 1 if makecpool failed.
