@@ -874,8 +874,8 @@ EXTRA_DIST = $(TESTS) tests/dvipdfmx.cfg tests/psfonts.map \
 	tests/upjf-hi.tfm tests/upjv-hu.tfm tests/upjv-hi.tfm \
 	tests/upjf-noto.map tests/upjf-ipa.map tests/multi_incl.dvi \
 	tests/multi_incl.tex tests/sue-mp.pdf tests/lmr0.tex \
-	tests/lmr0-al.dvi tests/lmr0-up.dvi tests/fullmap.dvi \
-	tests/cprm00.tex tests/cprm00.dvi tests/fullmap.tex
+	tests/lmr0-al.dvi tests/lmr0-up.dvi tests/cprm00.tex \
+	tests/cprm00.dvi tests/fullmap.dvi tests/fullmap.tex
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-am
 
@@ -2059,7 +2059,8 @@ xdvipdfmx.log xdvipdfm-ann.log xdvipdfm-bad.log xdvipdfm-bb.log \
 	xdvipdfm-bkm.log xdvipdfm-psz.log xdvipdfm-ptx.log xdvipdfm-res.log \
 	xdvipdfm-rev.log xdvipdfm-ttc.log \
 	dvipdfmx-upjf.log dvipdfmx-upjf2.log dvipdfmx-upjf3.log dvipdfmx-incl.log \
-	dvipdfmx-lmr0.log dvipdfmx-lmr1.log dvipdfmx-ttf0.log: \
+	dvipdfmx-lmr0.log dvipdfmx-lmr1.log \
+	dvipdfmx-ttf0.log: \
 	xdvipdfmx$(EXEEXT)
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
