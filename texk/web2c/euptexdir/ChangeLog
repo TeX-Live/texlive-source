@@ -1,3 +1,10 @@
+2025-02-02  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
+
+	* suppresserrors.ch: Add \ignoreprimitiveerror
+	as in pdfTeX and XeTeX.
+	* eptex_version.h, eptex.ech:
+	Bump version to 250202.
+
 2025-01-27  Karl Berry  <karl@freefriends.org>
 
 	* am/euptex.am (euptex-pool.c): exit 1 if makecpool failed.
