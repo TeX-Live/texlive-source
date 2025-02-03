@@ -25,8 +25,7 @@ $(buildvm_OBJECTS): buildvm_arch.h luajit.h
 
 
 luajit.h: minilua$(EXEEXT)
-	$(AM_V_GEN)./minilua$(EXEEXT) $(srcdir)/$(LUAJIT_TREE)/src/host/genversion.lua $(srcdir)/$(LUAJIT_TREE)/src/luajit_rolling.h $(srcdir)/$(LUAJIT_TREE)/.relver
-#	$(LN_S)	 luajit.h ../
+	$(AM_V_GEN)./minilua $(srcdir)/$(LUAJIT_TREE)/src/host/genversion.lua $(srcdir)/$(LUAJIT_TREE)/src/luajit_rolling.h $(srcdir)/$(LUAJIT_TREE)/.relver
 
 
 buildvm_arch.h: minilua$(EXEEXT) $(LUAJIT_TREE)/dynasm/dynasm.lua

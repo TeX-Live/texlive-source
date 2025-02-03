@@ -146,8 +146,8 @@ $(libtexluajit_la_OBJECTS): $(HDRGEN)
 native/buildvm-stamp: $(ljlib_sources) lj_opt_fold.c
 	cd native && $(MAKE) $(AM_MAKEFLAGS) buildvm-stamp
 
-native/luajit.h: 
-		cd native && $(MAKE) $(AM_MAKEFLAGS) luajit.h 
+native/luajit.h: native/buildvm-stamp 
+	cd native && $(MAKE) $(AM_MAKEFLAGS) luajit.h 
 
 
 HDRGEN = lj_bcdef.h lj_ffdef.h lj_libdef.h lj_recdef.h lj_folddef.h luajit.h
