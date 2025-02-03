@@ -58,8 +58,8 @@ class WebReader:
             sys.exit(1)
 
     def next_line(self):
-        """Returns the triple of current part, section and line numbers, as
-        well as the next line. Updates part and section numbers.
+        """Returns the triple of current part, section and line numbers,
+        as well as the next line. Updates part and section numbers.
         """
         if self._pos >= len(self._web_lines):
             return None
@@ -139,8 +139,8 @@ class ChangeReader:
 
     def find_match_in_web(self, web_reader):
         """Find the match for the current change chunk in the WEB file.
-        Returns the part, section, and line number of the first match line in
-        the WEB file.
+        Returns the part, section, and line number of the first match line
+        in the WEB file.
         """
         while True:
             try:
