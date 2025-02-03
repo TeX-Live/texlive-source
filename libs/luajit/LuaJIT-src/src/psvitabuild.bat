@@ -88,7 +88,7 @@ del %TARGETLIB%
 @echo.
 @echo *******************************************************
 @echo *** Build FAILED -- Please check the error messages ***
-@echo *******************************************************
+@echo *******************************************************
 @goto :END
 :FAIL
 @echo To run this script you must open a "Visual Studio .NET Command Prompt"
