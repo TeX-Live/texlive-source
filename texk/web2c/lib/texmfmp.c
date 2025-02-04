@@ -1019,7 +1019,8 @@ maininit (int ac, string *av)
         string new_arg;
         is_terminalUTF8(); /* To call get_terminal_enc(). return value is not used */
         new_arg = ptenc_from_utf8_string_to_internal_enc(argv[1]);
-        dump_name = argv[1] + 1; argv[1] = new_arg;
+        dump_name = argv[1] + 1;
+        if (new_arg) argv[1] = new_arg;
 #else
         dump_name = argv[1] + 1;
 #endif
