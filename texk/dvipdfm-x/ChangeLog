@@ -1,3 +1,7 @@
+2025-02-05  Clerk Ma  <maqiyuan130324@vip.qq.com>
+
+	* epdf.c: Fix page's opacity.
+
 2025-02-02  Yukimasa Morimi  <h20y6m@yahoo.co.jp>
 
 	* truetype.c: Fixed issues in embedded TrueType fonts (not CIDFont)
