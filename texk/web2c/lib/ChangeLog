@@ -1,3 +1,8 @@
+2025-02-04  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
+
+	* texmfmp.c: Avoid segmentation fault.
+	https://github.com/texjporg/tex-jp-build/issues/174
+
 2025-01-01  Akira Kakuto  <kakuto@jcom.zaq.ne.jp>
 
 	* printversion.c: Update copyright year.
