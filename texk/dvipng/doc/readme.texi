@@ -26,15 +26,10 @@ regenerate many images again and again. The primary target is the
 within (X)Emacs. Yes, you get to see your formulas in the (X)Emacs
 buffer, see @url{http://www.gnu.org/software/auctex/preview-latex.html}.
 
-Another example is WeBWorK, an internet-based method for delivering
-homework problems to students over the internet, giving students
-instant feedback as to whether or not their answers are correct, see
-@url{http://webwork.math.rochester.edu}.
-
-A more recent addition to the dvipng-using applications out there is
-MediaWiki, the software behind Wikipedia and many other wikis out
-there. Dvipng is used to render mathematical formulae from version
-1.8.0 of MediaWiki, see @url{http://www.mediawiki.org}.
+It is also used in MediaWiki, the software behind Wikipedia and many 
+other wikis out there. Dvipng is used to render mathematical formulae 
+(in image mode) from version 1.8.0 of MediaWiki, see 
+@url{http://www.mediawiki.org}.
 
 Other applications may also benefit, like web applications as latex2html
 and WYSIWYG editors like LyX.

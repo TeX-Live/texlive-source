@@ -1,10 +1,10 @@
-Release notes for version 1.17 of the dvipng package:
+Release notes for version 1.18 of the dvipng package:
 
 This program makes PNG graphics from DVI files as obtained from TeX
 and its relatives.
 
 
-This is a bugfix release that re-enables PK font rendering and enables gamma printout and interactive mode startup without DVI.
+This is a bugfix release that removes division-by-zero errors from faulty DVI, avoids unneeded GhostScript calls, and gives more informative error messages for missing image files
 
 
 Report any bugs you find, see README for instructions.

@@ -4,8 +4,8 @@ dvipng
 This program makes PNG and/or GIF graphics from DVI files as obtained
 from TeX and its relatives.
 
-   If GIF support is enabled, GIF output is chosen by using the 'dvigif'
-binary or with the '--gif' option.
+   If GIF support is enabled, GIF output is chosen by using the ‘dvigif’
+binary or with the ‘--gif’ option.
 
    It is intended to produce anti-aliased screen-resolution images as
 fast as is possible.  The target audience is people who need to generate
@@ -14,15 +14,10 @@ preview-latex (X)Emacs package, a package to preview formulas from
 within (X)Emacs.  Yes, you get to see your formulas in the (X)Emacs
 buffer, see <http://www.gnu.org/software/auctex/preview-latex.html>.
 
-   Another example is WeBWorK, an internet-based method for delivering
-homework problems to students over the internet, giving students instant
-feedback as to whether or not their answers are correct, see
-<http://webwork.math.rochester.edu>.
-
-   A more recent addition to the dvipng-using applications out there is
-MediaWiki, the software behind Wikipedia and many other wikis out there.
-Dvipng is used to render mathematical formulae from version 1.8.0 of
-MediaWiki, see <http://www.mediawiki.org>.
+   It is also used in MediaWiki, the software behind Wikipedia and many
+other wikis out there.  Dvipng is used to render mathematical formulae
+(in image mode) from version 1.8.0 of MediaWiki, see
+<http://www.mediawiki.org>.
 
    Other applications may also benefit, like web applications as
 latex2html and WYSIWYG editors like LyX.
@@ -30,31 +25,31 @@ latex2html and WYSIWYG editors like LyX.
 Benefits of dvipng
 ==================
 
-The benefits of 'dvipng'/'dvigif' include
+The benefits of ‘dvipng’/‘dvigif’ include
 
-   * Speed.  It is a very fast bitmap-rendering code for DVI files,
+   • Speed.  It is a very fast bitmap-rendering code for DVI files,
      which makes it suitable for generating large amounts of images
      on-the-fly, as needed in preview-latex, WeBWorK and others.
 
-   * It does not read the postamble, so it can be started before TeX
-     finishes.  There is a '--follow' switch that makes dvipng wait at
+   • It does not read the postamble, so it can be started before TeX
+     finishes.  There is a ‘--follow’ switch that makes dvipng wait at
      end-of-file for further output, unless it finds the POST marker
      that indicates the end of the DVI.
 
-   * Interactive query of options.  dvipng can read options
+   • Interactive query of options.  dvipng can read options
      interactively through stdin, and all options are usable.  It is
      even possible to change the input file through this interface.
 
-   * Supports PK, VF, PostScript Type1, and TrueType fonts, subfonts
+   • Supports PK, VF, PostScript Type1, and TrueType fonts, subfonts
      (i.e., as used in CJK-LaTeX), color specials, and inclusion of
      PostScript, PNG, JPEG or GIF images.
 
-   * and more...
+   • and more...
 
 Installation
 ============
 
-Read 'INSTALL', included in the distribution.
+Read ‘INSTALL’, included in the distribution.
 
 Usage
 =====
@@ -63,9 +58,9 @@ To use dvipng at its simplest, simply type
 
      dvipng foo
 
-where 'foo.dvi' is the output of TeX that you want to convert to PNG
-format.  If there are four pages in 'foo.dvi', those pages will be
-output as 'foo1.png', 'foo2.png', 'foo3.png', and 'foo4.png',
+where ‘foo.dvi’ is the output of TeX that you want to convert to PNG
+format.  If there are four pages in ‘foo.dvi’, those pages will be
+output as ‘foo1.png’, ‘foo2.png’, ‘foo3.png’, and ‘foo4.png’,
 respectively.
 
    Many options are available (see the info manual).  For a brief
@@ -104,23 +99,23 @@ This program is released under the GNU Lesser General Public License
 version 3, see the COPYING file in the dvipng distribution or
 <http://www.gnu.org/licenses/>.
 
-   Copyright (C) 2002-2014 Jan-AAke Larsson
+   Copyright © 2002-2014 Jan-Åke Larsson
 
 Todo
 ====
 
-   * Use gs interpreter library for speed and possibly for
+   • Use gs interpreter library for speed and possibly for
      functionality.
 
-   * Add more color models for xcolor compatibility
+   • Add more color models for xcolor compatibility
 
-   * Enable a named pipe as DVI
+   • Enable a named pipe as DVI
 
-   * Further speed improvements.
+   • Further speed improvements.
 
-   * Other output specials and source specials.
+   • Other output specials and source specials.
 
-   * Clean internal structures.  Overhaul file handling.
+   • Clean internal structures.  Overhaul file handling.
 
-   * Fix the SELFAUTO stuff at runtime rather than at build time
+   • Fix the SELFAUTO stuff at runtime rather than at build time
 

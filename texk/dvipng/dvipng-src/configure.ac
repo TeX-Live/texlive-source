@@ -23,29 +23,29 @@
 #************************************************************************
 
 # Process this file with autoconf to produce a configure script.
-AC_INIT([dvipng], [1.17], [dvipng@nongnu.org])
+AC_INIT([dvipng],[1.18],[dvipng@nongnu.org])
 AC_CONFIG_SRCDIR([dvipng.c])
 
 AC_ARG_ENABLE(debug,
-  AC_HELP_STRING([--disable-debug],[Compile without debug (-d) option]),
+  AS_HELP_STRING([--disable-debug],[Compile without debug (-d) option]),
     [ if test "$enableval" = yes ; then
       AC_DEFINE(DEBUG, 1, [Define as 1 to get the debug (-d) option.])
       fi ],
     [ enable_debug="yes";
       AC_DEFINE(DEBUG, 1, [Define as 1 to get the debug (-d) option.])])
 AC_ARG_ENABLE(timing,
-  AC_HELP_STRING([--enable-timing],[Output execution time of dvipng]),
+  AS_HELP_STRING([--enable-timing],[Output execution time of dvipng]),
    [ if test "$enableval" = yes ; then
      AC_DEFINE(TIMING, 1, [Define as 1 to get execution time output.])
      fi ])
 
 # Checks for programs.
-AC_SET_MAKE
+AC_PROG_MAKE_SET
 AC_PROG_CC
 AC_PROG_INSTALL
 AC_PROG_LN_S
 AC_ARG_WITH(gs,
-  AC_HELP_STRING([--with-gs=/PATH/TO/gs],[Hard-wire the location of GhostScript]),
+  AS_HELP_STRING([--with-gs=/PATH/TO/gs],[Hard-wire the location of GhostScript]),
   [if test "x$withval" != xno ; then
     AC_PATH_PROG(GS,["$withval"])
     AC_DEFINE_UNQUOTED(GS_PATH, "$GS", [Define as the path to GhostScript.])
@@ -73,7 +73,10 @@ AC_CHECK_LIB([kpathsea], [kpse_set_program_name],,
              AC_MSG_ERROR([cannot find/use libkpathsea]))
 
 # Checks for header files.
-AC_HEADER_STDC
+# Autoupdate added the next two lines to ensure that your configure
+# script's behavior did not change.  They are probably safe to remove.
+AC_CHECK_INCLUDES_DEFAULT
+AC_PROG_EGREP
 AC_CHECK_HEADERS([gd.h png.h kpathsea/kpathsea.h],,
 		 [AC_MSG_ERROR([cannot find/use $ac_header])])
 AC_CHECK_HEADERS([libgen.h])
@@ -87,7 +90,6 @@ PKG_CHECK_MODULES([FT2], [freetype2 >= 6.1.0],
 	ac_have_freetype2="yes"],
 	[ac_have_freetype2="no"])
 AC_HEADER_SYS_WAIT
-AC_HEADER_TIME
 AC_HEADER_STDBOOL
 AC_CHECK_HEADERS([fcntl.h sys/time.h])
 
@@ -144,8 +146,7 @@ AC_PATH_PROG(INSTALL_INFO, install-info, :, $PATH /usr/sbin /sbin)
 
 # SELFAUTO
 AC_ARG_ENABLE(selfauto-set,
-  AC_HELP_STRING([--enable-selfauto-set],
-  [This option will make the final binary explicitly set the
+  AS_HELP_STRING([--enable-selfauto-set],[This option will make the final binary explicitly set the
    $SELFAUTO... variables to make it look as dvipng is installed in the
    main texmf tree, even if it isn't. This is necessary when texmf.cnf
    only uses $SELFAUTO... variables and dvipng is not installed in the
@@ -218,6 +219,6 @@ AC_MSG_RESULT([
    Building within TeX Live:                $ac_cv_func_texlive_gs_init
 ])
 
-AC_CONFIG_HEADER([config.h])
+AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_FILES([Makefile])
 AC_OUTPUT

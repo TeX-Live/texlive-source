@@ -1,3 +1,5 @@
+	Does not apply in 1.18.
+
 --- special.c.orig	Fri Aug 31 16:39:04 2018
 +++ special.c	Mon Jan 06 18:53:34 2020
 @@ -492,6 +492,25 @@

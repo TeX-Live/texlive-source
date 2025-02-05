@@ -1,6 +1,26 @@
+2025-02-02  Jan-흆e Larsson <jan-ake.larsson@liu.se>
+
+    Release 1.18
+
+2025-02-02  Jan-흆e Larsson <jan-ake.larsson@liu.se>
+
+    Adapt to autoconf 2.71
+
+2025-02-02  Jan-흆e Larsson <jan-ake.larsson@liu.se>
+
+    Do not try to render Postscript special that only is PS comments
+
+2025-02-02  Jan-흆e Larsson <jan-ake.larsson@liu.se>
+
+    Fix division by zero error if DVI magnification too large
+
+2021-03-13  Jan-흆e Larsson <jan-ake.larsson@liu.se>
+
+    Prevent division-by-zero, and make image-file not found error message more informative
+
 2020-01-05  Jan-흆e Larsson <jan-ake.larsson@liu.se>
 
-    Prepare for 1.17
+    Release 1.17
 
 2019-11-29  Jan-흆e Larsson <jan-ake.larsson@liu.se>
 
