@@ -1,0 +1,13 @@
+	+ should be +=. Found by Clerk Ma, 5feb25.
+
+--- Compiler.cpp	(revision 73732)
++++ Compiler.cpp	(working copy)
+@@ -708,7 +708,7 @@
+ 							if (currentRule.lhsPreContext.size() != 0) {
+ 								contextID = getContextID(currentRule.lhsPreContext, sourceUni);
+ 								xmlRule += " preCtx=\"";
+-								xmlRule + contextID;
++								xmlRule += contextID;
+ 								xmlRule += "\"";
+ 							}
+ 							if (currentRule.lhsPostContext.size() != 0) {

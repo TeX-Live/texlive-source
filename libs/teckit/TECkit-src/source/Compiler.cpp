@@ -708,7 +708,7 @@ Compiler::Compiler(const char* txt, UInt32 len, char inForm, bool cmp, bool genX
 							if (currentRule.lhsPreContext.size() != 0) {
 								contextID = getContextID(currentRule.lhsPreContext, sourceUni);
 								xmlRule += " preCtx=\"";
-								xmlRule + contextID;
+								xmlRule += contextID;
 								xmlRule += "\"";
 							}
 							if (currentRule.lhsPostContext.size() != 0) {
