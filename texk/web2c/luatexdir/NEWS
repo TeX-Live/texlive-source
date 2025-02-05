@@ -1,4 +1,29 @@
 ==============================================================
+LuaTeX 1.21.0 2025-02-13
+==============================================================
+
+- LuaJIT 2.1.1736781742
+- New luaffi lib, supporting aarch64
+- New primitive \mathemptydisplaymode. By default paragraphs
+  before a display equation containing dir nodes are never ignored.
+  Changing that could break existing documents, but when you set mathemptydisplaymode
+  to 1 empty paragraphs before a display equation will be ignored.
+- New primitve \ignoreprimitiveerror.
+  If \ignoreprimitiveerror=1, the error
+  "Infinite glue shrinkage found in box being split" that occurs
+  when vsplit-ting a box containing infinite negative glue is turned into a warning.
+- In output_name_tree, sort_dest_names now compares
+  literal strings or hexdecimal strings.
+- Increment tally in tprint also when doterm is true 
+- For PNG, we no longer set the attr on the mask. If we get a report about dropping this 
+  we could add a 'maskattr' feature, but one should consider
+  to include a correct pdf of the image instead, it's more robust.
+- Handle token combiners in immediate assignments (H.Hagen)
+
+For more details, see ChangeLog.
+
+
+==============================================================
 LuaTeX 1.18.0 2024-02-13
 ==============================================================
 

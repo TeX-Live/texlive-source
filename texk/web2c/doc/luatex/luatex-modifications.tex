@@ -1164,6 +1164,10 @@ Because \type {\noindent} doesn't inject anything but a \type {\indent} injects
 an box, paragraphs with only an indent and directions are handled as paragraphs
 with content.
 
+By default paragraphs before a display equation containing dir nodes are never ignored.
+Changing that could break existing documents, but when you set \lpr {mathemptydisplaymode}
+to~\type {1} empty paragraphs before a display equation will be ignored.
+
 \stopsubsection
 
 \startsubsection[title={Controlling glue with \lpr {breakafterdirmode}}]

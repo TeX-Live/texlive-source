@@ -1161,6 +1161,9 @@ but don't apply the related callbacks.
 The \prm {vsplit} primitive has to be followed by a specification of the required
 height. As alternative for the \type {to} keyword you can use \type {upto} to get
 a split of the given size but result has the natural dimensions then.
+If \prm {ignoreprimitiveerror} = 1 , the error
+"Infinite glue shrinkage found in box being split" that occurs
+when vsplit-ting a box containing infinite negative glue is turned into a warning.
 
 \stopsubsection
 

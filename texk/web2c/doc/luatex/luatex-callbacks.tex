@@ -933,6 +933,21 @@ end
 This callback replaces the code that prints the error message. The usual
 interaction after the message is not affected.
 
+\subsection{\cbk {show_ignored_error_message}}
+
+\topicindex{callbacks+errors}
+
+\startfunctioncall
+function()
+end
+\stopfunctioncall
+
+This callback replaces the code that prints the error message
+when \prm {ignoreprimitiveerror} is enabled.
+As before, the usual
+interaction after the message is not affected.
+
+
 \subsection{\cbk {show_lua_error_hook}}
 
 \topicindex{callbacks+errors}
