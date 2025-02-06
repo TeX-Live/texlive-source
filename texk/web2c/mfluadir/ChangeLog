@@ -1,3 +1,7 @@
+2025-02-06 Luigi Scarso <luigi.scarso@gmail.com>
+
+	* TL'25 release.
+
 2025-01-27  Karl Berry  <karl@freefriends.org>
 
 	* am/mflua.am (mflua-pool.c): exit 1 if makecpool failed.
