@@ -1,8 +1,6 @@
-	Does not apply in 1.18.
-
---- special.c.orig	Fri Aug 31 16:39:04 2018
-+++ special.c	Mon Jan 06 18:53:34 2020
-@@ -492,6 +492,25 @@
+--- special.c.orig	Sun Feb 02 23:55:30 2025
++++ special.c	Thu Feb 06 13:40:55 2025
+@@ -516,6 +516,25 @@
  
        PSCodeInit(&image, NULL);
        image.filename=kpse_find_file(psname,kpse_pict_format,0);
@@ -25,6 +23,6 @@
 +        file_system_codepage = tmpcp;
 +      }
 +#endif
-       if (MmapFile(image.filename,&(image.fmmap)) || image.fmmap.size==0) {
- 	Warning("Image file %s unusable, image will be left blank",
- 		image.filename);
+       if (image.filename == NULL) {
+         Warning("Image file %s cannot be found, image will be left blank",
+ 		psname);

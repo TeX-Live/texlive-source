@@ -1,3 +1,11 @@
+2025-02-06  Akira Kakuto  <kakuto@jcom.zaq.ne.jp>
+
+	* patch-08-win32: adapted.
+
+2025-02-06  Karl Berry  <karl@freefriends.org>
+
+	Import dvipng-1.18.
+
 2020-01-06  Akira Kakuto  <kakuto@w32tex.org>
 
 	Import dvipng-1.17.

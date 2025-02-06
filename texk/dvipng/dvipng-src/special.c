@@ -516,6 +516,25 @@ void SetSpecial(char *start, char *end, int32_t hh, int32_t vv)
 
       PSCodeInit(&image, NULL);
       image.filename=kpse_find_file(psname,kpse_pict_format,0);
+#if !defined(MIKTEX) && defined(WIN32)
+      if (image.filename == NULL) {
+        wchar_t *wnam;
+        char *tmpnam;
+        int tmpcp;
+        tmpcp = file_system_codepage;
+        file_system_codepage = CP_UTF8;
+        tmpnam = kpse_find_file(psname,kpse_pict_format,0);
+        if (tmpnam) {
+          wnam = get_wstring_from_mbstring(CP_UTF8, tmpnam, wnam=NULL);
+          if (wnam) {
+            image.filename = get_mbstring_from_wstring(tmpcp, wnam, image.filename=NULL);
+            free(wnam);
+          }
+          free(tmpnam);
+        }
+        file_system_codepage = tmpcp;
+      }
+#endif
       if (image.filename == NULL) {
         Warning("Image file %s cannot be found, image will be left blank",
 		psname);
