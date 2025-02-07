@@ -14,6 +14,12 @@ know if any extant fonts are impacted.
   message, instead of (unhandled) arithmetic overflow or silent changing
   of the user's value.
 
+* (e)uptex: support combining characters with multiple codepoints,
+  Unicode latin characters and 16bit OFM Level-0 with
+  new kcatcodes (modifier(20), latin_ucs(14)).
+
+* euptex: new primitive \ignoreprimitiveerror as in pdfTeX and XeTeX.
+
 
 2024 (for TeX Live 2024, 10 March 2024)
 
