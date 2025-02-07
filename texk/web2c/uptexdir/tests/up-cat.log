@@ -18,10 +18,19 @@ superscript character Ć.
 subscript character ć.
 the letter Ĉ.
 the character ĉ.
+begin-group character ḁ; end-group character Ḃ.
+math shift character ḃ.
+alignment tab character Ḅ.
+macro parameter character ḅ.
+superscript character Ḇ.
+subscript character ḇ.
+the letter Ḉ.
+the character ḉ.
 math shift character ü.
 math shift character Č.
-superscript character þ.
-subscript character ÿ.
+math shift character Ḍ.
+superscript character þ; subscript character ÿ.
+superscript character Ď; subscript character ď.
+superscript character Ḏ; subscript character ḏ.
 [1] )
-(\end occurred when \ifx on line 101 was incomplete)
-Output written on up-cat.dvi (1 page, 372 bytes).
+Output written on up-cat.dvi (1 page, 440 bytes).

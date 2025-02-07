@@ -7,6 +7,8 @@
 % for (e)upTeX
   \kcatcode"C0=14  % Latin-1 Supplement
   \kcatcode"100=14 % Latin Extended-A
+  \kcatcode"1E00=14 % Latin Extended Additional
+  \kcatcode"2010=14 % General Punctuation
 \fi
 \ifx\ocp\undefined\else
 % for aleph
@@ -56,59 +58,90 @@
 \immediate\write16{\meaning Ĉ.}% the letter
 \immediate\write16{\meaning ĉ.}% the characer
 
+% Latin Extended Additional
+\catcode"1E01=1
+\catcode"1E02=2
+\catcode"1E03=3
+\catcode"1E04=4
+\catcode"1E05=6
+\catcode"1E06=7
+\catcode"1E07=8
+\catcode"1E08=11
+\catcode"1E09=12
+\immediate\write16{\meaning ḁ; % begin-group character
+                   \meaning Ḃ.}% end-group character
+\immediate\write16{\meaning ḃ.}% math shift character
+\immediate\write16{\meaning Ḅ.}% alignment tab character
+\immediate\write16{\meaning ḅ.}% macro parameter character
+\immediate\write16{\meaning Ḇ.}% superscript character
+\immediate\write16{\meaning ḇ.}% subscript character
+\immediate\write16{\meaning Ḉ.}% the letter
+\immediate\write16{\meaning ḉ.}% the characer
+
 
 % catcode 1,2 : begin-group, end-group character
 \catcode"F2=1  % ò
 \catcode"F3=2  % ó
 \catcode"102=1 % Ă
 \catcode"103=2 % ă
-òabcó Ădefă {ghió òjkl} {mnoă Ăpqr}
+\catcode"2039=1 % ‹
+\catcode"203A=2 % ›
+òabcó Ădefă {ghió òjkl} {mnoă Ăpqr} {stu› ‹vwx}
 
 % catcode 11,12 : the letter, the characer
 \catcode"F2=11
 \catcode"F3=12
 \catcode"102=11
 \catcode"103=12
-òabcó Ădefă {ghió òjkl} {mnoă Ăpqr}
+\catcode"2039=11 % ‹
+\catcode"203A=12 % ›
+òabcó Ădefă {ghió òjkl} {mnoă Ăpqr} {stu› ‹vwx}
 
 % catcode 3 : math shift character
 \catcode"FC=3  % ü
 \catcode"10C=3 % Č
+\catcode"1E0C=3 % Ḍ
 \immediate\write16{\meaning ü.}% math shift character
 \immediate\write16{\meaning Č.}% math shift character
+\immediate\write16{\meaning Ḍ.}% math shift character
 % Setting for math fonts is required.
-%$d^nx/dt^n$ $d^nx/dt^nü Čd^nx/dt^n$ üd^nx/dt^nČ
+%$d^nx/dt^n$ $d^nx/dt^nü Čd^nx/dt^n$ üd^nx/dt^nČ Ḍd^nx/dt^nḌ
 
 % catcode 7,8 : superscript, subscript character
 \catcode"FE=7  % þ
 \catcode"FF=8  % ÿ
 \catcode"10E=7 % Ď
 \catcode"10F=8 % ď
-\immediate\write16{\meaning þ.}% math shift character
-\immediate\write16{\meaning ÿ.}% math shift character
+\catcode"1E0E=7 % Ḏ
+\catcode"1E0F=8 % ḏ
+\immediate\write16{\meaning þ; \meaning ÿ.}% superscript, subscript character
+\immediate\write16{\meaning Ď; \meaning ď.}% superscript, subscript character
+\immediate\write16{\meaning Ḏ; \meaning ḏ.}% superscript, subscript character
 % Setting for math fonts is required.
-%$a_nx^m$ $aÿnxþm$ $aďnxĎm$
+%$a_nx^m$ $aÿnxþm$ $aďnxĎm$ $aḏnxḎm$
 
 % catcode 4 : alignment tab character
 \catcode"F4=4  % ô
 \catcode"104=4 % Ą
+\catcode"1E04=4 % Ḅ
 \halign{# & # & # \cr
   aaa & bbb & ccc \cr
   ddd ô eee ô fff \cr
-  ggg Ą hhh Ą iii \cr}
-
-% (e)uptex makes erros for following.
-\ifx\kcatcode\undefined\else\end\fi
+  ggg Ą hhh Ą iii \cr
+  jjj Ḅ kkk Ḅ lll \cr}
 
 % catcode 6 : macro parameter character
 \catcode"F5=6  % õ
 \catcode"105=6 % ą
+\catcode"1E05=6 % ḅ
 \def\oWz#1{o{#1}z}\relax
 \oWz{r}
 \def\oXzõ1{o{õ1}z}\relax
 \oXz{r}
 \def\oYzą1{o{ą1}z}\relax
 \oYz{r}
+\def\oZzḅ1{o{ḅ1}z}\relax
+\oZz{r}
 
 \end
 
