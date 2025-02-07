@@ -20,9 +20,19 @@ superscript character ^^^^0106.
 subscript character ^^^^0107.
 the letter ^^^^0108.
 the character ^^^^0109.
+begin-group character ^^^^1e01; end-group character ^^^^1e02.
+math shift character ^^^^1e03.
+alignment tab character ^^^^1e04.
+macro parameter character ^^^^1e05.
+superscript character ^^^^1e06.
+subscript character ^^^^1e07.
+the letter ^^^^1e08.
+the character ^^^^1e09.
 math shift character ^^fc.
 math shift character ^^^^010c.
-superscript character ^^fe.
-subscript character ^^ff.
+math shift character ^^^^1e0c.
+superscript character ^^fe; subscript character ^^ff.
+superscript character ^^^^010e; subscript character ^^^^010f.
+superscript character ^^^^1e0e; subscript character ^^^^1e0f.
 [1] )
-Output written on al-cat.dvi (1 page, 580 bytes).
+Output written on al-cat.dvi (1 page, 672 bytes).
