@@ -1,7 +1,5 @@
 // Enum class for v3dtypes
 // AUTO-GENERATED from v3dtypes.csv
-// Generated at 2024-03-08 08:14:52
-
 struct v3dtypes
 {
   int material=1;

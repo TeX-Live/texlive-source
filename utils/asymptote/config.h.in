@@ -1,7 +1,6 @@
 /* config.h.in.  Generated from configure.ac by autoheader.  */
 
-/* Define if building universal (internal helper macro) */
-#undef AC_APPLE_UNIVERSAL_BUILD
+#pragma once
 
 /* Directory for documentation */
 #undef ASYMPTOTE_DOCDIR
@@ -9,7 +8,16 @@
 /* System directory for global .asy files */
 #undef ASYMPTOTE_SYSDIR
 
-/* Define to 1 if you have GLSL compute shaders. */
+/* Freeglut is enabled */
+#undef FREEGLUT
+
+/* GC backtrace is enabled */
+#undef GC_BACKTRACE
+
+/* GC Debug is enabled */
+#undef GC_DEBUG
+
+/* Define to 1 if you have `GLSL compute shaders`. */
 #undef HAVE_COMPUTE_SHADER
 
 /* Define to 1 if you have the <curses.h> header file. */
@@ -42,55 +50,46 @@
 /* Define to 1 if fseeko (and presumably ftello) exists and is declared. */
 #undef HAVE_FSEEKO
 
-/* Define to 1 if you have GNU <getopt.h>. */
-#undef HAVE_GNU_GETOPT_H
-
 /* Define to 1 if you have the <inttypes.h> header file. */
 #undef HAVE_INTTYPES_H
 
 /* Define to 1 if you have the `lgamma' function. */
 #undef HAVE_LGAMMA
 
-/* Define to 1 if you have the `curl' library (-lcurl). */
+/* Define to 1 if you have the `curl` library (-lcurl). */
 #undef HAVE_LIBCURL
 
-/* Define to 1 if you have the `ncurses' library (-lncurses). */
+/* Define to 1 if you have the `ncurses` library (-lncurses). */
 #undef HAVE_LIBCURSES
 
 /* Define to 1 if you have the `edit' library (-ledit). */
 #undef HAVE_LIBEDIT
 
-/* Define to 1 if you have the `fftw3' library (-lfftw3). */
+/* Define to 1 if you have the `fftw3` library (-lfftw3). */
 #undef HAVE_LIBFFTW3
 
 /* Define to 1 if you have the `gccpp' library (-lgccpp). */
 #undef HAVE_LIBGCCPP
 
-/* Define to 1 if you have the `GL' library (-lGL). */
+/* Define to 1 if you have the `GL` library (-lGL). */
 #undef HAVE_LIBGL
 
-/* Define to 1 if you have the <glm/glm.hpp> header. */
+/* Define to 1 if you have `the <glm/glm.hpp> header`. */
 #undef HAVE_LIBGLM
 
 /* Define to 1 if you have the `glut' library (-lglut). */
 #undef HAVE_LIBGLUT
 
-/* Define to 1 if you have the `' library (-l). gsl */
+/* Define to 1 if you have the `gsl` library (-lgsl). */
 #undef HAVE_LIBGSL
 
 /* Define to 1 if you have the <libintl.h> header file. */
 #undef HAVE_LIBINTL_H
 
-/* Define to 1 if you have the `ncurses' library (-lncurses). */
-#undef HAVE_LIBNCURSES
-
-/* Define to 1 if you have the `OpenImageIO' library (-lOpenImageIO). */
-#undef HAVE_LIBOPENIMAGEIO
-
 /* Define to 1 if you have the `OSMesa' library (-lOSMesa). */
 #undef HAVE_LIBOSMESA
 
-/* Define to 1 if you have the `readline' library (-lreadline). */
+/* Define to 1 if you have the `readline` library (-lreadline). */
 #undef HAVE_LIBREADLINE
 
 /* Define to 1 if you have the `rt' library (-lrt). */
@@ -99,10 +98,10 @@
 /* Define to 1 if you have the `sigsegv' library (-lsigsegv). */
 #undef HAVE_LIBSIGSEGV
 
-/* Define to 1 if you have the `tinfo' library (-ltinfo). */
+/* Define to 1 if you have the `tinfo` library (-ltinfo). */
 #undef HAVE_LIBTINFO
 
-/* Define to 1 if you have the `tirpc' library (-ltirpc). */
+/* Define to 1 if you have the `tirpc` library (-ltirpc). */
 #undef HAVE_LIBTIRPC
 
 /* Define to 1 if you have the `z' library (-lz). */
@@ -114,7 +113,7 @@
 /* Define to 1 if the system has the type `long long'. */
 #undef HAVE_LONG_LONG
 
-/* Define to 1 if you have Language server protocol. */
+/* Define to 1 if you have `Language server protocol`. */
 #undef HAVE_LSP
 
 /* Define to 1 if you have the `memrchr' function. */
@@ -141,7 +140,7 @@
 /* Define to 1 if the system has the type `ptrdiff_t'. */
 #undef HAVE_PTRDIFF_T
 
-/* Define to 1 if you have GLSL shader storage buffer objects. */
+/* Define to 1 if you have `GLSL shader storage buffer objects`. */
 #undef HAVE_SSBO
 
 /* Define to 1 if you have the <stddef.h> header file. */
@@ -186,13 +185,10 @@
 /* Define to 1 if you have the `tgamma' function. */
 #undef HAVE_TGAMMA
 
-/* Define to 1 if you have <tr1/unordered_map>. */
-#undef HAVE_TR1_UNORDERED_MAP
-
 /* Define to 1 if you have the <unistd.h> header file. */
 #undef HAVE_UNISTD_H
 
-/* Define to 1 if you have <unordered_map>. */
+/* Unordered map is present */
 #undef HAVE_UNORDERED_MAP
 
 /* Define to 1 if you have the `vfork' function. */
@@ -206,6 +202,9 @@
 
 /* Define to 1 if `vfork' works. */
 #undef HAVE_WORKING_VFORK
+
+/* ZLib library present */
+#undef HAVE_ZLIB
 
 /* Define to the address where bug reports for this package should be sent. */
 #undef PACKAGE_BUGREPORT
@@ -234,17 +233,14 @@
    backward compatibility; new code need not use it. */
 #undef STDC_HEADERS
 
-/* Define WORDS_BIGENDIAN to 1 if your processor stores words with the most
-   significant byte first (like Motorola and SPARC, unlike Intel). */
-#if defined AC_APPLE_UNIVERSAL_BUILD
-# if defined __BIG_ENDIAN__
-#  define WORDS_BIGENDIAN 1
-# endif
-#else
-# ifndef WORDS_BIGENDIAN
-#  undef WORDS_BIGENDIAN
-# endif
-#endif
+/* Endianness is determined at compile time */
+#undef UNIVERSAL_ENDIAN_BUILD
+
+/* GC Enabled */
+#undef USEGC
+
+/* Build is big endian */
+#undef WORDS_BIGENDIAN
 
 /* Define to 1 if `lex' declares `yytext' as a `char *' by default, not a
    `char[]'. */

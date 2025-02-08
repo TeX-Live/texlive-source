@@ -1,4 +1,4 @@
-# Install script for directory: /usr/local/src/asymptote-2.88/LspCpp/third_party/uri
+# Install script for directory: /usr/local/src/asymptote-2.96/LspCpp/third_party/uri
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -37,18 +37,18 @@ if(NOT DEFINED CMAKE_CROSSCOMPILING)
   set(CMAKE_CROSSCOMPILING "FALSE")
 endif()
 
-# Set default install directory permissions.
+# Set path to fallback-tool for dependency-resolution.
 if(NOT DEFINED CMAKE_OBJDUMP)
   set(CMAKE_OBJDUMP "/bin/objdump")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/." TYPE DIRECTORY FILES "/usr/local/src/asymptote-2.88/LspCpp/third_party/uri/include")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/." TYPE DIRECTORY FILES "/usr/local/src/asymptote-2.96/LspCpp/third_party/uri/include")
 endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
-  include("/usr/local/src/asymptote-2.88/LspCpp/third_party/uri/src/cmake_install.cmake")
+  include("/usr/local/src/asymptote-2.96/LspCpp/third_party/uri/src/cmake_install.cmake")
 
 endif()
 

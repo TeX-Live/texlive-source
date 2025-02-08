@@ -1,3 +1,71 @@
+Release Notes for Version 2.96
+
+New keywords autounravel and using were added.
+Issues with templated imports were fixed.
+Asymptote now ships with the Boehm garbage collector.
+Portability fixes were implemented.
+
+Release Notes for Version 2.95
+
+Portability fixes were implemented.
+
+Release Notes for Version 2.94
+
+Portability fixes were implemented for compiling under MacOS.
+
+Release Notes for Version 2.93
+
+A portability issue with a recent version of Ubuntu was addressed.
+The windows binary is now built natively using CMake.
+
+Release Notes for Version 2.92
+
+A bug in unravelling static fields was fixed.
+ImageMagick arguments were reordered. 
+An Xasy regex bug was fixed. The bytecode interpreter was optimized.
+The code to ignore duplicate implicit shipouts now accounts for the format.
+The slide paperwidth and paperheight are now properly updated.
+
+Release Notes for Version 2.91
+
+By default, orthographic projections now use center=true;
+the camera and target are automatically centered within the scene.
+The surface constructor for triangles was fixed.
+A bug in the WebGL flatness test was fixed.
+Triangle group bugs were fixed and now produce compact HTML output.
+Triangle groups are used for indexed surfaces drawn with the render option
+tessellate=true.  
+GLSL error reporting was restored.
+The reported camera up vector was fixed.
+The map module was fixed.
+A syntax warning in Xasy was fixed.
+Improvements were made to the slide module.
+A bug was fixed in the experimental settings.render=0 mode.
+The debug option now outputs a traceback.
+
+Release Notes for Version 2.90
+
+A bug in the approximate transparency rendering code for GPUs
+without SSBO support was fixed.
+Support was added for templated accesses involving imported types,
+top-level structure types, and static fields.
+ImageMagick magick convert is now used instead of convert. 
+The add(picture dest, picture src, pair position) function now respects
+size specifications (backwards incompatible; the previous behaviour can
+be obtained with add(dest,src.fit(identity),position).
+The terminal is now reset upon exit. The erase command was fixed.
+Picture scalings in different dimensions are decoupled again.
+Flycheck syntax checking support for Emacs was added.
+Portability issues were addressed.
+Improvements were made to the documentation, including an introduction
+to deferred drawing.
+
+Release Notes for Version 2.89
+
+Portability fixes were made to allow static builds with or without pkg-config.
+Static linking of the GSL library is now supported.
+Redundant templated imports are avoided.
+
 Release Notes for Version 2.88
 
 Building against specific static libraries is supported again.
