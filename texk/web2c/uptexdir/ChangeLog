@@ -1,3 +1,8 @@
+2025-02-08  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* uptex-m.ch: Enable ^^^^xyzw format only when
+	internal encoding is upTeX.
+
 2025-02-07  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* uptex-m.ch: Enable catcode mac_param(6) for
