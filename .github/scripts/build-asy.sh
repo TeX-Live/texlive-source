@@ -71,7 +71,6 @@ esac
 find . -name \*.info -exec touch '{}' \;
 touch ./utils/asymptote/camp.tab.cc
 touch ./utils/asymptote/camp.tab.h
-touch ./utils/asymptote/GUI/pyUIClass/*
 
 cd utils/asymptote
 ./configure --prefix=/tmp/asyinst --enable-static --enable-texlive-build \
