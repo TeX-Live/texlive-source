@@ -1970,6 +1970,14 @@ the executable after loading and executing the startup file.
      in \DVI\ output mode, if true abort run when the number of pages exceeds 65535. 
      This is the default behaviour. If false, the run goes on as is in \TEX.
 \NC \NR
+\NC \type{texlua_img} \NC boolean \NC
+\NC 
+     if true, allows access to the \type {img} library in \TEXLUA\ mode. If
+     false (the default), the \type {img} library is not available in \TEXLUA\
+     mode (as it was unconditionally for \LUATEX\ versions prior to 1.22.0).
+     Note that this setting is {\bf experimental} and subject to be removed at
+     any time, without notice.
+\NC \NR
 \LL
 \stoptabulate
 
@@ -2429,6 +2437,7 @@ to \lpr {luadef}.
 
 \libindex{get_next}
 \libindex{put_next}
+\libindex{unchecked_put_next}
 
 There is a (for now) experimental putter:
 
@@ -2444,7 +2453,12 @@ token.put_next ( t3, t4 )
 \stoptyping
 
 When we scan \type {wxyz!} we get \type {yzwx!} back. The argument is either a table
-with tokens or a list of tokens. The \type {token.expand} function will trigger
+with tokens or a list of tokens. The new function \type {token.unchecked_put_next}
+has been added per request of the \LATEX\ team. It skips this error checking and
+follows a different code path. It assumes that a valid token user datum is
+passed and can crash the engine otherwise.
+
+The \type {token.expand} function will trigger
 expansion but what happens really depends on what you're doing where.
 
 \stopsubsection

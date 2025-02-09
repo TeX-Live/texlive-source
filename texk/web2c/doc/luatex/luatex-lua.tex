@@ -570,6 +570,12 @@ that we will discuss here.
     If the command ran ok, then the return value is the exit status of the
     command. Otherwise, it will return the two values \type {nil} and \type
     {error}.
+
+    \type {os.spawn()} takes an optional second argument, a table of key-value
+    pairs for the environment of the spawned process. Note that if you do pass
+    this table, it will be used as the \notabene {complete} environment for the
+    spawned process, so you'll likely want to start from \type {os.env} and add
+    or remove keys as needed.
 \stopitem
 
 \startitem

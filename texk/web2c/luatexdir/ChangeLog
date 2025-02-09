@@ -1,6 +1,9 @@
-2025-02-05 Luigi Scarso <luigi.scarso@gmail.com>
+2025-02-09 Luigi Scarso <luigi.scarso@gmail.com>
 	* fixed shell-escape bypass (thanks to tex@maxchernoff.ca)
-
+	* Add token.unchecked_put_next, support setting the environment
+	  with os.spawn, permit usage of the img module in texlua mode
+	  (thanks to tex@maxchernoff.ca)
+	
 	
 2025-02-05 Luigi Scarso <luigi.scarso@gmail.com>
 	* add mathemptydisplaymode primitive, 

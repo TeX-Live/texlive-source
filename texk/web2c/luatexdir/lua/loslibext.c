@@ -516,8 +516,8 @@ static int os_spawn(lua_State * L)
     char **cmdline = NULL;
     char **envblock = NULL;
     int i;
-
-    if (lua_gettop(L) != 1) {
+    int top = lua_gettop(L);
+    if (top != 1 && top != 2) {
         lua_pushnil(L);
         lua_pushliteral(L, "invalid arguments passed");
         return 2;
@@ -532,6 +532,26 @@ static int os_spawn(lua_State * L)
         cmdline = do_split_command(maincmd, &runcmd);
     } else if (lua_type(L, 1) == LUA_TTABLE) {
         cmdline = do_flatten_command(L, &runcmd);
+    }
+    /* Allow setting the environment */
+    if (restrictedshell == 0 && top == 2 && lua_istable(L, 2)) {
+        const char *key, *val;
+        char *value;
+        int size = 0;
+        lua_pushnil(L);
+        while (lua_next(L, 2) != 0) {
+            if (lua_type(L, -2) == LUA_TSTRING &&
+                lua_type(L, -1) == LUA_TSTRING) {
+                key = lua_tostring(L, -2);
+                val = lua_tostring(L, -1);
+                value = xmalloc((unsigned) (strlen(key) + strlen(val) + 2));
+                sprintf(value, "%s=%s", key, val);
+                envblock = xreallocarray(envblock, char*, size++ + 1);
+                envblock[size] = value;
+            }
+            lua_pop(L, 1);
+        }
+        envblock[size++] = NULL;
     }
     /* If restrictedshell == 0, any command is allowed. */
     /* this is a little different from \write18/ os.execute processing
