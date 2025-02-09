@@ -1,3 +1,103 @@
+commit 83de5cbc8268d689b52c07c87927cae3ab94e245
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Feb 9 10:01:51 2025 -0800
+
+    Distribute prebuilt GUI files.
+
+commit 23b2d7e2391f1b4a180778d6c1c98f6703fca10e
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Feb 8 22:13:41 2025 -0800
+
+    Increment version to 2.98.
+
+commit ab5e4e770bd96978ae5b211b752eab81433874c8
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Feb 8 22:13:00 2025 -0700
+
+    Revert "Move -std=c++17 to Makefile."
+    
+    This reverts commit 71b86dfe8d509eceb5ab4adce66b273135c0b4ca.
+
+commit 10be59fbd725216c3221c62fa64cac251dcd7131
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Feb 8 22:11:39 2025 -0700
+
+    Revert "Apply -std=c++17 only to C++ compilation."
+    
+    This reverts commit dcc187b1f97b317fc0aa11aac27606dc5aa3ba86.
+
+commit 6a0277facfaefa82a001b02e38b074cf1267b431
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Feb 8 20:57:47 2025 -0800
+
+    Fix clang warning.
+
+commit dcc187b1f97b317fc0aa11aac27606dc5aa3ba86
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Feb 8 20:50:39 2025 -0800
+
+    Apply -std=c++17 only to C++ compilation.
+
+commit 8df48262a3e2a149774f8fdbe0a1a0b315052d51
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Feb 8 20:41:03 2025 -0800
+
+    Fix runtime.pl warnings.
+
+commit 71b86dfe8d509eceb5ab4adce66b273135c0b4ca
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Feb 8 19:41:04 2025 -0800
+
+    Move -std=c++17 to Makefile.
+
+commit 3e1e10f75af1d549c40320c57763690c08b22c62
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Feb 8 17:30:38 2025 -0800
+
+    Allow compilation without libtirpc-devel (not recommended though as this would disable XDR and V3D support).
+
+commit 5736020c97ce62282e25d0c94c8bb2793f27c381
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Feb 8 17:00:20 2025 -0800
+
+    Fix symbolic link.
+
+commit 46532008179a304c517e0d467d3d1d23d88c8153
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Feb 8 12:28:25 2025 -0800
+
+    Qualify nullptr.
+
+commit 0ab6a0d09fac84efbe8d443d782d06f518f1aea2
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Feb 8 11:26:24 2025 -0800
+
+    Fix last revision.
+
+commit fd7ae5be14a71d6080a5b7f497551c8c369693b1
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Feb 8 11:03:46 2025 -0800
+
+    Clean up symbolic link and hidden directories.
+
+commit 071af187de37bef85987ad4af9e75f31d117cf5b
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Feb 8 10:14:25 2025 -0800
+
+    Clean up Python caches.
+
+commit ea26e0d22416de4510b6cc5b5f929c3d5a480c57
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Feb 7 09:24:41 2025 -0800
+
+    Remove empty and temporary files and directories.
+
+commit e2917d5092263d49f7cb9bbe34dbbb7b74a6ac34
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Feb 6 22:44:25 2025 -0800
+
+    Increment version to 2.97.
+
 commit a867372f32b18d9943a5b21430d2652f69e6854b
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Thu Feb 6 23:04:45 2025 -0700
