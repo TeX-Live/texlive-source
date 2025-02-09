@@ -51,3 +51,11 @@
 \indexentry{mixed-range2|xx}{ii}
 \indexentry{mixed-range2|yy}{3}
 \indexentry{mixed-range2|)}{6}
+
+\indexentry{encap-escape1 aaa"@bbb"|ccc"!ddd""eee"{fff"}|(}{10}
+\indexentry{encap-escape1 aaa"@bbb"|ccc"!ddd""eee"{fff"}|ppp}{11}
+\indexentry{encap-escape1 aaa"@bbb"|ccc"!ddd""eee"{fff"}|)}{12}
+
+\indexentry{encap-escape2|(aaa"@bbb"|ccc"!ddd""eee"{fff"}}{20}
+\indexentry{encap-escape2|aaa"@bbb"|ccc"!ddd""eee"{fff"}}{21}
+\indexentry{encap-escape2|)}{22}

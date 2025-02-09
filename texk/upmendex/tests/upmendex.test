@@ -1,6 +1,6 @@
 #! /bin/sh -vx
 # $Id$
-# Copyright 2021-2024 TANAKA Takuji <ttk@t-lab.opal.ne.jp>
+# Copyright 2021-2025 TANAKA Takuji <ttk@t-lab.opal.ne.jp>
 # Copyright 2017-2022 Karl Berry <tex-live@tug.org>
 # Copyright 2013 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
@@ -41,6 +41,12 @@ $_upmendex $srcdir/tests/tort.idx -o tort.ind1 -t tort.ilg1 \
 
 $_upmendex $srcdir/tests/tortW.idx -o tortW.ind1 -t tortW.ilg1 \
 	&& diff $srcdir/tests/ok-tort.ind tortW.ind1 || :
+
+$_upmendex $srcdir/tests/tort.idx -s $srcdir/tests/head1.ist -o tort2.ind1 -t tort2.ilg1 \
+	&& diff $srcdir/tests/ok-tort2.ind tort2.ind1 || :
+
+$_upmendex $srcdir/tests/tortW.idx -s $srcdir/tests/head1.ist -o tortW2.ind1 -t tortW2.ilg1 \
+	&& diff $srcdir/tests/ok-tort2.ind tortW2.ind1 || :
 
 
 exit $rc
