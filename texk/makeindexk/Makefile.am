@@ -51,7 +51,8 @@ EXTRA_DIST += tests/nested-range.tex tests/nested-range.idx \
 DISTCLEANFILES = nested-range.ilg nested-range.ind
 ## tests/makeindex.test
 EXTRA_DIST += tests/sample.idx tests/sample.ind \
-	tests/tort.idx tests/tortW.idx tests/ok-tort.ind
+	tests/tort.idx tests/tortW.idx tests/head1.ist \
+	tests/ok-tort.ind tests/ok-tort2.ind
 DISTCLEANFILES += sample.* tort*.*
 ## tests/pprec.test
 EXTRA_DIST += tests/range.idx \

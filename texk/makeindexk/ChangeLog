@@ -1,3 +1,10 @@
+2025-02-10  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* tests/makeindex.test, tests/head1.ist,
+	tests/tort{,W}.idx, tests/ok-tort{,2}.ind:
+	Add tests for encap escape & heading_{pre,post}fix.
+	* Makefile.am: Adjust.
+
 2024-11-09  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* tests/{makeindex,pprec}.test: Split test scripts.

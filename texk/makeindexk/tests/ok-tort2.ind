@@ -1,21 +1,29 @@
 \begin{theindex}
-
+aaa	bbb|ccc\ddd
+[{("'B'")}]
+aaa	bbb|ccc\ddd
   \item bad-encaps, \ii{5--7}
 
   \indexspace
-
+aaa	bbb|ccc\ddd
+[{("'E'")}]
+aaa	bbb|ccc\ddd
   \item encap-escape1 aaa@bbb|ccc!ddd"eee{fff}, \ppp{11}, 10--12
   \item encap-escape2, \aaa@bbb|ccc!ddd"eee{fff}{20--22}
 
   \indexspace
-
+aaa	bbb|ccc\ddd
+[{("'I'")}]
+aaa	bbb|ccc\ddd
   \item implicit-range, 10--12
   \item incons-encaps, \ii{6}, 5--7
   \item incons-encaps2, \ii{5}, 5
   \item incons-entries, 6, \xx{6}
 
   \indexspace
-
+aaa	bbb|ccc\ddd
+[{("'M'")}]
+aaa	bbb|ccc\ddd
   \item missing(, 6
   \item missing), 6
   \item mixed-range, i, 6
@@ -23,7 +31,9 @@
   \item mixed-range2, \xx{ii}, i--ii, \yy{3--6}
 
   \indexspace
-
+aaa	bbb|ccc\ddd
+[{("'O'")}]
+aaa	bbb|ccc\ddd
   \item ok-encaps, \ii{5--7}
 
 \end{theindex}
