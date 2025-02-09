@@ -1,3 +1,7 @@
+2025-02-10  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* Makefile.am: Adjust.
+
 2025-02-09  Yukimasa Morimi  <h20y6m@yahoo.co.jp>
 
 	* configure.ac, version.h:
@@ -5,9 +9,9 @@
 	* fread.c: Improved compatibility with makeindex.
 	* styfile.c: Fix escaping of string parameters.
 	https://github.com/texjporg/tex-jp-build/issues/173
-	* tests/mendex.test, tests/head1.ist, 
+	* tests/mendex.test, tests/head1.ist,
 	tests/tort{,W}.idx, tests/ok-tort{,2}.ind:
-	Add tests for encap escape & headinng_{pre,post}fix
+	Add tests for encap escape & heading_{pre,post}fix
 	from TANAKA Takuji.
 
 2025-01-25  Karl Berry  <karl@freefriends.org>
