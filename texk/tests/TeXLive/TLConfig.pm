@@ -1,12 +1,12 @@
 # TeXLive::TLConfig.pm - module exporting configuration values
-# Copyright 2007-2024 Norbert Preining
+# Copyright 2007-2025 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
 use strict; use warnings;
 package TeXLive::TLConfig;
 
-my $svnrev = '$Revision: 69783 $';
+my $svnrev = '$Revision: 73776 $';
 my $_modulerevision = ($svnrev =~ m/: ([0-9]+) /) ? $1 : "unknown";
 sub module_revision { return $_modulerevision; }
 
@@ -61,7 +61,7 @@ BEGIN {
 
 # the year of our release, will be used in the location of the
 # network packages, and in menu names, and other places.
-our $ReleaseYear = 2024;
+our $ReleaseYear = 2025;
 
 # users can upgrade from this year to the current year; might be the
 # same as the release year, or any number of releases earlier.
