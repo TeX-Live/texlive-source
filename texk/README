@@ -1,5 +1,5 @@
 $Id$
-Copyright 2006-2024 TeX Users Group.
+Copyright 2006-2025 TeX Users Group.
 You may freely use, modify and/or distribute this file.
 
 This TeX Live directory contains the programs that use the kpathsea
@@ -54,7 +54,7 @@ dvipdfm-x - maintained here, by us, contains
   dvipdfmx and xdvipdfmx.
     old info: https://project.ktug.org/dvipdfmx/
 
-dvipng 1.17 - checked 5feb25
+dvipng 1.18 - checked 5feb25
   https://mirror.ctan.org/dviware/dvipng/
   aka https://mirror.ctan.org/dviware/dvipng.zip
 

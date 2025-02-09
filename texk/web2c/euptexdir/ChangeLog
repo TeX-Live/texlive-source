@@ -1,3 +1,8 @@
+2025-02-09  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
+
+	* suppresserrors.ch: Format \ignoreprimitiveerror printing
+	as in pdfTeX and XeTeX.
+
 2025-02-02  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* euptex-{ofm,prntknj}.test, tests/eup-ofm.{tex,log},
