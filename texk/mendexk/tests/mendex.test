@@ -42,5 +42,11 @@ $_mendex $srcdir/tests/tort.idx -o tort.ind1 -t tort.ilg1 \
 $_mendex $srcdir/tests/tortW.idx -o tortW.ind1 -t tortW.ilg1 \
 	&& diff $srcdir/tests/ok-tort.ind tortW.ind1 || :
 
+$_mendex $srcdir/tests/tort.idx -s $srcdir/tests/head1.ist -o tort2.ind1 -t tort2.ilg1 \
+	&& diff $srcdir/tests/ok-tort2.ind tort2.ind1 || :
+
+$_mendex $srcdir/tests/tortW.idx -s $srcdir/tests/head1.ist -o tortW2.ind1 -t tortW2.ilg1 \
+	&& diff $srcdir/tests/ok-tort2.ind tortW2.ind1 || :
+
 
 exit $rc

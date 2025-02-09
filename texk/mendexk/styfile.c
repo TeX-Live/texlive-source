@@ -197,6 +197,12 @@ static void convline(char *buff1, int start, char *buff2)
 				else if (buff1[i]=='t') buff2[j]='\t';
 				else if (buff1[i]=='r') buff2[j]='\r';
 				else if (buff1[i]=='\"') buff2[j]='\"';
+				else {
+					/* Otherwise, the '\' is simply ignored here and the
+					   following character is copied as is in the next loop. */
+					i--;
+					continue;
+				}
 			}
 			else buff2[j]=buff1[i];
 			j++;
