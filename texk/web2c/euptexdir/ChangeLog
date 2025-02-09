@@ -2,6 +2,8 @@
 
 	* suppresserrors.ch: Format \ignoreprimitiveerror printing
 	as in pdfTeX and XeTeX.
+	* kinsoku_table.log, kinsoku_table.tex: No error after
+	increasing inhibit_xsp/kinsoku tables 256 -> 1024.
 
 2025-02-02  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
