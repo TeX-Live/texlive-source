@@ -1,4 +1,8 @@
 2025-02-05 Luigi Scarso <luigi.scarso@gmail.com>
+	* fixed shell-escape bypass (thanks to tex@maxchernoff.ca)
+
+	
+2025-02-05 Luigi Scarso <luigi.scarso@gmail.com>
 	* add mathemptydisplaymode primitive, 
 	* fix nodes leak in end_graf (thanks to udifoglle@gmail.com)
 
