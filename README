@@ -79,4 +79,4 @@ x86_64-linux,
 x86_64-linuxmusl,
 and others noted above:
   built at https://github.com/TeX-Live/texlive-source/releases.
-  see ./github/scripts/build-tl.sh.
+  see ./github/scripts/build-tl.sh (and workflows/main.yml).
