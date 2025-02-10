@@ -1,6 +1,10 @@
+2025-02-10  Karl Berry  <karl@tug.org>
+
+	* Makefile.am (xmflua.1): new target.
+	(xmans): add xmflua.1.
+
 2022-03-08  Karl Berry  <karl@freefriends.org>
 
-	* 
 	* e2pall.1,
 	* fmtutil.cnf.5,
 	* fontinst.1,

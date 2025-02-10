@@ -13,7 +13,7 @@ build and install them together with some of their support files.
 6.1 Build system tools
 ======================
 
-As mentioned above (*note Prerequisites::), a normal build has few
+As mentioned above (see Prerequisites), a normal build has few
 requirements.  On the other hand, if you want to modify the TeX Live
 infrastructure sources, such as 'configure.ac' or 'Makefile.am' files,
 you will need to have several additional tools installed.
@@ -28,12 +28,12 @@ many extra hassles, so don't do that, tempting as it may be.
    Currently the versions we use are:
 
      autoconf (GNU Autoconf) 2.72
-     automake (GNU automake) 1.16.5
+     automake (GNU automake) 1.17
      bison (GNU Bison) 3.8.2
      flex 2.6.0
-     ltmain.sh (GNU libtool) 2.4.7
+     ltmain.sh (GNU libtool) 2.5.4
      m4 (GNU M4) 1.4.19
-     makeinfo (GNU texinfo) 7.1
+     makeinfo (GNU texinfo) 7.2
 
    These versions should be used to update the generated files (e.g.,
 'configure' or 'Makefile.in') in all or parts of the TL tree after their
@@ -62,8 +62,8 @@ also be necessary to 'touch' first 'aclocal.m4', then 'configure' and
 Here is a brief description of the top-level directories in the TeX Live
 source tree.
 
-   As mentioned at the beginning of *note Overview of build system::,
-the main source directories are 'texk/' (TeX-specific programs and
+   As mentioned at the beginning of see Overview of build system, the
+main source directories are 'texk/' (TeX-specific programs and
 libraries), 'utils/' (additional programs), and 'libs/' (generic
 libraries).
 
@@ -105,8 +105,8 @@ Here we describe a few of the Autoconf macros used in several
 modules--many more are defined in the sources; see the top-level 'm4/'
 directory.  These general macros are supplemented by module-specific
 macros in directories such as 'texk/dvipng/m4/'; some of those are
-described in following sections (*note Library modules:: and *note
-Program modules::).
+described in following sections (see Library modules and Program
+modules).
 
 6.3.1 General setup macros
 --------------------------
@@ -169,9 +169,10 @@ Macros for compiler-related checks:
  -- Macro: KPSE_COMPILER_VISIBILITY
      When using the C or C++ compiler, try to set
      'VISIBILITY_C[XX]FLAGS' to flags to hide external symbols.  Call
-     'AC_SUBST' for this variable.  At present this only tests for the
-     compiler option '-fvisibility=hidden', but could be extended if
-     necessary.
+     'AC_SUBST' for this variable.  This tests for the compiler option
+     '-fvisibility=hidden' and, except for C,
+     '-fvisibility-inlines-hidden'.  Reports or patches for additional
+     tests are welcome.
 
      This macro caches its results in the 'kpse_cv_visibility_cflags' or
      'kpse_cv_visibility_cxxflags' variable.
@@ -265,7 +266,7 @@ due to the lack of symbolic links.
      'WIN32_WRAP' ('true' if the standard Windows wrapper
      ('texk/texlive/windows_wrapper/runscript.exe') exists.  This
      wrapper is used on Windows instead of symlinks for the "linked
-     scripts" (*note Linked scripts::).
+     scripts" (see Linked scripts).
 
  -- Macro: KPSE_WIN32_CALL
      Call 'KPSE_COND_WIN32' and check if the file
@@ -361,14 +362,14 @@ system provided by upstream (possibly patched).
 -----------------------------------------------
 
 This is one of the TeX-specific libraries that are maintained as part of
-TeX Live (*note (kpathsea)::); the other is 'ptexenc'.  These TeX
-libraries are Libtool libraries (static and/or shared) and are installed
-by 'make install' together with the programs.  They are, however, not
-part of the TL DVD as distributed by TeX user groups, and have never
-been officially released for standalone use.
+TeX Live (see (kpathsea)); the other is 'ptexenc'.  These TeX libraries
+are Libtool libraries (static and/or shared) and are installed by 'make
+install' together with the programs.  They are, however, not part of the
+TL DVD as distributed by TeX user groups, and have never been officially
+released for standalone use.
 
-   It is possible, and probably useful for distro builds (*note Distro
-builds::), to specify the configure option '--with-system-kpathsea' in
+   It is possible, and probably useful for distro builds (see Distro
+builds), to specify the configure option '--with-system-kpathsea' in
 order to use a system version of the library.  Programs outside the TL
 tree should use 'pkg-config' for the required flags.
 
@@ -385,8 +386,8 @@ override this default.
 6.5 Program modules
 ===================
 
-As with libraries (*note Library modules::), here we discuss the details
-for a few of the programs in TL.
+As with libraries (see Library modules), here we discuss the details for
+a few of the programs in TL.
 
 6.5.1 The 't1utils' package in 'utils/t1utils'
 ----------------------------------------------
@@ -542,8 +543,8 @@ new TL source directory ('texk/newprog' or 'utils/newprog'):
      Record all TL-specific changes, now and in the future.
 
    After populating the new TL source directory ('.../newprog/', in the
-above), run GNU 'autoreconf' there (*note Build system tools::).  Once
-that works, if you are the one who's eventually going to commit the new
+above), run GNU 'autoreconf' there (see Build system tools).  Once that
+works, if you are the one who's eventually going to commit the new
 package, 'svn add' the necessary files, including the generated
 'Makefile.in aclocal.m4 configure', and 'svn:ignore' the Automake cache
 'autom4te.cache'.  (This is so people checking out the TL source tree do
@@ -600,8 +601,8 @@ requirements, so existing examples will only take you so far.
 fragment inserted with an Automake 'include'.  This means that, for
 instance, '$(srcdir)' is '.../web2c', not '.../webdir/enginedir'.  It is
 a difficult setup to come to terms with, but the alternative is to
-recurse into each engine subdirectory, and that would be far worse
-(*note (automake)Directories::).
+recurse into each engine subdirectory, and that would be far worse (see
+(automake)Directories).
 
 6.6.3 Adding a new generic library module
 -----------------------------------------

@@ -660,8 +660,11 @@ Don't try to run the @code{--help} message through @code{perldoc}.
 @item @code{TL_DOWNLOAD_ARGS}
 @anchor{install-tl @code{TL_DOWNLOAD_ARGS}}
 
-These override the normal choice of a download program; see the @code{tlmgr}
-documentation, e.g.,
+@item @code{TEXLIVE_PREFER_OWN}
+@anchor{install-tl @code{TEXLIVE_PREFER_OWN}}
+
+These override the normal choice of the download and other utility
+programs; see the @code{tlmgr} documentation, e.g.,
 @url{https://tug.org/texlive/doc/tlmgr.html#ENVIRONMENT-VARIABLES}.
 
 @item @code{TEXLIVE_INSTALL_ENV_NOCHECK}
@@ -803,5 +806,5 @@ This script and its documentation were written for the TeX Live
 distribution (@url{https://tug.org/texlive}) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: install-tl 69711 2024-02-05 17:23:27Z karl $
+$Id: install-tl 73024 2024-12-03 17:12:38Z karl $
 

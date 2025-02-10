@@ -19,8 +19,8 @@ Python.
    * A C++11 compiler is similarly required because of the third-party
      libraries ICU and HarfBuzz (at least); the program 'dvisvgm' also
      requires C++11.  It is possible to build what remains with older
-     compilers, but you have to remove the C++11-dependent sources.
-     *Note Build one package::.
+     compilers, but you have to remove the C++11-dependent sources.  See
+     Build one package.
 
    * Python is required by ICU tests.  (If you know how to disable these
      tests and thus eliminate the requirement, please write.)
@@ -63,14 +63,13 @@ expect:
      GNU Autoconf, GNU Automake, and GNU Libtool to update the generated
      files.  Furthermore, to reliably reproduce the build files, the
      original GNU releases of these tools must be used, not any distro
-     packaging of them.  *Note Build system tools::, for more
-     discussion.
+     packaging of them.  See Build system tools, for more discussion.
 
    If you haven't modified any source files, and infrastructure tools
 such as 'autoconf' or 'makeinfo' are still being run, check your
 timestamps--notably, 'use-commit-times' must be set to 'yes' in your
-Subversion configuration (*note Build system tools::).  No
-infrastructure tools are needed to do a normal build (barring bugs).
+Subversion configuration (see Build system tools).  No infrastructure
+tools are needed to do a normal build (barring bugs).
 
    ---------- Footnotes ----------
 

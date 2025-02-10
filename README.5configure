@@ -20,8 +20,8 @@ variables, but for TeX Live it is better to specify them as assignments
 on the command line.
 
    The './Build' script used to make the binaries shipped with TeX Live
-invokes the top-level 'configure' with a few additional options (*note
-Building::).  The defaults discussed below are those for the actual
+invokes the top-level 'configure' with a few additional options (see
+Building).  The defaults discussed below are those for the actual
 'configure' script; invoking 'configure' via './Build' yields different
 results.
 
@@ -43,8 +43,8 @@ by the TeX user groups.  This requires GNU 'make' and implies
 are explicitly disabled), and enforces '--disable-shared'.
 
    If building TL for a GNU/Linux or other distribution, this should be
-disabled and system versions of most libraries should be used (*note
-Distro builds::).
+disabled and system versions of most libraries should be used (see
+Distro builds).
 
    A related option, '--enable-texlive-build', is automatically passed
 to all subdirectories (and cannot be disabled).  Subdirectories that can
@@ -56,11 +56,11 @@ TL-specific adaptations, such as installation paths.
 ---------------------------------
 
 These standard Autoconf options specify various installation directories
-as usual.  For the complete list, *note Installation directories::.
+as usual.  For the complete list, see Installation directories.
 
    Also as usual, all values are prefixed by the value of 'DESTDIR', if
-set, on the 'make' command line (*note Installation in a temporary
-location: (automake)Staged Installs.).
+set, on the 'make' command line (see Installation in a temporary
+location: (automake)Staged Installs).
 
 7.1.3 '--disable-largefile'
 ---------------------------
@@ -95,16 +95,16 @@ At present, these warning flags assume options from the GNU compilers.
 
 If enabled (as it is for the native TL build), when using 'g++', try to
 statically link with 'libstdc++', thus improving portability of the
-resulting binary.  *Note Macros for compilers::.
+resulting binary.  See Macros for compilers.
 
 7.1.7 '--enable-maintainer-mode'
 --------------------------------
 
 Enable 'make' rules and dependencies not useful (and sometimes
 confusing) to the casual user.  This requires current versions of the
-GNU build tools (*note Build system tools::), as it automatically
-rebuilds infrastructure files as needed.  *Note 'missing' and
-'AM_MAINTAINER_MODE': (automake)maintainer-mode.
+GNU build tools (see Build system tools), as it automatically rebuilds
+infrastructure files as needed.  See 'missing' and 'AM_MAINTAINER_MODE':
+(automake)maintainer-mode.
 
 7.1.8 '--enable-multiplatform'
 ------------------------------
@@ -161,7 +161,7 @@ enabled.  This is useful when one wants to work on only a single
 program, which is specified with an additional '--enable' option, e.g.,
 '--enable-dvipdfm-x'.  It's still simplest to check out and configure
 the whole source tree, but at least only the program you are interested
-in, and its dependencies, are built.  *Note Build one package::.
+in, and its dependencies, are built.  See Build one package.
 
    Without this option, all modules are built except those that are
 explicitly disabled or specify 'disable' in their 'ac/withenable.ac'
@@ -280,8 +280,8 @@ Specify non-standard locations of the Ghostscript headers and library.
 ------------------------------------------
 
 '--disable-linked-scripts'
-Do not install the "linked scripts" (*note Linked scripts::), except for
-the TL scripts required to run 'texlinks'.
+Do not install the "linked scripts" (see Linked scripts), except for the
+TL scripts required to run 'texlinks'.
 
 7.2.8 Configure options for 'texk/xdvik'
 ----------------------------------------
@@ -358,7 +358,7 @@ is one of:
      (TFM file)
 
 to generate the specified type of file dynamically.  The default can be
-overridden by the user in any case (*note kpathsea library::).
+overridden by the user in any case (see kpathsea library).
 
 7.4 Variables for configure
 ===========================
@@ -372,7 +372,7 @@ but that might not work for cross compilations.
 'CPPFLAGS'
      And plenty more.  As usual with Autoconf, these variables specify
      the name (or full path) of compilers, preprocessor flags, and
-     similar.  *Note (autoconf)Preset Output Variables::.
+     similar.  See (autoconf)Preset Output Variables.
 
 'CLISP'
      Name (or full path) of the 'clisp' executable, used to build

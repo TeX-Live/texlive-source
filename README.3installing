@@ -16,14 +16,15 @@ the source tree.
 not present in the TL source tree.  The best basis for dealing with them
 is the TeX Live (plain text) database in 'Master/tlpkg/texlive.tlpdb',
 and/or the TeX Live installer, 'install-tl'.  More information is under
-'Master/tlpkg' and at <https://tug.org/texlive/distro.html>.
+'Master/tlpkg' and at <https://tug.org/texlive/distro.html> and
+<https://tug.org/texlive/build.html#deploy>.
 
 5.1 Installation directories
 ============================
 
 Running 'make install' (or 'make install-strip') installs executables in
 'BINDIR', libraries in 'LIBDIR', headers in 'INCLUDEDIR', general data
-(including "linked scripts", *note Linked scripts::) in
+(including "linked scripts", see Linked scripts) in
 'DATAROOTDIR/texmf-dist', man pages in 'MANDIR', and Info files in
 'INFODIR'.
 
@@ -63,30 +64,57 @@ in './inst/' are ignored.
 5.2 Linked scripts
 ==================
 
-Quite a few executables are architecture-independent shell, Perl, or
-other interpreted scripts, rather than compiled binaries.  A few are
-maintained as part of the TL source tree, but most are maintained
-elsewhere with copies under 'texk/texlive/linked_scripts'.
+Quite a few of the executables in TeX Live are architecture-independent
+shell, Perl, or other interpreted scripts, rather than compiled
+binaries.  A few are maintained as part of the TL source tree, but most
+are maintained independently in their own packages, with copies under
+'texk/texlive/linked_scripts'.
 
    These so-called "linked scripts" are installed under
 'DATAROOTDIR/texmf-dist/scripts'; for Unix-like systems a symbolic link
-is made in 'BINDIR'.  For example, a symlink points from 'BINDIR/ps2eps'
-to 'DATAROOTDIR/texmf-dist/scripts/ps2eps/ps2eps.pl'.  For Windows, a
-standard wrapper binary (copied to, e.g., 'BINDIR/ps2eps.exe') serves
-the same purpose.  The source for the wrapper is in
-'texk/texlive/windows_wrapper'.
+is made in 'BINDIR'.  For example, a symlink points from
+'BINDIR/fmtutil' to 'DATAROOTDIR/texmf-dist/scripts/texlive/fmtutil.pl'.
+The symlink is relative, so the installation root can be anywhere.
 
-   One reason for this is to avoid having many copies of the same
+   For Windows, we cannot portably use symlinks, so a standard wrapper
+binary (copied to, e.g., 'BINDIR/fmtutil.exe') serves the same purpose
+(the source for the wrapper is in 'texk/texlive/windows_wrapper').
+
+   One reason for all this is to avoid having many copies of the same
 script; a more important reason is that it guarantees the scripts will
 stay in sync across the different supported operating systems.
 
-   Most important of all, we want the 'BINDIR' resulting from the build
-to be as close as possible to what is in the TL distribution.  At
-present, there are a few exceptions--Asymptote, Biber, Xindy--and each
-one creates considerable extra work.  We don't want to add more.  (See
+   Most important of all, we want the 'BINDIR' resulting from 'make
+install' in the TL source tree to be as close as possible to what's in
+thej TL distribution.  At present, there are a few
+exceptions--Asymptote, Biber, Xindy--and each one creates considerable
+extra work.  We don't want to add more.  (See
 <https://tug.org/texlive/build.html> for information about building
 those exceptions, as well as the 'xz' and 'wget' programs that are used
 in the TL infrastructure.)
+
+   As part of the 'make install' in the 'linked_scripts' directory, a
+file 'scripts-targets.lst' is created to record all the links that are
+created this way, so that distros and others can reproduce them.  The
+file has one line per link.  The first word is the target of the link
+(e.g., 'texmf-dist/scripts/texlive/fmtutil.pl'), and the second word is
+the name of the link to be placed in the bindir (e.g., 'fmtutil').
+Determining the relative link target (how many '../'s) is left to the
+users of this file, since it varies among distributions.  It can be
+assumed there is no whitespace in these filenames.
+
+   A few links are within bindir; in that case, the first word of the
+line is just a base name, e.g., the file 'fmtutil mktexfmt' means that
+doing the equivalent of 'ln -s fmtutil mktexfmt' in the bindir.
+
+   Be aware that although extensions are usually stripped (as with
+'fmtutil'), there are exceptions, such as 'memoize-extract.pl' and
+'listings-ext.sh'.
+
+   The 'scripts-targets.lst' file started being created as of the
+TeX Live 2025 release.  Historically, another file 'scripts.lst' has
+been (and still is) created, containing only the link targets, and using
+a Bourne shell syntax.
 
 5.3 Distro builds
 =================
@@ -139,10 +167,10 @@ find most relevant:
 '--libdir=\${exec_prefix}/lib64'
      May be needed for 64-bit bi-architecture (GNU/Linux) systems.
 
-   You will need to take care of the support files mentioned above
-(*note Installing::), and many other issues, such as font maps,
-languages, and formats, independently of the build.  Norbert Preining
-has written a detailed article on adapting TL for distros:
+   You will need to take care of the support files mentioned above (see
+Installing), and many other issues, such as font maps, languages, and
+formats, independently of the build.  Norbert Preining has written a
+detailed article on adapting TL for distros:
 <https://tug.org/TUGboat/tb34-3/tb108preining-distro.pdf>.  (If the
 article needs updating in the future, perhaps we will merge it into this
 document.)

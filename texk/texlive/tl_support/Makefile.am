@@ -56,8 +56,8 @@ dist_web2c_DATA = fmtutil.cnf
 ## since we don't want to require help2man for an install.  Leave that
 ## to be done by hand (see tlpkg/doc/releng.txt).
 EXTRA_DIST = updmap.help2man fmtutil.help2man
-.PHONY: xmans xupdmap.1 xfmtutil.1
-xmans: xupdmap.1 xfmtutil.1
+.PHONY: xmans xupdmap.1 xfmtutil.1 xmflua.1
+xmans: xupdmap.1 xfmtutil.1 xmflua.1
 Master_dir = $(top_srcdir)/../../../../Master
 tl_scripts_dir = $(Master_dir)/texmf-dist/scripts/texlive
 #
@@ -69,6 +69,11 @@ xupdmap.1: updmap.help2man $(tl_scripts_dir)/updmap.pl
 xfmtutil.1: fmtutil.help2man $(tl_scripts_dir)/fmtutil.pl
 	help2man --include=$< --source="TeX Live" --no-info \
 	  $(tl_scripts_dir)/fmtutil.pl >/tmp/$@
+	groff -mandoc -Thtml /tmp/$@ >/tmp/$@.html
+#
+xmflua.1:
+	help2man --source="TeX Live" --no-info \
+	  mflua >/tmp/$@
 	groff -mandoc -Thtml /tmp/$@ >/tmp/$@.html
 
 ## 

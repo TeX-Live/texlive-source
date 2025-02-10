@@ -418,8 +418,8 @@ name and in package descriptions, as complete words, and in filenames,
 as any substring, and outputs bug-reporting and other information for
 the package selected from the results.
 
-The search is equivalent to @code{tlmgr search --word --file @emph{search-string}.
-Thus, @emph{search-string} is interpreted as a (Perl) regular expression.}
+The search is equivalent to @code{tlmgr search --word --file} @emph{search-string}.
+Thus, @emph{search-string} is interpreted as a (Perl) regular expression.
 
 @node tlmgr candidates @emph{pkg}
 @appendixsubsec candidates @emph{pkg}
@@ -586,7 +586,7 @@ Dump the remote TLPDB.
 @anchor{tlmgr @strong{@asis{}-@asis{}-@asis{}json}}
 
 Instead of dumping the actual content, the database is dumped as
-JSON. For the format of JSON output see @code{tlpkg/doc/JSON-formats.txt},
+JSON. For the format of JSON output see @code{tlpkg/doc/json-formats.txt},
 format definition @code{TLPDB}.
 
 @end table
@@ -625,7 +625,7 @@ Line endings may be either LF or CRLF depending on the current platform.
 
 The @code{generate} action overwrites any manual changes made in the
 respective files: it recreates them from scratch based on the
-information of the installed packages, plus local adaptions.
+information of the installed packages, plus local adaptations.
 The TeX Live installer and @code{tlmgr} routinely call @code{generate} for
 all of these files.
 
@@ -789,6 +789,13 @@ files is also shown, including those for platform-specific dependencies.
 When given with schemes and collections, @code{--list} outputs their
 dependencies in a similar way.
 
+@item @strong{@asis{}-@asis{}-@asis{}only-files}
+@anchor{tlmgr @strong{@asis{}-@asis{}-@asis{}only-files}}
+
+If this option is given, only the files for a given package are listed,
+no further information. If more than one package name is given, each
+file list is preceded by the package name.
+
 @item @strong{@asis{}-@asis{}-@asis{}only-installed}
 @anchor{tlmgr @strong{@asis{}-@asis{}-@asis{}only-installed}}
 
@@ -832,11 +839,11 @@ page for new packages: @url{https://ctan.org/upload}.
 @item @strong{@asis{}-@asis{}-@asis{}json}
 @anchor{tlmgr @strong{@asis{}-@asis{}-@asis{}json} 1}
 
-In case @code{--json} is specified, the output is a JSON encoded array where
-each array element is the JSON representation of a single @code{TLPOBJ} but
-with additional information. For details see
-@code{tlpkg/doc/JSON-formats.txt}, format definition: @code{TLPOBJINFO}. If both
-@code{--json} and @code{--data} are given, @code{--json} takes precedence.
+If @code{--json} is specified, the output is a JSON encoded array where each
+array element is the JSON representation of a single @code{TLPOBJ} but with
+additional information. For details see @code{tlpkg/doc/json-formats.txt},
+format definition: @code{TLPOBJINFO}. If both @code{--json} and @code{--data} are
+given, @code{--json} takes precedence.
 
 @end table
 
@@ -989,7 +996,7 @@ synonym).
 Both @code{show...} forms take an option @code{--json}, which dumps the option
 information in JSON format.  In this case, both forms dump the same
 data. For the format of the JSON output see
-@code{tlpkg/doc/JSON-formats.txt}, format definition @code{TLOPTION}.
+@code{tlpkg/doc/json-formats.txt}, format definition @code{TLOPTION}.
 
 In the third form, with @emph{key}, if @emph{value} is not given, the setting
 for @emph{key} is displayed.  If @emph{value} is present, @emph{key} is set to
@@ -1075,7 +1082,7 @@ The last three options affect behavior on Windows installations.  If
 @code{desktop_integration} is set, then some packages will install items in
 a sub-folder of the Start menu for @code{tlmgr gui}, documentation, etc.  If
 @code{fileassocs} is set, Windows file associations are made (see also the
-@code{postaction} action).  Finally, if @code{multiuser} is set, then adaptions
+@code{postaction} action).  Finally, if @code{multiuser} is set, then changes
 to the registry and the menus are done for all users on the system
 instead of only the current user.  All three options are on by default.
 
@@ -1114,7 +1121,7 @@ sizes for that program.  The first size shown is the default.
 
 If @code{--json} is specified without other options, the paper setup is
 dumped in JSON format. For the format of JSON output see
-@code{tlpkg/doc/JSON-formats.txt}, format definition @code{TLPAPER}.
+@code{tlpkg/doc/json-formats.txt}, format definition @code{TLPAPER}.
 
 Incidentally, this syntax of having a specific program name before the
 @code{paper} keyword is unusual.  It is inherited from the longstanding
@@ -1380,7 +1387,9 @@ package with a symlink in a system directory.
 @item @strong{repository status}
 @anchor{tlmgr @strong{repository status}}
 
-This action manages the list of repositories.  See @ref{,,, MULTIPLE_REPOSITORIES} below for detailed explanations.
+This action manages the list of repositories.  See @url{https://metacpan.org/pod/MULTIPLE
+REPOSITORIES, MULTIPLE
+REPOSITORIES} below for detailed explanations.
 
 The first form, @code{repository list}, lists all configured repositories
 and the respective tags if set. If a path, url, or tag is given after
@@ -1478,10 +1487,11 @@ Don't ask questions.
 @item @strong{@asis{}-@asis{}-@asis{}json}
 @anchor{tlmgr @strong{@asis{}-@asis{}-@asis{}json} 2}
 
-When listing backups, the option @code{--json} turn on JSON output.
-The format is an array of JSON objects (@code{name}, @code{rev}, @code{date}).
-For details see @code{tlpkg/doc/JSON-formats.txt}, format definition: @code{TLBACKUPS}.
-If both @code{--json} and @code{--data} are given, @code{--json} takes precedence.
+When listing backups, the option @code{--json} writes JSON output. The
+format is an array of JSON objects (@code{name}, @code{rev}, @code{date}). For
+details see @code{tlpkg/doc/json-formats.txt}, format definition:
+@code{TLBACKUPS}. If both @code{--json} and @code{--data} are given, @code{--json} takes
+precedence.
 
 @end table
 
@@ -1530,6 +1540,13 @@ Restrict the search of package names and descriptions (but not
 filenames) to match only full words.  For example, searching for
 @code{table} with this option will not output packages containing the word
 @code{tables} (unless they also contain the word @code{table} on its own).
+
+@item @strong{@asis{}-@asis{}-@asis{}json}
+@anchor{tlmgr @strong{@asis{}-@asis{}-@asis{}json} 3}
+
+Output search results as a JSON hash with two keys: @strong{files} and
+@strong{packages}. For the format of the JSON output see
+@code{tlpkg/doc/json-formats.txt}, format definition @code{TLSEARCH}.
 
 @end table
 
@@ -2700,18 +2717,5 @@ This script and its documentation were written for the TeX Live
 distribution (@url{https://tug.org/texlive}) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 70001 2024-02-19 23:17:07Z karl $
-
-@node tlmgr POD ERRORS
-@appendixsec POD ERRORS
-
-Hey! @strong{The above document had some coding errors, which are explained below:}
-
-@table @asis
-@item Around line 8454:
-@anchor{tlmgr Around line 8454@asis{:}}
-
-Unterminated C<...> sequence
-
-@end table
+$Id: tlmgr.pl 73493 2025-01-17 22:28:29Z karl $
 

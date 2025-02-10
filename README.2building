@@ -61,21 +61,26 @@ configure cache file, i.e., specifying the 'configure' option '-C'
 4.3 Build distribution
 ======================
 
-Running 'make dist' at the top level creates a tarball
-'tex-live-YYYY-MM-DD.tar.xz' from the TL source tree.  Running 'make
-distcheck' also verifies that this tarball suffices to build and install
-all of TL.
+Running 'make dist' or related targets at the top level outputs an error
+message and fails.  We no longer try to keep 'make dist' working,
+although it could be restored if there is some use for it.
 
-   This is useful for checking consistency of the source tree and
-Makefiles, but the result is not a complete or even usable TeX system,
-since all the support files are lacking; *note Installing::.  We do not
-actually distribute any such tarball, and have no plans to do so.
+   The 'dist' target used to create a tarball
+'tex-live-YYYY-MM-DD.tar.xz' from the TL source tree, and 'distcheck'
+also verifies that this tarball suffices to build and install all of TL.
+
+   However, the result was not a complete or even usable TeX system,
+since all the support files are lacking.  We do not actually distribute
+any such tarball, and have no plans to do so.
+
+   See Installing, for more information on what to do with the results
+of a build.
 
 4.4 Build one package
 =====================
 
 To build one package, the basic idea is to use the 'configure' option
-'--disable-all-pkgs' (*note --disable-all-pkgs::).  Then all program and
+'--disable-all-pkgs' (see --disable-all-pkgs).  Then all program and
 library modules are configured but none are made.  However, the
 'Makefile's still contain all build rules and dependencies and can be
 invoked to build an individual program or library, first building any
@@ -164,9 +169,9 @@ for them does not suffice.  It's also necessary to specify
 
    Also, even with '--disable-all-pkgs', dependencies are (currently)
 checked.  One notable case: if a (non-MacOS) system does not have
-'fontconfig', XeTeX cannot be built (*note Prerequisites::), and
-'configure' will terminate even with '--disable-xetex'.  To proceed
-without such dependencies, specify '--enable-missing' also.
+'fontconfig', XeTeX cannot be built (see Prerequisites), and 'configure'
+will terminate even with '--disable-xetex'.  To proceed without such
+dependencies, specify '--enable-missing' also.
 
    As of 2022, HarfBuzz also requires C++11.  Therefore even more would
 have to be disabled and removed, notably including 'luahbtex', the
@@ -185,7 +190,7 @@ option(s).
 ====================
 
 Unfortunately, there is one common case where the steps in the preceding
-section to build one package (*note Build one package::) do not suffice:
+section to build one package (see Build one package) do not suffice:
 wanting to build one, or a subset, of the TeX engines (or other Web2c
 programs).
 
@@ -261,7 +266,7 @@ cross", technically this is not cross compilation at all.  In most such
 cases it suffices to specify suitable compiler flags.  It might be
 useful to add the configure option '--build=HOST' to get the correct
 canonical host name, but note that this should _not_ be '--host=HOST'
-(*note (autoconf)Hosts and Cross-Compilation::).
+(see (autoconf)Hosts and Cross-Compilation).
 
    In order to build, e.g., 32-bit binaries with 'clang' on a 64-bit
 MacOS system one could use:
