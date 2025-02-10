@@ -1,4 +1,4 @@
-% language=uk engine=luatex
+% language=us engine=luatex runpath=texruns:manuals/luatex
 
 \environment luatex-style
 
@@ -901,6 +901,28 @@ so called init and select discretionaries.
     \NC \ligmodefont \discretionaryligaturemode0 \hsize1pt xxffixx
     \NC \ligmodefont \discretionaryligaturemode1 \hsize1pt xxffixx
     \NC \ligmodefont \discretionaryligaturemode2 \hsize1pt xxffixx \NC \NR
+    \LL
+\stoptabulate
+
+\stopsubsection
+
+\startsubsection[title={\type {\tracinglostchars}}]
+
+This tracer reports missing characters. By design we delay this till the backend
+included them, when math typesetting needs them, or when a virtual font is
+created (1, 2, 3). Per request of the \LATEX\ team we have two extra options that
+report in an earlier stage i.e.\ when the glyphs are packaged or processed during
+line breaking (4 and 5).
+
+\starttabulate[|r|l|]
+    \DB     \BC effect \NC \NR
+    \TB
+    \NC 0   \NC nothing \NC \NR
+    \NC 1   \NC warning only to log file \NC \NR
+    \NC 2   \NC warning and force terminal \NC \NR
+    \NC 3   \NC error \NC \NR
+    \NC 4   \NC early warning (and force terminal) \NC \NR
+    \NC > 4 \NC early error \NC \NR
     \LL
 \stoptabulate
 
