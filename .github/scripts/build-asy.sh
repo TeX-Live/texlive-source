@@ -71,6 +71,7 @@ esac
 find . -name \*.info -exec touch '{}' \;
 touch ./utils/asymptote/camp.tab.cc
 touch ./utils/asymptote/camp.tab.h
+touch ./configure ./Makefile.in
 
 cd utils/asymptote
 ./configure --prefix=/tmp/asyinst --enable-static --enable-texlive-build \
