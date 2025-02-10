@@ -15,6 +15,9 @@ See also */NEWS, */ChangeLog, etc.
   message, instead of (unhandled) arithmetic overflow or silent changing
   of the user's value.
 
+* Relevant formats: generate PDF 1.7 by default, not 1.5. (No change in
+  the binaries; done in the .ini files and dvipdfmx.cfg.)
+
 * mf: remove incorrect change of long standing in the Web2c mf.ch file,
   which affects calculation of a few pen polygons in a small way; we don't
   know if any extant fonts are impacted.
