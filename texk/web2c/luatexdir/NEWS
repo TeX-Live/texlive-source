@@ -12,6 +12,9 @@ LuaTeX 1.21.0 2025-02-13
   If \ignoreprimitiveerror=1, the error
   "Infinite glue shrinkage found in box being split" that occurs
   when vsplit-ting a box containing infinite negative glue is turned into a warning.
+- If \tracinglostchars=4, warn about missing characters when glyphs are
+  processed, instead of waiting until some typesetting needs them.
+  If \tracinglostchars=5, make that "early" diagnostic an error.
 - In output_name_tree, sort_dest_names now compares
   literal strings or hexdecimal strings.
 - Increment tally in tprint also when doterm is true 
