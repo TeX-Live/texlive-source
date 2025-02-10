@@ -1,24 +1,27 @@
 This file records noteworthy changes.  (Public domain.)
 See also */NEWS, */ChangeLog, etc.
 
-* Most engines: if TeX exits due to the -halt-on-error option,
-write the help message to the log file, as happens without -halt-on-error.
-
-* mf: remove incorrect change of long standing in the Web2c mf.ch file,
-which affects calculation of a few pen polygons in a small way; we don't
-know if any extant fonts are impacted.
-
 
 2025 (for TeX Live 2025)
-* For all engines: scaling fonts to >= 2048pt now results in an error
+* Most engines: new primitive parameter \ignoreprimitiveerror: if set to 1,
+  the error "Infinite glue shrinkage found in box being split"
+  becomes a warning (thus program exit status remains 0). Other values
+  are reserved for future use.
+
+* Most engines: if TeX exits due to the -halt-on-error option,
+  write the help message to the log file, as happens without -halt-on-error.
+
+* Most engines: scaling fonts to >= 2048pt now results in an error
   message, instead of (unhandled) arithmetic overflow or silent changing
   of the user's value.
 
-* (e)uptex: support combining characters with multiple codepoints,
-  Unicode latin characters and 16bit OFM Level-0 with
-  new kcatcodes (modifier(20), latin_ucs(14)).
+* mf: remove incorrect change of long standing in the Web2c mf.ch file,
+  which affects calculation of a few pen polygons in a small way; we don't
+  know if any extant fonts are impacted.
 
-* euptex: new primitive \ignoreprimitiveerror as in pdfTeX and XeTeX.
+* (e)uptex: support combining characters with multiple codepoints,
+  Unicode Latin characters and 16-bit OFM Level-0 with
+  new kcatcodes: modifier(20), latin_ucs(14).
 
 
 2024 (for TeX Live 2024, 10 March 2024)

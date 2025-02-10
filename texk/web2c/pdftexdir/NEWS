@@ -4,16 +4,20 @@ pdfTeX 3.141592653-2.6-1.40.27 (TeX Live 2025)
     if \pdfmajorversion >= 2, PTEX.Fullbanner and other dictionary
     entry names use _ instead of ., as in "PTEX_Fullbanner".
   - new primitive \ignoreprimitiveerror, enabled with -etex: if set
-    to 1, the error "Infinite glue shrinkage" becomes a warning
-    (exit status remains 0). Other values reserved for future use.
+    to 1, the error "Infinite glue shrinkage found in box being split"
+    becomes a warning (thus program exit status remains 0). Other values
+    are reserved for future use. (cross-engine)
+  - if TeX exits due to the -halt-on-error option, write the help
+    message to the log file, as happens without -halt-on-error. (cross-engine)
+
 - bugfixes:
   - don't omit real spaces just because the font changes.
   - increase tolerance for detecting interword spaces in overfull lines.
   - ignore tiny resolutions like 1x1 embedded in images instead of
     exceeding \maxdimen.
-  - scaling fonts to >= 2048pt now results in an error
-    message, instead of (unhandled) arithmetic overflow or silent changing
-    of the user's value.
+  - scaling fonts to >= 2048pt now results in an error message, instead
+    of (unhandled) arithmetic overflow or silent changing of the user's
+    value. (cross-engine)
 
 -----------------------------------------------------------------------------
 pdfTeX 3.141592653-2.6-1.40.26 (TeX Live 2024) (March 10, 2024)

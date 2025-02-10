@@ -1,15 +1,13 @@
-
 This file is public domain.
 
 ----------------------------------------------------------------------
-What is new in MetaPost version 2.11:
+What is new in MetaPost version 2.11 (2025):
 ----------------------------------------------------------------------
-* Maintenance release, with several bug fixes.
-
-
+* Maintenance release, with several bug fixes, including some cases
+  where -0.0 was different from 0.0; see ChangeLog.
 
 ----------------------------------------------------------------------
-What is new in MetaPost version 2.10:
+What is new in MetaPost version 2.10 (2024):
 ----------------------------------------------------------------------
 * New interval number system based on MPFI. The implementation is somewhat experimental,
   given the "unusual" nature of interval arithmetic. 
@@ -17,12 +15,10 @@ What is new in MetaPost version 2.10:
   (on which MPFI is based).
 * Several bug fixes.
 
-
 ----------------------------------------------------------------------
 What is new in MetaPost version 2.01:
 ----------------------------------------------------------------------
 * It's a version needed to mark the patch mpx_copy_mpto.
-
 
 ----------------------------------------------------------------------
 What is new in MetaPost version 2.0rc2:
