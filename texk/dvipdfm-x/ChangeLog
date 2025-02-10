@@ -1,3 +1,8 @@
+2025-02-10  Karl Berry  <karl@tug.org>
+
+	* data/dvipdfmx.cfg (V): now generate PDF 1.7 by default.
+	* tests/dvipdfmx.cfg: likewise.
+
 2025-02-05  Clerk Ma  <maqiyuan130324@vip.qq.com>
 
 	* epdf.c: Fix page's opacity.
