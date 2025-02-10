@@ -1,4 +1,3 @@
-## $Id$
 ## Proxy Makefile.am to build LuaJIT for TeX Live.
 ##
 ## Copyright 2017 Karl Berry<tex-live@tug.org>
@@ -38,19 +37,7 @@ dist_libtexluajit_la_SOURCES = \
 nodist_libtexluajit_la_SOURCES = \
 	$(ljlib_sources) \
 	@LUAJIT_TREE@/src/lib_aux.c \
-	@LUAJIT_TREE@/src/lib_base.c \
-	@LUAJIT_TREE@/src/lib_bit.c \
-	@LUAJIT_TREE@/src/lib_buffer.c \
-	@LUAJIT_TREE@/src/lib_debug.c \
-	@LUAJIT_TREE@/src/lib_ffi.c \
 	@LUAJIT_TREE@/src/lib_init.c \
-	@LUAJIT_TREE@/src/lib_io.c \
-	@LUAJIT_TREE@/src/lib_jit.c \
-	@LUAJIT_TREE@/src/lib_math.c \
-	@LUAJIT_TREE@/src/lib_os.c \
-	@LUAJIT_TREE@/src/lib_package.c \
-	@LUAJIT_TREE@/src/lib_string.c \
-	@LUAJIT_TREE@/src/lib_table.c \
 	@LUAJIT_TREE@/src/lj_alloc.c \
 	@LUAJIT_TREE@/src/lj_api.c \
 	@LUAJIT_TREE@/src/lj_asm.c \
@@ -122,14 +109,13 @@ else !PEOBJ
 nodist_libtexluajit_la_SOURCES += lj_vm_asm.S
 endif !PEOBJ
 
+
 ljlib_sources = \
-	lib_aux.c \
 	lib_base.c \
+        lib_buffer.c \
 	lib_bit.c \
-	lib_buffer.c \
 	lib_debug.c \
 	lib_ffi.c \
-	lib_init.c \
 	lib_io.c \
 	lib_jit.c \
 	lib_math.c \
@@ -137,6 +123,7 @@ ljlib_sources = \
 	lib_package.c \
 	lib_string.c \
 	lib_table.c
+
 
 
 $(libtexluajit_la_OBJECTS): $(HDRGEN)

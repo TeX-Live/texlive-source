@@ -4,6 +4,11 @@ LuaTeX 1.21.0 2025-02-13
 
 - LuaJIT 2.1.1736781742
 - New luaffi lib, supporting aarch64
+- \tracinglostchars  has two extra options that
+   report in an earlier stage i.e.\ when the glyphs are packaged or processed during
+   line breaking:
+   \tracinglostchars=4 early warning (and force terminal)
+   \tracinglostchars >4 early error 
 - New primitive \mathemptydisplaymode. By default paragraphs
   before a display equation containing dir nodes are never ignored.
   Changing that could break existing documents, but when you set mathemptydisplaymode
@@ -12,9 +17,6 @@ LuaTeX 1.21.0 2025-02-13
   If \ignoreprimitiveerror=1, the error
   "Infinite glue shrinkage found in box being split" that occurs
   when vsplit-ting a box containing infinite negative glue is turned into a warning.
-- If \tracinglostchars=4, warn about missing characters when glyphs are
-  processed, instead of waiting until some typesetting needs them.
-  If \tracinglostchars=5, make that "early" diagnostic an error.
 - In output_name_tree, sort_dest_names now compares
   literal strings or hexdecimal strings.
 - Increment tally in tprint also when doterm is true 
@@ -22,6 +24,9 @@ LuaTeX 1.21.0 2025-02-13
   we could add a 'maskattr' feature, but one should consider
   to include a correct pdf of the image instead, it's more robust.
 - Handle token combiners in immediate assignments (H.Hagen)
+
+
+
 
 For more details, see ChangeLog.
 

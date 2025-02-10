@@ -150,20 +150,13 @@ am__installdirs = "$(DESTDIR)$(libdir)" "$(DESTDIR)$(pkgconfigdir)" \
 LTLIBRARIES = $(lib_LTLIBRARIES)
 @PEOBJ_TRUE@libtexluajit_la_DEPENDENCIES = lj_vm_obj.lo
 dist_libtexluajit_la_OBJECTS = lbitlib.lo
-am__objects_1 = lib_aux.lo lib_base.lo lib_bit.lo lib_buffer.lo \
-	lib_debug.lo lib_ffi.lo lib_init.lo lib_io.lo lib_jit.lo \
-	lib_math.lo lib_os.lo lib_package.lo lib_string.lo \
-	lib_table.lo
+am__objects_1 = lib_base.lo lib_buffer.lo lib_bit.lo lib_debug.lo \
+	lib_ffi.lo lib_io.lo lib_jit.lo lib_math.lo lib_os.lo \
+	lib_package.lo lib_string.lo lib_table.lo
 am__dirstamp = $(am__leading_dot)dirstamp
 @PEOBJ_FALSE@am__objects_2 = lj_vm_asm.lo
 nodist_libtexluajit_la_OBJECTS = $(am__objects_1) \
-	@LUAJIT_TREE@/src/lib_aux.lo @LUAJIT_TREE@/src/lib_base.lo \
-	@LUAJIT_TREE@/src/lib_bit.lo @LUAJIT_TREE@/src/lib_buffer.lo \
-	@LUAJIT_TREE@/src/lib_debug.lo @LUAJIT_TREE@/src/lib_ffi.lo \
-	@LUAJIT_TREE@/src/lib_init.lo @LUAJIT_TREE@/src/lib_io.lo \
-	@LUAJIT_TREE@/src/lib_jit.lo @LUAJIT_TREE@/src/lib_math.lo \
-	@LUAJIT_TREE@/src/lib_os.lo @LUAJIT_TREE@/src/lib_package.lo \
-	@LUAJIT_TREE@/src/lib_string.lo @LUAJIT_TREE@/src/lib_table.lo \
+	@LUAJIT_TREE@/src/lib_aux.lo @LUAJIT_TREE@/src/lib_init.lo \
 	@LUAJIT_TREE@/src/lj_alloc.lo @LUAJIT_TREE@/src/lj_api.lo \
 	@LUAJIT_TREE@/src/lj_asm.lo @LUAJIT_TREE@/src/lj_assert.lo \
 	@LUAJIT_TREE@/src/lj_bc.lo @LUAJIT_TREE@/src/lj_bcread.lo \
@@ -237,28 +230,15 @@ DEFAULT_INCLUDES = -I.@am__isrc@
 depcomp = $(SHELL) $(top_srcdir)/../../build-aux/depcomp
 am__maybe_remake_depfiles = depfiles
 am__depfiles_remade = ./$(DEPDIR)/jittest-jittest.Po \
-	./$(DEPDIR)/lbitlib.Plo ./$(DEPDIR)/lib_aux.Plo \
-	./$(DEPDIR)/lib_base.Plo ./$(DEPDIR)/lib_bit.Plo \
-	./$(DEPDIR)/lib_buffer.Plo ./$(DEPDIR)/lib_debug.Plo \
-	./$(DEPDIR)/lib_ffi.Plo ./$(DEPDIR)/lib_init.Plo \
+	./$(DEPDIR)/lbitlib.Plo ./$(DEPDIR)/lib_base.Plo \
+	./$(DEPDIR)/lib_bit.Plo ./$(DEPDIR)/lib_buffer.Plo \
+	./$(DEPDIR)/lib_debug.Plo ./$(DEPDIR)/lib_ffi.Plo \
 	./$(DEPDIR)/lib_io.Plo ./$(DEPDIR)/lib_jit.Plo \
 	./$(DEPDIR)/lib_math.Plo ./$(DEPDIR)/lib_os.Plo \
 	./$(DEPDIR)/lib_package.Plo ./$(DEPDIR)/lib_string.Plo \
 	./$(DEPDIR)/lib_table.Plo ./$(DEPDIR)/lj_vm_asm.Plo \
 	@LUAJIT_TREE@/src/$(DEPDIR)/lib_aux.Plo \
-	@LUAJIT_TREE@/src/$(DEPDIR)/lib_base.Plo \
-	@LUAJIT_TREE@/src/$(DEPDIR)/lib_bit.Plo \
-	@LUAJIT_TREE@/src/$(DEPDIR)/lib_buffer.Plo \
-	@LUAJIT_TREE@/src/$(DEPDIR)/lib_debug.Plo \
-	@LUAJIT_TREE@/src/$(DEPDIR)/lib_ffi.Plo \
 	@LUAJIT_TREE@/src/$(DEPDIR)/lib_init.Plo \
-	@LUAJIT_TREE@/src/$(DEPDIR)/lib_io.Plo \
-	@LUAJIT_TREE@/src/$(DEPDIR)/lib_jit.Plo \
-	@LUAJIT_TREE@/src/$(DEPDIR)/lib_math.Plo \
-	@LUAJIT_TREE@/src/$(DEPDIR)/lib_os.Plo \
-	@LUAJIT_TREE@/src/$(DEPDIR)/lib_package.Plo \
-	@LUAJIT_TREE@/src/$(DEPDIR)/lib_string.Plo \
-	@LUAJIT_TREE@/src/$(DEPDIR)/lib_table.Plo \
 	@LUAJIT_TREE@/src/$(DEPDIR)/lj_alloc.Plo \
 	@LUAJIT_TREE@/src/$(DEPDIR)/lj_api.Plo \
 	@LUAJIT_TREE@/src/$(DEPDIR)/lj_asm.Plo \
@@ -794,13 +774,7 @@ dist_libtexluajit_la_SOURCES = \
 	lbitlib.c
 
 nodist_libtexluajit_la_SOURCES = $(ljlib_sources) \
-	@LUAJIT_TREE@/src/lib_aux.c @LUAJIT_TREE@/src/lib_base.c \
-	@LUAJIT_TREE@/src/lib_bit.c @LUAJIT_TREE@/src/lib_buffer.c \
-	@LUAJIT_TREE@/src/lib_debug.c @LUAJIT_TREE@/src/lib_ffi.c \
-	@LUAJIT_TREE@/src/lib_init.c @LUAJIT_TREE@/src/lib_io.c \
-	@LUAJIT_TREE@/src/lib_jit.c @LUAJIT_TREE@/src/lib_math.c \
-	@LUAJIT_TREE@/src/lib_os.c @LUAJIT_TREE@/src/lib_package.c \
-	@LUAJIT_TREE@/src/lib_string.c @LUAJIT_TREE@/src/lib_table.c \
+	@LUAJIT_TREE@/src/lib_aux.c @LUAJIT_TREE@/src/lib_init.c \
 	@LUAJIT_TREE@/src/lj_alloc.c @LUAJIT_TREE@/src/lj_api.c \
 	@LUAJIT_TREE@/src/lj_asm.c @LUAJIT_TREE@/src/lj_assert.c \
 	@LUAJIT_TREE@/src/lj_bc.c @LUAJIT_TREE@/src/lj_bcread.c \
@@ -837,13 +811,11 @@ nodist_libtexluajit_la_SOURCES = $(ljlib_sources) \
 	$(am__append_1)
 @PEOBJ_TRUE@libtexluajit_la_LIBADD = lj_vm_obj.lo
 ljlib_sources = \
-	lib_aux.c \
 	lib_base.c \
+        lib_buffer.c \
 	lib_bit.c \
-	lib_buffer.c \
 	lib_debug.c \
 	lib_ffi.c \
-	lib_init.c \
 	lib_io.c \
 	lib_jit.c \
 	lib_math.c \
@@ -984,31 +956,7 @@ clean-libLTLIBRARIES:
 	@: >>@LUAJIT_TREE@/src/$(DEPDIR)/$(am__dirstamp)
 @LUAJIT_TREE@/src/lib_aux.lo: @LUAJIT_TREE@/src/$(am__dirstamp) \
 	@LUAJIT_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@LUAJIT_TREE@/src/lib_base.lo: @LUAJIT_TREE@/src/$(am__dirstamp) \
-	@LUAJIT_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@LUAJIT_TREE@/src/lib_bit.lo: @LUAJIT_TREE@/src/$(am__dirstamp) \
-	@LUAJIT_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@LUAJIT_TREE@/src/lib_buffer.lo: @LUAJIT_TREE@/src/$(am__dirstamp) \
-	@LUAJIT_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@LUAJIT_TREE@/src/lib_debug.lo: @LUAJIT_TREE@/src/$(am__dirstamp) \
-	@LUAJIT_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@LUAJIT_TREE@/src/lib_ffi.lo: @LUAJIT_TREE@/src/$(am__dirstamp) \
-	@LUAJIT_TREE@/src/$(DEPDIR)/$(am__dirstamp)
 @LUAJIT_TREE@/src/lib_init.lo: @LUAJIT_TREE@/src/$(am__dirstamp) \
-	@LUAJIT_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@LUAJIT_TREE@/src/lib_io.lo: @LUAJIT_TREE@/src/$(am__dirstamp) \
-	@LUAJIT_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@LUAJIT_TREE@/src/lib_jit.lo: @LUAJIT_TREE@/src/$(am__dirstamp) \
-	@LUAJIT_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@LUAJIT_TREE@/src/lib_math.lo: @LUAJIT_TREE@/src/$(am__dirstamp) \
-	@LUAJIT_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@LUAJIT_TREE@/src/lib_os.lo: @LUAJIT_TREE@/src/$(am__dirstamp) \
-	@LUAJIT_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@LUAJIT_TREE@/src/lib_package.lo: @LUAJIT_TREE@/src/$(am__dirstamp) \
-	@LUAJIT_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@LUAJIT_TREE@/src/lib_string.lo: @LUAJIT_TREE@/src/$(am__dirstamp) \
-	@LUAJIT_TREE@/src/$(DEPDIR)/$(am__dirstamp)
-@LUAJIT_TREE@/src/lib_table.lo: @LUAJIT_TREE@/src/$(am__dirstamp) \
 	@LUAJIT_TREE@/src/$(DEPDIR)/$(am__dirstamp)
 @LUAJIT_TREE@/src/lj_alloc.lo: @LUAJIT_TREE@/src/$(am__dirstamp) \
 	@LUAJIT_TREE@/src/$(DEPDIR)/$(am__dirstamp)
@@ -1147,13 +1095,11 @@ distclean-compile:
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/jittest-jittest.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lbitlib.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lib_aux.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lib_base.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lib_bit.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lib_buffer.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lib_debug.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lib_ffi.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lib_init.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lib_io.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lib_jit.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lib_math.Plo@am__quote@ # am--include-marker
@@ -1163,19 +1109,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lib_table.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lj_vm_asm.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@LUAJIT_TREE@/src/$(DEPDIR)/lib_aux.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@@LUAJIT_TREE@/src/$(DEPDIR)/lib_base.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@@LUAJIT_TREE@/src/$(DEPDIR)/lib_bit.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@@LUAJIT_TREE@/src/$(DEPDIR)/lib_buffer.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@@LUAJIT_TREE@/src/$(DEPDIR)/lib_debug.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@@LUAJIT_TREE@/src/$(DEPDIR)/lib_ffi.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@LUAJIT_TREE@/src/$(DEPDIR)/lib_init.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@@LUAJIT_TREE@/src/$(DEPDIR)/lib_io.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@@LUAJIT_TREE@/src/$(DEPDIR)/lib_jit.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@@LUAJIT_TREE@/src/$(DEPDIR)/lib_math.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@@LUAJIT_TREE@/src/$(DEPDIR)/lib_os.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@@LUAJIT_TREE@/src/$(DEPDIR)/lib_package.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@@LUAJIT_TREE@/src/$(DEPDIR)/lib_string.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@@LUAJIT_TREE@/src/$(DEPDIR)/lib_table.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@LUAJIT_TREE@/src/$(DEPDIR)/lj_alloc.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@LUAJIT_TREE@/src/$(DEPDIR)/lj_api.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@LUAJIT_TREE@/src/$(DEPDIR)/lj_asm.Plo@am__quote@ # am--include-marker
@@ -1913,13 +1847,11 @@ distclean: distclean-recursive
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
 	-rm -f ./$(DEPDIR)/jittest-jittest.Po
 	-rm -f ./$(DEPDIR)/lbitlib.Plo
-	-rm -f ./$(DEPDIR)/lib_aux.Plo
 	-rm -f ./$(DEPDIR)/lib_base.Plo
 	-rm -f ./$(DEPDIR)/lib_bit.Plo
 	-rm -f ./$(DEPDIR)/lib_buffer.Plo
 	-rm -f ./$(DEPDIR)/lib_debug.Plo
 	-rm -f ./$(DEPDIR)/lib_ffi.Plo
-	-rm -f ./$(DEPDIR)/lib_init.Plo
 	-rm -f ./$(DEPDIR)/lib_io.Plo
 	-rm -f ./$(DEPDIR)/lib_jit.Plo
 	-rm -f ./$(DEPDIR)/lib_math.Plo
@@ -1929,19 +1861,7 @@ distclean: distclean-recursive
 	-rm -f ./$(DEPDIR)/lib_table.Plo
 	-rm -f ./$(DEPDIR)/lj_vm_asm.Plo
 	-rm -f @LUAJIT_TREE@/src/$(DEPDIR)/lib_aux.Plo
-	-rm -f @LUAJIT_TREE@/src/$(DEPDIR)/lib_base.Plo
-	-rm -f @LUAJIT_TREE@/src/$(DEPDIR)/lib_bit.Plo
-	-rm -f @LUAJIT_TREE@/src/$(DEPDIR)/lib_buffer.Plo
-	-rm -f @LUAJIT_TREE@/src/$(DEPDIR)/lib_debug.Plo
-	-rm -f @LUAJIT_TREE@/src/$(DEPDIR)/lib_ffi.Plo
 	-rm -f @LUAJIT_TREE@/src/$(DEPDIR)/lib_init.Plo
-	-rm -f @LUAJIT_TREE@/src/$(DEPDIR)/lib_io.Plo
-	-rm -f @LUAJIT_TREE@/src/$(DEPDIR)/lib_jit.Plo
-	-rm -f @LUAJIT_TREE@/src/$(DEPDIR)/lib_math.Plo
-	-rm -f @LUAJIT_TREE@/src/$(DEPDIR)/lib_os.Plo
-	-rm -f @LUAJIT_TREE@/src/$(DEPDIR)/lib_package.Plo
-	-rm -f @LUAJIT_TREE@/src/$(DEPDIR)/lib_string.Plo
-	-rm -f @LUAJIT_TREE@/src/$(DEPDIR)/lib_table.Plo
 	-rm -f @LUAJIT_TREE@/src/$(DEPDIR)/lj_alloc.Plo
 	-rm -f @LUAJIT_TREE@/src/$(DEPDIR)/lj_api.Plo
 	-rm -f @LUAJIT_TREE@/src/$(DEPDIR)/lj_asm.Plo
@@ -2048,13 +1968,11 @@ maintainer-clean: maintainer-clean-recursive
 	-rm -rf $(top_srcdir)/autom4te.cache
 	-rm -f ./$(DEPDIR)/jittest-jittest.Po
 	-rm -f ./$(DEPDIR)/lbitlib.Plo
-	-rm -f ./$(DEPDIR)/lib_aux.Plo
 	-rm -f ./$(DEPDIR)/lib_base.Plo
 	-rm -f ./$(DEPDIR)/lib_bit.Plo
 	-rm -f ./$(DEPDIR)/lib_buffer.Plo
 	-rm -f ./$(DEPDIR)/lib_debug.Plo
 	-rm -f ./$(DEPDIR)/lib_ffi.Plo
-	-rm -f ./$(DEPDIR)/lib_init.Plo
 	-rm -f ./$(DEPDIR)/lib_io.Plo
 	-rm -f ./$(DEPDIR)/lib_jit.Plo
 	-rm -f ./$(DEPDIR)/lib_math.Plo
@@ -2064,19 +1982,7 @@ maintainer-clean: maintainer-clean-recursive
 	-rm -f ./$(DEPDIR)/lib_table.Plo
 	-rm -f ./$(DEPDIR)/lj_vm_asm.Plo
 	-rm -f @LUAJIT_TREE@/src/$(DEPDIR)/lib_aux.Plo
-	-rm -f @LUAJIT_TREE@/src/$(DEPDIR)/lib_base.Plo
-	-rm -f @LUAJIT_TREE@/src/$(DEPDIR)/lib_bit.Plo
-	-rm -f @LUAJIT_TREE@/src/$(DEPDIR)/lib_buffer.Plo
-	-rm -f @LUAJIT_TREE@/src/$(DEPDIR)/lib_debug.Plo
-	-rm -f @LUAJIT_TREE@/src/$(DEPDIR)/lib_ffi.Plo
 	-rm -f @LUAJIT_TREE@/src/$(DEPDIR)/lib_init.Plo
-	-rm -f @LUAJIT_TREE@/src/$(DEPDIR)/lib_io.Plo
-	-rm -f @LUAJIT_TREE@/src/$(DEPDIR)/lib_jit.Plo
-	-rm -f @LUAJIT_TREE@/src/$(DEPDIR)/lib_math.Plo
-	-rm -f @LUAJIT_TREE@/src/$(DEPDIR)/lib_os.Plo
-	-rm -f @LUAJIT_TREE@/src/$(DEPDIR)/lib_package.Plo
-	-rm -f @LUAJIT_TREE@/src/$(DEPDIR)/lib_string.Plo
-	-rm -f @LUAJIT_TREE@/src/$(DEPDIR)/lib_table.Plo
 	-rm -f @LUAJIT_TREE@/src/$(DEPDIR)/lj_alloc.Plo
 	-rm -f @LUAJIT_TREE@/src/$(DEPDIR)/lj_api.Plo
 	-rm -f @LUAJIT_TREE@/src/$(DEPDIR)/lj_asm.Plo
