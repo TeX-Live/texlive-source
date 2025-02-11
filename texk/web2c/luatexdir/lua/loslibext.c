@@ -382,7 +382,7 @@ static char **do_flatten_command(lua_State * L, char **runcmd)
     *runcmd = NULL;
 
     for (j = 1;; j++) {
-        lua_rawgeti(L, -1, j);
+        lua_rawgeti(L, 1, j);
         if (lua_isnil(L, -1)) {
             lua_pop(L, 1);
             break;
@@ -394,7 +394,7 @@ static char **do_flatten_command(lua_State * L, char **runcmd)
     cmdline = malloc(sizeof(char *) * (unsigned) (j + 1));
     for (i = 1; i <= (unsigned) j; i++) {
         cmdline[i] = NULL;
-        lua_rawgeti(L, -1, (int) i);
+        lua_rawgeti(L, 1, (int) i);
         if (lua_isnil(L, -1) || (s = lua_tostring(L, -1)) == NULL) {
             lua_pop(L, 1);
             if (i == 1) {
@@ -410,7 +410,7 @@ static char **do_flatten_command(lua_State * L, char **runcmd)
     }
     cmdline[i] = NULL;
 
-    lua_rawgeti(L, -1, 0);
+    lua_rawgeti(L, 1, 0);
     if (lua_isnil(L, -1) || (s = lua_tostring(L, -1)) == NULL) {
 #ifdef _WIN32
         *runcmd = get_command_name(cmdline[0]);
@@ -546,12 +546,18 @@ static int os_spawn(lua_State * L)
                 val = lua_tostring(L, -1);
                 value = xmalloc((unsigned) (strlen(key) + strlen(val) + 2));
                 sprintf(value, "%s=%s", key, val);
-                envblock = xreallocarray(envblock, char*, size++ + 1);
+                envblock = xreallocarray(envblock, char*, size + 1);
                 envblock[size] = value;
+                size++;
             }
             lua_pop(L, 1);
         }
-        envblock[size++] = NULL;
+        if (envblock) {
+            envblock[size++] = NULL;
+        } else {
+            envblock = xmalloc(sizeof(char *));
+            envblock[0] = NULL;
+        }
     }
     /* If restrictedshell == 0, any command is allowed. */
     /* this is a little different from \write18/ os.execute processing
