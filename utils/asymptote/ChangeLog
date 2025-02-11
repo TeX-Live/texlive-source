@@ -1,3 +1,57 @@
+commit cf4243cb97f7d700a320cb93a0e7a47328c32b35
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Feb 10 14:44:17 2025 -0800
+
+    Fix make maintainer-clean.
+
+commit 2f0a7cfb60a6a3475ee52990154ba28244832d17
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Feb 10 14:24:29 2025 -0800
+
+    Update config scripts.
+
+commit 214552f58197224a5b3a7efd4a15a6757c90813b
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Feb 10 13:35:08 2025 -0800
+
+    Remove libtool dependence from configure.
+
+commit 7fe989a89945c93c85e1e3cbb3cec4ce7460e170
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Feb 10 11:33:00 2025 -0800
+
+    git subrepo pull (merge) LspCpp
+    
+    subrepo:
+      subdir:   "LspCpp"
+      merged:   "84c9831f2"
+    upstream:
+      origin:   "git@github.com:vectorgraphics/LspCpp"
+      branch:   "master"
+      commit:   "aa2d67051"
+    git-subrepo:
+      version:  "0.4.9"
+      origin:   "https://github.com/ingydotnet/git-subrepo"
+      commit:   "b9b059a"
+
+commit d31fd43aad1be82b57517fb4f9bab41a8e9575f7
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Feb 10 01:26:47 2025 -0800
+
+    Update install-sh.
+
+commit 947c860f9430ef249407d2a051ed2b7e263c29e6
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Feb 9 13:51:32 2025 -0800
+
+    Disable dependency tracking for one-time gc builds.
+
+commit cc35f7e78d0dec53c50b8c34f1318500c3e13187
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Feb 9 11:32:32 2025 -0800
+
+    Increment version to 2.99.
+
 commit 83de5cbc8268d689b52c07c87927cae3ab94e245
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Sun Feb 9 10:01:51 2025 -0800
