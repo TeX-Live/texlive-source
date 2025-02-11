@@ -1,3 +1,8 @@
+2025-02-11  Max Chernoff  <tex@maxchernoff.ca>
+
+	* pdftex.web (scale_image): no warning if both resolutions are zero.
+	https://tug.org/pipermail/pdftex/2025-February/009441.html
+
 2025-02-02  Karl Berry  <karl@freefriends.org>
 
 	* pdftex.ch: try to give original files and line numbers for changes.

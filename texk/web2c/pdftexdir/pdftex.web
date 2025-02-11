@@ -34451,7 +34451,11 @@ begin
     end;
     if (x <= 0) or (y <= 0) or (xr < 0) or (yr < 0) then
         pdf_error("ext1", "invalid image dimensions");
-    if (x / one_inch >= xr) or (y / one_inch >= yr) then begin
+    if (xr = 0) and (yr = 0) then begin
+        {If both resolutions are zero, that suggests that the resolution data
+         is missing, so we should never issue a warning.}
+    end
+    else if (x / one_inch >= xr) or (y / one_inch >= yr) then begin
         {It's better to warn and ignore too-small resolutions given in
          the image file, usually 1dpi x 1dpi, to avoid arithmetic overflow.}
         xr := 0;
