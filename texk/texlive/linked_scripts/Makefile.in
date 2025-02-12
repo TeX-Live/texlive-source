@@ -503,6 +503,7 @@ bin_links = \
 	cluttex:clxelatex \
 	cluttex:cllualatex \
 	epstopdf:repstopdf \
+	extractbb:ebb \
 	fmtutil:mktexfmt \
 	kpsetool:kpsexpand \
 	kpsetool:kpsepath \
