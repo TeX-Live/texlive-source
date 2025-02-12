@@ -1,3 +1,8 @@
+2025-02-12  Karl Berry  <karl@freefriends.org>
+
+	* texmf.cnf (shell_escape_commands): doc link to
+	https://tug.org/texinfohtml/web2c.html#Output-file-location.
+
 2025-02-08  Karl Berry  <karl@tug.org>
 
 	* texmf.cnf (TEXMFVAR, TEXMFCONFIG, doc): 2025.
