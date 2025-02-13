@@ -33996,8 +33996,8 @@ processing of penalty nodes follows the same pattern we have just seen.
    case penalty_node:
      { int n,i;
        i = penalty(p);
-       if (i>10000) i=10000;
-       else if (i<-10000) i=-10000;
+       if (i>20000) i=20000;
+       else if (i<-20000) i=-20000;
        n=hget_int_no(i);
        if (n<0) tag=hput_int(i);
        else  { HPUT8(n); tag=TAG(penalty_kind,0);}
@@ -35170,7 +35170,9 @@ static int argument_is(struct option *opt, char * s)
 if (ARGUMENT_IS("help")) usage_help();
 else if (ARGUMENT_IS("version")){@+
        printf(banner@, "\n"@/
+#ifdef HINT_VERSION_STRING
               "HINT version "@,HINT_VERSION_STRING@,"\n"@/
+#endif
               "Prote version "@, Prote_version_string@, "\n");
        exit(0);@+
 }
