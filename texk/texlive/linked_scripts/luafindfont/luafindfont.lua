@@ -1,6 +1,6 @@
 #!/usr/bin/env texlua
 --
---  $Id: luafindfont.lua 961 2024-08-25 16:47:59Z herbert $
+--  $Id: luafindfont.lua 1072 2025-02-14 12:45:31Z herbert $
 -----------------------------------------------------------------------
 --         FILE:  luafindfont.lua
 --  DESCRIPTION:  search for fonts in the database
@@ -8,7 +8,7 @@
 --       AUTHOR:  Herbert Voß  (C) 2023-06-21
 -----------------------------------------------------------------------
         luafindfont = luafindfont or { }
-      local version = 0.14
+      local version = 0.15
 luafindfont.version = version
 
 --[[
@@ -48,6 +48,7 @@ local args_verbose = 0
 local args_nosymbolicnames = false
 local args_otfinfo = 0
 local args_info = 0
+local args_listonly = 0
 local args_xetex = 0
 local args_max_string = 90
 
@@ -70,6 +71,8 @@ while i <= #arg do
     -o,--otfinfo (default 0)
     -i,--info (default 0)
     -I,--Info (default 0)
+    -l, --listonlynames
+    -L, --listonlyfiles
     -x, --xetex 
     -v, --verbose
     -V, --version
@@ -82,6 +85,10 @@ while i <= #arg do
     args_verbose = 1
   elseif (arg[i] == "-n") or (arg[i] == "--nosymbolicnames") or (arg[i] == "--no-symbolic-names") then
     args_nosymbolicnames = true
+  elseif arg[i] == "-l" or arg[i] == "--listonlynames" then
+    args_listonly = 1
+  elseif arg[i] == "-L" or arg[i] == "--listonlyfiles" then
+    args_listonly = 2
   elseif arg[i] == "-x" or arg[i] == "--xetex" then
     args_xetex = 1
   elseif arg[i] == "-o" or arg[i] == "--otfinfo" then
@@ -146,7 +153,7 @@ if vlevel > 0 then
   print("  args_max_string = "..args_max_string)
 end
   
-if not args_font then
+if not args_font and args_listonly < 1 then
   print("No fontname given, will close ...")
   os.exit()
 end
@@ -156,7 +163,10 @@ local info = args_info
 local Info = args_Info
 local noSymbolicNames = args_nosymbolicnames
 local maxStrLength = args_max_string
-local font_str = args_font:lower():gsub("%s+", ""):split("&")
+local font_str = {}
+if args_listonly < 1 then
+  font_str = args_font:lower():gsub("%s+", ""):split("&")
+end
 if #font_str == 1 then font_str[2] = "" end
 
 local luaVersion = _VERSION
@@ -310,6 +320,29 @@ if not fontData then
 end
 
 --print(require 'xindex-pretty'.dump(fontData)) --["families"]["system"]["otf"]))
+
+if args_listonly == 1 then
+  local tmp = {}
+  for _,font in ipairs(fontData.mappings) do
+    tmp[#tmp + 1] = font.fontname --.. " (" .. font.basename .. ")"
+  end
+  table.sort(tmp)
+  for _,fontname in ipairs(tmp) do
+    print(fontname)
+  end
+  os.exit()
+elseif args_listonly == 2 then 
+  local tmp = {}
+  for _,font in ipairs(fontData.mappings) do
+    tmp[#tmp + 1] = font.basename
+  end
+  table.sort(tmp)
+  for _,filename in ipairs(tmp) do
+    print(filename)
+  end
+  os.exit()
+end
+
 
 fontDataMap = fontData["mappings"]
 fontFilesTable = fontData["files"]["full"]
