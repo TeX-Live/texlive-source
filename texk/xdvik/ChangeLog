@@ -1,3 +1,12 @@
+2025-02-15  Karl Berry  <karl@freefriends.org>
+
+	* gui/pagesel.c (xaw_update_list): put in comment about the known
+	problem of incompatible pointer types in the XawListChange call.
+	A configure test seems to be needed.
+	xdvi bug report: https://sourceforge.net/p/xdvi/bugs/406/
+	discussion of alternatives:
+	  https://tug.org/pipermail/tex-k/2024-February/004008.html
+
 2024-11-26  Sam James  <sam@gentoo.org>
 
 	* dvi-draw.c (lseek,pow): remove () declarations, incompatible
