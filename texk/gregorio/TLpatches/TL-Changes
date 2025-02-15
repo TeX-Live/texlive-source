@@ -1,13 +1,32 @@
 Changes applied to the gregorio source tree as obtained from:
-	CTAN/support/gregoriotex/gregorio-6.0.0.zip
+	https://mirrors.ctan.org/support/gregoriotex/gregorio-6.1.0-beta1.zip
 
-Remove:
-	Makefile.in
-	aclocal.m4
-	build-aux/
-	configure
-	contrib/Makefile.in
-	contrib/TeXShop/Makefile.in
-	src/Makefile.in
+Update ./version.ac.
+mv gregorio-src gregorio-prev
+mkdir gregorio-src
+cd gregorio-src
+unzip ...
+
+rm -rf \
+	Makefile.in \
+	aclocal.m4 \
+	build-aux/ \
+	configure \
+	contrib/Makefile.in \
+	contrib/TeXShop/Makefile.in \
+	src/Makefile.in \
 	src/config_.h.in
-	doc/ examples/ fonts/ tex/
+
+# files to add:
+svn status | sed -n 's/^\?//p'
+svn add `!!`                    # if looks reasonable
+svn status | sed -n 's/^\?//p'  # rerun, should be empty now
+#
+# files to remove:
+svn status | sed -n 's/^\!//p'
+svn rm `!!`                     # if looks reasonable
+svn status | sed -n 's/^\!//p'  # rerun, should be empty now
+
+cd ..
+autoreconf #in the TL directory (Build/source/texk/gregorio).
+rebuild; a full rebuild is best.

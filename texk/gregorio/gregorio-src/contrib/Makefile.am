@@ -1,4 +1,4 @@
-# Copyright (C) 2006-2021 The Gregorio Project (see CONTRIBUTORS.md)
+# Copyright (C) 2006-2025 The Gregorio Project (see CONTRIBUTORS.md)
 #
 # This file is part of Gregorio.
 #
@@ -15,6 +15,6 @@
 # You should have received a copy of the GNU General Public License
 # along with Gregorio.  If not, see <http://www.gnu.org/licenses/>.
 
-SUBDIRS = TeXShop
+SUBDIRS = TeXShop vim
 
-EXTRA_DIST = gprocess gabc.xml gabc.lang gabc.vim 900_gregorio.xml gregorio.png gabc-syntax.plist contrib_README.md system-setup.command system-setup.bat config-texworks.command checkSyllabation.py
+EXTRA_DIST = gprocess gabc.xml gabc.lang 900_gregorio.xml gregorio.png gabc-syntax.plist contrib_README.md system-setup.command system-setup.bat config-texworks.command checkSyllabation.py

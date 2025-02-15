@@ -1,4 +1,4 @@
-# Copyright (C) 2006-2021 The Gregorio Project (see CONTRIBUTORS.md)
+# Copyright (C) 2006-2025 The Gregorio Project (see CONTRIBUTORS.md)
 #
 # This file is part of Gregorio.
 #
@@ -77,7 +77,7 @@ LDADD += gregorio-resources.o
 endif
 
 gabc/gabc-score-determination-y.c: gabc/gabc-score-determination.y
-	$(YACC) -v -d -p "gabc_score_determination_" -o $@ $<
+	$(YACC) -Wno-yacc -v -d -p "gabc_score_determination_" -o $@ $<
 gabc/gabc-score-determination-y.h: gabc/gabc-score-determination-y.c
 	## Recover from the removal of gabc/gabc-score-determination-y.h, see
 	## https://www.gnu.org/software/automake/manual/html_node/Multiple-Outputs.html

@@ -1,11 +1,11 @@
-#! /usr/bin/env python2
+#! /usr/bin/env python3
 
 """
     A script that manages the VERSION of gregorio.
 
     See VersionUpdate.py -h for help
 
-    Copyright (C) 2015-2021 The Gregorio Project (see CONTRIBUTORS.md)
+    Copyright (C) 2015-2025 The Gregorio Project (see CONTRIBUTORS.md)
 
     This file is part of Gregorio.
 
@@ -23,7 +23,6 @@
     along with Gregorio.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-from __future__ import print_function
 
 import sys
 import re
@@ -34,8 +33,6 @@ import os
 import locale
 import linecache
 from datetime import date
-
-from distutils.util import strtobool
 
 locale.setlocale(locale.LC_TIME, 'C')
 
@@ -170,6 +167,19 @@ COPYRIGHT_FILES = ["install-gtex.sh",
                    "windows/uninstall.lua",
                   ]
 
+def strtobool(val):
+    """Convert a string representation of truth to true (1) or false (0).
+    True values are 'y', 'yes', 't', 'true', 'on', and '1'; false values
+    are 'n', 'no', 'f', 'false', 'off', and '0'.  Raises ValueError if
+    'val' is anything else.
+    """
+    val = val.lower()
+    if val in ('y', 'yes', 't', 'true', 'on', '1'):
+        return 1
+    if val in ('n', 'no', 'f', 'false', 'off', '0'):
+        return 0
+    raise ValueError(f'invalid truth value: {val}')
+
 def get_parser():
     "Return command line parser"
     parser = argparse.ArgumentParser(
@@ -218,7 +228,7 @@ def get_parser():
                         dest='release')
     return parser
 
-class Version(object):
+class Version():
     "Class for version manipulation."
 
     def __init__(self, versionfile):
@@ -259,8 +269,7 @@ class Version(object):
             ['git', 'rev-parse', '--short', 'HEAD'])
         self.short_tag = self.short_tag.strip('\n')
         self.date = time.strftime("%Y%m%d%H%M%S")
-        print("{0}+git{1}+{2}".format(self.version.replace('-', '~'),
-                                      self.date, self.short_tag))
+        print(f"{self.version.replace('-', '~')}+git{self.date}+{self.short_tag}")
         sys.exit(0)
 
     def update_version(self, newversion):
@@ -268,10 +277,9 @@ class Version(object):
         self.version = newversion
         self.filename_version = self.filename_version_from_version(newversion)
         self.binary_version = self.binary_version_from_version(newversion)
-        print('Updating {0} with the new version: {1}\n'.format(
-            self.versionfile, self.version))
-        with open(self.versionfile, 'w') as verfile:
-            verfile.write('{0}\n{1}'.format(self.version, CURRENTYEAR))
+        print(f'Updating {self.versionfile} with the new version: {self.version}\n')
+        with open(self.versionfile, 'w', encoding='utf-8') as verfile:
+            verfile.write(f'{self.version}\n{CURRENTYEAR}')
             verfile.write('\n\n*** Do not modify this file. ***\n')
             verfile.write('Use VersionManager.py to change the version.\n')
 
@@ -281,11 +289,11 @@ def replace_version(version_obj):
     newver_filename = version_obj.filename_version
     newbinver = version_obj.binary_version
     today = date.today()
-    print('Updating source files to version {0}\n'.format(newver))
+    print(f'Updating source files to version {newver}\n')
     for myfile in GREGORIO_FILES:
         result = []
         following_line_filename = False
-        with open(myfile, 'r') as infile:
+        with open(myfile, 'r', encoding='utf-8') as infile:
             for line in infile:
                 if 'AC_INIT([' in line:
                     result.append(re.sub(r'(\d+\.\d+\.\d+(?:[-+~]\w+)*)', newver, line, 1))
@@ -306,7 +314,8 @@ def replace_version(version_obj):
                     result.append(re.sub(r'(\d+\/\d+/\d+)', today.strftime("%Y/%m/%d"), newline, 1))
                 elif 'PARSE_VERSION_DATE' in line:
                     newline = re.sub(r'(\d+\.\d+\.\d+(?:[-+~]\w+)*)', newver, line, 1)
-                    result.append(re.sub(r'(\d{1,2} [A-Z][a-z]+ \d{4})', today.strftime("%-d %B %Y"), newline, 1))
+                    result.append(re.sub(r'(\d{1,2} [A-Z][a-z]+ \d{4})',
+                                         today.strftime("%-d %B %Y"), newline, 1))
                 elif 'FILEVERSION' in line:
                     result.append(re.sub(r'\d+,\d+,\d+,\d+', newbinver, line, 1))
                 elif 'PRODUCTVERSION' in line:
@@ -319,13 +328,14 @@ def replace_version(version_obj):
                     following_line_filename = False
                 else:
                     result.append(line)
-        with open(myfile, 'w') as outfile:
+        with open(myfile, 'w', encoding='utf-8') as outfile:
             outfile.write(''.join(result))
     sys.exit(0)
 
-def update_changelog(newver,upgradetype):
+def update_changelog(newver, upgradetype):
+    "Insert the version number into CHANGELOG"
     today = date.today()
-    with open('CHANGELOG.md', 'r') as infile:
+    with open('CHANGELOG.md', 'r', encoding='utf-8') as infile:
         result = []
         develop = False
         for line in infile:
@@ -361,17 +371,17 @@ def update_changelog(newver,upgradetype):
             print("I didn't find a unreleased develop section.")
             print("Non-patch releases should be based on develop branch.")
             sys.exit(1)
-    with open('CHANGELOG.md', 'w') as outfile:
+    with open('CHANGELOG.md', 'w', encoding='utf-8') as outfile:
         outfile.write(''.join(result))
 
 def confirm_replace(oldver, newver):
     "Query the user to confirm action"
-    query = 'Update version from {0} --> {1} [y/n]?'.format(oldver, newver)
+    query = f'Update version from {oldver} --> {newver} [y/n]?'
     print(query)
     consent = None
     while True:
         try:
-            consent = strtobool(raw_input().lower())
+            consent = strtobool(input().lower())
             break
         except ValueError:
             print('Answer with y or n.')
@@ -478,7 +488,7 @@ def copyright_year():
         print('Updating copyright year.')
         for myfile in COPYRIGHT_FILES:
             result = []
-            with open(myfile, 'r') as infile:
+            with open(myfile, 'r', encoding='utf-8') as infile:
                 for line in infile:
                     if re.search(r'[C|c]opyright.*Gregorio Project', line):
                         result.append(re.sub(r'(\d{4}-)?(\d{4})', year_range, line))
@@ -490,7 +500,7 @@ def copyright_year():
                         result.append(re.sub(r'(\d{4}-)?(\d{4})', year_range, line))
                     else:
                         result.append(line)
-            with open(myfile, 'w') as outfile:
+            with open(myfile, 'w', encoding='utf-8') as outfile:
                 outfile.write(''.join(result))
 
 def main():

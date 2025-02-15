@@ -5,7 +5,7 @@
 
     See checkSyllabation.py -h for help
 
-    Copyright (C) 2016-2021 Elie Roux
+    Copyright (C) 2016-2025 Elie Roux
 
     Permission is hereby granted, free of charge, to any person obtaining a copy of
     this software and associated documentation files (the "Software"), to deal in
@@ -32,12 +32,14 @@
 
 """
 
+
+import os
 import sys
 import re
+import glob
 import argparse
 import pyphen
-import os
-import glob
+
 
 DEFAULT_OUTFILE = False
 if os.name == 'nt':
@@ -62,7 +64,8 @@ def get_parser():
     return parser
 
 def deacc(accstr):
-  return accstr.replace('á', 'a').replace('é', 'e').replace('í', 'i').replace('ó', 'o').replace('ú', 'u').replace('ý', 'y').replace('́', '').replace('ǽ', 'æ')
+    "Remove accents from vowels"
+    return accstr.replace('á', 'a').replace('é', 'e').replace('í', 'i').replace('ó', 'o').replace('ú', 'u').replace('ý', 'y').replace('́', '').replace('ǽ', 'æ')
 
 def checkwords(words_list, hyphenator):
     errors = []
@@ -100,15 +103,15 @@ def get_words_list(gabc_content):
     return gabc_content.split()
 
 def get_file_list(path):
+    "Generate list of files to parse"
     if os.path.isfile(path):
         return [path]
-    elif os.path.isdir(path):
+    if os.path.isdir(path):
         files = glob.glob(os.path.join(path, '**/*.gabc'), recursive=True)
         files = sorted(files)
         return files
-    else:
-        print('Error! Cannot find '+path, file=sys.stderr)
-        sys.exit(1)
+    print(f'Error! Cannot find {path}', file=sys.stderr)
+    sys.exit(1)
 
 def check_file(filepath, hyphenator, outfd, report_no_error=False):
     words_list = []
@@ -139,8 +142,8 @@ def main():
         outfd = open(args.outfile, 'w', encoding='utf8')
     file_list = get_file_list(args.path)
     nb_errors = 0
-    for f in file_list:
-        nb_errors += check_file(f, hyphenator, outfd, args.verbose)
+    for filename in file_list:
+        nb_errors += check_file(filename, hyphenator, outfd, args.verbose)
     if len(file_list) > 1 and nb_errors > 0:
         outfd.write('Total errors: '+str(nb_errors)+'\n')
     elif nb_errors == 0 and not args.verbose:

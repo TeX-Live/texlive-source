@@ -1,4 +1,4 @@
-# Copyright (C) 2006-2025 The Gregorio Project (see CONTRIBUTORS.md)
+# Copyright (C) 2006-2021 The Gregorio Project (see CONTRIBUTORS.md)
 #
 # This file is part of Gregorio.
 #
@@ -15,4 +15,4 @@
 # You should have received a copy of the GNU General Public License
 # along with Gregorio.  If not, see <http://www.gnu.org/licenses/>.
 
-EXTRA_DIST = auto-configure.command LuaLaTeX+se.engine LuaTeX+se.engine
+SUBDIRS = ftdetect syntax
