@@ -290,13 +290,16 @@ character(p):=c; lig_ptr(p):=null;
 @d kcat_code_base=cat_code_base+256
   {table of 256 command codes for the wchar's catcodes }
 @d auto_xsp_code_base=kcat_code_base+256 {table of 256 auto spacer flag}
+@d inhibit_xsp_code_base=auto_xsp_code_base+256
 @y
 @d enable_cjk_token_code=auto_xspacing_code+1
 @d cat_code_base=enable_cjk_token_code+1
   {table of |max_latin_val| command codes (the ``catcodes'')}
 @d kcat_code_base=cat_code_base+max_latin_val
   {table of 512 command codes for the wchar's catcodes }
-@d auto_xsp_code_base=kcat_code_base+512 {table of 256 auto spacer flag}
+@d auto_xsp_code_base=kcat_code_base+512
+  {table of |max_latin_val| auto spacer flag}
+@d inhibit_xsp_code_base=auto_xsp_code_base+max_latin_val
 @z
 
 @x
@@ -333,15 +336,14 @@ for k:=0 to 255 do
 eqtb[auto_xspacing_code]:=eqtb[cat_code_base];
 eqtb[enable_cjk_token_code]:=eqtb[cat_code_base];
 for k:=0 to 255 do
-  begin cat_code(k):=other_char;
-  math_code(k):=hi(k);
+  begin math_code(k):=hi(k);
+  end;
+for k:=0 to max_latin_val-1 do
+  begin cat_code(k):=other_char; sf_code(k):=1000;
   auto_xsp_code(k):=0;
   end;
 for k:=0 to 511 do
   begin kcat_code(k):=other_kchar;
-  end;
-for k:=0 to max_latin_val-1 do
-  begin sf_code(k):=1000;
   end;
 @z
 
