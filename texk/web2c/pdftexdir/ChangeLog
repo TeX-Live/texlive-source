@@ -1,3 +1,12 @@
+2025-02-16  Thanh Han The  <hanthethanh@gmail.com>
+
+	* pdftex.web: fixes for previous change to add missing interword
+	spaces at font switches, following reports:
+	https://tug.org/pipermail/pdftex/2025-February/009443.html
+	https://tug.org/pipermail/tex-live/2025-February/051136.html
+	https://tug.org/pipermail/tex-live/2025-February/051139.html
+	Copied from pdftex r953.
+
 2025-02-11  Max Chernoff  <tex@maxchernoff.ca>
 
 	* pdftex.web (scale_image): no warning if both resolutions are zero.
