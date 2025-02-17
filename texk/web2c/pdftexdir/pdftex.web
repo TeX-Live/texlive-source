@@ -16277,6 +16277,7 @@ begin
         or (abs(s) >= @'100000)
         or (get_font_auto_expand_ratio(f) <> pdf_cur_Tm_a)
         or get_font_auto_expand_ratio(f) <> get_font_auto_expand_ratio(pdf_f);
+
     if must_set_text_pos then begin
         must_end_string := true;
     end;
@@ -16287,7 +16288,6 @@ begin
 
     if gen_faked_interword_space
         and move_looks_like_interword_space
-        and (not must_set_text_pos)
     then begin
         must_insert_space := true;
     end;
