@@ -1,3 +1,17 @@
+2025-02-17  Karl Berry  <karl@freefriends.org>
+
+	* m4/xdvi-check-xaw.m4: try to discern the type of the list
+	(second) parameter of the XawListChange function, (too) simply
+	with: sed -n 's/list,$//p' /usr/include/X11/Xaw/List.h.
+	Default to the type of the page_labels member, as before.
+	Maybe it will work in practice?
+	* gui/pagesel.c (XAWLISTCHANGELISTTYPE): define if not defined.
+	(xaw_update_list): cast to it.
+	(See next ChangeLog entry for links to discussions.)
+
+	* c-auto.in,
+	* configure: regenerate.
+
 2025-02-15  Karl Berry  <karl@freefriends.org>
 
 	* gui/pagesel.c (xaw_update_list): put in comment about the known

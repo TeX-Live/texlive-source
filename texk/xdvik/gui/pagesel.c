@@ -539,18 +539,25 @@ xaw_update_list(void)
     /* delete and re-create list */
     ASSERT(total_pages <= (int)page_info.index_size, "");
 
-    /* The following line causes a gcc incompatible-pointer-types error
-       on some system, due to lack and/or presence of const in the
+    /* The purpose of the (XAWLISTCHANGELISTTYPE) cast for page_labels
+       is to avoid a gcc incompatible-pointer-types error
+       on some systems, due to the lack and/or presence of const in the
        XawListChange function parameter. Unfortunately different systems
        evidently have different, and incompatible, types for that
        parameter. Thus a cast to any single type will fail on some
-       systems. A configure test to determine the correct type for the
-       cast seems like the only robust solution? --karl, 15feb25.
-       xdvi bug report: https://sourceforge.net/p/xdvi/bugs/406/
-       discussion of alternatives:
-         https://tug.org/pipermail/tex-k/2024-February/004008.html
+       systems. A (too) simplistic configure test to determine the
+       correct type is done in xdvi-check-xaw.m4. See more comments there.
+         xdvi bug report:
+           https://sourceforge.net/p/xdvi/bugs/406/
+         discussion of alternatives:
+           https://tug.org/pipermail/tex-k/2024-February/004008.html
     */
-    XawListChange(LIST_WIDGET, page_info.page_labels, 0,
+#ifndef XAWLISTCHANGELISTTYPE
+#define XAWLISTCHANGELISTTYPE char **
+#endif
+    XawListChange(LIST_WIDGET, 
+                  (XAWLISTCHANGELISTTYPE) page_info.page_labels,
+                  0,
 		  MAX(button_width, pagelist_width), False);
     /* restore selected item */
     if (idx != XAW_LIST_NONE) {
