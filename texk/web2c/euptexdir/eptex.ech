@@ -90,7 +90,7 @@ In \epTeX\ the |subtype| field is |qi(16*box_lr+box_dir)|.
 @x
 @d protected_token=@'7001 {$2^8\cdot|end_match|+1$}
 @y
-@d protected_token=@"E01 {$2^8\cdot|end_match|+1$}
+@d protected_token=@"E0001 {$2^16\cdot|end_match|+1$}
 @z
 
 @x [26.???] prepare for |scan_font_ident| to recognize \lastnodefont
