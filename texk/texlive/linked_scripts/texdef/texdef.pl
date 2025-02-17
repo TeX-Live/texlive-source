@@ -1,7 +1,7 @@
 #!/usr/bin/env perl
 ################################################################################
 #  texdef -- Show definitions of TeX commands
-#  Copyright (c) 2011-2020 Martin Scharrer <martin@scharrer-online.de>
+#  Copyright (c) 2011-2025 Martin Scharrer <martin.scharrer@web.de>
 #
 #  This program is free software: you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -116,14 +116,14 @@ my $ISCONTEXT = 0;
 my $BEGINENVSTR = '%s';
 my $ENDENVSTR   = '%s';
 
-my $VERSION = 'Version 1.9 -- 2020/09/27';
+my $VERSION = 'Version 1.10 -- 2025/02/17';
 sub usage {
     my $option = shift;
     my $ret    = ($option) ? 0 : 1;
 print << 'EOT';
 texdef -- Show definitions of TeX commands
-Version 1.9 -- 2020/09/27
-Copyright (C) 2011-2020  Martin Scharrer <martin@scharrer-online.de>
+Version 1.10 -- 2025/02/17
+Copyright (c) 2011-2025  Martin Scharrer <martin.scharrer@web.de>
 This program comes with ABSOLUTELY NO WARRANTY;
 This is free software, and you are welcome to redistribute it under certain conditions;
 
@@ -222,7 +222,7 @@ sub envcode {
 }
 
 ## Define and process options
-Getopt::Long::Configure ("bundling");
+Getopt::Long::Configure ("bundling","no_ignore_case");
 GetOptions (
    'value|v!' => \$SHOWVALUE,
    'Environment|E!' => \$ISENVIRONMENT,
