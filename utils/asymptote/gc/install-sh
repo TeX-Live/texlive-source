@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/sh
 # install - install a program, script, or datafile
 
 scriptversion=2020-11-14.01; # UTC

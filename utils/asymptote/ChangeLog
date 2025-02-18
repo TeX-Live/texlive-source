@@ -1,3 +1,51 @@
+commit 6d4b620bfe8895c4e1d1fce7c81e61d499bf765f
+Author: Charles Staats III <charles.staats.iii@gmail.com>
+Date:   Sun Feb 16 21:45:13 2025 -0800
+
+    Fix CPPFLAGS.
+
+commit edf66a773d0aaf7086e68bc4bcad6409e672e4ba
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Feb 15 11:29:57 2025 -0800
+
+    Simplify code.
+
+commit fe941345cf1f44a690c16f370d3b4c8db4cdd5c3
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Feb 14 20:25:08 2025 -0800
+
+    Search for glm in current directory; don't require tirpc under FreeBSD.
+
+commit a399a7dd6e9784d5d18696e66fd148c453e17ec6
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Feb 14 14:38:18 2025 -0800
+
+    Always look for includes in current directory first.
+
+commit 76d289e234c752336333ed9367366059ac978dbd
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Feb 14 10:54:22 2025 -0800
+
+    Update asymptote.spec.
+
+commit 38e5328c1595d187da029c83d61a18061d55800f
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Feb 14 10:43:37 2025 -0800
+
+    Update ax_pthread.m4.
+
+commit 8fb038c69868ee0205f8b3852a98167e21fbffe0
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Feb 14 10:38:18 2025 -0800
+
+    Prebuilt missing gc automake files.
+
+commit a0c2ea71ef180d391a769d6e78b049571edf0f55
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Feb 10 16:15:41 2025 -0800
+
+    Increment version to 3.00.
+
 commit cf4243cb97f7d700a320cb93a0e7a47328c32b35
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Mon Feb 10 14:44:17 2025 -0800
