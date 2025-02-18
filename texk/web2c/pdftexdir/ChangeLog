@@ -1,7 +1,13 @@
+2025-02-18  Thanh Han The  <hanthethanh@gmail.com>
+
+	* pdftex.web (pdf_begin_string): more space fixes.
+	(pdftex r958)
+
 2025-02-17  Thanh Han The  <hanthethanh@gmail.com>
 
 	* pdftex.web (pdf_begin_string): remove	"and (not must_set_text_pos)"
 	from condition for must_insert_space := true.
+	(pdftex r955)
 
 2025-02-16  Thanh Han The  <hanthethanh@gmail.com>
 

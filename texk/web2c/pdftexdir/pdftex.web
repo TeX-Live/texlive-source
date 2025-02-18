@@ -16225,7 +16225,6 @@ end;
 
 procedure pdf_begin_string(f: internal_font_number); {begin to draw a string}
 var s_out, v, v_out: scaled;
-    save_pdf_delta_h: scaled;
     s: integer;
     must_end_string: boolean;  {must we end the current string?}
     must_insert_space: boolean;  {must we insert an interword space?}
@@ -16296,8 +16295,7 @@ begin
         {insert a real space char from the font when possible}
         if pdf_font_has_space_char[f] and pdf_doing_string then begin
             pdf_out(" ");
-            save_pdf_delta_h := pdf_delta_h;
-            adv_char_width(f, 32, 3); { to get |adv_char_width_s| and |adv_char_width_s_out|}
+            adv_char_width(f, 32, 4); { to get |adv_char_width_s| and |adv_char_width_s_out|}
             s := s - adv_char_width_s;
             s_out := s_out - adv_char_width_s_out;
             pdf_mark_char(f, 32);
@@ -16348,6 +16346,7 @@ begin
     pdf_read_dummy_font;
     pdf_begin_string(pdf_dummy_font);
     pdf_print(" ");
+    adv_char_width(pdf_dummy_font, 32, 4);
     pdf_end_string_nl;
 
     gen_faked_interword_space := s;
