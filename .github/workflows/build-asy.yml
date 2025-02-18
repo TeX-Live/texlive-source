@@ -26,10 +26,6 @@
 
 # only build on push to trunk, not branch.
 on:
-  release:
-    types:
-      - released
-      - prereleased
   workflow_dispatch:
 
 # push:
