@@ -1,3 +1,10 @@
+2025-02-18  Karl Berry  <karl@freefriends.org>
+
+	* updmap.cfg.5: remove spurious extra spaces and \& commands,
+	plus other fixes en passant.
+	Report from Bjarni Ingi Gislason,
+	https://tug.org/pipermail/tex-live/2025-February/051151.html
+
 2025-02-10  Karl Berry  <karl@freefriends.org>
 
 	* fmtutil.cnf.5: remove spurious extra spaces and \& commands.
