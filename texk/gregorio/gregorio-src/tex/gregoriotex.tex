@@ -1,0 +1,288 @@
+% GregorioTeX boostrap file for Plain TeX
+%
+% Copyright (C) 2015-2025 The Gregorio Project (see CONTRIBUTORS.md)
+%
+% This file is part of Gregorio.
+%
+% Gregorio is free software: you can redistribute it and/or modify
+% it under the terms of the GNU General Public License as published by
+% the Free Software Foundation, either version 3 of the License, or
+% (at your option) any later version.
+%
+% Gregorio is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+% GNU General Public License for more details.
+%
+% You should have received a copy of the GNU General Public License
+% along with Gregorio.  If not, see <http://www.gnu.org/licenses/>.
+
+% this file contains definitions for lines, initial, fonts, etc.
+
+
+% This file needs to be marked with the version number.  For now I've done this with the following comment, but we should check to see if PlainTeX has something similar to the version declaration of LaTeX and use that if it does.
+% 		[2025/02/17 v6.1.0-beta2 GregorioTeX system.]% PARSE_VERSION_DATE_LTX
+
+\input iftex.sty
+\RequireLuaTeX%
+
+\edef\greoldcatcode{\the\catcode`@}
+\catcode`\@=11
+
+\input luatexbase.sty%
+\input luamplib.sty%
+\input luaotfload.sty%
+\input xstring.tex%
+\input color.tex%
+\input graphicx.tex % for \resizebox
+
+\def\gre@error#1{\begingroup%
+\def\MessageBreak{^^J}%
+\let\protect\string%
+\errmessage{GregorioTeX error: #1}%
+\endgroup}%
+
+\def\gre@warning#1{\begingroup%
+\def\MessageBreak{^^J}%
+\let\protect\string%
+\message{GregorioTeX warning: #1}%
+\endgroup}%
+
+\def\gre@bug#1{\begingroup%
+\def\MessageBreak{^^J}%
+\let\protect\string%
+\errmessage{GregorioTeX bug: #1 !! This is a bug in Gregorio.  Please report it at https://github.com/gregorio-project/gregorio/issues}%
+\endgroup}%
+
+\def\gre@typeout#1{\begingroup%
+\def\MessageBreak{^^J}%
+\let\protect\string%
+\message{#1}%
+\endgroup}%
+
+\ifcsname gre@debug\endcsname%
+\else%
+	\def\gre@debug{}%
+\fi%
+
+\ifcsname f@size\endcsname%
+\else%
+	\def\f@size{\directlua{gregoriotex.font_size()}}%
+\fi%
+
+\newif\ifgre@allowdeprecated%
+\gre@allowdeprecatedtrue%
+
+\long\def\gre@metapost#1{{%
+	\gre@localleftbox{}%
+	\gre@localrightbox{}%
+	\mplibcode
+	#1
+	\endmplibcode%
+}}%
+
+%% This is \strip@pt from LaTeX
+\begingroup%
+	\catcode`P=12%
+	\catcode`T=12%
+	\lowercase{%
+		\def\x{\def\gre@rem@pt##1.##2PT{##1\ifnum##2>\z@.##2\fi}}}%
+	\expandafter\endgroup\x%
+\def\gre@strip@pt{\expandafter\gre@rem@pt\the}%
+
+\long\def\gre@iflatex#1{}%
+\long\def\gre@ifnotlatex#1{#1}%
+\input gregoriotex-main.tex
+
+
+%%%%%%%%%
+%% Color definitions
+%%%%%%%%%
+
+\definecolor{grebackgroundcolor}{RGB}{255,255,255}%
+\definecolor{gregoriocolor}{RGB}{229,53,44}%
+
+%%%%%%%%%
+%% PlainTeX specific definitions for fonts
+%%%%%%%%%
+
+\def\GreBold#1{%
+	{\bf #1}%
+	\relax %
+}%
+
+\def\GreItalic#1{%
+	{\it #1}%
+	%\relax 
+}%
+
+% Since small caps in PlainTeX requires loading another font, it is not defined by default.  This command maintains compatibility by checking to see if \sc has been defined and raising a warning when it hasn’t
+\def\GreSmallCaps#1{%
+	\ifdefined\sc%
+		{\sc #1}%
+	\else%
+		\gre@warning{Small caps (\protect\sc) is not defined}%
+		{#1}%
+	\fi%
+	\relax %
+}%
+
+\def\GreTypewriter#1{%
+	{\tt #1}%
+	\relax %
+}%
+
+\def\GreColored#1{%
+	{%
+		\color{gregoriocolor}#1%
+	}%
+}%
+
+\def\GreUnderline#1{%
+	$\underline{\rm #1}$
+	\relax %
+}%
+
+%%%%%%%%%%%%%%%
+%% Line color
+%%%%%%%%%%%%%%%
+
+% Colors don't work in PlainTeX, but we need these functions for interoperability with LaTeX.
+
+\def\gresetlinecolor#1{%
+	\gre@changestyle{normalstafflines}{\color{#1}}[\relax]%
+}
+
+
+%%%%%%%%%%%%%%%%%%%%
+%% Formatting environments
+%%%%%%%%%%%%%%%%%%%%
+
+\font\gre@font@initial=pncr at 40pt\relax%
+
+\def\gre@style@initial{%
+	\begingroup%
+	\gre@font@initial%
+	\relax %
+}%
+\def\endgre@style@initial{\endgroup}%
+
+\def\gre@style@translation{%
+	\begingroup%
+	\it%
+}%
+\def\endgre@style@translation{\endgroup}%
+
+\def\gre@style@abovelinestext{%
+	\begingroup%
+	\it%
+}%
+\def\endgre@style@abovelinestext{\endgroup}%
+
+\def\gre@style@normalstafflines{%
+	\begingroup%
+	\relax%
+}%
+\def\endgre@style@normalstafflines{\endgroup}%
+
+\def\gre@style@additionalstafflines{%
+	\begingroup%
+	\gre@style@normalstafflines%
+}%
+\def\endgre@style@additionalstafflines{%
+	\endgre@style@normalstafflines%
+	\endgroup%
+}%
+
+\def\gre@style@lowchoralsign{%
+	\begingroup%
+	\relax%
+}%
+\def\endgre@style@lowchoralsign{\endgroup}%
+
+\def\gre@style@highchoralsign{%
+	\begingroup%
+	\relax%
+}%
+\def\endgre@style@highchoralsign{\endgroup}%
+
+\def\gre@style@firstsyllableinitial{%
+	\begingroup%
+	\relax%
+}%
+\def\endgre@style@firstsyllableinitial{\endgroup}%
+
+\def\gre@style@firstsyllable{%
+	\begingroup%
+	\relax%
+}%
+\def\endgre@style@firstsyllable{\endgroup}%
+
+\def\gre@style@firstword{%
+	\begingroup%
+	\relax%
+}%
+\def\endgre@style@firstword{\endgroup}%
+
+\def\gre@style@modeline{%
+	\begingroup%
+	\bf%
+	\relax%
+}%
+\def\endgre@style@modeline{\endgroup}%
+
+\def\gre@style@modemodifier{%
+	\begingroup%
+	\bf%
+	\it%
+	\relax%
+}%
+\def\endgre@style@modemodifier{\endgroup}%
+
+\def\gre@style@modedifferentia{%
+	\begingroup%
+	\bf%
+	\relax%
+}%
+\def\endgre@style@modedifferentia{\endgroup}%
+
+\def\gre@style@commentary{%
+	\begingroup%
+	\it%
+	% footnotesize in LaTeX, but nothing here since changing font size is so hard
+	\relax%
+}%
+\def\endgre@style@commentary{\endgroup}%
+
+\def\gre@style@elision{%
+	\begingroup%
+	\it%
+	% small in LaTeX, but nothing here since changing font size is so hard
+	\relax%
+}%
+\def\endgre@style@elision{\endgroup}%
+
+\def\gre@style@annotation{%
+	\begingroup%
+	\relax%
+}%
+\def\endgre@style@annotation{\endgroup}%
+
+\def\gre@style@nabc{%
+	\begingroup%
+	\color{gregoriocolor}%
+}
+\def\endgre@style@nabc{\endgroup}%
+
+\def\gre@changestyle#1#2[#3]{%
+	\expandafter\gdef\csname gre@style@#1\endcsname{\begingroup#2}%
+	\expandafter\gdef\csname endgre@style@#1\endcsname{#3\endgroup}%
+}%
+
+%%%%%%%%%%%%%%%
+%% Default Mode Numbering style
+%%%%%%%%%%%%%%%
+
+\gresetmodenumbersystem{roman-majuscule}%
+
+\catcode`\@=\greoldcatcode

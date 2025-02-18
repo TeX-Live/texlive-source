@@ -1,0 +1,1222 @@
+% !TEX root = GregorioRef.tex
+% !TEX program = LuaLaTeX+se
+%
+% Copyright (C) 2006-2025 The Gregorio Project (see CONTRIBUTORS.md)
+%
+% This file is part of Gregorio.
+%
+% Gregorio is free software: you can redistribute it and/or modify
+% it under the terms of the GNU General Public License as published by
+% the Free Software Foundation, either version 3 of the License, or
+% (at your option) any later version.
+%
+% Gregorio is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+% GNU General Public License for more details.
+%
+% You should have received a copy of the GNU General Public License
+% along with Gregorio.  If not, see <http://www.gnu.org/licenses/>.
+%
+\section{The GABC File}
+
+gabc is a simple notation based exclusively on ASCII characters that
+enables the user to describe Gregorian chant scores. The name
+\textit{gabc} was given in reference to the
+\href{http://www.walshaw.plus.com/abc/}{ABC} notation for modern
+music.
+
+The gabc notation was developed by a monk of the
+\href{http://www.barroux.org}{Abbey of Sainte Madeleine du Barroux}
+and has been improved by Élie Roux and by other monks of the same
+abbey to produce the best possible notation.
+
+This section will cover the elements of a gabc file.
+
+\subsection{File Structure}
+Files written in gabc have the extension \texttt{.gabc} and have the
+following structure:
+
+\begin{lstlisting}[autogobble]
+	name: incipit;
+	gabc-copyright: copyright on this gabc file;
+	score-copyright: copyright on the source score;
+	author: if known; % maybe some additional comment
+	language: latin;
+	mode: 6;
+	mode-modifier: t.;
+	annotation: IN.;
+	annotation: 6;
+
+	%%
+
+	(clef) text(notes)
+	% another comment
+	com(notes)plex(notes) word(notes)
+\end{lstlisting}
+
+The file above is separated into two sections by the \texttt{\%\%} (line 11).  The first section is the header section and contains, appropriately enough, the headers which are used to contain metadata about the score.  These are discussed in more detail in \nameref{headers}.  The second section is the notation section, where the score itself is represented.  The section consists of syllable text and notes.  Notes are contained within the parentheses, and the syllable text is outside.  The syntax for syllable text is discussed in \nameref{textsyntax}.  The syntax for notes is discussed in \nameref{notesyntax}.
+
+Spaces in the notation section are significant, and the end of lines in the
+gabc file are considered spaces.
+
+A \texttt{\%} character marks the beginning of a comment which ends at the end
+of the line.  A comment also suppresses the end-of-line space.  Comments may appear within either section of the document and can either be at the end of a line with non-comment material (as in line 4 above) or on their own line (line 14).
+
+
+\subsection{Headers}\label{headers}
+
+The headers, such as \texttt{name: incipit;}, above, each have a name
+before the colon and a value, between the colon and the semicolon.  The
+header name is composed of ASCII letters and numbers, optionally separated
+by dashes.  If you wish to write a value over several lines, omit the
+semicolon at the end of the first line, and end the header value with
+\texttt{;;} (two semicolons).
+
+Some headers have special meaning to Gregorio:
+
+\begin{description}
+\item[name] This is the name of the piece, in almost all cases the
+	incipit, the first few words. In the case of the mass ordinary, the
+	form as \texttt{Kyrie X Alme Pater} or \texttt{Sanctus XI} is
+	recommended where appropriate. \textbf{This field is required.}
+\item[gabc-copyright] This license is the copyright notice (in English) of the gabc file, as chosen by the person named in the transcriber field. As well as the notice itself, it may include a brief description of the license, such as public domain, CC-by-sa; for a list of commonly found open source licenses and exceptions, please see \url{https://spdx.org/licenses/}.  A separate text file will be necessary for the complete legal license. For the legal issues about Gregorian chant scores, please see \url{http://gregorio-project.github.io/legalissues}. An example of this field would be:
+	\begin{lstlisting}[autogobble]
+		gabc-copyright: CC0-1.0 by Elie Roux, 2009
+		<http://creativecommons.org/publicdomain/zero/1.0/>;;
+	\end{lstlisting}
+\item[score-copyright] This license is the copyright notice (in English) of the score itself from which the gabc was transcribed. Like the \texttt{gabc-copyright}, there may be a brief description of the license too. In unclear or complex cases it may be omitted; it is most suitable for use when the transcriber is the copyright holder and licensor of the score as well. One again, reading the page on legal issues (linked above) is recommended. An example of this field would be:
+	\begin{lstlisting}[autogobble]
+		score-copyright: (C) Abbaye de Solesmes, 1934;
+	\end{lstlisting}
+\item[author] The author of the piece, if known; of course, the author of most traditional chant is not known.
+\item[language] The language of the lyrics.
+\item[mode] The mode of the piece. This should normally be an Arabic
+	number between 1 and 8, but may be any text required for unusual
+	cases. The mode number will be converted to roman numerals and
+	placed above the initial unless one of the following conditions are
+	met:
+	\begin{itemize}
+	\item There is a \verb=\greannotation= defined immediately prior to \verb=\gregorioscore=.
+	\item The \texttt{annotation} header field is defined.
+	\end{itemize}
+\item[mode-modifier] The mode ``modifier'' of the piece. This may be any
+	\TeX\ code to typeset after the mode, if the mode is typeset.  If the mode
+	is not typeset, the mode-modifier will also not be typeset.
+\item[mode-differentia] The mode or tone differentia of the piece.  Typically,
+	this expresses the variant of the psalm tone to use for the piece.  This may
+	be any \TeX\ code to typeset after the mode-modifier, if the mode is typeset.
+	If the mode is not typeset, the mode-differentia will also not be typeset.
+\item[annotation] The annotation is the text to appear above the
+	initial letter. Usually this is an abbreviation of the office-part
+	in the upper line, and an indication of the mode (and differentia
+	for antiphons) in the lower. Either one or two annotation fields may
+	be used; if two are used, the first is the upper line, the second
+	the lower. Example:
+	\begin{lstlisting}[autogobble]
+		annotation:Ad Magnif.;
+		annotation:VIII G;
+	\end{lstlisting}
+	Full \TeX\ markup is accepted:
+	\begin{lstlisting}[autogobble]
+		annotation:{\color{red}Ad Magnif.};
+		annotation:{\color{red}VIII G};
+	\end{lstlisting}
+	If the user already defined annotation(s) in the main \TeX\ file via
+	\verb=\greannotation= then the \texttt{annotation} header field will not
+	overwrite that definition.
+\item[staff-lines] The number of lines in the staff.
+\item[nabc-lines] The number of NABC lines in the staff; currently only 1 NABC
+	line is supported.
+\item[oriscus-orientation] If set to \texttt{legacy}, Gregorio will use the
+	older oriscus orientation semantics.  Leave the header out to use the
+	default oriscus orientation semantics.
+\item[def-m\textit{n}] Defines \TeX\ code to be used for the given numbered
+	macro (from 0--9).  See \nameref{defmacros}.
+\end{description}
+
+Although Gregorio ascribes no special meaning to them, other suggested headers are:
+
+\begin{description}
+\item[office-part] The office-part is the category of chant (in Latin), according to its liturgical role. Examples are: antiphona, hymnus, responsorium brevium, responsorium prolixum, introitus, graduale, tractus, offertorium, communio, kyrie, gloria, credo, sanctus, benedictus, agnus dei.
+\item[occasion] The occasion is the liturgical occasion, in Latin. For example, Dominica II Adventus, Commune doctorum, Feria secunda.
+\item[meter] For hymns and anything else with repetitive stanzas, the meter, the numbers of syllables in each line of a stanza. For example, 8.8.8.8 for typical Ambrosian-style hymns: 4 lines each of 8 syllables.
+\item[commentary] This is intended for notes about the source of the text, such as references to the Bible.
+\item[arranger] The name of a modern arranger, when a traditional chant melody has been adapted for new words, or when a manuscript is transcribed into square notation. This may be a corporate name, like Solesmes.
+\item[date] The date of composition, or the date of earliest attestation. With most traditional chant, this will only be approximate; e.g. XI. s. for eleventh century. The convention is to put it with the latin style, like the previous examples (capital letters, roman numerals, s for seculum and the dots).
+\item[manuscript] For transcriptions direct from a manuscript, the text normally used to identify the manuscript, for example Montpellier H.159
+\item[manuscript-reference] A unique reference for the piece, according to some well-known system. For example, the reference beginning cao in the Cantus database of office chants. If the reference is unclear as to which system it uses, it should be prefixed by the name of the system. Note that this should be a reference identifying the piece, not the manuscript as a whole; anything identifying the manuscript as a whole should be put in the manuscript field.
+\item[manuscript-storage-place] For transcriptions direct from a manuscript, where the manuscript is held; e.g. Bibliothèque Nationale, Paris.
+\item[book] For transcriptions from a modern book (such as Solesmes editions; modern goes back at least to the 19th century revival), the name of the book; e.g. Liber Usualis.
+\item[transcriber] The name of the transcriber into gabc.
+\item[transcription-date] The date the gabc was written, with the following convention yyyymmdd, like 20090129 for January the 29th 2009.
+\item[user-notes] This may contain any text in addition to the other headers -- any notes the transcriber may wish. However, it is recommended to use the specific header fields where they are suitable, so that it is easier to find particular information.
+\end{description}
+
+\subsubsection{Mode Headers}
+
+The three mode headers described above (\texttt{mode}, \texttt{mode-modifier},
+and \texttt{mode-differentia}) will be typeset above the initial if neither
+the \texttt{annotation} gabc header nor the \verb=\greannotation= \TeX{}
+command is used.
+
+The mode annotation will look like
+\writemode{mode}{\thinspace mode-modifier}{\thinspace mode-differentia}.
+
+The \texttt{mode} header is typically a number that will be typeset as a
+Roman numeral using the \texttt{modeline} style.  Therefore, if the first
+character of \texttt{mode} is a number from one (\texttt{1}) through eight
+(\texttt{8}), that number will be converted according to the
+\verb=\gresetmodenumbersystem= setting.  However, there are other modes,
+so all other parts of \texttt{mode} will be typeset directly.  If the
+\texttt{mode} header is omitted, none of the other mode headers will be
+typeset.
+
+The \texttt{mode-modifier} header is some text (typeset in the
+\texttt{modemodifier} style) that appears after \texttt{mode}, but before
+\texttt{mode-differentia}.  This is meant for an extra notation that
+indicates something without altering the mode itself.  An example would be
+\writemode{}{t.}{} to indicate a transposed mode.  If the
+\texttt{mode-modifier} header starts with punctuation, there will be no space
+before it, otherwise there will be a \verb=\thinspace= before it.
+
+The \texttt{mode-differentia} header is some text (typeset in the
+\texttt{modedifferentia} style) that appears after \texttt{mode-modifier}.
+This is meant for indicating the psalm tone ending to use for the paired
+psalm tone.  If the \texttt{mode-differentia} header starts with punctuation,
+there will be no space before it, otherwise there will be a \verb=\thinspace=
+before it.
+
+Some examples:
+
+\begin{tabularx}{\textwidth}{l|l|l|X}
+	\texttt{mode} & \texttt{mode-modifier} & \texttt{mode-differentia} & Result \\
+	\hline
+	\verb=6= & & & \writemode{\romannumeral 6}{}{} \\
+	\verb=4A= & & & \writemode{\romannumeral 4\relax A}{}{} \\
+	\verb=4a= & & & \writemode{\romannumeral 4\relax a}{}{} \\
+	\verb=2*= & \verb=t.= & & \writemode{\romannumeral 2*}{\thinspace t.}{} \\
+	\verb=5= & \verb=,\thinspace t.= & & \writemode{\romannumeral 5}{,\thinspace t.}{} \\
+	\verb=7= & & {\scriptsize\verb=c\raise0.5ex\hbox{\small2}=} & \writemode{\romannumeral 7}{}{\thinspace c\raise0.5ex\hbox{\small2}} \\
+	\verb=8= & \verb=-t.= & \verb=G*= & \writemode{\romannumeral 8}{-t.}{\thinspace G*} \\
+	{\scriptsize\verb=t. irregularis=} & & & \writemode{t. irregularis}{}{} \\
+\end{tabularx}
+
+\subsubsection{Defining Macros}\label{defmacros}
+
+When you want to do something special in the course of processing several syllables then you should define a macro which contains the instructions for what to do.  In this fashion, you do not have to insert the full set of instructions each time.  A basic macro definition looks like this:
+
+\begin{lstlisting}[autogobble]
+	def-m0: \mymacro;
+\end{lstlisting}
+
+You would then need to define \verb=\mymacro= in your \TeX\ file.  We recommend using this structure whenever possible because it makes sharing and reusing a score much easier.  If a later project doesn’t require the use of \verb=\mymacro=, then it’s relatively trivial to change the definition in the \TeX\ file for that project to an empty macro.
+
+However, it is also possible to have longer macro definitions directly in the gabc file.  In this case you probably want to make use of the multi-line header possibilities to make the macro more readable.  For instance, the following two macros would allow the toggling on or off of the automatic custos behavior in the middle of the score.
+
+\begin{lstlisting}[autogobble]
+	def-m1: \makeatletter
+	\gre@usemanualcustos
+	\makeatother;;
+	def-m2: \makeatletter
+	\gre@useautocustos
+	\makeatother;;
+\end{lstlisting}
+
+Macros are used inside the notes portion of the notation section.  See \nameref{usemacros}.
+
+\subsection{Notation --- Lyrics Notation}
+
+As a reminder, the notation section consists of lines which look like this:
+
+\begin{lstlisting}[autogobble]
+	(clef) text(notes)
+	com(notes)plex(notes) word(notes)
+\end{lstlisting}
+
+We’ll start by discussing the syllable text syntax (which appears outside the parentheses) and then discus the note syntax (see \nameref{notesyntax}).
+
+\subsubsection{Syllable Text Syntax}\label{textsyntax}
+
+Text outside parenthesis is considered syllable text.  In general, this is the
+text that appears below the staff.  Parenthesized note sections separate
+syllables.  Spaces (and end-of-lines) in syllable text mark the end of words
+and should be placed after the parenthesized notes section for the last
+syllable of a given word.
+
+The special character \texttt{\$} is an ``escape'' character which causes the
+character which follows it to lose any special meaning.  This can be used to
+insert parentheses in text (\ie, use \texttt{\$(}).  In order to put a
+\texttt{\$} itself in text, escape it (\ie, use \texttt{\$\$}).
+
+There are several markup-like codes that may be inserted into syllable text.  We divide these into three categories: style tags, syllable controls, and other.
+
+\paragraph{Style Tags}
+These tags are used to apply basic styling to the syllable text and are very similar to html markup.
+
+\begin{description}
+	\item[bold] Text between \texttt{<b>} and \texttt{</b>} will be typeset in
+		boldface if supported by the font.
+	\item[colored] Text between \texttt{<c>} and \texttt{</c>} will be colored
+		using the \texttt{gregoriocolor} color.
+	\item[italics] Text between \texttt{<i>} and \texttt{</i>} will be typeset
+		in italics if supported by the font.
+	\item[small capitals] Text between \texttt{<sc>} and \texttt{</sc>} will be
+		typeset with small capitals if supported by the font.
+	\item[teletype] Text between \texttt{<tt>} and \texttt{</tt>} will be
+		typeset as teletype (typically monospaced).
+	\item[underlined] Text between \texttt{<ul>} and \texttt{</ul>} will be
+		underlined.
+\end{description}
+
+\paragraph{Syllable Controls}
+These tags are used to control the interaction between the syllable in which they appear and either the surrounding syllables or the line breaks.
+
+\begin{description}
+	\item[clear] The \texttt{<clear>} or \texttt{<clear/>} marker indicates that
+		the given syllable may not extend into the notation of the previous
+		syllable.
+	\item[elision] Text between \texttt{<e>} and \texttt{</e>} will be
+		considered an elision (by default typeset in italics), with special
+		consideration given when placing the syllable under the notes above.
+	\item[Euouae] Text between \texttt{<eu>} and \texttt{</eu>} is considered
+		``Euouae'' (\textit{s\ae{}culorem, Amen} of the lesser doxology) for
+		marking tone \textit{differentia}, with special typographic consideration
+		for line breaks.
+	\item[no line break] Text between \texttt{<nlba>} and \texttt{</nlba>} is a
+		``no line break area,'' and line breaks in the output will be
+		suppressed here.
+	\item[protrusion] Text after \texttt{<pr>} or \texttt{<pr/>} in a syllable
+		is considered a protrusion and may push into the margin.  Optionally, the
+		\texttt{pr} may be followed by a colon and a number between 0 (text may
+		not protrude) and 1 (text may protrude in its entirety) indicating how
+		much of the marked text is allowed to push into the margin.  For example:
+		\texttt{<pr:.5>}
+\end{description}
+
+\paragraph{Other}
+These tags allow for a variety of special effects.
+
+\begin{description}
+	\item[above lines text] Text between \texttt{<alt>} and \texttt{</alt>} is
+		``above lines text'' and will be typeset above the staff lines.
+	\item[special character] Text between \texttt{<sp>} and \texttt{</sp>} is a
+		``special character,'' as defined by \texttt{\textbackslash
+		gresetspecial}.  There are also several special characters defined by default
+		(see	\nameref{specialcharacters} below).
+	\item[verbatim] Text between \texttt{<v>} and \texttt{</v>} is passed
+		directly to \TeX, without preprocessing as gabc text.
+\end{description}
+
+Additionally, besides parentheses, there are a few other special characters in
+the syllable text.  Curly braces (\texttt{\{} and \texttt{\}}) are for
+\nameref{lyriccentering}.  Square brackets (\texttt{[} and \texttt{]}) are for
+\nameref{translationtext} that appears below the lyric text.  See immediately
+below for more information.
+
+\subsubsection{Lyric Centering}\label{lyriccentering}
+
+Gregorio centers the text of each syllable around the first note of each
+syllable.  There are three basic modes, selected with the command \verb=\gresetlyriccentering{<mode>}=:
+
+\begin{description}
+\item[syllable] the entire syllable is centered around the first note
+\item[firstletter] the first letter of the syllable is centered around the first note
+\item[vowel] the vowel sound of the syllable is centered around the first note
+\end{description}
+
+The default is \texttt{vowel}, being common in most Gregorian chant
+books with text in Latin.  The definition of how Gregorio\TeX{} interprets
+vowels is described in \nameref{voweldetection}, below.
+
+All modes allow you to force the centering with curly brackets,
+for example \verb=a{b}c= will center the notes around \texttt{b}.
+
+\subsubsection{Translation Text}\label{translationtext}
+
+Translation text, enclosed in square brackets (\texttt{[} and \texttt{]}),
+appears below the lyric text (by default) in italics.  It is aligned to the
+syllable where it appears in the gabc file unless the special sequence
+\texttt{[/]} appears in a later syllable indicating that the translation text
+should be centered between those two points.
+
+\subsubsection{Special Characters}\label{specialcharacters}
+
+Special characters are specified between \texttt{<sp>} and \texttt{</sp>}.
+They may be defined in the \TeX{} file using the \verb=\gresetspecial= command
+and undefined using the \verb=\greunsetspecial= command.  The following
+special characters are defined by default:
+
+\rowcolors{1}{lightgray}{lightgray}
+\begin{tabularx}{\textwidth}{c|X}
+	\textbf{Sequence} & \textbf{Description}\\
+	\hline
+	\texttt{ae} & The \ae{} ligature.\\
+	\texttt{oe} & The \oe{} ligature.\\
+	\texttt{\textquotesingle{}ae}  & An accented \ae{} (\'\ae).\\
+	\texttt{\textquotesingle{}oe}  & An accented \oe{} (\'\oe).\\
+	\texttt{\textquotesingle{}æ}   & An accented \ae{} (\'\ae).\\
+	\texttt{\textquotesingle{}œ}   & An accented \oe{} (\'\oe).\\
+	\texttt{A/} & A with a bar (\Abar), typically used to signify the
+								antiphon.\\
+	\texttt{R/} & R with a bar (\Rbar), typically used to signify the refrain
+								or response.\\
+	\texttt{V/} & V with a bar (\Vbar), typically used to signify the verse.\\
+	\texttt{*}  & The character produced by \verb=\GreStar= (\GreStar).\\
+	\texttt{+}  & The character produced by \verb=\GreDagger= (\GreDagger).\\
+	\texttt{-}  & A zero-width hyphen.\\
+	\texttt{\textbackslash} & A backslash, avoiding \TeX{} interpretation.\\
+	\texttt{\&} & An ampersand, avoiding \TeX{} interpretation.\\
+	\texttt{\#} & A hash mark, avoiding \TeX{} interpretation.\\
+	\texttt{\_} & An underscore, avoiding \TeX{} interpretation.\\
+	\texttt{\textasciitilde} & A centered tilde (a ``math'' tilde, \gretilde).\\
+\end{tabularx}
+
+Note that barred letters may be redefined by the \verb=\gredefbarredsymbol=
+and \verb=\gresimpledefbarredsymbol= commands.
+
+\subsubsection{Vowel Detection}\label{voweldetection}
+
+The default rules built into Gregorio for \texttt{vowel} mode are for
+Ecclesiastical Latin and work fairly well (though not perfectly) for
+other languages (especially Romance languages).  However, Gregorio
+provides a gabc \texttt{language} header which allows the language of
+the lyrics to be set. The default is Latin.
+
+Special characters (input with \texttt{<sp>}) or verbatim text (\texttt{<v>})
+count as consonants, so you have to force centering around them, for example
+\verb=gr{<sp>'ae</sp>}=. If an elision (input with \texttt{<e>}) is present in
+the syllable, Gregorio will consider it as consonant too.
+
+If no vowel is found, the notes are centered around the whole syllable.
+
+If you are using a language for which built-in language rules do not exist and the fallbacks are insufficient, then you may wish to provide your own set of vowel detection rules.  This can be done with a special file:\verb=gregorio-vowels.dat=.  See \nameref{customvowels} for information about how to create and use this file.
+
+Languages which are currently supported are Latin, English, Church Slavonic and Hungarian.  Polish, Czech, and Slovak are supported as aliases for Church Slavonic.  All of these languages can be specified by name (in which case both titlecase and lowercase names are recognized) and by using their ISO 639 (-1 two-letter, -2/T three-letter, or -2/B three-letter) standard abbreviations.
+
+
+\subsection{Notation --- Note Syntax}\label{notesyntax}
+
+In the notation section of the gabc file, notes and other figures that appear
+on the staff are specified within parentheses.
+
+\subsubsection{Pitches}
+
+Pitches are represented by a single letter from \texttt{a}--\texttt{n} and
+\texttt{p}.  Each letter represents the typographical position of the pitch
+regardless of the position of the clef (\ie, \textbf{not} the musical position
+of the pitch relative to the clef).  The letters available depend on the
+number of staff lines (set by the \texttt{staff-lines} header): three pitches
+are allowed above the top staff line.  This means that a two-line staff
+supports \texttt{a}--\texttt{i}:
+
+{
+	\gresetinitiallines{0}\gresetlyriccentering{firstletter}%
+	\gresetclef{invisible}\gresetlastline{justified}%
+	\ttfamily
+	\gregorioscore[a]{pitches2}
+}
+
+A three-line staff supports \texttt{a}--\texttt{k}:
+
+{
+	\gresetinitiallines{0}\gresetlyriccentering{firstletter}%
+	\gresetclef{invisible}\gresetlastline{justified}%
+	\ttfamily
+	\gregorioscore[a]{pitches3}
+}
+
+A four-line staff (the default) supports \texttt{a}-\texttt{m}:
+
+{
+	\gresetinitiallines{0}\gresetlyriccentering{firstletter}%
+	\gresetclef{invisible}\gresetlastline{justified}%
+	\ttfamily
+	\gregorioscore[a]{pitches4}
+}
+
+A five-line staff supports \texttt{a}-\texttt{n} and \texttt{p}.
+
+{
+	\gresetinitiallines{0}\gresetlyriccentering{firstletter}%
+	\gresetclef{invisible}\gresetlastline{justified}%
+	\ttfamily
+	\gregorioscore[a]{pitches5}
+}
+
+\subsubsection{One-Note Neumes}
+
+A lower-case pitch letter represents a \textit{punctum quadratum}, a square
+note.  A capitalized pitch letter represents a \textit{punctum inclinatum}, a
+diamond-shaped note.  Other shapes are created by appending various characters
+to the pitch letter.  These characters may be used together, and
+Gregorio\TeX{} will try to typeset them together.
+
+\begin{tabularx}{\textwidth}{l|X}
+	Gabc & Description \\
+	\hline
+	\pitchchar & punctum quadratum \\
+	\Pitchchar{} & punctum inclinatum (automatic leaning based on surrounding
+								 pitches) \\
+	\Pitchchar0 & left-leaning (descending) punctum inclinatum \\
+	\Pitchchar1 & right-leaning (ascending) punctum inclinatum \\
+	\Pitchchar2 & non-leaning (unison) punctum inclinatum \\
+	\pitchchar\texttt{o} & oriscus \\
+	\pitchchar\texttt{w} & quilisma \\
+	\pitchchar\texttt{v} & virga (stem on right) \\
+	\pitchchar\texttt{V} & virga reversa (stem on left) \\
+	\pitchchar\texttt{s} & stropha \\
+	\pitchchar\texttt{\textasciitilde} & liquescent deminutus (small note) \\
+	\pitchchar\texttt{<} & augmented liquescent \\
+	\pitchchar\texttt{>} & diminished liquescent \\
+	\pitchchar\texttt{=} & linea \\
+	\pitchchar\texttt{r} & cavum (hollow note) \\
+	\pitchchar\texttt{R} & punctum quadratum surrounded by lines \\
+	\pitchchar\texttt{r0} & punctum cavum surrounded by lines \\
+	\pitchchar\texttt{x} & flat \\
+	\pitchchar\texttt{\#} & sharp \\
+	\pitchchar\texttt{y} & natural \\
+	\pitchchar\texttt{x?} & parenthesized flat \\
+	\pitchchar\texttt{\#?} & parenthesized sharp \\
+	\pitchchar\texttt{y?} & parenthesized natural \\
+	\pitchchar\texttt{X} & soft flat \\
+	\pitchchar\texttt{\#\#} & soft sharp \\
+	\pitchchar\texttt{Y} & soft natural \\
+\end{tabularx}
+
+In the above table, \pitchchar{} represents a pitch character and
+\Pitchchar{} represents a capitalized pitch character.
+
+Some examples:
+
+{
+	\gresetinitiallines{0}\gresetlyriccentering{firstletter}%
+	\gresetclef{invisible}\gresetlastline{justified}\greseteolcustos{manual}%
+	\ttfamily
+	\gabcsnippet{
+		( )
+		g(g) g<sp>~~</sp>(g~) g<(g<) g>(g>) go(go) go<sp>~~</sp>(go~) gw(gw)
+		gv(gv) gV(gV) gs(gs) gs<(gs<) g=(g=)
+		( ) (z) ( )
+		gr(gr) gR(gR) gr0(gr0) G(G) G0(G0) G1(G1) G<sp>~~</sp>(G~) G>(G>) Gr(Gr) gx(gx)
+		g#(g#) gy(gy) gx?(gx?) g#?(g#?) gy?(gy?)
+		( )
+	}
+}
+
+\subsubsection{Alterations (Flats, Naturals, and Sharps)} \label{softalterations}
+
+Things like flats, sharps, and naturals (called ``alterations''), while not technically notes, are
+treated as one-note neumes by Gregorio\TeX.  Thus, they are also added by
+appending characters to pitch letters.
+
+Flats, sharps, and naturals each have a ``soft'' version (\verb|X|, \verb|##|, and \verb|Y|, respectively). Soft flats are printed if no previous flat (on the same pitch) is in effect. Similarly for soft sharps. Soft naturals are printed if a previous flat or sharp (on the same pitch) is in effect.
+What ``in effect'' means is controlled by the \verb|\gresetalterationeffect| macro (see \S\ref{setalterationeffect}). Soft alterations currently have two use cases.
+
+For Dominican chant (in which flats take effect until the end of a line or until cancelled by a natural), use \verb|\gresetalterationeffect{line}| (which is the default), and type a soft flat (\verb|X|) in front of \emph{every} note that is to be sung a half-step flat. Naturals should also be soft (\verb|Y|), but only naturals that cancel flats need to be typed. For example:
+
+\begin{center}\parbox{5in}{%
+	\gresetinitiallines{0}\gresetlyriccentering{firstletter}%
+	\grechangedim{spacelinestext}{0.4cm}{scalable}%
+	\grechangedim{spaceabovelines}{0.5cm}{scalable}%
+	\gresetalterationeffect{line}%
+	\ttfamily
+	\gabcsnippet{(e) (e) (e) gX(gXge) (f)gX(gXghED) (eddc) (;) (efef//hhv) gX(gXfe//fgED//efDC//ef) (;) (hhvFEf)(fv_//hhf)gY(gYghghf) (::)}
+}\end{center}
+
+Even under the convention that flats only take effect until the end of a word, if a long word has a flat that applies to two notes, one may want a flat to appear on the second note if a line break occurs between them. To do this, again use \verb|\gresetalterationeffect{line}| (the default) and type a soft flat (\verb|X|) before the second note. For example:
+\begin{center}\parbox{4in}{%
+	\gresetinitiallines{0}\gresetlyriccentering{firstletter}%
+	\grechangestyle{translation}{\ttfamily}%
+	\grechangedim{spacelinestext}{0.4cm}{scalable}%
+	\grechangedim{translationheight}{0.4cm}{scalable}%
+	\grechangedim{spaceabovelines}{0.5cm}{scalable}%
+	\gresetalterationeffect{line}%
+	\gabcsnippet{(c3) (d)(fh) (fe/hh)(ih..) (,) (hij) (kvJIH'i)(h.) (,) (k)(ij)(k) (jvIH'i) (h.) (;) mi[gx](gxfghz)se[gX](gXhvGF)re(e[ll:1]d)re(ef) (d_[oh:h]e_[oh:h]d_[oh:h])(d.) (::)}
+}\end{center}
+
+\subsubsection{Oriscus Orientation}
+
+Under the default rules for oriscus orientation, the direction of an oriscus
+(pointing upwards or downwards) depends on whether the first non-unison note
+that follows is higher or lower than the oriscus.  However, if Gregorio\TeX{}
+does not produce the desired oriscus, the direction may be explicitly selected
+using \texttt{o0} or \texttt{O0} for a downwards-pointing oriscus and
+\texttt{o1} or \texttt{O1} for an upwards-pointing oriscus.
+
+The \texttt{legacy} rules for oriscus orientation are deprecated and only
+remain for backwards compatibility with older gabc files that depend on their
+quirks.  They will not be discussed here.
+
+\subsubsection{Complex Neumes}
+
+Neumes with more than one note are simply made by chaining notes together
+without worrying about the connections between them.  In addition to the
+characters for one-note neumes, some more characters are available to adjust
+the shape.
+
+\begin{tabularx}{\textwidth}{l|X}
+	Gabc & Description \\
+	\hline
+	\texttt{-}\pitchchar & (prior to the pitch it modifies) initio debilis \\
+	\pitchchar\texttt{O} & oriscus scapus (an oriscus with stems that connect
+							 to the note prior to it) \\
+	\pitchchar\texttt{q} & quadratum (for making a ``square'' pes shape; see
+							 example below) \\
+	\pitchchar\texttt{W} & quilisma quadratum (similarly, for making a ``square''
+							 quilisma shape) \\
+	\pitchchar\texttt{ss} & distropha \\
+	\pitchchar\texttt{sss} & tristropha \\
+	\pitchchar\texttt{vv} & bivirga \\
+	\pitchchar\texttt{vvv} & trivirga \\
+\end{tabularx}
+
+In the above table, \pitchchar{} represents a pitch character.
+
+Some examples:
+
+{
+	\gresetinitiallines{0}\gresetlyriccentering{firstletter}%
+	\gresetclef{invisible}\gresetlastline{justified}%
+	\ttfamily
+	\gabcsnippet{( )
+		egoi(egoi) egOi(egOi)
+		gi(gi) gqi(gqi)
+		gwi(gwi) gWi(gWi) (z)
+		( ) gss(gss) gsss>(gsss>)
+		gvv(gvv) gvvv(gvvv)
+		gfh(gfh) <v>-</v>dge(-dge)
+		grfge<(grfge<) fgeh(fgeh)
+		<v>-</v>fgehf>(-fgehf>) ( )
+	}
+}
+
+Sometimes Gregorio\TeX{} will incorrectly guess the shape.  In this case, a
+space (see \nameref{neumespacing} below) may be needed to get the
+desired shape.
+
+\subsubsection{Neume Fusion}
+
+Sometimes, especially with longer neumes, Gregorio\TeX{} will not form the
+desired shape.  In this case, there is neume fusion.  Neume fusion allows for
+the composition of new shapes based on a set of primitive neumes.  These
+primitives are:
+
+\begin{tabularx}{\textwidth}{l|l|X}
+	Primitive & Description & Rules \\
+	\hline
+	\texttt{g} & punctum & fuses from higher or lower notes, and can fuse to higher or lower notes \\
+	\texttt{go} & oriscus & may only fuse in the direction it was fused from \\
+	\texttt{gO} & oriscus scapus & at the start only, next note must be higher to fuse \\
+	\texttt{gw} & quilisma & does not fuse from anything, and only fuses to a higher note \\
+	\texttt{gV} & virga reversa & at the start only, next note must be lower to fuse \\
+	\texttt{gf} & flexus & if not at the end, must be followed by a higher note to fuse \\
+	\texttt{gh} & pes & at the end only; in non-liquescent form, the previous note must be lower to fuse \\
+	\texttt{gfg} & porrectus & at the end only, previous note must be lower to fuse \\
+	\texttt{gv} & virga & at the end only, previous note must be lower to fuse \\
+\end{tabularx}
+
+In the above table, \texttt{f}, \texttt{g}, and \texttt{h} are representative
+pitch characters, considered by pitch relation.
+
+Placing the \texttt{@} character between two notes will attempt to use the above
+rules to fuse the notes together.  If a shape that is not fusible is used,
+Gregorio will typically fall back on the non-fusible form, but in some cases
+will result in a syntax error.
+
+Placing the \texttt{@} character before a primitive that would get a stem will
+suppress the stem.  Given the above list of primitives, this means the flexus
+and the porrectus.
+
+Here are some examples of fusion:
+
+{
+	\gresetinitiallines{0}\gresetlyriccentering{firstletter}%
+	\gresetclef{invisible}\gresetlastline{justified}%
+	\ttfamily
+	\gabcsnippet{
+		( )
+		h@iw@ji@j@ih<sp>~~</sp>(h@iw@ji@j@ih~)
+		d@eo@fd(d@eo@fd)
+		IJ@kh(IJ@kh)
+		( )
+	}
+}
+
+As a convenience, a sequence of notes enclosed within \texttt{@[} and
+\texttt{]} will be fused automatically based on an algorithm that breaks up
+the notes into the above primitives.  Using the same examples as before:
+
+{
+	\gresetinitiallines{0}\gresetlyriccentering{firstletter}%
+	\gresetclef{invisible}\gresetlastline{justified}%
+	\ttfamily
+	\gabcsnippet{
+		( )
+		@<v>[</v>hiwjijih<sp>~~</sp><v>]</v>(@[hiwjijih~])
+		@<v>[</v>deofd<v>]</v>(@[deofd])
+		@<v>[</v>IJkh<v>]</v>(@[IJkh])
+		( )
+	}
+}
+
+\subsubsection{Neume Spacing}\label{neumespacing}
+
+For musical phrases that consist of multiple neumes, various spaces may be
+added to the notes.
+
+\begin{tabularx}{\textwidth}{l|X}
+	Gabc & Description \\
+	\hline
+	\texttt{/0} & a half space that is considered part of the same neume \\
+	\texttt{/!} & an small separation that is considered part of the same neume \\
+	\texttt{/} & a small separation between neumes \\
+	\texttt{//} & a medium separation between neumes \\
+	\textit{space} & a large separation between neumes \\
+	\texttt{/[}\textit{factor}\texttt{]} & a space with the size the large
+							 separation scaled by the given \textit{factor} (which may be
+							 negative, resulting in a backspace) \\
+	\texttt{!} & if alone, a zero-width space used when Gregorio\TeX{} does not
+							 break the chain of notes in the correct place; if followed by a
+							 space, makes the space that follows a non-breaking space \\
+\end{tabularx}
+
+\subsubsection{Shape Hints}
+
+In some cases, an alternate form of a shape is desired.  To do this, put a
+\texttt{[shape:}\textit{hint}\texttt{]} after the figure that needs to be
+altered.  The available alternate form hints are as follows:
+
+\begin{tabularx}{\textwidth}{l|X}
+	\textit{hint} & Description \\
+	\hline
+	\texttt{stroke} & Render a clivis/flexus as a stroke (like in a porrectus)
+		rather than as two notes \\
+\end{tabularx}
+
+\subsubsection{Additional Symbols}
+
+Puncta mora, episemata, and other symbols may also be added to a note by
+adding various other characters.  As with note shapes, these may also be
+used together.
+
+\begin{tabularx}{\textwidth}{l|X}
+	Gabc & Description \\
+	\hline
+	\pitchchar\texttt{.} & punctum mora \\
+	\pitchchar\texttt{\textunderscore} & horizontal episema (see
+														 \nameref{horizontalepisemata} below)\\
+	\pitchchar\texttt{\textquotesingle} & vertical episema / ictus (automatic placement) \\
+	\pitchchar\texttt{\textquotesingle0} & vertical episema / ictus below the note \\
+	\pitchchar\texttt{\textquotesingle1} & vertical episema / ictus above the note \\
+	\pitchchar\texttt{r1} & accent above staff \\
+	\pitchchar\texttt{r2} & accent grave above staff \\
+	\pitchchar\texttt{r3} & circle above staff \\
+	\pitchchar\texttt{r4} & lower semicircle above staff \\
+	\pitchchar\texttt{r5} & upper semicircle above staff \\
+	\pitchchar\texttt{r6} & musica ficta flat \\
+	\pitchchar\texttt{r7} & musica ficta natural \\
+	\pitchchar\texttt{r8} & musica ficta sharp \\
+\end{tabularx}
+
+In the above table, \pitchchar{} represents a pitch character.
+
+Some examples:
+
+{
+	\gresetinitiallines{0}\gresetlyriccentering{firstletter}%
+	\gresetclef{invisible}\gresetlastline{justified}%
+	\ttfamily
+	\gabcsnippet{
+		g.(g.) g_(g_) g<v>\textquotesingle</v>(g') g<v>\textquotesingle</v>1(g'1)
+		gr1(gr1) gr2(gr2) gr3(gr3) gr4(gr4) gr5(gr5) gr6(gr6) gr7(gr7) gr8(gr8)
+		G<v>\textquotesingle</v>_.r3(G'_.r3) gv_r7(gv_r7)
+	}
+}
+
+\subsubsection{Rhythmic signs}
+
+\paragraph{\textit{Punctum Mora}}
+
+The \textit{punctum mora} (dots after the note) are denoted by adding a period ( \texttt{.} ) after the note. When there are two \textit{punctum mora} after a neume, the character is simply doubled: ( \texttt{..} ).  You cannot place more than two \textit{punctum mora} after a note.
+
+{
+	\gresetinitiallines{0}\gresetlyriccentering{firstletter}%
+	\gresetclef{invisible}\gresetlastline{justified}%
+	\ttfamily
+	\gabcsnippet{( ) g.(g.) h.(h.) g..(g..) ( )}
+}
+
+\paragraph{\textit{Ictus}}
+
+The \textit{ictus} (also called the vertical \textit{episema}) is denoted by an apostrophe ( \verb='= ) after the note. Gregorio will place the episema above or below the note according to the context, however you can force its position with \verb='0= (for always below) and \verb='1= (for always above).
+
+Of course, the \textit{ictus} can be present more than once in a neume, but only once per note.
+
+{
+	\gresetinitiallines{0}\gresetlyriccentering{firstletter}%
+	\gresetclef{invisible}\gresetlastline{justified}%
+	\ttfamily
+	\gabcsnippet{( ) g<v>\textquotesingle</v>(g') dh<v>\textquotesingle</v>(dh') g<v>\textquotesingle</v>1(g'1) dh<v>\textquotesingle</v>0(dh'0) ( )}
+}
+\paragraph{Horizontal Episemata}\label{horizontalepisemata}
+
+For the horizontal \textit{episema}, type an underscore ( \verb=_= ) after every note that is under an \texttt{episema}.  A horizontal \texttt{episema} may be adjusted with the addition of numbers.  Multiple numbers may be added to combine their effects.
+
+\begin{tabularx}{\textwidth}{l|X}
+	Gabc & Description \\
+	\hline
+	\texttt{0} & place the \texttt{episema} below the note \\
+	\texttt{1} & place the \texttt{episema} above the note \\
+	\texttt{2} & disable bridging the \texttt{episema} with the following \texttt{episema} \\
+	\texttt{3} & use a small \texttt{episema}, aligned left \\
+	\texttt{4} & use a small \texttt{episema}, aligned center \\
+	\texttt{5} & use a small \texttt{episema}, aligned right \\
+\end{tabularx}
+
+To demonstrate:
+
+{
+	\gresetinitiallines{0}\gresetlyriccentering{firstletter}%
+	\gresetclef{invisible}\gresetlastline{justified}%
+	\ttfamily
+	\gabcsnippet{
+		( )
+		g_(g_) g_0(g_0) d_hd(d_hd) d_1hd(d_1hd) (:?)
+		H_g_(H_g_) H_2g_(H_2g_) g_/g_(g_/g_) g_2/g_(g_2/g_) (z)
+		( ) g_3(g_3) g_4(g_4) g_0_4(g_0_4)  g_5(g_5) H_502g_0(H_502g_0)
+		( )
+	}
+}
+
+Additional tuning is possible.  See \nameref{horizontalepisematuning} below.
+
+\subsubsection{Separation Bars}
+
+Bars separate sections of the chant.
+
+\begin{tabularx}{\textwidth}{l|X}
+	Gabc & Description \\
+	\hline
+	\texttt{`} & virgula \\
+	\texttt{`0} & virgula on the ledger line above the staff \\
+	\texttt{\textasciicircum} & divisio ``minimis'' (eighth bar) \\
+	\texttt{\textasciicircum0} & divisio ``minimis'' (eighth bar) \\
+	\texttt{,} & divisio minima (quarter bar) \\
+	\texttt{,0} & divisio minima on the ledger line above the staff \\
+	\texttt{;} & divisio minor (half bar) \\
+	\texttt{:} & divisio maior (full bar) \\
+	\texttt{:?} & dotted divisio maior \\
+	\texttt{::} & divisio finalis \\
+	\texttt{;}\textit{n} & Dominican bar, where \textit{n} is the position, from
+												 1--8; depending on the number of staff lines, some
+												 Dominican bars will not be available. \\
+\end{tabularx}
+
+Bars can also take the following characters for additional symbols:
+
+\begin{tabularx}{\textwidth}{l|X}
+	Gabc & Description \\
+	\hline
+	\texttt{\textquotesingle} & vertical episema \\
+	\texttt{\_} & bar brace \\
+\end{tabularx}
+
+Some examples:
+
+{
+	\gresetinitiallines{0}\gresetlyriccentering{firstletter}%
+	\gresetclef{invisible}\gresetlastline{justified}%
+	\ttfamily
+	\gabcsnippet{
+		( )
+		`(`) `0(`0) ,(,) ,0(,0) ;(;) :(:) :?(:?) ::(::)
+		;1(;1) ;2(;2) ;3(;3) ;4(;4) ;5(;5) ;6(;6)
+		:<v>\textquotesingle</v>(:') ,_(,_)
+		(// //)
+	}
+}
+
+\subsubsection{Clefs}
+
+The syntax for a clef is a letter corresponding to the clef symbol, \texttt{c}
+or \texttt{f}, followed optionally by \texttt{b} if the clef should have a
+flat, followed by a number from \texttt{1} up to the number of staff lines
+indicating the line on which the clef is typeset.
+
+Two clefs may be typeset at the same time by linking the two clefs with a
+\texttt{@}.  The two clefs will be typeset in such a way that they don't
+collide with each other.
+
+{
+	\gresetinitiallines{0}\gresetlyriccentering{firstletter}%
+	\gresetclef{invisible}\gresetlastline{justified}%
+	\ttfamily
+	\gabcsnippet{
+		( )
+		c1(c1) ( ) c2(c2) ( ) c3(c3) ( ) c4(c4) ( )
+		f3(f3) ( ) f4(f4) ( )
+		cb3(cb3) ( )
+		c1@c4(c1@c4) ( ) f3@f4(f3@f4)
+		( )
+	}
+}
+
+\subsubsection{Custos}
+
+Gregorio\TeX{} typesets the custos automatically by default.  This may be
+switched off using the \verb=\greseteolcustos= command.  Additionally, a
+custos whose pitch depends on the note that follows may be typeset anywhere by
+entering \texttt{z0} or at any pitch by entering a \texttt{+} after the
+desired pitch character (\eg, \texttt{g+} for a custos at the \texttt{g}
+pitch).
+
+\verb=[nocustos]= will prevent a custos from appearing at the point where
+specified, if line formatting causes a line break there.  The \verb=[nocustos]=
+tag must appear \emph{before} spaces appearing at the point specified or it will
+have no effect.
+
+\subsubsection{Line Breaks}
+
+Gabc has a few codes to control line breaks.
+
+\begin{tabularx}{\textwidth}{l|X}
+	Gabc & Description \\
+	\hline
+	\texttt{z} & insert a justified line break whose custos depends on the
+							 \verb=\greseteolcustos= configuration \\
+	\texttt{z+} & insert a justified line break with a forced automatic custos \\
+	\texttt{z-} & insert a justified line break without a custos \\
+	\texttt{Z} & insert a ragged line break whose custos depends on the
+							 \verb=\greseteolcustos= configuration \\
+	\texttt{Z+} & insert a ragged line break with a forced automatic custos \\
+	\texttt{Z-} & insert a ragged line break without a custos \\
+	\texttt{<nlba>} & mark the beginning of a set of neumes where no line breaks
+										are allowed \\
+	\texttt{</nlba>} & mark the end of a set of neumes where no line breaks are
+										 allowed \\
+\end{tabularx}
+
+\subsubsection{Choral Signs}
+
+Choral signs (text near the note in the staff) may be typeset by using
+\texttt{[cs:}\textit{choral sign text}\texttt{]}.
+
+An NABC choral sign may be typeset by using
+\texttt{[cn:}\textit{nabc neume code}\texttt{]}.
+
+\subsubsection{Braces}
+
+To typeset a brace, use
+\texttt{[}\textit{type}\texttt{:}\textit{n}\texttt{;}\textit{size}\texttt{]}
+after some neume.  The \textit{type} may be \texttt{ob} for a round brace
+above the staff, \texttt{ub} for a round brace below the staff, \texttt{ocb}
+for a curly brace above the staff, or \texttt{ocba} for a curly brace with
+accent above the staff.  If \textit{n} is \texttt{0}, the brace will begin at
+the end of the neume.  If \textit{n} is \texttt{1}, the brace will begin at
+the start of the neume.  The \textit{size} should be a \TeX{} size unit.
+
+Alternately, use
+\texttt{[}\textit{type}\texttt{:}\textit{n}\texttt{\{]} followed by
+\texttt{[}\textit{type}\texttt{:}\textit{n}\texttt{\}]} after some later
+neume.  The \textit{type} and \textit{n} are as above, but this form typesets
+a brace with the endpoints thus defined.
+
+\subsubsection{Stem length for the bottom lines}
+
+Gregorio will determine the length of the stem for most neumes.
+Some manual input might be needed for notes on the bottom staff
+line (\textit{d}). Most of the time they will take a short form:
+
+{
+	\gresetinitiallines{0}\gresetlyriccentering{firstletter}%
+	\gresetclef{invisible}\gresetlastline{justified}%
+	\ttfamily
+	\gabcsnippet{(  ) dv(dv) ed(ed) ed~(ed~) dcd(dcd) ( )}
+}
+
+But when a ledger line is drawn below these notes, they should take a long
+form. The problem is that many cases are ambiguous: for instance if a note
+is close to a ledger line, one may want to make it long, others may not.
+To solve this problem, you can add \texttt{[ll:0]} to the note carrying the stem
+to get its short form, or \texttt{[ll:1]} to force its long form.
+
+{
+	\gresetinitiallines{0}\gresetlyriccentering{firstletter}%
+	\gresetclef{invisible}\gresetlastline{justified}\greseteolcustos{manual}%
+	\gabcsnippet{
+		( )
+		dv<v>[</v>ll:1<v>]</v>(dv[ll:1])
+		ed<v>[</v>ll:1<v>]</v>(ed[ll:1])
+		ed<sp>~~</sp><v>[</v>ll:1<v>]</v>(ed~[ll:1])
+		dcd<v>[</v>ll:1<v>]</v>(dcd[ll:1])
+		( ) (z) ( )
+		b!dv<v>[</v>ll:0<v>]</v>(b!dv[ll:0])
+		b!ed<v>[</v>ll:0<v>]</v>(b!ed[ll:0])
+		b!ed<sp>~~</sp><v>[</v>ll:0<v>]</v>(b!ed~[ll:0])
+		dcd<v>[</v>ll:0<v>]</v>!b(dcd[ll:0]!b)
+		( )
+	}
+}
+
+\subsubsection{Custom Ledger Lines}
+
+To specify a custom ledger line, use
+\texttt{[oll:}\textit{left}\texttt{;}\textit{right}\texttt{]} to create an
+over-the-staff ledger line with specified lengths to the left and right of the
+point where it is introduced.  If \textit{left} is \texttt{0}, the ledger line
+will start at the introduction point.  If \textit{left} is \texttt{1}, the
+ledger line will start at the \textit{additionaallineswidth} distance to the
+left of the introduction point.  Otherwise, the line will start at the
+\textit{left} distance (taken to be an explicit length, with \TeX{} units
+required) to the left of the introduction point.  When using this form,
+\texttt{right} must be an explicit length to the right of the introduction
+point at which to end the line.
+
+Alternately, use
+\texttt{[oll:}\textit{left}\texttt{\{}\textit{right}\texttt{]} to specify the
+start of an over-the-staff ledger line, followed by \texttt{[oll:\}]} at some
+point later to specify its end.  When using this form, \textit{left} has the
+same meaning as before.  However, \textit{right} takes on similar values as
+\textit{left}, which are instead applied to the right of the specified
+endpoint.
+
+Use \texttt{ull} instead of \texttt{oll} (with either form) to create an
+under-the-staff ledger line.
+
+When using this feature with fusion, you will not be able to start or end a
+ledger line in the middle of two-note primitive shapes.  To work around this,
+either adjust the parameters of the ledger line or use manual fusion to break
+up those two notes.
+
+\subsubsection{Simple Slurs}
+
+To specify a simple slur, use
+\texttt{[oslur:}\textit{shift}\texttt{;}\textit{width}\texttt{,}\textit{height}\texttt{]}
+to create an over-the-notes slur with the specified \textit{width} and
+\textit{height}.  If \textit{shift} is \texttt{0}, the slur will start on the
+right side of the note to which it is attached.  If \textit{shift} is
+\texttt{1}, the slur will start one punctum's width to the left of the right
+side of the note to which it is attached.  If \textit{shift} is \texttt{2},
+the slur will start one-half punctum's width to the left of the right side of
+the note to which it is attached.
+
+Alternately, use
+\texttt{[oslur:}\textit{shift}\texttt{\{]} to specify the start of an
+over-the-notes slur, followed by \texttt{[oslur:}\textit{shift}\texttt{\}]} at
+some point later to specify its end.  When using this form, \textit{shift} has
+the same meaning as before, but applies to both ends of the slur.
+
+Use \texttt{uslur} instead of \texttt{oslur} (with either form) to create an
+under-the-staff slur.
+
+\subsubsection{Horizontal episema placement for very high and low notes}
+
+Gregorio places horizontal episema under \texttt{c} and above \texttt{k} (or
+the note above the topmost line when staff does not have exactly 4 lines)
+closer to the notes when no ledger line is present.  The heuristics used by
+Gregorio are not perfect so it may be necessary to make the presence or
+absence of ledger line explicit for horizontal episema placement.  This is
+done in the exact same way as for stem length: place \texttt{[ll:0]} or
+\texttt{[ll:1]} on the note carrying the episema, to force Gregorio to
+consider the absence or presence of a ledger line in episema placement.
+
+\subsubsection{Horizontal Episema Tuning}\label{horizontalepisematuning}
+
+The horizontal episema position within the space can be adjusted should the
+defaults not be satisfactory.
+
+There are five tunable dimensions:
+
+\begin{tabularx}{\textwidth}{l|X}
+	Dimension & Description \\
+	\hline
+	\texttt{overhepisemalowshift} & The shift for positioning a horizontal episema that is over a note in a low position in the space\\
+	\texttt{overhepisemahighhift} & The shift for positioning a horizontal episema that is over a note in a high position in the space\\
+	\texttt{underhepisemalowshift} & The shift for positioning a horizontal episema that is under a note in a low position in the space\\
+	\texttt{underhepisemahighhift} & The shift for positioning a horizontal episema that is under a note in a high position in the space\\
+	\texttt{hepisemamiddleshift} & The shift for centering the horizontal episema in the middle of a space\\
+\end{tabularx}
+
+In addition, gabc allows you to adjust the positioning of a given episema by
+appending \texttt{[oh:\textit{p}]} (for the episema over the note) or
+\texttt{[uh:\textit{p}]} (for the episema under the note).  Here,
+\texttt{\textit{p}} is an optional position specifier followed by an optional
+nudge.  However at least one or the other must be specified.
+
+\pagebreak[4]
+
+The position specifier allows you to select which of the five tunable
+dimensions will be used for the base position:
+
+\begin{tabularx}{\textwidth}{l|X}
+	Specifier & Base shift \\
+	\hline
+	\textit{omitted} & Use the default shift based on the position of the episema relative to the note\\
+	\texttt{m} & Use \texttt{hepisemamiddleshift}.\\
+	\texttt{l} & Use \texttt{overhepisemalowshift} or \texttt{underhepisemalowshift} depending on whether the episema is over or under the note.\\
+	\texttt{h} & Use \texttt{overhepisemahighshift} or \texttt{underhepisemahighshift} depending on whether the episema is over or under the note.\\
+	\texttt{ol} & Use \texttt{overhepisemalowshift}.\\
+	\texttt{oh} & Use \texttt{overhepisemahighshift}.\\
+	\texttt{ul} & Use \texttt{underhepisemalowshift}.\\
+	\texttt{uh} & Use \texttt{underhepisemahighshift}.\\
+\end{tabularx}
+
+The nudge is a \TeX{} dimension specification (number and units) that starts
+with \texttt{+} for a nudge upwards or \texttt{-} for a nudge downwards from
+base position selected by the position specifier.  If omitted, the episema will
+be drawn at the base position.
+
+In addition, gabc also allows you to specify that a block of notes---possibly
+separated with spaces and in different syllables--should be considered a single
+unit when it comes to positioning the horizontal episema.  To do this, put
+\texttt{[oh:\textit{p}\{]} (for the episema over the note) or
+\texttt{[uh:\textit{p}\{]} (for the episema under the note) before the first
+note of the block and the corresponding \texttt{[oh\}]} or \texttt{[uh\}]}
+after the last note of the block.  When using this syntax, \texttt{\textit{p}}
+is the position specifier as before, but is entirely optional, and when
+completely omitted, allows the \texttt{:} to also be omitted.
+
+\subsubsection{Above Lines Text Within Notes}
+
+``Above lines text'' may also be specified within the notes for better
+positioning.  To do this, use \texttt{[alt:}\textit{text}\texttt{]}.
+
+\subsubsection{Verbatim \TeX}
+
+\TeX{} may be inserted directly within the notes.  This is an advanced command
+and is not easy to use, but it can allow for some interesting tweaks and
+special effects.
+
+To do this, use \texttt{[nv:}\textit{tex code}\texttt{]} to insert \TeX\ code
+at the note level, \texttt{[gv:}\textit{tex code}\texttt{]} to insert \TeX\
+code at the glyph level, or \texttt{[ev:}\textit{tex code}\texttt{]} to insert
+\TeX\ code at the element level.
+
+Here, note, glyph, and element refer to how Gregorio understands the score.
+
+\subsubsection{Macros}\label{usemacros}
+
+Macros may be defined using the \texttt{def-m}\textit{n} headers, where
+\textit{n} is 0--9, as described in the \nameref{headers} section above.  Then
+they may be inserted into the score at the note level using
+\texttt{[nm}\textit{n}\texttt{]}, at the glyph level using
+\texttt{[gm}\textit{n}\texttt{]}, or at the element level using
+\texttt{[em}\textit{n}\texttt{]}.  For backwards compatibility reasons,
+Gregorio will also accept \texttt{[altm}\textit{n}\texttt{]} to invoke the
+macro at the element level.
+
+As before, note, glyph, and element refer to how Gregorio understands the
+score.
+
+
+\subsection{Vowel file}\label{customvowels}
+
+When run, Gregorio will look for a file named
+\texttt{gregorio-vowels.dat} in your working directory or amongst the
+GregorioTeX files.  If it finds the language requested by the header (matched in a
+\emph{case-sensitive} fashion) in one of these files (henceforth called
+vowel files), Gregorio will use the rules contained within for vowel
+centering.  If it cannot find the requested language in any of the vowel
+files or is unable to parse the rules, Gregorio will fall back on the
+Latin rules.  If multiple vowel files have the desired language,
+Gregorio will use the first matching language section in the first
+matching file, according to Kpathsea order.  You may wish to enable
+verbose output (by passing the \texttt{-v} argument to
+\texttt{gregorio}), if there is a problem, for more information.
+
+The vowel file is a list of statements, each starting with a keyword and
+ending with a semicolon (\texttt{;}).  Multiple statements with the same
+keyword are allowed, and all will apply.  Comments start with a hash
+symbol (\texttt{\#}) and end at the end of the line.
+
+In general, Gregorio does no case folding, so the keywords and language
+names are case-sensitive and both upper- and lower-case characters
+should be listed after the keywords if they should both be considered in
+their given categories.
+
+The keywords are:
+
+\begin{description}
+
+\item[alias]
+
+The \texttt{alias} keyword indicates that a given name is an alias for a
+given language.  The \texttt{alias} keyword must be followed by the name
+of the alias (enclosed in square brackets), the \texttt{to} keyword, the
+name of the target language (enclosed in square brackets), and a
+semicolon.  Since gregorio reads the vowel files sequentially, aliases
+should precede the language they are aliasing, for best performance.
+
+\item[language]
+
+The \texttt{language} keyword indicates that the rules which follow are
+for the specified language.  It must be followed by the language name,
+enclosed in square brackets, and a semicolon.  The language specified
+applies until the next language statement.
+
+When choosing the name for your language, it is preferable that you use the ISO 639-1 standard (two-letter) code.  All other names should be listed as aliases (see above).  If you plan to submit your vowel detection rules for inclusion in the Gregorio source, then this will be required.
+
+\item[vowel]
+
+The \texttt{vowel} keyword indicates that the characters which follow,
+until the next semicolon, should be considered vowels.
+
+\item[prefix]
+
+The \texttt{prefix} keyword lists strings of characters which end in a
+vowel, but when followed by a sequence of vowels, \emph{should not} be
+considered part of the vowel sound.  These strings follow the keyword
+and must be separated by space and end with a semicolon.  Examples of
+prefixes include \emph{i} and \emph{u} in Latin and \emph{qu} in
+English.
+
+\item[suffix]
+
+The \texttt{suffix} keyword lists strings of characters which don't
+start with a vowel, but when appearing after a sequence of vowels,
+\emph{should} be considered part of the vowel sound.  These strings
+follow the keyword and must be separated by space and end with a
+semicolon.  Examples of suffixes include \emph{w} and \emph{we} in
+English and \emph{y} in Spanish.
+
+\item[secondary]
+
+The \texttt{secondary} keyword lists strings of characters which do not contain
+vowels, but for which, when there are no vowels present in a syllable,
+define the center of the syllable.  These strings follow the keyword and
+must be separated by space and end with a semicolon.  Examples of
+secondary sequences include \emph{w} from Welsh loanwords in English and
+the syllabic consonants \emph{l} and \emph{r} in Czech.
+
+\end{description}
+
+By way of example, here is a vowel file that works for English:
+
+\begin{lstlisting}[autogobble]
+alias [english] to [en];
+alias [English] to [en];
+alias [eng] to [en];
+
+language [en];
+
+vowel aàáAÀÁ;
+vowel eèéëEÈÉË;
+vowel iìíIÌÍ;
+vowel oòóOÒÓ;
+vowel uùúUÙÚ;
+vowel yỳýYỲÝ;
+vowel æǽÆǼ;
+vowel œŒ;
+
+prefix qu Qu qU QU;
+prefix y Y;
+
+suffix w W;
+suffix we We wE WE;
+
+secondary w W;
+\end{lstlisting}
+
+
+\endinput

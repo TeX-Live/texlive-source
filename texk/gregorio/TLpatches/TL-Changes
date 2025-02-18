@@ -3,9 +3,11 @@ Changes applied to the gregorio source tree as obtained from:
 
 Update ./version.ac.
 mv gregorio-src gregorio-prev
-mkdir gregorio-src
+zip=`ls ~/tmp/gregorio*zip`
+zipinfo -1 $zip # normally unpacks into gregorio-VERSION
+unzip -q ...
+mv gregorio-[6789]* gregorio-src
 cd gregorio-src
-unzip ...
 
 rm -rf \
 	Makefile.in \
@@ -28,5 +30,10 @@ svn rm `!!`                     # if looks reasonable
 svn status | sed -n 's/^\!//p'  # rerun, should be empty now
 
 cd ..
-autoreconf #in the TL directory (Build/source/texk/gregorio).
-rebuild; a full rebuild is best.
+autoreconf # in the TL directory (Build/source/texk/gregorio).
+rebuild    # a full rebuild is best.
+
+# if all looks ok:
+edit ./ChangeLog
+edit ../README
+svn commit -m"import gregorio-$VER" ../README .

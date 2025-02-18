@@ -81,7 +81,7 @@ FONTSRCFILES=(greextra.sfd squarize.py convertsfdtottf.py gregall.sfd
 FONTSRCFILES=("${FONTSRCFILES[@]/#/fonts/}")
 FONTSRCFILES+=(fonts/*-base.sfd)
 TDSDOCFILES=(*.md)
-TDSSRCFILES=(gregorio-${VERSION}.tar.bz2)
+TDSSRCFILES=(gregorio-${VERSION}.zip)
 # Files which have been eliminated, or whose installation location have been
 # changed.  We will remove existing versions of these files in the target texmf
 # tree before installing.
@@ -298,12 +298,7 @@ then
     rm -f ${TDS_ZIP}
     (rm ${TEXMFROOT}/fonts/source/gregoriotex/gregorio-base.sfd ${TEXMFROOT}/fonts/source/gregoriotex/granapadano-base.sfd ) || die
     install_to "doc/luatex/${NAME}/" "${TDSDOCFILES[@]}"
-    tar xf ${TDSSRCFILES[@]}
-    cd gregorio-$VERSION
-    zip -r ../gregorio-$VERSION.zip * --exclude=*.DS_Store*
-    cd ..
-    install_to "source/luatex/${NAME}/" "gregorio-$VERSION.zip"
-    rm -rf gregorio-$VERSION gregorio-$VERSION.zip
+    install_to "source/luatex/${NAME}/" "${TDSSRCFILES[@]}"
     (cd ${TEXMFROOT} && zip -9 ../${TDS_ZIP} -q -r .) || die
     rm -r ${TEXMFROOT} || die
 else

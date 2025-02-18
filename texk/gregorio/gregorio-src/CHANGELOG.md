@@ -8,7 +8,7 @@ As of v3.0.0 this project adheres to [Semantic Versioning](http://semver.org/). 
 ## [Unreleased][CTAN]
 
 
-## [6.1.0-beta1] - 2025-02-10
+## [6.1.0-beta2] - 2025-02-17
 ### Fixed
 - Multiple Scribus render frames were all using the same file name, which would result in the same score appearing in all render frames.  This change makes the score files use an available Scribus variable to force multiple file names.
 - When kpsewhich cannot write to a particular location, it generates an error which is directed to stderr but not to our glog file.  This created an undocumented error when trying to write to a gtex file to a bad location.  We now capture stderr output produced when compiling scores and redirect it to our glog file so that the error is properly recorded.  Fixes [#1541](https://github.com/gregorio-project/gregorio/issues/1541).
@@ -18,6 +18,10 @@ As of v3.0.0 this project adheres to [Semantic Versioning](http://semver.org/). 
 - Fixed a bug that caused a custos to sometimes change into a clef. See [#1373](https://github.com/gregorio-project/gregorio/issues/1373).
 - Fixed the alignment of 2-line initials so that an initial's baseline more exactly aligns with the baseline of the lowest line it appears next to.
 - When fancyhdr and GregorioTeX are used together, GregorioTeX's disabling of hyphenation and its `post_linebreak` modification of the `post_linebreak_filter` interfere with multiline headers.  Using the `fancyhdr/before` and `fancyhdr/after` hooks we temporarily reenable hyphenation and disable our `post_linebreak` modification while headers and footers are being processed in the middle of a score.  See [#1603](https://github.com/gregorio-project/gregorio/issues/1603).
+- Fixed a bug that could cause a hyphen to appear on the wrong line. See [#1319](https://github.com/gregorio-project/gregorio/issues/1319).
+- Fixed the placement of above-lines text (`<alt>`) relative to a note above the staff or when the number of staff lines is not 4. See [#1613](https://github.com/gregorio-project/gregorio/issues/1613) and [#1614](https://github.com/gregorio-project/gregorio/issues/1614).
+- Fixed a bug where the above-lines text (`<alt>`) could collid with a note above the staff. See [#1613](https://github.com/gregorio-project/gregorio/issues/1613).
+- Fixed a bug that could cause the clef and staff to be printed too high. See [#1503](https://github.com/gregorio-project/gregorio/issues/1503).
 
 ### Changed
 - Modified gregorio to append to the log file specified as an argument and to send early messages to it.  See [#1541](https://github.com/gregorio-project/gregorio/issues/1541).

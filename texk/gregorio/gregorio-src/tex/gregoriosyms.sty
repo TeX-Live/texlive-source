@@ -1,0 +1,82 @@
+%GregorioTeX file.
+%
+% Copyright (C) 2008-2025 The Gregorio Project (see CONTRIBUTORS.md)
+%
+% This file is part of Gregorio.
+%
+% Gregorio is free software: you can redistribute it and/or modify
+% it under the terms of the GNU General Public License as published by
+% the Free Software Foundation, either version 3 of the License, or
+% (at your option) any later version.
+%
+% Gregorio is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+% GNU General Public License for more details.
+%
+% You should have received a copy of the GNU General Public License
+% along with Gregorio.  If not, see <http://www.gnu.org/licenses/>.
+
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{gregoriosyms}
+		[2025/02/17 v6.1.0-beta2 GregorioTeX symbols only.]% PARSE_VERSION_DATE_LTX
+
+\RequirePackage{iftex}%
+\RequireLuaTeX
+
+% If gregoriotex has been loaded, then we need to abort the loading process of this package here in order to avoid some conflicts.
+\ifcsname gregoriotex@symbols@loaded\endcsname\endinput\fi%
+
+\RequirePackage{kvoptions}%
+\RequirePackage{luatexbase}%
+\RequirePackage{luaotfload}
+\RequirePackage{luamplib}%
+\RequirePackage{xstring}%
+\RequirePackage{xcolor}%
+
+\newluatexcatcodetable\gre@atletter %
+\setluatexcatcodetable\gre@atletter{%
+	\catcode`\@=11 %
+}%
+
+% The version of gregorio. All gregoriotex*.tex files must have the same.
+% All gtex files must also have the same version.
+\xdef\gre@gregoriotexversion{6.1.0-beta2}% GREGORIO_VERSION - VersionManager.py
+
+\providecommand{\gre@declarefileversion}[2]{\relax}
+
+\def\gre@error#1{\PackageError{GregorioTeX}{#1}{}}%
+\def\gre@warning#1{\PackageWarning{GregorioTeX}{#1}}%
+\def\gre@bug#1{\PackageError{GregorioTeX}{#1 !! This is a bug in Gregorio.  Please report it at https://github.com/gregorio-project/gregorio/issues}{}}%
+\def\gre@typeout{\typeout}
+
+\SetupKeyvalOptions{prefix=gre@}
+\DeclareStringOption{debug}[all]
+
+% This option allows the user to transform all deprecation messages
+% into errors.  Allowing one to determine if the TeX file is compliant
+% with future versions of gregoriotex. To enable, use gregoriotex with
+% this option: allowdeprecated=false
+\DeclareBoolOption[true]{allowdeprecated}
+
+\ProcessKeyvalOptions*
+
+\input gregoriotex-common.tex
+
+
+\long\def\gre@iflatex#1{#1}
+\long\def\gre@ifnotlatex#1{}
+\input gregoriotex-symbols.tex
+
+\xdef\gre@gregoriotexluaversion{\directlua{tex.write(gregoriotex.get_gregoriotexluaversion())}}%
+
+% Test to make sure that gregoriotex.lua is of the same version.
+\IfStrEq*{\gre@gregoriotexluaversion}{\gre@gregoriotexversion}{}{%else
+		\gre@error{uncoherent file versions: gregoriosyms.sty is in version \number\gre@gregoriotexversion \space\space while gregoriotex.lua is in version \gre@gregoriotexluaversion}}%
+
+%%%%%%%%%
+%% Color definitions
+%%%%%%%%%
+
+\definecolor{grebackgroundcolor}{RGB}{255,255,255}%
+\definecolor{gregoriocolor}{RGB}{229,53,44}%

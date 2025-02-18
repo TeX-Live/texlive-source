@@ -1,0 +1,201 @@
+%GregorioTeX file.
+%
+% Copyright (C) 2007-2025 The Gregorio Project (see CONTRIBUTORS.md)
+%
+% This file is part of Gregorio.
+%
+% Gregorio is free software: you can redistribute it and/or modify
+% it under the terms of the GNU General Public License as published by
+% the Free Software Foundation, either version 3 of the License, or
+% (at your option) any later version.
+%
+% Gregorio is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+% GNU General Public License for more details.
+%
+% You should have received a copy of the GNU General Public License
+% along with Gregorio.  If not, see <http://www.gnu.org/licenses/>.
+
+\gre@declarefileversion{gregoriotex-chars.tex}{6.1.0-beta2}% GREGORIO_VERSION
+
+\def\gre@char@fuse@punctum@one{\GreFuseTwo{\GreCPLeadingPunctumOne}{\GreCPPunctum}}%
+\def\gre@char@fuse@quilisma@one{\GreFuseTwo{\GreCPLeadingQuilismaOne}{\GreCPPunctum}}%
+\def\gre@char@fuse@oriscus@one{\GreFuseTwo{\GreCPLeadingOriscusOne}{\GreCPPunctum}}%
+\def\gre@char@fuse@punctum@two{\GreFuseTwo{\GreCPLeadingPunctumTwo}{\GreCPPunctum}}%
+\def\gre@char@fuse@quilisma@two{\GreFuseTwo{\GreCPLeadingQuilismaTwo}{\GreCPPunctum}}%
+\def\gre@char@fuse@oriscus@two{\GreFuseTwo{\GreCPLeadingOriscusTwo}{\GreCPPunctum}}%
+\def\gre@char@fuse@debilis{\GreFuseTwo{\GreCPLeadingPunctumOneInitioDebilis}{\GreCPPunctum}}%
+
+% horizontal episema
+\newbox\gre@box@hep%
+\def\gre@def@char@he#1#2{%
+	\gre@trace{gre@def@char@he{#1}{#2}}%
+	\expandafter\def\csname gre@char@he@#1\endcsname##1{%
+		\ifx##1f\csname GreCPHEpisema#2\endcsname%
+		\else%
+			\setbox\gre@box@hep\hbox{\csname GreCPHEpisema#2\endcsname}%
+			\hbox to \wd\gre@box@hep{%
+				\ifx##1l\else\hfil\fi%
+				\csname GreCPHEpisema#2Reduced\endcsname%
+				\ifx##1r\else\hfil\fi%
+			}%
+		\fi%
+	}%
+	\gre@trace@end%
+}%
+\def\gre@def@char@he@porr#1#2{%
+	\gre@trace{gre@def@char@he@porr{#1}{#2}}%
+	\expandafter\def\csname gre@char@he@#1\endcsname##1##2{%
+		\ifcase##1\gre@char@he@punctum{##2}%
+		\or\csname GreCPHEpisema#2One\endcsname%
+		\or\csname GreCPHEpisema#2Two\endcsname%
+		\or\csname GreCPHEpisema#2Three\endcsname%
+		\or\csname GreCPHEpisema#2Four\endcsname%
+		\or\csname GreCPHEpisema#2Five\endcsname%
+		\fi%
+	}%
+	\gre@trace@end%
+}%
+\gre@def@char@he{punctum}{Punctum}%
+\gre@def@char@he{punctum@line@br}{PunctumLineBR}%
+\gre@def@char@he{punctum@line@tr}{PunctumLineTR}%
+\gre@def@char@he{punctum@line@tl}{PunctumLineTL}%
+\gre@def@char@he{punctum@line@bl}{PunctumLineBL}%
+\gre@def@char@he{punctum@line@blbr}{PunctumLineBLBR}%
+\gre@def@char@he{punctumauctus@line@bl}{PunctumAuctusLineBL}%
+\gre@def@char@he{salicus@oriscus}{AscendensOriscusLineBLTR}%
+\gre@def@char@he{flexus}{FlexusDeminutus}%
+\gre@def@char@he{initio}{Debilis}%
+\gre@def@char@he{virga}{Virga}%
+\gre@def@char@he{virgabase@line@bl}{VirgaBaseLineBL}%
+\gre@def@char@he{inclinatum}{Inclinatum}%
+\gre@def@char@he{inclinatumdem}{InclinatumDeminutus}%
+\gre@def@char@he{stropha}{Stropha}%
+\gre@def@char@he@porr{porrectus}{Porrectus}%
+\gre@def@char@he@porr{porrectus@amone}{PorrectusAmOne}%
+\gre@def@char@he@porr{porrectusfl}{PorrectusFlexus}%
+\gre@def@char@he{quilisma}{Quilisma}%
+\gre@def@char@he{quilisma@line@tr}{QuilismaLineTR}%
+\gre@def@char@he{oriscus}{AscendensOriscus}%
+\gre@def@char@he{oriscus@line@tr}{AscendensOriscusLineTR}%
+\gre@def@char@he{smallpunctum}{HighPes}% "smallpunctum" is the top punctum in a pes
+\gre@def@char@he{flat}{Flat}%
+\gre@def@char@he{sharp}{Sharp}%
+\gre@def@char@he{natural}{Natural}%
+\gre@def@char@he{flatparen}{FlatParen}%
+\gre@def@char@he{sharpparen}{SharpParen}%
+\gre@def@char@he{naturalparen}{NaturalParen}%
+\gre@def@char@he{barstandard}{BarStandard}%
+\gre@def@char@he{barparen}{BarParen}%
+\gre@def@char@he{barvirgula}{BarVirgula}%
+\gre@def@char@he{barvirgulaparen}{BarVirgulaParen}%
+
+\def\gre@fontchar@flat{\gre@font@music\GreCPFlat}%
+\def\gre@fontchar@flathole{\gre@font@music\GreCPFlatHole}%
+\def\gre@fontchar@flatparen{\gre@font@music\GreCPFlatParen}%
+\def\gre@fontchar@flatparenhole{\gre@font@music\GreCPFlatParenHole}%
+\def\gre@fontchar@natural{\gre@font@music\GreCPNatural}%
+\def\gre@fontchar@naturalhole{\gre@font@music\GreCPNaturalHole}%
+\def\gre@fontchar@naturalparen{\gre@font@music\GreCPNaturalParen}%
+\def\gre@fontchar@naturalparenhole{\gre@font@music\GreCPNaturalParenHole}%
+\def\gre@fontchar@sharp{\gre@font@music\GreCPSharp}%
+\def\gre@fontchar@sharphole{\gre@font@music\GreCPSharpHole}%
+\def\gre@fontchar@sharpparen{\gre@font@music\GreCPSharpParen}%
+\def\gre@fontchar@sharpparenhole{\gre@font@music\GreCPSharpParenHole}%
+\def\gre@fontchar@cclef{\gre@font@music\GreCPCClef}%
+\def\gre@fontchar@fclef{\gre@font@music\GreCPFClef}%
+\def\gre@fontchar@incclef{\gre@font@music\GreCPCClefChange}%
+\def\gre@fontchar@infclef{\gre@font@music\GreCPFClefChange}%
+\def\gre@fontchar@punctummora{\gre@font@music\GreCPAuctumMora}%
+\def\gre@fontchar@verticalepisema{\gre@font@music\GreCPVEpisema}%
+\def\gre@fontchar@custostoplong{\gre@font@music\GreCPCustosUpLong}%
+\def\gre@fontchar@custostopshort{\gre@font@music\GreCPCustosUpShort}%
+\def\gre@fontchar@custostopmiddle{\gre@font@music\GreCPCustosUpMedium}%
+\def\gre@fontchar@custosbottomlong{\gre@font@music\GreCPCustosDownLong}%
+\def\gre@fontchar@custosbottomshort{\gre@font@music\GreCPCustosDownShort}%
+\def\gre@fontchar@custosbottommiddle{\gre@font@music\GreCPCustosDownMedium}%
+\def\gre@fontchar@abovebarbrace{\gre@font@music\GreCPBarBrace}%
+\def\gre@fontchar@punctum{\gre@font@music\GreCPPunctum}%
+
+%%%%%%%%%%%%%%%%%
+% macros for the different styles%
+%%%%%%%%%%%%%%%%%
+
+\def\gresetglyphstyle#1{%
+	\IfStrEqCase{#1}{%
+		{default}%
+			{%
+				\greresetglyph{Flat}%
+				\greresetglyph{FlatHole}%
+				\greresetglyph{Natural}%
+				\greresetglyph{NaturalHole}%
+				\greresetglyph{Sharp}%
+				\greresetglyph{SharpHole}%
+				\greresetglyph{CClef}%
+				\greresetglyph{FClef}%
+				\greresetglyph{CClefChange}%
+				\greresetglyph{FClefChange}%
+				\greresetglyph{AuctumMora}%
+				\greresetglyph{VEpisema}%
+				\greresetglyph{CustosUpLong}%
+				\greresetglyph{CustosUpShort}%
+				\greresetglyph{CustosUpMedium}%
+				\greresetglyph{CustosDownLong}%
+				\greresetglyph{CustosDownShort}%
+				\greresetglyph{CustosDownMedium}%
+				\greresetglyph{BarBrace}%
+				\greresetglyph{Punctum}%
+				\relax %
+			}%
+		{medicaea}%
+			{%
+				\gresetglyphstyle{default}\gre@usestylecommon %
+				\grechangeglyph{CustosUpLong}{greextra}{MedicaeaCustosUpLong}%
+				\grechangeglyph{CustosUpShort}{greextra}{MedicaeaCustosUpShort}%
+				\grechangeglyph{CustosUpMedium}{greextra}{MedicaeaCustosUpMedium}%
+				\grechangeglyph{CustosDownLong}{greextra}{MedicaeaCustosDownLong}%
+				\grechangeglyph{CustosDownShort}{greextra}{MedicaeaCustosDownShort}%
+				\grechangeglyph{CustosDownMedium}{greextra}{MedicaeaCustosDownMedium}%
+				\grechangeglyph{CClef}{greextra}{MedicaeaCClef}%
+				\grechangeglyph{FClef}{greextra}{MedicaeaFClef}%
+				\grechangeglyph{CClefChange}{greextra}{MedicaeaCClefChange}%
+				\grechangeglyph{FClefChange}{greextra}{MedicaeaFClefChange}%
+				\grechangeglyph{Flat}{greextra}{MedicaeaFlat}%
+				\grechangeglyph{FlatHole}{greextra}{MedicaeaFlatHole}%
+				\relax %
+			}%
+		{hufnagel}%
+			{%
+				\gresetglyphstyle{default}\gre@usestylecommon %
+				\grechangeglyph{CustosUpLong}{greextra}{HufnagelCustosUpLong}%
+				\grechangeglyph{CustosUpShort}{greextra}{HufnagelCustosUpShort}%
+				\grechangeglyph{CustosUpMedium}{greextra}{HufnagelCustosUpMedium}%
+				\grechangeglyph{CustosDownLong}{greextra}{HufnagelCustosDownLong}%
+				\grechangeglyph{CustosDownShort}{greextra}{HufnagelCustosDownShort}%
+				\grechangeglyph{CustosDownMedium}{greextra}{HufnagelCustosDownMedium}%
+				\grechangeglyph{CClef}{greextra}{HufnagelCClef}%
+				\grechangeglyph{FClef}{greextra}{HufnagelFClef}%
+				\grechangeglyph{CClefChange}{greextra}{HufnagelCClefChange}%
+				\grechangeglyph{FClefChange}{greextra}{HufnagelFClefChange}%
+				\grechangeglyph{Flat}{greextra}{HufnagelFlat}%
+				\grechangeglyph{FlatHole}{greextra}{HufnagelFlatHole}%
+				\relax %
+			}%
+		{mensural}%
+			{%
+				\gresetglyphstyle{default}\gre@usestylecommon %
+				\grechangeglyph{CustosUpLong}{greextra}{MensuralCustosUpLong}%
+				\grechangeglyph{CustosUpShort}{greextra}{MensuralCustosUpShort}%
+				\grechangeglyph{CustosUpMedium}{greextra}{MensuralCustosUpMedium}%
+				\grechangeglyph{CustosDownLong}{greextra}{MensuralCustosDownLong}%
+				\grechangeglyph{CustosDownShort}{greextra}{MensuralCustosDownShort}%
+				\grechangeglyph{CustosDownMedium}{greextra}{MensuralCustosDownMedium}%
+				\grechangeglyph{Flat}{greextra}{MensuralFlat}%
+				\grechangeglyph{FlatHole}{greextra}{MensuralFlatHole}%
+				\relax %
+			}%
+		}[% all other cases
+			\gre@error{Unrecognized option "#1" for \protect\gresetglyphstyle\MessageBreak Possible options are: 'default', 'medicaea', 'hufnagel' and 'mensural'}%
+		]%
+}%

@@ -42,8 +42,11 @@ clean-pdf: clean-doc
 clean-doc:
 	make -C doc clean-doc
 
-gregoriotex.tds.zip: dist install-gtex.sh
+gregoriotex.tds.zip: dist-zip install-gtex.sh
 	./install-gtex.sh tds
 
-ctan: dist gregoriotex.tds.zip build-ctan.sh
+ctan: gregoriotex.tds.zip build-ctan.sh
 	./build-ctan.sh
+
+dist-hook:
+	rm -rf $(distdir)/windows

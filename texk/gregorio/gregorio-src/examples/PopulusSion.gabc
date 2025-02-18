@@ -1,0 +1,27 @@
+% !TEX TS-program = LuaLaTeX+se
+% !TEX root = main-lualatex.tex
+
+% The first part of the score is called the header, you can input some useful informations here:
+
+name: Pópulus Sion;
+office-part: Introitus;
+occasion: Dominica II Adventus;
+date: 2006;
+commentary: Cf. Is. 30, 19 . 30 ; Ps. 79;
+transcriber: Elie Roux;
+transcription-date: 2006;
+style: modern;
+
+% Then, when gregorio encounters the following line (%%), it switches to the score, where you input the notes
+
+%%
+
+% The syntax in this part is called gabc. Please refer to http://gregorio-project.github.io/gabc/index.html
+
+Pó(c3eh/hi)pu(h)lus(h) Si(hi)on,(hgh.) *(;) ec(hihi)ce(e.) Dó(e.f!gwhhi)mi(h){n}us(h) vé(hi)ni(ig//ih)et(h.) (,) ad(iv./hig) sal(fe~)ván(ghg)das(fg) gen(e_f_e_)tes(e.) :(:)
+
+et(e) au(eh)dí(hhi)tam(i) fá(kjki)ci(i)et(i) Dó(ij)mi(ihi)nus(iv./hiHF.) (,) gló(h!i'j)ri(ji/kvJI)am(ij~) vo(j.i!jwk)cis(j_i) su(i_j_i_)æ,(i.) (;) in(e) læ(e)tí(e!f'h)ti(h)a(hi!jvji)
+
+cor(gh!ijI'~H~)dis(ihhf!gwh) ve(e_f_e_)stri.(e.) <i>Ps.</i>(::) Qui(ehg) re(hi)gis(i) I(i)sra(i)el,(ik) in(j)tén(ji~)de(ij..) :(:) qui(ig) de(hi)dú(i)cis(i)
+
+vel(i)ut(i!jwk) o(i')vem(h) Jo(hhh)seph.(fe..) (::) Gló(ehg)ri(hi)a(i) Pa(i)tri.(i) (:) <eu>E(i) u(i!jwk) o(i) u(h) a(hhh) e</eu>(fe..) (::)

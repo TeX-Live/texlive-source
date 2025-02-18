@@ -1,0 +1,152 @@
+%GregorioTeX common file (stuff needed by both gregoriotex and gregoriosyms)
+%
+% Copyright (C) 2007-2025 The Gregorio Project (see CONTRIBUTORS.md)
+%
+% This file is part of Gregorio.
+%
+% Gregorio is free software: you can redistribute it and/or modify
+% it under the terms of the GNU General Public License as published by
+% the Free Software Foundation, either version 3 of the License, or
+% (at your option) any later version.
+%
+% Gregorio is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+% GNU General Public License for more details.
+%
+% You should have received a copy of the GNU General Public License
+% along with Gregorio.  If not, see <http://www.gnu.org/licenses/>.
+
+\gre@declarefileversion{gregoriotex-common.tex}{6.1.0-beta2}% GREGORIO_VERSION
+
+\ifnum\luatexversion<76%
+	\gre@error{Error: this document must be compiled with LuaTeX (lualatex) 0.76 or later}%
+\fi%
+
+% Run a command for each string in a comma-separated list of strings.
+% #1: a comma-separated list of strings
+% #2: a command
+% Examples:
+% \greparsecommas{}{\typeout} does nothing.
+% \greparsecommas{foo}{\typeout} -> \typeout{foo}
+% \greparsecommas{foo,bar}{\typeout} -> \typeout{foo}\typeout{bar}
+% Note: Does not strip out any whitespace.
+\newcount\gre@count@parsecommas@cur
+\def\gre@parsecommas#1#2{%
+	% https://tex.stackexchange.com/a/510410
+	\def\gre@parsecommas@options{,#1,}%
+	\gre@debugmsg{parsecommas}{\gre@parsecommas@options}%
+	\IfStrEq{\gre@parsecommas@options}{,,}{%
+		% do nothing
+	}{%
+		\StrCount{\gre@parsecommas@options}{,}[\gre@parsecommas@total]% number of items plus one
+		\gre@count@parsecommas@cur=1\relax
+		\loop\ifnum\gre@count@parsecommas@cur<\gre@parsecommas@total\relax
+			\StrBetween[\the\gre@count@parsecommas@cur,\the\numexpr\gre@count@parsecommas@cur+1]{\gre@parsecommas@options}{,}{,}[\gre@parsecommas@option]%
+			#2{\gre@parsecommas@option}%
+			\advance\gre@count@parsecommas@cur by 1\relax
+		\repeat
+	}%
+}
+
+%%%%%%%%%
+%% Debugging
+%%%%%%%%%
+
+\def\gre@debugmsg#1#2{%
+	\IfStrEq{\gre@debug}{}{}%
+		%false
+		{\IfStrEq{#1}{all}%
+			%true
+			{\gre@error{Debug error: ‘all’ is not a permitted keyword}}%
+			%false
+			{\IfStrEq{\gre@debug}{,all,}%
+				%true
+				{\gre@typeout{GregorioTeX debug: (#1) #2}}%
+				%false
+				{\IfSubStr{\gre@debug}{,#1,}%
+					%true
+					{\gre@typeout{GregorioTeX debug: (#1) #2}}%
+					%false
+					{\relax}%
+				}%
+			}%
+		}%
+}%
+
+\def\gre@fixdebug{%
+	{% we're starting a group in order to localize \exploregroups
+		\exploregroups%
+		\StrRemoveBraces{\gre@debug}[\gre@debug]%
+		\xdef\gre@debug{,\gre@debug,}%
+	}%
+}%
+
+\IfStrEq{\gre@debug}{}{% then
+}{% else
+	\typeout{GregorioTeX is in debug mode}%
+	\typeout{\gre@debug\space messages will be printed to the log.}%
+	\gre@fixdebug\relax %
+}%
+
+%%%%%%%%%%%%%
+% Macros to handle deprecation path.
+%%%%%%%%%%%%%
+
+% #1 - the deprecated macro
+% #2 - the correct macro to use
+\def\gre@deprecated#1#2{%
+	\ifgre@allowdeprecated%
+		\ifx&#2&%
+			\gre@warning{#1\space is deprecated and marked for removal}%
+		\else%
+			\gre@warning{#1\space is deprecated.\MessageBreak Use #2\space instead}%
+		\fi%
+	\else%
+		\ifx&#2&%
+			\gre@error{#1\space is deprecated and marked for removal}%
+		\else%
+			\gre@error{#1\space is deprecated.\MessageBreak Use #2\space instead}%
+		\fi%
+	\fi%
+	\relax%
+}%
+
+\def\gre@obsolete#1#2{%
+	\ifx&#2&%
+		\gre@error{#1\space is obsolete and no longer has any effect}%
+	\else%
+		\gre@error{#1\space is obsolete.\MessageBreak Use #2\space instead}%
+	\fi%
+	\relax%
+}%
+
+%%%%%%%%%%%%%
+% Internal function tracing
+%%%%%%%%%%%%%
+
+% Each function in the internal name space (\gre@...) should have an invocation of
+% \gre@trace as its first line with the argument being the name of the function (without
+% the backslash) and the list of arguments.
+% The last line of these functions should be \gre@trace@end.
+% Macros which merely store a value are not considered to be functions and thus not
+% included in the trace stack.
+% We also exempt the internal aliases for functions defined elsewhere.
+% The tracing messages are turned on via the debug interface, keyword: trace.
+
+\def\gre@trace@prefix{GreTrace: }
+\def\gre@trace#1{%
+	\IfSubStr{\gre@debug}{,trace,}%
+		{%print tracing messages and increase indent
+			\gre@typeout{\gre@trace@prefix \unexpanded{#1}}%
+			\edef\gre@trace@prefix{\gre@trace@prefix| }%
+		}{}%do nothing if not tracing
+}%
+\def\gre@trace@end{%
+	\IfSubStr{\gre@debug}{,trace,}%
+		{%dedent trace messages and mark end
+			\StrGobbleRight{\gre@trace@prefix}{2}[\gre@trace@prefix]%
+			\gre@typeout{\gre@trace@prefix -----}%
+		}{}%do nothing if not tracing
+}
+

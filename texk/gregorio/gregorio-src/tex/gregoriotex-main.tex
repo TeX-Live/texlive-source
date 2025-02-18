@@ -1,0 +1,1988 @@
+%GregorioTeX main file.
+%
+% Copyright (C) 2007-2025 The Gregorio Project (see CONTRIBUTORS.md)
+%
+% This file is part of Gregorio.
+%
+% Gregorio is free software: you can redistribute it and/or modify
+% it under the terms of the GNU General Public License as published by
+% the Free Software Foundation, either version 3 of the License, or
+% (at your option) any later version.
+%
+% Gregorio is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+% GNU General Public License for more details.
+%
+% You should have received a copy of the GNU General Public License
+% along with Gregorio.  If not, see <http://www.gnu.org/licenses/>.
+
+% this file contains definitions for lines, initial, fonts, etc.
+
+% The version of gregorio. All gregoriotex*.tex files must have the same.
+% All gtex files must also have the same version.
+\xdef\gre@gregoriotexversion{6.1.0-beta2}% GREGORIO_VERSION - VersionManager.py
+
+% first some macros to allow checks for version:
+% Tests that all gregoriotex files are of the same version.
+% #1 is the name of the file
+% #2 is the version
+
+\def\gre@declarefileversion#1#2{%
+	\IfStrEq*{#2}{\gre@gregoriotexversion}{}{%else
+		\gre@error{Version Inconsistency!\MessageBreak gregoriotex-main.tex is in version \number\gre@gregoriotexversion \space\space while #1 is in version \number#2}}%
+}%
+
+
+\input gregoriotex-common.tex
+
+
+\def\gre@nothing{}%
+
+%%%%%%%%%%%%%%%
+%% Backwards Compatibility
+%%%%%%%%%%%%%%%
+
+% Depending on version of LuaTeX / LaTeX, some primitives have different names
+% We define local aliases for this eventuality, using \ifdefined to determine which
+% version of the primative is available.  In all cases the 'true' branch should be the
+% more recent version.
+\ifdefined\localleftbox%
+	\let\gre@localleftbox\localleftbox%
+\else%
+	\let\gre@localleftbox\luatexlocalleftbox%
+\fi%
+\ifdefined\localrightbox%
+	\let\gre@localrightbox\localrightbox%
+\else%
+	\let\gre@localrightbox\luatexlocalrightbox%
+\fi%
+\ifdefined\pdfextension%
+	\def\gre@startlink{\pdfextension startlink }%
+	\def\gre@endlink{\pdfextension endlink\relax}%
+\else%
+	\let\gre@startlink\pdfstartlink%
+	\let\gre@endlink\pdfendlink%
+\fi%
+\ifdefined\savepos%
+	\let\gre@savepos\savepos%
+\else%
+	\let\gre@savepos\pdfsavepos%
+\fi%
+\ifdefined\lastxpos%
+	\let\gre@lastxpos\lastxpos%
+\else%
+	\let\gre@lastxpos\pdflastxpos%
+\fi%
+\ifdefined\lastypos%
+	\let\gre@lastypos\lastypos%
+\else%
+	\let\gre@lastypos\pdflastypos%
+\fi%
+
+%%%%%%%%%%%%%%%
+
+% an attribute to mark various parts of the score
+% 1 = commentary, 2 = stafflines, 3 = initial
+\newluatexattribute\gre@attr@part%
+	\edef\gre@attrid@part{\the\allocationnumber}
+
+% an attribute we put on the text nodes.
+% if it is 1, it means that there may be a dash here if this syllable is at the end of a line
+% if it is 2, it means that it's never useful to typeset a dash
+% if it is 0, it just means that we are in a score...
+\newluatexattribute\gre@attr@dash%
+
+% an attribute used for translation centering
+\newluatexattribute\gre@attr@center%
+
+\newluatexattribute\GreScoreId %
+
+% attributes for tracking glyph heights
+\newluatexattribute\gre@attr@glyph@id %
+\newluatexattribute\gre@attr@glyph@top %
+\newluatexattribute\gre@attr@glyph@bottom %
+
+% attribute for syllable tracking
+\newluatexattribute\gre@attr@syllable@id %
+
+% attributes for soft alterations
+
+% Alterations are numbered consecutively starting from 1. If an
+% alteration is set twice, once for measurement and once for printing,
+% they have the same id (unlike glyph ids).
+\newluatexattribute\gre@attr@alteration@id %
+
+% The pitch and type of an alteration. If an alteration has a glyph
+% id, then \gre@attr@alteration@pitch = \gre@attr@glyph@top
+% = \gre@attr@glyph@bottom, but we can't use the latter because we
+% also keep track of custos alterations, which don't have glyph ids.
+\newluatexattribute\gre@attr@alteration@pitch
+	\edef\gre@attrid@alteration@pitch{\the\allocationnumber}%
+\newluatexattribute\gre@attr@alteration@type % see \gre@alteration for codes
+	\edef\gre@attrid@alteration@type{\the\allocationnumber}%
+
+\newluatexcatcodetable\gre@atletter %
+\setluatexcatcodetable\gre@atletter{%
+	\catcode`\@=11 %
+}%
+
+% Macro called by scores.
+% Tests the major version of gregorio (X.0.0) against the score. Fails
+% if the major version (X) does not match.
+% #1 is the version of GregorioTeX the score is made for.
+
+\def\GregorioTeXAPIVersion#1{%
+	\StrBefore{\gre@gregoriotexversion}{.}[\gre@gregoriomajorversion]%
+	\IfBeginWith{#1}{\gre@gregoriomajorversion}{\relax}{%else
+		\gre@error{Version Inconsistency!\MessageBreak GregorioTeX is in version \gre@gregoriotexversion \space\space while a score you included requires version #1. Please recompile your scores}}%
+}%
+
+\RequireLuaModule{gregoriotex}%
+\ifcsname greskipheightcomputation\endcsname %
+	\directlua{gregoriotex.init(arg, false)}%
+\else %
+	\directlua{gregoriotex.init(arg, true)}%
+\fi %
+\directlua{gregoriotex.set_debug_string([[\gre@debug]])}%
+
+\xdef\gre@gregoriotexluaversion{\directlua{tex.write(gregoriotex.get_gregoriotexluaversion())}}%
+
+% Test to make sure that gregoriotex.lua is of the same version.
+\IfStrEq*{\gre@gregoriotexluaversion}{\gre@gregoriotexversion}{}{%else
+		\gre@error{Version Inconsistency!\MessageBreak gregoriotex-main.tex is in version \number\gre@gregoriotexversion \space\space while gregoriotex.lua is in version \gre@gregoriotexluaversion}}%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+%% aux file definitions
+%%%%%%%%%%%%%%%%%%%%%%%%
+
+% for now, we only use an aux file with LuaTeX
+
+\ifluatex%
+	\newwrite\gre@gaux%
+\fi%
+
+\def\gre@write@gaux#1{%
+	\write\gre@gaux{#1}%
+	\relax %
+}%
+
+\def\gre@open@gaux{%
+	\openout\gre@gaux \jobname .gaux\relax%
+}%
+
+\def\gre@close@gaux{%
+	\closeout\gre@gaux %
+}%
+
+%%%%%%%%%%%%%%%%%%%
+%% output directory selection
+%%%%%%%%%%%%%%%%%%%
+
+\def\gresetoutputdir#1{%
+	\directlua{gregoriotex.set_base_output_dir([[#1]])}%
+}%
+
+%%%%%%%%%%%%%%%
+%% basic start
+%%%%%%%%%%%%%%%
+
+% Used for marking a gabc file read as a dependency
+\newread\gre@read@temp
+
+\def\gre@pitch@a{3}%
+\def\gre@pitch@b{4}%
+\def\gre@pitch@c{5}%
+\def\gre@pitch@d{6}%
+\def\gre@pitch@e{7}%
+\def\gre@pitch@f{8}%
+\def\gre@pitch@g{9}%
+\def\gre@pitch@h{10}%
+\def\gre@pitch@i{11}%
+\def\gre@pitch@j{12}%
+\def\gre@pitch@k{13}%
+\def\gre@pitch@l{14}%
+\def\gre@pitch@m{15}%
+\def\gre@pitch@n{16}%
+\def\gre@pitch@p{17}%
+
+\def\gre@pitch@adjust@bottom{\the\numexpr(\gre@space@count@noteadditionalspacelinestextthreshold + \gre@pitch@a)\relax} %
+\let\gre@pitch@belowstaff\gre@pitch@c %
+\let\gre@pitch@ledger@below\gre@pitch@b %
+\let\gre@pitch@barvepisema\gre@pitch@c %
+\let\gre@pitch@underbrace\gre@pitch@b %
+\let\gre@pitch@overbraceglyph\gre@pitch@g %
+\let\gre@pitch@bar\gre@pitch@g %
+\let\gre@pitch@dummy\gre@pitch@e % not above or below staff, even if 2 lines
+
+% factor is the factor with which you open you font (the number after the at). It will decide almost everything (spaces, etc.), so it is particularly important.
+% it is set to the default value : 17 (the value that makes it look like a standard graduale)
+\newcount\gre@factor%
+\gre@factor=17%
+
+%%%%%%%%%%%%%%%%%%%
+%% vertical spaces
+%%%%%%%%%%%%%%%%%%%
+
+\input gregoriotex-spaces.tex%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% macros for additionnal vertical spaces
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% macro called to go to the next line
+\def\GreNewLine{%
+	\gre@debugmsg{lineheight}{GreNewLine}%
+	\gre@newlinecommon{0}{0}%
+	\relax%
+}%
+
+% basically same as above, but this one does a \hfill, so the lines are not justified
+\def\GreNewParLine{%
+	\gre@debugmsg{lineheight}{GreNewParLine}%
+	\gre@newlinecommon{1}{0}%
+	\relax%
+}%
+
+\def\GreFinalNewLine{%
+}%
+
+% the macro we call each time we force a changing of line
+% #1 is 0 in case of gabc z, 1 for Z
+% #2 is 0 in the normal case, 1 after a bar in the new spacing algorithm
+\def\gre@newlinecommon#1#2{%
+	\gre@trace{gre@newlinecommon{#1}{#2}}%
+	\ifgre@blockeolcustos\ifnum\gre@insidediscretionary=0\relax %
+		 \gre@localrightbox{}%
+	\fi\fi %
+	\ifgre@boxing\else%
+		\global\gre@lastoflinecount=2\relax %
+		\ifnum#2=0\relax %
+			% we have to repeat the end of syllable shifts here because the manual line breaks will occur before we get to the regular shifting code in \GreSyllable
+			\ifdim\gre@dimen@enddifference <0pt\relax%
+				%% important, else we are not really at the end of the syllable
+				\kern -\gre@dimen@enddifference\relax%
+			\fi%
+			\ifgre@eolshiftsenabled%
+				\GreNoBreak% we want to make sure this shift doesn't get separated from the previous one if both occur
+				\gre@calculate@eolshift{\gre@dimen@enddifference}%
+				\gre@debugmsg{eolshift}{Manual end of line shift: \the\gre@dimen@eolshift}%
+				\kern -\gre@dimen@eolshift\relax%
+			\fi%
+		\fi %
+		\ifnum\gre@insidediscretionary=0\relax %
+			\gre@updateleftbox %
+		\fi %
+		\ifnum#1=1\relax %
+			\GreNoBreak %
+			\hfill %
+		\fi %
+		\gre@penalty{-10001}%
+	\fi %
+	%%
+	\GreResetEolCustos\relax %
+	\gre@trace@end%
+}%
+
+\def\gre@mark@translation{%
+	\gre@trace{gre@mark@translation}%
+	\directlua{gregoriotex.mark_translation()}%
+	\gre@trace@end%
+}%
+\def\gre@mark@abovelinestext{%
+	\gre@trace{gre@mark@abovelinestext}%
+	\directlua{gregoriotex.mark_abovelinestext()}%
+	\gre@trace@end%
+}%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% macros for the typesetting of text
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%% macro that sets \gre@dimen@temp@three to the width of its argument
+
+\newbox\gre@box@temp@width%
+
+\def\gre@widthof#1{%
+	\gre@trace{gre@widthof{#1}}%
+	\setbox\gre@box@temp@width=\hbox{#1}%
+	\global\gre@dimen@temp@three=\wd\gre@box@temp@width%
+	\relax%
+	\gre@trace@end%
+}%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% macros for the typesetting of the initial
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%% box containing the initial, and dimen containing its width (and the width of the space after)
+\newbox\gre@box@initial%
+
+% Where the initial appears
+\newcount\gre@count@initialposition
+% firsttop (0) = top of first line (that is, the top staff-line)
+% firstbaseline (1) = baseline of first line
+% lastbaseline (2) = baseline of last indented line
+% lastbottom (3) = bottom of last indented line
+\def\gresetinitialposition#1{%
+	\IfStrEqCase{#1}{%
+		{firsttop}{\gre@count@initialposition=0}%
+		{firstbaseline}{\gre@count@initialposition=1}%
+		{lastbaseline}{\gre@count@initialposition=2}%
+		{lastbottom}{\gre@count@initialposition=3}%
+	}[%
+		\gre@error{Unrecognized option "#1" for \protect\gresetinitialposition\MessageBreak Possible options are: 'firsttop', 'lastbaseline', and 'lastbottom'}%
+	]%
+}%
+\gresetinitialposition{lastbaseline}%
+
+% What part of the initial is aligned to \gre@count@initialposition:
+% top (0) = top of initial
+% baseline (1) = baseline of initial
+% bottom (2) = bottom of initial
+\newcount\gre@count@initialanchor
+\def\gresetinitialanchor#1{%
+	\IfStrEqCase{#1}{%
+		{top}{\gre@count@initialanchor=0}%
+		{baseline}{\gre@count@initialanchor=1}%
+		{bottom}{\gre@count@initialanchor=2}%
+	}[%
+		\gre@error{Unrecognized option "#1" for \protect\gresetinitialanchor\MessageBreak Possible options are: 'top', 'baseline', and 'bottom'}%
+	]%
+}%
+\gresetinitialanchor{baseline}%
+
+\def\gre@updateleftbox{%
+	\gre@trace{gre@updateleftbox}%
+	\gre@updatelinesclef %
+	\gre@trace@end%
+}%
+
+\def\greillumination#1{%
+	\setbox\gre@box@initial=\hbox{#1}%
+}%
+
+% Set paragraph shape.
+% #1: How many lines are indented
+% #2: The amount of the indentation
+\def\gre@makeparshape#1#2{%
+	\edef\gre@parshape@dims{\numexpr#1+1\relax}%
+	\gre@count@temp@one=0\relax
+	\loop
+		\edef\gre@parshape@dims{\gre@parshape@dims#2\dimexpr\gre@dimen@linewidth-#2\relax}%
+		\advance\gre@count@temp@one by 1\relax
+	\ifnum\gre@count@temp@one<#1\repeat
+	\parshape\gre@parshape@dims0pt\gre@dimen@linewidth
+}
+
+\def\gre@setinitial#1{%
+	\gre@trace{gre@setinitial{#1}}%
+	\gre@debugmsg{annotation}{Time to calculate the true raise.}%
+	\gre@calculate@annotationtrueraise %
+	% we print the initial always at the same place, and then we print the gre@box@annotation, centered
+	% first we print the initial
+	\ifvoid\gre@box@initial%
+		\gre@debugmsg{initial}{Fill initial box a}%
+		\setbox\gre@box@initial=\hbox{\gre@style@initial\gre@fixedtextformat{#1}\endgre@style@initial}%
+	\fi%
+	\gre@debugmsg{ifdim}{ manualinitialwidth = 0pt}%
+	\ifdim\gre@space@dimen@manualinitialwidth=0 pt\relax%
+		\global\gre@dimen@initialwidth=\wd\gre@box@initial %
+		\gre@style@initial%
+			\ifdim\gre@dimen@initialwidth<\gre@space@dimen@minimalinitialwidth\relax%
+				\global\gre@dimen@initialwidth=\gre@space@dimen@minimalinitialwidth\relax%
+			\fi%
+		\endgre@style@initial%
+	\else
+		\gre@style@initial%
+		\global\gre@dimen@initialwidth=\gre@space@dimen@manualinitialwidth\relax%
+		\endgre@style@initial%
+	\fi
+	\gre@debugmsg{ifdim}{ wd(gre@box@annotation) > initialwidth}%
+	\ifdim\wd\gre@box@annotation>\gre@dimen@initialwidth\relax%
+		\global\gre@dimen@initialwidth=\wd\gre@box@annotation%
+	\fi%
+	\gre@debugmsg{annotation}{Width check completed.}%
+	% Now compute the raise
+	\gre@dimen@temp@five = \dimexpr(\gre@dimen@textlower+\gre@space@dimen@initialraise)\relax%
+	\ifnum\gre@count@initialposition=0\relax
+		\advance\gre@dimen@temp@five by 
+			\dimexpr(\gre@dimen@staffheight
+			+ \gre@space@dimen@spacebeneathtext
+			+ \gre@dimen@currenttranslationheight
+			+ \gre@space@dimen@spacelinestext
+			+ \gre@dimen@additionalbottomspace)\relax%
+	\fi % post_linebreak takes care of the other cases
+	\ifcase\gre@count@initialanchor\relax
+		% top
+		\advance\gre@dimen@temp@five by -\ht\gre@box@initial\relax
+		\or
+		% baseline: do nothing
+		\or
+		% bottom
+		\advance\gre@dimen@temp@five by \dp\gre@box@initial\relax
+	\fi
+	\setbox\gre@box@initial=\hbox to \gre@dimen@initialwidth {\hss\raise \gre@dimen@temp@five\box\gre@box@initial\hss}%
+	\gre@debugmsg{annotation}{Initial set.}%
+	\gre@style@initial%
+	\global\gre@dimen@temp@four = \gre@space@dimen@beforeinitialshift\relax%
+	\endgre@style@initial%
+	\setbox\gre@box@temp@width=\hbox attr \gre@attrid@part=3 {%
+		\gre@hskip\gre@dimen@temp@four %
+		\global\advance\gre@dimen@initialwidth by \gre@dimen@temp@four %
+		\gre@debugmsg{annotation}{Ready to place initial.}%
+		\ifgre@showlyrics%
+			\box\gre@box@initial%
+		\else%
+			\kern\wd\gre@box@initial%
+		\fi%
+		\gre@style@initial%
+		\global\gre@dimen@temp@four = \gre@space@dimen@afterinitialshift\relax%
+		\endgre@style@initial%
+		\gre@hskip\gre@dimen@temp@four %
+		\global\advance\gre@dimen@initialwidth by \gre@dimen@temp@four%
+	}%
+	% Set the paragraph shape. This should happen before anything is printed.
+	\gre@makeparshape{\gre@count@initiallines}{\wd\gre@box@temp@width}%
+	% Set the initial. If it has more than one line, we smash it so it
+	% doesn't disrupt anything, in particular the glue between lines.
+	% The Lua function lower_initial will insert vertical space
+	% appropriately.
+	\ifnum\gre@count@initiallines>1\relax
+		\llap{\smash{\box\gre@box@temp@width}}%
+	\else
+		\llap{\box\gre@box@temp@width}%
+	\fi
+	% then we center the annotation box above the initial, if there is one
+	\gre@debugmsg{annotation}{Time to set the annotation.}%
+	\ifvoid\gre@box@annotation\relax%
+		\gre@debugmsg{annotation}{There is no annotation.}%
+	\else %
+		\gre@debugmsg{annotation}{Calculate horizontal position.}%
+		\gre@dimen@temp@five=\dimexpr((\gre@dimen@initialwidth - \wd\gre@box@annotation) / 2)\relax %
+		\gre@skip@temp@four = -\gre@dimen@initialwidth\relax%
+		\gre@hskip\gre@skip@temp@four %
+		\kern\gre@dimen@temp@five %
+		\gre@debugmsg{annotation}{And place the annotation.}%
+		\raise\gre@dimen@annotationtrueraise\box\gre@box@annotation%
+		\gre@debugmsg{annotation}{Move to beginning of staff.}%
+		\kern\gre@dimen@temp@five %
+	\fi %
+	\relax %
+	\gre@trace@end%
+}%
+
+\def\gre@noinitial{%
+	\gre@trace{gre@noinitial}%
+	\setbox\gre@box@initial=\box\voidb@x%
+	\global\gre@dimen@initialwidth=0pt\relax%
+	\relax %
+	\gre@trace@end%
+}%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% macros for the typesetting the things above the initial
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newbox\gre@box@annotation%
+\newbox\gre@box@add%
+\newbox\gre@box@old%
+
+\def\greannotation{\@ifnextchar[{\gre@annotation}{\gre@annotation[c]}}%
+
+%This flag controls whether the annotation control line is the top line (false) or the bottom line (true)
+\newif\ifgre@annotationbottomline%
+\gre@annotationbottomlinefalse%
+
+\def\gresetannotationby#1{%
+	\IfStrEqCase{#1}{%
+		{topline}%
+			{\gre@annotationbottomlinefalse}%
+		{bottomline}%
+			{\gre@annotationbottomlinetrue}%
+		}[% all other cases
+			\gre@error{Unrecognized option "#1" for \protect\gresetannotationby\MessageBreak Possible options are: 'topline' and 'bottomline'}%
+		]%
+}%
+
+% This flag controls whether the top (0), baseline (1), or bottom (2) of the control line is aligned with the top line of the staff before applying annotationraise.
+\newcount\gre@count@annotationvalign%
+\gre@count@annotationvalign=1%
+
+\def\gresetannotationvalign#1{%
+	\IfStrEqCase{#1}{%
+		{top}%
+			{\gre@count@annotationvalign=0}%
+		{baseline}%
+			{\gre@count@annotationvalign=1}%
+		{bottom}%
+			{\gre@count@annotationvalign=2}%
+		}[% all other cases
+			\gre@error{Unrecognized option "#1" for \protect\gresetannotationvalign\MessageBreak Possible options are: 'top', 'baseline' and 'bottom'}%
+		]%
+}%
+
+\def\gre@annotation[#1]#2{%
+	\gre@trace{gre@annotation[#1]{#2}}%
+	\ifx l#1\relax%
+		\let\gre@rightfill\hfil%
+		\let\gre@leftfill\relax%
+	\else\ifx r#1\relax%
+		\let\gre@rightfill\relax%
+		\let\gre@leftfill\hfil%
+	\else\ifx c#1\relax%
+		\let\gre@rightfill\hfil%
+		\let\gre@leftfill\hfil%
+	\else%
+		\gre@error{Unrecognzied alignment option for \protect\greannotation}%
+	\fi\fi\fi%
+	% first we determine the widest box
+	\gre@widthof{\gre@style@annotation#2\endgre@style@annotation}%
+	\ifdim\gre@dimen@temp@three < \wd\gre@box@annotation\relax%
+		\gre@dimen@temp@three = \wd\gre@box@annotation\relax%
+	\fi%
+	\ifvoid\gre@box@annotation%
+		\gre@debugmsg{annotation}{We're on the first line of the annotation.}%
+		\setbox\gre@box@annotation = \hbox to \gre@dimen@temp@three{\gre@leftfill\gre@style@annotation#2\endgre@style@annotation\gre@rightfill}%
+		% We set the initial value for annotationtrueraise based on the annotationvalign setting.  We always do this because if there is only one line in the annotation, then the topline is the bottomline.
+		\gre@debugmsg{annotation}{Initial set point.}%
+		\ifcase\gre@count@annotationvalign\relax%
+		%case 0 = top of first line
+			\global\gre@dimen@annotationtrueraise=-\ht\gre@box@annotation\relax%
+			\gre@debugmsg{annotation}{Aligning to top of first line: \the\gre@dimen@annotationtrueraise}%
+		\or %case 1 = baseline of first line
+			\global\gre@dimen@annotationtrueraise= 0pt\relax%
+			\gre@debugmsg{annotation}{Aligning to baseline of first line: \the\gre@dimen@annotationtrueraise}%
+		\or %case 2 = bottom of first line
+			\global\gre@dimen@annotationtrueraise=\dp\gre@box@annotation\relax%
+			\gre@debugmsg{annotation}{Aligning to bottom of first line: \the\gre@dimen@annotationtrueraise}%
+		\else% Bug
+			\gre@bug{Invalid value for \protect\gre@count@annotationvalign}%
+		\fi%
+	\else%
+		\gre@debugmsg{annotation}{We're not on the first line of the annotation.}%
+		\setbox\gre@box@old = \hbox to \gre@dimen@temp@three{\gre@leftfill\box\gre@box@annotation\gre@rightfill}%
+		\setbox\gre@box@add = \hbox to \gre@dimen@temp@three{\gre@leftfill\gre@style@annotation#2\endgre@style@annotation\gre@rightfill}%
+		% if the user has asked for the bottom line to be the controlling line, then we need to change the value of the annotationtrueraise appropriately
+		\gre@style@annotation% to make sure that an annotationseparation in font relative units translates correctly
+		\ifgre@annotationbottomline%
+			\ifcase\gre@count@annotationvalign\relax%
+				%case 0 = top of first line
+				\global\gre@dimen@annotationtrueraise=\dimexpr\ht\gre@box@old+\dp\gre@box@old+\gre@space@dimen@annotationseparation-\ht\gre@box@add\relax%
+				\gre@debugmsg{annotation}{Aligning to top of last line: \the\gre@dimen@annotationtrueraise}%
+			\or %case 1 = baseline of first line
+				\global\gre@dimen@annotationtrueraise=\dimexpr\ht\gre@box@old+\dp\gre@box@old+\gre@space@dimen@annotationseparation\relax%
+				\gre@debugmsg{annotation}{Aligning to baseline of last line: \the\gre@dimen@annotationtrueraise}%
+			\or %case 2 = bottom of first line
+				\global\gre@dimen@annotationtrueraise=\dimexpr\ht\gre@box@old+\dp\gre@box@old+\gre@space@dimen@annotationseparation+\dp\gre@box@add\relax%
+				\gre@debugmsg{annotation}{Aligning to bottom of last line: \the\gre@dimen@annotationtrueraise}%
+			\else% Bug
+				\gre@bug{Invalid value for \protect\gre@count@annotationvalign}%
+			\fi%
+		\fi%
+		\endgre@style@annotation%
+		\setbox\gre@box@annotation = \vtop spread \gre@space@dimen@annotationseparation\relax {\offinterlineskip\box\gre@box@old\vss\box\gre@box@add}%
+	\fi%
+	\gre@trace@end%
+}%
+
+\def\gre@writemode#1#2#3{%
+	\gre@trace{gre@writemode{#1}{#2}{#3}}%
+	\greannotation{%
+		\gre@style@modeline #1\endgre@style@modeline %
+		\gre@style@modemodifier \directlua{gregoriotex.mode_part("\luatexluaescapestring{#2}")}\endgre@style@modemodifier %
+		\gre@style@modedifferentia \directlua{gregoriotex.mode_part("\luatexluaescapestring{#3}")}\endgre@style@modedifferentia %
+		\relax %
+	}%
+	\relax %
+	\gre@trace@end%
+}%
+
+\def\GreMode#1#2#3{%
+	\ifvoid\gre@box@annotation%
+		\gre@writemode{#1}{#2}{#3}%
+	\fi%
+	\relax%
+}%
+
+\def\gre@romannumeral@majuscule#1{\uppercase\expandafter{\romannumeral#1\relax}}%
+\def\gre@romannumeral@minuscule#1{\romannumeral#1\relax}%
+\def\gresetmodenumbersystem#1{%
+	\IfStrEqCase{#1}{%
+		{roman-majuscule}%
+			{\let\GreModeNumber\gre@romannumeral@majuscule}%
+		{roman-minuscule}%
+			{\let\GreModeNumber\gre@romannumeral@minuscule}%
+		{arabic}%
+			{\let\GreModeNumber\relax}%
+		}[% all other cases
+			\gre@error{Unrecognized option "#1" in \protect\gresetmodenumbersystem\MessageBreak Possible options are: 'roman-majuscule', 'roman-minuscule', and 'arabic'}%
+		]%
+}%
+% defaults set differently for LaTeX and PlainTeX, so see gregoriotex.sty and gregoriotex.tex
+
+\def\GreAnnotationLines#1#2{%
+	\ifvoid\gre@box@annotation%
+		\greannotation{#1}%
+		\greannotation{#2}%
+	\fi%
+	\relax%
+}%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% macros for the typesetting of the commentary
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\def\gre@printcommentary{%
+	\gre@trace{gre@printcommentary}%
+	% see comments on this function to see what it does
+	\gre@debugmsg{commentary}{Time to calculate the true raise.}%
+	\gre@calculate@commentarytrueraise%
+	% we start by printing the commentary
+	% when doing this we place it inside a box as which is linewidth wide with an \hfill before to get it to align to the right of the page
+	% we then place that box inside one of 0 width so that our cursor doesn't move when we place the commentary
+	\ifvoid\gre@box@commentary\else%
+		\gre@debugmsg{commentary}{I am printing a commentary box}%
+		\raise\gre@dimen@commentarytrueraise\hbox to 0pt{\hbox attr \gre@attrid@part=1 to \gre@dimen@linewidth{\hfill\box\gre@box@commentary}\hss}%
+	\fi%
+	\gre@trace@end%
+}
+
+\newbox\gre@box@commentary
+
+\def\grecommentary{\@ifnextchar[{\gre@commentary}{\gre@commentary[0pt]}}%
+
+\def\gre@commentary[#1]#2{%
+	\gre@trace{gre@commentary[#1]{#2}}%
+	% we initialize commentarytrueraise here, but will only calculate it's final value just before placing the commentary so that we make sure we have the correct values for the distances which go into it
+	\gre@style@commentary% to make sure font relative units on the argument translate correctly
+	\global\gre@dimen@commentarytrueraise=#1\relax%
+	\endgre@style@commentary%
+	\ifvoid\gre@box@commentary%
+		\setbox\gre@box@commentary = \hbox{\gre@style@commentary#2\endgre@style@commentary}%
+	\else%
+		\gre@widthof{\gre@style@commentary#2\endgre@style@commentary}%
+		\ifdim\gre@dimen@temp@three < \wd\gre@box@commentary\relax%
+			\gre@dimen@temp@three = \wd\gre@box@commentary%
+		\fi%
+		\setbox\gre@box@old = \hbox to \gre@dimen@temp@three{\hfill\box\gre@box@commentary}%
+		\setbox\gre@box@add = \hbox to \gre@dimen@temp@three{\hfill\gre@style@commentary#2\endgre@style@commentary}%
+		\setbox\gre@box@commentary = \vbox spread \gre@space@dimen@commentaryseparation{\offinterlineskip\box\gre@box@old\vss\box\gre@box@add}%
+	\fi%
+	\gre@trace@end%
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% macro for putting text above lines for annotations and the like
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% set space above the text lines - almost the same as for the translation
+\def\gre@addspaceabove{%
+	\gre@trace{gre@addspaceabove}%
+	\gre@style@abovelinestext%
+	\global\gre@dimen@currentabovelinestextheight=\gre@space@dimen@abovelinestextheight\relax%
+	\endgre@style@abovelinestext%
+	\relax %
+	\gre@trace@end%
+}%
+
+% we don't need space above any more
+\def\gre@removespaceabove{%
+	\gre@trace{gre@removespaceabove}%
+	\global\gre@dimen@currentabovelinestextheight=0 sp%
+	\relax %
+	\gre@trace@end%
+}%
+
+% the code is a bit strange here: we always execute \gre@space@skip@spaceabovelines at the beginning of a glyph. This will:
+% - typeset the text above the lines if relevant, and making sure we execute it only once
+% - not do anything else
+
+\newif\ifgre@showabovelinestext%
+\gre@showabovelinestexttrue%
+
+\def\gresetabovelinestext#1{%
+	\IfStrEqCase{#1}{%
+		{visible}{\gre@showabovelinestexttrue}%
+		{invisible}{\gre@showabovelinestextfalse}%
+		}[% all other cases
+			\gre@error{Unknown option, "#1" for \protect\gresetabovelinestext\MessageBreak Possible options are: 'visible' and 'invisible'}%
+		]%
+}%
+
+\xdef\gre@currenttextabovelines{}%
+
+\def\GreSetTextAboveLines#1{%
+	\ifgre@showabovelinestext%
+		\gdef\gre@currenttextabovelines{%
+			\gre@typesettextabovelines{#1}{0}%
+			\gdef\gre@currenttextabovelines{}%
+			\relax %
+		}%
+	\fi%
+}%
+
+% typesets the text or nabc neumes above the line
+\def\gre@typesettextabovelines#1#2{%
+	\gre@trace{gre@typesettextabovelines{#1}{#2}}%
+	\gre@style@abovelinestext%
+	\gre@debugmsg{spacing}{Raise alt text: \gre@space@dimen@abovelinestextraise}%
+	\endgre@style@abovelinestext%
+	\ifnum#2=0\relax%
+		\gre@dimen@temp@five=\gre@dimen@additionaltopspacealt\relax%
+	\else%
+		\gre@dimen@temp@five=\gre@dimen@additionaltopspacenabc\relax%
+	\fi%
+	\gre@dimen@temp@five=\dimexpr(\gre@dimen@staffheight %
+		+ \gre@dimen@interstafflinespace %
+		+ \gre@space@dimen@spacebeneathtext %
+		+ \gre@dimen@currenttranslationheight %
+		+ \gre@space@dimen@spacelinestext %
+		+ \gre@dimen@additionalbottomspace %
+		+ \gre@dimen@temp@five %
+		+ \gre@space@dimen@abovelinestextraise)\relax%
+	\gre@mark@abovelinestext %
+	\gre@debugmsg{spacing}{Raise alt text: \the\gre@dimen@temp@five}%
+		\leavevmode\raise\gre@dimen@temp@five\hbox to 0pt{\gre@style@abovelinestext#1\endgre@style@abovelinestext\hss}%
+	\relax %
+	\gre@trace@end%
+}%
+
+% similarly, but for typesetting Nabc neumes above lines
+
+\def\GreSetNabcAboveLines#1{%
+	\gdef\gre@currenttextabovelines{%
+		\gre@typesettextabovelines{#1}{1}%
+		\gdef\gre@currenttextabovelines{}%
+		\relax %
+	}%
+}%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% macros for the typesetting of the lines
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%% first a macro to prevent the typesetting of the lines (useful for some people)
+\newif\ifgre@showlines%
+\gre@showlinestrue
+
+\def\gresetlines#1{%
+	\IfStrEqCase{#1}{%
+		{visible}%
+			{\gre@showlinestrue}%
+		{invisible}%
+			{\gre@showlinesfalse}%
+		}[% all other cases
+			\gre@error{Unrecognized option "#1" for \protect\gresetlines\MessageBreak Possible options are: 'visible' and 'invisible'}%
+		]%
+}
+
+%% box containing the stafflines for other lines than the first
+\newbox\gre@box@lines%
+
+% macro that must be called at each change of linewidth and gre@factor
+\def\gre@generatelines{%
+	\gre@trace{gre@generatelines}%
+	\setbox\gre@box@lines=\hbox to 0pt{%
+		\vbox attr \gre@attrid@part=2 {%
+			\gre@style@normalstafflines%
+			\vskip\glueexpr(\gre@dimen@additionaltopspace+\gre@space@skip@spaceabovelines+\gre@dimen@currentabovelinestextheight)\relax%
+			\gre@count@temp@one=0\relax
+			\loop
+				\ifgre@showlines %
+					\hrule height \gre@dimen@stafflineheight width \gre@dimen@stafflinewidth\relax%
+				\else %
+					\vskip\gre@dimen@stafflineheight\relax%
+				\fi %
+				\advance\gre@count@temp@one by 1\relax
+				\ifnum\gre@count@temp@one<\gre@count@stafflines
+					\kern\gre@dimen@interstafflinespace\relax
+				\repeat
+			\kern\dimexpr(\gre@space@dimen@spacelinestext+\gre@dimen@additionalbottomspace+\gre@space@dimen@spacebeneathtext+\gre@dimen@currenttranslationheight)\relax%
+			\endgre@style@normalstafflines %
+		}%
+		\hss%
+	}%
+	\relax %
+	\gre@trace@end%
+}%
+
+% Macro for fusion of larger neumes
+\def\GreFuseTwo#1#2{%
+	#1\GreNoBreak #2\relax %
+}%
+
+\def\GreFuse{\GreNoBreak}%
+
+% Macros for using variant glyphs
+
+% Changes a gregorio code point to a variant glyph
+% #1 = the name of the gregorio code point
+% #2 = font name
+% #3 = glyph name, glyph variant name (preceded by .), or code point
+\def\grechangeglyph#1#2#3{%
+	\directlua{gregoriotex.init_variant_font([[#2]], true, [[\the\gre@factor]])}%
+	\directlua{gregoriotex.change_score_glyph([[#1]],[[#2]],[[#3]])}%
+}%
+
+% Changes a gregorio cavum code point to a variant glyph
+% #1 = the name of the gregorio code point
+% #2 = font name for the hollow shape
+% #3 = glyph name, glyph variant name (preceded by .), or code point for the hollow shape
+% optional #4 = font name for the hollow shape
+% optional #5 = glyph name, glyph variant name (preceded by .), or code point for the hollow shape
+\def\grechangecavumglyph#1#2#3{%
+	\directlua{gregoriotex.init_variant_font([[#2]], true, [[\the\gre@factor]])}%
+	\directlua{gregoriotex.change_score_glyph([[#1]],[[#2]],[[#3]], [[Hollow]])}%
+	\@ifnextchar[{\gre@changecavumhole{#1}}{}%
+}%
+\def\gre@changecavumhole#1[#2][#3]{%
+	\gre@trace{gre@changecavumhole{#1}[#2][#3]}%
+	\directlua{gregoriotex.init_variant_font([[#2]], true, [[\the\gre@factor]])}%
+	\directlua{gregoriotex.change_score_glyph([[#1]],[[#2]],[[#3]], [[Hole]])}%
+	\gre@trace@end%
+}%
+
+% Resets a gregorio code point to its default setting
+% #1 = the name of the gregorio code point
+\def\greresetglyph#1{%
+	\directlua{gregoriotex.reset_score_glyph([[#1]])}%
+}%
+
+\def\greresetcavumglyph#1{%
+	\directlua{
+		gregoriotex.reset_score_glyph([[#1]], [[Hollow]])
+		gregoriotex.reset_score_glyph([[#1]], [[Hole]])
+	}%
+}%
+
+{%
+	\directlua{
+		gregoriotex.init_variant_font('greciliae', true, [[\the\gre@factor]])
+		gregoriotex.init_variant_font('greciliae-hollow', true, [[\the\gre@factor]])
+		gregoriotex.init_variant_font('greciliae-hole', true, [[\the\gre@factor]])
+	}%
+	\directlua{
+		gregoriotex.map_font('greciliae', 'CP')
+		gregoriotex.map_font('greciliae-hollow', 'HollowCP')
+		gregoriotex.map_font('greciliae-hole', 'HoleCP')
+	}%
+}%
+
+\input gregoriotex-chars.tex%
+
+\input gregoriotex-signs.tex%
+
+\input gregoriotex-syllable.tex%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% macros for the translations
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newif\ifgre@translationcentering
+\gre@translationcenteringfalse
+
+\def\gresettranslationcentering#1{%
+	\IfStrEqCase{#1}{%
+		{left}%
+			{\gre@translationcenteringfalse}%
+		{center}%
+			{\gre@translationcenteringtrue}%
+		}[% all other cases
+			\gre@error{Unrecognized option "#1" for \protect\gresettranslationcentering\MessageBreak Possible options are: 'left' and 'center'}%
+		]%
+}%
+
+
+\newif\ifgre@breakintranslation%
+\gre@breakintranslationfalse%
+
+\def\gresetbreakintranslation#1{%
+	\IfStrEqCase{#1}{%
+		{allow}%
+			{\gre@breakintranslationtrue}%
+		{prohibit}%
+			{\gre@breakintranslationfalse}%
+		}[% all other cases
+			\gre@error{Unrecognized option "#1" in \protect\gresetbreakintranslation\MessageBreak Possible options are: 'allow' and 'prohibit'}%
+		]%
+}%
+
+\newif\ifgre@showtranslation%
+\gre@showtranslationtrue%
+
+\def\gresettranslation#1{%
+	\IfStrEqCase{#1}{%
+		{visible}{\gre@showtranslationtrue}%
+		{invisible}{\gre@showtranslationfalse}%
+		}[% all other cases
+			\gre@error{Unknown option, "#1" for \protect\gresettranslation\MessageBreak Possible options are: 'visible' and 'invisible'}%
+		]%
+}%
+
+\def\GreWriteTranslation#1{%
+	\ifgre@showtranslation%
+		\ifgre@translationcentering %
+			\setbox\gre@box@temp@width=\hbox{#1}%
+			\gre@dimen@temp@five=\dimexpr((\wd\gre@box@syllabletext - \wd\gre@box@temp@width) / 2)\relax%
+			\gre@mark@translation %
+			\kern\gre@dimen@temp@five %
+			\raise\gre@space@dimen@spacebeneathtext\hbox to 0pt{\vbox to 0pt{\vss\hbox to 0pt{\gre@style@translation#1\endgre@style@translation\hss}}}%
+			\kern-\gre@dimen@temp@five %
+		\else %
+			\gre@mark@translation %
+			\raise\gre@space@dimen@spacebeneathtext\hbox to 0pt{\vbox to 0pt{\vss\hbox to 0pt{\gre@style@translation#1\endgre@style@translation\hss}}}%
+		\fi %
+	\fi%
+}%
+
+\def\GreWriteTranslationWithCenterBeginning#1{%
+	\ifgre@showtranslation%
+		\ifgre@breakintranslation\else%
+			\GreBeginNLBArea{0}{1}%
+		\fi %
+		\gre@attr@center=1\relax %
+		\gre@mark@translation %
+		\raise\gre@space@dimen@spacebeneathtext\hbox to 0pt{\kern 0pt\vbox to 0pt{\vss\hbox to 0pt{\gre@style@translation#1\endgre@style@translation\hss}}\kern 0pt}%
+		\unsetluatexattribute{\gre@attr@center}%
+		\relax %
+	\fi%
+}%
+
+\newif\ifgre@mustdotranslationcenterend%
+\gre@mustdotranslationcenterendfalse%
+
+\def\GreTranslationCenterEnd{%
+	\ifgre@showtranslation%
+		\gre@mustdotranslationcenterendtrue%
+		\relax %
+	\fi%
+}%
+
+\def\gre@dotranslationcenterend{%
+	\gre@trace{gre@dotranslationcenterend}%
+	\ifgre@breakintranslation\else%
+		\GreEndNLBArea{0}{1}%
+	\fi %
+	\gre@attr@center=2\relax %
+	\raise\gre@space@dimen@spacebeneathtext\hbox to 0pt{}%
+	\unsetluatexattribute{\gre@attr@center}%
+	\relax %
+	\gre@trace@end%
+}%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% other macros
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newif\ifgre@justifylastline%
+\gre@justifylastlinefalse%
+
+\def\gresetlastline#1{%
+	\IfStrEqCase{#1}{%
+		{justified}%
+			{\gre@justifylastlinetrue}%
+		{ragged}%
+			{\gre@justifylastlinefalse}%
+		}[% all other cases
+			\gre@error{Unrecognized option "#1" for \protect\gresetlastline\MessageBreak Possible options are: 'justified' and 'ragged'}%
+		]%
+}%
+
+% make this a count so that it can be read more easily in Lua
+\newcount\gre@variableheightexpansion\gre@variableheightexpansion=1\relax %
+\def\gresetlineheightexpansion#1{%
+	\IfStrEqCase{#1}{%
+		{uniform}%
+			{\gre@variableheightexpansion=0\relax }%
+		{variable}%
+			{\gre@variableheightexpansion=1\relax }%
+		}[% all other cases
+			\gre@error{Unrecognized option "#1" for \protect\gresetlineheightexpansion\MessageBreak Possible options are: 'uniform' and 'variable'}%
+		]%
+}%
+
+\newif\ifgre@noteadditionalspacelinestext%
+\def\gresetnoteadditionalspacelinestext#1{%
+	\IfStrEqCase{#1}{%
+		{automatic}%
+			{\gre@noteadditionalspacelinestextfalse}%
+		{manual}%
+			{\gre@noteadditionalspacelinestexttrue}%
+		}[% all other cases
+			\gre@error{Unrecognized option "#1" for \protect\gresetnoteadditionalspacelinestext\MessageBreak Possible options are: 'automatic' and 'manual'}%
+		]%
+}%
+\gresetnoteadditionalspacelinestext{automatic}%default setting
+
+% gre@attr@dash (see its definition in gregorio-syllable) is 0 when we are in a score, and unset when we are not
+
+\newif\ifgre@beginningofscore%
+
+\newcount\gre@count@stafflines
+\def\gre@setstafflines#1{%
+	\gre@trace{gre@setstafflines{#1}}%
+	\gre@count@stafflines=#1\relax
+	\ifcase#1% 0
+		\gre@error{Invalid number of staff lines}%
+	\or % 1
+		\gre@error{Invalid number of staff lines}%
+	\or % 2
+		\let\gre@pitch@adjust@top\gre@pitch@f %
+		\let\gre@pitch@abovestaff\gre@pitch@g %
+		\let\gre@pitch@ledger@above\gre@pitch@h %
+		\let\gre@pitch@raresign\gre@pitch@g %
+		\let\gre@pitch@overbrace\gre@pitch@i %
+		\let\gre@char@bar@virgula\GreCPVirgulaTwo %
+		\let\gre@char@bar@virgulahigh\GreCPVirgulaThree %
+		\let\gre@char@bar@virgulaparen\GreCPVirgulaParenTwo %
+		\let\gre@char@bar@virgulaparenhigh\GreCPVirgulaParenThree %
+		\let\gre@char@bar@divisiominimis\GreCPDivisioMinimisTwo %
+		\let\gre@char@bar@divisiominimishigh\GreCPDivisioMinimisThree %
+		\let\gre@char@bar@divisiominima\GreCPDivisioMinimaTwo %
+		\let\gre@char@bar@divisiominimahigh\GreCPDivisioMinimaThree %
+		\let\gre@char@bar@divisiominimaparen\GreCPDivisioMinimaParenTwo %
+		\let\gre@char@bar@divisiominimaparenhigh\GreCPDivisioMinimaParenThree %
+		\let\gre@char@bar@divisiominor\GreCPDivisioMinorTwo %
+		\let\gre@char@bar@divisiomaior\GreCPDivisioMaiorTwo %
+		\let\gre@char@bar@divisiomaiordotted\GreCPDivisioMaiorDottedTwo %
+		\let\gre@char@bar@divisiomaiordottedbacking\GreCPDivisioMaiorDottedBackingTwo %
+	\or % 3
+		\let\gre@pitch@adjust@top\gre@pitch@h %
+		\let\gre@pitch@abovestaff\gre@pitch@i %
+		\let\gre@pitch@ledger@above\gre@pitch@j %
+		\let\gre@pitch@raresign\gre@pitch@i %
+		\let\gre@pitch@overbrace\gre@pitch@k %
+		\let\gre@char@bar@virgula\GreCPVirgulaThree %
+		\let\gre@char@bar@virgulahigh\GreCPVirgulaFour %
+		\let\gre@char@bar@virgulaparen\GreCPVirgulaParenThree %
+		\let\gre@char@bar@virgulaparenhigh\GreCPVirgulaParenFour %
+		\let\gre@char@bar@divisiominimis\GreCPDivisioMinimisThree %
+		\let\gre@char@bar@divisiominimishigh\GreCPDivisioMinimisFour %
+		\let\gre@char@bar@divisiominima\GreCPDivisioMinimaThree %
+		\let\gre@char@bar@divisiominimahigh\GreCPDivisioMinimaFour %
+		\let\gre@char@bar@divisiominimaparen\GreCPDivisioMinimaParenThree %
+		\let\gre@char@bar@divisiominimaparenhigh\GreCPDivisioMinimaParenFour %
+		\let\gre@char@bar@divisiominor\GreCPDivisioMinorThree %
+		\let\gre@char@bar@divisiomaior\GreCPDivisioMaiorThree %
+		\let\gre@char@bar@divisiomaiordotted\GreCPDivisioMaiorDottedThree %
+		\let\gre@char@bar@divisiomaiordottedbacking\GreCPDivisioMaiorDottedBackingThree %
+	\or % 4
+		\let\gre@pitch@adjust@top\gre@pitch@j %
+		\let\gre@pitch@abovestaff\gre@pitch@k %
+		\let\gre@pitch@ledger@above\gre@pitch@l %
+		\let\gre@pitch@raresign\gre@pitch@k %
+		\let\gre@pitch@overbrace\gre@pitch@m %
+		\let\gre@char@bar@virgula\GreCPVirgulaFour %
+		\let\gre@char@bar@virgulahigh\GreCPVirgulaFive %
+		\let\gre@char@bar@virgulaparen\GreCPVirgulaParenFour %
+		\let\gre@char@bar@virgulaparenhigh\GreCPVirgulaParenFive %
+		\let\gre@char@bar@divisiominimis\GreCPDivisioMinimisFour %
+		\let\gre@char@bar@divisiominimishigh\GreCPDivisioMinimisFive %
+		\let\gre@char@bar@divisiominima\GreCPDivisioMinimaFour %
+		\let\gre@char@bar@divisiominimahigh\GreCPDivisioMinimaFive %
+		\let\gre@char@bar@divisiominimaparen\GreCPDivisioMinimaParenFour %
+		\let\gre@char@bar@divisiominimaparenhigh\GreCPDivisioMinimaParenFive %
+		\let\gre@char@bar@divisiominor\GreCPDivisioMinorFour %
+		\let\gre@char@bar@divisiomaior\GreCPDivisioMaiorFour %
+		\let\gre@char@bar@divisiomaiordotted\GreCPDivisioMaiorDottedFour %
+		\let\gre@char@bar@divisiomaiordottedbacking\GreCPDivisioMaiorDottedBackingFour %
+	\or % 5
+		\let\gre@pitch@adjust@top\gre@pitch@l %
+		\let\gre@pitch@abovestaff\gre@pitch@m %
+		\let\gre@pitch@ledger@above\gre@pitch@n %
+		\let\gre@pitch@raresign\gre@pitch@m %
+		\let\gre@pitch@overbrace\gre@pitch@p %
+		\let\gre@char@bar@virgula\GreCPVirgulaFive %
+		\let\gre@char@bar@virgulahigh\GreCPVirgulaSix %
+		\let\gre@char@bar@virgulaparen\GreCPVirgulaParenFive %
+		\let\gre@char@bar@virgulaparenhigh\GreCPVirgulaParenSix %
+		\let\gre@char@bar@divisiominimis\GreCPDivisioMinimisFive %
+		\let\gre@char@bar@divisiominimishigh\GreCPDivisioMinimisSix %
+		\let\gre@char@bar@divisiominima\GreCPDivisioMinimaFive %
+		\let\gre@char@bar@divisiominimahigh\GreCPDivisioMinimaSix %
+		\let\gre@char@bar@divisiominimaparen\GreCPDivisioMinimaParenFive %
+		\let\gre@char@bar@divisiominimaparenhigh\GreCPDivisioMinimaParenSix %
+		\let\gre@char@bar@divisiominor\GreCPDivisioMinorFive %
+		\let\gre@char@bar@divisiomaior\GreCPDivisioMaiorFive %
+		\let\gre@char@bar@divisiomaiordotted\GreCPDivisioMaiorDottedFive %
+		\let\gre@char@bar@divisiomaiordottedbacking\GreCPDivisioMaiorDottedBackingFive %
+	\else %
+		\gre@error{Invalid number of staff lines}%
+	\fi %
+	\gre@trace@end%
+}%
+
+%macro called at the beginning of a score
+% #1 is the gabc score id
+% #2 is the high height
+% #3 is the low height
+% #4 is 1 if there is a translation somewhere
+% #5 is if 1 if we have space above the staff
+% #6 is the point-and-click filename
+% #7 is the number of staff lines
+% #8 is to set the initial clef position
+\def\GreBeginScore#1#2#3#4#5#6#7#8{%
+	% scores must be new paragraphs!
+	\ifhmode\par\fi %
+	\gre@beginningofscoretrue%
+	\global\gre@dimen@morawidth=0pt\relax %
+	\GreResetEolCustos%
+	\gre@resetledgerlineheuristics%
+	\global\setluatexattribute\gre@attr@glyph@id{0}%
+	\global\setluatexattribute\gre@attr@syllable@id{0}%
+	\global\setluatexattribute\gre@attr@alteration@id{0}%
+	\let\gre@pitch@cleftop\gre@pitch@dummy %
+	\let\gre@pitch@clefbottom\gre@pitch@dummy %
+	\xdef\gre@gabcname{#6}%
+	\gre@setstafflines{#7}%
+	\ifgre@justifylastline%
+		\xdef\gre@saved@parfillskip{\the\parfillskip}%
+		\parfillskip=0pt plus 0pt minus 0pt\relax%
+	\fi %
+	\ifgre@usestylefont%
+		\gre@setstylefont %
+	\fi %
+	\gre@computespaces%
+	\gre@cancelpenalties %
+	\gre@attr@dash=0\relax %
+	\gre@generatelines %
+	\noindent%
+	\gre@calculate@additionalspaces{#2}{#3}{#4}{#5}%
+	#8%
+	\directlua{
+		gregoriotex.at_score_beginning([[#1]], #2, #3, #4, #5,
+				\gre@pitch@adjust@top, \gre@pitch@adjust@bottom,
+				"\luatexluaescapestring{\gre@gregoriofontname}")
+		gregoriotex.adjust_line_height(1)
+	}%
+	%TODO do something like LaTeX's AtBeginDocument
+	\ifdefined\optgabcAtScoreBeginning %
+		\optgabcAtScoreBeginning %
+	\fi %
+	\global\gre@lastoflinecount=2\relax %
+	\global\gre@endofscorefalse %
+	\relax%
+}%
+
+%macro called at the end of a score
+\def\GreEndScore{%
+	\global\gre@lastoflinecount=0\relax %
+	\gre@useautoeolcustos%
+	\GreEndEUOUAE{}%
+	\ifnum\gre@nlbstate=0\else %
+		\GreEndNLBArea{2}{0}%
+	\fi %
+	\gre@localleftbox{}%
+	\ifgre@keeprightbox\else %
+		\gre@localrightbox{}%
+	\fi %
+	\hfil %
+	\par %
+	\ifgre@keeprightbox%
+		\global\gre@keeprightboxfalse%
+	\fi%
+	% with some versions of LuaTeX, the \localrightbox and \localleftbox must be set empty in an environment with the good attributes set
+	\gre@localleftbox{}%
+	\gre@localrightbox{}%
+	\gre@calculate@additionalspaces{\gre@pitch@dummy}{\gre@pitch@dummy}{0}{0}%
+	\global\gre@dimen@currentabovelinestextheight=0 sp%
+	\gre@removetranslationspace %
+	\gre@restorepenalties %
+	\gre@dimen@temp@one=0pt\relax%
+	\gre@dimen@temp@two=0pt\relax%
+	\gre@dimen@temp@three=0pt\relax%
+	\gre@dimen@temp@four=0pt\relax%
+	\gre@dimen@temp@five=0pt\relax%
+	\gre@skip@temp@one=0pt\relax%
+	\gre@skip@temp@two=0pt\relax%
+	\gre@skip@temp@three=0pt\relax%
+	\gre@skip@temp@four=0pt\relax%
+	\setbox\gre@box@annotation=\box\voidb@x%
+	\setbox\gre@box@commentary=\box\voidb@x%
+	\directlua{gregoriotex.at_score_end()}%
+	\unsetluatexattribute{\gre@attr@glyph@id}%
+	\unsetluatexattribute{\gre@attr@glyph@top}%
+	\unsetluatexattribute{\gre@attr@glyph@bottom}%
+	\unsetluatexattribute{\gre@attr@dash}%
+	\xdef\gre@bolshiftcleftypelocal{\gre@bolshiftcleftypeglobal}%
+	\ifgre@justifylastline%
+		\parfillskip=\gre@saved@parfillskip\relax%
+	\fi %
+	\global\setluatexattribute\gre@attr@glyph@id{0}%
+	\relax%
+}%
+
+% macro called at the end of a bar (old bar spacing algorithm only).
+\def\gre@endafterbar#1{%
+	\gre@trace{gre@endafterbar{#1}}%
+	\gre@penalty{\the\gre@space@count@endafterbarpenalty }\relax %
+	\ifnum#1=1\relax %
+		\gre@debugmsg{ifdim}{ enddifference > 0pt}%
+		\ifdim\gre@dimen@enddifference > 0 pt\relax%
+			\gre@debugmsg{ifdim}{ nextbegindifference > 0pt}%
+			\ifdim\gre@skip@nextbegindifference > 0 pt\relax%
+				\gre@skip@temp@four = \gre@space@skip@notebarspace\relax%
+				\gre@hskip\gre@skip@temp@four %
+			\else % (next begin difference >0pt)
+				\gre@skip@temp@four = \gre@space@skip@textbartextspace\relax%
+				\gre@hskip\gre@skip@temp@four %
+			\fi %
+		\else%(enddifference < 0pt)
+			\gre@debugmsg{ifdim}{ nextbegindifference < 0pt}%
+			\ifdim\gre@skip@nextbegindifference < 0 pt\relax%
+				\gre@skip@temp@four = \gre@space@skip@textbartextspace\relax%
+				\gre@hskip\gre@skip@temp@four %
+			\else %(next begin difference < 0 pt)
+				\gre@skip@temp@four = \gre@space@skip@interwordspacetext\relax%
+				\gre@hskip\gre@skip@temp@four %
+			\fi %
+		\fi %
+	\fi %
+	%\gre@penalty{\the\gre@space@count@endafterbarpenalty }\relax
+	%\global\gre@dimen@enddifference=0pt
+	\relax %
+	\gre@trace@end%
+}%
+
+\newcount\gre@lastoflinecount%
+
+% called at syllable level. Indicates that the syllable is the last of the line (or score)
+% 0 if nothing
+% 1 if the syllable is the last of the line
+% 2 after it has finished the syllable, so when it is two it means that the syllable is the first of a line
+\def\GreLastOfLine{%
+	\global\gre@lastoflinecount=1\relax%
+	\gre@debugmsg{eolshift}{set lastoflinecount to 1}%
+	\relax%
+}%
+
+% Flag to mark the last syllable of the score
+\newif\ifgre@endofscore%
+\gre@endofscorefalse%
+
+% called at element level, before the final element
+\def\GreLastOfScore{%
+	%\gre@localleftbox{}% For an unknown reason, if I uncomment this line, the
+	%blank line removing algorithm (in lua) will let some blank space after the
+	%last line... (see bug #20953)
+	\global\gre@endofscoretrue %
+	\GreSuppressEolCustos%
+	\gre@debugmsg{eolshift}{set lastoflinecount to 1}%
+	\relax%
+}%
+
+% a flag to disable (or reenable) the left shift for first syllables of lines
+\newif\ifgre@bolshiftsenabled%
+% default state is for them to be enabled
+\gre@bolshiftsenabledtrue
+
+\def\gresetbolshifts#1{%
+	\IfStrEqCase{#1}{%
+		{enable}%
+			{\gre@bolshiftsenabledtrue}%
+		{disable}%
+			{\gre@bolshiftsenabledfalse}%
+		}[% all other cases
+			\gre@error{Unrecognized option "#1" in \protect\gresetbolshifts\MessageBreak Possible options are: 'enable' and 'disable'}%
+		]%
+}%
+
+% a flag to disable (or reenable) the shift for last syllables of lines
+% when the shifts are enabled lyrics cannot extend under (or past) the custos at the end of a line
+\newif\ifgre@eolshiftsenabled%
+% default state is for them to be enabled
+\gre@eolshiftsenabledtrue
+
+\def\greseteolshifts#1{%
+	\IfStrEqCase{#1}{%
+		{enable}%
+			{\gre@eolshiftsenabledtrue}%
+		{disable}%
+			{\gre@eolshiftsenabledfalse}%
+		}[% all other cases
+			\gre@error{Unrecognized option "#1" in \protect\greseteolshifts\MessageBreak Possible options are: 'enable' and 'disable'}%
+		]%
+}%
+
+
+% Flag indicating if we block the custos. We just block custos at the end of a score, to prevent a bug.
+\newif\ifgre@blockeolcustos%
+\def\GreSuppressEolCustos{%
+	\gre@blockeolcustostrue%
+	\gre@localrightbox{}%
+}%
+\def\gre@useautoeolcustos{%
+	\gre@trace{gre@useautoeolcustos}%
+	\gre@blockeolcustosfalse%
+	\gre@trace@end%
+}%
+\def\greseteolcustos#1{%
+	\IfStrEqCase{#1}{%
+		{manual}%
+			{\global\let\GreResetEolCustos\GreSuppressEolCustos\relax}%
+		{auto}%
+			{\global\let\GreResetEolCustos\gre@useautoeolcustos\relax}%
+		}[% all other cases
+			\gre@error{Unrecognized option "#1" for \protect\greseteolcustos\MessageBreak Possible options are: 'manual' and 'auto'}%
+		]%
+}%
+\greseteolcustos{auto}%
+
+\newif\ifgre@blockeolcustosbeforeeuouae%
+\def\greseteolcustosbeforeeuouae#1{%
+	\IfStrEqCase{#1}{%
+		{suppressed}%
+			{\gre@blockeolcustosbeforeeuouaetrue\relax}%
+		{auto}%
+			{\gre@blockeolcustosbeforeeuouaefalse\relax}%
+		}[% all other cases
+			\gre@error{Unrecognized option "#1" for \protect\greseteolcustosbeforeeuouae\MessageBreak Possible options are: 'suppressed' and 'auto'}%
+		]%
+}%
+\greseteolcustosbeforeeuouae{suppressed}%
+
+\newif\ifgre@raggedbreakbeforeeuouae%
+\def\gresetbreakbeforeeuouae#1{%
+	\IfStrEqCase{#1}{%
+		{ragged}%
+			{\gre@raggedbreakbeforeeuouaetrue\relax}%
+		{justified}%
+			{\gre@raggedbreakbeforeeuouaefalse\relax}%
+		}[% all other cases
+			\gre@error{Unrecognized option "#1" for \protect\greseteolcustosbeforeeuouae\MessageBreak Possible options are: 'ragged' and 'justified'}%
+		]%
+}%
+\gresetbreakbeforeeuouae{justified}%
+
+\def\GreAdHocSpaceEndOfElement#1#2#3{%
+	\gre@skip@temp@four = \gre@space@skip@interelementspace\relax %
+	\directlua{gregoriotex.scale_space(#1)}%
+	\GreEndOfElement{4}{#2}{#3}%
+}%
+
+\newif\ifgre@unbreakableendofelement %
+\def\gresetunisonbreakbehavior#1{%
+	\IfStrEqCase{#1}{%
+		{breakable}%
+			{\global\let\gre@unbreakableendofelement@unison\gre@unbreakableendofelementfalse\relax}%
+		{unbreakable}%
+			{\global\let\gre@unbreakableendofelement@unison\gre@unbreakableendofelementtrue\relax}%
+		}[% all other cases
+			\gre@error{Unrecognized option "#1" for \protect\gresetunisonbreakbehavior\MessageBreak Possible options are: 'breakable' and 'unbreakable'}%
+		]%
+}%
+\gresetunisonbreakbehavior{breakable}
+
+% macro to end elements, #1 is the type of space, it can be :
+%% 0: default space
+%% 1: larger space
+%% 2: glyph space
+%% 3: zero-width space
+%% 4: custom space
+% #2 is whether the space is breakable :
+%% 0: breakable
+%% 1: unbreakable
+%% 2: unison (breakable according to the unisonbreakbehavior setting)
+% #3 is the number of notes emitted in this syllable before this macro
+\def\GreEndOfElement#1#2#3{%
+	\ifnum\gre@count@syllablenotes<\gre@count@unbreakabletotalnotes\relax %
+		\gre@unbreakableendofelementtrue %
+	\else %
+		\ifnum#3<\gre@count@unbreakableinitialnotes\relax %
+			\gre@unbreakableendofelementtrue %
+		\else %
+			\ifnum\numexpr\gre@count@syllablenotes-#3\relax<%
+					\gre@count@unbreakablefinalnotes\relax %
+				\gre@unbreakableendofelementtrue %
+			\else %
+				\ifcase#2\relax %
+					\gre@unbreakableendofelementfalse %
+				\or% case 1
+					\gre@unbreakableendofelementtrue %
+				\or% case 2
+					\gre@unbreakableendofelement@unison %
+				\else %
+					\gre@error{Unrecognized breakable argument #2}%
+				\fi %
+			\fi %
+		\fi %
+	\fi %
+	\ifgre@unbreakableendofelement %
+		\GreNoBreak %
+	\else %
+		\gre@penalty{\the\gre@space@count@endofelementpenalty}%
+	\fi %
+	\ifcase#1\relax%
+		\gre@skip@temp@four = \gre@space@skip@interelementspace\relax%
+		\gre@hskip\gre@skip@temp@four %
+	\or% case 1
+		\gre@skip@temp@four = \gre@space@skip@largerspace\relax%
+		\gre@hskip\gre@skip@temp@four %
+	\or% case 2
+		\gre@skip@temp@four = \gre@space@skip@glyphspace\relax%
+		\gre@hskip\gre@skip@temp@four %
+	\or% case 3
+		\gre@skip@temp@four = \gre@space@skip@zerowidthspace\relax%
+		\gre@hskip\gre@skip@temp@four %
+	\or% case 4
+		\gre@hskip\gre@skip@temp@four %
+	\else%
+		\gre@error{Unrecognized space type #1}%
+	\fi%
+	\ifgre@unbreakableendofelement %
+		\GreNoBreak %
+	\fi %
+\relax%
+}%
+
+% puts the correct skip value into \gre@skip@temp@four for the desired type of space
+%% 0: default space
+%% 1: zero width space
+%% 2: space between flat or natural and a note
+%% 3: space between two puncta inclinata
+%% 7: space between a punctum inclinatum and a punctum inclinatum deminutus
+%% 8: space between two puncta inclinata deminuti
+%% 4: space between bivirga or trivirga
+%% 5: space between bistropha or tristropha
+%% 6: space after a punctum mora XXX: not used yet, not so sure it is a good idea...
+%% 7: space between a punctum inclinatum and a punctum inclinatum debilis
+%% 8: space between two puncta inclinata debilis
+%% 9: space before a punctum (or something else) and a punctum inclinatum
+%% 10: space between puncta inclinata (also debilis for now), larger ambitus (range=3rd).
+%% 11: space between puncta inclinata (also debilis for now), larger ambitus (range=4th or 5th)
+%% 12: ascending version of 3
+%% 13: ascending version of 7
+%% 14: ascending version of 10
+%% 15: ascending version of 11
+%% 16: space between a punctum inclinatum and a "no-bar" glyph one pitch below
+%% 17: space between a punctum inclinatum and a "no-bar" glyph two pitches below
+%% 18: space between a punctum inclinatum and a "no-bar" glyph three or four pitches below
+%% 19: space between a punctum inclinatum and a "no-bar" glyph one pitch above
+%% 20: space between a punctum inclinatum and a "no-bar" glyph two pitches above
+%% 21: space between a punctum inclinatum and a "no-bar" glyph three or four pitches above
+%% 22: half-space
+%% 23: Space between two puncta inclinata on a unison
+%% 24: Space before a right-leaning puncta inclinatum when the pitch is ascending (up to 4 pitches away)
+%% 25: Space before a left-leaning puncta inclinatum when the pitch is descending (up to 4 pitches away)
+%% 26: Space after after a non-punctum inclinatum and before the upright punctum inclinatum
+\def\gre@get@spaceskip#1{%
+	\gre@trace{gre@get@spaceskip{#1}}%
+	\ifcase#1%
+		\gre@skip@temp@four = \gre@space@skip@interglyphspace\relax%
+	\or% case 1
+		\gre@skip@temp@four = \gre@space@dimen@zerowidthspace\relax%
+	\or% case 2
+		\gre@skip@temp@four = \gre@space@dimen@alterationspace\relax%
+	\or% case 3
+		\gre@skip@temp@four = \gre@space@skip@punctuminclinatumshift\relax%
+	\or% case 4
+		\gre@skip@temp@four = \gre@space@skip@bitrivirspace\relax%
+	\or% case 5
+		\gre@skip@temp@four = \gre@space@skip@bitristrospace\relax%
+	\or% case 6
+		\gre@skip@temp@four = \gre@space@skip@spaceaftersigns\relax%
+	\or% case 7
+		\gre@skip@temp@four = \gre@space@skip@punctuminclinatumanddebilisshift\relax%
+	\or% case 8
+		\gre@skip@temp@four = \gre@space@skip@punctuminclinatumdebilisshift\relax%
+	\or% case 9
+		\gre@skip@temp@four = \gre@space@skip@beforepunctainclinatashift\relax%
+	\or% case 10
+		\gre@skip@temp@four = \gre@space@skip@punctuminclinatumbigshift\relax%
+	\or% case 11
+		\gre@skip@temp@four = \gre@space@skip@punctuminclinatummaxshift\relax%
+	\or% case 12 (ascending version of 3)
+		\gre@skip@temp@four = \gre@space@skip@ascendingpunctuminclinatumshift\relax%
+	\or% case 13 (ascending version of 7)
+		\gre@skip@temp@four = \gre@space@skip@ascendingpunctuminclinatumanddebilisshift\relax%
+	\or% case 14 (ascending version of 10)
+		\gre@skip@temp@four = \gre@space@skip@ascendingpunctuminclinatumbigshift\relax%
+	\or% case 15 (ascending version of 11)
+		\gre@skip@temp@four = \gre@space@skip@ascendingpunctuminclinatummaxshift\relax%
+	\or% case 16
+		\gre@skip@temp@four = \gre@space@skip@descendinginclinatumtonobarshift\relax%
+	\or% case 17
+		\gre@skip@temp@four = \gre@space@skip@descendinginclinatumtonobarbigshift\relax%
+	\or% case 18
+		\gre@skip@temp@four = \gre@space@skip@descendinginclinatumtonobarmaxshift\relax%
+	\or% case 19
+		\gre@skip@temp@four = \gre@space@skip@ascendinginclinatumtonobarshift\relax%
+	\or% case 20
+		\gre@skip@temp@four = \gre@space@skip@ascendinginclinatumtonobarbigshift\relax%
+	\or% case 21
+		\gre@skip@temp@four = \gre@space@skip@ascendinginclinatumtonobarmaxshift\relax%
+	\or% case 22
+		\gre@skip@temp@four = \gre@space@skip@halfspace\relax%
+	\or% case 23
+		\gre@skip@temp@four = \gre@space@skip@punctuminclinatumunisonshift\relax%
+	\or% case 24
+		\gre@skip@temp@four = \gre@space@skip@descendingpunctuminclinatumascendingshift\relax%
+	\or% case 25
+		\gre@skip@temp@four = \gre@space@skip@ascendingpunctuminclinatumdescendingshift\relax%
+	\or% case 26
+		\gre@skip@temp@four = \gre@space@skip@uprightpunctuminclinatumshift\relax%
+	\else%
+		\gre@error{Unrecognized spaceskip #1}%
+	\fi%
+	\gre@trace@end%
+}%
+
+% macro to end a glyph without ending the element
+% see \gre@get@glyphskip for the valus of the argument
+\def\GreEndOfGlyph#1{%
+	\GreNoBreak %
+	\gre@get@spaceskip{#1}%
+	\gre@hskip\gre@skip@temp@four %
+	\GreNoBreak %
+	\relax%
+}%
+
+% The different states of line break areas:
+% 0: not currently in a no line break area
+% 1: no line break area due to translation centering
+% 2: no line break area due to <nlba> tag
+\xdef\gre@nlbstate{0}%
+
+\newcount\gre@saved@prenlba@nobreakpenalty%
+\newcount\gre@saved@prenlba@endofwordpenalty%
+\newcount\gre@saved@prenlba@endofsyllablepenalty%
+\newcount\gre@saved@prenlba@endafterbarpenalty%
+\newcount\gre@saved@prenlba@endafterbaraltpenalty%
+\newcount\gre@saved@prenlba@endofelementpenalty%
+\newcount\gre@saved@prenlba@hyphenpenalty%
+% first argument is if if the nlba is starting in neumes or not
+% second argument is if it is called from translation centering or not
+\def\GreBeginNLBArea#1#2{%
+	\xdef\gre@nlbinitialstate{\gre@nlbstate}%
+	\ifnum#2=0\relax %
+		\xdef\gre@nlbstate{2}%
+	\else %
+			\ifcase\gre@nlbstate %
+				\xdef\gre@nlbstate{1}%
+			\or %
+				\xdef\gre@nlbstate{1}%
+			\or %
+				\xdef\gre@nlbstate{2}%
+			\fi %
+	\fi %
+	\ifnum\gre@nlbinitialstate=0\relax %
+			\global\gre@saved@prenlba@nobreakpenalty=\gre@space@count@nobreakpenalty\relax %
+			\global\gre@space@count@nobreakpenalty=10001\relax %
+			%
+			\global\gre@saved@prenlba@endofwordpenalty=\gre@space@count@endofwordpenalty\relax %
+			\global\gre@space@count@endofwordpenalty=10001\relax %
+			%
+			\global\gre@saved@prenlba@endofsyllablepenalty=\gre@space@count@endofsyllablepenalty\relax %
+			\global\gre@space@count@endofsyllablepenalty=10001\relax %
+			%
+			\global\gre@saved@prenlba@endafterbarpenalty=\gre@space@count@endafterbarpenalty\relax %
+			\global\gre@space@count@endafterbarpenalty=10001\relax %
+			%
+			\global\gre@saved@prenlba@endafterbaraltpenalty=\gre@space@count@endafterbaraltpenalty\relax %
+			\global\gre@space@count@endafterbaraltpenalty=10001\relax %
+			%
+			\global\gre@saved@prenlba@endofelementpenalty=\gre@space@count@endofelementpenalty\relax %
+			\global\gre@space@count@endofelementpenalty=10001\relax %
+			%
+			\global\gre@saved@prenlba@hyphenpenalty=\gre@space@count@hyphenpenalty\relax %
+			\global\gre@space@count@hyphenpenalty=10001\relax %
+	\fi %
+}%
+
+\def\GreEndNLBArea#1#2{%
+	\xdef\gre@nlbinitialstate{\gre@nlbstate}%
+	\ifnum#2=0\relax %
+		\xdef\gre@nlbstate{0}%
+	\else %
+			\ifcase\gre@nlbstate %
+				\xdef\gre@nlbstate{0}%
+			\or %
+				\xdef\gre@nlbstate{0}%
+			\or %
+				\xdef\gre@nlbstate{2}%
+			\fi %
+	\fi %
+	% if gre@nlbstate is not 0, then nothing should happend
+	\ifnum\gre@nlbstate=0\relax %
+		\ifnum\gre@nlbinitialstate=0\else %
+			\global\gre@space@count@nobreakpenalty=\gre@saved@prenlba@nobreakpenalty\relax %
+			\global\gre@space@count@endofwordpenalty=\gre@saved@prenlba@endofwordpenalty\relax %
+			\global\gre@space@count@endofsyllablepenalty=\gre@saved@prenlba@endofsyllablepenalty\relax %
+			\global\gre@space@count@endafterbarpenalty=\gre@saved@prenlba@endafterbarpenalty\relax %
+			\global\gre@space@count@endafterbaraltpenalty=\gre@saved@prenlba@endafterbaraltpenalty\relax %
+			\global\gre@space@count@endofelementpenalty=\gre@saved@prenlba@endofelementpenalty\relax %
+			\global\gre@space@count@hyphenpenalty=\gre@saved@prenlba@hyphenpenalty\relax %
+			\ifcase #1\relax % 0
+				\gre@penalty{\the\gre@space@count@endofelementpenalty}%
+			\or % 1
+				\gre@penalty{\the\gre@space@count@endofsyllablepenalty}%
+			\or % 2
+				% end of score, no penalty needs to be added
+			\or % 3
+				% before bar, no penalty should to be added
+			\fi %
+		\fi %
+	\fi %
+}%
+
+\newif\ifgre@euouae@implies@nlba
+\gre@euouae@implies@nlbatrue
+
+\def\gresetbreakineuouae#1{%
+	\IfStrEqCase{#1}{%
+		{allow}%
+			{\gre@euouae@implies@nlbafalse}%
+		{prohibit}%
+			{\gre@euouae@implies@nlbatrue}%
+		}[% all other cases
+			\gre@error{Unrecognized option "#1" in \protect\gresetbreakineuouae\MessageBreak Possible options are: 'allow' and 'prohibit'}%
+		]%
+}%
+
+
+\newif\ifgre@in@euouae
+\gre@in@euouaefalse
+
+\newif\ifgre@firstin@euouae
+\gre@firstin@euouaefalse
+\newcount\gre@lasteuouaeindex
+\gre@lasteuouaeindex=0
+
+\def\GreBeginEUOUAE#1{%
+	\ifgre@euouae@implies@nlba %
+		\GreBeginNLBArea{0}{0}%
+	\fi %
+	\ifgre@raggedbreakbeforeeuouae %
+		\gre@lasteuouaeindex=#1\relax %
+		\gre@firstin@euouaetrue %
+	\fi %
+	\gre@in@euouaetrue %
+	% as soon as the EUOUAE starts, we stop blocking the EOL custos that might
+	% have been blocked on the prior syllable.
+	\GreResetEolCustos %
+}
+
+\def\GreEndEUOUAE#1{%
+	\ifgre@euouae@implies@nlba %
+		\GreEndNLBArea{#1}{0}%
+	\fi %
+	\gre@in@euouaefalse %
+	\gre@firstin@euouaefalse %
+}
+
+\input gregoriotex-symbols.tex%
+
+%%%%%%%%%
+%% fonts
+%%%%%%%%%
+
+\def\gretilde{%
+	\ensuremath{\sim}%
+	\relax %
+}%
+
+
+\def\gresetgregoriofont{\@ifnextchar[{\gre@setgregoriofont}{\gre@setgregoriofont[]}}%
+\def\gresetgregoriofontscaled{\@ifnextchar[{\gre@setgregoriofontscaled}{\gre@setgregoriofontscaled[]}}%
+
+\def\gre@setgregoriofont[#1]#2{%
+	\gre@trace{gre@setgregoriofont[#1]{#2}}%
+	\gre@setgregoriofontscaled[#1]{#2}{100000}%
+	\relax %
+	\gre@trace@end%
+}%
+
+%% font calibration distances
+\newdimen\gre@dimen@stafflinethicknessbase%
+\newdimen\gre@dimen@glyphraisebase%
+\newdimen\gre@dimen@interstafflinedistancebase%
+\newdimen\gre@dimen@inclinatumonlinemoravshiftbase%
+\newdimen\gre@dimen@inclinatumonlinemorahshiftbase%
+\newdimen\gre@dimen@inclinatumofflinemorahshiftbase%
+
+\def\gre@setgregoriofontscaled[#1]#2#3{%
+	\gre@trace{gre@setgregoriofontscaled[#1]{#2}{#3}}%
+	\if\relax\detokenize{#1}\relax %
+		\xdef\gre@gregoriofontname{#2}%
+		\expandafter\xdef\csname gre@fontfactor@#2\endcsname{#3}%
+		\gre@loadgregoriofont%
+		\gdef\GreCPVirgaReversaAscendensOnDLine##1{##1}%
+	\else %
+		\xdef\gre@gregoriofontname{#2-#1}%
+		\expandafter\xdef\csname gre@fontfactor@#2-#1\endcsname{#3}%
+		\gre@loadgregoriofont%
+		\gdef\GreCPVirgaReversaAscendensOnDLine##1{\GreCPVirgaReversaLongqueueAscendens}%
+	\fi %
+	% currently all fonts use the same calibration distances
+	\gre@dimen@stafflinethicknessbase=1500sp\relax %
+	\gre@dimen@glyphraisebase=-22000sp\relax%
+	\gre@dimen@interstafflinedistancebase=30000sp\relax%
+	\gre@dimen@inclinatumonlinemoravshiftbase=4500sp\relax%
+	\gre@dimen@inclinatumonlinemorahshiftbase=3700sp\relax%
+	\gre@dimen@inclinatumofflinemorahshiftbase=2500sp\relax%
+	\gre@trace@end%
+}%
+
+\newif\ifgre@loadholehollowfonts%
+\gre@loadholehollowfontstrue%
+
+\def\greloadholehollowfonts#1{%
+	\IfStrEq{#1}{true}{%
+		\gre@loadholehollowfontstrue %
+	}{%
+		\gre@loadholehollowfontsfalse %
+	}%
+}
+
+\def\gre@loadgregoriofont{%
+	\gre@trace{gre@loadgregoriofont}%
+	\gre@count@temp@three = \the\gre@factor %
+	\gre@count@temp@two = \expandafter\csname gre@fontfactor@\gre@gregoriofontname\endcsname\relax %
+	\directlua{gregoriotex.set_font_factor([[\gre@gregoriofontname]], [[\the\gre@count@temp@two]])}%
+	\multiply\gre@count@temp@three by \gre@count@temp@two %
+	\global\font\gre@font@music={name:\gre@gregoriofontname} at \the\gre@count@temp@three sp\relax %
+	\ifgre@loadholehollowfonts %
+		\global\font\gre@font@music@hollow={name:\gre@gregoriofontname-hollow} at \the\gre@count@temp@three sp\relax %
+		\global\font\gre@font@music@hole={name:\gre@gregoriofontname-hole} at \the\gre@count@temp@three sp\relax %
+	\fi %
+	\directlua{gregoriotex.check_font_version() gregoriotex.scale_score_fonts([[\the\gre@factor]])}%
+	\relax%
+	\gre@trace@end%
+}%
+
+% the default gregorio font
+\gresetgregoriofont{greciliae}%
+
+\newif\ifgre@usestylefont%
+\gre@usestylefontfalse%
+
+% gregoriostylefont is the font used for additional glyphs
+\def\gre@setstylefont{%
+	\gre@trace{gre@setstylefont}%
+	\gre@count@temp@three = \numexpr(\gre@factor * 100000)\relax %
+	\global\font\gre@font@style={name:greextra} at \the\gre@count@temp@three sp%
+	{\gre@font@music\directlua{gregoriotex.check_font_version() gregoriotex.scale_score_fonts([[\the\gre@factor]])}}%
+	\relax%
+	\gre@trace@end%
+}%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Master function for changing element formats
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\def\grechangestyle#1#2{%
+	\@ifnextchar[{\gre@changestyle{#1}{#2}}{\gre@changestyle{#1}{#2}[\relax]}%
+}%
+
+% because the mechanism for the defining the formats differs under LaTeX and PlainTeX the underlying function which does the work is defined in gregoriotex.sty or gregoriotex.tex respectively.
+
+
+%%%%%%%%%%%%%%%%%%%
+%% changing staff size
+%%%%%%%%%%%%%%%%%%%
+
+\def\grechangestaffsize#1{%
+	\ifnum#1<0\relax%
+		\gre@error{Staff size must be a positive integer.}%
+	\else%
+		\gre@changedimenfactor{\gre@factor}{#1}%
+		\global\gre@factor=#1\relax %
+	\fi%
+	\gre@loadgregoriofont%
+	\relax %
+}%
+
+%%%%%%%%%%%%%%%%%%%
+%% headers
+%%%%%%%%%%%%%%%%%%%
+\def\gresetheadercapture#1#2#3{%
+	\directlua{gregoriotex.set_header_capture("#1","#2","#3")}%
+}%
+
+\def\GreHeader#1#2{%
+	\directlua{gregoriotex.capture_header("#1","#2")}%
+}%
+
+%%%%%%%%%%%%%%%%%%%
+%% score including
+%%%%%%%%%%%%%%%%%%%
+
+
+\def\gre@maketable#1{\ifx\relax#1\else,"#1"\expandafter\gre@maketable\fi}
+
+\def\gresetgregpath#1{%
+	\def\gre@input@path{#1}%
+	\directlua{
+		gre_input_path = {""\expandafter\gre@maketable\gre@input@path\relax}
+	}
+}
+
+\ifx\gre@input@path\@undefined
+	\let\gre@input@path\input@path
+\fi
+
+% Flag to track compilation behavior
+% 0 = never compile (default)
+% 1 = auto compile (compile outdated scores and those lacking a compiled version)
+% 2 = compile all scores
+\def\gre@compilegabc{0}%
+
+% User macro to change compilation behavior
+\def\gresetcompilegabc#1{%
+	\IfStrEqCase{#1}{%
+		{force}{\gdef\gre@compilegabc{2}}%
+		{auto}{\gdef\gre@compilegabc{1}}%
+		{never}{\gdef\gre@compilegabc{0}}%
+		}[% all other cases
+			\gre@error{Unrecognized argument for \protect\gresetcompilegabc.}%
+		]%
+}%
+
+\def\gre@allowdeprecated@asboolean{\ifgre@allowdeprecated true\else false\fi}%
+
+% Internal marco which includes a score when \gregorioscore is called without the optional argument.  Behavior is determined by the value of \gre@compilegabc flag.
+%
+% If \gre@compilegabc is 0, then we simply try to include the file as it is given to us.  This is the old behavior.
+%
+% If \gre@compilegabc is 1, tell the lua function to check that:
+%	-- The gtex file exists.
+%	-- The gtex file is of the correct gregoriotexapi_version.
+%	-- The gtex file is 'newer' than it's corresponding gabc file.
+% If any test fails, the gabc file is (re)compiled.
+%
+% If \gre@compilegabc is 2, pass true to the lua function.
+% This forces gregoriotex to recompile the gabc file.
+
+\def\gre@gregorioscore#1{%
+	\begingroup%
+	\let\input@path\gre@input@path%
+	\ifcase\gre@compilegabc% case 0, never compile
+		\gre@debugmsg{compile}{Refusing to compile #1}%
+		\input #1%
+	\or% case 1, auto compile
+		\gre@debugmsg{compile}{Auto compile #1}%
+		\directlua{gregoriotex.include_score([[#1]], nil, \gre@allowdeprecated@asboolean)}%
+	\or% case 2, force compile
+		\gre@debugmsg{compile}{Forced to compile #1}%
+		\directlua{gregoriotex.include_score([[#1]], true, \gre@allowdeprecated@asboolean)}%
+	\fi%
+	\relax%
+	\endgroup%
+}%
+
+% The internal macro called when \gregorioscore is called with the optional argument.  Behavior is determined by the value of the argument:
+% n - do not attempt to compile the score.  Simply include it as is.
+% a - perform the checks to see if the score needs to be recompiled and do so only if necessary
+% f - force the compilation of the score before including it
+\def\gre@gregorioscore@option[#1]#2{%
+	\begingroup%
+	\let\input@path\gre@input@path%
+	\ifx #1n\relax%
+		\gre@debugmsg{compile}{Override not compiling #2}%
+		\input #2%
+	\else%
+		\ifx #1f\relax%
+			\gre@debugmsg{compile}{Override force compiling #2}%
+			\directlua{gregoriotex.include_score([[#2]], true, \gre@allowdeprecated@asboolean)}%
+		\else%
+			\ifx #1a\relax%
+				\gre@debugmsg{compile}{Override auto compiling #2}%
+				\directlua{gregoriotex.include_score([[#2]], nil, \gre@allowdeprecated@asboolean)}%
+			\else%
+				\gre@error{Unrecognized option "#1" for \protect\includescore\MessageBreak Possible options are: 'f', 'a', and 'n'}%
+			\fi%
+		\fi%
+	\fi%
+	\relax%
+	\endgroup%
+}%
+
+% The main macro used by the user to input scores into the document.
+
+\def\gregorioscore{\@ifnextchar[{\gre@gregorioscore@option}%
+		{\gre@gregorioscore}%
+}%
+
+% If called without the optional argument: '\gregorioscore{Antiphon}'
+% the filename will be passed to the lua function 'include_score'
+% which will check: whether the gtex file exists, if the API version
+% of the gtex file, or if the gabc file is newer than the gtex
+% file. If one of these tests fails, the gabc file will be
+% (re)compiled.
+% The argument may or may not include a file extension. These are all valid:
+% '\gregorioscore{Antiphon}' or '\gregorioscore{Antiphon.gabc}' or
+% '\gregorioscore{Antiphon.gtex}'
+
+% If called with the optional argument: '\gregorioscore[f]{Antiphon.gtex}'
+% the gtex file will be forced into the document and will not be
+% checked by the lua function 'include_score'. This does not bypass
+% the API version test done by '\GregorioTeXAPIVersion'.
+
+% Macros for compiling short snippets of GABC directly expressed in TeX
+
+\long\def\gabcsnippet#1{%
+	\directlua{gregoriotex.direct_gabc("\luatexluaescapestring{\unexpanded\expandafter{#1}}", nil, \gre@allowdeprecated@asboolean)}%
+}%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% some hyphen definitions
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% a zero-width hyphen, useful for fine tuning line endings. To input in gabc verb for example.
+\def\gre@char@zerohyph{%
+	\hbox to 0pt{%
+	\char\the\hyphenchar\font %
+	\hss %
+	}%
+}%
+
+% a normal hyphen
+\def\gre@char@normalhyphen{%
+	%-
+	\char\the\hyphenchar\font %
+}%
+
+% the definition that will be always used for end of lines hyphens in gregorio, except if one of the two before is explicitely used
+\let\GreHyph\gre@char@normalhyphen %
+
+% macro to change the definition of the hyphen:
+\def\greseteolhyphen#1{%
+	\IfStrEqCase{#1}{%
+		{normal}%
+			{\global\let\GreHyph\gre@char@normalhyphen}%
+		{zero}%
+			{\global\let\GreHyph\gre@char@zerohyph}%
+		}[% all other cases
+			\gre@error{Unrecognized option "#1" for \protect\greseteolhyphen\MessageBreak Possible options are: 'normal' and 'zero'}%
+		]%
+}%
+
+% macro to force hyphenation of all syllables.
+\newif\ifgre@forcehyphen\gre@forcehyphenfalse%
+\def\gresethyphen#1{%
+	\IfStrEqCase{#1}{%
+		{force}%
+			{\gre@forcehyphentrue}%
+		{auto}%
+			{\gre@forcehyphenfalse}%
+		}[% all other cases
+			\gre@error{Unrecognized option "#1" in \protect\gresethyphen\MessageBreak Possible options are: 'force' and 'auto'}%
+		]%
+}%
+
+% macro called before the headers of a given inclusion
+\def\GreBeginHeaders{}%
+\long\def\grebeforeheaders#1{\def\GreBeginHeaders{#1}}%
+
+% macro called after the headers of a given inclusion
+\def\GreEndHeaders{}%
+\long\def\greafterheaders#1{\def\GreEndHeaders{#1}}%
+
+% We load the default space configuration.
+\greloadspaceconf{default}%
+
+\input gregoriotex-nabc.tex

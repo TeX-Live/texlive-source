@@ -1,0 +1,243 @@
+%GregorioTeX file.
+%
+% Copyright (C) 2007-2025 The Gregorio Project (see CONTRIBUTORS.md)
+%
+% This file is part of Gregorio.
+%
+% Gregorio is free software: you can redistribute it and/or modify
+% it under the terms of the GNU General Public License as published by
+% the Free Software Foundation, either version 3 of the License, or
+% (at your option) any later version.
+%
+% Gregorio is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+% GNU General Public License for more details.
+%
+% You should have received a copy of the GNU General Public License
+% along with Gregorio.  If not, see <http://www.gnu.org/licenses/>.
+
+% this file contains definitions of the symbols
+
+\ifcsname gregoriotex@symbols@loaded\endcsname\endinput\fi%
+\def\gregoriotex@symbols@loaded{}%
+
+\gre@declarefileversion{gregoriotex-symbols.tex}{6.1.0-beta2}% GREGORIO_VERSION
+
+\RequireLuaModule{gregoriotex}%
+
+\def\gre@symbolfontsize{\f@size}%
+
+% Defines a symbol which automatically scales with \f@size
+% #1 = control sequence name
+% #2 = font name
+% #3 = glyph name or code point
+\def\gredefsymbol#1#2#3{%
+	\directlua{gregoriotex.init_variant_font([[#2]],false)}%
+	\directlua{gregoriotex.def_symbol([[#1]],[[#2]],[[#3]],false)}%
+}%
+
+% Defines a symbol which takes a point size as argument
+% #1 = control sequence name
+% #2 = font name
+% #3 = glyph name or code point
+\def\gredefsizedsymbol#1#2#3{%
+	\directlua{gregoriotex.init_variant_font([[#2]],false)}%
+	\directlua{gregoriotex.def_symbol([[#1]],[[#2]],[[#3]],true)}%
+}%
+
+%%%%%%%%%%%%%
+%% symbols %%
+%%%%%%%%%%%%%
+
+\gredefsizedsymbol{greABar}{greextra}{ABar}
+\gredefsizedsymbol{greRBar}{greextra}{RBar}
+\gredefsizedsymbol{greVBar}{greextra}{VBar}
+\gredefsizedsymbol{greABarSlant}{greextra}{ABarSlant}
+\gredefsizedsymbol{greRBarSlant}{greextra}{RBarSlant}
+\gredefsizedsymbol{greVBarSlant}{greextra}{VBarSlant}
+\gredefsizedsymbol{greABarSC}{greextra}{ABarSC}
+\gredefsizedsymbol{greRBarSC}{greextra}{RBarSC}
+\gredefsizedsymbol{greVBarSC}{greextra}{VBarSC}
+\gredefsizedsymbol{greABarSmall}{greextra}{ABarSmall}
+\gredefsizedsymbol{greRBarSmall}{greextra}{RBarSmall}
+\gredefsizedsymbol{greVBarSmall}{greextra}{VBarSmall}
+\gredefsizedsymbol{greABarSmallSlant}{greextra}{ABarSmallSlant}
+\gredefsizedsymbol{greRBarSmallSlant}{greextra}{RBarSmallSlant}
+\gredefsizedsymbol{greVBarSmallSlant}{greextra}{VBarSmallSlant}
+\gredefsizedsymbol{greABarSmallSC}{greextra}{ABarSmallSC}
+\gredefsizedsymbol{greRBarSmallSC}{greextra}{RBarSmallSC}
+\gredefsizedsymbol{greVBarSmallSC}{greextra}{VBarSmallSC}
+\gredefsizedsymbol{greABarCaption}{greextra}{ABarCaption}
+\gredefsizedsymbol{greRBarCaption}{greextra}{RBarCaption}
+\gredefsizedsymbol{greVBarCaption}{greextra}{VBarCaption}
+\gredefsizedsymbol{greABarCaptionSlant}{greextra}{ABarCaptionSlant}
+\gredefsizedsymbol{greRBarCaptionSlant}{greextra}{RBarCaptionSlant}
+\gredefsizedsymbol{greVBarCaptionSlant}{greextra}{VBarCaptionSlant}
+\gredefsizedsymbol{greABarCaptionSC}{greextra}{ABarCaptionSC}
+\gredefsizedsymbol{greRBarCaptionSC}{greextra}{RBarCaptionSC}
+\gredefsizedsymbol{greVBarCaptionSC}{greextra}{VBarCaptionSC}
+\gredefsizedsymbol{greABarAlt}{greextra}{RBar.alt}
+\gredefsizedsymbol{greRBarAlt}{greextra}{RBar.alt}
+\gredefsizedsymbol{greVBarAlt}{greextra}{VBar.alt}
+
+\def\grebarredsymbol#1#2#3#4#5{%
+	\leavevmode\hbox to 0pt{}\kern #4\lower#5%
+	\hbox{\csname #2\endcsname{#3}}\kern -#4\relax #1%
+}%
+
+%% Intermediate version or barred glyph definition
+%% #1: the csname you want to define
+%% #2: the letter you'll typeset (you can use bold, italic, etc.)
+%% #3: the symbol corresponding to the glyph in greextra. Must be defined with \gredefsizedsymbol
+%% #4: the size of greextra
+%% #5: the kern of the bar from the beggining of the glyph
+%% #6: greextra glyph lowering
+\def\gredefbarredsymbol#1#2#3#4#5#6{%
+	\expandafter\gdef\csname #1\endcsname {%
+		\grebarredsymbol{#2}{#3}{#4}{#5}{#6}%
+	}%
+}%
+
+%% Most simple version or barred glyph definition
+%% #1: A, R or V
+%% #2: the negative kern
+\def\gresimpledefbarredsymbol#1#2{%
+	\gredefbarredsymbol{#1bar}{#1}{gre#1Bar}{\f@size}{#2}{0pt}%
+}%
+
+% defining \ABar, \VBar and \RBar for libertine font, define yours for your font
+\gresimpledefbarredsymbol{A}{.30em}%
+\gresimpledefbarredsymbol{R}{.35em}%
+\gresimpledefbarredsymbol{V}{.10em}%
+
+\gre@iflatex{%
+	\def\gre@latex@barredsymbol#1#2#3#4{%
+		\gre@trace{gre@latex@barredsymbol{#1}{#2}{#3}{#4}}%
+		\IfStrEq{\f@series/\f@shape}{#1}{\grebarredsymbol{#2}{#3}{\f@size}{#4}{0pt}}%
+		\gre@trace@end%
+	}%
+
+	%% define a barred symbol that handles italic, slanted, and small cap shapes
+	%% simply (LaTeX-only)
+	%% Most simple version or barred glyph definition
+	%% #1: A, R or V
+	%% #2: the negative kern for upright shape
+	%% #3: idem, for italic/slanted shape
+	%% #4: idem, for bold shape
+	%% #5: idem, for bold and italic/slanted shape
+	\def\grelatexsimpledefbarredsymbol#1#2#3#4#5{%
+		\expandafter\gdef\csname #1bar\endcsname {%
+			\gre@latex@barredsymbol{m/n}{#1}{gre#1Bar}{#2}{%
+				\gre@latex@barredsymbol{m/it}{#1}{gre#1BarSlant}{#3}{%
+					\gre@latex@barredsymbol{m/sl}{#1}{gre#1BarSlant}{#3}{%
+						\gre@latex@barredsymbol{bx/n}{#1}{gre#1Bar}{#4}{%
+							\gre@latex@barredsymbol{bx/it}{#1}{gre#1BarSlant}{#5}{%
+								\gre@latex@barredsymbol{bx/sl}{#1}{gre#1BarSlant}{#5}{%
+									\gre@latex@barredsymbol{b/n}{#1}{gre#1Bar}{#4}{%
+										\gre@latex@barredsymbol{b/it}{#1}{gre#1BarSlant}{#5}{%
+											\gre@latex@barredsymbol{b/sl}{#1}{gre#1BarSlant}{#5}{%
+											}%
+										}%
+									}%
+								}%
+							}%
+						}%
+					}%
+				}%
+			}%
+		}%
+	}%
+
+	\grelatexsimpledefbarredsymbol{A}{.30em}{.35em}{.30em}{.33em}%
+	\grelatexsimpledefbarredsymbol{R}{.35em}{.38em}{.45em}{.48em}%
+	\grelatexsimpledefbarredsymbol{V}{.10em}{.12em}{.14em}{.18em}%
+}%
+
+% the gothic R and V
+\gredefsymbol{gothRbar}{greextra}{RWithBarGoth}%
+\gredefsymbol{gothVbar}{greextra}{VWithBarGoth}%
+
+% the macro to typeset a dagger
+\gredefsymbol{GreDagger}{greextra}{Dagger}%
+
+% macro to typeset a (malt) cross
+\gredefsymbol{grecross}{greextra}{Cross}%
+\gredefsymbol{grealtcross}{greextra}{Cross.alt}%
+
+%stars
+\gredefsymbol{greheightstar}{greextra}{StarHeight}%
+\gredefsymbol{gresixstar}{greextra}{StarSix}%
+\let\GreStar\gresixstar%
+
+%%%%%%%%%%%%
+%%  Lines %%
+%%%%%%%%%%%%
+%Unlike the character symbols above, we require that the font size be specified when using the lines.
+
+\gredefsizedsymbol{greLineOne}{greextra}{Line1}%
+\gredefsizedsymbol{greLineTwo}{greextra}{Line2}%
+\gredefsizedsymbol{greLineThree}{greextra}{Line3}%
+\gredefsizedsymbol{greLineFour}{greextra}{Line4}%
+\gredefsizedsymbol{greLineFive}{greextra}{Line5}%
+
+%lines
+%#1 is the type of line (1-5)
+%#2 is the number of pt of the font it will use
+\def\greseparator#1#2{%
+	\ifcase#1\relax %
+	\or\greLineOne{#2}%
+	\or\greLineTwo{#2}%
+	\or\greLineThree{#2}%
+	\or\greLineFour{#2}%
+	\or\greLineFive{#2}%
+	\fi%
+}%
+
+
+%%%%%%%%%%%
+%% Ornamentation
+%%%%%%%%%%%
+
+\gredefsizedsymbol{greOrnamentOne}{greextra}{Drawing1}%
+\gredefsizedsymbol{greOrnamentTwo}{greextra}{Drawing2}%
+
+\def\greornamentation#1#2{%
+	\ifcase#1\relax%
+	\or\greOrnamentOne{#2}%
+	\or\greOrnamentTwo{#2}%
+	\fi%
+}%
+
+%% Specials
+
+\def\gresetspecial#1{\directlua{gregoriotex.define_special_character("#1")}}%
+\def\greunsetspecial#1{\directlua{gregoriotex.undefine_special_character("#1")}}%
+\def\GreSpecial#1{\directlua{gregoriotex.special_character("#1")}}%
+
+\gresetspecial{A/}{\Abar{}}%
+\gresetspecial{\string\037}{\%{}}%
+\gresetspecial{R/}{\Rbar{}}%
+\gresetspecial{V/}{\Vbar{}}%
+\gresetspecial{'ae}{\'\ae{}}%
+\gresetspecial{'oe}{\'\oe{}}%
+\gresetspecial{ae}{\ae{}}%
+\gresetspecial{oe}{\oe{}}%
+\gresetspecial{*}{\GreStar{}}%
+\gresetspecial{+}{\GreDagger{}}%
+\gresetspecial{-}{\gre@char@zerohyph{}}%
+\gresetspecial{\string\092}{\textbackslash{}}%
+\gresetspecial{\string\038}{\&{}}%
+\gresetspecial{\string\035}{\#{}}%
+\gresetspecial{\string\095}{\_{}}%
+\gresetspecial{\string\126}{\gretilde{}}%
+\gre@iflatex{%
+	\@ifpackageloaded{luainputenc}{}{%
+		\gresetspecial{'æ}{\'\ae{}}%
+		\gresetspecial{'œ}{\'\oe{}}%
+	}%
+}%
+\gre@ifnotlatex{%
+	\gresetspecial{'æ}{\'\ae{}}%
+	\gresetspecial{'œ}{\'\oe{}}%
+}%

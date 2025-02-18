@@ -1,0 +1,48 @@
+% !TEX program = LuaLaTeX+se
+
+% Simple template for using Gregorio scores in a LuaLaTeX document.
+
+\documentclass{scrartcl} % set document class: manual at https://ctan.org/pkg/koma-script
+
+% Load packages:
+\usepackage[osf,p]{libertine} % set font
+\usepackage{gregoriotex} % enable Gregorio score inclusion
+\usepackage[latin]{babel} % set language
+
+\setkomafont{section}{\normalfont\centering\huge\scshape} % section heading style
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+
+
+% Set the space around the initial:
+% See http://gregorio-project.github.io/gregoriotex/details.html for more details and options
+\grechangedim{beforeinitialshift}{2.2mm}{scalable}
+\grechangedim{afterinitialshift}{2.2mm}{scalable}
+
+% Set the initial font (change 43 for a larger size):
+\grechangestyle{initial}{\fontsize{43}{43}\selectfont}%
+
+% Make staff lines red; remove for black:
+\gresetlinecolor{gregoriocolor}
+
+% Use the "commentary" field of the score in the top right corner:
+\gresetheadercapture{commentary}{grecommentary}{string}
+
+% Format annotation above initial
+\grechangestyle{annotation}{\small\bfseries}
+
+\begin{document}
+
+\section{Populus Sion}
+
+% Add VII above the initial manually:
+\greannotation{Intr.} % first line
+\greannotation{\textsc{vii}} % second line
+
+% Include the score; the file must be in the same directory:
+\gregorioscore[a]{PopulusSion}
+
+\section{Factus est}
+
+\gregorioscore[a]{FactusEst}
+
+\end{document}

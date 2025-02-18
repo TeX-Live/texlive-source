@@ -1,0 +1,136 @@
+# Vowel rule file for Gregorio
+# Copyright (C) 2015-2025 The Gregorio Project (see CONTRIBUTORS.md)
+#
+# This file is part of Gregorio.
+#
+# This program is free software: you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published by the Free
+# Software Foundation, either version 3 of the License, or (at your option)
+# any later version.
+#
+# This program is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+# FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+# more details.
+#
+# You should have received a copy of the GNU General Public License along with
+# this program.  If not, see <http://www.gnu.org/licenses/>.
+
+# Comments begin with a hash symbol and end at the end of the line.  These two
+# lines are comments.
+
+# In general, Gregorio does no case folding, so upper- and lower-case
+# characters and combinations thereof should be listed.
+
+# The "alias" keyword indicates that a name is an alias for a given language.
+# The "alias" keyword must be followed by the name of the alias in square
+# brackets, the "to" keyword, the name of the target language in square
+# brackets, and a semicolon.  For best performance, aliases should precede the
+# language they are aliasing.
+alias [english] to [en];
+alias [English] to [en];
+alias [eng] to [en];
+
+# The "language" keyword indicates that the rules which follow are for the
+# specified language.  It must be followed by the language name enclosed in
+# square brackets and a semicolon.  The language specified applies until the
+# next language statement.
+language [en];
+
+# The "vowel" keyword indicates that the characters which follow, until the
+# next semicolon, should be considered vowels.  There may be multiple "vowel"
+# statements, and the characters following all of them will be considered
+# vowels.
+vowel aàáâAÀÁÂ;
+vowel eèéêëEÈÉÊË;
+vowel iìíîIÌÍÎ;
+vowel oòóôOÒÓÔ;
+vowel uùúûUÙÚÛ;
+vowel yỳýYỲÝ;
+vowel æǽÆǼ;
+vowel œŒ;
+
+# The "prefix" keyword lists strings of characters which end in a vowel, but
+# when followed by a sequence of vowels, SHOULD NOT be considered part of the
+# vowel sound.  These strings follow the keyword and must be separated by space
+# and end with a semicolon.  There may be multiple "prefix" statements, and all
+# will apply.  Examples of prefixes include "i" and "u" in Latin and "qu" in
+# English.
+prefix qu Qu qU QU;
+prefix gu Gu gU GU;
+prefix y Y;
+
+# The "suffix" keyword lists strings of characters which don't start with a
+# vowel, but when appearing after a sequence of vowels, SHOULD be considered
+# part of the vowel sound.  These strings follow the keyword and must be
+# separated by space and end with a semicolon.  There may be multiple "suffix"
+# statements, and all will apply.  Examples of suffixes include "w" and "we" in
+# English and "y" in Spanish.
+suffix w W;
+suffix we We wE WE;
+
+# The "secondary" keyword lists strings of characters which do not contain
+# vowels, but for which, when there are no vowels present in a syllable, define
+# the center of the syllable.  These strings follow the keyword and must be
+# separated by space and end with a semicolon.  Examples of secondary sequences
+# include "w" from Welsh loanwords in English and the syllabic consonants "l"
+# and "r" in Czech.
+secondary w W;
+
+alias [polish] to [pl];
+alias [Polish] to [pl];
+alias [pol] to [pl];
+alias [pl] to [cu];
+
+alias [czech] to [cs];
+alias [Czech] to [cs];
+alias [ces] to [cs];
+alias [cze] to [cs];
+alias [cs] to [cu];
+
+alias [slovak] to [sk];
+alias [Slovak] to [sk];
+alias [slk] to [sk];
+alias [slo] to [sk];
+alias [sk] to [cu];
+
+alias [Slavic] to [cu];
+alias [slavic] to [cu];
+alias [Church Slavic] to [cu];
+alias [church slavic] to [cu];
+alias [Church Slavonic] to [cu];
+alias [church slavonic] to [cu];
+alias [Old Church Slavonic] to [cu];
+alias [old church slavonic] to [cu];
+alias [Old Slavonic] to [cu];
+alias [old slavonic] to [cu];
+alias [Old Bulgarian] to [cu];
+alias [old bulgarian] to [cu];
+alias [chu] to [cu];
+
+language [cu];
+
+vowel aàáâąAÀÁÂĄ;
+vowel eèéêëěęEÈÉÊËĚĘ;
+vowel iìíîIÌÍÎ;
+vowel oòóôOÒÓÔ;
+vowel uùúûůUÙÚÛŮ;
+vowel yỳýYỲÝ;
+vowel æǽÆǼ;
+vowel œŒ;
+
+secondary l L ĺ Ĺ;
+secondary r R ŕ Ŕ;
+secondary m M;
+
+alias [hungarian] to [hu];
+alias [Hungarian] to [hu];
+alias [hun] to [hu];
+
+language [hu];
+
+vowel aáAÁ;
+vowel éeëÉEË;
+vowel iíIÍ;
+vowel oóöőOÓÖŐ;
+vowel uúüűUÚÜŰ;
