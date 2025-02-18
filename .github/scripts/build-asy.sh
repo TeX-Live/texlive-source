@@ -77,7 +77,7 @@ cd utils/asymptote
 ./configure --prefix=/tmp/asyinst --enable-static --enable-texlive-build \
 	--disable-gsl --disable-fftw --disable-lsp --disable-curl
 	LDFLAGS="-static-libgcc -static-libstdc++"
-$TL_MAKE -j2
+$TL_MAKE SIlENT_MAKE= -j2
 
 strip asy
 
