@@ -40,7 +40,7 @@ void styread(const char *filename)
 	int i,j,q,cc;
 	char buff[4096],tmp[4096];
 
-	filename = KP_find_file(&kp_ist,filename);
+	filename = KP_find_ist_file(filename);
 	if(kpse_in_name_ok(filename))
 		fp=fopen(filename,"rb");
 	else
