@@ -542,7 +542,6 @@ typedef enum
 struct display
 {
    jmp_buf        error_return;      /* Where to go to on error */
-   error_level    error_code;        /* Set before longjmp */
 
    const char    *filename;          /* The name of the original file */
    const char    *operation;         /* Operation being performed */
@@ -763,10 +762,7 @@ display_log(struct display *dp, error_level level, const char *fmt, ...)
 
    /* Errors cause this routine to exit to the fail code */
    if (level > APP_FAIL || (level > ERRORS && !(dp->options & CONTINUE)))
-   {
-      dp->error_code = level;
       longjmp(dp->error_return, level);
-    }
 }
 
 /* error handler callbacks for libpng */
@@ -1574,19 +1570,18 @@ static int
 do_test(struct display *dp, const char *file)
    /* Exists solely to isolate the setjmp clobbers */
 {
-   dp->error_code = VERBOSE; /* The "lowest" level */
+   int ret = setjmp(dp->error_return);
 
-   if (setjmp(dp->error_return) == 0)
+   if (ret == 0)
    {
       test_one_file(dp, file);
       return 0;
    }
 
-   else if (dp->error_code < ERRORS) /* shouldn't longjmp on warnings */
-      display_log(dp, INTERNAL_ERROR, "unexpected return code %d",
-                  dp->error_code);
+   else if (ret < ERRORS) /* shouldn't longjmp on warnings */
+      display_log(dp, INTERNAL_ERROR, "unexpected return code %d", ret);
 
-   return dp->error_code;
+   return ret;
 }
 
 int
@@ -1686,11 +1681,7 @@ main(int argc, char **argv)
             int ret = do_test(&d, argv[i]);
 
             if (ret > QUIET) /* abort on user or internal error */
-            {
-               display_clean(&d);
-               display_destroy(&d);
                return 99;
-            }
          }
 
          /* Here on any return, including failures, except user/internal issues

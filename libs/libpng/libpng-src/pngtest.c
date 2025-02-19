@@ -50,7 +50,7 @@
 #define STDERR stdout
 
 /* Generate a compiler error if there is an old png.h in the search path. */
-typedef png_libpng_version_1_6_47 Your_png_h_is_not_version_1_6_47;
+typedef png_libpng_version_1_6_46 Your_png_h_is_not_version_1_6_46;
 
 /* Ensure that all version numbers in png.h are consistent with one another. */
 #if (PNG_LIBPNG_VER != PNG_LIBPNG_VER_MAJOR * 10000 + \
@@ -2137,7 +2137,6 @@ main(int argc, char *argv[])
       fprintf(STDERR, " libpng FAILS test\n");
 
    dummy_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
-#ifdef PNG_USER_LIMITS_SUPPORTED
    fprintf(STDERR, " Default limits:\n");
    fprintf(STDERR, "  width_max  = %lu\n",
        (unsigned long) png_get_user_width_max(dummy_ptr));
@@ -2153,7 +2152,6 @@ main(int argc, char *argv[])
    else
       fprintf(STDERR, "  malloc_max = %lu\n",
           (unsigned long) png_get_chunk_malloc_max(dummy_ptr));
-#endif
    png_destroy_read_struct(&dummy_ptr, NULL, NULL);
 
    return (ierror != 0);
