@@ -40,7 +40,6 @@ libpaper 1.1.29 - checked 07jan24
 libpng 1.6.46 - checked 25jan25
   https://sourceforge.net/projects/libpng/files/ - used by many
 
-lua 5.2.4
 lua 5.3.6 - checked 04oct20
   https://www.lua.org/ftp/
   Lua updates must be done carefully, by the LuaTeX maintainer,
