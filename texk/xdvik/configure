@@ -19975,9 +19975,9 @@ printf %s "checking for type of XawListChange list parameter... " >&6; }
   tab='	' # that's a tab character
   # The outer square brackets are the Autoconf quote pair;
   # the inner square brackets are the normal regexp character class.
-  echo "got '$list_type' from $listh, tab=$tab." >/tmp/lh
+  #echo "got '$list_type' from $listh, tab=$tab." >/tmp/lh
   list_type=`echo "$list_type" | sed "s/[ $tab][ $tab]*/ /g"`
-  echo "new '$list_type' from $listh" >>/tmp/lh
+  #echo "new '$list_type' from $listh" >>/tmp/lh
   #
   if test -z "$list_type"; then
     # But if we didn't find anything, default to the type of our
