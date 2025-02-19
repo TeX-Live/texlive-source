@@ -34,6 +34,20 @@ $_mendex -U -d $srcdir/tests/uni.dict -s $srcdir/tests/uni1.ist -s $srcdir/tests
 	$srcdir/tests/uni.idx -o uni.ind3 -t uni.ilg3 \
 	&& diff $srcdir/tests/uni.ind uni.ind3 || rc=5
 
+INDEXSTYLE=$srcdir/tests
+export INDEXSTYLE
+
+$_mendex -U -d $srcdir/tests/uni.dict -s uni.ist \
+	$srcdir/tests/uni.idx -o uni.ind4 -t uni.ilg4 \
+	&& diff $srcdir/tests/uni.ind uni.ind4 || rc=6
+
+INDEXDICTIONARY=$srcdir/tests
+export INDEXDICTIONARY
+
+$_mendex -U -d uni.dict -s uni.ist \
+	$srcdir/tests/uni.idx -o uni.ind5 -t uni.ilg5 \
+	&& diff $srcdir/tests/uni.ind uni.ind5 || rc=7
+
 $_mendex $srcdir/tests/tort.idx -o tort.ind1 -t tort.ilg1 \
 	&& rc=20
 #$_mendex $srcdir/tests/tort.idx -o tort.ind1 -t tort.ilg1 \
