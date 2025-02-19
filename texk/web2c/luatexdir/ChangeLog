@@ -1,6 +1,11 @@
+2025-02-19 Luigi Scarso <luigi.scarso@gmail.com>
+	* Fixed ffi.h for OSX on arm64
+
+	
 2025-02-10 Luigi Scarso <luigi.scarso@gmail.com>
 	* Updated \tracinglostchars. 4: early warning (and force terminal); >4: early error.
 
+	
 2025-02-09 Luigi Scarso <luigi.scarso@gmail.com>
 	* fixed shell-escape bypass (thanks to tex@maxchernoff.ca)
 	* Add token.unchecked_put_next, support setting the environment
