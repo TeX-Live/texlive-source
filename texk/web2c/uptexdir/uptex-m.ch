@@ -708,8 +708,12 @@ hangul_code(mid_kanji):
      begin c:=buffer[loc+3]; cc:=buffer[loc+4];
        cd:=buffer[loc+5]; ce:=buffer[loc+6];
        if is_hex(c) and is_hex(cc) and is_hex(cd) and is_hex(ce) then
-       begin loc:=loc+7; long_hex_to_cur_chr; goto reswitch;
-       end
+       begin long_hex_to_cur_chr;
+         if (cur_chr<max_latin_val) then begin
+           loc:=loc+7;
+           goto reswitch;
+           end;
+       end;
      end;
   c:=buffer[loc+1]; @+if c<@'200 then {yes we have an expanded char}
 @z
