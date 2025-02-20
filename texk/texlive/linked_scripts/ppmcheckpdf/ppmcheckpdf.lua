@@ -1,14 +1,14 @@
 #!/usr/bin/env texlua
 
 -- Description: Image-based regression testing for LaTeX packages
--- Copyright: 2024 (c)  Jianrui Lyu <tolvjr@163.com>
+-- Copyright: 2024-2025 (c)  Jianrui Lyu <tolvjr@163.com>
 -- Repository: https://github.com/lvjr/ppmcheckpdf
 -- License: The LaTeX Project Public License 1.3c
 
 local pcp = pcp or {}
 
-pcp.version = "2024C"
-pcp.date = "2024-12-02"
+pcp.version = "2025A"
+pcp.date = "2025-02-20"
 
 --------------------------------------------
 --> \section{Some code from l3build.lua}
@@ -177,6 +177,8 @@ local function cfgToDir(cfg)
   if cfg == "build" then
     return testdir
   else
+    -- testfiledir may has been changed
+    dofile(cfg .. ".lua")
     return testdir .. "-" .. cfg
   end
 end
