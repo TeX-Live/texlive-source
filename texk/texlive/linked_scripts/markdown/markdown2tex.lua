@@ -59,7 +59,7 @@
 -- those in the standard .ins files.
 --
 local metadata = {
-    version   = "3.10.0-0-g626df6ad",
+    version   = "3.11.0-0-ga9095584",
     comment   = "A module for the conversion from markdown "
              .. "to plain TeX",
     author    = "John MacFarlane, Hans Hagen, Vít Starý Novotný, "
@@ -136,11 +136,11 @@ defaultOptions.texMathDoubleBackslash = false
 defaultOptions.texMathSingleBackslash = false
 defaultOptions.tightLists = true
 defaultOptions.underscores = true
+local HELP_STRING = "Usage: " .. [[
+markdown2tex [OPTIONS] -- [INPUT_FILE] [OUTPUT_FILE]
 
-local HELP_STRING = [[
-Usage: texlua ]] .. arg[0] .. [[ [OPTIONS] -- [INPUT_FILE] [OUTPUT_FILE]
-where OPTIONS are documented in the Lua interface section of the
-technical Markdown package documentation.
+OPTIONS are documented in Section 2.2.1 of the Markdown Package User
+Manual (https://ctan.org/pkg/markdown).
 
 When OUTPUT_FILE is unspecified, the result of the conversion will be
 written to the standard output. When INPUT_FILE is also unspecified, the
@@ -150,7 +150,7 @@ Report bugs to: witiko@mail.muni.cz
 Markdown package home page: <https://github.com/witiko/markdown>]]
 
 local VERSION_STRING = [[
-markdown-cli (Markdown) ]] .. metadata.version .. [[
+markdown2tex (Markdown) ]] .. metadata.version .. [[
 
 Copyright (C) ]] .. table.concat(metadata.copyright,
                                  "\nCopyright (C) ") .. [[
@@ -272,8 +272,20 @@ if metadata.version ~= md.metadata.version then
   warn("markdown-cli.lua " .. metadata.version .. " used with " ..
        "markdown.lua " .. md.metadata.version .. ".")
 end
+
 local convert = md.new(options)
-local output = convert(input)
+local raw_output, flat_output = convert(input, true)
+local output
+if flat_output == nil then
+  if options.eagerCache then
+    warn("markdown.lua has not produced flat output, so I am using " ..
+         "backwards-compatible raw output instead. This may cause " ..
+         'the conversion result to be hidden behind "\\input".')
+  end
+  output = raw_output
+else
+  output = flat_output()
+end
 
 if output_filename then
   local output_file = assert(io.open(output_filename, "w"),
