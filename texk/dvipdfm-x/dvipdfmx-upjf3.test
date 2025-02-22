@@ -1,6 +1,6 @@
 #! /bin/sh -vx
 # $Id$
-# Copyright 2020-2024 Japanese TeX Development Community <issue@texjp.org>
+# Copyright 2020-2025 Japanese TeX Development Community <issue@texjp.org>
 # You may freely use, modify and/or distribute this file.
 
 KpsDir=${KpsDir:-../kpathsea}
@@ -62,6 +62,8 @@ echo "*** dvipdfmx: test for upjf3_full-noto.pdf" && echo \
 	&& echo && echo "dvipdfmx-upjf3-vf_full-noto tests OK" && echo \
 	|| failed="$failed dvipdfmx-upjf3-vf_full-noto"
 
+rm -f ${TMPDIR-/tmp}/dvipdfmx.*
+
 #####  following tests require IPA MJ Mincho font  #####
 
 $_kpsewhich ipamjm.ttf || exit 77
@@ -74,6 +76,7 @@ echo "*** dvipdfmx: test for upjf3_full-ipa.pdf" && echo \
 	&& echo && echo "dvipdfmx-upjf3-vf_full-ipa tests OK" && echo \
 	|| failed="$failed dvipdfmx-upjf3-vf_full-ipa"
 
+rm -f ${TMPDIR-/tmp}/dvipdfmx.*
 
 test -z "$failed" && exit 0
 echo

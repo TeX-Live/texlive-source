@@ -1,6 +1,6 @@
 #! /bin/sh -vx
 # $Id$
-# Copyright 2017 Karl Berry <tex-live@tug.org>
+# Copyright 2017-2025 Karl Berry <tex-live@tug.org>
 # Copyright 2015 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
@@ -34,6 +34,8 @@ echo "*** xdvipdfmx -v -z0 -o bad.pdf <$f.dvi" && echo \
 	|| { echo && echo "xdvipdfmx-$f (stdin) tests OK" && echo; }
 
 done
+
+rm -f ${TMPDIR-/tmp}/dvipdfmx.*
 
 test -z "$failed" && exit 0
 echo

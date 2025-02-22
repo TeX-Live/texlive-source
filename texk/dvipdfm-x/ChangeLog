@@ -1,3 +1,17 @@
+2025-02-22  Karl Berry  <karl@freefriends.org>
+
+	* dvipdfmx-upjf3.test,
+	* xdvipdfm-bad.test: remove /tmp/dvipdfmx.* files created by these
+	tests. Report from Marc Baudoin,
+	https://tug.org/pipermail/tlbuild/2025q1/005642.html
+	
+	This should be fixed within the dvipdfmx program and these
+	removals changed to tests that the temp files don't exist; see
+	https://tug.org/pipermail/dvipdfmx/2025-February/000351.html
+	
+	En passant, set svn keywords for all *.test file,
+	for consistency.
+
 2025-02-10  Karl Berry  <karl@tug.org>
 
 	* data/dvipdfmx.cfg (V): now generate PDF 1.7 by default.
