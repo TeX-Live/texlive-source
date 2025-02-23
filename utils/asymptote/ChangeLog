@@ -1,3 +1,75 @@
+commit 0af1f12b4e50e9662b47254a8241b062442a228f
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Feb 23 12:17:49 2025 -0800
+
+    Fix #526: Trying to multiply large integers results in floating-point exception and crash.
+
+commit 4c611fa3b2bcae51415a2ab83b1903bac7c5100b
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Feb 23 10:57:43 2025 -0800
+
+    Update autogen.sh.
+
+commit 79f844e73815505bdfcc3fc2757ae406063d509a
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Feb 23 10:46:35 2025 -0800
+
+    Update install-sh.
+
+commit 3b759b4b90a09af806ef3c453ab8ccf2f9ac6ba8
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Feb 23 09:28:42 2025 -0800
+
+    git subrepo pull (merge) LspCpp
+    
+    subrepo:
+      subdir:   "LspCpp"
+      merged:   "1aa7ff654"
+    upstream:
+      origin:   "git@github.com:vectorgraphics/LspCpp"
+      branch:   "master"
+      commit:   "9a46924e7"
+    git-subrepo:
+      version:  "0.4.9"
+      origin:   "https://github.com/ingydotnet/git-subrepo"
+      commit:   "b9b059a"
+
+commit d929a3c08aba1158d37f3d17243241dbc28a7c8d
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Feb 22 21:23:13 2025 -0700
+
+    Fix segmentation fault under MacOS.
+
+commit cefbbaddaeeab925441b002d97b731476f93d808
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Feb 22 19:46:25 2025 -0800
+
+    Remove unused code.
+
+commit 63089568927a5fd68efa6dd25e9e8a10fb4ce72e
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Feb 18 11:48:42 2025 -0800
+
+    Fix maintainer-clean; update scripts.
+
+commit e483a80faaba046f39c2ad8fe32e0dec99ed1c35
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Feb 18 11:10:16 2025 -0800
+
+    Add SILENT_MAKE option (set to @ by default).
+
+commit 5e1c3d9a41ab5dc5f72b9947d9ec79555b6caea6
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Feb 18 10:46:07 2025 -0800
+
+    Fix typo in Makefile.in.
+
+commit eae8589a8ba557354bf627e6807d73c1c7ab39b7
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Feb 17 00:04:44 2025 -0800
+
+    Increment version to 3.01.
+
 commit 6d4b620bfe8895c4e1d1fce7c81e61d499bf765f
 Author: Charles Staats III <charles.staats.iii@gmail.com>
 Date:   Sun Feb 16 21:45:13 2025 -0800

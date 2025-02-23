@@ -474,7 +474,7 @@ am__v_at_ = $(am__v_at_@AM_DEFAULT_V@)
 am__v_at_0 = @
 am__v_at_1 = 
 DEFAULT_INCLUDES = 
-depcomp = $(SHELL) $(top_srcdir)/../depcomp
+depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__maybe_remake_depfiles = depfiles
 am__depfiles_remade = ./$(DEPDIR)/allchblk.Plo ./$(DEPDIR)/alloc.Plo \
 	./$(DEPDIR)/backgraph.Plo ./$(DEPDIR)/blacklst.Plo \
@@ -827,7 +827,7 @@ AM_TESTSUITE_SUMMARY_HEADER = ' for $(PACKAGE_STRING)'
 RECHECK_LOGS = $(TEST_LOGS)
 TEST_SUITE_LOG = test-suite.log
 TEST_EXTENSIONS = @EXEEXT@ .test
-LOG_DRIVER = $(SHELL) $(top_srcdir)/../test-driver
+LOG_DRIVER = $(SHELL) $(top_srcdir)/test-driver
 LOG_COMPILE = $(LOG_COMPILER) $(AM_LOG_FLAGS) $(LOG_FLAGS)
 am__set_b = \
   case '$@' in \
@@ -842,19 +842,16 @@ am__set_b = \
 am__test_logs1 = $(TESTS:=.log)
 am__test_logs2 = $(am__test_logs1:@EXEEXT@.log=.log)
 TEST_LOGS = $(am__test_logs2:.test.log=.log)
-TEST_LOG_DRIVER = $(SHELL) $(top_srcdir)/../test-driver
+TEST_LOG_DRIVER = $(SHELL) $(top_srcdir)/test-driver
 TEST_LOG_COMPILE = $(TEST_LOG_COMPILER) $(AM_TEST_LOG_FLAGS) \
 	$(TEST_LOG_FLAGS)
 DIST_SUBDIRS = $(SUBDIRS)
 am__DIST_COMMON = $(dist_man3_MANS) $(srcdir)/Makefile.in \
 	$(srcdir)/bdw-gc.pc.in $(srcdir)/cord/cord.am \
 	$(srcdir)/doc/doc.am $(srcdir)/include/include.am \
-	$(srcdir)/tests/tests.am $(top_srcdir)/../compile \
-	$(top_srcdir)/../config.guess $(top_srcdir)/../config.sub \
-	$(top_srcdir)/../depcomp $(top_srcdir)/../install-sh \
-	$(top_srcdir)/../ltmain.sh $(top_srcdir)/../missing \
-	$(top_srcdir)/../test-driver $(top_srcdir)/include/config.h.in \
-	AUTHORS ChangeLog README.md
+	$(srcdir)/tests/tests.am $(top_srcdir)/include/config.h.in \
+	AUTHORS ChangeLog README.md compile config.guess config.sub \
+	depcomp install-sh ltmain.sh missing test-driver
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 distdir = $(PACKAGE)-$(VERSION)
 top_distdir = $(distdir)
