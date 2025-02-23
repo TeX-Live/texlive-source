@@ -2,7 +2,7 @@
 
 --[[
 
-File l3build.lua Copyright (C) 2014-2024 The LaTeX Project
+File l3build.lua Copyright (C) 2014-2025 The LaTeX Project
 
 It may be distributed and/or modified under the conditions of the
 LaTeX Project Public License (LPPL), either version 1.3c of this
@@ -25,7 +25,7 @@ for those people who are interested.
 --]]
 
 -- Version information
-release_date = "2024-10-16"
+release_date = "2025-02-23"
 
 -- File operations are aided by the LuaFileSystem module
 local lfs = require("lfs")
