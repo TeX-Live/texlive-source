@@ -7,7 +7,7 @@
 
 ########################################################################
 # bundledoc                                                            #
-# Copyright (C) 2018-2019 Scott Pakin                                  #
+# Copyright (C) 2018-2025 Scott Pakin                                  #
 #                                                                      #
 # This program may be distributed and/or modified under the conditions #
 # of the LaTeX Project Public License, either version 1.3c of this     #
@@ -25,7 +25,7 @@
 ########################################################################
 
 use 5.006;             # Fail gracefully if we're not using Perl v5.6.0+.
-our $VERSION = "3.4";  # Specify the version of bundledoc.
+our $VERSION = "3.5";  # Specify the version of bundledoc.
 use File::Basename;
 use File::Copy;
 use File::Spec::Functions qw(abs2rel catfile devnull rel2abs rootdir updir);
@@ -33,6 +33,7 @@ use File::Path;
 use File::Temp qw(tempdir);
 use Getopt::Long;
 use Pod::Usage;
+use String::ShellQuote;
 use warnings;
 use strict;
 
@@ -66,8 +67,7 @@ my %subdirs;                              # Map from a qualified name to its sub
 # or abort if we can't.
 sub qualifyname ($)
 {
-    my $filename = $_[0];
-    $filename = "\"$filename\"" if $filename =~ /\s/ && substr($filename, 0, 1) ne '"';
+    my $filename = shell_quote $_[0];
     my $command = $uservariable{find};
     $command =~ s/[\$\%]BDINPUTS\%?/$filename/g;
     $command =~ s/[\$\%]BDBASE\%?/$ENV{"BDBASE"}/g;
@@ -151,12 +151,12 @@ sub process_config_file ($)
     printf("CONFIGURATION FILE: %s\n", rel2abs($configfile)) if $verbose;
     my $prevline = "";
     open (CONFIGFILE, "<", $configfile) || do {
-	my $configlist = $configfile;
-	if (! -e $configfile) {
-	    # Error is "file not found".  List the files we considered.
-	    $configlist .= "; also considered ${configfile}.cfg" if $configfile !~ /\.cfg$/;
-	}
-	die "${progname}: $! ($configlist)\n";
+        my $configlist = $configfile;
+        if (! -e $configfile) {
+            # Error is "file not found".  List the files we considered.
+            $configlist .= "; also considered ${configfile}.cfg" if $configfile !~ /\.cfg$/;
+        }
+        die "${progname}: $! ($configlist)\n";
     };
     while (my $oneline=<CONFIGFILE>) {
         # Read a line and trim it.
@@ -378,7 +378,7 @@ else {
                 mkpath($targetdir, 0, 0777) || die "${progname}: $! ($targetdir)\n";
             }
         }
-        copy ($dep, $targetdir) || die "${progname}: $! ($targetdir)\n";
+        copy ($dep, $targetdir) || die "${progname}: $! ($dep --> $targetdir)\n";
     }
     if ($manifest ne "") {
         my $manifest = catfile $tempdir2, $manifest;
