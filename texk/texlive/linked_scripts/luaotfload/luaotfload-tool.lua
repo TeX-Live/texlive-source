@@ -9,8 +9,8 @@
 
 local ProvidesLuaModule = { 
     name          = "luaotfload-tool",
-    version       = "3.28",       --TAGVERSION
-    date          = "2024-02-14", --TAGDATE
+    version       = "3.29",       --TAGVERSION
+    date          = "2024-12-03", --TAGDATE
     description   = "luaotfload-tool / database functionality",
     license       = "GPL v2.0"
 }
@@ -336,7 +336,7 @@ local function version_msg ( )
 
     local runtime = luaotfload.runtime
     local notes   = config.luaotfload.status
-    local notes   = status and status.notes or { }
+    local notes   = notes and notes.notes or { }
 
     out (about, luaotfload.self)
     out ("%s version: %q", luaotfload.self, version)
