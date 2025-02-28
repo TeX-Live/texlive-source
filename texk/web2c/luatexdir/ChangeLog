@@ -1,3 +1,7 @@
+2025-02-28  Akira Kakuto  <kakuto@jcom.zaq.ne.jp>
+	* luatex.c: Remove problematic lines for windows
+
+
 2025-02-19 Luigi Scarso <luigi.scarso@gmail.com>
 	* Fixed ffi.h for OSX on arm64
 
