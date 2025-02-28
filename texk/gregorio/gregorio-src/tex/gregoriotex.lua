@@ -24,13 +24,13 @@ local hpack, traverse, traverse_id, has_attribute, count, remove, insert_after, 
 gregoriotex = gregoriotex or {}
 local gregoriotex = gregoriotex
 
-local internalversion = '6.1.0-beta2' -- GREGORIO_VERSION (comment used by VersionManager.py)
+local internalversion = '6.1.0' -- GREGORIO_VERSION (comment used by VersionManager.py)
 
 local err, warn, info, log = luatexbase.provides_module({
     name               = "gregoriotex",
-    version            = '6.1.0-beta2', -- GREGORIO_VERSION
+    version            = '6.1.0', -- GREGORIO_VERSION
     greinternalversion = internalversion,
-    date               = "2025/02/17", -- GREGORIO_DATE_LTX
+    date               = "2025/02/28", -- GREGORIO_DATE_LTX
     description        = "GregorioTeX module.",
     author             = "The Gregorio Project (see CONTRIBUTORS.md)",
     copyright          = "2008-2025 - The Gregorio Project",
@@ -103,7 +103,7 @@ local snippet_logname = nil
 
 local base_output_dir = 'tmp-gre'
 local function set_base_output_dir(new_dirname)
-  base_output_dir = new_dirname
+  base_output_dir = lfs.normalize(new_dirname)
 end
 
 local space_below_staff = 5
@@ -139,9 +139,8 @@ local translation_mark = 1
 local abovelinestext_mark = 2
 log("marker whatsit id is %d", marker_whatsit_id)
 
-local function get_prog_output(cmd, fmt)
-  cmd = string.format(cmd, tmpname)
-  local rc = os.execute(cmd)
+local function get_prog_output(cmd, tmpname, fmt)
+  local rc = os.spawn(cmd)
   local content = nil
   if rc == 0 then
     local f = io.open(tmpname, 'r');
@@ -163,16 +162,14 @@ local function gregorio_exe()
     local exe_version
 
     -- first look for one with the exact version
-    real_gregorio_exe = 'gregorio-6_1_0-beta2' -- FILENAME_VERSION
-    local cmd = string.format([[%s -o "%%s" "%s"]], real_gregorio_exe,
-        test_snippet_filename)
-    exe_version = get_prog_output(cmd, '*line')
+    real_gregorio_exe = 'gregorio-6_1_0' -- FILENAME_VERSION
+    local cmd = {real_gregorio_exe, '-o', tmpname, test_snippet_filename}
+    exe_version = get_prog_output(cmd, tmpname, '*line')
     if not exe_version then
       -- look for suffix-less executable
       real_gregorio_exe = 'gregorio'
-      cmd = string.format([[%s -o "%%s" "%s"]], real_gregorio_exe,
-          test_snippet_filename)
-      exe_version = get_prog_output(cmd, '*line')
+      cmd = {real_gregorio_exe, '-o', tmpname, test_snippet_filename}
+      exe_version = get_prog_output(cmd, tmpname, '*line')
     end
     if not exe_version or string.match(exe_version,"%d+%.%d+%.")
         ~= string.match(internalversion,"%d+%.%d+%.") then
@@ -392,19 +389,18 @@ local function init(arg, enable_height_computation)
       end
     end
   end
+  
+  local basepath = tex.jobname
   if outputdir and lfs.isdir(outputdir) then
-    auxname = outputdir..'/'..tex.jobname..'.gaux'
-    tmpname = outputdir..'/'..tex.jobname..'.gtmp'
-    test_snippet_filename = outputdir..'/'..tex.jobname..'.test.gsnippet'
-    snippet_filename = outputdir..'/'..tex.jobname..'.gsnippet'
-    snippet_logname = outputdir..'/'..tex.jobname..'.gsniplog'
-  else
-    auxname = tex.jobname..'.gaux'
-    tmpname = tex.jobname..'.gtmp'
-    test_snippet_filename = tex.jobname..'.test.gsnippet'
-    snippet_filename = tex.jobname..'.gsnippet'
-    snippet_logname = tex.jobname..'.gsniplog'
+    basepath = outputdir..'/'..basepath
   end
+  basepath = lfs.normalize(basepath)
+    
+  auxname = basepath..'.gaux'
+  tmpname = basepath..'.gtmp'
+  test_snippet_filename = basepath..'.test.gsnippet'
+  snippet_filename = basepath..'.gsnippet'
+  snippet_logname = basepath..'.gsniplog'
 
   -- to get latexmk to realize the aux file is a dependency
   texio.write_nl('('..auxname..')')
@@ -1088,120 +1084,91 @@ function lfs.dirname(oldpath)
   return path
 end
 
--- Recursive directory creation a la mkdir -p. Unlike lfs.mkdir, this will
--- create missing intermediate directories, and will not fail if the
--- destination directory already exists.
--- It assumes that the directory separator is '/' and that the path is valid
--- for the OS it's running on, e.g. no trailing slashes on windows -- it's up
--- to the caller to ensure this!
-function lfs.rmkdir(path)
-  path = lfs.normalize(path)
-  if lfs.exists(path) then
-    return true
-  end
-  if lfs.dirname(path) == path then
-    -- We're being asked to create the root directory!
-    return nil,"rmkdir: unable to create root directory"
-  end
-  local r,err = lfs.rmkdir(lfs.dirname(path))
-  if not r then
-    return nil,err.." (creating "..path..")"
-  end
-  return lfs.mkdir(path)
-end
--- end https://github.com/ToxicFrog/luautil/blob/master/lfs.lua
-
-local function clean_old_gtex_files(file_withdir)
-  local filename = ""
-  local dirpath = ""
-  local sep = ""
-  local onwindows = os.type == "windows" or
-    string.find(os.getenv("PATH"),";",1,true)
-  if onwindows then
-    sep = "\\"
-  else
-    sep = "/"
-  end
-  dirpath = string.match(file_withdir, "(.*)"..sep)
-  if dirpath then -- dirpath is nil if current directory
-    filename = "^"..file_withdir:match(".*/".."(.*)").."%-%d+_%d+_%d+[-%a%d]*%.gtex$"
-    if lfs.exists(dirpath) then
-      for a in lfs.dir(dirpath) do
+local function delete_versioned_files(dir, base, ext)
+  -- Assume that dir is either empty (current directory) or ends with separator
+  filename = "^"..base.."%-%d+_%d+_%d+[-%a%d]*%."..ext.."$"
+  if dir ~= "" then
+    if lfs.exists(dir) then
+      for a in lfs.dir(dir) do
+        a = lfs.normalize(a)
         if a:match(filename) then
-          os.remove(dirpath..sep..a)
+          info("Deleting old file %s", dir..a)
+          os.remove(dir..a)
         end
       end
     end
   else
-    filename = "^"..file_withdir.."%-%d+_%d+_%d+[-%a%d]*%.gtex$"
     for a in lfs.dir(lfs.currentdir()) do
-      if a:match(filename) then os.remove(a) end
+      a = lfs.normalize(a)
+      if a:match(filename) then
+        info("Deleting old file %s", a)
+        os.remove(a)
+      end
     end
   end
 end
 
+function table.extend(x, y)
+  table.move(y, 1, #y, #x+1, x)
+end
+
 local function compile_gabc(gabc_file, gtex_file, glog_file, allow_deprecated)
   info("compiling the score %s...", gabc_file)
-  local extra_args = ''
+  local cmd = {gregorio_exe()}
   if tex.count['gre@generate@pointandclick'] == 1 then
-    extra_args = extra_args..' -p'
+    table.insert(cmd, '-p')
   end
   if not allow_deprecated then
-    extra_args = extra_args..' -D'
+    table.insert(cmd, '-D')
   end
 
-  local cmd = string.format('%s %s -W -o %s -l %s "%s" 2> %s', gregorio_exe(),
-      extra_args, gtex_file, glog_file, gabc_file, glog_file)
-  res = os.execute(cmd)
+  table.extend(cmd, {'-W', '-o', gtex_file, '-l', glog_file, gabc_file})
+  info("running: %s", table.concat(cmd, ' '))
+  res = os.spawn(cmd)
+
   if res == nil then
     err("\nSomething went wrong when executing\n    '%s'.\n"
         .."shell-escape mode may not be activated. Try\n\n"
         .."%s --shell-escape %s.tex\n\n"
         .."See the documentation of Gregorio or your TeX\n"
         .."distribution to automatize it.",
-        cmd, tex.formatname, tex.jobname)
+        table.concat(cmd, ' '), tex.formatname, tex.jobname)
   elseif res ~= 0 then
-    local glog = io.open(glog_file, 'a+')
-    if glog == nil then
-      err("\n Unable to open %s", glog_file)
-    else
-      local size = glog:seek('end')
-      if size > 0 then
-        glog:seek('set')
-        local line
-        for line in glog:lines() do
-          warn(line)
-        end
-      end
-      glog:close()
-    end
-    err("\nAn error occured when compiling the score file\n"
-        .."'%s' with %s.\nPlease check your score file.", gabc_file,
-        gregorio_exe())
+    err("\nSomething went wrong when executing\n    '%s'",
+        table.concat(cmd, ' '))
   else
-    -- The next few lines would open the gtex file for writing so that LuaTeX records the fact that gregorio has written to it
-    -- when the -recorder option is used.
-    -- However, in restricted \write18 mode, the gtex file might not be writable. Since we're the sole consumer of the gtex file, it should be okay not to record the write.
-    local gtex = io.open(gtex_file, 'a')
-    if gtex == nil then
-      warn("\n Unable to open %s for writing. If another program depends on %s, latexmk may not recognize the dependency.", gtex_file, gtex_file)
-    else
-      gtex:close()
-    end
-    local glog = io.open(glog_file, 'a+')
+    -- Open glog_file for writing so that the LuaTeX recorder knows that gregorio wrote to it.
+    local glog = io.open(glog_file, 'a')
     if glog == nil then
-      err("\n Unable to open %s", glog_file)
+      warn("\n Unable to open %s for writing. If another program depends on %s, latexmk may not recognize the dependency", glog_file, glog_file)
     else
-      local size = glog:seek('end')
-      if size > 0 then
-        glog:seek('set')
-        local line
-        for line in glog:lines() do
-          warn(line)
-        end
-        warn("*** end of warnings for %s ***", gabc_file)
+      glog:close()
+    end
+    -- Copy the contents of glog_file into warnings.
+    glog = io.open(glog_file, 'r')
+    if glog == nil then
+      err("\n Unable to open %s for reading", glog_file)
+    else
+      for line in glog:lines() do
+        warn(line)
       end
       glog:close()
+    end
+    
+    if res ~= 0 then
+      err("\nAn error occured when compiling the score file\n"
+          .."'%s' with %s.\nPlease check your score file.", gabc_file,
+          gregorio_exe())
+    else
+      -- The next few lines would open the gtex file for writing so that LuaTeX records the fact that gregorio has written to it
+      -- when the -recorder option is used.
+      -- However, in restricted \write18 mode, the gtex file might not be writable. Since we're the sole consumer of the gtex file, it should be okay not to record the write.
+      local gtex = io.open(gtex_file, 'a')
+      if gtex == nil then
+        warn("\n Unable to open %s for writing. If another program depends on %s, latexmk may not recognize the dependency.", gtex_file, gtex_file)
+      else
+        gtex:close()
+      end
     end
   end
 end
@@ -1212,6 +1179,7 @@ local function locate_file(filename)
     gre_input_path = {""}
   end
   for i,k in pairs(gre_input_path) do
+    k = lfs.normalize(k)
     log("Looking in %s", k)
     if lfs.isfile(k .. filename) then
       result = k..filename
@@ -1237,119 +1205,107 @@ local function locate_file(filename)
   return result
 end
 
-local function include_score(input_file, force_gabccompile, allow_deprecated)
-  if string.match(input_file, "[#%%]") then
+local function include_score(gabc_file, force_gabccompile, allow_deprecated)
+  gabc_file = lfs.normalize(gabc_file)
+  
+  if string.match(gabc_file, "[#%%]") then
     err("GABC filename contains invalid character(s): # %%\n"
-        .."Rename the file and retry: %s", input_file)
+        .."Rename the file and retry: %s", gabc_file)
   end
-  local has_extention = false
-  local file_dir,input_name
+  local gabc_dir, base
   local extensions = {['gabc']=true, ['gtex']=true, ['tex']=true}
-  if extensions[string.match(input_file, "([^%.\\/]*)$")] then
-    has_extention = true
-  end
-  if has_extention then
-    file_dir,input_name = string.match(input_file, "(.-)([^\\/]-)%.?[^%.\\/]*$")
+  if extensions[string.match(gabc_file, "([^%./]*)$")] then
+    gabc_dir, base = string.match(gabc_file, "(.-)([^/]-)%.?[^%./]*$")
   else
-    file_dir,input_name = string.match(input_file, "(.-)([^\\/]*)$")
+    gabc_dir, base = string.match(gabc_file, "(.-)([^/]*)$")
   end
+  local base_cleaned = base:gsub("[%s%+%&%*%?$@:;!\"\'`]", "-")
 
-  local cleaned_filename = input_name:gsub("[%s%+%&%*%?$@:;!\"\'`]", "-")
-  local gabc_filename = string.format("%s%s.gabc", file_dir, input_name)
-  local gabc_file = locate_file(gabc_filename)
-  local gtex_filename = string.format("%s%s-%s.gtex", file_dir, cleaned_filename,
-      internalversion:gsub("%.", "_"))
-  local gtex_file = locate_file(gtex_filename)
-  local glog_file = string.format("%s%s-%s.glog", file_dir, cleaned_filename,
-      internalversion:gsub("%.", "_"))
-  if not gtex_file then
-    clean_old_gtex_files(file_dir..cleaned_filename)
-    log("The file %s does not exist. Will use gabc file", gtex_filename)
-    if gabc_file then
-      local gabc = io.open(gabc_file, 'r')
-      if gabc == nil then
-        err("\n Unable to open %s", gabc_file)
-        return
-      else
-        gabc:close()
+  -- Find gabc file
+  gabc_file = string.format("%s%s.gabc", gabc_dir, base)
+  local gabc_found = locate_file(gabc_file)
+  if gabc_found then
+    gabc_found = lfs.normalize(gabc_found)
+  end
+  
+  -- Set up output directory
+  local output_dir = base_output_dir..'/'..gabc_dir
+  output_dir = string.explode(output_dir, '/')
+  for i, _ in ipairs(output_dir) do
+    if output_dir[i] == '..' then output_dir[i] = 'dotdot' end
+  end
+  output_dir = table.concat(output_dir, '/')
+  info('Output directory: %s', output_dir)
+  if not lfs.exists(output_dir) then
+    local ok, message = lfs.mkdirp(output_dir)
+    if not ok then
+      info('Could not create directory %s: %s', output_dir, message)
+    end
+  end
+    
+  -- Choose output filenames
+  gtex_file = string.format("%s%s-%s.gtex", output_dir, base_cleaned,
+                            internalversion:gsub("%.", "_"))
+  glog_file = string.format("%s%s-%s.glog", output_dir, base_cleaned,
+                            internalversion:gsub("%.", "_"))
+
+  -- Decide if we need to recompile
+  local needs_compile = false
+  if gabc_found then
+    if lfs.exists(gtex_file) then
+      local gtex_timestamp = lfs.attributes(gtex_file).modification
+      local gabc_timestamp = lfs.attributes(gabc_found).modification
+      if gtex_timestamp < gabc_timestamp then
+        log("%s has been modified and %s needs to be updated. Recompiling the gabc file", gabc_found, gtex_file)
+        needs_compile = true
       end
-      local sep = ""
-      local onwindows = os.type == "windows" or
-        string.find(os.getenv("PATH"),";",1,true)
-      if onwindows then
-        sep = "\\"
-      else
-        sep = "/"
-      end
-      local output_dir = base_output_dir..sep..file_dir
-      info(output_dir)
-      if not lfs.exists(output_dir) then
-        if not lfs.exists(base_output_dir) then
-          lfs.mkdir(base_output_dir)
-        end
-        local err,message = lfs.rmkdir(output_dir)
-        if not err then
-          info(message)
-        end
-      end
-      gtex_filename = string.format("%s%s-%s.gtex", output_dir, cleaned_filename,
-          internalversion:gsub("%.", "_"))
-      glog_file = string.format("%s%s-%s.glog", output_dir, cleaned_filename,
-          internalversion:gsub("%.", "_"))
-      compile_gabc(gabc_file, gtex_filename, glog_file, allow_deprecated)
-      gtex_filename = lfs.normalize(gtex_filename)
-      tex.print(string.format([[\input %s\relax]], gtex_filename))
-      return
     else
-      err("The file %s does not exist", gabc_filename)
+      log("The file %s does not exist. Compiling gabc file", gtex_file)
+      needs_compile = true
+    end
+  else
+    if lfs.exists(gtex_file) then
+      log("The file %s does not exist. Using gtex file", gabc_file)
+    else
+      err("The file %s does not exist", gabc_file)
       return
     end
   end
-  if not gabc_file then
-    gtex_file = lfs.normalize(gtex_file)
-    tex.print(string.format([[\input %s\relax]], gtex_file))
-    return
+  if needs_compile then
+    -- Delete old gtex files.
+    -- Before version 6.1, gtex files were stored in gabc_dir
+    delete_versioned_files(gabc_dir, base_cleaned, 'gtex')
+    delete_versioned_files(gabc_dir, base_cleaned, 'glog')
+    -- Since version 6.1, gtex files are stored in output_dir
+    delete_versioned_files(output_dir, base_cleaned, 'gtex')
+    delete_versioned_files(output_dir, base_cleaned, 'glog')
+
+    local gabc = io.open(gabc_found, 'r')
+    if gabc == nil then
+      err("\n Unable to open %s", gabc_found)
+      return
+    else
+      gabc:close()
+    end
+    compile_gabc(gabc_found, gtex_file, glog_file, allow_deprecated)
   end
-  local gtex_timestamp = lfs.attributes(gtex_file).modification
-  local gabc_timestamp = lfs.attributes(gabc_file).modification
-  -- open the gabc file for reading so that LuaTeX records input from it
-  -- when the -recorder option is used; do this here so that this happens
-  -- on every run
-  tex.sprint(catcode_at_letter, string.format(
-      [[\openin\gre@read@temp=%s\relax\closein\gre@read@temp]], gabc_file))
-  local gabc = io.open(gabc_file, 'r')
-  if gabc == nil then
-    err("\n Unable to open %s", gabc_file)
-  else
-    gabc:close()
-  end
-  if gtex_timestamp < gabc_timestamp then
-    log("%s has been modified and %s needs to be updated. Recompiling the gabc file.", gabc_file, gtex_file)
-    compile_gabc(gabc_file, gtex_file, glog_file, allow_deprecated)
-  elseif force_gabccompile then
-    compile_gabc(gabc_file, gtex_file, glog_file, allow_deprecated)
-  end
-  gtex_file = lfs.normalize(gtex_file)
+
+  -- Input the gtex file
   tex.print(string.format([[\input %s\relax]], gtex_file))
-  return
 end
 
 local function direct_gabc(gabc, header, allow_deprecated)
   info('Processing gabc snippet...')
-  local deprecated
-  if allow_deprecated then
-    deprecated = ''
-  else
-    deprecated = '-D '
-  end
   local f = io.open(snippet_filename, 'w')
   -- trims spaces on both ends (trim6 from http://lua-users.org/wiki/StringTrim)
   gabc = gabc:match('^()%s*$') and '' or gabc:match('^%s*(.*%S)')
   f:write('name:direct-gabc;\n'..(header or '')..'\n%%\n'..gabc:gsub('\\par', '\n'))
   f:close()
-  local cmd = string.format([[%s -W %s-o "%%s" -l "%s" "%s"]], gregorio_exe(),
-      deprecated, snippet_logname, snippet_filename)
-  local content = get_prog_output(cmd, '*a')
+  cmd = {gregorio_exe(), '-W'}
+  if allow_deprecated then table.insert(cmd, '-D') end
+  table.extend(cmd, {'-o', tmpname, '-l', snippet_logname, snippet_filename})
+  info('Running %s', table.concat(cmd, ' '))
+  local content = get_prog_output(cmd, tmpname, '*a')
   if content == nil then
     err("\nSomething went wrong when executing\n    %s\n"
         .."shell-escape mode may not be activated. Try\n\n"

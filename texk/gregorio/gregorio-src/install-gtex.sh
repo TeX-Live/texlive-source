@@ -65,6 +65,11 @@
 # uninstall script generation and any existing uninstall script will be left
 # alone.
 
+# Before we do anything we make sure our working directory is the top level of the
+# repository (where this script is located).  This allows us to specify the files to be
+# installed by their relative locations in the repository.
+cd "${0%/*}"
+
 VERSION=`head -1 .gregorio-version`
 FILEVERSION=`echo $VERSION | sed 's/\./_/g'`
 

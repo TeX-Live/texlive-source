@@ -16,8 +16,8 @@ dnl
 dnl You should have received a copy of the GNU General Public License
 dnl along with Gregorio.  If not, see <http://www.gnu.org/licenses/>.
 
-AC_INIT([gregorio],[6.1.0-beta2],[https://github.com/gregorio-project/gregorio/issues],[gregorio],[http://gregorio-project.github.io/])
-FILENAME_VERSION="6_1_0-beta2"
+AC_INIT([gregorio],[6.1.0],[https://github.com/gregorio-project/gregorio/issues],[gregorio],[http://gregorio-project.github.io/])
+FILENAME_VERSION="6_1_0"
 AC_SUBST(FILENAME_VERSION)
 AC_DEFINE_UNQUOTED(FILENAME_VERSION, "$FILENAME_VERSION", [version suitable for file names])
 MK=""
@@ -57,8 +57,6 @@ AX_CHECK_LINK_FLAG([-Wl,-z,relro], [LDFLAGS+=" -Wl,-z,relro"])
 AX_CHECK_LINK_FLAG([-Wl,-z,now], [LDFLAGS+=" -Wl,-z,now"])
 AX_CHECK_LINK_FLAG([-fPIE], [LDFLAGS+=" -fPIE"])
 AX_CHECK_LINK_FLAG([-pie], [LDFLAGS+=" -pie"])
-
-AC_HEADER_STDC
 
 gl_FUNC_REALPATH_WORKS
 
@@ -116,6 +114,34 @@ AC_ARG_ENABLE([version-in-exe], AS_HELP_STRING([--disable-version-in-exe], [Disa
 ])
 AC_SUBST(GREGORIO_EXE_SUFFIX)
 
+# AC_CANONICAL_HOST is needed to access the 'host_os' variable
+AC_CANONICAL_HOST
+
+build_linux=no
+build_windows=no
+build_mac=no
+
+# Detect the target system
+case "${host_os}" in
+    linux*)
+        build_linux=yes
+        ;;
+    cygwin*|mingw*)
+        build_windows=yes
+        ;;
+    darwin*)
+        build_mac=yes
+        ;;
+    *)
+        AC_MSG_ERROR(["OS $host_os is not supported"])
+        ;;
+esac
+
+# Pass the conditionals to automake
+AM_CONDITIONAL([LINUX], [test "$build_linux" = "yes"])
+AM_CONDITIONAL([WINDOWS], [test "$build_windows" = "yes"])
+AM_CONDITIONAL([MACOSX], [test "$build_mac" = "yes"])
+
 AC_CONFIG_HEADERS([src/config_.h])
 AC_CONFIG_FILES([
     Makefile
@@ -129,5 +155,6 @@ AC_CONFIG_FILES([
     doc/Makefile
     tex/Makefile
     fonts/Makefile
+    macosx/Makefile
 ])
 AC_OUTPUT

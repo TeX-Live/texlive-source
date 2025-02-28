@@ -15,7 +15,7 @@
 # You should have received a copy of the GNU General Public License
 # along with Gregorio.  If not, see <http://www.gnu.org/licenses/>.
 
-SUBDIRS = src examples tex contrib fonts doc
+SUBDIRS = src examples tex contrib fonts doc macosx
 
 ACLOCAL_AMFLAGS = -I m4
 
@@ -25,22 +25,26 @@ EXTRA_DIST = README.md CHANGELOG.md CONTRIBUTING.md CONTRIBUTORS.md \
 
 MAINTAINERCLEANFILES = gregoriotex.ctan.zip
 
+VERSION := $(shell ./VersionManager.py --get-current)
+TOP := $(shell pwd)
+export TOP
+
 export TOP_LEVEL_MAKE = true
 
 gregorio:
-	make -C src all
+	$(MAKE) -C src all
 
 fonts: make-fonts
 make-fonts:
-	make -C fonts fonts
+	$(MAKE) -C fonts fonts
 
 clean-fonts:
-	make -C fonts clean-fonts
+	$(MAKE) -C fonts clean-fonts
 
 doc: pdf
 clean-pdf: clean-doc
 clean-doc:
-	make -C doc clean-doc
+	$(MAKE) -C doc clean-doc
 
 gregoriotex.tds.zip: dist-zip install-gtex.sh
 	./install-gtex.sh tds
@@ -50,3 +54,14 @@ ctan: gregoriotex.tds.zip build-ctan.sh
 
 dist-hook:
 	rm -rf $(distdir)/windows
+
+if MACOSX
+dist-macosx: gregorio doc fonts
+	$(MAKE) -C macosx dist-macosx
+else
+dist-macosx:
+	@echo "macOS packages can only be built on Mac systems."
+endif
+
+clean-macosx:
+	$(MAKE) -C macosx clean-local

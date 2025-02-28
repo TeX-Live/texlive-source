@@ -1,11 +1,11 @@
 Changes applied to the gregorio source tree as obtained from:
-	https://mirrors.ctan.org/support/gregoriotex/gregorio-6.1.0-beta1.zip
+	https://mirrors.ctan.org/support/gregoriotex/gregorio-6.1.0.zip
 
-Update ./version.ac.
+Update ./version.ac to $VER.
 mv gregorio-src gregorio-prev
-zip=`ls ~/tmp/gregorio*zip`
+zip=`ls /tmp/gregorio*zip`
 zipinfo -1 $zip # normally unpacks into gregorio-VERSION
-unzip -q ...
+unzip -q $zip   # if all in a subdir
 mv gregorio-[6789]* gregorio-src
 cd gregorio-src
 

@@ -2,9 +2,13 @@
 
 This file contains instructions to upgrade to a new release of Gregorio.  These instructions are cumulative; meaning that you should apply the instructions from all versions between the one you are upgrading from and the current version.
 
-## [Unreleased][develop]
+## 6.1
 
-Initial letters that are 2 lines high used to require manual linebreaks (`z`), but no longer do. The alignment of 2-line initial letters has changed slightly and may need to be adjusted.
+### Multiline initials
+
+Initial letters that are 2 lines high used to require manual linebreaks (`z`), but no longer do. The alignment of 2-line initial letters has changed slightly and may need to be adjusted.  Further, initials can now span over an arbitrary number of lines.
+
+### Soft alterations
 
 GABC now has some new alterations: soft flat (`X`) and sharp (`##`), which appear when there is no previous flat or sharp (respectively) in effect, and soft natural (`Y`), which appears when there is a previous flat or sharp in effect. A new option `\gresetalterationeffect` determines what the "effect" of an alteration is. It defaults to `line`, meaning that an alteration's effect extends to the end of the line. Thus, for Dominican chant, type a soft flat (`X`) in front of _every_ note that is to be sung a half-step flat; naturals should also be soft (`Y`), but only naturals that cancel flats need to be typed.
 

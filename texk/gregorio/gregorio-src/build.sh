@@ -13,7 +13,13 @@
 #      --jobs=     : the number of jobs to run simultaneously in the make step
 #      --force=    : force autoreconf
 #      {other)     : anything else is passed to configure verbatim
-      
+
+# Before we do anything we make sure our working directory is the top level of the
+# repository (where this script is located).  This allows us to call this script from
+# other folders and still have it work.
+cd "${0%/*}"
+
+
 # try to find bash, in case the standard shell is not capable of
 # handling the generated configure's += variable assignments
 if which bash >/dev/null
@@ -33,7 +39,7 @@ then
   export MAKE
   echo "You have a GNU-make installed as gmake; I will use that"
 else
-  echo "I can't find a GNU-make; I'll try to use make and hope that works." 
+  echo "I can't find a GNU-make; I'll try to use make and hope that works."
   echo "If it doesn't, please install GNU-make."
 fi
 
@@ -67,22 +73,29 @@ if [ "$MINGWCROSS" = "TRUE" ]
 then
   MINGWBUILD=$HOSTTYPE-$OSTYPE
   MINGWSTR=mingw32
+  PREFIX=/usr/
   if [ -d /usr/mingw32 ]; then
     MINGWSTR=mingw32
+    PREFIX=/usr/
   elif [ -d /usr/i386-mingw32msvc ]; then
-      MINGWSTR=i386-mingw32msvc
+    MINGWSTR=i386-mingw32msvc
+    PREFIX=/usr/
   elif [ -d /usr/i586-mingw32msvc ]; then
-        MINGWSTR=i586-mingw32msvc
+    MINGWSTR=i586-mingw32msvc
+    PREFIX=/usr/
+  elif [ -d /opt/local/i686-w64-mingw32 ]; then
+    MINGWSTR=i686-w64-mingw32
+    PREFIX=/opt/local/
   fi
   OLDPATH=$PATH
   PATH=/usr/$MINGWSTR/bin:$PATH
   CFLAGS="-mtune=pentiumpro -msse2 -g -O2 $CFLAGS"
-  LDFLAGS="-Wl,--large-address-aware $CFLAGS"
+  LDFLAGS="-static -Wl,--large-address-aware $CFLAGS"
   ARCHFLAGS="--target=\"$MINGWSTR\" \
     --with-gnu-ld \
     --host=$MINGWSTR \
     --build=$MINGWBUILD \
-    --prefix=/usr/$MINGWSTR"
+    --prefix=$PREFIX$MINGWSTR"
 elif [ "$MACCROSS" = "TRUE" ]
 then
   # make sure that architecture parameter is valid
@@ -92,7 +105,7 @@ then
   esac
   ARCHFLAGS="$ARCHFLAGS"
   CFLAGS="-arch $ARCH -g -O2 $CFLAGS"
-  LDFLAGS="-arch $ARCH $LDFLAGS" 
+  LDFLAGS="-arch $ARCH $LDFLAGS"
 fi
 
 
