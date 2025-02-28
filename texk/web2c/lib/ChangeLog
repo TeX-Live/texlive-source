@@ -1,3 +1,7 @@
+2025-02-28  Akira Kakuto  <kakuto@jcom.zaq.ne.jp>
+
+	* texmfmp.c: Remove problematic lines for windows (windows only)
+
 2025-02-04  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
 
 	* texmfmp.c: Avoid segmentation fault.
