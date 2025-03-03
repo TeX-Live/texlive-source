@@ -12,7 +12,8 @@
 
 package require Tk
 
-if {[string index $::tcl_patchLevel 2] <5} {
+if {[string range $::tcl_version 0 1] eq "8." &&
+    [string index $::tcl_patchLevel 2] < 5} {
   tk_messageBox -message "Tcl/Tk version >= 8.5 required;\naborting..."
   exit
 }
