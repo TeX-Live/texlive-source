@@ -27,30 +27,20 @@ that document).
 Build information for some of the platforms.
 See also Master/tlpkg/bin/tl-update-bindir.
 
-aarch64-linux:
-  Built on contextgarden, see below, except for asy:
-  aarch64 Debian GNU/Linux 10 (buster)
-  gcc (Debian 8.3.0-6) 8.3.0
+aarch64-linux: Built on github, see below;
+  except for asy, by jhielscher on Fedora 41 (glibc 2.40, GCC 14.2.1).
   ./Build --enable-arm-neon=on
 
-armhf-linux:
-  Built on contextgarden, see below.
-  Raspbian/Raspberry Pi OS (Debian Buster)
-  Previously, built by Simon Dales:
-  gcc version 10.2.1 20210110 (Raspbian 10.2.1-6+rpi1)
-  ./Build --enable-xindy CLISP=${BUILD_ROOT_DIR}/clisp/clisp-build/clisp}
-  armhf-linux binaries are created and tested on RPi;
-  they run on RPi, as well as ARMv7 CPUs, but are untested on non-RPi
-  ARMv6 machines.
+armhf-linux: github, see below.
 
 x86_64-cygwin: gcc-10.2.0, cygwin-3.1.7
   TL_CONFIGURE_ARGS="--enable-xindy --enable-shared CLISP=/path/to/clisp.exe
     LDFLAGS='-Wl,--no-insert-timestamp -Wl,--stack,0x800000'" \
   ./Build
   
-i386-freebsd amd64-freebsd: see info at end.
+i386-freebsd amd64-freebsd: github, see below.
 
-i386-linux: see info at end.
+i386-linux: github, see below.
 
 i386-netbsd, amd64-netbsd:
   NetBSD/amd64 10.1
@@ -60,7 +50,7 @@ i386-netbsd, amd64-netbsd:
     LDFLAGS='-L/usr/X11R7/lib -Wl,-rpath,/usr/X11R7/lib' \
   ./Build --enable-xindy CLISP=/usr/local/bin/clisp
 
-i386-solaris, x86_64-solaris: see info at end.
+i386-solaris, x86_64-solaris: github, see below.
 
 universal-darwin: See Master/source/mactexdoc.tar.xz.
 
@@ -68,7 +58,7 @@ windows:
   Makefiles written by hand, see Master/source/windows-src.tar.xz.
   Visual Studio 2010 and Visual Studio 2015.
 
-x86_64-darwinlegacy:
+x86_64-darwinlegacy: Built on ConTeXtGarden.
   Mac OS X 10.6, clang 5.0, libc++ required
   auxiliary installer binaries: Mac OS X 10.6, gcc -std=c99.
   https://github.com/TeXLive-M/texlive-buildbot
@@ -77,6 +67,7 @@ x86_64-darwinlegacy:
 
 x86_64-linux,
 x86_64-linuxmusl,
-and others noted above:
+and others noted above for github:
   built at https://github.com/TeX-Live/texlive-source/releases.
-  see ./github/scripts/build-tl.sh (and workflows/main.yml).
+  see ./github/scripts/build-tl.sh and workflows/main.yml.
+  Some asy binaries are also built here; see */build-asy.*.

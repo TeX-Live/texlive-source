@@ -9,6 +9,11 @@ asymptote 3.01 - checked 24feb25
   See https://tug.org/texlive/build.html#asymptote
   and tlpkg/bin/tl-update-asy
 
+  Special builders for asy:
+    aarch64-linux - Johannes Hielscher
+    *solaris, as well as darwinlegacy - Mojca
+    windows - from asy dist, including dlls
+
 autosp 2023-10-07 - checked 07jan24
   https://ctan.org/pkg/autosp
 
