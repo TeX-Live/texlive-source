@@ -2,7 +2,7 @@
 
 -- texlogsieve - filter and summarize LaTeX log files
 --
--- Copyright (C) 2021-2024 Nelson Lago <lago@ime.usp.br>
+-- Copyright (C) 2021-2025 Nelson Lago <lago@ime.usp.br>
 --
 -- This program is free software: you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -165,26 +165,30 @@ in the LaTeX log file:
    With option -file-line-error, the exclamation is replaced by an
    indication like "filename:linenum:".
 
-   The "stack trace" is comprised of pairs of lines. By default, LaTeX
-   only shows the last pair (depending on \errorcontextlines) and, when
-   there are more lines, they are replaced by a line with " ..." (right
-   after the line starting with "!"). In each pair of lines, the first
-   one indicates the line content leading up to the error and the
-   second one shows the subsequent content. The first line is at most
-   half_error_line characters long (default 50) and the second line
-   is at most error_line characters long (default 79). The second line
-   is indented to start after the end of the first, as in the example
-   above. If the content of a line does not fit, a part of it (the
-   beginning for the first line and the end for the second line) may
-   be replaced by "...". error_line must be < 255 and half_error_line
-   must be < error_line -15. If error_line >= max_print_line or
-   half_error_line >= max_print_line, TeX does line wrapping as usual
-   (see below). If either is exactly max_print_line (which is true
-   for the default values), things get confusing, so TeX may add a
-   blank line when wrapping.
+   The "stack trace" is comprised of pairs of lines. In each pair,
+   the first line indicates the content in a given line leading up
+   to the error, while the second one shows the subsequent content of
+   that line. The first line is at most half_error_line characters long
+   (default 50) and the second line is at most error_line characters
+   long (default 79). The second line is indented to start after the
+   end of the first, as in the example above. If the content of either
+   segment does not fit, a part of it (the beginning for the first line
+   and the end for the second line) may be replaced by "...". error_line
+   must be < 255 and half_error_line must be < error_line -15. If
+   error_line >= max_print_line or half_error_line >= max_print_line,
+   TeX does line wrapping as usual (see below). If either is exactly
+   max_print_line (which is true for the default values), things get
+   confusing, so TeX may add a blank line when wrapping.
 
+   By default, LaTeX only shows the first and last pairs of lines of the
+   "stack trace" (if only one pair of lines is relevant, then obviously
+   only this pair is shown). The number of additional, intermediate pairs
+   of lines shown is determined by \errorcontextlines: if it is zero, no
+   additional lines are shown, but LaTeX prints "..." indicating they
+   were omitted. If it is -1 (the default), they are not shown and there
+   is no "..." indication.
 
-   LaTeX errors usually follow the format
+   LaTeX errors are similar, but usually follow the format
 
        ! LaTeX/Package/Class BLAH Error: some description
        See the BLAH documentation for explanation.
@@ -627,6 +631,13 @@ function moreData()
   while Lines:numLines() < 15 do
       tmp = logfile:read("*line")
       if tmp == nil then break end
+
+      -- If we are running in a unix-like OS but the files we are
+      -- processing were generated in Windows, lua may leave a \r
+      -- character at the end of the line; if this happens, remove it
+      local _, last = string.find(tmp, '\r$')
+      if last ~= nil then tmp = string.sub(tmp, 1, last -1) end
+
       -- Do not skip blank lines here, we need to do it in Lines:append()
       Lines:append(tmp)
   end
@@ -788,6 +799,7 @@ function initializeKpse()
 end
 
 function registerHandlers()
+  table.insert(beginningOfLineHandlers, pseudoErrorHandler)
   table.insert(beginningOfLineHandlers, errorHandler)
   table.insert(beginningOfLineHandlers, citationHandler)
   table.insert(beginningOfLineHandlers, referenceHandler)
@@ -975,8 +987,8 @@ Options:
   --version                              print program version]]
 
 versionmsg = [[
-texlogsieve 1.4.2
-Copyright (C) 2021-2024 Nelson Lago <lago@ime.usp.br>
+texlogsieve 1.5.0
+Copyright (C) 2021-2025 Nelson Lago <lago@ime.usp.br>
 License GPLv3+: GNU GPL version 3 or later <https://gnu.org/licenses/gpl.html>.
 This is free software: you are free to change and redistribute it.
 There is NO WARRANTY, to the extent permitted by law.]]
@@ -1314,8 +1326,15 @@ function processCommandLine(args)
   if vars.filename == nil then
       logfile = io.stdin
   else
-      logfile = assert(io.open(vars.filename, "r"))
-      readFls(vars.filename)
+      local filename
+      local exts = {"", ".log", "log"}
+      for _, ext in ipairs(exts) do
+          filename = vars.filename .. ext
+          logfile = io.open(filename, "r")
+          if logfile ~= nil then break end
+      end
+      assert(logfile ~= nil)
+      readFls(filename)
   end
 
   vars.filename = nil
@@ -1728,9 +1747,12 @@ function showFileBanner(msg)
   end
 end
 
-function showMessage(msg)
-  local formatted = msg:toString()
+function showMessage(msg, bypassMostFilters)
+  msg.suppressed = true
+  local formatted = msg:toString(bypassMostFilters)
+
   if trim(formatted) ~= "" then
+      msg.suppressed = false
       local pageinfo = ""
       local spaces = ""
       if not RAW and msg.physicalPage ~= nil then
@@ -1746,12 +1768,29 @@ function showMessage(msg)
           for _, summary in ipairs(summaries) do
               if summary:alreadySeen(msg) then
                   alreadySeen = true
+                  msg.suppressed = true
                   break
               end
           end
       end
 
       if not SILENCE_REPETITIONS or not alreadySeen then
+
+          -- For unknown messages, we show the previous one
+          -- if it was suppressed to give some context, unless
+          -- that message is certainly unrelated
+          if msg.severity == UNKNOWN
+                  and lastMessage ~= nil
+                  and msg ~= lastMessage
+                  and lastMessage.suppressed
+                  and not lastMessage.alwaysEnds
+          then
+              local TMP = SILENCE_REPETITIONS
+              SILENCE_REPETITIONS = false
+              showMessage(lastMessage, true)
+              SILENCE_REPETITIONS = TMP
+          end
+
           showFileBanner(msg)
 
           for _, line in ipairs(linesToTable(formatted)) do
@@ -1768,7 +1807,10 @@ function showMessage(msg)
       end
   end
 
-  msg:toSummary()
+  if msg ~= lastMessage then
+      lastMessage = msg
+      msg:toSummary()
+  end
 end
 
 function showPageMessages()
@@ -1973,21 +2015,26 @@ end
 
 -------------------------------------------------------------------------------
 -- errorHandler
+-- pseudoErrorHandler
 --
--- This simply identifies errors and defines "ERRORS_DETECTED" as true. The
--- line with the message is output directly with no further processing, which
--- means the other lines that belong to the error are output as unrecognized
--- messages. We could be more thorough here and handle the whole message, but
--- that is not really necessary, all we want is ERRORS_DETECTED.
---
--- We might get away with just detecting lines that start with "! ", but
--- that might fail with a wrapped line, so we go the extra mile to make
--- sure this is really an error.
+-- errorHandler simply identifies errors and defines "ERRORS_DETECTED" as true.
+-- We might get away with just detecting lines that start with "! ", but that
+-- might fail with a wrapped line, so we go the extra mile to make sure this
+-- is really an error. pseudoErrorHandler deals with some low-level warnings
+-- generated by some engines that have a similar format to error messages.
 -------------------------------------------------------------------------------
 
 errorHandler = HandlerPrototype:new()
 
 errorHandler.patterns = {
+    -- luatex engine errors
+    "error:%s+%(pdf backend%): 'endlink' ended up in different "
+                .. "nesting level than 'startlink'",
+    "error:%s+%(pdf backend%): \\pdfextension endlink cannot be "
+                .. "used in vertical mode",
+    -- pdftex engine errors
+    "pdfTeX error %(ext1%): \\pdfendlink cannot be used in vertical mode%.",
+    "pdfTeX error %(ext5%): cannot open file for embedding%.",
     -- basic LaTeX error messages follow these patterns
     'Package .- Error: ',
     'Class .- Error: ',
@@ -2046,70 +2093,105 @@ function errorHandler:canDoit(position)
   local line = Lines:get(position)
   if line == nil then return false, {} end
 
-  -- This error does not start with "! " or "file:line: "
+  -- Errors that do not start with "! " or "file:line: "
   local last = self:isRunawayLine(line)
   if last then return true, {numLines = 1} end
 
   last = self:isErrorLine(line)
   if not last then return false, {} end
 
-  -- Looks like an error; Let's look ahead to identify the other
-  -- lines that are part of the error message. We do not want to
-  -- look too much ahead, so we just scan the current buffer.
+  -- This is (almost certainly) an error; let's check
+  -- if it matches a known message (we do this to decide
+  -- whether we should unwrap the first line)
+  local identified = false
+  for _, pat in ipairs(self.patterns) do
+      local _, ok = string.find(line, pat)
+      if ok then identified = true break end
+  end
+
+  -- If there were no matches, let's try to unwrap the first line
+  local wrapped = false
+  if not identified then
+      if Lines:seemsWrapped(position) then
+          nextline = Lines:get(position +1)
+          local unwrappedLine = line .. nextline
+
+          for _, pat in ipairs(self.patterns) do
+              local _, ok = string.find(unwrappedLine, pat)
+              if ok then
+                  position = position +1
+                  wrapped = true
+                  break
+              end
+          end
+      end
+  end
+
+  -- if we still could not find a match, it is an unknown error message.
+  -- Things should still work ok, as long as the first line is not wrapped.
+  -- If that is not the case, the remaining lines of this message will
+  -- probably not be identified as such.
+
+  -- Let's look ahead to identify the other lines that are part
+  -- of the error message. We do not want to look too much ahead,
+  -- so we just scan the current buffer.
+
+  local lastline = position
   position = position +1
-  local lastline = nil
+  -- We use "<", not "<=", so we can access the following line too
   while position < Lines:numLines() do
+
       -- if there is a second error, don't look further ahead
       if self:isErrorLine(Lines:get(position))
               or self:isRunawayLine(Lines:get(position))
-
       then break end
 
-      if string.find(Lines:get(position), '^l%.%d+ ') then
-          local length = string.len(Lines:get(position))
+      -- This is always the last line
+      if string.find(Lines:get(position),
+                     '^Type%s+H %<return%>%s+for immediate help%.')
+      then
+          lastline = position
+          break
+      end
+
+      local length = string.len(Lines:get(position))
+      if length > 0 then -- skip empty lines
           if string.find(Lines:get(position +1),
                          "^" .. string.rep(" ", length))
           then
-              lastline = position +1 -- the following line is the last
-          else
-              -- the following line is empty, so it was skipped
-              -- when reading the file
+              -- this line and the next belong to the message;
+              -- on the next iteration, check the line after that
+              position = position +1
               lastline = position
+          elseif string.find(Lines:get(position), '^l%.%d+ ') then
+              lastline = position
+          else
+              break -- this line belongs to a different message
           end
-      end
-
-      if string.find(Lines:get(position),
-                         '^Type%s+H %<return%>%s+for immediate help%.') then
-          lastline = position
       end
 
       position = position +1
   end
 
-  if lastline then
-      -- position starts at zero, so numlines needs +1
-      return true, {numLines = lastline +1}
-  else
-      -- This looks like an error, but there is no "l.NUM" line following
-      -- it, so it is probably a false positive. Still, let's check for
-      -- some known error messages.
-      local candidateText = string.sub(line, last +1)
-      for _, pat in ipairs(self.patterns) do
-          _, last = string.find(candidateText, pat)
-          if last ~= nil then return true, {numLines = 1} end
-      end
-  end
-
-  return false, {} -- this was really a false positive
+  -- position starts at zero, so numlines needs +1
+  return true, {numLines = lastline +1, wrapped = wrapped}
 end
 
 function errorHandler:handleFirstLine()
   local myTurn, data = self:canDoit()
   if not myTurn then return false end
+  ERRORS_DETECTED = true
+  self:reallyHandleFirstLine(data)
+  return true
+end
 
+function errorHandler:reallyHandleFirstLine(data)
   flushUnrecognizedMessages()
 
-  ERRORS_DETECTED = true
+  if data.wrapped then
+      Lines:unwrapOneLine()
+      data.numLines = data.numLines -1
+  end
 
   self.message = self:newMessage()
   self.message.severity = UNKNOWN
@@ -2120,26 +2202,139 @@ function errorHandler:handleFirstLine()
   self.numLines = data.numLines
   self.doit = self.handleLines
   nextHandler = self
-
-  return true
 end
 
 errorHandler.doit = errorHandler.handleFirstLine
 
 function errorHandler:handleLines()
-  if self.processed >= self.numLines then
+  if self.processed >= self.numLines then -- We're done!
       self.doit = self.handleFirstLine
       dispatch(self.message)
-  else
-      self.message.content = self.message.content .. '\n' .. Lines.current
-      Lines:handledChars()
-      self.processed = self.processed +1
-      nextHandler = self
+      return true
   end
 
+  local last = nil
+
+  if self.processed == self.numLines -1 then
+      -- last line; there may be some other messages at the end
+      last = string.len(Lines.current)
+      for _, handler in ipairs(anywhereHandlers) do
+          local match, data = handler:lookahead()
+          if match and data.first -1 < last then last = data.first -1 end
+      end
+  end
+
+  self:outputCurrentLine(last)
+
+  self.processed = self.processed +1
+  nextHandler = self
   return true
 end
 
+function errorHandler:outputCurrentLine(last)
+   -- "last" is nil in all but the last line
+  local line = string.sub(Lines.current, 1, last)
+  self.message.content = self.message.content .. '\n' .. line
+  Lines:handledChars(last)
+end
+
+pseudoErrorHandler = errorHandler:new()
+
+pseudoErrorHandler.patterns = {
+    '^pdfTeX warning %(ext4%): destination with the same identifier %b() '
+               .. 'has been already used, duplicate ignored',
+    '^pdfTeX warning: \\pdfendlink ended up in different nesting level '
+               .. 'than \\pdfstartlink',
+    '^warning%s+%(pdf backend%): ignoring duplicate destination with '
+               .. "the name '.-'",
+}
+
+function pseudoErrorHandler:canDoit(position)
+  if position == nil then position = 0 end
+  local line = Lines:get(position)
+  if line == nil then return false, {} end
+
+  for _, pat in ipairs(self.patterns) do
+      _, last = string.find(line, pat)
+      if last then break end
+  end
+
+  -- Maybe we should unwrap this line?
+  local wrapped = false
+  if not last then
+      if not Lines:seemsWrapped(position) then return false, {} end
+      nextline = Lines:get(position +1)
+      line = line .. nextline
+      position = position +1
+
+      for _, pat in ipairs(self.patterns) do
+          _, last = string.find(line, pat)
+          if last then wrapped = true break end
+      end
+  end
+
+  if not last then return false, {} end
+  local lastline = position
+
+  -- Looks like a pseudoError; Let's look ahead to identify the other
+  -- lines that are part of the message. We do not want to look too
+  -- much ahead, so we just scan the current buffer.
+
+  position = position +1
+  -- We use "<", not "<=", so we can access the following line too
+  while position < Lines:numLines() do
+
+      -- if there is a second error, don't look further ahead
+      if self:isErrorLine(Lines:get(position))
+              or self:isRunawayLine(Lines:get(position))
+      then break end
+
+      local length = string.len(Lines:get(position))
+      if length > 0 then -- skip empty lines
+          if string.find(Lines:get(position +1),
+                         "^" .. string.rep(" ", length))
+          then
+              -- this line and the next belong to the message;
+              -- on the next iteration, check the line after that
+              position = position +1
+              lastline = position
+          elseif string.find(Lines:get(position), '^l%.%d+ ') then
+              lastline = position
+          else
+              break -- this line belongs to a different message
+          end
+      end
+
+      position = position +1
+  end
+
+  -- position starts at zero, so numlines needs +1
+  return true, {numLines = lastline +1, wrapped = wrapped}
+end
+
+function pseudoErrorHandler:handleFirstLine()
+  local myTurn, data = self:canDoit()
+  if not myTurn then return false end
+
+  local terseContent = Lines.current
+  if data.wrapped then terseContent = terseContent .. Lines:get(1) end
+
+  errorHandler.reallyHandleFirstLine(self, data)
+  self.message.severity = WARNING
+  self.message.terseContent = terseContent
+  return true
+end
+
+function pseudoErrorHandler:outputCurrentLine(last)
+   -- "last" is nil in all but the last line
+  local line = string.sub(Lines.current, 1, last)
+  if MINLEVEL <= INFO then
+      self.message.content = self.message.content .. '\n    ' .. line
+  end
+  Lines:handledChars(last)
+end
+
+pseudoErrorHandler.doit = pseudoErrorHandler.handleFirstLine
 
 -------------------------------------------------------------------------------
 -- epilogueHandler
@@ -2762,8 +2957,6 @@ beginningOfLineDebugStringsHandler.patterns = {
   '^\\[^%s=]+=[^%s=]+', -- "\c@chapter=\count174"
   "^\\openout%d+%s*=%s*`?[^']+'?%.?",
 
-  '^LaTeX2e <' .. datepat .. '>.*',
-
   '^Lua module: lualibs%-extended ' .. datepat
                    .. ' %S+ ConTeXt Lua libraries %-%- extended collection%.',
 
@@ -2921,12 +3114,6 @@ beginningOfLineDebugStringsHandler.patterns = {
 
   "^`newtxtext' v[%d%.]+, " .. datepat .. " Text macros taking advantage of "
               .. "TeXGyre Termes and its extensions %(msharpe%)",
-
-  -- don't know where this comes from...
-  "^ %*%*%*%*%*%*%*%*%*%*%*\n"
-  .. "LaTeX2e <" .. datepat .. ">\n"
-  .. "L3 programming layer <" .. datepat .. ">\n"
-  .. " %*%*%*%*%*%*%*%*%*%*%*"
 }
 
 
@@ -2937,7 +3124,24 @@ anywhereDebugStringsHandler = stringsHandler:new()
 anywhereDebugStringsHandler.IHandleAnywhere = true
 anywhereDebugStringsHandler.severity = DEBUG
 anywhereDebugStringsHandler.patterns = {
-  '^%s*L3 programming layer %b<>',
+  -- don't know where this comes from...
+  "^%s*%*%*%*%*%*%*%*%*%*%*%*\n"
+  .. "LaTeX2e <" .. datepat .. ">.*\n"
+  .. "%s*L3 programming layer <" .. datepat .. ">.*\n"
+  .. "%s*%*%*%*%*%*%*%*%*%*%*%*",
+
+  '^%s*LaTeX2e <' .. datepat .. '>\n%s*patch.*',
+
+  '^%s*LaTeX2e <' .. datepat .. '> patch.*',
+
+  '^%s*LaTeX2e <' .. datepat .. '>',
+
+  '^%s*L3 programming layer <' .. datepat .. '>\n%s*patch.*',
+
+  '^%s*L3 programming layer <' .. datepat .. '> patch.*',
+
+  '^%s*L3 programming layer <' .. datepat .. '>',
+
   '^%s*xparse %b<>',
   '^%s*%{.*pdftex%.map%}',
 
@@ -2996,6 +3200,10 @@ anywhereDebugStringsHandler.patterns = {
   "^%s*Comment '[^']+' writing to " .. filepat .. "%.",
   "^%s*Straight input of " .. filepat .. "%.",
   "^%s*Include comment '[^']+' up to level '[^']+'",
+  "^Lua module%: autotype " .. datepat .. " v%S+ automatic "
+                                .. "language%-specific typography",
+  "^Lua module%: pdnm%_nl%_manipulation " .. datepat .. " v%S+ "
+                        .. "pattern driven node list manipulation",
 }
 
 
@@ -3022,6 +3230,7 @@ beginningOfLineInfoStringsHandler.patterns = {
   "^No file .-%.bbl%.",
   "^No file .-%.gls%.",
 
+  "^runsystem%b()%.%.%.executed safely %(allowed%)%.",
   "^runsystem%b()%.%.%.executed%.?",
 
   'luaotfload | db : Reload initiated %(formats: .-%); reason: Font ".-" not found%.',
@@ -3106,6 +3315,14 @@ beginningOfLineInfoStringsHandler.patterns = {
    .. "although it is yet undefined",
 
    '^%* %* %* LNI %* %* %*',
+   "^Style `ntheorem', Version %S+ <" .. datepat .. ">",
+   "^`XCharter' v%S+, " .. datepat .. " Text macros for XCharter, "
+                           .. "an extension of Charter %(msharpe%)",
+   "^Document Style algorithmicx %S+ %- a greatly improved `algorithmic' style",
+   "^Applying%: [" .. datepat .. "] Usage of raw or classic option list "
+                                       .. "on input line %S+%.",
+   "^Already applied%: [" .. datepat .. "] Usage of raw or classic "
+                                       .. "option list on input line %S+%.",
 }
 
 
@@ -3219,7 +3436,7 @@ beginningOfLineCriticalStringsHandler.patterns = {
 
   "^ ======================================= \n"
     .. " WARNING WARNING WARNING \n"
-    .. " %-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%-%- \n"
+    .. " " .. string.rep('%-', 39) .. " \n"
     .. " The ligature suppression macros of the \n"
     .. " selnolig package %*require%* LuaLaTeX%. \n"
     .. " Because you're NOT running this package \n"
@@ -3373,10 +3590,25 @@ function genericLatexHandler:handleOtherLines()
       Lines:handledChars()
       nextHandler = self
   else
-      self.doit = self.handleFirstLine
+
       if self.linenum ~= "" then
           self.message.linenum = self.linenum
+
+          tmp = {
+                 " on input line " .. self.linenum .. "%.",
+                 " on line " .. self.linenum .. "$"
+                }
+          for _, pat in ipairs(tmp) do
+              local first = string.find(self.message.content, pat)
+              if first then
+                  self.message.terseContent = string.sub(self.message.content,
+                                                         1, first -1)
+                  break
+              end
+          end
       end
+
+      self.doit = self.handleFirstLine
       dispatch(self.message)
       self.message = nil
   end
@@ -3408,10 +3640,12 @@ function genericLatexHandler:extractLinenum()
   if self.linenum ~= "" then return end
 
   _, _, self.linenum = string.find(Lines.current, "on input line (%d+)%.")
+  if self.linenum == nil then self.linenum = "" end
   if self.linenum ~= "" then return end
 
   -- LaTeX3-style messages (with \msg_something)
   _, _, self.linenum = string.find(Lines.current, "on line (%d+)$")
+  if self.linenum == nil then self.linenum = "" end
 end
 
 function genericLatexHandler:parseSeverity(severity)
@@ -3735,6 +3969,13 @@ end
 
 openCloseHandlerPrototype = HandlerPrototype:new()
 
+function openCloseHandlerPrototype:init()
+    self.openPat = '%' .. self.openChar
+    self.closePat = '%' .. self.closeChar
+    self.openOrClosePat = '[' .. self.openPat .. self.closePat .. ']'
+    self.pattern = self.strictPattern
+end
+
 -- Just like :canDoit(), but does not anchor patterns to the
 -- beginning of the line (used by handleUnrecognizedMessage).
 -- Notice the similarity to stringsHandler:lookahead().
@@ -3748,9 +3989,11 @@ end
 
 openParensHandler = openCloseHandlerPrototype:new()
 
-openParensHandler.strictPattern = "^(%s*)%("
-openParensHandler.loosePattern = "%s*%("
-openParensHandler.pattern = openParensHandler.strictPattern
+openParensHandler.name = "openParensHandler"
+openParensHandler.openChar = '('
+openParensHandler.closeChar = ')'
+openParensHandler.loosePattern = "(%s*)%" .. openParensHandler.openChar
+openParensHandler.strictPattern = "^" .. openParensHandler.loosePattern
 
 function openParensHandler:canDoit(position)
   if position == nil then position = 0 end
@@ -3775,7 +4018,7 @@ function openParensHandler:canDoit(position)
   -- (because of the unwrapping) or we will handle them using the
   -- "DUMMY" entry in the stack as usual.
   if filename == nil and position > 0 then
-      if string.find(line, '%)') then return false, {} end
+      if string.find(line, self.closePat) then return false, {} end
   end
 
   return true, {first = first, filename = filename} -- might be nil
@@ -3786,6 +4029,7 @@ function openParensHandler:doit()
   if not myTurn then return false end
 
   local _, last, spaces = string.find(Lines.current, self.pattern)
+  if spaces == nil then spaces = "" end
   unrecognizedBuffer = unrecognizedBuffer .. spaces
 
   -- skip the spaces and the open parens character
@@ -3797,12 +4041,13 @@ function openParensHandler:doit()
       if last == nil then
           io.stderr:write("    texlogsieve: parsing error near input line "
                                .. Lines.linenum
-                               .. " (openParensHandler:doit)\n")
+                               .. " (" .. self.name .. ":doit)\n")
 
           PARSE_ERROR = true
       else
           Lines:handledChars(last)
       end
+      if openFiles:peek() == "DUMMY" then openFiles:pop() end
       openFiles:push(data.filename)
       mute = currentFileIsSilenced()
       local msg = openFileMessage:new()
@@ -3812,7 +4057,7 @@ function openParensHandler:doit()
       dispatch(msg)
   else
       openFiles:push("DUMMY")
-      unrecognizedBuffer = unrecognizedBuffer .. "("
+      unrecognizedBuffer = unrecognizedBuffer .. self.openChar
   end
 
   return true
@@ -3820,9 +4065,11 @@ end
 
 closeParensHandler = openCloseHandlerPrototype:new()
 
-closeParensHandler.strictPattern = "^(%s*)%)"
-closeParensHandler.loosePattern = "%s*%)"
-closeParensHandler.pattern = closeParensHandler.strictPattern
+closeParensHandler.name = "closeParensHandler"
+closeParensHandler.openChar = '('
+closeParensHandler.closeChar = ')'
+closeParensHandler.loosePattern = "(%s*)%" .. closeParensHandler.closeChar
+closeParensHandler.strictPattern = "^" .. closeParensHandler.loosePattern
 
 -- In lookahead, when we say "we can do it" we actually mean "well,
 -- we might be able to do it". This is not a problem: it simply
@@ -3908,9 +4155,9 @@ function closeParensHandler:canDoit(position)
     if line ~= nil then size = string.len(line) end
 
     while i <= size do
-        local j = string.find(line, '[%(%)]', i)
+        local j = string.find(line, self.openOrClosePat, i)
         if j ~= nil then
-            local open = string.find(line, '%(', i)
+            local open = string.find(line, self.openPat, i)
             if open then
                 unpaired = unpaired +1
             elseif unpaired > 0 then
@@ -3939,6 +4186,7 @@ function closeParensHandler:doit()
   if not myTurn then return false end
 
   local _, last, spaces = string.find(Lines.current, self.pattern)
+  if spaces == nil then spaces = "" end
   unrecognizedBuffer = unrecognizedBuffer .. spaces
 
   -- skip the spaces and the close parens character
@@ -3946,7 +4194,7 @@ function closeParensHandler:doit()
 
   local filename = openFiles:pop()
   if filename == nil or filename == "DUMMY" then
-      unrecognizedBuffer = unrecognizedBuffer .. ")"
+      unrecognizedBuffer = unrecognizedBuffer .. self.closeChar
   else
       flushUnrecognizedMessages()
       local msg = closeFileMessage:new()
@@ -3961,9 +4209,13 @@ end
 
 openSquareBracketHandler = openCloseHandlerPrototype:new()
 
-openSquareBracketHandler.strictPattern = "^(%s*)%["
-openSquareBracketHandler.loosePattern = "%s*%["
-openSquareBracketHandler.pattern = openSquareBracketHandler.strictPattern
+openSquareBracketHandler.name = "openSquareBracketHandler"
+openSquareBracketHandler.openChar = '['
+openSquareBracketHandler.closeChar = ']'
+openSquareBracketHandler.loosePattern = "(%s*)%"
+                                      .. openSquareBracketHandler.openChar
+openSquareBracketHandler.strictPattern = "^"
+                                       .. openSquareBracketHandler.loosePattern
 
 function openSquareBracketHandler:canDoit(position)
   if position == nil then position = 0 end
@@ -3979,7 +4231,7 @@ function openSquareBracketHandler:canDoit(position)
 
   -- See the comment "HACK ALERT" in openParensHandler:canDoit()
   if latexPage == nil and position > 0 then
-      if string.find(line, '%]') then return false, {} end
+      if string.find(line, self.closePat) then return false, {} end
   end
 
   return true, {first = first, latexPage = latexPage} -- may be nil
@@ -4001,12 +4253,13 @@ function openSquareBracketHandler:doit()
       if last == nil then
           io.stderr:write("    texlogsieve: parsing error near input line "
                                .. Lines.linenum
-                               .. " (openSquareBracketHandler:doit)\n")
+                               .. " (" .. self.name .. ":doit)\n")
 
           PARSE_ERROR = true
       else
           Lines:handledChars(last)
       end
+      if shipouts:peek() == "DUMMY" then shipouts:pop() end
       shipouts:push(data.latexPage)
       numShipouts = numShipouts +1
       table.insert(latexPages, numShipouts, data.latexPage)
@@ -4015,7 +4268,7 @@ function openSquareBracketHandler:doit()
       dispatch(msg)
   else
       shipouts:push("DUMMY")
-      unrecognizedBuffer = unrecognizedBuffer .. "["
+      unrecognizedBuffer = unrecognizedBuffer .. self.openChar
   end
 
   return true
@@ -4023,9 +4276,13 @@ end
 
 closeSquareBracketHandler = openCloseHandlerPrototype:new()
 
-closeSquareBracketHandler.strictPattern = "^(%s*)%]"
-closeSquareBracketHandler.loosePattern = "%s*%]"
-closeSquareBracketHandler.pattern = closeSquareBracketHandler.strictPattern
+closeSquareBracketHandler.name = "closeSquareBracketHandler"
+closeSquareBracketHandler.openChar = '['
+closeSquareBracketHandler.closeChar = ']'
+closeSquareBracketHandler.loosePattern = "(%s*)%"
+                                    .. closeSquareBracketHandler.closeChar
+closeSquareBracketHandler.strictPattern = "^"
+                                    .. closeSquareBracketHandler.loosePattern
 
 -- Read the comment right before "closeParensHandler:lookahead()"
 function closeSquareBracketHandler:lookahead()
@@ -4060,9 +4317,9 @@ function closeSquareBracketHandler:canDoit(position)
     if line ~= nil then size = string.len(line) end
 
     while i <= size do
-        local j = string.find(line, '[%[%]]', i)
+        local j = string.find(line, self.openOrClosePat, i)
         if j ~= nil then
-            local open = string.find(line, '%[', i)
+            local open = string.find(line, self.openPat, i)
             if open then
                 unpaired = unpaired +1
             elseif unpaired > 0 then
@@ -4098,7 +4355,7 @@ function closeSquareBracketHandler:doit()
 
   local latexPage = shipouts:pop()
   if latexPage == nil or latexPage == "DUMMY" then
-      unrecognizedBuffer = unrecognizedBuffer .. "]"
+      unrecognizedBuffer = unrecognizedBuffer .. self.closeChar
   else
       flushUnrecognizedMessages()
       local msg = endShipoutMessage:new()
@@ -4107,86 +4364,118 @@ function closeSquareBracketHandler:doit()
   end
 end
 
--- During a shipout, TeX sometimes puts some filenames inside a pair of
--- "{}" or "<>" characters. Since there are no other messages inside these
--- opening and closing characters, this handler may be simple: find the
--- opening character and unwrap lines until finding the closing character.
--- We even check for "{<" and "}>" at the same time, without verifying if
--- they are actually paired, because they really should be.
+-- During a shipout, TeX sometimes puts some filenames
+-- inside a pair of "{}" or "<>" characters.
 shipoutFilesHandler = HandlerPrototype:new()
-shipoutFilesHandler.strictPattern = "^(%s*)[%{%<]"
-shipoutFilesHandler.loosePattern = "%s*[%{%<]"
-shipoutFilesHandler.pattern = shipoutFilesHandler.strictPattern
-shipoutFilesHandler.closingPattern = "[%}%>]"
+shipoutFilesHandler.strictPatterns = {
+    "^(%s*)(%b<>)",
+    "^(%s*)(%b{})",
+}
+shipoutFilesHandler.loosePatterns = {
+    "(%s*)(%b<>)",
+    "(%s*)(%b{})",
+}
+shipoutFilesHandler.patterns = shipoutFilesHandler.strictPatterns
 
--- Read the comment right before "closeParensHandler:lookahead()"
+-- Read the comment right before "closeParensHandler:lookahead()".
+-- That does not work here for two reasons:
 --
--- This handler only processes stuff if there is a pending shipout in the
--- shipouts stack. However, we cannot check for this in lookahead() because
--- the shipout may not have been processed yet. As a result, lookahead()
--- may answer "yes" when in reality the handler won't do anything. This has
--- a nasty consequence: if there is a { or < character at the beginning
--- of a line, doit() may not handle it, but lookahead() may answer "yes",
--- causing an endless loop. We solve this by answering "yes" ONLY if the
--- open character is NOT at the beginning of the line.
+-- 1. We may mess up messages that present content from the document,
+--    which may include "{}" or "<>" characters. An example is the
+--    "pdfTeX warning (ext4):..." message.
+--
+-- 2. This handler should only process stuff if there is a pending shipout
+--    in the shipouts stack. However, we cannot check for this in lookahead()
+--    because the shipout may not have been processed yet. As a result,
+--    lookahead() might answer "yes" when in reality the handler won't do
+--    anything. This would have a nasty consequence: if there is a "{" or
+--    "<" character outside any shipouts at the beginning of a line, doit()
+--    would not handle it, but lookahead() would answer "yes", causing an
+--    endless loop.
+--
+-- The solution is to have lookahead() answer "yes" ONLY if there really
+-- is a filename within the "{}" or "<>" pair. We might also consider only
+-- answering "yes" if the "{" or "<" character is *not* at the beginning
+-- of a line, but that is probably overkill.
+
 function shipoutFilesHandler:lookahead()
-  local line = Lines:get(0)
-  if line == nil then return false, {} end
-
-  local first = string.find(line, self.loosePattern)
-  if first == nil then return false, {} end
-
-  local strictFirst = string.find(line, self.pattern)
-  if first == strictFirst then return false, {} end
-
-  return true, {first = first}
+  shipoutFilesHandler.patterns = shipoutFilesHandler.loosePatterns
+  local ok, data = self:realCanDoit()
+  shipoutFilesHandler.patterns = shipoutFilesHandler.strictPatterns
+  return ok, data
 end
 
 function shipoutFilesHandler:canDoit(position)
   if position == nil then position = 0 end
+  if position == 0 and shipouts:size() == 0 then return false, {} end
+  return self:realCanDoit(position)
+end
+
+function shipoutFilesHandler:realCanDoit(position)
+  if position == nil then position = 0 end
   local line = Lines:get(position)
   if line == nil then return false, {} end
-  if position == 0 and shipouts:size() == 0 then return false, {} end
 
-  local first, last = string.find(line, self.pattern)
+  local first, match
+  for _, pat in ipairs(self.patterns) do
+      first, _, _, match = string.find(line, pat)
+      if first then break end
+  end
+
+  -- let's try unwrapping, but we need to be careful: if we match
+  -- on subsequent lines by themselves, then the match is not the
+  -- result of unwrapping, so we should return false.
+  if first == nil then
+      local offset = 1
+      local subsequentLines = ""
+      while offset < 4 do -- unwrapping the 3 subsequent lines is enough
+          local nextLine = Lines:get(position + offset)
+          if not nextLine then return false, {} end
+          subsequentLines = subsequentLines .. nextLine
+          local nextMatch
+          for _, pat in ipairs(self.patterns) do
+              first, _, _, nextMatch = string.find(subsequentLines, pat)
+              if first then break end
+          end
+          local allLines = line .. subsequentLines
+          for _, pat in ipairs(self.patterns) do
+              first, _, _, match = string.find(allLines, pat)
+              if first then break end
+          end
+          if first then
+              if match == nextMatch then
+                  return false, {}
+              else
+                  break
+              end
+          end
+          offset = offset +1
+      end
+  end
+
   if first == nil then return false, {} end
-
-  return true, {first = first}
+  if checkIfFileExists(string.sub(match, 2, -2)) then
+      return true, {first = first, name = match}
+  end
+  return false, {}
 end
 
 function shipoutFilesHandler:doit()
   local myTurn, data = self:canDoit()
   if not myTurn then return false end
 
-  -- Look for the matching close character. It really
-  -- should be there and there should not be any nesting,
-  -- so no need to be overly cautious.
-  local last
-  for i = 0, 4 do -- 4 lines ahead is plenty!
-      line = Lines:get(i)
-      if line == nil then break end
-      _, last = string.find(line, self.closingPattern)
-      if last ~= nil then break end
+  local _, last, spaces = string.find(Lines.current, "(^%s+)")
+  if last then
+      unrecognizedBuffer = unrecognizedBuffer .. spaces
+      Lines:handledChars(last)
+      flushUnrecognizedMessages()
   end
-  if last == nil then return false end -- should never happen
 
-  local _, last, spaces = string.find(Lines.current, self.pattern)
-  unrecognizedBuffer = unrecognizedBuffer .. spaces
-
-  -- skip the spaces and the opening character
-  Lines:handledChars(last)
-  flushUnrecognizedMessages()
-
-  _, last = string.find(Lines.current, self.closingPattern)
-  while last == nil do
-      Lines:unwrapOneLine()
-      _, last = string.find(Lines.current, self.closingPattern)
-  end
+  last, _ = unwrapUntilStringMatches(data.name) -- this should never fail
 
   local msg = shipoutFilesMessage:new()
-  msg.content = "Loading file at shipout: "
-  -- "-1" so that we do not include the closing character
-  msg.content = msg.content .. string.sub(Lines.current, 1, last -1)
+  msg.content = "Loading file during shipout: "
+  msg.content = msg.content .. string.sub(data.name, 2, -2)
   Lines:handledChars(last)
   dispatch(msg)
 
@@ -4469,6 +4758,11 @@ Message.rerunMessages = {
   },
   {
     WARNING,
+    'LaTeX',
+    'Temporary extra page added at the end%. Rerun to get it removed%.'
+  },
+  {
+    WARNING,
     'longtable',
     'Table %S+s have changed%. Rerun LaTeX%.'
   },
@@ -4486,6 +4780,11 @@ Message.rerunMessages = {
     WARNING,
     'biblatex',
     'Please rerun LaTeX%.'
+  },
+  {
+    WARNING,
+    'biblatex',
+    'Please %(re%)run Biber on the file:'
   },
   {
     WARNING,
@@ -4526,16 +4825,6 @@ Message.rerunMessages = {
     WARNING,
     'biblatex',
     'Page references have changed%.\nRerun to get references right%.',
-  },
-  {
-    WARNING,
-    'biblatex',
-    'Please rerun LaTeX%. Page breaks have changed%.',
-  },
-  {
-    WARNING,
-    'biblatex',
-    'Please rerun LaTeX%.',
   },
   {
     WARNING,
@@ -5073,6 +5362,8 @@ function openFileMessage:realToString()
   return Message.realToString(self)
 end
 
+openFileMessage.alwaysEnds = true
+
 -- We never want to suppress these repetitions
 function openFileMessage:toSummary()
 end
@@ -5084,6 +5375,8 @@ function closeFileMessage:realToString()
 
   return Message.realToString(self)
 end
+
+closeFileMessage.alwaysEnds = true
 
 -- We never want to suppress these repetitions
 function closeFileMessage:toSummary()
@@ -5200,6 +5493,11 @@ function SummaryPrototype:add(msg)
   local formatted = msg:toString(self.bypassMostFilters)
   if trim(formatted) == "" then return end
 
+  -- Now that we know whether the message is actually included in
+  -- the output, let's check whether we should use terseContent to
+  -- identify duplicates
+  if msg.terseContent ~= nil then formatted = msg.terseContent end
+
   -- group messages by message content
   if self.messages[formatted] == nil then
       self.messages[formatted] = {}
@@ -5211,6 +5509,12 @@ end
 function SummaryPrototype:alreadySeen(msg)
   local formatted = msg:toString()
   if trim(formatted) == "" then return false end
+
+  -- Now that we know that the message should actually be included in
+  -- the output, let's check whether we should use terseContent to
+  -- identify duplicates
+  if msg.terseContent ~= nil then formatted = msg.terseContent end
+
   return self.messages[formatted] ~= nil
 end
 
@@ -5356,7 +5660,7 @@ function repetitionsSummary:processSingleMessageList(messages)
   if #messages > 1 then
       local pages, files = self:pageAndFileList(messages)
 
-      local where
+      local where = ""
       if pages ~= "" and files ~= "" then
           where = 'in ' .. pages .. ' (' .. files .. ') - '
       elseif pages == "" and files ~= "" then
@@ -5570,8 +5874,8 @@ function linesToTable(s)
   local i = 1
   local lines = {}
   while i <= size do
-      -- check \r in case the user added to this file a pattern
-      -- with an embedded dos-style "CR LF" sequence.
+      -- check for \r in case the user wrongfully added to this file
+      -- a pattern with an embedded dos-style "CR LF" sequence.
       local first, last, line = string.find(s, '(.-)[\r]?\n', i)
 
       if first == nil then
@@ -5602,7 +5906,7 @@ function pairsSortedByKeys (t, f)
 
 function listToCommaSeparatedString(list, singular, plural, sep)
   sep = sep or ','
-  if #list == 0 then return end
+  if #list == 0 then return "" end
 
   local tmp
   if #list == 1 then
@@ -6425,8 +6729,8 @@ function guessUnquotedFilename(line, position)
       local longest = string.len(line)
       local notWrapped = false
 
-      -- if there is a ")", "(", "[", or "]" char, stop before that
-      local first = string.find(line, "[%)%(%[%]]")
+      -- if the line contains one of these chars, stop before it
+      local first = string.find(line, "[%(%)%[%]%{%}%<%>]")
       if first ~= nil then
           notWrapped = true -- this line is obviously not wrapped
           longest = first -1
@@ -6478,45 +6782,50 @@ function readFls(logfilename)
 
   local flsfilename = string.gsub(logfilename, '%.log$', '.fls')
 
+  -- It is ok for this to fail, so no "assert"
+  local flsfile = io.open(flsfilename, 'r')
+  if flsfile == nil then return end
+
   -- Let's be reasonably sure that we are not dealing
   -- with a stale .fls file from a previous run
   local logdate = lfs.attributes(logfilename, 'modification')
   local flsdate = lfs.attributes(flsfilename, 'modification') or 0
   local timediff = math.abs(logdate - flsdate) -- seconds
+  if timediff > 5 then return end
 
-  -- It is ok for this to fail, so no "assert"
-  local flsfile = io.open(flsfilename, 'r')
+  -- We are good to go!
+  USE_FLS_FILE = true
 
-  if flsfile ~= nil and timediff <= 5 then
-      USE_FLS_FILE = true
+  filelist = {}
+  while true do
+      local line = flsfile:read("*line")
 
-      filelist = {}
-      while true do
-          local line = flsfile:read("*line")
-          if line == nil then
-              io.close(flsfile)
-              return
-          end
+      if line == nil then io.close(flsfile) return end
 
-          local _, last = string.find(line, '^[IO][NU]T?PUT ')
-          if last ~= nil then line = string.sub(line, last +1) end
+      -- If we are running in a unix-like OS but the files we are
+      -- processing were generated in Windows, lua may leave a \r
+      -- character at the end of the line; if this happens, remove it
+      local _, last = string.find(line, '\r$')
+      if last ~= nil then line = string.sub(line, 1, last -1) end
 
-          -- I don't think this ever happens
-          if string.find(line, '^".*"$') then line = string.sub(line, 2, -2) end
+      _, last = string.find(line, '^[IO][NU]T?PUT ')
+      if last ~= nil then line = string.sub(line, last +1) end
 
-          -- No idea what is this, but it happens with the MiKTeX version
-          -- of luatex for Windows. It apparently only appears with font
-          -- files, which are irrelevant here, but let's be safe
-          if string.find(line, '^\\\\%?\\') then line = string.sub(line, 5) end
+      -- I don't think this ever happens
+      if string.find(line, '^".*"$') then line = string.sub(line, 2, -2) end
 
-          line = string.gsub(line, '\\', '/')
+      -- No idea what is this, but it happens with the MiKTeX version
+      -- of luatex for Windows. It apparently only appears with font
+      -- files, which are irrelevant here, but let's be safe
+      if string.find(line, '^\\\\%?\\') then line = string.sub(line, 5) end
 
-          _, last = string.find(line, '^%./')
-          if last ~= nil then line = string.sub(line, last +1) end
+      line = string.gsub(line, '\\', '/')
 
-          -- Save as a Set to eliminate duplicates
-          if not string.find(line, '^PWD') then filelist[line] = true end
-      end
+      _, last = string.find(line, '^%./')
+      if last ~= nil then line = string.sub(line, last +1) end
+
+      -- Save as a Set to eliminate duplicates
+      if not string.find(line, '^PWD') then filelist[line] = true end
   end
 end
 
