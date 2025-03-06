@@ -2,7 +2,7 @@ This file records noteworthy changes.  (Public domain.)
 See also */NEWS, */ChangeLog, etc.
 
 
-2025 (for TeX Live 2025)
+2025 (for TeX Live 2025, 7 March 2025)
 * Most engines: new primitive parameter \ignoreprimitiveerror: if set to 1,
   the error "Infinite glue shrinkage found in box being split"
   becomes a warning (thus program exit status remains 0). Other values

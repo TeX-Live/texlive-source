@@ -1,3 +1,7 @@
+2025-03-07  Karl Berry  <karl@tug.org>
+
+	* TL'25 release.
+
 2025-01-25  Karl Berry  <karl@freefriends.org>
 
 	* version.ac: remove /dev, for TL25.

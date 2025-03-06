@@ -1,5 +1,7 @@
 ==============================================================
-XeTeX 0.999997
+XeTeX 0.999997 (7 March 2025)
+
+Cross-engine changes:
 
 * new primitive \ignoreprimitiveerror, enabled with -etex: if set
   to 1, the error "Infinite glue shrinkage" becomes a warning

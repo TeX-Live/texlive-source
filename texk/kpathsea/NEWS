@@ -1,7 +1,7 @@
 $Id$
 This file records noteworthy changes.  (Public domain.)
 
-6.4.1 (for TeX Live 2025)
+6.4.1 (for TeX Live 2025, 7 March 2025)
 * kpsewhich outputs a blank line when a given file cannot be found,
   if more than one file to search for is specified.  
 

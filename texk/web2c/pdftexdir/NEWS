@@ -1,4 +1,4 @@
-pdfTeX 3.141592653-2.6-1.40.27 (TeX Live 2025)
+pdfTeX 3.141592653-2.6-1.40.27 (TeX Live 2025) (7 March 2025)
 - changes:
   - new primitive \pdfptexuseunderscore: if positive or
     if \pdfmajorversion >= 2, PTEX.Fullbanner and other dictionary

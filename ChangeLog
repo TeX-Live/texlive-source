@@ -1,3 +1,7 @@
+2025-03-07  Karl Berry  <karl@tug.org>
+
+	* TL'25 release.
+
 2025-01-12  Karl Berry  <karl@tug.org>
 
 	* Build: also support --debug-more for -g -Og -ggdb3,

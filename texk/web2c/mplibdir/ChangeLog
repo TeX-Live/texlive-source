@@ -1,3 +1,7 @@
+2025-03-07  Karl Berry  <karl@tug.org>
+
+	* TL'25 release.
+
 2024-11-12  Ulrich Mueller  <ulm@gentoo.org>
 
 	* am/libmplib.am (libmplibextramath_a_OBJECTS,

@@ -1,3 +1,7 @@
+2025-03-07  Karl Berry  <karl@tug.org>
+
+	* TL'25 release.
+
 2024-10-13  <user202729@protonmail.com>
 
 	* synctex_record_node_kern: pass "kern" instead of "glue"

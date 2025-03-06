@@ -1,3 +1,7 @@
+2025-03-07  Karl Berry  <karl@tug.org>
+
+	* TL'25 release.
+
 2025-02-28  Akira Kakuto  <kakuto@jcom.zaq.ne.jp>
 
 	* texmfmp.c: Remove problematic lines for windows (windows only)

@@ -1,7 +1,7 @@
 $Id$
 This file records noteworthy changes.  (Public domain.)
 
-dvips 2025.1 (TeX Live 2025):
+dvips 2025.1 (TeX Live 2025, 7 March 2025):
   Support upTeX new encoding for combining characters via virtual fonts.
 
 dvips 2024.1 (TeX Live 2024):
