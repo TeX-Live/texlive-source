@@ -1,6 +1,8 @@
 ==============================================================
 XeTeX 0.999997 (7 March 2025)
 
+* Unicode characters beyond BMP in filenames also supported with synctex.
+
 Cross-engine changes:
 
 * new primitive \ignoreprimitiveerror, enabled with -etex: if set

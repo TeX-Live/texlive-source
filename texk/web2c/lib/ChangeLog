@@ -2,6 +2,11 @@
 
 	* TL'25 release.
 
+2025-03-07  Akira Kakuto  <kakuto@jcom.zaq.ne.jp>
+
+	* texmfmp.c (gettexstring) [XETEX]: correct non-BMP characters in
+	filenames with synctex.
+
 2025-02-28  Akira Kakuto  <kakuto@jcom.zaq.ne.jp>
 
 	* texmfmp.c: Remove problematic lines for windows (windows only)
