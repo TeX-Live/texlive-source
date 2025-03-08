@@ -1,3 +1,8 @@
+2025-03-09  Akira Kakuto  <kakuto@jcom.zaq.ne.jp>
+
+	* synctex.c: improve printing of a synctex file name
+	(windows only).
+
 2025-03-07  Karl Berry  <karl@tug.org>
 
 	* TL'25 release.

@@ -968,10 +968,11 @@ void synctexterminate(boolean log_opened)
                         if (SYNCTEX_interaction>0) {
 #ifdef W32UPTEXSYNCTEX
                         {
-                        char *stmp = chgto_oem(tmp);
+                        int savecp = GetConsoleOutputCP();
+                        SetConsoleOutputCP(file_system_codepage);
                         printf((synctex_ctxt.flags.quoted ? "\nSyncTeX written on \"%s\"\n" : "\nSyncTeX written on %s.\n"),
-                               stmp);
-                        free(stmp);
+                               tmp);
+                        SetConsoleOutputCP(savecp);
                         }
 #else
 #ifndef SYNCTEX_PRE_NL
