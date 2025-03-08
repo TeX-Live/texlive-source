@@ -28759,11 +28759,11 @@ msg_compiling="$msg_compiling
 test "x$srcdir" = x. || msg_compiling="$msg_compiling
       from sources in $kpse_src"
 { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result:
-** Configuration summary for $PACKAGE_STRING (2025$with_banner_add):
+** Configuration summary for $PACKAGE_STRING (2026/dev$with_banner_add):
 
    $msg_compiling" >&5
 printf "%s\n" "
-** Configuration summary for $PACKAGE_STRING (2025$with_banner_add):
+** Configuration summary for $PACKAGE_STRING (2026/dev$with_banner_add):
 
    $msg_compiling" >&6; }
 case $kpse_src$kpse_bld in
