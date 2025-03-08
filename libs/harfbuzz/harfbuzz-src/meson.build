@@ -1,6 +1,6 @@
 project('harfbuzz', 'c', 'cpp',
   meson_version: '>= 0.55.0',
-  version: '10.2.0',
+  version: '10.4.0',
   default_options: [
     'cpp_eh=none',          # Just to support msvc, we are passing -fno-exceptions also anyway
     # 'cpp_rtti=false',     # Do NOT enable, wraps inherit it and ICU needs RTTI
@@ -321,7 +321,7 @@ if host_machine.system() == 'windows' and not get_option('gdi').disabled()
   endif
 
   gdi_deps_found = true
-  foreach usplib : ['usp10', 'gdi32', 'rpcrt4']
+  foreach usplib : ['usp10', 'gdi32', 'rpcrt4', 'user32']
     dep = cpp.find_library(usplib, required: get_option('gdi'))
     gdi_deps_found = gdi_deps_found and dep.found()
     gdi_uniscribe_deps += dep
@@ -463,6 +463,13 @@ configure_file(output: 'config.h', configuration: conf)
 
 alias_target('lib', libharfbuzz)
 alias_target('libs', libharfbuzz, libharfbuzz_subset)
+
+if meson.version().version_compare('>=0.57.0')
+  # Re glib, see https://github.com/harfbuzz/harfbuzz/issues/4153#issuecomment-2646347531
+  add_test_setup('default',
+                 exclude_suites: ['google-benchmark'],
+                 is_default: glib_dep.type_name() != 'internal' and not meson.is_subproject())
+endif
 
 build_summary = {
   'Directories':
