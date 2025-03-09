@@ -122,7 +122,8 @@ class ChangeReader:
                 while True:
                     self._pos += 1
                     if self._pos >= len(self._lines):
-                        eprint(f"! Change file ended before @y. (l. {self._pos+1} of change file)")
+                        eprint(f"! Change file ended before @y. " +
+                            f"(l. {self._pos+1} of change file)")
                         sys.exit(1)
                     line = self._lines[self._pos]
                     if line.startswith("@y"):
@@ -131,7 +132,8 @@ class ChangeReader:
                         ]
                         return True
                     elif line.startswith("@x") or line.startswith("@z"):
-                        eprint(f"! Where is the matching @y?. (l. {self._pos+1} of change file)")
+                        eprint(f"! Where is the matching @y?. " +
+                            f"(l. {self._pos+1} of change file)")
                         eprint(line)
                         sys.exit(1)
             self._pos += 1
@@ -146,7 +148,8 @@ class ChangeReader:
             try:
                 (part, section, line_number), tex_line = web_reader.next_line()
             except:
-                eprint(f"! Change file entry did not match. (l. {self._chunk_start+2} of change file)")
+                eprint(f"! Change file entry did not match. " +
+                    f"(l. {self._chunk_start+2} of change file)")
                 eprint(self._match_lines[0])
                 sys.exit(1)
             if tex_line == self._match_lines[0]:
@@ -156,7 +159,8 @@ class ChangeReader:
                     except:
                         tex_line = None
                     if tex_line is None or tex_line != self._match_lines[i]:
-                        eprint(f"! Change file entry did not match. (l. {self._chunk_start+2+i} of change file)")
+                        eprint(f"! Change file entry did not match. " +
+                            f"(l. {self._chunk_start+2+i} of change file)")
                         eprint(self._match_lines[i])
                         sys.exit(1)
 
