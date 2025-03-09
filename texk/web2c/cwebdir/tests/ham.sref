@@ -4,7 +4,6 @@
 \]"<stdio.h>" \\{fprintf} \zip 
 \]{GB\_\,GRAPH}20 \&{Graph} =\&{struct}
 \]{GB\_\,GRAPH}8 \|{I} \&{long}
-\]{GB\_\,GRAPH}20 \|{m} \&{long}
 \]{GB\_\,GRAPH}20 \|{n} \&{long}
 \]{GB\_\,GRAPH}9 \\{name} \&{char} ${}{*}{}$
 \]{GB\_\,GRAPH}10 \\{next} \&{Arc} ${}{*}{}$
@@ -17,7 +16,7 @@
 \]{GB\_\,GRAPH}9 \|{v} \&{util}
 \]{GB\_\,GRAPH}9 \&{Vertex} =\&{struct}
 \]{GB\_\,GRAPH}20 \\{vertices} \&{Vertex} ${}{*}{}$
-\donewithpage3
+\donewithpage2
 \[1 \|{a} \&{register} \&{Arc} ${}{*}{}$
 \]{GB\_\,GRAPH}8 \|{A} \&{Arc} ${}{*}{}$
 \[1 \\{aa} \&{register} \&{Arc} ${}{*}{}$
@@ -44,4 +43,4 @@
 \]{GB\_\,GRAPH}9 \|{x} \&{util}
 \[1 \|{y} \&{Vertex} ${}{*}{}$
 \[1 \|{z} \&{Vertex} ${}{*}{}$
-\donewithpage5
+\donewithpage4

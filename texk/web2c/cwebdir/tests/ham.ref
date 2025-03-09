@@ -1,4 +1,4 @@
-!3
+!2
 + \]{GB\_\,GRAPH}9 \|{u} \&{util}
 + \]{GB\_\,GRAPH}10 \\{tip} \&{Vertex} ${}{*}{}$
 + \]{GB\_\,GRAPH}10 \\{next} \&{Arc} ${}{*}{}$
@@ -12,13 +12,12 @@
 + \]{GB\_\,GRAPH}20 \&{Graph} =\&{struct}
 + \]{GB\_\,SAVE}4 \\{restore\_graph} \&{Graph} ${}{*}(\,){}$
 + \]{GB\_\,GRAPH}8 \|{I} \&{long}
-+ \]{GB\_\,GRAPH}20 \|{m} \&{long}
 + \]"<stdlib.h>" \\{exit} \zip 
 + \]"<stdio.h>" \\{stderr} \zip 
 + \]"<stdio.h>" \\{fprintf} \zip 
 + \]"<stdio.h>" \\{sscanf} \zip 
 + \]{GB\_\,GRAPH}9 \|{v} \&{util}
-!5
+!4
 + \[1 \|{x} \&{register} \&{Vertex} ${}{*}{}$
 + \[1 \|{a} \&{register} \&{Arc} ${}{*}{}$
 + \[1 \|{z} \&{Vertex} ${}{*}{}$

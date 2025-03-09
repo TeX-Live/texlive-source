@@ -12,7 +12,7 @@ in my paper ``Mini-indexes for literate programs,'' {\sl Software---Concepts
 and Tools\/ \bf15} (1994), 2--11.] The input graph should be in
 Stanford GraphBase format, and should be named on the command line
 as, for example, \.{foo.gb}. An optional second command-line parameter
-is a modulus \PB{\|m}, which causes every $m$th solution to be printed.
+is a modulus~$m$, which causes every $m$th solution to be printed.
 
 We use a utility field to record the vertex degrees.
 
@@ -74,7 +74,6 @@ ${}\\{printf}(\.{"\ \%ld"},\39\|v\MG\\{deg});{}$\2\6
 \]{GB\_\,GRAPH}20 \&{Graph} =\&{struct}
 \]{GB\_\,SAVE}4 \\{restore\_graph} \&{Graph} ${}{*}(\,){}$
 \]{GB\_\,GRAPH}8 \|{I} \&{long}
-\]{GB\_\,GRAPH}20 \|{m} \&{long}
 }\FI
 
 \shortpage
