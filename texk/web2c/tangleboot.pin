@@ -807,8 +807,8 @@ label 22,30,10;var p:namepointer;begin modulecount:=modulecount+1;
 while true do begin 22:while nextcontrol<=132 do begin nextcontrol:=
 skipahead;if nextcontrol=135 then begin loc:=loc-2;nextcontrol:=getnext;
 end;end;if nextcontrol<>133 then goto 30;nextcontrol:=getnext;
-if nextcontrol<>130 then begin begin writeln(stdout);
-write(stdout,'! Definition flushed, must start with ',
+if(nextcontrol<>130)or(buffer[idfirst]=34)then begin begin writeln(
+stdout);write(stdout,'! Definition flushed, must start with ',
 'identifier of length > 1');error;end;goto 22;end;nextcontrol:=getnext;
 if nextcontrol=61 then begin scannumeric(idlookup(1));goto 22;
 end else if nextcontrol=30 then begin definemacro(2);goto 22;

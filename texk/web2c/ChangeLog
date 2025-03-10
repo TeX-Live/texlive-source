@@ -1,7 +1,16 @@
 2025-03-10  Andreas Scherer  <https://ascherer.github.io>
 
 	* texk/web2c/tangle.ch,
+	* texk/web2c/tangleboot.pin: Reject strings as macro names.
+	Report and initial patch from Benjamin Gray
+	(https://tug.org/pipermail/tex-k/2025-March/004163.html).
+
+2025-03-10  Andreas Scherer  <https://ascherer.github.io>
+
+	* texk/web2c/tangle.ch,
 	* texk/web2c/tangleboot.pin: Change case for letters only.
+	Report and initial patch from Benjamin Gray
+	(https://tug.org/pipermail/tex-k/2025-March/004161.html).
 
 2025-02-01  Karl Berry  <karl@freefriends.org>
 

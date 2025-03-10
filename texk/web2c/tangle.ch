@@ -573,6 +573,12 @@ equiv[p]:=accumulator+@'10000000000; {name |p| now is defined to equal |accumula
     end
 @z
 
+@x [1.2] l.3 - Reject strings as macro names.
+  if next_control<>identifier then
+@y
+  if (next_control<>identifier) or (buffer[id_first]="""") then
+@z
+
 @x [16.173] l.3107 - Add parametric2 macros (macros that use [] to delimit arguments).
   else @<If the next text is `\.{(\#)==}', call |define_macro|
     and |goto continue|@>;
