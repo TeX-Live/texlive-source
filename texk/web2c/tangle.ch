@@ -295,7 +295,8 @@ the replacement text.
     begin if buffer[i]>="a" then chopped_id[s]:=buffer[i]-@'40
 @y
   begin if (buffer[i]<>"_") or (allow_underlines and not strict_mode) then
-    begin if (strict_mode or force_uppercase) and (buffer[i]>="a") then
+    begin if (strict_mode or force_uppercase)
+           and (buffer[i]>="a") and (buffer[i]<="z") then
       chopped_id[s]:=buffer[i]-@'40
     else if (not strict_mode and force_lowercase)
            and (buffer[i]>="A") and (buffer[i]<="Z") then
@@ -313,7 +314,9 @@ else @<Define \(and output a new string of the pool@>;
     begin if c>="a" then c:=c-@'40; {merge lowercase with uppercase}
 @y
   if c<>"_" or (allow_underlines and not strict_mode) then
-    begin if (strict_mode or force_uppercase) and (c>="a") then c:=c-@'40
+    begin if (strict_mode or force_uppercase)
+           and (c>="a") and (c<="z") then
+      c:=c-@'40
     else if (not strict_mode and force_lowercase)
            and (c>="A") and (c<="Z") then
       c:=c+@'40;
@@ -482,9 +485,11 @@ with underlines removed. Extremely long identifiers must be chopped.
 identifier: begin k:=0; j:=byte_start[cur_val]; w:=cur_val mod ww;
   while (k<max_id_length)and(j<byte_start[cur_val+ww]) do
     begin incr(k); out_contrib[k]:=byte_mem[w,j]; incr(j);
-    if force_uppercase and (out_contrib[k]>="a") then
+    if force_uppercase
+          and (out_contrib[k]>="a") and (out_contrib[k]<="z") then
       out_contrib[k]:=out_contrib[k]-@'40
-    else if force_lowercase and (out_contrib[k]<="Z") then
+    else if force_lowercase
+          and (out_contrib[k]>="A") and (out_contrib[k]<="Z") then
       out_contrib[k]:=out_contrib[k]+@'40
     else if not allow_underlines and (out_contrib[k]="_") then decr(k);
     end;

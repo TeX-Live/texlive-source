@@ -1,3 +1,8 @@
+2025-03-10  Andreas Scherer  <https://ascherer.github.io>
+
+	* texk/web2c/tangle.ch,
+	* texk/web2c/tangleboot.pin: Change case for letters only.
+
 2025-02-01  Karl Berry  <karl@freefriends.org>
 
 	* tex.ch (24.336): comment out this patch for interactive deletion

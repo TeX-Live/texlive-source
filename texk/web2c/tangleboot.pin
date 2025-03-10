@@ -197,11 +197,11 @@ if(p=nameptr)or(t<>0)then{57:}begin if((p<>nameptr)and(t<>0)and(ilk[p]=0
 idfirst;s:=0;h:=0;
 while(i<idloc)and(s<unambiglength)do begin if(buffer[i]<>95)or(
 allowunderlines and not strictmode)then begin if(strictmode or
-forceuppercase)and(buffer[i]>=97)then choppedid[s]:=buffer[i]-32 else if
-(not strictmode and forcelowercase)and(buffer[i]>=65)and(buffer[i]<=90)
-then choppedid[s]:=buffer[i]+32 else choppedid[s]:=buffer[i];
-h:=(h+h+choppedid[s])mod hashsize;s:=s+1;end;i:=i+1;end;choppedid[s]:=0;
-end{:58};
+forceuppercase)and(buffer[i]>=97)and(buffer[i]<=122)then choppedid[s]:=
+buffer[i]-32 else if(not strictmode and forcelowercase)and(buffer[i]>=65
+)and(buffer[i]<=90)then choppedid[s]:=buffer[i]+32 else choppedid[s]:=
+buffer[i];h:=(h+h+choppedid[s])mod hashsize;s:=s+1;end;i:=i+1;end;
+choppedid[s]:=0;end{:58};
 if p<>nameptr then{59:}begin if ilk[p]=0 then begin if t=1 then begin
 writeln(stdout);write(stdout,'! This identifier has already appeared');
 error;end;{60:}q:=chophash[h];
@@ -214,8 +214,8 @@ chophash[h];while q<>0 do begin{63:}begin k:=bytestart[q];s:=0;
 w:=q mod 3;
 while(k<bytestart[q+3])and(s<unambiglength)do begin c:=bytemem[w,k];
 if c<>95 or(allowunderlines and not strictmode)then begin if(strictmode
-or forceuppercase)and(c>=97)then c:=c-32 else if(not strictmode and
-forcelowercase)and(c>=65)and(c<=90)then c:=c+32;
+or forceuppercase)and(c>=97)and(c<=122)then c:=c-32 else if(not
+strictmode and forcelowercase)and(c>=65)and(c<=90)then c:=c+32;
 if choppedid[s]<>c then goto 32;s:=s+1;end;k:=k+1;end;
 if(k=bytestart[q+3])and(choppedid[s]<>0)then goto 32;
 begin writeln(stdout);write(stdout,'! Identifier conflict with ');end;
@@ -469,11 +469,11 @@ outcontrib[1]:=curchar;sendout(2,1);end;
 130:begin k:=0;j:=bytestart[curval];w:=curval mod 3;
 while(k<maxidlength)and(j<bytestart[curval+3])do begin k:=k+1;
 outcontrib[k]:=bytemem[w,j];j:=j+1;
-if forceuppercase and(outcontrib[k]>=97)then outcontrib[k]:=outcontrib[k
-]-32 else if forcelowercase and(outcontrib[k]<=90)then outcontrib[k]:=
-outcontrib[k]+32 else if not allowunderlines and(outcontrib[k]=95)then k
-:=k-1;end;sendout(2,k);end;
-{:116}{119:}48,49,50,51,52,53,54,55,56,57:begin n:=0;
+if forceuppercase and(outcontrib[k]>=97)and(outcontrib[k]<=122)then
+outcontrib[k]:=outcontrib[k]-32 else if forcelowercase and(outcontrib[k]
+>=65)and(outcontrib[k]<=90)then outcontrib[k]:=outcontrib[k]+32 else if
+not allowunderlines and(outcontrib[k]=95)then k:=k-1;end;sendout(2,k);
+end;{:116}{119:}48,49,50,51,52,53,54,55,56,57:begin n:=0;
 repeat curchar:=curchar-48;if n>=214748364 then begin writeln(stdout);
 write(stdout,'! Constant too big');error;end else n:=10*n+curchar;
 curchar:=getoutput;until(curchar>57)or(curchar<48);sendval(n);k:=0;
