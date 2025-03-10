@@ -1,27 +1,8 @@
 #!/usr/bin/perl
-# (The MIT License)
-#
-# Copyright (c) 2022-2025 Yegor Bugayenko
-#
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the 'Software'), to deal
-# in the Software without restriction, including without limitation the rights
-# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-# copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
-#
-# The above copyright notice and this permission notice shall be included in all
-# copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-# SOFTWARE.
+# SPDX-FileCopyrightText: Copyright (c) 2022-2025 Yegor Bugayenko
+# SPDX-License-Identifier: MIT
 
-# 2025/01/22 0.0.25
+# 2025/03/10 0.0.30
 package bibcop;
 
 use warnings;
@@ -169,7 +150,7 @@ sub check_author {
         if ($name =~ /^[A-Z][^.]+$/) {
           next
         }
-        if ($name =~ /^(van|de|der|dos)$/) {
+        if ($name =~ /^(van|de|der|dos|von)$/) {
           next
         }
         if ($name =~ /^[A-Z]$/) {
@@ -268,7 +249,7 @@ sub check_org_in_booktitle {
       }
     }
     if ($title =~ /^.*(ACM|IEEE).*$/) {
-      return "Don't mention the"
+      return "Don't mention the organization in the booktitle, use 'publisher' tag instead"
     }
   }
 }
@@ -314,8 +295,8 @@ sub check_typography {
         next;
       }
       my $good = 0;
-      foreach my $s (@good_tails) {
-        if ($value =~ /^.*\Q$s\E$/) {
+      foreach my $gt (@good_tails) {
+        if ($value =~ /^.*\Q$gt\E$/) {
           $good = 1;
         }
       }
@@ -482,7 +463,7 @@ sub check_month {
   my (%entry) = @_;
   if (exists $entry{'month'}) {
     my $month = $entry{'month'};
-    if (not $month =~ /^[1-9]|10|11|12|jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec$/) {
+    if (not $month =~ /^[1-9]|10|11|12$/) {
       return "The format of the 'month' is wrong"
     }
   }
@@ -1109,7 +1090,7 @@ if (@ARGV+0 eq 0 or exists $args{'--help'} or exists $args{'-?'}) {
     "      --latex     Report errors in LaTeX format using the \\PackageWarningNoLine command\n\n" .
     "If any issues, please, report to GitHub: https://github.com/yegor256/bibcop");
 } elsif (exists $args{'--version'} or exists $args{'-v'}) {
-  info('0.0.25 2025/01/22');
+  info('0.0.30 2025/03/10');
 } else {
   my ($file) = grep { not($_ =~ /^-.*$/) } @ARGV;
   if (not $file) {
@@ -1130,6 +1111,8 @@ if (@ARGV+0 eq 0 or exists $args{'--help'} or exists $args{'-?'}) {
       $fixed = $fixed . entry_fix(%entry);
       $seen{$name} = 1;
     }
+    my ($head) = $bib =~ /^((?:%.*\n)+\n*)/;
+    $fixed = $head . $fixed;
     if (exists $args{'-i'} or exists $args{'--in-place'}) {
       open(my $out, '>', $file) or error('Cannot open file for writing: ' . $file);
       print $out $fixed;
