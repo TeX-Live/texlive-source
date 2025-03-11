@@ -497,15 +497,10 @@ identifier: begin k:=0; j:=byte_start[cur_val]; w:=cur_val mod ww;
   end;
 @z
 
-@x [11.119] l.2199 - Stretch limits of constants to match what we set for expressions.
-  if n>=@'2000000000 then err_print('! Constant too big')
+@x [11.119] l.2185 - Calculate with decimal limit value INT_MAX/10.
+  if n>=@'1463146314 then err_print('! Constant too big')
 @y
-  if n>=@'10000000000 then err_print('! Constant too big')
-@z
-@x [11.119] l.2208
-  if n>=@"8000000 then err_print('! Constant too big')
-@y
-  if n>=@"40000000 then err_print('! Constant too big')
+  if n>=214748364 then err_print('! Constant too big')
 @z
 
 @x [14.157] l.2862 - Larger numerics.
@@ -524,6 +519,31 @@ equiv[p]:=accumulator+@'10000000000; {name |p| now is defined to equal |accumula
     add_in(equiv[q]-@'100000);
 @y
     add_in(equiv[q]-@'10000000000);
+@z
+
+@x [14.160] l.2915 - Avoid numeric overflow; see also section 119.
+repeat val:=10*val+next_control-"0"; next_control:=get_next;
+@y
+repeat if val>=214748364 then err_print('! Constant too big')
+@.Constant too big@>
+  else val:=10*val+next_control-"0";
+  next_control:=get_next;
+@z
+@x [14.161] l.2920 - Avoid numeric overflow; see also section 119.
+repeat val:=8*val+next_control-"0"; next_control:=get_next;
+@y
+repeat if val>=@'2000000000 then err_print('! Constant too big')
+@.Constant too big@>
+  else val:=8*val+next_control-"0";
+  next_control:=get_next;
+@z
+@x [14.162] l.2926 - Avoid numeric overflow; see also section 119.
+val:=16*val+next_control-"0"; next_control:=get_next;
+@y
+  if val>=@"8000000 then err_print('! Constant too big')
+@.Constant too big@>
+  else val:=16*val+next_control-"0";
+  next_control:=get_next;
 @z
 
 @x [15.165] l.2964 - Add parametric2 macros (macros that use [] to delimit arguments).
