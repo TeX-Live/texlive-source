@@ -10346,14 +10346,14 @@ if (number_positive(arc)) {
   } else {
     set_number_from_div (n1, arc, d1); /* |n1 = (arc / d1)| */
     floor_scaled(n1);
-  }  
+  }
   number_clone (n, n1);
   set_number_from_mul (n1, n1, d1); /* |n1 = (n1 * d1)| */
   number_substract (arc, n1); /* |arc = arc - n1| */
 
   number_clone (d1, inf_t);         /* reuse |d1| */
   number_clone (v1, n);             /* |v1 = n| */
-    
+
   set_number_from_int(v1, number_to_int(v1)+1); /* |v1 = n1+1| */
   set_number_from_div (d1, d1, v1); /* |d1 = EL_GORDO / v1| */
   if (number_greater (t_tot, d1)) {
@@ -19323,7 +19323,7 @@ static mp_node mp_scan_toks (MP mp, mp_command_code terminator,
 
 @ @c
 void mp_print_sym  (mp_sym sym) {
-  printf("{type = %d, v = {type = %d, data = {indep = {scale = %d, serial = %d}, n = %d, str = %p, sym = %p, node = %p, p = %p}}, text = %p}\n", 
+  printf("{type = %d, v = {type = %d, data = {indep = {scale = %d, serial = %d}, n = %d, str = %p, sym = %p, node = %p, p = %p}}, text = %p}\n",
     sym->type, sym->v.type, (int)sym->v.data.indep.scale, (int)sym->v.data.indep.serial,
     sym->v.data.n.type, sym->v.data.str, sym->v.data.sym, sym->v.data.node, sym->v.data.p, sym->text);
   if (is_number(sym->v.data.n)) {
@@ -28265,72 +28265,89 @@ static void mp_frac_mult (MP mp, mp_number n, mp_number d) {
   mp_end_diagnostic (mp, false);
 }
 
-
 @ The |hard_times| routine multiplies a nice color or pair by a dependency list.
 
 @<Declare binary action procedures@>=
-static void mp_hard_times (MP mp, mp_node p) {
-  mp_value_node q;      /* a copy of the dependent variable |p| */
-  mp_value_node pp;     /* for typecasting p */
-  mp_node r;    /* a component of the big node for the nice color or pair */
-  mp_number v;     /* the known value for |r| */
-  new_number (v);
-  if (mp_type (p) <= mp_pair_type) {
-    q = (mp_value_node) mp_stash_cur_exp (mp);
-    mp_unstash_cur_exp (mp, p);
-    p = (mp_node) q;
-  }                             /* now |cur_type=mp_pair_type| or |cur_type=mp_color_type| or |cur_type=mp_cmykcolor_type| */
-  pp = (mp_value_node) p;
-  if (mp->cur_exp.type == mp_pair_type) {
-    r = x_part (value_node (cur_exp_node ()));
-    number_clone(v, value_number (r));
-    mp_new_dep (mp, r, mp_type (pp),
-                mp_copy_dep_list (mp, (mp_value_node) dep_list (pp)));
-    mp_dep_mult (mp, (mp_value_node) r, v, true);
-    r = y_part (value_node (cur_exp_node ()));
-    number_clone(v, value_number (r));
-    mp_new_dep (mp, r, mp_type (pp),
-                mp_copy_dep_list (mp, (mp_value_node) dep_list (pp)));
-    mp_dep_mult (mp, (mp_value_node) r, v, true);
-  } else if (mp->cur_exp.type == mp_color_type) {
-    r = red_part (value_node (cur_exp_node ()));
-    number_clone(v, value_number (r));
-    mp_new_dep (mp, r, mp_type (pp),
-                mp_copy_dep_list (mp, (mp_value_node) dep_list (pp)));
-    mp_dep_mult (mp, (mp_value_node) r, v, true);
-    r = green_part (value_node (cur_exp_node ()));
-    number_clone(v, value_number (r));
-    mp_new_dep (mp, r, mp_type (pp),
-                mp_copy_dep_list (mp, (mp_value_node) dep_list (pp)));
-    mp_dep_mult (mp, (mp_value_node) r, v, true);
-    r = blue_part (value_node (cur_exp_node ()));
-    number_clone(v, value_number (r));
-    mp_new_dep (mp, r, mp_type (pp),
-                mp_copy_dep_list (mp, (mp_value_node) dep_list (pp)));
-    mp_dep_mult (mp, (mp_value_node) r, v, true);
-  } else if (mp->cur_exp.type == mp_cmykcolor_type) {
-    r = cyan_part (value_node (cur_exp_node ()));
-    number_clone(v, value_number (r));
-    mp_new_dep (mp, r, mp_type (pp),
-                mp_copy_dep_list (mp, (mp_value_node) dep_list (pp)));
-    mp_dep_mult (mp, (mp_value_node) r, v, true);
-    r = yellow_part (value_node (cur_exp_node ()));
-    number_clone(v, value_number (r));
-    mp_new_dep (mp, r, mp_type (pp),
-                mp_copy_dep_list (mp, (mp_value_node) dep_list (pp)));
-    mp_dep_mult (mp, (mp_value_node) r, v, true);
-    r = magenta_part (value_node (cur_exp_node ()));
-    number_clone(v, value_number (r));
-    mp_new_dep (mp, r, mp_type (pp),
-                mp_copy_dep_list (mp, (mp_value_node) dep_list (pp)));
-    mp_dep_mult (mp, (mp_value_node) r, v, true);
-    r = black_part (value_node (cur_exp_node ()));
-    number_clone(v, value_number (r));
-    mp_new_dep (mp, r, mp_type (pp),
-                mp_copy_dep_list (mp, (mp_value_node) dep_list (pp)));
-    mp_dep_mult (mp, (mp_value_node) r, v, true);
-  }
-  free_number (v);
+static void mp_hard_times(MP mp, mp_node p)
+{
+    if (p->type <= mp_pair_type) {
+        mp_value_node q = (mp_value_node) mp_stash_cur_exp(mp);
+        mp_unstash_cur_exp(mp, p);
+        p = (mp_node) q;
+    }
+    switch (mp->cur_exp.type) {
+        case mp_pair_type:
+            {
+                mp_node e = value_node(cur_exp_node());
+                mp_number x, y;
+                new_number(x);
+                new_number(y);
+                number_clone(x, value_number(x_part(e)));
+                number_clone(y, value_number(y_part(e)));
+                mp_new_dep(mp, y_part(e), p->type, mp_copy_dep_list(mp, (mp_value_node) dep_list((mp_value_node) p)));
+                mp_free_value_node(mp, x_part(e));
+                x_part(e) = p;
+                set_mp_link(prev_dep(p), x_part(e));
+                mp_dep_mult(mp, (mp_value_node) x_part(e), x, true);
+                mp_dep_mult(mp, (mp_value_node) y_part(e), y, true);
+                free_number(x);
+                free_number(y);
+            }
+            break;
+        case mp_color_type:
+            {
+                mp_node e = value_node(cur_exp_node());
+                mp_number r, g, b;
+                new_number(r);
+                new_number(g);
+                new_number(b);
+                number_clone(r, value_number(red_part(e)));
+                number_clone(g, value_number(green_part(e)));
+                number_clone(b, value_number(blue_part(e)));
+                mp_new_dep(mp, blue_part(e),  p->type, mp_copy_dep_list(mp, (mp_value_node) dep_list((mp_value_node) p)));
+                mp_new_dep(mp, green_part(e), p->type, mp_copy_dep_list(mp, (mp_value_node) dep_list((mp_value_node) p)));
+                mp_free_value_node(mp, red_part(e));
+                red_part(e) = p;
+                set_mp_link(prev_dep(p), red_part(e));
+                mp_dep_mult(mp, (mp_value_node) red_part(e),   r, true);
+                mp_dep_mult(mp, (mp_value_node) green_part(e), g, true);
+                mp_dep_mult(mp, (mp_value_node) blue_part(e),  b, true);
+                free_number(r);
+                free_number(g);
+                free_number(b);
+            }
+            break;
+        case mp_cmykcolor_type:
+            {
+                mp_node e = value_node(cur_exp_node());
+                mp_number c, m, y, k;
+                new_number(c);
+                new_number(m);
+                new_number(y);
+                new_number(k);
+                number_clone(c, value_number(cyan_part(e)));
+                number_clone(m, value_number(magenta_part(e)));
+                number_clone(y, value_number(yellow_part(e)));
+                number_clone(k, value_number(black_part(e)));
+                mp_new_dep(mp, black_part(e),   p->type, mp_copy_dep_list(mp, (mp_value_node) dep_list((mp_value_node) p)));
+                mp_new_dep(mp, yellow_part(e),  p->type, mp_copy_dep_list(mp, (mp_value_node) dep_list((mp_value_node) p)));
+                mp_new_dep(mp, magenta_part(e), p->type, mp_copy_dep_list(mp, (mp_value_node) dep_list((mp_value_node) p)));
+                mp_free_value_node(mp, cyan_part(e));
+                cyan_part(e) = p;
+                set_mp_link(prev_dep(p), cyan_part(e));
+                mp_dep_mult(mp, (mp_value_node) cyan_part(e),    c, true);
+                mp_dep_mult(mp, (mp_value_node) magenta_part(e), m, true);
+                mp_dep_mult(mp, (mp_value_node) yellow_part(e),  y, true);
+                mp_dep_mult(mp, (mp_value_node) black_part(e),   k, true);
+                free_number(c);
+                free_number(m);
+                free_number(y);
+                free_number(k);
+            }
+            break;
+        default:
+            break;
+    }
 }
 
 @ @<Declare binary action...@>=
