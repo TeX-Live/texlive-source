@@ -367,8 +367,8 @@ A handler must provide:
 4. For handlers that deal with messages that can appear in the middle
    of a line, a lookahead(position) method to indicate whether there is
    a message that the handler can/should process in the line indicated
-   by "position", even if there is something else in the line before
-   that message.
+   by "position" when there is something else in the line before that
+   message.
 
 Besides true/false, canDoit() also returns a table with extra data. In
 some cases, this table is empty; in others, the handler's doit() method
@@ -419,6 +419,9 @@ A simple handler:
       self.pattern = string.sub(self.pattern, 2) -- remove leading '^'
       local result, data = self:canDoit()
       self.pattern = tmp
+      -- Only return true if whatever matches
+      -- is not at the beginning of the line
+      if result and data.first == 1 then return false, {} end
       return result, data
   end
 
@@ -562,7 +565,7 @@ Underfull \hbox (badness 3417) in paragraph at lines 128--128
 If there is no offending text, the description may appear in the same
 line as the under/overfull box message (both are \message's). The
 offending text, if any, always starts at the beginning of a line and
-ends at the end of a line.
+ends at the end of a line (but may be wrapped).
 
 About the description: https://tex.stackexchange.com/a/367589
 
@@ -621,11 +624,6 @@ function main(arg)
 end
 
 function moreData()
-  -- if there is remaining data from the previous iteration,
-  -- we leave everything as-is for it to be processed now
-  local tmp = Lines.current
-  if tmp ~= nil and tmp ~= "" then return true end
-
   -- Refill the buffer. A simple experiment suggests 8 lines
   -- is enough, but why not use a higher value?
   while Lines:numLines() < 15 do
@@ -641,6 +639,11 @@ function moreData()
       -- Do not skip blank lines here, we need to do it in Lines:append()
       Lines:append(tmp)
   end
+
+  -- if there is remaining data from the previous iteration,
+  -- we leave everything as-is for it to be processed now
+  local tmp = Lines.current
+  if tmp ~= nil and tmp ~= "" then return true end
 
   -- proceed to the next line
   flushUnrecognizedMessages()
@@ -684,7 +687,7 @@ end
 function handleUnrecognizedMessage()
   -- Before sending this to the unrecognizedBuffer, check if
   -- there is another known message later on this same line.
-
+  -- NOTE: check the comment before closeParensHandler:lookahead().
   local last = string.len(Lines.current)
 
   for _, handler in ipairs(anywhereHandlers) do
@@ -754,11 +757,14 @@ function initializeGlobals()
 
   -- Does the log file have wrapped lines?
   -- This may be changed by initializeKpse().
-  badLogFile = true
+  badLogfile = true
 
   -- When we detect one of the many "please rerun LaTeX"
   -- messages, this is set to true (used in showSummary)
   SHOULD_RERUN_LATEX = false
+
+  -- Have we reached the beginning of the epilogue yet?
+  EPILOGUE = false
 
   -- If there were parse errors, we should say so in showSummary
   PARSE_ERROR = false
@@ -828,7 +834,7 @@ function registerHandlers()
   table.insert(anywhereHandlers, closeParensHandler)
   table.insert(anywhereHandlers, openSquareBracketHandler)
   table.insert(anywhereHandlers, closeSquareBracketHandler)
-  table.insert(anywhereHandlers, shipoutFilesHandler)
+  table.insert(anywhereHandlers, extraFilesHandler)
 
   for _, handler in ipairs(beginningOfLineHandlers) do
       handler:init()
@@ -987,7 +993,7 @@ Options:
   --version                              print program version]]
 
 versionmsg = [[
-texlogsieve 1.5.0
+texlogsieve 1.6.0
 Copyright (C) 2021-2025 Nelson Lago <lago@ime.usp.br>
 License GPLv3+: GNU GPL version 3 or later <https://gnu.org/licenses/gpl.html>.
 This is free software: you are free to change and redistribute it.
@@ -1887,9 +1893,10 @@ function showSummary()
   end
 
   if PARSE_ERROR then
-      local txt = "** texlogsieve got confused during log processing **" ..
-                  "\n" .. "   messages may be missing or filenames may be" ..
-                  "\n" .. "   incorrect, check the LaTeX logfile directly"
+      local txt = "** texlogsieve got confused during log processing **\n"
+               .. "   (did you run it from the same directory as latex?)\n"
+               .. "   messages may be missing or filenames may be\n"
+               .. "   incorrect, check the LaTeX logfile directly"
       if COLOR then txt = red(txt) end
       print(txt)
       print()
@@ -2001,16 +2008,70 @@ end
 
 -- We use this after the main loop ends (we reached the end of the
 -- input file) to output any messages that have not been fully
--- processed by whatever is defined as nextHandler. Typically, this
--- is epilogueHandler, which does not know when to finish processing
--- and depends on "someone" calling flush when the file ends. However,
--- others may use it as well in case the file is truncated (which may
+-- processed by whatever is defined as nextHandler. This should
+-- never happen, but it may if the file is truncated (which may
 -- happen if there were errors).
 function HandlerPrototype:flush()
   if self.message ~= nil then
       dispatch(self.message)
       self.message = nil
   end
+end
+
+function HandlerPrototype:tryUnwrapping(position)
+  -- For some handlers, it makes sense to unwrap a few lines ahead to
+  -- see whether this unwrapping allows us to match. However, we need to
+  -- be careful: if we match on subsequent lines by themselves, then the
+  -- match is not the result of unwrapping, so we should return false.
+
+  if not badLogfile then return false, {} end
+
+  line = Lines:get(position)
+  local offset = 1
+  local subsequentLines = ""
+  local all = ""
+  local match = nil
+  local first, last
+
+  -- Ideally, we would do "while Lines:seemsWrapped(position + offset -1)".
+  -- However, in the epilogue there may be lines wrapped at the "wrong"
+  -- place, so we cannot do that. Doing it like this instead should not
+  -- have any ill consequences, as long as the patterns we are looking
+  -- for do not end in something like ".*".
+
+  while offset < 5 do -- unwrapping the 4 subsequent lines is enough
+      local nextLine = Lines:get(position + offset)
+      if not nextLine then return false, {} end
+
+      subsequentLines = subsequentLines .. nextLine
+      local nextMatch = nil
+      for _, pat in ipairs(self.patterns) do
+          first, last = string.find(subsequentLines, pat)
+          if last then
+              nextMatch = string.sub(subsequentLines, first, last)
+              break
+          end
+      end
+
+      all = line .. subsequentLines
+      match = nil
+      for _, pat in ipairs(self.patterns) do
+          first, last = string.find(all, pat)
+          if last then
+              match = string.sub(all, first, last)
+              break
+          end
+      end
+
+      if last then
+          if match == nextMatch then return false, {} else break end
+      end
+
+      offset = offset +1
+  end
+
+  if not first then return false, {} end
+  return true, {first = first , match = match}
 end
 
 -------------------------------------------------------------------------------
@@ -2088,6 +2149,17 @@ function errorHandler:isRunawayLine(line)
   return last
 end
 
+function errorHandler:tryUnwrapping(position)
+  -- If there were no matches, let's try to unwrap the first line
+  if Lines:seemsWrapped(position) then
+      local merged = Lines:get(position) .. Lines:get(position +1)
+      for _, pat in ipairs(self.patterns) do
+          if string.find(merged, pat) then return true, position +1 end
+      end
+  end
+  return false, position
+end
+
 function errorHandler:canDoit(position)
   if position == nil then position = 0 end
   local line = Lines:get(position)
@@ -2109,23 +2181,7 @@ function errorHandler:canDoit(position)
       if ok then identified = true break end
   end
 
-  -- If there were no matches, let's try to unwrap the first line
-  local wrapped = false
-  if not identified then
-      if Lines:seemsWrapped(position) then
-          nextline = Lines:get(position +1)
-          local unwrappedLine = line .. nextline
-
-          for _, pat in ipairs(self.patterns) do
-              local _, ok = string.find(unwrappedLine, pat)
-              if ok then
-                  position = position +1
-                  wrapped = true
-                  break
-              end
-          end
-      end
-  end
+  if not identified then wrapped, position = self:tryUnwrapping(position) end
 
   -- if we still could not find a match, it is an unknown error message.
   -- Things should still work ok, as long as the first line is not wrapped.
@@ -2262,18 +2318,10 @@ function pseudoErrorHandler:canDoit(position)
   -- Maybe we should unwrap this line?
   local wrapped = false
   if not last then
-      if not Lines:seemsWrapped(position) then return false, {} end
-      nextline = Lines:get(position +1)
-      line = line .. nextline
-      position = position +1
-
-      for _, pat in ipairs(self.patterns) do
-          _, last = string.find(line, pat)
-          if last then wrapped = true break end
-      end
+      wrapped, position = self:tryUnwrapping(position)
+      if not wrapped then return false, {} end
   end
 
-  if not last then return false, {} end
   local lastline = position
 
   -- Looks like a pseudoError; Let's look ahead to identify the other
@@ -2340,25 +2388,58 @@ pseudoErrorHandler.doit = pseudoErrorHandler.handleFirstLine
 -- epilogueHandler
 --
 -- This handles the generic messages at the end of each LaTeX run. We could
--- handle each one with stringsHandler, but this handler allows us to treat
--- the whole group of lines together, which means we do not need to have
--- dedicated rules for each line in them. Also, there are some lines here
--- that are not wrapped as the rest.
---
--- After epilogueHandler starts processing, it just consumes every line it
--- sees, i.e., it does not know when to call dispatch(). When the file ends,
--- main() needs to call flush() to make it output the lines it read.
+-- also handle each one with stringsHandler. WARNING! There may be lines in
+-- the epilogue that are not wrapped as the rest; they may either not be
+-- wrapped or they may be wrapped at "wrong" line lengths. We solve this
+-- by always trying to unwrap (this is only ok because no patterns end with
+-- ".* or ".-).
 -------------------------------------------------------------------------------
 
 epilogueHandler = HandlerPrototype:new()
 
 epilogueHandler.beginPatterns = {
   -- This appears in the logfile but not on stdout
-  "^Here is how much",
+  "^Here is how much of .-TeX's memory you used:",
   -- apparently, pdflatex writes this on stdout:
   "^%(see the transcript file for additional information%)",
   -- while lualatex writes this on stdout:
   "^ *%d+ words of node memory still in use:",
+}
+
+epilogueHandler.patterns = {
+  "^%s*%d+ strings out of %d+",
+  "^%s*%d+ string characters out of %d+",
+  "^%s*%d+ words of memory out of %d+",
+  "^%s*%d+ words of font info for %d+ fonts, out of %d+ for %d+",
+  "^%s*%d+,%d+ words of node,token memory allocated",
+  "^%s*%d+ words of node memory still in use:",
+  "^%s*%d+ hyphenation exceptions out of %d+",
+
+  -- This line lists several different values that may or may not
+  -- be present in a given execution; hopefully this will catch
+  -- all variations.
+  "^%s*%d+ hlist, %d+ vlist,.*, %d+ pdf%_%S+ nodes",
+
+  "^%s*avail lists: %d+:%d+,%d+:%d+,%d+:%d+,%d+:%d+,%d+:%d+,%d+:%d+,"
+          .. "%d+:%d+,%d+:%d+,%d+:%d+,%d+:%d+,%d+:%d+,%d+:%d+",
+
+  "^%s*avail lists: %d+:%d+,%d+:%d+,%d+:%d+,%d+:%d+,%d+:%d+,%d+:%d+,"
+          .. "%d+:%d+,%d+:%d+,%d+:%d+,%d+:%d+,%d+:%d+",
+
+  "^%s*%d+ multiletter control sequences out of %d+%+%d+",
+  "^%s*%d+ fonts using %d+ bytes",
+  "^%s*%d+i,%d+n,%d+p,%d+b,%d+s stack positions out of %d+i,%d+n,%d+p,%d+b,%d+s",
+  "^Output written on " .. filepat .. " %(%d+ pages, %d+ bytes%)%.",
+  "^Transcript written on " .. filepat .. "%.",
+
+  -- pdftex outputs these two separately; luatex outputs both on a single line
+  "^PDF statistics: %d+ PDF objects out of %d+ %(max%. %d+%)",
+  "^PDF statistics:",
+  "^%s*%d+ PDF objects out of %d+ %(max%. %d+%)",
+
+  "^%s*%d+ compressed objects within %d+ object streams",
+  "^%s*%d+ named destinations out of %d+ %(max%. %d+%)",
+  "^%s*%d+ words of extra memory for PDF output out of %d+ %(max%. %d+%)",
 }
 
 function epilogueHandler:canDoit(position)
@@ -2366,55 +2447,42 @@ function epilogueHandler:canDoit(position)
   local line = Lines:get(position)
   if line == nil then return false, {} end
 
-  local last
+  local first, last
   for _, pat in ipairs(self.beginPatterns) do
       _, last = string.find(line, pat)
       if last ~= nil then break end
   end
 
-  if last == nil then
-      return false, {}
-  else
-      return true, {last = string.len(line)}
+  if last ~= nil then return true, {line = line} end
+
+  if position == 0 and not EPILOGUE then return false, {} end
+
+  for _, pat in ipairs(self.patterns) do
+      _, last = string.find(line, pat)
+      if last ~= nil then break end
   end
+
+  if last then return true, {line = line} end
+
+  local ok, data = self:tryUnwrapping(position)
+
+  if not ok then return false, {} end
+  return true, {line = data.match}
 end
 
 function epilogueHandler:doit()
   local myTurn, data = self:canDoit()
   if not myTurn then return false end
 
+  EPILOGUE = true
   flushUnrecognizedMessages()
-  self.message = self:newMessage()
-  self.message.content = string.sub(Lines.current, 1, data.last)
-  self.message.severity = DEBUG
-  Lines:handledChars(data.last)
-  self.doit = self.handleOtherLines
-  nextHandler = self
-  self.processingFilelist = false
-  return true
-end
+  unwrapUntilStringMatches(data.line)
 
--- We need to "manually" unwrap the file list because some
--- lines are wrapped at lengths different from max_print_line
-function epilogueHandler:handleOtherLines()
-  if string.find(Lines.current, '^Output written') then
-      self.processingFilelist = false
-      self.message.content = '\n' .. self.message.content
-  end
-
-  if self.processingFilelist then
-      self.message.content = self.message.content .. Lines.current
-  else
-      self:unwrapLines()
-      self.message.content = self.message.content .. '\n' .. Lines.current
-  end
-
-  if string.find(Lines.current, '^[%<%{]') then
-      self.processingFilelist = true
-  end
-
+  msg = self:newMessage()
+  msg.severity = DEBUG
+  msg.content = Lines.current
   Lines:handledChars()
-  nextHandler = self
+  dispatch(msg)
   return true
 end
 
@@ -2470,7 +2538,9 @@ function fpHandler:lookahead()
   self.pattern = self.loosePattern
   local match, data = self:canDoit()
   self.pattern = self.strictPattern
-
+  -- Only return true if whatever matches
+  -- is not at the beginning of the line
+  if match and data.first == 1 then return false, {} end
   return match, data
 end
 
@@ -2641,6 +2711,11 @@ end
 
 underOverFullBoxHandler.doit = underOverFullBoxHandler.handleFirstLine
 
+-- This is somewhat fragile: if the line is wrapped and the second part
+-- of the message looks like a different message, it will be left to be
+-- processed on the next iteration. This is particularly easy to happen
+-- if the offending text includes something like [X] or [X.Y], which
+-- looks like a shipout.
 function underOverFullBoxHandler:handleOffendingText()
   self:unwrapLines()
   self.message.failedText = Lines.current
@@ -2913,6 +2988,9 @@ function stringsHandler:lookahead()
   self.patterns = self.loosePatterns
   local match, data = self:canDoit()
   self.patterns = self.strictPatterns
+  -- Only return true if whatever matches
+  -- is not at the beginning of the line
+  if match and data.first == 1 then return false, {} end
 
   return match, data
 end
@@ -2953,6 +3031,11 @@ beginningOfLineDebugStringsHandler.patterns = {
   -- if the jobname does not include the extension, we use the first
   -- part of filepat but also excluding the backslash character
   '^%*%*[^%%:;,%=%*%?%|%&%$%#%!%@"\\%`\'%<%>%[%]%{%}]+$',
+
+  "^%s*%*%*%*%*%*%*%*%*%*%*%*\n"
+  .. "LaTeX2e <" .. datepat .. ">.*\n"
+  .. "%s*L3 programming layer <" .. datepat .. ">.*\n"
+  .. "%s*%*%*%*%*%*%*%*%*%*%*%*",
 
   '^\\[^%s=]+=[^%s=]+', -- "\c@chapter=\count174"
   "^\\openout%d+%s*=%s*`?[^']+'?%.?",
@@ -3087,6 +3170,12 @@ beginningOfLineDebugStringsHandler.patterns = {
 
   '^' .. datepat .. ' %S+ pgflibraryvectorian%.code%.tex',
 
+  '^Custom whatsit start%_tag %= %d+',
+  '^Custom whatsit end%_tag %= %d+',
+
+  '^Lua module: spelling ' .. datepat
+              .. ' v%S+ support for spell%-checking of LuaTeX documents',
+
   -- Usually these are warnings, but for font "nil", why bother?
   '^luaotfload | aux : font no %d+ %(nil%) does not define feature '
                             .. '.- for script .- with language %S+',
@@ -3124,22 +3213,16 @@ anywhereDebugStringsHandler = stringsHandler:new()
 anywhereDebugStringsHandler.IHandleAnywhere = true
 anywhereDebugStringsHandler.severity = DEBUG
 anywhereDebugStringsHandler.patterns = {
-  -- don't know where this comes from...
-  "^%s*%*%*%*%*%*%*%*%*%*%*%*\n"
-  .. "LaTeX2e <" .. datepat .. ">.*\n"
-  .. "%s*L3 programming layer <" .. datepat .. ">.*\n"
-  .. "%s*%*%*%*%*%*%*%*%*%*%*%*",
-
-  '^%s*LaTeX2e <' .. datepat .. '>\n%s*patch.*',
-
-  '^%s*LaTeX2e <' .. datepat .. '> patch.*',
-
+  '^%s*LaTeX2e <' .. datepat .. '>\n%s*patch%s?level %S+',
+  '^%s*LaTeX2e <' .. datepat .. '>\n%s*patch %S+',
+  '^%s*LaTeX2e <' .. datepat .. '> patch%s?level %S+',
+  '^%s*LaTeX2e <' .. datepat .. '> patch %S+',
   '^%s*LaTeX2e <' .. datepat .. '>',
 
-  '^%s*L3 programming layer <' .. datepat .. '>\n%s*patch.*',
-
-  '^%s*L3 programming layer <' .. datepat .. '> patch.*',
-
+  '^%s*L3 programming layer <' .. datepat .. '>\n%s*patch%s?level %S+',
+  '^%s*L3 programming layer <' .. datepat .. '>\n%s*patch %S+',
+  '^%s*L3 programming layer <' .. datepat .. '> patch%s?level %S+',
+  '^%s*L3 programming layer <' .. datepat .. '> patch %S+',
   '^%s*L3 programming layer <' .. datepat .. '>',
 
   '^%s*xparse %b<>',
@@ -3267,6 +3350,11 @@ beginningOfLineInfoStringsHandler.patterns = {
 
   "^=== Package selnolig, Version %S+, Date " .. datepat .. " ===",
 
+  "^package spelling: Info%! %d+%/%d+ total%/new %S- strings "
+              .. "read from file %b''%.",
+  "^package spelling: Info%! %d+%/%d+ bad%/good %S- match rules "
+              .. "read from module %b''%.",
+
   -- Package snapshot
   '^Dependency list written on .-%.dep%.',
 
@@ -3381,6 +3469,9 @@ beginningOfLineWarningStringsHandler.patterns = {
 
   "^Couldn't patch \\%S+",
   "^Invalid UTF%-8 byte or sequence at line %d+ replaced by U%+FFFD%.",
+
+  "^pdfTeX warning %(dest%): name%b{} has been referenced but does not "
+                            .. "exist, replaced by a fixed one",
 
   "^Unknown feature %b`' in font %b`'%.\n"
                             .. ' %-> ' .. filepat,
@@ -3983,6 +4074,9 @@ function openCloseHandlerPrototype:lookahead()
     self.pattern = self.loosePattern
     match, data = self:canDoit()
     self.pattern = self.strictPattern
+    -- Only return true if whatever matches
+    -- is not at the beginning of the line
+    if match and data.first == 1 then return false, {} end
 
     return match, data
 end
@@ -4083,7 +4177,9 @@ function closeParensHandler:lookahead()
   if line == nil then return false, {} end
 
   local first = string.find(line, self.loosePattern)
-  if first == nil then return false, {} end
+  -- Only return true if whatever matches
+  -- is not at the beginning of the line
+  if first == nil or first == 1 then return false, {} end
 
   return true, {first = first}
 end
@@ -4290,7 +4386,9 @@ function closeSquareBracketHandler:lookahead()
   if line == nil then return false, {} end
 
   local first = string.find(line, self.loosePattern)
-  if first == nil then return false, {} end
+  -- Only return true if whatever matches
+  -- is not at the beginning of the line
+  if first == nil or first == 1 then return false, {} end
 
   return true, {first = first}
 end
@@ -4362,105 +4460,71 @@ function closeSquareBracketHandler:doit()
       msg.physicalPage = numShipouts
       dispatch(msg)
   end
+
+  return true
 end
 
--- During a shipout, TeX sometimes puts some filenames
--- inside a pair of "{}" or "<>" characters.
-shipoutFilesHandler = HandlerPrototype:new()
-shipoutFilesHandler.strictPatterns = {
-    "^(%s*)(%b<>)",
-    "^(%s*)(%b{})",
+-- During a shipout and in the epilogue (maybe at some other times too?),
+-- TeX sometimes puts a filename inside a pair of "{}" or "<>" characters.
+extraFilesHandler = HandlerPrototype:new()
+extraFilesHandler.strictPatterns = {
+    "^%s*%b<>",
+    "^%s*%b{}",
 }
-shipoutFilesHandler.loosePatterns = {
-    "(%s*)(%b<>)",
-    "(%s*)(%b{})",
+extraFilesHandler.loosePatterns = {
+    "%s*%b<>",
+    "%s*%b{}",
 }
-shipoutFilesHandler.patterns = shipoutFilesHandler.strictPatterns
+extraFilesHandler.patterns = extraFilesHandler.strictPatterns
 
 -- Read the comment right before "closeParensHandler:lookahead()".
--- That does not work here for two reasons:
---
--- 1. We may mess up messages that present content from the document,
---    which may include "{}" or "<>" characters. An example is the
---    "pdfTeX warning (ext4):..." message.
---
--- 2. This handler should only process stuff if there is a pending shipout
---    in the shipouts stack. However, we cannot check for this in lookahead()
---    because the shipout may not have been processed yet. As a result,
---    lookahead() might answer "yes" when in reality the handler won't do
---    anything. This would have a nasty consequence: if there is a "{" or
---    "<" character outside any shipouts at the beginning of a line, doit()
---    would not handle it, but lookahead() would answer "yes", causing an
---    endless loop.
---
--- The solution is to have lookahead() answer "yes" ONLY if there really
--- is a filename within the "{}" or "<>" pair. We might also consider only
--- answering "yes" if the "{" or "<" character is *not* at the beginning
--- of a line, but that is probably overkill.
+-- That does not work here because we may mess up messages that present
+-- content from the document, which may include "{}" or "<>" characters.
+-- An example is the "pdfTeX warning (ext4):..." message. The solution
+-- is to have lookahead() answer "yes" ONLY if there really is a filename
+-- within the "{}" or "<>" pair.
 
-function shipoutFilesHandler:lookahead()
-  shipoutFilesHandler.patterns = shipoutFilesHandler.loosePatterns
-  local ok, data = self:realCanDoit()
-  shipoutFilesHandler.patterns = shipoutFilesHandler.strictPatterns
+function extraFilesHandler:lookahead()
+  extraFilesHandler.patterns = extraFilesHandler.loosePatterns
+  local ok, data = self:canDoit()
+  extraFilesHandler.patterns = extraFilesHandler.strictPatterns
+  -- Only return true if whatever matches
+  -- is not at the beginning of the line
+  if ok and data.first == 1 then return false, {} end
   return ok, data
 end
 
-function shipoutFilesHandler:canDoit(position)
-  if position == nil then position = 0 end
-  if position == 0 and shipouts:size() == 0 then return false, {} end
-  return self:realCanDoit(position)
-end
-
-function shipoutFilesHandler:realCanDoit(position)
+function extraFilesHandler:canDoit(position)
   if position == nil then position = 0 end
   local line = Lines:get(position)
   if line == nil then return false, {} end
 
-  local first, match
+  local first, last, match
   for _, pat in ipairs(self.patterns) do
-      first, _, _, match = string.find(line, pat)
-      if first then break end
-  end
-
-  -- let's try unwrapping, but we need to be careful: if we match
-  -- on subsequent lines by themselves, then the match is not the
-  -- result of unwrapping, so we should return false.
-  if first == nil then
-      local offset = 1
-      local subsequentLines = ""
-      while offset < 4 do -- unwrapping the 3 subsequent lines is enough
-          local nextLine = Lines:get(position + offset)
-          if not nextLine then return false, {} end
-          subsequentLines = subsequentLines .. nextLine
-          local nextMatch
-          for _, pat in ipairs(self.patterns) do
-              first, _, _, nextMatch = string.find(subsequentLines, pat)
-              if first then break end
-          end
-          local allLines = line .. subsequentLines
-          for _, pat in ipairs(self.patterns) do
-              first, _, _, match = string.find(allLines, pat)
-              if first then break end
-          end
-          if first then
-              if match == nextMatch then
-                  return false, {}
-              else
-                  break
-              end
-          end
-          offset = offset +1
+      first, last = string.find(line, pat)
+      if first then
+          match = string.sub(line, first, last)
+          break
       end
   end
 
+  if first == nil then
+      local ok, data = self:tryUnwrapping(position)
+      if ok then first = data.first match = data.match end
+  end
+
   if first == nil then return false, {} end
+
+  _, last = string.find(match, '^%s*')
+  if last then match = string.sub(match, last +1) end
+
   if checkIfFileExists(string.sub(match, 2, -2)) then
       return true, {first = first, name = match}
   end
   return false, {}
 end
 
-function shipoutFilesHandler:doit()
+function extraFilesHandler:doit()
   local myTurn, data = self:canDoit()
   if not myTurn then return false end
 
@@ -4473,9 +4537,8 @@ function shipoutFilesHandler:doit()
 
   last, _ = unwrapUntilStringMatches(data.name) -- this should never fail
 
-  local msg = shipoutFilesMessage:new()
-  msg.content = "Loading file during shipout: "
-  msg.content = msg.content .. string.sub(data.name, 2, -2)
+  local msg = extraFilesMessage:new()
+  msg.content = data.name
   Lines:handledChars(last)
   dispatch(msg)
 
@@ -5460,8 +5523,14 @@ function unusedLabelMessage:toSummary()
   unusedLabelsSummary:add(self)
 end
 
-shipoutFilesMessage = Message:new()
-shipoutFilesMessage.severity = DEBUG
+extraFilesMessage = Message:new()
+extraFilesMessage.severity = DEBUG
+
+function extraFilesMessage:realToString()
+  if RAW then return self.content end
+  return "Loading file " .. string.sub(self.content, 2, -2)
+end
+
 
 --[[ ##################################################################### ]]--
 --[[ ############################ SUMMARIES ############################## ]]--
@@ -6256,22 +6325,24 @@ function simpleGetopt(args, optionsWithArgs)
 end
 
 function simpleGetoptStoreVal(userOptions, optname, optval)
-  if type(optval) == 'boolean' then
-      userOptions[optname] = optval
-      return
+  if type(optval) ~= 'boolean' then
+      local tmp = string.lower(optval)
+      if tmp  == "true" or tmp == "y" then optval = true end
+      if tmp  == "false" or tmp == "n" then optval = false end
   end
 
-  local tmp = string.lower(optval)
-    if tmp == "y" or tmp == "true" then
-        userOptions[optname] = true
-    elseif tmp == "n" or tmp == "false" then
-        userOptions[optname] = false
-    else
-        if type(userOptions[optname]) ~= 'table' then
-            userOptions[optname] = {}
-        end
-        table.insert(userOptions[optname], optval)
-    end
+  if type(optval) == 'boolean' then
+      if string.find(optname, "^no-") then
+          optname = string.sub(optname, 4)
+          optval = not optval
+      end
+      userOptions[optname] = optval
+  else
+      if type(userOptions[optname]) ~= 'table' then
+          userOptions[optname] = {}
+      end
+      table.insert(userOptions[optname], optval)
+  end
 end
 
 --[[
@@ -6527,7 +6598,7 @@ function Lines:noHandlersForNextLine(position)
   return true
 end
 
-function unwrapUntilPatternMatches(pat)
+function unwrapUntilPatternMatches(pat, permissive)
   local last, tmp
   while true do
       matches = {string.find(Lines.current, pat)}
@@ -6536,7 +6607,7 @@ function unwrapUntilPatternMatches(pat)
 
       if last ~= nil then break end
 
-      if Lines:seemsWrapped() then
+      if Lines:seemsWrapped() or permissive then
           Lines:unwrapOneLine()
       else
           io.stderr:write("    texlogsieve: parsing error near input line "
@@ -6577,8 +6648,12 @@ function unwrapUntilPatternMatches(pat)
   return last, matches
 end
 
+-- We always call this passing a string we know is there, so
+-- this should never fail. Since lines in the epilogue may
+-- be wrapped at "incorrect" line lengths, we always unwrap,
+-- even if "Lines:seemsWrapped()" returns false.
 function unwrapUntilStringMatches(s)
-  return unwrapUntilPatternMatches(protect_metachars(s))
+  return unwrapUntilPatternMatches(protect_metachars(s), true)
 end
 
 
@@ -6877,11 +6952,12 @@ function checkIfFileExists(filename)
   -- reliable, but the real advantage is that we can process a
   -- logfile even if we are not on the same environment that
   -- created it, which is nice for testing, reporting bugs, etc.
+  -- Unfortunately, some files such as images may sometimes not
+  -- be included in the .fls file, so let's be extra cautious.
   if USE_FLS_FILE then
-      return checkIfFileExistsWithFls(filename)
-  else
-      return checkIfFileExistsWithKpse(filename)
+      if checkIfFileExistsWithFls(filename) then return true end
   end
+  return checkIfFileExistsWithKpse(filename)
 end
 
 
