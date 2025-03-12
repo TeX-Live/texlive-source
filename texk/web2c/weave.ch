@@ -323,6 +323,36 @@ begin if no_xref then return;
 if (reserved(p)or(byte_start[p]+1=byte_start[p+ww]))and
 @z
 
+@x [9.82] l.1448 - Guard against get_line() when parsing a module name
+@p procedure get_line; {inputs the next line}
+label restart;
+begin restart:if changing then
+  @<Read from |change_file| and maybe turn off |changing|@>;
+if not changing then
+  begin @<Read from |web_file| and maybe turn on |changing|@>;
+  if changing then goto restart;
+  end;
+loc:=0; buffer[limit]:=" ";
+end;
+@y
+@p procedure get_line; {inputs the next line}
+label restart;
+begin
+  if in_module_name then begin
+    err_print('! Call to get_line when parsing a module name');
+    loc:=limit; {Reset to the |'|'| at the end of the line}
+  end else
+begin restart:if changing then
+  @<Read from |change_file| and maybe turn off |changing|@>;
+if not changing then
+  begin @<Read from |web_file| and maybe turn on |changing|@>;
+  if changing then goto restart;
+  end;
+loc:=0; buffer[limit]:=" ";
+end;
+end;
+@z
+
 @x [12.124] l.2199
 `\.{\\input webmac}'.
 @.\\input webmac@>
@@ -527,6 +557,37 @@ until_like: begin @<Append \(|term...@>;
 @<Append |termin...@>=
 @y
 @<Append \(|termin...@>=
+@z
+
+@x [17.202] l.3913 - Guard against get_line() while parsing module name
+@ @d cur_end==cur_state.end_field {current ending location in |tok_mem|}
+@y
+@ The module name Pascal parser re-uses the buffer and |get_next|
+infrastructure. However we don't want |get_next| to cause the next source line
+to be read with |get_line|, so we set a flag to trigger an error and recover if
+this happens.
+
+@d cur_end==cur_state.end_field {current ending location in |tok_mem|}
+@z
+@x [17.202] l.3919 - Guard against get_line() while parsing module name
+@!cur_state:output_state; {|cur_end|, |cur_tok|, |cur_mode|}
+@y
+@!in_module_name:boolean; {are we scanning a module name?}
+@!cur_state:output_state; {|cur_end|, |cur_tok|, |cur_mode|}
+@z
+
+@x [17.203] l.3925 - Guard against get_line() while parsing module name
+@ @<Set init...@>=stat max_stack_ptr:=0;@+tats
+@y
+@ @<Set init...@>=@!in_module_name:=false;
+stat max_stack_ptr:=0;@+tats
+@z
+
+@x [17.214] l.4170 - Guard against get_line() while parsing module name
+    buffer[limit]:="|"; output_Pascal;
+@y
+    buffer[limit]:="|";
+    in_module_name:=true; output_Pascal; in_module_name:=false;
 @z
 
 @x [18.222] l.4285 - Reject verbatim in TeX part
