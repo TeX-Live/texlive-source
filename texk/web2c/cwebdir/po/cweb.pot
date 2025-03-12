@@ -1,14 +1,14 @@
 # International version of CWEB (CWEBbin).
-# Copyright (C) 2021 Andreas Scherer et al.
+# Copyright (C) 2025 Andreas Scherer et al.
 # This file is distributed under the same license as the CWEB package.
-# Andreas Scherer <https://ascherer/github.io>, 2021.
+# Andreas Scherer <https://ascherer.github.io>, 2025.
 #
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: CWEBbin 2021\n"
+"Project-Id-Version: CWEBbin 2025\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-02-06 15:25+0100\n"
+"POT-Creation-Date: 2025-03-12 11:51+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -84,20 +84,20 @@ msgid ""
 "! Section name incompatible with <"
 msgstr ""
 
-#: ctang-i18n.ch:173 cweav-i18n.ch:67
+#: ctang-i18n.ch:163 cweav-i18n.ch:67
 msgid ""
 "\n"
 "! Section name too long: "
 msgstr ""
 
-#: comm-i18n.ch:248
+#: comm-i18n.ch:252
 #, c-format
 msgid ""
 "\n"
 "! Sorry, %s capacity exceeded"
 msgstr ""
 
-#: ctang-i18n.ch:131 cweav-i18n.ch:45
+#: ctang-i18n.ch:121 cweav-i18n.ch:45
 msgid ""
 "\n"
 "! String too long: "
@@ -110,7 +110,7 @@ msgid ""
 "Irreducible scrap sequence in section %d:"
 msgstr ""
 
-#: ctang-i18n.ch:300 cweav-i18n.ch:430
+#: ctang-i18n.ch:298 cweav-i18n.ch:436
 msgid ""
 "\n"
 "Memory usage statistics:"
@@ -123,13 +123,13 @@ msgid ""
 "Tracing after l. %d:\n"
 msgstr ""
 
-#: cweav-i18n.ch:377
+#: cweav-i18n.ch:383
 msgid ""
 "\n"
 "Writing the index..."
 msgstr ""
 
-#: ctang-i18n.ch:63
+#: ctang-i18n.ch:64
 #, c-format
 msgid ""
 "\n"
@@ -142,13 +142,14 @@ msgid ""
 "Writing the output file..."
 msgstr ""
 
-#: ctang-i18n.ch:69
+#: ctang-i18n.ch:65
+#, c-format
 msgid ""
 "\n"
-"Writing the output files:"
+"Writing the output files: (%s)"
 msgstr ""
 
-#: ctang-i18n.ch:225
+#: ctang-i18n.ch:221
 msgid "! @d, @f and @c are ignored in C text"
 msgstr ""
 
@@ -156,33 +157,33 @@ msgstr ""
 msgid "! CWEB file ended during a change"
 msgstr ""
 
-#: cweav-twill.ch:1029
+#: cweav-twill.ch:1243
 msgid "! Cannot open aux output file "
 msgstr ""
 
-#: comm-i18n.ch:84
+#: comm-i18n.ch:134
 msgid "! Cannot open change file "
 msgstr ""
 
-#: comm-i18n.ch:112
+#: comm-i18n.ch:98
 msgid "! Cannot open include file"
 msgstr ""
 
-#: cweav-i18n.ch:383
+#: cweav-i18n.ch:389
 msgid "! Cannot open index file "
 msgstr ""
 
-#: comm-i18n.ch:78
+#: comm-i18n.ch:128
 msgid "! Cannot open input file "
 msgstr ""
 
-#: comm-i18n.ch:300 comm-i18n.ch:306 comm-i18n.ch:312 comm-i18n.ch:318
-#: ctang-i18n.ch:83 ctang-i18n.ch:89 ctang-i18n.ch:315 ctang-i18n.ch:321
-#: cweav-i18n.ch:455
+#: comm-i18n.ch:304 comm-i18n.ch:310 comm-i18n.ch:324 comm-i18n.ch:330
+#: comm-i18n.ch:336 comm-i18n.ch:342 ctang-i18n.ch:79 ctang-i18n.ch:313
+#: ctang-i18n.ch:319 ctang-i18n.ch:325 ctang-i18n.ch:331 cweav-i18n.ch:461
 msgid "! Cannot open output file "
 msgstr ""
 
-#: cweav-i18n.ch:389
+#: cweav-i18n.ch:395
 msgid "! Cannot open section file "
 msgstr ""
 
@@ -194,11 +195,11 @@ msgstr ""
 msgid "! Change file ended before @y"
 msgstr ""
 
-#: comm-i18n.ch:120
+#: comm-i18n.ch:106
 msgid "! Change file ended without @z"
 msgstr ""
 
-#: comm-i18n.ch:134
+#: comm-i18n.ch:120
 msgid "! Change file entry did not match"
 msgstr ""
 
@@ -214,23 +215,23 @@ msgstr ""
 msgid "! Control text didn't end"
 msgstr ""
 
-#: ctang-i18n.ch:257
+#: ctang-i18n.ch:253
 msgid "! Definition flushed, must start with identifier"
 msgstr ""
 
-#: ctang-i18n.ch:153
+#: ctang-i18n.ch:143
 msgid "! Double @ should be used in ASCII constant"
 msgstr ""
 
-#: ctang-i18n.ch:145 ctang-i18n.ch:265
+#: ctang-i18n.ch:135 ctang-i18n.ch:261
 msgid "! Double @ should be used in control text"
 msgstr ""
 
-#: ctang-i18n.ch:271 cweav-i18n.ch:167 cweav-twill.ch:661 cweav-twill.ch:664
+#: ctang-i18n.ch:269 cweav-i18n.ch:167 cweav-twill.ch:364 cweav-twill.ch:367
 msgid "! Double @ should be used in limbo"
 msgstr ""
 
-#: ctang-i18n.ch:241
+#: ctang-i18n.ch:237
 msgid "! Double @ should be used in string"
 msgstr ""
 
@@ -242,11 +243,11 @@ msgstr ""
 msgid "! Extra } in comment"
 msgstr ""
 
-#: comm-i18n.ch:292
+#: comm-i18n.ch:296
 msgid "! Filename too long\n"
 msgstr ""
 
-#: cweav-twill.ch:541
+#: cweav-twill.ch:1024
 msgid "! Identifier in meaning should be followed by space"
 msgstr ""
 
@@ -254,39 +255,39 @@ msgstr ""
 msgid "! Illegal use of @ in comment"
 msgstr ""
 
-#: cweav-i18n.ch:353
+#: cweav-i18n.ch:359
 msgid "! Improper format definition"
 msgstr ""
 
-#: ctang-i18n.ch:279
+#: ctang-i18n.ch:277
 msgid "! Improper hex number following @l"
 msgstr ""
 
-#: cweav-i18n.ch:339 cweav-i18n.ch:345
+#: cweav-i18n.ch:343 cweav-i18n.ch:351
 msgid "! Improper macro definition"
 msgstr ""
 
-#: comm-i18n.ch:92
+#: comm-i18n.ch:78
 msgid "! Include file name not given"
 msgstr ""
 
-#: comm-i18n.ch:106
+#: comm-i18n.ch:92
 msgid "! Include file name too long"
 msgstr ""
 
-#: comm-i18n.ch:324
+#: comm-i18n.ch:316
 msgid "! Include path too long"
 msgstr ""
 
-#: ctang-i18n.ch:105 cweav-i18n.ch:181
+#: ctang-i18n.ch:95 cweav-i18n.ch:181
 msgid "! Input ended in mid-comment"
 msgstr ""
 
-#: ctang-i18n.ch:125 cweav-i18n.ch:39
+#: ctang-i18n.ch:115 cweav-i18n.ch:39
 msgid "! Input ended in middle of string"
 msgstr ""
 
-#: ctang-i18n.ch:167 cweav-i18n.ch:61
+#: ctang-i18n.ch:157 cweav-i18n.ch:61
 msgid "! Input ended in section name"
 msgstr ""
 
@@ -294,11 +295,11 @@ msgstr ""
 msgid "! Input line too long"
 msgstr ""
 
-#: cweav-twill.ch:548
+#: cweav-twill.ch:1032
 msgid "! Location in meaning should be followed by space"
 msgstr ""
 
-#: ctang-i18n.ch:219
+#: ctang-i18n.ch:215
 msgid "! Misplaced @h"
 msgstr ""
 
@@ -310,7 +311,7 @@ msgstr ""
 msgid "! Missing @x in change file"
 msgstr ""
 
-#: ctang-i18n.ch:233
+#: ctang-i18n.ch:229
 msgid "! Missing `@ ' before a named section"
 msgstr ""
 
@@ -326,27 +327,27 @@ msgstr ""
 msgid "! Missing } in comment"
 msgstr ""
 
-#: ctang-i18n.ch:187
+#: ctang-i18n.ch:177
 msgid "! Nesting of section names not allowed"
 msgstr ""
 
-#: cweav-twill.ch:1025
+#: cweav-twill.ch:1239
 msgid "! Only @$ is allowed in aux and bux files"
 msgstr ""
 
-#: ctang-i18n.ch:285
+#: ctang-i18n.ch:283
 msgid "! Replacement string in @l too long"
 msgstr ""
 
-#: ctang-i18n.ch:181 cweav-i18n.ch:75
+#: ctang-i18n.ch:171 cweav-i18n.ch:75
 msgid "! Section name didn't end"
 msgstr ""
 
-#: ctang-i18n.ch:111
+#: ctang-i18n.ch:101
 msgid "! Section name ended in mid-comment"
 msgstr ""
 
-#: ctang-i18n.ch:119 ctang-i18n.ch:159 cweav-i18n.ch:33
+#: ctang-i18n.ch:109 ctang-i18n.ch:149 cweav-i18n.ch:33
 msgid "! String didn't end"
 msgstr ""
 
@@ -354,146 +355,150 @@ msgstr ""
 msgid "! TeX string should be in C text only"
 msgstr ""
 
-#: comm-i18n.hch:42
+#: comm-i18n.hch:56
 msgid "! This can't happen: "
 msgstr ""
 
-#: cweav-twill.ch:307
+#: cweav-twill.ch:1370
 msgid "! Title name didn't end"
 msgstr ""
 
-#: cweav-twill.ch:305
+#: cweav-twill.ch:1368
 msgid "! Title should be enclosed in braces or doublequotes"
 msgstr ""
 
-#: comm-i18n.ch:98
+#: comm-i18n.ch:84
 msgid "! Too many nested includes"
 msgstr ""
 
-#: ctang-i18n.ch:249
+#: ctang-i18n.ch:245
 msgid "! Unrecognized escape sequence"
 msgstr ""
 
-#: comm-i18n.ch:272
+#: comm-i18n.ch:276
 msgid ""
 "! Usage: ctangle [options] webfile[.w] [{changefile[.ch]|-} [outfile[.c]]]\n"
 msgstr ""
 
-#: comm-i18n.ch:281
+#: comm-i18n.ch:285
 msgid ""
 "! Usage: ctwill [options] webfile[.w] [{changefile[.ch]|-} [outfile[.tex]]]\n"
 msgstr ""
 
-#: comm-i18n.ch:277
+#: comm-i18n.ch:281
 msgid ""
 "! Usage: cweave [options] webfile[.w] [{changefile[.ch]|-} [outfile[.tex]]]\n"
 msgstr ""
 
-#: ctang-i18n.ch:139 cweav-i18n.ch:53 cweav-i18n.ch:119
+#: ctang-i18n.ch:129 cweav-i18n.ch:53 cweav-i18n.ch:119
 msgid "! Use @l in limbo only"
 msgstr ""
 
-#: ctang-i18n.ch:195 cweav-i18n.ch:103
+#: ctang-i18n.ch:185 cweav-i18n.ch:103
 msgid "! Verbatim string didn't end"
+msgstr ""
+
+#: cweav-i18n.ch:330
+msgid "! Verbatim string should be in C text only"
 msgstr ""
 
 #: comm-i18n.ch:64
 msgid "! Where is the matching @y?"
 msgstr ""
 
-#: comm-i18n.ch:126
+#: comm-i18n.ch:112
 msgid "! Where is the matching @z?"
 msgstr ""
 
-#: cweav-i18n.ch:369
+#: cweav-i18n.ch:375
 msgid "! You can't do that in C text"
 msgstr ""
 
-#: cweav-i18n.ch:331
+#: cweav-i18n.ch:335
 msgid "! You can't do that in TeX text"
 msgstr ""
 
-#: cweav-i18n.ch:361
+#: cweav-i18n.ch:367
 msgid "! You need an = sign after the section name"
 msgstr ""
 
-#: ctang-i18n.ch:305 cweav-i18n.ch:436 cweav-twill.ch:1335 cweav-twill.ch:1338
+#: ctang-i18n.ch:303 cweav-i18n.ch:442 cweav-twill.ch:754 cweav-twill.ch:757
 #, c-format
-msgid "%ld bytes (out of %ld)\n"
+msgid "%td bytes (out of %ld)\n"
 msgstr ""
 
-#: cweav-i18n.ch:434
+#: cweav-i18n.ch:440
 #, c-format
-msgid "%ld cross-references (out of %ld)\n"
+msgid "%td cross-references (out of %ld)\n"
 msgstr ""
 
-#: cweav-i18n.ch:445 cweav-i18n.ch:448
+#: cweav-i18n.ch:451 cweav-i18n.ch:454
 #, c-format
-msgid "%ld levels (out of %ld)\n"
+msgid "%td levels (out of %ld)\n"
 msgstr ""
 
-#: ctang-i18n.ch:301 cweav-i18n.ch:432
+#: ctang-i18n.ch:299 cweav-i18n.ch:438
 #, c-format
-msgid "%ld names (out of %ld)\n"
+msgid "%td names (out of %ld)\n"
 msgstr ""
 
-#: ctang-i18n.ch:303
+#: ctang-i18n.ch:301
 #, c-format
-msgid "%ld replacement texts (out of %ld)\n"
+msgid "%td replacement texts (out of %ld)\n"
 msgstr ""
 
-#: cweav-i18n.ch:439
+#: cweav-i18n.ch:445
 #, c-format
-msgid "%ld scraps (out of %ld)\n"
+msgid "%td scraps (out of %ld)\n"
 msgstr ""
 
-#: cweav-twill.ch:1340
+#: cweav-twill.ch:759
 #, c-format
-msgid "%ld temp meanings (out of %ld)\n"
+msgid "%td temp meanings (out of %ld)\n"
 msgstr ""
 
-#: cweav-i18n.ch:441
+#: cweav-i18n.ch:447
 #, c-format
-msgid "%ld texts (out of %ld)\n"
+msgid "%td texts (out of %ld)\n"
 msgstr ""
 
-#: cweav-twill.ch:1343
+#: cweav-twill.ch:762
 #, c-format
-msgid "%ld titles (out of %ld)\n"
+msgid "%td titles (out of %ld)\n"
 msgstr ""
 
-#: ctang-i18n.ch:307 cweav-i18n.ch:443
+#: ctang-i18n.ch:305 cweav-i18n.ch:449
 #, c-format
-msgid "%ld tokens (out of %ld)\n"
-msgstr ""
-
-#: comm-i18n.ch:236
-msgid "(Did you see the warning message above?)"
-msgstr ""
-
-#: comm-i18n.ch:234
-msgid "(No errors were found.)"
-msgstr ""
-
-#: comm-i18n.ch:238
-msgid "(Pardon me, but I think I spotted something wrong.)"
+msgid "%td tokens (out of %ld)\n"
 msgstr ""
 
 #: comm-i18n.ch:240
+msgid "(Did you see the warning message above?)"
+msgstr ""
+
+#: comm-i18n.ch:238
+msgid "(No errors were found.)"
+msgstr ""
+
+#: comm-i18n.ch:242
+msgid "(Pardon me, but I think I spotted something wrong.)"
+msgstr ""
+
+#: comm-i18n.ch:244
 msgid "(That was a fatal error, my friend.)"
 msgstr ""
 
-#: comm-i18n.ch:218
+#: comm-i18n.ch:219
 #, c-format
 msgid ". (l. %d of change file)\n"
 msgstr ""
 
-#: comm-i18n.ch:220
+#: comm-i18n.ch:222
 #, c-format
 msgid ". (l. %d of include file %s)\n"
 msgstr ""
 
-#: comm-i18n.ch:219
+#: comm-i18n.ch:221
 #, c-format
 msgid ". (l. %d)\n"
 msgstr ""
@@ -510,15 +515,15 @@ msgid ""
 " which abbreviates <"
 msgstr ""
 
-#: ctang-i18n.ch:75 cweav-i18n.ch:395
+#: ctang-i18n.ch:71 cweav-i18n.ch:401
 msgid "Done."
 msgstr ""
 
-#: cweav-i18n.ch:438
+#: cweav-i18n.ch:444
 msgid "Parsing:"
 msgstr ""
 
-#: cweav-i18n.ch:447
+#: cweav-i18n.ch:453
 msgid "Sorting:"
 msgstr ""
 
@@ -526,11 +531,11 @@ msgstr ""
 msgid "This is CTANGLE (Version 4.12.1 [CWEBbin 2025])"
 msgstr ""
 
-#: cweav-twill.ch:61
+#: cweav-twill.ch:93
 msgid "This is CTWILL (Version 4.12.1 [CWEBbin 2025])"
 msgstr ""
 
-#: cweav-i18n.ch:17 cweav-twill.ch:42
+#: cweav-i18n.ch:17 cweav-twill.ch:69
 msgid "This is CWEAVE (Version 4.12.1 [CWEBbin 2025])"
 msgstr ""
 
@@ -546,15 +551,15 @@ msgstr ""
 msgid "cross-reference"
 msgstr ""
 
-#: cweav-twill.ch:818
+#: cweav-twill.ch:1161
 msgid "find type"
 msgstr ""
 
-#: cweav-twill.ch:757
+#: cweav-twill.ch:1096
 msgid "inner"
 msgstr ""
 
-#: ctang-i18n.ch:97
+#: ctang-i18n.ch:87
 msgid "macro defs have strange char"
 msgstr ""
 
@@ -578,7 +583,7 @@ msgstr ""
 msgid "section number"
 msgstr ""
 
-#: cweav-i18n.ch:403
+#: cweav-i18n.ch:409
 msgid "sorting"
 msgstr ""
 
@@ -586,19 +591,19 @@ msgstr ""
 msgid "stack"
 msgstr ""
 
-#: cweav-twill.ch:561
+#: cweav-twill.ch:1057
 msgid "temp meanings"
 msgstr ""
 
-#: ctang-i18n.ch:211 cweav-i18n.ch:223
+#: ctang-i18n.ch:207 cweav-i18n.ch:223
 msgid "text"
 msgstr ""
 
-#: cweav-twill.ch:308
+#: cweav-twill.ch:1371
 msgid "titles"
 msgstr ""
 
-#: ctang-i18n.ch:25 ctang-i18n.ch:203 cweav-i18n.ch:175 cweav-i18n.ch:217
+#: ctang-i18n.ch:25 ctang-i18n.ch:197 cweav-i18n.ch:175 cweav-i18n.ch:217
 #: cweav-i18n.ch:231
 msgid "token"
 msgstr ""

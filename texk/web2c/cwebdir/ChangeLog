@@ -1,3 +1,12 @@
+2025-03-12  Andreas Scherer  <https://ascherer.github.io>
+
+	* ctwill-w2c.ch,
+	* cweav-w2c.ch,
+	* cweave.w,
+	* po/cweb.pot,
+	* po/de/cweb.po,
+	* po/it/cweb.po: Handle verbatim strings in TeX part.
+
 2025-02-26  Andreas Scherer  <https://ascherer.github.io>
 
 	* tests/ham-sorted.tex,

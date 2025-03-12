@@ -4261,12 +4261,15 @@ index entries are not copied and \CEE/ text within \pb\ is translated.
   switch (next_control=copy_TeX()) {
     case '|': init_stack(); output_C(); break;
     case '@@': out('@@'); break;
-    case TeX_string: case noop:
+    case TeX_string: case verbatim: case noop:
     case xref_roman: case xref_wildcard: case xref_typewriter:
     case section_name: loc-=2; next_control=get_next(); /* skip to \.{@@>} */
       if (next_control==TeX_string)
-        err_print("! TeX string should be in C text only"); break;
+        err_print("! TeX string should be in C text only");
 @.TeX string should be...@>
+      if (next_control==verbatim)
+        err_print("! Verbatim string should be in C text only"); break;
+@.Verbatim string should be...@>
     case thin_space: case math_break: case ord:
     case line_break: case big_line_break: case no_line_break: case join:
     case pseudo_semi: case macro_arg_open: case macro_arg_close:

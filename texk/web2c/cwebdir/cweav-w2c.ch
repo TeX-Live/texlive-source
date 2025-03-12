@@ -471,24 +471,30 @@ if (show_progress) printf("%s",_("\nWriting the output file..."));
 @z
 
 @x [12.232] l.4268
-        err_print("! TeX string should be in C text only"); break;
+        err_print("! TeX string should be in C text only");
 @y
-        err_print(_("! TeX string should be in C text only")); break;
+        err_print(_("! TeX string should be in C text only"));
 @z
 
-@x [12.232] l.4274
+@x [12.232] l.4271
+        err_print("! Verbatim string should be in C text only"); break;
+@y
+        err_print(_("! Verbatim string should be in C text only")); break;
+@z
+
+@x [12.232] l.4277
         err_print("! You can't do that in TeX text"); break;
 @y
         err_print(_("! You can't do that in TeX text")); break;
 @z
 
-@x [12.236] l.4346
+@x [12.236] l.4349
     err_print("! Improper macro definition");
 @y
     err_print(_("! Improper macro definition"));
 @z
 
-@x [12.236] l.4359
+@x [12.236] l.4362
         } @=/* otherwise fall through */@>@;
       default: err_print("! Improper macro definition"); break;
 @y
@@ -496,62 +502,62 @@ if (show_progress) printf("%s",_("\nWriting the output file..."));
       default: err_print(_("! Improper macro definition")); break;
 @z
 
-@x [12.237] l.4386
+@x [12.237] l.4389
   if (scrap_ptr!=scrap_info+2) err_print("! Improper format definition");
 @y
   if (scrap_ptr!=scrap_info+2) err_print(_("! Improper format definition"));
 @z
 
-@x [12.240] l.4421
+@x [12.240] l.4424
   err_print("! You need an = sign after the section name");
 @y
   err_print(_("! You need an = sign after the section name"));
 @z
 
-@x [12.241] l.4443
+@x [12.241] l.4446
   err_print("! You can't do that in C text");
 @y
   err_print(_("! You can't do that in C text"));
 @z
 
-@x [13.247] l.4534
+@x [13.247] l.4537
   if (show_progress) printf("%s","\nWriting the index...");
 @y
   if (show_progress) printf("%s",_("\nWriting the index..."));
 @z
 
-@x [13.247] l.4545
+@x [13.247] l.4548
     fatal("! Cannot open index file ",idx_file_name);
 @y
     fatal(_("! Cannot open index file "),idx_file_name);
 @z
 
-@x [13.247] l.4557
+@x [13.247] l.4560
     fatal("! Cannot open section file ",scn_file_name);
 @y
     fatal(_("! Cannot open section file "),scn_file_name);
 @z
 
-@x [13.247] l.4569
+@x [13.247] l.4572
 fclose(active_file);
 @y
 fclose(active_file); active_file=tex_file=NULL;
 if (check_for_change) @<Update the result when it has changed@>@;
 @z
 
-@x [13.247] l.4572
+@x [13.247] l.4575
   printf("%s","Done.");
 @y
   printf("%s",_("Done."));
 @z
 
-@x [13.257] l.4724
+@x [13.257] l.4727
     if (sort_ptr>=scrap_info_end) overflow("sorting");
 @y
     if (sort_ptr>=scrap_info_end) overflow(_("sorting"));
 @z
 
-@x [13.269] l.4861
+@x [13.269] l.4864
   puts("\nMemory usage statistics:");
 @.Memory usage statistics:@>
   printf("%td names (out of %ld)\n",@^system dependencies@>
@@ -595,7 +601,7 @@ if (check_for_change) @<Update the result when it has changed@>@;
             (ptrdiff_t)(max_sort_ptr-scrap_info),(long)max_scraps);
 @z
 
-@x [14.270] l.4883
+@x [14.270] l.4886
 @** Index.
 @y
 @** Extensions to {\tentex CWEB}.  The following sections introduce new or
