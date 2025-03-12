@@ -1,3 +1,9 @@
+2025-03-12  Andreas Scherer  <https://ascherer.github.io>
+
+	* weave.ch: Parse and reject verbatim in TeX part.
+	Report and patch from Benjamin Gray
+	(https://tug.org/pipermail/tex-k/2025-March/004169.html).
+
 2025-03-11  Andreas Scherer  <https://ascherer.github.io>
 
 	* tangle.ch,

@@ -529,6 +529,25 @@ until_like: begin @<Append \(|term...@>;
 @<Append \(|termin...@>=
 @z
 
+@x [18.222] l.4285 - Reject verbatim in TeX part
+TeX_string,xref_roman,xref_wildcard,xref_typewriter,module_name:
+  begin loc:=loc-2; next_control:=get_next; {skip to \.{@@>}}
+  if next_control=TeX_string then
+    err_print('! TeX string should be in Pascal text only');
+@.TeX string should be...@>
+  end;
+@y
+TeX_string,xref_roman,xref_wildcard,xref_typewriter,module_name,verbatim:
+  begin loc:=loc-2; next_control:=get_next; {skip to \.{@@>}}
+  if next_control=TeX_string then
+    err_print('! TeX string should be in Pascal text only')
+@.TeX string should be...@>
+  else if next_control=verbatim then
+    err_print('! Verbatim string should be in Pascal text only');
+@.Verbatim string should be...@>
+  end;
+@z
+
 @x [19.239] l.4537 - omit index and module names if no_xref set
 @<Phase III: Output the cross-reference index@>=
 @y
