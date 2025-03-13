@@ -746,7 +746,7 @@ void initialize_commands(void)
     primitive_luatex("pdfextension", extension_cmd, pdf_extension_code, 0);
     primitive_luatex("pdffeedback", feedback_cmd, pdf_feedback_code, 0);
     primitive_luatex("pdfvariable", variable_cmd, pdf_variable_code, 0);
-    primitive_luatex("mathoption", option_cmd, math_option_code, 0);
+    primitive_luatex("mathoption", option_cmd, 0, 0);
 
     primitive_luatex("luacopyinputnodes", assign_int_cmd, int_base + copy_lua_input_nodes_code, int_base);
 

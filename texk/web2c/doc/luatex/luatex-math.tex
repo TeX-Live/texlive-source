@@ -1,4 +1,4 @@
-% language=uk engine=luatex runpath=texruns:manuals/luatex
+% language=us engine=luatex runpath=texruns:manuals/luatex
 
 \environment luatex-style
 
@@ -835,31 +835,58 @@ experimenting.
 
 \topicindex {math+italics}
 
-The \lpr {mathitalicsmode} parameter can be set to~1 to force italic correction
-before noads that represent some more complex structure (read: everything that is
-not an ord, bin, rel, open, close, punct or inner). A value of~2 will enforce the
-old school font code path for all italics. We show a Cambria example.
+The \lpr {mathitalicsmode} parameter was introduced to deal with the difference
+in applying italic correction in traditional and \OPENTYPE\ math fonts. There are
+\OPENTYPE\ fonts out there that have italic correction and assume them to be
+applied like traditional \TEX\ fonts. This parameter takes several values:
 
-\starttexdefinition Whatever #1
-    \NC \type{\mathitalicsmode = #1}
-    \NC \mathitalicsmode#1\ruledhbox{$\left|T^1\right|$}
-    \NC \mathitalicsmode#1\ruledhbox{$\left|T\right|$}
-    \NC \mathitalicsmode#1\ruledhbox{$T+1$}
-    \NC \mathitalicsmode#1\ruledhbox{$T{1\over2}$}
-    \NC \mathitalicsmode#1\ruledhbox{$T\sqrt{1}$}
-    \NC \NR
-\stoptexdefinition
+When set to zero, you get what was decided when the two code paths (traditional
+and \OPENTYPE) were introduced.
 
-\start
-    \switchtobodyfont[cambria]
-    \starttabulate[|c|c|c|c|c|c|]
-        \Whatever{0}%
-        \Whatever{1}%
-    \stoptabulate
-\stop
+Values larger than zero will add the italic correction between simple noads (it
+checks some classes so you might pay attention to for instance punctuation
+classes assigned).
 
-This kind of parameters relate to the fact that italic correction in \OPENTYPE\
-math is bound to fuzzy rules. So, control is the solution.
+When set to zero or one, italics are independent, so we separate width from
+italic, while values larger than one combine both in the width but later
+selectively has to get rid of it (depending on code path).
+
+A value larger than two will backtrack italics for large operators, because there
+italic correction is used for anchoring scripts (limits and no limits). In fact,
+\OPENTYPE\ uses italics either between characters or for this purpose but as
+mentioned fonts are sort of messy here.
+
+We tested our version of plain \TEX\ and recommend to use the value of three to
+get the best average results. More about this italic correction dilemma in
+rendering math can be found in articles (in for instance \TUGBOAT) and various
+documents in the \CONTEXT\ distribution, especially those that discuss the
+upgraded math engine in \LUAMETATEX.
+
+% The \lpr {mathitalicsmode} parameter can be set to~1 to force italic correction
+% before noads that represent some more complex structure (read: everything that is
+% not an ord, bin, rel, open, close, punct or inner). A value of~2 will enforce the
+% old school font code path for all italics. We show a Cambria example.
+%
+% \starttexdefinition Whatever #1
+%     \NC \type{\mathitalicsmode = #1}
+%     \NC \mathitalicsmode#1\ruledhbox{$\left|T^1\right|$}
+%     \NC \mathitalicsmode#1\ruledhbox{$\left|T\right|$}
+%     \NC \mathitalicsmode#1\ruledhbox{$T+1$}
+%     \NC \mathitalicsmode#1\ruledhbox{$T{1\over2}$}
+%     \NC \mathitalicsmode#1\ruledhbox{$T\sqrt{1}$}
+%     \NC \NR
+% \stoptexdefinition
+%
+% \start
+%     \switchtobodyfont[cambria]
+%     \starttabulate[|c|c|c|c|c|c|]
+%         \Whatever{0}%
+%         \Whatever{1}%
+%     \stoptabulate
+% \stop
+%
+% This kind of parameters relate to the fact that italic correction in \OPENTYPE\
+% math is bound to fuzzy rules. So, control is the solution.
 
 \subsection {Script and kerning}
 
@@ -1630,26 +1657,31 @@ explicitly set the style in the content argument.
 
 \subsection {Math options with \lpr {mathoption}}
 
-The logic in the math engine is rather complex and there are often no universal
-solutions (read: what works out well for one font, fails for another). Therefore
-some variations in the implementation are driven by parameters (modes). In
-addition there is a new primitive \lpr {mathoption} which will be used for
-testing. Don't rely on any option to be there in a production version as they are
-meant for development.
+This command is now obsolete and triggers an error message. It was only meant
+for experiments.
 
-This option was introduced for testing purposes when the math engine got split
-code paths and it forces the engine to treat new fonts as old ones with respect
-to italic correction etc. There are no guarantees given with respect to the final
-result and unexpected side effects are not seen as bugs as they relate to font
-properties. There is currently only one option:
+% % even more obsolete:
 
-\startbuffer
-\mathoption old 1
-\stopbuffer
-
-The \type {oldmath} boolean flag in the \LUA\ font table is the official way to
-force old treatment as it's bound to fonts. Like with all options we may
-temporarily introduce with this command this feature is not meant for production.
+% The logic in the math engine is rather complex and there are often no universal
+% solutions (read: what works out well for one font, fails for another). Therefore
+% some variations in the implementation are driven by parameters (modes). In
+% addition there is a new primitive \lpr {mathoption} which will be used for
+% testing. Don't rely on any option to be there in a production version as they are
+% meant for development.
+%
+% This option was introduced for testing purposes when the math engine got split
+% code paths and it forces the engine to treat new fonts as old ones with respect
+% to italic correction etc. There are no guarantees given with respect to the final
+% result and unexpected side effects are not seen as bugs as they relate to font
+% properties. There is currently only one option:
+%
+% \startbuffer
+% \mathoption old 1
+% \stopbuffer
+%
+% The \type {oldmath} boolean flag in the \LUA\ font table is the official way to
+% force old treatment as it's bound to fonts. Like with all options we may
+% temporarily introduce with this command this feature is not meant for production.
 
 % % obsolete:
 %
