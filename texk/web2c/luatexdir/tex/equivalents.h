@@ -315,24 +315,13 @@ the |number_regs| \.{\\dimen} registers.
 #  define show_stream_code 122
 #  define math_eq_dir_mode_code 123
 #  define var_fam_code 124
-
 #  define ignore_primitive_error_code 125 				/*ignore some primitive/engine errors*/
-
 #  define math_empty_display_mode_code 126
 
-#  define math_option_code 127
-
-
-#  define mathoption_int_base_code (math_option_code+1)                 /* one reserve */
-#  define mathoption_int_last_code (mathoption_int_base_code+8)
-
-#  define backend_int_base_code (mathoption_int_last_code+1)
+#  define backend_int_base_code (math_empty_display_mode_code+1)
 #  define backend_int_last_code (backend_int_base_code+32)              /* we need some 25 but take some slack */
 
 #  define tex_int_pars (backend_int_last_code+1)                        /* total number of integer parameters */
-
-#  define mathoption_int_base (int_base+mathoption_int_base_code)
-#  define mathoption_int_last (int_base+mathoption_int_last_code)
 
 #  define backend_int_base (int_base+backend_int_base_code)
 #  define backend_int_last (int_base+backend_int_last_code)
@@ -470,15 +459,6 @@ extern void print_save_stack(void);
 #  define dimen_par(A) eqtb[dimen_base+(A)].cint
 #  define loc_par(A)   equiv(local_base+(A))
 #  define glue_par(A)  equiv(glue_base+(A))
-
-typedef enum {
-    c_mathoption_old_code = 0,                  /* this one is stable */
-    /*
-    c_mathoption_umathcode_meaning_code,
-    */
-} math_option_codes ;
-
-#  define mathoption_int_par(A) eqtb[mathoption_int_base+(A)].cint
 
 /* if nonzero, this magnification should be used henceforth */
 
@@ -782,12 +762,6 @@ extern halfword last_cs_name;
 #define suppress_primitive_error_par       int_par(suppress_primitive_error_code)
 #define error_context_lines_par            int_par(error_context_lines_code)
 #define copy_lua_input_nodes_par           int_par(copy_lua_input_nodes_code)
-
-#define math_old_par                       mathoption_int_par(c_mathoption_old_code)
-
-/*
-#define math_umathcode_meaning_par         mathoption_int_par(c_mathoption_umathcode_meaning_code)
-*/
 
 #define math_pre_display_gap_factor_par    int_par(math_pre_display_gap_factor_code)
 
