@@ -1,3 +1,9 @@
+2025-03-13  Max Chernoff  <tex@maxchernoff.ca>
+
+	* dvipdfmx.c, dvipdfmx.h, pdffont.c: Use deterministic font names.
+	Report from Paulo Ney de Souza,
+	https://tug.org/pipermail/dvipdfmx/2025-March/000353.html
+
 2025-03-07  Karl Berry  <karl@tug.org>
 
 	* TL'25 release.
