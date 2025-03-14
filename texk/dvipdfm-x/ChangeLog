@@ -1,3 +1,8 @@
+2025-03-14  Max Chernoff  <tex@maxchernoff.ca>
+	* pdffont.c: Switch to using only A-Z in the tag since numerical
+	digits are invalid per the PDF spec. Thanks to Yukimasa Morimi,
+	https://tug.org/pipermail/dvipdfmx/2025-March/000370.html
+
 2025-03-13  Max Chernoff  <tex@maxchernoff.ca>
 
 	* dvipdfmx.c, dvipdfmx.h, pdffont.c: Use deterministic font names.

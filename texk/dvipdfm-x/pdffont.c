@@ -112,6 +112,8 @@ pdf_font_make_uniqueTag (char *tag)
 {
   MD5_CONTEXT state;
   unsigned char digest[16];
+  int i, ch;
+
   unique_tag_count.i++;
 
   MD5_init(&state);
@@ -122,7 +124,11 @@ pdf_font_make_uniqueTag (char *tag)
   MD5_write(&state, unique_tag_count.p, sizeof(unique_tag_count));
   MD5_final(digest, &state);
 
-  snprintf(tag, 7, "%02X%02X%02X", digest[0], digest[1], digest[2]);
+  for (i = 0; i < 6; i++) {
+    ch = digest[i] % 26;
+    tag[i] = ch + 'A';
+  }
+  tag[6] = '\0';
 }
 
 static void
