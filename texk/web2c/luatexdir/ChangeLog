@@ -1,3 +1,6 @@
+2025-03-15 Luigi Scarso  <luigi.scarso@gmail.com>
+	* : italicsmode fix for eight bit fonts (H.Hagen)
+
 2025-03-13 Luigi Scarso  <luigi.scarso@gmail.com>
 	* extra italicsmode (large operator italic spacing) (H.Hagen)
 
