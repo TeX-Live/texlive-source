@@ -61,31 +61,27 @@ LuaTeX; if not, see <http://www.gnu.org/licenses/>.
 */
 
 /*tex
-    These two are used to determine if we need to pick up parameters from the
+    These macros are used to determine if we need to pick up parameters from the
     opentype table or the traditional parameter array. We noticed that some macro
     packages set both tables so we cannot use that for determining if we have a new
-    or old font.
+    or old font. It's a bit guesswork especially when it comes to italics.
 */
 
-#define is_new_mathfont(A)   ((font_math_params(A)  > 0))
+# define trace_italics 0
+
+//      is_new_mathfont(A)   ((font_math_params(A) > 0) && (math_old_par == 0))
+//      is_old_mathfont(A,B) ((font_math_params(A) == 0) && (font_params(A) >= (B)))
+//      do_new_math(A)       ((font_math_params(A) > 0) && (font_oldmath(A) == 0) && (math_old_par == 0))
+
+#define is_new_mathfont(A)   ((font_math_params(A) > 0))
 #define is_old_mathfont(A,B) ((font_math_params(A) == 0) && (font_params(A) >= (B)))
-
-/*tex
-    This is a bit of a guess.
-*/
-
-#define assume_new_math(A) ((font_math_params(A) > 0) && (font_oldmath(A) == 0))
-
-/*tex
-    So we no longer use that test here.
-*/
+#define assume_new_math(A)   ((font_math_params(A) > 0) && (font_oldmath(A) == 0))
 
 //      do_new_math_but_not(A) (math_italics_mode_par > 1 ? 0 : do_new_math(A))
-//      do_new_math_but_not(A) (math_italics_mode_par <= 1)
 
-#define math_italics_between_simple     (math_italics_mode_par >  0) // 1 and higher
-#define math_italics_independent_italic (math_italics_mode_par <= 1)
-#define math_italics_backtrack_operator (math_italics_mode_par >  2) // 3 or more
+#define math_italics_between_simple(A)     (math_italics_mode_par > 0) // 1 and higher
+#define math_italics_independent_italic(A) (math_italics_mode_par > 1 ? 0 : assume_new_math(A))
+#define math_italics_backtrack_operator(A) (math_italics_mode_par > 2 ? assume_new_math(A) : 0) // 3 or more
 
 #define protect_glyph(A) subtype(A) = 256
 
@@ -1165,10 +1161,14 @@ static pointer char_box(internal_font_number f, int c, pointer bb)
     /*tex The new box and its character node. */
     pointer b, p;
     b = new_null_box();
-    if (math_italics_independent_italic)
+    if (math_italics_independent_italic(f)) {
+# if trace_italics
+    printf("[math italics independent italic 1]\n");
+# endif
         width(b) = char_width(f, c);
-    else
+    } else {
         width(b) = char_width(f, c) + char_italic(f, c);
+    }
     height(b) = char_height(f, c);
     depth(b) = char_depth(f, c);
     subtype(b) = math_char_list ;
@@ -2750,7 +2750,10 @@ static void do_make_math_accent(pointer q, internal_font_number f, int c, int fl
     } else if ((vlink(q) != null) && (type(nucleus(q)) == math_char_node)) {
         /*tex only pure math char nodes */
         internal_font_number f = fam_fnt(math_fam(nucleus(q)),cur_size);
-        if (math_italics_independent_italic) {
+        if (math_italics_independent_italic(f)) {
+# if trace_italics
+    printf("[math italics independent italic 2]\n");
+# endif
             ic = char_italic(f,math_character(nucleus(q)));
         }
     }
@@ -3139,13 +3142,19 @@ static scaled make_op(pointer q, int cur_style)
                 small_char(y) = math_character(nucleus(q));
                 x = do_delimiter(q, y, text_size, ok_size, false, cur_style, true, NULL, &delta, NULL);
                 if (delta != 0) {
-                    if (math_italics_backtrack_operator) {
+                    if (math_italics_backtrack_operator(cur_f)) {
                         width(x) -= delta;
-                    } else if (math_italics_independent_italic) {
+# if trace_italics
+    printf("[math italics backtrack operator 1]\n");
+# endif
+                    } else if (math_italics_independent_italic(cur_f)) {
                         /*tex
                             As we never added italic correction we don't need to compensate. The ic
                             is stored in a special field of the node and applied in some occasions.
                         */
+# if trace_italics
+    printf("[math italics independent italic 3]\n");
+# endif
                     } else if ((subscr(q) != null) && (subtype(q) != op_noad_type_limits)) {
                         /*tex
                             Here we (selectively) remove the italic correction that always gets added
@@ -3169,10 +3178,16 @@ static scaled make_op(pointer q, int cur_style)
                 delta = char_italic(cur_f, cur_c);
                 x = clean_box(nucleus(q), cur_style, cur_style, math_nucleus_list);
                 if (delta != 0) {
-                    if (math_italics_backtrack_operator) {
+                    if (math_italics_backtrack_operator(cur_f)) {
                         width(x) -= delta;
-                    } else if (math_italics_independent_italic) {
+# if trace_italics
+    printf("[math italics backtrack operator 2]\n");
+# endif
+                    } else if (math_italics_independent_italic(cur_f)) {
                         /*tex we never added italic correction */
+# if trace_italics
+    printf("[math italics independent italic 4]\n");
+# endif
                     } else if ((subscr(q) != null) && (subtype(q) != op_noad_type_limits)) {
                         /*tex remove italic correction */
                         width(x) -= delta;
@@ -3185,12 +3200,16 @@ static scaled make_op(pointer q, int cur_style)
             delta = char_italic(cur_f, cur_c);
             x = clean_box(nucleus(q), cur_style, cur_style, math_nucleus_list);
             if (delta != 0) {
-                /* if (math_italics_backtrack_operator) {
-                } else */
-                if (math_italics_backtrack_operator) {
+                if (math_italics_backtrack_operator(cur_f)) {
                     width(x) -= delta;
-                } else if (math_italics_independent_italic) {
+# if trace_italics
+    printf("[math italics backtrack operator 3]\n");
+# endif
+                } else if (math_italics_independent_italic(cur_f)) {
                     /*tex we never added italic correction */
+# if trace_italics
+    printf("[math italics independent italic 5]\n");
+# endif
                 } else if ((subscr(q) != null) && (subtype(q) != op_noad_type_limits)) {
                     /*tex remove italic correction */
                     width(x) -= delta;
@@ -3207,7 +3226,10 @@ static scaled make_op(pointer q, int cur_style)
     }
     /*tex we now handle op_nod_type_no_limits here too */
     if (subtype(q) == op_noad_type_no_limits) {
-if (math_italics_backtrack_operator) {
+if (math_italics_backtrack_operator(cur_f)) {
+# if trace_italics
+    printf("[math italics backtrack operator 4]\n");
+# endif
             /*tex
                 Not:
 
@@ -3294,7 +3316,10 @@ if (math_italics_backtrack_operator) {
         reset_attributes(v, node_attr(q));
         type(v) = vlist_node;
         subtype(v) = math_limits_list;
-        if (math_italics_independent_italic) {
+        if (math_italics_independent_italic(cur_f)) {
+# if trace_italics
+    printf("[math italics independent italic 6]\n");
+# endif
             n = nucleus(q);
             if (n != null) {
                 if ((type(n) == sub_mlist_node) || (type(n) == sub_box_node)) {
@@ -3401,7 +3426,10 @@ if (math_italics_backtrack_operator) {
             supscr(q) = null;
         }
         assign_new_hlist(q, v);
-        if (math_italics_independent_italic) {
+        if (math_italics_independent_italic(cur_f)) {
+# if trace_italics
+    printf("[math italics independent italic 7]\n");
+# endif
             delta = 0;
         }
     }
@@ -3450,7 +3478,11 @@ static void make_ord(pointer q)
             fetch(nucleus(q));
             a = cur_c;
             /*tex add italic correction */
-            if (math_italics_independent_italic && (char_italic(cur_f,math_character(nucleus(q))) != 0)) {
+            if (math_italics_independent_italic(cur_f) && (char_italic(cur_f,math_character(nucleus(q))) != 0)) {
+# if trace_italics
+    printf("[math italics independent italic 8]\n");
+# endif
+
                 p = new_kern(char_italic(cur_f,math_character(nucleus(q))));
                 subtype(p) = italic_kern;
                 reset_attributes(p, node_attr(q));
@@ -4329,8 +4361,11 @@ static pointer check_nucleus_complexity(halfword q, scaled * delta, int cur_styl
             fetch(nucleus(q));
             if (char_exists(cur_f, cur_c)) {
                 /*tex we could look at neighbours */
-                if (math_italics_independent_italic) {
+                if (math_italics_independent_italic(cur_f)) {
                     /*tex cf spec only the last one */
+# if trace_italics
+    printf("[math italics independent italic 9]\n");
+# endif
                     *delta = 0 ;
                 } else {
                     *delta = char_italic(cur_f, cur_c);
@@ -4338,9 +4373,15 @@ static pointer check_nucleus_complexity(halfword q, scaled * delta, int cur_styl
                 p = new_glyph(cur_f, cur_c);
                 protect_glyph(p);
                 reset_attributes(p, node_attr(nucleus(q)));
-                if (math_italics_backtrack_operator) {
+                if (math_italics_backtrack_operator(cur_f)) {
+# if trace_italics
+    printf("[math italics backtrack operator 5]\n");
+# endif
                     /* do nothing */
-                } else if (math_italics_independent_italic) {
+                } else if (math_italics_independent_italic(cur_f)) {
+# if trace_italics
+    printf("[math italics independent italic 10]\n");
+# endif
                     if (get_char_cat_code(cur_c) == 11) {
                         /*tex no italic correction in mid-word of text font */
                         *delta = 0;
@@ -4358,8 +4399,12 @@ static pointer check_nucleus_complexity(halfword q, scaled * delta, int cur_styl
                     reset_attributes(x, node_attr(nucleus(q)));
                     couple_nodes(p,x);
                     *delta = 0;
-                } else if (math_italics_independent_italic) {
+                } else if (math_italics_independent_italic(cur_f)) {
                     /*tex Needs checking but looks ok. It must be more selective. */
+# if trace_italics
+    printf("[math italics independent italic 11]\n");
+# endif
+
                     *delta = char_italic(cur_f, cur_c);
                 }
             }
@@ -4658,7 +4703,10 @@ void mlist_to_hlist(pointer mlist, boolean penalties, int cur_style)
                 the scripts so if it's optional here it also should be there.
 
             */
-            if (nxt && math_italics_between_simple && (delta != 0)) {
+            if (nxt && math_italics_between_simple(null) && (delta != 0)) {
+# if trace_italics
+    printf("[math italics between simple 1]\n");
+# endif
                 if (type(nxt) == simple_noad) {
                     switch (subtype(nxt)) {
                         case ord_noad_type:
