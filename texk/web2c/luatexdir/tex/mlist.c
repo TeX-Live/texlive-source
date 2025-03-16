@@ -60,30 +60,11 @@ LuaTeX; if not, see <http://www.gnu.org/licenses/>.
 
 */
 
-/*tex
-    These macros are used to determine if we need to pick up parameters from the
-    opentype table or the traditional parameter array. We noticed that some macro
-    packages set both tables so we cannot use that for determining if we have a new
-    or old font. It's a bit guesswork especially when it comes to italics.
-*/
-
-# define trace_italics 0
-
-//      is_new_mathfont(A)   ((font_math_params(A) > 0) && (math_old_par == 0))
-//      is_old_mathfont(A,B) ((font_math_params(A) == 0) && (font_params(A) >= (B)))
-//      do_new_math(A)       ((font_math_params(A) > 0) && (font_oldmath(A) == 0) && (math_old_par == 0))
-
-#define is_new_mathfont(A)   ((font_math_params(A) > 0))
-#define is_old_mathfont(A,B) ((font_math_params(A) == 0) && (font_params(A) >= (B)))
-#define assume_new_math(A)   ((font_math_params(A) > 0) && (font_oldmath(A) == 0))
-
-//      do_new_math_but_not(A) (math_italics_mode_par > 1 ? 0 : do_new_math(A))
-
-#define math_italics_between_simple(A)     (math_italics_mode_par > 0) // 1 and higher
-#define math_italics_independent_italic(A) (math_italics_mode_par > 1 ? 0 : assume_new_math(A))
-#define math_italics_backtrack_operator(A) (math_italics_mode_par > 2 ? assume_new_math(A) : 0) // 3 or more
-
-#define protect_glyph(A) subtype(A) = 256
+#define is_new_mathfont(A)     ((font_math_params(A) >0) && (math_old_par == 0))
+#define is_old_mathfont(A,B)   ((font_math_params(A)==0) && (font_params(A)>=(B)))
+#define do_new_math(A)         ((font_math_params(A) >0) && (font_oldmath(A) == 0) && (math_old_par == 0))
+#define do_new_math_but_not(A) (math_italics_mode_par > 1 ? 0 : do_new_math(A))
+#define protect_glyph(A)       subtype(A)=256
 
 #include "ptexlib.h"
 #include "lua/luatex-api.h"
@@ -291,7 +272,7 @@ static void math_param_error(const char *param, int style)
 static scaled accent_base_height(int f)
 {
     scaled a;
-    if (assume_new_math(f)) {
+    if (do_new_math(f)) {
         a = font_MATH_par(f, AccentBaseHeight);
         if (a == undefined_math_parameter)
             a = x_height(f);
@@ -1161,14 +1142,10 @@ static pointer char_box(internal_font_number f, int c, pointer bb)
     /*tex The new box and its character node. */
     pointer b, p;
     b = new_null_box();
-    if (math_italics_independent_italic(f)) {
-# if trace_italics
-    printf("[math italics independent italic 1]\n");
-# endif
+    if (do_new_math_but_not(f))
         width(b) = char_width(f, c);
-    } else {
+    else
         width(b) = char_width(f, c) + char_italic(f, c);
-    }
     height(b) = char_height(f, c);
     depth(b) = char_depth(f, c);
     subtype(b) = math_char_list ;
@@ -1613,17 +1590,17 @@ static pointer do_delimiter(pointer q, pointer d, int s, scaled v, boolean flat,
                         c = y;
                         w = u;
                         if (u >= v) {
-                            /*
-                                This solves a leftbrace middle being abused as starting point
-                                for an extensible bar in cmex. It's the only known case where
-                                a middle piece is so large that it makes us consider it a valid
-                                sized character. It is large because it braces have variants. The
-                                reason why actually these starting points can be somewhat weird
-                                (like: the extesible is a bottom parent piece (small) that has a
-                                recipe using shared middle pieces and and self references bottom
-                                piece usage.) In opentype the extensibles always sit on a complete
-                                shape i.e. they are end points in a variant list or a base
-                                character. It took two decades to run into an example (HH & MS).
+                            /* 
+                                This solves a leftbrace middle being abused as starting point 
+                                for an extensible bar in cmex. It's the only known case where 
+                                a middle piece is so large that it makes us consider it a valid 
+                                sized character. It is large because it braces have variants. The 
+                                reason why actually these starting points can be somewhat weird 
+                                (like: the extesible is a bottom parent piece (small) that has a 
+                                recipe using shared middle pieces and and self references bottom 
+                                piece usage.) In opentype the extensibles always sit on a complete 
+                                shape i.e. they are end points in a variant list or a base 
+                                character. It took two decades to run into an example (HH & MS). 
                             */
                             if (is_new_mathfont(g)) {
                                 goto FOUND;
@@ -1680,7 +1657,7 @@ static pointer do_delimiter(pointer q, pointer d, int s, scaled v, boolean flat,
                 b = get_delim_box(f, c, v, connector_overlap_min(cur_style), 0, att);
             }
             if (delta != NULL) {
-                if (assume_new_math(f)) {
+                if (do_new_math(f)) {
                     *delta = char_vert_italic(f,x);
                 } else {
                     *delta = char_italic(f,x);
@@ -2121,7 +2098,7 @@ static void make_over(pointer q, int cur_style, int cur_size, int cur_fam)
         f = noad_fam(q);
         if (f >= 0) {
             t = fam_fnt(f,cur_size);
-            if (assume_new_math(t)) {
+            if (do_new_math(t)) {
                 t = font_MATH_par(t, OverbarRuleThickness);
                 if (t != undefined_math_parameter) {
                     used_thickness = t;
@@ -2161,7 +2138,7 @@ static void make_under(pointer q, int cur_style, int cur_size, int cur_fam)
         f = noad_fam(q);
         if (f >= 0) {
             t = fam_fnt(f,cur_size);
-            if (assume_new_math(t)) {
+            if (do_new_math(t)) {
                 t = font_MATH_par(t, UnderbarRuleThickness);
                 if (t != undefined_math_parameter) {
                     used_thickness = t;
@@ -2255,7 +2232,7 @@ static void make_radical(pointer q, int cur_style)
         f = small_fam(left_delimiter(q));
         if (f >= 0) {
             t = fam_fnt(f,cur_size);
-            if (assume_new_math(t)) {
+            if (do_new_math(t)) {
                 t = font_MATH_par(t, RadicalRuleThickness);
                 if (t != undefined_math_parameter) {
                     theta = t;
@@ -2570,7 +2547,7 @@ static boolean compute_accent_skew(pointer q, int flags, scaled *s)
     boolean s_is_absolute = false;
     if (type(nucleus(q)) == math_char_node) {
         fetch(nucleus(q));
-        if (assume_new_math(cur_f)) {
+        if (do_new_math(cur_f)) {
             /*tex
                 There is no bot_accent so let's assume similarity
 
@@ -2670,7 +2647,7 @@ static void do_make_math_accent(pointer q, internal_font_number f, int c, int fl
     x = clean_box(nucleus(q), cramped_style(cur_style), cur_style, math_nucleus_list);
     w = width(x);
     h = height(x);
-    if (assume_new_math(cur_f) && !s_is_absolute) {
+    if (do_new_math(cur_f) && !s_is_absolute) {
         s = half(w);
         s_is_absolute = true;
     }
@@ -2750,10 +2727,7 @@ static void do_make_math_accent(pointer q, internal_font_number f, int c, int fl
     } else if ((vlink(q) != null) && (type(nucleus(q)) == math_char_node)) {
         /*tex only pure math char nodes */
         internal_font_number f = fam_fnt(math_fam(nucleus(q)),cur_size);
-        if (math_italics_independent_italic(f)) {
-# if trace_italics
-    printf("[math italics independent italic 2]\n");
-# endif
+        if (do_new_math_but_not(f)) {
             ic = char_italic(f,math_character(nucleus(q)));
         }
     }
@@ -2883,7 +2857,7 @@ static void make_fraction(pointer q, int cur_style)
         f = fraction_fam(q);
         if (f >= 0) {
             t = fam_fnt(f,cur_size);
-            if (assume_new_math(t)) {
+            if (do_new_math(t)) {
                 t = font_MATH_par(t, FractionRuleThickness);
                 if (t != undefined_math_parameter) {
                     thickness(q) = t;
@@ -3071,7 +3045,7 @@ static void make_fraction(pointer q, int cur_style)
         point to it.
 
     */
-    if (assume_new_math(cur_f)) {
+    if (do_new_math(cur_f)) {
         delta = fraction_del_size_new(cur_style);
         if (delta == undefined_math_parameter) {
             delta = get_delimiter_height(depth(v), height(v), true);
@@ -3132,7 +3106,7 @@ static scaled make_op(pointer q, int cur_style)
     if (type(nucleus(q)) == math_char_node) {
         fetch(nucleus(q));
         if (cur_style < text_style) {
-            /*tex try to make it larger: $\displaystyle \int \limits _a^b f(x)$ */ /* 1 */
+            /*tex try to make it larger */
             ok_size = minimum_operator_size(cur_style);
             if (ok_size != undefined_math_parameter) {
                 /*tex creating a temporary delimiter is the cleanest way */
@@ -3142,19 +3116,11 @@ static scaled make_op(pointer q, int cur_style)
                 small_char(y) = math_character(nucleus(q));
                 x = do_delimiter(q, y, text_size, ok_size, false, cur_style, true, NULL, &delta, NULL);
                 if (delta != 0) {
-                    if (math_italics_backtrack_operator(cur_f)) {
-                        width(x) -= delta;
-# if trace_italics
-    printf("[math italics backtrack operator 1]\n");
-# endif
-                    } else if (math_italics_independent_italic(cur_f)) {
+                    if (do_new_math_but_not(cur_f)) {
                         /*tex
                             As we never added italic correction we don't need to compensate. The ic
                             is stored in a special field of the node and applied in some occasions.
                         */
-# if trace_italics
-    printf("[math italics independent italic 3]\n");
-# endif
                     } else if ((subscr(q) != null) && (subtype(q) != op_noad_type_limits)) {
                         /*tex
                             Here we (selectively) remove the italic correction that always gets added
@@ -3178,16 +3144,8 @@ static scaled make_op(pointer q, int cur_style)
                 delta = char_italic(cur_f, cur_c);
                 x = clean_box(nucleus(q), cur_style, cur_style, math_nucleus_list);
                 if (delta != 0) {
-                    if (math_italics_backtrack_operator(cur_f)) {
-                        width(x) -= delta;
-# if trace_italics
-    printf("[math italics backtrack operator 2]\n");
-# endif
-                    } else if (math_italics_independent_italic(cur_f)) {
+                    if (do_new_math_but_not(cur_f)) {
                         /*tex we never added italic correction */
-# if trace_italics
-    printf("[math italics independent italic 4]\n");
-# endif
                     } else if ((subscr(q) != null) && (subtype(q) != op_noad_type_limits)) {
                         /*tex remove italic correction */
                         width(x) -= delta;
@@ -3196,20 +3154,12 @@ static scaled make_op(pointer q, int cur_style)
                 axis_shift = true;
             }
         } else {
-            /*tex normal size: $ \int\limits _a^b f(x)$ */
+            /*tex normal size */
             delta = char_italic(cur_f, cur_c);
             x = clean_box(nucleus(q), cur_style, cur_style, math_nucleus_list);
             if (delta != 0) {
-                if (math_italics_backtrack_operator(cur_f)) {
-                    width(x) -= delta;
-# if trace_italics
-    printf("[math italics backtrack operator 3]\n");
-# endif
-                } else if (math_italics_independent_italic(cur_f)) {
+                if (do_new_math_but_not(cur_f)) {
                     /*tex we never added italic correction */
-# if trace_italics
-    printf("[math italics independent italic 5]\n");
-# endif
                 } else if ((subscr(q) != null) && (subtype(q) != op_noad_type_limits)) {
                     /*tex remove italic correction */
                     width(x) -= delta;
@@ -3226,10 +3176,7 @@ static scaled make_op(pointer q, int cur_style)
     }
     /*tex we now handle op_nod_type_no_limits here too */
     if (subtype(q) == op_noad_type_no_limits) {
-if (math_italics_backtrack_operator(cur_f)) {
-# if trace_italics
-    printf("[math italics backtrack operator 4]\n");
-# endif
+        if (do_new_math_but_not(cur_f)) {
             /*tex
                 Not:
 
@@ -3316,10 +3263,7 @@ if (math_italics_backtrack_operator(cur_f)) {
         reset_attributes(v, node_attr(q));
         type(v) = vlist_node;
         subtype(v) = math_limits_list;
-        if (math_italics_independent_italic(cur_f)) {
-# if trace_italics
-    printf("[math italics independent italic 6]\n");
-# endif
+        if (do_new_math_but_not(cur_f)) {
             n = nucleus(q);
             if (n != null) {
                 if ((type(n) == sub_mlist_node) || (type(n) == sub_box_node)) {
@@ -3426,10 +3370,7 @@ if (math_italics_backtrack_operator(cur_f)) {
             supscr(q) = null;
         }
         assign_new_hlist(q, v);
-        if (math_italics_independent_italic(cur_f)) {
-# if trace_italics
-    printf("[math italics independent italic 7]\n");
-# endif
+        if (do_new_math_but_not(cur_f)) {
             delta = 0;
         }
     }
@@ -3478,11 +3419,7 @@ static void make_ord(pointer q)
             fetch(nucleus(q));
             a = cur_c;
             /*tex add italic correction */
-            if (math_italics_independent_italic(cur_f) && (char_italic(cur_f,math_character(nucleus(q))) != 0)) {
-# if trace_italics
-    printf("[math italics independent italic 8]\n");
-# endif
-
+            if (do_new_math_but_not(cur_f) && (char_italic(cur_f,math_character(nucleus(q))) != 0)) {
                 p = new_kern(char_italic(cur_f,math_character(nucleus(q))));
                 subtype(p) = italic_kern;
                 reset_attributes(p, node_attr(q));
@@ -3641,7 +3578,7 @@ static scaled find_math_kern(internal_font_number l_f, int l_c, internal_font_nu
 {
     scaled corr_height_top = 0, corr_height_bot = 0;
     scaled krn_l = 0, krn_r = 0, krn = 0;
-    if ((! assume_new_math(l_f)) || (! assume_new_math(r_f)) || (!char_exists(l_f,l_c)) || (!char_exists(r_f,r_c)))
+    if ((!do_new_math(l_f)) || (!do_new_math(r_f)) || (!char_exists(l_f,l_c)) || (!char_exists(r_f,r_c)))
         return MATH_KERN_NOT_FOUND;
     if (cmd == sup_mark_cmd) {
         corr_height_top = char_height(l_f, l_c);
@@ -4361,11 +4298,8 @@ static pointer check_nucleus_complexity(halfword q, scaled * delta, int cur_styl
             fetch(nucleus(q));
             if (char_exists(cur_f, cur_c)) {
                 /*tex we could look at neighbours */
-                if (math_italics_independent_italic(cur_f)) {
+                if (do_new_math_but_not(cur_f)) {
                     /*tex cf spec only the last one */
-# if trace_italics
-    printf("[math italics independent italic 9]\n");
-# endif
                     *delta = 0 ;
                 } else {
                     *delta = char_italic(cur_f, cur_c);
@@ -4373,15 +4307,7 @@ static pointer check_nucleus_complexity(halfword q, scaled * delta, int cur_styl
                 p = new_glyph(cur_f, cur_c);
                 protect_glyph(p);
                 reset_attributes(p, node_attr(nucleus(q)));
-                if (math_italics_backtrack_operator(cur_f)) {
-# if trace_italics
-    printf("[math italics backtrack operator 5]\n");
-# endif
-                    /* do nothing */
-                } else if (math_italics_independent_italic(cur_f)) {
-# if trace_italics
-    printf("[math italics independent italic 10]\n");
-# endif
+                if (do_new_math_but_not(cur_f)) {
                     if (get_char_cat_code(cur_c) == 11) {
                         /*tex no italic correction in mid-word of text font */
                         *delta = 0;
@@ -4399,12 +4325,8 @@ static pointer check_nucleus_complexity(halfword q, scaled * delta, int cur_styl
                     reset_attributes(x, node_attr(nucleus(q)));
                     couple_nodes(p,x);
                     *delta = 0;
-                } else if (math_italics_independent_italic(cur_f)) {
+                } else if (do_new_math_but_not(cur_f)) {
                     /*tex Needs checking but looks ok. It must be more selective. */
-# if trace_italics
-    printf("[math italics independent italic 11]\n");
-# endif
-
                     *delta = char_italic(cur_f, cur_c);
                 }
             }
@@ -4703,10 +4625,7 @@ void mlist_to_hlist(pointer mlist, boolean penalties, int cur_style)
                 the scripts so if it's optional here it also should be there.
 
             */
-            if (nxt && math_italics_between_simple(null) && (delta != 0)) {
-# if trace_italics
-    printf("[math italics between simple 1]\n");
-# endif
+            if (nxt && (math_italics_mode_par > 0) && (delta != 0)) {
                 if (type(nxt) == simple_noad) {
                     switch (subtype(nxt)) {
                         case ord_noad_type:

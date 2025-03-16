@@ -706,13 +706,32 @@ static void run_normal (void) {
 /*tex
 
 This is experimental and not used for production, only for testing and writing
-macros (some options stay). It's now obsolete. We keep the cmd_code because it 
-looks like hard coded numbers are used in macro packages. 
+macros (some options stay).
 
 */
 
+#define mathoption_set_int(A) \
+    scan_int(); \
+    word_define(mathoption_int_base+A, cur_val);
+
 static void run_option(void) {
-    normal_error("mathoption", "obsolete command");
+    int a = 0 ;
+    switch (cur_chr) {
+        case math_option_code:
+            if (scan_keyword("old")) {
+                mathoption_set_int(c_mathoption_old_code);
+            /*
+            } else if (scan_keyword("umathcodemeaning")) {
+                mathoption_set_int(c_mathoption_umathcode_meaning_code);
+            */
+            } else {
+                normal_warning("mathoption","unknown key");
+            }
+            break;
+        default:
+            /* harmless */
+            break;
+    }
 }
 
 static void lua_function_call(void) {
