@@ -155,7 +155,7 @@ pdf_include_page (pdf_ximage        *ximage,
   /*
    * Handle page's Group
    */
-  group = pdf_deref_obj(pdf_lookup_dict(page, "Group"));
+  group = pdf_import_object(pdf_lookup_dict(page, "Group"));
   /*
    * Handle page content stream.
    */
