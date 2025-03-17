@@ -706,7 +706,7 @@ static void run_normal (void) {
 /*tex
 
 This is experimental and not used for production, only for testing and writing
-macros (some options stay). It's now obsolete. We keep the cmd_code because it 
+macros (some options stay). It's now obsolete. We keep the cmd_code becuase it 
 looks like hard coded numbers are used in macro packages. 
 
 */
@@ -980,7 +980,7 @@ static void init_main_control (void) {
     any_mode(xray_cmd, show_whatever);
     any_mode(normal_cmd, run_normal);
     any_mode(extension_cmd, run_extension);
-    any_mode(option_cmd, run_option);
+    any_mode(option_cmd, run_option); /* obsolete */
 
     any_mode(lua_function_call_cmd, lua_function_call);
     any_mode(lua_bytecode_call_cmd, lua_bytecode_call);

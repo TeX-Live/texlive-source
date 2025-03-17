@@ -1,10 +1,21 @@
-2025-03-15 Luigi Scarso  <luigi.scarso@gmail.com>
-	* : italicsmode fix for eight bit fonts (H.Hagen)
+2025-03-17 Luigi Scarso  <luigi.scarso@gmail.com>
+	*  final solution for italic (H.Hagen)
 
+
+2025-03-16 Luigi Scarso  <luigi.scarso@gmail.com>
+	* always use old school tex logic (also for opentype) wrt italics
+	  with exception for large operators in opentyep fonts (no mixed font
+          usage); all related control modes removed (H.Hagen)
+
+
+2025-03-15 Luigi Scarso  <luigi.scarso@gmail.com>
+	* italicsmode fix for eight bit fonts (H.Hagen)
+
+	
 2025-03-13 Luigi Scarso  <luigi.scarso@gmail.com>
 	* extra italicsmode (large operator italic spacing) (H.Hagen)
 
-
+	
 2025-02-28  Akira Kakuto  <kakuto@jcom.zaq.ne.jp>
 	* luatex.c: Remove problematic lines for windows
 

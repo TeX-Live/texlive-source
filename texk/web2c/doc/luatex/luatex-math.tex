@@ -773,120 +773,120 @@ hasn't been the case since the start of the project. Changing it could break
 hacks that users came up with but when you set \lpr {matheqdirmode} to a positive
 value direction will be taken into account.
 
-\subsection {Nolimit correction}
-
-\topicindex {math+limits}
-
-There are two extra math parameters \lpr {Umathnolimitsupfactor} and \lpr
-{Umathnolimitsubfactor} that were added to provide some control over how limits
-are spaced (for example the position of super and subscripts after integral
-operators). They relate to an extra parameter \lpr {mathnolimitsmode}. The half
-corrections are what happens when scripts are placed above and below. The
-problem with italic corrections is that officially that correction italic is used
-for above|/|below placement while advanced kerns are used for placement at the
-right end. The question is: how often is this implemented, and if so, do the
-kerns assume correction too. Anyway, with this parameter one can control it.
-
-\starttabulate[|l|ck1|ck1|ck1|ck1|ck1|ck1|]
-    \NC % probably not ok, we need a raw int here
-        \NC \mathnolimitsmode0    $\displaystyle\mathop{\normalint}\nolimits^0_1$
-        \NC \mathnolimitsmode1    $\displaystyle\mathop{\normalint}\nolimits^0_1$
-        \NC \mathnolimitsmode2    $\displaystyle\mathop{\normalint}\nolimits^0_1$
-        \NC \mathnolimitsmode3    $\displaystyle\mathop{\normalint}\nolimits^0_1$
-        \NC \mathnolimitsmode4    $\displaystyle\mathop{\normalint}\nolimits^0_1$
-        \NC \mathnolimitsmode8000 $\displaystyle\mathop{\normalint}\nolimits^0_1$
-    \NC \NR
-    \TB
-    \BC mode
-        \NC \tttf 0
-        \NC \tttf 1
-        \NC \tttf 2
-        \NC \tttf 3
-        \NC \tttf 4
-        \NC \tttf 8000
-    \NC \NR
-    \BC superscript
-        \NC 0
-        \NC font
-        \NC 0
-        \NC 0
-        \NC +ic/2
-        \NC 0
-    \NC \NR
-    \BC subscript
-        \NC -ic
-        \NC font
-        \NC 0
-        \NC -ic/2
-        \NC -ic/2
-        \NC 8000ic/1000
-    \NC \NR
-\stoptabulate
-
-When the mode is set to one, the math parameters are used. This way a macro
-package writer can decide what looks best. Given the current state of fonts in
-\CONTEXT\ we currently use mode 1 with factor 0 for the superscript and 750 for
-the subscripts. Positive values are used for both parameters but the subscript
-shifts to the left. A \lpr {mathnolimitsmode} larger that 15 is considered to
-be a factor for the subscript correction. This feature can be handy when
-experimenting.
-
-\subsection {Math italic mess}
-
-\topicindex {math+italics}
-
-The \lpr {mathitalicsmode} parameter was introduced to deal with the difference
-in applying italic correction in traditional and \OPENTYPE\ math fonts. There are
-\OPENTYPE\ fonts out there that have italic correction and assume them to be
-applied like traditional \TEX\ fonts. This parameter takes several values:
-
-When set to zero, you get what was decided when the two code paths (traditional
-and \OPENTYPE) were introduced.
-
-Values larger than zero will add the italic correction between simple noads (it
-checks some classes so you might pay attention to for instance punctuation
-classes assigned).
-
-When set to zero or one, italics are independent, so we separate width from
-italic, while values larger than one combine both in the width but later
-selectively has to get rid of it (depending on code path).
-
-A value larger than two will backtrack italics for large operators, because there
-italic correction is used for anchoring scripts (limits and no limits). In fact,
-\OPENTYPE\ uses italics either between characters or for this purpose but as
-mentioned fonts are sort of messy here.
-
-We tested our version of plain \TEX\ and recommend to use the value of three to
-get the best average results. More about this italic correction dilemma in
-rendering math can be found in articles (in for instance \TUGBOAT) and various
-documents in the \CONTEXT\ distribution, especially those that discuss the
-upgraded math engine in \LUAMETATEX.
-
-% The \lpr {mathitalicsmode} parameter can be set to~1 to force italic correction
-% before noads that represent some more complex structure (read: everything that is
-% not an ord, bin, rel, open, close, punct or inner). A value of~2 will enforce the
-% old school font code path for all italics. We show a Cambria example.
+% \subsection {Nolimit correction}
 %
-% \starttexdefinition Whatever #1
-%     \NC \type{\mathitalicsmode = #1}
-%     \NC \mathitalicsmode#1\ruledhbox{$\left|T^1\right|$}
-%     \NC \mathitalicsmode#1\ruledhbox{$\left|T\right|$}
-%     \NC \mathitalicsmode#1\ruledhbox{$T+1$}
-%     \NC \mathitalicsmode#1\ruledhbox{$T{1\over2}$}
-%     \NC \mathitalicsmode#1\ruledhbox{$T\sqrt{1}$}
+% \topicindex {math+limits}
+%
+% There are two extra math parameters \lpr {Umathnolimitsupfactor} and \lpr
+% {Umathnolimitsubfactor} that were added to provide some control over how limits
+% are spaced (for example the position of super and subscripts after integral
+% operators). They relate to an extra parameter \lpr {mathnolimitsmode}. The half
+% corrections are what happens when scripts are placed above and below. The
+% problem with italic corrections is that officially that correction italic is used
+% for above|/|below placement while advanced kerns are used for placement at the
+% right end. The question is: how often is this implemented, and if so, do the
+% kerns assume correction too. Anyway, with this parameter one can control it.
+
+% \starttabulate[|l|ck1|ck1|ck1|ck1|ck1|ck1|]
+%     \NC % probably not ok, we need a raw int here
+%         \NC \mathnolimitsmode0    $\displaystyle\mathop{\normalint}\nolimits^0_1$
+%         \NC \mathnolimitsmode1    $\displaystyle\mathop{\normalint}\nolimits^0_1$
+%         \NC \mathnolimitsmode2    $\displaystyle\mathop{\normalint}\nolimits^0_1$
+%         \NC \mathnolimitsmode3    $\displaystyle\mathop{\normalint}\nolimits^0_1$
+%         \NC \mathnolimitsmode4    $\displaystyle\mathop{\normalint}\nolimits^0_1$
+%         \NC \mathnolimitsmode8000 $\displaystyle\mathop{\normalint}\nolimits^0_1$
 %     \NC \NR
-% \stoptexdefinition
+%     \TB
+%     \BC mode
+%         \NC \tttf 0
+%         \NC \tttf 1
+%         \NC \tttf 2
+%         \NC \tttf 3
+%         \NC \tttf 4
+%         \NC \tttf 8000
+%     \NC \NR
+%     \BC superscript
+%         \NC 0
+%         \NC font
+%         \NC 0
+%         \NC 0
+%         \NC +ic/2
+%         \NC 0
+%     \NC \NR
+%     \BC subscript
+%         \NC -ic
+%         \NC font
+%         \NC 0
+%         \NC -ic/2
+%         \NC -ic/2
+%         \NC 8000ic/1000
+%     \NC \NR
+% \stoptabulate
 %
-% \start
-%     \switchtobodyfont[cambria]
-%     \starttabulate[|c|c|c|c|c|c|]
-%         \Whatever{0}%
-%         \Whatever{1}%
-%     \stoptabulate
-% \stop
+% When the mode is set to one, the math parameters are used. This way a macro
+% package writer can decide what looks best. Given the current state of fonts in
+% \CONTEXT\ we currently use mode 1 with factor 0 for the superscript and 750 for
+% the subscripts. Positive values are used for both parameters but the subscript
+% shifts to the left. A \lpr {mathnolimitsmode} larger that 15 is considered to
+% be a factor for the subscript correction. This feature can be handy when
+% experimenting.
+
+% \subsection {Math italic mess}
 %
-% This kind of parameters relate to the fact that italic correction in \OPENTYPE\
-% math is bound to fuzzy rules. So, control is the solution.
+% \topicindex {math+italics}
+%
+% The \lpr {mathitalicsmode} parameter was introduced to deal with the difference
+% in applying italic correction in traditional and \OPENTYPE\ math fonts. There are
+% \OPENTYPE\ fonts out there that have italic correction and assume them to be
+% applied like traditional \TEX\ fonts. This parameter takes several values:
+%
+% When set to zero, you get what was decided when the two code paths (traditional
+% and \OPENTYPE) were introduced.
+%
+% Values larger than zero will add the italic correction between simple noads (it
+% checks some classes so you might pay attention to for instance punctuation
+% classes assigned).
+%
+% When set to zero or one, italics are independent, so we separate width from
+% italic, while values larger than one combine both in the width but later
+% selectively has to get rid of it (depending on code path).
+%
+% A value larger than two will backtrack italics for large operators, because there
+% italic correction is used for anchoring scripts (limits and no limits). In fact,
+% \OPENTYPE\ uses italics either between characters or for this purpose but as
+% mentioned fonts are sort of messy here.
+%
+% We tested our version of plain \TEX\ and recommend to use the value of three to
+% get the best average results. More about this italic correction dilemma in
+% rendering math can be found in articles (in for instance \TUGBOAT) and various
+% documents in the \CONTEXT\ distribution, especially those that discuss the
+% upgraded math engine in \LUAMETATEX.
+%
+% % The \lpr {mathitalicsmode} parameter can be set to~1 to force italic correction
+% % before noads that represent some more complex structure (read: everything that is
+% % not an ord, bin, rel, open, close, punct or inner). A value of~2 will enforce the
+% % old school font code path for all italics. We show a Cambria example.
+% %
+% % \starttexdefinition Whatever #1
+% %     \NC \type{\mathitalicsmode = #1}
+% %     \NC \mathitalicsmode#1\ruledhbox{$\left|T^1\right|$}
+% %     \NC \mathitalicsmode#1\ruledhbox{$\left|T\right|$}
+% %     \NC \mathitalicsmode#1\ruledhbox{$T+1$}
+% %     \NC \mathitalicsmode#1\ruledhbox{$T{1\over2}$}
+% %     \NC \mathitalicsmode#1\ruledhbox{$T\sqrt{1}$}
+% %     \NC \NR
+% % \stoptexdefinition
+% %
+% % \start
+% %     \switchtobodyfont[cambria]
+% %     \starttabulate[|c|c|c|c|c|c|]
+% %         \Whatever{0}%
+% %         \Whatever{1}%
+% %     \stoptabulate
+% % \stop
+% %
+% % This kind of parameters relate to the fact that italic correction in \OPENTYPE\
+% % math is bound to fuzzy rules. So, control is the solution.
 
 \subsection {Script and kerning}
 

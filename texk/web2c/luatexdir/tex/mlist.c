@@ -19,6 +19,20 @@ LuaTeX; if not, see <http://www.gnu.org/licenses/>.
 
 /*tex
 
+    These are now obsolete:
+
+    \starttyping
+    \Umathnolimitsupfactor
+    \Umathnolimitsubfactor
+    \mathnolimitsmode
+    \mathitalicssmode
+    \mathoption
+    \stoptyping
+
+*/
+
+/*tex
+
     In traditional \TeX\ the italic correction is added to the width of the
     glyph. This is part of the engine design and related font design. In opentype
     math this is different. There the italic correction had more explicit usage.
@@ -61,27 +75,71 @@ LuaTeX; if not, see <http://www.gnu.org/licenses/>.
 */
 
 /*tex
+
+    This is the state per early 2025:
+
+    When we started with \OPENTYPE\ math (2005) there was only cambria. The only
+    way to test with e.g. Computer Modern was to make a virtual font. One of the
+    complications we ran into is italic correction and because the specification
+    explicitly binds italic correction to (1) a sequence of text (!) glyphs and
+    (2) anchoring limits (as there's only a top anchor and no bttom anchor
+    field), we ended up with a split code path. This is also due to the fact that
+    when Latin Modern showed up, we wanted to make sure that it rendered okay.
+
+    However, when the \TEX\ Gyre fonts were introduced, and other fonts used
+    those as template, the heuristics for Latin Modern were sub optimal so we
+    introduced ways to control the distance between super and subscript as well
+    as limit anchoring for large operators (these cannot really be identified).
+    Keep in mind that the italic correction in large operators is not used as
+    correction but for anchoring while the \TEX\ machinery always adds italic
+    correction to the width and selectively removes it. There is also the fact
+    that we don't know to what extend users mix \OPENTYPE\ fonts with traditional
+    ones.
+
+    In the end we decided to just drop that control, and assume that \OPENTYPE\
+    math fonts are expected to behave like traditional \TEX\ fonts, or: just
+    forget about what the specification says about italic correction. As a side
+    note: in \CONTEXT\ we already moved on and started treating fonts (in the
+    \LUAMETATEX\ default setup) as glyph providers and forget about italic
+    correction and the on the average unreliable and often wrong staircase kerns.
+    There we take whatever information fits our purpose and assume fonts to be a
+    mixed bag.
+
+    The result is that math renders similar to traditional (eight bit) rendering
+    but that Latin Modern can look kind of bad but as (non \CONTEXT) users are
+    accustomed to correcting spacing manually (with |\,| and |\!| etc.) that is
+    what is expected. We just fix the fonts runtime.
+
+    So, we ditched the control options, went for a hard coded traditional font
+    approach and likely will never look back: this is what one gets,
+    irrespectable of the specification. A side effect is that in some cases
+    \CONTEXT\ users will get worse results but because most already switched to
+    \LUAMETATEX\ the impact is not that large.
+
+    In 2005 and following years no one could have predicted that the majority of
+    math fonts would be designed as traditional \TEX\ fonts and less like the
+    reference Cambria font and that anchoring scripts would therefore be italic
+    correction driven (also for non italic shapes). So, in retrospect one can
+    argue that following the specification was a waste of time although it
+    eventually lead to detailed control over these things in the follow up
+    engine. However, there we might eventually completely remove all traces of
+    italic correction because we don't need it, but that's another story and
+    only relevant for \CONTEXT\ \LMTX.
+
+*/
+
+/*tex
+
     These macros are used to determine if we need to pick up parameters from the
     opentype table or the traditional parameter array. We noticed that some macro
     packages set both tables so we cannot use that for determining if we have a new
     or old font. It's a bit guesswork especially when it comes to italics.
+
 */
-
-# define trace_italics 0
-
-//      is_new_mathfont(A)   ((font_math_params(A) > 0) && (math_old_par == 0))
-//      is_old_mathfont(A,B) ((font_math_params(A) == 0) && (font_params(A) >= (B)))
-//      do_new_math(A)       ((font_math_params(A) > 0) && (font_oldmath(A) == 0) && (math_old_par == 0))
 
 #define is_new_mathfont(A)   ((font_math_params(A) > 0))
 #define is_old_mathfont(A,B) ((font_math_params(A) == 0) && (font_params(A) >= (B)))
 #define assume_new_math(A)   ((font_math_params(A) > 0) && (font_oldmath(A) == 0))
-
-//      do_new_math_but_not(A) (math_italics_mode_par > 1 ? 0 : do_new_math(A))
-
-#define math_italics_between_simple(A)     (math_italics_mode_par > 0) // 1 and higher
-#define math_italics_independent_italic(A) (math_italics_mode_par > 1 ? 0 : assume_new_math(A))
-#define math_italics_backtrack_operator(A) (math_italics_mode_par > 2 ? assume_new_math(A) : 0) // 3 or more
 
 #define protect_glyph(A) subtype(A) = 256
 
@@ -397,14 +455,14 @@ static scaled do_get_math_param_or_error(int var, int param, const char *name)
     return a;
 }
 
-static scaled do_get_math_param_or_zero(int var, int param, const char *name)
-{
-    scaled a = get_math_param(param, var);
-    if (a == undefined_math_parameter) {
-        a = 0;
-    }
-    return a;
-}
+// static scaled do_get_math_param_or_zero(int var, int param, const char *name)
+// {
+//     scaled a = get_math_param(param, var);
+//     if (a == undefined_math_parameter) {
+//         a = 0;
+//     }
+//     return a;
+// }
 
 /*tex
 
@@ -1161,14 +1219,7 @@ static pointer char_box(internal_font_number f, int c, pointer bb)
     /*tex The new box and its character node. */
     pointer b, p;
     b = new_null_box();
-    if (math_italics_independent_italic(f)) {
-# if trace_italics
-    printf("[math italics independent italic 1]\n");
-# endif
-        width(b) = char_width(f, c);
-    } else {
-        width(b) = char_width(f, c) + char_italic(f, c);
-    }
+    width(b) = char_width(f, c) + char_italic(f, c);
     height(b) = char_height(f, c);
     depth(b) = char_depth(f, c);
     subtype(b) = math_char_list ;
@@ -2747,15 +2798,9 @@ static void do_make_math_accent(pointer q, internal_font_number f, int c, int fl
             delta = delta + height(x) - h;
             h = height(x);
         }
-    } else if ((vlink(q) != null) && (type(nucleus(q)) == math_char_node)) {
-        /*tex only pure math char nodes */
-        internal_font_number f = fam_fnt(math_fam(nucleus(q)),cur_size);
-        if (math_italics_independent_italic(f)) {
-# if trace_italics
-    printf("[math italics independent italic 2]\n");
-# endif
-            ic = char_italic(f,math_character(nucleus(q)));
-        }
+//    } else if ((vlink(q) != null) && (type(nucleus(q)) == math_char_node)) {
+//        /*tex only pure math char nodes */
+//        internal_font_number f = fam_fnt(math_fam(nucleus(q)),cur_size);
     }
     /*tex the top accents of both characters are aligned */
     if (s_is_absolute) {
@@ -3117,14 +3162,14 @@ static scaled make_op(pointer q, int cur_style)
 {
     /*tex offset between subscript and superscript */
     scaled delta = 0;
-    scaled dummy = 0;
     /*tex temporary registers for box construction */
-    pointer p, v, x, y, z, n;
+    pointer p, v, x, y, z;
     /*tex register for character examination */
     int c;
     /*tex dimensions for box calculation */
     scaled shift_up, shift_down;
     boolean axis_shift = false;
+    int opentype = 0;
     scaled ok_size;
     if ((subtype(q) == op_noad_type_normal) && (cur_style < text_style)) {
         subtype(q) = op_noad_type_limits;
@@ -3142,20 +3187,7 @@ static scaled make_op(pointer q, int cur_style)
                 small_char(y) = math_character(nucleus(q));
                 x = do_delimiter(q, y, text_size, ok_size, false, cur_style, true, NULL, &delta, NULL);
                 if (delta != 0) {
-                    if (math_italics_backtrack_operator(cur_f)) {
-                        width(x) -= delta;
-# if trace_italics
-    printf("[math italics backtrack operator 1]\n");
-# endif
-                    } else if (math_italics_independent_italic(cur_f)) {
-                        /*tex
-                            As we never added italic correction we don't need to compensate. The ic
-                            is stored in a special field of the node and applied in some occasions.
-                        */
-# if trace_italics
-    printf("[math italics independent italic 3]\n");
-# endif
-                    } else if ((subscr(q) != null) && (subtype(q) != op_noad_type_limits)) {
+                    if ((subscr(q) != null) && (subtype(q) != op_noad_type_limits)) {
                         /*tex
                             Here we (selectively) remove the italic correction that always gets added
                             in a traditional font. See (**). In \OPENTYPE\ mode we insert italic kerns,
@@ -3178,17 +3210,7 @@ static scaled make_op(pointer q, int cur_style)
                 delta = char_italic(cur_f, cur_c);
                 x = clean_box(nucleus(q), cur_style, cur_style, math_nucleus_list);
                 if (delta != 0) {
-                    if (math_italics_backtrack_operator(cur_f)) {
-                        width(x) -= delta;
-# if trace_italics
-    printf("[math italics backtrack operator 2]\n");
-# endif
-                    } else if (math_italics_independent_italic(cur_f)) {
-                        /*tex we never added italic correction */
-# if trace_italics
-    printf("[math italics independent italic 4]\n");
-# endif
-                    } else if ((subscr(q) != null) && (subtype(q) != op_noad_type_limits)) {
+                    if ((subscr(q) != null) && (subtype(q) != op_noad_type_limits)) {
                         /*tex remove italic correction */
                         width(x) -= delta;
                     }
@@ -3200,23 +3222,13 @@ static scaled make_op(pointer q, int cur_style)
             delta = char_italic(cur_f, cur_c);
             x = clean_box(nucleus(q), cur_style, cur_style, math_nucleus_list);
             if (delta != 0) {
-                if (math_italics_backtrack_operator(cur_f)) {
-                    width(x) -= delta;
-# if trace_italics
-    printf("[math italics backtrack operator 3]\n");
-# endif
-                } else if (math_italics_independent_italic(cur_f)) {
-                    /*tex we never added italic correction */
-# if trace_italics
-    printf("[math italics independent italic 5]\n");
-# endif
-                } else if ((subscr(q) != null) && (subtype(q) != op_noad_type_limits)) {
+                if ((subscr(q) != null) && (subtype(q) != op_noad_type_limits)) {
                     /*tex remove italic correction */
                     width(x) -= delta;
                 }
             }
             axis_shift = true;
-        }
+            }
         if (axis_shift) {
             /*tex center vertically */
             shift_amount(x) = half(height(x) - depth(x)) - math_axis_size(cur_size);
@@ -3224,82 +3236,18 @@ static scaled make_op(pointer q, int cur_style)
         type(nucleus(q)) = sub_box_node;
         math_list(nucleus(q)) = x;
     }
+    opentype = assume_new_math(cur_f);
     /*tex we now handle op_nod_type_no_limits here too */
     if (subtype(q) == op_noad_type_no_limits) {
-if (math_italics_backtrack_operator(cur_f)) {
-# if trace_italics
-    printf("[math italics backtrack operator 4]\n");
-# endif
-            /*tex
-                Not:
-
-                \starttyping
-                if (delta != 0) {
-                    delta = half(delta) ;
-                }
-                \stoptyping
-            */
-            p = check_nucleus_complexity(q, &dummy, cur_style, NULL);
-            if ((subscr(q) == null) && (supscr(q) == null)) {
-                assign_new_hlist(q, p);
-            } else {
-                /*tex
-                    Not:
-
-                    \starttyping
-                    make_scripts(q, p, 0, cur_style, delta, -delta);
-                    \stoptyping
-                */
-                int mode = math_nolimits_mode_par; /* wins */
-                /*tex
-
-                    For easy configuration ... fonts are somewhat inconsistent
-                    and the values for italic correction run from 30 to 60\% of.
-                    the width.
-
-                */
-                switch (mode) {
-                    case 0 :
-                        /*tex full bottom correction */
-                        make_scripts(q, p, 0, cur_style, 0, -delta);
-                        break;
-                    case 1 :
-                        /*tex |MathConstants| driven */
-                        make_scripts(q, p, 0, cur_style,
-                             round_xn_over_d(delta, nolimit_sup_factor(cur_style), 1000),
-                            -round_xn_over_d(delta, nolimit_sub_factor(cur_style), 1000));
-                        break ;
-                    case 2 :
-                        /*tex no correction */
-                        make_scripts(q, p, 0, cur_style, 0, 0);
-                        break ;
-                    case 3 :
-                        /*tex half bottom correction */
-                        make_scripts(q, p, 0, cur_style, 0, -half(delta));
-                        break;
-                    case 4 :
-                        /*tex half bottom and top correction */
-                        make_scripts(q, p, 0, cur_style, half(delta), -half(delta));
-                        break;
-                    default :
-                        if (mode > 15) {
-                            /*tex for quickly testing values */
-                            make_scripts(q, p, 0, cur_style, 0, -round_xn_over_d(delta, mode, 1000));
-                        } else {
-                            make_scripts(q, p, 0, cur_style, 0, 0);
-                        }
-                        break;
-                }
-            }
-            delta = 0;
+        /*tex similar code then the caller (before CHECK_DIMENSIONS) */
+        p = check_nucleus_complexity(q, &delta, cur_style, NULL);
+        if (opentype) {
+            width(p) -= delta;
+        }
+        if ((subscr(q) == null) && (supscr(q) == null)) {
+            assign_new_hlist(q, p);
         } else {
-            /*tex similar code then the caller (before CHECK_DIMENSIONS) */
-            p = check_nucleus_complexity(q, &delta, cur_style, NULL);
-            if ((subscr(q) == null) && (supscr(q) == null)) {
-                assign_new_hlist(q, p);
-            } else {
-                make_scripts(q, p, delta, cur_style, 0, 0);
-            }
+            make_scripts(q, p, delta, cur_style, 0, 0);
         }
     } else if (subtype(q) == op_noad_type_limits) {
         /*tex
@@ -3316,57 +3264,26 @@ if (math_italics_backtrack_operator(cur_f)) {
         reset_attributes(v, node_attr(q));
         type(v) = vlist_node;
         subtype(v) = math_limits_list;
-        if (math_italics_independent_italic(cur_f)) {
-# if trace_italics
-    printf("[math italics independent italic 6]\n");
-# endif
-            n = nucleus(q);
-            if (n != null) {
-                if ((type(n) == sub_mlist_node) || (type(n) == sub_box_node)) {
-                    n = math_list(n);
-                    if (n != null) {
-                        if (type(n) == hlist_node) {
-                            /*tex just a not scaled char */
-                            n = list_ptr(n);
-                            while (n != null) {
-                                if (type(n) == glyph_node) {
-                                    delta = char_italic(font(n),character(n));
-                                }
-                                n = vlink(n);
-                            }
-                        } else {
-                            while (n != null) {
-                                if (type(n) == fence_noad) {
-                                    if (delimiteritalic(n) > delta) {
-                                        /*tex we can have dummies, the period ones */
-                                        delta = delimiteritalic(n);
-                                    }
-                                }
-                                n = vlink(n);
-                            }
-                        }
-                    }
-                } else {
-                    n = nucleus(q);
-                    if (type(n) == math_char_node) {
-                        delta = char_italic(fam_fnt(math_fam(n),cur_size),math_character(n));
-                    }
-                }
-            }
-        }
         width(v) = width(y);
-        if (width(x) > width(v))
+        /* rebox fixes the width and ignores italic */
+        if (width(x) > width(v)) {
             width(v) = width(x);
-        if (width(z) > width(v))
+        }
+        if (width(z) > width(v)) {
             width(v) = width(z);
+        }
         x = rebox(x, width(v));
         y = rebox(y, width(v));
         z = rebox(z, width(v));
-        shift_amount(x) = half(delta);
-        shift_amount(z) = -shift_amount(x);
+        shift_amount(x) = half(delta);      /* sup */
+        shift_amount(z) = -shift_amount(x); /* sub */
         /*tex v is the still empty target */
         height(v) = height(y);
         depth(v) = depth(y);
+        if (opentype) {
+            width(v) -= delta;
+         // delta = 0;
+        }
         /*tex
 
             Attach the limits to |y| and adjust |height(v)|, |depth(v)| to
@@ -3426,12 +3343,6 @@ if (math_italics_backtrack_operator(cur_f)) {
             supscr(q) = null;
         }
         assign_new_hlist(q, v);
-        if (math_italics_independent_italic(cur_f)) {
-# if trace_italics
-    printf("[math italics independent italic 7]\n");
-# endif
-            delta = 0;
-        }
     }
     return delta;
 }
@@ -3477,19 +3388,6 @@ static void make_ord(pointer q)
             type(nucleus(q)) = math_text_char_node;
             fetch(nucleus(q));
             a = cur_c;
-            /*tex add italic correction */
-            if (math_italics_independent_italic(cur_f) && (char_italic(cur_f,math_character(nucleus(q))) != 0)) {
-# if trace_italics
-    printf("[math italics independent italic 8]\n");
-# endif
-
-                p = new_kern(char_italic(cur_f,math_character(nucleus(q))));
-                subtype(p) = italic_kern;
-                reset_attributes(p, node_attr(q));
-                couple_nodes(p,vlink(q));
-                couple_nodes(q,p);
-                return;
-            }
             /*tex construct ligatures, quite unlikely in new math fonts */
             if ((has_kern(cur_f, a)) || (has_lig(cur_f, a))) {
                 cur_c = math_character(nucleus(p));
@@ -4352,7 +4250,7 @@ static pointer check_nucleus_complexity(halfword q, scaled * delta, int cur_styl
 {
     pointer p = null;
     pointer t = null;
-    if (same != NULL) {
+    if (same) {
         *same = 0;
     }
     switch (type(nucleus(q))) {
@@ -4361,37 +4259,14 @@ static pointer check_nucleus_complexity(halfword q, scaled * delta, int cur_styl
             fetch(nucleus(q));
             if (char_exists(cur_f, cur_c)) {
                 /*tex we could look at neighbours */
-                if (math_italics_independent_italic(cur_f)) {
-                    /*tex cf spec only the last one */
-# if trace_italics
-    printf("[math italics independent italic 9]\n");
-# endif
-                    *delta = 0 ;
-                } else {
-                    *delta = char_italic(cur_f, cur_c);
-                }
+                *delta = char_italic(cur_f, cur_c);
                 p = new_glyph(cur_f, cur_c);
                 protect_glyph(p);
                 reset_attributes(p, node_attr(nucleus(q)));
-                if (math_italics_backtrack_operator(cur_f)) {
-# if trace_italics
-    printf("[math italics backtrack operator 5]\n");
-# endif
-                    /* do nothing */
-                } else if (math_italics_independent_italic(cur_f)) {
-# if trace_italics
-    printf("[math italics independent italic 10]\n");
-# endif
-                    if (get_char_cat_code(cur_c) == 11) {
-                        /*tex no italic correction in mid-word of text font */
-                        *delta = 0;
-                    }
-                } else {
-                    /*tex no italic correction in mid-word of text font */
-                    if (((type(nucleus(q))) == math_text_char_node) && (space(cur_f) != 0)) {
-                        *delta = 0;
-                    }
-                }
+             // /*tex no italic correction in mid-word of text font */
+             // if (((type(nucleus(q))) == math_text_char_node) && (space(cur_f) != 0)) {
+             //     *delta = 0;
+             // }
                 /*tex so we only add italic correction when we have no scripts */
                 if ((subscr(q) == null) && (supscr(q) == null) && (*delta != 0)) {
                     pointer x = new_kern(*delta);
@@ -4399,13 +4274,6 @@ static pointer check_nucleus_complexity(halfword q, scaled * delta, int cur_styl
                     reset_attributes(x, node_attr(nucleus(q)));
                     couple_nodes(p,x);
                     *delta = 0;
-                } else if (math_italics_independent_italic(cur_f)) {
-                    /*tex Needs checking but looks ok. It must be more selective. */
-# if trace_italics
-    printf("[math italics independent italic 11]\n");
-# endif
-
-                    *delta = char_italic(cur_f, cur_c);
                 }
             }
             break;
@@ -4455,7 +4323,6 @@ void mlist_to_hlist(pointer mlist, boolean penalties, int cur_style)
     pointer p = null;
     pointer pp = null;
     pointer z = null;
-    halfword nxt ;
     int same = 0;
     /*tex a penalty to be inserted */
     int pen;
@@ -4491,7 +4358,6 @@ void mlist_to_hlist(pointer mlist, boolean penalties, int cur_style)
         */
       RESWITCH:
         delta = 0;
-        nxt = vlink(q);
         switch (type(q)) {
             case simple_noad:
                 switch (subtype(q)) {
@@ -4703,43 +4569,6 @@ void mlist_to_hlist(pointer mlist, boolean penalties, int cur_style)
                 the scripts so if it's optional here it also should be there.
 
             */
-            if (nxt && math_italics_between_simple(null) && (delta != 0)) {
-# if trace_italics
-    printf("[math italics between simple 1]\n");
-# endif
-                if (type(nxt) == simple_noad) {
-                    switch (subtype(nxt)) {
-                        case ord_noad_type:
-                        case bin_noad_type:
-                        case rel_noad_type:
-                        case open_noad_type:
-                        case close_noad_type:
-                        case punct_noad_type:
-                            delta = 0;
-                            break;
-                        case inner_noad_type:
-                            if (! delimitermodeitalics) {
-                                delta = 0;
-                            }
-                            break;
-                        case op_noad_type_normal:
-                        case op_noad_type_limits:
-                        case op_noad_type_no_limits:
-                        case under_noad_type:
-                        case over_noad_type:
-                        case vcenter_noad_type:
-                            break;
-                        default:
-                            break;
-                    }
-                }
-                if (delta != 0) {
-                    pointer d = new_kern(delta);
-                    subtype(d) = italic_kern;
-                    reset_attributes(d, node_attr(q));
-                    couple_nodes(p,d);
-                }
-            }
             assign_new_hlist(q, p);
         } else {
             /*tex top, bottom */
