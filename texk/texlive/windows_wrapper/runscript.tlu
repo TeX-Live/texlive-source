@@ -1,7 +1,7 @@
 
 
-local svnrevision = string.match("$Revision: 71447 $", "%d+") or "0"
-local svndate     = string.match("$Date: 2024-06-06 09:46:11 +0200 (Thu, 06 Jun 2024) $", "[-%d]+") or "2009-12-04"
+local svnrevision = string.match("$Revision: 74666 $", "%d+") or "0"
+local svndate     = string.match("$Date: 2025-03-17 12:44:40 +0900 (月, 17 3 2025) $", "[-%d]+") or "2009-12-04"
 local bannerstr   = "runscript wrapper utility (rev. " ..
                     svnrevision .. ", " .. svndate .. ")\n" .. 
                     "usage:   runscript script-name [arguments]\n" ..
@@ -843,11 +843,22 @@ elseif progname == 'latexdef' then
   progname = 'texdef'
   argline = ' --tex latex ' .. argline
 elseif progname == 'cllualatex' then
+-- Originally argline was changed to add '--engine=...'.
+-- However cllualatex and clxelatex did not work due to Engine
+-- not specified error. This is because changed argline is not
+-- used by dofile() for a lua script.
+-- Here we rewrite arguments directly. (2025/03/17)
   progname = 'cluttex'
-  argline = ' --engine=lualatex ' .. argline
+  for k = #arg, 1, -1 do
+    arg[k+1] = arg[k]
+  end
+  arg[1] = '--engine=lualatex'
 elseif progname == 'clxelatex' then
   progname = 'cluttex'
-  argline = ' --engine=xelatex ' .. argline
+  for k = #arg, 1, -1 do
+    arg[k+1] = arg[k]
+  end
+  arg[1] = '--engine=xelatex'
 end
 
 -- general case
