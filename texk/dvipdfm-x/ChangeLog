@@ -1,3 +1,10 @@
+2025-03-17  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* vf.c: Store combining characters in vitual fonts with indices
+	and save memories to fix issue reported by gbb 60166.
+	https://okumuralab.org/tex/mod/forum/discuss.php?d=3903
+	* configure.ac: version 20250317.
+
 2025-03-14  Max Chernoff  <tex@maxchernoff.ca>
 	* pdffont.c: Switch to using only A-Z in the tag since numerical
 	digits are invalid per the PDF spec. Thanks to Yukimasa Morimi,
