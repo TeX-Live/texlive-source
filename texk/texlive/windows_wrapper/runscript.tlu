@@ -1,7 +1,7 @@
 
 
 local svnrevision = string.match("$Revision: 74666 $", "%d+") or "0"
-local svndate     = string.match("$Date: 2025-03-17 12:44:40 +0900 (月, 17 3 2025) $", "[-%d]+") or "2009-12-04"
+local svndate     = string.match("$Date: 2025-03-17 04:44:40 +0100 (Mon, 17 Mar 2025) $", "[-%d]+") or "2009-12-04"
 local bannerstr   = "runscript wrapper utility (rev. " ..
                     svnrevision .. ", " .. svndate .. ")\n" .. 
                     "usage:   runscript script-name [arguments]\n" ..
