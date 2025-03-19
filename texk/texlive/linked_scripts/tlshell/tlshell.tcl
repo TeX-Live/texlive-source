@@ -2286,7 +2286,7 @@ proc run_external {cmd {mess ""}} {
 }
 
 proc about_cmd {} {
-  set msg "\u00a9 2017-2022 Siep Kroonenberg\n\n"
+  set msg "\u00a9 2017-2025 Siep Kroonenberg\n\n"
   append msg [__ "GUI interface for TeX Live Manager\nImplemented in Tcl/Tk"]
   tk_messageBox -message $msg
 }

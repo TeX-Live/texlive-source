@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 74241 2025-02-23 23:10:34Z karl $
+# $Id: tlmgr.pl 74695 2025-03-18 23:12:52Z preining $
 # Copyright 2008-2024 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
@@ -8,8 +8,8 @@
 
 use strict; use warnings;
 
-my $svnrev = '$Revision: 74241 $';
-my $datrev = '$Date: 2025-02-24 00:10:34 +0100 (Mon, 24 Feb 2025) $';
+my $svnrev = '$Revision: 74695 $';
+my $datrev = '$Date: 2025-03-19 00:12:52 +0100 (Wed, 19 Mar 2025) $';
 my $tlmgrrevision;
 my $tlmgrversion;
 my $prg;
@@ -7634,7 +7634,7 @@ and the repository are not compatible:
   # - on every update, save the last seen remote main revision into
   #   00texlive.installation
   #
-  if ($is_main) {
+  if ($is_main && !$opts{"usermode"}) {
     my $rtlp = $remotetlpdb->get_package("texlive-scripts");
     my $ltlp = $localtlpdb->get_package("texlive-scripts");
     my $local_revision;
@@ -10625,7 +10625,7 @@ This script and its documentation were written for the TeX Live
 distribution (L<https://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 74241 2025-02-23 23:10:34Z karl $
+$Id: tlmgr.pl 74695 2025-03-18 23:12:52Z preining $
 =cut
 
 # test HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html
