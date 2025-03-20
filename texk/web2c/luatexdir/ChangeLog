@@ -1,4 +1,13 @@
-2025-03-17 Luigi Scarso  <luigi.scarso@gmail.com>
+2025-03-20 Luigi Scarso  <luigi.scarso@gmail.com>
+	*  some more never used modes made obsolete + staircase kerns adapted (H.Hagen)
+	   LuaTeX 1.23.1
+
+
+2025-03-18 Luigi Scarso  <luigi.scarso@gmail.com>
+	*  LuaTeX 1.23.0
+
+
+025-03-17 Luigi Scarso  <luigi.scarso@gmail.com>
 	*  final solution for italic (H.Hagen)
 
 

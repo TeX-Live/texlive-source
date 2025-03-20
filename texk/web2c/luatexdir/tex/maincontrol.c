@@ -3581,6 +3581,64 @@ void assign_internal_value(int a, halfword p, int val)
                 word_define(p, val);
             }
             break;
+        /* */
+        case math_italics_mode_code:
+            if (permit_math_obsolete) {
+                if (math_italics_mode_par != val) {
+                    normal_warning("math", "\\mathitalicsmode is obsolete");
+                }
+                word_define(p, val);
+            }
+            break;
+        case math_nolimits_mode_code:
+            if (permit_math_obsolete) {
+                if (math_nolimits_mode_par != val) {
+                    normal_warning("math", "\\mathnolimitssmode is obsolete");
+                }
+                word_define(p, val);
+            }
+            break;
+        case math_script_char_mode_code:
+            if (permit_math_obsolete) {
+                if (math_script_char_mode_par != val) {
+                    normal_warning("math", "\\mathscriptcharmode is obsolete");
+                }
+                word_define(p, val);
+            }
+            break;
+        case math_script_box_mode_code:
+            if (permit_math_obsolete) {
+                if (math_script_box_mode_par != val) {
+                    normal_warning("math", "\\mathscriptboxmode is obsolete");
+                }
+                word_define(p, val);
+            }
+            break;
+        case math_flatten_mode_code:
+            if (permit_math_obsolete) {
+                if (math_flatten_mode_par != val) {
+                    normal_warning("math", "\\mathflattenmode is obsolete");
+                }
+                word_define(p, val);
+            }
+            break;
+        case math_defaults_mode_code:
+            if (permit_math_obsolete) {
+                if (math_defaults_mode_par != val) {
+                    normal_warning("math", "\\mathdefaultsmode is obsolete");
+                }
+                word_define(p, val);
+            }
+            break;
+        case math_delimiters_mode_code:
+            if (permit_math_obsolete) {
+                if (math_delimiters_mode_par != val) {
+                    normal_warning("math", "\\mathdelimitersmode is obsolete");
+                }
+                word_define(p, val);
+            }
+            break;
+            /* */
         default:
             word_define(p, val);
             break;
@@ -4317,8 +4375,12 @@ void initialize(void)
         max_dead_cycles_par = 25;
         math_pre_display_gap_factor_par = 2000;
         pre_bin_op_penalty_par = inf_penalty;
-        math_script_box_mode_par = 1;
-        math_script_char_mode_par = 1;
+        /* obsolete but kept for old documents */
+        math_script_box_mode_par = 1;  
+        math_script_char_mode_par = 1; 
+        math_flatten_mode_par = 1; 
+        math_defaults_mode_par = 1; /* was 0 in TL 2025 but set by latex to 1 */
+        /* */
         pre_rel_penalty_par = inf_penalty;
         compound_hyphen_mode_par = 1;
         escape_char_par = '\\';
@@ -4347,7 +4409,6 @@ void initialize(void)
         font_bytes = 0;
         px_dimen_par = one_bp;
         math_eqno_gap_step_par = 1000 ;
-        math_flatten_mode_par = 1; /* ord */
         var_fam_par = -1;
         cs_text(frozen_protection) = maketexstring("inaccessible");
         format_ident = maketexstring(" (INITEX)");

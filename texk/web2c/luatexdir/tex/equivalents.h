@@ -300,10 +300,10 @@ the |number_regs| \.{\\dimen} registers.
 #  define pre_rel_penalty_code 108
 #  define math_penalties_mode_code 109
 #  define math_delimiters_mode_code 110
-#  define math_script_box_mode_code 111
-#  define math_script_char_mode_code 112
+#  define math_script_box_mode_code 111 /* obsolete */
+#  define math_script_char_mode_code 112 /* obsolete */
 #  define math_rule_thickness_mode_code 113
-#  define math_flatten_mode_code 114
+#  define math_flatten_mode_code 114 /* obsolete */
 
 #  define copy_lua_input_nodes_code 115
 #  define suppress_primitive_error_code 116
@@ -662,11 +662,6 @@ extern halfword last_cs_name;
 #define pre_bin_op_penalty_par             int_par(pre_bin_op_penalty_code)
 #define pre_rel_penalty_par                int_par(pre_rel_penalty_code)
 #define math_penalties_mode_par            int_par(math_penalties_mode_code)
-#define math_delimiters_mode_par           int_par(math_delimiters_mode_code)
-#define math_script_box_mode_par           int_par(math_script_box_mode_code)
-#define math_script_char_mode_par          int_par(math_script_char_mode_code)
-#define math_rule_thickness_mode_par       int_par(math_rule_thickness_mode_code)
-#define math_flatten_mode_par              int_par(math_flatten_mode_code)
 #define null_delimiter_space_par           dimen_par(null_delimiter_space_code)
 #define disable_lig_par                    int_par(disable_lig_code)
 #define disable_kern_par                   int_par(disable_kern_code)
@@ -797,7 +792,6 @@ extern halfword last_cs_name;
 
 #define fixup_boxes_par                    int_par(fixup_boxes_code)
 #define glyph_dimensions_par               int_par(glyph_dimensions_code)
-#define math_defaults_mode_par             int_par(math_defaults_mode_code)
 #define math_eq_dir_mode_par               int_par(math_eq_dir_mode_code)
 #define discretionary_ligature_mode_par    int_par(discretionary_ligature_mode_code)
 #define partoken_context_code_par          int_par(partoken_context_code)
@@ -809,6 +803,17 @@ extern halfword last_cs_name;
 /* */
 
 #define math_use_current_family_code 7
+
+/* obsolete */
+
+#define math_italics_mode_par        int_par(math_italics_mode_code)
+#define math_script_char_mode_par    int_par(math_script_char_mode_code)
+#define math_script_box_mode_par     int_par(math_script_box_mode_code)
+#define math_nolimits_mode_par       int_par(math_nolimits_mode_code)
+#define math_flatten_mode_par        int_par(math_flatten_mode_code)
+#define math_defaults_mode_par       int_par(math_defaults_mode_code)
+#define math_rule_thickness_mode_par int_par(math_rule_thickness_mode_code)
+#define math_delimiters_mode_par     int_par(math_delimiters_mode_code)
 
 /*
     #define box(A) equiv(box_base+(A))

@@ -19,14 +19,27 @@ LuaTeX; if not, see <http://www.gnu.org/licenses/>.
 
 /*tex
 
-    These are now obsolete:
+    These are now obsolete because we found otu that no one uses them. A few are used in \CONTEXT\ 
+    but we can deal with that. Most users moved on to \LUAMETATEX\ where we plenty of ways to 
+    control the engine. Some code is still present because we need it for legacy progress reports.
+
+    \starttyping
+    \mathoption
+    \mathitalicssmode
+    \mathnolimitsmode
+    \mathscriptboxmode
+    \mathscriptcharmode
+    \mathflattenmode
+    \mathdefaultsmode
+    \mathrulethicknessmode
+    \mathdelimitersmode
+    \stoptyping
+
+    Also no longer used are:
 
     \starttyping
     \Umathnolimitsupfactor
     \Umathnolimitsubfactor
-    \mathnolimitsmode
-    \mathitalicssmode
-    \mathoption
     \stoptyping
 
 */
@@ -136,6 +149,8 @@ LuaTeX; if not, see <http://www.gnu.org/licenses/>.
     or old font. It's a bit guesswork especially when it comes to italics.
 
 */
+
+int permit_math_obsolete = 0;
 
 #define is_new_mathfont(A)   ((font_math_params(A) > 0))
 #define is_old_mathfont(A,B) ((font_math_params(A) == 0) && (font_params(A) >= (B)))
@@ -3550,7 +3565,7 @@ static scaled find_math_kern(internal_font_number l_f, int l_c, internal_font_nu
         krn = (krn_l + krn_r);
         krn_l = math_kern_at(l_f, l_c, top_right_kern, corr_height_bot);
         krn_r = math_kern_at(r_f, r_c, bottom_left_kern, corr_height_bot);
-        if ((krn_l + krn_r) < krn)
+        if((krn_l + krn_r) >= krn) /* was < */
             krn = (krn_l + krn_r);
         return (krn);
     } else if (cmd == sub_mark_cmd) {
@@ -3562,7 +3577,7 @@ static scaled find_math_kern(internal_font_number l_f, int l_c, internal_font_nu
         krn = (krn_l + krn_r);
         krn_l = math_kern_at(l_f, l_c, bottom_right_kern, corr_height_bot);
         krn_r = math_kern_at(r_f, r_c, top_left_kern, corr_height_bot);
-        if ((krn_l + krn_r) < krn)
+        if((krn_l + krn_r) >= krn) /* was < */
             krn = (krn_l + krn_r);
         return (krn);
     } else {
@@ -3610,119 +3625,136 @@ static pointer attach_hkern_to_new_hlist(pointer q, scaled delta2, halfword subt
     the new fonts so eventualy there will be an option to ignore such
     corrections.
 
+    We used to use the base characters corner kerns (we only had cambria to test) 
+    but now use the ssty ones instead. 
+
+    In the following code the |\mathscriptcharmode| and |\mathscriptboxmode| are 
+    still present but they are obsolete. We keep them because older documentation 
+    can then be run. 
+
 */
 
 #define analyze_script(init,su_n,su_f,su_c) do { \
-    su_n = init; \
-    if (su_n != null) { \
-        if (math_script_char_mode_par > 0 && type(su_n) == math_char_node) { \
-            fetch(su_n); \
-            if (char_exists(cur_f, cur_c)) { \
-                su_f = cur_f; \
-                su_c = cur_c; \
-            } else { \
-                su_n = null; \
-            } \
-        } else if (math_script_box_mode_par > 0 && type(su_n) == sub_mlist_node) { \
-            su_n = math_list(su_n); \
-            while (su_n != null) { \
-                if ((type(su_n) == kern_node) || (type(su_n) == glue_node)) { \
-                    su_n = vlink(su_n); \
-                } else if (type(su_n) == simple_noad) { \
-                    su_n = nucleus(su_n); \
-                    if (type(su_n) == math_char_node) { \
-                        fetch(su_n); \
-                        if (char_exists(cur_f, cur_c)) { \
-                            su_f = cur_f; \
-                            su_c = cur_c; \
+    { \
+        int saved_cur_size = cur_size; \
+        if (cur_size < 2) ++cur_size; \
+        su_n = init; \
+        if (su_n != null) { \
+            if (math_script_char_mode_par > 0 && type(su_n) == math_char_node) { \
+                fetch(su_n); \
+                if (char_exists(cur_f, cur_c)) { \
+                    su_f = cur_f; \
+                    su_c = cur_c; \
+                } else { \
+                    su_n = null; \
+                } \
+            } else if (math_script_box_mode_par > 0 && type(su_n) == sub_mlist_node) { \
+                su_n = math_list(su_n); \
+                while (su_n != null) { \
+                    if ((type(su_n) == kern_node) || (type(su_n) == glue_node)) { \
+                        su_n = vlink(su_n); \
+                    } else if (type(su_n) == simple_noad) { \
+                        su_n = nucleus(su_n); \
+                        if (type(su_n) == math_char_node) { \
+                            fetch(su_n); \
+                            if (char_exists(cur_f, cur_c)) { \
+                                su_f = cur_f; \
+                                su_c = cur_c; \
+                            } else { \
+                                su_n = null; \
+                            } \
                         } else { \
                             su_n = null; \
                         } \
+                        break; \
                     } else { \
                         su_n = null; \
+                        break; \
                     } \
-                    break; \
+                } \
+            } else if (type(su_n) == sub_box_node) { \
+                su_n = math_list(su_n); \
+                if (su_n != null) { \
+                    if (type(su_n) == hlist_node) { \
+                        su_n = list_ptr(su_n); \
+                    } \
+                    if (su_n != null) { \
+                        if (math_script_box_mode_par == 2) { \
+                            while (su_n != null) { \
+                                if ((type(su_n) == kern_node) || (type(su_n) == glue_node)) { \
+                                    su_n = vlink(su_n); \
+                                } else if (type(su_n) == glyph_node) { \
+                                    if (char_exists(font(su_n), character(su_n))) { \
+                                        su_f = font(su_n); \
+                                        su_c = character(su_n); \
+                                    } else { \
+                                        su_n = null; \
+                                    } \
+                                    break ; \
+                                } else { \
+                                    su_n = null; \
+                                    break; \
+                                } \
+                            } \
+                        } else if (math_script_box_mode_par == 3) { \
+                            int boundary = -1; \
+                            while (su_n != null) { \
+                                if ((type(su_n) == boundary_node) && (subtype(su_n) == user_boundary)) { \
+                                    boundary = boundary_value(su_n); \
+                                    su_n = vlink(su_n); \
+                                } else if ((type(su_n) == kern_node) || (type(su_n) == glue_node)) { \
+                                    su_n = vlink(su_n); \
+                                } else if ((boundary > -1) && (type(su_n) == glyph_node)) { \
+                                    if (char_exists(font(su_n), character(su_n))) { \
+                                        su_f = font(su_n); \
+                                        su_c = character(su_n); \
+                                    } else { \
+                                        su_n = null; \
+                                    } \
+                                    break ; \
+                                } else { \
+                                    su_n = null; \
+                                    break; \
+                                } \
+                            } \
+                        } \
+                    } \
                 } else { \
                     su_n = null; \
-                    break; \
-                } \
-            } \
-        } else if (type(su_n) == sub_box_node) { \
-            su_n = math_list(su_n); \
-            if (su_n != null) { \
-                if (type(su_n) == hlist_node) { \
-                    su_n = list_ptr(su_n); \
-                } \
-                if (su_n != null) { \
-                    if (math_script_box_mode_par == 2) { \
-                        while (su_n != null) { \
-                            if ((type(su_n) == kern_node) || (type(su_n) == glue_node)) { \
-                                su_n = vlink(su_n); \
-                            } else if (type(su_n) == glyph_node) { \
-                                if (char_exists(font(su_n), character(su_n))) { \
-                                    su_f = font(su_n); \
-                                    su_c = character(su_n); \
-                                } else { \
-                                    su_n = null; \
-                                } \
-                                break ; \
-                            } else { \
-                                su_n = null; \
-                                break; \
-                            } \
-                        } \
-                    } else if (math_script_box_mode_par == 3) { \
-                        int boundary = -1; \
-                        while (su_n != null) { \
-                            if ((type(su_n) == boundary_node) && (subtype(su_n) == user_boundary)) { \
-                                boundary = boundary_value(su_n); \
-                                su_n = vlink(su_n); \
-                            } else if ((type(su_n) == kern_node) || (type(su_n) == glue_node)) { \
-                                su_n = vlink(su_n); \
-                            } else if ((boundary > -1) && (type(su_n) == glyph_node)) { \
-                                if (char_exists(font(su_n), character(su_n))) { \
-                                    su_f = font(su_n); \
-                                    su_c = character(su_n); \
-                                } else { \
-                                    su_n = null; \
-                                } \
-                                break ; \
-                            } else { \
-                                su_n = null; \
-                                break; \
-                            } \
-                        } \
-                    } \
                 } \
             } else { \
                 su_n = null; \
             } \
-        } else { \
-            su_n = null; \
         } \
-    } \
-  } while (0) \
+        cur_size = saved_cur_size; \
+     } \
+ } while (0) \
+
 
 #define x_su_style(n,cur_style,su_style) \
     (noadoptionnosubscript(n) ? cur_style : su_style(cur_style))
 
+/*tex 
+
+    Here |subshift| and |supshift| are no longer used. We could remove them. 
+
+*/
+
 static void make_scripts(pointer q, pointer p, scaled it, int cur_style, scaled supshift, scaled subshift)
 {
     pointer x, y, z;
-    scaled shift_up, shift_down, clr;
-    scaled delta1, delta2;
-    halfword sub_n, sup_n, subtyp;
-    internal_font_number sub_f, sup_f;
-    int sub_c, sup_c;
-    sub_n = null;
-    sup_n = null;
-    sub_f = 0;
-    sup_f = 0;
-    sub_c = 0;
-    sup_c = 0;
-    delta1 = it;
-    delta2 = 0;
-    subtyp = 0;
+    scaled shift_up = 0;
+    scaled shift_down = 0;
+    scaled clr = 0;
+    halfword sub_n = null;
+    halfword sup_n = null;
+    halfword subtyp = 0;
+    internal_font_number sub_f = 0;
+    internal_font_number sup_f = 0;
+    int sub_c = 0;
+    int sup_c = 0;
+    scaled delta1 = it;
+    scaled delta2 = 0;
     switch (type(nucleus(q))) {
         case math_char_node:
         case math_text_char_node:

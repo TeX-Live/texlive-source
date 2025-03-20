@@ -888,93 +888,93 @@ value direction will be taken into account.
 % % This kind of parameters relate to the fact that italic correction in \OPENTYPE\
 % % math is bound to fuzzy rules. So, control is the solution.
 
-\subsection {Script and kerning}
-
-\topicindex {math+kerning}
-\topicindex {math+scripts}
-
-If you want to typeset text in math macro packages often provide something \type
-{\text} which obeys the script sizes. As the definition can be anything there is
-a good chance that the kerning doesn't come out well when used in a script. Given
-that the first glyph ends up in a \prm {hbox} we have some control over this.
-And, as a bonus we also added control over the normal sublist kerning. The \lpr
-{mathscriptboxmode} parameter defaults to~1.
-
-\starttabulate[|c|l|]
-\DB value     \BC meaning \NC \NR
-\TB
-\NC \type {0} \NC forget about kerning \NC \NR
-\NC \type {1} \NC kern math sub lists with a valid glyph \NC \NR
-\NC \type {2} \NC also kern math sub boxes that have a valid glyph \NC \NR
-\NC \type {2} \NC only kern math sub boxes with a boundary node present\NC \NR
-\LL
-\stoptabulate
-
-Here we show some examples. Of course this doesn't solve all our problems, if
-only because some fonts have characters with bounding boxes that compensate for
-italics, while other fonts can lack kerns.
-
-\startbuffer[1]
-    $T_{\tf fluff}$
-\stopbuffer
-
-\startbuffer[2]
-    $T_{\text{fluff}}$
-\stopbuffer
-
-\startbuffer[3]
-    $T_{\text{\boundary1 fluff}}$
-\stopbuffer
-
-\unexpanded\def\Show#1#2#3%
-  {\doifelsenothing{#3}
-     {\small\tx\typeinlinebuffer[#1]}
-     {\doifelse{#3}{-}
-        {\small\bf\tt mode #2}
-        {\switchtobodyfont[#3]\showfontkerns\showglyphs\mathscriptboxmode#2\relax\inlinebuffer[#1]}}}
-
-\starttabulate[|lBT|c|c|c|c|c|]
-    \NC          \NC \Show{1}{0}{}         \NC\Show{1}{1}{}         \NC \Show{2}{1}{}         \NC \Show{2}{2}{}         \NC \Show{3}{3}{}         \NC \NR
-    \NC          \NC \Show{1}{0}{-}        \NC\Show{1}{1}{-}        \NC \Show{2}{1}{-}        \NC \Show{2}{2}{-}        \NC \Show{3}{3}{-}        \NC \NR
-    \NC modern   \NC \Show{1}{0}{modern}   \NC\Show{1}{1}{modern}   \NC \Show{2}{1}{modern}   \NC \Show{2}{2}{modern}   \NC \Show{3}{3}{modern}   \NC \NR
-    \NC lucidaot \NC \Show{1}{0}{lucidaot} \NC\Show{1}{1}{lucidaot} \NC \Show{2}{1}{lucidaot} \NC \Show{2}{2}{lucidaot} \NC \Show{3}{3}{lucidaot} \NC \NR
-    \NC pagella  \NC \Show{1}{0}{pagella}  \NC\Show{1}{1}{pagella}  \NC \Show{2}{1}{pagella}  \NC \Show{2}{2}{pagella}  \NC \Show{3}{3}{pagella}  \NC \NR
-    \NC cambria  \NC \Show{1}{0}{cambria}  \NC\Show{1}{1}{cambria}  \NC \Show{2}{1}{cambria}  \NC \Show{2}{2}{cambria}  \NC \Show{3}{3}{cambria}  \NC \NR
-    \NC dejavu   \NC \Show{1}{0}{dejavu}   \NC\Show{1}{1}{dejavu}   \NC \Show{2}{1}{dejavu}   \NC \Show{2}{2}{dejavu}   \NC \Show{3}{3}{dejavu}   \NC \NR
-\stoptabulate
-
-Kerning between a character subscript is controlled by \lpr {mathscriptcharmode}
-which also defaults to~1.
-
-Here is another example. Internally we tag kerns as italic kerns or font kerns
-where font kerns result from the staircase kern tables. In 2018 fonts like Latin
-Modern and Pagella rely on cheats with the boundingbox, Cambria uses staircase
-kerns and Lucida a mixture. Depending on how fonts evolve we might add some more
-control over what one can turn on and off.
-
-\def\MathSample#1#2#3%
-  {\NC
-   #1 \NC
-   #2 \NC
-   \showglyphdata \switchtobodyfont[#2,17.3pt]$#3T_{f}$         \NC
-   \showglyphdata \switchtobodyfont[#2,17.3pt]$#3\gamma_{e}$    \NC
-   \showglyphdata \switchtobodyfont[#2,17.3pt]$#3\gamma_{ee}$   \NC
-   \showglyphdata \switchtobodyfont[#2,17.3pt]$#3T_{\tf fluff}$ \NC
-   \NR}
-
-\starttabulate[|Tl|Tl|l|l|l|l|]
-    \FL
-    \MathSample{normal}{modern}  {\mr}
-    \MathSample{}      {pagella} {\mr}
-    \MathSample{}      {cambria} {\mr}
-    \MathSample{}      {lucidaot}{\mr}
-    \ML
-    \MathSample{bold}  {modern}  {\mb}
-    \MathSample{}      {pagella} {\mb}
-    \MathSample{}      {cambria} {\mb}
-    \MathSample{}      {lucidaot}{\mb}
-    \LL
-\stoptabulate
+% \subsection {Script and kerning}
+%
+% \topicindex {math+kerning}
+% \topicindex {math+scripts}
+%
+% If you want to typeset text in math macro packages often provide something \type
+% {\text} which obeys the script sizes. As the definition can be anything there is
+% a good chance that the kerning doesn't come out well when used in a script. Given
+% that the first glyph ends up in a \prm {hbox} we have some control over this.
+% And, as a bonus we also added control over the normal sublist kerning. The \lpr
+% {mathscriptboxmode} parameter defaults to~1.
+%
+% \starttabulate[|c|l|]
+% \DB value     \BC meaning \NC \NR
+% \TB
+% \NC \type {0} \NC forget about kerning \NC \NR
+% \NC \type {1} \NC kern math sub lists with a valid glyph \NC \NR
+% \NC \type {2} \NC also kern math sub boxes that have a valid glyph \NC \NR
+% \NC \type {2} \NC only kern math sub boxes with a boundary node present\NC \NR
+% \LL
+% \stoptabulate
+%
+% Here we show some examples. Of course this doesn't solve all our problems, if
+% only because some fonts have characters with bounding boxes that compensate for
+% italics, while other fonts can lack kerns.
+%
+% \startbuffer[1]
+%     $T_{\tf fluff}$
+% \stopbuffer
+%
+% \startbuffer[2]
+%     $T_{\text{fluff}}$
+% \stopbuffer
+%
+% \startbuffer[3]
+%     $T_{\text{\boundary1 fluff}}$
+% \stopbuffer
+%
+% \unexpanded\def\Show#1#2#3%
+%   {\doifelsenothing{#3}
+%      {\small\tx\typeinlinebuffer[#1]}
+%      {\doifelse{#3}{-}
+%         {\small\bf\tt mode #2}
+%         {\switchtobodyfont[#3]\showfontkerns\showglyphs\mathscriptboxmode#2\relax\inlinebuffer[#1]}}}
+%
+% \starttabulate[|lBT|c|c|c|c|c|]
+%     \NC          \NC \Show{1}{0}{}         \NC\Show{1}{1}{}         \NC \Show{2}{1}{}         \NC \Show{2}{2}{}         \NC \Show{3}{3}{}         \NC \NR
+%     \NC          \NC \Show{1}{0}{-}        \NC\Show{1}{1}{-}        \NC \Show{2}{1}{-}        \NC \Show{2}{2}{-}        \NC \Show{3}{3}{-}        \NC \NR
+%     \NC modern   \NC \Show{1}{0}{modern}   \NC\Show{1}{1}{modern}   \NC \Show{2}{1}{modern}   \NC \Show{2}{2}{modern}   \NC \Show{3}{3}{modern}   \NC \NR
+%     \NC lucidaot \NC \Show{1}{0}{lucidaot} \NC\Show{1}{1}{lucidaot} \NC \Show{2}{1}{lucidaot} \NC \Show{2}{2}{lucidaot} \NC \Show{3}{3}{lucidaot} \NC \NR
+%     \NC pagella  \NC \Show{1}{0}{pagella}  \NC\Show{1}{1}{pagella}  \NC \Show{2}{1}{pagella}  \NC \Show{2}{2}{pagella}  \NC \Show{3}{3}{pagella}  \NC \NR
+%     \NC cambria  \NC \Show{1}{0}{cambria}  \NC\Show{1}{1}{cambria}  \NC \Show{2}{1}{cambria}  \NC \Show{2}{2}{cambria}  \NC \Show{3}{3}{cambria}  \NC \NR
+%     \NC dejavu   \NC \Show{1}{0}{dejavu}   \NC\Show{1}{1}{dejavu}   \NC \Show{2}{1}{dejavu}   \NC \Show{2}{2}{dejavu}   \NC \Show{3}{3}{dejavu}   \NC \NR
+% \stoptabulate
+%
+% % Kerning between a character subscript is controlled by \lpr {mathscriptcharmode}
+% % which also defaults to~1.
+%
+% Here is another example. Internally we tag kerns as italic kerns or font kerns
+% where font kerns result from the staircase kern tables. In 2018 fonts like Latin
+% Modern and Pagella rely on cheats with the boundingbox, Cambria uses staircase
+% kerns and Lucida a mixture. Depending on how fonts evolve we might add some more
+% control over what one can turn on and off.
+%
+% \def\MathSample#1#2#3%
+%   {\NC
+%    #1 \NC
+%    #2 \NC
+%    \showglyphdata \switchtobodyfont[#2,17.3pt]$#3T_{f}$         \NC
+%    \showglyphdata \switchtobodyfont[#2,17.3pt]$#3\gamma_{e}$    \NC
+%    \showglyphdata \switchtobodyfont[#2,17.3pt]$#3\gamma_{ee}$   \NC
+%    \showglyphdata \switchtobodyfont[#2,17.3pt]$#3T_{\tf fluff}$ \NC
+%    \NR}
+%
+% \starttabulate[|Tl|Tl|l|l|l|l|]
+%     \FL
+%     \MathSample{normal}{modern}  {\mr}
+%     \MathSample{}      {pagella} {\mr}
+%     \MathSample{}      {cambria} {\mr}
+%     \MathSample{}      {lucidaot}{\mr}
+%     \ML
+%     \MathSample{bold}  {modern}  {\mb}
+%     \MathSample{}      {pagella} {\mb}
+%     \MathSample{}      {cambria} {\mb}
+%     \MathSample{}      {lucidaot}{\mb}
+%     \LL
+% \stoptabulate
 
 \subsection{Fixed scripts}
 
@@ -1055,51 +1055,51 @@ is divided by 1000 which is the usual way to mimmick floating point factors in
 
 \startsection[title={Math constructs}]
 
-\subsection {Unscaled fences}
-
-\topicindex {math+fences}
-
-The \lpr {mathdelimitersmode} primitive is experimental and deals with the
-following (potential) problems. Three bits can be set. The first bit prevents an
-unwanted shift when the fence symbol is not scaled (a cambria side effect). The
-second bit forces italic correction between a preceding character ordinal and the
-fenced subformula, while the third bit turns that subformula into an ordinary so
-that the same spacing applies as with unfenced variants. Here we show Cambria
-(with \lpr {mathitalicsmode} enabled).
-
-\starttexdefinition Whatever #1
-    \NC \type{\mathdelimitersmode = #1}
-    \NC \mathitalicsmode1\mathdelimitersmode#1\ruledhbox{\showglyphs\showfontkerns\showfontitalics$f(x)$}
-    \NC \mathitalicsmode1\mathdelimitersmode#1\ruledhbox{\showglyphs\showfontkerns\showfontitalics$f\left(x\right)$}
-    \NC \NR
-\stoptexdefinition
-
-\start
-    \switchtobodyfont[cambria]
-    \starttabulate[|l|l|l|]
-        \Whatever{0}\Whatever{1}\Whatever{2}\Whatever{3}%
-        \Whatever{4}\Whatever{5}\Whatever{6}\Whatever{7}%
-    \stoptabulate
-\stop
-
-So, when set to 7 fenced subformulas with unscaled delimiters come out the same
-as unfenced ones. This can be handy for cases where one is forced to use \prm
-{left} and \prm {right} always because of unpredictable content. As said, it's an
-experimental feature (which somehow fits in the exceptional way fences are dealt
-with in the engine). The full list of flags is given in the next table:
-
-\starttabulate[|c|l|]
-\DB value  \BC meaning \NC \NR
-\TB
-\NC \type{"01} \NC don't apply the usual shift \NC \NR
-\NC \type{"02} \NC apply italic correction when possible \NC \NR
-\NC \type{"04} \NC force an ordinary subformula \NC \NR
-\NC \type{"08} \NC no shift when a base character \NC \NR
-\NC \type{"10} \NC only shift when an extensible \NC \NR
-\LL
-\stoptabulate
-
-The effect can depend on the font (and for Cambria one can use for instance \type {"16}).
+% \subsection {Unscaled fences}
+%
+% \topicindex {math+fences}
+%
+% The \lpr {mathdelimitersmode} primitive is experimental and deals with the
+% following (potential) problems. Three bits can be set. The first bit prevents an
+% unwanted shift when the fence symbol is not scaled (a cambria side effect). The
+% second bit forces italic correction between a preceding character ordinal and the
+% fenced subformula, while the third bit turns that subformula into an ordinary so
+% that the same spacing applies as with unfenced variants. Here we show Cambria
+% (with \lpr {mathitalicsmode} enabled).
+%
+% \starttexdefinition Whatever #1
+%     \NC \type{\mathdelimitersmode = #1}
+%     \NC \mathitalicsmode1\mathdelimitersmode#1\ruledhbox{\showglyphs\showfontkerns\showfontitalics$f(x)$}
+%     \NC \mathitalicsmode1\mathdelimitersmode#1\ruledhbox{\showglyphs\showfontkerns\showfontitalics$f\left(x\right)$}
+%     \NC \NR
+% \stoptexdefinition
+%
+% \start
+%     \switchtobodyfont[cambria]
+%     \starttabulate[|l|l|l|]
+%         \Whatever{0}\Whatever{1}\Whatever{2}\Whatever{3}%
+%         \Whatever{4}\Whatever{5}\Whatever{6}\Whatever{7}%
+%     \stoptabulate
+% \stop
+%
+% So, when set to 7 fenced subformulas with unscaled delimiters come out the same
+% as unfenced ones. This can be handy for cases where one is forced to use \prm
+% {left} and \prm {right} always because of unpredictable content. As said, it's an
+% experimental feature (which somehow fits in the exceptional way fences are dealt
+% with in the engine). The full list of flags is given in the next table:
+%
+% \starttabulate[|c|l|]
+% \DB value  \BC meaning \NC \NR
+% \TB
+% \NC \type{"01} \NC don't apply the usual shift \NC \NR
+% \NC \type{"02} \NC apply italic correction when possible \NC \NR
+% \NC \type{"04} \NC force an ordinary subformula \NC \NR
+% \NC \type{"08} \NC no shift when a base character \NC \NR
+% \NC \type{"10} \NC only shift when an extensible \NC \NR
+% \LL
+% \stoptabulate
+%
+% The effect can depend on the font (and for Cambria one can use for instance \type {"16}).
 
 \subsection[mathacc]{Accent handling}
 
@@ -1570,48 +1570,59 @@ requested math family is used.
 
 \startsection[title={Goodies}]
 
-\subsection {Flattening: \lpr {mathflattenmode}}
+\subsection {Obsolete}
 
-\topicindex {math+flattening}
+Per TL 2026 the following primitives are \quote {ignored}. They were not used in
+two decades unless by \CONTEXT\ for exploring variants but we can do that
+differently now. Obsolete commands that trigger a warning: \typ {\mathoption},
+\typ {\mathitalicssmode}, \typ {\mathnolimitsmode}, \typ {\mathscriptboxmode},
+\typ {\mathscriptcharmode}, \typ {\mathflattenmode}, \typ {\mathdefaultsmode},
+\typ {\mathrulethicknessmode}, \typ {\mathdelimitersmode}. Also no longer used
+are the parameters \typ {\Umathnolimitsupfactor} and \typ
+{\Umathnolimitsubfactor}.
 
-The \TEX\ math engine collapses \type {ord} noads without sub- and superscripts
-and a character as nucleus. and which has the side effect that in \OPENTYPE\ mode
-italic corrections are applied (given that they are enabled).
-
-\startbuffer[sample]
-\switchtobodyfont[modern]
-$V \mathbin{\mathbin{v}} V$\par
-$V \mathord{\mathord{v}} V$\par
-\stopbuffer
-
-\typebuffer[sample]
-
-This renders as:
-
-\blank \start \mathflattenmode\plusone \getbuffer[sample] \stop \blank
-
-When we set \lpr {mathflattenmode} to 31 we get:
-
-\blank \start \mathflattenmode\numexpr1+2+4+8+16\relax \getbuffer[sample] \stop \blank
-
-When you see no difference, then the font probably has the proper character
-dimensions and no italic correction is needed. For Latin Modern (at least till
-2018) there was a visual difference. In that respect this parameter is not always
-needed unless of course you want efficient math lists anyway.
-
-You can influence flattening by adding the appropriate number to the value of the
-mode parameter. The default value is~1.
-
-\starttabulate[|Tc|c|]
-\DB mode \BC class \NC \NR
-\TB
-\NC  1   \NC ord   \NC \NR
-\NC  2   \NC bin   \NC \NR
-\NC  4   \NC rel   \NC \NR
-\NC  8   \NC punct \NC \NR
-\NC 16   \NC inner \NC \NR
-\LL
-\stoptabulate
+% \subsection {Flattening: \lpr {mathflattenmode}}
+%
+% \topicindex {math+flattening}
+%
+% The \TEX\ math engine collapses \type {ord} noads without sub- and superscripts
+% and a character as nucleus. and which has the side effect that in \OPENTYPE\ mode
+% italic corrections are applied (given that they are enabled).
+%
+% \startbuffer[sample]
+% \switchtobodyfont[modern]
+% $V \mathbin{\mathbin{v}} V$\par
+% $V \mathord{\mathord{v}} V$\par
+% \stopbuffer
+%
+% \typebuffer[sample]
+%
+% This renders as:
+%
+% \blank \start \mathflattenmode\plusone \getbuffer[sample] \stop \blank
+%
+% When we set \lpr {mathflattenmode} to 31 we get:
+%
+% \blank \start \mathflattenmode\numexpr1+2+4+8+16\relax \getbuffer[sample] \stop \blank
+%
+% When you see no difference, then the font probably has the proper character
+% dimensions and no italic correction is needed. For Latin Modern (at least till
+% 2018) there was a visual difference. In that respect this parameter is not always
+% needed unless of course you want efficient math lists anyway.
+%
+% You can influence flattening by adding the appropriate number to the value of the
+% mode parameter. The default value is~1.
+%
+% \starttabulate[|Tc|c|]
+% \DB mode \BC class \NC \NR
+% \TB
+% \NC  1   \NC ord   \NC \NR
+% \NC  2   \NC bin   \NC \NR
+% \NC  4   \NC rel   \NC \NR
+% \NC  8   \NC punct \NC \NR
+% \NC 16   \NC inner \NC \NR
+% \LL
+% \stoptabulate
 
 \subsection {Less Tracing}
 
@@ -1621,44 +1632,44 @@ Because there are quite some math related parameters and values, it is possible
 to limit tracing. Only when \type {tracingassigns} and|/|or \type
 {tracingrestores} are set to~2 or more they will be traced.
 
-\subsection {Math options with \lpr {mathdefaultsmode}}
+% \subsection {Math options with \lpr {mathdefaultsmode}}
+%
+% This option has been introduced because \LATEX\ developers wanted some of the
+% defaults to be different from the ones that were set in stone when we froze
+% \LUATEX. The default values are:
+%
+% \starttabulate[|l|c|c|]
+% \DB                 \BC scanning \BC rendering \NC \NR
+% \TB
+% \NC radical/root    \NC cramped  \NC cramped   \NC \NR
+% \NC under delimiter \NC cramped  \NC supstyle  \NC \NR
+% \NC over delimiter  \NC cramped  \NC substyle  \NC \NR
+% \NC delimiter under \NC cramped  \NC current   \NC \NR
+% \NC delimiter over  \NC cramped  \NC current   \NC \NR
+% \LL
+% \stoptabulate
+%
+% When \type {\mathdefaultsmode} is larger than zero, we have:
+%
+% \starttabulate[|l|c|c|]
+% \DB                 \BC scanning \BC rendering \NC \NR
+% \TB
+% \NC radical/root    \NC cramped  \NC cramped   \NC \NR
+% \NC under delimiter \NC substyle \NC substyle  \NC \NR
+% \NC over delimiter  \NC supstyle \NC supstyle  \NC \NR
+% \NC delimiter under \NC current  \NC current   \NC \NR
+% \NC delimiter over  \NC cramped  \NC cramped   \NC \NR
+% \LL
+% \stoptabulate
+%
+% It is outside the scope of this manual to discuss the rationale behind these
+% defaults. The zero values date back from the early times. If needed you can
+% explicitly set the style in the content argument.
 
-This option has been introduced because \LATEX\ developers wanted some of the
-defaults to be different from the ones that were set in stone when we froze
-\LUATEX. The default values are:
-
-\starttabulate[|l|c|c|]
-\DB                 \BC scanning \BC rendering \NC \NR
-\TB
-\NC radical/root    \NC cramped  \NC cramped   \NC \NR
-\NC under delimiter \NC cramped  \NC supstyle  \NC \NR
-\NC over delimiter  \NC cramped  \NC substyle  \NC \NR
-\NC delimiter under \NC cramped  \NC current   \NC \NR
-\NC delimiter over  \NC cramped  \NC current   \NC \NR
-\LL
-\stoptabulate
-
-When \type {\mathdefaultsmode} is larger than zero, we have:
-
-\starttabulate[|l|c|c|]
-\DB                 \BC scanning \BC rendering \NC \NR
-\TB
-\NC radical/root    \NC cramped  \NC cramped   \NC \NR
-\NC under delimiter \NC substyle \NC substyle  \NC \NR
-\NC over delimiter  \NC supstyle \NC supstyle  \NC \NR
-\NC delimiter under \NC current  \NC current   \NC \NR
-\NC delimiter over  \NC cramped  \NC cramped   \NC \NR
-\LL
-\stoptabulate
-
-It is outside the scope of this manual to discuss the rationale behind these
-defaults. The zero values date back from the early times. If needed you can
-explicitly set the style in the content argument.
-
-\subsection {Math options with \lpr {mathoption}}
-
-This command is now obsolete and triggers an error message. It was only meant
-for experiments.
+% \subsection {Math options with \lpr {mathoption}}
+%
+% This command is now obsolete and triggers an error message. It was only meant
+% for experiments.
 
 % % even more obsolete:
 

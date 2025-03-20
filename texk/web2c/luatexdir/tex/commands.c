@@ -54,10 +54,6 @@ void initialize_commands(void)
     primitive_tex("thickmuskip", assign_mu_glue_cmd, glue_base + thick_mu_skip_code, glue_base + thin_mu_skip_code);
     primitive_luatex("mathsurroundskip", assign_glue_cmd, glue_base + math_skip_code, glue_base);
     primitive_luatex("mathsurroundmode", assign_int_cmd, int_base + math_skip_mode_code, int_base);
-    primitive_luatex("mathscriptboxmode", assign_int_cmd, int_base + math_script_box_mode_code, int_base);
-    primitive_luatex("mathscriptcharmode", assign_int_cmd, int_base + math_script_char_mode_code, int_base);
-    primitive_luatex("mathrulethicknessmode", assign_int_cmd, int_base + math_rule_thickness_mode_code, int_base);
-    primitive_luatex("mathflattenmode", assign_int_cmd, int_base + math_flatten_mode_code, int_base);
     primitive_tex("output", assign_toks_cmd, output_routine_loc, local_base);
     primitive_tex("everypar", assign_toks_cmd, every_par_loc, local_base);
     primitive_tex("everymath", assign_toks_cmd, every_math_loc, local_base);
@@ -86,7 +82,6 @@ void initialize_commands(void)
     primitive_tex("predisplaypenalty", assign_int_cmd, int_base + pre_display_penalty_code, int_base);
     primitive_tex("postdisplaypenalty", assign_int_cmd, int_base + post_display_penalty_code, int_base);
     primitive_luatex("mathpenaltiesmode", assign_int_cmd, int_base + math_penalties_mode_code, int_base);
-    primitive_luatex("mathdelimitersmode", assign_int_cmd, int_base + math_delimiters_mode_code, int_base);
     primitive_tex("interlinepenalty", assign_int_cmd, int_base + inter_line_penalty_code, int_base);
     primitive_tex("doublehyphendemerits", assign_int_cmd, int_base + double_hyphen_demerits_code, int_base);
     primitive_tex("finalhyphendemerits", assign_int_cmd, int_base + final_hyphen_demerits_code, int_base);
@@ -177,7 +172,6 @@ void initialize_commands(void)
     primitive_luatex("exceptionpenalty", assign_int_cmd, int_base + exception_penalty_code, int_base);
     primitive_luatex("fixupboxesmode", assign_int_cmd, int_base + fixup_boxes_code, int_base);
     primitive_luatex("glyphdimensionsmode", assign_int_cmd, int_base + glyph_dimensions_code, int_base);
-    primitive_luatex("mathdefaultsmode", assign_int_cmd, int_base + math_defaults_mode_code, int_base);
     primitive_luatex("discretionaryligaturemode", assign_int_cmd, int_base + discretionary_ligature_mode_code, int_base);
     primitive_etex("partokencontext", assign_int_cmd, int_base + partoken_context_code, int_base);
     primitive_luatex("mathemptydisplaymode", assign_int_cmd, int_base + math_empty_display_mode_code, int_base);
@@ -804,11 +798,21 @@ void initialize_etex_commands(void)
     primitive_luatex("mathrulesfam", assign_int_cmd, int_base + math_rules_fam_code, int_base);
     primitive_luatex("synctex", assign_int_cmd, int_base + synctex_code, int_base);
 
-    /* obsolete: */
+    /*     
+        These are obsolete per TL 2026 because we decided to stick to the more traditional \TEX\ 
+        approach: less discussion, confusion and documentation that way. The primitives are not 
+        used in TL 2025 but we keep them for older documents that describe them (articles). 
+    */
 
     primitive_luatex("mathoption", option_cmd, 0, 0);
     primitive_luatex("mathitalicsmode", assign_int_cmd, int_base + math_italics_mode_code, int_base);
     primitive_luatex("mathnolimitsmode", assign_int_cmd, int_base + math_nolimits_mode_code, int_base);
+    primitive_luatex("mathscriptboxmode", assign_int_cmd, int_base + math_script_box_mode_code, int_base);
+    primitive_luatex("mathscriptcharmode", assign_int_cmd, int_base + math_script_char_mode_code, int_base);
+    primitive_luatex("mathflattenmode", assign_int_cmd, int_base + math_flatten_mode_code, int_base);
+    primitive_luatex("mathdefaultsmode", assign_int_cmd, int_base + math_defaults_mode_code, int_base);
+    primitive_luatex("mathrulethicknessmode", assign_int_cmd, int_base + math_rule_thickness_mode_code, int_base);
+    primitive_luatex("mathdelimitersmode", assign_int_cmd, int_base + math_delimiters_mode_code, int_base);
 
     /* */
 

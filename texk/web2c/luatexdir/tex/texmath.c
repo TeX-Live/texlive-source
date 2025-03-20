@@ -2123,12 +2123,17 @@ void close_math_group(pointer p)
     if (p != null && vlink(p) == null) {
         if (type(p) == simple_noad) {
             if (subscr(p) == null && supscr(p) == null) {
-                /*tex (subtype(p) == ord_noad_type) */
+                /*tex 
+                    In traditional \TEX\ this only happens for ordinary noads. Per TL 2026 this
+                    is now an undocumented features and eventually it might get dropped (unless 
+                    it makes some \CONTEXT\ \MKIV\ things more difficult. 
+                */
+             // int flatten = subtype(p) == ord_noad_type; /*tex traditional \TEX. */
                 int flatten = 0;
                 int modepar = math_flatten_mode_par;
                 switch (subtype(p)) {
                     case ord_noad_type :
-                        flatten = (modepar & 1) == 1;
+                        flatten = (modepar & 1) == 1; /* the default */
                         break;
                     case bin_noad_type :
                         flatten = (modepar & 2) == 2;
