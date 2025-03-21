@@ -4,8 +4,8 @@ dnl WARNING! C code starting with # (preprocessor directives) must not
 dnl be indented!
 
 AC_COPYRIGHT([
-Copyright 1999-2023 Free Software Foundation, Inc.
-Contributed by the AriC and Caramba projects, INRIA.
+Copyright 1999-2025 Free Software Foundation, Inc.
+Contributed by the Pascaline and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
 
@@ -20,13 +20,12 @@ or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 License for more details.
 
 You should have received a copy of the GNU Lesser General Public License
-along with the GNU MPFR Library; see the file COPYING.LESSER.  If not, see
-https://www.gnu.org/licenses/ or write to the Free Software Foundation, Inc.,
-51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
+along with the GNU MPFR Library; see the file COPYING.LESSER.
+If not, see <https://www.gnu.org/licenses/>.
 ])
 
 dnl Add check-news when it checks for more than 15 lines
-AC_INIT([MPFR],[4.2.1])
+AC_INIT([MPFR],[4.2.2])
 
 dnl AC_CANONICAL_HOST is needed by this configure.ac file.
 dnl AC_CANONICAL_TARGET is not explicitly needed, but may be required by
@@ -277,7 +276,7 @@ AC_ARG_ENABLE(decimal-float,
 
 dnl Warning! Not to be confused with _Decimal128. Thus it is better
 dnl to say binary128 in the description. It can correspond to either
-dnl _Float128 (ISO/IEC TS 18661) or __float128 (old type name).
+dnl _Float128 (ISO C23) or __float128 (old type name).
 AC_ARG_ENABLE(float128,
    [  --disable-float128      explicitly disable binary128 support
   --enable-float128       build conversion functions from/to binary128

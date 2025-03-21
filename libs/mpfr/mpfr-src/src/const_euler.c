@@ -1,6 +1,6 @@
 /* mpfr_const_euler -- Euler's constant
 
-Copyright 2001-2023 Free Software Foundation, Inc.
+Copyright 2001-2025 Free Software Foundation, Inc.
 Contributed by Fredrik Johansson.
 
 This file is part of the GNU MPFR Library.
@@ -16,9 +16,8 @@ or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 License for more details.
 
 You should have received a copy of the GNU Lesser General Public License
-along with the GNU MPFR Library; see the file COPYING.LESSER.  If not, see
-https://www.gnu.org/licenses/ or write to the Free Software Foundation, Inc.,
-51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA. */
+along with the GNU MPFR Library; see the file COPYING.LESSER.
+If not, see <https://www.gnu.org/licenses/>. */
 
 /* The approximation error bound uses Theorem 1 and Remark 2 in
    https://arxiv.org/pdf/1312.0039v1.pdf */

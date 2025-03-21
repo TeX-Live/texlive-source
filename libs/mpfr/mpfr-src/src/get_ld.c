@@ -1,8 +1,8 @@
 /* mpfr_get_ld, mpfr_get_ld_2exp -- convert a multiple precision floating-point
                                     number to a machine long double
 
-Copyright 2002-2023 Free Software Foundation, Inc.
-Contributed by the AriC and Caramba projects, INRIA.
+Copyright 2002-2025 Free Software Foundation, Inc.
+Contributed by the Pascaline and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
 
@@ -17,9 +17,8 @@ or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 License for more details.
 
 You should have received a copy of the GNU Lesser General Public License
-along with the GNU MPFR Library; see the file COPYING.LESSER.  If not, see
-https://www.gnu.org/licenses/ or write to the Free Software Foundation, Inc.,
-51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA. */
+along with the GNU MPFR Library; see the file COPYING.LESSER.
+If not, see <https://www.gnu.org/licenses/>. */
 
 #include <float.h> /* needed so that MPFR_LDBL_MANT_DIG is correctly defined */
 

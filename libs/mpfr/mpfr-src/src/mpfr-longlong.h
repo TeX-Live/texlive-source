@@ -1,6 +1,6 @@
 /* longlong.h -- definitions for mixed size 32/64 bit arithmetic.
 
-Copyright 1991-1994, 1996, 1997, 1999-2005, 2007-2009, 2011-2023 Free Software Foundation, Inc.
+Copyright 1991-1994, 1996, 1997, 1999-2005, 2007-2009, 2011-2025 Free Software Foundation, Inc.
 
 This file is part of the GNU MPFR Library and has been copied from
 GNU MP 18339:32dc4af70f95, with the following changes:
@@ -19,9 +19,8 @@ or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 License for more details.
 
 You should have received a copy of the GNU Lesser General Public License
-along with the GNU MPFR Library; see the file COPYING.LESSER.  If not, see
-https://www.gnu.org/licenses/ or write to the Free Software Foundation, Inc.,
-51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA. */
+along with the GNU MPFR Library; see the file COPYING.LESSER.
+If not, see <https://www.gnu.org/licenses/>. */
 
 /* You have to define the following before including this file:
 
@@ -1168,7 +1167,7 @@ extern UWtype __MPN(udiv_qrnnd) (UWtype *, UWtype, UWtype, UWtype);
   do {									\
     UDItype __u = (u), __v = (v);					\
     (w0) = __u * __v;							\
-    (w1) = (unsigned __int128__) __u * __v >> 64;			\
+    (w1) = (unsigned __int128) __u * __v >> 64;			\
   } while (0)
 #endif
 

@@ -5,8 +5,8 @@ See https://gcc.gnu.org/legacy-ml/gcc/2006-06/msg00691.html,
 https://gcc.gnu.org/onlinedocs/gcc/Decimal-Float.html,
 and TR 24732 <https://www.open-std.org/jtc1/sc22/wg14/www/projects#24732>.
 
-Copyright 2006-2023 Free Software Foundation, Inc.
-Contributed by the AriC and Caramel projects, INRIA.
+Copyright 2006-2025 Free Software Foundation, Inc.
+Contributed by the Pascaline and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
 
@@ -21,9 +21,8 @@ or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 License for more details.
 
 You should have received a copy of the GNU Lesser General Public License
-along with the GNU MPFR Library; see the file COPYING.LESSER.  If not, see
-https://www.gnu.org/licenses/ or write to the Free Software Foundation, Inc.,
-51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA. */
+along with the GNU MPFR Library; see the file COPYING.LESSER.
+If not, see <https://www.gnu.org/licenses/>. */
 
 #define MPFR_NEED_LONGLONG_H
 #include "mpfr-impl.h"

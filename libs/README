@@ -52,7 +52,7 @@ luajit 2.1.0-beta3 - checked 20jun17
 mpfi 1.5.4 - checked 1feb24
   https://perso.ens-lyon.fr/nathalie.revol/software.html#download
   
-mpfr 4.2.1 - checked 1feb24
+mpfr 4.2.2 - checked 21mar25
   https://ftp.gnu.org/gnu/mpfr/
 
 pixman 0.42.2 - no longer checked

@@ -1,5 +1,5 @@
-# Copyright 2000-2023 Free Software Foundation, Inc.
-# Contributed by the AriC and Caramba projects, INRIA.
+# Copyright 2000-2025 Free Software Foundation, Inc.
+# Contributed by the Pascaline and Caramba projects, INRIA.
 
 # This file is part of the GNU MPFR Library.
 
@@ -103,7 +103,7 @@ libmpfr_la_LIBADD = @LIBOBJS@
 #        4.0.x    6:x:0
 #        4.1.x    7:x:1
 #        4.2.x    8:x:2
-libmpfr_la_LDFLAGS = $(MPFR_LDFLAGS) $(LIBMPFR_LDFLAGS) -version-info 8:1:2
+libmpfr_la_LDFLAGS = $(MPFR_LDFLAGS) $(LIBMPFR_LDFLAGS) -version-info 8:2:2
 
 GET_PATCHES_SH = $(top_srcdir)/tools/get_patches.sh
 PATCHES = $(top_srcdir)/PATCHES

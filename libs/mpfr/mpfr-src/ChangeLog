@@ -1,4 +1,473 @@
+2025-03-20  Vincent Lefevre  <vincent@vinc17.net>
+
+	Updated version to 4.2.2.
+
+2025-03-14  Vincent Lefevre  <vincent@vinc17.net>
+
+	Corrected documentation about the failing check_null() tests (bug in GMP)
+
+	following commit e545a46332bc41f15eab7de7e19c851f311762ff.
+
+	This is not specific to Visual C++ under MS Windows, but due to a bug
+	in GMP's vsnprintf replacement (now fixed in its development branch).
+
+	* INSTALL: moved and updated text about failures in the testsuite.
+	  New section: "tfprintf and tsprintf failures in check_null".
+	* doc/README.dev: updated MPFR_TESTS_SKIP_CHECK_NULL description.
+
+2025-03-14  Vincent Lefevre  <vincent@vinc17.net>
+
+	ChangeLog update with tools/update-changelog
+
+	Updated version to 4.2.2-rc1.
+
+2025-03-12  Vincent Lefevre  <vincent@vinc17.net>
+
+	[NEWS] Update for 4.2.2 (mention 2 bug fixes)
+
+2025-03-12  Vincent Lefevre  <vincent@vinc17.net>
+
+	Added MPFR_TESTS_SKIP_CHECK_NULL: optionally skip the check_null() tests.
+
+	Build the MPFR tests with the MPFR_TESTS_SKIP_CHECK_NULL macro defined
+	in order to skip the check_null() tests in tfprintf.c and tsprintf.c
+	(failures with Visual C++ under MS Windows have been reported). The
+	goal is just to avoid a failure of the MPFR testsuite, as the bug seems
+	to come from neither MPFR nor GMP.
+
+	* INSTALL: mention the failures with Microsoft Visual C++ and how
+	  to skip the corresponding tests.
+	* doc/README.dev: document MPFR_TESTS_SKIP_CHECK_NULL.
+	* tests/{tfprintf.c,tsprintf.c}: skip the check_null() tests if
+	  the MPFR_TESTS_SKIP_CHECK_NULL macro is defined.
+
+2025-03-12  Vincent Lefevre  <vincent@vinc17.net>
+
+	[INSTALL] Moved notes for the CompCert and Intel OneApi compilers.
+
+	They were added under the "MPFR for use with Windows Applications"
+	section[*], but they actually concerned Linux.
+
+	[*] commit 5075ec08449b4d59aba7700a127bc7f35718cc3f (SVN r13849)
+	    commit 5543355cd613d1cfdd428b87101b0606648a50fa (SVN r14552)
+
+2025-03-12  Vincent Lefevre  <vincent@vinc17.net>
+
+	[NEWS] Update for 4.2.2
+
+	Added "Changes from version 4.2.1 to version 4.2.2" and moved an item
+	there (from commit a8cc66a9cc960545514470e41d5bbfaa64d89743).
+
+2025-03-12  Vincent Lefevre  <vincent@vinc17.net>
+
+	[src/mpfr-longlong.h] __int128__ → __int128 for portability (clang).
+
+	This is an update from the current GMP development code
+	(18482:d6c6436467ab in the GMP repository).
+
+2025-03-12  Vincent Lefevre  <vincent@vinc17.net>
+
+	[tests/tversion.c] Do not output gmp_*printf info when meaningless.
+
+	In particular, mini-gmp does not provide gmp_*printf functions, thus
+	it does not make any sense to output the corresponding lines.
+
+	Until now, one was getting
+
+	[tversion] gmp_printf: hhd = yes, lld = yes, jd = yes, td = ?, Lf = ?
+	[tversion] gmp_snprintf/vsnprintf on "%a" = ?
+
+	The "?" corresponded to the absence of the tests, thus could be
+	regarded as correct. But the "yes" was just the default, thus was
+	actually incorrect and misleading. Note that this default does not
+	matter for mini-gmp since the formatted output functions are not
+	tested: the corresponding test files have
+
+	  #if defined(HAVE_STDARG) && !defined(MPFR_USE_MINI_GMP)
+
+	and we are now using the same test.
+
+2025-03-12  Vincent Lefevre  <vincent@vinc17.net>
+
+	Detect the use of GMP's buggy vsnprintf replacement at configure time.
+
+	* acinclude.m4: detect the use of GMP's buggy vsnprintf replacement
+	  at configure time. With it, the tests of "%a" will be disabled to
+	  avoid an assertion failure in the MPFR testsuite. A warning will
+	  be displayed in the configure output in such a case.
+	* doc/mpfr.texi: corrected/improved the documentation of the
+	  conversion specification not involving "P" and "R" types.
+	* tests/tsprintf.c: disable the tests of "%a" if need be (see above).
+	* tests/tversion.c: output information about gmp_snprintf/vsnprintf
+	  support of "%a".
+	* NEWS: added an item about this.
+
+2025-03-12  Vincent Lefevre  <vincent@vinc17.net>
+
+	[tests/tversion.c] Typo in output.
+
+	For NPRINTF_L / PRINTF_L (see acinclude.m4), it should be "Lf",
+	not "Ld" (f: floating-point type; d: signed integer type).
+
+2025-03-07  Vincent Lefevre  <vincent@vinc17.net>
+
+	[acinclude.m4] Clean up support for binary128 (correction).
+
+	commit c37c9d599b9aced92e182507bf223440bbc9a9f1 was incomplete.
+
+	We also need to get rid of the "#define _Float128 __float128" in
+	the configure test (but this one does not affect Clang).
+
+2025-03-06  Vincent Lefevre  <vincent@vinc17.net>
+
+	[doc/mpfr.texi] Updated the month.
+
+2025-03-06  Vincent Lefevre  <vincent@vinc17.net>
+
+	Portability: clean up support for binary128 (a.k.a. float128).
+
+	This fixes a configure failure with Clang and glibc 2.41:
+	  https://bugs.gentoo.org/949962
+	  https://sourceware.org/bugzilla/show_bug.cgi?id=32750
+	  https://sympa.inria.fr/sympa/arc/mpfr/2025-02/msg00025.html
+	  https://sympa.inria.fr/sympa/arc/mpfr/2025-03/msg00001.html
+
+	The issue is the following: in its configure script, GNU MPFR first
+	tests whether _Float128 is supported (without header inclusions);
+	if it isn't, MPFR then tests whether __float128 is supported, and
+	in such a case, it defines _Float128 as __float128 with
+
+	  AC_DEFINE([_Float128],[__float128],[__float128 fallback])
+
+	As Clang supports __float128 but not _Float128 (at least on x86_64,
+	up to version 19), this fallback is selected. But glibc 2.41 has a
+	similar fallback, with a typedef:
+
+	  typedef __float128 _Float128;
+
+	With the MPFR _Float128 macro defined as __float128, as soon as some
+	header such as <stdio.h> is included, this yields
+
+	  typedef __float128 __float128;
+
+	which is incorrect. This first occurs in the
+
+	  AC_MSG_CHECKING(for GMP_NUMB_BITS and sizeof(mp_limb_t) consistency)
+	  [...]
+
+	configure test (in configure.ac), hence the failure of this test and
+	the configure script.
+
+	As an attempt to avoid such an issue with header inclusion, a solution
+	should be to include the common headers in every configure test.
+
+	But since _Float128 is a reserved identifier, we must avoid defining
+	it as a macro (a typedef would also be incorrect). This is done here,
+	by defining a mpfr_float128 macro instead. In the public mpfr.h header
+	file, if the user has defined MPFR_WANT_FLOAT128: mpfr_float128 will
+	be defined as _Float128 by default (thus this will not change the API),
+	but if _Float128 is not supported, the user should define mpfr_float128
+	as __float128 (or an equivalent type that is supported).
+
+	* acinclude.m4: changed _Float128 to mpfr_float128 in AC_DEFINE.
+	* configure.ac: updated a comment about _Float128.
+	* doc/README.dev: update about MPFR_WANT_FLOAT128 and _Float128.
+	* doc/mpfr.texi: in "Nomenclature and Types", added a paragraph about
+	  binary128 support and the mpfr_float128 macro; update concerning the
+	  functions related to binary128 (in particular, in the prototypes,
+	  changed _Float128 to mpfr_float128).
+	* src/mpfr.h: under "#ifdef MPFR_WANT_FLOAT128", define mpfr_float128
+	  as _Float128 if not defined yet; in the prototypes, changed
+	  _Float128 to mpfr_float128.
+	* src/get_float128.c, src/set_float128.c, tests/tset_float128.c:
+	  changed _Float128 to mpfr_float128; updated comments.
+	* tests/tversion.c: for "float128 = yes", also output the actual type.
+
+2025-02-13  Vincent Lefevre  <vincent@vinc17.net>
+
+	[MPFR manual] Added a paragraph for formatted output functions and a/A.
+
+	Reference and discussion about the choice of the exponent:
+	  https://sympa.inria.fr/sympa/arc/mpfr/2021-05/msg00002.html
+
+2025-02-12  Vincent Lefevre  <vincent@vinc17.net>
+
+	[MPFR manual] mpfr_subnormalize: corrected subnormal exponent range.
+
+	For mpfr_subnormalize, the subnormal exponent range is
+	[emin,emin+PREC(x)-2], not [emin,emin+PREC(x)-1].
+
+	Indeed, in precision p, there are p-1 exponents in the subnormal domain
+	(the subnormal numbers are represented with 1 to p-1 significant bits).
+
+	Note: the range got corrected in a src/subnormal.c comment on 2011-01-27
+	(SVN r7437, commit 49086d17298227973015e3c6fa97d95ea533cd43), but the
+	old range remained in doc/mpfr.texi, where it was added on 2005-04-14
+	(SVN r3442, commit 1ba17a49315bb425028e8613b89fa7c48d6b2c53).
+
+2025-02-01  Vincent Lefevre  <vincent@vinc17.net>
+
+	[doc/mpfr.texi] Mention the Pascaline project-team.
+
+	[tools/check_mparam.c] Updated the "Contributed" line.
+
+2025-02-01  Vincent Lefevre  <vincent@vinc17.net>
+
+	Updated the "Contributed" lines.
+
+	Replaced
+	  Contributed by the AriC and Caramba projects
+	by
+	  Contributed by the Pascaline and Caramba projects
+	in every file (except ChangeLog).
+
+2025-02-01  Vincent Lefevre  <vincent@vinc17.net>
+
+	[src/set_d128.c] Replaced "Caramel" by "Caramba".
+
+	This file was added with an incorrect "Contributed" line in SVN r12766
+	(commit 39cfc1ede643df1288f3d6fce2eafa408161f2c1).
+
+	Note: there is a bug in git, which thinks that this file comes from
+	src/set_d64.c, thus lists the change from "Caramel" to "Caramba" in
+	its history, which is wrong!
+
+2025-01-02  Vincent Lefevre  <vincent@vinc17.net>
+
+	[doc/mpfr.texi] Updated the month.
+
+2025-01-02  Vincent Lefevre  <vincent@vinc17.net>
+
+	Copyright notice update: added 2025.
+
+	Command used:
+	  perl -pi -e 's/ (\d{4}-)?(2024)(?= Free Software)/
+	               " ".($1||"$2-").($2+1)/e' **/*(^/)
+	under zsh (note: doc/texinfo.tex, from GNU Texinfo, isn't modified).
+	Removed 2024 from the example in the doc/README.dev file.
+
+2024-12-10  Vincent Lefevre  <vincent@vinc17.net>
+
+	[doc/mpfr.texi] Updated the month.
+
+2024-12-10  Vincent Lefevre  <vincent@vinc17.net>
+
+	MPFR manual: replaced variable "bool" by "cond" in examples.
+
+	As bool is a keyword in ISO C23, we should not use it as a variable name
+	(even in examples).
+
+2024-12-10  Vincent Lefevre  <vincent@vinc17.net>
+
+	[doc/README.dev] Update from the master branch, except new features.
+
+	Documentation of features present in master but not in the 4.2 branch
+	has been removed.
+
+2024-09-09  Vincent Lefevre  <vincent@vinc17.net>
+
+	[src/get_str.c] Renamed a variable.
+
+	Renamed variable "reste" (French) to "rem".
+	"reste" was triggering a error with codespell 2.3.0.
+
+2024-09-05  Vincent Lefevre  <vincent@vinc17.net>
+
+	[doc/mpfr.texi] Updated the month.
+
+2024-09-04  Vincent Lefevre  <vincent@vinc17.net>
+
+	[doc] Update to GNU Free Documentation License 1.3
+
+	In practice, this doesn't change anything for MPFR users, but
+	the FSF address in FDL 1.2 became obsolete, and this also fixes
+	a bug ("GNU Free Documentation License" was appearing twice in
+	the Concept Index).
+
+	See other details at
+	  https://sympa.inria.fr/sympa/arc/mpfr/2024-09/msg00001.html
+
+	At the same time, 2 old tweaks from GMP (added in 2002) have been
+	removed:
+	  * one to help texinfo-mode (which should have now been fixed);
+	  * one that was using @appendixsec for the addendum (adding "A.1"
+	    before the addendum title and possibly an item in the table of
+	    contents, but this is not really needed and this is strange for
+	    HTML output).
+
+2024-09-04  Vincent Lefevre  <vincent@vinc17.net>
+
+	[tools/mbench/Makefile] Updated copyright notice (FSF address changed).
+
+	The postal address of the FSF has changed. Updated the copyright notice
+	as in commit 9f2e53ef36ac196348ffafcc45ce8e5cc03fe007.
+
+2024-09-04  Vincent Lefevre  <vincent@vinc17.net>
+
+	[tests/data/*] Updated copyright notice (FSF address changed).
+
+	Some of the files under tests/data contained a very old FSF address.
+	No longer use the postal address. Updated the copyright notice as in
+	commit 9f2e53ef36ac196348ffafcc45ce8e5cc03fe007.
+
+	File gonnet.mpl updated manually, and other files with
+
+	  perl -p0i -e 'BEGIN { $s =
+	    "if not, write to the Free Software\n# Foundation, Inc.,".
+	    " 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA."
+	    } s#\Q$s\E#if not, see <https://www.gnu.org/licenses/>.#g'
+
+2024-09-04  Vincent Lefevre  <vincent@vinc17.net>
+
+	[tests/data/*] Updated copyright notice (FSF address changed).
+
+	The postal address of the FSF has changed. Updated the copyright notice
+	as in commit 9f2e53ef36ac196348ffafcc45ce8e5cc03fe007.
+
+2024-09-04  Vincent Lefevre  <vincent@vinc17.net>
+
+	[acinclude.m4] Updated copyright notice (FSF address changed).
+
+	The postal address of the FSF has changed. Updated the copyright notice
+	as in commit 9f2e53ef36ac196348ffafcc45ce8e5cc03fe007.
+
+	Moreover, make the copyright notice fit on 80 columns.
+
+2024-09-04  Vincent Lefevre  <vincent@vinc17.net>
+
+	Updated copyright notice of almost all files (FSF address changed).
+
+	This commit in the 4.2 branch is similar to the one in master
+	(9f2e53ef36ac196348ffafcc45ce8e5cc03fe007).
+
+	The postal address of the FSF has changed. Instead of updating it,
+	use the recommendation from
+	  https://www.gnu.org/licenses/gpl-howto.en.html
+	for the copyright notice, i.e. no longer use the postal address;
+	just give the web page <https://www.gnu.org/licenses/>.
+
+	This commit updates the copyright notice of almost all files (the
+	remaining files will be updated later). It has been obtained with
+
+	  perl -p0i -e 'BEGIN { $s =
+	      "If not, see\nhttps://www.gnu.org/licenses/ or write".
+	      " to the Free Software Foundation, Inc.,\n51 Franklin St,".
+	      " Fifth Floor, Boston, MA 02110-1301, USA." }
+	      s# +\Q$s\E#\nIf not, see <https://www.gnu.org/licenses/>.#g' \
+	    $(git ls-files)
+
+2024-08-23  Vincent Lefevre  <vincent@vinc17.net>
+
+	[src/logging.c] Replaced the obsolescent ctime() by strftime().
+
+	We use the "%Y-%m-%d %H:%M:%S" time format (human-readable ISO 8601),
+	which is easier to read than the ctime/asctime format.
+
+2024-08-23  Vincent Lefevre  <vincent@vinc17.net>
+
+	[src/logging.c] Added FIXME for ctime(), deprecated in POSIX & ISO C23.
+
+	See https://www.open-std.org/JTC1/SC22/WG14/www/docs/n2566.pdf
+	for details.
+
+2024-02-15  Vincent Lefevre  <vincent@vinc17.net>
+
+	[doc/mpfr.texi] Updated the month.
+
+2024-02-15  Vincent Lefevre  <vincent@vinc17.net>
+
+	Copyright notice update: added 2024.
+
+	Command used:
+	  perl -pi -e 's/ (\d{4}-)?(2023)(?= Free Software)/
+	               " ".($1||"$2-").($2+1)/e' **/*(^/)
+	under zsh.
+	Removed 2023 from the example in the doc/README.dev file.
+
+2023-12-15  Vincent Lefevre  <vincent@vinc17.net>
+
+	MPFR manual: added a note for mpfr_free_str.
+
+	[doc/mpfr.texi] Updated the month.
+
+2023-12-15  Vincent Lefevre  <vincent@vinc17.net>
+
+	MPFR manual: corrections for formatted output functions (mpfr_*printf).
+
+	Needed due to the possible use of %c with the value 0, thus with
+	potential (non-terminating) null characters in the output.
+
+	* Replaced "string" by "array" (term used in the ISO C standard).
+	* Document requirements concerning the use of mpfr_free_str to free
+	  the block of memory allocated by mpfr_asprintf / mpfr_vasprintf.
+
+2023-12-13  Vincent Lefevre  <vincent@vinc17.net>
+
+	Fixed bugs in the formatted output functions triggered with %c on 0.
+
+	Possible consequences of these bugs:
+	  - possible memory corruption with custom memory allocators that
+	    do not ignore the size parameter of the "free" function;
+	  - a part of the buffer fails to be overwritten;
+	  - an assertion failure when GNU MPFR has been configured with
+	    assertion checking (--enable-assert).
+
+	* src/vasprintf.c: No longer use the strncpy, strncat and strlen
+	  functions (thus mpfr_free_str as well), as they are incorrect
+	  when the buffer contains a non-terminating null character, which
+	  is possible when %c is used with the value 0. Instead, use memcpy
+	  and mpfr_free_func; and removed 2 MPFR_ASSERTD occurrences that
+	  were using strlen.
+	* src/printf.c: No longer use *printf (with %s) and mpfr_free_str
+	  functions, for the same reason. Instead, use fwrite, memcpy and
+	  mpfr_free_func.
+	* tests/tfprintf.c, tests/tsprintf.c: added a check_null test to
+	  check mpfr_vfprintf and mpfr_sprintf with %c on 0.
+
+2023-10-20  Vincent Lefevre  <vincent@vinc17.net>
+
+	English language correction.
+
+	Issue detected by codespell 2.2.6. Indeed, according to
+	  https://www.merriam-webster.com/dictionary/determinate
+	"determinate" is only an adjective, not a verb. 1913 Webster says
+	that as a verb, it is obsolete.
+
+2023-10-20  Vincent Lefevre  <vincent@vinc17.net>
+
+	mpfrlint: for codespell, ignore URLs.
+
+	This currently avoids a false positive "debbugs" with codespell 2.2.6.
+
+2023-08-31  Vincent Lefevre  <vincent@vinc17.net>
+
+	[src/sub1sp1_extracted.c] Fixed #include lines.
+
+	However, this doesn't change anything in practice since this code
+	is not used yet (see sub1sp.c and its "#if 0 && ...").
+
+2023-08-31  Vincent Lefevre  <vincent@vinc17.net>
+
+	[src] Added missing "#define int32_t int" for --enable-formally-proven-code
+
+	Bug detected on FreeBSD/RISC-V, reported by Dennis Clarke.
+
+	We didn't detect it under Linux because the GNU C Library defines
+	these types when <stdlib.h> is included:
+
+	  #if defined __USE_MISC || defined __USE_XOPEN_EXTENDED
+	  # include <sys/types.h> /* we need int32_t... */
+
+	Note: the code shouldn't use these standard types with #define, though
+	this is probably safe as we don't use standard functions/macros here.
+
 2023-08-22  Vincent Lefevre  <vincent@vinc17.net>
+
+	[src/Makefile.am] Updated -version-info to 8:2:2 for MPFR 4.2.2.
+
+	Updated version to 4.2.2-dev (with tools/update-version).
+
+	ChangeLog update with tools/update-changelog
 
 	Updated version to 4.2.1.
 

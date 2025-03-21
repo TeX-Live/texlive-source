@@ -1,7 +1,7 @@
 /* mpfr_li2 -- Dilogarithm.
 
-Copyright 2007-2023 Free Software Foundation, Inc.
-Contributed by the AriC and Caramba projects, INRIA.
+Copyright 2007-2025 Free Software Foundation, Inc.
+Contributed by the Pascaline and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
 
@@ -16,9 +16,8 @@ or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 License for more details.
 
 You should have received a copy of the GNU Lesser General Public License
-along with the GNU MPFR Library; see the file COPYING.LESSER.  If not, see
-https://www.gnu.org/licenses/ or write to the Free Software Foundation, Inc.,
-51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA. */
+along with the GNU MPFR Library; see the file COPYING.LESSER.
+If not, see <https://www.gnu.org/licenses/>. */
 
 #define MPFR_NEED_LONGLONG_H
 #include "mpfr-impl.h"
@@ -28,7 +27,7 @@ https://www.gnu.org/licenses/ or write to the Free Software Foundation, Inc.,
    with 0 < z <= log(2) to the precision of s rounded in the direction
    rnd_mode.
    Return the maximum index of the truncature which is useful
-   for determinating the relative error.
+   for determining the relative error.
 */
 static int
 li2_series (mpfr_ptr sum, mpfr_srcptr z, mpfr_rnd_t rnd_mode)

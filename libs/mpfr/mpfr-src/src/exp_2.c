@@ -1,8 +1,8 @@
 /* mpfr_exp_2 -- exponential of a floating-point number
                  using algorithms in O(n^(1/2)*M(n)) and O(n^(1/3)*M(n))
 
-Copyright 1999-2023 Free Software Foundation, Inc.
-Contributed by the AriC and Caramba projects, INRIA.
+Copyright 1999-2025 Free Software Foundation, Inc.
+Contributed by the Pascaline and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
 
@@ -17,9 +17,8 @@ or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 License for more details.
 
 You should have received a copy of the GNU Lesser General Public License
-along with the GNU MPFR Library; see the file COPYING.LESSER.  If not, see
-https://www.gnu.org/licenses/ or write to the Free Software Foundation, Inc.,
-51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA. */
+along with the GNU MPFR Library; see the file COPYING.LESSER.
+If not, see <https://www.gnu.org/licenses/>. */
 
 #define MPFR_NEED_LONGLONG_H  /* MPFR_INT_CEIL_LOG2 */
 #include "mpfr-impl.h"

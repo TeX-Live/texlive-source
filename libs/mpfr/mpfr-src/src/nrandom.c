@@ -2,7 +2,7 @@
    and variance 1 and round it to the precision of rop according to the given
    rounding mode.
 
-Copyright 2013-2023 Free Software Foundation, Inc.
+Copyright 2013-2025 Free Software Foundation, Inc.
 Contributed by Charles Karney <charles@karney.com>, SRI International.
 
 This file is part of the GNU MPFR Library.
@@ -18,9 +18,8 @@ or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 License for more details.
 
 You should have received a copy of the GNU Lesser General Public License
-along with the GNU MPFR Library; see the file COPYING.LESSER.  If not, see
-https://www.gnu.org/licenses/ or write to the Free Software Foundation, Inc.,
-51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA. */
+along with the GNU MPFR Library; see the file COPYING.LESSER.
+If not, see <https://www.gnu.org/licenses/>. */
 
 /*
  * Sampling from the normal distribution with zero mean and unit variance.

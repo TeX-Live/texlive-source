@@ -1,7 +1,7 @@
 /* Formatted output functions (printf functions family).
 
-Copyright 2007-2023 Free Software Foundation, Inc.
-Contributed by the AriC and Caramba projects, INRIA.
+Copyright 2007-2025 Free Software Foundation, Inc.
+Contributed by the Pascaline and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
 
@@ -16,9 +16,8 @@ or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 License for more details.
 
 You should have received a copy of the GNU Lesser General Public License
-along with the GNU MPFR Library; see the file COPYING.LESSER.  If not, see
-https://www.gnu.org/licenses/ or write to the Free Software Foundation, Inc.,
-51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA. */
+along with the GNU MPFR Library; see the file COPYING.LESSER.
+If not, see <https://www.gnu.org/licenses/>. */
 
 #ifdef HAVE_CONFIG_H
 # include "config.h"
@@ -32,25 +31,27 @@ https://www.gnu.org/licenses/ or write to the Free Software Foundation, Inc.,
 
 #include "mpfr-impl.h"
 
-#ifdef _MPFR_H_HAVE_FILE
-
 /* Each printf-like function calls mpfr_vasnprintf_aux (directly or
    via mpfr_vasprintf), which
    - returns the number of characters to be written excluding the
      terminating null character (disregarding the size argument);
    - returns -1 and sets the erange flag if this number exceeds INT_MAX
-     (in that case, also sets errno to EOVERFLOW on POSIX systems). */
+     (in that case, also sets errno to EOVERFLOW on POSIX systems).
+
+   Moreover, since the output may contain non-terminating null characters
+   (if %c is used with the value 0), the mpfr_free_str function must not be
+   used to free the allocated memory, because the size may matter with some
+   custom allocation functions. Anyway, mpfr_free_func is more efficient
+   here, as the size does not need to be recomputed. */
+
+#ifdef _MPFR_H_HAVE_FILE
 
 #define GET_STR_VA(sz, str, fmt, ap)            \
   do                                            \
     {                                           \
       sz = mpfr_vasprintf (&(str), fmt, ap);    \
       if (sz < 0)                               \
-        {                                       \
-          if (str)                              \
-            mpfr_free_str (str);                \
-          return -1;                            \
-        }                                       \
+        return -1;                              \
     } while (0)
 
 #define GET_STR(sz, str, fmt)                   \
@@ -61,11 +62,16 @@ https://www.gnu.org/licenses/ or write to the Free Software Foundation, Inc.,
       sz = mpfr_vasprintf (&(str), fmt, ap);    \
       va_end (ap);                              \
       if (sz < 0)                               \
-        {                                       \
-          if (str)                              \
-            mpfr_free_str (str);                \
-          return -1;                            \
-        }                                       \
+        return -1;                              \
+    } while (0)
+
+#define MPFR_FPRINTF_END(ret, str, fp)          \
+  do                                            \
+    {                                           \
+      int status;                               \
+      status = fwrite ((str), (ret), 1, (fp));  \
+      mpfr_free_func ((str), (ret) + 1);        \
+      return status == 1 ? (ret) : -1;          \
     } while (0)
 
 int
@@ -75,10 +81,7 @@ mpfr_printf (const char *fmt, ...)
   int ret;
 
   GET_STR (ret, str, fmt);
-  ret = printf ("%s", str);
-
-  mpfr_free_str (str);
-  return ret;
+  MPFR_FPRINTF_END (ret, str, stdout);
 }
 
 int
@@ -88,10 +91,7 @@ mpfr_vprintf (const char *fmt, va_list ap)
   int ret;
 
   GET_STR_VA (ret, str, fmt, ap);
-  ret = printf ("%s", str);
-
-  mpfr_free_str (str);
-  return ret;
+  MPFR_FPRINTF_END (ret, str, stdout);
 }
 
 
@@ -102,10 +102,7 @@ mpfr_fprintf (FILE *fp, const char *fmt, ...)
   int ret;
 
   GET_STR (ret, str, fmt);
-  ret = fprintf (fp, "%s", str);
-
-  mpfr_free_str (str);
-  return ret;
+  MPFR_FPRINTF_END (ret, str, fp);
 }
 
 int
@@ -115,13 +112,18 @@ mpfr_vfprintf (FILE *fp, const char *fmt, va_list ap)
   int ret;
 
   GET_STR_VA (ret, str, fmt, ap);
-  ret = fprintf (fp, "%s", str);
-
-  mpfr_free_str (str);
-  return ret;
+  MPFR_FPRINTF_END (ret, str, fp);
 }
 
 #endif /* _MPFR_H_HAVE_FILE */
+
+#define MPFR_SPRINTF_END(ret, buf, str)         \
+  do                                            \
+    {                                           \
+      memcpy ((buf), (str), (ret) + 1);         \
+      mpfr_free_func ((str), (ret) + 1);        \
+      return (ret);                             \
+    } while (0)
 
 int
 mpfr_sprintf (char *buf, const char *fmt, ...)
@@ -130,10 +132,7 @@ mpfr_sprintf (char *buf, const char *fmt, ...)
   int ret;
 
   GET_STR (ret, str, fmt);
-  ret = sprintf (buf, "%s", str);
-
-  mpfr_free_str (str);
-  return ret;
+  MPFR_SPRINTF_END (ret, buf, str);
 }
 
 int
@@ -143,10 +142,7 @@ mpfr_vsprintf (char *buf, const char *fmt, va_list ap)
   int ret;
 
   GET_STR_VA (ret, str, fmt, ap);
-  ret = sprintf (buf, "%s", str);
-
-  mpfr_free_str (str);
-  return ret;
+  MPFR_SPRINTF_END (ret, buf, str);
 }
 
 int

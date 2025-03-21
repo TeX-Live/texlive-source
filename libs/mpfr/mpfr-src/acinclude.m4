@@ -1,14 +1,14 @@
 dnl  MPFR specific autoconf macros
 
-dnl  Copyright 2000, 2002-2023 Free Software Foundation, Inc.
-dnl  Contributed by the AriC and Caramba projects, INRIA.
+dnl  Copyright 2000, 2002-2025 Free Software Foundation, Inc.
+dnl  Contributed by the Pascaline and Caramba projects, INRIA.
 dnl
 dnl  This file is part of the GNU MPFR Library.
 dnl
-dnl  The GNU MPFR Library is free software; you can redistribute it and/or modify
-dnl  it under the terms of the GNU Lesser General Public License as published
-dnl  by the Free Software Foundation; either version 3 of the License, or (at
-dnl  your option) any later version.
+dnl  The GNU MPFR Library is free software; you can redistribute it and/or
+dnl  modify it under the terms of the GNU Lesser General Public License as
+dnl  published by the Free Software Foundation; either version 3 of the
+dnl  License, or (at your option) any later version.
 dnl
 dnl  The GNU MPFR Library is distributed in the hope that it will be useful, but
 dnl  WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
@@ -16,9 +16,8 @@ dnl  or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 dnl  License for more details.
 dnl
 dnl  You should have received a copy of the GNU Lesser General Public License
-dnl  along with the GNU MPFR Library; see the file COPYING.LESSER.  If not, see
-dnl  https://www.gnu.org/licenses/ or write to the Free Software Foundation, Inc.,
-dnl  51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA.
+dnl  along with the GNU MPFR Library; see the file COPYING.LESSER.
+dnl  If not, see <https://www.gnu.org/licenses/>.
 
 dnl  autoconf 2.60 is necessary because of the use of AC_PROG_SED.
 dnl  The following line allows the autoconf wrapper (when installed)
@@ -781,8 +780,11 @@ fi
 # End of decimal float checks
 
 dnl Check if _Float128 or __float128 is available. We also require the
-dnl compiler to support hex constants with the f128 or q suffix (this
-dnl prevents the _Float128 support with GCC's -std=c90, but who cares?).
+dnl compiler to support hex constants with the f128 or q suffix respectively.
+dnl If _Float128 is supported, then the mpfr_float128 macro should be
+dnl defined as this type. We do not define it here because this will be
+dnl done in mpfr.h, and not defining it here is the only way to ensure
+dnl that under "make check", mpfr.h really defines it.
 dnl Note: We use AC_LINK_IFELSE instead of AC_COMPILE_IFELSE since an
 dnl error may occur only at link time, such as under NetBSD:
 dnl   https://mail-index.netbsd.org/pkgsrc-users/2018/02/02/msg026220.html
@@ -801,16 +803,14 @@ return x == 0;
       [AC_MSG_RESULT(no)
        AC_MSG_CHECKING(if __float128 can be used as a fallback)
 dnl Use the q suffix in this case.
-       AC_LINK_IFELSE([AC_LANG_PROGRAM([[
-#define _Float128 __float128
-]], [[
-volatile _Float128 x = 0x1.fp+16383q;
+       AC_LINK_IFELSE([AC_LANG_PROGRAM([[]], [[
+volatile __float128 x = 0x1.fp+16383q;
 return x == 0;
 ]])],
           [AC_MSG_RESULT(yes)
            AC_DEFINE([MPFR_WANT_FLOAT128],2,
-                     [Build float128 functions with float128 fallback])
-           AC_DEFINE([_Float128],[__float128],[__float128 fallback])],
+                     [Build float128 functions with __float128 fallback])
+           AC_DEFINE([mpfr_float128],[__float128],[__float128 fallback])],
           [AC_MSG_RESULT(no)
            if test "$enable_float128" = yes; then
               AC_MSG_ERROR(
@@ -1686,6 +1686,60 @@ MPFR_FUNC_GMP_PRINTF_SPEC([td], [ptrdiff_t], [
     ],
     [AC_DEFINE([PRINTF_T], 1, [printf/gmp_printf can read ptrdiff_t])],
     [AC_DEFINE([NPRINTF_T], 1, [printf/gmp_printf cannot read ptrdiff_t])])
+
+AC_MSG_CHECKING(if gmp_printf supports "%a")
+AC_RUN_IFELSE([AC_LANG_PROGRAM([[
+#include <stdio.h>
+#include "gmp.h"
+]], [[
+  char s[256];
+
+  /* With the buggy repl-vsnprintf.c (vsnprintf replacement), one gets
+     an assertion failure like:
+       repl-vsnprintf.c:389: GNU MP assertion failed: len < total_width
+     (not all values are affected, but -1.25, used below, is).
+     The purpose of this test is to detect this bug only, assuming
+     C99 support (which will be checked in the test .c files).
+     We do not check the output, which is not fully specified. */
+  gmp_snprintf (s, 256, "%a", -1.25);
+  return 0;
+
+#if 0
+  /* A more complete program, for testing.
+     The assertion failure occurs only on the 4th case. */
+#include <stdio.h>
+#include <gmp.h>
+int main (void)
+{
+  char s[256];
+  double x[2] = { 1.25, -1.25 };
+  int i;
+  for (i = 0; i < 2; i++)
+    {
+      gmp_sprintf (s, "%a", x[i]);
+      printf ("[%s]\n", s);
+      gmp_snprintf (s, 256, "%a", x[i]);
+      printf ("[%s]\n", s);
+    }
+  return 0;
+}
+#endif
+]])],
+  [AC_MSG_RESULT(yes)
+   AC_DEFINE([PRINTF_A], 1, [printf/gmp_printf supports "%a"])],
+  [AC_MSG_RESULT(no)
+   AC_MSG_WARN([gmp_snprintf on "%a" terminated the program abnormally.])
+   AC_MSG_WARN([This is probably an assertion failure due to the buggy])
+   AC_MSG_WARN([repl-vsnprintf.c (vsnprintf replacement). References:])
+   AC_MSG_WARN([  https://sympa.inria.fr/sympa/arc/mpfr/2022-10/msg00001.html])
+   AC_MSG_WARN([  https://gmplib.org/list-archives/gmp-bugs/2022-October/005200.html])
+   AC_MSG_WARN([  https://gmplib.org/list-archives/gmp-bugs/2025-January/005557.html])
+   AC_MSG_WARN([%a must not be used in the MPFR formatted output functions])
+   AC_MSG_WARN([with this version of GMP; the corresponding tests in the])
+   AC_MSG_WARN([MPFR testsuite will be disabled.])
+   AC_MSG_WARN([See 'config.log' for details.])
+   AC_DEFINE([NPRINTF_A], 1, [printf/gmp_printf does not support "%a"])],
+  [AC_MSG_RESULT(cross-compiling, do not assume anything)])
 ])
 
 dnl MPFR_CHECK_PRINTF_GROUPFLAG

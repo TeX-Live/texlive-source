@@ -1,7 +1,7 @@
-diff -ur mpfr-4.2.1/src/mparam_h.in mpfr-src/src/mparam_h.in
---- mpfr-4.2.1/src/mparam_h.in	Fri Jan 06 02:09:48 2023
-+++ mpfr-src/src/mparam_h.in	Sat Aug 26 13:05:08 2023
-@@ -38,6 +38,8 @@
+diff -ur mpfr-4.2.2/src/mparam_h.in mpfr-src/src/mparam_h.in
+--- mpfr-4.2.2/src/mparam_h.in	Thu Jan 02 10:30:02 2025
++++ mpfr-src/src/mparam_h.in	Fri Mar 21 10:08:29 2025
+@@ -37,6 +37,8 @@
     -march=... and -mtune=...).
     See https://gcc.gnu.org/pipermail/gcc-help/2021-September/140720.html */
  

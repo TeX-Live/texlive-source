@@ -1,7 +1,7 @@
 /* mpfr.h -- Include file for mpfr.
 
-Copyright 1999-2023 Free Software Foundation, Inc.
-Contributed by the AriC and Caramba projects, INRIA.
+Copyright 1999-2025 Free Software Foundation, Inc.
+Contributed by the Pascaline and Caramba projects, INRIA.
 
 This file is part of the GNU MPFR Library.
 
@@ -16,9 +16,8 @@ or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
 License for more details.
 
 You should have received a copy of the GNU Lesser General Public License
-along with the GNU MPFR Library; see the file COPYING.LESSER.  If not, see
-https://www.gnu.org/licenses/ or write to the Free Software Foundation, Inc.,
-51 Franklin St, Fifth Floor, Boston, MA 02110-1301, USA. */
+along with the GNU MPFR Library; see the file COPYING.LESSER.
+If not, see <https://www.gnu.org/licenses/>. */
 
 #ifndef __MPFR_H
 #define __MPFR_H
@@ -26,8 +25,8 @@ https://www.gnu.org/licenses/ or write to the Free Software Foundation, Inc.,
 /* Define MPFR version number */
 #define MPFR_VERSION_MAJOR 4
 #define MPFR_VERSION_MINOR 2
-#define MPFR_VERSION_PATCHLEVEL 1
-#define MPFR_VERSION_STRING "4.2.1"
+#define MPFR_VERSION_PATCHLEVEL 2
+#define MPFR_VERSION_STRING "4.2.2"
 
 /* User macros:
    MPFR_USE_FILE:        Define it to make MPFR define functions dealing
@@ -476,8 +475,14 @@ __MPFR_DECLSPEC int mpfr_set_decimal128 (mpfr_ptr, _Decimal128, mpfr_rnd_t);
 #endif
 __MPFR_DECLSPEC int mpfr_set_ld (mpfr_ptr, long double, mpfr_rnd_t);
 #ifdef MPFR_WANT_FLOAT128
-__MPFR_DECLSPEC int mpfr_set_float128 (mpfr_ptr, _Float128, mpfr_rnd_t);
-__MPFR_DECLSPEC _Float128 mpfr_get_float128 (mpfr_srcptr, mpfr_rnd_t);
+/* The user is free to define mpfr_float128 as another equivalent type,
+   such as __float128 if this one is supported by the current compiler
+   but _Float128 isn't. */
+# ifndef mpfr_float128
+#  define mpfr_float128 _Float128
+# endif
+__MPFR_DECLSPEC int mpfr_set_float128 (mpfr_ptr, mpfr_float128, mpfr_rnd_t);
+__MPFR_DECLSPEC mpfr_float128 mpfr_get_float128 (mpfr_srcptr, mpfr_rnd_t);
 #endif
 __MPFR_DECLSPEC int mpfr_set_z (mpfr_ptr, mpz_srcptr, mpfr_rnd_t);
 __MPFR_DECLSPEC int mpfr_set_z_2exp (mpfr_ptr, mpz_srcptr, mpfr_exp_t,
