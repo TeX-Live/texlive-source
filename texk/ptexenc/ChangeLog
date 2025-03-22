@@ -1,3 +1,8 @@
+2025-03-22  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* tex8benc.h: Update conversion tables between
+	T1/LGR encoding and Unicode.
+
 2025-03-08  Karl Berry  <karl@tug.org>
 
 	* version.ac: 1.5.2/dev.
