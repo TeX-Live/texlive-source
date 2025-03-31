@@ -15,11 +15,9 @@
 /*:5*/
 #line 67 "ctangle.w"
 
-#define banner "This is CTANGLE (Version 4.12.1)" \
-
+#define banner "This is CTANGLE (Version 4.12.1)"
 #define ctangle false
-#define cweave true \
-
+#define cweave true
 #define and_and 04
 #define lt_lt 020
 #define gt_gt 021
@@ -34,105 +32,78 @@
 #define dot_dot_dot 016
 #define colon_colon 06
 #define period_ast 026
-#define minus_gt_ast 027 \
-
-#define compress(c) if(loc++<=limit) return c \
-
-#define xisalpha(c) (isalpha((int) (c) ) &&((eight_bits) (c) <0200) ) 
-#define xisdigit(c) (isdigit((int) (c) ) &&((eight_bits) (c) <0200) ) 
-#define xisspace(c) (isspace((int) (c) ) &&((eight_bits) (c) <0200) ) 
-#define xislower(c) (islower((int) (c) ) &&((eight_bits) (c) <0200) ) 
-#define xisupper(c) (isupper((int) (c) ) &&((eight_bits) (c) <0200) ) 
-#define xisxdigit(c) (isxdigit((int) (c) ) &&((eight_bits) (c) <0200) ) 
-#define isxalpha(c) ((c) =='_'||(c) =='$')  \
-
-#define ishigh(c) ((eight_bits) (c) > 0177)  \
- \
-
-#define max_include_depth 10 \
-
+#define minus_gt_ast 027
+#define compress(c) if(loc++<=limit) return c
+#define xisalpha(c) (isalpha((int) (c) ) &&((eight_bits) (c) <0200) )
+#define xisdigit(c) (isdigit((int) (c) ) &&((eight_bits) (c) <0200) )
+#define xisspace(c) (isspace((int) (c) ) &&((eight_bits) (c) <0200) )
+#define xislower(c) (islower((int) (c) ) &&((eight_bits) (c) <0200) )
+#define xisupper(c) (isupper((int) (c) ) &&((eight_bits) (c) <0200) )
+#define xisxdigit(c) (isxdigit((int) (c) ) &&((eight_bits) (c) <0200) )
+#define isxalpha(c) ((c) =='_'||(c) =='$')
+#define ishigh(c) ((eight_bits) (c) > 0177)
+#define max_include_depth 10
 #define max_file_name_length 60
 #define cur_file file[include_depth]
 #define cur_file_name file_name[include_depth]
 #define cur_line line[include_depth]
 #define web_file file[0]
-#define web_file_name file_name[0] \
-
-#define length(c) (size_t) ((c+1) ->byte_start-(c) ->byte_start) 
-#define print_id(c) term_write((c) ->byte_start,length(c) ) 
+#define web_file_name file_name[0]
+#define length(c) (size_t) ((c+1) ->byte_start-(c) ->byte_start)
+#define print_id(c) term_write((c) ->byte_start,length(c) )
 #define llink link
 #define rlink dummy.Rlink
-#define root name_dir->rlink \
-
-#define ilk dummy.Ilk \
-
+#define root name_dir->rlink
+#define ilk dummy.Ilk
 #define spotless 0
 #define harmless_message 1
 #define error_message 2
 #define fatal_message 3
 #define mark_harmless() if(history==spotless) history= harmless_message
 #define mark_error() history= error_message
-#define confusion(s) fatal("! This can't happen: ",s)  \
- \
-
+#define confusion(s) fatal("! This can't happen: ",s)
 #define show_banner flags['b']
 #define show_progress flags['p']
 #define show_happiness flags['h']
 #define show_stats flags['s']
-#define make_xrefs flags['x'] \
-
-#define update_terminal() fflush(stdout) 
-#define new_line() putchar('\n') 
-#define term_write(a,b) fflush(stdout) ,fwrite(a,sizeof(char) ,b,stdout)  \
-
+#define make_xrefs flags['x']
+#define update_terminal() fflush(stdout)
+#define new_line() putchar('\n')
+#define term_write(a,b) fflush(stdout) ,fwrite(a,sizeof(char) ,b,stdout)
 #define buf_size 200
-#define longest_name 10000 \
-
-#define long_buf_size (buf_size+longest_name) 
-#define max_bytes 100000 \
-
-#define max_names 5000 \
-
-#define max_sections 2000 \
-
+#define longest_name 10000
+#define long_buf_size (buf_size+longest_name)
+#define max_bytes 100000
+#define max_names 5000
+#define max_sections 2000
 #define max_texts 4000
 #define max_toks 270000
-#define equiv equiv_or_xref \
-
+#define equiv equiv_or_xref
 #define macro 0
-#define section_flag max_texts \
-
+#define section_flag max_texts
 #define string 02
 #define constant 03
 #define join 0177
-#define output_defs_flag (2*024000-1)  \
-
+#define output_defs_flag (2*024000-1)
 #define stack_size 50
-#define cur_state stack[stack_size+1] \
-
+#define cur_state stack[stack_size+1]
 #define cur_byte cur_state.byte_field
 #define cur_name cur_state.name_field
 #define cur_repl cur_state.repl_field
 #define cur_section cur_state.section_field
-#define cur_end (cur_repl+1) ->tok_start \
-
+#define cur_end (cur_repl+1) ->tok_start
 #define section_number 0201
-#define identifier 0202 \
-
+#define identifier 0202
 #define normal 0
 #define num_or_id 1
 #define post_slash 2
 #define unbreakable 3
-#define verbatim 4 \
-
+#define verbatim 4
 #define max_files 256
-#define macro_end (cur_text+1) ->tok_start \
-
-#define C_printf(c,a) fprintf(C_file,c,a) 
-#define C_putc(c) fputc((int) (c) ,C_file)  \
-
-#define translit_length 10 \
-
+#define macro_end (cur_text+1) ->tok_start
+#define C_printf(c,a) fprintf(C_file,c,a)
+#define C_putc(c) fputc((int) (c) ,C_file)
+#define translit_length 10
 #define ignore 00
 #define ord 0302
 #define control_text 0303
@@ -142,19 +113,15 @@
 #define definition 0307
 #define begin_C 0310
 #define section_name 0311
-#define new_section 0312 \
-
+#define new_section 0312
 #define app_repl(c) { \
 if(tok_ptr==tok_mem_end) overflow("token") ; \
 else*(tok_ptr++) = (eight_bits) c; \
-} \
-
+}
 #define store_id(a) a= id_lookup(id_first,id_loc,'\0') -name_dir; \
 app_repl((a/0400) +0200) ; \
-app_repl(a%0400)  \
-
-#define keep_digit_separators flags['k'] \
-
+app_repl(a%0400)
+#define keep_digit_separators flags['k']
 
 #line 68 "ctangle.w"
 
@@ -747,17 +714,17 @@ printf("%s","Done.");
 static void
 output_defs(void)
 {
-sixteen_bits a;
+sixteen_bits a;eight_bits*last_char;
 push_level(NULL);
 for(cur_text= text_info+1;cur_text<text_ptr;cur_text++)
 if(cur_text->text_link==macro){
-cur_byte= cur_text->tok_start;
+cur_byte= cur_text->tok_start;last_char= macro_end-1;
 C_printf("%s","#define ");
 out_state= normal;
 protect= true;
-while(cur_byte<macro_end){
+while('\n'==*last_char||' '==*last_char)last_char--;
+while(cur_byte<=last_char){
 a= *cur_byte++;
-if(cur_byte==macro_end&&a=='\n')break;
 if(out_state==verbatim&&a!=string&&a!=constant&&a!='\n')
 C_putc(a);
 

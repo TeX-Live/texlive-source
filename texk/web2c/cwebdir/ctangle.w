@@ -593,17 +593,17 @@ static boolean output_defs_seen=false;
 static void
 output_defs(void)
 {
-  sixteen_bits a;
+  sixteen_bits a; eight_bits *last_char;
   push_level(NULL);
   for (cur_text=text_info+1; cur_text<text_ptr; cur_text++)
     if (cur_text->text_link==macro) { /* |cur_text| is the text for a |macro| */
-      cur_byte=cur_text->tok_start;
+      cur_byte=cur_text->tok_start; last_char=macro_end-1;
       C_printf("%s","#define ");
       out_state=normal;
       protect=true; /* newlines should be preceded by |'\\'| */
-      while (cur_byte<macro_end) {
+      while ('\n'==*last_char||' '==*last_char) last_char--; /* discard trailing whitespace */
+      while (cur_byte<=last_char) {
         a=*cur_byte++;
-        if (cur_byte==macro_end && a=='\n') break; /* disregard a final newline */
         if (out_state==verbatim && a!=string && a!=constant && a!='\n')
           C_putc(a); /* a high-bit character can occur in a string */
 @^high-bit character handling@>

@@ -1,3 +1,8 @@
+2025-03-31  Andreas Scherer  <https://ascherer.github.io>
+
+	* ctangleboot.cin,
+	* cwebboot.cin: Discard trailing whitespace in macros.
+
 2025-03-12  Andreas Scherer  <https://ascherer.github.io>
 
 	* weave.ch: Prevent get_line() when parsing module name.

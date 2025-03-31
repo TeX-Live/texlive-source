@@ -1,3 +1,9 @@
+2025-03-31  Andreas Scherer  <https://ascherer.github.io>
+
+	* common.c,
+	* ctangle.c,
+	* ctangle.w: Discard trailing whitespace in macros.
+
 2025-03-12  Andreas Scherer  <https://ascherer.github.io>
 
 	* ctwill-w2c.ch,
