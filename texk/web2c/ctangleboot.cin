@@ -113,7 +113,6 @@
 #define unbreakable 3
 #define verbatim 4
 #define max_files 256
-#define macro_end (cur_text+1) ->tok_start
 #define C_printf(c,a) fprintf(C_file,c,a)
 #define C_putc(c) fputc((int) (c) ,C_file)
 #define translit_length 10
@@ -994,21 +993,23 @@ printf("%s",_("Done."));
 }
 
 /*:48*//*54:*/
-#line 592 "cwebdir/ctangle.w"
+#line 590 "cwebdir/ctangle.w"
 
 static void
 output_defs(void)
 {
-sixteen_bits a;eight_bits*last_char;
+sixteen_bits a;eight_bits*macro_end;
 push_level(NULL);
 for(cur_text= text_info+1;cur_text<text_ptr;cur_text++)
 if(cur_text->text_link==macro){
-cur_byte= cur_text->tok_start;last_char= macro_end-1;
+cur_byte= cur_text->tok_start;
+macro_end= (cur_text+1)->tok_start;
 C_printf("%s","#define ");
 out_state= normal;
 protect= true;
-while('\n'==*last_char||' '==*last_char)last_char--;
-while(cur_byte<=last_char){
+do macro_end--;while('\n'==*macro_end||' '==*macro_end);
+
+while(cur_byte<=macro_end){
 a= *cur_byte++;
 if(out_state==verbatim&&a!=string&&a!=constant&&a!='\n')
 C_putc(a);

@@ -584,25 +584,25 @@ that refer to macros, preceded by the \.{\#define} preprocessor command.
 @ @<Private...@>=
 static boolean output_defs_seen=false;
 
-@ @d macro_end (cur_text+1)->tok_start /* end of |macro| replacement text */
-@#
-@d C_printf(c,a) fprintf(C_file,c,a)
+@ @d C_printf(c,a) fprintf(C_file,c,a)
 @d C_putc(c) fputc((int)(c),C_file) /* isn't \CEE/ wonderfully consistent? */
 
 @c
 static void
 output_defs(void)
 {
-  sixteen_bits a; eight_bits *last_char;
+  sixteen_bits a; eight_bits *macro_end;
   push_level(NULL);
   for (cur_text=text_info+1; cur_text<text_ptr; cur_text++)
     if (cur_text->text_link==macro) { /* |cur_text| is the text for a |macro| */
-      cur_byte=cur_text->tok_start; last_char=macro_end-1;
+      cur_byte=cur_text->tok_start;
+      macro_end=(cur_text+1)->tok_start; /* end of |macro| replacement text */
       C_printf("%s","#define ");
       out_state=normal;
       protect=true; /* newlines should be preceded by |'\\'| */
-      while ('\n'==*last_char||' '==*last_char) last_char--; /* discard trailing whitespace */
-      while (cur_byte<=last_char) {
+      do macro_end--; while ('\n'==*macro_end||' '==*macro_end);
+        /* discard trailing whitespace */
+      while (cur_byte<=macro_end) {
         a=*cur_byte++;
         if (out_state==verbatim && a!=string && a!=constant && a!='\n')
           C_putc(a); /* a high-bit character can occur in a string */
