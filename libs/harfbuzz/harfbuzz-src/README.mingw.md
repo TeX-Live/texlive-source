@@ -30,6 +30,11 @@ a few different ways to build and test HarfBuzz for Windows.
   - Ubuntu, 64bit: `apt install wine wine64`.
   - Mac: `brew install wine-stable`.
 
+Note that to run Wine on Apple silicon systems, you need the Apple Rosetta translator.
+Follow the instructions you got from brew. This should do it:
+
+  - `softwareupdate --install-rosetta --agree-to-license`
+
 2. Install the `mingw-w64` cross-compiler.
 
   - Fedora, 32bit: `dnf install mingw32-gcc-c++`
@@ -41,7 +46,7 @@ a few different ways to build and test HarfBuzz for Windows.
 3. Install dependencies.
 
 First, make sure you do not have the mingw32 harfbuzz package, as that will
-override our own build:
+override our own build with older `meson`:
 
   - Fedora, 32bit: `dnf remove mingw32-harfbuzz`
   - Fedora, 64bit: `dnf remove mingw64-harfbuzz`
