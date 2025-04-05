@@ -1,3 +1,8 @@
+2025-04-05  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* tex8benc.h: Update conversion tables between
+	T2A/T2B/T2C encoding and Unicode.
+
 2025-03-22  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* tex8benc.h: Update conversion tables between
