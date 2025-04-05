@@ -84,5 +84,47 @@
   \TEST{b\CA 。}
 }
 
+%% prebreakpenalty, postbreakpenalty
+\ifx\kchar\undefined\else
+
+\showboxbreadth10000
+\showboxdepth10000
+
+% default
+\setbox0\hbox{さㇷ゚サしか゚シすあ゙スせ𛂦゙セそ𛂱゚ソたっタ}
+\showbox0
+
+% prebreakpenalty
+\prebreakpenalty`ㇷ=41
+\prebreakpenalty`か=42
+\prebreakpenalty`あ=43
+\prebreakpenalty`𛂦=44
+\prebreakpenalty`𛂱=45
+\prebreakpenalty`っ=46
+\setbox1\hbox{たㇷ゚タちか゚チつあ゙ツて𛂦゙テと𛂱゚トなっナ}
+\showbox1
+
+% postbreakpenalty
+\postbreakpenalty`ㇷ=51
+\postbreakpenalty`か=52
+\postbreakpenalty`あ=53
+\postbreakpenalty`𛂦=54
+\postbreakpenalty`𛂱=55
+\postbreakpenalty`っ=56
+\setbox2\hbox{なㇷ゚ナにか゚ニぬあ゙ヌね𛂦゙ネの𛂱゚ノはっハ}
+\showbox2
+
+% reset
+\prebreakpenalty`ㇷ=0
+\postbreakpenalty`か=0
+\prebreakpenalty`あ=0
+\postbreakpenalty`𛂦=0
+\prebreakpenalty`𛂱=0
+\postbreakpenalty`っ=0
+\setbox3\hbox{はㇷ゚ハひか゚ヒふあ゙フへ𛂦゙ヘほ𛂱゚ホまっマ}
+\showbox3
+
+\fi
+
 \bye
 

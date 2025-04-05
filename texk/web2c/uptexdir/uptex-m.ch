@@ -51,6 +51,7 @@
 % (2024-09-30) TTK  upTeX u1.35
 % (2024-10-20) TTK  upTeX u2.00
 % (2025-01-02) TTK  Accept extended upTeX internal encoding also in pTeX-compatible EUC/SJIS mode.
+% (2025-04-05) TTK  upTeX u2.01
 
 @x
 \def\pTeX{p\kern-.15em\TeX}
@@ -65,8 +66,8 @@
   {printed when \pTeX\ starts}
 @#
 @d upTeX_version=2
-@d upTeX_revision==".00"
-@d upTeX_version_string=='-u2.00' {current \upTeX\ version}
+@d upTeX_revision==".01"
+@d upTeX_version_string=='-u2.01' {current \upTeX\ version}
 @#
 @d upTeX_banner=='This is upTeX, Version 3.141592653',pTeX_version_string,upTeX_version_string
 @d upTeX_banner_k==upTeX_banner
@@ -1194,7 +1195,7 @@ begin
 @x
 @d non_char==qi(256) {a |halfword| code that can't match a real character}
 @y
-@d non_char==qi(65535) {a code that can't match a real character}
+@d non_char==qi(max_latin_val) {a code that can't match a real character}
 @z
 
 @x
@@ -1714,6 +1715,14 @@ i:=char_info(f)(cx); hd:=height_depth(i);
 @z
 
 @x
+ligature_node: begin f:=font(lig_char(cur_p));
+  act_width:=act_width+char_width(f)(char_info(f)(character(lig_char(cur_p))));
+@y
+ligature_node: begin f:=font(lig_char(cur_p));
+  act_width:=act_width+char_width(f)(char_info(f)(ptencucsto8bitcode(font_enc[f],character(lig_char(cur_p)))));
+@z
+
+@x
   repeat f:=post_f; cc:=character(cur_p);
   act_width:=act_width+char_width(f)(orig_char_info(f)(cc));
 @y
@@ -1807,13 +1816,13 @@ while q>null do
 @x
       begin hu[0]:=256; init_lig:=false;
 @y
-      begin hu[0]:=max_hyph_char; init_lig:=false;
+      begin hu[0]:=non_char; init_lig:=false;
 @z
 
 @x
 found2: s:=ha; j:=0; hu[0]:=256; init_lig:=false; init_list:=null;
 @y
-found2: s:=ha; j:=0; hu[0]:=max_hyph_char; init_lig:=false; init_list:=null;
+found2: s:=ha; j:=0; hu[0]:=non_char; init_lig:=false; init_list:=null;
 @z
 
 @x
@@ -1822,11 +1831,17 @@ we consider $x_j$ to be an implicit left boundary character; in this
 case |j| must be strictly less than~|n|. There is a
 parameter |bchar|, which is either 256 or an implicit right boundary character
 @y
-getting the input $x_j\ldots x_n$ from the |hu| array. If $x_j=|max_hyph_char|$,
+getting the input $x_j\ldots x_n$ from the |hu| array. If $x_j=|non_char|$,
 we consider $x_j$ to be an implicit left boundary character; in this
 case |j| must be strictly less than~|n|. There is a
-parameter |bchar|, which is either |max_hyph_char|
+parameter |bchar|, which is either |non_char|
 or an implicit right boundary character
+@z
+
+@x
+else begin q:=char_info(hf)(cur_l);
+@y
+else begin q:=char_info(hf)(ptencucsto8bitcode(font_enc[hf],cur_l));
 @z
 
 @x
@@ -1844,7 +1859,7 @@ or an implicit right boundary character
 @x
   begin decr(l); c:=hu[l]; c_loc:=l; hu[l]:=256;
 @y
-  begin decr(l); c:=hu[l]; c_loc:=l; hu[l]:=max_hyph_char;
+  begin decr(l); c:=hu[l]; c_loc:=l; hu[l]:=non_char;
 @z
 
 @x
@@ -1852,13 +1867,25 @@ hyphenation algorithm is quite short. In the following code we set |hc[hn+2]|
 to the impossible value 256, in order to guarantee that |hc[hn+3]| will
 @y
 hyphenation algorithm is quite short. In the following code we set |hc[hn+2]| to
-the impossible value |max_hyph_char|, in order to guarantee that |hc[hn+3]| will
+the impossible value |non_char|, in order to guarantee that |hc[hn+3]| will
 @z
 
 @x
 hc[0]:=0; hc[hn+1]:=0; hc[hn+2]:=256; {insert delimiters}
 @y
-hc[0]:=0; hc[hn+1]:=0; hc[hn+2]:=max_hyph_char; {insert delimiters}
+hc[0]:=0; hc[hn+1]:=0; hc[hn+2]:=non_char; {insert delimiters}
+@z
+
+@x
+@t\hskip10pt@>@!trie_min:array[ASCII_code] of trie_pointer;
+@y
+@t\hskip10pt@>@!trie_min:array[0..max_latin_val] of trie_pointer;
+@z
+
+@x
+for p:=0 to 255 do trie_min[p]:=p+1;
+@y
+for p:=0 to max_latin_val-1 do trie_min[p]:=p+1;
 @z
 
 @x first_fit
@@ -1896,6 +1923,14 @@ if trie_max<h+max_hyph_char then
   until trie_max=h+256;
 @y
   until trie_max=h+max_hyph_char;
+@z
+
+@x
+if l<256 then
+  begin if z<256 then ll:=z @+else ll:=256;
+@y
+if l<max_hyph_char then
+  begin if z<max_hyph_char then ll:=z @+else ll:=max_hyph_char;
 @z
 
 @x
@@ -2358,6 +2393,12 @@ var b:pointer; {|lc_code_base| or |uc_code_base|}
 @z
 
 @x
+|cs_token_flag+active_base| is a multiple of~256.
+@y
+|cs_token_flag+active_base| is a multiple of~|max_char_val|.
+@z
+
+@x
 @<Change the case of the token in |p|, if a change is appropriate@>=
 t:=info(p);
 if (t<cs_token_flag+single_base)and(not check_kanji(t)) then
@@ -2542,6 +2583,21 @@ begin if is_char_node(link(p)) then
           info(main_p):=KANJI(cx)+kcat_code(kcatcodekey(KANJI(cx)))*max_cjk_val;
         ins_kp:=false;
         goto again_2
+        end
+      else if ((info(main_p) div max_cjk_val)=0 and (cur_q>0)) then begin
+        KANJI(cx):=info(cur_q) mod max_cjk_val;
+        kp:=get_kinsoku_pos(cx,cur_pos);
+        if (UVScombinecode(cx,cur_chr)>0 and (kp<>no_entry)
+            and (kinsoku_penalty(kp)<>0)
+            and (kinsoku_type(kp)=pre_break_penalty_code)) then begin
+          cx:=UVScombinecode(cx,cur_chr);
+          if (kcat_code(kcatcodekey(KANJI(cx)))=kanji)and(cx>=max_cjk_val) then
+            info(cur_q):=KANJI(cx)+kanji_ivs*max_cjk_val
+          else
+            info(cur_q):=KANJI(cx)+kcat_code(kcatcodekey(KANJI(cx)))*max_cjk_val;
+          ins_kp:=false;
+          goto again_2
+          end
         end
       end;
     if not disp_called then
