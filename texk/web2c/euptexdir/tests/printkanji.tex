@@ -173,4 +173,20 @@ MEANING \meaning\ſ.\meaning\顛.%
 
 \message{\string\^^e3^^81^^82 \string\あ}
 
+% check whether ^^^^0000 works or not
+\catcode`\@=11
+\def\@empty{}
+\begingroup
+  \catcode0=9 %
+  \catcode`\^=7 %
+  \catcode`\^^^=12 %
+  \def\x{^^^^0000}%
+\expandafter\endgroup
+\ifx\x\@empty
+ \def\cmd{ifx:TRUE}
+\else
+ \def\cmd{ifx:FALSE}
+\fi
+\message{^^J\cmd^^J}
+
 \end

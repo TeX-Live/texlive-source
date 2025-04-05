@@ -906,5 +906,145 @@ l.83   \TEST{\vrule\CA 。}
 l.84   \TEST{b\CA 。}
                       
 
+> \box0=
+\hbox(7.77588+1.38855)x173.19891, yoko direction
+.\displace 0.0
+.\jpy さ
+.\glue(refer from jfm) 1.07391 minus 1.07391
+.\jpy ㇷ゚
+.\glue(refer from jfm) 1.07391 minus 1.07391
+.\jpy サ
+.\jpy し
+.\jpy か゚
+.\jpy シ
+.\jpy す
+.\jpy あ゙
+.\jpy ス
+.\jpy せ
+.\jpy 𛂦゙
+.\jpy セ
+.\jpy そ
+.\jpy 𛂱゚
+.\jpy ソ
+.\jpy た
+.\glue(refer from jfm) 1.07391 minus 1.07391
+.\jpy っ
+.\glue(refer from jfm) 1.07391 minus 1.07391
+.\jpy タ
+
+! OK.
+l.95 \showbox0
+              
+
+> \box1=
+\hbox(7.77588+1.38855)x173.19891, yoko direction
+.\displace 0.0
+.\jpy た
+.\penalty 41(for kinsoku)
+.\glue(refer from jfm) 1.07391 minus 1.07391
+.\jpy ㇷ゚
+.\glue(refer from jfm) 1.07391 minus 1.07391
+.\jpy タ
+.\jpy ち
+.\penalty 42(for kinsoku)
+.\glue(\kanjiskip) 0.0
+.\jpy か゚
+.\jpy チ
+.\jpy つ
+.\penalty 43(for kinsoku)
+.\glue(\kanjiskip) 0.0
+.\jpy あ゙
+.\jpy ツ
+.\jpy て
+.\penalty 44(for kinsoku)
+.\glue(\kanjiskip) 0.0
+.\jpy 𛂦゙
+.\jpy テ
+.\jpy と
+.\penalty 45(for kinsoku)
+.\glue(\kanjiskip) 0.0
+.\jpy 𛂱゚
+.\jpy ト
+.\jpy な
+.\penalty 46(for kinsoku)
+.\glue(refer from jfm) 1.07391 minus 1.07391
+.\jpy っ
+.\glue(refer from jfm) 1.07391 minus 1.07391
+.\jpy ナ
+
+! OK.
+l.105 \showbox1
+               
+
+> \box2=
+\hbox(7.77588+1.38855)x173.19891, yoko direction
+.\displace 0.0
+.\jpy な
+.\glue(refer from jfm) 1.07391 minus 1.07391
+.\jpy ㇷ゚
+.\penalty 51(for kinsoku)
+.\glue(refer from jfm) 1.07391 minus 1.07391
+.\jpy ナ
+.\jpy に
+.\jpy か゚
+.\penalty 52(for kinsoku)
+.\glue(\kanjiskip) 0.0
+.\jpy ニ
+.\jpy ぬ
+.\jpy あ゙
+.\penalty 53(for kinsoku)
+.\glue(\kanjiskip) 0.0
+.\jpy ヌ
+.\jpy ね
+.\jpy 𛂦゙
+.\penalty 54(for kinsoku)
+.\glue(\kanjiskip) 0.0
+.\jpy ネ
+.\jpy の
+.\jpy 𛂱゚
+.\penalty 55(for kinsoku)
+.\glue(\kanjiskip) 0.0
+.\jpy ノ
+.\jpy は
+.\glue(refer from jfm) 1.07391 minus 1.07391
+.\jpy っ
+.\penalty 56(for kinsoku)
+.\glue(refer from jfm) 1.07391 minus 1.07391
+.\jpy ハ
+
+! OK.
+l.115 \showbox2
+               
+
+> \box3=
+\hbox(7.77588+1.38855)x173.19891, yoko direction
+.\displace 0.0
+.\jpy は
+.\glue(refer from jfm) 1.07391 minus 1.07391
+.\jpy ㇷ゚
+.\glue(refer from jfm) 1.07391 minus 1.07391
+.\jpy ハ
+.\jpy ひ
+.\jpy か゚
+.\jpy ヒ
+.\jpy ふ
+.\jpy あ゙
+.\jpy フ
+.\jpy へ
+.\jpy 𛂦゙
+.\jpy ヘ
+.\jpy ほ
+.\jpy 𛂱゚
+.\jpy ホ
+.\jpy ま
+.\glue(refer from jfm) 1.07391 minus 1.07391
+.\jpy っ
+.\glue(refer from jfm) 1.07391 minus 1.07391
+.\jpy マ
+
+! OK.
+l.125 \showbox3
+               
+
  )
 No pages of output.
