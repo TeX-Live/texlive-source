@@ -7,7 +7,7 @@
 	Thanks to Dr. Werner Fink, Y. Morimi, and H. Kitagawa.
 	https://tug.org/pipermail/tex-live/2025-March/051381.html
 	https://github.com/texjporg/tex-jp-build/issues/177
-	* tests/jchwidow.tex, tests/eup-jchwidow.log: Update tests.
+	* tests/jchwidow.tex, tests/up-jchwidow.log: Update tests.
 	* uptex-m.ch, upbibtex.ch, uptex_version.h:
 	upTeX version u2.01.
 
