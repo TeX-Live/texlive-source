@@ -1,5 +1,12 @@
 2025-04-08  Karl Berry  <karl@freefriends.org>
 
+	* fontstruct.h: note that the integer types in the new
+	prototype are "incompatible", causing warnings before C23.
+	* spaces.h (XYspace): disable my attempted prototypes,
+	the calls are incompatible even before C23.
+
+2025-04-08  Karl Berry  <karl@freefriends.org>
+
 	Partially placate C23's backward incompatible requirements. Sigh.
 	
 	* fontfcn.h (Type1CloseFont): arg is FontPtr.

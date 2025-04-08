@@ -119,6 +119,9 @@ typedef struct _Font {
     char        scan;
     fsBitmapFormat format;
     int         (*get_glyphs) ( /* font, count, chars, encoding, count, glyphs */
+/* The integer types are incompatible with the uint32_t and similar used
+    in the calls. I guess have to insert explicit casts? Not done.
+    --karl, 8apr25.  */
                                struct _Font *pFont, unsigned long count,
                                unsigned char *chars, int charEncoding,
                                unsigned *glyphCount,

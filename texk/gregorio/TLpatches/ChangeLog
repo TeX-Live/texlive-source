@@ -1,3 +1,7 @@
+2025-04-08  Karl Berry  <karl@freefriends.org>
+
+	* patch-04-bool: new file to placate C23.
+
 2019-12-19  Akira Kakuto  <kakuto@w32tex.org>
 
 	Import gregorio-5.2.1.

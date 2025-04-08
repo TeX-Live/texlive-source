@@ -23,7 +23,10 @@
 #ifndef BOOL_H
 #define BOOL_H
 
-typedef unsigned int bool;
+#include <stdbool.h>
+
+/* C23 makes a typedef bool into an error. */
+/* typedef unsigned int bool; */
 #define true 1
 #define false 0
 

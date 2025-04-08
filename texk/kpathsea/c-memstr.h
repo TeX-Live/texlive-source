@@ -53,11 +53,4 @@
 #define memcpy(to, from, len) bcopy ((from), (to), (len))
 #endif
 
-#if !defined(HAVE_STRING_H)
-extern char *strtok ();
-#ifndef strstr
-extern char *strstr ();
-#endif
-#endif
-
 #endif /* not KPATHSEA_C_MEMSTR_H */

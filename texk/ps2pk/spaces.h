@@ -67,7 +67,19 @@ struct fractpoint {
 struct XYspace {
        XOBJ_COMMON           /* xobject common data define 3-26-91 PNM       */
 			     /* type = SPACETYPE			     */
-       /* calculate "fractpoint" X,Y from float X,Y  [= FXYconvert]:  */
+       void (*convert)();     /* calculate "fractpoint" X,Y from float X,Y    */
+       void (*iconvert)();    /* calculate "fractpoint" X,Y from int X,Y      */
+       fractpel (*xconvert)();  /* subroutine of convert                     */
+       fractpel (*yconvert)();  /* subroutine of convert                     */
+       fractpel (*ixconvert)();  /* subroutine of iconvert                   */
+       fractpel (*iyconvert)();  /* subroutine of iconvert                   */
+#if 0
+/* These were my attempts at the C23-required replacement declarations
+   with all argument types (I gave up at ixconvert and iyconvert). But
+   the result still gets errors about incompatible types, so leaving
+   them disabled. The [=...] are my attempts at listing the functions
+   that get assigned to these structure members. --karl, 8apr25  */
+       /* calculate "fractpoint" X,Y from float X,Y  [=FXYconvert]:  */
        void (*convert)(struct fractpoint *,struct XYspace *,double,double);
        /* calculate "fractpoint" X,Y from int X,Y    [=ForceFloat,IXYConvert]: */
        void (*iconvert)(struct fractpoint *,struct XYspace *,long,long);
@@ -79,6 +91,7 @@ struct XYspace {
        fractpel (*ixconvert)();
        /* subroutine of iconvert  [=same] */
        fractpel (*iyconvert)();
+#endif
        int ID;               /* unique identifier (used in font caching)     */
        unsigned char context;  /* device context of coordinate space         */
        struct doublematrix tofract;  /* xform to get to fractional pels      */

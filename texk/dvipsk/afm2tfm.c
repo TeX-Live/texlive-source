@@ -68,7 +68,6 @@ extern char ascii2ebcdic[];
 /* debug.h redefines fopen to my_real_fopen, but it's still a FILE * */
 #ifdef fopen
 #undef fopen
-extern FILE *fopen ();
 #endif
 
 struct encoding {

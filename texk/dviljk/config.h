@@ -15,6 +15,8 @@
 
 #define USEPXL
 
+#include <stdbool.h>
+
 #ifdef __riscos
 /* #define RISC_USE_OSL */        /* use file functions of OSlib */
 /* #define RISC_BUFFER  */        /* buffer output */
@@ -161,15 +163,6 @@
 #define  UNKNOWN     -1
 
 #define  STRSIZE         255     /* stringsize for file specifications  */
-
-
-#ifdef __riscos
-# ifndef types_H                  /* for compatibility with OSLib */
-typedef  int     bool;
-# endif
-#else
-typedef  char    bool;
-#endif
 
 
 /* The smallest signed type: use `signed char' if ANSI C, `short' if

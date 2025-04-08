@@ -1,4 +1,4 @@
-/* Copyright (c) 1987, 1989, 2012 University of Maryland Department of
+/* Copyright (c) 1987, 1989, 2012, 2025 University of Maryland Department of
    Computer Science.
    
    Permission is hereby granted, free of charge, to any person obtaining
@@ -39,9 +39,6 @@
 #include "types.h"
 #else
 #include <sys/file.h>
-
-char	*getenv();
-
 #endif
 
 #include "tempfile.h"

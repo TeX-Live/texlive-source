@@ -40,6 +40,7 @@ Copyright (C) 1989-2010 M.J.E. Mol, MESA Consulting B.V."
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <stdbool.h>
 
 #if (defined(WIN32) && !defined(__MINGW32__))
 # include <fcntl.h>
@@ -101,7 +102,8 @@ typedef unsigned long DWORD;
  * Type definitions
  */
 
-typedef char bool;
+/* C23 makes "bool" into a keyword; must use <stdbool.h> as above. */
+/* typedef char bool; */
 
 typedef struct prlistptr {      /* list of pages selected for output         */
     int       pag;                      /* number of pages                   */

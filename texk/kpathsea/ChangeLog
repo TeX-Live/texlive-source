@@ -1,3 +1,10 @@
+2025-04-08  Karl Berry  <karl@freefriends.org>
+
+	* c-memstr.h (strtok, strstr): remove () fallback declarations,
+	since C23 considers that the same as (void). Apparently
+	HAVE_STRING_H was not defined, either.
+	Report from Hilmar, 3 Apr 2025 23:54:54.
+
 2025-03-08  Karl Berry  <karl@tug.org>
 
 	* version.ac: 6.4.2/dev.

@@ -1,3 +1,9 @@
+2025-04-08  Karl Berry  <karl@freefriends.org>
+
+	* tempfile.c (getenv): do not declare, since C23 makes ()
+	equivalent to void. Report from Hilmar Preusse,
+	3 Apr 2025 23:54:54.
+
 2023-08-23  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* seetexk.test: Tweak.

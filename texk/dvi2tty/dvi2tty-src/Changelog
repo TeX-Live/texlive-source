@@ -1,4 +1,6 @@
 /******************************************************************************
+ * Hilmar Preusse: 250408 (hille42@web.de)
+ *               Use <stdbool.h> instead of declaring bool, to placate C23.
  * Takuji Tanaka: 20160305 (ttk@t-lab.opal.ne.jp)
  *               Version 6.0.0
  *               Supported T1,TS1,OT2,T2A,T2B,T2C,X2 encodings.
