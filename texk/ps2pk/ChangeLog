@@ -1,3 +1,25 @@
+2025-04-08  Karl Berry  <karl@freefriends.org>
+
+	Partially placate C23's backward incompatible requirements. Sigh.
+	
+	* fontfcn.h (Type1CloseFont): arg is FontPtr.
+	* fontstruct.h (_Font) <get_glyphs>: declare args.
+	* regions.c (SortSwath): declare args of function argument.
+	(swathfcn): likewise.
+	* spaces.h (struct fractpoint): move to before struct XYspace.
+	(XYspace): declare arguments to convert(), iconvert(),
+	xconvert(), and yconvert(), though problems remain with them.
+	ixconvert() and iyconvert() also remain to be done.
+	Report from Hilmar, 3 Apr 2025 23:54:54.
+	
+	P.S. I was compiling like this on Rocky Linux 9:
+	  scl enable gcc-toolset-14 -- make -C $WK/ps2pk CFLAGS=-std=c23 
+	(where WK=.../Work/texk/)
+	This is not the final c23, but I doubt that matters.
+	
+	P.P.S. If anyone has time and interest to track down the remaining
+	errors, please (please) do.
+
 2023-08-27  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* tests/ps2pk.test, tests/lmmath.test:

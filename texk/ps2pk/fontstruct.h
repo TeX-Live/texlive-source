@@ -118,7 +118,11 @@ typedef struct _Font {
     char        glyph;
     char        scan;
     fsBitmapFormat format;
-    int         (*get_glyphs) ( /* font, count, chars, encoding, count, glyphs */ );
+    int         (*get_glyphs) ( /* font, count, chars, encoding, count, glyphs */
+                               struct _Font *pFont, unsigned long count,
+                               unsigned char *chars, int charEncoding,
+                               unsigned *glyphCount,
+                               struct _CharInfo **glyphs );
     int         (*get_metrics) ( /* font, count, chars, encoding, count, glyphs */ );
     int         (*get_bitmaps) (/* client, font, flags, ranges, nranges,
 				    nextents, extents */ );
