@@ -2,10 +2,10 @@
 #line 62 "cwebdir/common.w"
 
 /*4:*/
-#line 57 "cwebdir/comm-w2c.h"
+#line 54 "cwebdir/comm-w2c.h"
 
 #include <ctype.h>  
-#include <kpathsea/simpletypes.h>  
+#include <stdbool.h>  
 #include <stddef.h>  
 #include <stdint.h>  
 #include <stdio.h>  
@@ -15,15 +15,15 @@
 #ifndef HAVE_GETTEXT
 #define HAVE_GETTEXT 0
 #endif
-#line 69 "cwebdir/comm-w2c.h"
+#line 66 "cwebdir/comm-w2c.h"
 
 #if HAVE_GETTEXT
 #include <libintl.h> 
 #else
-#line 73 "cwebdir/comm-w2c.h"
+#line 70 "cwebdir/comm-w2c.h"
 #define gettext(a) a
 #endif
-#line 75 "cwebdir/comm-w2c.h"
+#line 72 "cwebdir/comm-w2c.h"
 
 /*:4*//*91:*/
 #line 739 "cwebdir/comm-w2c.ch"
@@ -41,13 +41,15 @@
 /*:91*//*93:*/
 #line 786 "cwebdir/comm-w2c.ch"
 
+typedef bool boolean;
+#define HAVE_BOOLEAN 1
 #include <kpathsea/kpathsea.h>  
 
 #include <w2c/config.h>  
 #include <lib/lib.h>  
 
 /*:93*//*96:*/
-#line 823 "cwebdir/comm-w2c.ch"
+#line 825 "cwebdir/comm-w2c.ch"
 
 #define CWEB
 #include "help.h" 
@@ -150,8 +152,9 @@ err_print(_("! Include file name too long") ) ;goto restart;}
 #line 64 "cwebdir/common.w"
 
 /*2:*/
-#line 33 "cwebdir/comm-w2c.h"
+#line 32 "cwebdir/comm-w2c.h"
 
+typedef bool boolean;
 typedef uint8_t eight_bits;
 typedef uint16_t sixteen_bits;
 typedef enum{
@@ -161,7 +164,7 @@ extern cweb program;
 extern int phase;
 
 /*:2*//*5:*/
-#line 97 "cwebdir/comm-w2c.h"
+#line 94 "cwebdir/comm-w2c.h"
 
 extern char section_text[];
 extern char*section_text_end;
@@ -169,7 +172,7 @@ extern char*id_first;
 extern char*id_loc;
 
 /*:5*//*6:*/
-#line 115 "cwebdir/comm-w2c.h"
+#line 112 "cwebdir/comm-w2c.h"
 
 extern char buffer[];
 extern char*buffer_end;
@@ -177,7 +180,7 @@ extern char*loc;
 extern char*limit;
 
 /*:6*//*7:*/
-#line 132 "cwebdir/comm-w2c.h"
+#line 129 "cwebdir/comm-w2c.h"
 
 extern int include_depth;
 extern FILE*file[];
@@ -194,7 +197,7 @@ extern boolean changing;
 extern boolean web_file_open;
 
 /*:7*//*9:*/
-#line 153 "cwebdir/comm-w2c.h"
+#line 150 "cwebdir/comm-w2c.h"
 
 extern sixteen_bits section_count;
 extern boolean changed_section[];
@@ -202,7 +205,7 @@ extern boolean change_pending;
 extern boolean print_where;
 
 /*:9*//*10:*/
-#line 168 "cwebdir/comm-w2c.h"
+#line 165 "cwebdir/comm-w2c.h"
 
 typedef struct name_info{
 char*byte_start;
@@ -227,12 +230,12 @@ extern hash_pointer hash_end;
 extern hash_pointer hash_ptr;
 
 /*:10*//*12:*/
-#line 213 "cwebdir/comm-w2c.h"
+#line 210 "cwebdir/comm-w2c.h"
 
 extern int history;
 
 /*:12*//*14:*/
-#line 234 "cwebdir/comm-w2c.h"
+#line 231 "cwebdir/comm-w2c.h"
 
 extern int argc;
 extern char**argv;
@@ -245,7 +248,7 @@ extern boolean flags[];
 extern const char*use_language;
 
 /*:14*//*15:*/
-#line 250 "cwebdir/comm-w2c.h"
+#line 247 "cwebdir/comm-w2c.h"
 
 extern FILE*C_file;
 extern FILE*tex_file;
@@ -398,14 +401,14 @@ string texmf_locale;
 extern void common_init(void);
 
 /*:3*//*8:*/
-#line 147 "cwebdir/comm-w2c.h"
+#line 144 "cwebdir/comm-w2c.h"
 
 extern boolean get_line(void);
 extern void check_complete(void);
 extern void reset_input(void);
 
 /*:8*//*11:*/
-#line 191 "cwebdir/comm-w2c.h"
+#line 188 "cwebdir/comm-w2c.h"
 
 extern name_pointer id_lookup(const char*,const char*,eight_bits);
 
@@ -419,7 +422,7 @@ extern boolean names_match(name_pointer,const char*,size_t,eight_bits);
 extern void init_node(name_pointer);
 
 /*:11*//*13:*/
-#line 216 "cwebdir/comm-w2c.h"
+#line 213 "cwebdir/comm-w2c.h"
 
 extern int wrap_up(void);
 extern void err_print(const char*);
@@ -459,7 +462,7 @@ static void scan_args(void);
 
 #line 514 "cwebdir/comm-w2c.ch"
 /*:76*//*98:*/
-#line 836 "cwebdir/comm-w2c.ch"
+#line 838 "cwebdir/comm-w2c.ch"
 
 static void cb_usage(const_string str);
 static void cb_usagehelp(const_string*message);
@@ -487,7 +490,7 @@ root= NULL;
 #line 78 "cwebdir/comm-w2c.ch"
 
 /*94:*/
-#line 798 "cwebdir/comm-w2c.ch"
+#line 800 "cwebdir/comm-w2c.ch"
 
 kpse_set_program_name(argv[0],"cweb");
 
@@ -1413,7 +1416,7 @@ if((**(++argv)=='-'||**argv=='+')&&*(*argv+1))/*80:*/
 if(strcmp("-help",*argv)==0||strcmp("--help",*argv)==0)
 
 /*97:*/
-#line 827 "cwebdir/comm-w2c.ch"
+#line 829 "cwebdir/comm-w2c.ch"
 
 cb_usagehelp(program==ctangle?CTANGLEHELP:
 program==cweave?CWEAVEHELP:CTWILLHELP);
@@ -1425,7 +1428,7 @@ program==cweave?CWEAVEHELP:CTWILLHELP);
 if(strcmp("-version",*argv)==0||strcmp("--version",*argv)==0)
 
 /*100:*/
-#line 873 "cwebdir/comm-w2c.ch"
+#line 875 "cwebdir/comm-w2c.ch"
 
 printversionandexit(cb_banner,
 program==ctwill?"Donald E. Knuth":"Silvio Levy and Donald E. Knuth",
@@ -1599,7 +1602,7 @@ cb_usage(program==ctangle?"ctangle":program==cweave?"cweave":"ctwill");
 }
 
 /*:75*//*99:*/
-#line 840 "cwebdir/comm-w2c.ch"
+#line 842 "cwebdir/comm-w2c.ch"
 
 static void cb_usage(const_string str)
 {
@@ -1631,7 +1634,7 @@ history= spotless;exit(wrap_up());
 }
 
 /*:99*//*101:*/
-#line 881 "cwebdir/comm-w2c.ch"
+#line 883 "cwebdir/comm-w2c.ch"
 
 void cb_show_banner(void)
 {

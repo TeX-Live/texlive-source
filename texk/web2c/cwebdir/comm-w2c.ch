@@ -784,6 +784,8 @@ The directories to be searched for come from three sources:
 @d kpse_find_cweb(name) kpse_find_file(name,kpse_cweb_format,true)
 
 @<Include files@>=
+typedef bool boolean;
+#define HAVE_BOOLEAN 1
 #include <kpathsea/kpathsea.h> /* include every \Kpathsea/ header;
   |@!kpathsea_debug|, |@!const_string|, |@!string| */
 #include <w2c/config.h> /* \&{integer} */

@@ -88,12 +88,6 @@ Section 2.
 Section 5.
 
 @x
-For backward compatibility with pre-{\mc ANSI} compilers, we replace the
-@y
-And we replace the
-@z
-
-@x
 @d _(s) gettext(s)
 @y
 @d _(s) gettext(s)
@@ -1657,9 +1651,12 @@ Section 212--213.
 Section 215.
 
 @x
-@<Append a \9{s}string or...@>={@+ int count=-1; /* characters remaining before string break */
+  if (count==0) { /* insert a discretionary break in a long string */
+     app_str(@q(@>@q{@>"}\\)\\.{"@q}@>); count=20;
 @y
-@<Append a \9{s}string or...@>={@+ int count=-1; /* characters remaining before string break */
+  if (count==0) {
+     count=20; @/ /* insert a discretionary break in a long string */
+     app_str(@q(@>@q{@>"}\\)\\.{"@q}@>);
 @z
 
 Section 220.
@@ -1901,6 +1898,14 @@ Section 247.
 @<Translate the \9{c}current section@>= {
 @y
 @ @<Translate the \9{c}current section@>= @+ {
+@z
+
+Section 249.
+
+@x
+    case section_name: loc-=2; next_control=get_next(); /* reprocess */
+@y
+    case section_name: @/ loc-=2; @/ next_control=get_next(); /* reprocess */
 @z
 
 Section 251.
@@ -2327,6 +2332,7 @@ Section 327.
 @y
 @d kpse_find_cweb(name) kpse_find_file(name,kpse_cweb_format,true)
 @-name@>
+@-HAVE_BOOLEAN@>
 @z
 
 Section 329.

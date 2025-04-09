@@ -2015,6 +2015,8 @@ The directories to be searched for come from three sources:
 @d kpse_find_cweb(name) kpse_find_file(name,kpse_cweb_format,true)
 
 @<Include files@>=
+typedef bool boolean;
+#define HAVE_BOOLEAN 1
 #include <kpathsea/tex-file.h> /* |@!kpse_find_file| */
 
 @ @<Set up |cur_file_name|...@>=

@@ -1,3 +1,10 @@
+2025-04-09  Andreas Scherer  <https://ascherer.github.io>
+
+	* comm-w2c.ch,
+	* comm-w2c.h,
+	* ctwill-mini.ch,
+	* ctwill-w2c.ch: Revert bool change for C23.
+
 2025-03-31  Andreas Scherer  <https://ascherer.github.io>
 
 	* common.c,
