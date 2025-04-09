@@ -1,3 +1,8 @@
+2025-04-09  Karl Berry  <karl@freefriends.org>
+
+	* latex.man: add [ first-line ]; update LaTeX Companion to 3rd edition.
+	* latex-dev.man: wording.
+
 2025-03-07  Karl Berry  <karl@tug.org>
 
 	* TL'25 release.

@@ -1,4 +1,4 @@
-.TH LATEX 1 "30 April 2018" "Web2C @VERSION@"
+.TH LATEX 1 "9 April 2025" "Web2C @VERSION@"
 .\"=====================================================================
 .if t .ds TX \fRT\\h'-0.1667m'\\v'0.20v'E\\v'-0.20v'\\h'-0.125m'X\fP
 .if n .ds TX TeX
@@ -15,6 +15,7 @@
 latex, pdflatex, xelatex, lualatex, dvilualatex, cslatex, pdfcslatex, platex, uplatex, lamed \- structured text formatting and typesetting
 .SH SYNOPSIS
 .B latex
+.RI [ options ]
 .RI [ first-line ]
 .\"=====================================================================
 .SH DESCRIPTION
@@ -76,12 +77,11 @@ Leslie Lamport,
 .IR "\*(LX \- A Document Preparation System" ,
 Addison-Wesley, 1985, ISBN 020115790X.
 .PP
-Frank Mittelbach, Michel Goossens, Johannes Braams, David Carlisle,
-and Chris Rowley, 
-.IR "LaTeX Companion" ,
-Addison-Wesley, 2004, ISBN 0201362996 (2nd edition).
+Frank Mittelbach with Ulrike Fischer,
+.IR "LaTeX Companion"
+Addison-Wesley, 2024, ISBN 0-13-811578-8 (3rd edition).
 .PP
-The \*(LX home page is http://latex-project.org.
+The \*(LX home page is https://latex-project.org.
 .br
 A list of some \*(LX tutorials is at
 http://www.tex.ac.uk/cgi-bin/texfaq2html?label=man-latex.
