@@ -16,8 +16,13 @@ rm -rf \
 	configure \
 	contrib/Makefile.in \
 	contrib/TeXShop/Makefile.in \
+	fonts \
 	src/Makefile.in \
 	src/config_.h.in
+
+# We remove the fonts/ subdir since they are all in the runtime anyway.
+# Our adapted Makefile.am does not try to rebuild them (the original
+# gregorio-src/Makefile.am does, but we don't use that).
 
 # files to add:
 svn status | sed -n 's/^\?//p'

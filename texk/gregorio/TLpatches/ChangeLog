@@ -1,3 +1,9 @@
+2025-04-09  Karl Berry  <karl@tug.org>
+
+	* TL-Changes: rm -rf fonts, to save space.
+	Suggestion from Hilmar,
+	https://tug.org/pipermail/tex-live/2025-March/051405.html
+
 2025-04-08  Karl Berry  <karl@freefriends.org>
 
 	* patch-04-bool: new file to placate C23.
