@@ -127,7 +127,7 @@ modified. The version number parallels the corresponding version of \.{CWEAVE}.
 turned on during the first phase.
 
 @<Private...@>=
-static boolean change_exists; /* has any section changed? */
+static bool change_exists; /* has any section changed? */
 @y
 turned on during the first phase---NOT!
 @z
@@ -950,14 +950,14 @@ section_count=0; format_visible=true; right_start_switch=false; copy_limbo();
 @z
 
 @x [12.229] l.4212
-static boolean group_found=false; /* has a starred section occurred? */
+static bool group_found=false; /* has a starred section occurred? */
 
 @ @<Translate the \9{c}current section@>= {
   section_count++;
 @y
-static boolean group_found=false; /* has a starred section occurred? */
-static boolean right_start_switch; /* has `\.{@@r}' occurred recently? */
-static boolean temp_switch; /* has `\.{@@\%}' occurred recently? */
+static bool group_found=false; /* has a starred section occurred? */
+static bool right_start_switch; /* has `\.{@@r}' occurred recently? */
+static bool temp_switch; /* has `\.{@@\%}' occurred recently? */
 
 @ @d usage_sentinel (struct perm_meaning *)1
 @<Translate the \9{c}current section@>= {
@@ -1199,9 +1199,9 @@ switch (cur_name->ilk) {
 @z
 
 @x [13.262] l.4776
-    else {@+boolean all_caps=true;@+@t}\6{@>
+    else {@+bool all_caps=true;@+@t}\6{@>
 @y
-    else {@+boolean all_caps=true;@+char *p;
+    else {@+bool all_caps=true;@+char *p;
       /* index into |byte_mem| */ @+@t}\6{@>
 @z
 
@@ -1486,7 +1486,7 @@ static char ministring_buf[max_tex_chars]; /* \TeX\ code being generated */
 static char *ministring_buf_end=ministring_buf+max_tex_chars-1;
   /* end of |ministring_buf| */
 static char *ministring_ptr; /* first available slot in |ministring_buf| */
-static boolean ms_mode; /* are we outputting to |ministring_buf|? */
+static bool ms_mode; /* are we outputting to |ministring_buf|? */
 
 @q Section 27->274. @>
 @ @<Set init...@>=
@@ -1584,10 +1584,10 @@ appear between parentheses or brackets. The calling routine |make_ministring|
 should set |ident_seen=false| first. (This is admittedly tricky.)
 
 @<Private var...@>=
-static boolean ident_seen;
+static bool ident_seen;
 
 @ @c
-static boolean app_supp(
+static bool app_supp(
   text_pointer p)
 { token_pointer j;
   if (ident_seen && **p>=tok_flag)
@@ -1607,7 +1607,7 @@ catch14: return *(*(p+1)-1)=='9'; /* was production 14 used? */
 }
 
 @q Section 282. @>
-@ @<Predec...@>=@+static boolean app_supp(text_pointer);
+@ @<Predec...@>=@+static bool app_supp(text_pointer);
 
 @q Section 142->283. @>
 @ The trickiest part of \.{CTWILL} is the procedure |make_ministring(pp+l)|,
@@ -1660,7 +1660,7 @@ else {
   text_pointer q=(p-1)->trans, r;
   token t;
   int ast_count=0; /* asterisks preceding the expression */
-  boolean non_ast_seen=false; /* have we seen a non-asterisk? */
+  bool non_ast_seen=false; /* have we seen a non-asterisk? */
   while (true) {
     if (*(q+1)==*q+1) {
       r=q;@+break; /* e.g., \&{struct}; we're doing production 45 or 46 */
@@ -1699,8 +1699,8 @@ while (ast_count) {
 
 @q Section 253->288. @>
 @ @<Private...@>=
-static boolean is_macro; /* it's a macro def, not a format def */
-static boolean def_diff; /* |false| iff the current macro has parameters */
+static bool is_macro; /* it's a macro def, not a format def */
+static bool def_diff; /* |false| iff the current macro has parameters */
 static name_pointer id_being_defined; /* the definee */
 
 @q Section 257->289. @>
@@ -1832,7 +1832,7 @@ out_mini(
 switch (cur_name->ilk) {@+char *p; /* index into |byte_mem| */@+@t}\6{\4@>
   case normal: case func_template:
     if (is_tiny(cur_name)) out_str("\\|");
-    else {@+boolean all_caps=true;@+@t}\6{@>
+    else {@+bool all_caps=true;@+@t}\6{@>
       for (p=cur_name->byte_start;p<(cur_name+1)->byte_start;p++)
         if (xislower(*p)) { /* not entirely uppercase */
           all_caps=false; break;
@@ -1942,7 +1942,7 @@ Preston Briggs, to whom credit is due.
 
 @<Update the result...@>= {
 if((tex_file=fopen(tex_file_name,"r"))!=NULL) {
-  boolean comparison=false;
+  bool comparison=false;
 
   if((check_file=fopen(check_file_name,"r"))==NULL)
     fatal(_("! Cannot open output file "),check_file_name);
@@ -2015,8 +2015,6 @@ The directories to be searched for come from three sources:
 @d kpse_find_cweb(name) kpse_find_file(name,kpse_cweb_format,true)
 
 @<Include files@>=
-typedef bool boolean;
-#define HAVE_BOOLEAN 1
 #include <kpathsea/tex-file.h> /* |@!kpse_find_file| */
 
 @ @<Set up |cur_file_name|...@>=

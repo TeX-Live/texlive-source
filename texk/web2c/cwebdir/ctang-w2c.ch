@@ -429,7 +429,7 @@ if((C_file=fopen(C_file_name,"r"))!=NULL) {
   rename(check_file_name,C_file_name); /* This was the first run */
 
 @ @<Set up the comparison of temporary output@>=
-  boolean comparison=false;
+  bool comparison=false;
 
   if((check_file=fopen(check_file_name,"r"))==NULL)
     fatal(_("! Cannot open output file "),check_file_name);
@@ -520,14 +520,14 @@ else {
 @ No copying necessary, just remove the temporary output file.
 
 @<Redirect temporary output to \.{/dev/null}@>={
-  boolean comparison=true;
+  bool comparison=true;
   @<Create the secondary output...@>@;
 }
 
 @ @<Setup system redirection@>=
 char in_buf[BUFSIZ+1];
 int in_size;
-boolean comparison=true;
+bool comparison=true;
 if((check_file=fopen(check_file_name,"r"))==NULL)
   fatal(_("! Cannot open output file "),check_file_name);
 @.Cannot open output file@>

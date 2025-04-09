@@ -1,5 +1,29 @@
 2025-04-09  Andreas Scherer  <https://ascherer.github.io>
 
+	* comm-bs.ch,
+	* comm-mac.ch,
+	* comm-mini.ch,
+	* comm-w2c.ch,
+	* comm-w2c.h,
+	* comm-w32.ch,
+	* common.bux,
+	* common.c,
+	* common.h,
+	* common.w,
+	* ctang-w2c.ch,
+	* ctang-w32.ch,
+	* ctangle.c,
+	* ctangle.w,
+	* ctwill-hint.ch,
+	* ctwill-mini.ch,
+	* ctwill-w2c.ch,
+	* ctwill.bux,
+	* cweav-w2c.ch,
+	* cweav-w32.ch,
+	* cweave.w: Replace type 'boolean' with 'bool'.
+
+2025-04-09  Andreas Scherer  <https://ascherer.github.io>
+
 	* comm-w2c.ch,
 	* comm-w2c.h,
 	* ctwill-mini.ch,

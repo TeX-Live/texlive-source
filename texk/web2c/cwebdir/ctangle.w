@@ -153,7 +153,7 @@ init_node(name_dir); /* the undefined section has no replacement text */
 starting at position |first| equals the identifier pointed to by |p|:
 
 @c
-boolean names_match(
+bool names_match(
 name_pointer p, /* points to the proposed match */
 const char *first, /* position of first character of string */
 size_t l, /* length of identifier */
@@ -334,7 +334,7 @@ text or returns the state to the most recently stacked level.
 @c
 static void
 pop_level( /* do this when |cur_byte| reaches |cur_end| */
-boolean flag) /* |flag==false| means we are in |output_defs| */
+bool flag) /* |flag==false| means we are in |output_defs| */
 {
   if (flag && cur_repl->text_link<section_flag) { /* link to a continuation */
     cur_repl=cur_repl->text_link+text_info; /* stay on the same level */
@@ -346,7 +346,7 @@ boolean flag) /* |flag==false| means we are in |output_defs| */
 
 @ @<Predecl...@>=
 static void push_level(name_pointer);@/
-static void pop_level(boolean);@/
+static void pop_level(bool);@/
 static void get_output(void);
 
 @ The heart of the output procedure is the function |get_output|,
@@ -456,7 +456,7 @@ are preceded by a `\.\\'.
 
 @<Private...@>=
 static eight_bits out_state; /* current status of partial output */
-static boolean protect; /* should newline characters be quoted? */
+static bool protect; /* should newline characters be quoted? */
 
 @ Here is a routine that is invoked when we want to output the current line.
 During the output process, |cur_line| equals the number of the next line
@@ -582,7 +582,7 @@ that refer to macros, preceded by the \.{\#define} preprocessor command.
     output_defs();
 
 @ @<Private...@>=
-static boolean output_defs_seen=false;
+static bool output_defs_seen=false;
 
 @ @d C_printf(c,a) fprintf(C_file,c,a)
 @d C_putc(c) fputc((int)(c),C_file) /* isn't \CEE/ wonderfully consistent? */
@@ -806,7 +806,7 @@ skip_ahead(void) /* skip to next control code */
 
 @ @<Predecl...@>=
 static eight_bits skip_ahead(void);@/
-static boolean skip_comment(boolean);
+static bool skip_comment(bool);
 
 @ The |skip_comment| procedure reads through the input at somewhat high
 speed in order to pass over comments, which \.{CTANGLE} does not transmit
@@ -825,11 +825,11 @@ If |skip_comment| comes to the end of the section, it prints an error message.
 No comment, long or short, is allowed to contain `\.{@@\ }' or `\.{@@*}'.
 
 @<Private...@>=
-static boolean comment_continues=false; /* are we scanning a comment? */
+static bool comment_continues=false; /* are we scanning a comment? */
 
 @ @c
-static boolean skip_comment( /* skips over comments */
-boolean is_long_comment)
+static bool skip_comment( /* skips over comments */
+bool is_long_comment)
 {
   char c; /* current character */
   while (true) {
@@ -863,7 +863,7 @@ boolean is_long_comment)
 
 @<Private...@>=
 static name_pointer cur_section_name; /* name of section just scanned */
-static boolean no_where; /* suppress |print_where|? */
+static bool no_where; /* suppress |print_where|? */
 
 @ As one might expect, |get_next| consists mostly of a big switch
 that branches to the various special cases that can arise.
@@ -872,7 +872,7 @@ that branches to the various special cases that can arise.
 static eight_bits
 get_next(void) /* produces the next input token */
 {
-  static boolean preprocessing=false;
+  static bool preprocessing=false;
   eight_bits c; /* the current character */
   while (true) {
     if (loc>limit) {
@@ -954,7 +954,7 @@ switch(c) {
 }
 
 @ @<Get a constant@>= {
-  boolean hex_flag = false; /* are we reading a hexadecimal literal? */
+  bool hex_flag = false; /* are we reading a hexadecimal literal? */
   id_first=loc-1;
   if (*id_first=='.' && !xisdigit(*loc)) goto mistake; /* not a constant */
   if (*id_first=='0') {

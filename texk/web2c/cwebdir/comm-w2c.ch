@@ -67,7 +67,7 @@ sometimes use \.{CWEB} to refer to any of the three component
 @z
 
 @x [1.18] l.80
-boolean program; /* \.{CWEAVE} or \.{CTANGLE}? */
+bool program; /* \.{CWEAVE} or \.{CTANGLE}? */
 @y
 cweb program; /* \.{CTANGLE} or \.{CWEAVE} or \.{CTWILL}? */
 @z
@@ -784,8 +784,6 @@ The directories to be searched for come from three sources:
 @d kpse_find_cweb(name) kpse_find_file(name,kpse_cweb_format,true)
 
 @<Include files@>=
-typedef bool boolean;
-#define HAVE_BOOLEAN 1
 #include <kpathsea/kpathsea.h> /* include every \Kpathsea/ header;
   |@!kpathsea_debug|, |@!const_string|, |@!string| */
 #include <w2c/config.h> /* \&{integer} */

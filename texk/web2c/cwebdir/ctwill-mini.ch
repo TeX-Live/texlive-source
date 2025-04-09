@@ -1912,10 +1912,10 @@ Section 251.
 
 @x
 finish_C( /* finishes a definition or a \CEE/ part */
-  boolean visible) /* |true| if we should produce \TeX\ output */
+  bool visible) /* |true| if we should produce \TeX\ output */
 @y
 finish_C( /* finishes a definition or a \CEE/ part */
-  boolean visible) /* |true| if we should produce \TeX\ output */
+  bool visible) /* |true| if we should produce \TeX\ output */
 @-finish_C@>
 @$finish_C {CTWILL}251 \&{static} \&{void} (\,)@>
 @z
@@ -1923,9 +1923,9 @@ finish_C( /* finishes a definition or a \CEE/ part */
 Section 252.
 
 @x
-@ @<Predecl...@>=@+static void finish_C(boolean);
+@ @<Predecl...@>=@+static void finish_C(bool);
 @y
-@ @<Predecl...@>=@+static void finish_C(boolean);
+@ @<Predecl...@>=@+static void finish_C(bool);
 @-finish_C@>
 @z
 
@@ -2223,9 +2223,9 @@ static struct perm_meaning {
 Section 300.
 
 @x
-@ @<Predec...@>=@+static boolean app_supp(text_pointer);
+@ @<Predec...@>=@+static bool app_supp(text_pointer);
 @y
-@ @<Predec...@>=@+static boolean app_supp(text_pointer);
+@ @<Predec...@>=@+static bool app_supp(text_pointer);
 @-app_supp@>
 @z
 

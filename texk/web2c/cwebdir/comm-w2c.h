@@ -30,7 +30,6 @@ First comes general stuff:
 @i iso_types.w
 
 @<Common code...@>=@^system dependencies@>
-typedef bool boolean;
 typedef uint8_t eight_bits;
 typedef uint16_t sixteen_bits;
 typedef enum {
@@ -137,21 +136,21 @@ extern char *found_filename; /* filename found by |kpse_find_file| */
 extern int line[]; /* number of current line in the stacked files */
 extern int change_line; /* number of current line in change file */
 extern int change_depth; /* where \.{@@y} originated during a change */
-extern boolean input_has_ended; /* if there is no more input */
-extern boolean changing; /* if the current line is from |change_file| */
-extern boolean web_file_open; /* if the web file is being read */
+extern bool input_has_ended; /* if there is no more input */
+extern bool changing; /* if the current line is from |change_file| */
+extern bool web_file_open; /* if the web file is being read */
 
 @ @<Predecl...@>=
-extern boolean get_line(void); /* inputs the next line */
+extern bool get_line(void); /* inputs the next line */
 extern void check_complete(void); /* checks that all changes were picked up */
 extern void reset_input(void); /* initialize to read the web file and change file */
 
 @ Code related to section numbers:
 @<Common code...@>=
 extern sixteen_bits section_count; /* the current section number */
-extern boolean changed_section[]; /* is the section changed? */
-extern boolean change_pending; /* is a decision about change still unclear? */
-extern boolean print_where; /* tells \.{CTANGLE} to print line and file info */
+extern bool changed_section[]; /* is the section changed? */
+extern bool change_pending; /* is a decision about change still unclear? */
+extern bool print_where; /* tells \.{CTANGLE} to print line and file info */
 
 @ Code related to identifier and section name storage:
 @d length(c) (size_t)((c+1)->byte_start-(c)->byte_start) /* the length of a name */
@@ -188,12 +187,12 @@ extern hash_pointer hash_ptr; /* index into hash-head array */
 @ @<Predecl...@>=
 extern name_pointer id_lookup(const char *,const char *,eight_bits);
    /* looks up a string in the identifier table */
-extern name_pointer section_lookup(char *,char *,boolean); /* finds section name */
+extern name_pointer section_lookup(char *,char *,bool); /* finds section name */
 extern void print_prefix_name(name_pointer);@/
 extern void print_section_name(name_pointer);@/
 extern void sprint_section_name(char *,name_pointer);
 @#
-extern boolean names_match(name_pointer,const char *,size_t,eight_bits);
+extern bool names_match(name_pointer,const char *,size_t,eight_bits);
 /* two routines defined in \.{ctangle.w} and \.{cweave.w} */
 extern void init_node(name_pointer);
 
@@ -236,7 +235,7 @@ extern char tex_file_name[]; /* name of |tex_file| */
 extern char idx_file_name[]; /* name of |idx_file| */
 extern char scn_file_name[]; /* name of |scn_file| */
 extern char check_file_name[]; /* name of |check_file| */
-extern boolean flags[]; /* an option for each 7-bit code */
+extern bool flags[]; /* an option for each 7-bit code */
 extern const char *use_language; /* prefix to \.{cwebmac.tex} in \TEX/ output */
 
 @ Code related to output:

@@ -141,7 +141,7 @@ name_pointer par, /* parent of new node */
 int c, /* right or left? */
 char *first, /* first character of section name */
 char *last, /* last character of section name, plus one */
-boolean ispref) /* are we adding a prefix or a full name? */
+bool ispref) /* are we adding a prefix or a full name? */
 {
   name_pointer p=name_ptr; /* new node */
   char *s=first_chunk(p);
@@ -152,7 +152,7 @@ name_pointer par, /* parent of new node */
 int c, /* right or left? */
 char huge* first, /* first character of section name */
 char huge* last, /* last character of section name, plus one */
-boolean ispref) /* are we adding a prefix or a full name? */
+bool ispref) /* are we adding a prefix or a full name? */
 {
   name_pointer p=name_ptr; /* new node */
   char huge* s=first_chunk(p);
@@ -165,7 +165,7 @@ extend_section_name(
 name_pointer p, /* name to be extended */
 char *first, /* beginning of extension text */
 char *last, /* one beyond end of extension text */
-boolean ispref) /* are we adding a prefix or a full name? */
+bool ispref) /* are we adding a prefix or a full name? */
 {
   char *s;
 @y
@@ -174,7 +174,7 @@ extend_section_name(
 name_pointer p, /* name to be extended */
 char huge* first, /* beginning of extension text */
 char huge* last, /* one beyond end of extension text */
-boolean ispref) /* are we adding a prefix or a full name? */
+bool ispref) /* are we adding a prefix or a full name? */
 {
   char huge* s;
 @z

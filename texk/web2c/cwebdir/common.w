@@ -77,7 +77,7 @@ both, differentiating between the two by means of the global variable
 |program|.
 
 @<Global var...@>=
-boolean program; /* \.{CWEAVE} or \.{CTANGLE}? */
+bool program; /* \.{CWEAVE} or \.{CTANGLE}? */
 
 @ \.{CWEAVE} operates in three phases: First it inputs the source
 file and stores cross-reference data, then it inputs the source once again and
@@ -154,7 +154,7 @@ support |feof| and |getc| you may have to change things here.
 @^system dependencies@>
 
 @c
-static boolean input_ln( /* copies a line into |buffer| or returns |false| */
+static bool input_ln( /* copies a line into |buffer| or returns |false| */
 FILE *fp) /* what file to read from */
 {
   int c=EOF; /* character read; initialized so some compilers won't complain */
@@ -173,7 +173,7 @@ FILE *fp) /* what file to read from */
   return true;
 }
 
-@ @<Predecl...@>=@+static boolean input_ln(FILE *);
+@ @<Predecl...@>=@+static bool input_ln(FILE *);
 
 @* File handling. Now comes the problem of deciding which file to read from
 next.  Recall that the actual text that \.{CWEB} should process comes from two
@@ -198,9 +198,9 @@ static char alt_web_file_name[max_file_name_length]; /* alternate name to try */
 int line[max_include_depth]; /* number of current line in the stacked files */
 int change_line; /* number of current line in change file */
 int change_depth; /* where \.{@@y} originated during a change */
-boolean input_has_ended; /* if there is no more input */
-boolean changing; /* if the current line is from |change_file| */
-boolean web_file_open=false; /* if the web file is being read */
+bool input_has_ended; /* if there is no more input */
+bool changing; /* if the current line is from |change_file| */
+bool web_file_open=false; /* if the web file is being read */
 
 @ When |changing==false|, the next line of |change_file| is kept in
 |change_buffer|, for purposes of comparison with the next
@@ -360,7 +360,7 @@ the |cur_file| has changed, we tell \.{CTANGLE} to print this
 information in the \CEE/ file by means of the |print_where| flag.
 
 @c
-boolean get_line(void) /* inputs the next line */
+bool get_line(void) /* inputs the next line */
 {
   restart:
   if (changing && include_depth==change_depth)
@@ -544,10 +544,10 @@ if ((change_file=fopen(change_file_name,"r"))==NULL)
 
 @ @<Global var...@>=
 sixteen_bits section_count; /* the current section number */
-boolean changed_section[max_sections]; /* is the section changed? */
-boolean change_pending; /* if the current change is not yet recorded in
+bool changed_section[max_sections]; /* is the section changed? */
+bool change_pending; /* if the current change is not yet recorded in
   |changed_section[section_count]| */
-boolean print_where=false; /* should \.{CTANGLE} print line and file info? */
+bool print_where=false; /* should \.{CTANGLE} print line and file info? */
 
 @* Storage of names and strings.
 Both \.{CWEAVE} and \.{CTANGLE} store identifiers, section names and
@@ -759,8 +759,8 @@ are null-terminated, and we keep an eye open for prefixes and extensions.
 
 @<Predecl...@>=
 static int web_strcmp(char *,size_t,char *,size_t);@/
-static name_pointer add_section_name(name_pointer,int,char *,char *,boolean);@/
-static void extend_section_name(name_pointer,char *,char *,boolean);
+static name_pointer add_section_name(name_pointer,int,char *,char *,bool);@/
+static void extend_section_name(name_pointer,char *,char *,bool);
 
 @ @c
 static int web_strcmp( /* fuller comparison than |strcmp| */
@@ -798,7 +798,7 @@ name_pointer par, /* parent of new node */
 int c, /* right or left? */
 char *first, /* first character of section name */
 char *last, /* last character of section name, plus one */
-boolean ispref) /* are we adding a prefix or a full name? */
+bool ispref) /* are we adding a prefix or a full name? */
 {
   name_pointer p=name_ptr; /* new node */
   char *s=first_chunk(p);
@@ -825,7 +825,7 @@ extend_section_name(
 name_pointer p, /* name to be extended */
 char *first, /* beginning of extension text */
 char *last, /* one beyond end of extension text */
-boolean ispref) /* are we adding a prefix or a full name? */
+bool ispref) /* are we adding a prefix or a full name? */
 {
   char *s;
   name_pointer q=p+1;
@@ -851,7 +851,7 @@ exactly equals or is a prefix or extension of a name in the tree.
 name_pointer
 section_lookup( /* find or install section name in tree */
 char *first,char *last, /* first and last characters of new name */
-boolean ispref) /* is the new name a prefix or a full name? */
+bool ispref) /* is the new name a prefix or a full name? */
 {
   int c=less; /* comparison between two names; initialized so some compilers won't complain */
   name_pointer p=root; /* current node of the search tree */
@@ -962,7 +962,7 @@ name_pointer r) /* section name being compared */
   name_pointer q=r+1; /* access to subsequent chunks */
   char *ss, *s=first_chunk(r);
   int c=less; /* comparison */
-  boolean ispref; /* is chunk |r| a prefix? */
+  bool ispref; /* is chunk |r| a prefix? */
   while (true) {
     ss=(r+1)->byte_start-1;
     if (*ss==' ' && ss>=r->byte_start) ispref=true,q=q->link;
@@ -1128,7 +1128,7 @@ char C_file_name[max_file_name_length]; /* name of |C_file| */
 char tex_file_name[max_file_name_length]; /* name of |tex_file| */
 char idx_file_name[max_file_name_length]; /* name of |idx_file| */
 char scn_file_name[max_file_name_length]; /* name of |scn_file| */
-boolean flags[128]; /* an option for each 7-bit code */
+bool flags[128]; /* an option for each 7-bit code */
 
 @ The |flags| will be initially |false|. Some of them are set to~|true| before
 scanning the arguments; if additional flags are |true| by default they
@@ -1159,7 +1159,7 @@ scan_args(void)
   char *dot_pos; /* position of |'.'| in the argument */
   char *name_pos; /* file name beginning, sans directory */
   char *s; /* pointer for scanning strings */
-  boolean found_web=false,found_change=false,found_out=false;
+  bool found_web=false,found_change=false,found_out=false;
              /* have these names been seen? */
 
   strcpy(change_file_name,"/dev/null");

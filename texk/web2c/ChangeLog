@@ -1,6 +1,11 @@
 2025-04-09  Andreas Scherer  <https://ascherer.github.io>
 
 	* ctangleboot.cin,
+	* cwebboot.cin: Replace type 'boolean' with 'bool.
+
+2025-04-09  Andreas Scherer  <https://ascherer.github.io>
+
+	* ctangleboot.cin,
 	* cwebboot.cin: Revert bool change for C23.
 
 2025-03-31  Andreas Scherer  <https://ascherer.github.io>

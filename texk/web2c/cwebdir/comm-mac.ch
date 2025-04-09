@@ -15,7 +15,7 @@ support |feof| and |getc| you may have to change things here.
 @^system dependencies@>
 
 @c
-static boolean input_ln( /* copies a line into |buffer| or returns |false| */
+static bool input_ln( /* copies a line into |buffer| or returns |false| */
 FILE *fp) /* what file to read from */
 {
   int c=EOF; /* character read; initialized so some compilers won't complain */
@@ -43,7 +43,7 @@ line endings, so that \.{CWEB} will works with ASCII files stored in
 @^system dependencies@>
 
 @c
-static boolean input_ln( /* copies a line into |buffer| or returns |false| */
+static bool input_ln( /* copies a line into |buffer| or returns |false| */
 FILE *fp) /* what file to read from */
 {
   int  c=EOF; /* character read; initialized so some compilers won't complain */

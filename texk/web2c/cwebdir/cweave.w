@@ -182,7 +182,7 @@ been altered by a change file entry have their |changed_section| flag
 turned on during the first phase.
 
 @<Private...@>=
-static boolean change_exists; /* has any section changed? */
+static bool change_exists; /* has any section changed? */
 
 @ The other large memory area in \.{CWEAVE} keeps the cross-reference data.
 All uses of the name |p| are recorded in a linked list beginning at
@@ -355,7 +355,7 @@ text_ptr=max_text_ptr=tok_start+1;
 
 @ Here are the two procedures needed to complete |id_lookup|:
 @c
-boolean names_match(
+bool names_match(
 name_pointer p, /* points to the proposed match */
 const char *first, /* position of first character of string */
 size_t l, /* length of identifier */
@@ -730,7 +730,7 @@ for |ord|, since |get_next| changes |ord| into a string.
 @d right_preproc 0217 /* ends a preprocessor command */
 
 @<Private...@>=
-static boolean preprocessing=false; /* are we scanning a preprocessor command? */
+static bool preprocessing=false; /* are we scanning a preprocessor command? */
 
 @ @<Raise prep...@>= {
   preprocessing=true;
@@ -743,7 +743,7 @@ a file name in lines that start with \.{\#include}.  We must treat this file
 name as a string.
 
 @<Private...@>=
-static boolean sharp_include_line=false;
+static bool sharp_include_line=false;
   /* are we scanning a \#\&{include} line? */
 
 @ @<Check if next token is |include|@>=
@@ -1140,7 +1140,7 @@ outer_xref(void) /* extension of |C_xref| */
     if (next_control!=begin_comment && next_control!=begin_short_comment)
       C_xref(ignore);
     else {
-      boolean is_long_comment=(next_control==begin_comment);
+      bool is_long_comment=(next_control==begin_comment);
       bal=copy_comment(is_long_comment,1); next_control='|';
       while (bal>0) {
         C_xref(section_name); /* do not reference section names in comments */
@@ -1282,7 +1282,7 @@ to cross-references for the current section name of interest.
 
 @<Private...@>=
 static xref_pointer cur_xref; /* temporary cross-reference pointer */
-static boolean an_output; /* did |file_flag| precede |cur_xref|? */
+static bool an_output; /* did |file_flag| precede |cur_xref|? */
 
 @ The following recursive procedure
 walks through the tree of section names and prints out anomalies.
@@ -1348,14 +1348,14 @@ of commented-out text).
 @d tex_puts(c) fputs(c,active_file)
 
 @<Predecl...@>=
-static void flush_buffer(char *,boolean,boolean);@/
+static void flush_buffer(char *,bool,bool);@/
 static void finish_line(void);
 
 @ @c
 static void
 flush_buffer(
 char *b, /* outputs from |out_buf+1| to |b|, where |b<=out_ptr| */
-boolean per_cent,boolean carryover)
+bool per_cent,bool carryover)
 {
   char *j=b; /* pointer into |out_buf| */
   if (! per_cent) /* remove trailing blanks */
@@ -1472,7 +1472,7 @@ the section is changed, we output `\.{\\*}' just after the number.
 
 @<Predecl...@>=
 static void out_section(sixteen_bits);@/
-static void out_name(name_pointer,boolean);
+static void out_name(name_pointer,bool);
 
 @ @c
 static void
@@ -1492,7 +1492,7 @@ entry, enclosing it in braces.
 static void
 out_name(
 name_pointer p,
-boolean quote_xalpha)
+bool quote_xalpha)
 {
   char *k; /* pointer into |byte_mem| */
   out('{');
@@ -1519,7 +1519,7 @@ The use of `\.{@@}' signs is severely restricted in such material:
 @<Predecl...@>=
 static void copy_limbo(void);@/
 static eight_bits copy_TeX(void);@/
-static int copy_comment(boolean,int);
+static int copy_comment(bool,int);
 
 @ @c
 static void
@@ -1585,7 +1585,7 @@ one further token without overflow.
 
 @c
 static int copy_comment( /* copies \TeX\ code in comments */
-boolean is_long_comment, /* is this a traditional \CEE/ comment? */
+bool is_long_comment, /* is this a traditional \CEE/ comment? */
 int bal) /* brace balance */
 {
   char c; /* current character being copied */
@@ -3627,14 +3627,14 @@ app(@q{@>'}');
 token list; it also builds a new scrap if |scrapping==true|.
 
 @<Predec...@>=
-static void app_cur_id(boolean);@/
+static void app_cur_id(bool);@/
 static text_pointer C_translate(void);@/
 static void outer_parse(void);
 
 @ @c
 static void
 app_cur_id(
-boolean scrapping) /* are we making this into a scrap? */
+bool scrapping) /* are we making this into a scrap? */
 {
   name_pointer p=id_lookup(id_first,id_loc,normal);
   if (p->ilk<=custom) { /* not a reserved word */
@@ -3698,7 +3698,7 @@ outer_parse(void) /* makes scraps from \CEE/ tokens and comments */
     if (next_control!=begin_comment && next_control!=begin_short_comment)
       C_parse(ignore);
     else {
-      boolean is_long_comment=(next_control==begin_comment);
+      bool is_long_comment=(next_control==begin_comment);
       @<Make sure that there is room for the new...@>@;
       app(cancel); app(inserted);
       if (is_long_comment) app_str("\\C{"@q}@>);
@@ -3911,8 +3911,8 @@ make_output(void) /* outputs the equivalents of tokens */
   char delim; /* first and last character of string being copied */
   char *save_loc, *save_limit; /* |loc| and |limit| to be restored */
   name_pointer cur_section_name; /* name of section being output */
-  boolean save_mode; /* value of |cur_mode| before a sequence of breaks */
-  boolean dindent_pending=false; /* should a |dindent| be output? */
+  bool save_mode; /* value of |cur_mode| before a sequence of breaks */
+  bool dindent_pending=false; /* should a |dindent| be output? */
   app(end_translation); /* append a sentinel */
   freeze_text(); push_level(text_ptr-1);
   while (true) {
@@ -4206,10 +4206,10 @@ and `|emit_space_if_needed|' are able to handle the situation:
 static int save_line; /* former value of |out_line| */
 static char *save_place; /* former value of |out_ptr| */
 static int sec_depth; /* the integer, if any, following \.{@@*} */
-static boolean space_checked; /* have we done |emit_space_if_needed|? */
-static boolean format_visible; /* should the next format declaration be output? */
-static boolean doing_format=false; /* are we outputting a format declaration? */
-static boolean group_found=false; /* has a starred section occurred? */
+static bool space_checked; /* have we done |emit_space_if_needed|? */
+static bool format_visible; /* should the next format declaration be output? */
+static bool doing_format=false; /* are we outputting a format declaration? */
+static bool group_found=false; /* has a starred section occurred? */
 
 @ @<Translate the \9{c}current section@>= {
   section_count++;
@@ -4305,7 +4305,7 @@ takes place, so that the translation will normally end with \.{\\6} or
 @c
 static void
 finish_C( /* finishes a definition or a \CEE/ part */
-  boolean visible) /* |true| if we should produce \TeX\ output */
+  bool visible) /* |true| if we should produce \TeX\ output */
 {
   text_pointer p; /* translation of the scraps */
   if (visible) {
@@ -4330,7 +4330,7 @@ finish_C( /* finishes a definition or a \CEE/ part */
     /* forget the tokens and the scraps */
 }
 
-@ @<Predecl...@>=@+static void finish_C(boolean);
+@ @<Predecl...@>=@+static void finish_C(bool);
 
 @ Keeping in line with the conventions of the \CEE/ preprocessor (and
 otherwise contrary to the rules of \.{CWEB}) we distinguish here
@@ -4773,7 +4773,7 @@ while (sort_ptr>scrap_info) {
 switch (cur_name->ilk) {@+char *p; /* index into |byte_mem| */@+@t}\6{\4@>
   case normal: case func_template:
     if (is_tiny(cur_name)) out_str("\\|");
-    else {@+boolean all_caps=true;@+@t}\6{@>
+    else {@+bool all_caps=true;@+@t}\6{@>
       for (p=cur_name->byte_start;p<(cur_name+1)->byte_start;p++)
         if (xislower(*p)) { /* not entirely uppercase */
           all_caps=false; break;

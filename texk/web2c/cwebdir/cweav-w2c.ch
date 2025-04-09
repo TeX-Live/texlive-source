@@ -642,7 +642,7 @@ Preston Briggs, to whom credit is due.
 
 @<Update the result...@>= {
 if((tex_file=fopen(tex_file_name,"r"))!=NULL) {
-  boolean comparison=false;
+  bool comparison=false;
 
   if((check_file=fopen(check_file_name,"r"))==NULL)
     fatal(_("! Cannot open output file "),check_file_name);
