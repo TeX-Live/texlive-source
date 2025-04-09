@@ -2332,7 +2332,6 @@ Section 327.
 @y
 @d kpse_find_cweb(name) kpse_find_file(name,kpse_cweb_format,true)
 @-name@>
-@-HAVE_BOOLEAN@>
 @z
 
 Section 329.
