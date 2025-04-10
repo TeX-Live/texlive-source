@@ -1,3 +1,7 @@
+2025-04-10  Karl Berry  <karl@freefriends.org>
+
+	* configure.ac: version 20250410.
+
 2025-04-09  Karl Berry  <karl@freefriends.org>
 
 	* pdfobj.c (pdf_get_object): fix possible seg fault in
