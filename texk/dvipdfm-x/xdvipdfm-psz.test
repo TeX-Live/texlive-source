@@ -1,6 +1,6 @@
 #! /bin/sh -vx
 # $Id$
-# Copyright 2017 Karl Berry <tex-live@tug.org>
+# Copyright 2017-2025 Karl Berry <tex-live@tug.org>
 # Copyright 2013 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
@@ -18,14 +18,16 @@ export TEXMFCNF TFMFONTS T1FONTS TEXFONTMAPS DVIPDFMXINPUTS TEXPICTS
 
 failed=
 
-echo "*** xdvipdfmx -v -m 1.0 -o paper2.pdf <paper.dvi" && echo \
+echo "*** xdvipdfmx -v -m 1.0 -o paper2.pdf <paper.dvi" \
 	&& $_xdvipdfmx -v -m 1.0 -o paper2.pdf <$srcdir/tests/paper.dvi \
-	&& echo && echo "xdvipdfmx-paper tests OK" && echo \
+	&& test -s paper2.pdf \
+	&& echo "xdvipdfmx-paper tests OK" && echo \
 	|| failed="$failed xdvipdfmx-paper"
 
-echo "*** xdvipdfmx -v -m 1.4 -o - paper >paper2m.pdf" && echo \
-	&& $_xdvipdfmx -v -m 1.4 -o - $srcdir/tests/paper >paper2m.pdf \
-	&& echo && echo "xdvipdfmx-paper-mag tests OK" && echo \
+echo "*** xdvipdfmx -v -m 1.4 -o paper2m.pdf paper" \
+	&& $_xdvipdfmx -v -m 1.4 -o paper2m.pdf $srcdir/tests/paper \
+	&& test -s paper2m.pdf \
+	&& echo "xdvipdfmx-paper-mag tests OK" && echo \
 	|| failed="$failed xdvipdfmx-paper-mag"
 
 test -z "$failed" && exit 0

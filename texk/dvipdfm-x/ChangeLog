@@ -1,3 +1,22 @@
+2025-04-09  Karl Berry  <karl@freefriends.org>
+
+	* pdfobj.c (pdf_get_object): fix possible seg fault in
+	object stream parsing. Report and patch from Shuqiao Zhang:
+	https://tug.org/pipermail/tex-live/2025-April/051444.html
+
+	* xdvipdfm-pdf.test: new test, for this (pdfobj) and the page
+	Group (pdfgroup) fix from Clerk ma.
+	* Makefile.am (tests): add it.
+	* tests/xdvipdfm-pdfobj.xdv,
+	* tests/xdvipdfm-pdfgroup.dvi: new test input files.
+	* tests/rpki-ecosystem.drawio.pdf,
+	* tests/xdvipdfm-pdfgroup-0318.pdf: inclusion files for the tests.
+
+2025-03-17  Clerk Ma  <clerkma@gmail.com>
+
+	* epdf.c (pdf_include_page): check for the page Group being NULL
+	before dereferencing it. (r74687)
+
 2025-03-17  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* vf.c: Store combining characters in vitual fonts with indices
@@ -6,6 +25,7 @@
 	* configure.ac: version 20250317.
 
 2025-03-14  Max Chernoff  <tex@maxchernoff.ca>
+
 	* pdffont.c: Switch to using only A-Z in the tag since numerical
 	digits are invalid per the PDF spec. Thanks to Yukimasa Morimi,
 	https://tug.org/pipermail/dvipdfmx/2025-March/000370.html

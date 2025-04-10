@@ -1,0 +1,54 @@
+#! /bin/sh -vx
+# $Id$
+# Copyright 2025 Karl Berry <tex-live@tug.org>
+# You may freely use, modify and/or distribute this file.
+# PDF parsing reports.
+
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_xdvipdfmx=$BinDir/xdvipdfmx$ExeExt
+
+TEXMFCNF=$srcdir/../kpathsea
+TFMFONTS="$srcdir/tests;$srcdir/data"
+T1FONTS="$srcdir/tests;$srcdir/data"
+TEXFONTMAPS="$srcdir/tests;$srcdir/data"
+DVIPDFMXINPUTS="$srcdir/tests;$srcdir/data"
+TEXPICTS=$srcdir/tests
+export TEXMFCNF TFMFONTS T1FONTS TEXFONTMAPS DVIPDFMXINPUTS TEXPICTS
+
+failed=
+
+# xdvipdfm-pdfobj: Object stream parsing bug. Original report from
+# Shuqiao Zhang,
+# https://tug.org/pipermail/tex-live/2025-April/051444.html
+# Unfortunately the bug is not reliably reproducible, as Zhang explains
+# in https://tug.org/pipermail/tex-live/2025-April/051447.html.
+
+# xdvipdfm-pdfgroup: Page group bug. Report and fix from Clerk Ma,
+# ca. 19 Mar 2025.
+
+for testfile in xdvipdfm-pdfobj.xdv xdvipdfm-pdfgroup.dvi; do
+  testin=$srcdir/tests/$testfile
+  testout=$testfile.pdf
+  #
+  # The pdfobj.xdv test includes a .pdf file, referenced as ./ in the
+  # .xdv, so have to copy it into the working directory.
+  cp $srcdir/tests/rpki-ecosystem.drawio.pdf . || exit 1
+  #
+  # By the way, the pdfgroup.dvi test includes the file
+  # xdvipdfm-pdfgroup-0318.pdf, but since that reference doesn't use
+  # "./", it can be found in srcdir/tests via TEXPICTS above.
+  #
+  cmd="$_xdvipdfmx $testin -o $testout"
+  echo "*** $cmd"
+  if $cmd && test -s $testout; then
+    echo "$testfile test OK"
+  else
+    failed="$failed $testfile"
+  fi
+done
+
+test -z "$failed" && exit 0
+echo
+echo "failed tests:$failed"
+exit 1

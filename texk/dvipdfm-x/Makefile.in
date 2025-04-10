@@ -828,16 +828,16 @@ dist_mapdata_DATA = data/cid-x.map
 cmapdatadir = $(datarootdir)/texmf-dist/fonts/cmap/dvipdfmx
 dist_cmapdata_DATA = data/EUC-UCS2
 DISTCLEANFILES = config.force image*.pdf xbmc*.pdf annot*.pdf pic*.* \
-	bookm*.pdf paper*.pdf ptex*.pdf resrc*.pdf reverse.pdf \
-	ttc*.pdf upjf.vf upjv.vf upjf-*.ofm upjv-*.ofm upjf-*.tfm \
-	upjf_*.pdf upjf1_*.pdf upjf2_*.pdf upjf3_*.pdf multi_incl.pdf \
-	lmr0-*.pdf cprm*.pdf
+	bookm*.pdf xdvipdfm-pdf*.pdf paper*.pdf ptex*.pdf resrc*.pdf \
+	reverse.pdf ttc*.pdf upjf.vf upjv.vf upjf-*.ofm upjv-*.ofm \
+	upjf-*.tfm upjf_*.pdf upjf1_*.pdf upjf2_*.pdf upjf3_*.pdf \
+	multi_incl.pdf lmr0-*.pdf cprm*.pdf
 TESTS = xdvipdfmx.test xdvipdfm-ann.test xdvipdfm-bad.test \
-	xdvipdfm-bb.test xdvipdfm-bkm.test xdvipdfm-psz.test \
-	xdvipdfm-ptx.test xdvipdfm-res.test xdvipdfm-rev.test \
-	xdvipdfm-ttc.test dvipdfmx-upjf.test dvipdfmx-upjf2.test \
-	dvipdfmx-upjf3.test dvipdfmx-incl.test dvipdfmx-lmr0.test \
-	dvipdfmx-lmr1.test dvipdfmx-ttf0.test
+	xdvipdfm-bb.test xdvipdfm-bkm.test xdvipdfm-pdf.test \
+	xdvipdfm-psz.test xdvipdfm-ptx.test xdvipdfm-res.test \
+	xdvipdfm-rev.test xdvipdfm-ttc.test dvipdfmx-upjf.test \
+	dvipdfmx-upjf2.test dvipdfmx-upjf3.test dvipdfmx-incl.test \
+	dvipdfmx-lmr0.test dvipdfmx-lmr1.test dvipdfmx-ttf0.test
 EXTRA_DIST = $(TESTS) tests/dvipdfmx.cfg tests/psfonts.map \
 	tests/cmr10.pfb tests/cmr10.tfm tests/image.dvi \
 	tests/image.tex tests/xbmc.dvi tests/xbmc.tex \
@@ -851,6 +851,7 @@ EXTRA_DIST = $(TESTS) tests/dvipdfmx.cfg tests/psfonts.map \
 	tests/picjpeg.xbb tests/image.png tests/picpng.bb \
 	tests/picpng.xbb tests/image.pdf tests/picpdf.bb \
 	tests/picpdf.xbb tests/bookm.dvi tests/bookm.tex \
+	tests/xdvipdfm-pdf.xdv tests/rpki-ecosystem.drawio.pdf \
 	tests/paper.dvi tests/paper.tex tests/ptex.dvi tests/resrc.dvi \
 	tests/resrc.tex tests/reverse.dvi tests/ttc.dvi tests/ttc.tex \
 	tests/test.ttc tests/upjf.dvi tests/upjf.tex tests/upjf.map \
@@ -2056,7 +2057,8 @@ config.force: $(ZLIB_DEPEND) $(LIBPNG_DEPEND) $(KPATHSEA_DEPEND) $(LIBPAPER_DEPE
 @ZLIB_RULE@
 @LIBPAPER_RULE@
 xdvipdfmx.log xdvipdfm-ann.log xdvipdfm-bad.log xdvipdfm-bb.log \
-	xdvipdfm-bkm.log xdvipdfm-psz.log xdvipdfm-ptx.log xdvipdfm-res.log \
+	xdvipdfm-bkm.log xdvipdfm-pdf.log xdvipdfm-psz.log \
+	xdvipdfm-ptx.log xdvipdfm-res.log \
 	xdvipdfm-rev.log xdvipdfm-ttc.log \
 	dvipdfmx-upjf.log dvipdfmx-upjf2.log dvipdfmx-upjf3.log dvipdfmx-incl.log \
 	dvipdfmx-lmr0.log dvipdfmx-lmr1.log \
