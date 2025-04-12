@@ -1,3 +1,9 @@
+2025-04-13  Akira Kakuto  <kakuto@jcom.zaq.ne.jp>
+
+	* dvipdfmx.c: Reinstate an option -o - to send output to
+	standard output. This option has been disabled unintentionally
+	for a long time.
+
 2025-04-10  Karl Berry  <karl@freefriends.org>
 
 	* configure.ac: version 20250410.

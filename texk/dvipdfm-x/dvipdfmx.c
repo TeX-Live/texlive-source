@@ -588,6 +588,9 @@ do_args_second_pass (int argc, char *argv[], const char *source, int unsafe)
       break;
 
     case 'o':
+      if (pdf_filename) {
+        RELEASE(pdf_filename);
+      }
       pdf_filename = NEW (strlen(optarg)+1, char);
       strcpy(pdf_filename, optarg);
       break;
@@ -1119,16 +1122,8 @@ main (int argc, char *argv[])
   if (!dvi_filename) {
     if (verbose)
       MESG("No dvi filename specified, reading standard input.\n");
-    if (!pdf_filename)
-      if (verbose)
-        MESG("No pdf filename specified, writing to standard output.\n");
   } else if (!pdf_filename)
     set_default_pdf_filename();
-
-  if (pdf_filename && !strcmp(pdf_filename, "-")) {
-    RELEASE(pdf_filename);
-    pdf_filename = NULL;
-  }
 
   if (dpx_conf.compat_mode == dpx_mode_mpost_mode) {
     x_offset = 0.0;
@@ -1156,6 +1151,19 @@ main (int argc, char *argv[])
       get_enc_password(oplain, uplain);
     }
   }
+
+  /* moved to here because -o - was not effective */
+  if (pdf_filename && !strcmp(pdf_filename, "-")) {
+    RELEASE(pdf_filename);
+    pdf_filename = NULL;
+  }
+
+  /* moved to here because an incorrect message:
+     "No pdf filename specified, writing to standard output."
+     is printed for xdvipdfmx -v -o foo.pdf < foo.xdv */
+  if (!pdf_filename)
+    if (verbose)
+      MESG("No pdf filename specified, writing to standard output.\n");
 
   /* moved to here because -r option was not effective */
 #ifndef MIKTEX
