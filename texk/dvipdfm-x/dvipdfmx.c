@@ -127,7 +127,7 @@ static int    translate_origin  = 0;
 static int has_paper_option = 0;
 
 /* Input and output filenames */
-static char *dvi_filename = NULL, *pdf_filename = NULL;
+char *dvi_filename = NULL, *pdf_filename = NULL;
 
 static void read_config_file (const char *config);
 

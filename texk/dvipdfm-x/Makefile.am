@@ -1,7 +1,7 @@
 ## $Id$
 ## Makefile.am for the TeX Live subdirectory texk/dvipdfm-x/
 ##
-## Copyright 2015-2024 Karl Berry <tex-live@tug.org>
+## Copyright 2015-2025 Karl Berry <tex-live@tug.org>
 ## Copyright 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
@@ -243,13 +243,15 @@ DISTCLEANFILES = config.force
 ## Tests
 ##
 TESTS = xdvipdfmx.test xdvipdfm-ann.test xdvipdfm-bad.test xdvipdfm-bb.test
-TESTS += xdvipdfm-bkm.test xdvipdfm-psz.test xdvipdfm-ptx.test xdvipdfm-res.test
+TESTS += xdvipdfm-bkm.test xdvipdfm-pdf.test xdvipdfm-psz.test
+TESTS += xdvipdfm-ptx.test xdvipdfm-res.test
 TESTS += xdvipdfm-rev.test xdvipdfm-ttc.test
 TESTS += dvipdfmx-upjf.test dvipdfmx-upjf2.test dvipdfmx-upjf3.test dvipdfmx-incl.test
 TESTS += dvipdfmx-lmr0.test dvipdfmx-lmr1.test
 TESTS += dvipdfmx-ttf0.test
 xdvipdfmx.log xdvipdfm-ann.log xdvipdfm-bad.log xdvipdfm-bb.log \
-	xdvipdfm-bkm.log xdvipdfm-psz.log xdvipdfm-ptx.log xdvipdfm-res.log \
+	xdvipdfm-bkm.log xdvipdfm-pdf.log xdvipdfm-psz.log \
+	xdvipdfm-ptx.log xdvipdfm-res.log \
 	xdvipdfm-rev.log xdvipdfm-ttc.log \
 	dvipdfmx-upjf.log dvipdfmx-upjf2.log dvipdfmx-upjf3.log dvipdfmx-incl.log \
 	dvipdfmx-lmr0.log dvipdfmx-lmr1.log \
@@ -279,6 +281,9 @@ DISTCLEANFILES += pic*.*
 ## xdvipdfm-bkm.test
 EXTRA_DIST += tests/bookm.dvi tests/bookm.tex
 DISTCLEANFILES += bookm*.pdf
+## xdvipdfm-pdf.test
+EXTRA_DIST += tests/xdvipdfm-pdf.xdv tests/rpki-ecosystem.drawio.pdf
+DISTCLEANFILES += xdvipdfm-pdf*.pdf
 ## xdvipdfm-psz.test
 EXTRA_DIST += tests/paper.dvi tests/paper.tex
 DISTCLEANFILES += paper*.pdf
