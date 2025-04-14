@@ -29,7 +29,7 @@ make4ht [options] filename ["tex4ht.sty op." "tex4ht op." "t4ht op" "latex op"]
 
 -- set version number. the template should be replaced by the
 -- actual version number by the build script
-local version = "v0.4c"
+local version = "v0.4d"
 mkparams.version_number = version
 
 local args = mkparams.get_args()
@@ -85,9 +85,8 @@ if make:length() < 1 then
     make:clean()
     make.no_dvi_process = true
 	else
-		make:htlatex()
-		make:htlatex()
-		make:htlatex()
+    -- automatically detect and execute number of necessary compilations by default
+    make:autohtlatex()
 	end
 end
 
