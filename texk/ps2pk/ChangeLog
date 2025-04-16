@@ -1,3 +1,11 @@
+2025-04-15  Andreas Scherer  <https://ascherer.github.io>
+
+	* fontstruct.h,
+	* spaces.c,
+	* spaces.h,
+	* token.c,
+	* tokst.h: Amend pointer-to-function prototypes for C23.
+
 2025-04-08  Karl Berry  <karl@freefriends.org>
 
 	* fontstruct.h: note that the integer types in the new
