@@ -27,6 +27,7 @@ hdr_links = \
 	$(HARFBUZZ_SRC)/hb-map.h \
 	$(HARFBUZZ_SRC)/hb-ot-deprecated.h \
 	$(HARFBUZZ_SRC)/hb-paint.h \
+	$(HARFBUZZ_SRC)/hb-script-list.h \
 	$(HARFBUZZ_SRC)/hb-set.h \
 	$(HARFBUZZ_SRC)/hb-shape.h \
 	$(HARFBUZZ_SRC)/hb-shape-plan.h \

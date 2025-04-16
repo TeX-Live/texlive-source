@@ -1,6 +1,6 @@
 project('harfbuzz', ['c', 'cpp'],
-  meson_version: '>= 0.55.0',
-  version: '11.0.1',
+  meson_version: '>= 0.60.0',
+  version: '11.1.0',
   default_options: [
     'cpp_eh=none',          # Just to support msvc, we are passing -fno-exceptions also anyway
     # 'cpp_rtti=false',     # Do NOT enable, wraps inherit it and ICU needs RTTI
@@ -32,11 +32,16 @@ pkgmod = import('pkgconfig')
 cpp = meson.get_compiler('cpp')
 null_dep = dependency('', required: false)
 
+
+# Includes Microsoft Clang compiler with GNU arguments, see
+# https://github.com/harfbuzz/harfbuzz/pull/4394
+cpp_is_microsoft_compiler = host_machine.system() == 'windows' and cpp.get_define('_MSC_FULL_VER') != ''
+
 # Only perform these checks if cpp_std is c++11 as setting -std directly
 # produces a warning from meson.
 if get_option('cpp_std') == 'c++11'
   # Enforce C++14 requirement for MSVC STL
-  if cpp.get_id() == 'clang' and cpp.get_define('_MSC_FULL_VER') != ''
+  if cpp.get_id() == 'clang' and cpp_is_microsoft_compiler
     add_project_arguments('-std=c++14', language: 'cpp')
   elif cpp.get_id() == 'clang-cl'
     # Clang-cl produces a warning when using -std=c++14, but not when using /std:c++14
@@ -145,38 +150,12 @@ wasm_dep = cpp.find_library('iwasm', required: get_option('wasm'))
 # How to check whether iwasm was built, and hence requires, LLVM?
 #llvm_dep = cpp.find_library('LLVM-15', required: get_option('wasm'))
 
-if meson.version().version_compare('>=0.60.0')
-  # pkg-config: icu-uc, cmake: ICU but with components
-  icu_dep = dependency('icu-uc', 'ICU',
-                            version: icu_min_version,
-                            components: 'uc',
-                            required: get_option('icu'),
-                            allow_fallback: true)
-else
-  # painful hack to handle multiple dependencies but also respect options
-  icu_opt = get_option('icu')
-  # we want to handle enabled manually after fallbacks, but also handle disabled normally
-  if icu_opt.enabled()
-    icu_opt = false
-  endif
-  # try pkg-config name
-  icu_dep = dependency('icu-uc', version: icu_min_version, method: 'pkg-config', required: icu_opt)
-  # when disabled, leave it not-found
-  if not icu_dep.found() and not get_option('icu').disabled()
-    # Try cmake name
-    icu_dep = dependency('ICU', version: icu_min_version, method: 'cmake', components: 'uc', required: false)
-    # Try again with subproject fallback. `allow_fallback: true` means the
-    # fallback will be tried even if the icu option is set to `auto`, but
-    # we cannot pass this option until Meson 0.59.0, because no wrap file
-    # is checked into git.
-    if not icu_dep.found()
-      icu_dep = dependency('icu-uc',
-                           version: icu_min_version,
-                           method: 'pkg-config',
-                           required: get_option('icu'))
-    endif
-  endif
-endif
+# pkg-config: icu-uc, cmake: ICU but with components
+icu_dep = dependency('icu-uc', 'ICU',
+                          version: icu_min_version,
+                          components: 'uc',
+                          required: get_option('icu'),
+                          allow_fallback: true)
 
 if icu_dep.found() and icu_dep.version().version_compare('>=75.1') and (get_option('cpp_std') == 'c++11' or get_option('cpp_std') == 'c++14')
   cpp17_arg = cpp.get_argument_syntax() == 'msvc' ? '/std:c++17' : '-std=c++17'
@@ -466,12 +445,10 @@ configure_file(output: 'config.h', configuration: conf)
 alias_target('lib', libharfbuzz)
 alias_target('libs', libharfbuzz, libharfbuzz_subset)
 
-if meson.version().version_compare('>=0.57.0')
-  # Re glib, see https://github.com/harfbuzz/harfbuzz/issues/4153#issuecomment-2646347531
-  add_test_setup('default',
-                 exclude_suites: ['google-benchmark'],
-                 is_default: glib_dep.type_name() != 'internal' and not meson.is_subproject())
-endif
+# Re glib, see https://github.com/harfbuzz/harfbuzz/issues/4153#issuecomment-2646347531
+add_test_setup('default',
+                exclude_suites: ['google-benchmark'],
+                is_default: glib_dep.type_name() != 'internal' and not meson.is_subproject())
 
 build_summary = {
   'Directories':
