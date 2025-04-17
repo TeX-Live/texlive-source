@@ -72,12 +72,12 @@
 #define period_ast 026
 #define minus_gt_ast 027
 #define compress(c) if(loc++<=limit) return c
-#define xisalpha(c) (isalpha((int) (c) ) &&((eight_bits) (c) <0200) )
-#define xisdigit(c) (isdigit((int) (c) ) &&((eight_bits) (c) <0200) )
-#define xisspace(c) (isspace((int) (c) ) &&((eight_bits) (c) <0200) )
-#define xislower(c) (islower((int) (c) ) &&((eight_bits) (c) <0200) )
-#define xisupper(c) (isupper((int) (c) ) &&((eight_bits) (c) <0200) )
-#define xisxdigit(c) (isxdigit((int) (c) ) &&((eight_bits) (c) <0200) )
+#define xisalpha(c) (isalpha((int) (c) ) &&!ishigh(c) )
+#define xisdigit(c) (isdigit((int) (c) ) &&!ishigh(c) )
+#define xisspace(c) (isspace((int) (c) ) &&!ishigh(c) )
+#define xislower(c) (islower((int) (c) ) &&!ishigh(c) )
+#define xisupper(c) (isupper((int) (c) ) &&!ishigh(c) )
+#define xisxdigit(c) (isxdigit((int) (c) ) &&!ishigh(c) )
 #define isxalpha(c) ((c) =='_'||(c) =='$')
 #define ishigh(c) ((eight_bits) (c) > 0177)
 #define max_include_depth 10

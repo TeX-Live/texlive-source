@@ -1,3 +1,13 @@
+2025-04-17  Andreas Scherer  <https://ascherer.github.io>
+
+	* Makefile,
+	* comm-w2c.h,
+	* common.c,
+	* common.h,
+	* ctang-w2c.ch,
+	* ctangle.c,
+	* ctangle.w: Make proper use of 'ishigh' macro.
+
 2025-04-09  Andreas Scherer  <https://ascherer.github.io>
 
 	* comm-bs.ch,

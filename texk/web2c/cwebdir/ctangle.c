@@ -34,12 +34,12 @@
 #define period_ast 026
 #define minus_gt_ast 027
 #define compress(c) if(loc++<=limit) return c
-#define xisalpha(c) (isalpha((int) (c) ) &&((eight_bits) (c) <0200) )
-#define xisdigit(c) (isdigit((int) (c) ) &&((eight_bits) (c) <0200) )
-#define xisspace(c) (isspace((int) (c) ) &&((eight_bits) (c) <0200) )
-#define xislower(c) (islower((int) (c) ) &&((eight_bits) (c) <0200) )
-#define xisupper(c) (isupper((int) (c) ) &&((eight_bits) (c) <0200) )
-#define xisxdigit(c) (isxdigit((int) (c) ) &&((eight_bits) (c) <0200) )
+#define xisalpha(c) (isalpha((int) (c) ) &&!ishigh(c) )
+#define xisdigit(c) (isdigit((int) (c) ) &&!ishigh(c) )
+#define xisspace(c) (isspace((int) (c) ) &&!ishigh(c) )
+#define xislower(c) (islower((int) (c) ) &&!ishigh(c) )
+#define xisupper(c) (isupper((int) (c) ) &&!ishigh(c) )
+#define xisxdigit(c) (isxdigit((int) (c) ) &&!ishigh(c) )
 #define isxalpha(c) ((c) =='_'||(c) =='$')
 #define ishigh(c) ((eight_bits) (c) > 0177)
 #define max_include_depth 10
@@ -721,7 +721,7 @@ macro_end= (cur_text+1)->tok_start;
 C_printf("%s","#define ");
 out_state= normal;
 protect= true;
-do macro_end--;while('\n'==*macro_end||' '==*macro_end);
+do macro_end--;while(isspace(*macro_end)&&plus_plus!=*macro_end);
 
 while(cur_byte<=macro_end){
 a= *cur_byte++;
@@ -768,9 +768,9 @@ case identifier:
 if(out_state==num_or_id)C_putc(' ');
 for(j= (cur_val+name_dir)->byte_start;
 j<(cur_val+name_dir+1)->byte_start;j++)
-if((eight_bits)(*j)<0200)C_putc(*j);
+if(ishigh(*j))C_printf("%s",translit[(eight_bits)(*j)-0200]);
 
-else C_printf("%s",translit[(eight_bits)(*j)-0200]);
+else C_putc(*j);
 out_state= num_or_id;break;
 
 /*:59*/

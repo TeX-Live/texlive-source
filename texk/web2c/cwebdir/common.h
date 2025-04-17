@@ -81,12 +81,12 @@ extern char *id_first; /* where the current identifier begins in the buffer */
 extern char *id_loc; /* just after the current identifier in the buffer */
 
 @ Code related to input routines:
-@d xisalpha(c) (isalpha((int)(c))&&((eight_bits)(c)<0200))
-@d xisdigit(c) (isdigit((int)(c))&&((eight_bits)(c)<0200))
-@d xisspace(c) (isspace((int)(c))&&((eight_bits)(c)<0200))
-@d xislower(c) (islower((int)(c))&&((eight_bits)(c)<0200))
-@d xisupper(c) (isupper((int)(c))&&((eight_bits)(c)<0200))
-@d xisxdigit(c) (isxdigit((int)(c))&&((eight_bits)(c)<0200))
+@d xisalpha(c) (isalpha((int)(c))&&!ishigh(c))
+@d xisdigit(c) (isdigit((int)(c))&&!ishigh(c))
+@d xisspace(c) (isspace((int)(c))&&!ishigh(c))
+@d xislower(c) (islower((int)(c))&&!ishigh(c))
+@d xisupper(c) (isupper((int)(c))&&!ishigh(c))
+@d xisxdigit(c) (isxdigit((int)(c))&&!ishigh(c))
 @d isxalpha(c) ((c)=='_' || (c)=='$')
   /* non-alpha characters allowed in identifier */
 @d ishigh(c) ((eight_bits)(c)>0177)

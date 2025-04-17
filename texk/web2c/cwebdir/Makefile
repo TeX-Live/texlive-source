@@ -56,7 +56,7 @@ LINKFLAGS = -g
 #LINKFLAGS = -s # for smaller (stripped) executables on many UNIX systems
 
 # What C compiler are you using?
-CC = cc
+#CC = cc
 
 # RM and CP are used below in case rm and cp are aliased
 RM= /bin/rm

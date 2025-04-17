@@ -600,8 +600,8 @@ output_defs(void)
       C_printf("%s","#define ");
       out_state=normal;
       protect=true; /* newlines should be preceded by |'\\'| */
-      do macro_end--; while ('\n'==*macro_end||' '==*macro_end);
-        /* discard trailing whitespace */
+      do macro_end--; while (isspace(*macro_end)&&plus_plus!=*macro_end);
+        /* discard trailing whitespace; |plus_plus=='\v'| */
       while (cur_byte<=macro_end) {
         a=*cur_byte++;
         if (out_state==verbatim && a!=string && a!=constant && a!='\n')
@@ -705,9 +705,9 @@ case identifier:
   if (out_state==num_or_id) C_putc(' ');
   for (j=(cur_val+name_dir)->byte_start;
        j<(cur_val+name_dir+1)->byte_start; j++)
-    if ((eight_bits)(*j)<0200) C_putc(*j);
+    if (ishigh(*j)) C_printf("%s",translit[(eight_bits)(*j)-0200]);
 @^high-bit character handling@>
-    else C_printf("%s",translit[(eight_bits)(*j)-0200]);
+    else C_putc(*j);
   out_state=num_or_id; break;
 
 @ @<Case of a sec...@>=@t\1\quad@>
