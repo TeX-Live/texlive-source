@@ -1,4 +1,4 @@
-% Copyright 1996-2024 Han Th\^e\llap{\raise 0.5ex\hbox{\'{}}} Th\`anh,
+% Copyright 1996-2025 Han Th\^e\llap{\raise 0.5ex\hbox{\'{}}} Th\`anh,
 % <thanh@@pdftex.org>
 
 % This file is part of pdfTeX.
@@ -10959,7 +10959,7 @@ p, q: pointer;
 @!save_scanner_status:small_number; {|scanner_status| upon entry}
 @!save_def_ref: pointer; {|def_ref| upon entry, important if inside `\.{\\message}'}
 @!save_warning_index: pointer;
-@!bool: boolean; {temp boolean}
+@!booltemp: boolean; {temp boolean}
 @!i: integer; {first temp integer}
 @!j: integer; {second temp integer}
 @!b:pool_pointer; {base of temporary string}
@@ -11159,7 +11159,7 @@ pdf_mdfive_sum_code:
     save_warning_index := warning_index;
     save_def_ref := def_ref;
     save_cur_string;
-    bool := scan_keyword("file");
+    booltemp := scan_keyword("file");
     scan_pdf_ext_toks;
     s := tokens_to_string(def_ref);
     delete_token_ref(def_ref);
@@ -11167,7 +11167,7 @@ pdf_mdfive_sum_code:
     warning_index := save_warning_index;
     scanner_status := save_scanner_status;
     b := pool_ptr;
-    getmd5sum(s, bool);
+    getmd5sum(s, booltemp);
     link(garbage) := str_toks(b);
     flush_str(s);
     ins_list(link(temp_head));
@@ -11230,7 +11230,7 @@ pdf_match_code:
     save_def_ref := def_ref;
     save_cur_string;
     {scan for icase}
-    bool := scan_keyword("icase");
+    booltemp := scan_keyword("icase");
     {scan for subcount}
     i := -1; {default for subcount}
     if scan_keyword("subcount") then begin
@@ -11247,7 +11247,7 @@ pdf_match_code:
     warning_index := save_warning_index;
     scanner_status := save_scanner_status;
     b := pool_ptr;
-    matchstrings(s, t, i, bool);
+    matchstrings(s, t, i, booltemp);
     link(garbage) := str_toks(b);
     flush_str(t);
     flush_str(s);
@@ -11286,7 +11286,7 @@ pdf_strcmp_code:
   end;
 pdf_colorstack_init_code:
   begin
-    bool := scan_keyword("page");
+    booltemp := scan_keyword("page");
     if scan_keyword("direct") then
         cur_val := direct_always
     else
@@ -11304,7 +11304,7 @@ pdf_colorstack_init_code:
     def_ref := save_def_ref;
     warning_index := save_warning_index;
     scanner_status := save_scanner_status;
-    cur_val := newcolorstack(s, cur_val, bool);
+    cur_val := newcolorstack(s, cur_val, booltemp);
     flush_str(s);
     cur_val_level := int_val;
     if cur_val < 0 then begin

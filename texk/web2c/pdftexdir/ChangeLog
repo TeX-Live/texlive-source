@@ -1,3 +1,7 @@
+2025-04-17  Karl Berry  <karl@freefriends.org>
+
+	* pdftex.web (bool): rename variable to booltemp, kowtowing to C23.
+
 2025-03-07  Karl Berry  <karl@tug.org>
 
 	* TL'25 release.
