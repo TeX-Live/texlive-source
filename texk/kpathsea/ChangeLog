@@ -1,3 +1,10 @@
+2025-04-18  Karl Berry  <karl@freefriends.org>
+
+	* c-ctype.h (kpse_isascii): new macro, since isascii() can
+	apparently longer be used portably, thanks to POSIX and gcc 15.
+	(ISALNUM, ..., ISBLANK): use it. Discussion:
+	https://tug.org/pipermail/tlbuild/2025q2/005743.html
+
 2025-04-08  Karl Berry  <karl@freefriends.org>
 
 	* c-memstr.h (strtok, strstr): remove () fallback declarations,
