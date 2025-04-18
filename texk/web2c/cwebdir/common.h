@@ -56,21 +56,36 @@ extern void common_init(void);
 @ Code related to the character set:
 @^ASCII code dependencies@>
 
-@d and_and 04 /* `\.{\&\&}'\,; corresponds to MIT's {\tentex\char'4} */
-@d lt_lt 020 /* `\.{<<}'\,; corresponds to MIT's {\tentex\char'20} */
-@d gt_gt 021 /* `\.{>>}'\,; corresponds to MIT's {\tentex\char'21} */
-@d plus_plus 013 /* `\.{++}'\,; corresponds to MIT's {\tentex\char'13} */
-@d minus_minus 01 /* `\.{--}'\,; corresponds to MIT's {\tentex\char'1} */
-@d minus_gt 031 /* `\.{->}'\,; corresponds to MIT's {\tentex\char'31} */
-@d non_eq 032 /* `\.{!=}'\,; corresponds to MIT's {\tentex\char'32} */
-@d lt_eq 034 /* `\.{<=}'\,; corresponds to MIT's {\tentex\char'34} */
-@d gt_eq 035 /* `\.{>=}'\,; corresponds to MIT's {\tentex\char'35} */
-@d eq_eq 036 /* `\.{==}'\,; corresponds to MIT's {\tentex\char'36} */
-@d or_or 037 /* `\.{\v\v}'\,; corresponds to MIT's {\tentex\char'37} */
-@d dot_dot_dot 016 /* `\.{...}'\,; corresponds to MIT's {\tentex\char'16} */
-@d colon_colon 06 /* `\.{::}'\,; corresponds to MIT's {\tentex\char'6} */
-@d period_ast 026 /* `\.{.*}'\,; corresponds to MIT's {\tentex\char'26} */
-@d minus_gt_ast 027 /* `\.{->*}'\,; corresponds to MIT's {\tentex\char'27} */
+@d and_and 04 /* `\.{\&\&}'\,; corresponds to MIT's {\tentex\char'4}
+  and ASCII~\.{EOT} */
+@d lt_lt 020 /* `\.{<<}'\,; corresponds to MIT's {\tentex\char'20}
+  and ASCII~\.{DLE} */
+@d gt_gt 021 /* `\.{>>}'\,; corresponds to MIT's {\tentex\char'21}
+  and ASCII~\.{DC1} */
+@d plus_plus 013 /* `\.{++}'\,; corresponds to MIT's {\tentex\char'13}
+  and ASCII~\.{VT} aka~|'\v'|  */
+@d minus_minus 01 /* `\.{--}'\,; corresponds to MIT's {\tentex\char'1}
+  and ASCII~\.{SOH} */
+@d minus_gt 031 /* `\.{->}'\,; corresponds to MIT's {\tentex\char'31}
+  and ASCII~\.{EM} */
+@d non_eq 032 /* `\.{!=}'\,; corresponds to MIT's {\tentex\char'32}
+  and ASCII~\.{SUB} */
+@d lt_eq 034 /* `\.{<=}'\,; corresponds to MIT's {\tentex\char'34}
+  and ASCII~\.{FS} */
+@d gt_eq 035 /* `\.{>=}'\,; corresponds to MIT's {\tentex\char'35}
+  and ASCII~\.{GS} */
+@d eq_eq 036 /* `\.{==}'\,; corresponds to MIT's {\tentex\char'36}
+  and ASCII~\.{RS} */
+@d or_or 037 /* `\.{\v\v}'\,; corresponds to MIT's {\tentex\char'37}
+  and ASCII~\.{US} */
+@d dot_dot_dot 016 /* `\.{...}'\,; corresponds to MIT's {\tentex\char'16}
+  and ASCII~\.{SO} */
+@d colon_colon 06 /* `\.{::}'\,; corresponds to MIT's {\tentex\char'6}
+  and ASCII~\.{ACK} */
+@d period_ast 026 /* `\.{.*}'\,; corresponds to MIT's {\tentex\char'26}
+  and ASCII~\.{SYN} */
+@d minus_gt_ast 027 /* `\.{->*}'\,; corresponds to MIT's {\tentex\char'27}
+  and ASCII~\.{ETB} */
 @#
 @d compress(c) if (loc++<=limit) return c
 
