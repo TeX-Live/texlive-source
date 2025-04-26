@@ -20,7 +20,7 @@ if test ! -f ./eup-basic.tex; then
   cp $srcdir/tests/dump-basic.tex ./eup-basic.tex
 fi
 if test ! -f ./eup-basic-euc.fmt; then
-  $_euptex -ini -kanji-internal=euc   -jobname=eup-basic-euc  eup-basic || exit 2
+  $_euptex -ini -etex -kanji-internal=euc   -jobname=eup-basic-euc  eup-basic || exit 2
 fi
 if test ! -f ./eup-basic.fmt; then
   $_euptex -ini -etex eup-basic || exit 3
