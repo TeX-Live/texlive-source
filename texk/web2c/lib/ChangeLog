@@ -1,3 +1,8 @@
+2025-04-26  Yukimasa Morimi  <h20y6m@yahoo.co.jp>
+
+	* openclose.c: Convert recorder filename to UTF-8.
+	https://github.com/texjporg/tex-jp-build/issues/45
+
 2025-03-07  Karl Berry  <karl@tug.org>
 
 	* TL'25 release.

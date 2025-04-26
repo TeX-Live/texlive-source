@@ -142,7 +142,10 @@ void
 recorder_change_filename (string new_name)
 {
    string temp = NULL;
-   
+#if defined(PTEX) && !defined(WIN32)
+   string fname0 = NULL;
+#endif
+
    if (!recorder_file)
      return;
 
@@ -150,6 +153,13 @@ recorder_change_filename (string new_name)
 #if defined(_WIN32)
    fclose (recorder_file);
 #endif /* _WIN32 */
+
+#if defined(PTEX) && !defined(WIN32)
+   fname0 = ptenc_from_internal_enc_string_to_utf8(new_name);
+   if (fname0) {
+     new_name = fname0;
+   }
+#endif
 
    /* If an output directory was specified, use it.  */
    if (output_directory) {
@@ -173,6 +183,10 @@ recorder_change_filename (string new_name)
 
    if (temp)
      free (temp);
+#if defined(PTEX) && !defined(WIN32)
+   if (fname0)
+     free (fname0);
+#endif
 }
 
 /* helper for recorder_record_* */
@@ -407,17 +421,10 @@ boolean
 open_output (FILE **f_ptr, const_string fopen_mode)
 {
     string fname;
-#if defined(PTEX) && !defined(WIN32)
     string fname0;
-#endif
     boolean absolute = kpse_absolute_p(nameoffile+1, false);
 
-    /* If we have an explicit output directory, use it. */
-    if (output_directory && !absolute) {
-        fname = concat3(output_directory, DIR_SEP_STRING, nameoffile + 1);
-    } else {
-        fname = nameoffile + 1;
-    }
+    fname = nameoffile + 1;
 #if defined(PTEX) && !defined(WIN32)
     fname0 = ptenc_from_internal_enc_string_to_utf8(fname);
     if (fname0) {
@@ -425,6 +432,14 @@ open_output (FILE **f_ptr, const_string fopen_mode)
         fname = fname0;
     }
 #endif
+    /* If we have an explicit output directory, use it. */
+    if (output_directory && !absolute) {
+        fname0 = concat3(output_directory, DIR_SEP_STRING, fname);
+        if (fname0) {
+            if (fname != nameoffile + 1) free(fname);
+            fname = fname0;
+        }
+    }
 
     /* Is the filename openable as given?  */
     *f_ptr = fopen (fname, fopen_mode);

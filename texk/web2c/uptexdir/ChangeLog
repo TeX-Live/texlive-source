@@ -21,6 +21,9 @@
 	tests/disp_{jfm,unbox}.tex, tests/inhibitglue_extensions.tex,
 	tests/filename_test.sh, am/uptex.am:
 	Clean up tests to prepare to remove ptexdir.
+	https://github.com/texjporg/tex-jp-build/issues/32
+	* wcfname0.test: Add tests for recorder filename.
+	https://github.com/texjporg/tex-jp-build/issues/45
 
 2025-04-05  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 

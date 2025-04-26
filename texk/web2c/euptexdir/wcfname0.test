@@ -1,6 +1,6 @@
 #! /bin/sh -vx
 #
-# Copyright 2022-2023 Japanese TeX Development Community <issue@texjp.org>
+# Copyright 2022-2025 Japanese TeX Development Community <issue@texjp.org>
 # You may freely use, modify and/or distribute this file.
 
 engine=euptex
@@ -83,7 +83,7 @@ for doc in fn-$fenc fnさざ波-$fenc; do
       { rc=1 ; err1=$err1" $fenc:$ienc:$doc" ; }
   $_kpsewhich -progname=$engine $doc-tmp.tex || rc=12
   mv $job.txt $job.log $testdir/ || rc=14
-  mv $job.fls $testdir/ || : echo "FIXME" # check *.fls
+  mv $job.fls $testdir/ || rc=15
   diff $testdir/$job.txt $srcdir/tests/fn-$fenc.txt || \
       { rc=2 ; err2=$err2" $fenc:$ienc:$doc" ; }
   rm -f $testdir/fn±×÷§¶-utf8-tmp.tex
@@ -121,7 +121,7 @@ for doc in fnさざ波-$fenc; do
       { rc=3 ; err3=$err3" $fenc:$ienc:$doc" ; }
   $_kpsewhich -progname=$engine $doc-tmp.tex || rc=22
   mv $job.txt $job.log $testdir/ || rc=24
-  mv $job.fls $testdir/ || : echo "FIXME" # check *.fls
+  mv $job.fls $testdir/ || rc=25
   diff $testdir/$job.txt $srcdir/tests/fn-$fenc.txt || \
       { rc=4 ; err4=$err4" $fenc:$ienc:$doc" ; }
 
