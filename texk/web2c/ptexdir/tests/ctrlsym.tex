@@ -19,14 +19,14 @@
   \count255=`\雪 \relax
   \message{B: \the\count255. 雪\string\雪 \雪^^J}
   \message{\expandafter\meaning\csname 雪\endcsname.^^J}
-  \ifx\Uchar\undefined\else\message{\expandafter\meaning\csname \Uchar"96EA\endcsname.^^J}\fi%
+  \ifx\Uchar\undefined\else\message{\expandafter\meaning\csname \Uchar\ucs"96EA\endcsname.^^J}\fi%
  \ifnum\jis"2121="3000
-  \count4095=0
-  \count4095=`🍌 \relax
-  \message{^^JC: \the\count4095^^J}
+  \count254=0
+  \count254=`🍌 \relax
+  \message{^^JC: \the\count254^^J}
   \def\🍌{banana}
-  \count4095=`\🍌 \relax
-  \message{D: \the\count4095. 🍌\string\🍌 \🍌^^J}
+  \count254=`\🍌 \relax
+  \message{D: \the\count254. 🍌\string\🍌 \🍌^^J}
   \message{\expandafter\meaning\csname 🍌\endcsname.^^J}
   \ifx\Uchar\undefined\else\message{\expandafter\meaning\csname \Uchar"1F34C\endcsname.^^J}\fi%
  \fi

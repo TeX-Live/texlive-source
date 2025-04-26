@@ -1,7 +1,7 @@
  restricted \write18 enabled.
  %&-line parsing enabled.
-**p-jctrlsym.tex
-(./p-jctrlsym.tex
+**up-jctrlsym.tex
+(./up-jctrlsym.tex
 ■control symbol
 > \X=macro:
 ->\+.
@@ -39,4 +39,4 @@ l.49 \show\Y
             \relax\message{(\meaning\Y)}
 
 (macro:->\あいう ) ■行末の和文コントロールシンボル [1] )
-Output written on p-jctrlsym.dvi (1 page, 376 bytes).
+Output written on up-jctrlsym-e.dvi (1 page, 376 bytes).

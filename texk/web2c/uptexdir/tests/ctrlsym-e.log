@@ -1,7 +1,7 @@
  restricted \write18 enabled.
  %&-line parsing enabled.
-**p-ctrlsym
-(./p-ctrlsym.tex 
+**up-ctrlsym
+(./up-ctrlsym.tex 
 A: 49379
 
 \雪 ->snow

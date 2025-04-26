@@ -26,7 +26,7 @@ entering extended mode
 <to be read again> 
                    }
 l.19 \TEST{す{\kcatcode`す=18 す}「。}
-                                           
+                                      
 
 > \box0=
 \vbox(7.77588+1.38855)x469.75499, yoko direction
@@ -49,7 +49,7 @@ l.19 \TEST{す{\kcatcode`す=18 す}「。}
 <to be read again> 
                    }
 l.20 \TEST{\CR。}
-                  
+                 
 
 > \box0=
 \vbox(7.77588+1.38855)x469.75499, yoko direction
@@ -72,7 +72,7 @@ l.20 \TEST{\CR。}
 <to be read again> 
                    }
 l.22 \TEST{\Ucharcat`す 16。}
-                               
+                             
 
 > \box0=
 \vbox(7.77588+1.38855)x469.75499, yoko direction
@@ -95,7 +95,7 @@ l.22 \TEST{\Ucharcat`す 16。}
 <to be read again> 
                    }
 l.23 \TEST{\Ucharcat`す 17。}
-                               
+                             
 
 > \box0=
 \vbox(7.77588+1.38855)x469.75499, yoko direction
@@ -118,7 +118,7 @@ l.23 \TEST{\Ucharcat`す 17。}
 <to be read again> 
                    }
 l.24 \TEST{\Ucharcat`す 18。}
-                               
+                             
 
 > \box0=
 \vbox(7.77588+1.38855)x469.75499, yoko direction
@@ -141,7 +141,7 @@ l.24 \TEST{\Ucharcat`す 18。}
 <to be read again> 
                    }
 l.25 \TEST{\Ucharcat`す 19。}
-                               
+                             
 
 > \box0=
 \vbox(7.77588+1.38855)x469.75499, yoko direction
@@ -164,7 +164,7 @@ l.25 \TEST{\Ucharcat`す 19。}
 <to be read again> 
                    }
 l.28 \TEST{す。}
-                  
+                
 
 > \box0=
 \vbox(7.77588+1.38855)x469.75499, yoko direction
@@ -187,7 +187,7 @@ l.28 \TEST{す。}
 <to be read again> 
                    }
 l.29 \TEST{す\char\kuten"0103}
-                               
+                              
 
 > \box0=
 \vbox(7.77588+1.38855)x469.75499, yoko direction
@@ -210,7 +210,7 @@ l.29 \TEST{す\char\kuten"0103}
 <to be read again> 
                    }
 l.31 \TEST{す\kchar\kuten"0103}
-                                
+                               
 
 > \box0=
 \vbox(7.77588+1.38855)x469.75499, yoko direction
@@ -233,7 +233,7 @@ l.31 \TEST{す\kchar\kuten"0103}
 <to be read again> 
                    }
 l.34 \TEST{\char\kuten"0419。}
-                               
+                              
 
 > \box0=
 \vbox(7.77588+1.38855)x469.75499, yoko direction
@@ -302,7 +302,7 @@ l.37 \TEST{\char\kuten"0419\kchar\kuten"0103}
 <to be read again> 
                    }
 l.40 \TEST{\KR。}
-                  
+                 
 
 > \box0=
 \vbox(7.77588+1.38855)x469.75499, yoko direction
@@ -325,7 +325,7 @@ l.40 \TEST{\KR。}
 <to be read again> 
                    }
 l.41 \TEST{\kchar\kuten"0419。}
-                                
+                               
 
 > \box0=
 \vbox(7.77588+1.38855)x469.75499, yoko direction
@@ -385,7 +385,7 @@ KCHAR"E0EA, kcatcode=15
 ..\jpy あ
 ..\jpy あ
 ..\jpy い
-..\jpy 
+..\jpy 瑕
 ..\jpy 。
 ..\penalty 10000
 ..\glue(\parfillskip) 0.0 plus 1.0fil
@@ -395,7 +395,7 @@ KCHAR"E0EA, kcatcode=15
 <to be read again> 
                    }
 l.50   \TEST{い\kchar"E0EA。}
-                               
+                             
 
 > \box0=
 \vbox(7.77588+1.38855)x469.75499, yoko direction
@@ -407,7 +407,7 @@ l.50   \TEST{い\kchar"E0EA。}
 ..\jpy あ
 ..\jpy あ
 ..\jpy あ
-..\jpy 
+..\jpy 瑕
 ..\jpy 。
 ..\penalty 10000
 ..\glue(\parfillskip) 0.0 plus 1.0fil
@@ -417,7 +417,7 @@ l.50   \TEST{い\kchar"E0EA。}
 <to be read again> 
                    }
 l.51   \TEST{\kchar"E0EA。}
-                            
+                           
 
 > \box0=
 \vbox(7.77588+1.38855)x469.75499, yoko direction
@@ -429,7 +429,7 @@ l.51   \TEST{\kchar"E0EA。}
 ..\jpy あ
 ..\jpy あ
 ..\jpy あ
-..\jpy 
+..\jpy 瑕
 ..\jpy 。
 ..\penalty 10000
 ..\glue(\parfillskip) 0.0 plus 1.0fil
@@ -439,7 +439,7 @@ l.51   \TEST{\kchar"E0EA。}
 <to be read again> 
                    }
 l.52   \TEST{\relax\kchar"E0EA。}
-                                  
+                                 
 
 > \box0=
 \vbox(7.77588+1.38855)x469.75499, yoko direction
@@ -452,7 +452,7 @@ l.52   \TEST{\relax\kchar"E0EA。}
 ..\jpy あ
 ..\jpy あ
 ..\rule(*+*)x0.4
-..\jpy 
+..\jpy 瑕
 ..\jpy 。
 ..\penalty 10000
 ..\glue(\parfillskip) 0.0 plus 1.0fil
@@ -462,7 +462,7 @@ l.52   \TEST{\relax\kchar"E0EA。}
 <to be read again> 
                    }
 l.53   \TEST{\vrule\kchar"E0EA。}
-                                  
+                                 
 
 > \box0=
 \vbox(7.77588+1.38855)x469.75499, yoko direction
@@ -477,7 +477,7 @@ l.53   \TEST{\vrule\kchar"E0EA。}
 ..\glue(\xkanjiskip) 0.0
 ..\cmr b
 ..\glue(\xkanjiskip) 0.0
-..\jpy 
+..\jpy 瑕
 ..\jpy 。
 ..\penalty 10000
 ..\glue(\parfillskip) 0.0 plus 1.0fil
@@ -487,7 +487,7 @@ l.53   \TEST{\vrule\kchar"E0EA。}
 <to be read again> 
                    }
 l.54   \TEST{b\kchar"E0EA。}
-                             
+                            
 
 > \box0=
 \vbox(7.77588+1.38855)x469.75499, yoko direction
@@ -500,7 +500,7 @@ l.54   \TEST{b\kchar"E0EA。}
 ..\jpy あ
 ..\jpy あ
 ..\jpy い
-..\jpy 
+..\jpy 瑕
 ..\jpy 。
 ..\penalty 10000
 ..\glue(\parfillskip) 0.0 plus 1.0fil
@@ -510,7 +510,7 @@ l.54   \TEST{b\kchar"E0EA。}
 <to be read again> 
                    }
 l.55   \TEST{い\S。}
-                      
+                    
 
 CHAR"E0EA, kcatcode=15
 > \box0=
@@ -524,7 +524,7 @@ CHAR"E0EA, kcatcode=15
 ..\jpy あ
 ..\jpy あ
 ..\jpy い
-..\jpy 
+..\jpy 瑕
 ..\jpy 。
 ..\penalty 10000
 ..\glue(\parfillskip) 0.0 plus 1.0fil
@@ -534,7 +534,7 @@ CHAR"E0EA, kcatcode=15
 <to be read again> 
                    }
 l.60   \TEST{い\char"E0EA。}
-                              
+                            
 
 > \box0=
 \vbox(7.77588+1.38855)x469.75499, yoko direction
@@ -546,7 +546,7 @@ l.60   \TEST{い\char"E0EA。}
 ..\jpy あ
 ..\jpy あ
 ..\jpy あ
-..\jpy 
+..\jpy 瑕
 ..\jpy 。
 ..\penalty 10000
 ..\glue(\parfillskip) 0.0 plus 1.0fil
@@ -556,7 +556,7 @@ l.60   \TEST{い\char"E0EA。}
 <to be read again> 
                    }
 l.61   \TEST{\char"E0EA。}
-                           
+                          
 
 > \box0=
 \vbox(7.77588+1.38855)x469.75499, yoko direction
@@ -568,7 +568,7 @@ l.61   \TEST{\char"E0EA。}
 ..\jpy あ
 ..\jpy あ
 ..\jpy あ
-..\jpy 
+..\jpy 瑕
 ..\jpy 。
 ..\penalty 10000
 ..\glue(\parfillskip) 0.0 plus 1.0fil
@@ -578,7 +578,7 @@ l.61   \TEST{\char"E0EA。}
 <to be read again> 
                    }
 l.62   \TEST{\relax\char"E0EA。}
-                                 
+                                
 
 > \box0=
 \vbox(7.77588+1.38855)x469.75499, yoko direction
@@ -591,7 +591,7 @@ l.62   \TEST{\relax\char"E0EA。}
 ..\jpy あ
 ..\jpy あ
 ..\rule(*+*)x0.4
-..\jpy 
+..\jpy 瑕
 ..\jpy 。
 ..\penalty 10000
 ..\glue(\parfillskip) 0.0 plus 1.0fil
@@ -601,7 +601,7 @@ l.62   \TEST{\relax\char"E0EA。}
 <to be read again> 
                    }
 l.63   \TEST{\vrule\char"E0EA。}
-                                 
+                                
 
 > \box0=
 \vbox(7.77588+1.38855)x469.75499, yoko direction
@@ -616,7 +616,7 @@ l.63   \TEST{\vrule\char"E0EA。}
 ..\glue(\xkanjiskip) 0.0
 ..\cmr b
 ..\glue(\xkanjiskip) 0.0
-..\jpy 
+..\jpy 瑕
 ..\jpy 。
 ..\penalty 10000
 ..\glue(\parfillskip) 0.0 plus 1.0fil
@@ -626,7 +626,7 @@ l.63   \TEST{\vrule\char"E0EA。}
 <to be read again> 
                    }
 l.64   \TEST{b\char"E0EA。}
-                            
+                           
 
 > \box0=
 \vbox(7.77588+1.38855)x469.75499, yoko direction
@@ -639,7 +639,7 @@ l.64   \TEST{b\char"E0EA。}
 ..\jpy あ
 ..\jpy あ
 ..\jpy い
-..\jpy 
+..\jpy 瑕
 ..\jpy 。
 ..\penalty 10000
 ..\glue(\parfillskip) 0.0 plus 1.0fil
@@ -649,7 +649,7 @@ l.64   \TEST{b\char"E0EA。}
 <to be read again> 
                    }
 l.65   \TEST{い\S。}
-                      
+                    
 
 KCHARDEF"E0EA, kcatcode=15
 > \box0=
@@ -663,7 +663,7 @@ KCHARDEF"E0EA, kcatcode=15
 ..\jpy あ
 ..\jpy あ
 ..\jpy い
-..\jpy 
+..\jpy 瑕
 ..\jpy 。
 ..\penalty 10000
 ..\glue(\parfillskip) 0.0 plus 1.0fil
@@ -673,7 +673,7 @@ KCHARDEF"E0EA, kcatcode=15
 <to be read again> 
                    }
 l.70   \TEST{い\KA 。}
-                        
+                      
 
 > \box0=
 \vbox(7.77588+1.38855)x469.75499, yoko direction
@@ -685,7 +685,7 @@ l.70   \TEST{い\KA 。}
 ..\jpy あ
 ..\jpy あ
 ..\jpy あ
-..\jpy 
+..\jpy 瑕
 ..\jpy 。
 ..\penalty 10000
 ..\glue(\parfillskip) 0.0 plus 1.0fil
@@ -695,7 +695,7 @@ l.70   \TEST{い\KA 。}
 <to be read again> 
                    }
 l.71   \TEST{\KA 。}
-                     
+                    
 
 > \box0=
 \vbox(7.77588+1.38855)x469.75499, yoko direction
@@ -707,7 +707,7 @@ l.71   \TEST{\KA 。}
 ..\jpy あ
 ..\jpy あ
 ..\jpy あ
-..\jpy 
+..\jpy 瑕
 ..\jpy 。
 ..\penalty 10000
 ..\glue(\parfillskip) 0.0 plus 1.0fil
@@ -717,7 +717,7 @@ l.71   \TEST{\KA 。}
 <to be read again> 
                    }
 l.72   \TEST{\relax\KA 。}
-                           
+                          
 
 > \box0=
 \vbox(7.77588+1.38855)x469.75499, yoko direction
@@ -730,7 +730,7 @@ l.72   \TEST{\relax\KA 。}
 ..\jpy あ
 ..\jpy あ
 ..\rule(*+*)x0.4
-..\jpy 
+..\jpy 瑕
 ..\jpy 。
 ..\penalty 10000
 ..\glue(\parfillskip) 0.0 plus 1.0fil
@@ -740,7 +740,7 @@ l.72   \TEST{\relax\KA 。}
 <to be read again> 
                    }
 l.73   \TEST{\vrule\KA 。}
-                           
+                          
 
 > \box0=
 \vbox(7.77588+1.38855)x469.75499, yoko direction
@@ -755,7 +755,7 @@ l.73   \TEST{\vrule\KA 。}
 ..\glue(\xkanjiskip) 0.0
 ..\cmr b
 ..\glue(\xkanjiskip) 0.0
-..\jpy 
+..\jpy 瑕
 ..\jpy 。
 ..\penalty 10000
 ..\glue(\parfillskip) 0.0 plus 1.0fil
@@ -765,7 +765,7 @@ l.73   \TEST{\vrule\KA 。}
 <to be read again> 
                    }
 l.74   \TEST{b\KA 。}
-                      
+                     
 
 > \box0=
 \vbox(7.77588+1.38855)x469.75499, yoko direction
@@ -778,7 +778,7 @@ l.74   \TEST{b\KA 。}
 ..\jpy あ
 ..\jpy あ
 ..\jpy い
-..\jpy 
+..\jpy 瑕
 ..\jpy 。
 ..\penalty 10000
 ..\glue(\parfillskip) 0.0 plus 1.0fil
@@ -788,7 +788,7 @@ l.74   \TEST{b\KA 。}
 <to be read again> 
                    }
 l.75   \TEST{い\S。}
-                      
+                    
 
 CHARDEF"E0EA, kcatcode=15
 > \box0=
@@ -802,7 +802,7 @@ CHARDEF"E0EA, kcatcode=15
 ..\jpy あ
 ..\jpy あ
 ..\jpy い
-..\jpy 
+..\jpy 瑕
 ..\jpy 。
 ..\penalty 10000
 ..\glue(\parfillskip) 0.0 plus 1.0fil
@@ -812,7 +812,7 @@ CHARDEF"E0EA, kcatcode=15
 <to be read again> 
                    }
 l.80   \TEST{い\CA 。}
-                        
+                      
 
 > \box0=
 \vbox(7.77588+1.38855)x469.75499, yoko direction
@@ -824,7 +824,7 @@ l.80   \TEST{い\CA 。}
 ..\jpy あ
 ..\jpy あ
 ..\jpy あ
-..\jpy 
+..\jpy 瑕
 ..\jpy 。
 ..\penalty 10000
 ..\glue(\parfillskip) 0.0 plus 1.0fil
@@ -834,7 +834,7 @@ l.80   \TEST{い\CA 。}
 <to be read again> 
                    }
 l.81   \TEST{\CA 。}
-                     
+                    
 
 > \box0=
 \vbox(7.77588+1.38855)x469.75499, yoko direction
@@ -846,7 +846,7 @@ l.81   \TEST{\CA 。}
 ..\jpy あ
 ..\jpy あ
 ..\jpy あ
-..\jpy 
+..\jpy 瑕
 ..\jpy 。
 ..\penalty 10000
 ..\glue(\parfillskip) 0.0 plus 1.0fil
@@ -856,7 +856,7 @@ l.81   \TEST{\CA 。}
 <to be read again> 
                    }
 l.82   \TEST{\relax\CA 。}
-                           
+                          
 
 > \box0=
 \vbox(7.77588+1.38855)x469.75499, yoko direction
@@ -869,7 +869,7 @@ l.82   \TEST{\relax\CA 。}
 ..\jpy あ
 ..\jpy あ
 ..\rule(*+*)x0.4
-..\jpy 
+..\jpy 瑕
 ..\jpy 。
 ..\penalty 10000
 ..\glue(\parfillskip) 0.0 plus 1.0fil
@@ -879,7 +879,7 @@ l.82   \TEST{\relax\CA 。}
 <to be read again> 
                    }
 l.83   \TEST{\vrule\CA 。}
-                           
+                          
 
 > \box0=
 \vbox(7.77588+1.38855)x469.75499, yoko direction
@@ -894,7 +894,7 @@ l.83   \TEST{\vrule\CA 。}
 ..\glue(\xkanjiskip) 0.0
 ..\cmr b
 ..\glue(\xkanjiskip) 0.0
-..\jpy 
+..\jpy 瑕
 ..\jpy 。
 ..\penalty 10000
 ..\glue(\parfillskip) 0.0 plus 1.0fil
@@ -904,147 +904,7 @@ l.83   \TEST{\vrule\CA 。}
 <to be read again> 
                    }
 l.84   \TEST{b\CA 。}
-                      
-
-> \box0=
-\hbox(7.77588+1.38855)x173.19891, yoko direction
-.\displace 0.0
-.\jpy さ
-.\glue(refer from jfm) 1.07391 minus 1.07391
-.\jpy ㇷ゚
-.\glue(refer from jfm) 1.07391 minus 1.07391
-.\jpy サ
-.\jpy し
-.\jpy か゚
-.\jpy シ
-.\jpy す
-.\jpy あ゙
-.\jpy ス
-.\jpy せ
-.\jpy 𛂦゙
-.\jpy セ
-.\jpy そ
-.\jpy 𛂱゚
-.\jpy ソ
-.\jpy た
-.\glue(refer from jfm) 1.07391 minus 1.07391
-.\jpy っ
-.\glue(refer from jfm) 1.07391 minus 1.07391
-.\jpy タ
-
-! OK.
-l.95 \showbox0
-              
-
-> \box1=
-\hbox(7.77588+1.38855)x173.19891, yoko direction
-.\displace 0.0
-.\jpy た
-.\penalty 41(for kinsoku)
-.\glue(refer from jfm) 1.07391 minus 1.07391
-.\jpy ㇷ゚
-.\glue(refer from jfm) 1.07391 minus 1.07391
-.\jpy タ
-.\jpy ち
-.\penalty 42(for kinsoku)
-.\glue(\kanjiskip) 0.0
-.\jpy か゚
-.\jpy チ
-.\jpy つ
-.\penalty 43(for kinsoku)
-.\glue(\kanjiskip) 0.0
-.\jpy あ゙
-.\jpy ツ
-.\jpy て
-.\penalty 44(for kinsoku)
-.\glue(\kanjiskip) 0.0
-.\jpy 𛂦゙
-.\jpy テ
-.\jpy と
-.\penalty 45(for kinsoku)
-.\glue(\kanjiskip) 0.0
-.\jpy 𛂱゚
-.\jpy ト
-.\jpy な
-.\penalty 46(for kinsoku)
-.\glue(refer from jfm) 1.07391 minus 1.07391
-.\jpy っ
-.\glue(refer from jfm) 1.07391 minus 1.07391
-.\jpy ナ
-
-! OK.
-l.105 \showbox1
-               
-
-> \box2=
-\hbox(7.77588+1.38855)x173.19891, yoko direction
-.\displace 0.0
-.\jpy な
-.\glue(refer from jfm) 1.07391 minus 1.07391
-.\jpy ㇷ゚
-.\penalty 51(for kinsoku)
-.\glue(refer from jfm) 1.07391 minus 1.07391
-.\jpy ナ
-.\jpy に
-.\jpy か゚
-.\penalty 52(for kinsoku)
-.\glue(\kanjiskip) 0.0
-.\jpy ニ
-.\jpy ぬ
-.\jpy あ゙
-.\penalty 53(for kinsoku)
-.\glue(\kanjiskip) 0.0
-.\jpy ヌ
-.\jpy ね
-.\jpy 𛂦゙
-.\penalty 54(for kinsoku)
-.\glue(\kanjiskip) 0.0
-.\jpy ネ
-.\jpy の
-.\jpy 𛂱゚
-.\penalty 55(for kinsoku)
-.\glue(\kanjiskip) 0.0
-.\jpy ノ
-.\jpy は
-.\glue(refer from jfm) 1.07391 minus 1.07391
-.\jpy っ
-.\penalty 56(for kinsoku)
-.\glue(refer from jfm) 1.07391 minus 1.07391
-.\jpy ハ
-
-! OK.
-l.115 \showbox2
-               
-
-> \box3=
-\hbox(7.77588+1.38855)x173.19891, yoko direction
-.\displace 0.0
-.\jpy は
-.\glue(refer from jfm) 1.07391 minus 1.07391
-.\jpy ㇷ゚
-.\glue(refer from jfm) 1.07391 minus 1.07391
-.\jpy ハ
-.\jpy ひ
-.\jpy か゚
-.\jpy ヒ
-.\jpy ふ
-.\jpy あ゙
-.\jpy フ
-.\jpy へ
-.\jpy 𛂦゙
-.\jpy ヘ
-.\jpy ほ
-.\jpy 𛂱゚
-.\jpy ホ
-.\jpy ま
-.\glue(refer from jfm) 1.07391 minus 1.07391
-.\jpy っ
-.\glue(refer from jfm) 1.07391 minus 1.07391
-.\jpy マ
-
-! OK.
-l.125 \showbox3
-               
+                     
 
  )
 No pages of output.

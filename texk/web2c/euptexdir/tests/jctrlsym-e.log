@@ -65,21 +65,15 @@ l.70 \show\Y
 
 (macro:->\あい！ ) ■not_cjk
 > \X=macro:
-->\^^e3^^82^^a2 .
+->\^^a5^^a2 .
 l.81 \show\X
             \relax\message{(\meaning\X)}
 
-(macro:->\^^e3^^82^^a2 )
+(macro:->\^^a5^^a2 )
 > \Y=macro:
-->\^^ef^^bc^^81 .
+->\^^a1^^aa .
 l.82 \show\Y
             \relax\message{(\meaning\Y)}
 
-(macro:->\^^ef^^bc^^81 ) ■行末の和文^^e3^^82^^b3^^e3^^83^^b3^^e3^^83^^88
-^^e3^^83^^ad^^e3^^83^^bc^^e3^^83^^ab^^e3^^82^^b7^^e3^^83^^b3^^e3^^83^^9c^^e3^^8
-3^^ab
-Missing character: There is no ^^ef in font cmr10!
-Missing character: There is no ^^bc in font cmr10!
-Missing character: There is no ^^8c in font cmr10!
- [1] )
-Output written on eup-jctrlsym.dvi (1 page, 372 bytes).
+(macro:->\^^a1^^aa ) ■行末の和文コントロールシンボル [1] )
+Output written on eup-jctrlsym-e.dvi (1 page, 376 bytes).

@@ -12,7 +12,7 @@ _uptftopl=$BinDir/uptftopl$ExeExt
 test -d uptests || mkdir -p uptests
 
 # Test inputs
-testdir=$srcdir/ptexdir/tests
+testdir=$srcdir/uptexdir/tests
 
 # Testing pPLtoTF/pTFtoPL compatible mode for SKIP property in GLUEKERN.
 for font in skipjfmp; do

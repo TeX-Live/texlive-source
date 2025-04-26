@@ -1,7 +1,7 @@
  restricted \write18 enabled.
  %&-line parsing enabled.
-**p-chartoken.tex
-(./p-chartoken.tex
+**up-chartoken.tex
+(./up-chartoken.tex
 \x=\count26
 
 ! Improper alphabetic or KANJI constant.
@@ -38,4 +38,4 @@ A one-character control sequence belongs after a ` mark.
 So I'm essentially inserting \0 here.
 
 48 126 97 46273 46273 [1] )
-Output written on p-chartoken.dvi (1 page, 152 bytes).
+Output written on up-chartoken.dvi (1 page, 152 bytes).

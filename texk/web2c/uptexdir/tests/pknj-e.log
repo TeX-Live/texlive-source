@@ -2,7 +2,7 @@
  %&-line parsing enabled.
 **printkanji
 (./printkanji.tex
-\openout1 = `p-pknj-e.out'.
+\openout1 = `up-pknj-e.out'.
 
 
 {MSG ^^c5^^bf ^^c5^^bf 顛 }
@@ -19,8 +19,8 @@ l.29 \show\A
 l.40 \show\B
             
 
-■\jobname. {MSG *あ*p-pknj-e*:p-pknj-e:*macro:->:p-pknj-e:*}
-{TOT *あ*p-pknj-e*:p-pknj-e:*macro:->:p-pknj-e:*}
+■\jobname. {MSG *あ*up-pknj-e*:up-pknj-e:*macro:->:up-pknj-e:*}
+{TOT *あ*up-pknj-e*:up-pknj-e:*macro:->:up-pknj-e:*}
 
 ■oneletter. {MSG \catcode`\^^c5= 197}
 {TOT \catcode`\^^c5= 197}
@@ -211,15 +211,15 @@ l.164 \expandafter\show\csname 顛\endcsname
 \^^e3^^81^^82\あ 
 ifx:FALSE
 [50623]
-Memory usage before: 1270&5525; after: 118&5090; still untouched: 4992443
+Memory usage before: 1270&5526; after: 118&5091; still untouched: 4992442
  ) 
 Here is how much of TeX's memory you used:
- 27 strings out of 4979XX
- 146 string characters out of 62194XX
- 7557 words of memory out of 5000000
- 971 multiletter control sequences out of 15000+600000
+ 27 strings out of 49XXXX
+ 149 string characters out of 6219XXX
+ 7558 words of memory out of 5000000
+ 97X multiletter control sequences out of 15000+600000
  3271 words of font info for 2 fonts, out of 8000000 for 9000
  0 hyphenation exceptions out of 8191
  6i,4n,2p,97b,22s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
-Output written on p-pknj-e.dvi (1 page, 1140 bytes).
+Output written on up-pknj-e.dvi (1 page, 1140 bytes).

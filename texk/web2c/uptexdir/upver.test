@@ -10,7 +10,7 @@ _uptex=$BinDir/uptex$ExeExt
 LC_ALL=C; export LC_ALL;  LANGUAGE=C; export LANGUAGE
 
 TEXMFCNF=$srcdir/../kpathsea; export TEXMFCNF
-TEXINPUTS="$srcdir/ptexdir/tests;."; export TEXINPUTS
+TEXINPUTS="$srcdir/uptexdir/tests;."; export TEXINPUTS
 
 # check consistency between runtime terminal and log
 $_uptex -ini -interaction batchmode -jobname upver1-log pver1.tex >upver1-term.log || exit 1

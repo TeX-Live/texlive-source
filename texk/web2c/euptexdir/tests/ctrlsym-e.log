@@ -1,0 +1,13 @@
+entering extended mode
+ restricted \write18 enabled.
+ %&-line parsing enabled.
+**eup-ctrlsym
+(./eup-ctrlsym.tex 
+A: 49379
+
+\雪 ->snow
+B: 49379. 雪\雪snow
+macro:->snow.
+macro:->snow.
+ )
+No pages of output.

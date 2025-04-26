@@ -33,6 +33,6 @@ $_ptex -fmt=p-basic-euc  -kanji-internal=euc  -jobname=p-jchwidow-e -interaction
 sed 1d p-jchwidow-s.log >p-jchwidow-s.out
 sed 1d p-jchwidow-e.log >p-jchwidow-e.out
 
-diff $srcdir/ptexdir/tests/p-jchwidow.log p-jchwidow-s.out || exit 10
-diff $srcdir/ptexdir/tests/p-jchwidow.log p-jchwidow-e.out || exit 11
+diff $srcdir/ptexdir/tests/p-jchwidow-s.log p-jchwidow-s.out || exit 10
+diff $srcdir/ptexdir/tests/p-jchwidow-e.log p-jchwidow-e.out || exit 11
 

@@ -14,19 +14,31 @@ TEXFONTS=".;$srcdir//tests"; export TEXFONTS
 TEXFORMATS=.; export TEXFORMATS
 
 # get same filename in log
-rm -f up-jchwidow.*
+rm -f up-jchwidow*.*
 $LN_S $srcdir/uptexdir/tests/jchwidow.tex ./up-jchwidow.tex
 
 if test ! -f ./up-basic.tex; then
   cp $srcdir/tests/dump-basic.tex ./up-basic.tex
 fi
+if test ! -f ./up-basic-sjis.fmt; then
+  $_uptex -ini -kanji-internal=sjis  -jobname=up-basic-sjis up-basic || exit 1
+fi
+if test ! -f ./up-basic-euc.fmt; then
+  $_uptex -ini -kanji-internal=euc   -jobname=up-basic-euc  up-basic || exit 2
+fi
 if test ! -f ./up-basic.fmt; then
-  $_uptex -ini up-basic || exit 1
+  $_uptex -ini up-basic || exit 3
 fi
 
+$_uptex -fmt=up-basic-sjis -kanji-internal=sjis -jobname=up-jchwidow-s -interaction=batchmode up-jchwidow || :
+$_uptex -fmt=up-basic-euc  -kanji-internal=euc  -jobname=up-jchwidow-e -interaction=batchmode up-jchwidow || :
 $_uptex -fmt=up-basic -interaction=batchmode up-jchwidow || :
 
+sed 1d up-jchwidow-s.log >up-jchwidow-s.out
+sed 1d up-jchwidow-e.log >up-jchwidow-e.out
 sed 1d up-jchwidow.log >up-jchwidow.out
 
-diff $srcdir/uptexdir/tests/up-jchwidow.log up-jchwidow.out || exit 3
+diff $srcdir/uptexdir/tests/up-jchwidow-s.log up-jchwidow-s.out || exit 10
+diff $srcdir/uptexdir/tests/up-jchwidow-e.log up-jchwidow-e.out || exit 11
+diff $srcdir/uptexdir/tests/up-jchwidow.log up-jchwidow.out || exit 12
 

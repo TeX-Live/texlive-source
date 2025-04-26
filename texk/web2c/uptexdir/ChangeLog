@@ -1,3 +1,27 @@
+2025-04-26  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* {nissya,sample,skipjfmp,updvitype,upver,yokotate}.test,
+	uptex-{ctrlsym,prntknj,ucs,widow}.test, tests/pver{1,2}.tex,
+	tests/chcode.{pl,tfm}, tests/chcode-{euc,jis,sjis,utf8}.pl,
+	tests/let_char_token.tex, tests/chartoken.log,
+	tests/control-symbol.tex, tests/ctrlsym.tex,
+	tests/ctrlsym-{e,s}.log, tests/jctrlsym-{e,u}.log,
+	tests/ptexlineendmode.tex,
+	tests/endlinechar.tex, tests/endline.log,
+	tests/up-endlinea.typ, tests/up-lineenda.typ,
+	tests/up-jctrlsyma-{e,u}.typ, tests/printkanji.tex,
+	tests/pknj-{e,s,u}.log, tests/up-pknj-{e,s,u}a.typ,
+	tests/ucs{_toucs}.tex, tests/ucs-{e,s,u}.log,
+	tests/jchwidow.tex, tests/up-jchwidow{,-{e,s}}.log,
+	tests/nissya.bst, tests/nissya_bib.{aux,bbl},
+	tests/ptex{3,4}.{dvi,tex}, tests/ptex{3,4}a-{jis,utf8}.typ,
+	tests/sample.{bib,dvi}, tests/samplea.typ,
+	tests/skipjfmp.{pl,tfm,tex},
+	tests/{min10,tmin10}.{pl,tfm}, tests/goth10.tfm,
+	tests/disp_{jfm,unbox}.tex, tests/inhibitglue_extensions.tex,
+	tests/filename_test.sh, am/uptex.am:
+	Clean up tests to prepare to remove ptexdir.
+
 2025-04-05  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* uptex-m.ch: Enable \prebreakpenalty for combining

@@ -15,7 +15,7 @@ TFMFONTS=".;$srcdir//tests"; export TFMFONTS
 TEXINPUTS=".;$srcdir/tests"; export TEXINPUTS
 TEXFORMATS=.; export TEXFORMATS
 
-rm -f p-base.* p-ucs*.*
+rm -f p-pknj-*.*
 $LN_S $srcdir/ptexdir/tests/printkanji.tex ./printkanji.tex
 
 if test ! -f ./p-basic.tex; then

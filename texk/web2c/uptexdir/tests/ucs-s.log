@@ -1,7 +1,7 @@
  restricted \write18 enabled.
  %&-line parsing enabled.
-**p-ucs
-(./p-ucs.tex
+**up-ucs
+(./up-ucs.tex
 <SJIS>
 \ucs.
 \cntA=\count26

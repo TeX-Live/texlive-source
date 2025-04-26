@@ -19,7 +19,7 @@
   \count255=`\雪 \relax
   \message{B: \the\count255. 雪\string\雪 \雪^^J}
   \message{\expandafter\meaning\csname 雪\endcsname.^^J}
-  \ifx\Uchar\undefined\else\message{\expandafter\meaning\csname \Uchar"96EA\endcsname.^^J}\fi%
+  \ifx\Uchar\undefined\else\message{\expandafter\meaning\csname \Uchar\ucs"96EA\endcsname.^^J}\fi%
  \ifnum\jis"2121="3000
   \count4095=0
   \count4095=`🍌 \relax

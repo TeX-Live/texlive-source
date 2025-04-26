@@ -3256,7 +3256,6 @@ EXTRA_DIST = PROJECTS cftests cpascal.h help.h w2c/config.h \
 	ptexdir/ptex.defines ptexdir/COPYRIGHT ptexdir/COPYRIGHT.jis \
 	ptexdir/ChangeLog ptexdir/Changes.txt ptexdir/INSTALL.txt \
 	ptexdir/README.txt $(ptex_tests) $(pweb_tests) \
-	ptexdir/tests/nissya.bst ptexdir/tests/sample.bib \
 	tests/testfield.bst tests/enc-asc.bib tests/enc-jis.bib \
 	tests/enc-sjis.bib tests/enc-euc.bib tests/enc-utf8.bib \
 	tests/enc-utf8a.bib tests/enc-utf8b.bib tests/enc-amb0.bib \
@@ -3264,69 +3263,94 @@ EXTRA_DIST = PROJECTS cftests cpascal.h help.h w2c/config.h \
 	tests/enc-e.aux tests/enc-s.aux tests/enc-u.aux \
 	tests/enc-p.bbl tests/enc-ep.bbl tests/enc-sp.bbl \
 	tests/enc-up.bbl tests/memdata1.bst tests/memdata2.bst \
-	tests/memdata3.bst ptexdir/tests/ptex3.tex \
-	ptexdir/tests/ptex3.dvi ptexdir/tests/ptex4.tex \
-	ptexdir/tests/ptex4.dvi ptexdir/tests/ptex3a-jis.typ \
-	ptexdir/tests/ptex3a-utf8.typ ptexdir/tests/ptex4a-jis.typ \
-	ptexdir/tests/ptex4a-utf8.typ ptexdir/tests/goth10.tfm \
-	ptexdir/tests/sample.dvi ptexdir/tests/samplea.typ \
-	ptexdir/tests/min10.pl ptexdir/tests/min10.tfm \
-	ptexdir/tests/tmin10.pl ptexdir/tests/tmin10.tfm \
-	ptexdir/tests/chcode.pl ptexdir/tests/chcode-jis.pl \
-	ptexdir/tests/chcode.tfm ptexdir/tests/chcode-utf8.pl \
-	ptexdir/tests/chcode-euc.pl ptexdir/tests/chcode-sjis.pl \
-	ptexdir/tests/skipjfmp.pl ptexdir/tests/skipjfmp.tfm \
-	ptexdir/ptrip/ptrip.diffs ptexdir/ptrip/texmf.cnf \
-	ptexdir/tests/ctrlsym.tex ptexdir/tests/ctrlsym.log \
-	ptexdir/tests/endlinechar.tex ptexdir/tests/endline.log \
-	ptexdir/tests/control-symbol.tex ptexdir/tests/jctrlsym.log \
-	ptexdir/tests/p-endlinea.typ ptexdir/tests/p-jctrlsyma.typ \
-	ptexdir/tests/let_char_token.tex ptexdir/tests/chartoken.log \
-	ptexdir/tests/ptexlineendmode.tex ptexdir/tests/p-lineenda.typ \
-	ptexdir/tests/printkanji.tex ptexdir/tests/pknj-s.log \
-	ptexdir/tests/pknj-e.log ptexdir/tests/p-pknj-sa.typ \
-	ptexdir/tests/p-pknj-ea.typ ptexdir/tests/ucs.tex \
-	ptexdir/tests/ucs-s.log ptexdir/tests/ucs-e.log \
-	ptexdir/tests/p-jchwidow.log $(uptex_web_srcs) \
+	tests/memdata3.bst ptexdir/ptrip/ptrip.diffs \
+	ptexdir/ptrip/texmf.cnf ptexdir/tests/pver1.tex \
+	ptexdir/tests/pver2.tex ptexdir/tests/ctrlsym.tex \
+	ptexdir/tests/ctrlsym.log ptexdir/tests/endlinechar.tex \
+	ptexdir/tests/endline.log ptexdir/tests/control-symbol.tex \
+	ptexdir/tests/jctrlsym.log ptexdir/tests/p-endlinea.typ \
+	ptexdir/tests/p-jctrlsyma.typ ptexdir/tests/let_char_token.tex \
+	ptexdir/tests/chartoken.log ptexdir/tests/ptexlineendmode.tex \
+	ptexdir/tests/p-lineenda.typ ptexdir/tests/printkanji.tex \
+	ptexdir/tests/pknj-s.log ptexdir/tests/pknj-e.log \
+	ptexdir/tests/p-pknj-sa.typ ptexdir/tests/p-pknj-ea.typ \
+	ptexdir/tests/ucs.tex ptexdir/tests/ucs-s.log \
+	ptexdir/tests/ucs-e.log ptexdir/tests/p-jchwidow-e.log \
+	ptexdir/tests/p-jchwidow-s.log $(uptex_web_srcs) \
 	$(uptex_ch_srcs) uptexdir/uptex.defines uptexdir/upbibtex.ch \
 	uptexdir/updvitype.ch uptexdir/uppltotf.ch \
 	uptexdir/uptftopl.ch uptexdir/COPYRIGHT uptexdir/COPYRIGHT.ja \
 	uptexdir/ChangeLog $(uptex_tests) $(upweb_tests) \
+	uptexdir/tests/nissya.bst uptexdir/tests/sample.bib \
+	uptexdir/tests/nissya_bib.aux uptexdir/tests/nissya_bib.bbl \
 	tests/enc-u.bbl tests/enc-eu.bbl tests/enc-su.bbl \
-	tests/enc-uu.bbl uptexdir/tests/uptex3.tex \
+	tests/enc-uu.bbl uptexdir/tests/ptex3.tex \
+	uptexdir/tests/ptex3.dvi uptexdir/tests/ptex4.tex \
+	uptexdir/tests/ptex4.dvi uptexdir/tests/ptex3a-jis.typ \
+	uptexdir/tests/ptex3a-utf8.typ uptexdir/tests/ptex4a-jis.typ \
+	uptexdir/tests/ptex4a-utf8.typ uptexdir/tests/uptex3.tex \
 	uptexdir/tests/uptex3.dvi uptexdir/tests/uptex4.tex \
 	uptexdir/tests/uptex4.dvi uptexdir/tests/uptex5.tex \
 	uptexdir/tests/uptex5.dvi uptexdir/tests/uptex3a.typ \
 	uptexdir/tests/uptex4a.typ uptexdir/tests/uptex5a.typ \
-	uptexdir/tests/umin10.pl uptexdir/tests/umin10.tfm \
-	uptexdir/tests/utmin10.pl uptexdir/tests/utmin10.tfm \
-	uptexdir/tests/testnewu.pl uptexdir/tests/testnewu.tfm \
-	uptexdir/tests/testnewu8.pl uptexdir/tests/testnewu8.tfm \
-	uptexdir/tests/uparse.pl uptexdir/tests/uparse.tfm \
-	uptexdir/tests/gkhugeok.tfm uptexdir/tests/gkhugeng.tfm \
-	uptexdir/tests/gkhugeng.err uptexdir/tests/gk256g.tfm \
-	uptexdir/tests/gk256k.tfm uptexdir/uptrip/uptrip.diffs \
-	uptexdir/uptrip/texmf.cnf uptexdir/tests/up-ofm.tex \
-	uptexdir/tests/up-ofm.log uptexdir/tests/up-ofma.typ \
-	uptexdir/tests/up-prim.tex uptexdir/tests/up-prim.log \
-	uptexdir/tests/lmr1.tex uptexdir/tests/up-lmr1.log \
-	uptexdir/tests/lmr2.tex uptexdir/tests/up-lmr2.log \
-	uptexdir/tests/catcd.tex uptexdir/tests/up-cat.log \
-	uptexdir/tests/noto1.tex uptexdir/tests/up-noto1.log \
-	uptexdir/tests/jchwidow.tex uptexdir/tests/up-jchwidow.log \
-	$(euptex_web_srcs) $(euptex_ch_srcs) euptexdir/euptex.defines \
-	euptexdir/COPYRIGHT euptexdir/COPYRIGHT.jis \
-	euptexdir/ChangeLog euptexdir/EUPTEX.txt $(euptex_tests) \
+	uptexdir/tests/goth10.tfm uptexdir/tests/sample.dvi \
+	uptexdir/tests/samplea.typ uptexdir/tests/min10.pl \
+	uptexdir/tests/min10.tfm uptexdir/tests/tmin10.pl \
+	uptexdir/tests/tmin10.tfm uptexdir/tests/chcode.pl \
+	uptexdir/tests/chcode-jis.pl uptexdir/tests/chcode.tfm \
+	ptexdir/tests/chcode-utf8.pl uptexdir/tests/chcode-euc.pl \
+	uptexdir/tests/chcode-sjis.pl uptexdir/tests/umin10.pl \
+	uptexdir/tests/umin10.tfm uptexdir/tests/utmin10.pl \
+	uptexdir/tests/utmin10.tfm uptexdir/tests/testnewu.pl \
+	uptexdir/tests/testnewu.tfm uptexdir/tests/testnewu8.pl \
+	uptexdir/tests/testnewu8.tfm uptexdir/tests/uparse.pl \
+	uptexdir/tests/uparse.tfm uptexdir/tests/gkhugeok.tfm \
+	uptexdir/tests/gkhugeng.tfm uptexdir/tests/gkhugeng.err \
+	uptexdir/tests/gk256g.tfm uptexdir/tests/gk256k.tfm \
+	uptexdir/tests/skipjfmp.pl uptexdir/tests/skipjfmp.tfm \
+	uptexdir/tests/skipjfmp.tex uptexdir/uptrip/uptrip.diffs \
+	uptexdir/uptrip/texmf.cnf uptexdir/tests/pver1.tex \
+	uptexdir/tests/pver2.tex uptexdir/tests/ctrlsym.tex \
+	uptexdir/tests/ctrlsym-e.log uptexdir/tests/ctrlsym-u.log \
+	uptexdir/tests/endlinechar.tex uptexdir/tests/endline.log \
+	uptexdir/tests/control-symbol.tex \
+	uptexdir/tests/jctrlsym-e.log uptexdir/tests/jctrlsym-u.log \
+	uptexdir/tests/up-endlinea.typ \
+	uptexdir/tests/up-jctrlsyma-e.typ \
+	uptexdir/tests/up-jctrlsyma-u.typ \
+	uptexdir/tests/let_char_token.tex uptexdir/tests/chartoken.log \
+	uptexdir/tests/ptexlineendmode.tex \
+	uptexdir/tests/up-lineenda.typ uptexdir/tests/printkanji.tex \
+	uptexdir/tests/pknj-s.log uptexdir/tests/pknj-e.log \
+	uptexdir/tests/pknj-u.log uptexdir/tests/up-pknj-sa.typ \
+	uptexdir/tests/up-pknj-ea.typ uptexdir/tests/up-pknj-ua.typ \
+	uptexdir/tests/up-ofm.tex uptexdir/tests/up-ofm.log \
+	uptexdir/tests/up-ofma.typ uptexdir/tests/up-prim.tex \
+	uptexdir/tests/up-prim.log uptexdir/tests/lmr1.tex \
+	uptexdir/tests/up-lmr1.log uptexdir/tests/lmr2.tex \
+	uptexdir/tests/up-lmr2.log uptexdir/tests/catcd.tex \
+	uptexdir/tests/up-cat.log uptexdir/tests/noto1.tex \
+	uptexdir/tests/up-noto1.log uptexdir/tests/ucs.tex \
+	uptexdir/tests/ucs-s.log uptexdir/tests/ucs-e.log \
+	uptexdir/tests/ucs-u.log uptexdir/tests/jchwidow.tex \
+	uptexdir/tests/up-jchwidow-s.log \
+	uptexdir/tests/up-jchwidow-e.log \
+	uptexdir/tests/up-jchwidow.log $(euptex_web_srcs) \
+	$(euptex_ch_srcs) euptexdir/euptex.defines euptexdir/COPYRIGHT \
+	euptexdir/COPYRIGHT.jis euptexdir/ChangeLog \
+	euptexdir/EUPTEX.txt $(euptex_tests) \
 	euptexdir/eptrip/eptrip.log euptexdir/eptrip/eptrip.tex \
 	euptexdir/euptrip/euptrip.diffs euptexdir/euptrip/texmf.cnf \
 	euptexdir/pdfprimitive.test \
 	euptexdir/tests/pdfprimitive-test.tex \
 	euptexdir/tests/pdfprimitive-euptex.log \
-	euptexdir/tests/ctrlsym.tex euptexdir/tests/ctrlsym.log \
-	euptexdir/tests/endlinechar.tex euptexdir/tests/endline.log \
-	euptexdir/tests/control-symbol.tex \
-	euptexdir/tests/jctrlsym.log euptexdir/tests/eup-endlinea.typ \
-	euptexdir/tests/eup-jctrlsyma.typ \
+	euptexdir/tests/ctrlsym.tex euptexdir/tests/ctrlsym-e.log \
+	euptexdir/tests/ctrlsym-u.log euptexdir/tests/endlinechar.tex \
+	euptexdir/tests/endline.log euptexdir/tests/control-symbol.tex \
+	euptexdir/tests/jctrlsym-e.log euptexdir/tests/jctrlsym-u.log \
+	euptexdir/tests/eup-endlinea.typ \
+	euptexdir/tests/eup-jctrlsyma-e.typ \
+	euptexdir/tests/eup-jctrlsyma-u.typ \
 	euptexdir/tests/printkanji.tex euptexdir/tests/pknj-s.log \
 	euptexdir/tests/pknj-e.log euptexdir/tests/pknj-u.log \
 	euptexdir/tests/eup-pknj-sa.typ \
@@ -3343,23 +3367,24 @@ EXTRA_DIST = PROJECTS cftests cpascal.h help.h w2c/config.h \
 	euptexdir/tests/eup-ofm.log euptexdir/tests/eup-prim.tex \
 	euptexdir/tests/eup-prim.log euptexdir/tests/ucs.tex \
 	euptexdir/tests/ucs-s.log euptexdir/tests/ucs-e.log \
-	euptexdir/tests/ucs-u.log euptexdir/tests/eup-jchwidow.log \
-	hitexdir/ChangeLog $(hitex_web) $(hitex_tests) \
-	hitexdir/tests/hello.tex hitexdir/tests/rule.tex \
-	pdftexdir/regex/COPYING.LIB pdftexdir/regex/README \
-	$(pdftex_ch_srcs) pdftexdir/pdftex.defines pdftexdir/ChangeLog \
-	pdftexdir/NEWS pdftexdir/README pdftexdir/change-files.txt \
-	$(pdftex_tests) tests/wprob.tex pdftexdir/tests/pdfimage.tex \
-	tests/1-4.jpg tests/B.pdf tests/basic.tex \
-	tests/lily-ledger-broken.png tests/expanded.tex \
-	tests/expanded.txt tests/cnfline.tex tests/partoken-ok.tex \
-	tests/partoken-xfail.tex $(ttf2afm_tests) \
-	pdftexdir/tests/postV3.afm pdftexdir/tests/postV3.ttf \
-	pdftexdir/tests/postV7.afm pdftexdir/tests/postV7.ttf \
-	$(pdftosrc_tests) pdftexdir/tests/test-13.pdf \
-	pdftexdir/tests/test-13.xref pdftexdir/tests/test-15.pdf \
-	pdftexdir/tests/test-15.xref $(libluasocket_sources) \
-	luatexdir/luasocket/src/ftp_lua.c \
+	euptexdir/tests/ucs-u.log euptexdir/tests/eup-jchwidow-s.log \
+	euptexdir/tests/eup-jchwidow-e.log \
+	euptexdir/tests/eup-jchwidow.log hitexdir/ChangeLog \
+	$(hitex_web) $(hitex_tests) hitexdir/tests/hello.tex \
+	hitexdir/tests/rule.tex pdftexdir/regex/COPYING.LIB \
+	pdftexdir/regex/README $(pdftex_ch_srcs) \
+	pdftexdir/pdftex.defines pdftexdir/ChangeLog pdftexdir/NEWS \
+	pdftexdir/README pdftexdir/change-files.txt $(pdftex_tests) \
+	tests/wprob.tex pdftexdir/tests/pdfimage.tex tests/1-4.jpg \
+	tests/B.pdf tests/basic.tex tests/lily-ledger-broken.png \
+	tests/expanded.tex tests/expanded.txt tests/cnfline.tex \
+	tests/partoken-ok.tex tests/partoken-xfail.tex \
+	$(ttf2afm_tests) pdftexdir/tests/postV3.afm \
+	pdftexdir/tests/postV3.ttf pdftexdir/tests/postV7.afm \
+	pdftexdir/tests/postV7.ttf $(pdftosrc_tests) \
+	pdftexdir/tests/test-13.pdf pdftexdir/tests/test-13.xref \
+	pdftexdir/tests/test-15.pdf pdftexdir/tests/test-15.xref \
+	$(libluasocket_sources) luatexdir/luasocket/src/ftp_lua.c \
 	luatexdir/luasocket/src/headers_lua.c \
 	luatexdir/luasocket/src/http_lua.c \
 	luatexdir/luasocket/src/ltn12_lua.c \
@@ -3654,33 +3679,32 @@ DISTCLEANFILES = CXXLD.sh tangle.c tangle.h tangle.p tangle-web2c \
 	ptex.pool ptex-tangle $(pweb_programs:=.c) \
 	$(pweb_programs:=.h) $(pweb_programs:=.p) \
 	$(pweb_programs:=-web2c) $(pweb_programs:=.web) \
-	ptests/nissya_bib.* ptests/xexampl.aux ptests/xexampl.bbl \
-	ptests/xexampl.blg ptests/xenc*.* ptests/fn*.* \
-	ptests/memtest.bib ptests/memtest?.* ptests/xstory.dvityp \
-	ptests/xpagenum.typ ptests/xptex[34]*.typ ptests/xcmr10.tfm \
-	ptests/xcmr10.pl ptests/xsample*.typ ptests/x*min10.* \
-	ptests/xchcode*.* ptests/xskipjfmp.* ptrip.diffs p-ctrlsym.log \
-	p-ctrlsym.out p-ctrlsym.tex p-endline*.* p-jctrlsym*.* \
-	p-chartoken.* p-lineend.* p-pknj-*.* p-ucs*.* p-jchwidow*.* \
-	$(nodist_uptex_SOURCES) uptex.web uptex.ch uptex-web2c uptex.p \
-	uptex.pool uptex-tangle $(upweb_programs:=.c) \
-	$(upweb_programs:=.h) $(upweb_programs:=.p) \
-	$(upweb_programs:=-web2c) $(upweb_programs:=.web) \
-	uptests/nissya_bib.* uptests/xexampl.aux uptests/xexampl.bbl \
-	uptests/xexampl.blg uptests/xenc*.* uptests/fn*.* \
-	uptests/memtest.bib uptests/memtest?.* uptests/xstory.dvityp \
-	uptests/xpagenum.typ uptests/x*ptex[345]*.typ \
-	uptests/xcmr10.tfm uptests/xcmr10.pl uptests/xsample*.typ \
-	uptests/x*min10.* uptests/xchcode*.* uptests/xtestnewu*.* \
-	uptests/xuparse.* uptests/yuparse.* uptests/ygkhuge*.* \
-	uptests/ygk256*.* uptests/xskipjfmp.* uptrip.diffs up-ofm.* \
-	up-prim.* up-lmr*.* up-cat.* up-noto*.* up-jchwidow.* \
-	$(nodist_euptex_SOURCES) euptex.web euptex.ch euptex-web2c \
-	euptex.p euptex.pool euptex-tangle euptrip.diffs \
-	pdfprimitive-euptex.* eup-ctrlsym.log eup-ctrlsym.out \
-	eup-ctrlsym.tex eup-endline*.* eup-jctrlsym*.* eup-pknj-*.* \
-	eup-postpena*.* eup-free_*.* eup-inhibitglue*.* eup-kinsoku*.* \
-	eup-ofm.* eup-prim.* eup-ucs*.* eup-jchwidow.* \
+	ptests/xexampl.aux ptests/xexampl.bbl ptests/xexampl.blg \
+	ptests/xenc*.* ptests/fn*.* ptests/memtest.bib \
+	ptests/memtest?.* ptests/xcmr10.tfm ptests/xcmr10.pl \
+	ptrip.diffs p-ctrlsym.log p-ctrlsym.out p-ctrlsym.tex \
+	p-endline*.* p-jctrlsym*.* p-chartoken.* p-lineend.* \
+	p-pknj-*.* p-ucs*.* p-jchwidow*.* $(nodist_uptex_SOURCES) \
+	uptex.web uptex.ch uptex-web2c uptex.p uptex.pool uptex-tangle \
+	$(upweb_programs:=.c) $(upweb_programs:=.h) \
+	$(upweb_programs:=.p) $(upweb_programs:=-web2c) \
+	$(upweb_programs:=.web) uptests/nissya_bib.* \
+	uptests/xexampl.aux uptests/xexampl.bbl uptests/xexampl.blg \
+	uptests/xenc*.* uptests/fn*.* uptests/memtest.bib \
+	uptests/memtest?.* uptests/xstory.dvityp uptests/xpagenum.typ \
+	uptests/x*ptex[345]*.typ uptests/xcmr10.tfm uptests/xcmr10.pl \
+	uptests/xsample*.typ uptests/x*min10.* uptests/xchcode*.* \
+	uptests/xtestnewu*.* uptests/xuparse.* uptests/yuparse.* \
+	uptests/ygkhuge*.* uptests/ygk256*.* uptests/xskipjfmp.* \
+	uptrip.diffs up-ctrlsym.log up-ctrlsym.out up-ctrlsym.tex \
+	up-endline*.* up-jctrlsym*.* up-chartoken.* up-lineend.* \
+	up-pknj-*.* up-ofm.* up-prim.* up-lmr*.* up-cat.* up-noto*.* \
+	up-ucs*.* up-jchwidow*.* $(nodist_euptex_SOURCES) euptex.web \
+	euptex.ch euptex-web2c euptex.p euptex.pool euptex-tangle \
+	euptrip.diffs pdfprimitive-euptex.* eup-ctrlsym.log \
+	eup-ctrlsym.out eup-ctrlsym.tex eup-endline*.* eup-jctrlsym*.* \
+	eup-pknj-*.* eup-postpena*.* eup-free_*.* eup-inhibitglue*.* \
+	eup-kinsoku*.* eup-ofm.* eup-prim.* eup-ucs*.* eup-jchwidow*.* \
 	$(nodist_hitex_SOURCES) $(nodist_hishrink_SOURCES) \
 	$(nodist_histretch_SOURCES) hiformat-tangle hitex-tangle \
 	hello.log rule.log $(nodist_pdftex_SOURCES) pdftex-final.ch \
@@ -4569,9 +4593,12 @@ uptex_tests = \
 	uptexdir/upver.test \
 	uptexdir/upkcat.test \
 	uptexdir/wcfname.test uptexdir/wcfname0.test \
+	uptexdir/uptex-ctrlsym.test \
+	uptexdir/uptex-prntknj.test \
 	uptexdir/uptex-ofm.test uptexdir/uptex-prim.test \
 	uptexdir/uptex-lmr.test uptexdir/uptex-cat.test \
-	uptexdir/uptex-noto.test uptexdir/uptex-widow.test
+	uptexdir/uptex-noto.test \
+	uptexdir/uptex-ucs.test uptexdir/uptex-widow.test
 
 # uppPLtoTF/upTFtoPL
 upweb_tests = uptexdir/upbibtex.test uptexdir/updvitype.test \
@@ -22152,9 +22179,11 @@ uptexdir/uptriptest.log uptexdir/ptriptest.log: \
 	uptex$(EXEEXT) dvitype$(EXEEXT) pltotf$(EXEEXT) tftopl$(EXEEXT)
 uptexdir/upver.log uptexdir/upkcat.log \
 	uptexdir/wcfname.log uptexdir/wcfname0.log \
+	uptexdir/uptex-ctrlsym.log uptexdir/uptex-prntknj.log \
 	uptexdir/uptex-ofm.log uptexdir/uptex-prim.log \
 	uptexdir/uptex-lmr.log uptexdir/uptex-cat.log \
-	uptexdir/uptex-noto.log uptexdir/uptex-widow.log: uptex$(EXEEXT)
+	uptexdir/uptex-noto.log \
+	uptexdir/uptex-ucs.log uptexdir/uptex-widow.log: uptex$(EXEEXT)
 uptexdir/upbibtex.log: upbibtex$(EXEEXT)
 uptexdir/updvitype.log: updvitype$(EXEEXT)
 uptexdir/uppltotf.log: uppltotf$(EXEEXT)

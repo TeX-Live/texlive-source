@@ -13,16 +13,16 @@ _upbibtex=$BinDir/upbibtex$ExeExt
 
 test -d uptests || mkdir -p uptests
 
-cp $srcdir/ptexdir/tests/nissya_bib.aux uptests/nissya_bib.aux
+cp $srcdir/uptexdir/tests/nissya_bib.aux uptests/nissya_bib.aux
 
 TEXMFCNF=$srcdir/../kpathsea \
-  BSTINPUTS=$srcdir/ptexdir/tests \
-  BIBINPUTS=$srcdir/ptexdir/tests \
+  BSTINPUTS=$srcdir/uptexdir/tests \
+  BIBINPUTS=$srcdir/uptexdir/tests \
   $_upbibtex -kanji-internal=euc uptests/nissya_bib || exit 1
-  diff $srcdir/ptexdir/tests/nissya_bib.bbl uptests/nissya_bib.bbl || exit 2
+  diff $srcdir/uptexdir/tests/nissya_bib.bbl uptests/nissya_bib.bbl || exit 2
 
 TEXMFCNF=$srcdir/../kpathsea \
-  BSTINPUTS=$srcdir/ptexdir/tests \
-  BIBINPUTS=$srcdir/ptexdir/tests \
+  BSTINPUTS=$srcdir/uptexdir/tests \
+  BIBINPUTS=$srcdir/uptexdir/tests \
   $_upbibtex uptests/nissya_bib || exit 3
 

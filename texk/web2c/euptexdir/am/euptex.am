@@ -141,10 +141,13 @@ EXTRA_DIST += \
 DISTCLEANFILES += pdfprimitive-euptex.*
 
 ## euptexdir/euptex-ctrlsym.test
-EXTRA_DIST += euptexdir/tests/ctrlsym.tex euptexdir/tests/ctrlsym.log \
+EXTRA_DIST += euptexdir/tests/ctrlsym.tex euptexdir/tests/ctrlsym-e.log \
+	euptexdir/tests/ctrlsym-u.log \
 	euptexdir/tests/endlinechar.tex euptexdir/tests/endline.log \
-	euptexdir/tests/control-symbol.tex euptexdir/tests/jctrlsym.log \
-	euptexdir/tests/eup-endlinea.typ euptexdir/tests/eup-jctrlsyma.typ
+	euptexdir/tests/control-symbol.tex euptexdir/tests/jctrlsym-e.log \
+	euptexdir/tests/jctrlsym-u.log \
+	euptexdir/tests/eup-endlinea.typ euptexdir/tests/eup-jctrlsyma-e.typ \
+	euptexdir/tests/eup-jctrlsyma-u.typ
 DISTCLEANFILES += eup-ctrlsym.log eup-ctrlsym.out eup-ctrlsym.tex \
 	eup-endline*.* eup-jctrlsym*.*
 ## euptexdir/euptex-prntknj.test
@@ -172,8 +175,9 @@ EXTRA_DIST += euptexdir/tests/ucs.tex euptexdir/tests/ucs-s.log \
 	euptexdir/tests/ucs-e.log euptexdir/tests/ucs-u.log
 DISTCLEANFILES += eup-ucs*.*
 ## euptexdir/euptex-widow.test
-EXTRA_DIST += euptexdir/tests/eup-jchwidow.log
-DISTCLEANFILES += eup-jchwidow.*
+EXTRA_DIST += euptexdir/tests/eup-jchwidow-s.log \
+	euptexdir/tests/eup-jchwidow-e.log euptexdir/tests/eup-jchwidow.log
+DISTCLEANFILES += eup-jchwidow*.*
 
 euptrip.diffs: euptex$(EXEEXT) dvitype$(EXEEXT) pltotf$(EXEEXT) tftopl$(EXEEXT)
 	$(triptrap_diffs) $@

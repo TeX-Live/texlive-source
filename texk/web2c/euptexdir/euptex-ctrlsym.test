@@ -1,5 +1,5 @@
 #! /bin/sh -vx
-# Copyright 2024 Japanese TeX Development Community <issue@texjp.org>
+# Copyright 2024-2025 Japanese TeX Development Community <issue@texjp.org>
 # You may freely use, modify and/or distribute this file.
 
 BinDir=${BinDir:-.}
@@ -19,17 +19,23 @@ rm -f eup-ctrlsym.* eup-endline*.* eup-jctrlsym*.*
 if test ! -f ./eup-basic.tex; then
   cp $srcdir/tests/dump-basic.tex ./eup-basic.tex
 fi
+if test ! -f ./eup-basic-euc.fmt; then
+  $_euptex -ini -kanji-internal=euc   -jobname=eup-basic-euc  eup-basic || exit 2
+fi
 if test ! -f ./eup-basic.fmt; then
-  $_euptex -ini -etex eup-basic || exit 1
+  $_euptex -ini -etex eup-basic || exit 3
 fi
 
 # ctrlsym.tex
 $LN_S $srcdir/euptexdir/tests/ctrlsym.tex ./eup-ctrlsym.tex
-$_euptex -etex -fmt=eup-basic eup-ctrlsym || exit 2
+$_euptex -etex -fmt=eup-basic-euc -kanji-internal=euc -jobname=eup-ctrlsym-e eup-ctrlsym || exit 10
+$_euptex -etex -fmt=eup-basic                         -jobname=eup-ctrlsym-u eup-ctrlsym || exit 11
 
-sed 1d eup-ctrlsym.log >eup-ctrlsym.out
+sed 1d eup-ctrlsym-e.log >eup-ctrlsym-e.out
+sed 1d eup-ctrlsym-u.log >eup-ctrlsym-u.out
 
-diff $srcdir/euptexdir/tests/ctrlsym.log eup-ctrlsym.out || exit 3
+diff $srcdir/euptexdir/tests/ctrlsym-e.log eup-ctrlsym-e.out || exit 12
+diff $srcdir/euptexdir/tests/ctrlsym-u.log eup-ctrlsym-u.out || exit 13
 
 
 # endlinchar.tex
@@ -38,26 +44,32 @@ $_euptex -fmt=eup-basic -interaction=batchmode eup-endline.tex || :
 
 sed 1d eup-endline.log >eup-endline.out
 
-diff $srcdir/euptexdir/tests/endline.log eup-endline.out || exit 4
+diff $srcdir/euptexdir/tests/endline.log eup-endline.out || exit 20
 
 if test -f $_updvitype; then
   $_updvitype ./eup-endline.dvi >euptests/xeup-endline.typ
   sed "1d;s/TeX output 20[23].\...\...:.*'/TeX output 20XX.XX.XX'/" euptests/xeup-endline.typ >euptests/xeup-endlinea.typ
-  diff $srcdir/euptexdir/tests/eup-endlinea.typ euptests/xeup-endlinea.typ || exit 5
+  diff $srcdir/euptexdir/tests/eup-endlinea.typ euptests/xeup-endlinea.typ || exit 21
 fi
 
 
 # control-symbol.tex
 $LN_S $srcdir/euptexdir/tests/control-symbol.tex ./eup-jctrlsym.tex
-$_euptex -fmt=eup-basic -interaction=batchmode eup-jctrlsym.tex || :
+$_euptex -etex -fmt=eup-basic-euc -kanji-internal=euc -jobname=eup-jctrlsym-e -interaction=batchmode eup-jctrlsym.tex || :
+$_euptex -etex -fmt=eup-basic                         -jobname=eup-jctrlsym-u -interaction=batchmode eup-jctrlsym.tex || :
 
-sed 1d eup-jctrlsym.log >eup-jctrlsym.out
+sed 1d eup-jctrlsym-e.log >eup-jctrlsym-e.out
+sed 1d eup-jctrlsym-u.log >eup-jctrlsym-u.out
 
-diff $srcdir/euptexdir/tests/jctrlsym.log eup-jctrlsym.out || exit 6
+diff $srcdir/euptexdir/tests/jctrlsym-e.log eup-jctrlsym-e.out || exit 30
+diff $srcdir/euptexdir/tests/jctrlsym-u.log eup-jctrlsym-u.out || exit 31
 
 if test -f $_updvitype; then
-  $_updvitype ./eup-jctrlsym.dvi >euptests/xeup-jctrlsym.typ
-  sed "1d;s/TeX output 20[23].\...\...:.*'/TeX output 20XX.XX.XX'/" euptests/xeup-jctrlsym.typ >euptests/xeup-jctrlsyma.typ
-  diff $srcdir/euptexdir/tests/eup-jctrlsyma.typ euptests/xeup-jctrlsyma.typ || exit 7
+  $_updvitype ./eup-jctrlsym-e.dvi >euptests/xeup-jctrlsym-e.typ
+  $_updvitype ./eup-jctrlsym-u.dvi >euptests/xeup-jctrlsym-u.typ
+  sed "1d;s/TeX output 20[23].\...\...:.*'/TeX output 20XX.XX.XX'/" euptests/xeup-jctrlsym-e.typ >euptests/xeup-jctrlsyma-e.typ
+  sed "1d;s/TeX output 20[23].\...\...:.*'/TeX output 20XX.XX.XX'/" euptests/xeup-jctrlsym-u.typ >euptests/xeup-jctrlsyma-u.typ
+  diff $srcdir/euptexdir/tests/eup-jctrlsyma-e.typ euptests/xeup-jctrlsyma-e.typ || exit 32
+  diff $srcdir/euptexdir/tests/eup-jctrlsyma-u.typ euptests/xeup-jctrlsyma-u.typ || exit 33
 fi
 

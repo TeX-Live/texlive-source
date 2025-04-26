@@ -131,9 +131,6 @@ endif PWEB
 
 ## Test data and results
 ##
-## ptexdir/nissya.test
-EXTRA_DIST += ptexdir/tests/nissya.bst ptexdir/tests/sample.bib
-DISTCLEANFILES += ptests/nissya_bib.*
 ## ptexdir/pbibtex.test
 EXTRA_DIST += tests/testfield.bst \
 	tests/enc-asc.bib tests/enc-jis.bib tests/enc-sjis.bib \
@@ -147,31 +144,15 @@ DISTCLEANFILES += ptests/xexampl.aux ptests/xexampl.bbl ptests/xexampl.blg \
 ## ptexdir/pbibtex-mem.test
 EXTRA_DIST += tests/memdata1.bst tests/memdata2.bst tests/memdata3.bst
 DISTCLEANFILES += ptests/memtest.bib ptests/memtest?.*
-## ptexdir/pdvitype.test
-EXTRA_DIST += ptexdir/tests/ptex3.tex ptexdir/tests/ptex3.dvi \
-	ptexdir/tests/ptex4.tex ptexdir/tests/ptex4.dvi \
-	ptexdir/tests/ptex3a-jis.typ ptexdir/tests/ptex3a-utf8.typ \
-	ptexdir/tests/ptex4a-jis.typ ptexdir/tests/ptex4a-utf8.typ
-DISTCLEANFILES += ptests/xstory.dvityp ptests/xpagenum.typ ptests/xptex[34]*.typ
 ## ptexdir/ppltotf.test
 DISTCLEANFILES += ptests/xcmr10.tfm
 ## ptexdir/ptftopl.test
 DISTCLEANFILES += ptests/xcmr10.pl
-## ptexdir/sample.test
-EXTRA_DIST += ptexdir/tests/goth10.tfm ptexdir/tests/sample.dvi ptexdir/tests/samplea.typ
-DISTCLEANFILES += ptests/xsample*.typ
-## ptexdir/yokotate.test
-EXTRA_DIST += ptexdir/tests/min10.pl ptexdir/tests/min10.tfm
-EXTRA_DIST += ptexdir/tests/tmin10.pl ptexdir/tests/tmin10.tfm
-EXTRA_DIST += ptexdir/tests/chcode.pl ptexdir/tests/chcode-jis.pl ptexdir/tests/chcode.tfm \
-	ptexdir/tests/chcode-utf8.pl ptexdir/tests/chcode-euc.pl ptexdir/tests/chcode-sjis.pl
-DISTCLEANFILES += ptests/x*min10.* ptests/xchcode*.*
-## ptexdir/skipjfmp.test
-EXTRA_DIST += ptexdir/tests/skipjfmp.pl ptexdir/tests/skipjfmp.tfm
-DISTCLEANFILES += ptests/xskipjfmp.*
 ## ptexdir/ptriptest
 EXTRA_DIST += ptexdir/ptrip/ptrip.diffs ptexdir/ptrip/texmf.cnf
 DISTCLEANFILES += ptrip.diffs
+## ptexdir/pver.test
+EXTRA_DIST += ptexdir/tests/pver1.tex ptexdir/tests/pver2.tex
 
 ## ptex-ctrlsym.test
 EXTRA_DIST += ptexdir/tests/ctrlsym.tex ptexdir/tests/ctrlsym.log \
@@ -192,7 +173,8 @@ EXTRA_DIST += ptexdir/tests/ucs.tex ptexdir/tests/ucs-s.log \
 	ptexdir/tests/ucs-e.log
 DISTCLEANFILES += p-ucs*.*
 ## ptexdir/ptex-widow.test
-EXTRA_DIST += ptexdir/tests/p-jchwidow.log
+EXTRA_DIST += ptexdir/tests/p-jchwidow-e.log \
+	ptexdir/tests/p-jchwidow-s.log
 DISTCLEANFILES += p-jchwidow*.*
 
 ptrip.diffs: ptex$(EXEEXT) dvitype$(EXEEXT) pltotf$(EXEEXT) tftopl$(EXEEXT)

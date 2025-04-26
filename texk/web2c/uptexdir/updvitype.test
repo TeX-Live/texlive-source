@@ -27,14 +27,14 @@ TEXMFCNF=$srcdir/../kpathsea \
 
 
 TEXMFCNF=$srcdir/../kpathsea
-TFMFONTS=$srcdir/ptexdir/tests:$srcdir/uptexdir/tests:$srcdir/tests
+TFMFONTS=$srcdir/uptexdir/tests:$srcdir/tests
 export TEXMFCNF TFMFONTS
 
 for enc in utf8 jis; do
 for doc in ptex3 ptex4; do
-  $_updvitype -kanji=$enc $srcdir/ptexdir/tests/$doc.dvi >uptests/x$doc-$enc.typ || rc=3
+  $_updvitype -kanji=$enc $srcdir/uptexdir/tests/$doc.dvi >uptests/x$doc-$enc.typ || rc=3
   sed 1d uptests/x$doc-$enc.typ >uptests/x${doc}a-$enc.typ
-  diff $srcdir/ptexdir/tests/${doc}a-$enc.typ uptests/x${doc}a-$enc.typ || rc=4
+  diff $srcdir/uptexdir/tests/${doc}a-$enc.typ uptests/x${doc}a-$enc.typ || rc=4
 done
 done
 

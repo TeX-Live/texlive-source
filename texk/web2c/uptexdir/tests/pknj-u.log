@@ -2,7 +2,7 @@
  %&-line parsing enabled.
 **printkanji
 (./printkanji.tex
-\openout1 = `up-pknj-s.out'.
+\openout1 = `up-pknj-u.out'.
 
 
 {MSG ^^c5^^bf ^^c5^^bf 顛 }
@@ -19,8 +19,8 @@ l.29 \show\A
 l.40 \show\B
             
 
-■\jobname. {MSG *あ*up-pknj-s*:up-pknj-s:*macro:->:up-pknj-s:*}
-{TOT *あ*up-pknj-s*:up-pknj-s:*macro:->:up-pknj-s:*}
+■\jobname. {MSG *あ*up-pknj-u*:up-pknj-u:*macro:->:up-pknj-u:*}
+{TOT *あ*up-pknj-u*:up-pknj-u:*macro:->:up-pknj-u:*}
 
 ■oneletter. {MSG \catcode`\^^c5= 197}
 {TOT \catcode`\^^c5= 197}
@@ -28,13 +28,13 @@ l.40 \show\B
 {TOT \catcode`^^c5 = 197}
 {MSG \catcode`^^c5^^bf = 197}
 {TOT \catcode`^^c5^^bf = 197}
-{MSG \catcode`顛 = 37726}
-{TOT \catcode`顛 = 37726}
+{MSG \catcode`顛 = 39003}
+{TOT \catcode`顛 = 39003}
 ■csname1.
 > \顛=macro:
 ->hoge.
 l.72 \show\顛
-             
+              
 
 > \^^c5^^bf=macro:
 ->piyo.
@@ -60,10 +60,10 @@ l.74 \expandafter\show\csname ^^c5^^bf\endcsname
 {MSG \あ=> hoge, \^^e3^^81^^82=> piyo. \^^e3^^81^^82=> piyo. }
 {TOT \あ=> hoge, \^^e3^^81^^82=> piyo. \^^e3^^81^^82=> piyo. }
 ■0xFF. 
-{MSG あ, ^^c5^^bf ^^c5^^bf 顛 , \^^ff^^c5^^ff^^bf, macro:->(\^^ff^^c5^^ff^^bf:m
-acro:->あ).}
-{TOT あ, ^^c5^^bf ^^c5^^bf 顛 , \^^ff^^c5^^ff^^bf, macro:->(\^^ff^^c5^^ff^^bf:m
-acro:->あ).}
+{MSG あ, ^^c5^^bf ^^c5^^bf 顛 , \^^ff^^c5^^ff^^bf, macro:->(\^^ff^^c5^^ff^^bf
+:macro:->あ).}
+{TOT あ, ^^c5^^bf ^^c5^^bf 顛 , \^^ff^^c5^^ff^^bf, macro:->(\^^ff^^c5^^ff^^bf
+:macro:->あ).}
 {MSG い, (\^^ff:macro:->い), \^^ff, macro:->(\^^ff:macro:->い).}
 {TOT い, (\^^ff:macro:->い), \^^ff, macro:->(\^^ff:macro:->い).}
 ■contexts.
@@ -71,9 +71,9 @@ acro:->あ).}
 \@->\A \undefined 
                   
 \a ->^^c5^^bf a^^c5^^bf ^^c5^^bf 顛 \@
-                                       ^^c5^^bf 顛 
+                                        ^^c5^^bf 顛 
 \+#1->\^^c5^^bf \顛 \^^ff^^c5^^ff^^bf #1
-                                         \^^ff macro:->^^c5^^bf ^^c5^^bf 顛 ...
+                                          \^^ff macro:->^^c5^^bf ^^c5^^bf ...
 l.136 \+\a
           
 The control sequence at the end of the top line
@@ -86,8 +86,8 @@ and I'll forget about whatever was undefined.
 \@->\A \undefined 
                   
 \a ->^^c5^^bf a^^c5^^bf ^^c5^^bf 顛 \@
-                                       ^^c5^^bf 顛 
-l.138 ...5^^ff^^bf ^^c5^^bf \^^c5^^bf ^^c5^^bf顛\a
+                                        ^^c5^^bf 顛 
+l.138 ...^^ff^^bf ^^c5^^bf \^^c5^^bf ^^c5^^bf顛\a
                                                    \^^ff ^^ff\^^c5^^bf
 The control sequence at the end of the top line
 of your error message was never \def'ed. If you have
@@ -146,7 +146,7 @@ spelling (e.g., `I\hbox'). Otherwise just continue,
 and I'll forget about whatever was undefined.
 
 ! Undefined control sequence.
-\b ...5^^be .\^^c5^^bf .\^^c5^^bd ..\転 .\顛 .\貼 
+\b ...be .\^^c5^^bf .\^^c5^^bd ..\転 .\顛 .\貼 
                                                   .
 l.154 \b
         
@@ -158,7 +158,7 @@ and I'll forget about whatever was undefined.
 
 ! Undefined control sequence.
 l.156 \^^c5^^be
-               .\^^c5^^bf.\^^c5^^bd..\転.\顛.\貼.
+               .\ſ.\Ž..\転.\顛.\貼.
 The control sequence at the end of the top line
 of your error message was never \def'ed. If you have
 misspelled it (e.g., `\hobx'), type `I' and the correct
@@ -175,8 +175,8 @@ spelling (e.g., `I\hbox'). Otherwise just continue,
 and I'll forget about whatever was undefined.
 
 ! Undefined control sequence.
-l.156 \^^c5^^be.\^^c5^^bf.\^^c5^^bd..\転.\顛.\貼
-                                                .
+l.156 ...5^^be.\^^c5^^bf.\^^c5^^bd..\転.\顛.\貼
+                                                  .
 The control sequence at the end of the top line
 of your error message was never \def'ed. If you have
 misspelled it (e.g., `\hobx'), type `I' and the correct
@@ -192,7 +192,7 @@ l.162 SHOW \show\^^c5^^bf
 > \顛=macro:
 ->b.
 l.162 SHOW \show\^^c5^^bf.\show\顛
-                                  .%
+                                   .%
 
 > \^^c5^^bf=macro:
 ->a.
@@ -204,22 +204,22 @@ l.163 \expandafter\show\csname ^^c5^^bf\endcsname
 > \顛=macro:
 ->b.
 <recently read> \顛 
-                    
+                     
 l.164 \expandafter\show\csname 顛\endcsname
-                                           
+                                            
 
 \^^e3^^81^^82\あ 
-ifx:FALSE
-[37726]
-Memory usage before: 1274&5529; after: 118&5092; still untouched: 4992439
+ifx:TRUE
+[39003]
+Memory usage before: 1274&5528; after: 118&5091; still untouched: 4992441
  ) 
 Here is how much of TeX's memory you used:
  26 strings out of 49XXXX
- 147 string characters out of 6219XXX
- 7561 words of memory out of 5000000
+ 152 string characters out of 6219XXX
+ 7559 words of memory out of 5000000
  97X multiletter control sequences out of 15000+600000
- 3271 words of font info for 2 fonts, out of 8000000 for 9000
+ 3297 words of font info for 2 fonts, out of 8000000 for 9000
  0 hyphenation exceptions out of 8191
  6i,4n,2p,97b,22s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
-Output written on up-pknj-s.dvi (1 page, 1148 bytes).
+Output written on up-pknj-u.dvi (1 page, 1148 bytes).

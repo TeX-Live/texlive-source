@@ -1,0 +1,43 @@
+#! /bin/sh -vx
+# Copyright 2024-2025 Japanese TeX Development Community <issue@texjp.org>
+# You may freely use, modify and/or distribute this file.
+
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_uptex=$BinDir/uptex$ExeExt
+
+LC_ALL=C; export LC_ALL;  LANGUAGE=C; export LANGUAGE
+
+TEXMFCNF=$srcdir/../kpathsea;export TEXMFCNF
+OFMFONTS=".;$srcdir/tests"; export OFMFONTS
+TEXINPUTS=".;$srcdir/tests"; export TEXINPUTS
+TEXFORMATS=.; export TEXFORMATS
+
+rm -f up-ucs*.*
+$LN_S $srcdir/uptexdir/tests/ucs.tex ./up-ucs.tex
+
+if test ! -f ./up-basic.tex; then
+  cp $srcdir/tests/dump-basic.tex ./up-basic.tex
+fi
+if test ! -f ./up-basic-sjis.fmt; then
+  $_uptex -ini -kanji-internal=sjis  -jobname=up-basic-sjis up-basic || exit 1
+fi
+if test ! -f ./up-basic-euc.fmt; then
+  $_uptex -ini -kanji-internal=euc   -jobname=up-basic-euc  up-basic || exit 2
+fi
+if test ! -f ./up-basic.fmt; then
+  $_uptex -ini -kanji-internal=uptex -jobname=up-basic      up-basic || exit 3
+fi
+
+$_uptex -fmt=up-basic-sjis -kanji-internal=sjis -jobname=up-ucs-s -interaction=batchmode up-ucs || exit 4
+$_uptex -fmt=up-basic-euc  -kanji-internal=euc  -jobname=up-ucs-e -interaction=batchmode up-ucs || exit 5
+$_uptex -fmt=up-basic                           -jobname=up-ucs-u -interaction=batchmode up-ucs || exit 6
+
+sed 1d up-ucs-s.log >up-ucs-s.out
+sed 1d up-ucs-e.log >up-ucs-e.out
+sed 1d up-ucs-u.log >up-ucs-u.out
+
+diff $srcdir/uptexdir/tests/ucs-s.log up-ucs-s.out || exit 10
+diff $srcdir/uptexdir/tests/ucs-e.log up-ucs-e.out || exit 11
+diff $srcdir/uptexdir/tests/ucs-u.log up-ucs-u.out || exit 12
+

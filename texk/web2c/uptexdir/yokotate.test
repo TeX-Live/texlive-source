@@ -31,7 +31,7 @@ done
 
 
 # Test inputs
-testdir=$srcdir/ptexdir/tests
+testdir=$srcdir/uptexdir/tests
 
 # Testing pPLtoTF/pTFtoPL compatible mode for character range & encoding.
 for font in chcode; do

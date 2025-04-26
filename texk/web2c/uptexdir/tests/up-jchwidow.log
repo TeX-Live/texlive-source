@@ -280,7 +280,7 @@ l.42 \TEST{\kchar\kuten"0419\char\kuten"0103}
 l.43 \TEST{\kchar\kuten"0419\kchar\kuten"0103}
                                               
 
-KCHAR"3B1, kcatcode=15
+KCHAR"E0EA, kcatcode=15
 > \box0=
 \vbox(7.77588+1.38855)x469.75499, yoko direction
 .\hbox(7.77588+1.38855)x469.75499, glue set 387.73756fil
@@ -292,7 +292,7 @@ KCHAR"3B1, kcatcode=15
 ..\jpy あ
 ..\jpy あ
 ..\jpy い
-..\jpy α
+..\jpy 
 ..\jpy 。
 ..\penalty 10000
 ..\glue(\parfillskip) 0.0 plus 1.0fil
@@ -301,7 +301,7 @@ KCHAR"3B1, kcatcode=15
 ! OK.
 <to be read again> 
                    }
-l.50   \TEST{い\kchar"03B1。}
+l.50   \TEST{い\kchar"E0EA。}
                                
 
 > \box0=
@@ -314,7 +314,7 @@ l.50   \TEST{い\kchar"03B1。}
 ..\jpy あ
 ..\jpy あ
 ..\jpy あ
-..\jpy α
+..\jpy 
 ..\jpy 。
 ..\penalty 10000
 ..\glue(\parfillskip) 0.0 plus 1.0fil
@@ -323,7 +323,7 @@ l.50   \TEST{い\kchar"03B1。}
 ! OK.
 <to be read again> 
                    }
-l.51   \TEST{\kchar"03B1。}
+l.51   \TEST{\kchar"E0EA。}
                             
 
 > \box0=
@@ -336,7 +336,7 @@ l.51   \TEST{\kchar"03B1。}
 ..\jpy あ
 ..\jpy あ
 ..\jpy あ
-..\jpy α
+..\jpy 
 ..\jpy 。
 ..\penalty 10000
 ..\glue(\parfillskip) 0.0 plus 1.0fil
@@ -345,7 +345,7 @@ l.51   \TEST{\kchar"03B1。}
 ! OK.
 <to be read again> 
                    }
-l.52   \TEST{\relax\kchar"03B1。}
+l.52   \TEST{\relax\kchar"E0EA。}
                                   
 
 > \box0=
@@ -359,7 +359,7 @@ l.52   \TEST{\relax\kchar"03B1。}
 ..\jpy あ
 ..\jpy あ
 ..\rule(*+*)x0.4
-..\jpy α
+..\jpy 
 ..\jpy 。
 ..\penalty 10000
 ..\glue(\parfillskip) 0.0 plus 1.0fil
@@ -368,7 +368,7 @@ l.52   \TEST{\relax\kchar"03B1。}
 ! OK.
 <to be read again> 
                    }
-l.53   \TEST{\vrule\kchar"03B1。}
+l.53   \TEST{\vrule\kchar"E0EA。}
                                   
 
 > \box0=
@@ -384,7 +384,7 @@ l.53   \TEST{\vrule\kchar"03B1。}
 ..\glue(\xkanjiskip) 0.0
 ..\cmr b
 ..\glue(\xkanjiskip) 0.0
-..\jpy α
+..\jpy 
 ..\jpy 。
 ..\penalty 10000
 ..\glue(\parfillskip) 0.0 plus 1.0fil
@@ -393,7 +393,7 @@ l.53   \TEST{\vrule\kchar"03B1。}
 ! OK.
 <to be read again> 
                    }
-l.54   \TEST{b\kchar"03B1。}
+l.54   \TEST{b\kchar"E0EA。}
                              
 
 > \box0=
@@ -407,7 +407,7 @@ l.54   \TEST{b\kchar"03B1。}
 ..\jpy あ
 ..\jpy あ
 ..\jpy い
-..\jpy α
+..\jpy 
 ..\jpy 。
 ..\penalty 10000
 ..\glue(\parfillskip) 0.0 plus 1.0fil
@@ -419,7 +419,7 @@ l.54   \TEST{b\kchar"03B1。}
 l.55   \TEST{い\S。}
                       
 
-CHAR"3B1, kcatcode=15
+CHAR"E0EA, kcatcode=15
 > \box0=
 \vbox(7.77588+1.38855)x469.75499, yoko direction
 .\hbox(7.77588+1.38855)x469.75499, glue set 387.73756fil
@@ -431,7 +431,7 @@ CHAR"3B1, kcatcode=15
 ..\jpy あ
 ..\jpy あ
 ..\jpy い
-..\jpy α
+..\jpy 
 ..\jpy 。
 ..\penalty 10000
 ..\glue(\parfillskip) 0.0 plus 1.0fil
@@ -440,7 +440,7 @@ CHAR"3B1, kcatcode=15
 ! OK.
 <to be read again> 
                    }
-l.60   \TEST{い\char"03B1。}
+l.60   \TEST{い\char"E0EA。}
                               
 
 > \box0=
@@ -453,7 +453,7 @@ l.60   \TEST{い\char"03B1。}
 ..\jpy あ
 ..\jpy あ
 ..\jpy あ
-..\jpy α
+..\jpy 
 ..\jpy 。
 ..\penalty 10000
 ..\glue(\parfillskip) 0.0 plus 1.0fil
@@ -462,7 +462,7 @@ l.60   \TEST{い\char"03B1。}
 ! OK.
 <to be read again> 
                    }
-l.61   \TEST{\char"03B1。}
+l.61   \TEST{\char"E0EA。}
                            
 
 > \box0=
@@ -475,7 +475,7 @@ l.61   \TEST{\char"03B1。}
 ..\jpy あ
 ..\jpy あ
 ..\jpy あ
-..\jpy α
+..\jpy 
 ..\jpy 。
 ..\penalty 10000
 ..\glue(\parfillskip) 0.0 plus 1.0fil
@@ -484,7 +484,7 @@ l.61   \TEST{\char"03B1。}
 ! OK.
 <to be read again> 
                    }
-l.62   \TEST{\relax\char"03B1。}
+l.62   \TEST{\relax\char"E0EA。}
                                  
 
 > \box0=
@@ -498,7 +498,7 @@ l.62   \TEST{\relax\char"03B1。}
 ..\jpy あ
 ..\jpy あ
 ..\rule(*+*)x0.4
-..\jpy α
+..\jpy 
 ..\jpy 。
 ..\penalty 10000
 ..\glue(\parfillskip) 0.0 plus 1.0fil
@@ -507,7 +507,7 @@ l.62   \TEST{\relax\char"03B1。}
 ! OK.
 <to be read again> 
                    }
-l.63   \TEST{\vrule\char"03B1。}
+l.63   \TEST{\vrule\char"E0EA。}
                                  
 
 > \box0=
@@ -523,7 +523,7 @@ l.63   \TEST{\vrule\char"03B1。}
 ..\glue(\xkanjiskip) 0.0
 ..\cmr b
 ..\glue(\xkanjiskip) 0.0
-..\jpy α
+..\jpy 
 ..\jpy 。
 ..\penalty 10000
 ..\glue(\parfillskip) 0.0 plus 1.0fil
@@ -532,7 +532,7 @@ l.63   \TEST{\vrule\char"03B1。}
 ! OK.
 <to be read again> 
                    }
-l.64   \TEST{b\char"03B1。}
+l.64   \TEST{b\char"E0EA。}
                             
 
 > \box0=
@@ -546,7 +546,7 @@ l.64   \TEST{b\char"03B1。}
 ..\jpy あ
 ..\jpy あ
 ..\jpy い
-..\jpy α
+..\jpy 
 ..\jpy 。
 ..\penalty 10000
 ..\glue(\parfillskip) 0.0 plus 1.0fil
@@ -558,7 +558,7 @@ l.64   \TEST{b\char"03B1。}
 l.65   \TEST{い\S。}
                       
 
-KCHARDEF"3B1, kcatcode=15
+KCHARDEF"E0EA, kcatcode=15
 > \box0=
 \vbox(7.77588+1.38855)x469.75499, yoko direction
 .\hbox(7.77588+1.38855)x469.75499, glue set 387.73756fil
@@ -570,7 +570,7 @@ KCHARDEF"3B1, kcatcode=15
 ..\jpy あ
 ..\jpy あ
 ..\jpy い
-..\jpy α
+..\jpy 
 ..\jpy 。
 ..\penalty 10000
 ..\glue(\parfillskip) 0.0 plus 1.0fil
@@ -592,7 +592,7 @@ l.70   \TEST{い\KA 。}
 ..\jpy あ
 ..\jpy あ
 ..\jpy あ
-..\jpy α
+..\jpy 
 ..\jpy 。
 ..\penalty 10000
 ..\glue(\parfillskip) 0.0 plus 1.0fil
@@ -614,7 +614,7 @@ l.71   \TEST{\KA 。}
 ..\jpy あ
 ..\jpy あ
 ..\jpy あ
-..\jpy α
+..\jpy 
 ..\jpy 。
 ..\penalty 10000
 ..\glue(\parfillskip) 0.0 plus 1.0fil
@@ -637,7 +637,7 @@ l.72   \TEST{\relax\KA 。}
 ..\jpy あ
 ..\jpy あ
 ..\rule(*+*)x0.4
-..\jpy α
+..\jpy 
 ..\jpy 。
 ..\penalty 10000
 ..\glue(\parfillskip) 0.0 plus 1.0fil
@@ -662,7 +662,7 @@ l.73   \TEST{\vrule\KA 。}
 ..\glue(\xkanjiskip) 0.0
 ..\cmr b
 ..\glue(\xkanjiskip) 0.0
-..\jpy α
+..\jpy 
 ..\jpy 。
 ..\penalty 10000
 ..\glue(\parfillskip) 0.0 plus 1.0fil
@@ -685,7 +685,7 @@ l.74   \TEST{b\KA 。}
 ..\jpy あ
 ..\jpy あ
 ..\jpy い
-..\jpy α
+..\jpy 
 ..\jpy 。
 ..\penalty 10000
 ..\glue(\parfillskip) 0.0 plus 1.0fil
@@ -697,7 +697,7 @@ l.74   \TEST{b\KA 。}
 l.75   \TEST{い\S。}
                       
 
-CHARDEF"3B1, kcatcode=15
+CHARDEF"E0EA, kcatcode=15
 > \box0=
 \vbox(7.77588+1.38855)x469.75499, yoko direction
 .\hbox(7.77588+1.38855)x469.75499, glue set 387.73756fil
@@ -709,7 +709,7 @@ CHARDEF"3B1, kcatcode=15
 ..\jpy あ
 ..\jpy あ
 ..\jpy い
-..\jpy α
+..\jpy 
 ..\jpy 。
 ..\penalty 10000
 ..\glue(\parfillskip) 0.0 plus 1.0fil
@@ -731,7 +731,7 @@ l.80   \TEST{い\CA 。}
 ..\jpy あ
 ..\jpy あ
 ..\jpy あ
-..\jpy α
+..\jpy 
 ..\jpy 。
 ..\penalty 10000
 ..\glue(\parfillskip) 0.0 plus 1.0fil
@@ -753,7 +753,7 @@ l.81   \TEST{\CA 。}
 ..\jpy あ
 ..\jpy あ
 ..\jpy あ
-..\jpy α
+..\jpy 
 ..\jpy 。
 ..\penalty 10000
 ..\glue(\parfillskip) 0.0 plus 1.0fil
@@ -776,7 +776,7 @@ l.82   \TEST{\relax\CA 。}
 ..\jpy あ
 ..\jpy あ
 ..\rule(*+*)x0.4
-..\jpy α
+..\jpy 
 ..\jpy 。
 ..\penalty 10000
 ..\glue(\parfillskip) 0.0 plus 1.0fil
@@ -801,7 +801,7 @@ l.83   \TEST{\vrule\CA 。}
 ..\glue(\xkanjiskip) 0.0
 ..\cmr b
 ..\glue(\xkanjiskip) 0.0
-..\jpy α
+..\jpy 
 ..\jpy 。
 ..\penalty 10000
 ..\glue(\parfillskip) 0.0 plus 1.0fil

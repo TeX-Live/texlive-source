@@ -17,7 +17,7 @@ tfmparent=`dirname "$tfmpath"`
 tfmgrandparent=`dirname "$tfmparent"`
 
 # Test inputs
-testdir=$srcdir/ptexdir/tests
+testdir=$srcdir/uptexdir/tests
 
 TEXMFCNF=$srcdir/../kpathsea \
   TFMFONTS="$testdir;"`dirname "$tfmgrandparent"`// \
