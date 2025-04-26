@@ -1,0 +1,77 @@
+#! /bin/sh -vx
+# Copyright 2024 Japanese TeX Development Community <issue@texjp.org>
+# You may freely use, modify and/or distribute this file.
+
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_ptex=$BinDir/ptex$ExeExt
+_updvitype=$BinDir/updvitype$ExeExt
+
+LC_ALL=C; export LC_ALL;  LANGUAGE=C; export LANGUAGE
+
+TEXMFCNF=$srcdir/../kpathsea;export TEXMFCNF
+TEXINPUTS=".;$srcdir/tests"; export TEXINPUTS
+TEXFONTS=".;$srcdir//tests"; export TEXFONTS
+TEXFORMATS=.; export TEXFORMATS
+
+rm -f p-ctrlsym.tex p-endline*.* p-jctrlsym*.* p-chartoken.* p-lineend.*
+
+if test ! -f ./p-basic.tex; then
+  cp $srcdir/tests/dump-basic.tex ./p-basic.tex
+fi
+if test ! -f ./p-basic-euc.fmt; then
+  $_ptex -ini -kanji-internal=euc   -jobname=p-basic-euc  p-basic || exit 2
+fi
+
+# ctrlsym.tex
+$LN_S $srcdir/ptexdir/tests/ctrlsym.tex ./p-ctrlsym.tex
+$_ptex -fmt=p-basic-euc p-ctrlsym || exit 2
+
+sed 1d p-ctrlsym.log >p-ctrlsym.out
+
+diff $srcdir/ptexdir/tests/ctrlsym.log p-ctrlsym.out || exit 3
+
+
+# endlinchar.tex
+$LN_S $srcdir/ptexdir/tests/endlinechar.tex ./p-endline.tex
+$_ptex -fmt=p-basic-euc -interaction=batchmode p-endline.tex || :
+
+sed 1d p-endline.log >p-endline.out
+
+diff $srcdir/ptexdir/tests/endline.log p-endline.out || exit 4
+
+$_updvitype ./p-endline.dvi >ptests/xp-endline.typ
+sed "1d;s/TeX output 20[23].\...\...:.*'/TeX output 20XX.XX.XX'/" ptests/xp-endline.typ >ptests/xp-endlinea.typ
+diff $srcdir/ptexdir/tests/p-endlinea.typ ptests/xp-endlinea.typ || exit 5
+
+
+# control-symbol.tex
+$LN_S $srcdir/ptexdir/tests/control-symbol.tex ./p-jctrlsym.tex
+$_ptex -fmt=p-basic-euc -interaction=batchmode p-jctrlsym.tex || :
+
+sed 1d p-jctrlsym.log >p-jctrlsym.out
+
+diff $srcdir/ptexdir/tests/jctrlsym.log p-jctrlsym.out || exit 6
+
+$_updvitype ./p-jctrlsym.dvi >ptests/xp-jctrlsym.typ
+sed "1d;s/TeX output 20[23].\...\...:.*'/TeX output 20XX.XX.XX'/" ptests/xp-jctrlsym.typ >ptests/xp-jctrlsyma.typ
+diff $srcdir/ptexdir/tests/p-jctrlsyma.typ ptests/xp-jctrlsyma.typ || exit 7
+
+
+# let_char_token.tex
+$LN_S $srcdir/ptexdir/tests/let_char_token.tex ./p-chartoken.tex
+$_ptex -fmt=p-basic-euc -interaction=batchmode p-chartoken.tex || :
+
+sed 1d p-chartoken.log >p-chartoken.out
+
+diff $srcdir/ptexdir/tests/chartoken.log p-chartoken.out || exit 8
+
+
+# ptexlineendmode.tex
+$LN_S $srcdir/ptexdir/tests/ptexlineendmode.tex ./p-lineend.tex
+$_ptex -fmt=p-basic-euc -kanji=utf8 -interaction=batchmode p-lineend.tex || :
+
+$_updvitype -kanji=utf8 ./p-lineend.dvi >ptests/xp-lineend.typ
+sed "1d;s/TeX output 20[23].\...\...:.*'/TeX output 20XX.XX.XX'/" ptests/xp-lineend.typ >ptests/xp-lineenda.typ
+diff $srcdir/ptexdir/tests/p-lineenda.typ ptests/xp-lineenda.typ || exit 9
+

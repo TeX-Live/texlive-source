@@ -1,0 +1,37 @@
+#! /bin/sh -vx
+# Copyright 2024 Japanese TeX Development Community <issue@texjp.org>
+# You may freely use, modify and/or distribute this file.
+
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_ptex=$BinDir/ptex$ExeExt
+
+LC_ALL=C; export LC_ALL;  LANGUAGE=C; export LANGUAGE
+
+TEXMFCNF=$srcdir/../kpathsea;export TEXMFCNF
+OFMFONTS=".;$srcdir/tests"; export OFMFONTS
+TEXINPUTS=".;$srcdir/tests"; export TEXINPUTS
+TEXFORMATS=.; export TEXFORMATS
+
+rm -f p-ucs*.*
+$LN_S $srcdir/ptexdir/tests/ucs.tex ./p-ucs.tex
+
+if test ! -f ./p-basic.tex; then
+  cp $srcdir/tests/dump-basic.tex ./p-basic.tex
+fi
+if test ! -f ./p-basic-sjis.fmt; then
+  $_ptex -ini -kanji-internal=sjis  -jobname=p-basic-sjis p-basic || exit 1
+fi
+if test ! -f ./p-basic-euc.fmt; then
+  $_ptex -ini -kanji-internal=euc   -jobname=p-basic-euc  p-basic || exit 2
+fi
+
+$_ptex -fmt=p-basic-sjis -kanji-internal=sjis -jobname=p-ucs-s -interaction=batchmode p-ucs || exit 4
+$_ptex -fmt=p-basic-euc  -kanji-internal=euc  -jobname=p-ucs-e -interaction=batchmode p-ucs || exit 5
+
+sed 1d p-ucs-s.log >p-ucs-s.out
+sed 1d p-ucs-e.log >p-ucs-e.out
+
+diff $srcdir/ptexdir/tests/ucs-s.log p-ucs-s.out || exit 10
+diff $srcdir/ptexdir/tests/ucs-e.log p-ucs-e.out || exit 11
+

@@ -1,0 +1,42 @@
+ restricted \write18 enabled.
+ %&-line parsing enabled.
+**p-jctrlsym.tex
+(./p-jctrlsym.tex
+■control symbol
+> \X=macro:
+->\+.
+l.27 \show\X
+            \relax\message{(\meaning\X)}
+
+(macro:->\+)
+> \Y=macro:
+->\＋.
+l.28 \show\Y
+            \relax\message{(\meaning\Y)}
+
+(macro:->\＋) ■control word
+> \X=macro:
+->\+ .
+l.39 \show\X
+            \relax\message{(\meaning\X)}
+
+(macro:->\+ )
+> \Y=macro:
+->\＋ .
+l.40 \show\Y
+            \relax\message{(\meaning\Y)}
+
+(macro:->\＋ ) ■control word
+> \X=macro:
+->\ABC .
+l.48 \show\X
+            \relax\message{(\meaning\X)}
+
+(macro:->\ABC )
+> \Y=macro:
+->\あいう .
+l.49 \show\Y
+            \relax\message{(\meaning\Y)}
+
+(macro:->\あいう ) ■行末の和文コントロールシンボル [1] )
+Output written on p-jctrlsym.dvi (1 page, 376 bytes).

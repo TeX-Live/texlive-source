@@ -1,0 +1,11 @@
+ restricted \write18 enabled.
+ %&-line parsing enabled.
+**p-ctrlsym
+(./p-ctrlsym.tex 
+A: 49379
+
+\雪 ->snow
+B: 49379. 雪\雪snow
+macro:->snow.
+ )
+No pages of output.

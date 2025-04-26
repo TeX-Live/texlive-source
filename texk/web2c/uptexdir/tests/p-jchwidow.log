@@ -1,0 +1,470 @@
+ restricted \write18 enabled.
+ %&-line parsing enabled.
+**p-jchwidow
+(./p-jchwidow.tex TEST
+> \box0=
+\vbox(7.77588+1.38855)x469.75499, yoko direction
+.\hbox(7.77588+1.38855)x469.75499, glue set 378.1154fil
+..\displace 0.0
+..\jpy あ
+..\jpy あ
+..\jpy あ
+..\jpy あ
+..\jpy あ
+..\jpy あ
+..\jpy す
+..\jpy す
+..\glue(refer from jfm) 4.58203 minus 2.291
+..\jpy 「
+..\jpy 。
+..\penalty 10000
+..\glue(\parfillskip) 0.0 plus 1.0fil
+..\glue(\rightskip) 0.0
+
+! OK.
+<to be read again> 
+                   }
+l.19 \TEST{す{\kcatcode`す=18 す}「。}
+                                      
+
+> \box0=
+\vbox(7.77588+1.38855)x469.75499, yoko direction
+.\hbox(7.77588+1.38855)x469.75499, glue set 397.84087fil
+..\displace 0.0
+..\jpy あ
+..\jpy あ
+..\jpy あ
+..\jpy あ
+..\jpy あ
+..\jpy あ
+..\jpy す
+..\kern-0.48114
+..\jpy 。
+..\penalty 10000
+..\glue(\parfillskip) 0.0 plus 1.0fil
+..\glue(\rightskip) 0.0
+
+! OK.
+<to be read again> 
+                   }
+l.20 \TEST{\CR。}
+                 
+
+> \box0=
+\vbox(7.77588+1.38855)x469.75499, yoko direction
+.\hbox(7.77588+1.38855)x469.75499, glue set 397.84087fil
+..\displace 0.0
+..\jpy あ
+..\jpy あ
+..\jpy あ
+..\jpy あ
+..\jpy あ
+..\jpy あ
+..\jpy す
+..\kern-0.48114
+..\jpy 。
+..\penalty 10000
+..\glue(\parfillskip) 0.0 plus 1.0fil
+..\glue(\rightskip) 0.0
+
+! OK.
+<to be read again> 
+                   }
+l.28 \TEST{す。}
+                
+
+> \box0=
+\vbox(7.77588+1.38855)x469.75499, yoko direction
+.\hbox(7.77588+1.38855)x469.75499, glue set 397.84087fil
+..\displace 0.0
+..\jpy あ
+..\jpy あ
+..\jpy あ
+..\jpy あ
+..\jpy あ
+..\jpy あ
+..\jpy す
+..\kern-0.48114
+..\jpy 。
+..\penalty 10000
+..\glue(\parfillskip) 0.0 plus 1.0fil
+..\glue(\rightskip) 0.0
+
+! OK.
+<to be read again> 
+                   }
+l.29 \TEST{す\char\kuten"0103}
+                              
+
+> \box0=
+\vbox(7.77588+1.38855)x469.75499, yoko direction
+.\hbox(7.77588+1.38855)x469.75499, glue set 397.84087fil
+..\displace 0.0
+..\jpy あ
+..\jpy あ
+..\jpy あ
+..\jpy あ
+..\jpy あ
+..\jpy あ
+..\jpy す
+..\kern-0.48114
+..\jpy 。
+..\penalty 10000
+..\glue(\parfillskip) 0.0 plus 1.0fil
+..\glue(\rightskip) 0.0
+
+! OK.
+<to be read again> 
+                   }
+l.34 \TEST{\char\kuten"0419。}
+                              
+
+> \box0=
+\vbox(7.77588+1.38855)x469.75499, yoko direction
+.\hbox(7.77588+1.38855)x469.75499, glue set 397.84087fil
+..\displace 0.0
+..\jpy あ
+..\jpy あ
+..\jpy あ
+..\jpy あ
+..\jpy あ
+..\jpy あ
+..\jpy す
+..\kern-0.48114
+..\jpy 。
+..\penalty 10000
+..\glue(\parfillskip) 0.0 plus 1.0fil
+..\glue(\rightskip) 0.0
+
+! OK.
+<to be read again> 
+                   }
+l.35 \TEST{\char\kuten"0419\char\kuten"0103}
+                                            
+
+! Invalid code (15), should be in the range 16..18.
+l.46 {\kcatcode`α=15
+                     
+I'm going to use 16 instead of that illegal code value.
+
+CHAR"3B1, kcatcode=15
+! Bad character code (945).
+<to be read again> 
+                   。\BAD.
+\TEST ...kens \undefined \else \scantokens \fi {#1
+                                                  }}\showboxbreadth 10000\sh...
+l.60   \TEST{い\char"03B1。}
+                            
+A character number must be between 0 and 255, or KANJI code.
+I changed this one to zero.
+
+> \box0=
+\vbox(7.77588+1.38855)x469.75499, yoko direction
+.\hbox(7.77588+1.38855)x469.75499, glue set 391.10971fil
+..\displace 0.0
+..\jpy あ
+..\jpy あ
+..\jpy あ
+..\jpy あ
+..\jpy あ
+..\jpy あ
+..\jpy い
+..\cmr ^^@
+..\jpy 。
+..\penalty 10000
+..\glue(\parfillskip) 0.0 plus 1.0fil
+..\glue(\rightskip) 0.0
+
+! OK.
+<to be read again> 
+                   }
+l.60   \TEST{い\char"03B1。}
+                            
+
+! Bad character code (945).
+<to be read again> 
+                   。\BAD.
+\TEST ...kens \undefined \else \scantokens \fi {#1
+                                                  }}\showboxbreadth 10000\sh...
+l.61   \TEST{\char"03B1。}
+                          
+A character number must be between 0 and 255, or KANJI code.
+I changed this one to zero.
+
+> \box0=
+\vbox(7.77588+1.38855)x469.75499, yoko direction
+.\hbox(7.77588+1.38855)x469.75499, glue set 400.73187fil
+..\displace 0.0
+..\jpy あ
+..\jpy あ
+..\jpy あ
+..\jpy あ
+..\jpy あ
+..\jpy あ
+..\cmr ^^@
+..\jpy 。
+..\penalty 10000
+..\glue(\parfillskip) 0.0 plus 1.0fil
+..\glue(\rightskip) 0.0
+
+! OK.
+<to be read again> 
+                   }
+l.61   \TEST{\char"03B1。}
+                          
+
+! Bad character code (945).
+<to be read again> 
+                   。\BAD.
+\TEST ...kens \undefined \else \scantokens \fi {#1
+                                                  }}\showboxbreadth 10000\sh...
+l.62   \TEST{\relax\char"03B1。}
+                                
+A character number must be between 0 and 255, or KANJI code.
+I changed this one to zero.
+
+> \box0=
+\vbox(7.77588+1.38855)x469.75499, yoko direction
+.\hbox(7.77588+1.38855)x469.75499, glue set 400.73187fil
+..\displace 0.0
+..\jpy あ
+..\jpy あ
+..\jpy あ
+..\jpy あ
+..\jpy あ
+..\jpy あ
+..\cmr ^^@
+..\jpy 。
+..\penalty 10000
+..\glue(\parfillskip) 0.0 plus 1.0fil
+..\glue(\rightskip) 0.0
+
+! OK.
+<to be read again> 
+                   }
+l.62   \TEST{\relax\char"03B1。}
+                                
+
+! Bad character code (945).
+<to be read again> 
+                   。\BAD.
+\TEST ...kens \undefined \else \scantokens \fi {#1
+                                                  }}\showboxbreadth 10000\sh...
+l.63   \TEST{\vrule\char"03B1。}
+                                
+A character number must be between 0 and 255, or KANJI code.
+I changed this one to zero.
+
+> \box0=
+\vbox(7.77588+1.38855)x469.75499, yoko direction
+.\hbox(7.77588+1.38855)x469.75499, glue set 400.33188fil
+..\displace 0.0
+..\jpy あ
+..\jpy あ
+..\jpy あ
+..\jpy あ
+..\jpy あ
+..\jpy あ
+..\rule(*+*)x0.4
+..\cmr ^^@
+..\jpy 。
+..\penalty 10000
+..\glue(\parfillskip) 0.0 plus 1.0fil
+..\glue(\rightskip) 0.0
+
+! OK.
+<to be read again> 
+                   }
+l.63   \TEST{\vrule\char"03B1。}
+                                
+
+! Bad character code (945).
+<to be read again> 
+                   。\BAD.
+\TEST ...kens \undefined \else \scantokens \fi {#1
+                                                  }}\showboxbreadth 10000\sh...
+l.64   \TEST{b\char"03B1。}
+                           
+A character number must be between 0 and 255, or KANJI code.
+I changed this one to zero.
+
+> \box0=
+\vbox(7.77588+1.38855)x469.75499, yoko direction
+.\hbox(7.77588+1.38855)x469.75499, glue set 395.1763fil
+..\displace 0.0
+..\jpy あ
+..\jpy あ
+..\jpy あ
+..\jpy あ
+..\jpy あ
+..\jpy あ
+..\glue(\xkanjiskip) 0.0
+..\cmr b
+..\cmr ^^@
+..\jpy 。
+..\penalty 10000
+..\glue(\parfillskip) 0.0 plus 1.0fil
+..\glue(\rightskip) 0.0
+
+! OK.
+<to be read again> 
+                   }
+l.64   \TEST{b\char"03B1。}
+                           
+
+! Bad character code (945).
+<to be read again> 
+                   。\BAD.
+\TEST ...kens \undefined \else \scantokens \fi {#1
+                                                  }}\showboxbreadth 10000\sh...
+l.65   \TEST{い\S。}
+                    
+A character number must be between 0 and 255, or KANJI code.
+I changed this one to zero.
+
+> \box0=
+\vbox(7.77588+1.38855)x469.75499, yoko direction
+.\hbox(7.77588+1.38855)x469.75499, glue set 391.10971fil
+..\displace 0.0
+..\jpy あ
+..\jpy あ
+..\jpy あ
+..\jpy あ
+..\jpy あ
+..\jpy あ
+..\jpy い
+..\cmr ^^@
+..\jpy 。
+..\penalty 10000
+..\glue(\parfillskip) 0.0 plus 1.0fil
+..\glue(\rightskip) 0.0
+
+! OK.
+<to be read again> 
+                   }
+l.65   \TEST{い\S。}
+                    
+
+CHARDEF"3B1, kcatcode=15
+! Bad character code (945).
+l.79   \chardef\CA="3B1
+                       
+A character number must be between 0 and 255, or KANJI code.
+I changed this one to zero.
+
+> \box0=
+\vbox(7.77588+1.38855)x469.75499, yoko direction
+.\hbox(7.77588+1.38855)x469.75499, glue set 391.10971fil
+..\displace 0.0
+..\jpy あ
+..\jpy あ
+..\jpy あ
+..\jpy あ
+..\jpy あ
+..\jpy あ
+..\jpy い
+..\cmr ^^@
+..\jpy 。
+..\penalty 10000
+..\glue(\parfillskip) 0.0 plus 1.0fil
+..\glue(\rightskip) 0.0
+
+! OK.
+<to be read again> 
+                   }
+l.80   \TEST{い\CA 。}
+                      
+
+> \box0=
+\vbox(7.77588+1.38855)x469.75499, yoko direction
+.\hbox(7.77588+1.38855)x469.75499, glue set 400.73187fil
+..\displace 0.0
+..\jpy あ
+..\jpy あ
+..\jpy あ
+..\jpy あ
+..\jpy あ
+..\jpy あ
+..\cmr ^^@
+..\jpy 。
+..\penalty 10000
+..\glue(\parfillskip) 0.0 plus 1.0fil
+..\glue(\rightskip) 0.0
+
+! OK.
+<to be read again> 
+                   }
+l.81   \TEST{\CA 。}
+                    
+
+> \box0=
+\vbox(7.77588+1.38855)x469.75499, yoko direction
+.\hbox(7.77588+1.38855)x469.75499, glue set 400.73187fil
+..\displace 0.0
+..\jpy あ
+..\jpy あ
+..\jpy あ
+..\jpy あ
+..\jpy あ
+..\jpy あ
+..\cmr ^^@
+..\jpy 。
+..\penalty 10000
+..\glue(\parfillskip) 0.0 plus 1.0fil
+..\glue(\rightskip) 0.0
+
+! OK.
+<to be read again> 
+                   }
+l.82   \TEST{\relax\CA 。}
+                          
+
+> \box0=
+\vbox(7.77588+1.38855)x469.75499, yoko direction
+.\hbox(7.77588+1.38855)x469.75499, glue set 400.33188fil
+..\displace 0.0
+..\jpy あ
+..\jpy あ
+..\jpy あ
+..\jpy あ
+..\jpy あ
+..\jpy あ
+..\rule(*+*)x0.4
+..\cmr ^^@
+..\jpy 。
+..\penalty 10000
+..\glue(\parfillskip) 0.0 plus 1.0fil
+..\glue(\rightskip) 0.0
+
+! OK.
+<to be read again> 
+                   }
+l.83   \TEST{\vrule\CA 。}
+                          
+
+> \box0=
+\vbox(7.77588+1.38855)x469.75499, yoko direction
+.\hbox(7.77588+1.38855)x469.75499, glue set 395.1763fil
+..\displace 0.0
+..\jpy あ
+..\jpy あ
+..\jpy あ
+..\jpy あ
+..\jpy あ
+..\jpy あ
+..\glue(\xkanjiskip) 0.0
+..\cmr b
+..\cmr ^^@
+..\jpy 。
+..\penalty 10000
+..\glue(\parfillskip) 0.0 plus 1.0fil
+..\glue(\rightskip) 0.0
+
+! OK.
+<to be read again> 
+                   }
+l.84   \TEST{b\CA 。}
+                     
+
+ )
+No pages of output.

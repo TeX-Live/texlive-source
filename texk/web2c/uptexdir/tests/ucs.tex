@@ -1,0 +1,36 @@
+%#!eptex
+
+\def\typeout{\immediate\write17}
+
+\ifnum`あ="A4A2 \typeout{<EUC>}
+\else\ifnum`ア="8341 \typeout{<SJIS>}
+\else\typeout{<uptex>}\fi\fi
+
+\typeout{\string\ucs.}
+\newcount\cntA
+\loop\ifnum\cntA<256
+  \ifnum0>\ucs\cntA\else\typeout{\the\cntA: \ucs\cntA %
+    \ifx\Uchar\undefined\else(\Uchar\ucs\cntA)\fi}\fi
+  \advance\cntA1
+\repeat
+
+
+\typeout{\string\toucs.}
+\cntA=0
+\loop\ifnum\cntA<256
+  \ifnum0>\toucs\cntA\else\typeout{\the\cntA: \toucs\cntA}\fi
+  \advance\cntA1
+\repeat
+\typeout{\toucs"0, \toucs"80, \toucs"D7, \toucs"A7, \toucs"10000}
+\typeout{\toucs"8341, \toucs"EAA4, \toucs"EAA5}
+\typeout{\toucs"A4A2, \toucs"F4A6, \toucs"F4A7}
+\typeout{\jis"2131, \jis"213D, \jis"2141, \jis"2142, \jis"2144,
+         \jis"215D, \jis"216F, \jis"2171, \jis"2172, \jis"224C}
+\typeout{\ucs"203E, \ucs"2014, \ucs"301C, \ucs"2016, \ucs"2026,
+         \ucs"2212, \ucs"00A5, \ucs"00A2, \ucs"00A3, \ucs"00AC}
+\typeout{\ucs"FFE3, \ucs"2015, \ucs"FF5E, \ucs"2225, \ucs"22EF,
+         \ucs"FF0D, \ucs"FFE5, \ucs"FFE0, \ucs"FFE1, \ucs"FFE2}
+
+
+\bye
+

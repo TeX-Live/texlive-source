@@ -1,0 +1,52 @@
+%#!eptex -ini -etex
+\let\dump\relax
+\input plain
+\newlinechar=`^^J
+
+\newcount\tempcnta
+\newcount\CharCount
+
+\xdef\KINTERNAL{%
+  \ifnum\ucs"3000="3000 \string\ucs
+  \else\ifnum\euc"A1A1="A1A1 \string\euc
+  \else\ifnum\sjis"8140="8140 \string\sjis
+  \fi\fi\fi}
+
+{\escapechar-1 \xdef\CHAR{\string\char}\xdef\OMCHAR{\string\omathchar}}
+\def\CC#1{\expandafter\StripChar#1}
+\expandafter\def\expandafter\StripChar\expandafter#\expandafter1\CHAR#2{#2}
+\def\OC#1{\expandafter\StripOChar#1}
+\expandafter\def\expandafter\StripOChar\expandafter#\expandafter1\OMCHAR#2{#2}
+
+\CharCount=0\relax
+\tempcnta=0\relax
+%\ifnum\ucs"3000="3000 \else \tempcnta=256\relax \fi
+\loop\ifnum\tempcnta<"110000\relax
+ %\iffontchar\jfont\tempcnta\relax
+  \ifnum\ucs\toucs\tempcnta=\tempcnta\relax
+    \advance\CharCount by 1\relax
+\ifnum\ucs"3000="3000 \else % boring for upTeX -> omitted
+    \ifx\omathchardef\undefined      %%%%%
+      \message{^^J\KINTERNAL\the\tempcnta\space
+        = \string\ucs\toucs\tempcnta}
+    \else                            %%%%%
+      \chardef\KnjInternal=\tempcnta\relax
+      \omathchardef\KnjUCS=\toucs\tempcnta\relax
+      \message{^^J\KINTERNAL\CC{\meaning\KnjInternal}
+        = \string\ucs\OC{\meaning\KnjUCS} (\Uchar\tempcnta)}
+    \fi                              %%%%%
+\fi
+  \else
+\ifnum\ucs"3000="3000 % should not happen for upTeX
+    \errhelp{}\errmessage{Should not happen: char \the\tempcnta}
+\fi
+  \fi
+ %\fi
+  \advance\tempcnta by 1\relax
+\repeat
+
+\message{^^JNumber of valid characters: \the\CharCount^^J}
+% => for pTeX, should be 6879 (JIS X 0208)
+% => for upTeX, should be 1114112 (0..0x10FFFF)
+
+\end
