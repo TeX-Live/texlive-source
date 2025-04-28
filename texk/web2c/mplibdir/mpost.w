@@ -1029,7 +1029,7 @@ fprintf(stdout,
 "  With a --dvitomp argument, MetaPost acts as DVI-to-MPX converter only.\n"
 "  Call MetaPost with --dvitomp --help for option explanations.\n\n");
 fprintf(stdout,
-"  -ini                      be inimpost, for dumping mem files\n"
+"  -ini                      do not load any preload file\n"
 "  -interaction=STRING       set interaction mode (STRING=batchmode/nonstopmode/\n"
 "                            scrollmode/errorstopmode)\n"
 "  -numbersystem=STRING      set number system mode (STRING=scaled/double/binary/interval/decimal)\n"
@@ -1037,12 +1037,16 @@ fprintf(stdout,
 "  -progname=STRING          set program (and mem) name to STRING\n"
 "  -tex=TEXPROGRAM           use TEXPROGRAM for text labels\n"
 "  [-no]-file-line-error     disable/enable file:line:error style messages\n"
+"  -no-kpathsea              Do not use the kpathsea program to find files.\n"
+"                            All files have to be in the current directory\n" 
+"                            or specified via a full path.\n"
 );
 fprintf(stdout,
 "  -debug                    print debugging info and leave temporary files in place\n"
 "  -kpathsea-debug=NUMBER    set path searching debugging flags according to\n"
 "                            the bits of NUMBER\n"
-"  -mem=MEMNAME or &MEMNAME  use MEMNAME instead of program name or a %%& line\n"
+"  -mem=STRING               Use STRING for the name of the file that contains macros\n"
+"                            to be preloaded (same as &STRING)\n" 
 "  -recorder                 enable filename recorder\n"
 "  -restricted               be secure: disable tex, makempx and editor commands\n"
 "  -troff                    set prologues:=1 and assume TEXPROGRAM is really troff\n"

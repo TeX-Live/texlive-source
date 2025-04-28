@@ -1,4 +1,8 @@
-2025-03-11   Luigi Scarso <luigi.scarso@gmail.com>
+2025-04-28  Luigi Scarso <luigi.scarso@gmail.com>
+
+	* Fixed --help to be consistent with the manual
+
+2025-03-11  Luigi Scarso <luigi.scarso@gmail.com>
 
 	* Fixed mp_hard_times (H.Hagen)
 
