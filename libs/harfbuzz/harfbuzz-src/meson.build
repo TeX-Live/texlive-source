@@ -1,6 +1,6 @@
 project('harfbuzz', ['c', 'cpp'],
   meson_version: '>= 0.60.0',
-  version: '11.1.0',
+  version: '11.2.0',
   default_options: [
     'cpp_eh=none',          # Just to support msvc, we are passing -fno-exceptions also anyway
     # 'cpp_rtti=false',     # Do NOT enable, wraps inherit it and ICU needs RTTI
@@ -467,6 +467,7 @@ build_summary = {
   'Font callbacks (the more the merrier)':
     {'Builtin' : true,
      'FreeType': conf.get('HAVE_FREETYPE', 0) == 1,
+     'Fontations': conf.get('HAVE_FONTATIONS', 0) == 1,
     },
   'Dependencies used for command-line utilities':
     {'Cairo': conf.get('HAVE_CAIRO', 0) == 1,
