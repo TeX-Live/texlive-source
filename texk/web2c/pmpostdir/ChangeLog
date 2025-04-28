@@ -1,3 +1,7 @@
+2025-04-28  Andreas Scherer  <https://ascherer.github.io>
+
+	* pmpost.ch: Adapt to upstream mpost.w.
+
 2025-04-05  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* pmp.ch: Bump upmpost version to 2.11-0.04-u2.01.

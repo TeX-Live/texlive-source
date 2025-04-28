@@ -157,7 +157,7 @@ else
 "  With a --dvitomp argument, MetaPost acts as DVI-to-MPX converter only.\n"
 "  Call MetaPost with --dvitomp --help for option explanations.\n\n");
 fprintf(stdout,
-"  -ini                      be inimpost, for dumping mem files\n"
+"  -ini                      do not load any preload file\n"
 @y
 "Usage: "@= @>P_UP@= @>"mpost [OPTION] [&MEMNAME] [MPNAME[.mp]] [COMMANDS]\n"
 "       "@= @>P_UP@= @>"mpost --dvitomp DVINAME[.dvi] [MPXNAME[.mpx]]\n"
@@ -169,7 +169,7 @@ fprintf(stdout,
 "  With a --dvitomp argument, "@= @>P_UP@= @>"MetaPost acts as DVI-to-MPX converter only.\n"
 "  Call "@= @>P_UP@= @>"MetaPost with --dvitomp --help for option explanations.\n\n");
 fprintf(stdout,
-"  -ini                      be ini"@= @>P_UP@= @>"mpost, for dumping mem files\n"
+"  -ini                      do not load any preload file\n"
 @z
 
 @x
