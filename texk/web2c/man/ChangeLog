@@ -1,7 +1,7 @@
 2025-04-09  Karl Berry  <karl@freefriends.org>
 
-	* latex.man: add [ first-line ]; update LaTeX Companion to 3rd edition.
 	* latex-dev.man: wording.
+	* latex.man: add [ first-line ]; update LaTeX Companion to 3rd edition.
 
 2025-03-07  Karl Berry  <karl@tug.org>
 

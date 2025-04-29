@@ -15,7 +15,7 @@
 	https://tug.org/pipermail/tex-live/2025-April/051444.html
 
 	* xdvipdfm-pdf.test: new test, for this (pdfobj) and the page
-	Group (pdfgroup) fix from Clerk ma.
+	Group (pdfgroup) fix from Clerk Ma.
 	* Makefile.am (tests): add it.
 	* tests/xdvipdfm-pdfobj.xdv,
 	* tests/xdvipdfm-pdfgroup.dvi: new test input files.
