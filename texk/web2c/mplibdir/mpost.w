@@ -1019,7 +1019,7 @@ else
 mpost_xfree(s);
 fprintf(stdout,
 "\n"
-"Usage: mpost [OPTION] [&MEMNAME] [MPNAME[.mp]] [COMMANDS]\n"
+"Usage: mpost [OPTION] [&MPNAME] [MPNAME[.mp]] [COMMANDS]\n"
 "       mpost --dvitomp DVINAME[.dvi] [MPXNAME[.mpx]]\n"
 "\n"
 "  Run MetaPost on MPNAME, usually creating MPNAME.NNN (and perhaps\n"
@@ -1046,7 +1046,7 @@ fprintf(stdout,
 "  -kpathsea-debug=NUMBER    set path searching debugging flags according to\n"
 "                            the bits of NUMBER\n"
 "  -mem=STRING               Use STRING for the name of the file that contains macros\n"
-"                            to be preloaded (same as &STRING)\n" 
+"                            to be preloaded (same as &MPNAME)\n" 
 "  -recorder                 enable filename recorder\n"
 "  -restricted               be secure: disable tex, makempx and editor commands\n"
 "  -troff                    set prologues:=1 and assume TEXPROGRAM is really troff\n"
