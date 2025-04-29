@@ -1,3 +1,8 @@
+2025-04-29  Karl Berry  <karl@freefriends.org>
+
+	* Build: use TL_CFLAGS, TL_CXXFLAGS, etc., for TL_BUILD_ENV
+	if -g is not given.
+
 2025-03-08  Karl Berry  <karl@tug.org>
 
 	* version.ac: 2026/dev.

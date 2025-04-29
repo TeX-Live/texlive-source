@@ -68,8 +68,6 @@ if echo "$1" | grep '^--debug' >/dev/null || test "x$1" = x-g; then
   # The idea is that with Build -g, you can set TL_COMPILER_GFLAGS in
   # the environment with options common to all compilers --
   # not necessarily anything to do with debugging, e.g., -mcpu=sparvc9.
-  # Or you can set TL_{C,CXX,OBJCXX}FLAGS for per-language flags,
-  # notably TL_CFLAGS=-Wdeclaration-after-statement.
   # 
   # See https://tug.org/texlive/build.html for some discussion.
   # 
@@ -82,12 +80,15 @@ if echo "$1" | grep '^--debug' >/dev/null || test "x$1" = x-g; then
     exit 1
   fi
   export TL_COMPILER_CFLAGS
-  #
-  c="CFLAGS='$TL_COMPILER_GFLAGS $TL_CFLAGS'"
-  cxx="CXXFLAGS='$TL_COMPILER_GFLAGS $TL_CXXFLAGS'"
-  objcxx="OBJCXXFLAGS='$TL_COMPILER_GFLAGS $TL_OBJCXXFLAGS'" # only for macs
-  TL_BUILD_ENV="$c $cxx $objcxx $TL_BUILD_ENV"
 fi
+#
+# You can also set TL_{C,CXX,OBJCXX}FLAGS for per-language flags,
+# notably TL_CFLAGS=-Wdeclaration-after-statement to help Akira.
+#
+c="CFLAGS='$TL_COMPILER_GFLAGS $TL_CFLAGS'"
+cxx="CXXFLAGS='$TL_COMPILER_GFLAGS $TL_CXXFLAGS'"
+objcxx="OBJCXXFLAGS='$TL_COMPILER_GFLAGS $TL_OBJCXXFLAGS'" # only for macs
+TL_BUILD_ENV="$c $cxx $objcxx $TL_BUILD_ENV"
 
 # allow for changing the banner identification, e.g.,
 # --with-banner-add='/SomeDistro'; see the build doc.
