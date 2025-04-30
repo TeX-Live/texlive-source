@@ -109,7 +109,7 @@ extern bool program;
 extern int phase;
 
 /*:2*//*5:*/
-#line 77 "common.h"
+#line 92 "common.h"
 
 extern char section_text[];
 extern char*section_text_end;
@@ -117,7 +117,7 @@ extern char*id_first;
 extern char*id_loc;
 
 /*:5*//*6:*/
-#line 95 "common.h"
+#line 110 "common.h"
 
 extern char buffer[];
 extern char*buffer_end;
@@ -125,7 +125,7 @@ extern char*loc;
 extern char*limit;
 
 /*:6*//*7:*/
-#line 112 "common.h"
+#line 127 "common.h"
 
 extern int include_depth;
 extern FILE*file[];
@@ -141,7 +141,7 @@ extern bool changing;
 extern bool web_file_open;
 
 /*:7*//*9:*/
-#line 132 "common.h"
+#line 147 "common.h"
 
 extern sixteen_bits section_count;
 extern bool changed_section[];
@@ -149,7 +149,7 @@ extern bool change_pending;
 extern bool print_where;
 
 /*:9*//*10:*/
-#line 147 "common.h"
+#line 162 "common.h"
 
 typedef struct name_info{
 char*byte_start;
@@ -174,12 +174,12 @@ extern hash_pointer hash_end;
 extern hash_pointer hash_ptr;
 
 /*:10*//*12:*/
-#line 192 "common.h"
+#line 207 "common.h"
 
 extern int history;
 
 /*:12*//*14:*/
-#line 210 "common.h"
+#line 225 "common.h"
 
 extern int argc;
 extern char**argv;
@@ -190,7 +190,7 @@ extern char scn_file_name[];
 extern bool flags[];
 
 /*:14*//*15:*/
-#line 224 "common.h"
+#line 239 "common.h"
 
 extern FILE*C_file;
 extern FILE*tex_file;
@@ -314,14 +314,14 @@ FILE*active_file;
 extern void common_init(void);
 
 /*:3*//*8:*/
-#line 126 "common.h"
+#line 141 "common.h"
 
 extern bool get_line(void);
 extern void check_complete(void);
 extern void reset_input(void);
 
 /*:8*//*11:*/
-#line 170 "common.h"
+#line 185 "common.h"
 
 extern name_pointer id_lookup(const char*,const char*,eight_bits);
 
@@ -335,7 +335,7 @@ extern bool names_match(name_pointer,const char*,size_t,eight_bits);
 extern void init_node(name_pointer);
 
 /*:11*//*13:*/
-#line 195 "common.h"
+#line 210 "common.h"
 
 extern int wrap_up(void);
 extern void err_print(const char*);
