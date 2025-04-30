@@ -85,9 +85,10 @@ fi
 # You can also set TL_{C,CXX,OBJCXX}FLAGS for per-language flags,
 # notably TL_CFLAGS=-Wdeclaration-after-statement to help Akira.
 #
-c="CFLAGS='$TL_COMPILER_GFLAGS $TL_CFLAGS'"
-cxx="CXXFLAGS='$TL_COMPILER_GFLAGS $TL_CXXFLAGS'"
-objcxx="OBJCXXFLAGS='$TL_COMPILER_GFLAGS $TL_OBJCXXFLAGS'" # only for macs
+c="CFLAGS='$TL_COMPILER_GFLAGS $TL_CFLAGS $CFLAGS'"
+cxx="CXXFLAGS='$TL_COMPILER_GFLAGS $TL_CXXFLAGS $CXXFLAGS'"
+objcxx="OBJCXXFLAGS='$TL_COMPILER_GFLAGS $TL_OBJCXXFLAGS $OBJCXXFLAGS'"
+  # objcxx is only used on macs.
 TL_BUILD_ENV="$c $cxx $objcxx $TL_BUILD_ENV"
 
 # allow for changing the banner identification, e.g.,

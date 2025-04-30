@@ -1,3 +1,8 @@
+2025-04-30  Karl Berry  <karl@freefriends.org>
+
+	* Build: incorporate original CFLAGS, CXXFLAGS, OBJCXXFLAGS values.
+	https://tug.org/pipermail/tlbuild/2025q2/005771.html
+
 2025-04-29  Karl Berry  <karl@freefriends.org>
 
 	* Build: use TL_CFLAGS, TL_CXXFLAGS, etc., for TL_BUILD_ENV
