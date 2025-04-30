@@ -375,45 +375,11 @@ else if (cur_line>0) {
   else printf(_(". (l. %d of include file %s)\n"), cur_line, cur_file_name);
 @z
 
-@x [6.68] l.1057
-Some implementations may wish to pass the |history| value to the
-operating system so that it can be used to govern whether or not other
-programs are started. Here, for instance, we pass the operating system
-a status of |EXIT_SUCCESS| if and only if only harmless messages were printed.
-@^system dependencies@>
-@y
-On multi-tasking systems like the {\mc AMIGA} it is very convenient to
-know a little bit more about the reasons why a program failed.  The four
-levels of return indicated by the |history| value are very suitable for
-this purpose.  Here, for instance, we pass the operating system a status
-of~0 if and only if the run was a complete success.  Any warning or error
-message will result in a higher return value, so that {\mc AREXX} scripts
-can be made sensitive to these conditions.
-@^system dependencies@>
-
-@d RETURN_OK     0 /* No problems, success */
-@d RETURN_WARN   5 /* A warning only */
-@d RETURN_ERROR 10 /* Something wrong */
-@d RETURN_FAIL  20 /* Complete or severe failure */
-@z
-
 @x [6.68] l.1068
   @<Print the job |history|@>@;
 @y
   @<Print the job |history|@>@;
   @<Remove the temporary file if not already done@>@;
-@z
-
-@x [6.68] l.1069
-  if (history > harmless_message) return EXIT_FAILURE;
-  else return EXIT_SUCCESS;
-@y
-  switch(history) {
-  case spotless: return RETURN_OK;
-  case harmless_message: return RETURN_WARN;
-  case error_message: return RETURN_ERROR;
-  case fatal_message: default: return RETURN_FAIL;
-  }
 @z
 
 @x [6.69] l.1075
@@ -455,12 +421,6 @@ char scn_file_name[max_file_name_length]; /* name of |scn_file| */
 @y
 char scn_file_name[max_file_name_length]; /* name of |scn_file| */
 char check_file_name[max_file_name_length]; /* name of |check_file| */
-@z
-
-@x [7.74] l.1138
-show_banner=show_happiness=show_progress=make_xrefs=true;
-@y
-make_xrefs=true;
 @z
 
 @x [7.75] l.1142

@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: CWEBbin 2025\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-01-01 15:08+0100\n"
-"PO-Revision-Date: 2025-01-01 15:08+0100\n"
+"POT-Creation-Date: 2025-04-30 10:05+0200\n"
+"PO-Revision-Date: 2025-04-30 10:05+0200\n"
 "Last-Translator: Andreas Scherer <andreas_github@freenet.de>\n"
 "Language-Team: German\n"
 "Language: de\n"
@@ -56,12 +56,12 @@ msgid "+p          print progress report messages"
 msgstr "+p          schreibe die Fortschrittsmeldungen"
 
 #: help.h:62 help.h:85 help.h:114
-msgid "+/-q        shortcut for '-bhp'; also '--quiet' (default)"
-msgstr "+/-q        Kurzform für '-bhp'; auch '--quiet' (Vorgabe)"
+msgid "+/-q        shortcut for '-bhp'; also '--quiet'"
+msgstr "+/-q        Kurzform für '-bhp'; auch '--quiet'"
 
 #: help.h:63 help.h:86 help.h:115
-msgid "+/-v        shortcut for '+bhp'; also '--verbose'"
-msgstr "+/-v        Kurzform für '+bhp'; auch '--verbose'"
+msgid "+/-v        shortcut for '+bhp'; also '--verbose' (default)"
+msgstr "+/-v        Kurzform für '+bhp'; auch '--verbose' (Vorgabe)"
 
 #: help.h:64 help.h:87 help.h:116
 msgid "+c          check temporary output for changes"

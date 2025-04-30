@@ -1,3 +1,7 @@
+2025-04-30  Andreas Scherer  <https://ascherer.github.io>
+
+	* help.h: Restore 'verbose' diagnostics in CWEB.
+
 2025-04-18  Andreas Scherer  <https://ascherer.github.io>
 
 	* ctangleboot.cin,
