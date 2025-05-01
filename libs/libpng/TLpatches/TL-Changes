@@ -1,5 +1,5 @@
-Changes applied to the libpng-1.6.47/ tree as obtained from:
-	https://sourceforge.net/projects/libpng/files/libpng16/1.6.47/
+Changes applied to the libpng-1.6.48/ tree as obtained from:
+	https://sourceforge.net/projects/libpng/files/libpng16/1.6.48/
 
 Copied:
 	scripts/pnglibconf.h.prebuilt -> pnglibconf.h
@@ -11,7 +11,6 @@ Removed:
 	.editorconfig
 	.editorconfig-checker.json
 	.gitignore
-	.travis.yml
 	.yamllint.yml
 	Makefile.in
 	aclocal.m4
