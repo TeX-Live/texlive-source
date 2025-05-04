@@ -1,3 +1,7 @@
+2025-05-04  Karl Berry  <karl@freefriends.org>
+
+	* expand.c (kpathsea_expand_kpse_dot): doc fix.
+
 2025-04-18  Karl Berry  <karl@freefriends.org>
 
 	* c-ctype.h (kpse_isascii): new macro, since isascii() can

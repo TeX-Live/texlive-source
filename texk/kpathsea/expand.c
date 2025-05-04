@@ -1,7 +1,7 @@
 /* expand.c: general expansion.
 
    Copyright 1993, 1994, 1995, 1996, 1997, 2005, 2008, 2009, 2011,
-             2012, 2016, 2017 Karl Berry.
+             2012, 2016, 2017, 2025 Karl Berry.
    Copyright 1997-2005 Olaf Weber.
 
    This library is free software; you can redistribute it and/or
@@ -50,7 +50,7 @@ kpathsea_expand (kpathsea kpse, const_string s)
 static str_list_type brace_expand (kpathsea, const_string*);
 
 /* If $KPSE_DOT is defined in the environment, prepend it to any relative
-   path components. */
+   path components in PATH and return result in new memory.  */
 
 static string
 kpathsea_expand_kpse_dot (kpathsea kpse, string path)
@@ -63,7 +63,7 @@ kpathsea_expand_kpse_dot (kpathsea kpse, string path)
 
   if (kpse_dot == NULL)
     return path;
-  ret = (string)xmalloc(1);
+  ret = (string) xmalloc(1);
   *ret = 0;
 
 #ifdef MSDOS
@@ -84,26 +84,33 @@ kpathsea_expand_kpse_dot (kpathsea kpse, string path)
        elt = kpathsea_path_element (kpse, NULL)) {
     string save_ret = ret;
     boolean ret_copied = true;
-    /* We assume that the !! magic is only used on absolute components.
-       Single "." gets special treatment, as does "./" or its equivalent. */
+    /* We assume that the !! magic is only used on absolute components.  */
     if (kpathsea_absolute_p (kpse, elt, false)
         || (elt[0] == '!' && elt[1] == '!')) {
-      ret = concat3(ret, elt, ENV_SEP_STRING);
+      ret = concat3 (ret, elt, ENV_SEP_STRING);
+
+    /* Path element is sole '.' -> replace with kpse_dot.  */
     } else if (elt[0] == '.' && elt[1] == 0) {
       ret = concat3 (ret, kpse_dot, ENV_SEP_STRING);
+
 #ifndef VMS
+    /* Path element is './foo' -> replace the '.' with kpse_dot.  */
     } else if (elt[0] == '.' && IS_DIR_SEP(elt[1])) {
       ret = concatn (ret, kpse_dot, elt + 1, ENV_SEP_STRING, NULL);
+    
+    /* Path element is anything element -> prepend "kpse_dot/" to elt.  */
     } else if (*elt) {
       ret = concatn (ret, kpse_dot, DIR_SEP_STRING, elt, ENV_SEP_STRING, NULL);
 #endif
+
     } else {
       /* omit empty path elements from TEXMFCNF.
-         See http://bugs.debian.org/358330.  */
+         See https://bugs.debian.org/358330.  */
       ret_copied = false;
     }
-    if (ret_copied)
+    if (ret_copied) {
       free (save_ret);
+    }
   }
 
 #ifdef MSDOS
