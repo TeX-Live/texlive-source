@@ -1107,7 +1107,7 @@ mpx->font_num[i]=e
 
 @ @<Read the font parameters into position for font |nf|@>=
 mpx->font_check_sum[mpx->nfonts]=mpx_signed_quad(mpx);
-@<Read |font_scaled_size[nf]| and |font_design_size[nf]|@>;
+@<Read |font_scaled_size[nf]| and |font_design_size[nf]|@>
 n=mpx_get_byte(mpx);  /* that is the area */
 n=n+mpx_get_byte(mpx);
 mpx->font_name[mpx->nfonts]=xmalloc((size_t)(n+1),1);
@@ -4157,7 +4157,7 @@ int mpx_makempx (mpx_options *mpxopt) {
     char **cmdline, **cmdbits;
     char infile[15];
     int retcode, i ;
-    char tmpname[] = "mpXXXXXX";
+    char tmpname[] = "mpXXXXXX\0";
     int cmdlength = 1;
     int cmdbitlength = 1;
     if (!mpxopt->debug) {
