@@ -1,0 +1,15 @@
+% $Id$
+% Public domain, from Tyge Thiessen and David Fuchs.
+% 
+% When \mkern is followed by a normal (non-mu) dimen or skip, it gives
+% the expected "Incompatible glue units" error, but then continues with
+% up to two spurious additional errors. Fix from DRF in tex.ch at 26.449.
+% Original report: https://tug.org/pipermail/tex-k/2025-January/004150.html
+% TeX bug entry: https://tug.org/texmfbug/newbug.html#B182muerror
+
+\catcode`\$ = 3 % so we can run under initex
+\dimen0=1pt
+\skip0=1pt
+$\mkern \dimen0$
+$\mkern \skip0$
+\end
