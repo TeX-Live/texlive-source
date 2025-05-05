@@ -1,9 +1,9 @@
 #!/usr/bin/env perl
-# $Id: fmtutil.pl 71424 2024-06-04 10:25:53Z preining $
+# $Id: fmtutil.pl 75097 2025-05-04 17:51:06Z karl $
 # fmtutil - utility to maintain format files.
 # (Maintained in TeX Live:Master/texmf-dist/scripts/texlive.)
 # 
-# Copyright 2014-2024 Norbert Preining
+# Copyright 2014-2025 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 #
@@ -24,11 +24,11 @@ BEGIN {
   TeX::Update->import();
 }
 
-my $svnid = '$Id: fmtutil.pl 71424 2024-06-04 10:25:53Z preining $';
-my $lastchdate = '$Date: 2024-06-04 12:25:53 +0200 (Tue, 04 Jun 2024) $';
+my $svnid = '$Id: fmtutil.pl 75097 2025-05-04 17:51:06Z karl $';
+my $lastchdate = '$Date: 2025-05-04 19:51:06 +0200 (Sun, 04 May 2025) $';
 $lastchdate =~ s/^\$Date:\s*//;
 $lastchdate =~ s/ \(.*$//;
-my $svnrev = '$Revision: 71424 $';
+my $svnrev = '$Revision: 75097 $';
 $svnrev =~ s/^\$Revision:\s*//;
 $svnrev =~ s/\s*\$$//;
 my $version = "r$svnrev ($lastchdate)";
@@ -437,7 +437,12 @@ sub callback_build_formats {
   die "abs_path failed, strange: $!" if !$opts{'fmtdir'};
   print_info("writing formats under $opts{fmtdir}\n"); # report
 
-  # code taken over from the original shell script for KPSE_DOT etc
+  # Set KPSE_DOT in the environment so that kpathsea's expand functions
+  # will prepend it to relative paths when looking for files. This is
+  # needed because we chdir to a temp dir, but we want (say) "." as a
+  # path element to refer to the original working directory where the
+  # script was run, not the temp dir.
+  # 
   my $thisdir = cwd();
   $ENV{'KPSE_DOT'} = $thisdir;
   # due to KPSE_DOT, we don't search the current directory, so include
@@ -787,13 +792,37 @@ sub rebuild_one_format {
 
   #
   # check for existence of $engine
-  # we do *NOT* use the return value but rely on execution of the shell
+  # we do *NOT* use the return value but rely on execution of the shell.
+  # This won't find engines in "." (etc.) in PATH, because we have cd'd
+  # to a temporary directory.
+  # 
+  # Although we could change our which() fn to prepend KPSE_DOT (like
+  # kpathsea does), it won't help, because we won't be able to execute
+  # an engine "./$eng" (since we're in the temp dir). Prepending
+  # KPSE_DOT to the executable name seems too much. Instead, tell the
+  # user to have PATH include the absolute directory.
   if (!TeXLive::TLUtils::which($eng)) {
-    if ($opts{'no-error-if-no-engine'} &&
-        ",$opts{'no-error-if-no-engine'}," =~ m/,$eng,/) {
+    if ($opts{'no-error-if-no-engine'}
+        && ",$opts{'no-error-if-no-engine'}," =~ m/,$eng,/) {
       return $FMT_NOTAVAIL;
     } else {
       print_deferred_error("not building $fmt due to missing engine: $eng\n");
+      # could be irrelevant if PATH didn't contain ., and won't find
+      # other cases like the engine being in .., but it's just a help message,
+      # in response to
+      # https://tug.org/pipermail/tlbuild/2025q1/005685.html
+      if (-x "$ENV{KPSE_DOT}/$eng") {
+        print_deferred_error(<<END_ENGINE_IN_CWD);
+It seems your engine ($eng)
+  is in the original working directory
+  ($ENV{KPSE_DOT}).
+Since fmtutil works in a new temporary directory, the engine can't
+  be run from elsewhere. Sorry.
+To use an engine from an arbitrary directory, set your PATH to include
+  the absolute directory where the engine resides, instead of a relative
+  directory like ".".
+END_ENGINE_IN_CWD
+      }
       return $FMT_FAILURE;
     }
   }
