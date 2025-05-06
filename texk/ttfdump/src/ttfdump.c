@@ -159,6 +159,13 @@ main(int argc, char *argv[])
     else
       strcpy(dumpname, "-");
   }
+
+  if (optind + 2 < argc)
+  {
+    usage();
+    exit(EXIT_FAILURE);
+  }
+
   if (!strcmp(dumpname, "-"))
   {
 #ifdef WIN32
