@@ -1,3 +1,8 @@
+2025-05-06  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
+
+	* pdfutils.ch: Rename bool variable to booltemp, for C23.
+	https://github.com/texjporg/tex-jp-build/issues/178
+
 2025-04-26  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* eupver.test, euptex-{ctrlsym,widow}.test,
