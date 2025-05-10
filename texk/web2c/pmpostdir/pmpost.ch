@@ -159,7 +159,7 @@ else
 fprintf(stdout,
 "  -ini                      do not load any preload file\n"
 @y
-"Usage: "@= @>P_UP@= @>"mpost [OPTION] [&MEMNAME] [MPNAME[.mp]] [COMMANDS]\n"
+"Usage: "@= @>P_UP@= @>"mpost [OPTION] [&MPNAME] [MPNAME[.mp]] [COMMANDS]\n"
 "       "@= @>P_UP@= @>"mpost --dvitomp DVINAME[.dvi] [MPXNAME[.mpx]]\n"
 "\n"
 "  Run "@= @>P_UP@= @>"MetaPost on MPNAME, usually creating MPNAME.NNN (and perhaps\n"
