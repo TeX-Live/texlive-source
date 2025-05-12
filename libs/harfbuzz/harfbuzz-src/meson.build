@@ -1,6 +1,6 @@
 project('harfbuzz', ['c', 'cpp'],
   meson_version: '>= 0.60.0',
-  version: '11.2.0',
+  version: '11.2.1',
   default_options: [
     'cpp_eh=none',          # Just to support msvc, we are passing -fno-exceptions also anyway
     # 'cpp_rtti=false',     # Do NOT enable, wraps inherit it and ICU needs RTTI
@@ -205,6 +205,12 @@ if get_option('fontations').enabled()
   fontations_dep_found = true
 endif
 
+harfruzz_dep_found = false
+if get_option('harfruzz').enabled()
+  add_languages(['rust'], native: false, required : true)
+  harfruzz_dep_found = true
+endif
+
 conf = configuration_data()
 incconfig = include_directories('.')
 
@@ -248,6 +254,10 @@ endif
 
 if fontations_dep_found
   conf.set('HAVE_FONTATIONS', 1)
+endif
+
+if harfruzz_dep_found
+  conf.set('HAVE_HARFRUZZ', 1)
 endif
 
 if wasm_dep.found()
@@ -479,8 +489,9 @@ build_summary = {
     },
   'Platform shapers (not normally needed)':
     {'CoreText': conf.get('HAVE_CORETEXT', 0) == 1,
-     'DirectWrite (experimental)': conf.get('HAVE_DIRECTWRITE', 0) == 1,
+     'DirectWrite': conf.get('HAVE_DIRECTWRITE', 0) == 1,
      'GDI/Uniscribe': (conf.get('HAVE_GDI', 0) == 1) and (conf.get('HAVE_UNISCRIBE', 0) == 1),
+     'HarfRuzz': conf.get('HAVE_HARFRUZZ', 0) == 1,
     },
   'Other features':
     {'Documentation': conf.get('HAVE_GTK_DOC', 0) == 1,
