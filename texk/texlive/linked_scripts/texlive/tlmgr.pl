@@ -1,6 +1,6 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 74695 2025-03-18 23:12:52Z preining $
-# Copyright 2008-2024 Norbert Preining
+# $Id: tlmgr.pl 75204 2025-05-13 21:48:24Z karl $
+# Copyright 2008-2025 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 # 
@@ -8,8 +8,8 @@
 
 use strict; use warnings;
 
-my $svnrev = '$Revision: 74695 $';
-my $datrev = '$Date: 2025-03-19 00:12:52 +0100 (Wed, 19 Mar 2025) $';
+my $svnrev = '$Revision: 75204 $';
+my $datrev = '$Date: 2025-05-13 23:48:24 +0200 (Tue, 13 May 2025) $';
 my $tlmgrrevision;
 my $tlmgrversion;
 my $prg;
@@ -7659,9 +7659,11 @@ and the repository are not compatible:
     if ($remote_revision > 0 && $local_revision > $remote_revision) {
       info("fail load $location\n") if ($::machinereadable);
       return(undef, <<OLD_REMOTE_MSG);
-Remote database (revision $remote_revision of the texlive-scripts package)
-seems to be older than the local installation (rev $local_revision of
-texlive-scripts); please use a different mirror and/or wait a day or two.
+Remote database at $location
+(revision $remote_revision of the texlive-scripts package)
+seems to be older than the local installation
+(revision $local_revision of texlive-scripts);
+please use a different mirror and/or wait a day or two.
 OLD_REMOTE_MSG
     }
   }
@@ -10625,7 +10627,7 @@ This script and its documentation were written for the TeX Live
 distribution (L<https://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 74695 2025-03-18 23:12:52Z preining $
+$Id: tlmgr.pl 75204 2025-05-13 21:48:24Z karl $
 =cut
 
 # test HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html
