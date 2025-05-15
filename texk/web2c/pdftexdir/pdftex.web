@@ -15794,7 +15794,7 @@ accuracy.
 @!scaled_out: integer; {amount of |scaled| that was taken out in
 |divide_scaled|}
 @!init_pdf_output: boolean;
-@!adv_char_width_s: integer; {to save result of calculation done in |adv_char_width| }
+@!adv_char_width_s: integer; {to save result of calculation done in |adv_char_width|}
 @!adv_char_width_s_out: scaled;
 
 @ @<Set init...@>=
@@ -15809,6 +15809,9 @@ init_pdf_output := false;
 
 
 @ The following function divides |s| by |m|. |dd| is number of decimal digits.
+The result is $r = (s/m) \times 10^{dd}$, and the remainder after
+the division is $s - |scaled_out|$
+
 
 @<Declare procedures that need to be declared forward for \pdfTeX@>=
 function divide_scaled(s, m: scaled; dd: integer): scaled;
@@ -15893,7 +15896,7 @@ For PK fonts things are more complicated,
 as we have to deal with scaling bitmaps as well.
 
 @p
-procedure adv_char_width(f: internal_font_number; c: eight_bits; dd: eight_bits);
+procedure adv_char_width(f: internal_font_number; c: eight_bits);
 {update |pdf_delta_h| by character width |w| from font |f|}
 var w, s_out: scaled;
     s: integer;
@@ -15901,21 +15904,21 @@ begin
     w := char_width(f)(char_info(f)(c));
     if isscalable(f) then begin
         if pdf_cur_Tm_a = 0 then begin
-            s := divide_scaled(w, pdf_font_size[f], dd);
+            s := divide_scaled(w, pdf_font_size[f], 4);
             s_out := scaled_out;
             pdf_delta_h := pdf_delta_h + s_out;
         end
         else begin
             s := divide_scaled(round_xn_over_d(w, 1000, 1000 + pdf_cur_Tm_a),
                                pdf_font_size[f],
-                               dd);
+                               4);
             s_out := round_xn_over_d(round_xn_over_d(pdf_font_size[f], abs(s), 10000),
                                      1000 + pdf_cur_Tm_a, 1000);
             if s < 0 then
                 s_out := -s_out;
             pdf_delta_h := pdf_delta_h + s_out;
         end;
-        adv_char_width_s := s;
+        adv_char_width_s := round(s/10);
         adv_char_width_s_out := s_out;
     end else
         pdf_delta_h := pdf_delta_h + get_pk_char_width(f, w);
@@ -16151,7 +16154,7 @@ begin
 
     {create a new font object for |f|}
     pdf_create_obj(obj_type_font, f);
-    pdf_font_has_space_char[f] := hasspacechar(f);
+    pdf_font_has_space_char[f] := hasspacechar(f) and (char_width(f)(char_info(f)(32)) > one_bp);
     pdf_use_font(f, obj_ptr);
 end;
 
@@ -16295,7 +16298,7 @@ begin
         {insert a real space char from the font when possible}
         if pdf_font_has_space_char[f] and pdf_doing_string then begin
             pdf_out(" ");
-            adv_char_width(f, 32, 4); { to get |adv_char_width_s| and |adv_char_width_s_out|}
+            adv_char_width(f, 32); { update |pdf_delta_h|, get |adv_char_width_s| and |adv_char_width_s_out|}
             s := s - adv_char_width_s;
             s_out := s_out - adv_char_width_s_out;
             pdf_mark_char(f, 32);
@@ -16346,7 +16349,7 @@ begin
     pdf_read_dummy_font;
     pdf_begin_string(pdf_dummy_font);
     pdf_print(" ");
-    adv_char_width(pdf_dummy_font, 32, 4);
+    adv_char_width(pdf_dummy_font, 32);
     pdf_end_string_nl;
 
     gen_faked_interword_space := s;
@@ -18431,7 +18434,7 @@ end;
     else begin
         pdf_begin_string(f);
         pdf_print_char(f, #);
-        adv_char_width(f, #, 4);
+        adv_char_width(f, #);
     end;
 end
 

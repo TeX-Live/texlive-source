@@ -1,3 +1,16 @@
+2025-05-15  Thanh Han The  <hanthethanh@gmail.com>
+
+	* pdftex.web (adv_char_width): remove dd parameter; call
+	divide_scaled by the hardwired 4, instead of dd.
+	(pdf_init_font): also check that the width of character 32 is >one_bp
+	for the pdf_font_has_space_char value.
+	(pdf_begin_string, output_one_char): change adv_char_width calls
+	similarly.
+	This is to fix overlapping text in ptmr8r and other fonts,
+	reported by Ulrike 01 May 2025 10:23:07.
+	Test: 40-overlapping-text-with-pdfinterwordspaceon.
+	(pdftex r963)
+
 2025-04-17  Karl Berry  <karl@freefriends.org>
 
 	* pdftex.web (bool): rename variable to booltemp, kowtowing to C23.
