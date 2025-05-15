@@ -2,7 +2,7 @@
 
 # File    : makeglossaries
 # Author  : Nicola Talbot
-# Version : 4.6
+# Version : 4.7
 # Description: simple Perl script that calls makeindex or xindy.
 # Intended for use with "glossaries.sty" (saves having to remember
 # all the various switches)
@@ -31,9 +31,12 @@
 # glossaries-babel.sty, glossaries-polyglossia.sty, glossaries.l2h.
 # Also makeglossaries and makeglossaries-lite.lua.
 
-my $version="4.6 (2025-04-14)";
+my $version="4.7 (2025-05-14)";
 
 # History:
+# v4.7:
+#   * allow dots in base name and allow ".aux" extension to be
+#     specified.
 # v4.51 - v4.6
 #   * No change. (Version number updated in line with glossaries.sty)
 # v4.50:
@@ -291,45 +294,59 @@ my ($basename,$extension) = ($name =~ m/^(.*?)(?:\.([^\.]*))?$/);
 
 # make sure $extension is defined. (If there was no match in the
 # above, it cause an uninitialised error later.)
-$extension = '' unless ($extension);
+
+# v4.7: allow for dots in basename
+$extension = 'aux' unless ($extension);
+
+my $auxname = $basename;
+
+if ($name=~m/\.aux$/i)
+{
+   $auxname = $name;
+}
+else
+{
+   $auxname .= ".aux";
+
+   unless (-e $auxname)
+   {
+      if (-e "$name.aux")
+      {
+         $basename = $name;
+         $extension = 'aux';
+         $auxname = "$name.aux";
+      }
+   }
+}
 
 # Make sure users don't try passing the tex file:
 
-#if (length($ARGV[0]) > 3 and substr($ARGV[0],-4,1) eq ".")
-#{
-#  $name = substr($ARGV[0],0,length($ARGV[0])-4);
-#
-#  $ext = substr($ARGV[0],-3,3);
-#
-#  if (lc($ext) eq 'tex')
 # (HS) changes fix for 3 character extension limit
-#if (length($ARGV[0]) > 3 and substr($ARGV[0],-4,1) eq ".")
-#{
-#  $name = substr($ARGV[0],0,length($ARGV[0])-4);
-#
-#  $ext = substr($ARGV[0],-3,3);
-#
-#  if (lc($ext) eq 'tex')
-  if (lc($extension) eq 'tex')
-  {
-     die("Don't pass the tex file to makeglossaries:\n"
-        ."either omit the extension to make all the glossaries, "
-        ."or specify one of the glossary files, e.g. $name.glo, to "
-        ."make just that glossary.\n")
+if (lc($extension) eq 'tex')
+{
+   die("Don't pass the tex file to makeglossaries:\n"
+      ."either omit the extension or use aux to make all the glossaries, "
+      ."or specify one of the glossary files, e.g. $name.glo, to "
+      ."make just that glossary.\n")
   }
-#}
 # (HS) end of fix for 3 character extension limit
 
-# (HS) changes fix for 3 character extension limit
-$ext = $extension;
+if ($extension eq 'aux')
+{
+  $ext = '';
+}
+else
+{
+  $ext = $extension;
+}
+
 $name = $basename;
-# (HS) end of changes fix for 3 character extension limit
 
 # v2.01 add check to see if aux file exists
 
-unless (-e "$name.aux")
+unless (-e $auxname)
 {
-   die "Auxiliary file '$name.aux' doesn't exist. Have you run LaTeX?\n";
+   die "Auxiliary file '$auxname' doesn't exist. Have you run LaTeX?\n";
 }
 
 my $istfile = "";
@@ -1864,18 +1881,29 @@ makeglossaries  - Calls makeindex/xindy for LaTeX documents using glossaries pac
 B<makeglossaries> [B<-o> I<file>] [B<-q>] [B<-Q>] [B<-k>] [B<-n>]
 [B<-s> I<file>] [B<-t> I<file>] [B<-L> I<language>] [B<-c>] [B<-g>] [B<-l>]
 [B<-p> I<num>] [B<-r>] [B<-d> I<aux dir>] [B<-m> I<file>] [B<-x> I<file>]
-[B<-e>] [B<--version>] [B<--help>] I<basename>
+[B<-e>] [B<--version>] [B<--help>] I<filename>
 
 =head1 DESCRIPTION
 
 B<makeglossaries> is designed for use with LaTeX documents that
-use the glossaries package. The mandatory argument I<basename> should
-be the name of the LaTeX document without the .tex extension. 
+use the glossaries package. 
+
+The mandatory argument I<filename> should be the name of the aux
+file. The B<.aux> extension may be omitted but is best included where the
+filename includes additional dots in its name to avoid ambiguity.
+
+Alternatively, the I<filename> may be the name of a
+specific glossary file if only one glossary should be processed (for
+example, when working on a draft document). In this case, the aux
+file is still expected to exist and is inferred from the basename of
+I<filename>.
+
 B<makeglossaries> will read the auxiliary file to determine whether
 B<makeindex> or B<xindy> should be called. All the information
 required to be passed to the relevant indexing application should
 also be contained in the auxiliary file, but may be overridden by
 the option arguments to B<makeglossaries>.
+
 
 =head1 OPTIONS
 
