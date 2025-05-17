@@ -1,3 +1,8 @@
+pdfTeX 3.141592653-2.6-1.40.28 (TeX Live 2025 post-release) (17 May March 2025)
+- bugfixes:
+  - fix overlapping text in ptmr8r and other fonts.
+
+-----------------------------------------------------------------------------
 pdfTeX 3.141592653-2.6-1.40.27 (TeX Live 2025) (7 March 2025)
 - changes:
   - new primitive \pdfptexuseunderscore: if positive or
