@@ -1,3 +1,10 @@
+2025-05-17  Karl Berry  <karl@freefriends.org>
+
+        * NEWS,
+        * pdftex_version.h,
+        * pdftex.web (pdftex_revision, pdftex_version_string):
+        version [1.40.]28 for post-TL25 fix.
+
 2025-05-15  Thanh Han The  <hanthethanh@gmail.com>
 
 	* pdftex.web (adv_char_width): remove dd parameter; call
