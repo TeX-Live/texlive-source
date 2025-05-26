@@ -101,7 +101,7 @@
 /* Define to 1 if you have the <dlfcn.h> header file. */
 #undef HAVE_DLFCN_H
 
-/* Define to 1 if you have the `dl_iterate_phdr' function. */
+/* Define to 1 if you have the 'dl_iterate_phdr' function. */
 #undef HAVE_DL_ITERATE_PHDR
 
 /* Define to 1 if you have the <inttypes.h> header file. */
@@ -228,7 +228,7 @@
 /* See the comment in gcconfig.h. */
 #undef SOLARIS25_PROC_VDB_BUG_FIXED
 
-/* Define to 1 if all of the C90 standard headers exist (not just the ones
+/* Define to 1 if all of the C89 standard headers exist (not just the ones
    required in a freestanding environment). This macro is provided for
    backward compatibility; new code need not use it. */
 #undef STDC_HEADERS
@@ -267,7 +267,7 @@
 /* Required define if using POSIX threads. */
 #undef _REENTRANT
 
-/* Define to `__inline__' or `__inline' if that's what the C compiler
+/* Define to '__inline__' or '__inline' if that's what the C compiler
    calls it, or to nothing if 'inline' is not supported under any name.  */
 #ifndef __cplusplus
 #undef inline

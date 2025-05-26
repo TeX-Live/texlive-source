@@ -1,3 +1,489 @@
+commit 1cfeecfc04efb9f6457a6243b46441d911eba7f2
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat May 24 13:26:14 2025 -0700
+
+    Fix last revision.
+
+commit f21cd77f3a139d1bce048f2597d04715758cb1ed
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat May 24 13:21:55 2025 -0700
+
+    List URLs to source code for dynamically linked MSWindows libraries.
+
+commit 118dd50b48e6a0de7b80d258ac54d96c4d4bbf1d
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat May 24 13:01:02 2025 -0700
+
+    Change WebGL KEYS to comments.
+
+commit 888c93cb1b2d912cd392e450779d7fcb19a0ddac
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat May 24 12:19:24 2025 -0700
+
+    Implement settings.keys: optionally add KEYS to WebGL output.
+
+commit 585e7894ea788aa467604e83db1dc3b0b544ab35
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat May 24 12:15:23 2025 -0700
+
+    Add KEY to cylinder and disk primitives.
+
+commit 2622dc2282b5484ca7d305f9ebd6583d517d2bb8
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat May 24 08:18:40 2025 -0700
+
+    Restore example.
+
+commit ff38310cda44d645255002a693d4c0adf4bd3f19
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu May 22 11:54:41 2025 -0700
+
+    Copy version.asy to top-level base directory for testing purposes.
+
+commit 201b3ebdd6e889ff252657d8e1307db4aff2afd6
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu May 22 10:53:50 2025 -0700
+
+    Fix unlink issues under MSWindows.
+
+commit 552844cf477675ace123d862f3a1dffab67fdade
+Merge: d93212c85 a8d72054d
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed May 21 23:21:57 2025 -0700
+
+    Merge branch 'master' of github.com:vectorgraphics/asymptote
+
+commit d93212c85642efdb8e34ef5f4845b3fecc706c9e
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed May 21 23:21:31 2025 -0700
+
+    Fix CMake builds.
+
+commit a8d72054d039101b8e148e9cb477bdc8fb57ac19
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed May 21 23:06:21 2025 -0700
+
+    Update build-asymptote.ps1.
+
+commit c005fe1517e6d016f5319d01cbfbe1c176fa1c08
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed May 21 21:54:15 2025 -0700
+
+    Update build-gui.yml.
+
+commit 095847b91c669ceca06572fda35076c1ad2ffe8c
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed May 21 21:22:38 2025 -0700
+
+    Remove unused files.
+
+commit 579756ca19853a42b6d431f93bc96c3a44f76db9
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue May 20 21:37:25 2025 -0700
+
+    Update required setuptools version.
+
+commit 66719c732100dc6b34495f6575e7a139cba0edb9
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue May 20 21:33:50 2025 -0700
+
+    Update asygl.
+
+commit 30afe085fa08ae6c3a5e2d6244b212fd5a1f435e
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue May 20 21:32:28 2025 -0700
+
+    Remove projection-dependence of shaders for correct rendering of embedded WebGL images.
+
+commit 08c4c25ec5b8c76a06ad51c0c0a8250848f6b307
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon May 19 10:31:13 2025 -0700
+
+    Revert "Update asygl."
+    
+    This reverts commit 0d13b088207cbbd8942f2eee55287d95a135957b.
+
+commit 3c9de631d62c19697c33f1d60b41d59c146f5d77
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun May 18 21:58:45 2025 -0700
+
+    Revert "Fix race condition between embedded WebGL scenes."
+    
+    This reverts commit 6ea778325776f1905e96d125b658388af182eb8d.
+
+commit 0d13b088207cbbd8942f2eee55287d95a135957b
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun May 18 21:43:53 2025 -0700
+
+    Update asygl.
+
+commit 6ea778325776f1905e96d125b658388af182eb8d
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun May 18 21:39:12 2025 -0700
+
+    Fix race condition between embedded WebGL scenes.
+
+commit ae4edfbd6a96a85d661178f516e183d246045e26
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun May 18 00:31:47 2025 -0700
+
+    git subrepo pull (merge) --force LspCpp
+    
+    subrepo:
+      subdir:   "LspCpp"
+      merged:   "273a4a224"
+    upstream:
+      origin:   "git@github.com:vectorgraphics/LspCpp"
+      branch:   "master"
+      commit:   "273a4a224"
+    git-subrepo:
+      version:  "0.4.9"
+      origin:   "???"
+      commit:   "???"
+
+commit dc093856266b7d4024c0711c1d056adec5917609
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat May 17 22:39:12 2025 -0700
+
+    Use pngdriver=png16malpha by default.
+    Use ghostscript options "-dTextAlphaBits=4" and "-dGraphicsAlphaBits=4"
+    for pngdriver.
+
+commit 88cc6268cf2e5870920ea27aae41be58fea4b69d
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun May 11 15:07:01 2025 -0700
+
+    Increment version to 3.04.
+
+commit 664e2b2e90efcaf1ad0b71ff9d86589d92d0eb49
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun May 11 14:13:58 2025 -0700
+
+    Support --outname again in MSWindows build.
+
+commit c38d7617f1d61e850fb8ef86aa7e0ed6c6e5f420
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat May 10 17:01:24 2025 -0700
+
+    Simplify code.
+
+commit e8dcdee86938f21d2efe3c1a1442d4bf6678c34e
+Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
+Date:   Sat May 10 17:52:28 2025 -0600
+
+    W32: Fix implementation of renameOverwrite by parsing the return value correctly.
+
+commit f70c2a83e88d01f6048bf0c031be8263abea240b
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri May 9 14:50:39 2025 -0700
+
+    Fix last revision.
+
+commit 0054f80ebe23f35e30ab16f81ef8c11d3820f7b8
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri May 9 14:40:27 2025 -0700
+
+    Fix last revision.
+
+commit 5d03a31162eff7271b1107d78124b1204523d9ca
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri May 9 14:37:54 2025 -0700
+
+    Fix last revision; update FFTW++ files.
+
+commit e2c7b2730553876180933e2b4b640902d7d03568
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri May 9 10:42:04 2025 -0700
+
+    Port rename to MSWindows.
+
+commit acaf12bc3a642eec8c850fd12d32f353b3c94655
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri May 9 10:18:54 2025 -0700
+
+    Revert "W32: Replace rename with MoveFileExA on windows to allow overwriting."
+    
+    This reverts commit 1771aa6990c74397380c31d432da7630a8547fdc.
+
+commit 177125ffcf4419952ffb8b77b438a014c7e9b315
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri May 2 23:09:50 2025 -0700
+
+    Fix xasy setting.
+
+commit ee7686077c93e75bca61da337532170f0a310548
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Apr 29 13:29:44 2025 -0700
+
+    Fix last two revisions.
+
+commit d9cbac891fde5b1706ae9f643ebd00c20e67b2f2
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Apr 28 23:22:55 2025 -0700
+
+    Add missing setenv argument.
+
+commit 219f5b43b5a6da0cc21d87128153ff4d4f40090f
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Apr 28 22:51:07 2025 -0700
+
+    Implement setenv and unsetenv for MSWindows.
+
+commit e31c4b76781606665f8a575abb7334e10a03e4d9
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Apr 28 21:56:24 2025 -0700
+
+    Remove obsolete code.
+
+commit 1767469b548e7ad293d7bfa69ddb482fde8f53b7
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Apr 28 21:44:26 2025 -0700
+
+    Remove obsolete code.
+
+commit a4cf3480b540ab6fb9b24f1864d103a9437d6f31
+Merge: 3bd2de12b 1771aa699
+Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
+Date:   Tue Apr 22 01:01:39 2025 -0600
+
+    Merge pull request #545 from vectorgraphics/fix-windows-file-rename-override
+    
+    W32: Replace rename with MoveFileExA on windows to allow overwriting.
+
+commit 1771aa6990c74397380c31d432da7630a8547fdc
+Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
+Date:   Mon Apr 21 21:15:57 2025 -0600
+
+    W32: Replace rename with MoveFileExA on windows to allow overwriting.
+
+commit 3bd2de12b5d900671a18a6a57832cde9af0ce2cf
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Apr 11 22:37:47 2025 -0700
+
+    Increment version to 3.03.
+
+commit 827761cd8d204f082b0f7b4dd23804a522142c77
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Apr 11 21:08:33 2025 -0700
+
+    Fix 3D pixels.
+
+commit de51a196d67e785120b155ecc896bfadfab25ced
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Mar 29 20:41:05 2025 -0700
+
+    Document range type.
+
+commit 5baa95ba8eb5d22f9ad82c911d3d4e91f7da4a34
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Mar 29 20:21:01 2025 -0700
+
+    Simplify code.
+
+commit 28f393d2660d13c2f8c0a6d78c2808b31996e1e8
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Mar 27 21:51:47 2025 -0700
+
+    Initially seed random number generators with std::random_device.
+
+commit dba230b2e2566e2f37e9200c30e93384d8f90709
+Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
+Date:   Thu Mar 27 21:57:30 2025 -0600
+
+    RAND: Use mt19937_64 as random engine.
+
+commit 34c48768703e205835a7782e1a0b87ab8af9e4dc
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Mar 27 20:26:12 2025 -0700
+
+    Generalize rand() to an arbitrary integer interval.
+
+commit 57c84e557c35848be522f8924803edc8d57386de
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Mar 27 20:08:50 2025 -0700
+
+    Set randMax to intMax.
+
+commit 8eebfd08f58ad80bb699972854b3f53ea6909911
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Mar 26 19:42:03 2025 -0700
+
+    Fix typo in documentation of unitrand.
+
+commit 109d4e3ff02b8571d34a651f7aa1ec095183bb81
+Merge: 0e4fe6547 12718954a
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Mar 22 22:13:52 2025 -0700
+
+    Merge pull request #540 from vectorgraphics/539-configure-creates-a-broken-makefile
+    
+    Fix #539: Avoid the use of realpath.
+
+commit 12718954af4ae659a9f84dc63f13152a4fe04f08
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Mar 22 21:49:34 2025 -0700
+
+    Fix #539: Avoid the use of realpath.
+
+commit 0e4fe6547de55ea2ba1f0d39b723a4ca9a28bd74
+Merge: c289e4329 7a4eedac8
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Mar 21 10:59:23 2025 -0700
+
+    Merge pull request #538 from vectorgraphics/fix-msvc-registry-reading.
+    
+    Fix path search algorithm when asy is installed outside the standard directory.
+
+commit 7a4eedac80d99f93150a6063544890f6c6ff713d
+Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
+Date:   Thu Mar 20 20:56:45 2025 -0600
+
+    W32: Remove "other" from move constructor.
+
+commit 64a61447afbdeacc0d18f93cc02ccc0b22bc743a
+Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
+Date:   Thu Mar 20 20:56:17 2025 -0600
+
+    W32: Change implementation of getEntry so it returns valid value without glob.
+
+commit c289e4329b4f14cf855859ce267d9c9d8778b38a
+Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
+Date:   Wed Mar 19 22:04:53 2025 -0600
+
+    PY: Add clarifying remarks to scan-asy-tests-cmake.py.
+
+commit bc9364b39a70165f024630cd37d49d5c13f02636
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Mar 18 20:04:53 2025 -0700
+
+    Add executable flag.
+
+commit 923e912dd3a70f996ac3afe61cb5f90fe3d8264c
+Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
+Date:   Tue Mar 18 21:01:02 2025 -0600
+
+    CMAKE: Update generated-asy-tests-list.cmake.
+
+commit 5ba3a64ce24ef2811426fc8f61d6467f6ddd7412
+Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
+Date:   Tue Mar 18 21:00:02 2025 -0600
+
+    PY: Ignore any empty test directories in scan-asy-tests-cmake.py.
+
+commit afda977f80e37e004c689e3fd93e97d5ad531965
+Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
+Date:   Tue Mar 18 20:59:44 2025 -0600
+
+    PY: Add newline to end of each test explicity in scan-asy-tests-cmake.py.
+
+commit 79951ab4ef8e447d25bba4d7c5b314a72ed66e8e
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Mar 18 09:11:44 2025 -0700
+
+    Fix #537: update documenation regarding default value of keepAspect.
+
+commit c1868d4570bfd17311aea0c4e759546c666e757c
+Merge: 91ef39b8a aac010bf4
+Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
+Date:   Sun Mar 16 20:54:12 2025 -0600
+
+    Merge pull request #536 from vectorgraphics/asy-test-scanning
+    
+    Add python script to scan and generate asy test file lists
+
+commit aac010bf4c0d68535956106dcc73705029593b4a
+Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
+Date:   Sun Mar 16 20:09:04 2025 -0600
+
+    CI: Add step to check if there are missing asy unit tests in generated/asy-tests-list.cmake.
+
+commit 7cceff3385d157f9fd15703f7d23c0ae61a80636
+Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
+Date:   Sun Mar 16 20:07:14 2025 -0600
+
+    CI: Rename lint-non-gui-python-files to misc-sanity-checks.
+
+commit c09b13e0d03fb1c0d79f5d2632247bbb6dbfd5fd
+Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
+Date:   Sun Mar 16 15:23:23 2025 -0600
+
+    CMAKE Use generated asy-tests-list.cmake.
+
+commit 4dbc28d01c95030373fa549b781157599a3f4224
+Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
+Date:   Sun Mar 16 15:06:07 2025 -0600
+
+    CMAKE: Add generated asy test list file.
+
+commit 9d9242ec3abd1c9851d5131d1b6a1ed3c440a903
+Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
+Date:   Sun Mar 16 15:05:52 2025 -0600
+
+    CMAKE: Add script to scan and generate asy test list.
+
+commit 907459263a044fe38265fe6eb5f0b2253d86d947
+Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
+Date:   Sun Mar 16 11:03:21 2025 -0600
+
+    REPO: Add .editorconfig to gitignore file.
+
+commit 91ef39b8a453fb46503e890c6fb040356c27a959
+Merge: 5e43d12df 063d3984b
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Mar 11 21:24:11 2025 -0700
+
+    Merge pull request #534 from vectorgraphics/tmp-fix-doc
+    
+    Move operator init doc to the correct section.
+
+commit 063d3984b3dd8cb162a019a43976d2c2fa226c32
+Author: Charles Staats III <charles.staats.iii@gmail.com>
+Date:   Thu Mar 6 12:51:29 2025 -0800
+
+    Move operator init doc to the correct section.
+
+commit 5e43d12dfd1c25b1aa896ea08e528765a2c32aea
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Mar 2 19:40:32 2025 -0800
+
+    git subrepo pull (merge) LspCpp
+    
+    subrepo:
+      subdir:   "LspCpp"
+      merged:   "222549234"
+    upstream:
+      origin:   "git@github.com:vectorgraphics/LspCpp"
+      branch:   "master"
+      commit:   "11c5053a1"
+    git-subrepo:
+      version:  "0.4.9"
+      origin:   "https://github.com/ingydotnet/git-subrepo"
+      commit:   "b9b059a"
+
+commit 68d3bfd4e65cccb35cc3d193e9bb55dc3daf8f81
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Mar 1 21:29:26 2025 -0800
+
+    Remove obsolete code.
+
+commit 92376e30115a3ba14e42504e744ca3551af8763b
+Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
+Date:   Sun Feb 23 21:06:44 2025 -0700
+
+    EXR: Move tinyexr.h include to EXRFiels.cc.
+
+commit 382b2f115c48b606adc797e90865db4b333aa588
+Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
+Date:   Sun Feb 23 21:06:31 2025 -0700
+
+    TINYEXR: Disable thread usage as it is causing issues with gc.
+
+commit b0f8ba5a6460926f28912cd7884df238c1ff5778
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Feb 23 13:02:41 2025 -0800
+
+    Increment version to 3.02.
+
 commit 0af1f12b4e50e9662b47254a8241b062442a228f
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Sun Feb 23 12:17:49 2025 -0800
@@ -315,7 +801,7 @@ Date:   Tue Feb 4 20:24:58 2025 -0800
     Standardize settings.
 
 commit 2c49492af03fa38c24b29e493d9d4e69c21ea2e2
-Merge: abe03f77 47c76b58
+Merge: abe03f77f 47c76b583
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Tue Feb 4 19:59:52 2025 -0800
 
@@ -336,7 +822,7 @@ Date:   Tue Feb 4 18:56:19 2025 -0700
     WCE: Use a dedicated errorsNonTempalate.asy for testing templated imports on a non-template files.
 
 commit 7e5edf6ff1071f057cbe8282e7e8e537cbc67ee8
-Merge: f943e556 abe03f77
+Merge: f943e5562 abe03f77f
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Tue Feb 4 17:29:35 2025 -0800
 
@@ -373,14 +859,14 @@ Date:   Mon Feb 3 22:39:16 2025 -0800
     Fix include.
 
 commit aefbccad0e33bf613f26d70fe1097c0d8138c7d4
-Merge: b068bad9 efad9f67
+Merge: b068bad97 efad9f676
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Mon Feb 3 22:30:39 2025 -0800
 
     Merge branch 'master' into unify-lsp-ast-files.
 
 commit eca17db9487edc1d7299bf0685b400c9b5398b09
-Merge: efad9f67 f0de5475
+Merge: efad9f676 f0de5475d
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Mon Feb 3 22:24:51 2025 -0800
 
@@ -509,7 +995,7 @@ Date:   Sat Feb 1 23:10:05 2025 -0700
     CMAKE: Disable miscfiles generation in msvc/release/with-external-doc-files preset.
 
 commit 14e8d64a27c2f37b4eca9c14df44adfa886f6f3b
-Merge: 184c6cf4 f7cd5ba0
+Merge: 184c6cf4f f7cd5ba0d
 Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
 Date:   Wed Jan 29 22:12:28 2025 -0700
 
@@ -596,14 +1082,14 @@ Date:   Sat Jan 25 10:09:07 2025 -0800
     Remove trailing whitespace.
 
 commit 8d42b82c8d4a175fdb87f2d1996b30f14de26bc3
-Merge: ae949e77 03973ef5
+Merge: ae949e77f 03973ef58
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Sat Jan 25 10:03:53 2025 -0800
 
     Merge branch 'master' into privacy.
 
 commit ae949e77f75e63cfa70d56e89c2d37b8e86eaf09
-Merge: 56e144cd 3683c526
+Merge: 56e144cd8 3683c5260
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Sat Jan 25 10:02:54 2025 -0800
 
@@ -958,7 +1444,7 @@ Date:   Fri Jan 3 11:33:43 2025 +1100
     Being better implementation of templated imports.
 
 commit 03973ef58ffb4814f30b5a691bb58f4ecce29059
-Merge: 3683c526 253e9014
+Merge: 3683c5260 253e90142
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Sun Jan 19 15:19:19 2025 -0800
 
@@ -1057,7 +1543,7 @@ Date:   Sat Jan 18 13:24:24 2025 -0700
     AC: Change ac_cv_use_gc to enable_gc in lsp configuration.
 
 commit 3683c52606fd53adc4b49d3c8645429e16435040
-Merge: 4aa41ce8 5b2096a2
+Merge: 4aa41ce83 5b2096a2a
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Thu Jan 16 20:43:06 2025 -0800
 
@@ -1070,7 +1556,7 @@ Date:   Thu Jan 16 20:41:34 2025 -0800
     Format plain*.asy files.
 
 commit b66679ead880464224dd7512547cd1be4206da88
-Merge: 129ddc0f ef2fd57f
+Merge: 129ddc0f8 ef2fd57f7
 Author: Charles Staats III <charles.staats.iii@gmail.com>
 Date:   Thu Jan 16 20:18:19 2025 -0800
 
@@ -1095,7 +1581,7 @@ Date:   Thu Jan 16 19:37:36 2025 -0800
     Delete unnecessary comment.
 
 commit 4aa41ce8300046efa473ef8f1ebe5ea68212fb10
-Merge: ed93f99b 76635560
+Merge: ed93f99b6 766355606
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Thu Jan 16 19:26:33 2025 -0800
 
@@ -1104,14 +1590,14 @@ Date:   Thu Jan 16 19:26:33 2025 -0800
     Unify spellings of two perl variables that should be one.
 
 commit e4be79c7500fae335c95b82e042b9297ece1f547
-Merge: 7c60d7be ed93f99b
+Merge: 7c60d7bec ed93f99b6
 Author: Charles Staats III <charles.staats.iii@gmail.com>
 Date:   Thu Jan 16 18:13:14 2025 -0800
 
     Merge branch 'master' into using_typedef
 
 commit 766355606b9d8753216674461a2aef83bda351d0
-Merge: c62a29c8 ed93f99b
+Merge: c62a29c8a ed93f99b6
 Author: Charles Staats III <charles.staats.iii@gmail.com>
 Date:   Thu Jan 16 18:08:26 2025 -0800
 
@@ -1124,7 +1610,7 @@ Date:   Fri Jan 3 10:55:17 2025 +1100
     Assert type in encodeLevel is a record.
 
 commit 4c062b25a506218b94b3bedb2d5b2e9c083cdf66
-Merge: 65e47202 5ea9cb32
+Merge: 65e472028 5ea9cb326
 Author: Charles Staats III <charles.staats.iii@gmail.com>
 Date:   Thu Jan 2 15:12:31 2025 -0800
 
@@ -1137,7 +1623,7 @@ Date:   Wed Jan 1 18:41:19 2025 -0800
     Debugging WIP
 
 commit 5ea9cb326a92fb62654e348783a3b8352bc663c9
-Merge: 65e0876f ed93f99b
+Merge: 65e0876ff ed93f99b6
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Wed Jan 1 15:50:22 2025 -0800
 
@@ -1156,28 +1642,28 @@ Date:   Sun Dec 29 20:24:06 2024 -0800
     Avoid redefining preprocessor macro.
 
 commit 429fd699bcc24d099206ca7dd896d96e6be71dda
-Merge: 4bfd6b75 0c384938
+Merge: 4bfd6b754 0c3849387
 Author: Charles Staats III <charles.staats.iii@gmail.com>
 Date:   Sun Dec 29 20:18:34 2024 -0800
 
     Merge branch 'autounravel' into 508-error-compiling-nested-template-imports
 
 commit 0c3849387bb668d258a2f71a13528d1cf70d3e04
-Merge: 23e17701 5d8454c6
+Merge: 23e177013 5d8454c61
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Sun Dec 29 20:04:12 2024 -0800
 
     Merge branch 'master' into autounravel.
 
 commit c62a29c8a5dc572ad29362cb2596804bdaa934ac
-Merge: ef211932 bb5b8780
+Merge: ef211932b bb5b8780f
 Author: Charles Staats III <charles.staats.iii@gmail.com>
 Date:   Sun Dec 29 09:36:13 2024 -0800
 
     Merge branch 'master' into 509-perl-script-has-misspelled-variable-name
 
 commit 5d8454c61df9e4fee383e028061581cd02c0220c
-Merge: 06d4a678 7561c251
+Merge: 06d4a678c 7561c251e
 Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
 Date:   Sat Dec 28 23:12:06 2024 -0700
 
@@ -1246,7 +1732,7 @@ Date:   Sat Dec 28 21:09:52 2024 -0700
     PY: Change ascii encoding to utf-8.
 
 commit bb5b8780f31fed2bd1e7eac5cf3a17027714445e
-Merge: fc5766d2 e2a02980
+Merge: fc5766d27 e2a029805
 Author: charlesstaats <charlesstaats@users.noreply.github.com>
 Date:   Sat Dec 28 22:38:24 2024 -0500
 
@@ -1273,7 +1759,7 @@ Date:   Sat Dec 28 18:24:41 2024 -0800
     Fix alignment of generated C++ comment blocks.
 
 commit 354432ac6bf3b45a957b2723af92a4c348f6c796
-Merge: 55b8760a fc5766d2
+Merge: 55b8760a5 fc5766d27
 Author: Charles Staats III <charles.staats.iii@gmail.com>
 Date:   Sat Dec 28 18:09:59 2024 -0800
 
@@ -1316,7 +1802,7 @@ Date:   Sat Dec 28 17:17:35 2024 -0800
     Format new python files.
 
 commit 0efe596d63da9d372dbe31163b62566f5e20e24f
-Merge: be5d58e3 5cf1ed44
+Merge: be5d58e36 5cf1ed445
 Author: Charles Staats III <charles.staats.iii@gmail.com>
 Date:   Sat Dec 28 16:50:42 2024 -0800
 
@@ -1341,7 +1827,7 @@ Date:   Sat Dec 28 11:15:53 2024 -0800
     Access xasy and debug settings as variables.
 
 commit 8703e2a6316862dc6dcd6d247c7faf0a91b9fc2f
-Merge: 5cf1ed44 94ccb43d
+Merge: 5cf1ed445 94ccb43df
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Fri Dec 27 22:48:11 2024 -0800
 
@@ -1566,7 +2052,7 @@ Date:   Sat Dec 14 18:49:35 2024 -0800
     Translate keywords.pl to python.
 
 commit 1b157a79685433a9676bd3a6c155e9c6560adbfe
-Merge: 2735aad2 77ba9cd2
+Merge: 2735aad23 77ba9cd2b
 Author: Charles Staats III <charles.staats.iii@gmail.com>
 Date:   Sat Dec 14 17:51:30 2024 -0800
 
@@ -1603,14 +2089,14 @@ Date:   Sat Dec 14 09:47:55 2024 -0800
     Make rational.asy use autounravel.
 
 commit 4601cc946d130cc66b3ad8d003061cf994d15502
-Merge: a526dfc9 0c3610e0
+Merge: a526dfc9a 0c3610e03
 Author: Charles Staats III <charles.staats.iii@gmail.com>
 Date:   Sat Dec 14 09:11:24 2024 -0800
 
     Merge branch 'autounravel' of https://github.com/vectorgraphics/asymptote into autounravel
 
 commit 77f85b7ac80908e5d8471a2e6c83fa79318533a6
-Merge: 607b655e 6e5a08cb
+Merge: 607b655e9 6e5a08cb3
 Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
 Date:   Sat Dec 14 01:05:32 2024 -0700
 
@@ -1649,14 +2135,14 @@ Date:   Fri Dec 13 18:57:50 2024 -0800
     Update documentation.
 
 commit a526dfc9ae21a91304f50dddece178ac88dfa240
-Merge: fe4aae51 2686dcaa
+Merge: fe4aae516 2686dcaa7
 Author: Charles Staats III <charles.staats.iii@gmail.com>
 Date:   Fri Dec 13 16:25:42 2024 -0800
 
     Merge branch 'master' into autounravel.
 
 commit f99492aa23fa11459d7f347d12cc6fcb3e8101f2
-Merge: fe4aae51 607b655e
+Merge: fe4aae516 607b655e9
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Fri Dec 13 16:19:53 2024 -0800
 
@@ -1737,7 +2223,7 @@ Date:   Fri Dec 6 16:22:01 2024 -0800
     generated by a different script.
 
 commit 5f99d1f2944e784ca295ba75055c3f50f5bc2d59
-Merge: 96e6e392 d3003d15
+Merge: 96e6e3926 d3003d159
 Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
 Date:   Wed Dec 4 22:31:03 2024 -0700
 
@@ -1889,7 +2375,7 @@ Date:   Sun Dec 1 20:16:14 2024 -0800
     Share asy-keywords.el with MSWindows build.
 
 commit e81d98429fd814b7e20f659c6d6215aca446d4ef
-Merge: 8a21f0a9 be02adf7
+Merge: 8a21f0a96 be02adf7f
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Sun Dec 1 20:00:50 2024 -0800
 
@@ -1898,7 +2384,7 @@ Date:   Sun Dec 1 20:00:50 2024 -0800
     Initialize positions to nullPos.
 
 commit 8a21f0a96f53c7fa16b56e9a9433e48f56eb697a
-Merge: 327038c6 ce74561f
+Merge: 327038c6f ce74561ff
 Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
 Date:   Sun Dec 1 01:25:25 2024 -0700
 
@@ -1931,7 +2417,7 @@ Date:   Sat Nov 30 09:14:49 2024 -0800
     Use C++17 for static analysis tools in vscode.
 
 commit 327038c6f3df340087bd78951d594cba442d7f27
-Merge: cb9b4c58 1dfce308
+Merge: cb9b4c581 1dfce3088
 Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
 Date:   Fri Nov 29 03:03:00 2024 -0700
 
@@ -2000,7 +2486,7 @@ Date:   Thu Nov 28 21:04:06 2024 -0700
     PY: Add requirements.lint.txt.
 
 commit cb9b4c5811c8f103c5dceab749441469b7f55ce3
-Merge: 595e0186 72ad028e
+Merge: 595e01868 72ad028e1
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Thu Nov 28 21:21:46 2024 -0800
 
@@ -2418,7 +2904,7 @@ Date:   Fri Nov 15 10:41:35 2024 -0800
     Fix #493: qualify fpclassify namespace.
 
 commit cb1a3c9e29cca940f08c9fd2527649a8fa108fab
-Merge: efb5c8d2 fd4d0019
+Merge: efb5c8d2e fd4d0019b
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Fri Nov 15 10:37:26 2024 -0800
 
@@ -2493,7 +2979,7 @@ Date:   Thu Nov 14 01:05:42 2024 -0700
     BUILD: Restore asygl's regex in determine_pkg_info.py.
 
 commit 3f9cf39aff16ba816039425cff697f8cad62f07c
-Merge: a3479bbd 4ce9ccfc
+Merge: a3479bbd6 4ce9ccfc3
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Wed Nov 13 22:01:15 2024 -0800
 
@@ -2526,7 +3012,7 @@ Date:   Wed Nov 13 21:33:48 2024 -0700
     Back port to Python 3.7.16.
 
 commit a3479bbd6155497cb1fd237106bf769557578818
-Merge: 952e74a7 db6d3a50
+Merge: 952e74a73 db6d3a504
 Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
 Date:   Wed Nov 13 19:25:27 2024 -0700
 
@@ -2595,7 +3081,7 @@ Date:   Tue Nov 12 18:53:10 2024 -0800
     Address pull request #482.
 
 commit d693f5f9928c84170ca23433abe548c848506fe0
-Merge: db52be09 fa4774e0
+Merge: db52be09a fa4774e06
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Tue Nov 12 18:49:48 2024 -0800
 
@@ -2610,7 +3096,7 @@ Date:   Mon Nov 11 23:22:05 2024 -0800
     Remove unused file.
 
 commit 8fbdf7a261417b40e7ddc26c5bf41c3941f0c6e2
-Merge: 7cfedab7 d95f595e
+Merge: 7cfedab72 d95f595e6
 Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
 Date:   Mon Nov 11 21:15:07 2024 -0700
 
@@ -2655,7 +3141,7 @@ Date:   Mon Nov 11 15:24:39 2024 -0800
     Fix missing dependencies.
 
 commit a0bfdd5d73dac863577608e2115c35d8002b0d97
-Merge: ce2dfa5d 5839f005
+Merge: ce2dfa5d7 5839f0053
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Mon Nov 11 12:50:41 2024 -0800
 
@@ -2668,7 +3154,7 @@ Date:   Mon Nov 11 13:48:57 2024 -0700
     MAKE: Re-add tests/Makefile.
 
 commit ce2dfa5d76eef26877862a81fbfa4283032e6fc6
-Merge: 34eb2703 cfa4b387
+Merge: 34eb27036 cfa4b387f
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Mon Nov 11 12:49:00 2024 -0800
 
@@ -2693,7 +3179,7 @@ Date:   Mon Nov 11 12:44:42 2024 -0800
     Restore example.
 
 commit 3e030884510819477e9588fecd4285cfb52aae8e
-Merge: 54955c5a e0ee47fb
+Merge: 54955c5af e0ee47fbd
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Mon Nov 11 12:41:39 2024 -0800
 
@@ -2706,7 +3192,7 @@ Date:   Mon Nov 11 13:41:11 2024 -0700
     MAKE: Add xasy to asy target.
 
 commit 54955c5af723b2a8e7812f039b5b5b4e57099773
-Merge: ac9dad0e dd281a48
+Merge: ac9dad0e9 dd281a480
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Mon Nov 11 12:39:38 2024 -0800
 
@@ -2719,7 +3205,7 @@ Date:   Mon Nov 11 13:36:55 2024 -0700
     GUI: Fix path import for GUI symlink.
 
 commit ac9dad0e9e1b28a2ad7e6d2dee8e926057beaa9b
-Merge: 6df88fac b9e744cf
+Merge: 6df88faca b9e744cfd
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Mon Nov 11 12:29:16 2024 -0800
 
@@ -2796,7 +3282,7 @@ Date:   Sun Nov 10 13:30:51 2024 -0800
     Standardize formatting.
 
 commit d18983c5fe851b71f8aeb574389317cc67655e84
-Merge: 21d1648f dab310c0
+Merge: 21d1648f5 dab310c01
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Sun Nov 10 13:11:43 2024 -0800
 
@@ -2874,14 +3360,14 @@ Date:   Sat Nov 9 17:32:31 2024 -0800
     Test compiler errors for autounravel.
 
 commit 10248a12f9c6db810da18bd2e70f33d97c20eee4
-Merge: 0c70a313 03587f0f
+Merge: 0c70a3135 03587f0fb
 Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
 Date:   Sat Nov 9 18:15:11 2024 -0700
 
     Merge remote-tracking branch 'origin' into msvc-support-make
 
 commit 94bac8ba470dbba54e90fbc92c4ed07aebd5f3e7
-Merge: 16d05bc2 03587f0f
+Merge: 16d05bc27 03587f0fb
 Author: Charles Staats III <charles.staats.iii@gmail.com>
 Date:   Sat Nov 9 17:13:48 2024 -0800
 
@@ -2956,7 +3442,7 @@ Date:   Tue Oct 8 10:32:57 2024 -0700
     Increment version to 2.93.
 
 commit 9ed0a02a09524bec5add75a13151c36bc742fe8f
-Merge: 730570ca d773ca31
+Merge: 730570ca0 d773ca31b
 Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
 Date:   Tue Oct 8 02:36:06 2024 -0600
 
@@ -2981,7 +3467,7 @@ Date:   Mon Oct 7 10:43:36 2024 -0700
     Improve build-asymptote paths.
 
 commit c89a69a2fbfb0d67590bf000cf2c0a89a68610ad
-Merge: f44f70c6 be6cde32
+Merge: f44f70c60 be6cde328
 Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
 Date:   Thu Oct 3 21:46:49 2024 -0600
 
@@ -3036,7 +3522,7 @@ Date:   Mon Sep 30 20:20:38 2024 -0700
     Remove duplicate error messages.
 
 commit 825eeda1ddb8a58e609283359d0756d143541ab4
-Merge: 6a080594 82c919fb
+Merge: 6a0805946 82c919fb2
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Mon Sep 30 19:57:32 2024 -0700
 
@@ -3049,7 +3535,7 @@ Date:   Mon Sep 30 19:30:29 2024 -0700
     First draft autounravel doc.
 
 commit 99efd94d4dddf0344e8953b1783099e2850377d0
-Merge: 14cc566d 82c919fb
+Merge: 14cc566d9 82c919fb2
 Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
 Date:   Sun Sep 29 23:42:19 2024 -0600
 
@@ -3116,7 +3602,7 @@ Date:   Tue Sep 24 16:02:34 2024 -0700
     Passing tests for autounravel parametrized type.
 
 commit 42ce1177890d9d1e4ab74d9e3152b2b172411839
-Merge: 47a6c8e5 604e0e09
+Merge: 47a6c8e52 604e0e09f
 Author: Charles Staats III <charles.staats.iii@gmail.com>
 Date:   Tue Sep 24 15:23:04 2024 -0700
 
@@ -3153,7 +3639,7 @@ Date:   Sat Sep 14 22:41:54 2024 -0600
     CI: Fix determine_asy_version CI stage.
 
 commit 8cc0d0a551c50998bee03e891f0aa52f1097e00b
-Merge: 24679056 c1c5f761
+Merge: 246790569 c1c5f7613
 Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
 Date:   Sat Sep 14 22:40:28 2024 -0600
 
@@ -3250,7 +3736,7 @@ Date:   Tue Sep 3 21:01:49 2024 -0600
     BUILD: Add asymptote.pdf to build-asymptote.ps1.
 
 commit ee85f42d88aab58a3b7a93353dccd21a6597189e
-Merge: 1a74d2f3 db6d2426
+Merge: 1a74d2f3f db6d24267
 Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
 Date:   Mon Sep 2 16:25:35 2024 -0600
 
@@ -3337,14 +3823,14 @@ Date:   Sun Sep 1 21:05:05 2024 -0600
     CMAKE: Add tests for template tests.
 
 commit 81d0ffcb6dccf2172ca69a27618bf333c4608b4f
-Merge: 080b4447 604e0e09
+Merge: 080b44472 604e0e09f
 Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
 Date:   Sun Sep 1 21:01:36 2024 -0600
 
     Merge remote-tracking branch 'origin' into msvc-support-make
 
 commit 604e0e09f82116b3dd8c613f8439fb2e994dcd9b
-Merge: abb6d707 442b9b6f
+Merge: abb6d7076 442b9b6f2
 Author: Charles Staats III <charles.staats.iii@gmail.com>
 Date:   Thu Aug 29 18:32:42 2024 -0700
 
@@ -3693,7 +4179,7 @@ Date:   Fri Aug 16 02:32:37 2024 -0600
     CMAKE: Fix CDlabel case-sensitive typo.
 
 commit 315d7958ca29a6e0e23b2d86789359070d1e5329
-Merge: 17965535 c2e57e12
+Merge: 179655352 c2e57e121
 Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
 Date:   Fri Aug 16 00:39:56 2024 -0600
 
@@ -3760,7 +4246,7 @@ Date:   Wed Aug 14 21:58:18 2024 -0700
     Update introductory talk.
 
 commit 35e076eeaf7057db11df777ac41db80532acb768
-Merge: 1b8712e8 a058c4b3
+Merge: 1b8712e8f a058c4b32
 Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
 Date:   Wed Aug 14 18:06:01 2024 -0600
 
@@ -3821,7 +4307,7 @@ Date:   Mon Aug 12 14:28:24 2024 -0700
     Only recenter camera on nontrivial scenes.
 
 commit 1b8712e8fecdbd0102ba0af72832f03d82d084a2
-Merge: 98508450 b730244a
+Merge: 985084504 b730244a1
 Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
 Date:   Mon Aug 12 15:25:25 2024 -0600
 
@@ -3882,7 +4368,7 @@ Date:   Mon Aug 12 01:10:15 2024 -0600
     CXX: Fix definition in picture.cc.
 
 commit 726e71d2c5776d44531cec87128e1b65204ce4a8
-Merge: 2aec573d 560ffb6e
+Merge: 2aec573d3 560ffb6e4
 Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
 Date:   Mon Aug 12 01:07:14 2024 -0600
 
@@ -4100,7 +4586,7 @@ Date:   Sat Aug 3 11:17:03 2024 -0600
     PY: Add script to fetch package version information from configure.ac.
 
 commit b43bf009fd0b67401dd09a7e5a7eb041b98a1fcd
-Merge: 926b16f8 1a683cb0
+Merge: 926b16f81 1a683cb01
 Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
 Date:   Sat Aug 3 10:29:05 2024 -0600
 
@@ -4197,7 +4683,7 @@ Date:   Tue Jul 30 01:36:42 2024 -0600
     CMAKE: Use VERBATIM option only on unix systems for gen_preprocessed_depfile since it was causing problems on github runner and windows.
 
 commit 98c49c8c3d9ccf2dfa324d2423d3e5f0b65ced92
-Merge: 7a67ba57 e4ef069e
+Merge: 7a67ba574 e4ef069ed
 Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
 Date:   Tue Jul 30 01:24:30 2024 -0600
 
@@ -4330,7 +4816,7 @@ Date:   Fri Jul 26 01:01:18 2024 -0600
     AC: Make configure.ac work with vcpkg.
 
 commit 7c60d7bec543f6dd19086d8395df61b494e424e8
-Merge: 2e65241f e4ef069e
+Merge: 2e65241ff e4ef069ed
 Author: Charles Staats III <charles.staats.iii@gmail.com>
 Date:   Sat Jul 27 13:18:58 2024 -0700
 
@@ -4355,7 +4841,7 @@ Date:   Fri Jul 26 16:21:12 2024 -0700
     Apply type rename after merge.
 
 commit 985175fa00617610e86e5448c9f8a06dc3b04529
-Merge: 0227e6da 472d8ceb
+Merge: 0227e6da9 472d8ceb6
 Author: Charles Staats III <charles.staats.iii@gmail.com>
 Date:   Fri Jul 26 15:21:12 2024 -0700
 
@@ -4441,7 +4927,7 @@ Date:   Mon Jul 22 13:45:42 2024 -0700
     Enable GLSL error reporting again.
 
 commit 5f57f90df7a2cd003c8771906049e58b034572cf
-Merge: 467867e5 0a28468d
+Merge: 467867e56 0a28468d0
 Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
 Date:   Mon Jul 22 12:08:17 2024 -0600
 
@@ -4555,7 +5041,7 @@ Date:   Sun Jul 14 21:30:32 2024 -0600
     CXX: Move src/include/srctemplate files to root directory.
 
 commit 20f7f705e870ee57784480f16532edaf8a39ff80
-Merge: 2d14741e 40f83910
+Merge: 2d14741e5 40f83910c
 Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
 Date:   Sun Jul 14 21:09:58 2024 -0600
 
@@ -4592,14 +5078,14 @@ Date:   Tue Jul 9 18:03:25 2024 -0700
     Hardcoded autounravel structs named TestAuUn.
 
 commit 8c6c5ca0e36c298fa5767b9d7699f95f6ecef8e5
-Merge: b3278634 472d8ceb
+Merge: b32786347 472d8ceb6
 Author: Charles Staats III <charles.staats.iii@gmail.com>
 Date:   Tue Jul 9 13:22:38 2024 -0700
 
     Merge branch 'master' into autounravel
 
 commit 2d14741e5805a27f75dc76c4a616f02f6252a5f1
-Merge: 030c13a0 472d8ceb
+Merge: 030c13a0c 472d8ceb6
 Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
 Date:   Sun Jul 7 20:35:09 2024 -0600
 
@@ -4696,7 +5182,7 @@ Date:   Sun Jun 30 11:12:59 2024 -0600
     CXX: Fix exitHandler from master branch.
 
 commit 5e777baf7e8b16096487432d6c0ca6b789b02f1d
-Merge: b4a7504b 5dc79928
+Merge: b4a7504b8 5dc799289
 Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
 Date:   Sun Jun 30 11:10:02 2024 -0600
 
@@ -4861,7 +5347,7 @@ Date:   Wed Jun 19 19:00:15 2024 -0700
     Fix documentation.
 
 commit b2dba448eb7e579f9f1e382c3c22c3e1be439e1c
-Merge: eca567a5 154a9d93
+Merge: eca567a53 154a9d938
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Wed Jun 19 18:43:30 2024 -0700
 
@@ -5023,7 +5509,7 @@ Date:   Sun Jun 2 17:39:49 2024 -0700
     Remove automatic recordInitializer for imported templates; add test.
 
 commit b327863476ffeb69000a6c0fa19d425fb664f286
-Merge: 122092fa be47ce98
+Merge: 122092fa8 be47ce983
 Author: Charles Staats III <charles.staats.iii@gmail.com>
 Date:   Sun Jun 2 15:28:58 2024 -0700
 
@@ -5116,7 +5602,7 @@ Date:   Thu May 30 20:55:20 2024 -0700
     Simplify code.
 
 commit 6faf168867f0a7dd3930b6cf0d74fc4e3333ddd0
-Merge: 7dfdaf3c be47ce98
+Merge: 7dfdaf3c4 be47ce983
 Author: Charles Staats III <charles.staats.iii@gmail.com>
 Date:   Thu May 30 19:50:04 2024 -0700
 
@@ -5147,7 +5633,7 @@ Date:   Wed May 29 22:13:06 2024 -0700
     Change `#if SIMPLE_FRAME` to `#ifdef SIMPLE_FRAME` for consistency.
 
 commit 7dfdaf3c418ddb0d2471cea99eb0bcaeaec8c6a7
-Merge: ecb912d9 122092fa
+Merge: ecb912d95 122092fa8
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Wed May 29 21:02:20 2024 -0700
 
@@ -5178,7 +5664,7 @@ Date:   Wed May 29 12:57:35 2024 -0700
     Rename types::ty to types::tyTy to distinguish it from absyntax::ty.
 
 commit ecb912d95d3cb9c9595e82f8de8bfaf1dfa9e8ba
-Merge: 193c933f 684570c8
+Merge: 193c933fe 684570c88
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Tue May 28 10:15:51 2024 -0700
 
@@ -5197,7 +5683,7 @@ Date:   Mon May 27 19:50:24 2024 -0700
     Ship with pkg.m4 to support pkg-config.
 
 commit de439f6d57b43871dbb3d23f5a9ab8c9af9c4ef2
-Merge: 518077fd e369a22f
+Merge: 518077fd6 e369a22fd
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Thu May 23 22:52:55 2024 -0700
 
@@ -5310,7 +5796,7 @@ Date:   Sat May 18 20:07:35 2024 -0600
     XASY: Update requirement versions.
 
 commit db9b2954ff472fbda07f95bf1df7e2e6ef8fe687
-Merge: b6671564 8fbeeaa6
+Merge: b66715648 8fbeeaa6b
 Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
 Date:   Sat May 18 20:03:10 2024 -0600
 
@@ -5329,7 +5815,7 @@ Date:   Thu Apr 11 11:32:45 2024 -0600
     ASY: Increment version to 2.90 for cmake.
 
 commit 9d9d67aab1bc9fd2444e9b40852fc84b8b05ea66
-Merge: da0ecbd4 8b606e7a
+Merge: da0ecbd4e 8b606e7a6
 Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
 Date:   Wed Apr 10 23:35:31 2024 -0600
 
@@ -5350,7 +5836,7 @@ Date:   Wed Apr 10 22:40:08 2024 -0600
     CXX: Change RPC macro to HAVE_LIBTIRPC.
 
 commit b2f03f07111984f2466ebac0dc689f15868be925
-Merge: da0ecbd4 8371bce0
+Merge: da0ecbd4e 8371bce08
 Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
 Date:   Wed Apr 10 22:17:59 2024 -0600
 
@@ -5418,7 +5904,7 @@ Date:   Fri Mar 22 18:45:11 2024 -0700
     Avoid particular compile error if Int=int.
 
 commit 63359273ebbd562fcd5f269eb08e5ce2d59bd1bf
-Merge: 4e0d0dcb d3f67352
+Merge: 4e0d0dcb1 d3f67352c
 Author: Charles Staats III <charles.staats.iii@gmail.com>
 Date:   Fri Mar 22 09:26:47 2024 -0700
 
@@ -5471,14 +5957,14 @@ Date:   Wed Mar 20 14:01:37 2024 -0700
     Add additional tests from datastructures branch.
 
 commit 033715655b4165ba2d00aaf9640bfb9b505d593a
-Merge: 2bc14502 de239a50
+Merge: 2bc145021 de239a50c
 Author: Charles Staats III <charles.staats.iii@gmail.com>
 Date:   Tue Mar 19 20:49:33 2024 -0700
 
     Merge branch 'template' of https://github.com/vectorgraphics/asymptote into template
 
 commit de239a50c0681502d6405038e649997f49e2d27d
-Merge: 3429cdc7 337b9f37
+Merge: 3429cdc71 337b9f378
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Tue Mar 19 20:44:00 2024 -0700
 
@@ -5587,7 +6073,7 @@ Date:   Tue Mar 5 09:41:06 2024 -0800
     Specify PDF 1.5 instead of 1.4.
 
 commit da0ecbd4e2f79eac43283d2e20f24eb7aeaed37c
-Merge: 091c183d 00ac5da3
+Merge: 091c183d6 00ac5da37
 Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
 Date:   Thu Feb 29 22:01:19 2024 -0700
 
@@ -5614,7 +6100,7 @@ Date:   Thu Feb 29 12:22:07 2024 -0700
     CXX: Change process.h to processutils.h since it collides with Windows' existing process.h.
 
 commit 943b0d5440449ae9f41f443057ddeb92c35b7512
-Merge: 1bf3e0ec cd07b1d3
+Merge: 1bf3e0ec4 cd07b1d33
 Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
 Date:   Thu Feb 29 12:15:52 2024 -0700
 
@@ -5711,7 +6197,7 @@ Date:   Wed Feb 21 00:10:10 2024 -0800
     Improve error messages and documentation.
 
 commit 542d92da66d913edc425dab33beb3c187cf419f9
-Merge: c60f3b51 c551fa24
+Merge: c60f3b513 c551fa24a
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Sun Feb 18 23:50:08 2024 -0800
 
@@ -5724,7 +6210,7 @@ Date:   Fri Feb 16 22:09:44 2024 -0800
     Open context menu only for GUI-drawn items.
 
 commit 091c183d6a6c5e5e7e53b87488e11b81b3b4235c
-Merge: c5648284 585bad04
+Merge: c56482845 585bad046
 Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
 Date:   Wed Feb 14 21:44:54 2024 -0700
 
@@ -5763,7 +6249,7 @@ Date:   Mon Feb 12 20:28:29 2024 -0800
     Address some comments.
 
 commit 124722665617a004985dd3a59baaa41a49109611
-Merge: 167db8b8 d8fed60a
+Merge: 167db8b84 d8fed60a4
 Author: Charles Staats III <charles.staats.iii@gmail.com>
 Date:   Mon Feb 12 19:43:53 2024 -0800
 
@@ -5782,7 +6268,7 @@ Date:   Mon Feb 12 16:10:08 2024 -0800
     deduplicate intSymbol and templatedSymbol lookup
 
 commit 8a87711cc92c4e0d40f24b7066c4c8c3ddb9df49
-Merge: 24c9d634 df776148
+Merge: 24c9d6340 df7761482
 Author: Charles Staats III <charles.staats.iii@gmail.com>
 Date:   Mon Feb 12 13:09:32 2024 -0800
 
@@ -5831,7 +6317,7 @@ Date:   Sun Feb 11 18:45:07 2024 -0800
     Replace use of std::pair with a new gc-enabled struct.
 
 commit 1b9b8ed09b0315284d9cbea0da4dd3050e198623
-Merge: 8463465a 034891bd
+Merge: 8463465a5 034891bdb
 Author: Charles Staats III <charles.staats.iii@gmail.com>
 Date:   Sun Feb 11 18:20:57 2024 -0800
 
@@ -5898,7 +6384,7 @@ Date:   Thu Feb 8 15:22:12 2024 -0800
     tests with wrapper
 
 commit c564828450c3bcbaf4b5493aab02f8422c3bb0f7
-Merge: 44544fc8 e3d8a5cb
+Merge: 44544fc86 e3d8a5cb5
 Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
 Date:   Wed Feb 7 00:42:05 2024 -0700
 
@@ -5989,7 +6475,7 @@ Date:   Sun Jan 21 09:05:09 2024 -0800
     More natural error from camp.y.
 
 commit 44544fc865ff410e396859f059f9539c0fe60fd7
-Merge: 55ee4cd7 f65f8085
+Merge: 55ee4cd75 f65f80853
 Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
 Date:   Sat Jan 20 23:12:32 2024 -0700
 
@@ -6052,7 +6538,7 @@ Date:   Wed Jan 17 21:50:52 2024 -0800
     better error message for positional template arg
 
 commit db40b20dd93c78a1441a4a7d6acd4a4b24888c7a
-Merge: d34926df 5650e015
+Merge: d34926dfc 5650e0155
 Author: Charles Staats III <charles.staats.iii@gmail.com>
 Date:   Wed Jan 17 21:27:10 2024 -0800
 
@@ -6065,7 +6551,7 @@ Date:   Wed Jan 17 20:15:22 2024 -0800
     Use a unique signature hash for identifying templated imports.
 
 commit d34926dfc945b03d1c1e8a950597ff2e8d18fa5e
-Merge: b5d3eb12 c66deaf2
+Merge: b5d3eb121 c66deaf27
 Author: Charles Staats III <charles.staats.iii@gmail.com>
 Date:   Wed Jan 17 18:04:05 2024 -0800
 
@@ -6090,7 +6576,7 @@ Date:   Wed Jan 17 14:57:11 2024 -0800
     checkpoint; extraneous errors fixed?
 
 commit 50961c069288547c1ca3431a225b274ad34154f2
-Merge: 3f55d6eb dd4b63cc
+Merge: 3f55d6eba dd4b63cc1
 Author: Charles Staats III <charles.staats.iii@gmail.com>
 Date:   Tue Jan 16 18:52:03 2024 -0800
 
@@ -6196,7 +6682,7 @@ Date:   Fri Dec 29 10:12:33 2023 -0800
     dummy parse from Andy
 
 commit 55ee4cd758034e16b9081619c49a1838edbbe30b
-Merge: 2e4f39ad 55808725
+Merge: 2e4f39adb 558087253
 Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
 Date:   Sun Jan 7 02:51:25 2024 -0700
 
@@ -6205,14 +6691,14 @@ Date:   Sun Jan 7 02:51:25 2024 -0700
     Update a/ci-staging
 
 commit 5580872533b1b47c55bd45012322a474b1c55803
-Merge: 4a69c2ea 2e4f39ad
+Merge: 4a69c2eab 2e4f39adb
 Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
 Date:   Sun Jan 7 02:24:34 2024 -0700
 
     Merge branch 'a/ci-staging' into msvc-support
 
 commit 4a69c2eab22be42a66d6c5301ad5c8a69f47f3b5
-Merge: 544184aa 98d66af9
+Merge: 544184aa4 98d66af9f
 Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
 Date:   Sun Jan 7 02:22:41 2024 -0700
 
@@ -6225,7 +6711,7 @@ Date:   Tue Jan 2 17:06:05 2024 -0800
     Improve diagnostic.
 
 commit 2e4f39adb0c07b88fa78d25808b2cc1501afda2c
-Merge: 93553dc8 544184aa
+Merge: 93553dc8b 544184aa4
 Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
 Date:   Mon Jan 1 17:28:39 2024 -0700
 
@@ -6234,7 +6720,7 @@ Date:   Mon Jan 1 17:28:39 2024 -0700
     update msvc support to a/ci-staging
 
 commit 544184aa474a33eba1e1ee40af50c372be39649d
-Merge: 64041044 8c83a8e8
+Merge: 64041044e 8c83a8e87
 Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
 Date:   Mon Jan 1 17:04:25 2024 -0700
 
@@ -6359,7 +6845,7 @@ Date:   Sun Dec 31 06:56:58 2023 -0800
     Fix issue #412: prevent inferred assignment of void type.
 
 commit 93553dc8bdc772277d181b2f4e176f450f6655c2
-Merge: 977b8d31 5176b7c0
+Merge: 977b8d31b 5176b7c0e
 Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
 Date:   Sat Dec 30 14:48:46 2023 -0700
 
@@ -6410,7 +6896,7 @@ Date:   Sat Dec 30 11:55:52 2023 -0700
     CI: Add initialize windows action file.
 
 commit 977b8d31b3a204e8c557ab0c9b86ea0557ef35d6
-Merge: 60024dde 0078b611
+Merge: 60024dde4 0078b611d
 Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
 Date:   Sat Dec 30 11:49:07 2023 -0700
 
@@ -6425,7 +6911,7 @@ Date:   Sat Dec 30 11:43:57 2023 -0700
     CI: Add stub windows build CI workflow.
 
 commit 8d18a50951b1239fb0ca3b000e5772ae5406e6bf
-Merge: d6e86bd1 60024dde
+Merge: d6e86bd10 60024dde4
 Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
 Date:   Sat Dec 30 02:40:38 2023 -0700
 
@@ -6438,14 +6924,14 @@ Date:   Sat Dec 30 02:16:56 2023 -0700
     CXX: Fix include for picture.cc.
 
 commit 60024dde4db321863e04690fabd15a032d2d2e78
-Merge: 69c3e4a1 8428d007
+Merge: 69c3e4a14 8428d007f
 Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
 Date:   Sat Dec 30 02:37:16 2023 -0700
 
     Merge branch 'vectorgraphics:master' into a/ci-staging
 
 commit 69c3e4a14110d871d09193443904f419bcded8dd
-Merge: b468f92a fdd82c8d
+Merge: b468f92ab fdd82c8df
 Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
 Date:   Sat Dec 30 02:36:36 2023 -0700
 
@@ -6598,14 +7084,14 @@ Date:   Sun Dec 24 00:40:57 2023 -0700
     WIN32: Fix CreateProcessA's arguments.
 
 commit 0b19d8d615b26a33d25291d81f9225a60d56161e
-Merge: b1e03f7a 2b4140b0
+Merge: b1e03f7a3 2b4140b09
 Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
 Date:   Fri Dec 22 23:19:37 2023 -0700
 
     Merge branch 'master' into msvc-support
 
 commit cf5f033cbe6fd008052b62033265e4fcc05face8
-Merge: 0b07b0db 2b4140b0
+Merge: 0b07b0db0 2b4140b09
 Author: Charles Staats III <charles.staats.iii@gmail.com>
 Date:   Fri Dec 22 16:22:06 2023 -0800
 
@@ -6636,7 +7122,7 @@ Date:   Tue Dec 19 21:11:46 2023 -0700
     clang-format: Change clang-format style.
 
 commit f64bd104c950d1ff43176c534f1a126d18265107
-Merge: be005add 081db9d0
+Merge: be005add4 081db9d08
 Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
 Date:   Tue Dec 19 20:44:46 2023 -0700
 
@@ -6745,7 +7231,7 @@ Date:   Sun Dec 10 01:21:20 2023 -0700
     COMMON: Include winsock2.h before any other includes to prevent winsock.h being included.
 
 commit 380cc71f3c903d9a37cbc8e43eaea1bdc6ea5351
-Merge: 4eca6498 6868ca1a
+Merge: 4eca64986 6868ca1a6
 Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
 Date:   Sat Dec 9 00:47:46 2023 -0700
 
@@ -6878,7 +7364,7 @@ Date:   Tue Dec 5 00:04:19 2023 -0700
     x86-64: Disable fpu precision setting for ARM+x64 systems.
 
 commit db074cd9748a26c891b4a702e0fde228974603c3
-Merge: e0e99d71 4f0b7939
+Merge: e0e99d71f 4f0b79391
 Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
 Date:   Mon Dec 4 22:39:06 2023 -0700
 
@@ -7965,7 +8451,7 @@ Date:   Mon Oct 2 22:58:36 2023 -0700
     Simplify bilinear interpolation of surfaces.
 
 commit cc79cc5253f4e9963c731f131ea00a3fea6cbc29
-Merge: 90bc314c 25be300d
+Merge: 90bc314c2 25be300d8
 Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
 Date:   Mon Sep 25 16:12:50 2023 -0600
 
@@ -7998,7 +8484,7 @@ Date:   Sat Jul 29 23:25:54 2023 -0600
     Fix bug 388: Avoid broken dvisvgm reassign-clippaths optimization.
 
 commit b069d8158e7921298b38874b4b2600de0fddf497
-Merge: 29caaed5 2a242c54
+Merge: 29caaed5e 2a242c545
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Tue Jun 27 16:31:53 2023 -0600
 
@@ -8263,7 +8749,7 @@ Date:   Sat Jun 3 14:42:17 2023 -0600
       commit:   "???"
 
 commit b3345619ab5aad88fcf229591c5a20f0d0864eaa
-Merge: 5c40136f 7366fe26
+Merge: 5c40136f6 7366fe263
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Sat Jun 3 12:21:01 2023 -0600
 
@@ -8278,7 +8764,7 @@ Date:   Sat Jun 3 12:11:23 2023 -0600
     Reformat code.
 
 commit 4709f6e6956d3f455c127fa5d44debf6f70d027e
-Merge: 456ae992 7f5cdf0b
+Merge: 456ae9920 7f5cdf0b2
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Sat Jun 3 11:59:50 2023 -0600
 
@@ -8623,7 +9109,7 @@ Date:   Mon Nov 28 20:20:35 2022 -0700
     Improve example of multiple shipout.
 
 commit dce2e0d3b94b59dddcca6bb95c38548e2021821a
-Merge: ee0d1a4a a42e056e
+Merge: ee0d1a4a8 a42e056e2
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Sun Nov 13 00:10:12 2022 -0700
 
@@ -8638,7 +9124,7 @@ Date:   Sun Nov 13 00:00:45 2022 -0700
     Fix issue #308: runtime error when drawing degenerate path with TexHead arrow.
 
 commit 0ff56f1ecaff0f5e6da0acd0e7ff6f152cd52c56
-Merge: eb89fd60 1834e488
+Merge: eb89fd60d 1834e4883
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Sat Nov 12 23:06:21 2022 -0700
 
@@ -8667,7 +9153,7 @@ Date:   Tue Nov 1 21:22:49 2022 -0600
     Use Bland's rule even on artificial variables.
 
 commit 4f326abc01934c83380ca6e0d399dc5f33819e76
-Merge: e7d475fa 38d018f6
+Merge: e7d475fa6 38d018f6b
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Mon Oct 31 15:03:46 2022 -0600
 
@@ -8755,7 +9241,7 @@ Date:   Sun Oct 9 10:55:22 2022 -0600
     Change default UNIX postscript viewer to evince; remove remaining references to gsview.
 
 commit 6d556b7a78d1680702abcdc0972ecf6c458ced88
-Merge: 681daee0 7696801a
+Merge: 681daee01 7696801ae
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Fri Sep 30 17:10:52 2022 -0600
 
@@ -8822,7 +9308,7 @@ Date:   Fri Sep 16 23:05:54 2022 -0600
     XASY: Convert from asy to Qt pattern.
 
 commit 2f9dc5be12dca41d2e0413d2c94f0359c60f6919
-Merge: f3e3ed1a 2bf7c010
+Merge: f3e3ed1a2 2bf7c010e
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Fri Sep 16 21:19:37 2022 -0600
 
@@ -8931,7 +9417,7 @@ Date:   Sat Aug 27 03:12:24 2022 -0600
     XASY: Remove debug print statements.
 
 commit 6d326fef6aa47d027ae159e9f9aeb60b67a1a657
-Merge: bbdba2da d48103a9
+Merge: bbdba2da4 d48103a9a
 Author: chaumont-arch <chaumont@ualberta.ca>
 Date:   Sat Aug 27 03:07:16 2022 -0600
 
@@ -8950,7 +9436,7 @@ Date:   Fri Aug 26 00:29:01 2022 -0600
     XASY: Apply KEY to begingroup().
 
 commit 2191ec77923ddbdb742abfe9fdcf0f9c1ffa4505
-Merge: 539b8367 98a183dc
+Merge: 539b83671 98a183dcf
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Fri Aug 26 00:13:20 2022 -0600
 
@@ -9243,7 +9729,7 @@ Date:   Tue Jul 26 15:18:10 2022 +0200
     List ambiguous functions.
 
 commit 60df18eea453855571ee4a2cc3f45878a4fe52d9
-Merge: fa284421 4fe6f9fb
+Merge: fa2844219 4fe6f9fb1
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Tue Jul 26 04:17:33 2022 -0600
 
@@ -9444,7 +9930,7 @@ Date:   Mon Jul 4 00:04:25 2022 -0600
     WEBGL: Compute Bezier triangle bounds in WebGL. Remove Min and Max.
 
 commit 42bc4a3b4e0f187e265c353fc9e7766cf8165b95
-Merge: a45aaa1e 30ad132f
+Merge: a45aaa1e9 30ad132f3
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Sun Jul 3 22:09:06 2022 -0600
 
@@ -9463,7 +9949,7 @@ Date:   Sun Jul 3 18:56:08 2022 -0600
     Fix BUG #319: Rename NOCACHE to NoOutputFonts to address yet another Ghostscript backwards incompatibility (in Ghostscript version 9.56).
 
 commit 12a778be453f9319faeac99edfa25c0498bf2024
-Merge: d393a76b 48625bd2
+Merge: d393a76b3 48625bd2b
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Wed Jun 29 13:06:59 2022 -0600
 
@@ -9500,7 +9986,7 @@ Date:   Wed Jun 22 00:49:55 2022 -0600
     XASY: Progress on saving bug.
 
 commit d393a76b3960455b4285806771e705faa54c20d8
-Merge: 0669e4fb d8cacc97
+Merge: 0669e4fb0 d8cacc97b
 Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
 Date:   Tue Jun 21 15:44:12 2022 -0600
 
@@ -9588,7 +10074,7 @@ Date:   Fri Jun 10 21:12:42 2022 -0600
     XASY: Add arrow sizes.
 
 commit a45aaa1e948343e6a6d86391f26f4f132e17e6bd
-Merge: 5f676ec6 0669e4fb
+Merge: 5f676ec6a 0669e4fb0
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Thu Jun 9 19:01:27 2022 -0600
 
@@ -10031,7 +10517,7 @@ Date:   Wed May 11 16:40:43 2022 -0600
     Document surface constructor for solids of revolution.
 
 commit f910ea19eee9f240045594bf049f363cc8181ac4
-Merge: de70a958 72b0fe36
+Merge: de70a958b 72b0fe368
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Tue May 10 22:20:00 2022 -0600
 
@@ -11272,7 +11758,7 @@ Date:   Thu Jan 6 12:55:08 2022 -0700
     This reverts commit 166efc83f399a795d2fa221477034e63e8ebb235.
 
 commit af52c7800ecef8fda895f604fd9c42d9fbb3ae18
-Merge: d7f097c1 123a7300
+Merge: d7f097c15 123a7300e
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Thu Jan 6 11:08:00 2022 -0700
 
@@ -11337,7 +11823,7 @@ Date:   Wed Jan 5 14:36:49 2022 -0700
     Merge pull request #157 from ivankokan: Inversion fixes and improvements.
 
 commit c808070eeb7bc1737b1e314c698e92d6c2889145
-Merge: 1ce26e54 9c770c62
+Merge: 1ce26e54a 9c770c628
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Wed Jan 5 13:46:17 2022 -0700
 
@@ -12251,7 +12737,7 @@ Date:   Mon Dec 13 00:15:30 2021 -0700
     Fix compilation for configure --disable-lsp.
 
 commit b60ef92ffde1edd6b0a8a589c1a937317dc3a3c2
-Merge: 117f64ba bc239956
+Merge: 117f64ba0 bc2399563
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Sun Dec 12 23:30:34 2021 -0700
 
@@ -12312,7 +12798,7 @@ Date:   Sat Dec 11 18:02:31 2021 -0700
     LSP: Port to C++14.
 
 commit 6f238b01ae31f81b7a20730b1413077e0837e08c
-Merge: 895c90e8 5f2f5ba5
+Merge: 895c90e88 5f2f5ba55
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Sat Dec 11 12:18:57 2021 -0700
 
@@ -12579,7 +13065,7 @@ Date:   Thu Dec 2 04:01:33 2021 -0700
     XASY: Don't overwrite extension in loadFile.
 
 commit 571d1eadab6c5edd743320c7a12f60d971cf58f8
-Merge: b47ab404 20fe8cd8
+Merge: b47ab4045 20fe8cd80
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Thu Dec 2 03:41:32 2021 -0700
 
@@ -12648,7 +13134,7 @@ Date:   Sun Nov 21 22:09:21 2021 -0700
     XASY: Fix segmentation fault.
 
 commit e5f45896916caf91fd6e304413dd8dcb8477b230
-Merge: 2fac9e58 86954d86
+Merge: 2fac9e58b 86954d868
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Sun Nov 21 17:40:50 2021 -0700
 
@@ -12955,7 +13441,7 @@ Date:   Fri Nov 12 10:03:17 2021 -0700
     Update gl.js.
 
 commit a49741358f3f9c9b79bb24dac263c4dec8d1d785
-Merge: c7c084b6 568da114
+Merge: c7c084b64 568da1148
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Thu Nov 11 22:05:36 2021 -0700
 
@@ -13023,7 +13509,7 @@ Date:   Sun Oct 31 10:41:14 2021 -0600
     V3D: Mention source file in header comment.
 
 commit 9f9b9cfdb450048341f4eac3778e4e1f5999b8a9
-Merge: ae624c44 3b3f33bb
+Merge: ae624c444 3b3f33bb7
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Sun Oct 31 09:59:52 2021 -0600
 
@@ -13078,7 +13564,7 @@ Date:   Tue Oct 26 22:34:36 2021 -0600
     Remove troublesome u qualifiers from preprocessor constants.
 
 commit 3724879c8b1ca767c75559406c578df13670d52d
-Merge: 44a1a06a 172dda0b
+Merge: 44a1a06a9 172dda0ba
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Mon Oct 25 22:31:48 2021 -0600
 
@@ -13128,7 +13614,7 @@ Date:   Sun Oct 24 13:20:47 2021 -0600
     Use maximum number of available GPU processors.
 
 commit 44a1a06a99e5fd18b5d7557de2c6e3197597d256
-Merge: 7f57426f 025e14b2
+Merge: 7f57426f1 025e14b2b
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Sun Oct 24 11:15:13 2021 -0600
 
@@ -13768,7 +14254,7 @@ Date:   Tue Aug 17 04:01:27 2021 -0600
     Support centerIndex in WebGL triangle groups.
 
 commit 22a784d251242440f4cbdaa8ae2349ba031cf8db
-Merge: b0729f18 79137914
+Merge: b0729f182 791379141
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Mon Aug 16 17:29:43 2021 -0600
 
@@ -13787,7 +14273,7 @@ Date:   Mon Aug 16 12:45:56 2021 -0600
     V3D: Add center to triangle groups.
 
 commit 79137914157f38ce1fb548e26d2a409cc36445d7
-Merge: d56f0966 3fdfbd69
+Merge: d56f09667 3fdfbd69f
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Mon Aug 16 10:13:34 2021 -0600
 
@@ -14017,7 +14503,7 @@ Date:   Mon Aug 9 17:14:17 2021 -0600
     XASY: Color filledbucket and nodes of curve and polygon icons.
 
 commit 2c52f34e4439309cba661ef7d82c3328afcfdf41
-Merge: 71cb3f68 a6a23c75
+Merge: 71cb3f68c a6a23c75f
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Mon Aug 9 16:06:52 2021 -0600
 
@@ -14054,7 +14540,7 @@ Date:   Mon Aug 9 10:29:23 2021 -0600
     Rename renderMode to renderDensity.
 
 commit 4603ec03cd7bdfa97e8c91559c115049d62593ba
-Merge: 867f44da 9c6677a2
+Merge: 867f44da7 9c6677a2e
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Mon Aug 9 09:49:17 2021 -0600
 
@@ -14201,7 +14687,7 @@ Date:   Thu Aug 5 22:13:18 2021 -0600
     Suppress internal Qt diagnostics.
 
 commit 0995689e8505f85329b000c50e74daab196e887c
-Merge: 57b93d55 7dead80b
+Merge: 57b93d551 7dead80b4
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Thu Aug 5 21:45:03 2021 -0600
 
@@ -14232,7 +14718,7 @@ Date:   Thu Aug 5 18:06:07 2021 -0600
     This reverts commit bad1b04a2aaf6e21eacf07b046d99e07a839c18f.
 
 commit 94651febdff5250fb6bc98393817a578737a8ee4
-Merge: 2d4c3cde c2f559c8
+Merge: 2d4c3cde0 c2f559c8b
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Thu Aug 5 18:05:32 2021 -0600
 
@@ -14455,7 +14941,7 @@ Date:   Fri Jul 30 13:21:45 2021 -0600
     XASY: Fix crash on 'Exporting as Asy' for new files.
 
 commit 88a10b46356cf14d1ef91faeea7261f346b3a226
-Merge: 63eea214 9650c998
+Merge: 63eea2141 9650c9989
 Author: RubberNoodles <ocheng@ualberta.ca>
 Date:   Fri Jul 30 13:16:58 2021 -0600
 
@@ -14558,7 +15044,7 @@ Date:   Thu Jul 29 02:00:42 2021 -0600
     XASY: Ensure consitency of dialog for found identical files.
 
 commit 363acfd36317d6c46fc6fa12c01312bd980d2ad9
-Merge: 3d91532e 9161d8bf
+Merge: 3d91532e0 9161d8bfa
 Author: RubberNoodles <ocheng@ualberta.ca>
 Date:   Thu Jul 29 01:51:40 2021 -0600
 
@@ -14727,7 +15213,7 @@ Date:   Mon Jul 26 19:50:29 2021 -0600
     XDR: Add triangles to v3d file.
 
 commit 35ee832a48783d2378adb508ca0724b0058de7be
-Merge: 3a338ba8 04a5d074
+Merge: 3a338ba8a 04a5d074d
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Mon Jul 26 17:32:37 2021 -0600
 
@@ -14812,7 +15298,7 @@ Date:   Mon Jul 26 12:16:59 2021 -0600
     XASY: Check if file does not exist when loading file from command line.
 
 commit d17303f0fd9e14dfbf2923ab580de1fac2b4adf0
-Merge: 51367354 17c8855b
+Merge: 51367354c 17c8855b0
 Author: RubberNoodles <ocheng@ualberta.ca>
 Date:   Mon Jul 26 12:12:32 2021 -0600
 
@@ -14831,7 +15317,7 @@ Date:   Mon Jul 26 11:51:55 2021 -0600
     XASY: Change save to open dialog for default .xasy save.
 
 commit 17c8855b0acc7b736700ac4f7964486a7106781a
-Merge: 2a9d492d 9e6ef1e0
+Merge: 2a9d492d0 9e6ef1e0b
 Author: chaumont-arch <chaumont@ualberta.ca>
 Date:   Mon Jul 26 11:21:12 2021 -0600
 
@@ -14910,7 +15396,7 @@ Date:   Fri Jul 23 17:32:48 2021 -0600
     Add preliminary v3d standard.
 
 commit 8c1d863d3c332b91490598c84d9bcc51ff9bb37d
-Merge: cfd3121e c84c526a
+Merge: cfd3121e4 c84c526ae
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Fri Jul 23 16:42:22 2021 -0600
 
@@ -14959,7 +15445,7 @@ Date:   Mon Jul 19 11:08:05 2021 -0600
     XASY: Fix Bezier editor transform bug.
 
 commit ad84064b6721d033ea95ece4aa7702bd99ed5f29
-Merge: 86c8c792 f69347fe
+Merge: 86c8c7924 f69347fe1
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Mon Jul 19 10:42:16 2021 -0600
 
@@ -15032,7 +15518,7 @@ Date:   Tue Jul 13 22:26:22 2021 -0600
     Make lspport and lsphost environment settings.
 
 commit 4dc77c0eed54202ccafdbea6db7a851463e900d4
-Merge: 224a60e7 9cae116c
+Merge: 224a60e71 9cae116c1
 Author: RubberNoodles <ocheng@ualberta.ca>
 Date:   Tue Jul 13 15:05:43 2021 -0600
 
@@ -15195,7 +15681,7 @@ Date:   Wed Jul 7 15:46:50 2021 -0600
     LSP: Search from access declarations for functions.
 
 commit 2fbdcbee88202969b31f2c52a4cf344d326c30e7
-Merge: cb0f82f3 20e1d214
+Merge: cb0f82f3b 20e1d214e
 Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
 Date:   Wed Jul 7 14:36:20 2021 -0600
 
@@ -15232,7 +15718,7 @@ Date:   Tue Jul 6 17:29:55 2021 -0600
     XASY: Replace undo/redo icons.
 
 commit ce507966cfd81f01e62fd6a066ae0a307a46e31e
-Merge: 3726940a 2fe124e7
+Merge: 3726940ad 2fe124e73
 Author: RubberNoodles <ocheng@ualberta.ca>
 Date:   Tue Jul 6 13:38:31 2021 -0600
 
@@ -15263,7 +15749,7 @@ Date:   Fri Jul 2 14:35:49 2021 -0600
     REPO: Update vscode settings to disable js format and python language server.
 
 commit a6a88e866411b88ec8038fc28f5173824c7f3a67
-Merge: e38a3c3f 84451cf2
+Merge: e38a3c3f7 84451cf2d
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Fri Jul 2 12:51:24 2021 -0600
 
@@ -15511,7 +15997,7 @@ Date:   Thu Jun 17 11:13:22 2021 -0600
     XASY: Open recent class to handle paths
 
 commit 0f41b3af1bea5ad1c88c740502ee52b369e922e8
-Merge: 8dfb98bc 0d799204
+Merge: 8dfb98bc5 0d7992042
 Author: RubberNoodles <ocheng@ualberta.ca>
 Date:   Thu Jun 17 11:11:11 2021 -0600
 
@@ -15644,14 +16130,14 @@ Date:   Thu Jun 3 21:18:06 2021 -0600
     fixed: undo create object crashes if selected object is deleted
 
 commit 8e95228aff14dbd37821bca7b519a20d4bcc73f5
-Merge: 0442d6c4 c195c1fc
+Merge: 0442d6c42 c195c1fc4
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Thu Jun 3 14:03:32 2021 -0600
 
     Merge branch 'Qt'.
 
 commit c195c1fc4c5b0631aae84cc75b3b9bf27da677e5
-Merge: bbacc4f8 ded4ea86
+Merge: bbacc4f87 ded4ea860
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Thu Jun 3 13:55:00 2021 -0600
 
@@ -15884,7 +16370,7 @@ Date:   Mon May 10 10:39:53 2021 -0600
     fixed y-axis inversion bug in initialized and load-fail states
 
 commit e1eb7e2c3c22caa8052e70b38055ca45420eebe2
-Merge: 634e1b8f c71d3faf
+Merge: 634e1b8f9 c71d3faf1
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Thu May 6 22:52:55 2021 -0600
 
@@ -15917,7 +16403,7 @@ Date:   Thu May 6 14:15:49 2021 -0600
     Calculate maxKey.
 
 commit fc8b0803744cb892d670455c9d86d56ad348ad04
-Merge: b4bf0803 bbb1ed00
+Merge: b4bf08036 bbb1ed004
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Thu May 6 09:44:31 2021 -0600
 
@@ -15960,7 +16446,7 @@ Date:   Sun Mar 14 18:29:38 2021 -0600
     Update copyright.
 
 commit 80f47d0cf5777ebca07790bc0c8f46881e568a3c
-Merge: 3cac2756 7a22ce6a
+Merge: 3cac27568 7a22ce6ae
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Sat Mar 13 12:51:02 2021 -0700
 
@@ -16053,7 +16539,7 @@ Date:   Thu Feb 18 09:11:30 2021 -0700
     Make orthographic scaling consistent with perspective scaling when keepAspect=false.
 
 commit 70aa2bcb08e9f2cc88bef64570d5760430f0891a
-Merge: a755f768 4b768e16
+Merge: a755f7680 4b768e169
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Mon Feb 8 23:11:04 2021 -0700
 
@@ -16062,21 +16548,21 @@ Date:   Mon Feb 8 23:11:04 2021 -0700
     Fix Gouraud image scaling
 
 commit a755f7680687d11bc95b00e83b327c917f76cb77
-Merge: 7f96ae66 9347f01d
+Merge: 7f96ae660 9347f01dc
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Mon Feb 8 23:04:22 2021 -0700
 
     Merge branch 'cagprado-contour_scaling'.
 
 commit 9347f01dcbfd4aa9f77b236259bf3acecb481248
-Merge: 7f96ae66 4cd9bf4b
+Merge: 7f96ae660 4cd9bf4b6
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Mon Feb 8 22:56:07 2021 -0700
 
     Merge branch 'contour_scaling' of https://github.com/cagprado/asymptote into cagprado-contour_scaling.
 
 commit 7f96ae660b6359c601c8243b279b0146ef4cf7ae
-Merge: 3c7dffea d4a34e7b
+Merge: 3c7dffea7 d4a34e7b2
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Mon Feb 8 22:50:45 2021 -0700
 
@@ -16089,7 +16575,7 @@ Date:   Mon Feb 8 22:44:50 2021 -0700
     Subtract 1 before casting to potentially smaller type.
 
 commit 36ff9595303524acf076ee11ff746b6a273a65c0
-Merge: 3c7dffea ad93504e
+Merge: 3c7dffea7 ad93504e5
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Mon Feb 8 22:33:06 2021 -0700
 
@@ -16328,14 +16814,14 @@ Date:   Sun Oct 25 22:24:51 2020 -0600
     Use ps2write instead of eps2write where possible, for compatibility with gs 9.53.
 
 commit 42b291049920c2a023ab5f3598cc917eb36297ca
-Merge: e62d0401 d9826965
+Merge: e62d04011 d9826965b
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Sun Oct 25 20:18:21 2020 -0600
 
     Merge branch 'spotrh-curl-config', standardized.
 
 commit d9826965be5768c417b790fb6ff6ba59aeb89246
-Merge: e62d0401 a055a0ae
+Merge: e62d04011 a055a0ae8
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Sun Oct 25 20:09:49 2020 -0600
 
@@ -16426,7 +16912,7 @@ Date:   Thu Aug 13 16:06:15 2020 -0600
     Update URLs.
 
 commit af12ec3b6fcca4e273dad4fdd3b431bada30608f
-Merge: 986d6423 68682879
+Merge: 986d64236 68682879c
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Sun Aug 9 08:29:58 2020 -0600
 
@@ -16667,7 +17153,7 @@ Date:   Mon Jul 27 00:30:18 2020 -0600
     Format documentation.
 
 commit 9193d9d8ee934b325e575d405631d4fb252b1d8d
-Merge: ef016d74 013e0cb2
+Merge: ef016d741 013e0cb25
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Mon Jul 27 00:20:41 2020 -0600
 
@@ -16676,7 +17162,7 @@ Date:   Mon Jul 27 00:20:41 2020 -0600
     Obsolete *encoding modules
 
 commit 013e0cb25362e46cecb40ea468aa95e66788dd12
-Merge: aa8a5244 ef016d74
+Merge: aa8a5244e ef016d741
 Author: Ivan Kokan <ivan.kokan@gmail.com>
 Date:   Mon Jul 27 02:26:20 2020 +0200
 
@@ -16974,7 +17460,7 @@ Date:   Thu Jul 9 15:53:58 2020 +0200
     Format docs
 
 commit 9cca9e9106e6ad4aa89389d25b11712d7ac4edec
-Merge: e0b8e3de d968c027
+Merge: e0b8e3def d968c0274
 Author: Ivan Kokan <ivan.kokan@gmail.com>
 Date:   Thu Jul 9 15:14:31 2020 +0200
 
@@ -17475,7 +17961,7 @@ Date:   Thu Apr 23 00:01:44 2020 +0200
     CJK package URL
 
 commit 285f855a0312465f1c1d96757a5098061d929725
-Merge: 35428571 881b585a
+Merge: 354285717 881b585a2
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Mon Apr 13 14:56:25 2020 -0600
 
@@ -17564,7 +18050,7 @@ Date:   Thu Mar 5 18:00:32 2020 -0700
     Update documentation.
 
 commit 79ec5d5c2b5bd432709265d53bcbe51d0cafe1ce
-Merge: c161ffe7 f9bc3f2b
+Merge: c161ffe7b f9bc3f2bb
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Thu Mar 5 14:15:05 2020 -0700
 
@@ -17589,7 +18075,7 @@ Date:   Tue Mar 3 21:44:25 2020 -0700
     Increment version to 2.65.
 
 commit df95759c3752e7fc902894ce73ba86d91e16a5e9
-Merge: 396d060c ae3dc713
+Merge: 396d060c5 ae3dc713a
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Tue Mar 3 16:52:03 2020 -0700
 
@@ -17704,7 +18190,7 @@ Date:   Sat Feb 29 19:44:44 2020 -0700
     Port curve lighting to WebGL.
 
 commit 9d932516731c26a811b512ed91a7631e5c825344
-Merge: ffa4ef3f d4285d04
+Merge: ffa4ef3f1 d4285d04f
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Sat Feb 29 17:21:30 2020 -0700
 
@@ -17915,7 +18401,7 @@ Date:   Wed Feb 12 14:33:06 2020 +0100
     Remove unicode module
 
 commit d560eaefbcffe9eb6c26db1d4fd1b365daa5799a
-Merge: 2898b83f 9beb5b6c
+Merge: 2898b83f6 9beb5b6c7
 Author: Ivan Kokan <ivan.kokan@gmail.com>
 Date:   Wed Feb 12 13:42:05 2020 +0100
 
@@ -18197,7 +18683,7 @@ Date:   Sun Jan 12 16:48:53 2020 -0700
     Use relative paths in asymptote.pdf images.
 
 commit 79296236068897d39e112d12eaf98ecaaaebecbc
-Merge: b3b0d915 2898b83f
+Merge: b3b0d915a 2898b83f6
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Sun Jan 12 16:42:21 2020 -0700
 
@@ -18266,7 +18752,7 @@ Date:   Wed Jan 8 19:54:08 2020 -0700
     Fix typo in documentation.
 
 commit b35aa3a56960f9eb6bbecab2e4b325ee02d3b160
-Merge: 374823eb 8cfac4d9
+Merge: 374823ebe 8cfac4d98
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Sun Jan 5 09:49:20 2020 -0700
 
@@ -18383,7 +18869,7 @@ Date:   Fri Nov 22 14:53:19 2019 +0100
     hyperbola by foci passing through a point
 
 commit 1f6ccfc849a2f920007b270a7cc3c2d4e3a93203
-Merge: b050a1b4 1fca842e
+Merge: b050a1b46 1fca842ea
 Author: Ivan Kokan <ivan.kokan@gmail.com>
 Date:   Fri Nov 22 14:15:24 2019 +0100
 
@@ -18729,7 +19215,7 @@ Date:   Sat Oct 19 15:16:22 2019 -0600
     fix materialTable resizing.
 
 commit 24feb014dd4bc563d52c8fa6b14c3e097ec3d03a
-Merge: ea84254a 8d8031f7
+Merge: ea84254a3 8d8031f70
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Sat Oct 19 12:53:50 2019 -0600
 
@@ -19635,7 +20121,7 @@ Date:   Mon Sep 23 03:11:35 2019 -0600
     Implement faster WebGL and OpenGL rendering, with improved offscreen detection.
 
 commit 07ee50be15e9968de2e1a6f70c00392785bb5028
-Merge: 4dcd549b 5e911430
+Merge: 4dcd549b9 5e9114304
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Mon Sep 23 01:27:26 2019 -0600
 
@@ -19732,7 +20218,7 @@ Date:   Sun Sep 15 21:43:45 2019 -0600
     Reformat webgl header and footer.
 
 commit 573369c22e52e2b4d3424ef1e0e8e4607572f7b4
-Merge: e6580bf3 221e1542
+Merge: e6580bf30 221e15420
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Sun Sep 15 18:52:46 2019 -0600
 
@@ -19769,7 +20255,7 @@ Date:   Sun Sep 15 12:20:22 2019 -0600
     Remove duplicate code.
 
 commit e6580bf30d1ecd8f96a4b7e48adfcaa2a5d24fd5
-Merge: f40bd919 cc4115dd
+Merge: f40bd919b cc4115dd2
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Sun Sep 15 01:03:28 2019 -0600
 
@@ -19848,7 +20334,7 @@ Date:   Thu Sep 12 09:59:01 2019 -0600
     Remove unused arguments.
 
 commit f40bd919b1a2772f8ea696c0004b447ef6f21b11
-Merge: a6b55307 76978127
+Merge: a6b553072 76978127a
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Thu Sep 12 09:08:25 2019 -0600
 
@@ -20047,7 +20533,7 @@ Date:   Sun Sep 8 16:12:12 2019 -0600
     Remove unwanted code.
 
 commit f8c22220b7dee93b97bca2a793df59e6e83ef664
-Merge: 4972f905 f1254f8d
+Merge: 4972f9053 f1254f8d7
 Author: Supakorn "Jamie" Rassameemasmuang <rassamee@ualberta.ca>
 Date:   Sun Sep 8 14:39:32 2019 -0600
 
@@ -20060,7 +20546,7 @@ Date:   Sun Sep 8 14:39:27 2019 -0600
     Clean up gl.js again.
 
 commit f1254f8d7fa19053fc483231053d16103679a2e9
-Merge: cc7eb276 bad6b6d5
+Merge: cc7eb2765 bad6b6d57
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Sun Sep 8 14:34:04 2019 -0600
 
@@ -20289,7 +20775,7 @@ Date:   Sat Aug 31 19:14:37 2019 -0600
     Improve zoom.
 
 commit aa2f9e5bcdb6aaf4fc960a0448bbd04c6c174e53
-Merge: 11577411 11b7f3b4
+Merge: 115774110 11b7f3b44
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Sat Aug 31 14:21:25 2019 -0600
 
@@ -20412,7 +20898,7 @@ Date:   Thu Aug 29 19:14:55 2019 -0600
     Add in authors names.
 
 commit afc2a146dd755fc19adbdba7f7aa28aab5a9b45d
-Merge: 04feea56 306f6df4
+Merge: 04feea568 306f6df4e
 Author: Supakorn "Jamie" Rassameemasmuang <rassamee@ualberta.ca>
 Date:   Thu Aug 29 19:08:19 2019 -0600
 
@@ -20425,7 +20911,7 @@ Date:   Thu Aug 29 19:08:14 2019 -0600
     Fix vViewPosition.
 
 commit 306f6df4e77d854c9890d4a14f8679e7e16f4ebf
-Merge: 63fb75af ff8cc6d3
+Merge: 63fb75aff ff8cc6d32
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Thu Aug 29 19:07:05 2019 -0600
 
@@ -20444,7 +20930,7 @@ Date:   Thu Aug 29 19:05:07 2019 -0600
     Add in orthographic/persp view directions.
 
 commit acb3196c4d37930b0ef6d3fb2bee214222789593
-Merge: 60dd5701 ce412f94
+Merge: 60dd5701d ce412f946
 Author: Supakorn "Jamie" Rassameemasmuang <rassamee@ualberta.ca>
 Date:   Thu Aug 29 18:49:49 2019 -0600
 
@@ -20535,7 +21021,7 @@ Date:   Wed Aug 28 17:32:58 2019 -0600
     Fix float arrays flag.
 
 commit 3de4371ce380c2185d7f483f02e2abd48abc55f1
-Merge: dc9692dd 2ad31cb3
+Merge: dc9692dde 2ad31cb32
 Author: Supakorn "Jamie" Rassameemasmuang <rassamee@ualberta.ca>
 Date:   Wed Aug 28 17:31:23 2019 -0600
 
@@ -20602,7 +21088,7 @@ Date:   Wed Aug 28 02:20:09 2019 -0600
     Reglue back translation routine.
 
 commit 53c16fcd22a2f19cbea8f07c7054d1d9519d4806
-Merge: 4c9342e9 df4b5699
+Merge: 4c9342e9d df4b56997
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Wed Aug 28 01:41:15 2019 -0600
 
@@ -20615,7 +21101,7 @@ Date:   Wed Aug 28 01:40:03 2019 -0600
     Fix last commit.
 
 commit df4b5699744d668ae4cb4367d2ab5f5cf039cc1b
-Merge: 5b876724 52d3e4d6
+Merge: 5b8767247 52d3e4d67
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Wed Aug 28 01:36:05 2019 -0600
 
@@ -20628,7 +21114,7 @@ Date:   Wed Aug 28 01:35:54 2019 -0600
     Simplify glew compilation.
 
 commit b2a6fff4e97192c5bd42b5eed689d3aa0e0c7b14
-Merge: 64d3f620 52d3e4d6
+Merge: 64d3f620d 52d3e4d67
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Wed Aug 28 01:07:42 2019 -0600
 
@@ -20653,7 +21139,7 @@ Date:   Tue Aug 27 17:32:12 2019 -0600
     Add in temporary canvas height/width.
 
 commit ac8cbda3cc382a0ceb632fe3930cb5351a50468f
-Merge: 8f7b2711 97e03e6d
+Merge: 8f7b27118 97e03e6de
 Author: Supakorn "Jamie" Rassameemasmuang <rassamee@ualberta.ca>
 Date:   Tue Aug 27 17:27:08 2019 -0600
 
@@ -20696,7 +21182,7 @@ Date:   Fri Aug 23 17:27:53 2019 -0600
     Change jsfile to handle new p properly.
 
 commit 6fc0875e2ed6c3ef9108d0103615d8f1f5264ca7
-Merge: 2fe6c372 fa9cfab0
+Merge: 2fe6c372d fa9cfab02
 Author: Supakorn "Jamie" Rassameemasmuang <rassamee@ualberta.ca>
 Date:   Fri Aug 23 17:22:06 2019 -0600
 
@@ -20739,7 +21225,7 @@ Date:   Wed Aug 21 16:37:20 2019 -0600
     Add webgl option to glrender.
 
 commit 9bfd0c90ef80dfcbd28422cc6348f1bf943a5cd7
-Merge: 05461c69 3d714156
+Merge: 05461c696 3d7141566
 Author: Supakorn "Jamie" Rassameemasmuang <rassamee@ualberta.ca>
 Date:   Wed Aug 21 16:28:09 2019 -0600
 
@@ -20764,7 +21250,7 @@ Date:   Wed Aug 21 16:23:42 2019 -0600
     Fix gl.js vertex function.
 
 commit 98a67e304b975c141ff16011fa9ea5eee15c671f
-Merge: 56076839 7f1fba23
+Merge: 56076839a 7f1fba235
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Wed Aug 21 15:58:08 2019 -0600
 
@@ -20843,7 +21329,7 @@ Date:   Thu Aug 15 23:22:19 2019 -0600
     Disable bulky and leaky OpenImageIO library by default.
 
 commit 56076839adb43e1a0bc99aa0019a4ff4c275f86b
-Merge: 46461352 94ac15f8
+Merge: 464613521 94ac15f88
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Wed Aug 14 14:51:57 2019 -0600
 
@@ -21134,7 +21620,7 @@ Date:   Sun Aug 4 07:39:09 2019 +0200
     Handle zero-sized dot radii.
 
 commit a98cceebf82a2cee9a3526a909fc1435888e81bc
-Merge: 69218e14 4bfc7889
+Merge: 69218e14b 4bfc78893
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Sat Aug 3 21:10:42 2019 -0600
 
@@ -21317,7 +21803,7 @@ Date:   Mon Jul 29 19:44:51 2019 -0600
     Fix fragment shader.
 
 commit 486071f481eb83fc1f93cff9d2c3d0b97bc4df8e
-Merge: ffd8ced7 37ca4019
+Merge: ffd8ced79 37ca40193
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Mon Jul 29 19:30:14 2019 -0600
 
@@ -21486,7 +21972,7 @@ Date:   Tue Jun 4 17:47:49 2019 -0600
     Pack material floats in a vec4.
 
 commit 8fd7f10e9590568224daffcff34abee98d8cc0f2
-Merge: 81bba72d 549c3665
+Merge: 81bba72df 549c3665c
 Author: Supakorn "Jamie" Rassameemasmuang <rassamee@ualberta.ca>
 Date:   Tue Jun 4 17:46:18 2019 -0600
 
@@ -21511,7 +21997,7 @@ Date:   Sat Jun 1 14:58:22 2019 -0600
     Minor updates; tried Beckmann NDF.
 
 commit 24ccec91a0632d1b8799572339f8805065472f55
-Merge: ea6f3787 71f10dc1
+Merge: ea6f3787c 71f10dc1f
 Author: Supakorn "Jamie" Rassameemasmuang <rassamee@ualberta.ca>
 Date:   Tue May 28 14:43:14 2019 -0600
 
@@ -21538,7 +22024,7 @@ Date:   Sun May 26 22:56:21 2019 +1000
     Detect gamma instead of sqrt function in libm.
 
 commit cc9be83022f3506b4adfc2c8face25532f40880f
-Merge: f4784eac b4884e1a
+Merge: f4784eac5 b4884e1a0
 Author: Supakorn "Jamie" Rassameemasmuang <rassamee@ualberta.ca>
 Date:   Sat May 25 15:43:46 2019 -0600
 
@@ -21677,7 +22163,7 @@ Date:   Thu May 2 16:28:45 2019 -0600
     Update fftw++; fix warning message.
 
 commit 8f641c83362c04460251f884493b1c3536274192
-Merge: abd3f761 43b43ae8
+Merge: abd3f7616 43b43ae8f
 Author: Supakorn "Jamie" Rassameemasmuang <rassamee@ualberta.ca>
 Date:   Fri Apr 26 12:35:50 2019 -0600
 
@@ -21728,7 +22214,7 @@ Date:   Tue Apr 2 09:54:01 2019 -0600
     Fix fuzz and soccerball example.
 
 commit 1f92dbaf87bf93635fdb67f83e57268893707cec
-Merge: 211c791b 6fad4a32
+Merge: 211c791b7 6fad4a32d
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Sun Mar 31 23:48:48 2019 -0600
 
@@ -21741,7 +22227,7 @@ Date:   Sun Mar 31 13:10:44 2019 -0600
     Update to Boehm gc-8.0.4.
 
 commit 6fad4a32d4b786782504b3368d0aa1ce13fbd4d5
-Merge: 819de76a d1d56093
+Merge: 819de76a7 d1d560934
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Sun Mar 31 10:23:57 2019 -0600
 
@@ -22010,7 +22496,7 @@ Date:   Wed Jan 23 20:46:19 2019 -0700
     Downgrade to GLSL 1.30.
 
 commit 8506a29977e9437851759a59087b433a39f1c44a
-Merge: 1eb6fd84 f106987c
+Merge: 1eb6fd84f f106987c9
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Wed Jan 23 19:30:40 2019 -0700
 
@@ -22311,7 +22797,7 @@ Date:   Thu Jan 3 20:57:21 2019 -0700
     Do camera calculations in double precision.
 
 commit 60d2c0e07174e2050af00236e286bdfac9c191ca
-Merge: 6d6a6535 aa08fb34
+Merge: 6d6a65354 aa08fb345
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Tue Jan 1 21:32:41 2019 -0700
 
@@ -22330,7 +22816,7 @@ Date:   Fri Dec 28 02:20:16 2018 -0700
     Fix ghostscript arguments.
 
 commit 60acb54ca61ba808d64aa0e28c1c64c853380083
-Merge: d98f3793 5fb1fecb
+Merge: d98f3793c 5fb1fecb5
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Fri Dec 28 01:40:44 2018 -0700
 
@@ -22361,7 +22847,7 @@ Date:   Fri Dec 21 15:44:52 2018 -0700
     Centralize render data exchange.
 
 commit 25ccee4d0fb257c223f786bfd151583a32c1aa2b
-Merge: 25668b72 924bd6b1
+Merge: 25668b728 924bd6b1d
 Author: Supakorn "Jamie" Rassameemasmuang <rassamee@ualberta.ca>
 Date:   Fri Dec 21 15:15:25 2018 -0700
 
@@ -22428,7 +22914,7 @@ Date:   Fri Dec 14 07:52:02 2018 +1100
     Drive artificial variables out of basis.
 
 commit 2113adb6f8ba236eb7ce08d76a464f52e3b3bb3b
-Merge: 494cf1d0 f3da29c7
+Merge: 494cf1d0d f3da29c7a
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Tue Dec 4 15:58:18 2018 -0700
 
@@ -22441,14 +22927,14 @@ Date:   Tue Dec 4 15:49:49 2018 -0700
     Remove glext.h and add GLEW library.
 
 commit ffabb72fdf2df5753e9d60535a9eb13fe23534f8
-Merge: 0dbed3fc 632607db
+Merge: 0dbed3fc8 632607db0
 Author: Supakorn "Jamie" Rassameemasmuang <rassamee@ualberta.ca>
 Date:   Sun Dec 2 14:17:53 2018 -0700
 
     Merge branch 'master' into glupdate.
 
 commit 494cf1d0dc9f567d758377a1dab6f93617d63d10
-Merge: 0dbed3fc c69fb7d6
+Merge: 0dbed3fc8 c69fb7d6f
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Tue Nov 27 14:12:14 2018 -0700
 
@@ -22509,7 +22995,7 @@ Date:   Thu Sep 27 16:25:36 2018 -0600
     Minor documentation edits.
 
 commit d9ee7b4bfe23f5355f9d62701599af00b242bc79
-Merge: c172ffeb 1b22b181
+Merge: c172ffeb3 1b22b1813
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Wed Sep 26 08:12:35 2018 -0600
 
@@ -22588,7 +23074,7 @@ Date:   Fri Aug 31 22:11:50 2018 -0600
     Begin development of webgl output.
 
 commit adbb32fdd380304839cb401c76ea2ab662edfe65
-Merge: 23c4bd2d df015058
+Merge: 23c4bd2d5 df015058a
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Fri Aug 31 17:57:46 2018 -0600
 
@@ -22601,7 +23087,7 @@ Date:   Fri Aug 31 17:56:58 2018 -0600
     Rename webgl files.
 
 commit 23c4bd2d53cdc577eeed0cac28d73439eb4f3e84
-Merge: c41bc347 48fc03cf
+Merge: c41bc347b 48fc03cf2
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Fri Aug 31 17:33:40 2018 -0600
 
@@ -22772,7 +23258,7 @@ Date:   Thu Jul 19 14:59:32 2018 -0600
     Use class instead of instance on item not existing.
 
 commit 721cc5cc84abe2351211262670f5091e66f33b7c
-Merge: ec53a266 5f95aa82
+Merge: ec53a266a 5f95aa824
 Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
 Date:   Thu Jul 19 14:56:15 2018 -0600
 
@@ -22965,7 +23451,7 @@ Date:   Wed Jul 11 17:05:36 2018 -0600
     Enable cycle control points.
 
 commit 1c444f8695301ae16bd8beb20778bd7fc14cc9cf
-Merge: 92d1e727 93a679de
+Merge: 92d1e7272 93a679de2
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Wed Jul 11 16:13:33 2018 -0600
 
@@ -22990,7 +23476,7 @@ Date:   Wed Jul 11 16:04:13 2018 -0600
     Correctly fixes scaling with zoom.
 
 commit afad348e03eaf2e73cd606e4f008d7316bc52627
-Merge: 7f2a28a6 ad6faf30
+Merge: 7f2a28a60 ad6faf30e
 Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
 Date:   Wed Jul 11 16:02:35 2018 -0600
 
@@ -23039,7 +23525,7 @@ Date:   Wed Jul 11 15:33:59 2018 -0600
     Fix segfault (?).
 
 commit ab12f523ac4e6e52e312cd66e9f869c762779e46
-Merge: 2d24c9aa feefafd6
+Merge: 2d24c9aad feefafd64
 Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
 Date:   Wed Jul 11 15:29:04 2018 -0600
 
@@ -23118,7 +23604,7 @@ Date:   Sun Jul 8 20:46:48 2018 -0600
     Read in xasy version.
 
 commit 94d4cd52647d433b1d13e5a96641c89f07203ebe
-Merge: de430749 770eea72
+Merge: de430749d 770eea723
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Sun Jul 8 17:06:00 2018 -0600
 
@@ -23371,7 +23857,7 @@ Date:   Sun Jul 1 21:33:03 2018 -0600
     Fix missing KEYs.
 
 commit 89ecbf116ccee69453179cdab48b0b633a5ff8bb
-Merge: 4463b94c 67c86cd4
+Merge: 4463b94c5 67c86cd41
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Sun Jul 1 19:08:33 2018 -0600
 
@@ -23462,7 +23948,7 @@ Date:   Sat Jun 30 18:22:54 2018 -0600
     Use direct conversion to svg for proper bounding box.
 
 commit 92d74369e228512b2270616f79562741856e0b85
-Merge: ea4fed15 25fab655
+Merge: ea4fed159 25fab6554
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Sat Jun 30 15:42:20 2018 -0600
 
@@ -23517,7 +24003,7 @@ Date:   Fri Jun 29 22:08:11 2018 -0600
     Save file with asy coords.
 
 commit 79c2ce6d847f470760faa70fd5a2e211dcfd5033
-Merge: f0d35d4f 731251c7
+Merge: f0d35d4fb 731251c73
 Author: Supakorn <rassamee@ualberta.ca>
 Date:   Fri Jun 29 21:57:28 2018 -0600
 
@@ -23644,7 +24130,7 @@ Date:   Wed Jun 27 02:07:47 2018 -0600
     Add svg support dependent on QtSvg.
 
 commit 19efab230370f14552d1d17930dd33373f59220d
-Merge: 96031ea2 50fb809f
+Merge: 96031ea26 50fb809fd
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Wed Jun 27 00:19:54 2018 -0600
 
@@ -23699,7 +24185,7 @@ Date:   Mon Jun 25 12:52:11 2018 -0600
     Add Scale mode to bezier editing.
 
 commit 0c1a59da64db42d1d961210f9e464cab24ebd6b9
-Merge: 4b55a597 cf2e8c9d
+Merge: 4b55a5971 cf2e8c9df
 Author: Supakorn <rassamee@ualberta.ca>
 Date:   Mon Jun 25 12:12:57 2018 -0600
 
@@ -23718,7 +24204,7 @@ Date:   Mon Jun 25 12:12:43 2018 -0600
     Simplify string management.
 
 commit cf2e8c9df1b1665b48b85815028b8990d2cc97f3
-Merge: 5e612b5d b757219e
+Merge: 5e612b5dc b757219e2
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Mon Jun 25 11:19:56 2018 -0600
 
@@ -23731,7 +24217,7 @@ Date:   Mon Jun 25 11:19:51 2018 -0600
     Remove unused prompt.
 
 commit b757219e235127134448516c47ad3104e86dc100
-Merge: f01a9f11 aa4ee7b7
+Merge: f01a9f115 aa4ee7b78
 Author: Supakorn <rassamee@ualberta.ca>
 Date:   Mon Jun 25 11:03:26 2018 -0600
 
@@ -23798,7 +24284,7 @@ Date:   Fri Jun 22 16:48:33 2018 -0600
     Fix xasy mode and keys.
 
 commit 0e31fa8c29737941d559bf4e42162212f5f85bb5
-Merge: 10d30131 60a35767
+Merge: 10d301318 60a35767c
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Fri Jun 22 15:04:58 2018 -0600
 
@@ -23817,7 +24303,7 @@ Date:   Fri Jun 22 13:59:59 2018 -0600
     Allow for new key replacement.
 
 commit febc76cb94e3de54b8f3d01da29f6eb71bf76e25
-Merge: 8aeec7ce 69aaf4fc
+Merge: 8aeec7ce7 69aaf4fca
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Fri Jun 22 11:36:36 2018 -0600
 
@@ -23878,7 +24364,7 @@ Date:   Tue Jun 19 11:20:11 2018 -0600
     Add a flag to identify a user-specified key.
 
 commit 88de674b7daeb9efc3e59a1300e4cd3928f22ceb
-Merge: 3040e29d 74393725
+Merge: 3040e29d1 743937250
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Mon Jun 18 23:41:42 2018 -0600
 
@@ -23917,7 +24403,7 @@ Date:   Mon Jun 18 13:37:01 2018 -0600
     Add initial bezier curve detailed view.
 
 commit c049ce0c2f21c4c9eb86ffaa7bb5b6b163cbc0a8
-Merge: e4a169a5 9d0f460a
+Merge: e4a169a5a 9d0f460a2
 Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
 Date:   Mon Jun 18 12:50:47 2018 -0600
 
@@ -24122,7 +24608,7 @@ Date:   Sat Jun 9 13:33:22 2018 -0600
     Update three and slide modules.
 
 commit ae8f7b0bc3a001fb6dc8a72598f4342979117eb8
-Merge: 6cb432ef de2c27e0
+Merge: 6cb432ef3 de2c27e04
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Fri Jun 8 22:23:39 2018 -0600
 
@@ -24171,7 +24657,7 @@ Date:   Thu Jun 7 21:42:37 2018 -0600
     Renenable object deletion.
 
 commit 018e17a2e1caeec6552eefd94737b1e24715ee5f
-Merge: 7b06be2c 594473ef
+Merge: 7b06be2c7 594473ef6
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Thu Jun 7 21:20:50 2018 -0600
 
@@ -24250,7 +24736,7 @@ Date:   Mon Jun 4 13:44:57 2018 -0600
     Fix selection issue.
 
 commit 3d1ca05ccaaf934a42df038e5b8c5ab098a299b8
-Merge: cf276195 93f367bb
+Merge: cf2761953 93f367bba
 Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
 Date:   Mon Jun 4 13:32:05 2018 -0600
 
@@ -24341,7 +24827,7 @@ Date:   Mon May 28 12:52:57 2018 -0600
     Add filling to circles and polygons.
 
 commit d04cac4bf67abb52bde752204d76cecec1f3a422
-Merge: c489474d 560f683d
+Merge: c489474da 560f683d7
 Author: Supakorn Rassameemasmuang <rassamee@ualberta.ca>
 Date:   Fri May 25 18:52:52 2018 -0600
 
@@ -24366,7 +24852,7 @@ Date:   Fri May 25 14:44:52 2018 -0600
     Fix add shape transform bug.
 
 commit ac69fc4d0deab73dbfeef21fb88a6e0007b2fec1
-Merge: baf37589 f01b1baf
+Merge: baf37589e f01b1baf5
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Fri May 25 14:24:58 2018 -0600
 
@@ -24427,7 +24913,7 @@ Date:   Wed May 23 12:58:33 2018 -0600
     Get xasy to wait for asy to start.
 
 commit 82cb3f48c6ed3c81af5d62e870adbc6cda27e9d5
-Merge: fb2bd13e 4425e5c5
+Merge: fb2bd13e3 4425e5c5a
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Wed May 23 11:22:07 2018 -0600
 
@@ -24728,7 +25214,7 @@ Date:   Wed May 2 15:10:29 2018 -0600
     Add adding circles.
 
 commit 8258bb93752a2d888e583f307d13bb4ef727aee6
-Merge: 7c18f2ea d09e7fce
+Merge: 7c18f2ea1 d09e7fce2
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Wed May 2 08:28:05 2018 -0600
 
@@ -24749,7 +25235,7 @@ Date:   Tue May 1 17:09:33 2018 -0600
     Merge settings management into original Shardt code.
 
 commit b9754484ce5ef55fb9415731512362615a431778
-Merge: 75b22704 7c18f2ea
+Merge: 75b227048 7c18f2ea1
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Tue May 1 12:03:43 2018 -0600
 
@@ -24794,7 +25280,7 @@ Date:   Fri Apr 13 10:11:31 2018 -0600
     Add option to use unstable sort in favour of less(T i, T j) ordering.
 
 commit 20ff31c0444c901c2b0486127f3c4df2b9832df8
-Merge: 1a50ee63 2fd03c66
+Merge: 1a50ee634 2fd03c669
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Wed Apr 11 17:51:11 2018 -0600
 
@@ -24987,7 +25473,7 @@ Date:   Mon Apr 2 22:49:03 2018 -0600
     Specify current directory.
 
 commit d8d976aee0234524ab5794a75d61f9ea9c9e6d72
-Merge: dc276c11 67b844ae
+Merge: dc276c116 67b844aec
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Mon Apr 2 21:42:51 2018 -0600
 
@@ -25006,7 +25492,7 @@ Date:   Mon Apr 2 21:36:48 2018 -0600
     Check for feenableexcept.
 
 commit 13d9a1ec1cf6f6f1478cc4f590f728b0f0561725
-Merge: edf06016 bed300cc
+Merge: edf060165 bed300ccb
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Mon Apr 2 21:14:51 2018 -0600
 
@@ -25021,7 +25507,7 @@ Date:   Mon Apr 2 20:54:44 2018 -0600
     Fix transparent depth test.
 
 commit d75d007c08b19787bc59b3efad1337f18b8a1bde
-Merge: e0dba9d6 6ce2d6f6
+Merge: e0dba9d6b 6ce2d6f6c
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Mon Apr 2 13:31:16 2018 -0600
 
@@ -25058,7 +25544,7 @@ Date:   Fri Jan 19 20:18:17 2018 -0700
     Inline call to intbits().
 
 commit 5f5a678fcb4d40fe312c511eb32189c410269a73
-Merge: c2ca99da e9906f89
+Merge: c2ca99da1 e9906f89f
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Fri Jan 19 01:06:50 2018 -0700
 
@@ -25227,7 +25713,7 @@ Date:   Sun Dec 3 11:21:39 2017 -0700
     Extend bitreverse and CLZ to long long integers.
 
 commit 6dfcb97eb80d384371cbba095ce5e0289ff649f5
-Merge: 5709f8fc 1e314cf9
+Merge: 5709f8fc6 1e314cf9b
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Thu Nov 23 15:33:58 2017 -0700
 
@@ -25252,7 +25738,7 @@ Date:   Thu Nov 16 20:32:08 2017 -0700
     Port to latest CYGWIN.
 
 commit bdb0c70c984316552298396d0ec75f7b1c40a971
-Merge: 9db9467d 51ababda
+Merge: 9db9467d4 51ababdae
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Fri Nov 3 13:33:10 2017 -0600
 
@@ -25325,7 +25811,7 @@ Date:   Mon Sep 4 16:23:21 2017 -0600
     Add preliminary keymap & settings support.
 
 commit 8e8a2349800a1d245779e023ecc5ede7da38b239
-Merge: c4aa7ded e9584ed2
+Merge: c4aa7dedf e9584ed2f
 Author: Supakorn Rassameemasmuang <mistersupakorn@gmail.com>
 Date:   Fri Sep 1 15:28:23 2017 -0600
 
@@ -25350,7 +25836,7 @@ Date:   Fri Sep 1 15:27:11 2017 -0600
     Update GUI.
 
 commit c5e57f4d961d136c4b547ea63026795790bd125e
-Merge: 355f99d4 15fe0eb7
+Merge: 355f99d46 15fe0eb71
 Author: Supakorn Rassameemasmuang <mistersupakorn@gmail.com>
 Date:   Fri Sep 1 15:26:49 2017 -0600
 
@@ -25369,7 +25855,7 @@ Date:   Fri Sep 1 15:16:29 2017 -0600
     Update.
 
 commit 65e540f590ae0a9b552d31fec8eef5980e0f59c9
-Merge: 7be28a23 093568e2
+Merge: 7be28a23c 093568e25
 Author: Supakorn Rassameemasmuang <mistersupakorn@gmail.com>
 Date:   Fri Sep 1 15:09:10 2017 -0600
 
@@ -25406,7 +25892,7 @@ Date:   Tue Aug 29 13:00:50 2017 -0600
     Add Beizer Curve Editor.
 
 commit 8fde617cc64cdfe44f61e6cc5ef6197ef2cc633c
-Merge: d664d887 f1092a70
+Merge: d664d8870 f1092a70a
 Author: Supakorn Rassameemasmuang <mistersupakorn@gmail.com>
 Date:   Tue Aug 29 13:00:01 2017 -0600
 
@@ -25419,7 +25905,7 @@ Date:   Tue Aug 29 12:59:42 2017 -0600
     Add undo/redo stack.
 
 commit f1092a70a211994ddf6bafe488427628e71341a0
-Merge: 1ed21e9e 1eafa765
+Merge: 1ed21e9e5 1eafa765e
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Sat Aug 26 23:39:00 2017 -0600
 
@@ -25519,7 +26005,7 @@ Date:   Tue Aug 15 14:42:19 2017 -0600
     Rename xasyQt to xasy and original xasy to xasyTk.
 
 commit 52b8a33a6129219acb608abcc36248f27596965e
-Merge: fd134d02 67fe29eb
+Merge: fd134d022 67fe29eb9
 Author: Supakorn Rassameemasmuang <mistersupakorn@gmail.com>
 Date:   Tue Aug 15 14:40:50 2017 -0600
 
@@ -25637,7 +26123,7 @@ Date:   Mon Mar 20 23:05:31 2017 -0600
     Remove temporary pbsdat file.
 
 commit dacbf47554b36d0571394b3c4d747405e53f2708
-Merge: f34a52df c2e4bd59
+Merge: f34a52dfb c2e4bd599
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Fri Mar 17 01:48:29 2017 -0600
 
@@ -25986,7 +26472,7 @@ Date:   Sat Jan 21 16:59:00 2017 -0700
     Reinstate patch outline mode.
 
 commit a96ffbbfba55fc69b27b1c6052545bbf99ee23f8
-Merge: 0be6f556 16ae9ee4
+Merge: 0be6f5567 16ae9ee48
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Sat Jan 21 15:45:27 2017 -0700
 
@@ -26083,7 +26569,7 @@ Date:   Mon Dec 26 18:19:02 2016 -0500
     Document using keyword
 
 commit 96b017b1a26305700dffc52a80153c799d0f3b4e
-Merge: 9ab90951 1cc7f83d
+Merge: 9ab90951e 1cc7f83d7
 Author: Charles Staats III <charles.staats.iii@gmail.com>
 Date:   Mon Dec 26 17:17:13 2016 -0500
 
@@ -26260,7 +26746,7 @@ Date:   Sat Jun 4 20:00:48 2016 -0600
     Fix typo.
 
 commit 7ecaf8f43931d728eaf4154092cefaa4d0d0c201
-Merge: 692051a2 154c47b6
+Merge: 692051a28 154c47b69
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Thu Jun 2 23:11:58 2016 -0600
 
@@ -26406,7 +26892,7 @@ Date:   Fri May 6 20:49:46 2016 -0600
     Pass CC and CXX to gc configure.
 
 commit a40b6c087091bdc15ffe44d00c51ca15cb1d4877
-Merge: 656cf976 0f1f6d1c
+Merge: 656cf9764 0f1f6d1c7
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Fri May 6 09:45:34 2016 -0600
 
@@ -26501,7 +26987,7 @@ Date:   Sat Mar 12 21:26:01 2016 -0700
     Add progress function.
 
 commit bcbf941fdd0fa9db5c3b77d7a3477fa358a291ac
-Merge: 97f3b6c3 ae0af708
+Merge: 97f3b6c39 ae0af708d
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Sun Mar 6 22:33:57 2016 -0700
 
@@ -26520,7 +27006,7 @@ Date:   Sun Mar 6 21:12:26 2016 -0700
     Look for kpsewhich first in the same directory as the asy executable.
 
 commit ae0af708d12981318936697c7c289fe71723dabe
-Merge: 815b7381 6fc23e01
+Merge: 815b7381e 6fc23e01a
 Author: Charles Staats III <charles.staats.iii@gmail.com>
 Date:   Sun Mar 6 20:07:38 2016 -0800
 
@@ -26552,14 +27038,14 @@ Date:   Sun Mar 6 14:20:31 2016 -0700
     Add EPSWRITE compiler flag to support ghostscript versions older than 9.14.
 
 commit cbb7e37c1a8ed7168bdfb61b5c48ef775b9dd668
-Merge: 90041839 6c1ad05b
+Merge: 900418390 6c1ad05b4
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Sun Mar 6 10:04:21 2016 -0700
 
     Merge branch 'trianglewithnormals'
 
 commit 900418390224e6f56ed33a5df55c0b47e418e1f0
-Merge: ce19f613 9a36fe85
+Merge: ce19f613e 9a36fe859
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Sun Mar 6 09:45:19 2016 -0700
 
@@ -26620,7 +27106,7 @@ Date:   Sun Feb 28 19:27:19 2016 -0800
     Change adaptive rendering constant for bezier triangles.
 
 commit fc81a2ed70019cca10eed52b2caa3bff713d0d7f
-Merge: cd9f8755 e78de7f9
+Merge: cd9f87557 e78de7f99
 Author: Charles Staats III <charles.staats.iii@gmail.com>
 Date:   Sun Feb 28 19:23:17 2016 -0800
 
@@ -26658,7 +27144,7 @@ Date:   Tue Feb 23 19:00:20 2016 -0700
     Fix bug #219 Asymptote forks in an uncontrolled way.
 
 commit cd9f8755715b8ce7e5b239ecd77fdff4d336411a
-Merge: e6454cb2 344698e2
+Merge: e6454cb23 344698e2c
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Tue Feb 16 17:41:59 2016 -0700
 
@@ -26671,7 +27157,7 @@ Date:   Tue Feb 16 17:41:21 2016 -0700
     Fix epsilon.
 
 commit e6454cb2370e412699d467f451519ab89efd3f40
-Merge: e5394afc 75ce9969
+Merge: e5394afc3 75ce99693
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Tue Feb 16 17:29:10 2016 -0700
 
@@ -26812,14 +27298,14 @@ Date:   Fri Feb 5 17:47:36 2016 -0700
     Simplify code.
 
 commit b2d975013dfec4c2163b66286eacb8e6b9a71b56
-Merge: a2dc3010 ce719ebe
+Merge: a2dc30108 ce719ebe7
 Author: Charles Staats III <charles.staats.iii@gmail.com>
 Date:   Fri Feb 5 08:34:14 2016 -0800
 
     Merge branch 'trianglewithnormals' of github.com:vectorgraphics/asymptote into trianglewithnormals
 
 commit ce719ebe712ae40a4fd31dc5e59b6c1f382cdfca
-Merge: 30d63a35 9b9e8f57
+Merge: 30d63a35b 9b9e8f579
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Thu Feb 4 23:18:11 2016 -0700
 
@@ -26832,7 +27318,7 @@ Date:   Thu Feb 4 23:05:28 2016 -0700
     Simplify code.
 
 commit ab2042f994b6dd71c204ddaa59124b7f3644ee58
-Merge: 5d97e7d7 a873617b
+Merge: 5d97e7d70 a873617b4
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Thu Feb 4 23:03:06 2016 -0700
 
@@ -26851,7 +27337,7 @@ Date:   Thu Feb 4 21:31:58 2016 -0800
     Amend one comment.
 
 commit 8ec9865cc3fd4bc2cbded6e754ad4670e1920730
-Merge: 6ca10836 a873617b
+Merge: 6ca10836b a873617b4
 Author: Charles Staats III <charles.staats.iii@gmail.com>
 Date:   Thu Feb 4 21:20:20 2016 -0800
 
@@ -26882,7 +27368,7 @@ Date:   Thu Feb 4 13:24:27 2016 -0700
     Fix planar Bezier triangles under render=0.
 
 commit 64e1d1ad3777e898febba132ac0aae152882c52d
-Merge: 03a2310b 29806bc7
+Merge: 03a2310b7 29806bc76
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Thu Feb 4 01:37:46 2016 -0700
 
@@ -27181,7 +27667,7 @@ Date:   Fri Jan 29 01:24:36 2016 -0700
     Fix bug in rest argument signature equivalence.
 
 commit e59d44b1f641743f7eea53b18286f8ae71f7ad42
-Merge: 3fcb8827 d70ce121
+Merge: 3fcb88277 d70ce1214
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Fri Jan 29 00:58:56 2016 -0700
 
@@ -27194,7 +27680,7 @@ Date:   Fri Jan 29 00:57:41 2016 -0700
     Implement Bezier triangle vertex shading; simplify notation.
 
 commit d70ce12140bcee8f60cf4b14d86345ea1a597d24
-Merge: 9a859296 4cca8cba
+Merge: 9a8592962 4cca8cbac
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Thu Jan 28 19:45:53 2016 -0700
 
@@ -27203,7 +27689,7 @@ Date:   Thu Jan 28 19:45:53 2016 -0700
     Fix package format
 
 commit 9a85929623975d23856c6462efaf66c1b645337e
-Merge: fec79bd9 daa7b97d
+Merge: fec79bd94 daa7b97df
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Thu Jan 28 19:45:10 2016 -0700
 
@@ -27220,7 +27706,7 @@ Date:   Fri Jan 29 14:21:18 2016 +1300
     Using the work "Emacs" is redundant here. Better to describe this as what it is: a major mode.
 
 commit fec79bd94f87e1532ab8f90c46ebeffa8ef68a34
-Merge: af459e8a 799d62d7
+Merge: af459e8a8 799d62d72
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Thu Jan 28 18:06:22 2016 -0700
 
@@ -27254,7 +27740,7 @@ Date:   Wed Jan 27 08:22:51 2016 -0700
     Rename NaN to more standard nan, consistent with inf.
 
 commit 40222e2f183510bbc3e7642ab58abaae107837d7
-Merge: 6d148e9d e6a9c8c3
+Merge: 6d148e9d4 e6a9c8c33
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Wed Jan 27 01:44:30 2016 -0700
 
@@ -27263,14 +27749,14 @@ Date:   Wed Jan 27 01:44:30 2016 -0700
     Fix asy-mode.el headers for use with package.el
 
 commit 6d148e9d4cb76e7a62b38cd7917f13f7e6b14241
-Merge: 120804c1 b4f5fd7f
+Merge: 120804c13 b4f5fd7f3
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Wed Jan 27 01:32:44 2016 -0700
 
     Merge branch 'tpatch'
 
 commit 120804c135338ad70ed74c37f6391cf2bd31143b
-Merge: eeb634e5 dda2736d
+Merge: eeb634e5a dda2736d7
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Wed Jan 27 01:32:37 2016 -0700
 
@@ -27283,21 +27769,21 @@ Date:   Wed Jan 27 01:32:11 2016 -0700
     Remove obsolete comment.
 
 commit dda2736d7adc54b42fb063ad04d9818c4dac1cad
-Merge: e86faf9a 37a30365
+Merge: e86faf9a9 37a303655
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Wed Jan 27 01:28:31 2016 -0700
 
     Merge branch 'master' of github.com:vectorgraphics/asymptote
 
 commit e86faf9a90abe8546db543ba1decb3db4709a7af
-Merge: 4243c5af bb9a29b0
+Merge: 4243c5afa bb9a29b04
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Wed Jan 27 01:28:01 2016 -0700
 
     Merge branch 'NaNconstant'
 
 commit 4abd683e6bcf1c03254a05d0f80dac2da49b796e
-Merge: 62f540f3 eeb634e5
+Merge: 62f540f32 eeb634e5a
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Wed Jan 27 00:53:10 2016 -0700
 
@@ -27409,7 +27895,7 @@ Date:   Mon Dec 7 00:42:20 2015 -0700
     Define PERL.
 
 commit 2292b4e20cec169b8e49ffd90c266fe0c481280c
-Merge: 83d8788e 2f0e11d1
+Merge: 83d8788e4 2f0e11d1d
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Sat Dec 5 11:59:38 2015 -0700
 
@@ -27458,7 +27944,7 @@ Date:   Mon Nov 16 00:00:44 2015 -0700
     Fix Bezier triangle bounds calculation.
 
 commit 78c5a4dc967871262371bc09a752c4f7c3a0982e
-Merge: 3bdb0da5 71ff9e76
+Merge: 3bdb0da5d 71ff9e769
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Sun Nov 15 11:47:01 2015 -0700
 
@@ -27471,7 +27957,7 @@ Date:   Sat Nov 14 01:25:56 2015 -0700
     Support GSL 2.0.
 
 commit 3bdb0da5d7762bdc3509cbbd3aadfea392065729
-Merge: 342bd39a d7d0920c
+Merge: 342bd39a6 d7d0920cf
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Fri Nov 13 15:22:31 2015 -0700
 
@@ -27549,7 +28035,7 @@ Date:   Thu Aug 27 14:49:08 2015 -0600
       aligns better with the symmetry and (seems to) avoid degeneracies.
 
 commit 9607b89ce3b1dd6f41905b3ca7225304a78a4236
-Merge: b186e65a e660681e
+Merge: b186e65ab e660681eb
 Author: Jesse Frohlich <jesse.frohlich@ualberta.ca>
 Date:   Tue Aug 18 10:56:13 2015 -0600
 
@@ -27633,7 +28119,7 @@ Date:   Thu Aug 6 18:03:19 2015 -0600
     Condense code.
 
 commit afc9bb50d32bc30a60e8ec14130f459ee3d07324
-Merge: 83115611 6d640996
+Merge: 831156114 6d6409960
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Thu Aug 6 16:59:34 2015 -0600
 
@@ -27662,7 +28148,7 @@ Date:   Thu Aug 6 15:40:24 2015 -0600
     Simplify code.
 
 commit 9a719d5a367ea6bb04ccc7d43d1b9d9ef8461ccf
-Merge: 10b58e6f 6d640996
+Merge: 10b58e6fb 6d6409960
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Thu Aug 6 15:03:39 2015 -0600
 
@@ -27716,7 +28202,7 @@ Date:   Wed Aug 5 12:39:15 2015 -0600
     Update to latest beziertriangle.cc.
 
 commit f27143b2c09b588397d2a357b6663f9872ab1526
-Merge: ce5d022f 8f3274d4
+Merge: ce5d022f6 8f3274d4b
 Author: Jesse Frohlich <jesse.frohlich@ualberta.ca>
 Date:   Wed Aug 5 12:35:30 2015 -0600
 
@@ -27731,7 +28217,7 @@ Date:   Wed Aug 5 12:27:33 2015 -0600
     The implementation for Bezier triangles now compiles.
 
 commit 8f3274d4b9fea2c5afbce309019779c71874f387
-Merge: 6510a213 b1041ff1
+Merge: 6510a213c b1041ff1a
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Wed Aug 5 12:20:34 2015 -0600
 
@@ -27750,14 +28236,14 @@ Date:   Wed Aug 5 12:18:11 2015 -0600
     Add example.
 
 commit 0c9443bed41f84d8c38deac9df0be0c62474ebf4
-Merge: 6510a213 421cd19d
+Merge: 6510a213c 421cd19d0
 Author: Jesse Frohlich <jesse.frohlich@ualberta.ca>
 Date:   Wed Aug 5 10:28:02 2015 -0600
 
     Merge changes in master branch to tpatch.
 
 commit 421cd19d01577dab0f3b92d89eaf1e1edf6487c2
-Merge: ecae5ee6 94fb5fb6
+Merge: ecae5ee66 94fb5fb67
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Tue Aug 4 18:01:02 2015 -0600
 
@@ -27776,7 +28262,7 @@ Date:   Tue Aug 4 17:54:37 2015 -0600
     Update INSTALL.
 
 commit 94fb5fb6792662366f0d0d9587bb2504a71c77bd
-Merge: 2cb41a4e 86920ebf
+Merge: 2cb41a4e6 86920ebf9
 Author: johncbowman <bowman@ualberta.ca>
 Date:   Tue Aug 4 17:14:19 2015 -0600
 
@@ -57923,7 +58409,7 @@ Date:   Mon Nov 7 23:26:21 2005 -0600
     Remaining import updates.
 
 commit 14735e983987b664738f9bbab29953a6cdeafd7d
-Merge: 0b62f703 9710028a
+Merge: 0b62f7038 9710028ac
 Author: Andy Hammerlindl <ahammerlindl@gmail.com>
 Date:   Mon Nov 7 10:57:39 2005 -0600
 

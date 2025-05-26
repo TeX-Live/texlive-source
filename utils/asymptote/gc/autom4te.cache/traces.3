@@ -1,17 +1,17 @@
-m4trace:aclocal.m4:755: -1- AC_SUBST([am__quote])
-m4trace:aclocal.m4:755: -1- AC_SUBST_TRACE([am__quote])
-m4trace:aclocal.m4:755: -1- m4_pattern_allow([^am__quote$])
-m4trace:aclocal.m4:1207: -1- m4_include([m4/gc_set_version.m4])
+m4trace:aclocal.m4:717: -1- AC_SUBST([am__quote])
+m4trace:aclocal.m4:717: -1- AC_SUBST_TRACE([am__quote])
+m4trace:aclocal.m4:717: -1- m4_pattern_allow([^am__quote$])
+m4trace:aclocal.m4:1364: -1- m4_include([m4/gc_set_version.m4])
 m4trace:m4/gc_set_version.m4:40: -1- sinclude([libtool.m4])
-m4trace:aclocal.m4:1208: -1- m4_include([m4/libtool.m4])
-m4trace:aclocal.m4:1209: -1- m4_include([m4/ltoptions.m4])
-m4trace:aclocal.m4:1210: -1- m4_include([m4/ltsugar.m4])
-m4trace:aclocal.m4:1211: -1- m4_include([m4/ltversion.m4])
-m4trace:aclocal.m4:1212: -1- m4_include([m4/lt~obsolete.m4])
+m4trace:aclocal.m4:1365: -1- m4_include([m4/libtool.m4])
+m4trace:aclocal.m4:1366: -1- m4_include([m4/ltoptions.m4])
+m4trace:aclocal.m4:1367: -1- m4_include([m4/ltsugar.m4])
+m4trace:aclocal.m4:1368: -1- m4_include([m4/ltversion.m4])
+m4trace:aclocal.m4:1369: -1- m4_include([m4/lt~obsolete.m4])
 m4trace:configure.ac:17: -1- AC_INIT([gc], [8.2.8], [https://github.com/ivmai/bdwgc/issues])
 m4trace:configure.ac:17: -1- m4_pattern_forbid([^_?A[CHUM]_])
 m4trace:configure.ac:17: -1- m4_pattern_forbid([_AC_])
-m4trace:configure.ac:17: -1- m4_pattern_forbid([^LIBOBJS$], [do not use LIBOBJS directly, use AC_LIBOBJ (see section `AC_LIBOBJ vs LIBOBJS'])
+m4trace:configure.ac:17: -1- m4_pattern_forbid([^LIBOBJS$], [do not use LIBOBJS directly, use AC_LIBOBJ (see section 'AC_LIBOBJ vs LIBOBJS'])
 m4trace:configure.ac:17: -1- m4_pattern_allow([^AS_FLAGS$])
 m4trace:configure.ac:17: -1- m4_pattern_forbid([^_?m4_])
 m4trace:configure.ac:17: -1- m4_pattern_forbid([^dnl$])
@@ -215,7 +215,7 @@ m4trace:configure.ac:24: -1- AH_OUTPUT([GC_VERSION_MICRO], [/* The micro version
 @%:@undef GC_VERSION_MICRO])
 m4trace:configure.ac:25: -1- AM_INIT_AUTOMAKE([foreign nostdinc subdir-objects])
 m4trace:configure.ac:25: -1- m4_pattern_allow([^AM_[A-Z]+FLAGS$])
-m4trace:configure.ac:25: -1- AM_AUTOMAKE_VERSION([1.16.5])
+m4trace:configure.ac:25: -1- AM_AUTOMAKE_VERSION([1.17])
 m4trace:configure.ac:25: -1- AC_REQUIRE_AUX_FILE([install-sh])
 m4trace:configure.ac:25: -1- AC_SUBST([INSTALL_PROGRAM])
 m4trace:configure.ac:25: -1- AC_SUBST_TRACE([INSTALL_PROGRAM])
@@ -306,7 +306,6 @@ m4trace:configure.ac:25: -1- m4_pattern_allow([^ETAGS$])
 m4trace:configure.ac:25: -1- AC_SUBST([CSCOPE])
 m4trace:configure.ac:25: -1- AC_SUBST_TRACE([CSCOPE])
 m4trace:configure.ac:25: -1- m4_pattern_allow([^CSCOPE$])
-m4trace:configure.ac:25: -1- AM_SILENT_RULES
 m4trace:configure.ac:25: -1- AC_SUBST([AM_V])
 m4trace:configure.ac:25: -1- AC_SUBST_TRACE([AM_V])
 m4trace:configure.ac:25: -1- m4_pattern_allow([^AM_V$])
@@ -322,6 +321,12 @@ m4trace:configure.ac:25: -1- AC_SUBST([AM_BACKSLASH])
 m4trace:configure.ac:25: -1- AC_SUBST_TRACE([AM_BACKSLASH])
 m4trace:configure.ac:25: -1- m4_pattern_allow([^AM_BACKSLASH$])
 m4trace:configure.ac:25: -1- _AM_SUBST_NOTMAKE([AM_BACKSLASH])
+m4trace:configure.ac:25: -1- AC_SUBST([am__rm_f_notfound])
+m4trace:configure.ac:25: -1- AC_SUBST_TRACE([am__rm_f_notfound])
+m4trace:configure.ac:25: -1- m4_pattern_allow([^am__rm_f_notfound$])
+m4trace:configure.ac:25: -1- AC_SUBST([am__xargs_n])
+m4trace:configure.ac:25: -1- AC_SUBST_TRACE([am__xargs_n])
+m4trace:configure.ac:25: -1- m4_pattern_allow([^am__xargs_n$])
 m4trace:configure.ac:26: -1- AC_CONFIG_HEADERS([include/config.h])
 m4trace:configure.ac:27: -1- AM_MAINTAINER_MODE
 m4trace:configure.ac:27: -1- AM_CONDITIONAL([MAINTAINER_MODE], [test $USE_MAINTAINER_MODE = yes])
@@ -591,7 +596,7 @@ m4trace:configure.ac:36: -1- AH_OUTPUT([HAVE_UNISTD_H], [/* Define to 1 if you h
 @%:@undef HAVE_UNISTD_H])
 m4trace:configure.ac:36: -1- AC_DEFINE_TRACE_LITERAL([STDC_HEADERS])
 m4trace:configure.ac:36: -1- m4_pattern_allow([^STDC_HEADERS$])
-m4trace:configure.ac:36: -1- AH_OUTPUT([STDC_HEADERS], [/* Define to 1 if all of the C90 standard headers exist (not just the ones
+m4trace:configure.ac:36: -1- AH_OUTPUT([STDC_HEADERS], [/* Define to 1 if all of the C89 standard headers exist (not just the ones
    required in a freestanding environment). This macro is provided for
    backward compatibility; new code need not use it. */
 @%:@undef STDC_HEADERS])
@@ -652,7 +657,7 @@ m4trace:configure.ac:184: -1- AH_OUTPUT([UNICODE], [/* Use Unicode (W) variant o
 @%:@undef UNICODE])
 m4trace:configure.ac:188: -1- AH_OUTPUT([GC_DLL], [/* Define to build dynamic libraries with only API symbols exposed. */
 @%:@undef GC_DLL])
-m4trace:configure.ac:194: -1- AH_OUTPUT([inline], [/* Define to `__inline__\' or `__inline\' if that\'s what the C compiler
+m4trace:configure.ac:194: -1- AH_OUTPUT([inline], [/* Define to \'__inline__\' or \'__inline\' if that\'s what the C compiler
    calls it, or to nothing if \'inline\' is not supported under any name.  */
 #ifndef __cplusplus
 #undef inline
@@ -756,7 +761,7 @@ m4trace:configure.ac:455: -1- AC_DEFINE_TRACE_LITERAL([NO_GETCONTEXT])
 m4trace:configure.ac:455: -1- m4_pattern_allow([^NO_GETCONTEXT$])
 m4trace:configure.ac:455: -1- AH_OUTPUT([NO_GETCONTEXT], [/* Missing getcontext function. */
 @%:@undef NO_GETCONTEXT])
-m4trace:configure.ac:459: -1- AH_OUTPUT([HAVE_DL_ITERATE_PHDR], [/* Define to 1 if you have the `dl_iterate_phdr\' function. */
+m4trace:configure.ac:459: -1- AH_OUTPUT([HAVE_DL_ITERATE_PHDR], [/* Define to 1 if you have the \'dl_iterate_phdr\' function. */
 @%:@undef HAVE_DL_ITERATE_PHDR])
 m4trace:configure.ac:459: -1- AC_DEFINE_TRACE_LITERAL([HAVE_DL_ITERATE_PHDR])
 m4trace:configure.ac:459: -1- m4_pattern_allow([^HAVE_DL_ITERATE_PHDR$])

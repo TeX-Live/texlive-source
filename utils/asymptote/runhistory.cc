@@ -95,7 +95,7 @@ struct historyState {
   HISTORY_STATE state;
 };
 
-typedef mem::map<CONST string, historyState> historyMap_t;
+typedef mem::map<const string, historyState> historyMap_t;
 historyMap_t historyMap;
 static HISTORY_STATE history_save;
 

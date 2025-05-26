@@ -1,3 +1,24 @@
+Release Notes for Version 3.04
+
+To support transparent backgrounds, the png16malpha driver of Ghostscript 10
+is now used as the default pngdriver; use settings.pngdriver="png16m" or
+settings.pngdriver="pngalpha" for older versions of Ghostscript. 
+The projection-dependence of WebGL shaders was removed for correct rendering
+of multiple embedded images.
+A new setting keys generates WebGL comments to identify each generated object.
+Unlink issues under MSWindows and compilation issues were addressed.
+
+Release Notes for Version 3.03
+
+The xasy setting was fixed.
+The rename function and --outname setting are supported again under MSWindows.
+
+Release Notes for Version 3.02
+
+The documentation was updated. The MSWindows search path was fixed.
+Random number generators are now initially seeded with std::random_device.
+The rendering of 3D pixels was fixed.
+
 Release Notes for Version 3.01
 
 A workaround was implemented to fix a segmentation fault under MacOS Monterey.

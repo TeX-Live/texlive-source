@@ -4,15 +4,17 @@ Public domain.  Originally written 2005 by Karl Berry.
 Extra utilities we (optionally) compile for TeX Live.
 See comments in ../texk/README.
 
-asymptote 3.01 - checked 24feb25
+asymptote 3.04 - checked 26may25
   update TL from CTAN, to include prebuilt doc, Windows binaries, etc.
   See https://tug.org/texlive/build.html#asymptote
   and tlpkg/bin/tl-update-asy
 
   Special builders for asy:
     aarch64-linux - Johannes Hielscher
-    *solaris, as well as darwinlegacy - Mojca
-    windows - from asy dist, including dlls
+    universal-darwin - Dick Koch
+    x86_64-cygwin - Ken Brown
+    *solaris, as well as darwinlegacy - Mojca (no longer done)
+    windows - installed from asy dist, including dlls
 
 autosp 2023-10-07 - checked 07jan24
   https://ctan.org/pkg/autosp
