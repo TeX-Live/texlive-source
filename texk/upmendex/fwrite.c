@@ -165,9 +165,9 @@ static int pnumconv2(struct page *p)
 /*   write ind file   */
 void indwrite(char *filename, struct index *ind, int pagenum)
 {
-	int i,j,k,q,hpoint=0,tpoint=0,ipoint=0,jpoint=0,block_open=0;
+	int i,j,k,q,hpoint=0,tpoint=0,bpoint[NUM_BRAHMIC]={0},block_open=0,*__point;
 	char lbuff[BUFFERLEN],obuff[BUFFERLEN];
-	UChar initial[INITIALLENGTH],initial_prev[INITIALLENGTH];
+	UChar initial[INITIALLENGTH],initial_prev[INITIALLENGTH],*__head;
 	int chset,chset_prev;
 	FILE *fp=NULL;
 	UErrorCode perr;
@@ -267,50 +267,31 @@ void indwrite(char *filename, struct index *ind, int pagenum)
 					}
 				}
 			}
-			else if (chset==CH_DEVANAGARI) {
+			else if (chset>=CH_DEVANAGARI && chset<=CH_LAO) {
+				__head=brahmic_head[chset-CH_DEVANAGARI];
+				__point=&bpoint[chset-CH_DEVANAGARI];
 				if (lethead_flag!=0) {
 					fputs(lethead_prefix,fp);
-					for (j=jpoint;j<(u_strlen(devanagari_head));) {
-						if (initial_cmp_char(initial,&devanagari_head[j])) {
-							k=j;  U16_BACK_1(devanagari_head, 0, k);
-							fprint_uchar(fp,&devanagari_head[k],M_NONE,1);
-							jpoint=j;
+					for (j=*__point;j<(u_strlen(__head));) {
+						if (initial_cmp_char(initial,&__head[j])) {
+							k=j;  U16_BACK_1(__head, 0, k);
+							fprint_uchar(fp,&__head[k],M_NONE,1);
+							*__point=j;
 							break;
 						}
-						U16_FWD_1(devanagari_head, j, -1);
+						U16_FWD_1(__head, j, -1);
 					}
-					if (j==(u_strlen(devanagari_head))) {
-						k=j;  U16_BACK_1(devanagari_head, 0, k);
-						fprint_uchar(fp,&devanagari_head[k],M_NONE,1);
+					if (j==(u_strlen(__head))) {
+						k=j;  U16_BACK_1(__head, 0, k);
+						fprint_uchar(fp,&__head[k],M_NONE,1);
 					}
 					fputs(lethead_suffix,fp);
 				}
-				for (jpoint=0;jpoint<(u_strlen(devanagari_head));) {
-					if (initial_cmp_char(initial,&devanagari_head[jpoint])) {
+				for (*__point=0;*__point<(u_strlen(__head));) {
+					if (initial_cmp_char(initial,&__head[*__point])) {
 						break;
 					}
-					U16_FWD_1(devanagari_head, jpoint, -1);
-				}
-			}
-			else if (chset==CH_THAI) {
-				if (lethead_flag!=0) {
-					fputs(lethead_prefix,fp);
-					for (j=ipoint;j<(u_strlen(thai_head));j++) {
-						if (initial_cmp_char(initial,&thai_head[j])) {
-							fprint_uchar(fp,&thai_head[j-1],M_NONE,1);
-							ipoint=j;
-							break;
-						}
-					}
-					if (j==(u_strlen(thai_head))) {
-						fprint_uchar(fp,&thai_head[j-1],M_NONE,1);
-					}
-					fputs(lethead_suffix,fp);
-				}
-				for (ipoint=0;ipoint<(u_strlen(thai_head));ipoint++) {
-					if (initial_cmp_char(initial,&thai_head[ipoint])) {
-						break;
-					}
+					U16_FWD_1(__head, *__point, -1);
 				}
 			}
 			else {
@@ -382,36 +363,22 @@ void indwrite(char *filename, struct index *ind, int pagenum)
 					}
 				}
 			}
-			else if (chset==CH_DEVANAGARI) {
-				for (j=jpoint;j<(u_strlen(devanagari_head));) {
-					if (initial_cmp_char(initial,&devanagari_head[j])) {
+			else if (chset>=CH_DEVANAGARI && chset<=CH_LAO) {
+				__head=brahmic_head[chset-CH_DEVANAGARI];
+				__point=&bpoint[chset-CH_DEVANAGARI];
+				for (j=*__point;j<(u_strlen(__head));) {
+					if (initial_cmp_char(initial,&__head[j])) {
 						break;
 					}
-					U16_FWD_1(devanagari_head, j, -1);
+					U16_FWD_1(__head, j, -1);
 				}
-				if ((j!=jpoint)||(j==0)) {
-					jpoint=j;
+				if ((j!=*__point)||(j==0)) {
+					*__point=j;
 					fputs(group_skip,fp);
 					if (lethead_flag!=0) {
-						k=j;  U16_BACK_1(devanagari_head, 0, k);
+						k=j;  U16_BACK_1(__head, 0, k);
 						fputs(lethead_prefix,fp);
-						fprint_uchar(fp,&devanagari_head[k],M_NONE,1);
-						fputs(lethead_suffix,fp);
-					}
-				}
-			}
-			else if (chset==CH_THAI) {
-				for (j=ipoint;j<(u_strlen(thai_head));j++) {
-					if (initial_cmp_char(initial,&thai_head[j])) {
-						break;
-					}
-				}
-				if ((j!=ipoint)||(j==0)) {
-					ipoint=j;
-					fputs(group_skip,fp);
-					if (lethead_flag!=0) {
-						fputs(lethead_prefix,fp);
-						fprint_uchar(fp,&thai_head[j-1],M_NONE,1);
+						fprint_uchar(fp,&__head[k],M_NONE,1);
 						fputs(lethead_suffix,fp);
 					}
 				}
@@ -713,7 +680,7 @@ static void index_normalize(UChar *istr, UChar *ini, int *chset)
 	UErrorCode perr;
 	UCollationResult order,order1;
 	UCollationStrength strgth;
-	static int i_y_mode=0,o_o_mode=0,u_u_mode=0;
+	static int i_y_mode=0,o_o_mode=0,u_u_mode=0,v_w_mode=0,s_s_mode=0,t_t_mode=0;
 
 	ch=istr[0];
 	*chset=charset(istr);
@@ -847,21 +814,24 @@ static void index_normalize(UChar *istr, UChar *ini, int *chset)
 		u_strcpy(ini,hz_index[lo-1].idx);
 		return;
 	}
-	else if (is_thai(&ch)) {
-		if ((istr[0]>=0x0E40 && istr[0]<=0x0E44) && (istr[1]>=0x0E01 && istr[1]<=0x0E2E)) {
-			/* Thai reordering :: Vowel followed by Consonant */
+	else if (is_thai(&ch)||is_lao(&ch)) {
+		if (((istr[0]>=0x0E40 && istr[0]<=0x0E44) && (istr[1]>=0x0E01 && istr[1]<=0x0E2E)) ||
+		    ((istr[0]>=0x0EC0 && istr[0]<=0x0EC4) && (istr[1]>=0x0E81 && istr[1]<=0x0EAE))) {
+			/* Thai/Lao reordering :: Vowel followed by Consonant */
 			/* https://unicode-org.github.io/icu/userguide/collation/concepts.html#thailao-reordering */
 			ini[0]=istr[1];
+		} else if (istr[0]==0x0EDC || istr[0]==0x0EDD) { /* ໜ ໝ */
+			ini[0]=0xEAB; /* ຫ */
 		} else {
 			ini[0]=istr[0];
 		}
 		return;
 	}
-	else if (is_devanagari(istr)==2) {
+	else if (is_surrogate_pair(istr)&&is_brahmic(istr)) {
 		ini[0]=istr[0]; ini[1]=istr[1]; ini[2]=L'\0';
 		return;
 	}
-	else if (is_devanagari(&ch)||is_arabic(&ch)||is_hebrew(&ch)) {
+	else if (is_brahmic(&ch)||is_arabic(&ch)||is_hebrew(&ch)) {
 		if (ch==0x626) {  /* Arabic Letter Yeh with Hamza Above for Uyghur */
 			strY[0]=0x626; strY[1]=L'\0'; /* Yeh with Hamza Above */
 			strZ[0]=0x628; strZ[1]=L'\0'; /* Beh */
@@ -882,11 +852,35 @@ static void index_normalize(UChar *istr, UChar *ini, int *chset)
 				return;
 			}
 		}
+		/* Bengali */
+		if (       (istr[0]==0x995 && istr[1]==0x9CD && istr[2]== 0x9B7)) { /* KSSA ক্ষ */
+			strY[0]=istr[0]; strY[1]=istr[1]; strY[2]=istr[2]; strY[3]=L'\0';
+			strZ[0]=0x9B9; strZ[1]=L'\0'; /* HA হ */
+			order = ucol_strcoll(icu_collator, strZ, -1, strY, -1);
+			if (order==UCOL_LESS) {
+				u_strcpy(ini,strY);
+				return;
+			}
+		}
+		/* Oriya */
+		if (       (istr[0]==0xB15 && istr[1]==0xB4D && istr[2]== 0xB37)) { /* KSSA କ୍ଷ */
+			strY[0]=istr[0]; strY[1]=istr[1]; strY[2]=istr[2]; strY[3]=L'\0';
+			strZ[0]=0xB39; strZ[1]=L'\0'; /* HA ହ */
+			order = ucol_strcoll(icu_collator, strZ, -1, strY, -1);
+			if (order==UCOL_LESS) {
+				u_strcpy(ini,strY);
+				return;
+			}
+		}
 		if (ch==0x929||ch==0x931||ch==0x934||(0x958<=ch&&ch<=0x95F) /* Devanagary */
 			||(0x622<=ch&&ch<=0x626)||ch==0x6C0||ch==0x6C2||ch==0x6D3 /* Arabic */
 			||(0xFB50<=ch&&ch<=0xFDFF) /* Arabic Presentation Forms-A */
 			||(0xFE70<=ch&&ch<=0xFEFF) /* Arabic Presentation Forms-B */
 			||(0xFB1D<=ch&&ch<=0xFB4F) /* Hebrew presentation forms */
+			||ch==0x9DC||ch==0x9DD||ch==0x9DF /* Bengali */
+			||ch==0xA33||ch==0xA36||(0xA59<=ch&&ch<=0xA5B)||ch==0xA5E /* Gurmukhi */
+			||ch==0xB5C||ch==0xB5D            /* Oriya */
+			||ch==0xB94                       /* Tamil */
 		   ) {
 			src[0]=ch;  src[1]=0x00;
 			perr=U_ZERO_ERROR;
@@ -934,6 +928,94 @@ static void index_normalize(UChar *istr, UChar *ini, int *chset)
 		if (i_y_mode==2) {
 			ini[0] = 0x049; /* I */
 			return;
+		}
+	}
+	if (ch==0x057||ch==0x077) {
+		/* check V versus W for Finnish */
+		if (v_w_mode==0) {
+			strgth = ucol_getStrength(icu_collator);
+			ucol_setStrength(icu_collator, UCOL_PRIMARY);
+			strX[0] = 0x057;  strX[1] = 0x00; /* W */
+			strZ[0] = 0x056;  strZ[1] = 0x00; /* V */
+			order = ucol_strcoll(icu_collator, strZ, -1, strX, -1);
+			v_w_mode = (order==UCOL_EQUAL) ? 2 : 1;
+			ucol_setStrength(icu_collator, strgth);
+		}
+		if (v_w_mode==2) {
+			ini[0] = 0x056; /* V */
+			return;
+		}
+	}
+	if (ch==0x15E||ch==0x15F||ch==0x218||ch==0x219) {
+		/* check Ş versus Ș for Romanian */
+		if (s_s_mode<=2) {
+			strgth = ucol_getStrength(icu_collator);
+			strX[0] = ch;     strX[1] = 0x00; /* myself */
+			strZ[0] = 0x053;  strZ[1] = 0x00; /* S */
+			ucol_setStrength(icu_collator, UCOL_PRIMARY);
+			order = ucol_strcoll(icu_collator, strZ, -1, strX, -1);
+			if (s_s_mode==0) {
+				strX[0] = 0x15E;  strX[1] = 0x00; /* Ş */
+				strY[0] = 0x218;  strY[1] = 0x00; /* Ș */
+				order1 = ucol_strcoll(icu_collator, strY, -1, strX, -1);
+				if (order1==UCOL_EQUAL) s_s_mode = 3;
+			}
+			if (s_s_mode<3) {
+				s_s_mode = (order==UCOL_EQUAL) ? 1 : 2;
+			}
+			ucol_setStrength(icu_collator, strgth);
+		}
+		if (s_s_mode==3) {
+			strgth = ucol_getStrength(icu_collator);
+			ucol_setStrength(icu_collator, UCOL_QUATERNARY);
+			order  = ucol_strcoll(icu_collator, strY, -1, strX, -1);
+			s_s_mode = (order==UCOL_LESS) ? 5 : 4;
+			ucol_setStrength(icu_collator, strgth);
+		}
+		if (s_s_mode==2) {
+			ini[0] = u_toupper(ch);  return;
+		}
+		if (s_s_mode==4) {
+			ini[0] = 0x15E;  return;
+		}
+		if (s_s_mode==5) {
+			ini[0] = 0x218;  return;
+		}
+	}
+	if (ch==0x162||ch==0x163||ch==0x21A||ch==0x21B) {
+		/* check Ţ versus Ț for Romanian */
+		if (t_t_mode<=2) {
+			strgth = ucol_getStrength(icu_collator);
+			strX[0] = ch;     strX[1] = 0x00; /* myself */
+			strZ[0] = 0x054;  strZ[1] = 0x00; /* T */
+			ucol_setStrength(icu_collator, UCOL_PRIMARY);
+			order = ucol_strcoll(icu_collator, strZ, -1, strX, -1);
+			if (t_t_mode==0) {
+				strX[0] = 0x162;  strX[1] = 0x00; /* Ţ */
+				strY[0] = 0x21A;  strY[1] = 0x00; /* Ț */
+				order1 = ucol_strcoll(icu_collator, strY, -1, strX, -1);
+				if (order1==UCOL_EQUAL) t_t_mode = 3;
+			}
+			if (t_t_mode<3) {
+				t_t_mode = (order==UCOL_EQUAL) ? 1 : 2;
+			}
+			ucol_setStrength(icu_collator, strgth);
+		}
+		if (t_t_mode==3) {
+			strgth = ucol_getStrength(icu_collator);
+			ucol_setStrength(icu_collator, UCOL_QUATERNARY);
+			order  = ucol_strcoll(icu_collator, strY, -1, strX, -1);
+			t_t_mode = (order==UCOL_LESS) ? 5 : 4;
+			ucol_setStrength(icu_collator, strgth);
+		}
+		if (t_t_mode==2) {
+			ini[0] = u_toupper(ch);  return;
+		}
+		if (t_t_mode==4) {
+			ini[0] = 0x162;  return;
+		}
+		if (t_t_mode==5) {
+			ini[0] = 0x21A;  return;
 		}
 	}
 	if (ch==0x0D6||ch==0x0F6||ch==0x150||ch==0x151) {

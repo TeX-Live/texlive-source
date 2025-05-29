@@ -1,3 +1,24 @@
+2025-05-29  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* version 1.20  Stable version.
+	* configure.ac: Bump version.
+	* main.c, sort.c, convert.c, fwrite.c, styfile.c,
+	kana.h, {,ex}var.h, mendex.h:
+	Support Brahmic (Bengali, Gurmukhi, Gujarati, Kannada,
+	Lao, Malayalam, Oriya, Sinhala, Tamil and Telugu)
+	scripts (experimental).
+	Add options "script_head" in style file.
+	https://github.com/t-tk/upmendex-package/issues/14
+	* styfile.c:
+	Remove deprecated keyword "tumunja" from style file.
+	* fwrite.c:
+	Enhance treatment of S,T comma below in Romanian.
+	Support V-W ordering in Finnish traditional collation.
+	* sort.c:
+	Prepare to support CJK Unified Ideographs Extention J in Unicode 17.0.
+	It will work with future version of ICU.
+	Treat U+3192..3195, U+3280..3289, U+A830..A835 as "other number".
+
 2025-03-07  Karl Berry  <karl@tug.org>
 
 	* TL'25 release.
