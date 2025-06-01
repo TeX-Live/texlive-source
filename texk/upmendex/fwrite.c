@@ -675,10 +675,10 @@ static void crcheck(char *lbuff, FILE *fp)
 static void index_normalize(UChar *istr, UChar *ini, int *chset)
 {
 	int k, hi, lo, mi;
-	UChar ch,src[2],dest[8],strX[4],strY[4],strZ[4];
+	UChar ch,src[2],dest[8],strX[4],strY[4],strZ[4],strW[4];
 	UChar32 c32;
 	UErrorCode perr;
-	UCollationResult order,order1;
+	UCollationResult order,order1,order2,order3,order4,order5;
 	UCollationStrength strgth;
 	static int i_y_mode=0,o_o_mode=0,u_u_mode=0,v_w_mode=0,s_s_mode=0,t_t_mode=0;
 
@@ -1018,26 +1018,70 @@ static void index_normalize(UChar *istr, UChar *ini, int *chset)
 			ini[0] = 0x21A;  return;
 		}
 	}
-	if (ch==0x0D6||ch==0x0F6||ch==0x150||ch==0x151) {
-		/* check Ö,ö versus Ő,ő for Hungarian */
+	if (ch==0x0D6||ch==0x0F6||ch==0x150||ch==0x151
+		||ch==0x0D8||ch==0x0F8||ch==0x0D5||ch==0x0F5) {
+		/* check Ö,ö versus Ő,ő for Hungarian
+		         Ø,ø versus Ö,ö for Danish, Norwegian
+		         Ö,ö versus Ø,ø,Ő,ő,Õ,õ for Finnish SFS 4600 */
 		if (o_o_mode==0) {
 			strgth = ucol_getStrength(icu_collator);
 			ucol_setStrength(icu_collator, UCOL_PRIMARY);
 			strX[0] = 0x0D6;  strX[1] = 0x00; /* Ö */
-			strY[0] = 0x150;  strY[1] = 0x00; /* Ő */
+			strY[0] = 0x0D8;  strY[1] = 0x00; /* Ø */
 			strZ[0] = 0x04F;  strZ[1] = 0x00; /* O */
-			order  = ucol_strcoll(icu_collator, strY, -1, strX, -1);
-			order1 = ucol_strcoll(icu_collator, strZ, -1, strX, -1);
-			o_o_mode = (order==UCOL_EQUAL && order1!=UCOL_EQUAL) ? 2 : 1;
+			order  = ucol_strcoll(icu_collator, strZ, -1, strX, -1);
+			order1 = ucol_strcoll(icu_collator, strZ, -1, strY, -1);
+			if (order==UCOL_LESS || order1==UCOL_LESS) {
+				o_o_mode = 2;
+			} else {
+				o_o_mode = 1;
+			}
 			ucol_setStrength(icu_collator, strgth);
 		}
 		if (o_o_mode==2) {
+			strgth = ucol_getStrength(icu_collator);
+			ucol_setStrength(icu_collator, UCOL_SECONDARY);
+			strX[0] = 0x0D6;  strX[1] = 0x00; /* Ö */
+			strY[0] = 0x0D8;  strY[1] = 0x00; /* Ø */
+			strZ[0] = 0x150;  strZ[1] = 0x00; /* Ő */
+			strW[0] = 0x0D5;  strZ[1] = 0x00; /* Õ */
+			order2 = ucol_strcoll(icu_collator, strY, -1, strZ, -1);
+			order3 = ucol_strcoll(icu_collator, strZ, -1, strX, -1);
+			order4 = ucol_strcoll(icu_collator, strY, -1, strX, -1);
+			order5 = ucol_strcoll(icu_collator, strW, -1, strX, -1);
+			if (order1==UCOL_LESS && order4==UCOL_LESS) {
+				o_o_mode = 3;           /* O < Ø << Ö */
+				if (order2==UCOL_LESS)
+					o_o_mode = 4;   /* O < Ø << Ö and O < Ø << Ő */
+			} else if (order==UCOL_LESS && order4==UCOL_GREATER) {
+				o_o_mode = 6;           /* O < Ö << Ø */
+				if (order3==UCOL_GREATER)
+					o_o_mode = 7;   /* O < Ö << Ø and O < Ö << Ő */
+				if (order3==UCOL_GREATER && order5==UCOL_GREATER)
+					o_o_mode = 8;   /* O < Ö << Ø and O < Ö << Ő and O < Ö << Õ */
+			} else if (order==UCOL_LESS && order3==UCOL_GREATER) {
+				o_o_mode = 5;           /* O < Ö << Ő */
+			}
+			ucol_setStrength(icu_collator, strgth);
+		}
+		if ((o_o_mode==3 && (ch==0x0D6||ch==0x0F6)) || /* Ö */
+		    (o_o_mode==4 && (ch==0x150||ch==0x151||ch==0x0D6||ch==0x0F6)) || /* Ö,Ő */
+		    (o_o_mode>=3 && o_o_mode<=4 && (ch==0x0D8||ch==0x0F8))) { /* Ø */
+			ini[0] = 0x0D8; /* Ø */
+			return;
+		}
+		if ((o_o_mode==5 && (ch==0x150||ch==0x151)) || /* Ő */
+		    (o_o_mode==6 && (ch==0x0D8||ch==0x0F8)) || /* Ø */
+		    (o_o_mode==7 && (ch==0x150||ch==0x151||ch==0x0D8||ch==0x0F8)) || /* Ő,Ø */
+		    (o_o_mode==8 && (ch==0x150||ch==0x151||
+		                     ch==0x0D8||ch==0x0F8||ch==0x0D5||ch==0x0F5)) || /* Ő,Ø,Õ */
+		    (o_o_mode>=5 && o_o_mode<=8 && (ch==0x0D6||ch==0x0F6))) { /* Ö */
 			ini[0] = 0x0D6; /* Ö */
 			return;
 		}
 	}
 	if (ch==0x0DC||ch==0x0FC||ch==0x170||ch==0x171) {
-		/* check Ü,ü versus Ű,ű for Hungarian */
+		/* check Ü,ü versus Ű,ű for Hungarian, and for Finnish SFS 4600 */
 		if (u_u_mode==0) {
 			strgth = ucol_getStrength(icu_collator);
 			ucol_setStrength(icu_collator, UCOL_PRIMARY);
@@ -1046,11 +1090,20 @@ static void index_normalize(UChar *istr, UChar *ini, int *chset)
 			strZ[0] = 0x055;  strZ[1] = 0x00; /* U */
 			order = ucol_strcoll(icu_collator, strY, -1, strX, -1);
 			order1 = ucol_strcoll(icu_collator, strZ, -1, strX, -1);
-			u_u_mode = (order==UCOL_EQUAL && order1!=UCOL_EQUAL) ? 2 : 1;
+			if (order==UCOL_EQUAL && order1!=UCOL_EQUAL) {
+				strZ[0] = 0x059;          /* Y */
+				order1 = ucol_strcoll(icu_collator, strZ, -1, strX, -1);
+				u_u_mode = (order1==UCOL_EQUAL) ? 3 : 2;
+			} else {
+				u_u_mode = 1;
+			}
 			ucol_setStrength(icu_collator, strgth);
 		}
 		if (u_u_mode==2) {
 			ini[0] = 0x0DC; /* Ü */
+			return;
+		} else if (o_o_mode==3) {
+			ini[0] = 0x059; /* Y */
 			return;
 		}
 	}
@@ -1059,9 +1112,11 @@ static void index_normalize(UChar *istr, UChar *ini, int *chset)
 		strX[0] = u_toupper(ch);  strX[1] = 0x00; /* ex. "Æ" "Œ" */
 		switch (ch) {
 			case 0x0C6: case 0x0E6:        /* Æ æ */
-				strZ[0] = 0x41; break; /* A   */
+				strZ[0] = 0x41;        /* A   */
+				strW[0] = 0xC4; break; /* Ä   */
 			case 0x152: case 0x153:        /* Œ œ */
-				strZ[0] = 0x4F; break; /* O   */
+				strZ[0] = 0x4F;        /* O   */
+				strW[0] = 0xD6; break; /* Ö   */
 			case 0x0DF: case 0x1E9E:       /* ß ẞ */
 				strZ[0] = 0x53; break; /* S   */
 			case 0x132: case 0x133:        /* Ĳ ĳ */
@@ -1080,6 +1135,21 @@ static void index_normalize(UChar *istr, UChar *ini, int *chset)
 		strZ[2] = 0x00;                           /* ex. "AZ" "OZ" "ГЯ" */
 		order = ucol_strcoll(icu_collator, strZ, -1, strX, -1);
 		if (order==UCOL_GREATER) { ini[0]=strZ[0]; return; }  /* not ligature */
+
+		if (ch==0x0C6||ch==0x0E6||ch==0x152||ch==0x153) {
+		/* check Æ,Œ versus Ä,Ö for Finnish */
+			strW[1] = 0x00;
+			strgth = ucol_getStrength(icu_collator);
+			ucol_setStrength(icu_collator, UCOL_PRIMARY);
+			order =  ucol_strcoll(icu_collator, strW, -1, strX, -1);
+			ucol_setStrength(icu_collator, UCOL_SECONDARY);
+			order1 = ucol_strcoll(icu_collator, strW, -1, strX, -1);
+			strgth = ucol_getStrength(icu_collator);
+			if (order==UCOL_EQUAL) {
+				ini[0] = (order1==UCOL_GREATER) ? strX[0] : strW[0];
+				return;
+			}
+		}
 	}
 	else if ((is_latin(&ch)&&ch>0x7F)||
 		 (is_cyrillic(&ch)&&(ch<0x410||ch==0x419||ch==0x439||ch>0x44F))||
@@ -1094,7 +1164,20 @@ static void index_normalize(UChar *istr, UChar *ini, int *chset)
 			strZ[0] = u_toupper(dest[0]);  strZ[2] = 0x00;   /* ex. "AZ" */
 			strX[0] = u_toupper(ch);       strX[1] = 0x00;   /* ex. "Å"  */
 			order = ucol_strcoll(icu_collator, strZ, -1, strX, -1);
-			if (order==UCOL_LESS) { ini[0]=strX[0]; return; }  /* with diacritic */
+			if (order==UCOL_LESS) {                            /* with diacritic */
+				if (strX[0]!=0xC4) {                /* Ä */
+					ini[0]=strX[0]; return;
+				}
+				strZ[0] = 0x0C6;  strZ[1] = 0x00;   /* Æ */
+				strgth = ucol_getStrength(icu_collator);
+				ucol_setStrength(icu_collator, UCOL_PRIMARY);
+				order  = ucol_strcoll(icu_collator, strZ, -1, strX, -1);
+				ucol_setStrength(icu_collator, UCOL_SECONDARY);
+				order1 = ucol_strcoll(icu_collator, strZ, -1, strX, -1);
+				strgth = ucol_getStrength(icu_collator);
+				ini[0] = (order==UCOL_EQUAL && order1==UCOL_LESS) ? strZ[0] : strX[0];
+				return;
+			}
 			ch=dest[0];                                        /* without diacritic */
 		}
 	}
@@ -1148,6 +1231,25 @@ static void index_normalize(UChar *istr, UChar *ini, int *chset)
 			if (order==UCOL_LESS) {
 				ini[0]=strX[0]; ini[1]=strX[1]; /* NG */
 				ini[2]=L'\0';
+				return;
+			}
+		}
+		/* AA for Norwegian, Danish */
+		if (strX[0]==0x41 && strX[1]==0x41) {                            /* AA */
+			strX[2]=L'\0';
+			strY[0]=0xC5; strY[1]=L'\0';                             /* Å  */
+			strZ[0]=0x41; strZ[1]=0x42; strZ[3]=L'\0';               /* AB */
+			order = ucol_strcoll(icu_collator, strZ, -1, strX, -1);
+			ucol_setStrength(icu_collator, UCOL_PRIMARY);
+			order1 = ucol_strcoll(icu_collator, strY, -1, strX, -1);
+			strgth = ucol_getStrength(icu_collator);
+			if (order==UCOL_LESS) {
+				if (order1==UCOL_EQUAL) {
+					ini[0]=strY[0]; ini[1]=L'\0';   /* Å */
+				} else {
+					ini[0]=strX[0]; ini[1]=strX[1]; /* AA */
+					ini[2]=L'\0';
+				}
 				return;
 			}
 		}
