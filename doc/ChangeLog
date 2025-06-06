@@ -1,10 +1,14 @@
+2025-06-06  Karl Berry  <karl@freefriends.org>
+
+	* build-tools: automake 1.18.
+
 2024-12-08  Karl Berry  <karl@freefriends.org>
 
 	* tlbuild.texi (Linked scripts): document new scripts-targets.lst file.
 
 2024-07-12  Karl Berry  <karl@freefriends.org>
 
-	* build-tools.txt: automake 1.17.5
+	* build-tools.txt: automake 1.17.5.
 
 2024-04-18  Karl Berry  <karl@freefriends.org>
 
