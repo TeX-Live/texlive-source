@@ -2191,6 +2191,7 @@ proc mark_displayed {} {
 proc do_package_popup_menu {x y X Y} {
   # as focused item, the identity of the clicked item will be
   # globally available:
+  if {[.pkglist identify region $x $y] ne "cell"} {return}
   .pkglist focus [.pkglist identify item $x $y]
   # recreate menu with only applicable items
   set lr [dict get $::pkgs [.pkglist focus] "localrev"]
