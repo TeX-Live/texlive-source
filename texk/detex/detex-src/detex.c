@@ -1,3 +1,4 @@
+#line 5 "../../../texk/detex/detex-src/detex.l"
 /*
  * Copyright (c) 1986-2007 Purdue University
  * All rights reserved.
@@ -34,6 +35,7 @@
  * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS WITH THE SOFTWARE.
  */
+
 
 /*
  * detex [-e environment-list] [-c] [-l] [-n] [-s] [-t] [-w] [-1] [file[.tex] ]
@@ -87,7 +89,9 @@
 
 #endif /* KPATHSEA */
 
-#line 91 "lex.yy.c"
+
+
+#line 95 "../../../texk/detex/detex-src/detex.c"
 
 #define  YY_INT_ALIGNED short int
 
@@ -96,7 +100,7 @@
 #define FLEX_SCANNER
 #define YY_FLEX_MAJOR_VERSION 2
 #define YY_FLEX_MINOR_VERSION 6
-#define YY_FLEX_SUBMINOR_VERSION 4
+#define YY_FLEX_SUBMINOR_VERSION 0
 #if YY_FLEX_SUBMINOR_VERSION > 0
 #define FLEX_BETA
 #endif
@@ -171,48 +175,60 @@ typedef unsigned int flex_uint32_t;
 #define UINT32_MAX             (4294967295U)
 #endif
 
-#ifndef SIZE_MAX
-#define SIZE_MAX               (~(size_t)0)
-#endif
-
 #endif /* ! C99 */
 
 #endif /* ! FLEXINT_H */
 
-/* begin standard C++ headers. */
+#ifdef __cplusplus
 
-/* TODO: this is always defined, so inline it */
+/* The "const" storage-class-modifier is valid. */
+#define YY_USE_CONST
+
+#else	/* ! __cplusplus */
+
+/* C99 requires __STDC__ to be defined as 1. */
+#if defined (__STDC__)
+
+#define YY_USE_CONST
+
+#endif	/* defined (__STDC__) */
+#endif	/* ! __cplusplus */
+
+#ifdef YY_USE_CONST
 #define yyconst const
-
-#if defined(__GNUC__) && __GNUC__ >= 3
-#define yynoreturn __attribute__((__noreturn__))
 #else
-#define yynoreturn
+#define yyconst
 #endif
 
 /* Returned upon end-of-file. */
 #define YY_NULL 0
 
-/* Promotes a possibly negative, possibly signed char to an
- *   integer in range [0..255] for use as an array index.
+/* Promotes a possibly negative, possibly signed char to an unsigned
+ * integer for use as an array index.  If the signed char is negative,
+ * we want to instead treat it as an 8-bit unsigned char, hence the
+ * double cast.
  */
-#define YY_SC_TO_UI(c) ((YY_CHAR) (c))
+#define YY_SC_TO_UI(c) ((unsigned int) (unsigned char) c)
 
 /* Enter a start condition.  This macro really ought to take a parameter,
  * but we do it the disgusting crufty way forced on us by the ()-less
  * definition of BEGIN.
  */
 #define BEGIN (yy_start) = 1 + 2 *
+
 /* Translate the current start state into a value that can be later handed
  * to BEGIN to return to the state.  The YYSTATE alias is for lex
  * compatibility.
  */
 #define YY_START (((yy_start) - 1) / 2)
 #define YYSTATE YY_START
+
 /* Action number for EOF rule of a given start state. */
 #define YY_STATE_EOF(state) (YY_END_OF_BUFFER + state + 1)
+
 /* Special action meaning "start processing a new file". */
-#define YY_NEW_FILE yyrestart( yyin  )
+#define YY_NEW_FILE yyrestart(yyin  )
+
 #define YY_END_OF_BUFFER_CHAR 0
 
 /* Size of default input buffer. */
@@ -242,14 +258,14 @@ typedef struct yy_buffer_state *YY_BUFFER_STATE;
 typedef size_t yy_size_t;
 #endif
 
-extern int yyleng;
+extern yy_size_t yyleng;
 
 extern FILE *yyin, *yyout;
 
 #define EOB_ACT_CONTINUE_SCAN 0
 #define EOB_ACT_END_OF_FILE 1
 #define EOB_ACT_LAST_MATCH 2
-    
+
     #define YY_LESS_LINENO(n)
     #define YY_LINENO_REWIND_TO(ptr)
     
@@ -266,6 +282,7 @@ extern FILE *yyin, *yyout;
 		YY_DO_BEFORE_ACTION; /* set up yytext again */ \
 		} \
 	while ( 0 )
+
 #define unput(c) yyunput( c, (yytext_ptr)  )
 
 #ifndef YY_STRUCT_YY_BUFFER_STATE
@@ -280,12 +297,12 @@ struct yy_buffer_state
 	/* Size of input buffer in bytes, not including room for EOB
 	 * characters.
 	 */
-	int yy_buf_size;
+	yy_size_t yy_buf_size;
 
 	/* Number of characters read into yy_ch_buf, not including EOB
 	 * characters.
 	 */
-	int yy_n_chars;
+	yy_size_t yy_n_chars;
 
 	/* Whether we "own" the buffer - i.e., we know we created it,
 	 * and can realloc() it to grow it, and should free() it to
@@ -308,7 +325,7 @@ struct yy_buffer_state
 
     int yy_bs_lineno; /**< The line count. */
     int yy_bs_column; /**< The column count. */
-
+    
 	/* Whether to try to fill the input buffer when we reach the
 	 * end of it.
 	 */
@@ -336,7 +353,7 @@ struct yy_buffer_state
 /* Stack of input buffers. */
 static size_t yy_buffer_stack_top = 0; /**< index of top of stack. */
 static size_t yy_buffer_stack_max = 0; /**< capacity of stack. */
-static YY_BUFFER_STATE * yy_buffer_stack = NULL; /**< Stack as an array. */
+static YY_BUFFER_STATE * yy_buffer_stack = 0; /**< Stack as an array. */
 
 /* We provide macros for accessing buffer states in case in the
  * future we want to put the buffer states in a more general
@@ -347,6 +364,7 @@ static YY_BUFFER_STATE * yy_buffer_stack = NULL; /**< Stack as an array. */
 #define YY_CURRENT_BUFFER ( (yy_buffer_stack) \
                           ? (yy_buffer_stack)[(yy_buffer_stack_top)] \
                           : NULL)
+
 /* Same as previous macro, but useful when we know that the buffer stack is not
  * NULL or when we need an lvalue. For internal use only.
  */
@@ -354,11 +372,11 @@ static YY_BUFFER_STATE * yy_buffer_stack = NULL; /**< Stack as an array. */
 
 /* yy_hold_char holds the character lost when yytext is formed. */
 static char yy_hold_char;
-static int yy_n_chars;		/* number of characters read into yy_ch_buf */
-int yyleng;
+static yy_size_t yy_n_chars;		/* number of characters read into yy_ch_buf */
+yy_size_t yyleng;
 
 /* Points to current character in buffer. */
-static char *yy_c_buf_p = NULL;
+static char *yy_c_buf_p = (char *) 0;
 static int yy_init = 0;		/* whether we need to initialize */
 static int yy_start = 0;	/* start state number */
 
@@ -367,56 +385,62 @@ static int yy_start = 0;	/* start state number */
  */
 static int yy_did_buffer_switch_on_eof;
 
-void yyrestart ( FILE *input_file  );
-void yy_switch_to_buffer ( YY_BUFFER_STATE new_buffer  );
-YY_BUFFER_STATE yy_create_buffer ( FILE *file, int size  );
-void yy_delete_buffer ( YY_BUFFER_STATE b  );
-void yy_flush_buffer ( YY_BUFFER_STATE b  );
-void yypush_buffer_state ( YY_BUFFER_STATE new_buffer  );
-void yypop_buffer_state ( void );
+void yyrestart (FILE *input_file  );
+void yy_switch_to_buffer (YY_BUFFER_STATE new_buffer  );
+YY_BUFFER_STATE yy_create_buffer (FILE *file,int size  );
+void yy_delete_buffer (YY_BUFFER_STATE b  );
+void yy_flush_buffer (YY_BUFFER_STATE b  );
+void yypush_buffer_state (YY_BUFFER_STATE new_buffer  );
+void yypop_buffer_state (void );
 
-static void yyensure_buffer_stack ( void );
-static void yy_load_buffer_state ( void );
-static void yy_init_buffer ( YY_BUFFER_STATE b, FILE *file  );
-#define YY_FLUSH_BUFFER yy_flush_buffer( YY_CURRENT_BUFFER )
+static void yyensure_buffer_stack (void );
+static void yy_load_buffer_state (void );
+static void yy_init_buffer (YY_BUFFER_STATE b,FILE *file  );
 
-YY_BUFFER_STATE yy_scan_buffer ( char *base, yy_size_t size  );
-YY_BUFFER_STATE yy_scan_string ( const char *yy_str  );
-YY_BUFFER_STATE yy_scan_bytes ( const char *bytes, int len  );
+#define YY_FLUSH_BUFFER yy_flush_buffer(YY_CURRENT_BUFFER )
 
-void *yyalloc ( yy_size_t  );
-void *yyrealloc ( void *, yy_size_t  );
-void yyfree ( void *  );
+YY_BUFFER_STATE yy_scan_buffer (char *base,yy_size_t size  );
+YY_BUFFER_STATE yy_scan_string (yyconst char *yy_str  );
+YY_BUFFER_STATE yy_scan_bytes (yyconst char *bytes,yy_size_t len  );
+
+void *yyalloc (yy_size_t  );
+void *yyrealloc (void *,yy_size_t  );
+void yyfree (void *  );
 
 #define yy_new_buffer yy_create_buffer
+
 #define yy_set_interactive(is_interactive) \
 	{ \
 	if ( ! YY_CURRENT_BUFFER ){ \
         yyensure_buffer_stack (); \
 		YY_CURRENT_BUFFER_LVALUE =    \
-            yy_create_buffer( yyin, YY_BUF_SIZE ); \
+            yy_create_buffer(yyin,YY_BUF_SIZE ); \
 	} \
 	YY_CURRENT_BUFFER_LVALUE->yy_is_interactive = is_interactive; \
 	}
+
 #define yy_set_bol(at_bol) \
 	{ \
 	if ( ! YY_CURRENT_BUFFER ){\
         yyensure_buffer_stack (); \
 		YY_CURRENT_BUFFER_LVALUE =    \
-            yy_create_buffer( yyin, YY_BUF_SIZE ); \
+            yy_create_buffer(yyin,YY_BUF_SIZE ); \
 	} \
 	YY_CURRENT_BUFFER_LVALUE->yy_at_bol = at_bol; \
 	}
+
 #define YY_AT_BOL() (YY_CURRENT_BUFFER_LVALUE->yy_at_bol)
 
 /* Begin user sect3 */
-typedef flex_uint8_t YY_CHAR;
 
-FILE *yyin = NULL, *yyout = NULL;
+typedef unsigned char YY_CHAR;
+
+FILE *yyin = (FILE *) 0, *yyout = (FILE *) 0;
 
 typedef int yy_state_type;
 
 extern int yylineno;
+
 int yylineno = 1;
 
 extern char *yytext;
@@ -425,20 +449,24 @@ extern char *yytext;
 #endif
 #define yytext_ptr yytext
 
-static yy_state_type yy_get_previous_state ( void );
-static yy_state_type yy_try_NUL_trans ( yy_state_type current_state  );
-static int yy_get_next_buffer ( void );
-static void yynoreturn yy_fatal_error ( const char* msg  );
+static yy_state_type yy_get_previous_state (void );
+static yy_state_type yy_try_NUL_trans (yy_state_type current_state  );
+static int yy_get_next_buffer (void );
+#if defined(__GNUC__) && __GNUC__ >= 3
+__attribute__((__noreturn__))
+#endif
+static void yy_fatal_error (yyconst char msg[]  );
 
 /* Done after the current pattern has been matched and before the
  * corresponding action - sets up yytext.
  */
 #define YY_DO_BEFORE_ACTION \
 	(yytext_ptr) = yy_bp; \
-	yyleng = (int) (yy_cp - yy_bp); \
+	yyleng = (size_t) (yy_cp - yy_bp); \
 	(yy_hold_char) = *yy_cp; \
 	*yy_cp = '\0'; \
 	(yy_c_buf_p) = yy_cp;
+
 #define YY_NUM_RULES 174
 #define YY_END_OF_BUFFER 175
 /* This struct is not used in this scanner,
@@ -448,7 +476,7 @@ struct yy_trans_info
 	flex_int32_t yy_verify;
 	flex_int32_t yy_nxt;
 	};
-static const flex_int16_t yy_accept[1362] =
+static yyconst flex_int16_t yy_accept[1362] =
     {   0,
         0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
         0,    0,    0,    0,  145,  145,    0,    0,    0,    0,
@@ -602,7 +630,7 @@ static const flex_int16_t yy_accept[1362] =
         0
     } ;
 
-static const YY_CHAR yy_ec[256] =
+static yyconst YY_CHAR yy_ec[256] =
     {   0,
         1,    1,    1,    1,    1,    1,    1,    1,    2,    3,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
@@ -634,7 +662,7 @@ static const YY_CHAR yy_ec[256] =
         1,    1,    1,    1,    1
     } ;
 
-static const YY_CHAR yy_meta[61] =
+static yyconst YY_CHAR yy_meta[61] =
     {   0,
         1,    2,    3,    2,    4,    1,    1,    5,    1,    1,
         1,    1,    6,    7,    1,    7,    7,    1,    7,    1,
@@ -644,7 +672,7 @@ static const YY_CHAR yy_meta[61] =
         9,    9,    9,    9,    9,    9,   12,    1,   13,    1
     } ;
 
-static const flex_int16_t yy_base[1416] =
+static yyconst flex_uint16_t yy_base[1416] =
     {   0,
         0,    0,    0,    1,    2,    6,   14,   26,   11,   30,
        43,   47,   96,    0,  156,    0,  216,    0,  274,  277,
@@ -804,7 +832,7 @@ static const flex_int16_t yy_base[1416] =
      2288, 2290, 3173, 2291, 2293
     } ;
 
-static const flex_int16_t yy_def[1416] =
+static yyconst flex_int16_t yy_def[1416] =
     {   0,
      1362, 1362, 1363, 1363, 1364, 1364, 1365, 1365, 1366, 1366,
      1367, 1367, 1361,   13, 1361,   15, 1361,   17, 1368, 1368,
@@ -964,7 +992,7 @@ static const flex_int16_t yy_def[1416] =
      1361, 1361, 1361, 1361, 1361
     } ;
 
-static const flex_int16_t yy_nxt[3432] =
+static yyconst flex_uint16_t yy_nxt[3432] =
     {   0,
      1361, 1361,   48,   48,   51, 1361, 1361,   52,   51,  108,
       108,   52,   61,   62,   61,   57,   58,   57,  134,   53,
@@ -1346,7 +1374,7 @@ static const flex_int16_t yy_nxt[3432] =
      1361
     } ;
 
-static const flex_int16_t yy_chk[3432] =
+static yyconst flex_int16_t yy_chk[3432] =
     {   0,
         0,    0,    3,    4,    5,    0,    0,    5,    6,   23,
        24,    6,    9,    9,    9,    7,    7,    7,   39,    5,
@@ -1742,9 +1770,9 @@ int yy_flex_debug = 0;
 #define YY_MORE_ADJ 0
 #define YY_RESTORE_YY_MORE_OFFSET
 char *yytext;
-#line 1 "detex.l"
+#line 1 "../../../texk/detex/detex-src/detex.l"
 
-#line 97 "detex.l"
+#line 97 "../../../texk/detex/detex-src/detex.l"
 #undef IGNORE
 #undef ECHO
 
@@ -1788,7 +1816,7 @@ int SeparateList(char *sbList, char *rgsbList[] ,char chSep, int csbMax);
 FILE *TexOpen(char *sbFile);
 char *SafeMalloc(int cch, const char *sbMessage);
 #ifndef KPATHSEA
-char *getenv();
+char *getenv(const char *);
 #ifndef NO_MALLOC_DECL
 char	*malloc();
 #endif
@@ -1838,9 +1866,11 @@ int				fIsColumn0 = 1;			/* Are we at the begining of a line? */
 int				csb = 0;				/* depth of flex context stack */
 #endif /* FLEX_SCANNER */
 
-#line 1842 "lex.yy.c"
 
-#line 1844 "lex.yy.c"
+
+
+
+#line 1874 "../../../texk/detex/detex-src/detex.c"
 
 #define INITIAL 0
 #define Define 1
@@ -1877,36 +1907,36 @@ int				csb = 0;				/* depth of flex context stack */
 #define YY_EXTRA_TYPE void *
 #endif
 
-static int yy_init_globals ( void );
+static int yy_init_globals (void );
 
 /* Accessor methods to globals.
    These are made visible to non-reentrant scanners for convenience. */
 
-int yylex_destroy ( void );
+int yylex_destroy (void );
 
-int yyget_debug ( void );
+int yyget_debug (void );
 
-void yyset_debug ( int debug_flag  );
+void yyset_debug (int debug_flag  );
 
-YY_EXTRA_TYPE yyget_extra ( void );
+YY_EXTRA_TYPE yyget_extra (void );
 
-void yyset_extra ( YY_EXTRA_TYPE user_defined  );
+void yyset_extra (YY_EXTRA_TYPE user_defined  );
 
-FILE *yyget_in ( void );
+FILE *yyget_in (void );
 
-void yyset_in  ( FILE * _in_str  );
+void yyset_in  (FILE * _in_str  );
 
-FILE *yyget_out ( void );
+FILE *yyget_out (void );
 
-void yyset_out  ( FILE * _out_str  );
+void yyset_out  (FILE * _out_str  );
 
-			int yyget_leng ( void );
+yy_size_t yyget_leng (void );
 
-char *yyget_text ( void );
+char *yyget_text (void );
 
-int yyget_lineno ( void );
+int yyget_lineno (void );
 
-void yyset_lineno ( int _line_number  );
+void yyset_lineno (int _line_number  );
 
 /* Macros after this point can all be overridden by user definitions in
  * section 1.
@@ -1914,9 +1944,9 @@ void yyset_lineno ( int _line_number  );
 
 #ifndef YY_SKIP_YYWRAP
 #ifdef __cplusplus
-extern "C" int yywrap ( void );
+extern "C" int yywrap (void );
 #else
-extern int yywrap ( void );
+extern int yywrap (void );
 #endif
 #endif
 
@@ -1925,18 +1955,19 @@ extern int yywrap ( void );
 #endif
 
 #ifndef yytext_ptr
-static void yy_flex_strncpy ( char *, const char *, int );
+static void yy_flex_strncpy (char *,yyconst char *,int );
 #endif
 
 #ifdef YY_NEED_STRLEN
-static int yy_flex_strlen ( const char * );
+static int yy_flex_strlen (yyconst char * );
 #endif
 
 #ifndef YY_NO_INPUT
+
 #ifdef __cplusplus
-static int yyinput ( void );
+static int yyinput (void );
 #else
-static int input ( void );
+static int input (void );
 #endif
 
 #endif
@@ -1956,7 +1987,7 @@ static int input ( void );
 /* This used to be an fputs(), but since the string might contain NUL's,
  * we now use fwrite().
  */
-#define ECHO do { if (fwrite( yytext, (size_t) yyleng, 1, yyout )) {} } while (0)
+#define ECHO do { if (fwrite( yytext, yyleng, 1, yyout )) {} } while (0)
 #endif
 
 /* Gets input and stuffs it into "buf".  number of characters read, or YY_NULL,
@@ -1967,7 +1998,7 @@ static int input ( void );
 	if ( YY_CURRENT_BUFFER_LVALUE->yy_is_interactive ) \
 		{ \
 		int c = '*'; \
-		int n; \
+		size_t n; \
 		for ( n = 0; n < max_size && \
 			     (c = getc( yyin )) != EOF && c != '\n'; ++n ) \
 			buf[n] = (char) c; \
@@ -1980,7 +2011,7 @@ static int input ( void );
 	else \
 		{ \
 		errno=0; \
-		while ( (result = (int) fread(buf, 1, (yy_size_t) max_size, yyin)) == 0 && ferror(yyin)) \
+		while ( (result = fread(buf, 1, max_size, yyin))==0 && ferror(yyin)) \
 			{ \
 			if( errno != EINTR) \
 				{ \
@@ -2069,16 +2100,16 @@ YY_DECL
 		if ( ! YY_CURRENT_BUFFER ) {
 			yyensure_buffer_stack ();
 			YY_CURRENT_BUFFER_LVALUE =
-				yy_create_buffer( yyin, YY_BUF_SIZE );
+				yy_create_buffer(yyin,YY_BUF_SIZE );
 		}
 
-		yy_load_buffer_state(  );
+		yy_load_buffer_state( );
 		}
 
 	{
-#line 211 "detex.l"
+#line 211 "../../../texk/detex/detex-src/detex.l"
 
-#line 2082 "lex.yy.c"
+#line 2113 "../../../texk/detex/detex-src/detex.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -2106,9 +2137,9 @@ yy_match:
 				{
 				yy_current_state = (int) yy_def[yy_current_state];
 				if ( yy_current_state >= 1362 )
-					yy_c = yy_meta[yy_c];
+					yy_c = yy_meta[(unsigned int) yy_c];
 				}
-			yy_current_state = yy_nxt[yy_base[yy_current_state] + yy_c];
+			yy_current_state = yy_nxt[yy_base[yy_current_state] + (unsigned int) yy_c];
 			++yy_cp;
 			}
 		while ( yy_current_state != 1361 );
@@ -2133,24 +2164,24 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 212 "detex.l"
+#line 212 "../../../texk/detex/detex-src/detex.l"
 /* ignore comments */	{INCRLINENO;}
 	YY_BREAK
 case 2:
 /* rule 2 can match eol */
 YY_RULE_SETUP
-#line 214 "detex.l"
+#line 214 "../../../texk/detex/detex-src/detex.l"
 {LATEX; IGNORE;}
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 216 "detex.l"
+#line 216 "../../../texk/detex/detex-src/detex.l"
 /* environment start */	{LaBEGIN LaBegin; IGNORE;}
 	YY_BREAK
 case 4:
 /* rule 4 can match eol */
 YY_RULE_SETUP
-#line 218 "detex.l"
+#line 218 "../../../texk/detex/detex-src/detex.l"
 { if (BeginEnv("verbatim"))
 							BEGIN LaEnv;
 						else
@@ -2161,24 +2192,24 @@ YY_RULE_SETUP
 case 5:
 /* rule 5 can match eol */
 YY_RULE_SETUP
-#line 225 "detex.l"
+#line 225 "../../../texk/detex/detex-src/detex.l"
 /* verbatim mode */	{BEGIN Normal; IGNORE;}
 	YY_BREAK
 case 6:
 /* rule 6 can match eol */
 YY_RULE_SETUP
-#line 226 "detex.l"
+#line 226 "../../../texk/detex/detex-src/detex.l"
 ECHO;
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 227 "detex.l"
+#line 227 "../../../texk/detex/detex-src/detex.l"
 ECHO;
 	YY_BREAK
 case 8:
 /* rule 8 can match eol */
 YY_RULE_SETUP
-#line 229 "detex.l"
+#line 229 "../../../texk/detex/detex-src/detex.l"
 { KILLARGS(1);
 						if (BeginEnv("minipage"))
 							BEGIN LaEnv;
@@ -2190,7 +2221,7 @@ YY_RULE_SETUP
 case 9:
 /* rule 9 can match eol */
 YY_RULE_SETUP
-#line 237 "detex.l"
+#line 237 "../../../texk/detex/detex-src/detex.l"
 {
 						if (BeginEnv("table"))
 							BEGIN LaEnv;
@@ -2202,7 +2233,7 @@ YY_RULE_SETUP
 case 10:
 /* rule 10 can match eol */
 YY_RULE_SETUP
-#line 245 "detex.l"
+#line 245 "../../../texk/detex/detex-src/detex.l"
 {
 						if (BeginEnv("figure"))
 							BEGIN LaEnv;
@@ -2213,7 +2244,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 253 "detex.l"
+#line 253 "../../../texk/detex/detex-src/detex.l"
 { if (BeginEnv(yytext))
 							BEGIN LaEnv;
 						else
@@ -2224,28 +2255,28 @@ YY_RULE_SETUP
 /*<LaBegin>"\n"					NEWLINE;*/
 case 12:
 YY_RULE_SETUP
-#line 260 "detex.l"
+#line 260 "../../../texk/detex/detex-src/detex.l"
 {INCRLINENO;}
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 262 "detex.l"
+#line 262 "../../../texk/detex/detex-src/detex.l"
 /* absorb some environments */	{LaBEGIN LaEnd; IGNORE;}
 	YY_BREAK
 case 14:
 /* rule 14 can match eol */
 YY_RULE_SETUP
-#line 263 "detex.l"
+#line 263 "../../../texk/detex/detex-src/detex.l"
 ;/*NEWLINE;*/
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 264 "detex.l"
+#line 264 "../../../texk/detex/detex-src/detex.l"
 {INCRLINENO;}
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 266 "detex.l"
+#line 266 "../../../texk/detex/detex-src/detex.l"
 /* end environment */	{   if (EndEnv(yytext))
 							BEGIN Normal;
 							IGNORE;
@@ -2253,354 +2284,354 @@ YY_RULE_SETUP
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 270 "detex.l"
+#line 270 "../../../texk/detex/detex-src/detex.l"
 {BEGIN LaEnv; IGNORE;}
 	YY_BREAK
 /*<LaEnd>"\n"					NEWLINE;*/
 case 18:
 YY_RULE_SETUP
-#line 272 "detex.l"
+#line 272 "../../../texk/detex/detex-src/detex.l"
 {INCRLINENO;}
 	YY_BREAK
 case 19:
 /* rule 19 can match eol */
 YY_RULE_SETUP
-#line 274 "detex.l"
+#line 274 "../../../texk/detex/detex-src/detex.l"
 ;
 	YY_BREAK
 case 20:
 /* rule 20 can match eol */
 YY_RULE_SETUP
-#line 275 "detex.l"
+#line 275 "../../../texk/detex/detex-src/detex.l"
 ;
 	YY_BREAK
 case 21:
 /* rule 21 can match eol */
 YY_RULE_SETUP
-#line 276 "detex.l"
+#line 276 "../../../texk/detex/detex-src/detex.l"
 ;
 	YY_BREAK
 case 22:
 /* rule 22 can match eol */
 YY_RULE_SETUP
-#line 277 "detex.l"
+#line 277 "../../../texk/detex/detex-src/detex.l"
 ;
 	YY_BREAK
 case 23:
 /* rule 23 can match eol */
 YY_RULE_SETUP
-#line 278 "detex.l"
+#line 278 "../../../texk/detex/detex-src/detex.l"
 ;
 	YY_BREAK
 case 24:
 /* rule 24 can match eol */
 YY_RULE_SETUP
-#line 279 "detex.l"
+#line 279 "../../../texk/detex/detex-src/detex.l"
 ;
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 280 "detex.l"
+#line 280 "../../../texk/detex/detex-src/detex.l"
 ; /* hack to fix \begin{minipage}{300pt} */
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 282 "detex.l"
+#line 282 "../../../texk/detex/detex-src/detex.l"
 { KILLARGS(1); }
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 283 "detex.l"
+#line 283 "../../../texk/detex/detex-src/detex.l"
 { KILLARGS(2); }
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 284 "detex.l"
+#line 284 "../../../texk/detex/detex-src/detex.l"
 { KILLARGS(2); }
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 285 "detex.l"
+#line 285 "../../../texk/detex/detex-src/detex.l"
 { KILLARGS(2); }
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 286 "detex.l"
+#line 286 "../../../texk/detex/detex-src/detex.l"
 { KILLARGS(2); }
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 287 "detex.l"
+#line 287 "../../../texk/detex/detex-src/detex.l"
 { KILLARGS(2); }
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 288 "detex.l"
+#line 288 "../../../texk/detex/detex-src/detex.l"
 { KILLARGS(1); }
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 289 "detex.l"
+#line 289 "../../../texk/detex/detex-src/detex.l"
 { KILLARGS(1); }
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 290 "detex.l"
+#line 290 "../../../texk/detex/detex-src/detex.l"
 { KILLARGS(2); }
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 291 "detex.l"
+#line 291 "../../../texk/detex/detex-src/detex.l"
 { KILLARGS(1); }
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 292 "detex.l"
+#line 292 "../../../texk/detex/detex-src/detex.l"
 { STRIPARGS(2); }
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 293 "detex.l"
+#line 293 "../../../texk/detex/detex-src/detex.l"
 { KILLARGS(1); }
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 294 "detex.l"
+#line 294 "../../../texk/detex/detex-src/detex.l"
 { STRIPARGS(2); }
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 295 "detex.l"
+#line 295 "../../../texk/detex/detex-src/detex.l"
 { KILLARGS(2); }
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 296 "detex.l"
+#line 296 "../../../texk/detex/detex-src/detex.l"
 ;
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-#line 297 "detex.l"
+#line 297 "../../../texk/detex/detex-src/detex.l"
 { KILLARGS(1); }
 	YY_BREAK
 case 42:
 /* rule 42 can match eol */
 YY_RULE_SETUP
-#line 298 "detex.l"
+#line 298 "../../../texk/detex/detex-src/detex.l"
 { LaBEGIN LaPicture; }
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 300 "detex.l"
+#line 300 "../../../texk/detex/detex-src/detex.l"
 ;
 	YY_BREAK
 case 44:
 /* rule 44 can match eol */
 YY_RULE_SETUP
-#line 301 "detex.l"
+#line 301 "../../../texk/detex/detex-src/detex.l"
 { if(fShowPictures) { printf("<Picture %s>", yytext); } }
 	YY_BREAK
 case 45:
 /* rule 45 can match eol */
 YY_RULE_SETUP
-#line 302 "detex.l"
+#line 302 "../../../texk/detex/detex-src/detex.l"
 { BEGIN Normal; INCRLINENO; }
 	YY_BREAK
 case 46:
 YY_RULE_SETUP
-#line 303 "detex.l"
+#line 303 "../../../texk/detex/detex-src/detex.l"
 BEGIN Normal;
 	YY_BREAK
 case 47:
 YY_RULE_SETUP
-#line 305 "detex.l"
+#line 305 "../../../texk/detex/detex-src/detex.l"
 { KILLARGS(3); }
 	YY_BREAK
 case 48:
 YY_RULE_SETUP
-#line 306 "detex.l"
+#line 306 "../../../texk/detex/detex-src/detex.l"
 { KILLARGS(1); }
 	YY_BREAK
 case 49:
 YY_RULE_SETUP
-#line 307 "detex.l"
+#line 307 "../../../texk/detex/detex-src/detex.l"
 { KILLARGS(2); }
 	YY_BREAK
 case 50:
 YY_RULE_SETUP
-#line 308 "detex.l"
+#line 308 "../../../texk/detex/detex-src/detex.l"
 { KILLARGS(2); }
 	YY_BREAK
 case 51:
 YY_RULE_SETUP
-#line 309 "detex.l"
+#line 309 "../../../texk/detex/detex-src/detex.l"
 { KILLARGS(3); }
 	YY_BREAK
 case 52:
 YY_RULE_SETUP
-#line 310 "detex.l"
+#line 310 "../../../texk/detex/detex-src/detex.l"
 { KILLARGS(1); }
 	YY_BREAK
 case 53:
 YY_RULE_SETUP
-#line 311 "detex.l"
+#line 311 "../../../texk/detex/detex-src/detex.l"
 { STRIPARGS(1); }
 	YY_BREAK
 case 54:
 YY_RULE_SETUP
-#line 312 "detex.l"
+#line 312 "../../../texk/detex/detex-src/detex.l"
 { KILLARGS(1); }
 	YY_BREAK
 case 55:
 YY_RULE_SETUP
-#line 313 "detex.l"
+#line 313 "../../../texk/detex/detex-src/detex.l"
 { KILLARGS(1); }
 	YY_BREAK
 case 56:
 YY_RULE_SETUP
-#line 314 "detex.l"
+#line 314 "../../../texk/detex/detex-src/detex.l"
 { KILLARGS(3); }
 	YY_BREAK
 case 57:
 YY_RULE_SETUP
-#line 316 "detex.l"
+#line 316 "../../../texk/detex/detex-src/detex.l"
 ;/*NEWLINE;*/
 	YY_BREAK
 case 58:
 YY_RULE_SETUP
-#line 317 "detex.l"
+#line 317 "../../../texk/detex/detex-src/detex.l"
 ;/*NEWLINE;*/
 	YY_BREAK
 case 59:
 YY_RULE_SETUP
-#line 318 "detex.l"
+#line 318 "../../../texk/detex/detex-src/detex.l"
 ;/*NEWLINE;*/
 	YY_BREAK
 case 60:
 YY_RULE_SETUP
-#line 319 "detex.l"
+#line 319 "../../../texk/detex/detex-src/detex.l"
 ;/*NEWLINE;*/
 	YY_BREAK
 case 61:
 YY_RULE_SETUP
-#line 320 "detex.l"
+#line 320 "../../../texk/detex/detex-src/detex.l"
 ;/*NEWLINE;*/
 	YY_BREAK
 case 62:
 YY_RULE_SETUP
-#line 321 "detex.l"
+#line 321 "../../../texk/detex/detex-src/detex.l"
 ;/*NEWLINE;*/
 	YY_BREAK
 case 63:
 YY_RULE_SETUP
-#line 322 "detex.l"
+#line 322 "../../../texk/detex/detex-src/detex.l"
 ;/*NEWLINE;*/
 	YY_BREAK
 case 64:
 YY_RULE_SETUP
-#line 324 "detex.l"
+#line 324 "../../../texk/detex/detex-src/detex.l"
 /* ignore args  */	{KILLARGS(1); IGNORE;}
 	YY_BREAK
 case 65:
 YY_RULE_SETUP
-#line 325 "detex.l"
+#line 325 "../../../texk/detex/detex-src/detex.l"
 /* of these \cs */	{KILLARGS(1); IGNORE;}
 	YY_BREAK
 case 66:
 YY_RULE_SETUP
-#line 326 "detex.l"
+#line 326 "../../../texk/detex/detex-src/detex.l"
 {KILLARGS(1); IGNORE;}
 	YY_BREAK
 case 67:
 YY_RULE_SETUP
-#line 327 "detex.l"
+#line 327 "../../../texk/detex/detex-src/detex.l"
 {KILLARGS(1);} /* kill space before */
 	YY_BREAK
 case 68:
 YY_RULE_SETUP
-#line 328 "detex.l"
+#line 328 "../../../texk/detex/detex-src/detex.l"
 {LATEX; KILLARGS(1); IGNORE;}
 	YY_BREAK
 case 69:
 YY_RULE_SETUP
-#line 329 "detex.l"
+#line 329 "../../../texk/detex/detex-src/detex.l"
 {LATEX; KILLARGS(1); IGNORE;}
 	YY_BREAK
 case 70:
 YY_RULE_SETUP
-#line 330 "detex.l"
+#line 330 "../../../texk/detex/detex-src/detex.l"
 {KILLARGS(1); IGNORE;}
 	YY_BREAK
 case 71:
 YY_RULE_SETUP
-#line 331 "detex.l"
+#line 331 "../../../texk/detex/detex-src/detex.l"
 {KILLARGS(1); IGNORE;}
 	YY_BREAK
 case 72:
 YY_RULE_SETUP
-#line 332 "detex.l"
+#line 332 "../../../texk/detex/detex-src/detex.l"
 {KILLARGS(1);}
 	YY_BREAK
 case 73:
 YY_RULE_SETUP
-#line 333 "detex.l"
+#line 333 "../../../texk/detex/detex-src/detex.l"
 {KILLARGS(1);}
 	YY_BREAK
 /*<Normal>"\\footnote"				{KILLARGS(1); SPACE;}*/
 case 74:
 YY_RULE_SETUP
-#line 335 "detex.l"
+#line 335 "../../../texk/detex/detex-src/detex.l"
 {KILLARGS(1); IGNORE;}
 	YY_BREAK
 case 75:
 YY_RULE_SETUP
-#line 336 "detex.l"
+#line 336 "../../../texk/detex/detex-src/detex.l"
 {CITE(1); IGNORE;}
 	YY_BREAK
 case 76:
 YY_RULE_SETUP
-#line 337 "detex.l"
+#line 337 "../../../texk/detex/detex-src/detex.l"
 {CITE(1); IGNORE;}
 	YY_BREAK
 case 77:
 YY_RULE_SETUP
-#line 338 "detex.l"
+#line 338 "../../../texk/detex/detex-src/detex.l"
 {KILLARGS(1); IGNORE;}
 	YY_BREAK
 case 78:
 YY_RULE_SETUP
-#line 339 "detex.l"
+#line 339 "../../../texk/detex/detex-src/detex.l"
 {CITE(1); IGNORE;}
 	YY_BREAK
 case 79:
 YY_RULE_SETUP
-#line 340 "detex.l"
+#line 340 "../../../texk/detex/detex-src/detex.l"
 {KILLARGS(2); IGNORE;}
 	YY_BREAK
 case 80:
 YY_RULE_SETUP
-#line 341 "detex.l"
+#line 341 "../../../texk/detex/detex-src/detex.l"
 {KILLARGS(2); IGNORE;}
 	YY_BREAK
 case 81:
 YY_RULE_SETUP
-#line 342 "detex.l"
+#line 342 "../../../texk/detex/detex-src/detex.l"
 { KILLARGS(1); }
 	YY_BREAK
 case 82:
 YY_RULE_SETUP
-#line 343 "detex.l"
+#line 343 "../../../texk/detex/detex-src/detex.l"
 { KILLARGS(2); }
 	YY_BREAK
 case 83:
 YY_RULE_SETUP
-#line 345 "detex.l"
+#line 345 "../../../texk/detex/detex-src/detex.l"
 {KILLARGS(1);}
 	YY_BREAK
 case 84:
 /* rule 84 can match eol */
 YY_RULE_SETUP
-#line 347 "detex.l"
+#line 347 "../../../texk/detex/detex-src/detex.l"
 {
 							putchar('(');
 							footnoteLevel = currBracesLevel;
@@ -2609,10 +2640,10 @@ YY_RULE_SETUP
 	YY_BREAK
 case 85:
 YY_RULE_SETUP
-#line 352 "detex.l"
+#line 352 "../../../texk/detex/detex-src/detex.l"
 /* ignore \verb<ch>...<ch> */ {
 	if (fLatex) {
-		char verbchar, c;
+		int verbchar, c;
 		verbchar = input();
 		if (verbchar < ' ') {
 			/* would be nice to include input filenames and line numbers */
@@ -2629,157 +2660,157 @@ YY_RULE_SETUP
 	YY_BREAK
 case 86:
 YY_RULE_SETUP
-#line 369 "detex.l"
+#line 369 "../../../texk/detex/detex-src/detex.l"
 { LATEX; KILLARGS(2); }
 	YY_BREAK
 case 87:
 YY_RULE_SETUP
-#line 370 "detex.l"
+#line 370 "../../../texk/detex/detex-src/detex.l"
 { LATEX; KILLARGS(2); }
 	YY_BREAK
 case 88:
 YY_RULE_SETUP
-#line 371 "detex.l"
+#line 371 "../../../texk/detex/detex-src/detex.l"
 { LATEX; KILLARGS(3); }
 	YY_BREAK
 case 89:
 YY_RULE_SETUP
-#line 373 "detex.l"
+#line 373 "../../../texk/detex/detex-src/detex.l"
 /* ignore def begin */	{BEGIN Define; IGNORE;}
 	YY_BREAK
 case 90:
 YY_RULE_SETUP
-#line 374 "detex.l"
+#line 374 "../../../texk/detex/detex-src/detex.l"
 BEGIN Normal;
 	YY_BREAK
 case 91:
 /* rule 91 can match eol */
 YY_RULE_SETUP
-#line 375 "detex.l"
+#line 375 "../../../texk/detex/detex-src/detex.l"
 NEWLINE;
 	YY_BREAK
 case 92:
 YY_RULE_SETUP
-#line 376 "detex.l"
+#line 376 "../../../texk/detex/detex-src/detex.l"
 ;
 	YY_BREAK
 case 93:
 YY_RULE_SETUP
-#line 378 "detex.l"
+#line 378 "../../../texk/detex/detex-src/detex.l"
 /* formula mode */	{LaBEGIN LaFormula; NOUN;}
 	YY_BREAK
 case 94:
 YY_RULE_SETUP
-#line 379 "detex.l"
+#line 379 "../../../texk/detex/detex-src/detex.l"
 BEGIN Normal;
 	YY_BREAK
 case 95:
 /* rule 95 can match eol */
 YY_RULE_SETUP
-#line 380 "detex.l"
+#line 380 "../../../texk/detex/detex-src/detex.l"
 NEWLINE;
 	YY_BREAK
 case 96:
 YY_RULE_SETUP
-#line 381 "detex.l"
+#line 381 "../../../texk/detex/detex-src/detex.l"
 VERBNOUN;
 	YY_BREAK
 case 97:
 YY_RULE_SETUP
-#line 382 "detex.l"
+#line 382 "../../../texk/detex/detex-src/detex.l"
 ;
 	YY_BREAK
 case 98:
 YY_RULE_SETUP
-#line 384 "detex.l"
+#line 384 "../../../texk/detex/detex-src/detex.l"
 /* display mode */	{LaBEGIN LaDisplay; NOUN;}
 	YY_BREAK
 case 99:
 YY_RULE_SETUP
-#line 385 "detex.l"
+#line 385 "../../../texk/detex/detex-src/detex.l"
 BEGIN Normal;
 	YY_BREAK
 case 100:
 /* rule 100 can match eol */
 YY_RULE_SETUP
-#line 386 "detex.l"
+#line 386 "../../../texk/detex/detex-src/detex.l"
 NEWLINE;
 	YY_BREAK
 case 101:
 YY_RULE_SETUP
-#line 387 "detex.l"
+#line 387 "../../../texk/detex/detex-src/detex.l"
 VERBNOUN;
 	YY_BREAK
 case 102:
 YY_RULE_SETUP
-#line 388 "detex.l"
+#line 388 "../../../texk/detex/detex-src/detex.l"
 ;
 	YY_BREAK
 case 103:
 YY_RULE_SETUP
-#line 390 "detex.l"
+#line 390 "../../../texk/detex/detex-src/detex.l"
 /* display mode */	{BEGIN Display; NOUN;}
 	YY_BREAK
 case 104:
 YY_RULE_SETUP
-#line 391 "detex.l"
+#line 391 "../../../texk/detex/detex-src/detex.l"
 BEGIN Normal;
 	YY_BREAK
 case 105:
 /* rule 105 can match eol */
 YY_RULE_SETUP
-#line 392 "detex.l"
+#line 392 "../../../texk/detex/detex-src/detex.l"
 NEWLINE;
 	YY_BREAK
 case 106:
 YY_RULE_SETUP
-#line 393 "detex.l"
+#line 393 "../../../texk/detex/detex-src/detex.l"
 VERBNOUN;
 	YY_BREAK
 case 107:
 YY_RULE_SETUP
-#line 394 "detex.l"
+#line 394 "../../../texk/detex/detex-src/detex.l"
 ;
 	YY_BREAK
 case 108:
 YY_RULE_SETUP
-#line 396 "detex.l"
+#line 396 "../../../texk/detex/detex-src/detex.l"
 /* math mode */		{BEGIN Math; NOUN;}
 	YY_BREAK
 case 109:
 YY_RULE_SETUP
-#line 397 "detex.l"
+#line 397 "../../../texk/detex/detex-src/detex.l"
 BEGIN Normal;
 	YY_BREAK
 case 110:
 /* rule 110 can match eol */
 YY_RULE_SETUP
-#line 398 "detex.l"
+#line 398 "../../../texk/detex/detex-src/detex.l"
 ;
 	YY_BREAK
 case 111:
 YY_RULE_SETUP
-#line 399 "detex.l"
+#line 399 "../../../texk/detex/detex-src/detex.l"
 ;
 	YY_BREAK
 case 112:
 YY_RULE_SETUP
-#line 400 "detex.l"
+#line 400 "../../../texk/detex/detex-src/detex.l"
 VERBNOUN;
 	YY_BREAK
 case 113:
 YY_RULE_SETUP
-#line 401 "detex.l"
+#line 401 "../../../texk/detex/detex-src/detex.l"
 ;
 	YY_BREAK
 case 114:
 YY_RULE_SETUP
-#line 403 "detex.l"
+#line 403 "../../../texk/detex/detex-src/detex.l"
 /* process files */	{LaBEGIN LaInclude; IGNORE;}
 	YY_BREAK
 case 115:
 YY_RULE_SETUP
-#line 404 "detex.l"
+#line 404 "../../../texk/detex/detex-src/detex.l"
 {   IncludeFile(yytext);
 							BEGIN Normal;
 						}
@@ -2787,51 +2818,51 @@ YY_RULE_SETUP
 case 116:
 /* rule 116 can match eol */
 YY_RULE_SETUP
-#line 407 "detex.l"
+#line 407 "../../../texk/detex/detex-src/detex.l"
 NEWLINE;
 	YY_BREAK
 case 117:
 YY_RULE_SETUP
-#line 408 "detex.l"
+#line 408 "../../../texk/detex/detex-src/detex.l"
 ;
 	YY_BREAK
 case 118:
 YY_RULE_SETUP
-#line 410 "detex.l"
+#line 410 "../../../texk/detex/detex-src/detex.l"
 {BEGIN IncludeOnly; IGNORE;}
 	YY_BREAK
 case 119:
 YY_RULE_SETUP
-#line 411 "detex.l"
+#line 411 "../../../texk/detex/detex-src/detex.l"
 AddInclude(yytext);
 	YY_BREAK
 case 120:
 YY_RULE_SETUP
-#line 412 "detex.l"
+#line 412 "../../../texk/detex/detex-src/detex.l"
 {   if (csbIncList == 0)
-							rgsbIncList[csbIncList++] = '\0';
+							*rgsbIncList[csbIncList++] = '\0';
 							BEGIN Normal;
 						}
 	YY_BREAK
 case 121:
 /* rule 121 can match eol */
 YY_RULE_SETUP
-#line 416 "detex.l"
+#line 416 "../../../texk/detex/detex-src/detex.l"
 NEWLINE;
 	YY_BREAK
 case 122:
 YY_RULE_SETUP
-#line 417 "detex.l"
+#line 417 "../../../texk/detex/detex-src/detex.l"
 ;
 	YY_BREAK
 case 123:
 YY_RULE_SETUP
-#line 419 "detex.l"
+#line 419 "../../../texk/detex/detex-src/detex.l"
 /* process files */	{LaBEGIN LaSubfile; IGNORE;}
 	YY_BREAK
 case 124:
 YY_RULE_SETUP
-#line 420 "detex.l"
+#line 420 "../../../texk/detex/detex-src/detex.l"
 {   IncludeFile(yytext);
 							BEGIN Normal;
 						}
@@ -2839,22 +2870,22 @@ YY_RULE_SETUP
 case 125:
 /* rule 125 can match eol */
 YY_RULE_SETUP
-#line 423 "detex.l"
+#line 423 "../../../texk/detex/detex-src/detex.l"
 NEWLINE;
 	YY_BREAK
 case 126:
 YY_RULE_SETUP
-#line 424 "detex.l"
+#line 424 "../../../texk/detex/detex-src/detex.l"
 ;
 	YY_BREAK
 case 127:
 YY_RULE_SETUP
-#line 426 "detex.l"
+#line 426 "../../../texk/detex/detex-src/detex.l"
 {BEGIN Input; IGNORE;}
 	YY_BREAK
 case 128:
 YY_RULE_SETUP
-#line 427 "detex.l"
+#line 427 "../../../texk/detex/detex-src/detex.l"
 {   InputFile(yytext);
 							BEGIN Normal;
 						}
@@ -2862,66 +2893,66 @@ YY_RULE_SETUP
 case 129:
 /* rule 129 can match eol */
 YY_RULE_SETUP
-#line 430 "detex.l"
+#line 430 "../../../texk/detex/detex-src/detex.l"
 NEWLINE;
 	YY_BREAK
 case 130:
 YY_RULE_SETUP
-#line 431 "detex.l"
+#line 431 "../../../texk/detex/detex-src/detex.l"
 ;
 	YY_BREAK
 /* escaping commands */
 case 131:
 YY_RULE_SETUP
-#line 434 "detex.l"
+#line 434 "../../../texk/detex/detex-src/detex.l"
 putchar('/');
 	YY_BREAK
 case 132:
 YY_RULE_SETUP
-#line 435 "detex.l"
+#line 435 "../../../texk/detex/detex-src/detex.l"
 putchar('%');
 	YY_BREAK
 case 133:
 /* rule 133 can match eol */
 YY_RULE_SETUP
-#line 437 "detex.l"
+#line 437 "../../../texk/detex/detex-src/detex.l"
 /* handle ligatures */	{(void)printf("%.2s", yytext+1);}
 	YY_BREAK
 case 134:
 /* rule 134 can match eol */
 YY_RULE_SETUP
-#line 438 "detex.l"
+#line 438 "../../../texk/detex/detex-src/detex.l"
 {(void)printf("%.1s", yytext+1);}
 	YY_BREAK
 case 135:
 YY_RULE_SETUP
-#line 439 "detex.l"
+#line 439 "../../../texk/detex/detex-src/detex.l"
 {NEWLINE;}	/*BEGIN LaBreak;*/
 	YY_BREAK
 case 136:
 YY_RULE_SETUP
-#line 441 "detex.l"
+#line 441 "../../../texk/detex/detex-src/detex.l"
 /* ignore other \cs */	{BEGIN Control; IGNORE;}
 	YY_BREAK
 case 137:
 YY_RULE_SETUP
-#line 442 "detex.l"
+#line 442 "../../../texk/detex/detex-src/detex.l"
 SPACE;
 	YY_BREAK
 case 138:
 /* rule 138 can match eol */
 YY_RULE_SETUP
-#line 443 "detex.l"
+#line 443 "../../../texk/detex/detex-src/detex.l"
 NEWLINE;
 	YY_BREAK
 case 139:
 YY_RULE_SETUP
-#line 444 "detex.l"
+#line 444 "../../../texk/detex/detex-src/detex.l"
 IGNORE;
 	YY_BREAK
 case 140:
 YY_RULE_SETUP
-#line 445 "detex.l"
+#line 445 "../../../texk/detex/detex-src/detex.l"
 {  if (yytext==NULL || strlen(yytext)==0
 							|| atoi(yytext)>=0)
 							NEWLINE;
@@ -2930,85 +2961,85 @@ YY_RULE_SETUP
 	YY_BREAK
 case 141:
 YY_RULE_SETUP
-#line 451 "detex.l"
+#line 451 "../../../texk/detex/detex-src/detex.l"
 IGNORE;
 	YY_BREAK
 case 142:
 YY_RULE_SETUP
-#line 452 "detex.l"
+#line 452 "../../../texk/detex/detex-src/detex.l"
 IGNORE;
 	YY_BREAK
 case 143:
 /* rule 143 can match eol */
 YY_RULE_SETUP
-#line 453 "detex.l"
+#line 453 "../../../texk/detex/detex-src/detex.l"
 {BEGIN Normal; /*NEWLINE;*/}
 	YY_BREAK
 case 144:
 YY_RULE_SETUP
-#line 454 "detex.l"
+#line 454 "../../../texk/detex/detex-src/detex.l"
 {++currBracesLevel;BEGIN Normal; IGNORE;}
 	YY_BREAK
 case 145:
 YY_RULE_SETUP
-#line 455 "detex.l"
+#line 455 "../../../texk/detex/detex-src/detex.l"
 {BEGIN Normal; IGNORE;}
 	YY_BREAK
 case 146:
 YY_RULE_SETUP
-#line 456 "detex.l"
+#line 456 "../../../texk/detex/detex-src/detex.l"
 {yyless(0);BEGIN Normal;}
 	YY_BREAK
 case 147:
 YY_RULE_SETUP
-#line 458 "detex.l"
+#line 458 "../../../texk/detex/detex-src/detex.l"
 /* special characters */	IGNORE;
 	YY_BREAK
 case 148:
 YY_RULE_SETUP
-#line 459 "detex.l"
+#line 459 "../../../texk/detex/detex-src/detex.l"
 IGNORE;
 	YY_BREAK
 case 149:
 YY_RULE_SETUP
-#line 460 "detex.l"
+#line 460 "../../../texk/detex/detex-src/detex.l"
 SPACE;
 	YY_BREAK
 case 150:
 YY_RULE_SETUP
-#line 461 "detex.l"
+#line 461 "../../../texk/detex/detex-src/detex.l"
 putchar('-');
 	YY_BREAK
 case 151:
 YY_RULE_SETUP
-#line 462 "detex.l"
+#line 462 "../../../texk/detex/detex-src/detex.l"
 putchar('"');
 	YY_BREAK
 case 152:
 YY_RULE_SETUP
-#line 463 "detex.l"
+#line 463 "../../../texk/detex/detex-src/detex.l"
 putchar('\'');
 	YY_BREAK
 case 153:
 YY_RULE_SETUP
-#line 464 "detex.l"
+#line 464 "../../../texk/detex/detex-src/detex.l"
 putchar('"');
 	YY_BREAK
 case 154:
 YY_RULE_SETUP
-#line 465 "detex.l"
+#line 465 "../../../texk/detex/detex-src/detex.l"
 putchar('"');
 	YY_BREAK
 /* braces */
 case 155:
 YY_RULE_SETUP
-#line 468 "detex.l"
+#line 468 "../../../texk/detex/detex-src/detex.l"
 { ++currBracesLevel;
 							}
 	YY_BREAK
 case 156:
 YY_RULE_SETUP
-#line 470 "detex.l"
+#line 470 "../../../texk/detex/detex-src/detex.l"
 {
 							--currBracesLevel;
 							if (currBracesLevel == footnoteLevel) {
@@ -3019,7 +3050,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 157:
 YY_RULE_SETUP
-#line 477 "detex.l"
+#line 477 "../../../texk/detex/detex-src/detex.l"
 {   if (fWord)
 							(void)printf("%s\n", yytext);
 							else
@@ -3028,39 +3059,39 @@ YY_RULE_SETUP
 	YY_BREAK
 case 158:
 YY_RULE_SETUP
-#line 482 "detex.l"
+#line 482 "../../../texk/detex/detex-src/detex.l"
 if (!fWord) ECHO;
 	YY_BREAK
 case 159:
 YY_RULE_SETUP
-#line 483 "detex.l"
+#line 483 "../../../texk/detex/detex-src/detex.l"
 { INCRLINENO; if (!fWord) ECHO; }
 	YY_BREAK
 case 160:
 /* rule 160 can match eol */
 YY_RULE_SETUP
-#line 484 "detex.l"
+#line 484 "../../../texk/detex/detex-src/detex.l"
 { if (!fWord) NEWLINE; }
 	YY_BREAK
 case 161:
 YY_RULE_SETUP
-#line 485 "detex.l"
+#line 485 "../../../texk/detex/detex-src/detex.l"
 if (!fWord) putchar('\t');
 	YY_BREAK
 case 162:
 YY_RULE_SETUP
-#line 487 "detex.l"
+#line 487 "../../../texk/detex/detex-src/detex.l"
 { BEGIN LaOptArg; }
 	YY_BREAK
 case 163:
 YY_RULE_SETUP
-#line 488 "detex.l"
+#line 488 "../../../texk/detex/detex-src/detex.l"
 { cOpenBrace++; }
 	YY_BREAK
 case 164:
 /* rule 164 can match eol */
 YY_RULE_SETUP
-#line 489 "detex.l"
+#line 489 "../../../texk/detex/detex-src/detex.l"
 {   cOpenBrace--; INCRLINENO;
 							if (cOpenBrace == 0)
 							{
@@ -3071,28 +3102,28 @@ YY_RULE_SETUP
 	YY_BREAK
 case 165:
 YY_RULE_SETUP
-#line 496 "detex.l"
+#line 496 "../../../texk/detex/detex-src/detex.l"
 ;
 	YY_BREAK
 case 166:
 YY_RULE_SETUP
-#line 497 "detex.l"
+#line 497 "../../../texk/detex/detex-src/detex.l"
 BEGIN LaMacro;
 	YY_BREAK
 case 167:
 /* rule 167 can match eol */
 YY_RULE_SETUP
-#line 498 "detex.l"
+#line 498 "../../../texk/detex/detex-src/detex.l"
 ;
 	YY_BREAK
 case 168:
 YY_RULE_SETUP
-#line 500 "detex.l"
+#line 500 "../../../texk/detex/detex-src/detex.l"
 { BEGIN LaOptArg2; }
 	YY_BREAK
 case 169:
 YY_RULE_SETUP
-#line 501 "detex.l"
+#line 501 "../../../texk/detex/detex-src/detex.l"
 { if (cOpenBrace == 0)
 							{
 							if (--cArgs==0)
@@ -3106,30 +3137,30 @@ YY_RULE_SETUP
 	YY_BREAK
 case 170:
 YY_RULE_SETUP
-#line 511 "detex.l"
+#line 511 "../../../texk/detex/detex-src/detex.l"
 {   cOpenBrace--; }
 	YY_BREAK
 case 171:
 YY_RULE_SETUP
-#line 512 "detex.l"
+#line 512 "../../../texk/detex/detex-src/detex.l"
 ;
 	YY_BREAK
 case 172:
 YY_RULE_SETUP
-#line 513 "detex.l"
+#line 513 "../../../texk/detex/detex-src/detex.l"
 BEGIN LaMacro2;
 	YY_BREAK
 case 173:
 YY_RULE_SETUP
-#line 514 "detex.l"
+#line 514 "../../../texk/detex/detex-src/detex.l"
 ;
 	YY_BREAK
 case 174:
 YY_RULE_SETUP
-#line 515 "detex.l"
+#line 515 "../../../texk/detex/detex-src/detex.l"
 ECHO;
 	YY_BREAK
-#line 3133 "lex.yy.c"
+#line 3164 "../../../texk/detex/detex-src/detex.c"
 case YY_STATE_EOF(INITIAL):
 case YY_STATE_EOF(Define):
 case YY_STATE_EOF(Display):
@@ -3229,7 +3260,7 @@ case YY_STATE_EOF(LaPicture):
 				{
 				(yy_did_buffer_switch_on_eof) = 0;
 
-				if ( yywrap(  ) )
+				if ( yywrap( ) )
 					{
 					/* Note: because we've taken care in
 					 * yy_get_next_buffer() to have set up
@@ -3296,7 +3327,7 @@ static int yy_get_next_buffer (void)
 {
     	char *dest = YY_CURRENT_BUFFER_LVALUE->yy_ch_buf;
 	char *source = (yytext_ptr);
-	int number_to_move, i;
+	yy_size_t number_to_move, i;
 	int ret_val;
 
 	if ( (yy_c_buf_p) > &YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[(yy_n_chars) + 1] )
@@ -3325,7 +3356,7 @@ static int yy_get_next_buffer (void)
 	/* Try to read more data. */
 
 	/* First move last chars to start of buffer. */
-	number_to_move = (int) ((yy_c_buf_p) - (yytext_ptr) - 1);
+	number_to_move = (yy_size_t) ((yy_c_buf_p) - (yytext_ptr)) - 1;
 
 	for ( i = 0; i < number_to_move; ++i )
 		*(dest++) = *(source++);
@@ -3338,7 +3369,7 @@ static int yy_get_next_buffer (void)
 
 	else
 		{
-			int num_to_read =
+			yy_size_t num_to_read =
 			YY_CURRENT_BUFFER_LVALUE->yy_buf_size - number_to_move - 1;
 
 		while ( num_to_read <= 0 )
@@ -3352,7 +3383,7 @@ static int yy_get_next_buffer (void)
 
 			if ( b->yy_is_our_buffer )
 				{
-				int new_size = b->yy_buf_size * 2;
+				yy_size_t new_size = b->yy_buf_size * 2;
 
 				if ( new_size <= 0 )
 					b->yy_buf_size += b->yy_buf_size / 8;
@@ -3361,12 +3392,11 @@ static int yy_get_next_buffer (void)
 
 				b->yy_ch_buf = (char *)
 					/* Include room in for 2 EOB chars. */
-					yyrealloc( (void *) b->yy_ch_buf,
-							 (yy_size_t) (b->yy_buf_size + 2)  );
+					yyrealloc((void *) b->yy_ch_buf,b->yy_buf_size + 2  );
 				}
 			else
 				/* Can't grow it, we don't own it. */
-				b->yy_ch_buf = NULL;
+				b->yy_ch_buf = 0;
 
 			if ( ! b->yy_ch_buf )
 				YY_FATAL_ERROR(
@@ -3394,7 +3424,7 @@ static int yy_get_next_buffer (void)
 		if ( number_to_move == YY_MORE_ADJ )
 			{
 			ret_val = EOB_ACT_END_OF_FILE;
-			yyrestart( yyin  );
+			yyrestart(yyin  );
 			}
 
 		else
@@ -3408,15 +3438,12 @@ static int yy_get_next_buffer (void)
 	else
 		ret_val = EOB_ACT_CONTINUE_SCAN;
 
-	if (((yy_n_chars) + number_to_move) > YY_CURRENT_BUFFER_LVALUE->yy_buf_size) {
+	if ((yy_size_t) ((yy_n_chars) + number_to_move) > YY_CURRENT_BUFFER_LVALUE->yy_buf_size) {
 		/* Extend the array by 50%, plus the number we really need. */
-		int new_size = (yy_n_chars) + number_to_move + ((yy_n_chars) >> 1);
-		YY_CURRENT_BUFFER_LVALUE->yy_ch_buf = (char *) yyrealloc(
-			(void *) YY_CURRENT_BUFFER_LVALUE->yy_ch_buf, (yy_size_t) new_size  );
+		yy_size_t new_size = (yy_n_chars) + number_to_move + ((yy_n_chars) >> 1);
+		YY_CURRENT_BUFFER_LVALUE->yy_ch_buf = (char *) yyrealloc((void *) YY_CURRENT_BUFFER_LVALUE->yy_ch_buf,new_size  );
 		if ( ! YY_CURRENT_BUFFER_LVALUE->yy_ch_buf )
 			YY_FATAL_ERROR( "out of dynamic memory in yy_get_next_buffer()" );
-		/* "- 2" to take care of EOB's */
-		YY_CURRENT_BUFFER_LVALUE->yy_buf_size = (int) (new_size - 2);
 	}
 
 	(yy_n_chars) += number_to_move;
@@ -3449,9 +3476,9 @@ static int yy_get_next_buffer (void)
 			{
 			yy_current_state = (int) yy_def[yy_current_state];
 			if ( yy_current_state >= 1362 )
-				yy_c = yy_meta[yy_c];
+				yy_c = yy_meta[(unsigned int) yy_c];
 			}
-		yy_current_state = yy_nxt[yy_base[yy_current_state] + yy_c];
+		yy_current_state = yy_nxt[yy_base[yy_current_state] + (unsigned int) yy_c];
 		}
 
 	return yy_current_state;
@@ -3477,9 +3504,9 @@ static int yy_get_next_buffer (void)
 		{
 		yy_current_state = (int) yy_def[yy_current_state];
 		if ( yy_current_state >= 1362 )
-			yy_c = yy_meta[yy_c];
+			yy_c = yy_meta[(unsigned int) yy_c];
 		}
-	yy_current_state = yy_nxt[yy_base[yy_current_state] + yy_c];
+	yy_current_state = yy_nxt[yy_base[yy_current_state] + (unsigned int) yy_c];
 	yy_is_jam = (yy_current_state == 1361);
 
 		return yy_is_jam ? 0 : yy_current_state;
@@ -3513,7 +3540,7 @@ static int yy_get_next_buffer (void)
 
 		else
 			{ /* need more input */
-			int offset = (int) ((yy_c_buf_p) - (yytext_ptr));
+			yy_size_t offset = (yy_c_buf_p) - (yytext_ptr);
 			++(yy_c_buf_p);
 
 			switch ( yy_get_next_buffer(  ) )
@@ -3530,14 +3557,14 @@ static int yy_get_next_buffer (void)
 					 */
 
 					/* Reset buffer status. */
-					yyrestart( yyin );
+					yyrestart(yyin );
 
 					/*FALLTHROUGH*/
 
 				case EOB_ACT_END_OF_FILE:
 					{
-					if ( yywrap(  ) )
-						return 0;
+					if ( yywrap( ) )
+						return EOF;
 
 					if ( ! (yy_did_buffer_switch_on_eof) )
 						YY_NEW_FILE;
@@ -3574,11 +3601,11 @@ static int yy_get_next_buffer (void)
 	if ( ! YY_CURRENT_BUFFER ){
         yyensure_buffer_stack ();
 		YY_CURRENT_BUFFER_LVALUE =
-            yy_create_buffer( yyin, YY_BUF_SIZE );
+            yy_create_buffer(yyin,YY_BUF_SIZE );
 	}
 
-	yy_init_buffer( YY_CURRENT_BUFFER, input_file );
-	yy_load_buffer_state(  );
+	yy_init_buffer(YY_CURRENT_BUFFER,input_file );
+	yy_load_buffer_state( );
 }
 
 /** Switch to a different input buffer.
@@ -3606,7 +3633,7 @@ static int yy_get_next_buffer (void)
 		}
 
 	YY_CURRENT_BUFFER_LVALUE = new_buffer;
-	yy_load_buffer_state(  );
+	yy_load_buffer_state( );
 
 	/* We don't actually know whether we did this switch during
 	 * EOF (yywrap()) processing, but the only time this flag
@@ -3634,22 +3661,22 @@ static void yy_load_buffer_state  (void)
 {
 	YY_BUFFER_STATE b;
     
-	b = (YY_BUFFER_STATE) yyalloc( sizeof( struct yy_buffer_state )  );
+	b = (YY_BUFFER_STATE) yyalloc(sizeof( struct yy_buffer_state )  );
 	if ( ! b )
 		YY_FATAL_ERROR( "out of dynamic memory in yy_create_buffer()" );
 
-	b->yy_buf_size = size;
+	b->yy_buf_size = (yy_size_t)size;
 
 	/* yy_ch_buf has to be 2 characters longer than the size given because
 	 * we need to put in 2 end-of-buffer characters.
 	 */
-	b->yy_ch_buf = (char *) yyalloc( (yy_size_t) (b->yy_buf_size + 2)  );
+	b->yy_ch_buf = (char *) yyalloc(b->yy_buf_size + 2  );
 	if ( ! b->yy_ch_buf )
 		YY_FATAL_ERROR( "out of dynamic memory in yy_create_buffer()" );
 
 	b->yy_is_our_buffer = 1;
 
-	yy_init_buffer( b, file );
+	yy_init_buffer(b,file );
 
 	return b;
 }
@@ -3668,9 +3695,9 @@ static void yy_load_buffer_state  (void)
 		YY_CURRENT_BUFFER_LVALUE = (YY_BUFFER_STATE) 0;
 
 	if ( b->yy_is_our_buffer )
-		yyfree( (void *) b->yy_ch_buf  );
+		yyfree((void *) b->yy_ch_buf  );
 
-	yyfree( (void *) b  );
+	yyfree((void *) b  );
 }
 
 /* Initializes or reinitializes a buffer.
@@ -3682,7 +3709,7 @@ static void yy_load_buffer_state  (void)
 {
 	int oerrno = errno;
     
-	yy_flush_buffer( b );
+	yy_flush_buffer(b );
 
 	b->yy_input_file = file;
 	b->yy_fill_buffer = 1;
@@ -3725,7 +3752,7 @@ static void yy_load_buffer_state  (void)
 	b->yy_buffer_status = YY_BUFFER_NEW;
 
 	if ( b == YY_CURRENT_BUFFER )
-		yy_load_buffer_state(  );
+		yy_load_buffer_state( );
 }
 
 /** Pushes the new state onto the stack. The new state becomes
@@ -3756,7 +3783,7 @@ void yypush_buffer_state (YY_BUFFER_STATE new_buffer )
 	YY_CURRENT_BUFFER_LVALUE = new_buffer;
 
 	/* copied from yy_switch_to_buffer. */
-	yy_load_buffer_state(  );
+	yy_load_buffer_state( );
 	(yy_did_buffer_switch_on_eof) = 1;
 }
 
@@ -3775,7 +3802,7 @@ void yypop_buffer_state (void)
 		--(yy_buffer_stack_top);
 
 	if (YY_CURRENT_BUFFER) {
-		yy_load_buffer_state(  );
+		yy_load_buffer_state( );
 		(yy_did_buffer_switch_on_eof) = 1;
 	}
 }
@@ -3793,15 +3820,15 @@ static void yyensure_buffer_stack (void)
 		 * scanner will even need a stack. We use 2 instead of 1 to avoid an
 		 * immediate realloc on the next call.
          */
-      num_to_alloc = 1; /* After all that talk, this was set to 1 anyways... */
+		num_to_alloc = 1; // After all that talk, this was set to 1 anyways...
 		(yy_buffer_stack) = (struct yy_buffer_state**)yyalloc
 								(num_to_alloc * sizeof(struct yy_buffer_state*)
 								);
 		if ( ! (yy_buffer_stack) )
 			YY_FATAL_ERROR( "out of dynamic memory in yyensure_buffer_stack()" );
-
+								  
 		memset((yy_buffer_stack), 0, num_to_alloc * sizeof(struct yy_buffer_state*));
-
+				
 		(yy_buffer_stack_max) = num_to_alloc;
 		(yy_buffer_stack_top) = 0;
 		return;
@@ -3830,7 +3857,7 @@ static void yyensure_buffer_stack (void)
  * @param base the character buffer
  * @param size the size in bytes of the character buffer
  * 
- * @return the newly allocated buffer state object.
+ * @return the newly allocated buffer state object. 
  */
 YY_BUFFER_STATE yy_scan_buffer  (char * base, yy_size_t  size )
 {
@@ -3840,23 +3867,23 @@ YY_BUFFER_STATE yy_scan_buffer  (char * base, yy_size_t  size )
 	     base[size-2] != YY_END_OF_BUFFER_CHAR ||
 	     base[size-1] != YY_END_OF_BUFFER_CHAR )
 		/* They forgot to leave room for the EOB's. */
-		return NULL;
+		return 0;
 
-	b = (YY_BUFFER_STATE) yyalloc( sizeof( struct yy_buffer_state )  );
+	b = (YY_BUFFER_STATE) yyalloc(sizeof( struct yy_buffer_state )  );
 	if ( ! b )
 		YY_FATAL_ERROR( "out of dynamic memory in yy_scan_buffer()" );
 
-	b->yy_buf_size = (int) (size - 2);	/* "- 2" to take care of EOB's */
+	b->yy_buf_size = size - 2;	/* "- 2" to take care of EOB's */
 	b->yy_buf_pos = b->yy_ch_buf = base;
 	b->yy_is_our_buffer = 0;
-	b->yy_input_file = NULL;
+	b->yy_input_file = 0;
 	b->yy_n_chars = b->yy_buf_size;
 	b->yy_is_interactive = 0;
 	b->yy_at_bol = 1;
 	b->yy_fill_buffer = 0;
 	b->yy_buffer_status = YY_BUFFER_NEW;
 
-	yy_switch_to_buffer( b  );
+	yy_switch_to_buffer(b  );
 
 	return b;
 }
@@ -3869,10 +3896,10 @@ YY_BUFFER_STATE yy_scan_buffer  (char * base, yy_size_t  size )
  * @note If you want to scan bytes that may contain NUL values, then use
  *       yy_scan_bytes() instead.
  */
-YY_BUFFER_STATE yy_scan_string (const char * yystr )
+YY_BUFFER_STATE yy_scan_string (yyconst char * yystr )
 {
     
-	return yy_scan_bytes( yystr, (int) strlen(yystr) );
+	return yy_scan_bytes(yystr,strlen(yystr) );
 }
 
 /** Setup the input buffer state to scan the given bytes. The next call to yylex() will
@@ -3882,16 +3909,16 @@ YY_BUFFER_STATE yy_scan_string (const char * yystr )
  * 
  * @return the newly allocated buffer state object.
  */
-YY_BUFFER_STATE yy_scan_bytes  (const char * yybytes, int  _yybytes_len )
+YY_BUFFER_STATE yy_scan_bytes  (yyconst char * yybytes, yy_size_t  _yybytes_len )
 {
 	YY_BUFFER_STATE b;
 	char *buf;
 	yy_size_t n;
-	int i;
+	yy_size_t i;
     
 	/* Get memory for full buffer, including space for trailing EOB's. */
-	n = (yy_size_t) (_yybytes_len + 2);
-	buf = (char *) yyalloc( n  );
+	n = _yybytes_len + 2;
+	buf = (char *) yyalloc(n  );
 	if ( ! buf )
 		YY_FATAL_ERROR( "out of dynamic memory in yy_scan_bytes()" );
 
@@ -3900,7 +3927,7 @@ YY_BUFFER_STATE yy_scan_bytes  (const char * yybytes, int  _yybytes_len )
 
 	buf[_yybytes_len] = buf[_yybytes_len+1] = YY_END_OF_BUFFER_CHAR;
 
-	b = yy_scan_buffer( buf, n );
+	b = yy_scan_buffer(buf,n );
 	if ( ! b )
 		YY_FATAL_ERROR( "bad buffer in yy_scan_bytes()" );
 
@@ -3916,9 +3943,9 @@ YY_BUFFER_STATE yy_scan_bytes  (const char * yybytes, int  _yybytes_len )
 #define YY_EXIT_FAILURE 2
 #endif
 
-static void yynoreturn yy_fatal_error (const char* msg )
+static void yy_fatal_error (yyconst char* msg )
 {
-			fprintf( stderr, "%s\n", msg );
+			(void) fprintf( stderr, "%s\n", msg );
 	exit( YY_EXIT_FAILURE );
 }
 
@@ -3946,7 +3973,7 @@ static void yynoreturn yy_fatal_error (const char* msg )
  */
 int yyget_lineno  (void)
 {
-    
+        
     return yylineno;
 }
 
@@ -3969,7 +3996,7 @@ FILE *yyget_out  (void)
 /** Get the length of the current token.
  * 
  */
-int yyget_leng  (void)
+yy_size_t yyget_leng  (void)
 {
         return yyleng;
 }
@@ -4025,10 +4052,10 @@ static int yy_init_globals (void)
      * This function is called from yylex_destroy(), so don't allocate here.
      */
 
-    (yy_buffer_stack) = NULL;
+    (yy_buffer_stack) = 0;
     (yy_buffer_stack_top) = 0;
     (yy_buffer_stack_max) = 0;
-    (yy_c_buf_p) = NULL;
+    (yy_c_buf_p) = (char *) 0;
     (yy_init) = 0;
     (yy_start) = 0;
 
@@ -4037,8 +4064,8 @@ static int yy_init_globals (void)
     yyin = stdin;
     yyout = stdout;
 #else
-    yyin = NULL;
-    yyout = NULL;
+    yyin = (FILE *) 0;
+    yyout = (FILE *) 0;
 #endif
 
     /* For future reference: Set errno on error, since we are called by
@@ -4053,7 +4080,7 @@ int yylex_destroy  (void)
     
     /* Pop the buffer stack, destroying each element. */
 	while(YY_CURRENT_BUFFER){
-		yy_delete_buffer( YY_CURRENT_BUFFER  );
+		yy_delete_buffer(YY_CURRENT_BUFFER  );
 		YY_CURRENT_BUFFER_LVALUE = NULL;
 		yypop_buffer_state();
 	}
@@ -4074,7 +4101,7 @@ int yylex_destroy  (void)
  */
 
 #ifndef yytext_ptr
-static void yy_flex_strncpy (char* s1, const char * s2, int n )
+static void yy_flex_strncpy (char* s1, yyconst char * s2, int n )
 {
 		
 	int i;
@@ -4084,7 +4111,7 @@ static void yy_flex_strncpy (char* s1, const char * s2, int n )
 #endif
 
 #ifdef YY_NEED_STRLEN
-static int yy_flex_strlen (const char * s )
+static int yy_flex_strlen (yyconst char * s )
 {
 	int n;
 	for ( n = 0; s[n]; ++n )
@@ -4096,7 +4123,7 @@ static int yy_flex_strlen (const char * s )
 
 void *yyalloc (yy_size_t  size )
 {
-			return malloc(size);
+			return (void *) malloc( size );
 }
 
 void *yyrealloc  (void * ptr, yy_size_t  size )
@@ -4109,7 +4136,7 @@ void *yyrealloc  (void * ptr, yy_size_t  size )
 	 * any pointer type to void*, and deal with argument conversions
 	 * as though doing an assignment.
 	 */
-	return realloc(ptr, size);
+	return (void *) realloc( (char *) ptr, size );
 }
 
 void yyfree (void * ptr )
@@ -4119,7 +4146,8 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 515 "detex.l"
+#line 515 "../../../texk/detex/detex-src/detex.l"
+
 
 
 /******
@@ -4273,8 +4301,8 @@ yywrap(void)
 		/* Pop context state */
 	if (csb > 0) {
 		free(fFileNames[csb]);
-		yy_delete_buffer( YY_CURRENT_BUFFER );
-		yy_switch_to_buffer( rgsb[--csb] );
+		yy_delete_buffer(YY_CURRENT_BUFFER );
+		yy_switch_to_buffer(rgsb[--csb] );
 	}
 #endif /* FLEX_SCANNER */
 	if (cfp > 0) {
@@ -4429,8 +4457,6 @@ EndEnv(const char *sbEnv)
 void
 InputFile(char *sbFile)
 {
-	FILE	*TexOpen();
-
 	if (!fFollow)
 		return;
 	rgfp[cfp++] = yyin;
@@ -4443,7 +4469,7 @@ InputFile(char *sbFile)
 	rgsb[csb++]     = YY_CURRENT_BUFFER;
 	fFileLines[csb] = 1;
 	fFileNames[csb] = strdup(sbFile);
-	yy_switch_to_buffer(yy_create_buffer( yyin, YY_BUF_SIZE ) );
+	yy_switch_to_buffer(yy_create_buffer(yyin,YY_BUF_SIZE ) );
 #endif /* FLEX_SCANNER */
 }
 
@@ -4455,8 +4481,6 @@ InputFile(char *sbFile)
 void
 IncludeFile(char *sbFile)
 {
-	FILE	*TexOpen();
-
 	if (!fFollow)
 		return;
 	if (!InList(sbFile))
@@ -4471,7 +4495,7 @@ IncludeFile(char *sbFile)
 	rgsb[csb++]     = YY_CURRENT_BUFFER;
 	fFileLines[csb] = 1;
 	fFileNames[csb] = strdup(sbFile);
-	yy_switch_to_buffer(yy_create_buffer( yyin, YY_BUF_SIZE ) );
+	yy_switch_to_buffer(yy_create_buffer(yyin,YY_BUF_SIZE ) );
 #endif /* FLEX_SCANNER */
 }
 

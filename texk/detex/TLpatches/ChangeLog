@@ -1,3 +1,7 @@
+2025-06-08  Karl Berry  <karl@freefriends.org>
+
+	* patch-86-declarations: new file.
+
 2024-01-07  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
 	Adapt to opendetex-2.8.11.

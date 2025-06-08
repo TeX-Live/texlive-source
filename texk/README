@@ -33,9 +33,12 @@ cjkutils 4.8.5 - checked 22jan22
   https://git.savannah.gnu.org/gitweb/?p=cjk.git;a=summary
   https://www.nongnu.org/cjk/
 
-detex 2.8.11 - checked 07jan24
+detex 2.8.11 - checked 8jun25
   https://github.com/pkubowicz/opendetex/releases
   original author: https://www.cs.purdue.edu/homes/trinkle/detex/
+  Per Paulo Ney de Souza ca. 3 June 2025, Piotr is no longer actively
+  maintainting opendetex above, and no new maintainer has come forward.
+  So we are maintaining it here in TL again, until/unless that changes.
 
 dtl - maintained here, by Takuji
 

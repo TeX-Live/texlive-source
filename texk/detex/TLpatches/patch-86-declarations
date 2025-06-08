@@ -1,0 +1,86 @@
+https://github.com/pkubowicz/opendetex/pull/86
+
+From 069c8e4af14840c039ade63dcb8c0354b5e4306c Mon Sep 17 00:00:00 2001
+From: mbuhl <git@moritzbuhl.de>
+Date: Mon, 27 May 2024 14:59:41 +0200
+Subject: [PATCH] Fix compiler warnings.
+
+cc -O2 -pipe  -DVERSION='"2.8.11"'    -c -o detex.o detex.c
+detex.l:140:7: warning: a function declaration without a prototype is deprecated in all versions of C and is treated as a zero-parameter prototype in C2x, conflicting with a previous declaration [-Wdeprecated-non-prototype]
+char *getenv();
+      ^
+/usr/include/stdlib.h:110:7: note: conflicting prototype is here
+char    *getenv(const char *);
+         ^
+detex.l:413:36: warning: expression which evaluates to zero treated as a null pointer constant of type 'char *' [-Wnon-literal-null-conversion]
+                                                        rgsbIncList[csbIncList++] = '\0';
+                                                                                    ^~~~
+detex.l:360:54: warning: result of comparison of constant -1 with expression of type 'char' is always true [-Wtautological-constant-out-of-range-compare]
+                while ((c = input()) != verbchar && c != '\n' && c != EOF && c != 0) {
+                                                                 ~ ^  ~~~
+detex.l:825:8: warning: a function declaration without a prototype is deprecated in all versions of C and is treated as a zero-parameter prototype in C2x, conflicting with a previous declaration [-Wdeprecated-non-prototype]
+        FILE    *TexOpen();
+                 ^
+detex.l:137:7: note: conflicting prototype is here
+FILE *TexOpen(char *sbFile);
+      ^
+detex.l:851:8: warning: a function declaration without a prototype is deprecated in all versions of C and is treated as a zero-parameter prototype in C2x, conflicting with a previous declaration [-Wdeprecated-non-prototype]
+        FILE    *TexOpen();
+                 ^
+detex.l:137:7: note: conflicting prototype is here
+FILE *TexOpen(char *sbFile);
+      ^
+5 warnings generated.
+---
+ detex.l | 10 +++-------
+ 1 file changed, 3 insertions(+), 7 deletions(-)
+
+diff --git a/detex.l b/detex.l
+index 591dc0a..2195822 100644
+--- a/detex.l
++++ b/detex.l
+@@ -137,7 +137,7 @@ int SeparateList(char *sbList, char *rgsbList[] ,char chSep, int csbMax);
+ FILE *TexOpen(char *sbFile);
+ char *SafeMalloc(int cch, const char *sbMessage);
+ #ifndef KPATHSEA
+-char *getenv();
++char *getenv(const char *);
+ #ifndef NO_MALLOC_DECL
+ char	*malloc();
+ #endif
+@@ -351,7 +351,7 @@ VERBSYMBOL	=|\\leq|\\geq|\\in|>|<|\\subseteq|\subseteq|\\subset|\\supset|\\sim|\
+ 							}
+ <Normal>"\\verb" /* ignore \verb<ch>...<ch> */ {
+ 	if (fLatex) {
+-		char verbchar, c;
++		int verbchar, c;
+ 		verbchar = input();
+ 		if (verbchar < ' ') {
+ 			/* would be nice to include input filenames and line numbers */
+@@ -410,7 +410,7 @@ VERBSYMBOL	=|\\leq|\\geq|\\in|>|<|\\subseteq|\subseteq|\\subset|\\supset|\\sim|\
+ <Normal>"\\includeonly"				{BEGIN IncludeOnly; IGNORE;}
+ <IncludeOnly>[^{ \t,\n}]+			AddInclude(yytext);
+ <IncludeOnly>"}"				{   if (csbIncList == 0)
+-							rgsbIncList[csbIncList++] = '\0';
++							*rgsbIncList[csbIncList++] = '\0';
+ 							BEGIN Normal;
+ 						}
+ <IncludeOnly>"\n"+				NEWLINE;
+@@ -821,8 +821,6 @@ EndEnv(const char *sbEnv)
+ void
+ InputFile(char *sbFile)
+ {
+-	FILE	*TexOpen();
+-
+ 	if (!fFollow)
+ 		return;
+ 	rgfp[cfp++] = yyin;
+@@ -847,8 +845,6 @@ InputFile(char *sbFile)
+ void
+ IncludeFile(char *sbFile)
+ {
+-	FILE	*TexOpen();
+-
+ 	if (!fFollow)
+ 		return;
+ 	if (!InList(sbFile))

@@ -137,7 +137,7 @@ int SeparateList(char *sbList, char *rgsbList[] ,char chSep, int csbMax);
 FILE *TexOpen(char *sbFile);
 char *SafeMalloc(int cch, const char *sbMessage);
 #ifndef KPATHSEA
-char *getenv();
+char *getenv(const char *);
 #ifndef NO_MALLOC_DECL
 char	*malloc();
 #endif
@@ -351,7 +351,7 @@ VERBSYMBOL	=|\\leq|\\geq|\\in|>|<|\\subseteq|\subseteq|\\subset|\\supset|\\sim|\
 							}
 <Normal>"\\verb" /* ignore \verb<ch>...<ch> */ {
 	if (fLatex) {
-		char verbchar, c;
+		int verbchar, c;
 		verbchar = input();
 		if (verbchar < ' ') {
 			/* would be nice to include input filenames and line numbers */
@@ -410,7 +410,7 @@ VERBSYMBOL	=|\\leq|\\geq|\\in|>|<|\\subseteq|\subseteq|\\subset|\\supset|\\sim|\
 <Normal>"\\includeonly"				{BEGIN IncludeOnly; IGNORE;}
 <IncludeOnly>[^{ \t,\n}]+			AddInclude(yytext);
 <IncludeOnly>"}"				{   if (csbIncList == 0)
-							rgsbIncList[csbIncList++] = '\0';
+							*rgsbIncList[csbIncList++] = '\0';
 							BEGIN Normal;
 						}
 <IncludeOnly>"\n"+				NEWLINE;
@@ -821,8 +821,6 @@ EndEnv(const char *sbEnv)
 void
 InputFile(char *sbFile)
 {
-	FILE	*TexOpen();
-
 	if (!fFollow)
 		return;
 	rgfp[cfp++] = yyin;
@@ -847,8 +845,6 @@ InputFile(char *sbFile)
 void
 IncludeFile(char *sbFile)
 {
-	FILE	*TexOpen();
-
 	if (!fFollow)
 		return;
 	if (!InList(sbFile))

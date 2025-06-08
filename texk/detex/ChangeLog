@@ -1,3 +1,11 @@
+2025-06-08  Karl Berry  <karl@freefriends.org>
+
+	* detex-src/detex.l: pacify C23.
+        (getenv) add prototype arg.
+	(TexOpen): avoid decl with no args.
+	Etc.
+	From https://github.com/pkubowicz/opendetex/pull/86.
+
 2024-01-07  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
 	* Import opendetex-2.8.11.
