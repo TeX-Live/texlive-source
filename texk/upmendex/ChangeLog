@@ -1,3 +1,13 @@
+2025-06-10  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* fwrite.c: Better treatment of Ŋ,ŋ in Finnish.
+	Better treatment of Þ,þ in Danish, Norwegian, Swedish and Finnish.
+	Better treatment of Ę,ę in Norwegian and Swedish.
+	Better treatment of Ð,ð,Đ,đ in Danish, Norwegian, Finnish, Swedish
+	and Icelandic.
+	Better treatment of Ü,ü,Ű,ű in Danish, Norwegian, Swedish and Finnish.
+	Better treatment of Ö,ö,Ø,ø,Ő,ő,Ô,ô,Œ,œ,Æ,æ,Ä,ä in Swedish.
+
 2025-06-01  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* fwrite.c: Support digraph AA and
