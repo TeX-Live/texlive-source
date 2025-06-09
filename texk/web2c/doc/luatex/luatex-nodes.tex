@@ -816,7 +816,8 @@ font|-|end nodes nodes.
 \TB
 \NC \type{attr}   \NC node   \NC list of attributes \NC \NR
 \NC \type{stream} \NC number \NC \TEX's stream id number \NC \NR
-\NC \type{data}   \NC table  \NC a table representing the token list to be written \NC \NR
+\NC \type{data}   \NC string \NC a string representing the token list to be written \NC \NR
+\NC \type{value}  \NC table  \NC a table representing the token list to be written \NC \NR
 \LL
 \stoptabulate
 
@@ -2480,6 +2481,11 @@ is relevant. In that case, some field names are considered similar (like \type
 could have normalized field names better but we decided to stick to the original
 (internal) names as much as possible. After all, at the \LUA\ end one can easily
 create synonyms.
+
+In \type {setfield} and \type {getfield} specials and writes accept \type {data}
+and \type {value} as equivalent keys. In the case of a write whatsit getting the
+\type {value} returns the token list as table, while \type {data} returns the
+expansion as a string (version 1.23.2, 2026).
 
 Some nodes have indirect references. For instance a math character refers to a
 family instead of a font. In that case we provide a virtual font field as

@@ -216,6 +216,7 @@ The following top|-|level keys can be present inside a character hash:
 \NC \type{right_protruding} \NC no  \NC no  \NC maybe \NC number  \NC character's \lpr {rpcode} \NC\NR
 \NC \type{expansion_factor} \NC no  \NC no  \NC maybe \NC number  \NC character's \lpr {efcode} \NC\NR
 \NC \type{tounicode}        \NC no  \NC no  \NC maybe \NC string  \NC character's \UNICODE\ equivalent(s), in \UTF|-|16BE hexadecimal format \NC\NR
+\NC                         \NC     \NC     \NC       \NC table   \NC character's \UNICODE\ equivalent, as an array of (integer) \UNICODE\ codepoints \NC\NR
 \NC \type{next}             \NC no  \NC yes \NC yes   \NC number  \NC the \quote {next larger} character index \NC\NR
 \NC \type{extensible}       \NC no  \NC yes \NC yes   \NC table   \NC the constituent parts of an extensible recipe \NC\NR
 \NC \type{vert_variants}    \NC no  \NC no  \NC yes   \NC table   \NC constituent parts of a vertical variant set \NC \NR
@@ -779,6 +780,57 @@ a font structure. An alternative call is:
 \stopfunctioncall
 
 Where the first argument is a reserved font id (see below).
+
+\subsection{Unicode mappings}
+
+The \type {glyphtounicode} extension is similar to the one in \PDFTEX\ but
+doesn't offer a way to set it per font. This has to do with the fact that we
+store fonts differently and that one can overload the default font loader. If you
+want to tune a specific font, you can use a \LUA\ helper as shown below in plain
+\TEX\ code.
+
+\starttyping
+% ToUnicode vectors will be added
+
+\pdfvariable gentounicode 1
+
+% Wrap a helper in a macro:
+
+\protected\def\luaglyphtounicode#1#2%
+  {\directlua{font.settounicode(\fontid\font,\number#1,"#2")}}
+
+% Use the global mapper:
+
+\pdfextension glyphtounicode {A}{0042}
+
+% Test this:
+
+{A \font\test=cmss10 \test  A}
+
+% Define a non unicode symbol font:
+
+\font\orn = OrnementsADF at 10pt
+
+% Register mappings:
+
+\bgroup \orn
+    \luaglyphtounicode{42}{2B9C}
+    \luaglyphtounicode{65}{2B9D}
+\egroup
+
+% Test this:
+
+{\orn \char42 \char65 A} A
+
+% And see if cut-n-paste from the pdf file works.
+\stoptyping
+
+Of course wrapping the helper is macro package dependent. This feature was added
+for the 2026 release and should not interfere with previous behavior. As a side
+note: adding the vectors to the pdf file for \TYPEONE\ fonts only happens when
+there is at least one global extension entry, but this \LUA\ driven one doesn't
+have that limitation. This means that when you use the font specific method, it
+also can trigger vectors for other eight bit fonts.
 
 \subsection{Extending a font}
 

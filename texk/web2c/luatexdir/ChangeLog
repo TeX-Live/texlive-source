@@ -1,6 +1,17 @@
+2025-05-30 Luigi Scarso  <luigi.scarso@gmail.com>
+	* additional 'value' field for write nodes (getfield) for
+	  unexpanded token tables (H.Hagen)
+	* LuaTeX 1.23.2 
+
+
+2025-04-17 Luigi Scarso  <luigi.scarso@gmail.com>
+	* experimental extension to ToUnicode for Type1 fonts (HH)
+	* Document the table variant of `character.tounicode` (Max Chernoff)
+
+
 2025-03-20 Luigi Scarso  <luigi.scarso@gmail.com>
 	*  some more never used modes made obsolete + staircase kerns adapted (H.Hagen)
-	   LuaTeX 1.23.1
+	*  LuaTeX 1.23.1
 
 
 2025-03-18 Luigi Scarso  <luigi.scarso@gmail.com>
