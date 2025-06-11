@@ -230,6 +230,7 @@ texmf_other_scripts = \
 	pythontex/pythontex.py \
 	rubik/rubikrotation.pl \
 	runtexshebang/runtexshebang.lua \
+	show-pdf-tags/show-pdf-tags.lua \
 	spix/spix.py \
 	splitindex/splitindex.pl \
 	sqltex/sqltex \
