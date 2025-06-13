@@ -25,7 +25,7 @@ AC_PREREQ([2.68])
 
 dnl Version number stuff here:
 
-AC_INIT([libpng],[1.6.48],[png-mng-implement@lists.sourceforge.net])
+AC_INIT([libpng],[1.6.49],[png-mng-implement@lists.sourceforge.net])
 AC_CONFIG_MACRO_DIR([scripts/autoconf])
 
 # libpng does not follow GNU file name conventions (hence 'foreign')
@@ -46,10 +46,10 @@ dnl automake, so the following is not necessary (and is not defined anyway):
 dnl AM_PREREQ([1.11.2])
 dnl stop configure from automagically running automake
 
-PNGLIB_VERSION=1.6.48
+PNGLIB_VERSION=1.6.49
 PNGLIB_MAJOR=1
 PNGLIB_MINOR=6
-PNGLIB_RELEASE=48
+PNGLIB_RELEASE=49
 
 dnl End of version number stuff
 
@@ -343,6 +343,9 @@ AC_ARG_ENABLE([hardware-optimizations],
          enable_loongarch_lsx=no
          AC_DEFINE([PNG_LOONGARCH_LSX_OPT], [0],
            [Disable LOONGARCH_LSX optimizations])
+         enable_riscv_rvv=no
+         AC_DEFINE([PNG_RISCV_RVV_OPT], [0],
+           [Disable RISC-V Vector optimizations])
          ;;
       *)
          # allow enabling hardware optimization on any system:
@@ -374,6 +377,11 @@ AC_ARG_ENABLE([hardware-optimizations],
               enable_loongarch_lsx=yes
               AC_DEFINE([PNG_LOONGARCH_LSX_OPT], [1],
                 [Enable LOONGARCH_LSX optimizations])
+              ;;
+            riscv64)
+              enable_riscv_rvv=yes
+              AC_DEFINE([PNG_RISCV_RVV_OPT], [2],
+                [Enable RISC-V Vector optimizations])
               ;;
          esac
          ;;
@@ -659,6 +667,81 @@ AM_CONDITIONAL([PNG_LOONGARCH_LSX],
     case "$host_cpu" in
       loongarch*) : ;;
       *)    test "$enable_loongarch_lsx" != '' ;;
+    esac])
+
+# RISC-V
+# ======
+#
+# RISC-V Vector support.
+
+AC_ARG_ENABLE([riscv-rvv],
+AS_HELP_STRING([[[--enable-riscv-rvv]]],
+      [Enable RISC-V Vector optimizations: =no/off, check, api, yes/on:]
+      [no/off: disable the optimizations; check: use internal checking code]
+      [api: disable by default, enable by a call to png_set_option]
+      [yes/on: turn on unconditionally.]
+      [If not specified: determined by the compiler.]),
+   [case "$enableval" in
+      no|off)
+         # disable the default enabling on __riscv systems:
+         AC_DEFINE([PNG_RISCV_RVV_OPT], [0],
+                   [Disable RISC-V Vector optimizations])
+         # Prevent inclusion of the platform-specific files below:
+         enable_riscv_rvv=no ;;
+      check)
+         AC_DEFINE([PNG_RISCV_RVV_CHECK_SUPPORTED], [],
+                   [Check for RISC-V Vector support at run-time])
+         AC_MSG_WARN([--enable-riscv-rvv Please check contrib/riscv-rvv/README file]
+            [for the list of supported OSes.]);;
+      api)
+         AC_DEFINE([PNG_RISCV_RVV_API_SUPPORTED], [],
+                   [Turn on RISC-V Vector optimizations at run-time]);;
+      yes|on)
+         AC_DEFINE([PNG_RISCV_RVV_OPT], [2],
+                   [Enable RISC-V Vector optimizations])
+         AC_MSG_WARN([--enable-riscv-rvv: please specify 'check' or 'api', if]
+            [you want the optimizations unconditionally pass e.g. '-march=rv64gv']
+            [to the compiler.]);;
+      *)
+         AC_MSG_ERROR([--enable-riscv-rvv=${enable_riscv_rvv}: invalid value])
+   esac])
+
+if test "$enable_riscv_rvv" != "no" &&
+   case "$host_cpu" in
+      riscv64) : ;;
+      *)    test "$enable_riscv_rvv" != '' ;;
+   esac
+then
+   compiler_support_riscv_rvv=no
+   AC_MSG_CHECKING(whether to use RISC-V RVV intrinsics)
+
+   save_CFLAGS=$CFLAGS
+   CFLAGS="$CFLAGS -march=rv64gv"
+   AC_COMPILE_IFELSE([AC_LANG_SOURCE([[
+#include <riscv_vector.h>
+int main(){
+   return 0;
+}]])],compiler_support_riscv_rvv=yes)
+   AC_MSG_RESULT($compiler_support_riscv_rvv)
+   if test "$compiler_support_riscv_rvv" = "yes"; then
+      AC_DEFINE([PNG_RISCV_RVV_OPT], [1],
+                [Enable RISCV RVV optimizations])
+   else
+      AC_MSG_WARN([Compiler does not support riscv rvv.])
+   fi
+   CFLAGS=$save_CFLAGS
+fi
+
+# Add RISC-V-specific files to all builds where $host_cpu is riscv ('riscv64')
+# or where RISC-V optimizations were explicitly requested (this allows a fallback
+# if a future host CPU does not match 'riscv64')
+
+AM_CONDITIONAL([PNG_RISCV_RVV],
+   [test "$enable_riscv_rvv" != "no" &&
+    test "$compiler_support_riscv_rvv" = "yes" &&
+    case "$host_cpu" in
+      riscv64) : ;;
+      *)    test "$compiler_support_riscv_rvv" != '' ;;
     esac])
 
 AC_MSG_NOTICE([[Extra options for compiler: $PNG_COPTS]])
