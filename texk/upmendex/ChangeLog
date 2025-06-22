@@ -32,7 +32,7 @@
 	Enhance treatment of S,T comma below in Romanian.
 	Support V-W ordering in Finnish traditional collation.
 	* sort.c:
-	Prepare to support CJK Unified Ideographs Extention J in Unicode 17.0.
+	Prepare to support CJK Unified Ideographs Extension J in Unicode 17.0.
 	It will work with future version of ICU.
 	Treat U+3192..3195, U+3280..3289, U+A830..A835 as "other number".
 
