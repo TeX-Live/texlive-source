@@ -1,3 +1,8 @@
+2025-06-22  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* tests/printkanji.tex, tests/pknj-[esu].log:
+	Update tests.
+
 2025-05-06  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
 
 	* pdfutils.ch: Rename bool variable to booltemp, for C23.

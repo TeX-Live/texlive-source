@@ -1,3 +1,8 @@
+2025-06-22  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* tests/printkanji.tex, tests/pknj-[es].log:
+	Update tests.
+
 2025-04-26  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* ptex-{ctrlsym,prntknj,widow}.test,

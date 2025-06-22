@@ -2406,7 +2406,7 @@ if (t<cs_token_flag+single_base)and(not check_kanji(t)) then
 @y
 @<Change the case of the token in |p|, if a change is appropriate@>=
 t:=info(p);
-if (t<cs_token_flag+single_base) then
+if (t<cs_token_flag+single_base)and(check_kanji(t)<2) then
   begin c:=t mod max_char_val;
 @z
 

@@ -208,15 +208,18 @@ l.163 \expandafter\show\csname ^^c5^^bf\endcsname
 l.164 \expandafter\show\csname 顛\endcsname
                                             
 
-\^^e3^^81^^82\あ 
+\^^e3^^81^^82\あ
+SNOW SNOW 雪
+snow snow 雪
+
 ifx:TRUE
 [39003]
-Memory usage before: 1274&5528; after: 118&5091; still untouched: 4992441
+Memory usage before: 1274&5528; after: 118&5091; still untouched: 4992421
  ) 
 Here is how much of TeX's memory you used:
  26 strings out of 49XXXX
  152 string characters out of 6219XXX
- 7559 words of memory out of 5000000
+ 7579 words of memory out of 5000000
  97X multiletter control sequences out of 15000+600000
  3297 words of font info for 2 fonts, out of 8000000 for 9000
  0 hyphenation exceptions out of 8191

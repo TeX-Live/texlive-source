@@ -18,25 +18,25 @@
 #define KCAT_KANJI_IVS 23
 
 /* TOKEN */
-boolean check_kanji (integer c)
+integer check_kanji (integer c)
 {
     integer c0, c1;
 
-    if (c >= CS_TOKEN_FLAG) return false;
+    if (c >= CS_TOKEN_FLAG) return 0;
 
     c0 = c & CJK_TOKEN_FLAG;
     c1 = XXHi(c);
     if (c1>=CAT_LEFT_BRACE && c1<=CAT_DELIM_NUM &&
             c0 < LATIN_CHAR_LIMIT) { /* kcatcode latin_ucs */
-        return is_char_kanji(c0);
+        return 1;
     }
     else if (c1>=KCAT_KANJI && c1<=KCAT_MODIFIER) {
-        return is_char_kanji(c0);
+        return is_char_kanji(c0)*2;
     }
     else if (c1>=KCAT_KANJI_IVS+1 && c1<=KCAT_KANJI_IVS+4) {
-        return is_char_kanji(c - KCAT_KANJI_IVS * CJK_CHAR_LIMIT);
+        return is_char_kanji(c - KCAT_KANJI_IVS * CJK_CHAR_LIMIT)*3;
     }
-    return false;
+    return 0;
 }
 
 boolean is_char_ascii(integer c)
