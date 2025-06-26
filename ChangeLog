@@ -1,3 +1,7 @@
+2025-06-26  Karl Berry  <karl@freefriends.org>
+
+	* automake 1.18.1.
+
 2025-04-30  Karl Berry  <karl@freefriends.org>
 
 	* Build: incorporate original CFLAGS, CXXFLAGS, OBJCXXFLAGS values.
