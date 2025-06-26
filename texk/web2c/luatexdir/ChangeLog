@@ -1,4 +1,9 @@
 2025-05-30 Luigi Scarso  <luigi.scarso@gmail.com>
+	* Restored \mathflattenmode (M.F. Krüger)
+	* LuaTeX 1.23.3 
+
+
+2025-05-30 Luigi Scarso  <luigi.scarso@gmail.com>
 	* additional 'value' field for write nodes (getfield) for
 	  unexpanded token tables (H.Hagen)
 	* LuaTeX 1.23.2 

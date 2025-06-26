@@ -1576,53 +1576,54 @@ Per TL 2026 the following primitives are \quote {ignored}. They were not used in
 two decades unless by \CONTEXT\ for exploring variants but we can do that
 differently now. Obsolete commands that trigger a warning: \typ {\mathoption},
 \typ {\mathitalicssmode}, \typ {\mathnolimitsmode}, \typ {\mathscriptboxmode},
-\typ {\mathscriptcharmode}, \typ {\mathflattenmode}, \typ {\mathdefaultsmode},
+\typ {\mathscriptcharmode}, %\typ {\mathflattenmode},
+\typ {\mathdefaultsmode},
 \typ {\mathrulethicknessmode}, \typ {\mathdelimitersmode}. Also no longer used
 are the parameters \typ {\Umathnolimitsupfactor} and \typ
 {\Umathnolimitsubfactor}.
 
-% \subsection {Flattening: \lpr {mathflattenmode}}
-%
-% \topicindex {math+flattening}
-%
-% The \TEX\ math engine collapses \type {ord} noads without sub- and superscripts
-% and a character as nucleus. and which has the side effect that in \OPENTYPE\ mode
-% italic corrections are applied (given that they are enabled).
-%
-% \startbuffer[sample]
-% \switchtobodyfont[modern]
-% $V \mathbin{\mathbin{v}} V$\par
-% $V \mathord{\mathord{v}} V$\par
-% \stopbuffer
-%
-% \typebuffer[sample]
-%
-% This renders as:
-%
-% \blank \start \mathflattenmode\plusone \getbuffer[sample] \stop \blank
-%
-% When we set \lpr {mathflattenmode} to 31 we get:
-%
-% \blank \start \mathflattenmode\numexpr1+2+4+8+16\relax \getbuffer[sample] \stop \blank
-%
-% When you see no difference, then the font probably has the proper character
-% dimensions and no italic correction is needed. For Latin Modern (at least till
-% 2018) there was a visual difference. In that respect this parameter is not always
-% needed unless of course you want efficient math lists anyway.
-%
-% You can influence flattening by adding the appropriate number to the value of the
-% mode parameter. The default value is~1.
-%
-% \starttabulate[|Tc|c|]
-% \DB mode \BC class \NC \NR
-% \TB
-% \NC  1   \NC ord   \NC \NR
-% \NC  2   \NC bin   \NC \NR
-% \NC  4   \NC rel   \NC \NR
-% \NC  8   \NC punct \NC \NR
-% \NC 16   \NC inner \NC \NR
-% \LL
-% \stoptabulate
+\subsection {Flattening: \lpr {mathflattenmode}}
+
+\topicindex {math+flattening}
+
+The \TEX\ math engine collapses \type {ord} noads without sub- and superscripts
+and a character as nucleus. and which has the side effect that in \OPENTYPE\ mode
+italic corrections are applied (given that they are enabled).
+
+\startbuffer[sample]
+\switchtobodyfont[modern]
+$V \mathbin{\mathbin{v}} V$\par
+$V \mathord{\mathord{v}} V$\par
+\stopbuffer
+
+\typebuffer[sample]
+
+This renders as:
+
+\blank \start \mathflattenmode\plusone \getbuffer[sample] \stop \blank
+
+When we set \lpr {mathflattenmode} to 31 we get:
+
+\blank \start \mathflattenmode\numexpr1+2+4+8+16\relax \getbuffer[sample] \stop \blank
+
+When you see no difference, then the font probably has the proper character
+dimensions and no italic correction is needed. For Latin Modern (at least till
+2018) there was a visual difference. In that respect this parameter is not always
+needed unless of course you want efficient math lists anyway.
+
+You can influence flattening by adding the appropriate number to the value of the
+mode parameter. The default value is~1.
+
+\starttabulate[|Tc|c|]
+\DB mode \BC class \NC \NR
+\TB
+\NC  1   \NC ord   \NC \NR
+\NC  2   \NC bin   \NC \NR
+\NC  4   \NC rel   \NC \NR
+\NC  8   \NC punct \NC \NR
+\NC 16   \NC inner \NC \NR
+\LL
+\stoptabulate
 
 \subsection {Less Tracing}
 

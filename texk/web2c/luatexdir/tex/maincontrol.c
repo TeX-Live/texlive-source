@@ -3615,12 +3615,7 @@ void assign_internal_value(int a, halfword p, int val)
             }
             break;
         case math_flatten_mode_code:
-            if (permit_math_obsolete) {
-                if (math_flatten_mode_par != val) {
-                    normal_warning("math", "\\mathflattenmode is obsolete");
-                }
-                word_define(p, val);
-            }
+            word_define(p, val);
             break;
         case math_defaults_mode_code:
             if (permit_math_obsolete) {

@@ -797,6 +797,7 @@ void initialize_etex_commands(void)
     primitive_luatex("matheqdirmode", assign_int_cmd, int_base + math_eq_dir_mode_code, int_base);
     primitive_luatex("mathrulesfam", assign_int_cmd, int_base + math_rules_fam_code, int_base);
     primitive_luatex("synctex", assign_int_cmd, int_base + synctex_code, int_base);
+    primitive_luatex("mathflattenmode", assign_int_cmd, int_base + math_flatten_mode_code, int_base);
 
     /*     
         These are obsolete per TL 2026 because we decided to stick to the more traditional \TEX\ 
@@ -809,7 +810,6 @@ void initialize_etex_commands(void)
     primitive_luatex("mathnolimitsmode", assign_int_cmd, int_base + math_nolimits_mode_code, int_base);
     primitive_luatex("mathscriptboxmode", assign_int_cmd, int_base + math_script_box_mode_code, int_base);
     primitive_luatex("mathscriptcharmode", assign_int_cmd, int_base + math_script_char_mode_code, int_base);
-    primitive_luatex("mathflattenmode", assign_int_cmd, int_base + math_flatten_mode_code, int_base);
     primitive_luatex("mathdefaultsmode", assign_int_cmd, int_base + math_defaults_mode_code, int_base);
     primitive_luatex("mathrulethicknessmode", assign_int_cmd, int_base + math_rule_thickness_mode_code, int_base);
     primitive_luatex("mathdelimitersmode", assign_int_cmd, int_base + math_delimiters_mode_code, int_base);

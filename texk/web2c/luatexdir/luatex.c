@@ -33,8 +33,8 @@
 */
 
 int luatex_version = 123;
-int luatex_revision = '2';
-const char *luatex_version_string = "1.23.2";
+int luatex_revision = '3';
+const char *luatex_version_string = "1.23.3";
 const char *engine_name = my_name;
 
 #include <kpathsea/c-ctype.h>

@@ -29,7 +29,6 @@ LuaTeX; if not, see <http://www.gnu.org/licenses/>.
     \mathnolimitsmode
     \mathscriptboxmode
     \mathscriptcharmode
-    \mathflattenmode
     \mathdefaultsmode
     \mathrulethicknessmode
     \mathdelimitersmode

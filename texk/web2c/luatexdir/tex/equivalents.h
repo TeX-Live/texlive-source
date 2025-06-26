@@ -303,7 +303,7 @@ the |number_regs| \.{\\dimen} registers.
 #  define math_script_box_mode_code 111 /* obsolete */
 #  define math_script_char_mode_code 112 /* obsolete */
 #  define math_rule_thickness_mode_code 113
-#  define math_flatten_mode_code 114 /* obsolete */
+#  define math_flatten_mode_code 114
 
 #  define copy_lua_input_nodes_code 115
 #  define suppress_primitive_error_code 116

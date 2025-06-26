@@ -2124,9 +2124,7 @@ void close_math_group(pointer p)
         if (type(p) == simple_noad) {
             if (subscr(p) == null && supscr(p) == null) {
                 /*tex 
-                    In traditional \TEX\ this only happens for ordinary noads. Per TL 2026 this
-                    is now an undocumented features and eventually it might get dropped (unless 
-                    it makes some \CONTEXT\ \MKIV\ things more difficult. 
+                    In traditional \TEX\ this only happens for ordinary noads.
                 */
              // int flatten = subtype(p) == ord_noad_type; /*tex traditional \TEX. */
                 int flatten = 0;
