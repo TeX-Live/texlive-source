@@ -1,3 +1,8 @@
+2025-07-02  Luigi Scarso <luigi.scarso@gmail.com>
+
+	* Fixed two single unescaped '%' in mpxout.w;
+	makes MPXOUT.W formatting nicely with CWEAVE and pdfTeX (A. Scherer )
+
 2025-04-28  Luigi Scarso <luigi.scarso@gmail.com>
 
 	* Fixed --help to be consistent with the manual
