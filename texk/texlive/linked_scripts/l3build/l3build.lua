@@ -25,7 +25,7 @@ for those people who are interested.
 --]]
 
 -- Version information
-release_date = "2025-05-08"
+release_date = "2025-07-03"
 
 -- File operations are aided by the LuaFileSystem module
 local lfs = require("lfs")
@@ -112,7 +112,7 @@ if options["epoch"] then
   forcecheckepoch = true
   forcedocepoch   = true
 end
-epoch = normalise_epoch(epoch)
+epoch = normalize_epoch(epoch)
 -- LuaTeX needs the `-utc` option
 if forcecheckepoch then
   if next(specialformats) and next(specialformats.latex)
