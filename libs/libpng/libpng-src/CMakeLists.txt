@@ -18,7 +18,7 @@ cmake_minimum_required(VERSION 3.14...4.0)
 
 set(PNGLIB_MAJOR 1)
 set(PNGLIB_MINOR 6)
-set(PNGLIB_REVISION 49)
+set(PNGLIB_REVISION 50)
 set(PNGLIB_SUBREVISION 0)
 #set(PNGLIB_SUBREVISION "git")
 set(PNGLIB_VERSION ${PNGLIB_MAJOR}.${PNGLIB_MINOR}.${PNGLIB_REVISION})
@@ -30,6 +30,7 @@ project(libpng
         LANGUAGES C ASM)
 
 include(CheckCSourceCompiles)
+include(CheckLibraryExists)
 include(GNUInstallDirs)
 
 # Allow the users to specify an application-specific API prefix for libpng
@@ -138,19 +139,15 @@ endif()
 
 # Find the zlib library.
 find_package(ZLIB REQUIRED)
+set(PNG_LINK_LIBRARIES ZLIB::ZLIB)
 
-# Find the math library (where available).
-if(UNIX
-   AND NOT (APPLE OR BEOS OR HAIKU)
-   AND NOT EMSCRIPTEN)
-  find_library(M_LIBRARY m)
-  if(M_LIBRARY)
-    set(M_LIBRARY m)
-  else()
-    set(M_LIBRARY "")
-  endif()
-else()
-  # libm is not available or not needed.
+# Find the math library (unless we already know it's not available or
+# not needed).
+if(UNIX AND NOT (APPLE OR BEOS OR HAIKU OR EMSCRIPTEN))
+  check_library_exists(m pow "" PNG_HAVE_LIBM_POW)
+endif()
+if(PNG_HAVE_LIBM_POW)
+  list(APPEND PNG_LINK_LIBRARIES m)
 endif()
 
 # Silence function deprecation warnings on the Windows compilers that might
@@ -322,26 +319,40 @@ if(PNG_HARDWARE_OPTIMIZATIONS)
   # Set definitions and sources for RISC-V.
   if(PNG_TARGET_ARCHITECTURE MATCHES "^(riscv)")
     include(CheckCCompilerFlag)
-    set(PNG_RISCV_RVV_POSSIBLE_VALUES check on off)
+    set(PNG_RISCV_RVV_POSSIBLE_VALUES on off)
     set(PNG_RISCV_RVV "off"
-      CACHE STRING "Enable RISC-V Vector optimizations: check|on|off; off is default")
+      CACHE STRING "Enable RISC-V Vector optimizations: on|off; off is default")
     set_property(CACHE PNG_RISCV_RVV
                 PROPERTY STRINGS ${PNG_RISCV_RVV_POSSIBLE_VALUES})
     list(FIND PNG_RISCV_RVV_POSSIBLE_VALUES ${PNG_RISCV_RVV} index)
     if(index EQUAL -1)
       message(FATAL_ERROR "PNG_RISCV_RVV must be one of [${PNG_RISCV_RVV_POSSIBLE_VALUES}]")
     elseif(NOT PNG_RISCV_RVV STREQUAL "off")
-      check_c_compiler_flag("-march=rv64gv1p0" COMPILER_SUPPORTS_RVV)
+
+      check_c_source_compiles("
+        #include <riscv_vector.h>
+        #include <asm/hwcap.h>
+        #ifndef COMPAT_HWCAP_ISA_V /* added in linux-6.5 */
+        #error \"COMPAT_HWCAP_ISA_V is not available\"
+        #endif
+        int main() {
+          const float src[] = { 0.0f, 0.0f, 0.0f, 0.0f };
+          uint64_t ptr[2] = {0x0908060504020100, 0xFFFFFFFF0E0D0C0A};
+          vuint8m1_t a = __riscv_vreinterpret_v_u64m1_u8m1(__riscv_vle64_v_u64m1(ptr, 2));
+          vfloat32m1_t val = __riscv_vle32_v_f32m1((const float*)(src), 4);
+          return (int)__riscv_vfmv_f_s_f32m1_f32(val);
+      }" COMPILER_SUPPORTS_RVV)
+
       if(NOT COMPILER_SUPPORTS_RVV)
-        message(FATAL_ERROR "Compiler does not support -march=rv64gv1p0 option")
+        message(FATAL_ERROR "Compiler does not support RISC-V Vector extension or its unable to detect it")
       endif()
       set(libpng_riscv_sources
           riscv/filter_rvv_intrinsics.c
           riscv/riscv_init.c)
       if(PNG_RISCV_RVV STREQUAL "on")
         add_definitions(-DPNG_RISCV_RVV_OPT=2)
-      elseif(PNG_RISCV_RVV STREQUAL "check")
-        add_definitions(-DPNG_RISCV_RVV_CHECK_SUPPORTED)
+      else()
+        add_definitions(-DPNG_RISCV_RVV_OPT=0)
       endif()
     else()
       add_definitions(-DPNG_RISCV_RVV_OPT=0)
@@ -688,7 +699,7 @@ if(PNG_SHARED)
                              SYSTEM
                              INTERFACE "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/libpng${PNGLIB_ABI_VERSION}>")
   target_link_libraries(png_shared
-                        PUBLIC ZLIB::ZLIB ${M_LIBRARY})
+                        PUBLIC ${PNG_LINK_LIBRARIES})
 endif()
 
 if(PNG_STATIC)
@@ -706,7 +717,7 @@ if(PNG_STATIC)
                              SYSTEM
                              INTERFACE "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/libpng${PNGLIB_ABI_VERSION}>")
   target_link_libraries(png_static
-                        PUBLIC ZLIB::ZLIB ${M_LIBRARY})
+                        PUBLIC ${PNG_LINK_LIBRARIES})
 endif()
 
 if(PNG_FRAMEWORK AND NOT APPLE)
@@ -739,7 +750,7 @@ if(PNG_FRAMEWORK)
                              SYSTEM
                              INTERFACE "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/libpng${PNGLIB_ABI_VERSION}>")
   target_link_libraries(png_framework
-                        PUBLIC ZLIB::ZLIB ${M_LIBRARY})
+                        PUBLIC ${PNG_LINK_LIBRARIES})
 endif()
 
 if(NOT PNG_LIBRARY_TARGETS)
@@ -936,7 +947,7 @@ if(PNG_SHARED AND PNG_TOOLS)
 
   add_executable(png-fix-itxt ${png_fix_itxt_sources})
   target_link_libraries(png-fix-itxt
-                        PRIVATE ZLIB::ZLIB ${M_LIBRARY})
+                        PRIVATE ${PNG_LINK_LIBRARIES})
   list(APPEND PNG_BIN_TARGETS png-fix-itxt)
 endif()
 
