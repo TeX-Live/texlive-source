@@ -1,4 +1,12 @@
-2025-05-30 Luigi Scarso  <luigi.scarso@gmail.com>
+2025-07-05 Luigi Scarso  <luigi.scarso@gmail.com>
+	* Fix for legacy handling of truetype fonts (thanks to marcpenninga)
+
+
+2025-07-01 Luigi Scarso  <luigi.scarso@gmail.com>
+	* max size of the destination names table for PDF output raised to 1048576  (Max Chernoff)
+
+
+2025-06-24 Luigi Scarso  <luigi.scarso@gmail.com>
 	* Restored \mathflattenmode (M.F. Krüger)
 	* LuaTeX 1.23.3 
 
