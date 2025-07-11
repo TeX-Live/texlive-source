@@ -1,6 +1,6 @@
 #!/usr/bin/env texlua
 
-local show_pdf_tags_version = "1.1"
+local show_pdf_tags_version = "1.2"
 
 kpse.set_program_name'lualatex'
 
@@ -168,14 +168,14 @@ local function pdf2lua(container, index, t, v, x, warnings)
   return recurse(container, index, t, v, x), warnings[0] and warnings
 end
 
-local function convert_attributes(ctx, attrs, classes)
+local function convert_attributes(ctx, attrs, classes, warnings)
   if not classes and not attrs then return end
   local attributes = {}
   local function apply_attr(attr)
     local owner = assert(attr.O)
     if owner == 'NSO' then
       -- avoid error if  no-namespace attributes to be modelled by missing NS field
-      owner = (attr.NS and attr.NS.NS) or "" 
+      owner = (attr.NS and get_string(attr.NS, 'NS', warnings)) or "" 
     else
       owner = owner_prefix .. owner
     end
@@ -187,11 +187,7 @@ local function convert_attributes(ctx, attrs, classes)
     for i = 1, #attr do
       local key, t, v, extra = pdfe.getfromdictionary(attr, i)
       if key ~= 'O' and key ~= 'NS' then
-        local warnings = ctx.warnings[false] or {}
         owner_dict[key] = pdf2lua(attr, key, t, v, extra, warnings)
-        if warnings[1] then
-          ctx.warnings[false] = warnings
-        end
       end
     end
   end
@@ -237,13 +233,13 @@ local function convert(ctx, elem, id, page)
   elseif elem.Type == 'OBJR' then
     return convert_objr(ctx, elem, get_page(elem) or page)
   end
+  local warnings = {}
   local ns = elem.NS
   local role_mapped_s, role_mapped_ns
-  ns = ns and ns.NS or default_namespace
-  local warnings = {}
+  ns = ns and get_string(ns, 'NS', warnings) or default_namespace
   local obj = {
     subtype = ctx.type_maps[elem.NS and tostring(elem.NS) or false][elem.S],
-    attributes = convert_attributes(ctx, elem.A, elem.C),
+    attributes = convert_attributes(ctx, elem.A, elem.C, warnings),
     title = get_string(elem, 'T', warnings),
     lang = get_string(elem, 'Lang', warnings),
     alt = get_string(elem, 'Alt', warnings),
@@ -258,7 +254,9 @@ local function convert(ctx, elem, id, page)
   if warnings[1] then
     ctx.warnings[obj] = warnings
   end
-  ctx.id_map[id] = obj
+  if id then
+    ctx.id_map[id] = obj
+  end
   local elem_ref = elem.Ref
   if elem_ref and #elem_ref > 0 then
     local ref = {}
@@ -339,6 +337,8 @@ local function open(filename)
     return {}, ctx
   end
   local type_maps = {}
+  ctx.warnings = setmetatable({}, {__mode = 'k'})
+  local global_warnings = {}
   do
     local namespaces = structroot.Namespaces
     for i=0, namespaces and #namespaces or 0 do
@@ -348,7 +348,7 @@ local function open(filename)
         role_map = structroot.RoleMap
       else
         local namespace = namespaces[i]
-        ns = namespace.NS
+        ns = get_string(namespace, 'NS', global_warnings)
         ns_key = tostring(namespace)
         role_map = namespace.RoleMapNS
       end
@@ -365,9 +365,9 @@ local function open(filename)
       end})
     end
   end
+  if global_warnings[1] then warnings[false] = global_warnings end
   ctx.type_maps = type_maps
   ctx.ClassMap = structroot.ClassMap
-  ctx.warnings = setmetatable({}, {__mode = 'k'})
   local elements = convert_kids(ctx, structroot)
   ctx.ClassMap = nil
 
@@ -646,6 +646,25 @@ local function print_tree_xml(tree, ctx)
           lines[#lines + 1] = ' referenced-as="' .. referenced[obj] .. '"'
         end
 	lines[#lines+1] = ">"
+--
+        if obj.associated_files then
+	  local f = {}
+          local af_output = ''
+	  local warnings = {}
+	  for i, file in ipairs(obj.associated_files) do
+            if file.EF.F then
+	      af_output = pdfe.readwholestream(file.EF.F, true)
+              lines[#lines + 1] = '<AssociatedFile name="' .. get_string(file, "UF", warnings) .. '" xmlns="">'
+	      if file.EF.F.Subtype == 'application/mathml+xml' then
+                lines[#lines + 1] = af_output
+	      else
+                lines[#lines + 1] = af_output:gsub('&','&amp;'):gsub('<','&lt;'):gsub('"','&quot;'):gsub('\0','[NULL]'):gsub('[\1-\8\11\12\14-\31]','[CTRL]')
+              end	  
+              lines[#lines + 1] = '</AssociatedFile>'
+            end
+	  end
+        end
+--
         if obj.ref then
           local refs = {}
           for i, r in ipairs(obj.ref) do
@@ -677,15 +696,10 @@ local function print_tree_xml(tree, ctx)
       end
     end
   end
-  if #tree == 1 then
-    return recurse(tree, '', '', '', '')
-  else
-    print"<!-- Warning: Multiple document elements -->"
-    print ("<Document>")
-    recurse(tree, '  ', '', '', '')
-    print ("</Document>")
-    return
-  end
+  print ("<PDF>\n <StructTreeRoot>")
+  recurse(tree, '  ', '', '', ' ')
+  print (" </StructTreeRoot>\n</PDF>")
+  return
 end
 
 
