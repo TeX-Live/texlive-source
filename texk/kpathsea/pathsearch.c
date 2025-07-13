@@ -1,6 +1,7 @@
 /* pathsearch.c: look up a filename in a path.
 
-   Copyright 1993, 1994, 1995, 1997, 2007, 2009-2012, 2018, 2020 Karl Berry.
+   Copyright 1993, 1994, 1995, 1997, 2007, 2009-2012, 2018,
+   2020, 2025 Karl Berry.
    Copyright 1997-2005 Olaf Weber.
 
    This library is free software; you can redistribute it and/or
@@ -396,7 +397,7 @@ absolute_search (kpathsea kpse, string name)
 #ifdef KPSE_CASEFOLDING_SEARCH
   /* Do the casefolding search only if both needed and enabled. */
   if (!found) {
-    if (KPSE_CNF_P (kpathsea_var_value (kpse, "texmf_casefold_search"))) {
+    if (kpse_cnf_p (kpathsea_var_value (kpse, "texmf_casefold_search"))) {
       found = casefold_readable_file (kpse, name);
 #ifdef KPSE_DEBUG
       if (KPATHSEA_DEBUG_P (KPSE_DEBUG_SEARCH)) {
@@ -475,7 +476,7 @@ path_search (kpathsea kpse, const_string path, string name,
                                   kpathsea_readable_file);
 #ifdef KPSE_CASEFOLDING_SEARCH
         if (!STR_LIST (*found)
-            && KPSE_CNF_P (kpathsea_var_value (kpse,
+            && kpse_cnf_p (kpathsea_var_value (kpse,
                                                "texmf_casefold_search"))) {
           /* Nothing found; search again, case-insensitively: */
           *found = dir_list_search (kpse, dirs, name, all,
@@ -706,7 +707,7 @@ kpathsea_path_search_list_generic (kpathsea kpse,
         *found = dir_list_search_list (kpse, dirs, names, all,
                                       kpathsea_readable_file);
 #ifdef KPSE_CASEFOLDING_SEARCH
-        if (!STR_LIST (*found) && KPSE_CNF_P (kpathsea_var_value (kpse,
+        if (!STR_LIST (*found) && kpse_cnf_p (kpathsea_var_value (kpse,
                                                    "texmf_casefold_search"))) {
           /* Still nothing; search again, case-insensitively: */
           *found = dir_list_search_list (kpse, dirs, names, all,

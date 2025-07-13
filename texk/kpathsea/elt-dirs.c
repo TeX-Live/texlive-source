@@ -292,7 +292,7 @@ do_subdir (kpathsea kpse, str_llist_type *str_list_ptr, string elt,
                  Cygwin 1.7 also leaves st_nlink as 1:
                  http://cygwin.com/ml/cygwin-developers/2008-04/msg00110.html
                  */
-              if (links != 2 || KPSE_CNF_P (kpathsea_var_value
+              if (links != 2 || kpse_cnf_p (kpathsea_var_value
                                           (kpse, "kpse_ignore_nlink_for_leaf"))
                  ) {
 #endif /* ST_NLINK_TRICK */

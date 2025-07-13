@@ -1,7 +1,7 @@
 /* cnf.c: read config files.
 
    Copyright 1994, 1995, 1996, 1997, 2008, 2009, 2011, 2012, 2016,
-   2017, 2018, 2019 Karl Berry.
+   2017, 2018, 2019, 2025 Karl Berry.
    Copyright 1997-2005 Olaf Weber.
 
    This library is free software; you can redistribute it and/or
@@ -357,3 +357,14 @@ kpse_cnf_get (const_string name)
   return kpathsea_cnf_get(kpse_def, name);
 }
 #endif
+
+
+/* Return true if S is (loosely) true.  This function exists since a
+   macro unavoidably has to evaluate the argument multiple times, which
+   generates an irritating number of debugging messages.  */
+
+boolean
+kpse_cnf_p (const_string s)
+{
+  return s && *s && *(s) != 'f' && *(s) != '0';
+}

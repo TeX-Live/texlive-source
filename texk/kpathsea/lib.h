@@ -1,7 +1,7 @@
 /* lib.h: declarations for common, low-level routines in kpathsea.
 
    Copyright 1992, 1993, 1994, 1995, 1996, 2008, 2009, 2010, 2011,
-             2012, 2015 Karl Berry.
+             2012, 2015, 2025 Karl Berry.
    Copyright 1999, 2000, 2003, 2005 Olaf Weber.
 
    This library is free software; you can redistribute it and/or
@@ -124,10 +124,20 @@ extern "C" {
    DEFAULT.  This is useful for paths that use more than one envvar.  */
 #define ENVVAR(test, default) (getenv (test) ? (test) : (default))
 
-/* Return whether a kpse configuration is (some sort of) true.  Check
-   for negation values, so a value like "2" will be true, just in case.  */
+/* Return whether a string value S is (some sort of) true.  Check
+   for negation values, so a value like "2" will be true.  This is used
+   only for texmf.cnf configuration values, where we want to be generous
+   in what we accept as true (or false).
+   
+   Nowadays we use the function `kpse_cnf_p' (lowercase) to avoid
+   evaluating the argument multiple times, but leaving the macro just in
+   case something outside Kpathsea uses -- fairly sure there are no such
+   uses, but doesn't hurt to leave it in.  */
 #define KPSE_CNF_P(val) \
   ((val) && *(val) && *(val) != 'f' && *(val) != '0')
+
+/* The function that does the same thing.  */
+extern KPSEDLL boolean kpse_cnf_p (const_string s);
 
 
 /* Return a fresh copy of S1 followed by S2, et al.  */

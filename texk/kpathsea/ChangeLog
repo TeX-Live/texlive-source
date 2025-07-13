@@ -1,5 +1,14 @@
 2025-07-13  Karl Berry  <karl@freefriends.org>
 
+	* lib.h (kpse_cnf_p): declare new fn.
+	* cnf.c (kpse_cnf_p): define it.
+	* pathsearch.c,
+	* tex-file.c: change calls from KPSE_CNF_P macro to this new fn,
+	to avoid multiple evaluations of the argument and hence useless
+	multiple debugging lines.
+
+2025-07-13  Karl Berry  <karl@freefriends.org>
+
 	* elt-dirs.c (do_subdir) [ST_NLINK_TRICK]: if new cnf variable
 	kpse_ignore_nlink_for_leaf is true, never mind the st_nlink=2
 	trick for checking if we're in a leaf directory. Useful because

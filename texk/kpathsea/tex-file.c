@@ -1079,7 +1079,7 @@ kpathsea_find_file_generic (kpathsea kpse, const_string const_name,
   try_std_extension_first
     = kpathsea_var_value (kpse, "try_std_extension_first");
 
-  if (has_any_suffix && !KPSE_CNF_P (try_std_extension_first)) {
+  if (has_any_suffix && !kpse_cnf_p (try_std_extension_first)) {
     target_asis_name (kpse, &target, &count, format, name, use_fontmaps,
                       has_potential_suffix, has_any_suffix);
     target_suffixed_names (kpse, &target, &count, format, name, use_fontmaps,
