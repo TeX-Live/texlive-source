@@ -275,7 +275,7 @@ uninstall-local:
 AM_TESTS_ENVIRONMENT  = LN_S='$(LN_S)'; export LN_S;
 AM_TESTS_ENVIRONMENT += LT_OBJDIR='$(LT_OBJDIR)'; export LT_OBJDIR;
 #
-TESTS  = tests/cnfline.test tests/cnfnewline.test
+TESTS  = tests/cnfline.test tests/cnfnewline.test tests/cnfnlink.test
 TESTS += tests/cnfnull.test tests/cnfprog.test
 TESTS += tests/kpseaccess.test
 TESTS += tests/kpsereadlink.test

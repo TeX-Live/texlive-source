@@ -2,8 +2,8 @@
 @setfilename kpathsea.info
 @settitle Kpathsea: A library for path searching
 
-@set version 6.4.0
-@set month-year January 2025
+@set version 6.4.2/dev
+@set month-year July 2025
 
 @copying
 This file documents the Kpathsea library for path searching.
@@ -1059,36 +1059,44 @@ subdirectories which match those components are included.  For example,
 
 You can include multiple @samp{//} constructs in the path.
 
-@samp{//} at the beginning of a path is ignored; you didn't really want
-to search every directory on the system, did you?
+@samp{//} at the beginning of a path is ignored.  Searching every
+directory on the system is not relevant for @TeX{}.
 
 @cindex trick for detecting leaf directories
 @cindex leaf directory trick
 @cindex Farwell, Matthew
 @cindex MacKenzie, David
-I should mention one related implementation trick, which I took from GNU
-find.  Matthew Farwell suggested it, and David MacKenzie implemented it.
+We need to discuss one related implementation trick, originally taken
+from GNU find.  Matthew Farwell suggested it, and David MacKenzie
+implemented it.
 
 @vindex st_nlink
-The trick is that in every real Unix implementation (as opposed to the
-POSIX specification), a directory which contains no subdirectories will
-have exactly two links (namely, one for @file{.} and one for @file{..}).
-That is to say, the @code{st_nlink} field in the @samp{stat} structure
-will be two.  Thus, we don't have to stat everything in the bottom-level
-(leaf) directories---we can just check @code{st_nlink}, notice it's two,
-and do no more work.
+The trick is that in normal Unix implementations (though not in the
+POSIX specification), a directory which contains no subdirectories
+will have exactly two links (namely, one for @file{.} and one for
+@file{..}).  That is to say, the @code{st_nlink} field in the
+@samp{stat} structure will be two.  Thus, we don't have to stat
+everything in the bottom-level (leaf) directories---we can just check
+@code{st_nlink}, notice it's two, and do no more work.
 
-But if you have a directory that contains a single subdirectory and 500
-regular files, @code{st_nlink} will be 3, and Kpathsea has to stat every
-one of those 501 entries.  Therein lies slowness.
+You can turn off this trick at runtime by setting the configuration
+variable @code{kpse_ignore_nlink_for_leaf} to 1.
+@vindex ST_NLINK_TRICK@r{, compile-time flag}
+You can also disable the trick at compile-time by undefining
+@code{ST_NLINK_TRICK} in @file{kpathsea/config.h}. It is only defined
+by default on Unix-ish systems.
 
-@vindex ST_NLINK_TRICK
-You can disable the trick by undefining @code{ST_NLINK_TRICK} in
-@file{kpathsea/config.h}. (It is undefined by default except under Unix.)
+Turning off the trick can help in two situations: 1)@tie{}overlay
+filesystems, such as may be used for @file{/tmp}, can lie about
+@code{st_nlink}
+(@url{https://tug.org/pipermail/texhax/2025-July/026771.html});
+2)@tie{}a symbolic link to another directory will not be followed in
+such an apparent leaf directory
+(@url{https://tex.stackexchange.com/questions/132908}).
 
 @flindex elt-dirs.c
 Unfortunately, in some cases files in leaf directories are
-@code{stat}'d: if the path specification is, say,
+@code{stat}'d anyway: if the path specification is, say,
 @samp{$TEXMF/fonts//pk//}, then files in a subdirectory
 @samp{@dots{}/pk}, even if it is a leaf, are checked. The reason
 cannot be explained without reference to the implementation, so read
@@ -3304,13 +3312,13 @@ variable @code{KPATHSEA_DEBUG} (if that is set).
 @cindex SELFAUTOPARENT
 @cindex symlinks, resolving
 @cindex expanding symlinks
-Finally, it sets the environment variables @code{SELFAUTOLOC}, @code{SELFAUTODIR}
-and @code{SELFAUTOPARENT} to the location, parent and grandparent
-directory of the executable, removing @file{.} and @file{..} path
-elements and resolving symbolic links.  These are used in the default
-configuration file to allow people to invoke TeX from anywhere.  You
-can use @samp{kpsewhich --expand-var=\$SELFAUTOLOC}, etc., to see the
-values.
+Finally, it sets the environment variables @code{SELFAUTOLOC},
+@code{SELFAUTODIR} and @code{SELFAUTOPARENT} to the location, parent
+and grandparent directory of the executable, removing @file{.} and
+@file{..} path elements and resolving symbolic links.  These are used
+in the default configuration file to allow people to invoke TeX from
+anywhere.  You can use @samp{kpsewhich --expand-var=\$SELFAUTOLOC},
+etc., to see the values.
 
 @item
 @vindex kpse->debug @r{variable}
@@ -3964,22 +3972,29 @@ culprit.
 @cindex symbolic links not found
 @cindex leaf directories wrongly guessed
 Your files reside in a directory that is only pointed to via a symbolic
-link, in a leaf directory and is not listed in @file{ls-R}.
+link within a leaf directory, and is not listed in @file{ls-R}.
 
-Unfortunately, Kpathsea's subdirectory searching has an irremediable
+Unfortunately, Kpathsea's subdirectory searching has a problematic
 deficiency: If a directory @var{d} being searched for subdirectories
-contains plain files and symbolic links to other directories, but no
-true subdirectories, @var{d} will be considered a leaf directory, i.e.,
-the symbolic links will not be followed.  @xref{Subdirectory expansion}.
+contains symbolic links to other directories (and possibly other plain
+files or symlinks), but no true subdirectories, by default @var{d}
+will be considered a leaf directory, i.e., the symbolic links will not
+be followed.  @xref{Subdirectory expansion}.
 
 You can work around this problem by creating an empty dummy subdirectory
 in @var{d}. Then @var{d} will no longer be a leaf, and the symlinks will
 be followed.
 
+Another workaround is to set the configuration variable
+@code{kpse_ignore_nlink_for_leaf} to 1.  Then Kpathsea will look at
+all entries in all directories in determining whether they are
+(symlinks to) subdirectories. This is not the default because it is
+considerably expensive to consider the contents of every leaf directory.
+
 The directory immediately followed by the @samp{//} in the path
-specification, however, is always searched for subdirectories, even if
-it is a leaf.  Presumably you would not have asked for the directory to
-be searched for subdirectories if you didn't want it to be.
+specification is always searched for subdirectories, even if it is a
+leaf.  Presumably you would not have asked for the directory to be
+searched for subdirectories if you didn't want it to be.
 
 @item
 If the fonts (or whatever) don't already exist, @code{mktexpk} (or

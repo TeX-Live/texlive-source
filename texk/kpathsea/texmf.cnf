@@ -781,10 +781,18 @@ BIBTEX_CSFILE = 88591lat.csf
 
 % This variable is specific to Unix, to fall back to case-insensitive
 % search in non-system directories if there is no exact match. It is
-% enabled by default in texmf.cnf, but not enabled by default at
+% enabled by default here in texmf.cnf, but not enabled by default at
 % compile-time.
 %
 texmf_casefold_search = 1
+
+% This variable is specific to Unix, to turn off the trick of checking
+% for st_nlink=2 to determine if a directory is a leaf.  It is not
+% enabled by default, since the trick only fails in unusual situations,
+% and it's expensive to stat everything in every (non-!!) leaf.
+%
+%kpse_ignore_nlink_for_leaf = 1 % uncomment to skip the trick
+%                               % or set in the environment as usual.
 
 % This variable is specific to Windows.  It must be set to 0 or 1.  The
 % default is 0.  Setting it to 1 tells the Windows script wrappers to

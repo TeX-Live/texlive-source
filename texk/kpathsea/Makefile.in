@@ -874,8 +874,8 @@ dist_noinst_DATA = texmf.cnf
 AM_TESTS_ENVIRONMENT = LN_S='$(LN_S)'; export LN_S; \
 	LT_OBJDIR='$(LT_OBJDIR)'; export LT_OBJDIR;
 #
-TESTS = tests/cnfline.test tests/cnfnewline.test tests/cnfnull.test \
-	tests/cnfprog.test tests/kpseaccess.test \
+TESTS = tests/cnfline.test tests/cnfnewline.test tests/cnfnlink.test \
+	tests/cnfnull.test tests/cnfprog.test tests/kpseaccess.test \
 	tests/kpsereadlink.test tests/kpsesafe.test \
 	tests/kpsestat.test tests/kpsewhich.test
 

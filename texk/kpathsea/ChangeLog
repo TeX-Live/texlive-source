@@ -1,3 +1,21 @@
+2025-07-13  Karl Berry  <karl@freefriends.org>
+
+	* elt-dirs.c (do_subdir) [ST_NLINK_TRICK]: if new cnf variable
+	kpse_ignore_nlink_for_leaf is true, never mind the st_nlink=2
+	trick for checking if we're in a leaf directory. Useful because
+	overlay filesystems can lie about st_nlink:
+	  https://tug.org/pipermail/texhax/2025-July/026771.html
+	And also when an apparent leaf directory contains symlinks to
+	other directories:
+	  https://tex.stackexchange.com/questions/132908
+	[KPSE_DEBUG]: add and tweak debugging output.
+	* NEWS: mention this.
+	* doc/kpathsea.texi (Subdirectory expansion, Unable to find files):
+	mention new workaround of setting kpse_ignore_nlink_for_leaf=1.
+	* texmf.cnf (kpse_ignore_nlink_for_leaf): commented-out setting.
+	* tests/cnfnlink.test: new test.
+	* Makefile.am (TESTS): add it.
+
 2025-05-04  Karl Berry  <karl@freefriends.org>
 
 	* expand.c (kpathsea_expand_kpse_dot): doc fix.
@@ -3360,7 +3378,7 @@
 	is exactly 2; Cygwin sets st_nlink to 1 now.  Remove special case
 	for the Amiga.
 	* kpathsea.texi (Subdirectory expansion): correct preprocessor
-	name to ST_NLINK_TRIC.
+	name to ST_NLINK_TRICK.
 	Report from Ken Brown, tlbuild mail 12 Dec 2008 13:42:19.
 
 2008-11-10  Karl Berry  <karl@tug.org>

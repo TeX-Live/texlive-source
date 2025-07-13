@@ -1,7 +1,7 @@
 /* elt-dirs.c: Translate a path element to its corresponding director{y,ies}.
 
    Copyright 1993, 1994, 1995, 1996, 1997, 2008, 2009, 2010, 2011, 2016,
-   2017, 2018 Karl Berry.
+   2017, 2018, 2025 Karl Berry.
    Copyright 1997, 1998, 1999, 2000, 2005 Olaf Weber.
 
    This library is free software; you can redistribute it and/or
@@ -23,6 +23,7 @@
 #include <kpathsea/expand.h>
 #include <kpathsea/fn.h>
 #include <kpathsea/pathsearch.h>
+#include <kpathsea/variable.h>
 #include <kpathsea/xopendir.h>
 
 /* To avoid giving prototypes for all the routines and then their real
@@ -275,25 +276,44 @@ do_subdir (kpathsea kpse, str_llist_type *str_list_ptr, string elt,
 
                  The #ifdef here makes all this configurable at
                  compile-time, so that if we're using VMS directories or
-                 some such, we can still find subdirectories, even if it
-                 is much slower.  */
+                 some such, we can still find subdirectories.
+                 
+                 We also have a runtime configuration setting, since
+                 even regular Unix systems where the st_link trick would
+                 normally work, can have overlay filesystems where it fails
+                 (https://tug.org/pipermail/texhax/2025-July/026771.html);
+                 and also if users like to make symlinks to subdirs,
+                 they might want to disable it
+                 (https://tex.stackexchange.com/questions/132908).  */
+                 
 #ifdef ST_NLINK_TRICK
               /* With SAS/C++ 6.55 on the Amiga, stat sets the st_nlink
                  field to -1 for a file, or to 1 for a directory.
                  Cygwin 1.7 also leaves st_nlink as 1:
                  http://cygwin.com/ml/cygwin-developers/2008-04/msg00110.html
                  */
-              if (links != 2)
+              if (links != 2 || KPSE_CNF_P (kpathsea_var_value
+                                          (kpse, "kpse_ignore_nlink_for_leaf"))
+                 ) {
 #endif /* ST_NLINK_TRICK */
                 /* All criteria are met; find subdirectories.  */
-                  do_subdir (kpse, str_list_ptr, FN_STRING (name),
+#ifdef KPSE_DEBUG
+                if (KPATHSEA_DEBUG_P (KPSE_DEBUG_EXPAND))
+                  DEBUGF1 ("do_subdir: recursing into subdir: %s\n", name);
+#endif /* KPSE_DEBUG */
+                do_subdir (kpse, str_list_ptr, FN_STRING (name),
                            potential_len, post);
 #ifdef ST_NLINK_TRICK
-              else if (*post == 0)
+              } else if (*post == 0) {
                 /* Nothing to match, no recursive subdirectories to
                    look for: we're done with this branch.  Add it.  */
                 dir_list_add (str_list_ptr, FN_STRING (name));
-#endif
+#ifdef KPSE_DEBUG
+                if (KPATHSEA_DEBUG_P (KPSE_DEBUG_EXPAND))
+                  DEBUGF1 ("do_subdir: done with subdir, adding: %s\n", name);
+#endif /* KPSE_DEBUG */
+              }
+#endif /* ST_NLINK_TRICK */
             }
 
           /* Remove the directory entry we just checked from `name'.  */
@@ -394,7 +414,6 @@ kpathsea_normalize_path (kpathsea kpse, string elt)
   if (KPATHSEA_DEBUG_P (KPSE_DEBUG_STAT))
     DEBUGF2 ("kpse_normalize_path (%s) => %u\n", elt, ret);
 #endif /* KPSE_DEBUG */
-
     memmove (elt + ret + 1, elt + i, strlen (elt + i) + 1);
   }
 
@@ -462,7 +481,7 @@ kpathsea_element_dirs (kpathsea kpse, string elt)
 #ifdef KPSE_DEBUG
   if (KPATHSEA_DEBUG_P (KPSE_DEBUG_EXPAND))
     {
-      DEBUGF1 ("path element %s =>", elt);
+      DEBUGF1 ("kpathsea_element_dirs: path element %s =>", elt);
       if (ret)
         {
           str_llist_elt_type *e;
