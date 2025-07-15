@@ -43,20 +43,24 @@
    redefinitions on some systems.  (We don't include <stddef.h>
    ourselves any more, but FYI.)  */
 #else
-/* It's impossible to say for sure what the system will deign to put in
-   <stdlib.h>, but let's hope it's at least this.  */
-extern char *getenv ();
+/* We used to declare char *getenv() here, but since C23 decided to break
+   historical () declarations, and evince (et al.?) have decided not to
+   check for <stdlib.h> any more, that caused errors, e.g.:
+   https://tug.org/pipermail/tex-live/2025-July/051609.html
+   So eliding the declaration and hoping for the best.  */
+  /* extern char *getenv (); */
 #endif /* not HAVE_STDLIB_H */
 
 #ifdef WIN32
 #include <malloc.h>
 #else
-#ifndef STDC_HEADERS
-#ifndef ALLOC_RETURN_TYPE
-#define ALLOC_RETURN_TYPE void
-#endif /* not ALLOC_RETURN_TYPE */
-extern ALLOC_RETURN_TYPE *calloc (), *malloc (), *realloc ();
-#endif /* not STDC_HEADERS */
+/* As with above getenv, don't try to declare the alloc fns.  */
+/* #ifndef STDC_HEADERS */
+/* #ifndef ALLOC_RETURN_TYPE */
+/* #define ALLOC_RETURN_TYPE void */
+/* #endif */ /* not ALLOC_RETURN_TYPE */
+/* extern ALLOC_RETURN_TYPE *calloc (), *malloc (), *realloc (); */
+/* #endif */ /* not STDC_HEADERS */
 #endif /* not WIN32 */
 
 /* SunOS 4.1.1 gets STDC_HEADERS defined, but it doesn't provide

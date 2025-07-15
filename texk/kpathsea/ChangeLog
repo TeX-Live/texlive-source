@@ -1,3 +1,11 @@
+2025-07-15  Karl Berry  <karl@freefriends.org>
+
+	* c-std.h (getenv) [! HAVE_STDLIB_H]: remove declaration, 
+	since evince (et al.?) don't bother to check for <stdlib.h>,
+	and C23 broke () declarations.
+	https://tug.org/pipermail/tex-live/2025-July/051609.html
+	-> https://bugs.debian.org/1109256
+
 2025-07-13  Karl Berry  <karl@freefriends.org>
 
 	* lib.h (kpse_cnf_p): declare new fn.
