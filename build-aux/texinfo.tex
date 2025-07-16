@@ -3,7 +3,7 @@
 % Load plain if necessary, i.e., if running under initex.
 \expandafter\ifx\csname fmtname\endcsname\relax\input plain\fi
 %
-\def\texinfoversion{2025-07-11.23}
+\def\texinfoversion{2025-07-15.21}
 %
 % Copyright 1985, 1986, 1988, 1990-2025 Free Software Foundation, Inc.
 %
@@ -483,8 +483,8 @@
 %   \envdef\foo{...}
 %   \def\Efoo{...}
 %
-% It's the responsibility of \envdef to insert \begingroup before the
-% actual body; @end closes the group after calling \Efoo.  \envdef also
+% \envdef inserts \begingroup before the actual body; @end calls
+% \Efoo then closes the group with \endgroup.  \envdef also
 % defines \thisenv, so the current environment is known; @end checks
 % whether the environment name matches.  The \checkenv macro can also be
 % used to check whether the current environment is the one expected.
@@ -3888,7 +3888,8 @@ $$%
 }
 
 \def\finishtitlepage{%
-  \vskip4pt \hrule height 2pt width \hsize
+  \ifseenauthor \vskip4pt \else \vskip 0pt plus 1filll \fi
+  \hrule height 2pt width \hsize
   \vskip\titlepagebottomglue
   \finishedtitlepagetrue
 }
@@ -3911,32 +3912,104 @@ $$%
 \let\subtitlerm=\rmfont
 \def\subtitlefont{\subtitlerm \normalbaselineskip = 13pt \normalbaselines}
 
+\let\savedtitle\empty
+\let\savedsubtitlegroup\empty
+\let\savedauthorgroup\empty
+
 \parseargdef\title{%
-  \checkenv\titlepage
-  \vbox{\titlefonts \raggedtitlesettings #1\par}%
-  % print a rule at the page bottom also.
-  \finishedtitlepagefalse
-  \vskip4pt \hrule height 4pt width \hsize \vskip4pt
+  \expandafter\ifx\thisenv\documentinfo
+    \gdef\savedtitle{#1}%
+  \else
+    \checkenv\titlepage
+    \vbox{\titlefonts \raggedtitlesettings #1\par}%
+    % print a rule at the page bottom also.
+    \finishedtitlepagefalse
+    \vskip4pt \hrule height 4pt width \hsize \vskip4pt
+  \fi
 }
 
 \parseargdef\subtitle{%
-  \checkenv\titlepage
-  {\subtitlefont \rightline{#1}}%
+  \expandafter\ifx\thisenv\documentinfo
+    \ifx\savedsubtitlegroup\empty
+      \gdef\savedsubtitlegroup{\savedsubtitle{#1}}%
+    \else
+      \expandafter\gdef\expandafter\savedsubtitlegroup\expandafter{%
+        \savedsubtitlegroup\savedsubtitle{#1}}%
+    \fi
+  \else
+    \checkenv\titlepage
+    {\subtitlefont \rightline{#1}}%
+  \fi
 }
 
 % @author should come last, but may come many times.
 % It can also be used inside @quotation.
 %
 \parseargdef\author{%
-  \def\temp{\quotation}%
-  \ifx\thisenv\temp
-    \def\quotationauthor{#1}% printed in \Equotation.
+  \expandafter\ifx\thisenv\documentinfo
+    \ifx\savedauthorgroup\empty
+      \gdef\savedauthorgroup{\savedauthor{#1}}%
+    \else
+      \expandafter\gdef\expandafter\savedauthorgroup\expandafter{%
+        \savedauthorgroup\savedauthor{#1}}%
+    \fi
   \else
-    \checkenv\titlepage
-    \ifseenauthor\else \vskip 0pt plus 1filll \seenauthortrue \fi
-    {\secfonts\rm \leftline{#1}}%
+    \def\temp{\quotation}%
+    \ifx\thisenv\temp
+      \def\quotationauthor{#1}% printed in \Equotation.
+    \else
+      \checkenv\titlepage
+      \ifseenauthor\else \vskip 0pt plus 1filll \seenauthortrue \fi
+      {\secfonts\rm \leftline{#1}}%
+    \fi
   \fi
 }
+
+% @maketitle
+{\obeylines
+\gdef\maketitle{%
+\titlepage
+\ifx\savedtitle\empty\else
+  \title \savedtitle
+  \ifx\savedsubtitlegroup\empty\else
+    \savedsubtitlegroup
+\fi\fi
+\ifx\savedauthorgroup\empty\else
+  \savedauthorgroup
+\fi
+% start verso page if either copying or publication text is given
+\ifx\copyingtext\relax
+  \ifx\publicationtext\relax\else
+    \page \vskip 0pt plus 1filll
+  \fi
+\else
+  \page \vskip 0pt plus 1filll
+\fi
+\ifx\publicationtext\relax\else
+  \insertpublication
+  \sp 1
+\fi
+\ifx\copyingtext\relax\else
+  \insertcopying
+\fi
+\end titlepage
+}
+
+% \savedauthor{#1}, called with braces.  output an @author line.
+\gdef\savedauthor#1{%
+\author#1
+}
+
+% \savedsubtitle{#1}, called with braces.  output a @subtitle line.
+\gdef\savedsubtitle#1{%
+\subtitle#1
+}
+} % \obeylines
+
+% @documentinfo block
+\envdef\documentinfo{%
+}
+\def\Edocumentinfo{}%
 
 
 % Set up page headings and footings.
@@ -7809,6 +7882,7 @@ might help (with 'rm \jobname.?? \jobname.??s')%
 {\catcode`\ =\other
 \gdef\docopying#1@end copying{\endgroup\def\copyingtext{#1}}
 }
+\let\copyingtext\relax
 
 \def\insertcopying{%
   \begingroup
@@ -7817,6 +7891,18 @@ might help (with 'rm \jobname.?? \jobname.??s')%
   \endgroup
 }
 
+\def\publication{\checkenv{}\begingroup\macrobodyctxt\dopublication}
+{\catcode`\ =\other
+\gdef\dopublication#1@end publication{\endgroup\def\publicationtext{#1}}
+}
+\let\publicationtext\relax
+
+\def\insertpublication{%
+  \begingroup
+    \parindent = 0pt  % paragraph indentation looks wrong on title page
+    \scanexp\publicationtext
+  \endgroup
+}
 
 \message{defuns,}
 % @defun etc.
