@@ -1079,20 +1079,25 @@ will have exactly two links (namely, one for @file{.} and one for
 everything in the bottom-level (leaf) directories---we can just check
 @code{st_nlink}, notice it's two, and do no more work.
 
-You can turn off this trick at runtime by setting the configuration
-variable @code{kpse_ignore_nlink_for_leaf} to 1.
-@vindex ST_NLINK_TRICK@r{, compile-time flag}
-You can also disable the trick at compile-time by undefining
-@code{ST_NLINK_TRICK} in @file{kpathsea/config.h}. It is only defined
-by default on Unix-ish systems.
-
-Turning off the trick can help in two situations: 1)@tie{}overlay
-filesystems, such as may be used for @file{/tmp}, can lie about
-@code{st_nlink}
-(@url{https://tug.org/pipermail/texhax/2025-July/026771.html});
-2)@tie{}a symbolic link to another directory will not be followed in
-such an apparent leaf directory
+Kpathsea never does this @code{st_nlink=2} check (or any disk
+checking) for @code{!!} trees (@pxref{ls-R}).  And the non-@code{!!}
+trees in a @TeX{} Live installation are typically extremely small.
+Therefore the @code{st_nlink} check is not performed by default at
+all, as of 2025 (Kpathsea 6.3.4). That way, two not-uncommon
+situations work out: 1)@tie{}all @code{gvisor}-handled filesystems return
+@code{st_nlink=1} before some post-2025 release
+(@url{https://tug.org/pipermail/texhax/2025-July/026772.html});
+2)@tie{}a symbolic link to another directory in such an apparent leaf
+directory will get followed even though @code{st_nlink=2} 
 (@url{https://tex.stackexchange.com/questions/132908}).
+
+If you have an extremely large non-@code{!!} tree, most likely
+@code{TEXMFHOME}, you may find it useful to enable the check: you can
+do this by setting the configuration variable
+@code{texmf_nlink_for_leaf} to 1. Alternatively, with such a large
+tree, you may find it even more useful to add the tree to
+@code{TEXMFDBS} so that only @code{ls-R} lookups are done (again,
+@pxref{ls-R}).
 
 @flindex elt-dirs.c
 Unfortunately, in some cases files in leaf directories are

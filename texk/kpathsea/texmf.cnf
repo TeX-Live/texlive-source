@@ -783,16 +783,17 @@ BIBTEX_CSFILE = 88591lat.csf
 % search in non-system directories if there is no exact match. It is
 % enabled by default here in texmf.cnf, but not enabled by default at
 % compile-time.
+% See https://tug.org/texinfohtml/kpathsea.html#Casefolding-search.
 %
 texmf_casefold_search = 1
 
-% This variable is specific to Unix, to turn off the trick of checking
-% for st_nlink=2 to determine if a directory is a leaf.  It is not
-% enabled by default, since the trick only fails in unusual situations,
-% and it's expensive to stat everything in every (non-!!) leaf.
+% This variable is specific to Unix, to enable or disable the check
+% for st_nlink=2 to determine if a directory is a leaf.  The check is
+% disabled by default, since it's relevant only for non-!!
+% trees, such as TEXMFHOME and TEXMF[SYS]VAR, which are almost always tiny.
+% See https://tug.org/texinfohtml/kpathsea.html#Subdirectory-expansion.
 %
-%kpse_ignore_nlink_for_leaf = 1 % uncomment to skip the trick
-%                               % or set in the environment as usual.
+texmf_nlink_for_leaf = 0 % set to 1 to enable st_nlink check in non-!! trees
 
 % This variable is specific to Windows.  It must be set to 0 or 1.  The
 % default is 0.  Setting it to 1 tells the Windows script wrappers to

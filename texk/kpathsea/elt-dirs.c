@@ -290,10 +290,12 @@ do_subdir (kpathsea kpse, str_llist_type *str_list_ptr, string elt,
               /* With SAS/C++ 6.55 on the Amiga, stat sets the st_nlink
                  field to -1 for a file, or to 1 for a directory.
                  Cygwin 1.7 also leaves st_nlink as 1:
-                 http://cygwin.com/ml/cygwin-developers/2008-04/msg00110.html
+                   http://cygwin.com/ml/cygwin-developers/2008-04/msg00110.html
+                 The gvisor sandboxing package also left it at 1, until 2025:
+                   https://github.com/google/gvisor/issues/11925
                  */
-              if (links != 2 || kpse_cnf_p (kpathsea_var_value
-                                          (kpse, "kpse_ignore_nlink_for_leaf"))
+              if (links != 2 || !kpse_cnf_p (kpathsea_var_value
+                                                (kpse, "texmf_nlink_for_leaf"))
                  ) {
 #endif /* ST_NLINK_TRICK */
                 /* All criteria are met; find subdirectories.  */

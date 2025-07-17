@@ -3,9 +3,9 @@
 # Copyright 2025 Karl Berry <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 # 
-# Test kpse_ignore_nlink_for_leaf configuration value. For the problem
-# reports that motivated this, see the "Subdirectory expansion" node in
-# the Kpathsea manual.
+# Test configuration value for enabling/disabling the check for
+# st_nlink=2 to determine leaf directories. For the problem reports that
+# motivated this, see the "Subdirectory expansion" node in the Kpathsea manual.
 
 BinDir=${BinDir:-.}
 ExeExt=${ExeExt:-}
@@ -19,62 +19,64 @@ rm -rf nlinka nlinkc
 $LN_S ../../nlinkc nlinka/nlinksub/symlinkdir || exit 77
 touch nlinka/nlinksub/subfile.tex || exit 1
 touch nlinkc/throughfile.tex || exit 1
-# i.e.:
-# nli
 
 # We don't need a texmf.cnf for this.
 KPATHSEA_WARNING=0; export KPATHSEA_WARNING
 
 # debugging
-find -type f
+#find nlink\* -type f | sort
 #brokensymlink .
 #ls -lR
 
-# expected recurse into nlinka.
+# recurse into nlinka subdir.
 TEXINPUTS=nlinka//
+
+# optimism.
 fail=0
 
 # 
-cnf_line=
-# st_nlink trick enabled, file should be found:
+cnf_line=--cnf-line=texmf_nlink_for_leaf=1 # do the check
+# st_nlink check enabled, file should be found:
 val=`$_kpsewhich $cnf_line subfile.tex`
 if test "$ExeExt" = .exe; then val=`echo $val | sed -e 's/\\r//'`; fi
 #
 # This should find the file, because we always search the directory
 # explicitly given with the // suffix.
 if test x"$val" = xnlinka/nlinksub/subfile.tex; then
-  echo "for subfile.tex (with st_nlink trick), got expected: $val"
+  echo "for subfile.tex (with st_nlink check), got expected: $val"
 else
-  echo "for subfile.tex (with st_nlink trick), failed with: $val"
+  echo "for subfile.tex (with st_nlink check), failed with: $val"
   fail=1
 fi
 
 # 
-# st_nlink enabled, file through symlinked dir should not be found:
+# st_nlink check enabled, file through symlinked dir should not be found:
 val=`$_kpsewhich $cnf_line throughfile.tex`
 if test "$ExeExt" = .exe; then val=`echo $val | sed -e 's/\\r//'`; fi
 #
 # This should not find the file, because with st_nlink, kpse cannot know
 # to descend into the symlinked subdir.
 if test -z "$val"; then
-  echo "for throughfile.tex, with st_nlink trick, not found as expected."
+  echo "for throughfile.tex, with st_nlink check, not found as expected."
 else
-  echo "for throughfile.tex, with st_nlink trick, failed since found: $val"
+  echo "for throughfile.tex, with st_nlink check, failed since found: $val"
   fail=1
 fi
 
 # 
-cnf_line=--cnf-line=kpse_ignore_nlink_for_leaf=1
-debug=--debug=-1 # won't hurt to see it if something goes wrong
-val=`$_kpsewhich $cnf_line throughfile.tex`
+cnf_line=--cnf-line=texmf_nlink_for_leaf=0 # don't do the check
+debug=--debug=-1 # can help to have if something goes wrong
+val=`$_kpsewhich $debug $cnf_line throughfile.tex`
 if test "$ExeExt" = .exe; then val=`echo $val | sed -e 's/\\r//'`; fi
 #
-# without the st_nlink trick, we should descend and find the
+# without the st_nlink check, we should descend and find the
 # file through the symlinked subdir:
-if test x"$val" = xnlinka/nlinksub/symlinkdir/throughfile.tex; then
-  echo "for throughfile.tex, without st_nlink trick, got expected: $val"
+expect=nlinka/nlinksub/symlinkdir/throughfile.tex
+if test x"$val" = x$expect; then
+  echo "for throughfile.tex, without st_nlink check, got expected: $val"
 else
-  echo "for throughfile.tex, without st_nlink trick, failed with: $val"
+  echo "for throughfile.tex, without st_nlink check, failed with: $val"
+  echo "  (expected: $expect)"
   fail=1
 fi
 

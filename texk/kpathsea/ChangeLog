@@ -1,3 +1,13 @@
+2025-07-17  Karl Berry  <karl@freefriends.org>
+
+	* NEWS: let's completely disable the st_nlink check by default.
+	* doc/kpathsea.texi (Subdirectory expansion): document this.
+	* elt-dirs.c (do_subdir): change name to texmf_nlink_for_leaf,
+	for consistency with texmf_casefold_search.
+	* tests/cnfnlink.test: change name; doc.
+	* texmf.cnf (texmf_nlink_for_leaf): change name, and set to 0
+	to disable the check.
+
 2025-07-15  Karl Berry  <karl@freefriends.org>
 
 	* c-std.h (getenv) [! HAVE_STDLIB_H]: remove declaration, 

@@ -2,10 +2,10 @@ $Id$
 This file records noteworthy changes.  (Public domain.)
 
 6.4.2 (for TeX Live 2026)
-* New configuration value kpse_ignore_nlink_for_leaf for skipping the
-  st_nlink=2 (stat member for number of links) trick to decide whether
-  we're in a leaf directory. Only relevant on Unix-ish systems. Overlay
-  filesystems can lie about this value (and everything else).
+* New configuration value texmf_nlink_for_leaf to specify whether
+  st_nlink=2 (stat member for number of links, only on Unix-ish systems)
+  check is made to decide whether we're in a leaf directory; in the
+  default texmf.cnf, the check is disabled.
 
 6.4.1 (for TeX Live 2025, 7 March 2025)
 * kpsewhich outputs a blank line when a given file cannot be found,

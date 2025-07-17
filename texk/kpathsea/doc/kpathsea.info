@@ -861,17 +861,23 @@ we don't have to stat everything in the bottom-level (leaf)
 directories--we can just check ‘st_nlink’, notice it's two, and do no
 more work.
 
-   You can turn off this trick at runtime by setting the configuration
-variable ‘kpse_ignore_nlink_for_leaf’ to 1.  You can also disable the
-trick at compile-time by undefining ‘ST_NLINK_TRICK’ in
-‘kpathsea/config.h’.  It is only defined by default on Unix-ish systems.
-
-   Turning off the trick can help in two situations: 1) overlay
-filesystems, such as may be used for ‘/tmp’, can lie about ‘st_nlink’
-(<https://tug.org/pipermail/texhax/2025-July/026771.html>); 2) a
-symbolic link to another directory will not be followed in such an
-apparent leaf directory
+   Kpathsea never does this ‘st_nlink=2’ check (or any disk checking)
+for ‘!!’ trees (*note ls-R::).  And the non-‘!!’ trees in a TeX Live
+installation are typically extremely small.  Therefore the ‘st_nlink’
+check is not performed by default at all, as of 2025 (Kpathsea 6.3.4).
+That way, two not-uncommon situations work out: 1) all ‘gvisor’-handled
+filesystems return ‘st_nlink=1’ before some post-2025 release
+(<https://tug.org/pipermail/texhax/2025-July/026772.html>); 2) a
+symbolic link to another directory in such an apparent leaf directory
+will get followed even though ‘st_nlink=2’
 (<https://tex.stackexchange.com/questions/132908>).
+
+   If you have an extremely large non-‘!!’ tree, most likely
+‘TEXMFHOME’, you may find it useful to enable the check: you can do this
+by setting the configuration variable ‘texmf_nlink_for_leaf’ to 1.
+Alternatively, with such a large tree, you may find it even more useful
+to add the tree to ‘TEXMFDBS’ so that only ‘ls-R’ lookups are done
+(again, *note ls-R::).
 
    Unfortunately, in some cases files in leaf directories are ‘stat’'d
 anyway: if the path specification is, say, ‘$TEXMF/fonts//pk//’, then
@@ -3556,9 +3562,9 @@ Index
 * dynamic creation of files:             mktex scripts.       (line   6)
 * EC fonts, and dynamic source creation: mktex scripts.       (line   6)
 * elt-dirs.c:                            Subdirectory expansion.
-                                                              (line  46)
+                                                              (line  52)
 * elt-dirs.c <1>:                        Subdirectory expansion.
-                                                              (line  54)
+                                                              (line  60)
 * enabling mktex scripts:                mktex configuration. (line   6)
 * ENCFONTS:                              Supported file formats.
                                                               (line  61)
@@ -3960,8 +3966,6 @@ Index
                                                               (line  30)
 * st_nlink:                              Subdirectory expansion.
                                                               (line  26)
-* ST_NLINK_TRICK, compile-time flag:     Subdirectory expansion.
-                                                              (line  35)
 * stack trace:                           Bug checklist.       (line  58)
 * standalone path searching:             Invoking kpsewhich.  (line   6)
 * standard error and debugging output:   Debugging.           (line  27)
@@ -4192,49 +4196,49 @@ Node: Tilde expansion35090
 Node: Brace expansion36138
 Node: KPSE_DOT expansion37133
 Node: Subdirectory expansion37658
-Node: Casefolding search40396
-Node: Casefolding rationale41173
-Node: Casefolding examples42531
-Node: Filename database47753
-Node: ls-R48767
-Node: Filename aliases52639
-Node: Database format53881
-Node: Invoking kpsewhich54930
-Node: kpsewhich examples56321
-Node: Path searching options57209
-Node: Specially-recognized files67383
-Node: Auxiliary tasks68858
-Node: Standard options73002
-Node: TeX support73370
-Node: Supported file formats74728
-Node: File lookup83479
-Node: Glyph lookup85284
-Node: Basic glyph lookup86432
-Node: Fontmap87340
-Node: Fallback font89951
-Node: Suppressing warnings90887
-Node: mktex scripts92050
-Node: mktex configuration93293
-Node: mktex script names99386
-Node: mktex script arguments101069
-Node: Programming101984
-Node: Programming overview102627
-Node: Calling sequence105538
-Node: Safe filenames110875
-Ref: openout_any111034
-Node: Program-specific files114843
-Node: Programming with config files115896
-Node: Reporting bugs117543
-Node: Bug checklist118221
-Node: Mailing lists121778
-Node: Debugging122455
-Node: Logging127712
-Node: Common problems129619
-Node: Unable to find files130096
-Node: Slow path searching132939
-Node: Unable to generate fonts134334
-Node: TeX or Metafont failing136870
-Node: Index138072
+Node: Casefolding search40819
+Node: Casefolding rationale41596
+Node: Casefolding examples42954
+Node: Filename database48176
+Node: ls-R49190
+Node: Filename aliases53062
+Node: Database format54304
+Node: Invoking kpsewhich55353
+Node: kpsewhich examples56744
+Node: Path searching options57632
+Node: Specially-recognized files67806
+Node: Auxiliary tasks69281
+Node: Standard options73425
+Node: TeX support73793
+Node: Supported file formats75151
+Node: File lookup83902
+Node: Glyph lookup85707
+Node: Basic glyph lookup86855
+Node: Fontmap87763
+Node: Fallback font90374
+Node: Suppressing warnings91310
+Node: mktex scripts92473
+Node: mktex configuration93716
+Node: mktex script names99809
+Node: mktex script arguments101492
+Node: Programming102407
+Node: Programming overview103050
+Node: Calling sequence105961
+Node: Safe filenames111298
+Ref: openout_any111457
+Node: Program-specific files115266
+Node: Programming with config files116319
+Node: Reporting bugs117966
+Node: Bug checklist118644
+Node: Mailing lists122201
+Node: Debugging122878
+Node: Logging128135
+Node: Common problems130042
+Node: Unable to find files130519
+Node: Slow path searching133362
+Node: Unable to generate fonts134757
+Node: TeX or Metafont failing137293
+Node: Index138495
 
 End Tag Table
 
