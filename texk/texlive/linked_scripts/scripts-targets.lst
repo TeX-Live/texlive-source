@@ -169,6 +169,7 @@ texmf-dist/scripts/pygmentex/pygmentex.py pygmentex
 texmf-dist/scripts/pythontex/depythontex.py depythontex
 texmf-dist/scripts/pythontex/pythontex.py pythontex
 texmf-dist/scripts/rubik/rubikrotation.pl rubikrotation
+texmf-dist/scripts/runtexfile/runtexfile.lua runtexfile
 texmf-dist/scripts/runtexshebang/runtexshebang.lua runtexshebang
 texmf-dist/scripts/show-pdf-tags/show-pdf-tags.lua show-pdf-tags
 texmf-dist/scripts/spix/spix.py spix

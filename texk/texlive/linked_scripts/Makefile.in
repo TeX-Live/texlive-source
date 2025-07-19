@@ -449,6 +449,7 @@ texmf_other_scripts = \
 	pythontex/depythontex.py \
 	pythontex/pythontex.py \
 	rubik/rubikrotation.pl \
+	runtexfile/runtexfile.lua \
 	runtexshebang/runtexshebang.lua \
 	show-pdf-tags/show-pdf-tags.lua \
 	spix/spix.py \
