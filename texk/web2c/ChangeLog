@@ -1,3 +1,18 @@
+2025-07-19  David Fuchs  <drfuchs@yahoo.com>
+
+	* dvitype.web (scan_bop [99]): verbosely output fnt_def commands
+	that occur after the preamble and before the first bop, or between
+	eop/bop pairs. This replaces the change of 2022-02-24, which fixed
+	the original problem (lack of newline between such fnt_def cmds),
+	but output them tersely.
+	https://tug.org/texmfbug/newbug.html#% https://tug.org/texmfbug/newbug.html#dvitypefontoutput
+
+2025-07-19  David Fuchs  <drfuchs@yahoo.com>
+
+	* dvitype.web (skip_pages [95]): initialize w,x,y,z to protect
+	against use in first_par, which skip_pages can call.
+	https://tug.org/texmfbug/newbug.html#dvitypeinitglobal
+
 2025-05-05  Karl Berry  <karl@freefriends.org>
 
 	* tex.ch (26.449): avoid spurious additional errors

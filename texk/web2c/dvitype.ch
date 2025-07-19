@@ -503,12 +503,52 @@ endcases;
   if show_opcodes and (o >= 128) then print (' {', o:1, '}');
 @z
 
-@x [10.99] l.2228 newline after fonts
-    begin define_font(first_par(k)); k:=nop;
+% skip_pages calls first_par, which can (uselessly) access w,x,y,z.
+% https://tug.org/texmfbug/newbug.html#dvitypeinitglobal
+@x [10.95] l.2171
+@!down_the_drain:integer; {garbage}
+begin showing:=false;
 @y
-    begin define_font(first_par(k));
-      if out_mode<>errors_only then print_ln(' ');
-      k:=nop;
+@!down_the_drain:integer; {garbage}
+begin
+w:=0; x:=0; y:=0; z:=0; {|first_par| fetches these}
+showing:=false;
+@z
+
+% show full fnt_def command after preamble but before bop, or between eop/bop.
+% https://tug.org/texmfbug/newbug.html#dvitypefontoutput
+@x [10.99] l.2222
+procedure scan_bop;
+var k:0..255; {command code}
+begin repeat if eof(dvi_file) then bad_dvi('the file ended prematurely');
+@.the file ended prematurely@>
+  k:=get_byte;
+  if (k>=fnt_def1)and(k<fnt_def1+4) then
+    begin define_font(first_par(k)); k:=nop;
+    end;
+@y
+procedure scan_bop;
+var k:0..255; {command code}
+@!a:integer; {byte number of the current command}
+@!p:integer; {parameter of the current command}
+@!o:0..255;  {copy of command code}
+begin repeat if eof(dvi_file) then bad_dvi('the file ended prematurely');
+@.the file ended prematurely@>
+  a:=cur_loc;
+  k:=get_byte;
+  if (k>=fnt_def1)and(k<fnt_def1+4) then
+    begin
+    p:=first_par(k);
+    {Web2C's |dvitype| provides a |-show-opcodes| option, the output
+     from which requires that the opcode be in the variable |o|,
+     as it is elsewhere. So duplicate the value. Sorry.}
+    o:=k;
+    if max_pages>0 then
+      major('fntdef',k-fnt_def1+1:1,' ',p:1);
+    define_font(p);
+    if out_mode<>errors_only then print_ln(' ');
+    k:=nop;
+    end;
 @z
 
 @x [13.107] l.2404 (main) No dialog; remove unused label.
