@@ -29,7 +29,7 @@ KPATHSEA_WARNING=0; export KPATHSEA_WARNING
 #ls -lR
 
 # recurse into nlinka subdir.
-TEXINPUTS=nlinka//
+TEXINPUTS=nlinka//; export TEXINPUTS
 
 # optimism.
 fail=0
@@ -80,6 +80,7 @@ else
   fail=1
 fi
 
+#exit 1
 exit $fail
 
 # BTW, to run just this one test:

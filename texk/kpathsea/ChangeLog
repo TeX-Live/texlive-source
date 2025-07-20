@@ -1,3 +1,7 @@
+2025-07-20  Karl Berry  <karl@freefriends.org>
+
+	* tests/cnfnlink.test: forgot to export TEXINPUTS.
+
 2025-07-17  Karl Berry  <karl@freefriends.org>
 
 	* NEWS: let's completely disable the st_nlink check by default.
