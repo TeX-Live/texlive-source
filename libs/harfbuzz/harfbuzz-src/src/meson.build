@@ -338,8 +338,8 @@ hb_ft_headers = files('hb-ft.h')
 hb_fontations_sources = files()
 hb_fontations_headers = files('hb-fontations.h')
 
-hb_harfruzz_sources = files('hb-harfruzz.cc')
-hb_harfruzz_headers = files()
+hb_harfrust_sources = files('hb-harfrust.cc')
+hb_harfrust_headers = files()
 
 hb_glib_sources = files('hb-glib.cc')
 hb_glib_headers = files('hb-glib.h')
@@ -428,6 +428,8 @@ hb_gobject_headers = files(
   'hb-gobject.h',
   'hb-gobject-structs.h',
 )
+
+hb_failing_alloc_sources = files('failing-alloc.c')
 
 ragel = find_program('ragel', version: '6.10', required: false)
 has_ragel = ragel.found()
@@ -532,7 +534,7 @@ if conf.get('HAVE_CORETEXT', 0) == 1
   harfbuzz_deps += coretext_deps
 endif
 
-if conf.get('HAVE_FONTATIONS', 0) == 1 or conf.get('HAVE_HARFRUZZ', 0) == 1
+if conf.get('HAVE_FONTATIONS', 0) == 1 or conf.get('HAVE_HARFRUST', 0) == 1
   subdir('rust')
   harfbuzz_deps += [harfbuzz_rust_dep]
 endif
@@ -542,9 +544,9 @@ if conf.get('HAVE_FONTATIONS', 0) == 1
   hb_headers += hb_fontations_headers
 endif
 
-if conf.get('HAVE_HARFRUZZ', 0) == 1
-  hb_sources += hb_harfruzz_sources
-  hb_headers += hb_harfruzz_headers
+if conf.get('HAVE_HARFRUST', 0) == 1
+  hb_sources += hb_harfrust_sources
+  hb_headers += hb_harfrust_headers
 endif
 
 have_icu = conf.get('HAVE_ICU', 0) == 1
@@ -621,10 +623,10 @@ endif
 
 if get_option('fuzzer_ldflags') != ''
   extra_hb_cpp_args += ['-DHB_CUSTOM_MALLOC']
-  hb_sources += 'failing-alloc.c'
-  hb_subset_sources += 'failing-alloc.c'
-  hb_icu_sources += 'failing-alloc.c'
-  hb_gobject_sources += 'failing-alloc.c'
+  hb_sources += hb_failing_alloc_sources
+  hb_subset_sources += hb_failing_alloc_sources
+  hb_icu_sources += hb_failing_alloc_sources
+  hb_gobject_sources += hb_failing_alloc_sources
 endif
 
 darwin_versions = [hb_version_int, '@0@.0.0'.format(hb_version_int)]

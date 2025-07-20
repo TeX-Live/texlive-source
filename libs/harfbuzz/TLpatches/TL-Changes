@@ -1,5 +1,5 @@
-Changes applied to the harfbuzz-11.2.1/ tree as obtained from:
-	https://github.com/harfbuzz/harfbuzz/releases/download/11.2.1/
+Changes applied to the harfbuzz-11.3.1/ tree as obtained from:
+	https://github.com/harfbuzz/harfbuzz/releases/download/11.3.1/
 
 Removed:
 	.clang-format
@@ -10,7 +10,6 @@ Removed:
 
         unused dirs:
 	.ci
-	.circleci
 	.github
 	docs
 	perf

@@ -3,6 +3,10 @@ project(harfbuzz)
 
 message(WARN "HarfBuzz has a Meson port and tries to migrate all the other build systems to it, please consider using it as we might remove our cmake port soon.")
 
+if(POLICY CMP0063)
+  cmake_policy(SET CMP0063 NEW)
+endif()
+
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
@@ -359,6 +363,7 @@ if (WIN32 AND HB_HAVE_DIRECTWRITE)
   endif ()
   add_definitions(-DHAVE_DIRECTWRITE)
   list(APPEND project_headers ${PROJECT_SOURCE_DIR}/src/hb-directwrite.h)
+  list(APPEND THIRD_PARTY_LIBS dwrite)
 endif ()
 
 if (HB_HAVE_CAIRO)
@@ -487,9 +492,13 @@ endif ()
 ## Define harfbuzz library
 add_library(harfbuzz ${project_sources} ${project_extra_sources} ${project_headers})
 target_link_libraries(harfbuzz ${THIRD_PARTY_LIBS})
+if (MINGW)
+    target_compile_options(harfbuzz PRIVATE "-Wa,-mbig-obj")
+endif()
 target_include_directories(harfbuzz PUBLIC
                            "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>"
                            "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/harfbuzz>")
+set_target_properties(harfbuzz PROPERTIES VISIBILITY_INLINES_HIDDEN TRUE)
 if (HB_HAVE_FREETYPE AND TARGET freetype)
   target_link_libraries(harfbuzz freetype)
 endif ()
@@ -500,10 +509,9 @@ if (HB_HAVE_ICU)
   add_library(harfbuzz-icu ${PROJECT_SOURCE_DIR}/src/hb-icu.cc ${PROJECT_SOURCE_DIR}/src/hb-icu.h)
   add_dependencies(harfbuzz-icu harfbuzz)
   target_link_libraries(harfbuzz-icu harfbuzz ${THIRD_PARTY_LIBS})
+  set_target_properties(harfbuzz-icu PROPERTIES VISIBILITY_INLINES_HIDDEN TRUE)
 
   if (BUILD_SHARED_LIBS)
-    set_target_properties(harfbuzz harfbuzz-icu PROPERTIES VISIBILITY_INLINES_HIDDEN TRUE)
-
     if (BUILD_FRAMEWORK)
       set_target_properties(harfbuzz harfbuzz-icu PROPERTIES
         FRAMEWORK TRUE
@@ -528,10 +536,13 @@ if (HB_BUILD_SUBSET)
   list(APPEND project_headers ${PROJECT_SOURCE_DIR}/src/hb-subset.h ${PROJECT_SOURCE_DIR}/src/hb-subset-serialize.h)
   add_dependencies(harfbuzz-subset harfbuzz)
   target_link_libraries(harfbuzz-subset harfbuzz ${THIRD_PARTY_LIBS})
+  set_target_properties(harfbuzz-subset PROPERTIES VISIBILITY_INLINES_HIDDEN TRUE)
 
+  if (MINGW)
+    target_compile_options(harfbuzz-subset PRIVATE "-Wa,-mbig-obj")
+  endif()
+  
   if (BUILD_SHARED_LIBS)
-    set_target_properties(harfbuzz harfbuzz-subset PROPERTIES VISIBILITY_INLINES_HIDDEN TRUE)
-
     if (BUILD_FRAMEWORK)
       set_target_properties(harfbuzz harfbuzz-subset PROPERTIES
         FRAMEWORK TRUE
@@ -593,10 +604,9 @@ if (HB_HAVE_GOBJECT)
   include_directories(BEFORE ${CMAKE_CURRENT_BINARY_DIR}/src)
   add_dependencies(harfbuzz-gobject harfbuzz)
   target_link_libraries(harfbuzz-gobject harfbuzz ${GOBJECT_LIBRARIES} ${THIRD_PARTY_LIBS})
+  set_target_properties(harfbuzz-gobject PROPERTIES VISIBILITY_INLINES_HIDDEN TRUE)
 
   if (BUILD_SHARED_LIBS)
-    set_target_properties(harfbuzz harfbuzz-gobject PROPERTIES VISIBILITY_INLINES_HIDDEN TRUE)
-
     if (BUILD_FRAMEWORK)
       set_target_properties(harfbuzz-gobject PROPERTIES
         FRAMEWORK TRUE
@@ -620,10 +630,9 @@ if (HB_HAVE_CAIRO)
   add_library(harfbuzz-cairo ${PROJECT_SOURCE_DIR}/src/hb-cairo.cc ${PROJECT_SOURCE_DIR}/src/hb-static.cc ${PROJECT_SOURCE_DIR}/src/hb-cairo.h)
   add_dependencies(harfbuzz-cairo harfbuzz)
   target_link_libraries(harfbuzz-cairo harfbuzz ${THIRD_PARTY_LIBS})
+  set_target_properties(harfbuzz-cairo PROPERTIES VISIBILITY_INLINES_HIDDEN TRUE)
 
   if (BUILD_SHARED_LIBS)
-    set_target_properties(harfbuzz-cairo PROPERTIES VISIBILITY_INLINES_HIDDEN TRUE)
-
     if (BUILD_FRAMEWORK)
       set_target_properties(harfbuzz-cairo PROPERTIES
         FRAMEWORK TRUE
@@ -843,16 +852,6 @@ if (HB_BUILD_UTILS)
   )
   target_link_libraries(hb-subset harfbuzz harfbuzz-subset)
 
-  add_executable(hb-ot-shape-closure
-        ${PROJECT_SOURCE_DIR}/util/face-options.hh
-        ${PROJECT_SOURCE_DIR}/util/font-options.hh
-        ${PROJECT_SOURCE_DIR}/util/hb-ot-shape-closure.cc
-        ${PROJECT_SOURCE_DIR}/util/main-font-text.hh
-        ${PROJECT_SOURCE_DIR}/util/options.hh
-        ${PROJECT_SOURCE_DIR}/util/text-options.hh
-  )
-  target_link_libraries(hb-ot-shape-closure harfbuzz)
-
   if (HB_HAVE_GOBJECT)
     add_executable(hb-info
         ${PROJECT_SOURCE_DIR}/util/batch.hh
@@ -1006,9 +1005,6 @@ if (NOT SKIP_INSTALL_LIBRARIES AND NOT SKIP_INSTALL_ALL)
       )
     endif()
 
-    install(TARGETS hb-ot-shape-closure
-      RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-    )
   endif ()
   if (HB_HAVE_GOBJECT)
     install(TARGETS harfbuzz-gobject
