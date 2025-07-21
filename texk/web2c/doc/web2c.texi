@@ -12,7 +12,7 @@ The latest version is available from ftp://ftp.tug.org/tex/texinfo.tex.}
 @end tex
 
 @set version 2025
-@set month-year January 2025
+@set month-year July 2025
 
 @c Define new indices for commands in auxiliary files, filenames, and options.
 @defcodeindex cm
@@ -2712,9 +2712,8 @@ Also, a standard MetaPost package for drawing graphs is documented in
 AT&T technical report CSTR-164, available as the file @file{mpgraph.ps},
 generally stored alongside @file{mpman.ps}.
 
-MetaPost processes its command line and determines its memory dump
-(mem) file in a way analogous to Metafont and @TeX{} (@pxref{tex
-invocation,,@code{tex} invocation}, and @pxref{Memory dumps}).
+MetaPost processes its command line in a way analogous to Metafont and
+@TeX{} (@pxref{tex invocation,,@code{tex} invocation}).
 Synopses:
 
 @example
@@ -2831,7 +2830,6 @@ The program accepts the following options, as well as the standard
 @samp{-help} and @samp{-version} (@pxref{Common options}):
 @table @samp
 @item -[no]-file-line-error
-@itemx -fmt=@var{fmtname}
 @itemx -halt-on-error
 @itemx -ini
 @itemx -interaction=@var{string}
@@ -2845,6 +2843,28 @@ The program accepts the following options, as well as the standard
 @itemx -8bit
 These options are common to @TeX{}, Metafont, and MetaPost.
 @xref{Common options}.
+
+@item -debug
+@opindex -debug
+Print debugging information and leave temporary files in place.
+
+@item -mem=@var{MPFILE}
+@opindex -mem
+Preload @var{MPFILE} instead of via the program name of @code{%&} line.
+This is a MetaPost source file; MetaPost no longer has binary mem files.
+
+@item -numbersystem=@var{string}
+@opindex -numbersystem
+Set number system mode where @var{string} is one of:
+@code{scaled double binary interval decimal}.
+
+@item -restricted 
+@opindex -restricted
+Be secure: disable the @code{tex}, @code{makempx} and editor commands.
+
+@item -s @var{internal}=@var{value}
+@opindex -s
+Set @var{INTERNAL} to @var{VALUE}, a string or integer.
 
 @item -T
 @itemx -troff
@@ -2871,7 +2891,8 @@ As of MetaPost 1.504 (@TeX{} Live 2011), MetaPost no longer dumps
 @file{.mem} files (@pxref{Memory dumps}) and does not distinguish
 virgin and initial forms (@pxref{Initial and virgin}).  Instead, the
 ``initial'' file name is read in its source form---that is,
-@file{mpost.mp} when the program is invoked as @command{mpost}.
+@file{mpost.mp} when the program is invoked as @command{mpost}.  This
+is considered to be ``preloading'' the source.
 
 For a list of options and other information, see @ref{mpost invocation}.
 
@@ -3222,6 +3243,10 @@ The output is to the basename of @var{webfile} extended with
 @samp{.tex}; for example, @samp{weave /wherever/foo.web} creates
 @file{./foo.tex}.  Weave applies @var{changefile} to @var{webfile}
 before writing the output; by default, there is no change file.
+
+The Web2c version of Weave accepts 8-bit characters as themselves.
+This can cause trouble with various internal WEB control codes, and
+should not be relied on.
 
 The program accepts the following option, as well as the standard
 @samp{-verbose}, @samp{-help} and @samp{-version} (@pxref{Common

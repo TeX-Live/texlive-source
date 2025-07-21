@@ -1,3 +1,7 @@
+2025-07-21  Karl Berry  <karl@freefriends.org>
+
+	* doc/web2c.texi (mpost invocation): update option list.
+
 2025-07-19  David Fuchs  <drfuchs@yahoo.com>
 
 	* dvitype.web (scan_bop [99]): verbosely output fnt_def commands
