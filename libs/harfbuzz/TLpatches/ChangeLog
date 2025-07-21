@@ -1,5 +1,10 @@
 2025-07-21  Akira Kakuto  <kakuto@jcom.zaq.ne.jp>
 
+	Imported harfbuzz-11.3.2 source tree from:
+	https://github.com/harfbuzz/harfbuzz/releases/download/11.3.2/
+
+2025-07-21  Akira Kakuto  <kakuto@jcom.zaq.ne.jp>
+
 	Imported harfbuzz-11.3.1 source tree from:
 	https://github.com/harfbuzz/harfbuzz/releases/download/11.3.1/
 
