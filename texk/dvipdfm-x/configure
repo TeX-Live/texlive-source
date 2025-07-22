@@ -18096,6 +18096,10 @@ ${top_builddir}/../kpathsea/paths.h:
 	cd ${top_builddir}/../kpathsea && $(MAKE) $(AM_MAKEFLAGS) rebuild'
 fi
 
+
+
+
+
 { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking if libkpathsea supports debugging" >&5
 printf %s "checking if libkpathsea supports debugging... " >&6; }
 if test ${kpse_cv_kpse_debug+y}
@@ -18177,6 +18181,10 @@ $(ZLIB_DEPEND): ${top_builddir}/../../libs/zlib/include/zconf.h
 ${top_builddir}/../../libs/zlib/include/zconf.h:
 	cd ${top_builddir}/../../libs/zlib && $(MAKE) $(AM_MAKEFLAGS) rebuild'
 fi
+
+
+
+
 { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking if <zlib.h> defines 'z_const'" >&5
 printf %s "checking if <zlib.h> defines 'z_const'... " >&6; }
 if test ${kpse_cv_have_decl_z_const+y}
@@ -18250,6 +18258,10 @@ ${top_builddir}/../../libs/libpng/include/png.h:
 	cd ${top_builddir}/../../libs/libpng && $(MAKE) $(AM_MAKEFLAGS) rebuild'
 fi
 
+
+
+
+
 ##tldbg _KPSE_LIB_FLAGS: Setup libpaper (-lpaper) flags.
 echo 'tldbg:_KPSE_LIB_FLAGS called: libdir=libpaper, libname=paper, options=, tlincl=-IBLD/libs/libpaper/include, tllib=BLD/libs/libpaper/libpaper.a, tlextra=, rebuildsrcdeps=, rebuildblddeps=${top_builddir}/../../libs/libpaper/include/paper.h.' >&5
 ##tldbg _KPSE_LIB_FLAGS_TL: libpaper (paper) .
@@ -18290,6 +18302,10 @@ $(LIBPAPER_DEPEND): ${top_builddir}/../../libs/libpaper/include/paper.h
 ${top_builddir}/../../libs/libpaper/include/paper.h:
 	cd ${top_builddir}/../../libs/libpaper && $(MAKE) $(AM_MAKEFLAGS) rebuild'
 fi
+
+
+
+
 
 
 printf "%s\n" "#define HAVE_LIBPAPER 1" >>confdefs.h

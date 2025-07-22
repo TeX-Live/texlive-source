@@ -17108,6 +17108,10 @@ ${top_builddir}/../kpathsea/paths.h:
 	cd ${top_builddir}/../kpathsea && $(MAKE) $(AM_MAKEFLAGS) rebuild'
 fi
 
+
+
+
+
 KPATHSEA_INCLUDES="$KPATHSEA_INCLUDES -DNO_DEBUG"
 
 { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for native WIN32 or MINGW32" >&5

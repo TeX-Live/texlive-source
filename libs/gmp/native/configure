@@ -5952,6 +5952,7 @@ case $ac_cv_search_pow in #(
 esac
 
 
+
 GMP_TREE=../gmp-src
 
 

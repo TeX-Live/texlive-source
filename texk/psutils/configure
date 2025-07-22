@@ -17121,6 +17121,10 @@ ${top_builddir}/../kpathsea/paths.h:
 	cd ${top_builddir}/../kpathsea && $(MAKE) $(AM_MAKEFLAGS) rebuild'
 fi
 
+
+
+
+
 { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking if libkpathsea supports debugging" >&5
 printf %s "checking if libkpathsea supports debugging... " >&6; }
 if test ${kpse_cv_kpse_debug+y}
@@ -17202,6 +17206,10 @@ $(LIBPAPER_DEPEND): ${top_builddir}/../../libs/libpaper/include/paper.h
 ${top_builddir}/../../libs/libpaper/include/paper.h:
 	cd ${top_builddir}/../../libs/libpaper && $(MAKE) $(AM_MAKEFLAGS) rebuild'
 fi
+
+
+
+
 
 
 { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for native WIN32 or MINGW32" >&5

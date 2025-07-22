@@ -1,3 +1,10 @@
+2025-07-21  Karl Berry  <karl@freefriends.org>
+
+	* configure.ac: commented-out example of KPSE_ENABLE_PROG([bibcheck])
+	as a package using only Autoconf, not Automake. bibcheck et al.
+	can't be included because they don't support VPATH builds,
+	but not using automake isn't a stopper per se.
+
 2018-03-15  Karl Berry  <karl@tug.org>
 
 	* README: best guess is that xindy's use of clisp does not need

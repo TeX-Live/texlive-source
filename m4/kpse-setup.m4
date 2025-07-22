@@ -1,6 +1,6 @@
 # $Id$
 # Private macros for the TeX Live (TL) tree.
-# Copyright 2017-2021 Karl Berry <tex-live@tug.org>
+# Copyright 2015-2025 Karl Berry <tex-live@tug.org>
 # Copyright 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 #
 # This file is free software; the copyright holder
@@ -120,7 +120,7 @@ KPSE_FOR_PKGS([texlibs], [m4_sinclude(kpse_TL[texk/]Kpse_Pkg[/ac/withenable.ac])
 
 # end of kpse_setup macro.
 echo 'tldbg:[$0] done (toplevel=[$1])' >&AS_MESSAGE_LOG_FD
-]) # KPSE_SETUP
+]) # end kpse_setup
 
 # KPSE_ENABLE_PROG(PROG, REQUIRED-LIBS, OPTIONS, [COMMENT])
 # ---------------------------------------------------------
@@ -131,21 +131,26 @@ echo 'tldbg:[$0] done (toplevel=[$1])' >&AS_MESSAGE_LOG_FD
 #          disable - do not build by default
 #          native - impossible to cross compile
 #          x - requires X11
+# If given, the COMMENT is used in the help string.
 AC_DEFUN([KPSE_ENABLE_PROG], [dnl
+echo 'tldbg:[$0] called: prog=[$1], libs=[$2], options=[$3], comment=[$4].' >&AS_MESSAGE_LOG_FD
 m4_define([have_]AS_TR_SH($1))[]dnl
 m4_pushdef([Kpse_enable], m4_if(m4_index([ $3 ], [ disable ]), [-1], [yes], [no]))[]dnl
+echo 'tldbg:[$0] enabling: $1 -> Kpse_enable' >&AS_MESSAGE_LOG_FD
 AC_ARG_ENABLE([$1],
               AS_HELP_STRING([[--]m4_if(Kpse_enable, [yes], [dis], [en])[able-$1]],
                               m4_if(Kpse_enable, [yes],
                                     [do not ])[build the $1 ]m4_ifval([$4],
                                                                       [($4) ])[package]))[]dnl
+#
 m4_if(m4_index([ $3 ], [ x ]), [-1], , [AS_IF([test "x$with_x" = xno],
       [AS_CASE([$enable_[]AS_TR_SH($1)],
                [""], [AC_MSG_NOTICE([`--without-x' -> `--disable-$1'])
                       enable_[]AS_TR_SH($1)=no
                       ac_configure_args="$ac_configure_args '--disable-$1'"],
                [yes], [AC_MSG_ERROR([Sorry, incompatible options `--without-x' and `--enable-$1'])])])
-])[]dnl m4_if
+])[]dnl end m4_if
+#
 AS_CASE([$enable_[]AS_TR_SH($1)],
   m4_if(m4_index([ $3 ], [ native ]), [-1],
         [[yes|no], []],
@@ -163,12 +168,16 @@ AS_CASE([$enable_[]AS_TR_SH($1)],
      ac_configure_args="$ac_configure_args '--enable-$1=$enable_[]AS_TR_SH($1)'"
    m4_if(m4_index([ $3 ], [ native ]), [-1], , [fi])])
 m4_popdef([Kpse_enable])[]dnl
+#
+# setting need_ for each of [$2]:
 m4_ifval([$2], [
 test "x$enable_[]AS_TR_SH($1)" = xno || {
 AC_FOREACH([Kpse_Lib], [$2], [  need_[]AS_TR_SH(Kpse_Lib)=yes
 ])}
-])[]dnl m4_ifval
-]) # KPSE_ENABLE_PROG
+])[]dnl end m4_ifval
+
+echo 'tldbg:[$0] done (prog=[$1])' >&AS_MESSAGE_LOG_FD
+]) # end kpse_enable_prog
 
 # KPSE_WITH_LIB(LIB, REQUIRED-LIBS, OPTIONS)
 # ------------------------------------------
@@ -236,7 +245,7 @@ test "x$need_[]AS_TR_SH($2)" = xyes && {
 AC_FOREACH([Kpse_Lib], [$3], [  need_[]AS_TR_SH(Kpse_Lib)=yes
 ])}
 ])[]dnl m4_ifval
-]) # _KPSE_WITH_LIB
+]) # end _kpse_with_lib
 
 # KPSE_TRY_LIB(LIB, PROLOGUE, BODY)
 # ---------------------------------
@@ -253,7 +262,7 @@ if test "x$need_[]AS_TR_SH($1):$with_system_[]AS_TR_SH($1)" = xyes:yes; then
                  [syslib_status=no kpse_res=failed])
   AC_MSG_RESULT([$kpse_res])
 fi
-]) # KPSE_TRY_LIB
+]) # end kpse_try_lib
 
 # KPSE_TRY_LIBXX(LIB, PROLOGUE, BODY)
 # -----------------------------------
@@ -263,7 +272,7 @@ AC_REQUIRE([AC_PROG_CXX])[]dnl
 AC_LANG_PUSH([C++])[]dnl
 KPSE_TRY_LIB($@)[]dnl
 AC_LANG_POP([C++])[]dnl
-]) # KPSE_TRY_LIBXX
+]) # end kpse_try_libxx
 
 # KPSE_RECURSE_LIBS(LIST, TEXT, [PREFIX])
 # ---------------------------------------
@@ -274,17 +283,18 @@ _KPSE_RECURSE([$1], [$2 libraries],
               [test "x$with_system_[]Kpse_pkg" != xyes && test "x$need_[]Kpse_pkg" = xyes],
               [$3])[]dnl
 m4_popdef([Kpse_add])[]dnl
-]) # KPSE_RECURSE_LIBS
+]) # end kpse_recurse_libs
 
 # KPSE_RECURSE_PROGS(LIST, TEXT)
 # ------------------------------
 # Determine which of the programs in kpse_LIST_pkgs to build.
 AC_DEFUN([KPSE_RECURSE_PROGS], [dnl
 m4_pushdef([Kpse_add], [$][1="$$][1 Kpse_Pkg"])[]dnl append
+echo 'tldbg:[$0] calling with: $1 $2' >&AS_MESSAGE_LOG_FD
 _KPSE_RECURSE([$1], [$2 programs],
               [test "x$enable_[]Kpse_pkg" = xyes])[]dnl
 m4_popdef([Kpse_add])[]dnl
-]) # KPSE_RECURSE_PROGS
+]) # end kpse_recurse_progs
 
 # _KPSE_RECURSE(LIST, TEXT, COND, [PREFIX])
 # -----------------------------------------
@@ -303,18 +313,34 @@ echo 'tldbg:[$0] called: list=[$1], text=[$2], cond=[$3], prefix=[$4].' >&AS_MES
 MAKE_SUBDIRS=
 CONF_SUBDIRS=
 KPSE_FOR_PKGS([$1], [dnl
+echo 'tldbg:[$0]  checking: Kpse_pkg' >&AS_MESSAGE_LOG_FD
 m4_ifdef([have_]Kpse_pkg, [dnl
 if test -x $srcdir/$4Kpse_Pkg/configure; then
-  $3 && Kpse_add([MAKE_SUBDIRS])
+  echo 'tldbg:[$0]   have configure, adding to CONF_SUBDIRS: Kpse_pkg' >&AS_MESSAGE_LOG_FD
   Kpse_add([CONF_SUBDIRS])
+  if $3; then
+    echo 'tldbg:[$0]   $3 true, adding to MAKE_SUBDIRS: Kpse_pkg' >&AS_MESSAGE_LOG_FD
+    Kpse_add([MAKE_SUBDIRS])
+  else
+    echo 'tldbg:[$0]   $3 false, omitting from MAKE_SUBDIRS: Kpse_Pkg' >&AS_MESSAGE_LOG_FD
+  fi
+  
 else
-  echo 'tldbg:[$0] skipping subdir, no (executable) configure: '"$srcdir"'/$4Kpse_Pkg/configure' >&AS_MESSAGE_LOG_FD
+  echo 'tldbg:[$0]   omitting from CONF_SUBDIRS, no (executable) configure: '"$srcdir"'/$4Kpse_Pkg/configure' >&AS_MESSAGE_LOG_FD
 fi
-])[]dnl m4_ifdef
-])
+], [
+  echo 'tldbg:[$0]   omitting from CONF_SUBDIRS, [have_]Kpse_pkg not defined' >&AS_MESSAGE_LOG_FD
+])dnl m4_ifdef
+])dnl 
 AC_SUBST([MAKE_SUBDIRS])[]dnl
 AC_SUBST([CONF_SUBDIRS])[]dnl
-AC_MSG_RESULT([$MAKE_SUBDIRS])[]dnl
+dnl No dnl here to avoid following code getting pasted on:
+AC_MSG_RESULT([$MAKE_SUBDIRS])
+dnl 
+dnl Turns out they're normally different, because of xindy.
+dnl if test x"$MAKE_SUBDIRS" != x"$CONF_SUBDIRS"; then
+dnl  AC_MSG_NOTICE([$2 to configure is different: $CONF_SUBDIRS])  
+dnl fi
 dnl
 dnl Historic (and current) method: assume all directories present will be
 dnl configured, but only make if the package is enabled.  This works in
@@ -334,5 +360,5 @@ dnl #new if test -x $srcdir/$4Kpse_Pkg/configure && $3; then
 dnl #new   Kpse_add([CONF_SUBDIRS])
 dnl #new   Kpse_add([MAKE_SUBDIRS])
 dnl #new fi
-dnl 
-]) dnl _KPSE_RECURSE
+echo 'tldbg:[$0] done (list=[$1])' >&AS_MESSAGE_LOG_FD
+]) # end _kpse_recurse

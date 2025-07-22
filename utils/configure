@@ -2779,6 +2779,7 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
 
 
+# utils/configure.ac: kpse_setup call; see comment in ../configure.ac.
 
 
 
@@ -4392,11 +4393,15 @@ esac
 
 ## utils/autosp/ac/withenable.ac: configure.ac fragment for Tl subdir
 ## configure options and TL libraries required for autosp.
+echo 'tldbg:KPSE_ENABLE_PROG called: prog=autosp, libs=, options=, comment=.' >&5
+echo 'tldbg:KPSE_ENABLE_PROG enabling: autosp -> yes' >&5
 # Check whether --enable-autosp was given.
 if test ${enable_autosp+y}
 then :
   enableval=$enable_autosp;
 fi
+#
+#
 case $enable_autosp in #(
   yes|no) :
      ;; #(
@@ -4408,14 +4413,22 @@ printf "%s\n" "$as_me: Assuming \`--enable-autosp=$enable_autosp'" >&6;}
      ac_configure_args="$ac_configure_args '--enable-autosp=$enable_autosp'"
     ;;
 esac
+#
+# setting need_ for each of []:
+
+echo 'tldbg:KPSE_ENABLE_PROG done (prog=autosp)' >&5
 
 ## utils/axodraw2/ac/withenable.ac: configure.ac fragment for TL subdir
 ## configure options and TL libraries for axodraw2.
+echo 'tldbg:KPSE_ENABLE_PROG called: prog=axodraw2, libs=, options=, comment=.' >&5
+echo 'tldbg:KPSE_ENABLE_PROG enabling: axodraw2 -> yes' >&5
 # Check whether --enable-axodraw2 was given.
 if test ${enable_axodraw2+y}
 then :
   enableval=$enable_axodraw2;
 fi
+#
+#
 case $enable_axodraw2 in #(
   yes|no) :
      ;; #(
@@ -4427,14 +4440,22 @@ printf "%s\n" "$as_me: Assuming \`--enable-axodraw2=$enable_axodraw2'" >&6;}
      ac_configure_args="$ac_configure_args '--enable-axodraw2=$enable_axodraw2'"
     ;;
 esac
+#
+# setting need_ for each of []:
+
+echo 'tldbg:KPSE_ENABLE_PROG done (prog=axodraw2)' >&5
 
 ## utils/devnag/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory utils/devnag/
 ## configure options and TL libraries required for devnag
+echo 'tldbg:KPSE_ENABLE_PROG called: prog=devnag, libs=, options=, comment=.' >&5
+echo 'tldbg:KPSE_ENABLE_PROG enabling: devnag -> yes' >&5
 # Check whether --enable-devnag was given.
 if test ${enable_devnag+y}
 then :
   enableval=$enable_devnag;
 fi
+#
+#
 case $enable_devnag in #(
   yes|no) :
      ;; #(
@@ -4446,14 +4467,22 @@ printf "%s\n" "$as_me: Assuming \`--enable-devnag=$enable_devnag'" >&6;}
      ac_configure_args="$ac_configure_args '--enable-devnag=$enable_devnag'"
     ;;
 esac
+#
+# setting need_ for each of []:
+
+echo 'tldbg:KPSE_ENABLE_PROG done (prog=devnag)' >&5
 
 ## utils/lacheck/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory utils/lacheck/
 ## configure options and TL libraries required for lacheck
+echo 'tldbg:KPSE_ENABLE_PROG called: prog=lacheck, libs=, options=, comment=.' >&5
+echo 'tldbg:KPSE_ENABLE_PROG enabling: lacheck -> yes' >&5
 # Check whether --enable-lacheck was given.
 if test ${enable_lacheck+y}
 then :
   enableval=$enable_lacheck;
 fi
+#
+#
 case $enable_lacheck in #(
   yes|no) :
      ;; #(
@@ -4465,14 +4494,22 @@ printf "%s\n" "$as_me: Assuming \`--enable-lacheck=$enable_lacheck'" >&6;}
      ac_configure_args="$ac_configure_args '--enable-lacheck=$enable_lacheck'"
     ;;
 esac
+#
+# setting need_ for each of []:
+
+echo 'tldbg:KPSE_ENABLE_PROG done (prog=lacheck)' >&5
 
 ## utils/m-tx/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory utils/m-tx/
 ## configure options and TL libraries required for mtx
+echo 'tldbg:KPSE_ENABLE_PROG called: prog=m-tx, libs=, options=, comment=.' >&5
+echo 'tldbg:KPSE_ENABLE_PROG enabling: m-tx -> yes' >&5
 # Check whether --enable-m-tx was given.
 if test ${enable_m_tx+y}
 then :
   enableval=$enable_m_tx;
 fi
+#
+#
 case $enable_m_tx in #(
   yes|no) :
      ;; #(
@@ -4484,14 +4521,22 @@ printf "%s\n" "$as_me: Assuming \`--enable-m-tx=$enable_m_tx'" >&6;}
      ac_configure_args="$ac_configure_args '--enable-m-tx=$enable_m_tx'"
     ;;
 esac
+#
+# setting need_ for each of []:
+
+echo 'tldbg:KPSE_ENABLE_PROG done (prog=m-tx)' >&5
 
 ## utils/pmx/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory utils/pmx/
 ## configure options and TL libraries required for pmx
+echo 'tldbg:KPSE_ENABLE_PROG called: prog=pmx, libs=, options=, comment=.' >&5
+echo 'tldbg:KPSE_ENABLE_PROG enabling: pmx -> yes' >&5
 # Check whether --enable-pmx was given.
 if test ${enable_pmx+y}
 then :
   enableval=$enable_pmx;
 fi
+#
+#
 case $enable_pmx in #(
   yes|no) :
      ;; #(
@@ -4503,14 +4548,22 @@ printf "%s\n" "$as_me: Assuming \`--enable-pmx=$enable_pmx'" >&6;}
      ac_configure_args="$ac_configure_args '--enable-pmx=$enable_pmx'"
     ;;
 esac
+#
+# setting need_ for each of []:
+
+echo 'tldbg:KPSE_ENABLE_PROG done (prog=pmx)' >&5
 
 ## utils/ps2eps/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory utils/ps2eps/
 ## configure options and TL libraries required for ps2eps
+echo 'tldbg:KPSE_ENABLE_PROG called: prog=ps2eps, libs=, options=, comment=.' >&5
+echo 'tldbg:KPSE_ENABLE_PROG enabling: ps2eps -> yes' >&5
 # Check whether --enable-ps2eps was given.
 if test ${enable_ps2eps+y}
 then :
   enableval=$enable_ps2eps;
 fi
+#
+#
 case $enable_ps2eps in #(
   yes|no) :
      ;; #(
@@ -4522,14 +4575,22 @@ printf "%s\n" "$as_me: Assuming \`--enable-ps2eps=$enable_ps2eps'" >&6;}
      ac_configure_args="$ac_configure_args '--enable-ps2eps=$enable_ps2eps'"
     ;;
 esac
+#
+# setting need_ for each of []:
+
+echo 'tldbg:KPSE_ENABLE_PROG done (prog=ps2eps)' >&5
 
 ## utils/t1utils/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory utils/t1utils/
 ## configure options and TL libraries required for t1utils
+echo 'tldbg:KPSE_ENABLE_PROG called: prog=t1utils, libs=, options=, comment=.' >&5
+echo 'tldbg:KPSE_ENABLE_PROG enabling: t1utils -> yes' >&5
 # Check whether --enable-t1utils was given.
 if test ${enable_t1utils+y}
 then :
   enableval=$enable_t1utils;
 fi
+#
+#
 case $enable_t1utils in #(
   yes|no) :
      ;; #(
@@ -4541,14 +4602,22 @@ printf "%s\n" "$as_me: Assuming \`--enable-t1utils=$enable_t1utils'" >&6;}
      ac_configure_args="$ac_configure_args '--enable-t1utils=$enable_t1utils'"
     ;;
 esac
+#
+# setting need_ for each of []:
+
+echo 'tldbg:KPSE_ENABLE_PROG done (prog=t1utils)' >&5
 
 ## utils/texdoctk/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory utils/texdoctk/
 ## configure options and TL libraries required for texdoctk
+echo 'tldbg:KPSE_ENABLE_PROG called: prog=texdoctk, libs=, options=, comment=.' >&5
+echo 'tldbg:KPSE_ENABLE_PROG enabling: texdoctk -> yes' >&5
 # Check whether --enable-texdoctk was given.
 if test ${enable_texdoctk+y}
 then :
   enableval=$enable_texdoctk;
 fi
+#
+#
 case $enable_texdoctk in #(
   yes|no) :
      ;; #(
@@ -4560,14 +4629,22 @@ printf "%s\n" "$as_me: Assuming \`--enable-texdoctk=$enable_texdoctk'" >&6;}
      ac_configure_args="$ac_configure_args '--enable-texdoctk=$enable_texdoctk'"
     ;;
 esac
+#
+# setting need_ for each of []:
+
+echo 'tldbg:KPSE_ENABLE_PROG done (prog=texdoctk)' >&5
 
 ## utils/tpic2pdftex/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory utils/tpic2pdftex/
 ## configure options and TL libraries required for tpic2pdftex
+echo 'tldbg:KPSE_ENABLE_PROG called: prog=tpic2pdftex, libs=, options=, comment=.' >&5
+echo 'tldbg:KPSE_ENABLE_PROG enabling: tpic2pdftex -> yes' >&5
 # Check whether --enable-tpic2pdftex was given.
 if test ${enable_tpic2pdftex+y}
 then :
   enableval=$enable_tpic2pdftex;
 fi
+#
+#
 case $enable_tpic2pdftex in #(
   yes|no) :
      ;; #(
@@ -4579,14 +4656,22 @@ printf "%s\n" "$as_me: Assuming \`--enable-tpic2pdftex=$enable_tpic2pdftex'" >&6
      ac_configure_args="$ac_configure_args '--enable-tpic2pdftex=$enable_tpic2pdftex'"
     ;;
 esac
+#
+# setting need_ for each of []:
+
+echo 'tldbg:KPSE_ENABLE_PROG done (prog=tpic2pdftex)' >&5
 
 ## utils/vlna/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory utils/vlna/
 ## configure options and TL libraries required for vlna
+echo 'tldbg:KPSE_ENABLE_PROG called: prog=vlna, libs=, options=, comment=.' >&5
+echo 'tldbg:KPSE_ENABLE_PROG enabling: vlna -> yes' >&5
 # Check whether --enable-vlna was given.
 if test ${enable_vlna+y}
 then :
   enableval=$enable_vlna;
 fi
+#
+#
 case $enable_vlna in #(
   yes|no) :
      ;; #(
@@ -4598,14 +4683,22 @@ printf "%s\n" "$as_me: Assuming \`--enable-vlna=$enable_vlna'" >&6;}
      ac_configure_args="$ac_configure_args '--enable-vlna=$enable_vlna'"
     ;;
 esac
+#
+# setting need_ for each of []:
+
+echo 'tldbg:KPSE_ENABLE_PROG done (prog=vlna)' >&5
 
 ## utils/xindy/ac/withenable.ac: configure.ac fragment for TL subdir
 ## configure options and TL libraries required for xindy.
+echo 'tldbg:KPSE_ENABLE_PROG called: prog=xindy, libs=, options=disable, comment=.' >&5
+echo 'tldbg:KPSE_ENABLE_PROG enabling: xindy -> no' >&5
 # Check whether --enable-xindy was given.
 if test ${enable_xindy+y}
 then :
   enableval=$enable_xindy;
 fi
+#
+#
 case $enable_xindy in #(
   yes|no) :
      ;; #(
@@ -4617,6 +4710,10 @@ printf "%s\n" "$as_me: Assuming \`--enable-xindy=$enable_xindy'" >&6;}
      ac_configure_args="$ac_configure_args '--enable-xindy=$enable_xindy'"
     ;;
 esac
+#
+# setting need_ for each of []:
+
+echo 'tldbg:KPSE_ENABLE_PROG done (prog=xindy)' >&5
 
 ## utils/xindy/ac/xindy.ac: configure.ac fragment for the TeX Live subdirectory utils/xindy/
 ## configure options for xindy
@@ -4667,11 +4764,15 @@ esac
 
 ## utils/xml2pmx/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory utils/xml2pmx/
 ## configure options and TL libraries required for xml2pmx
+echo 'tldbg:KPSE_ENABLE_PROG called: prog=xml2pmx, libs=, options=, comment=.' >&5
+echo 'tldbg:KPSE_ENABLE_PROG enabling: xml2pmx -> yes' >&5
 # Check whether --enable-xml2pmx was given.
 if test ${enable_xml2pmx+y}
 then :
   enableval=$enable_xml2pmx;
 fi
+#
+#
 case $enable_xml2pmx in #(
   yes|no) :
      ;; #(
@@ -4683,14 +4784,21 @@ printf "%s\n" "$as_me: Assuming \`--enable-xml2pmx=$enable_xml2pmx'" >&6;}
      ac_configure_args="$ac_configure_args '--enable-xml2pmx=$enable_xml2pmx'"
     ;;
 esac
+#
+# setting need_ for each of []:
+
+echo 'tldbg:KPSE_ENABLE_PROG done (prog=xml2pmx)' >&5
 
 ## utils/xpdfopen/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory utils/xpdfopen/
 ## configure options and TL libraries required for xpdfopen
+echo 'tldbg:KPSE_ENABLE_PROG called: prog=xpdfopen, libs=, options=x, comment=.' >&5
+echo 'tldbg:KPSE_ENABLE_PROG enabling: xpdfopen -> yes' >&5
 # Check whether --enable-xpdfopen was given.
 if test ${enable_xpdfopen+y}
 then :
   enableval=$enable_xpdfopen;
 fi
+#
 if test "x$with_x" = xno
 then :
   case $enable_xpdfopen in #(
@@ -4705,6 +4813,7 @@ printf "%s\n" "$as_me: \`--without-x' -> \`--disable-xpdfopen'" >&6;}
      ;;
 esac
 fi
+#
 case $enable_xpdfopen in #(
   yes|no) :
      ;; #(
@@ -4716,15 +4825,23 @@ printf "%s\n" "$as_me: Assuming \`--enable-xpdfopen=$enable_xpdfopen'" >&6;}
      ac_configure_args="$ac_configure_args '--enable-xpdfopen=$enable_xpdfopen'"
     ;;
 esac
+#
+# setting need_ for each of []:
+
+echo 'tldbg:KPSE_ENABLE_PROG done (prog=xpdfopen)' >&5
 
 
 ## texk/web2c/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/web2c/
 ## configure options and TL libraries required for web2c
+echo 'tldbg:KPSE_ENABLE_PROG called: prog=web2c, libs=kpathsea zlib, options=, comment=TeX & Co..' >&5
+echo 'tldbg:KPSE_ENABLE_PROG enabling: web2c -> yes' >&5
 # Check whether --enable-web2c was given.
 if test ${enable_web2c+y}
 then :
   enableval=$enable_web2c;
 fi
+#
+#
 case $enable_web2c in #(
   yes|no) :
      ;; #(
@@ -4736,11 +4853,15 @@ printf "%s\n" "$as_me: Assuming \`--enable-web2c=$enable_web2c'" >&6;}
      ac_configure_args="$ac_configure_args '--enable-web2c=$enable_web2c'"
     ;;
 esac
+#
+# setting need_ for each of [kpathsea zlib]:
 
 test "x$enable_web2c" = xno || {
   need_kpathsea=yes
   need_zlib=yes
 }
+
+echo 'tldbg:KPSE_ENABLE_PROG done (prog=web2c)' >&5
 
 # texk/web2c/ac/web2c.ac: configure.ac fragment for TL subdir
 # configure options for TeX and MF
@@ -5233,11 +5354,15 @@ fi
 
 ## texk/afm2pl/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/afm2pl/
 ## configure options and TL libraries required for afm2pl
+echo 'tldbg:KPSE_ENABLE_PROG called: prog=afm2pl, libs=kpathsea, options=, comment=.' >&5
+echo 'tldbg:KPSE_ENABLE_PROG enabling: afm2pl -> yes' >&5
 # Check whether --enable-afm2pl was given.
 if test ${enable_afm2pl+y}
 then :
   enableval=$enable_afm2pl;
 fi
+#
+#
 case $enable_afm2pl in #(
   yes|no) :
      ;; #(
@@ -5249,18 +5374,26 @@ printf "%s\n" "$as_me: Assuming \`--enable-afm2pl=$enable_afm2pl'" >&6;}
      ac_configure_args="$ac_configure_args '--enable-afm2pl=$enable_afm2pl'"
     ;;
 esac
+#
+# setting need_ for each of [kpathsea]:
 
 test "x$enable_afm2pl" = xno || {
   need_kpathsea=yes
 }
 
+echo 'tldbg:KPSE_ENABLE_PROG done (prog=afm2pl)' >&5
+
 ## texk/bibtex-x/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/bibtex-x/
 ## configure options and TL libraries required for bibtex-x
+echo 'tldbg:KPSE_ENABLE_PROG called: prog=bibtex-x, libs=kpathsea, options=, comment=.' >&5
+echo 'tldbg:KPSE_ENABLE_PROG enabling: bibtex-x -> yes' >&5
 # Check whether --enable-bibtex-x was given.
 if test ${enable_bibtex_x+y}
 then :
   enableval=$enable_bibtex_x;
 fi
+#
+#
 case $enable_bibtex_x in #(
   yes|no) :
      ;; #(
@@ -5272,10 +5405,14 @@ printf "%s\n" "$as_me: Assuming \`--enable-bibtex-x=$enable_bibtex_x'" >&6;}
      ac_configure_args="$ac_configure_args '--enable-bibtex-x=$enable_bibtex_x'"
     ;;
 esac
+#
+# setting need_ for each of [kpathsea]:
 
 test "x$enable_bibtex_x" = xno || {
   need_kpathsea=yes
 }
+
+echo 'tldbg:KPSE_ENABLE_PROG done (prog=bibtex-x)' >&5
 
 ## texk/bibtex-x/ac/bibtex-x.ac: configure.ac fragment for the TeX Live subdirectory texk/bibtex-x/
 ## configure options for bibtex-x
@@ -5308,11 +5445,15 @@ test "x$enable_bibtex_x:$enable_bibtexu" = xyes:yes && need_icu=yes
 
 ## texk/chktex/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/chktex/
 ## configure options and TL libraries required for chktex
+echo 'tldbg:KPSE_ENABLE_PROG called: prog=chktex, libs=kpathsea, options=, comment=.' >&5
+echo 'tldbg:KPSE_ENABLE_PROG enabling: chktex -> yes' >&5
 # Check whether --enable-chktex was given.
 if test ${enable_chktex+y}
 then :
   enableval=$enable_chktex;
 fi
+#
+#
 case $enable_chktex in #(
   yes|no) :
      ;; #(
@@ -5324,18 +5465,26 @@ printf "%s\n" "$as_me: Assuming \`--enable-chktex=$enable_chktex'" >&6;}
      ac_configure_args="$ac_configure_args '--enable-chktex=$enable_chktex'"
     ;;
 esac
+#
+# setting need_ for each of [kpathsea]:
 
 test "x$enable_chktex" = xno || {
   need_kpathsea=yes
 }
 
+echo 'tldbg:KPSE_ENABLE_PROG done (prog=chktex)' >&5
+
 ## texk/cjkutils/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/cjkutils/
 ## configure options and TL libraries required for cjkutils
+echo 'tldbg:KPSE_ENABLE_PROG called: prog=cjkutils, libs=kpathsea, options=, comment=.' >&5
+echo 'tldbg:KPSE_ENABLE_PROG enabling: cjkutils -> yes' >&5
 # Check whether --enable-cjkutils was given.
 if test ${enable_cjkutils+y}
 then :
   enableval=$enable_cjkutils;
 fi
+#
+#
 case $enable_cjkutils in #(
   yes|no) :
      ;; #(
@@ -5347,18 +5496,26 @@ printf "%s\n" "$as_me: Assuming \`--enable-cjkutils=$enable_cjkutils'" >&6;}
      ac_configure_args="$ac_configure_args '--enable-cjkutils=$enable_cjkutils'"
     ;;
 esac
+#
+# setting need_ for each of [kpathsea]:
 
 test "x$enable_cjkutils" = xno || {
   need_kpathsea=yes
 }
 
+echo 'tldbg:KPSE_ENABLE_PROG done (prog=cjkutils)' >&5
+
 ## texk/detex/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/detex/
 ## configure options and TL libraries required for detex
+echo 'tldbg:KPSE_ENABLE_PROG called: prog=detex, libs=kpathsea, options=, comment=.' >&5
+echo 'tldbg:KPSE_ENABLE_PROG enabling: detex -> yes' >&5
 # Check whether --enable-detex was given.
 if test ${enable_detex+y}
 then :
   enableval=$enable_detex;
 fi
+#
+#
 case $enable_detex in #(
   yes|no) :
      ;; #(
@@ -5370,18 +5527,26 @@ printf "%s\n" "$as_me: Assuming \`--enable-detex=$enable_detex'" >&6;}
      ac_configure_args="$ac_configure_args '--enable-detex=$enable_detex'"
     ;;
 esac
+#
+# setting need_ for each of [kpathsea]:
 
 test "x$enable_detex" = xno || {
   need_kpathsea=yes
 }
 
+echo 'tldbg:KPSE_ENABLE_PROG done (prog=detex)' >&5
+
 ## texk/dtl/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/dtl/
 ## configure options and TL libraries required for dtl
+echo 'tldbg:KPSE_ENABLE_PROG called: prog=dtl, libs=kpathsea, options=, comment=.' >&5
+echo 'tldbg:KPSE_ENABLE_PROG enabling: dtl -> yes' >&5
 # Check whether --enable-dtl was given.
 if test ${enable_dtl+y}
 then :
   enableval=$enable_dtl;
 fi
+#
+#
 case $enable_dtl in #(
   yes|no) :
      ;; #(
@@ -5393,18 +5558,26 @@ printf "%s\n" "$as_me: Assuming \`--enable-dtl=$enable_dtl'" >&6;}
      ac_configure_args="$ac_configure_args '--enable-dtl=$enable_dtl'"
     ;;
 esac
+#
+# setting need_ for each of [kpathsea]:
 
 test "x$enable_dtl" = xno || {
   need_kpathsea=yes
 }
 
+echo 'tldbg:KPSE_ENABLE_PROG done (prog=dtl)' >&5
+
 ## texk/dvi2tty/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/dvi2tty/
 ## configure options and TL libraries required for dvi2tty
+echo 'tldbg:KPSE_ENABLE_PROG called: prog=dvi2tty, libs=ptexenc, options=, comment=.' >&5
+echo 'tldbg:KPSE_ENABLE_PROG enabling: dvi2tty -> yes' >&5
 # Check whether --enable-dvi2tty was given.
 if test ${enable_dvi2tty+y}
 then :
   enableval=$enable_dvi2tty;
 fi
+#
+#
 case $enable_dvi2tty in #(
   yes|no) :
      ;; #(
@@ -5416,18 +5589,26 @@ printf "%s\n" "$as_me: Assuming \`--enable-dvi2tty=$enable_dvi2tty'" >&6;}
      ac_configure_args="$ac_configure_args '--enable-dvi2tty=$enable_dvi2tty'"
     ;;
 esac
+#
+# setting need_ for each of [ptexenc]:
 
 test "x$enable_dvi2tty" = xno || {
   need_ptexenc=yes
 }
 
+echo 'tldbg:KPSE_ENABLE_PROG done (prog=dvi2tty)' >&5
+
 ## texk/dvidvi/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/dvidvi/
 ## configure options and TL libraries required for dvidvi
+echo 'tldbg:KPSE_ENABLE_PROG called: prog=dvidvi, libs=kpathsea, options=, comment=.' >&5
+echo 'tldbg:KPSE_ENABLE_PROG enabling: dvidvi -> yes' >&5
 # Check whether --enable-dvidvi was given.
 if test ${enable_dvidvi+y}
 then :
   enableval=$enable_dvidvi;
 fi
+#
+#
 case $enable_dvidvi in #(
   yes|no) :
      ;; #(
@@ -5439,18 +5620,26 @@ printf "%s\n" "$as_me: Assuming \`--enable-dvidvi=$enable_dvidvi'" >&6;}
      ac_configure_args="$ac_configure_args '--enable-dvidvi=$enable_dvidvi'"
     ;;
 esac
+#
+# setting need_ for each of [kpathsea]:
 
 test "x$enable_dvidvi" = xno || {
   need_kpathsea=yes
 }
 
+echo 'tldbg:KPSE_ENABLE_PROG done (prog=dvidvi)' >&5
+
 ## texk/dviljk/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/dviljk/
 ## configure options and TL libraries required for dviljk
+echo 'tldbg:KPSE_ENABLE_PROG called: prog=dviljk, libs=kpathsea, options=, comment=.' >&5
+echo 'tldbg:KPSE_ENABLE_PROG enabling: dviljk -> yes' >&5
 # Check whether --enable-dviljk was given.
 if test ${enable_dviljk+y}
 then :
   enableval=$enable_dviljk;
 fi
+#
+#
 case $enable_dviljk in #(
   yes|no) :
      ;; #(
@@ -5462,18 +5651,26 @@ printf "%s\n" "$as_me: Assuming \`--enable-dviljk=$enable_dviljk'" >&6;}
      ac_configure_args="$ac_configure_args '--enable-dviljk=$enable_dviljk'"
     ;;
 esac
+#
+# setting need_ for each of [kpathsea]:
 
 test "x$enable_dviljk" = xno || {
   need_kpathsea=yes
 }
 
+echo 'tldbg:KPSE_ENABLE_PROG done (prog=dviljk)' >&5
+
 ## texk/dviout-util/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/dviout-util/
 ## configure options and TL libraries required for dviout-util
+echo 'tldbg:KPSE_ENABLE_PROG called: prog=dviout-util, libs=ptexenc, options=, comment=.' >&5
+echo 'tldbg:KPSE_ENABLE_PROG enabling: dviout-util -> yes' >&5
 # Check whether --enable-dviout-util was given.
 if test ${enable_dviout_util+y}
 then :
   enableval=$enable_dviout_util;
 fi
+#
+#
 case $enable_dviout_util in #(
   yes|no) :
      ;; #(
@@ -5485,18 +5682,26 @@ printf "%s\n" "$as_me: Assuming \`--enable-dviout-util=$enable_dviout_util'" >&6
      ac_configure_args="$ac_configure_args '--enable-dviout-util=$enable_dviout_util'"
     ;;
 esac
+#
+# setting need_ for each of [ptexenc]:
 
 test "x$enable_dviout_util" = xno || {
   need_ptexenc=yes
 }
 
+echo 'tldbg:KPSE_ENABLE_PROG done (prog=dviout-util)' >&5
+
 ## texk/dvipdfm-x/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/dvipdfm-x/
 ## configure options and TL libraries required for dvipdfm-x
+echo 'tldbg:KPSE_ENABLE_PROG called: prog=dvipdfm-x, libs=kpathsea libpng libpaper, options=, comment=.' >&5
+echo 'tldbg:KPSE_ENABLE_PROG enabling: dvipdfm-x -> yes' >&5
 # Check whether --enable-dvipdfm-x was given.
 if test ${enable_dvipdfm_x+y}
 then :
   enableval=$enable_dvipdfm_x;
 fi
+#
+#
 case $enable_dvipdfm_x in #(
   yes|no) :
      ;; #(
@@ -5508,6 +5713,8 @@ printf "%s\n" "$as_me: Assuming \`--enable-dvipdfm-x=$enable_dvipdfm_x'" >&6;}
      ac_configure_args="$ac_configure_args '--enable-dvipdfm-x=$enable_dvipdfm_x'"
     ;;
 esac
+#
+# setting need_ for each of [kpathsea libpng libpaper]:
 
 test "x$enable_dvipdfm_x" = xno || {
   need_kpathsea=yes
@@ -5515,13 +5722,19 @@ test "x$enable_dvipdfm_x" = xno || {
   need_libpaper=yes
 }
 
+echo 'tldbg:KPSE_ENABLE_PROG done (prog=dvipdfm-x)' >&5
+
 ## texk/dvipng/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/dvipng/
 ## configure options and TL libraries required for dvipng
+echo 'tldbg:KPSE_ENABLE_PROG called: prog=dvipng, libs=kpathsea gd, options=, comment=.' >&5
+echo 'tldbg:KPSE_ENABLE_PROG enabling: dvipng -> yes' >&5
 # Check whether --enable-dvipng was given.
 if test ${enable_dvipng+y}
 then :
   enableval=$enable_dvipng;
 fi
+#
+#
 case $enable_dvipng in #(
   yes|no) :
      ;; #(
@@ -5533,11 +5746,15 @@ printf "%s\n" "$as_me: Assuming \`--enable-dvipng=$enable_dvipng'" >&6;}
      ac_configure_args="$ac_configure_args '--enable-dvipng=$enable_dvipng'"
     ;;
 esac
+#
+# setting need_ for each of [kpathsea gd]:
 
 test "x$enable_dvipng" = xno || {
   need_kpathsea=yes
   need_gd=yes
 }
+
+echo 'tldbg:KPSE_ENABLE_PROG done (prog=dvipng)' >&5
 
 ## texk/dvipng/ac/dvipng.ac: configure.ac fragment for the TeX Live subdirectory texk/dvipng/
 ## configure options for dvipng
@@ -5563,11 +5780,15 @@ fi
 
 ## texk/dvipos/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/dvipos/
 ## configure options and TL libraries required for dvipos
+echo 'tldbg:KPSE_ENABLE_PROG called: prog=dvipos, libs=kpathsea, options=, comment=.' >&5
+echo 'tldbg:KPSE_ENABLE_PROG enabling: dvipos -> yes' >&5
 # Check whether --enable-dvipos was given.
 if test ${enable_dvipos+y}
 then :
   enableval=$enable_dvipos;
 fi
+#
+#
 case $enable_dvipos in #(
   yes|no) :
      ;; #(
@@ -5579,18 +5800,26 @@ printf "%s\n" "$as_me: Assuming \`--enable-dvipos=$enable_dvipos'" >&6;}
      ac_configure_args="$ac_configure_args '--enable-dvipos=$enable_dvipos'"
     ;;
 esac
+#
+# setting need_ for each of [kpathsea]:
 
 test "x$enable_dvipos" = xno || {
   need_kpathsea=yes
 }
 
+echo 'tldbg:KPSE_ENABLE_PROG done (prog=dvipos)' >&5
+
 ## texk/dvipsk/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/dvipsk/
 ## configure options and TL libraries required for dvipsk
+echo 'tldbg:KPSE_ENABLE_PROG called: prog=dvipsk, libs=kpathsea, options=, comment=.' >&5
+echo 'tldbg:KPSE_ENABLE_PROG enabling: dvipsk -> yes' >&5
 # Check whether --enable-dvipsk was given.
 if test ${enable_dvipsk+y}
 then :
   enableval=$enable_dvipsk;
 fi
+#
+#
 case $enable_dvipsk in #(
   yes|no) :
      ;; #(
@@ -5602,18 +5831,26 @@ printf "%s\n" "$as_me: Assuming \`--enable-dvipsk=$enable_dvipsk'" >&6;}
      ac_configure_args="$ac_configure_args '--enable-dvipsk=$enable_dvipsk'"
     ;;
 esac
+#
+# setting need_ for each of [kpathsea]:
 
 test "x$enable_dvipsk" = xno || {
   need_kpathsea=yes
 }
 
+echo 'tldbg:KPSE_ENABLE_PROG done (prog=dvipsk)' >&5
+
 # texk/dvisvgm/ac/withenable.ac: configure.ac fragment
 ## configure options and TL libraries required for dvisvgm
+echo 'tldbg:KPSE_ENABLE_PROG called: prog=dvisvgm, libs=kpathsea potrace freetype2 zlib, options=, comment=.' >&5
+echo 'tldbg:KPSE_ENABLE_PROG enabling: dvisvgm -> yes' >&5
 # Check whether --enable-dvisvgm was given.
 if test ${enable_dvisvgm+y}
 then :
   enableval=$enable_dvisvgm;
 fi
+#
+#
 case $enable_dvisvgm in #(
   yes|no) :
      ;; #(
@@ -5625,6 +5862,8 @@ printf "%s\n" "$as_me: Assuming \`--enable-dvisvgm=$enable_dvisvgm'" >&6;}
      ac_configure_args="$ac_configure_args '--enable-dvisvgm=$enable_dvisvgm'"
     ;;
 esac
+#
+# setting need_ for each of [kpathsea potrace freetype2 zlib]:
 
 test "x$enable_dvisvgm" = xno || {
   need_kpathsea=yes
@@ -5633,13 +5872,19 @@ test "x$enable_dvisvgm" = xno || {
   need_zlib=yes
 }
 
+echo 'tldbg:KPSE_ENABLE_PROG done (prog=dvisvgm)' >&5
+
 ## texk/gregorio/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/gregorio/
 ## configure options and TL libraries required for gregorio
+echo 'tldbg:KPSE_ENABLE_PROG called: prog=gregorio, libs=kpathsea, options=, comment=.' >&5
+echo 'tldbg:KPSE_ENABLE_PROG enabling: gregorio -> yes' >&5
 # Check whether --enable-gregorio was given.
 if test ${enable_gregorio+y}
 then :
   enableval=$enable_gregorio;
 fi
+#
+#
 case $enable_gregorio in #(
   yes|no) :
      ;; #(
@@ -5651,18 +5896,26 @@ printf "%s\n" "$as_me: Assuming \`--enable-gregorio=$enable_gregorio'" >&6;}
      ac_configure_args="$ac_configure_args '--enable-gregorio=$enable_gregorio'"
     ;;
 esac
+#
+# setting need_ for each of [kpathsea]:
 
 test "x$enable_gregorio" = xno || {
   need_kpathsea=yes
 }
 
+echo 'tldbg:KPSE_ENABLE_PROG done (prog=gregorio)' >&5
+
 ## texk/gsftopk/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/gsftopk/
 ## configure options and TL libraries required for gsftopk
+echo 'tldbg:KPSE_ENABLE_PROG called: prog=gsftopk, libs=kpathsea, options=, comment=.' >&5
+echo 'tldbg:KPSE_ENABLE_PROG enabling: gsftopk -> yes' >&5
 # Check whether --enable-gsftopk was given.
 if test ${enable_gsftopk+y}
 then :
   enableval=$enable_gsftopk;
 fi
+#
+#
 case $enable_gsftopk in #(
   yes|no) :
      ;; #(
@@ -5674,18 +5927,26 @@ printf "%s\n" "$as_me: Assuming \`--enable-gsftopk=$enable_gsftopk'" >&6;}
      ac_configure_args="$ac_configure_args '--enable-gsftopk=$enable_gsftopk'"
     ;;
 esac
+#
+# setting need_ for each of [kpathsea]:
 
 test "x$enable_gsftopk" = xno || {
   need_kpathsea=yes
 }
 
+echo 'tldbg:KPSE_ENABLE_PROG done (prog=gsftopk)' >&5
+
 ## texk/lcdf-typetools/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/lcdf-typetools/
 ## configure options and TL libraries required for lcdf-typetools
+echo 'tldbg:KPSE_ENABLE_PROG called: prog=lcdf-typetools, libs=kpathsea, options=, comment=.' >&5
+echo 'tldbg:KPSE_ENABLE_PROG enabling: lcdf-typetools -> yes' >&5
 # Check whether --enable-lcdf-typetools was given.
 if test ${enable_lcdf_typetools+y}
 then :
   enableval=$enable_lcdf_typetools;
 fi
+#
+#
 case $enable_lcdf_typetools in #(
   yes|no) :
      ;; #(
@@ -5697,10 +5958,14 @@ printf "%s\n" "$as_me: Assuming \`--enable-lcdf-typetools=$enable_lcdf_typetools
      ac_configure_args="$ac_configure_args '--enable-lcdf-typetools=$enable_lcdf_typetools'"
     ;;
 esac
+#
+# setting need_ for each of [kpathsea]:
 
 test "x$enable_lcdf_typetools" = xno || {
   need_kpathsea=yes
 }
+
+echo 'tldbg:KPSE_ENABLE_PROG done (prog=lcdf-typetools)' >&5
 
 # Define configure options for lcdf-typetools.  Extracted from configure.ac
 # for ease of building TeX Live.
@@ -5787,11 +6052,15 @@ fi
 
 ## texk/makeindexk/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/makeindexk/
 ## configure options and TL libraries required for makeindexk
+echo 'tldbg:KPSE_ENABLE_PROG called: prog=makeindexk, libs=kpathsea, options=, comment=.' >&5
+echo 'tldbg:KPSE_ENABLE_PROG enabling: makeindexk -> yes' >&5
 # Check whether --enable-makeindexk was given.
 if test ${enable_makeindexk+y}
 then :
   enableval=$enable_makeindexk;
 fi
+#
+#
 case $enable_makeindexk in #(
   yes|no) :
      ;; #(
@@ -5803,18 +6072,26 @@ printf "%s\n" "$as_me: Assuming \`--enable-makeindexk=$enable_makeindexk'" >&6;}
      ac_configure_args="$ac_configure_args '--enable-makeindexk=$enable_makeindexk'"
     ;;
 esac
+#
+# setting need_ for each of [kpathsea]:
 
 test "x$enable_makeindexk" = xno || {
   need_kpathsea=yes
 }
 
+echo 'tldbg:KPSE_ENABLE_PROG done (prog=makeindexk)' >&5
+
 ## texk/makejvf/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/makejvf/
 ## configure options and TL libraries required for makejvf
+echo 'tldbg:KPSE_ENABLE_PROG called: prog=makejvf, libs=ptexenc, options=, comment=.' >&5
+echo 'tldbg:KPSE_ENABLE_PROG enabling: makejvf -> yes' >&5
 # Check whether --enable-makejvf was given.
 if test ${enable_makejvf+y}
 then :
   enableval=$enable_makejvf;
 fi
+#
+#
 case $enable_makejvf in #(
   yes|no) :
      ;; #(
@@ -5826,18 +6103,26 @@ printf "%s\n" "$as_me: Assuming \`--enable-makejvf=$enable_makejvf'" >&6;}
      ac_configure_args="$ac_configure_args '--enable-makejvf=$enable_makejvf'"
     ;;
 esac
+#
+# setting need_ for each of [ptexenc]:
 
 test "x$enable_makejvf" = xno || {
   need_ptexenc=yes
 }
 
+echo 'tldbg:KPSE_ENABLE_PROG done (prog=makejvf)' >&5
+
 ## texk/mendexk/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/mendexk/
 ## configure options and TL libraries required for mendexk
+echo 'tldbg:KPSE_ENABLE_PROG called: prog=mendexk, libs=ptexenc, options=, comment=.' >&5
+echo 'tldbg:KPSE_ENABLE_PROG enabling: mendexk -> yes' >&5
 # Check whether --enable-mendexk was given.
 if test ${enable_mendexk+y}
 then :
   enableval=$enable_mendexk;
 fi
+#
+#
 case $enable_mendexk in #(
   yes|no) :
      ;; #(
@@ -5849,18 +6134,26 @@ printf "%s\n" "$as_me: Assuming \`--enable-mendexk=$enable_mendexk'" >&6;}
      ac_configure_args="$ac_configure_args '--enable-mendexk=$enable_mendexk'"
     ;;
 esac
+#
+# setting need_ for each of [ptexenc]:
 
 test "x$enable_mendexk" = xno || {
   need_ptexenc=yes
 }
 
+echo 'tldbg:KPSE_ENABLE_PROG done (prog=mendexk)' >&5
+
 ## texk/musixtnt/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/musixtnt/
 ## configure options and TL libraries required for musixtnt
+echo 'tldbg:KPSE_ENABLE_PROG called: prog=musixtnt, libs=kpathsea, options=, comment=.' >&5
+echo 'tldbg:KPSE_ENABLE_PROG enabling: musixtnt -> yes' >&5
 # Check whether --enable-musixtnt was given.
 if test ${enable_musixtnt+y}
 then :
   enableval=$enable_musixtnt;
 fi
+#
+#
 case $enable_musixtnt in #(
   yes|no) :
      ;; #(
@@ -5872,18 +6165,26 @@ printf "%s\n" "$as_me: Assuming \`--enable-musixtnt=$enable_musixtnt'" >&6;}
      ac_configure_args="$ac_configure_args '--enable-musixtnt=$enable_musixtnt'"
     ;;
 esac
+#
+# setting need_ for each of [kpathsea]:
 
 test "x$enable_musixtnt" = xno || {
   need_kpathsea=yes
 }
 
+echo 'tldbg:KPSE_ENABLE_PROG done (prog=musixtnt)' >&5
+
 ## texk/ps2pk/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/ps2pk/
 ## configure options and TL libraries required for ps2pk
+echo 'tldbg:KPSE_ENABLE_PROG called: prog=ps2pk, libs=kpathsea, options=, comment=.' >&5
+echo 'tldbg:KPSE_ENABLE_PROG enabling: ps2pk -> yes' >&5
 # Check whether --enable-ps2pk was given.
 if test ${enable_ps2pk+y}
 then :
   enableval=$enable_ps2pk;
 fi
+#
+#
 case $enable_ps2pk in #(
   yes|no) :
      ;; #(
@@ -5895,18 +6196,26 @@ printf "%s\n" "$as_me: Assuming \`--enable-ps2pk=$enable_ps2pk'" >&6;}
      ac_configure_args="$ac_configure_args '--enable-ps2pk=$enable_ps2pk'"
     ;;
 esac
+#
+# setting need_ for each of [kpathsea]:
 
 test "x$enable_ps2pk" = xno || {
   need_kpathsea=yes
 }
 
+echo 'tldbg:KPSE_ENABLE_PROG done (prog=ps2pk)' >&5
+
 ## texk/psutils/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/psutils/
 ## configure options and TL libraries required for psutils
+echo 'tldbg:KPSE_ENABLE_PROG called: prog=psutils, libs=kpathsea libpaper, options=, comment=.' >&5
+echo 'tldbg:KPSE_ENABLE_PROG enabling: psutils -> yes' >&5
 # Check whether --enable-psutils was given.
 if test ${enable_psutils+y}
 then :
   enableval=$enable_psutils;
 fi
+#
+#
 case $enable_psutils in #(
   yes|no) :
      ;; #(
@@ -5918,19 +6227,27 @@ printf "%s\n" "$as_me: Assuming \`--enable-psutils=$enable_psutils'" >&6;}
      ac_configure_args="$ac_configure_args '--enable-psutils=$enable_psutils'"
     ;;
 esac
+#
+# setting need_ for each of [kpathsea libpaper]:
 
 test "x$enable_psutils" = xno || {
   need_kpathsea=yes
   need_libpaper=yes
 }
 
+echo 'tldbg:KPSE_ENABLE_PROG done (prog=psutils)' >&5
+
 ## texk/seetexk/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/seetexk/
 ## configure options and TL libraries required for seetexk
+echo 'tldbg:KPSE_ENABLE_PROG called: prog=seetexk, libs=kpathsea, options=, comment=.' >&5
+echo 'tldbg:KPSE_ENABLE_PROG enabling: seetexk -> yes' >&5
 # Check whether --enable-seetexk was given.
 if test ${enable_seetexk+y}
 then :
   enableval=$enable_seetexk;
 fi
+#
+#
 case $enable_seetexk in #(
   yes|no) :
      ;; #(
@@ -5942,18 +6259,26 @@ printf "%s\n" "$as_me: Assuming \`--enable-seetexk=$enable_seetexk'" >&6;}
      ac_configure_args="$ac_configure_args '--enable-seetexk=$enable_seetexk'"
     ;;
 esac
+#
+# setting need_ for each of [kpathsea]:
 
 test "x$enable_seetexk" = xno || {
   need_kpathsea=yes
 }
 
+echo 'tldbg:KPSE_ENABLE_PROG done (prog=seetexk)' >&5
+
 ## texk/tex4htk/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/tex4htk/
 ## configure options and TL libraries required for tex4htk
+echo 'tldbg:KPSE_ENABLE_PROG called: prog=tex4htk, libs=kpathsea, options=, comment=.' >&5
+echo 'tldbg:KPSE_ENABLE_PROG enabling: tex4htk -> yes' >&5
 # Check whether --enable-tex4htk was given.
 if test ${enable_tex4htk+y}
 then :
   enableval=$enable_tex4htk;
 fi
+#
+#
 case $enable_tex4htk in #(
   yes|no) :
      ;; #(
@@ -5965,18 +6290,26 @@ printf "%s\n" "$as_me: Assuming \`--enable-tex4htk=$enable_tex4htk'" >&6;}
      ac_configure_args="$ac_configure_args '--enable-tex4htk=$enable_tex4htk'"
     ;;
 esac
+#
+# setting need_ for each of [kpathsea]:
 
 test "x$enable_tex4htk" = xno || {
   need_kpathsea=yes
 }
 
+echo 'tldbg:KPSE_ENABLE_PROG done (prog=tex4htk)' >&5
+
 ## texk/ttf2pk2/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/ttf2pk2/
 ## configure options and TL libraries required for ttf2pk
+echo 'tldbg:KPSE_ENABLE_PROG called: prog=ttf2pk2, libs=kpathsea freetype2, options=, comment=.' >&5
+echo 'tldbg:KPSE_ENABLE_PROG enabling: ttf2pk2 -> yes' >&5
 # Check whether --enable-ttf2pk2 was given.
 if test ${enable_ttf2pk2+y}
 then :
   enableval=$enable_ttf2pk2;
 fi
+#
+#
 case $enable_ttf2pk2 in #(
   yes|no) :
      ;; #(
@@ -5988,19 +6321,27 @@ printf "%s\n" "$as_me: Assuming \`--enable-ttf2pk2=$enable_ttf2pk2'" >&6;}
      ac_configure_args="$ac_configure_args '--enable-ttf2pk2=$enable_ttf2pk2'"
     ;;
 esac
+#
+# setting need_ for each of [kpathsea freetype2]:
 
 test "x$enable_ttf2pk2" = xno || {
   need_kpathsea=yes
   need_freetype2=yes
 }
 
+echo 'tldbg:KPSE_ENABLE_PROG done (prog=ttf2pk2)' >&5
+
 ## texk/ttfdump/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/ttfdump/
 ## configure options and TL libraries required for ttfdump
+echo 'tldbg:KPSE_ENABLE_PROG called: prog=ttfdump, libs=kpathsea, options=, comment=.' >&5
+echo 'tldbg:KPSE_ENABLE_PROG enabling: ttfdump -> yes' >&5
 # Check whether --enable-ttfdump was given.
 if test ${enable_ttfdump+y}
 then :
   enableval=$enable_ttfdump;
 fi
+#
+#
 case $enable_ttfdump in #(
   yes|no) :
      ;; #(
@@ -6012,18 +6353,26 @@ printf "%s\n" "$as_me: Assuming \`--enable-ttfdump=$enable_ttfdump'" >&6;}
      ac_configure_args="$ac_configure_args '--enable-ttfdump=$enable_ttfdump'"
     ;;
 esac
+#
+# setting need_ for each of [kpathsea]:
 
 test "x$enable_ttfdump" = xno || {
   need_kpathsea=yes
 }
 
+echo 'tldbg:KPSE_ENABLE_PROG done (prog=ttfdump)' >&5
+
 ## texk/upmendex/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/upmendex/
 ## configure options and TL libraries required for upmendex
+echo 'tldbg:KPSE_ENABLE_PROG called: prog=upmendex, libs=kpathsea icu, options=, comment=.' >&5
+echo 'tldbg:KPSE_ENABLE_PROG enabling: upmendex -> yes' >&5
 # Check whether --enable-upmendex was given.
 if test ${enable_upmendex+y}
 then :
   enableval=$enable_upmendex;
 fi
+#
+#
 case $enable_upmendex in #(
   yes|no) :
      ;; #(
@@ -6035,19 +6384,26 @@ printf "%s\n" "$as_me: Assuming \`--enable-upmendex=$enable_upmendex'" >&6;}
      ac_configure_args="$ac_configure_args '--enable-upmendex=$enable_upmendex'"
     ;;
 esac
+#
+# setting need_ for each of [kpathsea icu]:
 
 test "x$enable_upmendex" = xno || {
   need_kpathsea=yes
   need_icu=yes
 }
 
+echo 'tldbg:KPSE_ENABLE_PROG done (prog=upmendex)' >&5
+
 ## texk/xdvik/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/xdvik/
 ## configure options and TL libraries required for xdvik
+echo 'tldbg:KPSE_ENABLE_PROG called: prog=xdvik, libs=kpathsea freetype2, options=x, comment=.' >&5
+echo 'tldbg:KPSE_ENABLE_PROG enabling: xdvik -> yes' >&5
 # Check whether --enable-xdvik was given.
 if test ${enable_xdvik+y}
 then :
   enableval=$enable_xdvik;
 fi
+#
 if test "x$with_x" = xno
 then :
   case $enable_xdvik in #(
@@ -6062,6 +6418,7 @@ printf "%s\n" "$as_me: \`--without-x' -> \`--disable-xdvik'" >&6;}
      ;;
 esac
 fi
+#
 case $enable_xdvik in #(
   yes|no) :
      ;; #(
@@ -6073,11 +6430,15 @@ printf "%s\n" "$as_me: Assuming \`--enable-xdvik=$enable_xdvik'" >&6;}
      ac_configure_args="$ac_configure_args '--enable-xdvik=$enable_xdvik'"
     ;;
 esac
+#
+# setting need_ for each of [kpathsea freetype2]:
 
 test "x$enable_xdvik" = xno || {
   need_kpathsea=yes
   need_freetype2=yes
 }
+
+echo 'tldbg:KPSE_ENABLE_PROG done (prog=xdvik)' >&5
 
 ## texk/xdvik/ac/xdvik.ac: configure.ac fragment for the TeX Live subdirectory texk/xdvik/
 ## configure options for xdvik
@@ -6091,11 +6452,15 @@ fi
 
 ## texk/texlive/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/texlive/
 ## configure options and TL libraries required for texlive
+echo 'tldbg:KPSE_ENABLE_PROG called: prog=texlive, libs=, options=, comment=TeX Live scripts.' >&5
+echo 'tldbg:KPSE_ENABLE_PROG enabling: texlive -> yes' >&5
 # Check whether --enable-texlive was given.
 if test ${enable_texlive+y}
 then :
   enableval=$enable_texlive;
 fi
+#
+#
 case $enable_texlive in #(
   yes|no) :
      ;; #(
@@ -6107,6 +6472,10 @@ printf "%s\n" "$as_me: Assuming \`--enable-texlive=$enable_texlive'" >&6;}
      ac_configure_args="$ac_configure_args '--enable-texlive=$enable_texlive'"
     ;;
 esac
+#
+# setting need_ for each of []:
+
+echo 'tldbg:KPSE_ENABLE_PROG done (prog=texlive)' >&5
 
 ## texk/texlive/ac/texlive.ac: configure.ac fragment for the TeX Live subdirectory texk/texlive/
 ## configure options for texlive
@@ -6837,6 +7206,7 @@ fi
 
 # end of kpse_setup macro.
 echo 'tldbg:KPSE_SETUP done (toplevel=../)' >&5
+
 
 
 am__api_version='1.18'
@@ -8073,98 +8443,212 @@ echo 'tldbg:KPSE_BASIC done (pkg=utils, amopt=)' >&5
 
 
 
+echo 'tldbg:KPSE_RECURSE_PROGS calling with: utils Utils' >&5
 { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for Utils programs to build" >&5
 printf %s "checking for Utils programs to build... " >&6; }
 echo 'tldbg:_KPSE_RECURSE called: list=utils, text=Utils programs, cond=test "x$enable_[]Kpse_pkg" = xyes, prefix=.' >&5
 MAKE_SUBDIRS=
 CONF_SUBDIRS=
+echo 'tldbg:_KPSE_RECURSE  checking: autosp' >&5
 if test -x $srcdir/autosp/configure; then
-  test "x$enable_autosp" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS autosp"
+  echo 'tldbg:_KPSE_RECURSE   have configure, adding to CONF_SUBDIRS: autosp' >&5
   CONF_SUBDIRS="$CONF_SUBDIRS autosp"
-else
-  echo 'tldbg:_KPSE_RECURSE skipping subdir, no (executable) configure: '"$srcdir"'/autosp/configure' >&5
-fi
-if test -x $srcdir/axodraw2/configure; then
-  test "x$enable_axodraw2" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS axodraw2"
-  CONF_SUBDIRS="$CONF_SUBDIRS axodraw2"
-else
-  echo 'tldbg:_KPSE_RECURSE skipping subdir, no (executable) configure: '"$srcdir"'/axodraw2/configure' >&5
-fi
-if test -x $srcdir/devnag/configure; then
-  test "x$enable_devnag" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS devnag"
-  CONF_SUBDIRS="$CONF_SUBDIRS devnag"
-else
-  echo 'tldbg:_KPSE_RECURSE skipping subdir, no (executable) configure: '"$srcdir"'/devnag/configure' >&5
-fi
-if test -x $srcdir/lacheck/configure; then
-  test "x$enable_lacheck" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS lacheck"
-  CONF_SUBDIRS="$CONF_SUBDIRS lacheck"
-else
-  echo 'tldbg:_KPSE_RECURSE skipping subdir, no (executable) configure: '"$srcdir"'/lacheck/configure' >&5
-fi
-if test -x $srcdir/m-tx/configure; then
-  test "x$enable_m_tx" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS m-tx"
-  CONF_SUBDIRS="$CONF_SUBDIRS m-tx"
-else
-  echo 'tldbg:_KPSE_RECURSE skipping subdir, no (executable) configure: '"$srcdir"'/m-tx/configure' >&5
-fi
-if test -x $srcdir/pmx/configure; then
-  test "x$enable_pmx" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS pmx"
-  CONF_SUBDIRS="$CONF_SUBDIRS pmx"
-else
-  echo 'tldbg:_KPSE_RECURSE skipping subdir, no (executable) configure: '"$srcdir"'/pmx/configure' >&5
-fi
-if test -x $srcdir/ps2eps/configure; then
-  test "x$enable_ps2eps" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS ps2eps"
-  CONF_SUBDIRS="$CONF_SUBDIRS ps2eps"
-else
-  echo 'tldbg:_KPSE_RECURSE skipping subdir, no (executable) configure: '"$srcdir"'/ps2eps/configure' >&5
-fi
-if test -x $srcdir/t1utils/configure; then
-  test "x$enable_t1utils" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS t1utils"
-  CONF_SUBDIRS="$CONF_SUBDIRS t1utils"
-else
-  echo 'tldbg:_KPSE_RECURSE skipping subdir, no (executable) configure: '"$srcdir"'/t1utils/configure' >&5
-fi
-if test -x $srcdir/texdoctk/configure; then
-  test "x$enable_texdoctk" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS texdoctk"
-  CONF_SUBDIRS="$CONF_SUBDIRS texdoctk"
-else
-  echo 'tldbg:_KPSE_RECURSE skipping subdir, no (executable) configure: '"$srcdir"'/texdoctk/configure' >&5
-fi
-if test -x $srcdir/tpic2pdftex/configure; then
-  test "x$enable_tpic2pdftex" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS tpic2pdftex"
-  CONF_SUBDIRS="$CONF_SUBDIRS tpic2pdftex"
-else
-  echo 'tldbg:_KPSE_RECURSE skipping subdir, no (executable) configure: '"$srcdir"'/tpic2pdftex/configure' >&5
-fi
-if test -x $srcdir/vlna/configure; then
-  test "x$enable_vlna" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS vlna"
-  CONF_SUBDIRS="$CONF_SUBDIRS vlna"
-else
-  echo 'tldbg:_KPSE_RECURSE skipping subdir, no (executable) configure: '"$srcdir"'/vlna/configure' >&5
-fi
-if test -x $srcdir/xindy/configure; then
-  test "x$enable_xindy" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS xindy"
-  CONF_SUBDIRS="$CONF_SUBDIRS xindy"
-else
-  echo 'tldbg:_KPSE_RECURSE skipping subdir, no (executable) configure: '"$srcdir"'/xindy/configure' >&5
-fi
-if test -x $srcdir/xml2pmx/configure; then
-  test "x$enable_xml2pmx" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS xml2pmx"
-  CONF_SUBDIRS="$CONF_SUBDIRS xml2pmx"
-else
-  echo 'tldbg:_KPSE_RECURSE skipping subdir, no (executable) configure: '"$srcdir"'/xml2pmx/configure' >&5
-fi
-if test -x $srcdir/xpdfopen/configure; then
-  test "x$enable_xpdfopen" = xyes && MAKE_SUBDIRS="$MAKE_SUBDIRS xpdfopen"
-  CONF_SUBDIRS="$CONF_SUBDIRS xpdfopen"
-else
-  echo 'tldbg:_KPSE_RECURSE skipping subdir, no (executable) configure: '"$srcdir"'/xpdfopen/configure' >&5
-fi
+  if test "x$enable_autosp" = xyes; then
+    echo 'tldbg:_KPSE_RECURSE   test "x$enable_autosp" = xyes true, adding to MAKE_SUBDIRS: autosp' >&5
+    MAKE_SUBDIRS="$MAKE_SUBDIRS autosp"
+  else
+    echo 'tldbg:_KPSE_RECURSE   test "x$enable_autosp" = xyes false, omitting from MAKE_SUBDIRS: autosp' >&5
+  fi
 
+else
+  echo 'tldbg:_KPSE_RECURSE   omitting from CONF_SUBDIRS, no (executable) configure: '"$srcdir"'/autosp/configure' >&5
+fi
+echo 'tldbg:_KPSE_RECURSE  checking: axodraw2' >&5
+if test -x $srcdir/axodraw2/configure; then
+  echo 'tldbg:_KPSE_RECURSE   have configure, adding to CONF_SUBDIRS: axodraw2' >&5
+  CONF_SUBDIRS="$CONF_SUBDIRS axodraw2"
+  if test "x$enable_axodraw2" = xyes; then
+    echo 'tldbg:_KPSE_RECURSE   test "x$enable_axodraw2" = xyes true, adding to MAKE_SUBDIRS: axodraw2' >&5
+    MAKE_SUBDIRS="$MAKE_SUBDIRS axodraw2"
+  else
+    echo 'tldbg:_KPSE_RECURSE   test "x$enable_axodraw2" = xyes false, omitting from MAKE_SUBDIRS: axodraw2' >&5
+  fi
+
+else
+  echo 'tldbg:_KPSE_RECURSE   omitting from CONF_SUBDIRS, no (executable) configure: '"$srcdir"'/axodraw2/configure' >&5
+fi
+echo 'tldbg:_KPSE_RECURSE  checking: devnag' >&5
+if test -x $srcdir/devnag/configure; then
+  echo 'tldbg:_KPSE_RECURSE   have configure, adding to CONF_SUBDIRS: devnag' >&5
+  CONF_SUBDIRS="$CONF_SUBDIRS devnag"
+  if test "x$enable_devnag" = xyes; then
+    echo 'tldbg:_KPSE_RECURSE   test "x$enable_devnag" = xyes true, adding to MAKE_SUBDIRS: devnag' >&5
+    MAKE_SUBDIRS="$MAKE_SUBDIRS devnag"
+  else
+    echo 'tldbg:_KPSE_RECURSE   test "x$enable_devnag" = xyes false, omitting from MAKE_SUBDIRS: devnag' >&5
+  fi
+
+else
+  echo 'tldbg:_KPSE_RECURSE   omitting from CONF_SUBDIRS, no (executable) configure: '"$srcdir"'/devnag/configure' >&5
+fi
+echo 'tldbg:_KPSE_RECURSE  checking: lacheck' >&5
+if test -x $srcdir/lacheck/configure; then
+  echo 'tldbg:_KPSE_RECURSE   have configure, adding to CONF_SUBDIRS: lacheck' >&5
+  CONF_SUBDIRS="$CONF_SUBDIRS lacheck"
+  if test "x$enable_lacheck" = xyes; then
+    echo 'tldbg:_KPSE_RECURSE   test "x$enable_lacheck" = xyes true, adding to MAKE_SUBDIRS: lacheck' >&5
+    MAKE_SUBDIRS="$MAKE_SUBDIRS lacheck"
+  else
+    echo 'tldbg:_KPSE_RECURSE   test "x$enable_lacheck" = xyes false, omitting from MAKE_SUBDIRS: lacheck' >&5
+  fi
+
+else
+  echo 'tldbg:_KPSE_RECURSE   omitting from CONF_SUBDIRS, no (executable) configure: '"$srcdir"'/lacheck/configure' >&5
+fi
+echo 'tldbg:_KPSE_RECURSE  checking: m_tx' >&5
+if test -x $srcdir/m-tx/configure; then
+  echo 'tldbg:_KPSE_RECURSE   have configure, adding to CONF_SUBDIRS: m_tx' >&5
+  CONF_SUBDIRS="$CONF_SUBDIRS m-tx"
+  if test "x$enable_m_tx" = xyes; then
+    echo 'tldbg:_KPSE_RECURSE   test "x$enable_m_tx" = xyes true, adding to MAKE_SUBDIRS: m_tx' >&5
+    MAKE_SUBDIRS="$MAKE_SUBDIRS m-tx"
+  else
+    echo 'tldbg:_KPSE_RECURSE   test "x$enable_m_tx" = xyes false, omitting from MAKE_SUBDIRS: m-tx' >&5
+  fi
+
+else
+  echo 'tldbg:_KPSE_RECURSE   omitting from CONF_SUBDIRS, no (executable) configure: '"$srcdir"'/m-tx/configure' >&5
+fi
+echo 'tldbg:_KPSE_RECURSE  checking: pmx' >&5
+if test -x $srcdir/pmx/configure; then
+  echo 'tldbg:_KPSE_RECURSE   have configure, adding to CONF_SUBDIRS: pmx' >&5
+  CONF_SUBDIRS="$CONF_SUBDIRS pmx"
+  if test "x$enable_pmx" = xyes; then
+    echo 'tldbg:_KPSE_RECURSE   test "x$enable_pmx" = xyes true, adding to MAKE_SUBDIRS: pmx' >&5
+    MAKE_SUBDIRS="$MAKE_SUBDIRS pmx"
+  else
+    echo 'tldbg:_KPSE_RECURSE   test "x$enable_pmx" = xyes false, omitting from MAKE_SUBDIRS: pmx' >&5
+  fi
+
+else
+  echo 'tldbg:_KPSE_RECURSE   omitting from CONF_SUBDIRS, no (executable) configure: '"$srcdir"'/pmx/configure' >&5
+fi
+echo 'tldbg:_KPSE_RECURSE  checking: ps2eps' >&5
+if test -x $srcdir/ps2eps/configure; then
+  echo 'tldbg:_KPSE_RECURSE   have configure, adding to CONF_SUBDIRS: ps2eps' >&5
+  CONF_SUBDIRS="$CONF_SUBDIRS ps2eps"
+  if test "x$enable_ps2eps" = xyes; then
+    echo 'tldbg:_KPSE_RECURSE   test "x$enable_ps2eps" = xyes true, adding to MAKE_SUBDIRS: ps2eps' >&5
+    MAKE_SUBDIRS="$MAKE_SUBDIRS ps2eps"
+  else
+    echo 'tldbg:_KPSE_RECURSE   test "x$enable_ps2eps" = xyes false, omitting from MAKE_SUBDIRS: ps2eps' >&5
+  fi
+
+else
+  echo 'tldbg:_KPSE_RECURSE   omitting from CONF_SUBDIRS, no (executable) configure: '"$srcdir"'/ps2eps/configure' >&5
+fi
+echo 'tldbg:_KPSE_RECURSE  checking: t1utils' >&5
+if test -x $srcdir/t1utils/configure; then
+  echo 'tldbg:_KPSE_RECURSE   have configure, adding to CONF_SUBDIRS: t1utils' >&5
+  CONF_SUBDIRS="$CONF_SUBDIRS t1utils"
+  if test "x$enable_t1utils" = xyes; then
+    echo 'tldbg:_KPSE_RECURSE   test "x$enable_t1utils" = xyes true, adding to MAKE_SUBDIRS: t1utils' >&5
+    MAKE_SUBDIRS="$MAKE_SUBDIRS t1utils"
+  else
+    echo 'tldbg:_KPSE_RECURSE   test "x$enable_t1utils" = xyes false, omitting from MAKE_SUBDIRS: t1utils' >&5
+  fi
+
+else
+  echo 'tldbg:_KPSE_RECURSE   omitting from CONF_SUBDIRS, no (executable) configure: '"$srcdir"'/t1utils/configure' >&5
+fi
+echo 'tldbg:_KPSE_RECURSE  checking: texdoctk' >&5
+if test -x $srcdir/texdoctk/configure; then
+  echo 'tldbg:_KPSE_RECURSE   have configure, adding to CONF_SUBDIRS: texdoctk' >&5
+  CONF_SUBDIRS="$CONF_SUBDIRS texdoctk"
+  if test "x$enable_texdoctk" = xyes; then
+    echo 'tldbg:_KPSE_RECURSE   test "x$enable_texdoctk" = xyes true, adding to MAKE_SUBDIRS: texdoctk' >&5
+    MAKE_SUBDIRS="$MAKE_SUBDIRS texdoctk"
+  else
+    echo 'tldbg:_KPSE_RECURSE   test "x$enable_texdoctk" = xyes false, omitting from MAKE_SUBDIRS: texdoctk' >&5
+  fi
+
+else
+  echo 'tldbg:_KPSE_RECURSE   omitting from CONF_SUBDIRS, no (executable) configure: '"$srcdir"'/texdoctk/configure' >&5
+fi
+echo 'tldbg:_KPSE_RECURSE  checking: tpic2pdftex' >&5
+if test -x $srcdir/tpic2pdftex/configure; then
+  echo 'tldbg:_KPSE_RECURSE   have configure, adding to CONF_SUBDIRS: tpic2pdftex' >&5
+  CONF_SUBDIRS="$CONF_SUBDIRS tpic2pdftex"
+  if test "x$enable_tpic2pdftex" = xyes; then
+    echo 'tldbg:_KPSE_RECURSE   test "x$enable_tpic2pdftex" = xyes true, adding to MAKE_SUBDIRS: tpic2pdftex' >&5
+    MAKE_SUBDIRS="$MAKE_SUBDIRS tpic2pdftex"
+  else
+    echo 'tldbg:_KPSE_RECURSE   test "x$enable_tpic2pdftex" = xyes false, omitting from MAKE_SUBDIRS: tpic2pdftex' >&5
+  fi
+
+else
+  echo 'tldbg:_KPSE_RECURSE   omitting from CONF_SUBDIRS, no (executable) configure: '"$srcdir"'/tpic2pdftex/configure' >&5
+fi
+echo 'tldbg:_KPSE_RECURSE  checking: vlna' >&5
+if test -x $srcdir/vlna/configure; then
+  echo 'tldbg:_KPSE_RECURSE   have configure, adding to CONF_SUBDIRS: vlna' >&5
+  CONF_SUBDIRS="$CONF_SUBDIRS vlna"
+  if test "x$enable_vlna" = xyes; then
+    echo 'tldbg:_KPSE_RECURSE   test "x$enable_vlna" = xyes true, adding to MAKE_SUBDIRS: vlna' >&5
+    MAKE_SUBDIRS="$MAKE_SUBDIRS vlna"
+  else
+    echo 'tldbg:_KPSE_RECURSE   test "x$enable_vlna" = xyes false, omitting from MAKE_SUBDIRS: vlna' >&5
+  fi
+
+else
+  echo 'tldbg:_KPSE_RECURSE   omitting from CONF_SUBDIRS, no (executable) configure: '"$srcdir"'/vlna/configure' >&5
+fi
+echo 'tldbg:_KPSE_RECURSE  checking: xindy' >&5
+if test -x $srcdir/xindy/configure; then
+  echo 'tldbg:_KPSE_RECURSE   have configure, adding to CONF_SUBDIRS: xindy' >&5
+  CONF_SUBDIRS="$CONF_SUBDIRS xindy"
+  if test "x$enable_xindy" = xyes; then
+    echo 'tldbg:_KPSE_RECURSE   test "x$enable_xindy" = xyes true, adding to MAKE_SUBDIRS: xindy' >&5
+    MAKE_SUBDIRS="$MAKE_SUBDIRS xindy"
+  else
+    echo 'tldbg:_KPSE_RECURSE   test "x$enable_xindy" = xyes false, omitting from MAKE_SUBDIRS: xindy' >&5
+  fi
+
+else
+  echo 'tldbg:_KPSE_RECURSE   omitting from CONF_SUBDIRS, no (executable) configure: '"$srcdir"'/xindy/configure' >&5
+fi
+echo 'tldbg:_KPSE_RECURSE  checking: xml2pmx' >&5
+if test -x $srcdir/xml2pmx/configure; then
+  echo 'tldbg:_KPSE_RECURSE   have configure, adding to CONF_SUBDIRS: xml2pmx' >&5
+  CONF_SUBDIRS="$CONF_SUBDIRS xml2pmx"
+  if test "x$enable_xml2pmx" = xyes; then
+    echo 'tldbg:_KPSE_RECURSE   test "x$enable_xml2pmx" = xyes true, adding to MAKE_SUBDIRS: xml2pmx' >&5
+    MAKE_SUBDIRS="$MAKE_SUBDIRS xml2pmx"
+  else
+    echo 'tldbg:_KPSE_RECURSE   test "x$enable_xml2pmx" = xyes false, omitting from MAKE_SUBDIRS: xml2pmx' >&5
+  fi
+
+else
+  echo 'tldbg:_KPSE_RECURSE   omitting from CONF_SUBDIRS, no (executable) configure: '"$srcdir"'/xml2pmx/configure' >&5
+fi
+echo 'tldbg:_KPSE_RECURSE  checking: xpdfopen' >&5
+if test -x $srcdir/xpdfopen/configure; then
+  echo 'tldbg:_KPSE_RECURSE   have configure, adding to CONF_SUBDIRS: xpdfopen' >&5
+  CONF_SUBDIRS="$CONF_SUBDIRS xpdfopen"
+  if test "x$enable_xpdfopen" = xyes; then
+    echo 'tldbg:_KPSE_RECURSE   test "x$enable_xpdfopen" = xyes true, adding to MAKE_SUBDIRS: xpdfopen' >&5
+    MAKE_SUBDIRS="$MAKE_SUBDIRS xpdfopen"
+  else
+    echo 'tldbg:_KPSE_RECURSE   test "x$enable_xpdfopen" = xyes false, omitting from MAKE_SUBDIRS: xpdfopen' >&5
+  fi
+
+else
+  echo 'tldbg:_KPSE_RECURSE   omitting from CONF_SUBDIRS, no (executable) configure: '"$srcdir"'/xpdfopen/configure' >&5
+fi
 { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $MAKE_SUBDIRS" >&5
 printf "%s\n" "$MAKE_SUBDIRS" >&6; }
+echo 'tldbg:_KPSE_RECURSE done (list=utils)' >&5
+
 
 ac_config_files="$ac_config_files Makefile"
 

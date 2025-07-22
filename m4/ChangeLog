@@ -1,3 +1,8 @@
+2025-07-22  Karl Berry  <karl@freefriends.org>
+
+	* kpse-setup.m4: add tldbg debugging lines to help understand
+	when the recursion happens and when it's skipped.
+
 2025-01-15  J. Neusch\"afer  <j.ne@posteo.net>
 
 	configure support for system luajit library.

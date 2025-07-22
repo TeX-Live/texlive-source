@@ -8543,6 +8543,10 @@ ${top_builddir}/../../libs/graphite2/include/graphite2/Font.h:
 fi
 
 
+
+
+
+
 # Functions and headers
 ac_fn_c_check_func "$LINENO" "atexit" "ac_cv_func_atexit"
 if test "x$ac_cv_func_atexit" = xyes

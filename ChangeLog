@@ -1,3 +1,9 @@
+2025-07-22  Karl Berry  <karl@freefriends.org>
+
+	* reautoconf: mention that autoconf-only packages need to be
+	explicitly added; would be better to read kpse-pkgs.m4.
+	Also reautoconf tree for kpse-setup.m4 changes.
+
 2025-06-26  Karl Berry  <karl@freefriends.org>
 
 	* automake 1.18.1.

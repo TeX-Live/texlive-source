@@ -309,8 +309,9 @@ Modification of any part of the build system (M4 macros,
 @file{configure.ac}, @file{Makefile.am}, or their fragments) requires
 GNU M4, GNU Autoconf, GNU Automake, and GNU Libtool to update the
 generated files.  Furthermore, to reliably reproduce the build files,
-the original GNU releases of these tools must be used, not any distro
-packaging of them.  @xref{Build system tools}, for more discussion.
+the latest original GNU releases of these tools must be used, not any
+distro packaging of them.  @xref{Build system tools}, for more
+discussion.
 
 @end itemize
 
@@ -621,7 +622,7 @@ make -C $ww check SUBDIRS=. TESTS='$(hitex_tests)'
 @end example
 
 @noindent where @code{$ww} is the web2c build directory, that is,
-@file{ww=/wherever/Build/source/Work/texk/web2c}.
+@file{ww=/.../Build/source/Work/texk/web2c}.
 
 It's also possible to run individual tests the same way, using the test
 name exactly as specified in the @file{.am} file:
@@ -643,9 +644,9 @@ directory} lines, you can add the (GNU) make option
 @code{--no-print-dir}.
 
 You may find it useful to put lengthy incantations like this into a
-trivial shell script with a short name (say, @code{hitst}).  Then you
-just run @code{hitst} and edit the file when necessary to change
-things around.
+trivial shell script with a short name (say, @code{hitch}).  Then you
+just run @code{hitch} and edit the file when necessary to change
+the options.
 
 @node Cross compilation
 @section Cross compilation
@@ -1421,7 +1422,7 @@ is used on Windows instead of symlinks for the ``linked scripts''
 
 @defmac KPSE_WIN32_CALL
 @pindex callexe.c
-Call @code{KPSE_COND_WIN32} and check if the file
+Call @code{KPSE_COND_WIN32} and check whether the file
 @file{texk/texlive/windows_wrapper/callexe.c} exists; if it does, create a
 symlink in the build tree.  Compiling @file{callexe.c} with
 @code{-DEXEPROG='"@var{foo}.exe"'} and installing @file{callexe.exe}
@@ -1625,8 +1626,8 @@ modifications documented in @file{TLpatches/*}, and a wrapper
 @file{xindy-src}.
 
 The @code{xindy} build requires a @file{make} that supports a
-@code{VPATH} build, can handle all targets, and does not refer to
-@code{$@{top_srcdir@}} or @code{$@{top_builddir@}}.  The fragment
+@code{VPATH} build, can handle all needed targets, and does not refer
+to @code{$@{top_srcdir@}} or @code{$@{top_builddir@}}.  The fragment
 @code{xindy/ac/withenable.ac} contains
 
 @example
@@ -1696,13 +1697,27 @@ their support files.  See @url{https://tug.org/texlive/build.html#asymptote}.
 This section outlines the basic process for adding new packages to the
 TL build system.
 
-In any case, a new package directory @file{foo} should contain the
-original sources, modified only with changes necessary for TL, in
+A new package directory @file{foo} should be placed under
+@file{Build/source/texk/} if it uses Kpathsea (or another
+@TeX{}-specific library), or under @file{Build/source/utils} if it
+does not.
+
+The new directory should normally have the original sources, modified
+only with changes necessary for TL, in a subdirectory
 @file{foo/foo-src}. The changes should be documented in
 @file{foo/TLpatches/*}, and also be submitted upstream whenever
 reasonable.  In addition, @file{foo/} will need the usual Automake
 build-related files (@file{configure.ac}, @file{Makefile.am}, etc.
 Please maintain @file{foo/ChangeLog} for all TL changes.
+
+@cindex new package using Autoconf only
+@cindex Autoconf, new package using only
+It is also possible to add a package which is configured with Autoconf
+(or another @code{make}-based system) and not Automake.  The package
+must still support the standard @code{make} variables and targets, and
+@code{VPATH} builds (@pxref{VPATH Builds,,, automake, GNU Automake}).
+For Autoconf-only packages, it is probably not sensible to use a
+@code{foo-src} subdirectory.
 
 @menu
 * Adding a new program module::
@@ -1725,15 +1740,15 @@ included by adding its name @file{@var{prog}} to the M4 list
 
 @vindex kpse_utils_pkgs
 A generic program module in a subdirectory @file{utils/@var{prog}}
-must not use the @TeX{}-specific libraries and is included by adding
-its name @file{@var{prog}} to the M4 list @code{kpse_utils_pkgs} in
-@file{m4/kpse-pkgs.m4}.
+must not use the @TeX{}-specific libraries, notably Kpathsea, and is
+included by adding its name @file{@var{prog}} to the M4 list
+@code{kpse_utils_pkgs} in @file{m4/kpse-pkgs.m4}.
 
 @pindex withenable.ac@r{, for new modules}
 @findex KPSE_ENABLE_PROG
 In either case, the subdirectory @file{texk/@var{prog}} or
-@file{utils/@var{prog}} must provide a fragment
-@file{ac/withenable.ac} that contains the M4 macro
+@file{utils/@var{prog}} must include a file
+@file{ac/withenable.ac} which contains a call to the M4 macro
 @code{KPSE_ENABLE_PROG} defined in @file{m4/kpse-setup.m4} with
 @code{@var{prog}} as the mandatory first argument and three optional
 arguments:
@@ -2285,7 +2300,7 @@ terminals, @dots{}).
 @noindent @code{--enable-tex-synctex}, @code{--disable-etex-synctex},
 @dots{}@*Build the @TeX{} engines with or without @code{SyncTeX}
 support; ignored for a native @TL{} build.  Defaults are defined in
-@file{texk/web2c/ac/web2c.ac}.
+@file{texk/web2c/ac/web2c.ac} (@pxref{Autoconf macros}).
 
 @vindex --disable-synctex
 @cindex synctex

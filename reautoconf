@@ -103,6 +103,9 @@ do_it () {
   fi
 }
 
+# use the presence of an ac/ subdir to determine if it's a package
+# directory in which we should run autoreconf. Would be better to
+# extract from kpse-pkgs.m4, if we ever get an autoconf-only package.
 if test "x$list" = x; then
   list=". auxdir/auxsub libs utils texk \
         `find libs utils texk -type d -name ac | sed 's,/ac\$,,'`"
