@@ -5,7 +5,7 @@
 #
 # BSD 2-Clause License
 # 
-# Copyright (c) 2012 - 2020, Matthieu Moy
+# Copyright (c) 2012 - 2025, Matthieu Moy
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -80,16 +80,21 @@ unset GIT_WORK_TREE
 # But we protect ourselves from such a user mistake nevertheless.
 unset CDPATH
 
-# 1.6.0 is substituted by the install script here,
+# 1.7.1 is substituted by the install script here,
 # but not within git_latexdiff_compute_version().
-git_latexdiff_version='1.6.0'
+git_latexdiff_version='1.7.1'
 
 git_latexdiff_compute_version () {
+    printf '%s' "git latexdiff version "
     if [ "$git_latexdiff_version" = '@GIT_LATEXDIFF''_VERSION@' ]; then
 	(cd "$(dirname "$0")" && git describe --tags HEAD 2>/dev/null || echo 'Unknown version')
     else
 	echo "$git_latexdiff_version"
     fi
+    echo
+    echo "Using external commands:"
+    command -v latexpand && latexpand --version
+    command -v latexdiff && latexdiff --version
 }
 
 usage () {
@@ -162,6 +167,8 @@ Options:
     --filter <cmd>        run <cmd> after latexdiff and before compilation
                              (e.g. to fix up latexdiff output)
     --ln-untracked        symlink uncommited files from the working directory
+    --ln-untracked-dir <dir>
+                          symlink subdirectory of uncommited files (relative to the main .tex file)
     --version             show git-latexdiff version.
     --subtree             checkout the tree at and below the main file
                              (enabled by default, disable with --whole-tree)
@@ -173,6 +180,8 @@ Options:
     --latexpand OPT       pass option OPT to latexpand. Use multiple times like
                           --latexpand OPT1 --latexpand OPT2 to pass multiple options.
     --latexdiff-flatten   use --flatten from latexdiff instead of latexpand
+    --early-exit-if-equal if two files are identical latexdiff will not be called and git-latexdiff exits gracefully.
+                          This option works only if latexpand is used
 
 Unrecognized options are passed unmodified to latexdiff.
 EOF
@@ -180,8 +189,6 @@ EOF
 
 examples () {
     cat <<EOF
-Examples:
-
 Diff the previous revision with the latest commit:
 
     git latexdiff HEAD^
@@ -202,6 +209,11 @@ instead of red+trike/blue+underline diff:
 Use a specific latexdiff configuration file:
 
     git latexdiff --config /path/to/file HEAD^
+
+Add a \\makeatletter statement to hopefuly fix some LaTeX compilation errors
+involving commands containing an @ character:
+
+    git latexdiff --latexpand --makeatletter HEAD^
 EOF
 }
 
@@ -252,6 +264,7 @@ uselatexmk=
 use_build_dir=
 latexopt=
 ln_untracked=0
+ln_untracked_dir=
 quiet=0
 ignorelatexerrors=0
 latexdiffopt=()
@@ -263,6 +276,9 @@ xelatex=0
 lualatex=0
 tectonic=0
 BIBTEX_EXEC=bibtex
+early_exit_if_equal=0
+
+run_latex_diff=1
 
 while test $# -ne 0; do
     case "$1" in
@@ -316,7 +332,9 @@ while test $# -ne 0; do
 	"-o"|"--output")
 	    test $# -gt 1 && shift || die "missing argument for $1"
 	    output=$1
-	    cleanup=all
+            if [ "$cleanup" = keeppdf ]; then
+	        cleanup=all
+            fi
 	    ;;
 	"-b"|"--bibtex")
 	    bbl=1
@@ -385,6 +403,9 @@ while test $# -ne 0; do
 	    latexdiff_flatten=1
             flatten=0
 	    ;;
+	"--early-exit-if-equal")
+	  	early_exit_if_equal=1
+	    ;;
 	"--latexopt")
 	    shift
 	    latexopt=$1
@@ -392,6 +413,10 @@ while test $# -ne 0; do
         "--ln-untracked")
             ln_untracked=1
             ;;
+        "--ln-untracked-dir")
+           shift
+           ln_untracked_dir=$1
+           ;;
         "--no-ln-untracked")
             ln_untracked=0
             ;;
@@ -411,7 +436,7 @@ while test $# -ne 0; do
             else
 		case "$1" in
 		    '--type'|'-t'|'--subtype'|'-s'|'--floattype'|'-f'|\
-			'--config'|'-c'|'-p'|'--encoding'|'-e'|\
+			'--config'|'-c'|'--encoding'|'-e'|\
 			'--label'|'-L'|'--exclude-safecmd'|'-A'|\
 			'--replace-safecmd'|'--append-safecmd'|'-a'|\
 			'--exclude-textcmd'|'-X'|'--replace-textcmd'|\
@@ -425,13 +450,22 @@ while test $# -ne 0; do
 			latexdiffopt+=("$1" "$2")
 			shift
 			;;
-		    '--preamble')
+		    --preamble=*|-p*|"--preamble"|"-p")
 			# Same, but with a file argument. Make it
 			# absolute to avoid issues when cd-ing
 			# somewhere else.
-			absolute="$(cd $(dirname "$2"); pwd)/$(basename "$2")"
-			latexdiffopt+=("$1" "$absolute")
-			shift
+			doshift=1
+			if test "$1" = "--preamble" || test "$1" = "-p"; then
+				relative="$2"
+			else
+				relative="$(printf "%s" "$1" | sed 's/^--preamble=//;s/^-p//')"
+				doshift=0
+			fi
+			absolute="$(cd $(dirname "$relative"); pwd)/$(basename "$relative")"
+			latexdiffopt+=("-p" "$absolute")
+			if test $doshift = 1; then
+				shift
+			fi
 			;;
 		    *)
 			latexdiffopt+=("$1")
@@ -500,7 +534,7 @@ case "$view" in
 esac
 
 if test $flatten = 1 &&
-    ! command -v latexpand 2>/dev/null; then
+    ! command -v latexpand >/dev/null 2>&1; then
     echo "Warning: latexpand not found. Falling back to latexdiff --flatten."
     latexdiff_flatten=1
     flatten=0
@@ -533,7 +567,18 @@ check_knitr () {
 
 check_org () {
     if test -z "$prepare_cmd"; then
-        prepare_cmd="emacs --batch --eval \"(load \\\"~/.emacs\\\")\" \"$main\" -f org-latex-export-to-latex --kill"
+        init_file=
+        load_init_file=
+        for f in ~/.emacs ~/.emacs.el ~/.emacs.d/init.elc ~/.emacs.d/init.el; do
+            if test -f "$f"; then
+                init_file="$f"
+                break
+            fi
+        done
+        if test -n "$init_file"; then
+            load_init_file="--eval \"(load \\\"$init_file\\\")\""
+        fi
+        prepare_cmd="emacs --batch $load_init_file \"$main\" -f org-latex-export-to-latex --kill"
     fi
     main="${main%\.*}.tex"
 }
@@ -593,7 +638,7 @@ verbose "Creating temporary directories"
 
 git_prefix=$(git rev-parse --show-prefix)
 git_dir="$(git rev-parse --git-dir)" || die "Not a git repository?"
-cd "$(git rev-parse --show-cdup)" || die "Can't cd back to repository root"
+cd "$(git rev-parse --show-toplevel)" || die "Can't cd back to repository root"
 git_dir=$(cd "$git_dir"; pwd)
 git_worktree=$(pwd)
 
@@ -629,10 +674,17 @@ if test "$ln_untracked" = 1; then
     ) || true
 fi
 
+if test -n "$ln_untracked_dir" ; then
+    (
+	mkdir -p "$maindir"/"$ln_untracked_dir" && cd "$maindir"/"$ln_untracked_dir" &&
+	    log_cmd ln-old.log ln -s "$initial_repo"/"$maindir"/"$ln_untracked_dir"/* .
+    ) || true
+fi
+
 if test "$subtree" = 1 && test -n "$git_prefix"; then
     checkoutroot=$git_prefix
 else
-    checkoutroot="."
+    checkoutroot="./"
 fi
 # create the build directory (containing the final PDFs) if the param was set
 if test -n "$use_build_dir" ; then
@@ -640,11 +692,36 @@ if test -n "$use_build_dir" ; then
 else
     builddir="$relative_main_dir"
 fi
+pdffile="$builddir/$mainbase".pdf
 
 # Checkout a subtree, without touching the index ("git checkout" would)
 (cd "$git_dir" && git archive --format=tar "$old" "$checkoutroot") | tar -xf -
+
 # Also expand the possible submodules
-(cd "$git_worktree" && git submodule foreach --recursive 'git archive --format=tar "$sha1" | tar -xf - --directory '$tmpdir/old'/$displaypath')
+(cd "$git_worktree" && git ls-tree -r "$old":"$checkoutroot" | \
+    { grep '^[^ ]* commit ' || true; } | \
+    while read -r mod type id name; do
+        # Submodule's object may be in the submodule (if it was directly "git init && git add"-ed),
+        # or in .git/modules, if it was cloned using "git submodule update <repository> <path>".
+        ALTERNATES=
+        for d in "$name"/.git/objects/ .git/modules/"$name"/objects/; do
+            if test -d "$d"; then
+                if [ -z "${ALTERNATES}" ]; then
+                    ALTERNATES="$d"
+                else
+                    ALTERNATES="$ALTERNATES":"$d"
+                fi
+            fi
+        done
+        if [ -z "${GIT_ALTERNATE_OBJECT_DIRECTORIES}" ]; then
+            GIT_ALTERNATE_OBJECT_DIRECTORIES="$ALTERNATES" \
+                git archive --format=tar "$id"^{tree} | tar -xf - --directory "$tmpdir/old/$name"
+        else
+            GIT_ALTERNATE_OBJECT_DIRECTORIES="$GIT_ALTERNATE_OBJECT_DIRECTORIES":"$ALTERNATES" \
+                git archive --format=tar "$id"^{tree} | tar -xf - --directory "$tmpdir/old/$name"
+        fi
+    done
+)
 verbose_progress
 cd ../new || die "Cannot cd to new/"
 if test "$new" == "--"; then
@@ -653,12 +730,23 @@ if test "$new" == "--"; then
 else
     # checkout new revision
     (cd "$git_dir" && git archive --format=tar "$new" "$checkoutroot") | tar -xf -
+    # In case the submodule isn't yet "git add && git commit"ed, its directory may not have been created.
+    (cd "$git_worktree" && git submodule foreach --recursive 'mkdir -p '$tmpdir/new'/$displaypath')
     (cd "$git_worktree" && git submodule foreach --recursive 'git archive --format=tar "$sha1" | tar -xf - --directory '$tmpdir/new'/$displaypath')
 fi
 if test "$ln_untracked" = 1; then
     (
 	mkdir -p "$maindir" && cd "$maindir" &&
 	    log_cmd ln-new.log ln -s "$initial_repo"/"$maindir"/* .
+        # We'll write to this file, don't link it to the worktree, or we'll write to the worktree!
+        rm "$pdffile"
+    ) || true
+fi
+
+if test -n "$ln_untracked_dir" ; then
+    (
+	mkdir -p "$maindir"/"$ln_untracked_dir" && cd "$maindir"/"$ln_untracked_dir" &&
+	    log_cmd ln-old.log ln -s "$initial_repo"/"$maindir"/"$ln_untracked_dir"/* .
     ) || true
 fi
 
@@ -766,15 +854,24 @@ if test "$flatten" = 1; then
 	|| die "latexpand failed for new version"
     verbose_done
 
-    verbose "Running $LATEXDIFF_EXEC ${latexdiffopt[*]} old-${mainbase}-fl.tex new-${mainbase}-fl.tex > ./diff.tex"
-    "$LATEXDIFF_EXEC" "${latexdiffopt[@]}" old-"$mainbase"-fl.tex new-"$mainbase"-fl.tex > diff.tex \
-	|| die "$LATEXDIFF_EXEC failed"
-    verbose_done
+    if test "${early_exit_if_equal}" = 1 && cmp --s -- old-"${mainbase}"-fl.tex new-"${mainbase}"-fl.tex;
+    then
+      echo "As the two revisions are identical and --early-exit-if-equal was provided, exiting without running latexdiff."
+      run_latex_diff=0
+    fi
 
-    verbose "mv ./diff.tex new/$main"
-    mv -f new/"$main" new/"$main".orig
-    mv -f diff.tex new/"$main"
-    verbose_done
+    if test "${run_latex_diff}" = 1;
+    then
+      verbose "Running $LATEXDIFF_EXEC ${latexdiffopt[*]} old-${mainbase}-fl.tex new-${mainbase}-fl.tex > ./diff.tex"
+      "$LATEXDIFF_EXEC" "${latexdiffopt[@]}" old-"$mainbase"-fl.tex new-"$mainbase"-fl.tex > diff.tex \
+    || die "$LATEXDIFF_EXEC failed"
+      verbose_done
+
+      verbose "mv ./diff.tex new/$main"
+      mv -f new/"$main" new/"$main".orig
+      mv -f diff.tex new/"$main"
+      verbose_done
+    fi
 else
     verbose "Running $LATEXDIFF_EXEC ${latexdiffopt[*]} old/$main new/$main > ./diff.tex"
     "$LATEXDIFF_EXEC" "${latexdiffopt[@]}" old/"$main" new/"$main" > diff.tex \
@@ -787,107 +884,110 @@ else
     verbose_done
 fi
 
-if [ ! -z "$filter_cmd" ]; then
-    verbose "Running filter command $filter_cmd in new/"
-    ( cd "new/" && log_cmd filter.log eval "$filter_cmd" )
-    if [ ! -f "new/$main" ]; then
-	die "$filter_cmd removed new/$main."
-    fi
-    verbose_done
-fi
+if test "${run_latex_diff}" = 1; then
+  if [ ! -z "$filter_cmd" ]; then
+      verbose "Running filter command $filter_cmd in new/"
+      ( cd "new/" && log_cmd filter.log eval "$filter_cmd" )
+      if [ ! -f "new/$main" ]; then
+    die "$filter_cmd removed new/$main."
+      fi
+      verbose_done
+  fi
 
-verbose "Compiling result"
+  verbose "Compiling result"
 
-compile_error=0
+  compile_error=0
 
-oldPWD=$PWD
-cd new/"$maindir" || die "Can't cd to new/$maindir"
-if test -f Makefile && test "$ignoremake" != 1 ; then
-    log_cmd make.log make || {
-	compile_error=1
-	error_msg="command 'make' failed."
-    }
-elif test "$uselatexmk" = 1; then
-    log_cmd latexmk.log latexmk -f -pdf -silent $latexopt "$mainbase" || {
-	compile_error=1
-	error_msg="command 'latexmk' failed."
-    }
-elif test "$tectonic" = 1; then
-    log_cmd tectonic.log tectonic $latexopt "$mainbase.tex" || {
-	compile_error=1
-	error_msg="command 'tectonic' failed."
-    }
-else
-    log_cmd pdflatex1.log $LATEX_EXEC $latexopt "$mainbase" || {
-	compile_error=1
-	error_msg="command pdflatex (first run) failed."
-    }
-    if test "$bibtex" = 1 || test "$biber" = 1 ; then
-	log_cmd "$BIBTEX_EXEC".log $BIBTEX_EXEC "$mainbase" || {
-	    compile_error=1
-	    error_msg="command '$BIBTEX_EXEC' failed."
-	}
-    fi
-    log_cmd pdflatex2.log $LATEX_EXEC $latexopt "$mainbase" || {
-	compile_error=1
-	error_msg="command 'pdflatex' (second run) failed."
-    }
-    log_cmd pdflatex3.log $LATEX_EXEC $latexopt "$mainbase" || {
-	compile_error=1
-	error_msg="command 'pdflatex' (third run) failed."
-    }
-fi
-cd "$oldPWD"
-
-# Same relative path as where we've been called from, but in the
-# temporary new/ directory:
-cd new/"$git_prefix"
-
-verbose_done
-
-ignore_errors_maybe
-
-if test $latex = 1; then
-    dvips "$mainbase".dvi
-    ps2pdf "$mainbase".ps
-fi
-
-pdffile="$builddir/$mainbase".pdf
-if test ! -r "$pdffile" ; then
-    echo "No PDF file generated."
-    echo "Working directory: $PWD"
-    echo "Expected PDF: $pdffile"
+  oldPWD=$PWD
+  cd new/"$maindir" || die "Can't cd to new/$maindir"
+  if test -e Makefile && test "$ignoremake" != 1 ; then
+      log_cmd make.log make || {
     compile_error=1
-elif test ! -s "$pdffile" ; then
-    echo "PDF file generated is empty."
+    error_msg="command 'make' failed."
+      }
+  elif test "$uselatexmk" = 1; then
+      log_cmd latexmk.log latexmk -f -pdf -silent $latexopt "$mainbase" || {
     compile_error=1
-fi
+    error_msg="command 'latexmk' failed."
+      }
+  elif test "$tectonic" = 1; then
+      log_cmd tectonic.log tectonic $latexopt "$mainbase.tex" || {
+    compile_error=1
+    error_msg="command 'tectonic' failed."
+      }
+  else
+      log_cmd pdflatex1.log $LATEX_EXEC $latexopt "$mainbase" || {
+    compile_error=1
+    error_msg="command pdflatex (first run) failed."
+      }
+      if test "$bibtex" = 1 || test "$biber" = 1 ; then
+    log_cmd "$BIBTEX_EXEC".log $BIBTEX_EXEC "$mainbase" || {
+        compile_error=1
+        error_msg="command '$BIBTEX_EXEC' failed."
+    }
+      fi
+      log_cmd pdflatex2.log $LATEX_EXEC $latexopt "$mainbase" || {
+    compile_error=1
+    error_msg="command 'pdflatex' (second run) failed."
+      }
+      log_cmd pdflatex3.log $LATEX_EXEC $latexopt "$mainbase" || {
+    compile_error=1
+    error_msg="command 'pdflatex' (third run) failed."
+      }
+  fi
+  cd "$oldPWD"
 
-if test "$compile_error" = "1" ; then
-    echo "Error during compilation. Please examine and cleanup if needed:"
-    echo "Directory: $tmpdir/new/$maindir"
-    echo "     File: $mainbase.tex"
-    echo "  Problem: $error_msg"
-    # Don't clean up to let the user diagnose.
-    exit 1
-fi
+  # Same relative path as where we've been called from, but in the
+  # temporary new/ directory:
+  cd new/"$git_prefix"
 
-if test -n "$output" ; then
-    abs_pdffile="$PWD/$pdffile"
-    (cd "$initial_dir" && mv "$abs_pdffile" "$output")
-    pdffile="$output"
-    echo "Output written on $pdffile"
-elif [ -f "$pdffile" ]; then
-    new_pdffile="$tmpdir"/"$mainbase".pdf
-    mv "$pdffile" "$new_pdffile"
-    pdffile="$new_pdffile"
+  verbose_done
+
+  ignore_errors_maybe
+
+  if test $latex = 1; then
+      dvips "$mainbase".dvi
+      ps2pdf "$mainbase".ps
+  fi
+
+  if test ! -r "$pdffile" ; then
+      echo "No PDF file generated."
+      echo "Working directory: $PWD"
+      echo "Expected PDF: $pdffile"
+      compile_error=1
+  elif test ! -s "$pdffile" ; then
+      echo "PDF file generated is empty."
+      compile_error=1
+  fi
+
+  if test "$compile_error" = "1" ; then
+      echo "Error during compilation. Please examine and cleanup if needed:"
+      echo "Directory: $tmpdir/new/$maindir"
+      echo "     File: $mainbase.tex"
+      echo "  Problem: $error_msg"
+      # Don't clean up to let the user diagnose.
+      exit 1
+  fi
+
+  if test -n "$output" ; then
+      abs_pdffile="$PWD/$pdffile"
+      (cd "$initial_dir" && mv "$abs_pdffile" "$output")
+      pdffile="$output"
+      echo "Output written on $pdffile"
+  elif [ -f "$pdffile" ]; then
+      new_pdffile="$tmpdir"/"$mainbase".pdf
+      mv "$pdffile" "$new_pdffile"
+      pdffile="$new_pdffile"
+  fi
 fi
 
 # Change directory so nothing will keep us from cleaning
 cd "$initial_dir"
 
-if test "$view" = 1 || ( test "$view" = maybe  && test -z "$output" ) ; then
+if test "${run_latex_diff}" = 1; then
+  if test "$view" = 1 || ( test "$view" = maybe  && test -z "$output" ) ; then
     "$PDFVIEWER" "$pdffile"
+  fi
 fi
 
 case "$cleanup" in
