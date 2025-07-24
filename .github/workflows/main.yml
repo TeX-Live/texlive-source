@@ -53,7 +53,7 @@ jobs:
           - ${{ startsWith(github.ref, 'refs/tags/') }}
         include:
           - tl_name: i386-linux
-            image: i386/debian:buster
+            image: i386/debian:bullseye
             platform: 386
             ci_build: true
             use_qemu: false
@@ -71,14 +71,14 @@ jobs:
             use_qemu: false
             buildsys: alpine
           - tl_name: aarch64-linux
-            image: arm64v8/debian:buster
+            image: arm64v8/debian:bullseye
             platform: aarch64
             ci_build: false
             use_qemu: true
             qemu_arch: aarch64
             buildsys: debian
           - tl_name: armhf-linux
-            image: arm32v7/debian:buster
+            image: arm32v7/debian:bullseye
             platform: arm/v7
             ci_build: false
             use_qemu: true
