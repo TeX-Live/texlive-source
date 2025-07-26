@@ -1,5 +1,5 @@
-Changes applied to the harfbuzz-11.3.2/ tree as obtained from:
-	https://github.com/harfbuzz/harfbuzz/releases/download/11.3.2/
+Changes applied to the harfbuzz-11.3.3/ tree as obtained from:
+	https://github.com/harfbuzz/harfbuzz/releases/download/11.3.3/
 
 Removed:
 	.clang-format
