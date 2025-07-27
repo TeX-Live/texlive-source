@@ -1,3 +1,10 @@
+2025-07-27  Karl Berry  <karl@freefriends.org>
+
+	* aleph-cat.test,
+	* aleph-lmr.test,
+	* aleph-ofm.test: use different .fmt names for each test,
+	to avoid occasional race condition failures under parallel builds.
+
 2025-03-07  Karl Berry  <karl@tug.org>
 
 	* TL'25 release.

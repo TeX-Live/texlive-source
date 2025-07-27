@@ -1,5 +1,6 @@
 #! /bin/sh -vx
-# Copyright 2024 Japanese TeX Development Community <issue@texjp.org>
+# $Id$
+# Copyright 2024-2025 Japanese TeX Development Community <issue@texjp.org>
 # You may freely use, modify and/or distribute this file.
 
 BinDir=${BinDir:-.}
@@ -18,16 +19,15 @@ TEXFORMATS=.; export TEXFORMATS
 rm -f al-lmr*.*
 $LN_S $srcdir/alephdir/tests/lmr1.tex ./al-lmr1.tex
 
-if test ! -f ./al-basic.tex; then
-  cp $srcdir/tests/dump-basic.tex ./al-basic.tex
+if test ! -f ./al-basic-lmr.tex; then
+  cp $srcdir/tests/dump-basic.tex ./al-basic-lmr.tex
 fi
-if test ! -f ./al-basic.fmt; then
-  $_aleph -ini -etex al-basic || exit 1
+if test ! -f ./al-basic-lmr.fmt; then
+  $_aleph -ini -etex al-basic-lmr || exit 1
 fi
 
-$_aleph -fmt=al-basic -interaction=batchmode al-lmr1.tex || :
+$_aleph -fmt=al-basic-lmr -interaction=batchmode al-lmr1.tex || :
 
 sed '1d;3d;4d' al-lmr1.log >al-lmr1.out
 
 diff $srcdir/alephdir/tests/al-lmr1.log al-lmr1.out || exit 3
-

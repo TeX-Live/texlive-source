@@ -1,4 +1,5 @@
 #! /bin/sh -vx
+# $Id$
 # Copyright 2025 Japanese TeX Development Community <issue@texjp.org>
 # You may freely use, modify and/or distribute this file.
 
@@ -18,16 +19,15 @@ TEXFORMATS=.; export TEXFORMATS
 rm -f al-cat.*
 $LN_S $srcdir/alephdir/tests/catcd.tex ./al-cat.tex
 
-if test ! -f ./al-basic.tex; then
-  cp $srcdir/tests/dump-basic.tex ./al-basic.tex
+if test ! -f ./al-basic-cat.tex; then
+  cp $srcdir/tests/dump-basic.tex ./al-basic-cat.tex
 fi
-if test ! -f ./al-basic.fmt; then
-  $_aleph -ini -etex al-basic || exit 1
+if test ! -f ./al-basic-cat.fmt; then
+  $_aleph -ini -etex al-basic-cat || exit 1
 fi
 
-$_aleph -fmt=al-basic -interaction=batchmode al-cat.tex || :
+$_aleph -fmt=al-basic-cat -interaction=batchmode al-cat.tex || :
 
 sed '1d;3d;4d' al-cat.log >al-cat.out
 
 diff $srcdir/alephdir/tests/al-cat.log al-cat.out || exit 3
-
