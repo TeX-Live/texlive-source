@@ -1,3 +1,7 @@
+2025-07-27  Andreas Scherer  <https://ascherer.github.io>
+
+	* ctangleboot.cin: CWEB 4.12.2 release.
+
 2025-07-21  Karl Berry  <karl@freefriends.org>
 
 	* doc/web2c.texi (mpost invocation): update option list.

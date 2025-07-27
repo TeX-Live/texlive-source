@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: CWEBbin 2025\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-03-12 11:51+0100\n"
-"PO-Revision-Date: 2025-01-01 15:08+0100\n"
+"PO-Revision-Date: 2025-07-27 15:08+0200\n"
 "Last-Translator: Andreas Scherer <andreas_github@freenet.de>\n"
 "Language-Team: Italian\n"
 "Language: it\n"
@@ -608,16 +608,16 @@ msgid "Sorting:"
 msgstr "Ordinamento:"
 
 #: ctang-i18n.ch:17
-msgid "This is CTANGLE (Version 4.12.1 [CWEBbin 2025])"
-msgstr "Questo è CTANGLE (Versione 4.12.1 [CWEBbin 2025])"
+msgid "This is CTANGLE (Version 4.12.2 [CWEBbin 2025.1])"
+msgstr "Questo è CTANGLE (Versione 4.12.2 [CWEBbin 2025.1])"
 
 #: cweav-twill.ch:93
-msgid "This is CTWILL (Version 4.12.1 [CWEBbin 2025])"
-msgstr "Questo è CTWILL (Versione 4.12.1 [CWEBbin 2025])"
+msgid "This is CTWILL (Version 4.12.2 [CWEBbin 2025.1])"
+msgstr "Questo è CTWILL (Versione 4.12.2 [CWEBbin 2025.1])"
 
 #: cweav-i18n.ch:17 cweav-twill.ch:69
-msgid "This is CWEAVE (Version 4.12.1 [CWEBbin 2025])"
-msgstr "Questo è CWEAVE (Versione 4.12.1 [CWEBbin 2025])"
+msgid "This is CWEAVE (Version 4.12.2 [CWEBbin 2025.1])"
+msgstr "Questo è CWEAVE (Versione 4.12.2 [CWEBbin 2025.1])"
 
 #: cweav-i18n.ch:301 cweav-i18n.ch:309
 msgid "buffer"

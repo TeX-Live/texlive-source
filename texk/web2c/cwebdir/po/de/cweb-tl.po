@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: CWEBbin 2025\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-01-01 15:08+0100\n"
-"PO-Revision-Date: 2025-01-01 15:08+0100\n"
+"PO-Revision-Date: 2025-07-27 15:08+0200\n"
 "Last-Translator: Andreas Scherer <andreas_github@freenet.de>\n"
 "Language-Team: German\n"
 "Language: de\n"
@@ -33,16 +33,16 @@ msgid "%s: Need one to three file arguments.\n"
 msgstr "%s: Benötige ein bis drei Dateiargumente.\n"
 
 #: ctang-texlive.ch:39
-msgid "This is CTANGLE, Version 4.12"
-msgstr "Dies ist CTANGLE, Version 4.12"
+msgid "This is CTANGLE, Version 4.12.2"
+msgstr "Dies ist CTANGLE, Version 4.12.2"
 
 #: ctwill-texlive.ch:39
-msgid "This is CTWILL, Version 4.12"
-msgstr "Dies ist CTWILL, Version 4.12"
+msgid "This is CTWILL, Version 4.12.2"
+msgstr "Dies ist CTWILL, Version 4.12.2"
 
 #: cweav-texlive.ch:39
-msgid "This is CWEAVE, Version 4.12"
-msgstr "Dies ist CWEAVE, Version 4.12"
+msgid "This is CWEAVE, Version 4.12.2"
+msgstr "Dies ist CWEAVE, Version 4.12.2"
 
 #: comm-texlive.ch:512
 #, c-format

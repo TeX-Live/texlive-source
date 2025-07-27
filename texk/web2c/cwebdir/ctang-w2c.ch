@@ -17,15 +17,15 @@
 @q Please send comments, suggestions, etc. to tex-k@@tug.org.            @>
 
 @x [0.0] l.30
-\def\title{CTANGLE (Version 4.12.1)}
+\def\title{CTANGLE (Version 4.12.2)}
 @y
-\def\title{CTANGLE (Version 4.12.1 [\TeX~Live])}
+\def\title{CTANGLE (Version 4.12.2 [\TeX~Live])}
 @z
 
 @x [0.0] l.34
-  \centerline{(Version 4.12.1)}
+  \centerline{(Version 4.12.2)}
 @y
-  \centerline{(Version 4.12.1 [\TeX~Live])}
+  \centerline{(Version 4.12.2 [\TeX~Live])}
 @z
 
 @x [0.0] l.36
@@ -41,9 +41,9 @@
 @z
 
 @x [1.1] l.64
-@d banner "This is CTANGLE (Version 4.12.1)"
+@d banner "This is CTANGLE (Version 4.12.2)"
 @y
-@d banner "This is CTANGLE, Version 4.12.1"
+@d banner "This is CTANGLE, Version 4.12.2"
   /* will be extended by the \TeX~Live |versionstring| */
 @z
 

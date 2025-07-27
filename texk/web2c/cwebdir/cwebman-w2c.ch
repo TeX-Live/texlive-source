@@ -94,17 +94,17 @@
 @z
 
 @x l.34
-\def\runninghead{{\ninett CWEB} USER MANUAL (VERSION 4.12.1)}
+\def\runninghead{{\ninett CWEB} USER MANUAL (VERSION 4.12.2)}
 @y
 \def\Kpathsea/{{\mc KPATHSEA\spacefactor1000}}
-\def\runninghead{{\ninett CWEB} USER MANUAL (Version 4.12.1 [\TeX~Live])}
+\def\runninghead{{\ninett CWEB} USER MANUAL (Version 4.12.2 [\TeX~Live])}
 @z
 
 @x l.48
-\vskip 18pt\centerline{(Version 4.12.1 --- January 2025)}
+\vskip 18pt\centerline{(Version 4.12.2 --- July 2025)}
 @y
-\vskip 18pt\centerline{(Version 4.12.1 --- January 2025)%
-\footnote*{This document describes the extended \.{CWEB} (Version 4.12.1 [\TeX~Live]).}}
+\vskip 18pt\centerline{(Version 4.12.2 --- July 2025)%
+\footnote*{This document describes the extended \.{CWEB} (Version 4.12.2 [\TeX~Live]).}}
 @z
 
 @x l.79
@@ -347,9 +347,9 @@ And here's what the same excerpt looks like when typeset.
 @z
 
 @x l.1613
-  \.{ { }\\vskip 15pt \\centerline\{(Version 4.12.1)\}{ }\\vfill\}}\cr}$$
+  \.{ { }\\vskip 15pt \\centerline\{(Version 4.12.2)\}{ }\\vfill\}}\cr}$$
 @y
-  \.{ { }\\vskip 15pt \\centerline\{(Version 4.12.1)\}{ }\\vfill\}}\cr}$$
+  \.{ { }\\vskip 15pt \\centerline\{(Version 4.12.2)\}{ }\\vfill\}}\cr}$$
 @z
 
 @x l.1728
