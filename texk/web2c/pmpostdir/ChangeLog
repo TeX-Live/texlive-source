@@ -1,3 +1,7 @@
+2025-08-02  Akira Kakuto  <kakuto@jcom.zaq.ne.jp>
+
+	* pmp.ch, pmpost.ch: Adapt to upstream mp.w and mpost.w.
+
 2025-04-29  Andreas Scherer  <https://ascherer.github.io>
 
 	* pmpost.ch: Adapt to upstream mpost.w.
