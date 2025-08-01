@@ -1,3 +1,10 @@
+2025-07-27  Luigi Scarso <luigi.scarso@gmail.com>
+
+	* Fixed and reorganized the help message,
+	updated the manual for the supported 
+        option --output-directory (thanks to Karl Berry)
+
+
 2025-07-02  Luigi Scarso <luigi.scarso@gmail.com>
 
 	* Fixed two single unescaped '%' in mpxout.w;

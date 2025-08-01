@@ -71,12 +71,12 @@ undergoes any modifications, so that it will be clear which version of
 @^extensions to \MP@>
 @^system dependencies@>
 
-@d default_banner "This is MetaPost, Version 2.11" /* printed when \MP\ starts */
+@d default_banner "This is MetaPost, Version 2.12" /* printed when \MP\ starts */
 @d true 1
 @d false 0
 
 @<\MP\ version header@>=
-#define metapost_version "2.11"
+#define metapost_version "2.12"
 
 @ The external library header for \MP\ is |mplib.h|. It contains a
 few typedefs and the header defintions for the externally used
