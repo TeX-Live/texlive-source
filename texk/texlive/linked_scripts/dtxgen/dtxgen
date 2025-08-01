@@ -1,6 +1,5 @@
 #!/bin/bash
-
-Version=1.08
+Version=1.09
 Myname="${0##*/}"
 
 :<<'DOC'
@@ -10,20 +9,31 @@ Myname="${0##*/}"
 dtxgen [options] basename.[sty,cls]	
 
 == Options
+
 -h,--help	print short help and exit
 -H,--Help	print full documentation via less and exit
--V,--version	print version and exit
--s,--short	short, one-liner, package description
--d,--date	initial version's date. Default: current date 
--m,--mail	your email address. Default: |$EMAIL|
--n,--name	your name. Default: |$NAME|
--c,--class	(class packs only) class to be preloaded. Default: article
--q,--quiet	run quietly
+-V		print version and exit
+-s,--short=X	set short, one-liner, package description to X
+-v,--version=X	set initial version to X.
+		Default: 1.00
+-d,--date=X	set initial version’s date to X.
+		Default: current date 
+-m,--mail=X	set your email address to X.
+		Default: |$EMAIL|
+-n,--name=X	set your name to X.
+		Default: |$NAME|
+-c,--class=X	(class packs only) set class to be preloaded to X.
+		Default: article
+-f,--format=X	set latex format to be used for compilation to X.
+		Default: pdflatex
+-b,--body=X	existing style or class X to be used instead of demo
+-i,--history	replace standard Change History section with simpler one.
 
 = Description
-dtxgen creates a template for a self-extracting .dtx file, based on the model described by
-[Joseph Wright](www.texdev.net/2009/10/06/a-model-dtx-file/). It is useful for
-those who plan to create a new Documented LaTeX Source (.dtx) file.
+dtxgen creates a template for a self-extracting .dtx file, based on the
+model described by [Joseph Wright](www.texdev.net/2009/10/06/a-model-dtx-file/).
+It is useful for those who plan to create a new Documented LaTeX Source
+(.dtx) file.
 
 Usage example:
 
@@ -47,152 +57,206 @@ NAME and EMAIL, you could simply type:
   dtxgen myclass.cls
 
 and you would end up with five files: |myclass.dtx|, |myclass.cls|,
-|myclass.pdf|, |README|, and |Makefile|.
+|myclass.pdf|, |README.md|, and |Makefile|.
 
 = Options
 dtxgen recognizes the following options:
 
--s,--short=...	
-	A short, one-liner, description for the class or package.
-	By default, the string /A new LaTeX class/ or /A new LaTeX package/
-	will be used.
--n,--name=...	
-	Your name (first name, followed by surname). Alternatively,
-	you can set a default value in the environment variable |NAME|;
-	if you do so and still use this option, the option's value wills
-	have priority.
--m,--mail=...	
-	Your email address. Alternatively, you can set a default value ins
-	the environment variable |EMAIL|; if you do so and still use this
-	option, the option's value will have priority.
--c,--class=...	
-	For class templates only: inserts a |\LoadClass{...}|, so that the
-	new class will start with the properties of the |...| class.
-	The default is |article|.
--d,--date=...	
-	Set the initial version's date. By default, the current date will
-	be used.  The date should be entered in the |yyyymmdd| format,
-	although it will be stored the LaTeX way: |yyyy/mm/dd|.
--q,--quiet	
-	Run quietly
--V,--version	
-	Prints the script's version and exits.
 -h,--help	
 	Prints help information and exits.
 -H,--Help	
 	print full documentation via less and exit
+-V	
+	Prints the script's version and exits.
+-s,--short=X
+	A short, one-liner, description for the class or package.
+	By default, the string /A new LaTeX class/ or /A new LaTeX package/
+	will be used.
+-n,--name=X
+	Your name (first name, followed by surname). Alternatively,
+	you can set a default value in the environment variable |NAME|;
+	if you do so and still use this option, the option's value wills
+	have priority.
+-m,--mail=X
+	Your email address. Alternatively, you can set a default value ins
+	the environment variable |EMAIL|; if you do so and still use this
+	option, the option's value will have priority.
+-c,--class=X
+	For class templates only: inserts a |\LoadClass{...}|, so that the
+	new class will start with the properties of the |...| class.
+	The default is |article|.
+-v,--version=X
+	Set the initial version; by default 1.00 wil be used.
+-d,--date=X
+	Set the initial version's date. By default, the current date will
+	be used.  The date should be entered in the |yyyymmdd| format,
+	although it will be stored the LaTeX way: |yyyy/mm/dd|.
+
+-f,--format=X
+	Latex format to be used for compilation. The default is pdflatex,
+	but you may need another format, like xelatex of lualatex.
+-i,--history	
+	Create a section History instead of the standard Change History
+	section. The standard Change History allows very detailed reports,
+	but most people contine themselves to global remarks about changes
+	between versions, appearing at one place in the document. The |--
+	history| option provides a straightforward history section,
+	formatted in a |longtable| environment.
 
 = Makefile
-The |Makefile| can be used to compile new versions of your work; it contains the following targets:
+The |Makefile| can be used to compile new versions of your work; it
+contains the following targets:
 
-all		(the default) generate the style or class file, the pdf-documentation,
-		and a README file.
+all		(the default) generate the style or class file,
+		the pdf-documentation, and a README.md file.
 distclean	remove all files that can be regenerated,
-clean		same, except the style or class file, the pdf-documentation,
-		and a README file.
+clean		same, except the style or class file, the
+		pdf-documentation, and a README.md file.
 inst		install in the user's TeX tree,
 install		install in the local TeX tree (uses sudo)
 zip		produce a zip file ready for upload to CTAN
 
 = Author
-[Wybo Dekker](wybo@dekkerdocumenten.nl)
+[Wybo Dekker](wybodekker@me.com)
 
 = Copyright
 Released under the [GNU General Public License](www.gnu.org/copyleft/gpl.html)
 DOC
 
-# check executables and versions of bash and getopt
-((BASH_VERSINFO>=4)) || die "Need bash version >= 4"
-for i in getopt make; do
-   command -v "$i" &> /dev/null || die "$i: command not found"
-done
-i=$(getopt -T)
-{ (($?==4)) && [[ -z $i ]]; } || die "Your getopt is not GNU"
+REd='\e[38;5;1m' Mag='\e[38;5;5m' Nor='\e[0m'
+    die() { local i; for i; do echo -e "$Myname: $REd$i$Nor"; done 1>&2; exit 1; }
+   Warn() { local i; for i; do echo -e "$Myname: $Mag$i$Nor"; done 1>&2; }
+helpsrt() { sed -n '/^= Synopsis/,/^= /p' "$0"|sed '1d;$d'; exit; }
+helpall() { sed -n "/^:<<'DOC'$/,/^DOC/p" "$0"|sed '1d;$d'|
+            less -P"$Myname-${Version/./·} (press h for help, q to quit)";exit; }
 
-# using the label in arg 2, read template from my self, filter it
-# through the script in arg 1, and write the output to the file in arg 3.
-# The default for arg 3 is arg 2
-function createfile {
-   file=$3
-   test "$file" = "" && file=$2
-   sed -n "/^:<<'$2'/,/^$2/p" "$0" |tail -n +2 |head -n -1 |sed "$1" >"$file"
+:<<'DOC' #---------------------------------------------------------------------
+= excheck
+synopsis:	 excheck executable1 [executable2...]
+description:	check if all needed execs are there and getopt is GNU
+		execs and their source are to be set in hash |needs|
+		Find the source of, say, |pdfcrop|, with:
+		 apt-file find -x /pdfcrop$
+DOC
+#-------------------------------------------------------------------------------
+excheck() {
+   local ok=true i
+   ((BASH_VERSINFO>=4)) || die "Need bash version >= 4"
+   for i in "${!needs[@]}"; do 
+      command -v "$i" > /dev/null && continue
+      Warn "Missing executable: $i (available in ${needs[$i]})"
+      ok=false
+   done
+   $ok || die
+   getopt -T 
+   (( $? == 4 )) || die "Your getopt is not GNU"
 }
 
-REd='\e[38;5;9m'
-    die() { local i; for i; do echo -e "$Myname: $REd$i"; done 1>&2; exit 1; }
-helpsrt() { sed -n '/^= Synopsis/,/^= /p' "$0"|sed '1d;$d'; exit; }
-instscr() { instscript --zip --pdf "$Myname"; exit; }
+:<<'DOC' #----------------------------------------------------------------------
+= handle_options
+synopsis:	 handle_options "$@"
+description:	handle the options.
+globals used:	 Myname Version
+globals  set:	 args short date mail name loadclass format
+returns:	the number of remaining arguments
+DOC
+#-------------------------------------------------------------------------------
+handle_options() {
+   local options
+   if ! options=$(getopt \
+      -n "$Myname" \
+      -o s:n:m:b:c:d:v:hHVf:iI \
+      -l short:,name:,mail:,body:,class:,date:,version:,help,Help,version,format,history: -- "$@"
+   ); then exit 1; fi
+   history=false
+   eval set -- "$options"
+   
+   while [ $# -gt 0 ]; do
+      case $1 in
+      (-h|--help)    # print short help and exit
+                     helpsrt
+                     ;;
+      (-H|--Help)    # print full documentation via less and exit
+                     helpall
+                     ;;      
+      (-V)           # print version and exit
+                     echo $Version
+                     exit
+                     ;;
+      (-s|--short)   # set short, one-liner, package description to X
+                     short=$2
+                     shift 2
+                     ;;
+      (-v|--version) # set initial version to X.
+		     # Default: 1.00
+                     version=$2
+                     shift 2
+                     ;;
+      (-d|--date)    # set initial version’s date to X.
+		     # Default: current date 
+                     date=$2
+                     shift 2
+                     ;;
+      (-m|--mail)    # set your email address to X.
+		     # Default: |$EMAIL|
+                     mail=$2
+                     shift 2
+                     ;;
+      (-n|--name)    # set your name to X.
+		     # Default: |$NAME|
+                     name=$2
+                     shift 2
+                     ;;
+      (-c|--class)   # (class packs only) set class to be preloaded to X.
+		     # Default: article
+                     loadclass=$2
+                     shift 2
+                     ;;
+      (-f|--format)  # set latex format to be used for compilation to X.
+		     # Default: pdflatex
+                     format=$2
+                     shift 2
+                     ;;
+      (-b|--body)    # existing style or class X to be used instead of demo
+                     body="$2"
+                     [[ -z $body ]] && die "kpsewhich could not find $body"
+                     shift 2
+                     ;;
+      (-i|--history) # replace standard Change History section with simpler one.
+                     history=true
+                     shift
+                     ;;
+      (-I)           instscript "$Myname" ||
+                        die 'the -I option is for developers only'
+                     exit
+                     ;;
+      (--)           shift
+                     break
+                     ;;
+      (*)            break
+                     ;;
+      esac
+   done
+   args=( "$@" )
+}
 
-# shellcheck disable=SC2154
-helpall() { sed -n "/^:<<'DOC'$/,/^DOC/p" "$0"|sed -n '1d;$d;p'|
-            less -Ps"$Myname-${Version/./·} documentation - type h for help, q to quit."
-		exit
-	  }
+declare -A needs=(
+[make]='make'
+[getopt]='util-linux'
+[envsubst]='gettext-base'
+[pdflatex]='texlive-latex-base'
+[makeindex]='texlive-binaries'
+[zip]='zip'
+[ltxfileinfo]='texlive-extra-utils'
+[kpsewhich]='texlive-binaries'
+[texi2dvi]='https://ctan.mirrors.hoobly.com/macros/texinfo/latest/texi2dvi'
+)
+excheck "${needs[@]}"
 
-if ! options=$(getopt \
-   -n "$Myname" \
-   -o s:n:m:c:d:hHVqI \
-   -l short:,name:,mail:,class:,date:,help,Help,version,quiet -- "$@"
-); then exit 1; fi
-eval set -- "$options"
+handle_options "$@"
+set -- "${args[@]}"
 
-while [ $# -gt 0 ]; do
-   case $1 in
-   (-h|--help)    # print short help and exit
-                  helpsrt
-                  ;;
-   (-H|--Help)    # print full documentation via less and exit
-                  helpall
-                  ;;      
-   (-V|--version) # print version and exit
-                  echo $Version
-		  exit
-                  ;;
-   (-s|--short)   # short, one-liner, package description
-                  short=$2
-                  shift 2
-                  ;;
-   (-d|--date)    # initial version's date. Default: current date 
-                  date=$2
-                  shift 2
-                  ;;
-   (-m|--mail)    # your email address. Default: $EMAIL
-                  mail=$2
-                  shift 2
-                  ;;
-   (-n|--name)    # your name. Default: $NAME
-                  name=$2
-                  shift 2
-                  ;;
-   (-c|--class)   # (class packs only) class to be preloaded. Default: article
-                  loadclass=$2
-                  shift 2
-                  ;;
-   (-q|--quiet)   # run quietly
-                  quiet=--quiet
-                  shift
-                  ;;
-   (-I)           instscr
-                  ;;
-   (--)           shift
-                  break
-                  ;;
-   (*)            break
-                  ;;
-   esac
-done
-
-export year typ Typ lcl use # used in templates - shellcheck se them as unused
-
-name=${name:-${NAME:-(not set)}}
-mail=${mail:-${EMAIL:-(not set)}}
-date=${date:-$(date +%Y%m%d)}
-year=${date:0:4}
-loadclass=${loadclass:-article}
-
-# date must be 8 digits; insert the two /'s:
-if [[ ! $date =~ ^[[:digit:]]{8}$ ]]; then die "illegal date"; fi
-date=$(sed 's/\(....\)\(..\)\(..\)/\1\\\/\2\\\/\3/' <<<"$date")
+test $# == 1 || die "I need 1 argument"
 
 # argument must have .cls or .sty extension:
 base=${1%.*}
@@ -200,16 +264,44 @@ ext=${1#*.}
 
 case "$ext" in
 (cls) typ=class; Typ=Class;
-      short=${short:-A new LaTeX class}
-      lcl='\\LoadClass[a4paper,fleqn]{'"$loadclass}"
-     ;;
+      lcl="\\LoadClass[a4paper,fleqn]{${loadclass:-article}}"
+      ;;
 (sty) typ=package; Typ=Package;
-      short=${short:-A new LaTeX package}
-      use='\\usepackage{\\jobname}'
-     ;;
+      use='\usepackage{\jobname}'
+      ;;
 (*)   die "The argument must have .cls or .sty extension
          (try the --help option)"
 esac
+
+: "${name:=${NAME:-(not set)}}"		# default name is envvar NAME
+: "${mail:=${EMAIL:-(not set)}}"	# default email is envvar MAIL
+: "${date:=$(date +%Y%m%d)}"		# default date is now
+: "${version:=1.00}"			# default version is 1.00
+: "${format:=pdflatex}"			# default formatter is pdflatex
+: "${short:=A new LaTeX $typ}"		# default short description
+
+# date must be 8 digits; insert the two -'s:
+if [[ ! $date =~ ^[[:digit:]]{8}$ ]]; then die "illegal date: $date"; fi
+date="${date:0:4}-${date:4:2}-${date:6:2}"
+Date="${date//-/\/}" # format for \Provides commands
+
+if $history; then
+   read -rd '' history <<-EOD
+	% \section{History}
+	% \begin{longtable}{@{}p{8mm}p{127mm}@{}}
+	% v1.00 & $date\\\\
+	%       & - first release.\\\\
+	% \end{longtable}
+	EOD
+else
+   history='% \PrintChanges'
+   ch1="% \\changes{v1.00}{$date}{First public release}"
+   read -rd '' ch2 <<-EOD
+	% \\changes{v1.00a}{$date}{Added a spurious change log entry to
+	%   show what a change \emph{within} an environment definition looks
+	%   like.}"
+	EOD
+fi
 
 # The short description may contain TeX commands, but then we need
 # a version without them at some places; note that this removes only
@@ -222,187 +314,57 @@ short="${short//\\/\\\\}"
 test -z "$mail" && die "author's email not set - use option or environment variable EMAIL"
 test -z "$name" && die "author's name not set - use option or environment variable NAME"
 
-colw=${#base}
-(( colw = colw < 7 ? 7 : colw ))
-kopl="$(eval "printf '%.0s-' {1..$colw}")"
-kopr="$(eval "printf '%.0s-' {1..$((72-colw))}")"
-declare -A rm=(
-    [$kopl]=$kopr
-    [$base]=$shrt
-   [Author]=$name
-   [E-mail]=$mail
-  [License]='Released under the LaTeX Project Public License v1.3c or later'
-      [See]='http://www.latex-project.org/lppl.txt'
-)
+export abst body desc base format etc ext year mail use typ Typ name date
+export short shrt lcl make readme version history ch1 ch2 Date
 
-for i in $kopl $base Author E-mail License See; do
-  readme+="$(printf "%*s:| %s\\\\n"  $colw "$i" "${rm[$i]}")"
-done
+if [[ -z $body ]]; then
+   # if no existing style/class file was given, use the demo one:
+   body="$(sed -n "/^:<<'BODY'/,/^BODY/{/BODY/!p}" "$0" |envsubst)"
+   desc="$(sed -n "/^:<<'DESC'/,/^DESC/{/DESC/!p}" "$0")"
+   abst="% This is a demo $Typ file"
+else
+   body=${body%.$ext}.$ext
+   body="$(kpsewhich "$body")"
+   [[ -z $body ]] && die "kpsewhich could not find $body"
+   # remove any \Provides..., \NeedsTeXFormat, \endinput and %%-comments
+   body="$(sed '
+	/^\\Provides/{N;N;s/\\Provides.*{.*}%*\s\+\[.*\]//;}
+	/^%%/d
+	/^\\NeedsTeXFormat/d
+	/^\\endinput/d
+   ' "$body")"
+   abst="% Put your abstract here"
+   desc="% Put your descriptive text here"
+fi
+readme="$(sed -n "/^:<<'README'/,/^README/{/README/!p}" "$0" |envsubst)"
 
-# make sed script replacing the variables in the templates:
-sedscript=''
-for i in base year ext mail use typ Typ name date short shrt lcl readme; do
-  test $quiet || eval "echo -e \"$i	\$$i\""|sed 's/\\\\/\\/g'
-  eval "sedscript+=\"s=%$i%=\$$i=g;\""
-done
+# Here we zip only the Makefile, but in real projects more files may be involved.
+sed -n "/^:<<'MAKEF'/,/^MAKEF/{/MAKEF/!p}" "$0" |envsubst > Makefile
+etc="$(tar czf - Makefile | uuencode -m etc.taz)"
+rm Makefile
 
-createfile "$sedscript" Makefile
-createfile "$sedscript" DTX "$base.dtx"
-make $quiet
+sed -n "/^:<<'DTX'/,/^DTX/{/DTX/!p}" "$0" |envsubst >"$base".dtx
+
+{ tex -interaction=batchmode "$base.dtx"
+  sh make.sh
+  make
+  make clean
+} >/dev/null
+cat <<-EOD
+	
+	You have 5 new files now:
+	1. $base.dtx: this is the only file you need to keep and edit.
+	   The other files can be generated from it with:
+	   tex $base.dtx && sh make.sh
+	2. The README.md file.
+	3. $base.$ext: the $Typ file.
+	4. $base.pdf: the documentation.
+	5. A Makefile:
+EOD
+make help
 exit 0
-
 # ---- TEMPLATES: ----
-:<<'Makefile'
-NAME  = %base%
-SHELL = bash
-PWD   = $(shell pwd)
-VERS  = $(shell ltxfileinfo -v $(NAME).dtx|sed -e 's/^v//')
-LOCAL = $(shell kpsewhich --var-value TEXMFLOCAL)
-UTREE = $(shell kpsewhich --var-value TEXMFHOME)
-all:	$(NAME).pdf
-	test -e README.txt && mv README.txt README || exit 0
-$(NAME).pdf: $(NAME).dtx
-	pdflatex -shell-escape -recorder -interaction=batchmode $(NAME).dtx >/dev/null
-	if [ -f $(NAME).glo ]; then makeindex -q -s gglo.ist -o $(NAME).gls $(NAME).glo; fi
-	if [ -f $(NAME).idx ]; then makeindex -q -s gind.ist -o $(NAME).ind $(NAME).idx; fi
-	pdflatex --recorder --interaction=nonstopmode $(NAME).dtx > /dev/null
-	pdflatex --recorder --interaction=nonstopmode $(NAME).dtx > /dev/null
-clean:
-	rm -f $(NAME).{aux,fls,glo,gls,hd,idx,ilg,ind,ins,log,out}
-distclean: clean
-	rm -f $(NAME).{pdf,%ext%} README
-inst: all
-	mkdir -p $(UTREE)/{tex,source,doc}/latex/$(NAME)
-	cp $(NAME).dtx $(UTREE)/source/latex/$(NAME)
-	cp $(NAME).%ext% $(UTREE)/tex/latex/$(NAME)
-	cp $(NAME).pdf $(UTREE)/doc/latex/$(NAME)
-install: all
-	sudo mkdir -p $(LOCAL)/{tex,source,doc}/latex/$(NAME)
-	sudo cp $(NAME).dtx $(LOCAL)/source/latex/$(NAME)
-	sudo cp $(NAME).%ext% $(LOCAL)/tex/latex/$(NAME)
-	sudo cp $(NAME).pdf $(LOCAL)/doc/latex/$(NAME)
-zip: all
-	ln -sf . $(NAME)
-	zip -Drq $(PWD)/$(NAME)-$(VERS).zip $(NAME)/{README,$(NAME).{pdf,dtx}}
-	rm $(NAME)
-Makefile
-
-:<<'DTX'
-% \iffalse meta-comment
-% vim: textwidth=75
-%<*internal>
-\iffalse
-%</internal>
-%<*readme>
-|
-%readme%
-
-Short description:
-Some text about the %typ%: probably the same as the abstract.
-%</readme>
-%<*internal>
-\fi
-\def\nameofplainTeX{plain}
-\ifx\fmtname\nameofplainTeX\else
-  \expandafter\begingroup
-\fi
-%</internal>
-%<*install>
-\input docstrip.tex
-\keepsilent
-\askforoverwritefalse
-\preamble
-%readme%
-\endpreamble
-\postamble
-
-Copyright (C) %year% by %name% <%mail%>
-
-This work may be distributed and/or modified under the
-conditions of the LaTeX Project Public License (LPPL), either
-version 1.3c of this license or (at your option) any later
-version.  The latest version of this license is in the file:
-
-http://www.latex-project.org/lppl.txt
-
-This work is "maintained" (as per LPPL maintenance status) by
-%name%.
-
-This work consists of the file %base%.dtx and a Makefile.
-Running "make" generates the derived files README, %base%.pdf and %base%.%ext%.
-Running "make inst" installs the files in the user's TeX tree.
-Running "make install" installs the files in the local TeX tree.
-
-\endpostamble
-
-\usedir{tex/latex/%base%}
-\generate{
-  \file{\jobname.%ext%}{\from{\jobname.dtx}{%typ%}}
-}
-%</install>
-%<install>\endbatchfile
-%<*internal>
-\usedir{source/latex/%base%}
-\generate{
-  \file{\jobname.ins}{\from{\jobname.dtx}{install}}
-}
-\nopreamble\nopostamble
-\usedir{doc/latex/%base%}
-\generate{
-  \file{README.txt}{\from{\jobname.dtx}{readme}}
-}
-\ifx\fmtname\nameofplainTeX
-  \expandafter\endbatchfile
-\else
-  \expandafter\endgroup
-\fi
-%</internal>
-% \fi
-%
-% \iffalse
-%<*driver>
-\ProvidesFile{%base%.dtx}
-%</driver>
-%<%typ%>\NeedsTeXFormat{LaTeX2e}[1999/12/01]
-%<%typ%>\Provides%Typ%{%base%}
-%<*%typ%>
-    [%date% v1.00 %shrt%]
-%</%typ%>
-%<*driver>
-\documentclass{ltxdoc}
-\usepackage[a4paper,margin=25mm,left=50mm,nohead]{geometry}
-\usepackage[numbered]{hypdoc}
-%use%
-\EnableCrossrefs
-\CodelineIndex
-\RecordChanges
-\begin{document}
-  \DocInput{\jobname.dtx}
-\end{document}
-%</driver>
-% \fi
-%
-% \GetFileInfo{\jobname.dtx}
-% \DoNotIndex{\newcommand,\newenvironment}
-%
-%\title{\textsf{%base%} --- %short%\thanks{This file
-%   describes version \fileversion, last revised \filedate.}
-%}
-%\author{%name%\thanks{E-mail: %mail%}}
-%\date{Released \filedate}
-%
-%\maketitle
-%
-%\changes{v1.00}{%date%}{First public release}
-%
-% \begin{abstract}
-% ==== Put abstract text here. ====
-% \end{abstract}
-%
-% \section{Usage}
-%
-% ==== Put descriptive text here. ====
-%
+:<<'DESC'
 % \DescribeMacro{\dummyMacro}
 % This macro does nothing.\index{doing nothing|usage} It is merely an
 % example.  If this were a real macro, you would put a paragraph here
@@ -414,17 +376,9 @@ Running "make install" installs the files in the local TeX tree.
 % If this were a real environment, you would put a paragraph here
 % describing what the environment is supposed to do, what its
 % mandatory and optional arguments are, and so forth.
-%
-%\StopEventually{^^A
-%  \PrintChanges
-%  \PrintIndex
-%}
-%
-% \section{Implementation}
-%
-%    \begin{macrocode}
-%<*%typ%>
-%lcl%
+DESC
+
+:<<'BODY'
 %    \end{macrocode}
 % \begin{macro}{\dummyMacro}
 % This is a dummy macro.  If it did anything, we'd describe its
@@ -441,9 +395,7 @@ Running "make install" installs the files in the local TeX tree.
 \newenvironment{dummyEnv}{%
 }{%
 %    \end{macrocode}
-% \changes{v1.00a}{%date%}{Added a spurious change log entry to
-%   show what a change \emph{within} an environment definition looks
-%   like.}
+$ch2
 % Don't use |%| to introduce a code comment within a |macrocode|
 % environment.  Instead, you should typeset all of your comments with
 % LaTeX---doing so gives much prettier results.  For comments within a
@@ -453,10 +405,198 @@ Running "make install" installs the files in the local TeX tree.
 }
 %    \end{macrocode}
 % \end{environment}
+%    \begin{macrocode}
+BODY
+
+:<<'MAKEF'
+SHELL = bash
+BASE  = $base
+FMT   = $format
+UID   = $(shell id -u)
+PWD   = $(shell pwd)
+VERS  = $(shell ltxfileinfo -v $(BASE).dtx|sed -e 's/^v//')
+LOCAL = $(shell kpsewhich --var-value TEXMFLOCAL)
+UTREE = $(shell kpsewhich --var-value TEXMFHOME)
+all:	check
+	@$(FMT) '$(BASE).dtx'
+	@test -e $(BASE).glo && makeindex -qs gglo.ist -o $(BASE).gls $(BASE).glo
+	@makeindex -qs gind.ist $(BASE).idx
+	@$(FMT) '$(BASE).dtx'
+clean:	# clean, but keep installable files only #
+	rm -f $(BASE).{aux,fls,glo,gls,hd,idx,ilg,ind,ins,log,out,toc,synctex.gz}
+	rm -f etc.* make.sh
+Clean:	clean # clean to keep dtx file and CTAN zip only #
+	rm -f $(BASE).{pdf,$ext} README.md Makefile
+inst:	check # install in your own tree #
+	@mkdir -p $(UTREE)/{tex,source,doc}/latex/$(BASE)
+	cp $(BASE).dtx $(UTREE)/source/latex/$(BASE)
+	cp $(BASE).$ext $(UTREE)/tex/latex/$(BASE)
+	cp $(BASE).pdf README.md $(UTREE)/doc/latex/$(BASE)
+install: check # install in local tree (needs sudo rights) #
+	@sudo mkdir -p $(LOCAL)/{tex,source,doc}/latex/$(BASE)
+	sudo cp $(BASE).dtx $(LOCAL)/source/latex/$(BASE)
+	sudo cp $(BASE).$ext $(LOCAL)/tex/latex/$(BASE)
+	sudo cp $(BASE).pdf README.md $(LOCAL)/doc/latex/$(BASE)
+zip:	check # create zip for CTAN #
+	@ln -sf . $(BASE)
+	@zip -Drq $(PWD)/$(BASE)-$(VERS).zip $(BASE)/{README.md,$(BASE).{pdf,dtx,$ext}}
+	@rm $(BASE)
+	@echo $(BASE)-$(VERS).zip created
+check:
+	@test "$(UID)" != "0" -a  -n "$(VERS)" -a -n "$(LOCAL)" || exit 1
+help:	# show this help #
+	@echo
+	@echo make targets:
+	@sed -n '/^[a-zA-Z.]*:/N;s/:[^#]*# \([^#]*\) #.*/:\t\1/p' Makefile |expand -12
+	@echo
+	@echo "Version:    $(VERS)"
+	@echo "User tree:  $(UTREE)"
+	@echo "Local tree: $(LOCAL)"
+	@echo "Use the Makefile for the above targets only"
+	@echo "Note:       Never use sudo!"
+MAKEF
+
+:<<'README'
+# $base
+     key | description
+     ---:|:---
+   $base | $shrt
+ version | $version
+    date | $date 
+  author | $name
+   email | $mail
+ license | Released under the LaTeX Project Public License v1.3c or later
+
+## Short description:
+Some text about the $typ: probably the same as the abstract.
+
+## Installation:
+This is a self-extracting file. Install as follows:
+1. Run "tex $base.dtx"
+2. Run "sh make.sh"
+3. Run "make install" to install in the local tree (needs sudo rights), or
+   Run "make inst" to install in your own tree.
+4. Run "make clean" to remove most intermediate files, or
+   Run "make Clean" to keep the dtx file and CTAN zip only.
+5. Run "make zip" to create a zip file for CTAN
+6. Try "make help"
+README
+
+:<<'DTX'
+% \iffalse meta-comment
+%
+% Copyright (C) 2021 by Wybo Dekker <wybodekker@me.com>
+%
+% This work may be distributed and/or modified under the
+% conditions of the LaTeX Project Public License (LPPL), either
+% version 1.3c of this license or (at your option) any later
+% version.  The latest version of this license is in the file:
+%
+% http://www.latex-project.org/lppl.txt
+%
+% This work consists of the self-extracting file $base.dtx,
+% generated by dtxgen (https://github.com/wybodekker/dtxgen)
+% Installation: see the readme section below.
+%
+%<*internal>
+\iffalse
+%</internal>
+%<*readme>
+$readme
+%</readme>
+%<*make>
+uudecode etc.uue
+tar xf etc.taz
+make
+make help
+%</make>
+%<*etc>
+$etc
+%</etc>
+%<*internal>
+\fi
+\def\nameofplainTeX{plain}
+\ifx\fmtname\nameofplainTeX
+  \def\Extract#1#2#3{\generate{\file{#1.#2}{\from{\jobname.dtx}{#3}}}}
+\else
+  \def\Extract#1#2#3{}
+  \expandafter\begingroup
+\fi
+%</internal>
+%<*install>
+\input docstrip.tex
+\keepsilent
+\askforoverwritefalse
+\Extract{\jobname}{$ext}{$typ}
+%</install>
+%<install>\endbatchfile
+%<*internal>
+\nopreamble\nopostamble
+\catcode9=12
+\Extract{README}{md}{readme}
+\Extract{etc}{uue}{etc}
+\Extract{make}{sh}{make}
+\ifx\fmtname\nameofplainTeX
+  \expandafter\endbatchfile
+\else
+  \expandafter\endgroup
+\fi
+%</internal>
+% \fi
+%
+% \iffalse
+%<*driver>
+\ProvidesFile{$base.dtx}
+%</driver>
+%<$typ>\NeedsTeXFormat{LaTeX2e}[2021/11/15]
+%<$typ>\Provides$Typ{$base}
+%<*$typ>
+    [$Date v$version $shrt]
+%</$typ>
+%<*driver>
+\documentclass{ltxdoc}
+\usepackage[a4paper,margin=20mm,left=50mm,nohead]{geometry}
+\usepackage[numbered]{hypdoc}
+\usepackage{longtable}
+$use
+\EnableCrossrefs
+\CodelineIndex
+\RecordChanges
+\begin{document}
+  \DocInput{\jobname.dtx}
+\end{document}
+%</driver>
+% \fi
+%
+% \GetFileInfo{\jobname.dtx}
+% \DoNotIndex{\newcommand,\newenvironment}
+%
+% \title{\textsf{$base} --- $short}
+% \date{\large\fileversion\quad\filedate}
+% \author{$name\thanks{Email: $mail}}
+% \maketitle
+$ch1
+% \begin{abstract}\noindent
+$abst
+% \end{abstract}
+% \tableofcontents
+%
+% \section{Usage}
+$desc
+% \StopEventually{^^A
+$history
+% \PrintIndex
+% }
+% \section{Implementation}
 %
 %    \begin{macrocode}
+%<*$typ>
+$lcl
+% ===== Start of your own code =====
+$body
+% ===== End of your own code =====
 \endinput
-%</%typ%>
+%</$typ>
 %    \end{macrocode}
 %\Finale
 DTX
