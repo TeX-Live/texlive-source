@@ -9,7 +9,7 @@
 -----------------------------------------------------------------------
 
         xindex = xindex or { }
- local version = 0.64
+ local version = 1.02
 xindex.version = version
 --xindex.self = "xindex"
 
@@ -57,8 +57,6 @@ local args = require ('xindex-lapp') [[
     -o,--output (default "")
     -p,--prefix (default L)
     -s,--use_stdin
-    -u,--use_UCA     no more needed
-    -x,--no_UCA
     <files...> (default stdin) .idx file(s)
 ]]
 
@@ -255,45 +253,25 @@ else
   end
 end
 
--- next config is UCA
+writeLog(1,"Will use LUA-UCA\n",1)
+ducet = require "lua-uca.lua-uca-ducet"
+collator = require "lua-uca.lua-uca-collator"
+languages = require "lua-uca.lua-uca-languages"
+collator_obj = collator.new(ducet)
 
-use_UCA = not args["no_UCA"]
-if use_UCA then
-  writeLog(1,"Will use LUA-UCA\n",1)
-  ducet = require "lua-uca.lua-uca-ducet"
-  collator = require "lua-uca.lua-uca-collator"
-  languages = require "lua-uca.lua-uca-languages"
-  collator_obj = collator.new(ducet)
-
-  uca_config_file = "xindex-cfg-uca.lua"      -- for additional language definition
-  writeLog(2,"Loading local UCA config file "..uca_config_file,0)
-  UCA_Config_File = kpse.find_file(uca_config_file) 
-  uca_cfg = require(UCA_Config_File)
-  writeLog(2," ... done\n",0)
+uca_config_file = "xindex-cfg-uca.lua"      -- for additional language definition
+writeLog(2,"Loading local UCA config file "..uca_config_file,0)
+UCA_Config_File = kpse.find_file(uca_config_file) 
+uca_cfg = require(UCA_Config_File)
+writeLog(2," ... done\n",0)
   
 -- language name specified on the command line doesn't seem to be available
 -- in the config file, so we just try to find it ourselves
-  for i, a in ipairs(arg) do
+for i, a in ipairs(arg) do
     if a == "-l" or a=="--language" then
       language = arg[i+1]
       break
     end
-  end
-
-  if languages[language] then
-    print("[Lua-UCA] Loading language: " .. language)
-    collator_obj = languages[language](collator_obj)
-  end
-  alphabet_lower_map = {}   -- empty tables for UCA sorting
-  alphabet_upper_map = {}
-else
-  writeLog(1,"Will _not_ use LUA-UCA\n",1)
-  -- Create the character list maps for faster sorting if not using UCA
-  writeLog(2,"Loading config file for no UCA".."xindex-cfg-no_uca\n",1)
-  Config_File_UCA = kpse.find_file("xindex-cfg-no_uca.lua") 
-  cfg_UCA = require(Config_File_UCA)
-  alphabet_lower_map = CreateCharListMap(alphabet_lower)
-  alphabet_upper_map = CreateCharListMap(alphabet_upper)
 end
 
 -- at last the user config
@@ -312,6 +290,18 @@ if args["config"] ~= '""' then
   cfg = require(Config_File)
   writeLog(2," ... done\n",0)
 end
+
+-- language can also be set in the config file
+
+if languages[language] then
+    print("[Lua-UCA] Loading language: " .. language)
+    collator_obj = languages[language](collator_obj)
+end
+alphabet_lower_map = {}   -- empty tables for UCA sorting
+alphabet_upper_map = {}
+
+
+
 
 --print("Sprache:"..language)
 
@@ -334,7 +324,7 @@ end
 
 
 esc_char = args.escapechar
-print("Escape char "..esc_char)
+--print("Escape char "..esc_char)
 esc_char2 = esc_char..esc_char  
 writeLog(2,"Escapechar = "..esc_char.."\n",1)
 escape_chars = { -- by default " is the escape char
