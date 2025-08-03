@@ -1,5 +1,6 @@
 #!/usr/bin/env texlua
 
+--%% $Id: runtexfile-doc.tex 1 2025-08-02 16:44:17Z herbert $
 -----------------------------------------------------------------------
 --         FILE:  runtexfile.lua
 --  DESCRIPTION:  run a latex document with special steps
@@ -7,10 +8,10 @@
 --       AUTHOR:  Herbert Voß
 --      LICENSE:  LPPL 1.3
 --
--- %% $Id: runtexfile.lua 1146 2025-07-19 07:38:43Z herbert $
+-- %% $Id: runtexfile.lua 1 2025-08-02 16:44:17Z herbert $
 -----------------------------------------------------------------------
         runtexfile = runtexfile or { }
- local version = 0.03
+ local version = 0.04
 runtexfile.version = version
 
 --[[doc--
@@ -35,37 +36,52 @@ local f = kpse.find_file("lualibs.lua")
 
 require("lualibs")  -- all part of LuaTeX
 
+
+local function isInArray(value,array)
+  for _,v in pairs(array) do
+    if v == value then
+      return true
+    end
+  end
+  return false
+end
+
+args = {}
+for i=1, #arg do
+   args[#args+1] = arg[i]
+--   print(arg[i])
+end
+
+local verbose = isInArray("-V",args) or isInArray("--verbose",args)
+
 local function flog(s)
   if verbose then tmpfile:write(s.."\n") end
 end
 
-flog("Read parameter ... ")
+if verbose then
+  tmpfile = io.open("runtexfile.log","w")
+  tmpfile:write("Start logfile (verbose)\n")
+end
 
-local args = require ('xindex-lapp') [[
-  parameter handling
-    -h,--help
-    -v,--verbose
-    -V,--version
-    <file> (string)  .tex file
-]]
-
---for i=1, #arg do
---   command[#command+1] = arg[i]
---end
-
-if args.version then
+if isInArray("-v",args) or isInArray("--version",args) then
   print("runtexfile version "..runtexfile.version)
   os.exit()
 end
 
-verbose = args.verbose
--- not_quiet = not args["quiet"]
-if verbose then
-  tmpfile = io.open("runtexfile.log","w")
+if isInArray("-h",args) or isInArray("--help",args) then
+  print([[
+  parameter handling
+    -h,--help
+    -V,--verbose
+    -v,--version
+    <file> (string)  tex file name with or without extension]])
+  os.exit()
 end
 
 local luaVersion = _VERSION
-flog("Check Lua version: "..luaVersion)
+if verbose then
+  flog("Check Lua version: "..luaVersion)
+end
 if (luaVersion < "Lua 5.3") then
   print("=========================================")
   print("Sorry. but we need at least LuaTeX 1.09")
@@ -83,27 +99,22 @@ print("Run wrapperscript in directory "..current_dir)
 flog("Run wrapperscript in directory "..current_dir)
 ]]
 
-local LTXfile = args.file
-print("Main file: "..LTXfile)
-flog("Main file: "..LTXfile)
-
 local commands = {"lualatex", "luatex", "luahbtex", "latex", "pdflatex", "xelatex", "xetex" }
 
-local function isInArray(value,array)
-  for _,v in pairs(array) do
-    if v == value then
-      return true
-    end
-  end
-  return false
+local function removeTeXFileExtension(fname) -- -- from the lines in the TeX file
+    return fname:gsub("%.tex", "")
 end
 
-local function getFileName(s)
---   get different file name: runtexfile ... <filename>
+local function getFileName(s) -- from the commands in the TeX file
+--   get different file name: <command< ... <filename>
     local r = s:match "(%b<>)$"
     return r and r:sub(2,-2)
 --    return string.match(s, "<([^<>]-)>%s*$")
 end
+
+local LTXfile = removeTeXFileExtension(args[#args])
+print("Main file: "..LTXfile)
+flog("Main file: "..LTXfile)
 
 local specialFileName
 
@@ -114,14 +125,18 @@ if not file then
     print("Fatal error: no file "..LTXfile.." or "..LTXfile..".tex")
     print("I will exit ...")
     flog("Fatal error: no file "..LTXfile.." or "..LTXfile..".tex")
-    if verbose then tmpfile:close() end
-    os.exit()
+    if verbose then
+      tmpfile:close()
+      os.exit()
+    end
   end
 end
+
 
 local step = 1
 local saveLTXfile = LTXfile
 local commandLineFound = false
+local para = ""
 
 for line in file:lines() do
   if line ~= "" then
@@ -171,5 +186,8 @@ if commandLineFound == false then
   os.execute(commands[1].." "..para.." "..LTXfile.." > "..current_dir.."/runtexfile-"..step..".log") 
 end
 file:close()
-if verbose then tmpfile:close() end
--- os.exit()
+if verbose then 
+  tmpfile:write("Close logfile (verbose)\n")
+  tmpfile:close() 
+end
+
