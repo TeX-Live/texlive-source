@@ -15,9 +15,9 @@ _dvitype=$W2CDir/dvitype$ExeExt
 LC_ALL=C; export LC_ALL;  LANGUAGE=C; export LANGUAGE
 
 testdir=$abs_srcdir/triptrap
-ptestdir=$abs_srcdir/ptexdir/ptrip
+uptestdir=$abs_srcdir/uptexdir/uptrip
 
-TEXMFCNF=$ptestdir; export TEXMFCNF
+TEXMFCNF=$uptestdir; export TEXMFCNF
 
 rm -rf upptripdir
 mkdir upptripdir
@@ -70,7 +70,7 @@ cat >>filter <<-\_EOF
 dvitype_args="-output-level=2 -dpi=72.27 -page-start='*.*.*.*.*.*.*.*.*.*'"
 
 echo ">>> Running TRIP test for upTeX-euc." >&2
-echo ">>> See $ptestdir/ptrip.diffs for example of acceptable diffs." >&2
+echo ">>> See $uptestdir/ptrip.diffs for example of acceptable diffs." >&2
 
 # pTeX outputs direction of boxes.
 P_SED1='s/, yoko direction//;s/yoko direction, //'

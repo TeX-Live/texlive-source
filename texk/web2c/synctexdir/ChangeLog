@@ -1,3 +1,7 @@
+2025-08-10  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* synctex-{p,up,ep}tex.h: Remove.
+
 2025-03-09  Akira Kakuto  <kakuto@jcom.zaq.ne.jp>
 
 	* synctex.c: improve printing of a synctex file name

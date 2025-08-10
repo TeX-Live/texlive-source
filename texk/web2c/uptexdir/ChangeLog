@@ -1,3 +1,19 @@
+2025-08-10  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* pTeX_doc/{{README,Changes,INSTALL}.txt,ChangeLog,
+	COPYRIGHT{,.ja}}: Move from ../ptexdir/*.
+	* uptexextra.h, am/uptex.am, ptriptest.test:
+	Remove ptex and ptexdir/.
+	* COPYRIGHT, COPYRIGHT.ja:
+	Add Japanese TeX Development Community to copyright holders.
+	https://github.com/texjporg/tex-jp-build/issues/32
+	* uptex-prntknj.test: Update tests.
+
+2025-08-10  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
+
+	* am/uptex.am: Clean up unbalanced-braces*.ch .
+	https://github.com/texjporg/tex-jp-build/pull/187
+
 2025-06-22  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* uptex-m.ch, kanji.[ch]:

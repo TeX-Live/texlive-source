@@ -35,9 +35,16 @@ $_uptex -fmt=up-basic-sjis -kanji-internal=sjis -jobname=up-pknj-s -interaction=
 $_uptex -fmt=up-basic-euc  -kanji-internal=euc  -jobname=up-pknj-e -interaction=batchmode printkanji || :
 $_uptex -fmt=up-basic                           -jobname=up-pknj-u -interaction=batchmode printkanji || :
 
-sed "1d;s/strings out of 49[789]...$/strings out of 49XXXX/;s/characters out of 6219...$/characters out of 6219XXX/;s/97. multiletter/97X multiletter/" up-pknj-s.log >up-pknj-s.out
-sed "1d;s/strings out of 49[789]...$/strings out of 49XXXX/;s/characters out of 6219...$/characters out of 6219XXX/;s/97. multiletter/97X multiletter/" up-pknj-e.log >up-pknj-e.out
-sed "1d;s/strings out of 49[789]...$/strings out of 49XXXX/;s/characters out of 6219...$/characters out of 6219XXX/;s/97. multiletter/97X multiletter/" up-pknj-u.log >up-pknj-u.out
+cat >up-pknj-x.filter <<-\_EOF
+	1d
+	s/strings out of 49[789]...$/strings out of 49XXXX/
+	s/characters out of 6219...$/characters out of 6219XXX/
+	s/97. multiletter/97X multiletter/
+	_EOF
+
+sed -f up-pknj-x.filter up-pknj-s.log >up-pknj-s.out
+sed -f up-pknj-x.filter up-pknj-e.log >up-pknj-e.out
+sed -f up-pknj-x.filter up-pknj-u.log >up-pknj-u.out
 
 diff $srcdir/uptexdir/tests/pknj-s.log up-pknj-s.out || exit 10
 diff $srcdir/uptexdir/tests/pknj-e.log up-pknj-e.out || exit 11

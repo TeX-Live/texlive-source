@@ -1,3 +1,9 @@
+2025-08-10  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* ac/web2c.ac (ptex), Makefile.am, uptexdir/am/uptex.am,
+	euptexdir/am/euptex.am, ptexdir/*, texmfmem.h, texmfmp-help.h:
+	Remove ptex and ptexdir/.
+
 2025-07-27  Andreas Scherer  <https://ascherer.github.io>
 
 	* ctangleboot.cin: CWEB 4.12.2 release.

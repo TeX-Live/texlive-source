@@ -133,10 +133,10 @@ web2c - maintained here, by us - core web2c, plain tex, etc.
       luatex - https://luatex.org/
       pdftex - https://pdftex.org/
    [u]pmpost - nothing current, see README for old info
-        ptex - https://github.com/texjporg/tex-jp-build
-               old info: https://asciidwango.github.io/ptex/
      synctex - maintained here, but also https://github.com/jlaurens/synctex
-       uptex - https://www.t-lab.opal.ne.jp/tex/uptex_en.html
+       uptex - https://github.com/texjporg/tex-jp-build
+               also: https://www.t-lab.opal.ne.jp/tex/uptex_en.html
+               old info: https://asciidwango.github.io/ptex/
        xetex - https://tug.org/xetex/
    
 xdvik 22.87.06 - checked 31may22

@@ -12,6 +12,14 @@ up_tangle = $(tangle_silent)WEBINPUTS=.:$(srcdir)/uptexdir:$(srcdir) $(buildenv)
 
 upweb_programs = upbibtex updvitype uppltotf uptftopl
 
+
+## pTeX library
+##
+pproglib = lib/libp.a
+# Rebuild $(pproglib)
+$(pproglib): $(KPATHSEA_DEPEND) ${srcdir}/lib/*.c
+	cd lib && $(MAKE) $(AM_MAKEFLAGS) libp.a
+
 ## libukanji.a for upTeX and e-upTeX
 ##
 EXTRA_LIBRARIES += libukanji.a
@@ -78,9 +86,9 @@ uptex.ch: tie$(EXEEXT) uptex.web $(uptex_ch_srcs)
 	$(tie_c) uptex.web $(uptex_ch_srcs)
 uptex_ch_srcs = \
 	uptexdir/ptex-base.ch \
-	unbalanced-braces.ch \
 	uptexdir/uptex-m.ch \
 	$(uptex_ch_synctex) \
+	unbalanced-braces.ch \
 	tex-binpool.ch
 
 EXTRA_DIST += $(uptex_web_srcs) $(uptex_ch_srcs) uptexdir/uptex.defines

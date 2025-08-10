@@ -269,9 +269,6 @@ include $(srcdir)/mplibdir/am/libmplib.am
 ## e-TeX
 include $(srcdir)/etexdir/am/etex.am
 
-## pTeX
-include $(srcdir)/ptexdir/am/ptex.am
-
 ## upTeX
 include $(srcdir)/uptexdir/am/uptex.am
 

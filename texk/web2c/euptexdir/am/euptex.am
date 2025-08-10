@@ -13,9 +13,6 @@ if !UPTEX
 bin_links += euptex$(EXEEXT):uptex
 endif !UPTEX
 bin_links += euptex$(EXEEXT):eptex
-if !PTEX
-bin_links += euptex$(EXEEXT):ptex
-endif !PTEX
 endif EUPTEX
 EXTRA_PROGRAMS += euptex
 
@@ -74,10 +71,10 @@ euptex_ch_srcs = \
 	euptexdir/eptex.ech \
 	euptexdir/etex.ch1 \
 	$(euptex_ch_synctex) \
+	unbalanced-braces.ch \
 	euptexdir/fam256.ch \
 	euptexdir/pdfutils.ch \
 	euptexdir/suppresserrors.ch \
-	euptexdir/unbalanced-braces-eptex.ch \
 	euptexdir/char-warning-eptex.ch \
 	tex-binpool.ch
 
