@@ -1,28 +1,28 @@
 ===========================================================================
-$BF|K\8l(B TeX $B%P!<%8%g%s(B 3.141592, p3.1.11
-(tetex-src-3.0 $B0J9_MQ(B)
+日本語 TeX バージョン 3.141592, p3.1.11
+(tetex-src-3.0 以降用)
 ===========================================================================
-$B"((B $BI,MW$J$i$P!"%$%s%9%H!<%k:n6H$r$9$kA0$K!"(B
-   $B5l%P!<%8%g%s$N(B TeX $B%7%9%F%`$N%P%C%/%"%C%W$r$7$F$/$@$5$$!#(B
+※ 必要ならば、インストール作業をする前に、
+   旧バージョンの TeX システムのバックアップをしてください。
 
-$B"((B space code $B$r4^$s$@%U%!%$%kL>$,%5%]!<%H$5$l$F$$$^$9!#(B
-   $B$?$@$7!"O"B3$9$kFs$D0J>e$N(B space codes $B$O;HMQ$7$J$$$G$/$@$5$$(B:
-      platex "a b c d e.tex" $B$O(B ok $B$G$9$,(B
-      platex "a  b.tex"      $B$O(B ng $B$G$9!#(B
+※ space code を含んだファイル名がサポートされています。
+   ただし、連続する二つ以上の space codes は使用しないでください:
+      platex "a b c d e.tex" は ok ですが
+      platex "a  b.tex"      は ng です。
 
 ---------------------------------------------------------------------------
-$B!|(B $B%=!<%9%U%!%$%k(B
+● ソースファイル
 ---------------------------------------------------------------------------
-pTeX $B$r%$%s%9%H!<%k$9$k$K$O!"$D$.$N%U%!%$%k$,I,MW$G$9!#(B
+pTeX をインストールするには、つぎのファイルが必要です。
 
-  $B!&(Bptex-src-3.1.11.tar.gz    (pTeX $B%=!<%9%U%!%$%k(B)
-  $B!&(Bptex-texmf-2.5.tar.gz    (pTeX $B%i%$%V%i%j%U%!%$%k(B)
-  $B!&(BteTeX-src-3.0.tar.gz     (teTeX $B%=!<%9%U%!%$%k(B)
-  $B!&(BteTeX-texmf-3.0.tar.gz   (teTeX $B%i%$%V%i%j%U%!%$%k(B)
+  ・ptex-src-3.1.11.tar.gz    (pTeX ソースファイル)
+  ・ptex-texmf-2.5.tar.gz    (pTeX ライブラリファイル)
+  ・teTeX-src-3.0.tar.gz     (teTeX ソースファイル)
+  ・teTeX-texmf-3.0.tar.gz   (teTeX ライブラリファイル)
 
-$B$3$l$i$O!"0J2<$N%5%$%H$J$I$+$iF~<j2DG=$G$9!#(B
+これらは、以下のサイトなどから入手可能です。
 
-$B!&(BpTeX $B4XO"(B
+・pTeX 関連
   ftp://ftp.ascii.co.jp/pub/TeX/ascii-ptex/
   ftp://ftp.ring.gr.jp/pub/text/TeX/ascii-ptex/
   ftp://ftp.media.kyoto-u.ac.jp/TeX/ASCII-pTeX/
@@ -32,51 +32,51 @@ pTeX $B$r%$%s%9%H!<%k$9$k$K$O!"$D$.$N%U%!%$%k$,I,MW$G$9!#(B
   ftp://ftp.u-aizu.ac.jp/pub/tex/ASCII-pTeX/
   ftp://ftp.foretune.co.jp/pub/TeX/ascii-ptex/
 
-$B!&(BteTeX $B4XO"(B
+・teTeX 関連
   ftp://ftp.ring.gr.jp/pub/text/CTAN/systems/unix/teTeX/current/distrib/  (JPN)
   ftp://cam.ctan.org/tex-archive/systems/unix/teTeX/current/distrib/      (UK)
   ftp://dante.ctan.org/tex-archive/systems/unix/teTeX/current/distrib/    (GER)
   ftp://tug.ctan.org/tex-archive/systems/unix/teTeX/current/distrib/      (US)
 
 ---------------------------------------------------------------------------
-$B!|(B $B%$%s%9%H!<%k(B
+● インストール
 ---------------------------------------------------------------------------
-1. teTeX $B$N%i%$%V%i%j%U%!%$%k$rE83+$7$^$9!#(B
+1. teTeX のライブラリファイルを展開します。
 
      mkdir -p /usr/local/teTeX3/share/texmf-dist
      tar zxf tetex-texmf-3.0.tar.gz \
 		-C /usr/local/teTeX3/share/texmf-dist
 
-2. ptex $B$N%i%$%V%i%j%U%!%$%k$rE83+$7$^$9!#(B
+2. ptex のライブラリファイルを展開します。
 
      mkdir -p /usr/local/teTeX3/share/texmf
      tar zxf ptex-texmf-2.5.tar.gz -C /usr/local/teTeX3/share/texmf
 
-3. teTeX $B$N%=!<%9%U%!%$%k$rE83+$7$^$9!#(B
+3. teTeX のソースファイルを展開します。
 
      tar zxf tetex-src-3.0.tar.gz -C /usr/local/src
 
-4. ptex $B$N%=!<%9%U%!%$%k$rE83+$7$^$9!#(B
+4. ptex のソースファイルを展開します。
 
      tar zxvf ptex-src-3.1.11.tar.gz \
 		-C /usr/local/src/tetex-src-3.0/texk/web2c
 
-5. teTeX $B%=!<%9%U%!%$%k$rE83+$7$?%G%#%l%/%H%j$K0\F0$7!"(Bconfigure $B%3%^%s%I(B
-   $B$r<B9T$7$^$9!#(Bprefix $B%*%W%7%g%s$K$O!"(BteTeX $B%i%$%V%i%j$r%$%s%9%H!<%k(B
-   $B$7$?%G%#%l%/%H%j$r;XDj$7$^$9!#(B
+5. teTeX ソースファイルを展開したディレクトリに移動し、configure コマンド
+   を実行します。prefix オプションには、teTeX ライブラリをインストール
+   したディレクトリを指定します。
 
      cd /usr/local/src/tetex-src-3.0
      ./configure --prefix=/usr/local/teTeX3
      make
      make install
 
-6. ptex $B$N%=!<%9%G%#%l%/%H%j$K0\F0$7!"(Bconfigure $B%3%^%s%I$r<B9T$7$^$9!#(B
-   $B$3$N$H$-!"%G%U%)%k%H$N4A;z%3!<%I$r;XDj$7$F$/$@$5$$!#(B
+6. ptex のソースディレクトリに移動し、configure コマンドを実行します。
+   このとき、デフォルトの漢字コードを指定してください。
 
      cd /usr/local/src/tetex-src-3.0/texk/web2c/ptex-src-3.1.11
-     ./configure euc     (EUC$B%3!<%I$N>l9g(B)
-     ./configure jis     (JIS$B%3!<%I$N>l9g(B)
-     ./configure sjis    ($B%7%U%H(BJIS$B%3!<%I$N>l9g(B)
+     ./configure euc     (EUCコードの場合)
+     ./configure jis     (JISコードの場合)
+     ./configure sjis    (シフトJISコードの場合)
      make
      make install
 

@@ -1,139 +1,139 @@
 2009/08/17: (p3.1.11)
-    ptex: 2�Х���ʸ���֤Υ��롼�����������ʤ�Х�����
-          \{y|t}baselineshift �������ˤ�ȿ�Ǥ����褦�˽���
-	    (���꤬�Ȥ��������ޤ� ��ƣ������¼����)
+    ptex: 2バイト文字間のグルーがおかしくなるバグを修正
+          \{y|t}baselineshift が数式にも反映されるように修正
+	    (ありがとうございます 角藤さん、土村さん)
 
 2006/07/18: (p3.1.10)
-	ptex, tftopl, pltotf, jbibtex: -kanji ���ץ���� -version ���ץ�����
-		���������ɾ����ȿ�Ǥ����褦������
-	Makefile.in: texmf.cnf ��Υѥ����Ҥ� teTeX-3.0 �ε�ˡ�˶᤯�ʤ�褦�˽���
-	    (���꤬�Ȥ��������ޤ� ��¼����)
-	ptex: �ѿ��ν����˺��Τ��ᡢ�Ķ��ˤ�ä����Ƿ�̤��ۤʤ�ɾ�����
-	    (���꤬�Ȥ��������ޤ� ��¼���󡢳�ƣ����)
-	pltotf, tftopl: 16��δ����ΰ����˼��Ԥ����Զ�����
-	    (���꤬�Ȥ��������ޤ� TANAKA Takuji����)
+	ptex, tftopl, pltotf, jbibtex: -kanji オプションが -version オプションの
+		漢字コード情報に反映されるよう修正。
+	Makefile.in: texmf.cnf 中のパス記述が teTeX-3.0 の記法に近くなるように修正
+	    (ありがとうございます 土村さん)
+	ptex: 変数の初期化忘れのため、環境によって組版結果が異なる症状を修正
+	    (ありがとうございます 土村さん、角藤さん)
+	pltotf, tftopl: 16区の漢字の扱いに失敗する不具合を修正
+	    (ありがとうございます TANAKA Takujiさん)
 
 2005/10/17: (p3.1.9)
-	mkconf: platex �θ����ѥ��� tex/platex ������ʤ��褦�˽���
-	ptex: ñ�����Ƭ�� LIG/ ��Ԥ��褦��TFM����Ѥ���ȥ١����饤�󥷥եȤ�
-		0�Ǥʤ����˰۾ｪλ����Х�����
+	mkconf: platex の検索パスに tex/platex を入れないように修正
+	ptex: 単語の先頭で LIG/ を行うようなTFMを使用するとベースラインシフトが
+		0でない場合に異常終了するバグを修正
 
 2005/03/07: (p3.1.8)
-	Makefile.in: make install �κǸ�� mktexlsr �μ¹Ԥ��ɲ�
-	Makefile.in, INSTALL.txt: teTeX-3.0��TEXMF�ǥ��쥯�ȥ���ѹ���ȼ������
-	    (���꤬�Ȥ��������ޤ�����ƣ����)��
+	Makefile.in: make install の最後に mktexlsr の実行を追加
+	Makefile.in, INSTALL.txt: teTeX-3.0のTEXMFディレクトリの変更に伴い修正
+	    (ありがとうございます、角藤さん)。
 
 2004/12/14: (p3.1.8)
-	ptex: ����ȥ����륷������̾�ν������������
-		(�㡧\Te^^5e^58 �� \Te^^58 �Ȥʤꡢ\TeX �Ȥ���ɾ������ʤ�)
-	ptex: ����ȥ����륷������ľ��� ^^�����������Ȥ���ǧ�������
-		���ޤ���礬����Τ��� (�㡧\TeX^^83A �� \TeX��)
-		(�ʾ塢���꤬�Ȥ��������ޤ�����夵��)��
-	ptex: ü��������ե�����Ǥβ��԰��֤Υ����ߥ󥰤ν���
-	    (���꤬�Ȥ��������ޤ�����ƣ����)��
+	ptex: コントロールシーケンス名の処理誤りを修正。
+		(例：\Te^^5e^58 ⇒ \Te^^58 となり、\TeX として評価されない)
+	ptex: コントロールシーケンス直後の ^^形式が漢字として認識されて
+		しまう場合があるのを修正 (例：\TeX^^83A ⇒ \TeXア)
+		(以上、ありがとうございます、井上さん)。
+	ptex: 端末やログファイルでの改行位置のタイミングの修正
+	    (ありがとうございます、角藤さん)。
 
 2004/12/09: (p3.1.7)
-	ptex: ^^������ޤॳ��ȥ����륷������̾�ν������������
-	ptex: ɽ���Բ�ǽʸ�����ϰϤ�3.1.4��Ʊ���ˤ�����
-        (Missing character �Ǥ� ^^ �����ǽ���)��
-	mkconf: sjis,jis,euc�γƥ��󥳡���̾��TEXINPUTS���������褦�ˤ�����
-	    �ޤ���TEXINPUTS.xetex �μ��˺�������褦�ˤ�����
+	ptex: ^^形式を含むコントロールシーケンス名の処理誤りを修正。
+	ptex: 表示不可能文字の範囲を3.1.4と同じにした。
+        (Missing character では ^^ 形式で出力)。
+	mkconf: sjis,jis,eucの各エンコード名のTEXINPUTSを作成するようにした。
+	    また、TEXINPUTS.xetex の次に作成するようにした。
 
 2004/12/02: (p3.1.6)
-	ptex: tetex-2.99.4.20041128-beta ���б�(���꤬�Ȥ��������ޤ�����ƣ����)��
-	INSTALL.txt: �ե�����̾��TDS�˴ؤ��륳���Ȥ��ɲ�
-	    (���꤬�Ȥ��������ޤ�����ƣ����)��
+	ptex: tetex-2.99.4.20041128-beta に対応(ありがとうございます、角藤さん)。
+	INSTALL.txt: ファイル名とTDSに関するコメントを追加
+	    (ありがとうございます、角藤さん)。
 
 2004/11/29: (p3.1.5)
-	ptex: ����ȥ����륷������̾�Ρ�^^������ʸ���ȼ���ʸ���������
-	   ���Ƥߤʤ���礬����Τ���(���꤬�Ȥ��������ޤ�����夵��)��
-	ptex: Missing character �ʤɤΥ�å������Ǥ�ɽ���Բ�ǽʸ����
-	   ^^ �����ǽ��Ϥ���褦�˽�����
+	ptex: コントロールシーケンス名の、^^形式の文字と次の文字を漢字と
+	   してみなす場合があるのを修正(ありがとうございます、井上さん)。
+	ptex: Missing character などのメッセージでの表示不可能文字を
+	   ^^ 形式で出力するように修正。
 	
 2004/11/08: (p3.1.5)
-	ptex: JIS���󥳡��ǥ��󥰥ե�������ɤ߹�����塢`��������' �ξ��֤�
-	  �ե�����ν�����ۤ���ͭ���ˤʤäƤ��ޤ���礬����Τ���
-	  (���꤬�Ȥ��������ޤ�����夵��)��
+	ptex: JISエンコーディングファイルを読み込んだ後、`漢字イン' の状態が
+	  ファイルの終わりを越えて有効になってしまう場合があるのを修正
+	  (ありがとうございます、井上さん)。
 
 2004/10/12:
-	pltotf: SJIS�����ɤ�PL�ե����뤫�顢TFM�ե���������������ʤ�
-	  �Τ���(���꤬�Ȥ��������ޤ�����ƣ�������ڤ���)��
+	pltotf: SJISコードのPLファイルから、TFMファイルを正しく作れない
+	  のを修正(ありがとうございます、角藤さん、青木さん)。
 
 2004/09/02: (p3.1.4)
-	ptex: ����������������1�Х��Ȥ�������ʸ���ˤ�����硢�Ԥμ���ʸ��
-	  �ȶ��˴����ˤ��褦�Ȥ��Ƥ��ޤ��Τ�����
-	ptex: 1�Х���ʸ���Τ�������������1�Х��Ȥ�������ʸ���Υ��ƥ��꡼
-	  �����ɤ�̵����ʸ���ȤʤäƤ��ޤ��Τ�����
-	ptex: ^^���������Ϥ��줿ʸ�������ɤ���������1�Х��Ȥ��������硢
-	  ����ʸ���ȶ��˴����ˤ��褦�Ȥ��Ƥ��ޤ��Τ�����
-	ptex: \string �ǰ���ʸ���δ���Ƚ���̩����
-	jbibtex: ���ԥ�����CR���б���
-      (�ʾ塢���꤬�Ȥ��������ޤ�����夵��)
-	ptex: ������� \char ����Ѥ�������1�Х���ʸ���������ȸ�ǧ�������
-		�Х�������
-      (���꤬�Ȥ��������ޤ�����ƣ����)
-	�����ʸ����������
+	ptex: 行末記号を漢字の第1バイトに当たる文字にした場合、行の次の文字
+	  と共に漢字にしようとしてしまうのを修正。
+	ptex: 1バイト文字のうち、漢字の第1バイトに当たる文字のカテゴリー
+	  コードが無効な文字となってしまうのを修正。
+	ptex: ^^形式で入力された文字コードが漢字の第1バイトに当たる場合、
+	  次の文字と共に漢字にしようとしてしまうのを修正。
+	ptex: \string で扱う文字の漢字判定を厳密化。
+	jbibtex: 改行コードCRに対応。
+      (以上、ありがとうございます、井上さん)
+	ptex: 数式内で \char を使用した場合に1バイト文字が漢字と誤認識される
+		バグを修正。
+      (ありがとうございます、角藤さん)
+	契約条文和訳を修正。
 
 2003/10/07: (p3.1.3)
-	ptex: -kanji=sjis �ΤȤ���\kansujichar �ǡ����Ԥ���ʸ�������ꤵ��
-	  �ʤ��Τ���(���꤬�Ȥ�����ƣ����)��
+	ptex: -kanji=sjis のとき、\kansujichar で、期待した文字が設定され
+	  ないのを修正(ありがとう、角藤さん)。
 
 2003/09/30:
-	ptex: ü��/�����ؤΥ�å������ǡ������Ǥ��ʤ�ʸ�������Ϥ���뤳�Ȥ�
-	  ����Τ��н衣
+	ptex: 端末/ログへのメッセージで、印字できない文字が出力されることが
+	  あるのに対処。
 
 2003/08/05:
-	pconvert: usage ��å��������ѹ���pltotf, tftopl, pdvitype �ΤȤ���
-	  fixwrites �˥��ץ����($target)����ꤹ��褦�ˤ�����
+	pconvert: usage メッセージの変更。pltotf, tftopl, pdvitype のとき、
+	  fixwrites にオプション($target)を指定するようにした。
 
 2003/06/23: (p3.1.2)
-	configure: mktemp��Ȥ�ʤ��褦�˽���
+	configure: mktempを使わないように修正
 
 2003/06/17: (p3.1.2)
-	Makefile.in: BSD�� make �� texmf.cnf �κ����˼��Ԥ��Ƥ���Τ���
+	Makefile.in: BSD版 make で texmf.cnf の作成に失敗しているのを修正
 
 2003/02/18: (p3.1.2)
-    ptex: \kansuji �ץ�ߥƥ��֤����褵������
-	ptex: \kansujichar �ץ�ߥƥ��֤ˤ�ꡢ\kansuji �ǽ��Ϥ����ʸ��������
-	  ��ǽ�ˤ�����
+    ptex: \kansuji プリミティブを復活させた。
+	ptex: \kansujichar プリミティブにより、\kansuji で出力される文字を設定
+	  可能にした。
 
 2003/02/14: (p3.1.1)
-    ptex: ������ ^^ �����ǥ��󥽡����ɽ�������Τ�����
-	ptex: \uppercase, \lowercase �� core ��Ф���礬����Τ�����
+    ptex: 漢字が ^^ 形式でコンソールに表示されるのを修正。
+	ptex: \uppercase, \lowercase で core を出す場合があるのを修正。
 
 2003/02/13: (p3.1)
-	ptex: main_memory��hash_extra ���礭����������ʥޥ�������򤹤�ȡ�
-	  ��!Missing control sequence inserted.�פΥ��顼�ˤʤ�Τ�����
+	ptex: main_memory、hash_extra を大きくし、膨大なマクロ定義をすると、
+	  「!Missing control sequence inserted.」のエラーになるのを修正。
 
 2003/02/03: (p3.0.6)
-	ptex: tetex-2.0 �ؤ��б�
-	ptex: sjis ư��ʳ��ΤȤ���\char\sjis ��������ư���ʤ��Τ���
-	ptex: �¸�Ū������Ƥ��ä��ץ�ߥƥ��֡�\kansuji��\tozen�ˤ��������
-	ptexextra.h: BANNER ʸ����ι���
-	ptexextra.c: tetex-2.0 �ؤ��б�
+	ptex: tetex-2.0 への対応
+	ptex: sjis 動作以外のとき、\char\sjis が正しく動かないのを修正
+	ptex: 実験的に入れてあったプリミティブ（\kansuji、\tozen）を取り除いた
+	ptexextra.h: BANNER 文字列の更新
+	ptexextra.c: tetex-2.0 への対応
 
 2002/11/22:
-	Makefile.in: euc(jis), sjis �ѥե����ޥåȤ��������褦����
-		platex �ѤΥ�󥯤��������褦�ˤ���
-	mkconf: iniptex �ε��Ҥ���
+	Makefile.in: euc(jis), sjis 用フォーマットを作成するよう修正
+		platex 用のリンクを作成するようにした
+	mkconf: iniptex の記述を削除
 
 2002/11/15: (p3.0.5)
-	ptexextra.c: web2c-7.3.11 (teTeX-beta-20021114) �ؤ��б�
+	ptexextra.c: web2c-7.3.11 (teTeX-beta-20021114) への対応
 
 2002/10/29: (p3.0.4)
-    --version �Σ����ܤΥե����ޥåȤ��ѹ�
-	jbibtex: ǧ���Ǥ��ʤ����ץ����� core ��Ф��Τ���
+    --version の１行目のフォーマットを変更
+	jbibtex: 認識できないオプションで core を出すのを修正
 
 2002/10/28: (p3.0.3)
-    ptex: �Хʡ��Υե����ޥåȤ��ѹ�
-	tftopl.ch: pTeX�Ѥ�HELP��ȤäƤ��ʤ��Τ���
-	pltotf.ch: pTeX�Ѥ�HELP��ȤäƤ��ʤ��Τ���
+    ptex: バナーのフォーマットを変更
+	tftopl.ch: pTeX用のHELPを使っていないのを修正
+	pltotf.ch: pTeX用のHELPを使っていないのを修正
 
 2002/10/24: (p3.0.2)
-	web2c-7.3.9 ���б���
+	web2c-7.3.9 に対応。
 
 2002/01/18: (p3.0.1)
-	�ʲ��Υ��������Ѥ������Ȥ��Ǥ⥳��ѥ���Ǥ���褦�ˤ�����
+	以下のソースを用いたたときでもコンパイルできるようにした。
 		* tetex-supp.tar.gz
 		* web2c-7.3.3.tar.gz
 		* teTeX-src-beta-20011202.tar.gz
