@@ -1,3 +1,20 @@
+2025-08-11  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* configure.ac, version.h:
+	Version 3.9 [11-Aug-2025].
+	* fwrite.c: Fix bug on page range.
+	Thanks to @pejsek02468.
+	https://github.com/t-tk/upmendex-package/issues/15
+	* fread.c, convert.c:
+	Avoid segmentation fault about page_compositor and page_precedence.
+	Thanks to Lemures Lemniscati.
+	https://okumuralab.org/tex/mod/forum/discuss.php?d=3976#p24754
+	https://github.com/texjporg/tex-jp-build/issues/181
+	* tests/pprec.test, tests/range.idx,
+	tests/range4.ist, tests/range{1,2,3,4}.ind:
+	Add tests for page range.
+	* Makefile.am: Adjust.
+
 2025-03-07  Karl Berry  <karl@tug.org>
 
 	* TL'25 release.

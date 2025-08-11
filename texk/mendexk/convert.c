@@ -369,6 +369,7 @@ int pnumconv(char *page, int attr)
 {
 	int i,cc=0;
 
+	if (attr<0) return 0;  /* inappropriate page type */
 	switch (page_precedence[attr]) {
 	case 'a':
 		cc=page[0]-'a'+1;

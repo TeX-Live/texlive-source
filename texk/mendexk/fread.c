@@ -77,7 +77,7 @@ LOOP:
 		}
 		indent=wflg=k=nest=esc=quo=0;
 
-/*   analize words   */
+/*   analyze words   */
 
 		for (;;j++,k++) {
 			if (buff[j]=='\n' || buff[j]=='\0') {
@@ -501,8 +501,7 @@ static void chkpageattr(struct page *p)
 		else {
 			cnt=0;
 			if (!((*page0>='0' && *page0<='9') || (*page0>='A' && *page0<='Z') || (*page0>='a' && *page0<='z'))) {
-				p->attr[cc]= -1;
-				if (cc<2) p->attr[++cc]= -1;
+				for (j=cc;j<PAGE_COMPOSIT_DEPTH;j++) p->attr[j]=-1;
 				return;
 			}
 			pcpos=strstr(page0,page_compositor);
@@ -588,7 +587,7 @@ ATTRLOOP:
 		}
 	}
 	p->attr[cc]=pattr[cc];
-	if (cc<2) p->attr[++cc]= -1;
+	for (j=cc+1;j<PAGE_COMPOSIT_DEPTH;j++) p->attr[j]=-1;
 }
 
 char *mfgets(char *buf, int size, FILE *fp)

@@ -16,7 +16,7 @@ rm -f range*.* pprec*.* romalp*.*
 rc=0
 
 # test for range suffix_2p, suffix_3p, suffix_mp
-for num in 1 2 3; do
+for num in 1 2 3 4; do
 $_mendex -s $srcdir/tests/range$num.ist $srcdir/tests/range.idx \
 	-o range$num.ind1 -t range$num.ilg \
 	&& diff $srcdir/tests/range$num.ind range$num.ind1 || rc=6
