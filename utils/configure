@@ -783,10 +783,7 @@ enable_tex
 enable_tex_synctex
 enable_etex
 enable_etex_synctex
-enable_ptex
-enable_ptex_synctex
 enable_uptex
-enable_uptex_synctex
 enable_euptex
 enable_euptex_synctex
 enable_aleph
@@ -1585,10 +1582,7 @@ Optional Features:
   --enable-tex-synctex        build TeX with SyncTeX support
   --enable-etex             compile and install e-TeX
   --disable-etex-synctex      build e-TeX without SyncTeX support
-  --enable-ptex             compile and install pTeX
-  --disable-ptex-synctex      build pTeX without SyncTeX support
   --enable-uptex            compile and install upTeX
-  --disable-uptex-synctex     build upTeX without SyncTeX support
   --disable-euptex          do not compile and install e-upTeX
   --disable-euptex-synctex    build e-upTeX without SyncTeX support
   --disable-aleph           do not compile and install Aleph
@@ -4931,28 +4925,6 @@ fi
 test "x$enable_web2c:$enable_etex" = xyes:yes && {
   need_zlib=yes
 }
-# Check whether --enable-ptex was given.
-if test ${enable_ptex+y}
-then :
-  enableval=$enable_ptex;
-fi
-case $enable_ptex in #(
-  yes | no) :
-     ;; #(
-  *) :
-    enable_ptex=no ;;
-esac
-
-# Check whether --enable-ptex-synctex was given.
-if test ${enable_ptex_synctex+y}
-then :
-  enableval=$enable_ptex_synctex;
-fi
-
-test "x$enable_web2c:$enable_ptex" = xyes:yes && {
-  need_ptexenc=yes
-  need_zlib=yes
-}
 # Check whether --enable-uptex was given.
 if test ${enable_uptex+y}
 then :
@@ -4964,12 +4936,6 @@ case $enable_uptex in #(
   *) :
     enable_uptex=no ;;
 esac
-
-# Check whether --enable-uptex-synctex was given.
-if test ${enable_uptex_synctex+y}
-then :
-  enableval=$enable_uptex_synctex;
-fi
 
 test "x$enable_web2c:$enable_uptex" = xyes:yes && {
   need_ptexenc=yes
