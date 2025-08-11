@@ -1,3 +1,20 @@
+2025-08-11  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* version 1.21  Stable version.
+	* configure.ac: Bump version.
+	* fwrite.c: Fix bug on page range.
+	Thanks to @pejsek02468.
+	https://github.com/t-tk/upmendex-package/issues/15
+	* fread.c, convert.c:
+	Avoid segmentation fault about page_compositor and page_precedence.
+	Thanks to Lemures Lemniscati.
+	https://okumuralab.org/tex/mod/forum/discuss.php?d=3976#p24754
+	https://github.com/texjporg/tex-jp-build/issues/181
+	* tests/pprec.test, tests/range.idx,
+	tests/range4.ist, tests/range{1,2,3,4}.ind:
+	Add tests for page range.
+	* Makefile.am: Adjust.
+
 2025-06-10  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* fwrite.c: Better treatment of Ŋ,ŋ in Finnish.

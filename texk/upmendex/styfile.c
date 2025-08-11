@@ -268,7 +268,7 @@ void styread(const char *filename)
 	verb_printf(efp,"...done.\n");
 }
 
-/*   analize string parameter of style file   */
+/*   analyze string parameter of style file   */
 static void convline(char *buff1, int start, char *buff2)
 {
 	int i,j,cc;

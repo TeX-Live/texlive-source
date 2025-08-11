@@ -446,10 +446,6 @@ static void printpage(struct index *ind, FILE *fp, int num, char *lbuff)
 		if (cc>j) {
 			int epage = pnumconv2(&ind[num].p[cc]);
 			int bpage = pnumconv2(&ind[num].p[j]);
-			if (epage==bpage) {
-				j=cc-1;
-				continue;
-			}
 /* range process */
 			if (ind[num].p[j].enc[0]==range_open
 				|| ind[num].p[j].enc[0]==range_close)
@@ -467,6 +463,8 @@ static void printpage(struct index *ind, FILE *fp, int num, char *lbuff)
 			}
 			else if (strlen(suffix_2p)>0 && epage-bpage==1) {
 				SAPPENDF(buff,"%s",suffix_2p);
+			}
+			else if (epage-bpage==0) {
 			}
 			else {
 				SAPPENDF(buff,"%s",delim_r);

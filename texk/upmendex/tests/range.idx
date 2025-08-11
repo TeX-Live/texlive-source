@@ -87,6 +87,10 @@
 \indexentry{entryA1|)}{iv}
 \indexentry{entryA1|(}{IX}
 \indexentry{entryA1|)}{X}
+\indexentry{entryA1|(textbf}{XX}
+\indexentry{entryA1|)textbf}{XXI}
+\indexentry{entryA2|(textbf}{XX}
+\indexentry{entryA2|)textbf}{XX}
 
 \indexentry{entryB1|(}{1}
 \indexentry{entryB1|)}{3}
@@ -94,6 +98,8 @@
 \indexentry{entryB1|)}{v}
 \indexentry{entryB1|(}{IX}
 \indexentry{entryB1|)}{XI}
+\indexentry{entryB1|(textbf}{XX}
+\indexentry{entryB1|)textbf}{XXII}
 
 \indexentry{entryC1|(}{1}
 \indexentry{entryC1|)}{4}
@@ -102,6 +108,8 @@
 \indexentry{entryC1|(}{IX}
 \indexentry{entryC1|bold}{X}
 \indexentry{entryC1|)}{XII}
+\indexentry{entryC1|(textbf}{XX}
+\indexentry{entryC1|)textbf}{XXIII}
 
 \indexentry{entryD1|(}{c-1}
 \indexentry{entryD1|)}{c-2}
