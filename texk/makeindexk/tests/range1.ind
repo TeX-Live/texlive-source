@@ -1,13 +1,16 @@
 \begin{theindex}
 
   \item entryA, 1[[sfx 2p]], iii[[sfx 2p]], IX[[sfx 2p]]
-  \item entryA1, 1[[sfx 2p]], iii[[sfx 2p]], IX[[sfx 2p]]
+  \item entryA1, 1[[sfx 2p]], iii[[sfx 2p]], IX[[sfx 2p]], 
+		\textbf{XX[[sfx 2p]]}
+  \item entryA2, \textbf{XX}
   \item entryB, 1[[sfx mp]], iii[[sfx mp]], IX[[sfx mp]]
-  \item entryB1, 1[[sfx mp]], iii[[sfx mp]], IX[[sfx mp]]
+  \item entryB1, 1[[sfx mp]], iii[[sfx mp]], IX[[sfx mp]], 
+		\textbf{XX[[sfx mp]]}
   \item entryC, 1[[sfx mp]], \bold{iii[[sfx mp]]}, IX, \bold{X}, 
 		XI[[sfx 2p]]
   \item entryC1, 1[[sfx mp]], \bold{iii[[sfx mp]]}, \bold{X}, 
-		IX[[sfx mp]]
+		IX[[sfx mp]], \textbf{XX[[sfx mp]]}
   \item entryD, c-1[[sfx 2p]], d-IX[[sfx 2p]], i-iii[[sfx 2p]]
   \item entryD1, c-1[[sfx 2p]], d-IX[[sfx 2p]], i-iii[[sfx 2p]]
   \item entryE, c-1[[sfx mp]], d-IX[[sfx mp]], i-iii[[sfx mp]]
