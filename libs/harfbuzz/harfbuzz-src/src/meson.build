@@ -341,6 +341,9 @@ hb_fontations_headers = files('hb-fontations.h')
 hb_harfrust_sources = files('hb-harfrust.cc')
 hb_harfrust_headers = files()
 
+hb_kbts_sources = files('hb-kbts.cc')
+hb_kbts_headers = files()
+
 hb_glib_sources = files('hb-glib.cc')
 hb_glib_headers = files('hb-glib.h')
 
@@ -403,6 +406,12 @@ hb_subset_sources = files(
   'hb-subset-plan.hh',
   'hb-subset-plan-member-list.hh',
   'hb-subset-serialize.cc',
+  'hb-subset-table.hh',
+  'hb-subset-table-layout.cc',
+  'hb-subset-table-var.cc',
+  'hb-subset-table-cff.cc',
+  'hb-subset-table-color.cc',
+  'hb-subset-table-other.cc',
   'graph/gsubgpos-context.cc',
   'graph/gsubgpos-context.hh',
   'graph/gsubgpos-graph.hh',
@@ -547,6 +556,12 @@ endif
 if conf.get('HAVE_HARFRUST', 0) == 1
   hb_sources += hb_harfrust_sources
   hb_headers += hb_harfrust_headers
+endif
+
+if conf.get('HAVE_KBTS', 0) == 1
+  hb_sources += hb_kbts_sources
+  hb_headers += hb_kbts_headers
+  harfbuzz_deps += [kbts_dep]
 endif
 
 have_icu = conf.get('HAVE_ICU', 0) == 1
@@ -750,7 +765,6 @@ if get_option('tests').enabled()
     foreach name, source : noinst_programs
       executable(name, source,
         include_directories: incconfig,
-        cpp_args: cpp_args + ['-UNDEBUG'],
         dependencies: libharfbuzz_dep,
         install: false,
       )
@@ -1085,6 +1099,14 @@ if get_option('tests').enabled()
       suite: ['src'],
     )
   endforeach
+
+  test('check-release-notes',
+    find_program('check-release-notes.py'),
+    args: [
+      meson.current_source_dir() / '..' / 'NEWS',
+      meson.project_version()
+    ],
+  )
 endif
 
 install_headers(hb_headers + hb_subset_headers, subdir: meson.project_name())
