@@ -1,6 +1,6 @@
 #!/usr/bin/env texlua
 
---%% $Id: runtexfile-doc.tex 1 2025-08-02 16:44:17Z herbert $
+--%% $Id: runtexfile.lua 4 2025-08-13 14:58:56Z herbert $
 -----------------------------------------------------------------------
 --         FILE:  runtexfile.lua
 --  DESCRIPTION:  run a latex document with special steps
@@ -8,10 +8,10 @@
 --       AUTHOR:  Herbert Voß
 --      LICENSE:  LPPL 1.3
 --
--- %% $Id: runtexfile.lua 1 2025-08-02 16:44:17Z herbert $
+-- %% $Id: runtexfile.lua 4 2025-08-13 14:58:56Z herbert $
 -----------------------------------------------------------------------
         runtexfile = runtexfile or { }
- local version = 0.04
+ local version = 0.05
 runtexfile.version = version
 
 --[[doc--
@@ -53,6 +53,7 @@ for i=1, #arg do
 end
 
 local verbose = isInArray("-V",args) or isInArray("--verbose",args)
+local usefilename = isInArray("-f",args) or isInArray("--usefilename",args)
 
 local function flog(s)
   if verbose then tmpfile:write(s.."\n") end
@@ -113,8 +114,9 @@ local function getFileName(s) -- from the commands in the TeX file
 end
 
 local LTXfile = removeTeXFileExtension(args[#args])
-print("Main file: "..LTXfile)
-flog("Main file: "..LTXfile)
+local mainLTXfile = LTXfile
+print("Main file: "..mainLTXfile)
+flog("Main file: "..mainLTXfile)
 
 local specialFileName
 
@@ -146,10 +148,13 @@ for line in file:lines() do
     if words[1] == "%!" and words[2] == "HV" then
       commandLineFound = true
       specialFileName = getFileName(line)
+--      print(step..": Zeile:"..line)
       if specialFileName then
-        print("Special filename = ".. specialFileName)
+         flog("Use special filename: "..specialFileName)
+         specialFileName = specialFileName:gsub("!!file!!",mainLTXfile)
+         flog("geändert zu filename: "..specialFileName)
       else
-        print("Filename = "..LTXfile)
+         flog("Kein specialFileName")
       end
       command = words[3]
       if isInArray(command,commands) then 
