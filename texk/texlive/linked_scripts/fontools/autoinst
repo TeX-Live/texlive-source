@@ -41,7 +41,7 @@ use Getopt::Long ();
 use Pod::Usage ();
 use POSIX ();
 
-my $VERSION = '20250107';
+my $VERSION = '20250819';
 
 my ($d, $m, $y) = (localtime time)[3 .. 5];
 my $TODAY = sprintf "%04d/%02d/%02d", $y + 1900, $m + 1, $d;
@@ -284,7 +284,7 @@ my @WIDTH = (
     c   =>  [ qw( condensed ) ],
     sc  =>  [ qw( semicondensed narrow ) ],
     ''  =>  [ qw( regular ) ],
-    sx  =>  [ qw( semiextended semiexpanded wide) ],
+    sx  =>  [ qw( semiextended semiexpanded wide ) ],
     x   =>  [ qw( extended expanded ) ],
     ex  =>  [],
     ux  =>  [],
@@ -809,13 +809,16 @@ END_ERR_METADATA_MISSING
         $data->{subfamily} =~ s/\A (?: ST | T | SD | D)//xms;
     }
 
-    # Adobe's Source Serif 4 family name contains the name of the optical master;
-    # we don't want this, as all these fonts should be part of the same family,
+    # Some extended font families, especially from Adobe,
+    # include the optical master in the family name.
+    # We don't want this, as all these fonts should be part of the same family,
     # with different values for the optical size range.
     # We therefore move the optical master name from the family to the subfamily.
     # We don't discard this information entirely, since we need it later on
     # in _parse_sizedata().
-    if ($data->{family} =~ m/SourceSerifFour/xmsi) {
+    # This hack causes problems with Libertinus Serif Display,
+    # so we skip it for that font.
+    if ($data->{family} !~ m/Libertinus/xmsi) {
         for my $optical (qw(Caption SmText SmallText Subhead Display)) {
             if ($data->{family} =~ s/$optical\z//xms) {
                 $data->{subfamily} .= $optical;
@@ -830,6 +833,10 @@ END_ERR_METADATA_MISSING
 
     # remove Adobe's SmallText size, to avoid mistaking it for Text weight
     $fullinfo =~ s/(?: SmallText | SmText )//gxmsi;
+
+    # remove the word 'TypeWriter' from the info, to avoid it matching
+    # against the "It" shape
+    $fullinfo =~ s/typewriter//gxmsi;
 
     # We need to be careful when parsing the font info; in particular
     # we must parse strings like 'UltraCondensed' as 'Regular' weight
@@ -1067,10 +1074,10 @@ sub _parse_sizedata {
         && $minsize == 8.9 && $maxsize == 13.9) {
         ($minsize, $maxsize) = (23, 72);
     }
-    # Adobe's Source Serif 4 follows the latest version of the OpenType
-    # spec and keeps its optical size info in the STAT (Style Attributes)
-    # table rather than in the OS/2 table. This isn't (yet?) supported
-    # by otfinfo, so we add the missing size info here.
+    # Adobe's Source Serif 4 follows a recent version of the OpenType
+    # spec and keeps its optical size info as a `size` feature rather
+    #  than in the OS/2 table. This isn't (yet?) supported by otfinfo,
+    #  so we add the missing size info here.
     elsif ($self->{family} eq 'SourceSerifFour'
         && $minsize == 0 && $maxsize == 0) {
         if ($self->{subfamily} eq 'Caption') {
@@ -1277,7 +1284,7 @@ sub create_stylefile {
     binmode $STY;
 
     print {$STY} <<"END_STY_HEADER";
-\\NeedsTeXFormat{LaTeX2e}
+\\NeedsTeXFormat{LaTeX2e}[2020/02/02]
 \\ProvidesPackage{$fam}
     [$TODAY (autoinst)  Style file for $fam fonts.]
 
@@ -1398,8 +1405,12 @@ END_STY_PROCESSOPTIONS
     print {$STY} "\\RequirePackage[@{[ join ',', grep { $_ ne 'OT1' } @{$ARGV{encoding}} ]}]{fontenc}\n";
     print {$STY} "\\RequirePackage{textcomp}\n" if $seen{TS1};
     print {$STY} "\\RequirePackage{ifthen}\n";
-    print {$STY} "\\RequirePackage{mweights}\n";
     print {$STY} "\n";
+
+    ##  TODO:
+    #   remove `fontaxes` package, rewrite the following bits using
+    #   LaTeX kernel functionality (i.e., \DeclareFontShapeChangeRule)
+    #   and the `figureversions` package.
 
     print {$STY} <<'END_STY_FONTAXES_START';
 \IfFileExists{fontaxes.sty}{
@@ -1534,7 +1545,7 @@ END_STY_FONTAXES_DNOM
         \\settoheight{\\$fam\@xheight}
             {{\\font\\testfont=$testfont at \\f\@size pt\\testfont x}}
         \\renewcommand*{\\$fam\@scale}
-            {\\strip\@pt\\dimexpr\\number\\numexpr\\number\\dimexpr\\$fam\@currentx\\relax*65536/\\number\\dimexpr\\$fam\@xheight\\relax\\relax sp\\relax}}
+            {\\fpeval{\\$fam\@currentx / \\$fam\@xheight}}}
     {}
 
 END_STY_MATCHLOWERCASE
@@ -3418,20 +3429,24 @@ sub cleanup {
     # Don't create ligatures if the user doesn't want them.
     delete $feature{liga} if !$ARGV{ligatures};
 
-    # Don't create kerns and ligatures for symbol or math fonts.
+    # Don't create kerns and ligatures for symbol or otherwise "unencoded" fonts.
     delete @feature{qw(kern liga)}
-        if $workitem->{encoding} =~ m/\A ( TS\d | OML ) \z/xmsi;
+        if $workitem->{encoding} =~ m/\A ( TS\d | OM[LS] ) \z | \A U_ /xmsi;
 
     $workitem->{features} = [ sort keys %feature ];
 
     # Generate a unique name for this font.
+    (my $encoding = lc $workitem->{encoding}) =~ s/\A u_ //xms;
     $workitem->{fontname}
             = join '-', grep { $_ } $font->{name},
                                     lc $figurestyle,
                                     lc Tables::get_name($style),
-                                    lc $workitem->{encoding};
+                                    $encoding;
 
     $workitem->{encoding} = uc $workitem->{encoding};
+    if ($workitem->{encoding} =~ m/\A U_/xms) {
+        $workitem->{encoding} = 'U';
+    }
 
     return $workitem;
 }
@@ -3784,8 +3799,6 @@ Select the weight that LaTeX will use as the "bold" weight.
 
 =back
 
-The last two groups of options will only work if
-you have the F<mweights> package installed.
 The default here is not to change LaTeX's default,
 i.e. use the "m" and "b" weights.
 
@@ -4101,10 +4114,19 @@ For each encoding argument, B<autoinst> will first check if it is
 the filename of an encoding file, and if found it will use that;
 otherwise the argument is assumed to be the name of one of
 the built-in encodings.
+If the argument is a filename,
+B<autoinst> will define the font with an NFSS encoding
+equal to the filename (minus a ".enc" extension),
+except when the filename starts with "U_";
+in that case the NFSS encoding will be "U"
+and the part after "U_" will be used as the "enc" part
+of the name of the generated font.
+
 Currently B<autoinst> comes with built-in support for the OT1, T1/TS1, LY1,
 T2A/B/C, T3/TS3, T4, T5, LGR, CS, L7X and QX encodings.
-(These files are called F<fontools_ot1.enc> etc. to avoid name clashes
-with other packages; the F<fontools_> prefix may be omitted.)
+(The corresponding files are called F<fontools_ot1.enc> etc.,
+to avoid name clashes with other packages;
+the F<fontools_> prefix may be omitted.)
 
 =item B<-ts1>/B<-nots1>
 
@@ -4409,7 +4431,7 @@ GNU General Public License for more details.
 
 =head1 VERSION
 
-This document describes B<autoinst> version 20250107.
+This document describes B<autoinst> version 20250819.
 
 
 =head1 RECENT CHANGES
@@ -4417,6 +4439,29 @@ This document describes B<autoinst> version 20250107.
 (See the source for the full story, all the way back to 2005.)
 
 =over 12
+
+=item I<2025-08-19>
+
+Fixed a bug where any fonts with the word "Typewriter"
+in their name would be parsed as "Italic".
+
+=item I<2025-07-02>
+
+The hack in font metadata parsing for Source Serif 4
+(See 2025-01-07) is also needed for other fonts;
+at least for Arno Pro, maybe some other Adobe fonts as well.
+So we changed the test again: we apply this hack by default,
+except for Libertinus.
+
+=item I<2025-06-23>
+
+Introduced the "U_" rule for encoding file names.
+
+=item I<2025-04-16>
+
+Don't load the I<mweights> package, as its functionality
+is now part of the LaTeX kernel
+(and, in fact, has been for a while ...).
 
 =item I<2025-01-07>
 
