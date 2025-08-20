@@ -1,3 +1,7 @@
+2025-07-15 Luigi Scarso  <luigi.scarso@gmail.com>
+	* Fixed typos im mathcodes.c (thanks to Josef Friedrich)
+
+
 2025-07-05 Luigi Scarso  <luigi.scarso@gmail.com>
 	* Fix for legacy handling of truetype fonts (thanks to marcpenninga)
 
