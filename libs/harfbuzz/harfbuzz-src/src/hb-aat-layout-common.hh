@@ -47,8 +47,7 @@ using namespace OT;
 
 struct ankr;
 
-using hb_aat_class_cache_t = hb_cache_t<15, 8, 7>;
-static_assert (sizeof (hb_aat_class_cache_t) == 256, "");
+using hb_aat_class_cache_t = hb_ot_layout_mapping_cache_t;
 
 struct hb_aat_scratch_t
 {
@@ -1082,6 +1081,8 @@ struct SubtableGlyphCoverage
     for (unsigned i = 0; i < subtable_count; i++)
     {
       uint32_t offset = (uint32_t) subtableOffsets[i];
+      // A font file called SFNSDisplay.ttf has value 0xFFFFFFFF in the offsets.
+      // Just ignore it.
       if (offset == 0 || offset == 0xFFFFFFFF)
         continue;
       if (unlikely (!subtableOffsets[i].sanitize (c, this, bytes)))

@@ -1,6 +1,6 @@
 project('harfbuzz', ['c', 'cpp'],
   meson_version: '>= 0.60.0',
-  version: '11.4.1',
+  version: '11.4.2',
   default_options: [
     'cpp_eh=none',          # Just to support msvc, we are passing -fno-exceptions also anyway
     # 'cpp_rtti=false',     # Do NOT enable, wraps inherit it and ICU needs RTTI
@@ -374,9 +374,6 @@ if host_machine.system() != 'windows'
     conf.set('HAVE_PTHREAD', 1)
   endif
 endif
-
-conf.set_quoted('PACKAGE_NAME', 'HarfBuzz')
-conf.set_quoted('PACKAGE_VERSION', meson.project_version())
 
 foreach check : check_headers
   name = check[0]

@@ -3,10 +3,11 @@
 use super::hb::*;
 
 use std::ffi::c_void;
+use std::mem::transmute;
 use std::ptr::null_mut;
 use std::str::FromStr;
 
-use harfrust::{FontRef, NormalizedCoord, ShaperData, ShaperInstance, Tag};
+use harfrust::{FontRef, NormalizedCoord, Shaper, ShaperData, ShaperInstance, Tag};
 
 pub struct HBHarfRustFaceData<'a> {
     face_blob: *mut hb_blob_t,
@@ -51,7 +52,8 @@ pub unsafe extern "C" fn _hb_harfrust_shaper_face_data_destroy_rs(data: *mut c_v
 }
 
 pub struct HBHarfRustFontData {
-    shaper_instance: ShaperInstance,
+    shaper_instance: Box<ShaperInstance>,
+    shaper: Shaper<'static>,
 }
 
 fn font_to_shaper_instance(font: *mut hb_font_t, font_ref: &FontRef<'_>) -> ShaperInstance {
@@ -74,9 +76,19 @@ pub unsafe extern "C" fn _hb_harfrust_shaper_font_data_create_rs(
     let face_data = face_data as *const HBHarfRustFaceData;
 
     let font_ref = &(*face_data).font_ref;
-    let shaper_instance = font_to_shaper_instance(font, font_ref);
+    let shaper_instance = Box::new(font_to_shaper_instance(font, font_ref));
 
-    let hr_font_data = Box::new(HBHarfRustFontData { shaper_instance });
+    let shaper_instance_ref = &*(&*shaper_instance as *const _);
+    let shaper = (*face_data)
+        .shaper_data
+        .shaper(font_ref)
+        .instance(Some(shaper_instance_ref))
+        .build();
+
+    let hr_font_data = Box::new(HBHarfRustFontData {
+        shaper_instance,
+        shaper: transmute::<harfrust::Shaper<'_>, harfrust::Shaper<'_>>(shaper),
+    });
     let hr_font_data_ptr = Box::into_raw(hr_font_data);
 
     hr_font_data_ptr as *mut c_void
@@ -113,15 +125,11 @@ pub unsafe extern "C" fn _hb_harfrust_buffer_destroy_rs(data: *mut c_void) {
 #[no_mangle]
 pub unsafe extern "C" fn _hb_harfrust_shape_plan_create_rs(
     font_data: *const c_void,
-    face_data: *const c_void,
     script: hb_script_t,
     language: hb_language_t,
     direction: hb_direction_t,
 ) -> *mut c_void {
     let font_data = font_data as *const HBHarfRustFontData;
-    let face_data = face_data as *const HBHarfRustFaceData;
-
-    let font_ref = &(*face_data).font_ref;
 
     let script = harfrust::Script::from_iso15924_tag(Tag::from_u32(script));
     let language = hb_language_to_hr_language(language);
@@ -133,14 +141,9 @@ pub unsafe extern "C" fn _hb_harfrust_shape_plan_create_rs(
         _ => harfrust::Direction::Invalid,
     };
 
-    let shaper = (*face_data)
-        .shaper_data
-        .shaper(font_ref)
-        .instance(Some(&(*font_data).shaper_instance))
-        .build();
+    let shaper = &(*font_data).shaper;
 
-    let hr_shape_plan =
-        harfrust::ShapePlan::new(&shaper, direction, script, language.as_ref(), &[]);
+    let hr_shape_plan = harfrust::ShapePlan::new(shaper, direction, script, language.as_ref(), &[]);
     let hr_shape_plan = Box::new(hr_shape_plan);
     Box::into_raw(hr_shape_plan) as *mut c_void
 }
@@ -223,6 +226,8 @@ pub unsafe extern "C" fn _hb_harfrust_shape_rs(
     let count = hb_buffer_get_length(buffer);
     let infos = hb_buffer_get_glyph_infos(buffer, null_mut());
 
+    hr_buffer.reserve(count as usize);
+
     for i in 0..count {
         let info = &*infos.add(i as usize);
         let unicode = info.codepoint;
@@ -233,12 +238,16 @@ pub unsafe extern "C" fn _hb_harfrust_shape_rs(
     let ptem = hb_font_get_ptem(font);
     let ptem = if ptem > 0.0 { Some(ptem) } else { None };
 
-    let shaper = (*face_data)
-        .shaper_data
-        .shaper(font_ref)
-        .instance(Some(&(*font_data).shaper_instance))
-        .point_size(ptem)
-        .build();
+    let shaper = if ptem.is_some() {
+        (*face_data)
+            .shaper_data
+            .shaper(font_ref)
+            .instance(Some(&(*font_data).shaper_instance))
+            .point_size(ptem)
+            .build()
+    } else {
+        (*font_data).shaper.clone()
+    };
 
     let features = if features.is_null() {
         Vec::new()
@@ -275,18 +284,31 @@ pub unsafe extern "C" fn _hb_harfrust_shape_rs(
         hb_buffer_content_type_t_HB_BUFFER_CONTENT_TYPE_GLYPHS,
     );
     hb_buffer_set_length(buffer, count as u32);
-    if hb_buffer_get_length(buffer) != count as u32 {
+    let mut count_out: u32 = 0;
+    let infos = hb_buffer_get_glyph_infos(buffer, &mut count_out);
+    let positions = hb_buffer_get_glyph_positions(buffer, null_mut());
+    if count != count_out as usize {
         return false as hb_bool_t;
     }
-    let infos = hb_buffer_get_glyph_infos(buffer, null_mut());
-    let positions = hb_buffer_get_glyph_positions(buffer, null_mut());
 
     let mut x_scale: i32 = 0;
     let mut y_scale: i32 = 0;
     hb_font_get_scale(font, &mut x_scale, &mut y_scale);
     let upem = shaper.units_per_em();
-    let x_scale = x_scale as f32 / upem as f32;
-    let y_scale = y_scale as f32 / upem as f32;
+    let upem = if upem > 0 { upem } else { 1000 };
+    let x_mult = if x_scale < 0 {
+        -((-x_scale as i64) << 16)
+    } else {
+        (x_scale as i64) << 16
+    } / upem as i64;
+    let y_mult = if y_scale < 0 {
+        -((-y_scale as i64) << 16)
+    } else {
+        (y_scale as i64) << 16
+    } / upem as i64;
+
+    let em_mult =
+        |v: i32, mult: i64| -> hb_position_t { ((v as i64 * mult + 32768) >> 16) as hb_position_t };
 
     for (i, (hr_info, hr_pos)) in glyphs
         .glyph_infos()
@@ -308,10 +330,10 @@ pub unsafe extern "C" fn _hb_harfrust_shape_rs(
         if hr_info.safe_to_insert_tatweel() {
             info.mask |= hb_glyph_flags_t_HB_GLYPH_FLAG_SAFE_TO_INSERT_TATWEEL;
         }
-        pos.x_advance = (hr_pos.x_advance as f32 * x_scale + 0.5).floor() as hb_position_t;
-        pos.y_advance = (hr_pos.y_advance as f32 * y_scale + 0.5).floor() as hb_position_t;
-        pos.x_offset = (hr_pos.x_offset as f32 * x_scale + 0.5).floor() as hb_position_t;
-        pos.y_offset = (hr_pos.y_offset as f32 * y_scale + 0.5).floor() as hb_position_t;
+        pos.x_advance = em_mult(hr_pos.x_advance, x_mult);
+        pos.y_advance = em_mult(hr_pos.y_advance, y_mult);
+        pos.x_offset = em_mult(hr_pos.x_offset, x_mult);
+        pos.y_offset = em_mult(hr_pos.y_offset, y_mult);
     }
 
     let hr_buffer = glyphs.clear();

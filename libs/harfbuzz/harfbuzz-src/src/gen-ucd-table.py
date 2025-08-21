@@ -165,7 +165,7 @@ COMPACT = "COMPACT"
 SLOPPY = "SLOPPY"
 
 compression_level = {
-    DEFAULT: 5,
+    DEFAULT: 3,
     COMPACT: 9,
     SLOPPY: 9,
 }
@@ -193,7 +193,7 @@ elif language.name == "rust":
     print("pub(crate) mod ucd {")
     print()
     print("#![allow(unused_parens)]")
-    print("#![allow(clippy::unnecessary_cast)]")
+    print("#![allow(clippy::unnecessary_cast, clippy::unreadable_literal, clippy::double_parens)]")
     print()
     print("use crate::hb::algs::{HB_CODEPOINT_ENCODE3, HB_CODEPOINT_ENCODE3_11_7_14};")
     print("use crate::hb::common::script;")
