@@ -1,7 +1,7 @@
 ## $Id$
 ## Makefile.am for the TeX Live subdirectory texk/detex/
 ##
-## Copyright 2017-2022 Karl Berry <tex-live@tug.org>
+## Copyright 2017-2025 Karl Berry <tex-live@tug.org>
 ## Copyright 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
@@ -27,6 +27,14 @@ bin_PROGRAMS = detex
 detex_SOURCES = \
 	@DETEX_TREE@/detex.h \
 	@DETEX_TREE@/detex.l
+
+# If detex.l is modified, ylwrap will try to create detex.c in 
+# builddir/texk/detex/detex-src/, but the detex-src subdir doesn't exist
+# there and neither ylwrap nor Automake creates it (as of 2025-08-30).
+# So ensure that the directory exists before trying to build anything
+# else. TL report, with further links to the Debian bug and patch:
+# https://tug.org/pipermail/tlbuild/2025q3/005834.html
+BUILT_SOURCES = detex-src/$(am__dirstamp)
 
 LDADD = $(KPATHSEA_LIBS)
 

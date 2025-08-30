@@ -1,3 +1,13 @@
+2025-08-30  Karl Berry  <karl@freefriends.org>
+
+	* Makefile.am (BUILT_SOURCES): depend on detex-src/$(am__dirstamp)
+	to work around modifications to detex.l causing failure
+	due to the detex-src/ subdir in the build directory not being created.
+	Patch from Samuel Thibault.
+	TL report: https://tug.org/pipermail/tlbuild/2025q3/005834.html
+	Debian patch: https://github.com/debian-tex/texlive-bin/blob/master/debian/patches/detex_single_job.diff
+	Debian bug: https://bugs.debian.org/1111524
+
 2025-06-08  Karl Berry  <karl@freefriends.org>
 
 	* detex-src/detex.l: pacify C23.

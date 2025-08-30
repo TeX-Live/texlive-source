@@ -588,6 +588,14 @@ detex_SOURCES = \
 	@DETEX_TREE@/detex.h \
 	@DETEX_TREE@/detex.l
 
+
+# If detex.l is modified, ylwrap will try to create detex.c in 
+# builddir/texk/detex/detex-src/, but the detex-src subdir doesn't exist
+# there and neither ylwrap nor Automake creates it (as of 2025-08-30).
+# So ensure that the directory exists before trying to build anything
+# else. TL report, with further links to the Debian bug and patch:
+# https://tug.org/pipermail/tlbuild/2025q3/005834.html
+BUILT_SOURCES = detex-src/$(am__dirstamp)
 LDADD = $(KPATHSEA_LIBS)
 man1_MANS = \
 	$(DETEX_TREE)/detex.man
@@ -595,7 +603,7 @@ man1_MANS = \
 dist_check_SCRIPTS = detex.test
 TESTS = detex.test
 CLEANFILES = test.out texmf.cnf
-all: c-auto.h
+all: $(BUILT_SOURCES) c-auto.h
 	$(MAKE) $(AM_MAKEFLAGS) all-am
 
 .SUFFIXES:
@@ -1222,14 +1230,17 @@ distcleancheck: distclean
 check-am: all-am
 	$(MAKE) $(AM_MAKEFLAGS) $(dist_check_SCRIPTS)
 	$(MAKE) $(AM_MAKEFLAGS) check-TESTS
-check: check-am
+check: $(BUILT_SOURCES)
+	$(MAKE) $(AM_MAKEFLAGS) check-am
 all-am: Makefile $(PROGRAMS) $(MANS) c-auto.h
 installdirs:
 	for dir in "$(DESTDIR)$(bindir)" "$(DESTDIR)$(man1dir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
-install: install-am
-install-exec: install-exec-am
+install: $(BUILT_SOURCES)
+	$(MAKE) $(AM_MAKEFLAGS) install-am
+install-exec: $(BUILT_SOURCES)
+	$(MAKE) $(AM_MAKEFLAGS) install-exec-am
 install-data: install-data-am
 uninstall: uninstall-am
 
@@ -1264,6 +1275,7 @@ distclean-generic:
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
 	@echo "it deletes files that may require special tools to rebuild."
+	-$(am__rm_f) $(BUILT_SOURCES)
 	-$(am__rm_f) @DETEX_TREE@/detex.c
 clean: clean-am
 
@@ -1340,7 +1352,8 @@ uninstall-am: uninstall-binPROGRAMS uninstall-man
 
 uninstall-man: uninstall-man1
 
-.MAKE: all check-am install-am install-strip
+.MAKE: all check check-am install install-am install-exec \
+	install-strip
 
 .PHONY: CTAGS GTAGS TAGS all all-am am--depfiles am--refresh check \
 	check-TESTS check-am clean clean-binPROGRAMS clean-cscope \
