@@ -77,9 +77,9 @@ C<crossref-upload-tool.jar>
 
 For the definition of the Crossref schema currently output by this
 script, see
-L<https://data.crossref.org/reports/help/schema_doc/5.3.1/index.html>
+L<https://data.crossref.org/reports/help/schema_doc/5.4.0/index.html>
 with additional links and information at
-L<https://www.crossref.org/documentation/schema-library/metadata-deposit-schema-5-3-1/>.
+L<https://www.crossref.org/documentation/schema-library/metadata-deposit-schema-5-4-0/>.
 
 =head1 CONFIGURATION FILE FORMAT
 
@@ -108,7 +108,7 @@ configuration data is written as a C<journal_metadata> element, with
 given C<full_title>, C<issn>, etc., and then each C<.rpi> is written as
 C<journal_issue> plus C<journal_article> elements.
 
-The configuration file can also define one Perl function:
+The configuration file can also define a Perl function
 C<LaTeX_ToUnicode_convert_hook>. If it is defined, it is called at the
 beginning of the procedure that converts LaTeX text to Unicode, which is
 done with the L<LaTeX::ToUnicode> module, from the C<bibtexperllibs>
@@ -118,6 +118,16 @@ the transformed string). The standard conversions are then applied to
 the returned string, so the configured function need only handle special
 cases, such as control sequences particular to the journal at hand.
 (See TUGboat's C<ltx2crossrefxml-tugboat.cfg> for an example.)
+
+The configuration file can also define a hash C<BibentryToCrossref>) that
+maps Crossref entry types to BibTeX entry types used in the
+bibliography processing (see L<CITATIONS>), for example
+
+  %BibentryToCrossref = ('WEBPAGE' => 'other',
+                         'MISC' => 'other');
+
+The keys in this hash must be in the upper case, while the entries
+must be in the lower case.
 
 =head1 RPI FILE FORMAT
 
@@ -245,14 +255,49 @@ convenient when creating a C<.bbl> purely for Crossref.
 The C<.rpi> file is also checked for the bibliography information, in
 this same format.
 
-Crossref's structured citations are added as follows, Aas defined by
-their schema
-(L<https://data.crossref.org/reports/help/schema_doc/5.3.1/common5_3_1_xsd.html#citation>):
-If an C<.aux> file is present, it is checked for any C<\bibdata>
+Crossref's structured citations are added as follows:
+
+=over 4
+
+=item 1. If an C<.aux> file is present, it is checked for any C<\bibdata>
 commands. The C<bib> files in these commands are read, and the
 information there is used to generate XML entries. The script uses
-C<kpsewhich> to look for the bib files, so the usual BibTeX conventions
-for the search paths are followed.
+C<kpsewhich> to look for the bib files, so the usual BibTeX
+conventions for the search paths are followed.
+
+=item 2. For any citation the corresponding entry in the C<bib> file is
+processed.
+
+=item 3. The Crossref entry type is determined according to the algorithm
+describe below (L<CITATION ENTRY TYPES>).
+
+=item 4. The entry fields are used to populate structured citation.
+
+=back
+
+=head2 CITATION ENTRY TYPES
+
+The current Crossref schema
+L<https://data.crossref.org/reports/help/schema_doc/5.4.0/schema_5_4_0.html>
+defines C<type> attribute for a citation.  Unfortunately the list of
+possible types does not fully coincide with the list of BibTeX entry
+types.  Therefore the script uses the following algorithm to determine
+the Crossref entry type for a citation:
+
+=over 4
+
+=item 1. If the entry has the field C<crossrefentrytype>, it is used.
+
+=item 2. Otherwise if BibTeX entry type appears in the hash
+C<BibentryToCrossref>) in the configuration file (L<CONFIGURATION FILE
+FORMAT>), its value is used.
+
+=item 3. Otherwise the default mapping is used.  The script knows many
+BibTeX entry types, and should do a good job in most cases.
+
+=back
+
+
 
 =head1 EXAMPLES
 
@@ -391,8 +436,46 @@ END
  our $timestamp = strftime("%Y%m%d%H%M%S", gmtime);
  # use timestamp in batchid, since the value is supposed to be unique
  # for every submission to crossref by a given publisher.
- # https://data.crossref.org/reports/help/schema_doc/5.3.1/common5_3_1_xsd.html#doi_batch_id
+ # https://data.crossref.org/reports/help/schema_doc/5.4.0/schema_5_4_0.html#doi_batch_id
  our $batchId="ltx2crossref-$timestamp-$$";
+
+ # Default mappings of BibTeX entries to Crossref types
+our %BibentryToCrossrefDefault = (
+    # Default types
+    'ARTICLE' => 'journal_article',
+    'BOOK' => 'book',
+    'BOOKLET' => 'book',
+    'CONFERENCE' => 'conference_paper',
+    'INBOOK' => 'book_chapter',
+    'INCOLLECTION' => 'book_chapter',
+    'INPROCEEDINGS' => 'conference_paper',
+    'MANUAL' => 'software',
+    'MASTERSTHESIS' => 'dissertation',
+    'MISC' => 'other',
+    'PHDTHESIS' => 'dissertation',
+    'PROCEEDINGS' => 'conference_proceedings',
+    'TECHREPORT' => 'report',
+    'UNPUBLISHED' => 'other',
+    # From TUGboat
+    'CTAN' => 'software',
+    'ONLINE' => 'web_resource',
+    'SOFTWARE' => 'software',
+    'WEBPAGE' => 'web_resource',
+    # From ACM
+    'UNDERREVIEW' => 'other',
+    'PRESENTATION' => 'poster',
+    'GAME' => 'software',
+    'VIDEO' => 'web_resource',
+    'ARTIFACTSOFTWARE' => 'software',
+    'ARTIFACTDATASET' => 'dataset',
+    'DATASET' => 'dataset',
+    'PRERINT' => 'preprint',
+    # Some other popular types
+    'PATENT' => 'patent',
+    'STANDARD' => 'standard'
+    );
+
+ our %BibentryToCrossref; # empty hash, might be overriden by config
 
  if ($opts{c}) {
      if (-r $opts{c}) {
@@ -404,7 +487,9 @@ END
          die "Cannot read config file $opts{c}. Goodbye.";
      }
  }
- 
+
+
+
  PrintHead();
 
  # 
@@ -455,7 +540,7 @@ sub PrintHead {
     # Crossref schema info:
     # https://www.crossref.org/documentation/schema-library/schema-versions/
     print OUT <<END;
-<doi_batch xmlns="http://www.crossref.org/schema/5.3.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="5.3.1" xsi:schemaLocation="http://www.crossref.org/schema/5.3.1 http://www.crossref.org/schema/deposit/crossref5.3.1.xsd">
+<doi_batch xmlns="http://www.crossref.org/schema/5.4.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="5.4.0" xsi:schemaLocation="http://www.crossref.org/schema/5.4.0 https://www.crossref.org/schemas/crossref5.4.0.xsd">
   <head>
     <doi_batch_id>$batchId</doi_batch_id>
     <timestamp>$timestamp</timestamp>
@@ -628,12 +713,13 @@ sub AddBibliography {
 # Extract bib entries corresponding to the list of keys and convert
 # them to XML structured citations accoding to Crossref
 # scheme at
-# https://data.crossref.org/reports/help/schema_doc/5.3.1/common5_3_1_xsd.html#citation 
+# https://data.crossref.org/reports/help/schema_doc/5.4.0/schema_5_4_0.html#citation 
 # 
 # Return a hash reference, with each element's key being the citation
 # key plus an integer, the same keys as in AddBibliography from the .bbl
-# file. Each value is a flat string, the structured citation items for
-# that element.
+# file. Each value is a hash with two elements:  entrytype being the
+# type of the entry, and citation being  the structured citation items for
+# that entry.
 ##############################################################
 sub AddBibtexBib {
     my ($auxfile,$refs) = @_;
@@ -694,28 +780,52 @@ sub AddBibtexBib {
 
     return \%result;
 }
+
+############################################################## 
+# Get Crossref entry type for a given entry.
+# Returnr a flat string
+##############################################################
+sub CrEntrytype {
+    my $entry=shift;
+    if ($entry->{'crossrefentrytype'}) {
+	&debug("  Found explicit entry type, $entry->{'crossrefentrytype'}\n");
+	return($entry->{'crossrefentrytype'});
+    }
+    
+    my $type = $entry->type;
+    &debug("Bibtex type $type\n");
+
+    if (exists $BibentryToCrossref{$type}) {
+	&debug("  Found a custom mapping $BibentryToCrossref{$type}\n");
+	return($BibentryToCrossref{$type});
+    }
+
+    if (exists $BibentryToCrossrefDefault{$type}) {
+	&debug("  Found a default mapping $BibentryToCrossrefDefault{$type}\n");
+	return($BibentryToCrossrefDefault{$type});
+    }
+
+    &debug("  Cannot find a mapping, returning 'other'\n");
+    return('other');
+}
 
 
 ############################################################## 
 # Convert a BibTeX entry to Crossref structured citation
 # according to
-# data.crossref.org/reports/help/schema_doc/5.3.1/common5_3_1_xsd.html#citation
+# https://data.crossref.org/reports/help/schema_doc/5.4.0/schema_5_4_0.html#citation
 #
-# Return a string.
+# Return a hash with two elements: entrytype and citation
 ##############################################################
 sub ConvertBibentryToCr {
     my $entry = shift;
-    my $result = "";
+    &debug_hash_as_string("Processing citation entry", $entry);
+    my %result = ();
 
-    if (! $entry->{"journal"} && ! $entry->{"issn"}) {
-        # crossref 5.3.1 only supports citations to journal articles; an
-        # upload of anything else gets:
-        # <citation key="whatever-1" status="error">Either ISSN or
-        #    Journal title or Proceedings title must be supplied.</citation>
-        # So we might as well quit now unless we have journal|issn.
-        return "";
-    }
-    $result .= ConvertBibFieldToCfield($entry, 'journal', 'journal_title');
+    $result{'entrytype'} = CrEntrytype($entry);
+    $result{'citation'} = "";
+    
+    $result{'citation'} .= ConvertBibFieldToCfield($entry, 'journal', 'journal_title');
 
     my $issn = $entry->{"issn"};
     if ($issn && $issn !~ /\d{4}-?\d{3}[\dX]/) {
@@ -723,7 +833,7 @@ sub ConvertBibentryToCr {
         warn "$0: goodbye, invalid issn value: $issn\n";
         die "$0:   ", &debug_hash_as_string("in entry", $entry);
     }
-    $result .= ConvertBibFieldToCfield($entry, 'issn');
+    $result{'citation'} .= ConvertBibFieldToCfield($entry, 'issn');
 
     # Somehow crossref wants only the first author.  Why?
     my @authors = $entry->author;
@@ -732,27 +842,27 @@ sub ConvertBibentryToCr {
     }
     if (scalar(@authors)) {
 	my $author = shift @authors;
-	$result .= "<author>";
-	$result .= SanitizeTextEntities($author->to_string());
-	$result .= "</author>\n";
+	$result{'citation'} .= "<author>";
+	$result{'citation'} .= SanitizeTextEntities($author->to_string());
+	$result{'citation'} .= "</author>\n";
     }
 
-    $result .= ConvertBibFieldToCfield($entry, 'volume');
+    $result{'citation'} .= ConvertBibFieldToCfield($entry, 'volume');
 
-    $result .= ConvertBibFieldToCfield($entry, 'issue');
+    $result{'citation'} .= ConvertBibFieldToCfield($entry, 'issue');
 
     # We need only the first page
     if ($entry->field('pages')) {
 	my $page = $entry->field('pages');
 	$page =~ s/-.*//;
-	$result .= "<first_page>$page</first_page>\n";
+	$result{'citation'} .= "<first_page>$page</first_page>\n";
     }
 
-    $result .= ConvertBibFieldToCfield($entry, 'eprint', 'elocation_id');
+    $result{'citation'} .= ConvertBibFieldToCfield($entry, 'eprint', 'elocation_id');
 
-    $result .= ConvertBibFieldToCfield($entry, 'year', 'cYear');
+    $result{'citation'} .= ConvertBibFieldToCfield($entry, 'year', 'cYear');
 
-    $result .= ConvertBibFieldToCfield($entry, 'doi');
+    $result{'citation'} .= ConvertBibFieldToCfield($entry, 'doi');
 
     my $isbn = $entry->{"isbn"};
     if ($isbn) {
@@ -776,19 +886,19 @@ sub ConvertBibentryToCr {
             die "$0:   ", &debug_hash_as_string("in entry", $entry);
         } else {
             # value apparently ok, use it.
-            $result .= ConvertBibFieldToCfield($entry, 'isbn');
+            $result{'citation'} .= ConvertBibFieldToCfield($entry, 'isbn');
         }
     }
 
-    $result .= ConvertBibFieldToCfield($entry, 'series', 'series_title');
+    $result{'citation'} .= ConvertBibFieldToCfield($entry, 'series', 'series_title');
 
-    $result .= ConvertBibFieldToCfield($entry, 'booktitle', 'volume_title');
+    $result{'citation'} .= ConvertBibFieldToCfield($entry, 'booktitle', 'volume_title');
 
-    $result .= ConvertBibFieldToCfield($entry, 'title', 'article_title');
+    $result{'citation'} .= ConvertBibFieldToCfield($entry, 'title', 'article_title');
     
-    chomp $result; # Delete the last \n
+    chomp $result{'citation'}; # Delete the last \n
     
-    return $result;
+    return \%result;
 }
 
 
@@ -1033,18 +1143,27 @@ sub PrintCitationList {
             $citation_text = SanitizeTextEntities($citation_text);
 
             &debug("  printing citation $citekey: $citation_text\n");
-            my $structured_citation = $bibtexbib->{$citekey} || "";
-	    if ($structured_citation) {
+            my $structured_citation_hash = $bibtexbib->{$citekey} || "";
+	    if ($structured_citation_hash) {
+		my $entrytype = $structured_citation_hash -> {'entrytype'};
+		my $structured_citation = $structured_citation_hash -> {'citation'};
 		$structured_citation = "\n" . $structured_citation;
 		$structured_citation =~ s/^(.)/          $1/mg;
-		debug ("    with structured citation: $structured_citation\n");
+		&debug ("    with structured citation: $structured_citation\n");
 
-	    }
             print OUT <<END;
-        <citation key="$citekey">$structured_citation
+        <citation key="$citekey" type="$entrytype">$structured_citation
           <unstructured_citation>$citation_text</unstructured_citation>
         </citation>
 END
+	    } else {
+            print OUT <<END;
+        <citation key="$citekey">
+          <unstructured_citation>$citation_text</unstructured_citation>
+        </citation>
+END
+	    }
+		
         }
     }
     print OUT "      </citation_list>\n";

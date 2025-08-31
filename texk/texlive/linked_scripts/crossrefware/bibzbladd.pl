@@ -8,7 +8,7 @@ bibzbladd.pl - add Zbl numbers to papers in a given bib file
 
 =head1 SYNOPSIS
 
-bibzbladd  [-d] [B<-f>] [B<-e> 1|0] [B<-o> I<output>] I<bib_file>
+bibzbladd  [-d] [B<-f>] [B<-e> 1|0] [B<-o> I<output>] [B<-p> I<probability>] [B<-v|-q>] I<bib_file>
 
 =head1 OPTIONS
 
@@ -33,6 +33,22 @@ Force searching for Zbl numbers even if the entry already has one.
 Output file.  If this option is not used, the name for the 
 output file is formed by adding C<_zbl> to the input file
 
+=item B<-p> I<probability>
+
+Zbmath.org now outputs a probability of match.  We disregard the
+matches with the probability lower than I<probability>.  The default
+is 0.9
+
+=item B<-v>
+
+Verbose mode (the default).  Add to the output the intermediate
+results of zbl search
+
+=item B<-q>
+
+Quiet mode.  Do not add to the output the intermediate results
+of zbl search.
+
 =back
 
 =head1 DESCRIPTION
@@ -52,7 +68,7 @@ Boris Veytsman
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright (C) 2014-2024 Boris Veytsman
+Copyright (C) 2014-2025 Boris Veytsman
 
 This is free software.  You may redistribute copies of it under the
 terms of the GNU General Public License
@@ -74,9 +90,10 @@ use BibTeX::Parser;
 use Getopt::Std;
 use URI::Escape;
 use LWP::UserAgent;
+use JSON;
 $ENV{PERL_LWP_SSL_VERIFY_HOSTNAME}=0;
 
-my $USAGE="USAGE: $0  [-d] [-e 1|0] [-f] [-o output] file\n";
+my $USAGE="USAGE: $0  [-d] [-e 1|0] [-f] [-o output] [-p probability] [-v|-q] file\n";
 my $VERSION = <<END;
 bibzbladd v2.3
 This is free software.  You may redistribute copies of it under the
@@ -86,7 +103,7 @@ extent permitted by law.
 $USAGE
 END
 my %opts;
-getopts('de:fo:hV',\%opts) or die $USAGE;
+getopts('de:fo:p:hV',\%opts) or die $USAGE;
 
 if ($opts{h} || $opts{V}){
     print $VERSION;
@@ -115,6 +132,23 @@ if (exists $opts{e}) {
 }		
 
 my $debug = $opts{d};
+
+my $prob = 0.9;
+if (exists $opts{p}) {
+    $prob = $opts{p};
+}
+
+my $json = JSON->new->allow_nonref;
+
+my $quiet = 0;
+if (exists $opts{q}) {
+    $quiet = 1;
+}
+if (exists $opts{v}) {
+    $quiet = 0;
+}
+
+
 
 my $input= IO::File->new($inputfile) or 
     die "Cannot find BibTeX file $inputfile\n$USAGE\n";
@@ -188,17 +222,43 @@ sub GetZbl {
 	print STDERR "DEBUG:  response: ",
 	$response->decoded_content, "\n";
     }
-    
-    if ($response->decoded_content =~ /^\s*"zbl_id":\s*"(.*)",?\s*$/m) {
+
+    my $content = $json->decode($response->decoded_content);
+
+    if (!exists $content->{results}) {
 	if ($debug) {
-	    print STDERR "DEBUG:  got zbl: $1\n",
+	    print STDERR "DEBUG: Did not get zbl\n";
 	}
-	return $1;
-     } else {
-	if ($debug) {
-	    print STDERR "DEBUG: Did not get zbl\n",
-	}
- 	return ("");
+	return("");
     }
 
+    if (!$quiet) {
+	print $output "% ZBL search:\n";
+    }
+    
+    my $results = $content->{results};
+    if (!$quiet) {
+	my $string =  $json->pretty->encode( $results );
+	$string =~ s/^(.)/% \1/mg;
+	print $output "$string\n";
+    }
+
+    foreach my $result (@{$results}) {
+	if (!exists $result->{probability} ||
+	    $result->{probability} < $prob ||
+	    !exists $result->{zbl_id}
+	    ) {
+	    next;
+	}
+	my $zbl = $result->{zbl_id};
+ 	if ($debug) {
+ 	    print STDERR "DEBUG:  got zbl: $zbl\n",
+ 	}
+ 	return($zbl);
+    }
+
+    if ($debug) {
+	print STDERR "DEBUG: Did not get zbl\n",
+    }
+    return ("");
 }
