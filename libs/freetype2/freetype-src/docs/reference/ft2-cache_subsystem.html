@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="API Reference Documentation for FreeType-2.13.3">
+        <meta name="description" content="API Reference Documentation for FreeType-2.14.0">
       
       
         <meta name="author" content="FreeType Contributors">
@@ -22,15 +22,15 @@
       
       
       <link rel="icon" href="images/favico.ico">
-      <meta name="generator" content="mkdocs-1.6.0, mkdocs-material-9.5.31">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.9">
     
     
       
-        <title>Cache Sub-System - FreeType-2.13.3 API Reference</title>
+        <title>Cache Sub-System - FreeType-2.14.0 API Reference</title>
       
     
     
-      <link rel="stylesheet" href="assets/stylesheets/main.3cba04c6.min.css">
+      <link rel="stylesheet" href="assets/stylesheets/main.4af4bdda.min.css">
       
         
         <link rel="stylesheet" href="assets/stylesheets/palette.06af60db.min.css">
@@ -54,7 +54,7 @@
     
       <link rel="stylesheet" href="stylesheets/extra.css">
     
-    <script>__md_scope=new URL(".",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL(".",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -94,20 +94,20 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="index.html" title="FreeType-2.13.3 API Reference" class="md-header__button md-logo" aria-label="FreeType-2.13.3 API Reference" data-md-component="logo">
+    <a href="index.html" title="FreeType-2.14.0 API Reference" class="md-header__button md-logo" aria-label="FreeType-2.14.0 API Reference" data-md-component="logo">
       
   <img src="images/favico.ico" alt="logo">
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
       
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
     </label>
     <div class="md-header__title" data-md-component="header-title">
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            FreeType-2.13.3 API Reference
+            FreeType-2.14.0 API Reference
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -127,7 +127,7 @@
     
       <label class="md-header__button md-icon" for="__search">
         
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
       </label>
       <div class="md-search" data-md-component="search" role="dialog">
   <label class="md-search__overlay" for="__search"></label>
@@ -136,15 +136,15 @@
       <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
       <label class="md-search__icon md-icon" for="__search">
         
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
         
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
       </label>
       <nav class="md-search__options" aria-label="Search">
         
         <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
           
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
         </button>
       </nav>
       
@@ -188,12 +188,12 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="index.html" title="FreeType-2.13.3 API Reference" class="md-nav__button md-logo" aria-label="FreeType-2.13.3 API Reference" data-md-component="logo">
+    <a href="index.html" title="FreeType-2.14.0 API Reference" class="md-nav__button md-logo" aria-label="FreeType-2.14.0 API Reference" data-md-component="logo">
       
   <img src="images/favico.ico" alt="logo">
 
     </a>
-    FreeType-2.13.3 API Reference
+    FreeType-2.14.0 API Reference
   </label>
   
   <ul class="md-nav__list" data-md-scrollfix>
@@ -210,6 +210,7 @@
   
   <span class="md-ellipsis">
     TOC
+    
   </span>
   
 
@@ -230,6 +231,7 @@
   
   <span class="md-ellipsis">
     Index
+    
   </span>
   
 
@@ -260,6 +262,7 @@
   
   <span class="md-ellipsis">
     General Remarks
+    
   </span>
   
 
@@ -285,6 +288,7 @@
   
   <span class="md-ellipsis">
     Preamble
+    
   </span>
   
 
@@ -306,6 +310,7 @@
   
   <span class="md-ellipsis">
     FreeType's header inclusion scheme
+    
   </span>
   
 
@@ -327,6 +332,7 @@
   
   <span class="md-ellipsis">
     User allocation
+    
   </span>
   
 
@@ -365,6 +371,7 @@
   
   <span class="md-ellipsis">
     Core API
+    
   </span>
   
 
@@ -390,6 +397,7 @@
   
   <span class="md-ellipsis">
     Basic Data Types
+    
   </span>
   
 
@@ -411,6 +419,7 @@
   
   <span class="md-ellipsis">
     Library Setup
+    
   </span>
   
 
@@ -432,6 +441,7 @@
   
   <span class="md-ellipsis">
     Face Creation
+    
   </span>
   
 
@@ -453,6 +463,7 @@
   
   <span class="md-ellipsis">
     Font Testing Macros
+    
   </span>
   
 
@@ -474,6 +485,7 @@
   
   <span class="md-ellipsis">
     Sizing and Scaling
+    
   </span>
   
 
@@ -495,6 +507,7 @@
   
   <span class="md-ellipsis">
     Glyph Retrieval
+    
   </span>
   
 
@@ -516,6 +529,7 @@
   
   <span class="md-ellipsis">
     Character Mapping
+    
   </span>
   
 
@@ -537,6 +551,7 @@
   
   <span class="md-ellipsis">
     Information Retrieval
+    
   </span>
   
 
@@ -558,6 +573,7 @@
   
   <span class="md-ellipsis">
     Other API Data
+    
   </span>
   
 
@@ -596,6 +612,7 @@
   
   <span class="md-ellipsis">
     Extended API
+    
   </span>
   
 
@@ -621,6 +638,7 @@
   
   <span class="md-ellipsis">
     Unicode Variation Sequences
+    
   </span>
   
 
@@ -642,6 +660,7 @@
   
   <span class="md-ellipsis">
     Glyph Color Management
+    
   </span>
   
 
@@ -663,6 +682,7 @@
   
   <span class="md-ellipsis">
     Glyph Layer Management
+    
   </span>
   
 
@@ -684,6 +704,7 @@
   
   <span class="md-ellipsis">
     Glyph Management
+    
   </span>
   
 
@@ -705,6 +726,7 @@
   
   <span class="md-ellipsis">
     Mac Specific Interface
+    
   </span>
   
 
@@ -726,6 +748,7 @@
   
   <span class="md-ellipsis">
     Size Management
+    
   </span>
   
 
@@ -747,6 +770,7 @@
   
   <span class="md-ellipsis">
     Header File Macros
+    
   </span>
   
 
@@ -785,6 +809,7 @@
   
   <span class="md-ellipsis">
     Format-Specific API
+    
   </span>
   
 
@@ -809,7 +834,8 @@
         
   
   <span class="md-ellipsis">
-    Multiple Masters
+    OpenType Font Variations, TrueType GX, and Adobe MM Fonts
+    
   </span>
   
 
@@ -831,6 +857,7 @@
   
   <span class="md-ellipsis">
     TrueType Tables
+    
   </span>
   
 
@@ -852,6 +879,7 @@
   
   <span class="md-ellipsis">
     Type 1 Tables
+    
   </span>
   
 
@@ -873,6 +901,7 @@
   
   <span class="md-ellipsis">
     SFNT Names
+    
   </span>
   
 
@@ -894,6 +923,7 @@
   
   <span class="md-ellipsis">
     BDF and PCF Files
+    
   </span>
   
 
@@ -915,6 +945,7 @@
   
   <span class="md-ellipsis">
     CID Fonts
+    
   </span>
   
 
@@ -936,6 +967,7 @@
   
   <span class="md-ellipsis">
     PFR Fonts
+    
   </span>
   
 
@@ -957,6 +989,7 @@
   
   <span class="md-ellipsis">
     Window FNT Files
+    
   </span>
   
 
@@ -978,6 +1011,7 @@
   
   <span class="md-ellipsis">
     OpenType SVG Fonts
+    
   </span>
   
 
@@ -999,6 +1033,7 @@
   
   <span class="md-ellipsis">
     Font Formats
+    
   </span>
   
 
@@ -1020,6 +1055,7 @@
   
   <span class="md-ellipsis">
     Gasp Table
+    
   </span>
   
 
@@ -1058,6 +1094,7 @@
   
   <span class="md-ellipsis">
     Controlling FreeType Modules
+    
   </span>
   
 
@@ -1083,6 +1120,7 @@
   
   <span class="md-ellipsis">
     The auto-hinter
+    
   </span>
   
 
@@ -1104,6 +1142,7 @@
   
   <span class="md-ellipsis">
     The CFF driver
+    
   </span>
   
 
@@ -1125,6 +1164,7 @@
   
   <span class="md-ellipsis">
     The Type 1 and CID drivers
+    
   </span>
   
 
@@ -1146,6 +1186,7 @@
   
   <span class="md-ellipsis">
     The TrueType driver
+    
   </span>
   
 
@@ -1167,6 +1208,7 @@
   
   <span class="md-ellipsis">
     The PCF driver
+    
   </span>
   
 
@@ -1188,6 +1230,7 @@
   
   <span class="md-ellipsis">
     The SVG driver
+    
   </span>
   
 
@@ -1209,6 +1252,7 @@
   
   <span class="md-ellipsis">
     Driver properties
+    
   </span>
   
 
@@ -1230,6 +1274,7 @@
   
   <span class="md-ellipsis">
     Parameter Tags
+    
   </span>
   
 
@@ -1251,6 +1296,7 @@
   
   <span class="md-ellipsis">
     Subpixel Rendering
+    
   </span>
   
 
@@ -1291,6 +1337,7 @@
   
   <span class="md-ellipsis">
     Cache Sub-System
+    
   </span>
   
 
@@ -1325,6 +1372,7 @@
   
   <span class="md-ellipsis">
     Cache Sub-System
+    
   </span>
   
 
@@ -1336,6 +1384,7 @@
   
   <span class="md-ellipsis">
     Cache Sub-System
+    
   </span>
   
 
@@ -1655,6 +1704,7 @@
   
   <span class="md-ellipsis">
     Support API
+    
   </span>
   
 
@@ -1680,6 +1730,7 @@
   
   <span class="md-ellipsis">
     Computations
+    
   </span>
   
 
@@ -1701,6 +1752,7 @@
   
   <span class="md-ellipsis">
     List Processing
+    
   </span>
   
 
@@ -1722,6 +1774,7 @@
   
   <span class="md-ellipsis">
     Outline Processing
+    
   </span>
   
 
@@ -1743,6 +1796,7 @@
   
   <span class="md-ellipsis">
     Quick retrieval of advance values
+    
   </span>
   
 
@@ -1764,6 +1818,7 @@
   
   <span class="md-ellipsis">
     Bitmap Handling
+    
   </span>
   
 
@@ -1785,6 +1840,7 @@
   
   <span class="md-ellipsis">
     Scanline Converter
+    
   </span>
   
 
@@ -1806,6 +1862,7 @@
   
   <span class="md-ellipsis">
     Glyph Stroker
+    
   </span>
   
 
@@ -1827,6 +1884,7 @@
   
   <span class="md-ellipsis">
     System Interface
+    
   </span>
   
 
@@ -1848,6 +1906,7 @@
   
   <span class="md-ellipsis">
     Module Management
+    
   </span>
   
 
@@ -1869,6 +1928,7 @@
   
   <span class="md-ellipsis">
     GZIP Streams
+    
   </span>
   
 
@@ -1890,6 +1950,7 @@
   
   <span class="md-ellipsis">
     LZW Streams
+    
   </span>
   
 
@@ -1911,6 +1972,7 @@
   
   <span class="md-ellipsis">
     BZIP2 Streams
+    
   </span>
   
 
@@ -1932,6 +1994,7 @@
   
   <span class="md-ellipsis">
     External Debugging APIs
+    
   </span>
   
 
@@ -1970,6 +2033,7 @@
   
   <span class="md-ellipsis">
     Error Codes
+    
   </span>
   
 
@@ -1995,6 +2059,7 @@
   
   <span class="md-ellipsis">
     Error Enumerations
+    
   </span>
   
 
@@ -2016,6 +2081,7 @@
   
   <span class="md-ellipsis">
     Error Code Values
+    
   </span>
   
 
@@ -2054,6 +2120,7 @@
   
   <span class="md-ellipsis">
     Miscellaneous
+    
   </span>
   
 
@@ -2079,6 +2146,7 @@
   
   <span class="md-ellipsis">
     TrueTypeGX/AAT Validation
+    
   </span>
   
 
@@ -2100,6 +2168,7 @@
   
   <span class="md-ellipsis">
     Incremental Loading
+    
   </span>
   
 
@@ -2121,6 +2190,7 @@
   
   <span class="md-ellipsis">
     The TrueType Engine
+    
   </span>
   
 
@@ -2142,6 +2212,7 @@
   
   <span class="md-ellipsis">
     OpenType Validation
+    
   </span>
   
 
@@ -2458,6 +2529,7 @@
               <article class="md-content__inner md-typeset">
                 
                   
+
 
 
 <p><a href="https://www.freetype.org">FreeType</a> &raquo; <a href="../">Docs</a> &raquo; <a href="index.html#cache-sub-system">Cache Sub-System</a> &raquo; Cache Sub-System</p>
@@ -3272,7 +3344,7 @@
       <div class="md-copyright">
   
     <div class="md-copyright__highlight">
-      Copyright 2024 <a href = "https://www.freetype.org/license.html">The FreeType Project</a>.
+      Copyright 2025 <a href = "https://www.freetype.org/license.html">The FreeType Project</a>.
     </div>
   
   
@@ -3293,10 +3365,10 @@
     </div>
     
     
-    <script id="__config" type="application/json">{"base": ".", "features": [], "search": "assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    <script id="__config" type="application/json">{"base": ".", "features": [], "search": "assets/javascripts/workers/search.f8cc74c7.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
-      <script src="assets/javascripts/bundle.fe8b6f2b.min.js"></script>
+      <script src="assets/javascripts/bundle.c8b220af.min.js"></script>
       
         <script src="javascripts/extra.js"></script>
       

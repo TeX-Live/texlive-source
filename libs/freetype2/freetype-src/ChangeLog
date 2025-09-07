@@ -1,3 +1,3007 @@
+2025-09-06  Werner Lemberg  <wl@gnu.org>
+
+	* Version 2.14.0 released.
+	==========================
+
+	Tag sources with `VER-2-14-0'.
+
+	* docs/VERSION.TXT: Add entry for version 2.14.0.
+	* docs/CHANGES: Updated.
+	* docs/release, docs/README, builds/macs/README: Updated.
+
+	* README, src/base/ftver.rc, builds/windows/vc2010/index.html,
+	builds/windows/visualc/index.html, builds/windows/visualce/index.html,
+	builds/wince/vc2005-ce/index.html, builds/wince/vc2008-ce/index.html,
+	docs/freetype-config.1: s/2.13.3/2.14.0/, s/2133/2140/.
+
+	* include/freetype/freetype.h (FREETYPE_MINOR): Set to 14.
+	(FREETYPE_PATCH): Set to 0.
+
+	* builds/unix/configure.raw (version_info): Set to 26:3:20.
+	* CMakeLists.txt (VERSION_MINOR): Set to 14.
+	(VERSION_PATCH): Set to 0.
+
+2025-09-06  Werner Lemberg  <wl@gnu.org>
+
+	* builds/toplevel.mk (do-dist): Download shallow clone of `config.git`.
+
+	No need for any other commit than the current one.
+
+2025-09-06  Werner Lemberg  <wl@gnu.org>
+
+	Update all copyright notices.
+
+2025-09-05  Werner Lemberg  <wl@gnu.org>
+
+	src/sfnt/ttload.c (tt_face_load_any): Correctly handle font containers.
+
+	Reported as
+
+	  https://issues.oss-fuzz.com/issues/424613326
+
+2025-09-05  Jouk Jansen  <joukj@hrem.nano.tudelft.nl>
+
+	Clean up OpenVMS support.
+
+	This avoids cluttering the source code with VMS-specific changes.
+
+	* include/freetype/internal/ftcalc.h [__VMS], src/base/ftcalc.c
+	  [vms_auto64_source]: Remove.
+
+	* builds/vms/patch_ftcalc.sed: New file.
+
+	* vms_make.com: Change macro definitions while this script is running; we
+	  use `GNU sed` to inject the necessary preprocessor code on the fly.
+
+2025-09-01  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* src/psaux/psauxmod.h (psaux_driver_class): Removed declaration.
+
+2025-08-29  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	[base] Use const FT_Module_Class.
+
+	This is intended to warn against modifying any fields in the class,
+	at compile-time and avoid crashes at run-time.
+
+	* include/freetype/internal/ftobjs.h (FT_ModuleRec): Do it.
+	* src/base/ftobjs.c (Destroy_Module, FT_Add_Module): Updated.
+
+2025-08-27  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* src/base/ftobjs.c (FT_Load_Glyph): Reduces scope of 'ttface'.
+
+2025-08-25  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* src/truetype/ttinterp.c: Fix some builds.
+
+2025-08-23  Werner Lemberg  <wl@gnu.org>
+
+	* subprojects/*.wrap: Updated.
+
+2025-08-23  Werner Lemberg  <wl@gnu.org>
+
+	Updating `CHANGES` file; minor fixes elsewhere (mostly formatting).
+
+2025-08-20  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	[truetype] Fix compilation without bytecode.
+
+	Fixes #1351 and various warnings about unused variables.
+
+	* src/truetype/ttinterp.c: Put the entire body under #ifdef.
+	* src/truetype/ttgload.c (TT_Process_Composite_Glyph): Relocate
+	some declarations.
+	* src/truetype/ttinterp.h: Remove some #ifdef conditions.
+	* src/truetype/ttobjs.c (tt_size_done): Modified.
+
+2025-08-14  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	[truetype] Small fix in the incremental interface (again).
+	
+	Fixes #1299, last [-Wdangling-pointer=] warning.
+	
+	* src/truetype/ttgload.c (load_truetype_glyph): Restore original stream
+	on exit unconditionally.
+
+2025-08-14  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	[truetype] Small fix in the incremental interface.
+	
+	Fixes #1299, last [-Wdangling-pointer=] warning.
+	
+	* src/truetype/ttgload.c (load_truetype_glyph): Restore original stream
+	on exit.
+
+2025-08-14  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* src/autofit/afgsub.c: Fix a warning.
+	
+	Fixes [-Wunused-function] warning without HarfBuzz.
+
+2025-08-11  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* */ftoption.h: Update C99 wording.
+
+2025-08-11  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	*  */ftoption.h: Note C99 compliance.
+
+2025-08-08  Behdad Esfahbod  <behdad@behdad.org>
+
+	[ttgxvar] Fix caching of scalars when there are intermediate tuples.
+
+	For example, with `GoogleSansFlex-Regular.ttf` at ROND=100, the 'Q' glyph
+	was misrendering.
+
+	* src/truetype/ttgxvar.c (TT_Vary_Apply_Glyph_Deltas): Reset `tupleScalars`
+	  earlier.
+
+2025-08-05  Jouk Jansen  <joukj@hrem.nano.tudelft.nl>
+
+	Improvements to OpenVMS support.
+
+	* include/freetype/internal/ftcalc.h [__VMS]: Undefine `FT_MulFix`.
+
+	* src/base/ftcalc.c [vms_auto64_source]: Define `FT_MulFix`.
+
+	* vms_make.com: Also create 32bit version of the FreeType library.
+
+2025-08-04  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* docs/CHANGES: Mention 'ftmulti' improvements.
+
+2025-08-02  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	[type1/MM] Correctly reset the default instance.
+
+	Call T1_Set_MM_WeightVector, which actually sets default weights,
+	instead of TT_Set_MM_Blend, which just centers the axes.
+
+	* src/type1/t1load.c (T1_Reset_MM_Blend): Do it.
+
+2025-08-01  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	[truetype/v40] Fix ROUND_XY_TO_GRID handling.
+
+	Fixes #1346.
+
+	* src/truetype/ttgload.c (TT_Process_Composite_Component): Round
+	the x-position unless in backward_compatibility mode.
+
+2025-07-30  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* src/truetype/ttinterp.c (Ins_MDRP,MIRP): Small tweak.
+
+2025-07-30  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	[truetype] Tweak size management.
+
+	* include/freetype/internal/services/svmetric.h (FT_Size_Reset_Func):
+	Update typedef, do not return error.
+	* src/truetype/ttobjs.c (tt_size_reset_height): Move the PPem error
+	handling from here...
+	(tt_size_reset): ... to here to improve readability.
+	src/truetype/ttobjs.h (tt_size_reset_height): Update prototype.
+
+2025-07-30  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	[truetype] Relocate color compensation (cont'd).
+
+	* src/truetype/ttinterp.c (Inc_MDAR,MIAP,MDRP,MIRP): Fix forgotten
+	rounding.
+
+2025-07-29  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	[truetype] Fix EVEN and ODD instructions.
+
+	It is possible to have a fractional part after rounding when rounding
+	to half-grid or super-rounding. The specs call to ignore the fractional
+	part in that case.
+
+	^ src/truetype/ttinterp.c (Ins_EVEN, Ins_ODD): Fix mask.
+
+2025-07-28  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* src/truetype/ttinterp.c: Fix comments.
+
+2025-07-28  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* src/truetype/ttinterp.h (TT_Round_Func): Fix argument.
+
+	Fixes #1347: function type mismatch.
+
+2025-07-27  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	[truetype] Clean up size validation.
+
+	Rely on non-zero ppem to validate the size object.
+
+	* src/truetype/ttobjs.h (TT_Size_Merics): Remove the `valid` flag.
+	* src/truetype/ttobjs.c (tt_size_init,done,reset,reset_height): Updated.
+	* src/truetype/ttgload.c (TT_Load_Glyph): Check for non-zero ppem.
+
+2025-07-27  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	[truetype] Relocate color compensation.
+
+	The rounding color compensation, which is not used by FreeType, belongs
+	to GS. This is a more logical place for it, next to round_state.
+
+	* src/truetype/ttobjs.h (TT_GraphicsState): Move compensations here...
+	(TT_Size_Metrics): ... from here.
+	* src/truetype/ttobjs.c (tt_size_init_bytecode): Updated.
+	* src/truetype/ttinterp.c (tt_default_graphics_state): Updated.
+	(Ins_ROUND,NROUND,EVEN,ODD): Updated.
+	(Round_*): Updated.
+
+2025-07-26  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	[smooth] Remove usage of setjmp and longjmp.
+
+	To support WASM targets with slow or unsupported setjmp and longjmp,
+	we eliminate these calls in favor of an error propagation model.
+	When gray_set_cell is out of cells, it raises an exception which is
+	later handled in gray_convert_glyph_inner.
+	This is a less invasive alternative to !385.
+
+	* src/smooth/ftgrays.c (gray_set_cell): Raise the overflow exception
+	and redirect all work to `cell_null`.
+	(gray_move,line,conic,cubic_to): Return the exception.
+	(gray_convert_glyph, gray_convert_glyph_inner): Handle the exception.
+
+2025-07-05  Werner Lemberg  <wl@gnu.org>
+
+	[sfnt] Rewrite GPOS kerning support. (2/2)
+
+	The previous code had a fundamental flaw: it didn't validate the necessary
+	parts of the 'GPOS' table before accessing it, causing crashes with
+	malformed data (since `TT_CONFIG_OPTION_GPOS_KERNING` is off by default,
+	standard fuzzers don't catch these problems).  Additionally, it did a lot of
+	parsing while accessing kerning data, making it rather slow.
+
+	The new implementation fixes this.  After validation, offsets to the 'GPOS'
+	lookup subtables used in the 'kern' feature that correspond to 'simple'
+	kerning (i.e., similar to 'kern' table kerning) are stored in `TT_Face`;
+	this greatly simplifies and accelerates access to the kerning data.
+
+	Testing with font `SF-Pro.ttf` version '1.00', the validation time for the
+	'GPOS' table increases the start-up time of `FT_New_Face` by less than 1%,
+	while calls to `FT_Get_Kerning` become about 3.5 times faster.
+
+	* include/freetype/internal (gpos_kerning_available): Replace with...
+	  (gpos_lookups_kerning, num_gpos_lookups_kerning): ... these new fields.
+	  Update callers.
+
+	* src/ttgpos.c [TT_CONFIG_OPTION_GPOS_KERNING]: A new implementation.
+
+2025-07-05  Werner Lemberg  <wl@gnu.org>
+
+	[sfnt] Rewrite GPOS kerning support. (1/2)
+
+	This commit removes the previous implementation.
+
+2025-07-05  Werner Lemberg  <wl@gnu.org>
+
+	[cff] Support GPOS kerning.
+
+	* src/cff/cffdrivr.c (cff_get_kerning) [TT_CONFIG_OPTION_GPOS_KERNING]: Add
+	  code similar to the one in `tt_get_kerning`.
+
+2025-07-05  Werner Lemberg  <wl@gnu.org>
+
+	* src/sfnt/ttkern.h (TT_FACE_HAS_KERNING): Remove macro.
+
+	Given that we also support (limited) 'GPOS' table kerning if
+	`TT_CONFIG_OPTION_GPOS_KERNING` is defined, the name of this macro is
+	misleading since it only is true for 'kern' table kerning.
+
+	* src/sfnt/sfobjs.c (sfn_load_face): Replace `TT_FACE_HAS_KERNING` with
+	  plain code.
+
+2025-07-05  Werner Lemberg  <wl@gnu.org>
+
+	[autofit] Remove `globals->gsub_length`.
+
+	We completely validate the accessed data from the 'GSUB' table, making this
+	field unnecessary.
+
+	* src/autofit/afglobal.h (AF_FaceGlobalsRec): Remove `gsub_length` field.
+
+	* src/autofit/afglobal.c (af_face_globals_new), src/autofit/afgsub.c
+	  (af_parse_gsub): Updated.
+
+2025-07-01  Werner Lemberg  <wl@gnu.org>
+
+	* src/truetype/ttobjs.c (tt_size_init_bytecode): Correct previous fix.
+
+	`FT_NEW_ARRAY` expects a signed value, not an unsigned one.
+
+2025-07-01  Werner Lemberg  <wl@gnu.org>
+
+	* src/autofit/afgsub.c: Include `tttables.h` and `afgsub.h`.
+
+	This fixes 'make multi' compilation with clang.
+
+	Reported as
+
+	  https://gitlab.freedesktop.org/freetype/freetype/-/merge_requests/381#note_2984610
+
+2025-07-01  Werner Lemberg  <wl@gnu.org>
+
+	Various minor fixes.
+
+	As reported by clang 19.
+
+	* src/autofit/afadjust.c (adjustment_database): Make it static.
+
+	* src/base/ftdbgmem.c (FT_MEM_SIZE_MIN): Remove unused macro.
+
+	* src/psaux/psobjs.c (skip_procedure), src/truetype/ttinterp.c (Ins_IF,
+	  Ins_ELSE, Ins_FDEF, Ins_IDEF): Add `default` clause.
+
+2025-07-01  Werner Lemberg  <wl@gnu.org>
+
+	More signedness fixes.
+
+	As reported by clang 19.
+
+	* src/autofit/afadjust.c (add_substitute): Make first argument unsigned.
+	  Update all callers.
+	  Other minor signedness fixes.
+	  (af_reverse_character_map_new): Minor signedness fixes.
+
+	* src/autofit/afgsub.c (af_hash_insert): Minor signedness fixes.
+
+	* src/autofit/aflatin.c
+	  (af_glyph_hints_apply_vertical_separation_adjustments): Make third
+	  argument unsigned.
+	  Update all callers.
+	  Other minor signedness fixes.
+	  (af_latin_hints_apply): Minor signedness fixes.
+
+	* src/bdf/bdflib.c (bdf_parse_bitmap_): Minor signedness fix.
+
+	* src/truetype/ttobjs.c (tt_size_init_bytecode): Minor signedness fix.
+
+2025-07-01  Werner Lemberg  <wl@gnu.org>
+
+	*/*: Fix trivial signedness issues with format strings in trace messages.
+
+	As reported with clang 19's `-Wformat` option.
+
+2025-07-01  Werner Lemberg  <wl@gnu.org>
+
+	Fix `make multi`.
+
+	Reported as
+
+	  https://gitlab.freedesktop.org/freetype/freetype/-/merge_requests/381#note_2984253
+
+	* src/base/fthash.c: Include `ftobjs.h`.
+	* src/autofit/afgsub.c: Include `afglobal.h`.
+
+2025-06-30  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* MSBuild.sln: Minor.
+
+2025-06-29  Werner Lemberg  <wl@gnu.org>
+
+	[doc] Revise font variation API.
+
+2025-06-29  Werner Lemberg  <wl@gnu.org>
+
+	[doc] Use 'Adobe MM', 'TrueType GX', and 'OpenType Font Variations'.
+
+2025-06-26  Werner Lemberg  <wl@gnu.org>
+
+	Set minimum HarfBuzz version back to 2.0.0.
+
+	Due to the new GSUB parsing we no longer need
+	`hb_ot_layout_lookup_get_glyph_alternates`.
+
+	This partially reverts commit 5d2fd7608a9.
+
+	* CMakeLists.txt (HARFBUZZ_MIN_VERSION), meson.build (harfbuzz_dep),
+	  builds/unix/configure.raw (harfbuzz_pkg): Set version to 2.0.0.
+
+	* src/autofit/ft-hb-decls.h: Remove entry for
+	  `hb_ot_layout_lookup_get_glyph_alternates`.
+
+2025-06-26  Werner Lemberg  <wl@gnu.org>
+
+	[autofit] Speed up computation of `af_reverse_character_map_new`. (4/4)
+
+	With this commit, the start-up time for creating the reverse character map
+	gets reduced from more than 300% to about 25% (as tested with `arial.ttf`
+	version 7.00).
+
+	* src/autofit/afadjust.c [FT_CONFIG_OPTION_USE_HARFBUZZ]: Include
+	  `afgsub.h`.
+	  (add_substitute): New auxiliary function to recursively add elements to
+	  the reverse cmap.
+	  (af_reverse_character_map_new): New code that replaces the old code
+	  removed in the previous commit.
+
+2025-06-26  Werner Lemberg  <wl@gnu.org>
+
+	[autofit] Speed up computation of `af_reverse_character_map_new`. (3/4)
+
+	Rip out some HarfBuzz code of `af_reverse_character_map_new`.  The new code
+	comes immediately in a follow-up commit, making it easier to follow the
+	changes.
+
+	* src/autofit/afadjust.c (af_get_glyph_alternates_helper,
+	  af_get_glyph_alternates): Remove.
+	  (af_reverse_character_map_new): Remove code to create the `*map` hash.
+
+2025-06-26  Werner Lemberg  <wl@gnu.org>
+
+	[autofit] Speed up computation of `af_reverse_character_map_new`. (2/4)
+
+	Create an array of GSUB lookup indices for `SingleSubst` and
+	`AlternateSubst` lookup types to exit early if we have different types.
+
+	Also improve tracing.
+
+	* src/autofit/afglobal.h (AF_FaceGlobals) [FT_CONFIG_OPTION_USE_HARFBUZZ]:
+	  New fields `gsub_length`, `gsub`, and `gsub_lookups_single_alternate`.
+
+	* src/autofit/afglobal.c [FT_CONFIG_OPTION_USE_HARFBUZZ]: Include
+	  `afgsub.h`.
+	  (af_face_globals_new) [FT_CONFIG_OPTION_USE_HARFBUZZ]: Call
+	  `af_parse_gsub` to fill `gsub_lookups_single_alternate`.
+	  (af_face_globals_free): Updated.
+
+	* src/autofit/afadjust.c (af_get_glyph_alternates_helper): Exit early if we
+	  possible.
+	  (af_reverse_character_map_new): Trace GSUB lookup indices to be checked.
+
+2025-06-26  Werner Lemberg  <wl@gnu.org>
+
+	[autofit] Speed up computation of `af_reverse_character_map_new`. (1/4)
+
+	Using HarfBuzz's API functions to construct the reverse map is too slow; we
+	have to call `hb_ot_layout_lookup_get_glyph_alternates` far too often
+	because it can only handle a single glyph at a time.  For this reason we are
+	going to parse the GSUB table by ourselves.
+
+	The new non-local functions are `af_parse_gsub` and `af_map_lookup`.
+
+	* src/autofit/afgsub.c, src/autofit/afgsub.h: New files for parsing,
+	  validating, and mapping the `SingleSubst` and `AlternateSubst` subtable
+	  types of a GSUB table.
+
+	* src/autofit/autofit.c, src/autofit/rules.mk (AUTOF_DRV_SRC): Updated.
+
+2025-06-26  Werner Lemberg  <wl@gnu.org>
+
+	[base] Add no-overwrite hash insert functions.
+
+	* src/base/fthash.c (ft_hash_num_insert_no_overwrite,
+	  ft_hash_str_insert_no_overwrite): New functions.
+	* include/freetype/internal/fthash.h: Updated.
+
+2025-06-26  Werner Lemberg  <wl@gnu.org>
+
+	[base] Add iterators for `FT_Hash`.
+
+	* src/base/fthash.c (ft_hash_num_iterator, ft_hash_str_iterator): New
+	  functions.
+	* include/freetype/internal/fthash.h: Updated.
+
+2025-06-24  Werner Lemberg  <wl@gnu.org>
+
+	[truetype] Add comment to explain heuristic limit for twilight points.
+
+2025-06-23  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	[truetype] Restore non-persistent CVT and storage.
+	
+	According to specifications, CVT and storage area may or may not be
+	persistent after modifications by a glyf program.  FreeType had always
+	reset them, which was broken by the last commit.
+	
+	* src/truetype/ttinterp.c (TT_Load_Context): Set CVT and storage here.
+	* src/truetype.ttobjs.c (tt_size_run_prep): Prioritize TT_Load_Context.
+	(tt_size_init_bytecode): Allocate but not set CVT and storage area.
+
+2025-06-22  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	[truetype] Deduplicate 'codeRangeTable'.
+
+	* src/truetype/ttinterp.c (TT_Load_Context, TT_Save_Context): Do not
+	copy 'codeRangeTable'.
+	* src/truetype/ttobjs.h (TT_Size): Remove 'codeRangeTable'.
+	(TT_CodeRange_Tag, TT_CodeRange, TT_DefArray): Moved to...
+	* src/truetype/ttinterp.h: ... this header.1
+
+2025-06-22  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	[truetype] Simplify bytecode allocations.
+
+	To avoid repeated synchronization, some TT_Size allocations are moved
+	TT_ExecContext for good.  The memory blocks are also consolidated.
+
+	* src/truetype/ttinterp.c (TT_{Load,Save,Done}_Context): Remove
+	synchronization and stack management.
+	* src/truetype/ttobjs.c (tt_size_{init,done}_bytecode): Manage allocations
+	and assign them to the execution context.
+	(tt_size_run_prep): Updated.
+
+2025-06-22  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	[truetype] Rework handling of rendering mode in bytecode.
+
+	This replaces a large number of confusing boolean constructs that
+	describe the target rendering mode in the execution context with
+	the straight mode variable.  It might fix some hidden bugs when
+	FT_LOAD_TARGET_XXX were used as flags, which they are not.
+
+	The condition that triggers the CV program re-execution is simplified.
+	These events due the rendering mode change are rather rare and unexpected
+	and, therefore, should not be over-analyzed. In v40, all mode changes
+	now trigger the CV program. In v35, only switches to/from mono do.
+
+	* src/truetype/ttinterp.h (TT_ExecContext): Replace 'grayscale',
+	'grayscale_cleartype', 'subpixel_hinting_lean', and 'vertical_lcd_lean'
+	with the rendering 'mode'.
+	* src/truetype/ttinterp.c (Ins_GETINFO): Updated.
+	* src/truetype/ttgload.c (tt_loader_init): Replace 'prep' re-execution
+	trigger and update 'backward_compatibility' condition.
+	(tt_loader_set_pp): Updated.
+
+2025-06-21  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* src/truetype/{ttinterp.c,ttobjs.c}: Minor.
+
+2025-06-21  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	[truetype] Clean up bytecode execution triggers.
+
+	This avoids executing the CV program twice and cleans up the use of
+	'fpgm' and 'prep' triggers
+
+	* src/truetype/ttgload.c (tt_loader_init): Call 'tt_size_init_bytecode'
+	and 'tt_size_run_prep' explicitly and avoid the call repetition.
+	* src/truetype/ttobjs.c (tt_size_ready_bytecode): Removed as unused.
+	(tt_size_init, tt_size_init_bytecode, tt_size_done_bytecode): Remove some
+	'fpgm' and 'prep' triggers and update.
+	(tt_size_run_fpgm, tt_size_run_prep): Do not set the pedantic flag here.
+	* src/truetype/ttobjs.h: Update signatures.
+
+2025-06-21  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* src/truetype/ttgload.c (tt_loader_init, load_sbit_image): Clean up.
+
+2025-06-21  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	[truetype] Simplify twilight zone management.
+
+	* include/freetype/internal/tttypes.h (TT_GlyphZone): Remove 'memory'.
+	* src/truetype/ttobjs.c (tt_glyphzone_done): Use 'memory' as argument.
+	(tt_glyphzone_new, tt_glyphzone_done): Allocate/free as a single block.
+	(tt_size_init_bytecode, tt_size_done_bytecode): Updated.
+	* src/truetype/ttobjs.h (tt_glyphzone_done): Updated signature.
+
+2025-06-19  Behdad Esfahbod  <behdad@behdad.org>
+
+	[autofit] Really fix handling of `RTLD_DEFAULT`.
+
+	This commit actually implements what commit 43ec023e1a7 describes.
+
+	* src/autofit/ft-hb.c (FT_RTLD_FLAGS): New macro for `dlopen`; it uses
+	  `RTLD_GLOBAL` only if `RTLD_DEFAULT` is available.
+
+2025-06-15  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	[truetype] Revise twilight zone initiation.
+
+	This assures that twilight zone is reset before each CV program
+	execution, including after the rendering mode switch. Fixes #1344.
+
+	* src/truetype/ttobjs.c (tt_size_ready_bytecode): Relocate the GS
+	the twilight zone initiation from here...
+	(tt_size_run_prep): ... to this function, sho that it is always
+	done prior to the CV program execution.
+	* src/truetype/ttobjs.c (TT_Run_Context): Set twilight zone here...
+	(TT_Load_Context): ... rather than here, as it used to be.
+
+2025-06-13  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* src/base/ftrfork.c (FT_Raccess_Get_DataOffsets): Remove check.
+	
+	The highest (sign) attribute bit is reserved and should be zero.
+	It is harmless to omit this check however. Fixes #1342.
+
+2025-06-12  Werner Lemberg  <wl@gnu.org>
+
+	[autofit] Ignore virtual glyph indices from GSUB lookups.
+
+	Reported as
+
+	  https://issues.chromium.org/issues/420401651
+
+	* src/autofit/afadjust.c (af_reverse_character_map_new): Implement it.
+
+2025-06-11  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	[truetype] Clean up TT_GlyphZone.
+	
+	* include/freetype/internal/tttypes.h (TT_GlyphZone): Delete fields.
+	* src/truetype/ttobjs.c (tt_glyphzone_new, tt_glyphzone_done,
+	tt_size_init_bytecode): Updated.
+
+2025-06-11  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	[truetype] Use FT_ARRAY_ZERO.
+
+	* src/truetype/ttgxvar.c (TT_Vary_Apply_Glyph_Deltas): Updated.
+	* src/truetype/ttobjs.c (tt_check_trickyness_sfnt_ids,
+	tt_size_ready_bytecode): Updated.
+
+2025-06-11  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	[truetype] Rearrange bytecode run.
+
+	This is a minor change with large code rearrangements.
+
+	* src/truetype/ttinterp.c (TT_RunIns): Just loop through instructions
+	and move all setup to...
+	(TT_Run_Context): ... here; relocated.
+	(Compute_Round): Replaced by simple assignment, removed.
+
+2025-06-11  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	[truetype] Relocate the interpreter pointer.
+
+	This reduces dereferencing when calling the interpreter.
+
+	* include/freetype/internal/tttypes.h (TT_Face): Move it from here...
+	* src/truetype/ttinterp.h (TT_ExecContext): ... to here.
+	* src/truetype/ttobjs.c (tt_size_init_bytecode):  Move its initialization
+	* src/truetype/ttinterp.c (TT_New_Context): ... to here.
+	(TT_Run_Context): Updated.
+
+2025-06-11  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	[truetype] Clean up the loader initiation.
+
+	* include/freetype/internal/tttypes.h (TT_LoaderRec): Remove unused field.
+	* src/truetype/ttgload.c (tt_loader_init): Refactor.
+
+2025-06-11  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	[truetype] Modify bytecode initiation.
+
+	This reduces the number of function calls and data copying events.
+
+	* src/truetype/ttinterp.c (TT_Goto_CodeRange): Merge into...
+	(TT_Set_CodeRange): ... this function.
+	(TT_Load_Context): Do not set up any zones, copy GS, or prepare the
+	execution...
+	(TT_Run_Context): ... do this here instead..
+	* src/truetype/ttinterp.c (TT_Set_CodeRange): Update signature.
+	* src/truetype/ttobjs.c (tt_size_run_fpgm, tt_size_run_prep): Call
+	TT_Run_Context.
+	* src/truetype/ttgload.c (TT_Hint_Glyph, tt_loader_init): Updated.
+
+2025-06-11  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	[truetype] Modify the graphics state management.
+
+	Instead of restoring persistent GS variables, we only save modifications
+	permitted by the CVT program. This reduces the context manipulations.
+
+	* src/truetype/ttobjs.h (TT_GraphicsState): Reorder fields.
+	* src/truetype/ttobjs.c (tt_size_run_fpgm, tt_size_run_prep):
+	Do not alter the context.
+
+	* src/truetype/ttgload.c (TT_Hint_Glyph): Do not reset GS.
+	(tt_loader_init): Fix potential issue in 'instruct_control' handling.
+	* src/truetype/ttinterp.c (TT_Run_Context): Fully reset GS.
+	(TT_Load_Conext): Rearrange and remove the 'size' check, already
+	performed in FT_Load_Glyph.
+	(TT_Save_Context): Save only modifiable GS parts.
+	(tt_default_graphics_state): Updated.
+	* src/truetype/ttinterp.h (TT_Run_Context): Update signature.
+
+2025-06-10  Werner Lemberg  <wl@gnu.org>
+
+	[gxvar] Really fix setting of named-instance to Regular.
+
+	This fixes an ommission in commit cf06661c51.
+
+	* src/truetype/ttgxvar.c (TT_Vary_Apply_Glyph_Deltas): Initialize `error`.
+
+2025-06-10  Werner Lemberg  <wl@gnu.org>
+
+	Two more link fixes.
+
+2025-06-10  Werner Lemberg  <wl@gnu.org>
+
+	Update links.
+
+	Found with `linkchecker --check-extern index.html` running locally in the
+	'freetype-web' repository.
+
+2025-06-07  Behdad Esfahbod  <behdad@behdad.org>
+
+	Fix setting of named-instance to Regular
+
+	Fixes https://gitlab.freedesktop.org/freetype/freetype/-/issues/1341
+
+	And more elaborate avoidance of loading face->blend if all coords
+	are zero.
+
+2025-06-04  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* src/type42/t42objs.c (T42_Size_Init): Fix uninitialized use.
+	
+	Found by Ozkan Sezer.
+
+2025-06-04  Ozkan Sezer  <sezeroz@gmail.com>
+
+	[autofit] Fix `-Wunused-but-set-variable` warning in Windows builds.
+
+	With this commit, the following warning gets removed.
+
+	```
+	In file included from src/autofit/autofit.c:21:0:
+	src/autofit/ft-hb.c: In function 'ft_hb_funcs_init':
+	src/autofit/ft-hb.c:75:35: warning:
+	  variable 'version_atleast' set but not used [-Wunused-but-set-variable]
+	     ft_hb_version_atleast_func_t  version_atleast = NULL;
+	                                   ^~~~~~~~~~~~~~~
+	```
+
+	* src/autofit/ft-hb.c (ft_hb_funcs_init): Move `NULL` check of
+	  `version_atleast` out of ifdefs.
+
+2025-06-04  Ozkan Sezer  <sezeroz@gmail.com>
+
+	[build] Revise visibility attributes usage in autotools and CMake.
+
+	* CMakeLists.txt: Set `C_VISIBILITY_PRESET` to hidden for non-Windows only.
+	  Windows handles exports with `DLL_EXPORT` defined, and old MinGW
+	  toolchains emit a lot of warnings about visibility attributes not being
+	  supported in this configuration.
+
+	* build/unix/configure.raw: Revise visibility attributes checks by compiling a
+	  better test program with `-Werror` in `CFLAGS` so that warnings correctly
+	  indicate unsupported configurations.
+
+2025-06-04  Ozkan Sezer  <sezeroz@gmail.com>
+
+	* CMakeLists.txt: Add support for `FT_CONFIG_OPTION_USE_HARFBUZZ_DYNAMIC`.
+
+	This commit introduces a new CMake option `FT_DYNAMIC_HARFBUZZ`.
+
+2025-06-03  Ozkan Sezer  <sezeroz@gmail.com>
+
+	* src/autofit/ft-hb.c: Fix definition of `_GNU_SOURCE`.
+
+	Commit 43ec023e1a730f defined the macro too late.
+
+2025-06-03  Werner Lemberg  <wl@gnu.org>
+
+	Replace 'www.freetype.org' with 'freetype.org'.
+
+2025-06-03  Ozkan Sezer  <sezeroz@gmail.com>
+
+	* builds/unix/configure.raw: Fix HarfBuzz library detection for MinGW.
+
+	Set `have_harfbuzz*` variables explicitly to dynamic for MinGW, since
+	Windows uses its own `LoadLibrary` call.
+
+	This fixes a MinGW configuration error:
+
+	```
+	checking for HARFBUZZ... no
+	checking for dlopen in -lc... no
+	checking for dlopen in -ldl... no
+	configure: error: harfbuzz support requested but library not found
+	```
+
+2025-06-03  Ozkan Sezer  <sezeroz@gmail.com>
+
+	* builds/unix/configure.raw: Improve check for `dlopen`.
+
+	Look for `dlopen` first in 'libc', then in 'libdl'.
+
+2025-06-03  Behdad Esfahbod  <behdad@behdad.org>
+
+	* src/autofit/ft-hb.c: Fix usage of `RTLD_DEFAULT`.
+
+	Using `RTLD_DEFAULT` we see whether the process already has HarfBuzz linked
+	in, and reuse it.  If this symbol is not defined it is tempting to use
+	`RTLD_GLOBAL` instead, which would make the library available to the whole
+	process.  However, without `RTLD_DEFAULT`, we would risk loading a second
+	HarfBuzz library, and if the linker mixes them up, probably giving symbols
+	from the new library to other clients, we might get into trouble.  For this
+	reason, we do not pass `RTLD_GLOBAL` to `dlopen`; the default is
+	`RTLD_LOCAL`, and the rest of the process won't see the loaded HarfBuzz and
+	hopefully all be happy.
+
+2025-05-28  Werner Lemberg  <wl@gnu.org>
+
+	[sfnt] `FT_Load_Sfnt_Table` can now also load a font's table directory.
+
+	Closes issue #1263.
+
+	* src/sfnt/ttload.c (tt_face_load_any): Implement it.
+
+2025-05-28  Werner Lemberg  <wl@gnu.org>
+
+	[gzip] Update sources to zlib 1.13.1.
+
+	Fixes issue #1294.
+
+2025-05-27  Vítor Ramos  <vitor.ramos@ufrn.br>
+
+	* src/base/ftobjs.c (FT_Load_Glyph): Loosen auto-hinting constraints.
+
+	Fixes issue #1320.
+
+2025-05-27  Werner Lemberg  <wl@gnu.org>
+
+	Update `CHANGES` file.
+
+2025-05-27  Behdad Esfahbod  <behdad@behdad.org>
+
+	[gxvar] Optimize out more bounds checking.
+
+	Big win, ~20% in measured mega-var font, HarfBuzz's `benchmark-font`
+	'glyph_h_advances' benchmark.
+
+	* src/truetype/ttgxvar.c (TT_Vary_Apply_Glyph_Deltas): Implement it in
+	  loops.
+
+2025-05-27  Behdad Esfahbod  <behdad@behdad.org>
+
+	* src/truetype/ttgload.c (load_truetype_glyph): Use `IS_DEFAULT_INSTANCE`.
+
+2025-05-27  Behdad Esfahbod  <behdad@behdad.org>
+
+	[gxvar] Set `doblend` to `FALSE` if at default location.
+
+	* src/truetype/ttgxvar.c (tt_set_mm_blend, TT_Get_Var_Design): Do it.
+
+2025-05-27  Behdad Esfahbod  <behdad@behdad.org>
+
+	[mm/gxvar] Always detect default instance and use optimized codepath.
+
+	Even if it was explicitly set by either design or normalized APIs.
+
+	Also update documentation.
+
+	* src/truetype/ttgxvar.c (TT_Set_MM_Blend, TT_Set_Var_Design): Use value -2
+	  of `error` to indicate that we have a non-default instance.
+	  (TT_Set_Named_Instance): Updated.
+
+	* src/base/ftmm.c (FT_Set_Var_Design_Coordinates,
+	  FT_Set_Var_Blend_Coordinates): Updated.
+
+2025-05-27  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	Typo.
+
+2025-05-27  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* src/truetype/ttinterp.c (TT_Load_Context): Clean up.
+
+2025-05-26  Werner Lemberg  <wl@gnu.org>
+
+	[autofit] Fix integer overflow.
+
+	Reported as
+
+	  https://issues.oss-fuzz.com/issues/420401635
+
+	* src/autofit/aflatin.c (af_latin_stretch_top_tilde,
+	  af_latin_stretch_bottom_tilde): Use `SUB_LONG`.
+
+2025-05-26  Werner Lemberg  <wl@gnu.org>
+
+	[gxvar] Speed up handling of deltas in `ItemVariationStore`. (3/3)
+
+	* src/base/ftcalc.c (FT_MulAddFix): Removed, no longer needed.
+	* include/freetype/internal/ftcalc.h: Updated.
+
+2025-05-26  Behdad Esfahbod  <behdad@behdad.org>
+
+	[gxvar] Speed up handling of deltas in `ItemVariationStore`. (2/3)
+
+	Do all math in fixed integer and do a single divide at the end.
+
+	Also don't use an array to read deltas; just read them as we go, and skip
+	(branch-free) when scalar is 0.
+
+	30% speedup in measured mega-var font, HarfBuzz's `benchmark-font`
+	'glyph_h_advances' benchmark.
+
+2025-05-26  Behdad Esfahbod  <behdad@behdad.org>
+
+	[gxvar] Speed up handling of deltas in `ItemVariationStore`. (1/3)
+
+	* src/truetype/ttgxvar.c (ft_mul_add_delta_scalar, ft_round_and_shift16):
+	  New functions, reusing code from `ftcalc.c`.
+
+2025-05-26  Behdad Esfahbod  <behdad@behdad.org>
+
+	Lift `FT_Int64` type to global (internal) FreeType use.
+
+	* src/base/ftcalc.c (FT_Int64) [!FT_INT64]: Move declaration to...
+	* include/freetype/config/integer-types.h: ... this file.
+	  (FT_UInt64) [!FT_INT64]: New structure.
+	  (FT_INT64_ZERO): New macro.
+
+2025-05-26  Behdad Esfahbod  <behdad@behdad.org>
+
+	[gxvar] Move scalar computation into its own function.
+
+	* src/truetype/ttgxvar.c (tt_var_get_item_delta): Split off affected code
+	  into...
+	  (tt_calculate_scalar): ...this new function.
+
+2025-05-26  Werner Lemberg  <wl@gnu.org>
+
+	[autofit] Make the accent database work for more glyphs (again).
+
+	See the added comment for an explanation.
+
+	This partially undoes commit f68733d4a8.
+
+	* src/autofit/afadjust.c (af_reverse_character_map_new): Always loop over all
+	  elements of the adjustment database.
+	  (in_range): Removed, no longer needed.
+
+2025-05-26  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	[trueetype] Remove useless assignments.
+
+	* src/truetype/ttobjs.c (tt_size_run_fpgm): Remove assignment that
+	is ignored and overridden later in 'Compute_Funcs'.
+	* src/truetype/ttinterp.c (TT_RunIns): Ditto.
+	(Ins_MIAP): Formatting.
+
+2025-05-25  Werner Lemberg  <wl@gnu.org>
+
+	[autofit] Minor code cleanup.
+
+	* src/autofit/afadjust.c (af_reverse_character_map_new): Rename `result_set`
+	  to `glyph_alternates` and move its clearing to...
+	  (af_get_glyph_alternates): ...this function.
+	  (af_get_glyph_alternates_helper): s/result/helper_result/.
+
+2025-05-25  Werner Lemberg  <wl@gnu.org>
+
+	[autofit] Speed up construction of reverse character map. (4/4)
+
+	* src/autofit/afadjust.c (af_get_glyph_alternates): Move creation and
+	  deletion of the `helper_result` set to...
+	  (af_reverse_character_map_new): ...this function.
+	  Gain for `arial.ttf` version 7.00: approx. 1%.
+
+2025-05-25  Werner Lemberg  <wl@gnu.org>
+
+	[autofit] Speed up construction of reverse character map. (3/4)
+
+	* src/autofit/afadjust.c (af_reverse_character_map_new): Fold two loops into
+	  one.
+	  Gain for `arial.ttf` version 7.00: approx. 1%.
+
+2025-05-25  Werner Lemberg  <wl@gnu.org>
+
+	[autofit] Speed up construction of reverse character map. (2/4)
+
+	This commit, together with the previous one, makes the startup of the
+	auto-hinter much faster.
+
+	Note, though, that the startup time for handling the diacritic database is
+	still rather large.  For example, loading `arial.ttf` version 7.00 followed
+	by auto-hinting a first Latin glyph is still approx. three times slower
+	than before the introduction of the database (this is because function
+	`hb_ot_layout_lookup_get_glyph_alternates` is called very often).
+
+	* src/autofit/afshaper.c (scripts): Rename this array to...
+	  (af_hb_scripts): ...this and export it.
+	  (af_shaper_get_coverage_hb): Updated.
+	* src/autofit/afshaper.h: Updated.
+
+	* src/autofit/afadjust.c (af_reverse_character_map_new): Pass the current
+	  script to `hb_ot_layout_collect_lookups` to make HarfBuzz check less
+	  lookups while searching for glyph alternates.
+
+2025-05-25  Werner Lemberg  <wl@gnu.org>
+
+	[autofit] Speed up construction of reverse character map. (1/4)
+
+	Build reverse cmap for characters of the current script style only.
+
+	* src/autofit/afadjust.c (in_range): New function.
+	  (af_reverse_character_map_new): Pass `AF_StyleMetrics` instead of
+	  `AF_FaceGlobals` so that we can access the current script style.
+	  Use `in_range` to limit tested code points.
+	* src/autofit/afadjust.h: Updated.
+	* src/autofit/aflatin.c (af_latin_metrics_init): Updated.
+
+2025-05-25  Werner Lemberg  <wl@gnu.org>
+
+	[autofit] Avoid variable shadowing.
+
+	* src/autofit/afadjust.c (af_reverse_character_map_new): Do it.
+
+2025-05-25  Werner Lemberg  <wl@gnu.org>
+
+	[autofit] Minor speedup of reverse charmap creation.
+
+	* src/autofit/afglobal.h (AF_HAS_CMAP_ENTRY): New flag.
+	  (AF_STYLE_MASK): Update value.
+	* src/autofit/afglobal.c (af_face_globals_compute_style_coverage): Set
+	  `AF_HAS_CMAP_ENTRY`.
+
+	* src/autofit/afadjust.c (af_reverse_character_map_new): For the creation of
+	  the reverse map, change code to handle glyphs with cmap entries before
+	  glyphs without cmap entries.  Doing so avoids some code redundancy and
+	  reduces the number of hash lookups.
+
+2025-05-25  Werner Lemberg  <wl@gnu.org>
+
+	[autofit] Whitespace.
+
+2025-05-25  Werner Lemberg  <wl@gnu.org>
+
+	[autofit] Use `FT_Offset`.
+
+	* src/autofit/afadjust.c (af_adjustment_database_lookup,
+	  af_reverse_character_map_new): Do it.
+
+2025-05-25  Werner Lemberg  <wl@gnu.org>
+
+	[autofit] Simplify return value of `af_adjustment_database_lookup`.
+
+	* src/autofit/adfadjust.h (af_adjustment_database_lookup): Return integer.
+	  (AF_AdjustmentDatabaseEntry): Move structure to...
+	* src/autofit/afadjust.c: ...this file.
+	  (af_adjustment_database_lookup, af_reverse_character_map_new): Updated.
+	* src/autofit/aflatin.c
+	  (af_glyph_hints_apply_vertical_separation_adjustments): Updated.
+
+2025-05-25  Werner Lemberg  <wl@gnu.org>
+
+	[autofit] Remove no longer used functions and structures.
+
+	This is the clean-up from the previous commit.
+
+	* src/autofit/afadjust.c (af_reverse_character_map_entry_compare,
+	  af_reverse_character_map_lookup, af_reverse_character_map_expand):
+	  Removed.
+	* src/autofit/afadjust.h: Updated.
+	* src/autofit/aftypes.h (AF_ReverseMapEntry, AF_ReverseCharacterMap):
+	  Removed.
+
+2025-05-25  Werner Lemberg  <wl@gnu.org>
+
+	[autofit] Use a hash for handling vertical accent adjustments.
+
+	This greatly simplifies the code.
+
+	* src/autofit/afadjust.c (af_reverse_character_map_new): Implement it.
+	  (af_reverse_character_map_done): Updated.
+	* src/autofit/afadjust.h: Updated.
+
+	* src/autofit/aflatin.c
+	  (af_glyph_hints_apply_vertical_separation_adjustments): Updated.
+
+	* src/autofit/aftypes.h: Include `fthash.h`.
+	  (AF_StyleMetrics): Change type of `reverse_charmap` to `FT_Hash`.
+
+2025-05-25  Werner Lemberg  <wl@gnu.org>
+
+	* src/autofit/aflatin.c (af_latin_hints_apply): Improve code legibility.
+
+2025-05-25  Werner Lemberg  <wl@gnu.org>
+
+	[autofit] Use `FT_LONG_MIN` and `FT_LONG_MAX` for `FT_Pos` variables.
+
+	* src/autofit/aflatin.c (af_latin_metrics_init_blues,
+	  af_compute_vertical_extrema, af_find_highest_contour,
+	  af_find_second_highest_contour, af_find_lowest_contour,
+	  af_find_second_lowest_contour, af_check_contour_horizontal_overlap):
+	  Updated.
+
+2025-05-25  Werner Lemberg  <wl@gnu.org>
+
+	[autofit] Fix uninitialized variables.
+
+	* src/autofit/aflatin.c (af_latin_stretch_top_tilde,
+	  af_latin_stretch_bottom_tilde): Initialize `min_measurement`.
+
+2025-05-23  Behdad Esfahbod  <behdad@behdad.org>
+
+	[ttmtx] Fix check for being non-default variation position.
+
+	If user explicitly sets variations to `NULL` after it being set to something
+	else, `face->blend` will still be non-`NULL`.  The intention here however is
+	correctly captured by `FT_IS_VARIATION`.
+
+	* src/sfnt/ttmtx.c (tt_face_get_metrics): Use `FT_IS_VARIATION`.
+
+2025-05-23  Behdad Esfahbod  <behdad@behdad.org>
+
+	[gxvar] Optimize loading of 'gvar' table.
+
+	* src/truetype/ttgxvar.c (tt_var_load_item_variation_store,
+	  tt_var_load_delta_set_index_mapping, ft_var_load_gvar): Use frames to
+	  reduce bounds checking.
+	  (TT_Vary_Apply_Glyph_Deltas): Better macro usage.
+
+2025-05-22  Behdad Esfahbod  <behdad@behdad.org>
+
+	[mm] Short-circuit setting face to default instance if already is so.
+
+	I found that in hb-ft I need to sometime reset the face to the default
+	instance.  However, calling `FT_Set_Var_Design_Coordinates` with no coords
+	was still slowing down at least the glyph-advance code by processing
+	variations.
+
+	Perhaps there's a better fix, but this handles the easy cases.
+
+	* src/base/ftmm.c (FT_Set_Var_Design_Coordinates): Implement it.
+
+2025-05-22  Behdad Esfahbod  <behdad@behdad.org>
+
+	* src/truetype/ttgxvar.c (TT_Vary_Apply_Glyph_Deltas): Fix allocation.
+
+	Bug was introduced in commit 582de1a4b6f.
+
+2025-05-21  Werner Lemberg  <wl@gnu.org>
+
+	* src/truetype/ttgxvar.c (ft_var_apply_tuple): Remove redundant test.
+
+	This was erroneously added in commit e6e9110a8.
+
+2025-05-21  ColdPaleLight  <coldpalelight@gmail.com>
+
+	[sdf] Skip neighbor comparison for pixels near edges.
+
+	If the distance of the current pixel to the edge is less than or equal
+	to 0.5, skip further neighbor comparisons to avoid unnecessary
+	calculations. When the `USE_SQUARED_DISTANCES` macro is defined,
+	compare to 0.25 instead.
+
+	* src/sdf/ftbsdf.c (compare_neighbor): Add early return for pixels
+	  close to edges to avoid unnecessary neighbor checks.
+
+2025-05-21  Behdad Esfahbod (بهداد اسفهبد)  <behdad@behdad.org>
+
+	[gxvar] Cache shared-tuple scalar values.
+
+	GoogleSansFlex HB benchmark-font draw results:
+
+	  Before:  2.13ms
+	  After:   1.65ms
+	  Speedup: 22%
+
+	* src/truetype/ttgxvar.h (GX_BlendRec): Add `tuplescalars` field.
+
+	* src/truetype/ttgxvar.c (ft_var_load_gvar): Allocate `tuplescalars` array.
+	  (tt_set_mm_blend): Set its values.
+	  (TT_Vary_Apply_Glyph_Deltas): Use it.
+	  (tt_done_blend): Deallocate it.
+
+2025-05-21  Behdad Esfahbod (بهداد اسفهبد)  <behdad@behdad.org>
+
+	[gxvar] Reduce number of mallocs.
+
+	8% speed up in drawing GoogleSansFlex variable in HB benchmark-font.
+
+	* src/truetype/ttgxvar.c (TT_Vary_Apply_Glyph_Deltas): Use an allocation
+	  pool instead of individual allocations.
+
+2025-05-21  Behdad Esfahbod (بهداد اسفهبد)  <behdad@behdad.org>
+
+	[gxvar] Another optimization in computing scalar.
+
+	Another ~6% speedup in GoogleSansFlex var drawing.
+
+	* src/truetype/ttgxvar.c (ft_var_apply_tuple): Test `ncv` for being zero.
+
+2025-05-21  Behdad Esfahbod (بهداد اسفهبد)  <behdad@behdad.org>
+
+	[gxvar] Remove stale comment.
+
+	The code *does* check against start/end!
+
+2025-05-21  Behdad Esfahbod (بهداد اسفهبد)  <behdad@behdad.org>
+
+	* src/truetype/ttgxvar.c (ft_var_apply_tuple): Micro-optimize.
+
+2025-05-21  Behdad Esfahbod (بهداد اسفهبد)  <behdad@behdad.org>
+
+	[gxvar] Inline two USHORT reads.
+
+	Speeds up GoogleSansFlex variable glyph drawing by ~13%.
+
+	  Before: 2.95ms
+	  After:  2.57ms
+
+	* src/truetype/ttgxvar.c (TT_Vary_Apply_Glyph_Deltas): Do it.
+
+2025-05-21  Behdad Esfahbod (بهداد اسفهبد)  <behdad@behdad.org>
+
+	[gxvar] Micro-optimize loop end condition.
+
+	* src/truetype/ttgxvar.c (TT_Vary_Apply_Glyph_Deltas): Do it.
+
+2025-05-21  Behdad Esfahbod  <behdad@behdad.org>
+
+	[truetype] Don't process `mvar` metrics if default instance.
+
+	GoogleSansFlex default-instance HarfBuzz benchmark-font draw:
+
+	  Before:  0.610ms
+	  After:   0.435ms
+	  Speedup: 28%
+
+	* src/truetype/ttobjs.c (tt_face_init) [TT_CONFIG_OPTION_GX_VAR_SUPPORT]:
+	  Check `instance_index`.
+
+2025-05-21  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* src/truetype/ttinterp.c (Ins_MIRP,DELTAP,DELTAC): Minor.
+
+2025-05-20  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	[truetype] Update bytecode error handling.
+
+	* src/truetype/ttinterp.c (Ins_SHP,SHPIX,ALIGNRP): Return appropriate
+	error in case of stack underflow.
+	(Ins_IP): Ditto and remove redundant check.
+
+2025-05-19  Werner Lemberg  <wl@gnu.org>
+
+	* src/aflatin.c (af_latin_hint_edges): Refine fix for serif handling.
+
+	Commit 11432424 (from 2025-May-12) was too aggressive; it is now restricted
+	to edges that are not too far away.
+
+2025-05-19  Werner Lemberg  <wl@gnu.org>
+
+	* src/afadjust.c (adjustment_database): Make it complete up to U+FFFF.
+
+	Also fix two entries.
+
+	This is for Unicode 17.0.
+
+2025-05-19  Werner Lemberg  <wl@gnu.org>
+
+	[autofit] Fix vertical adjustment of (mainly) double diacritics.
+
+	The series of commits that introduced this adjustment support had some
+	flaws.
+
+	- If there were two diacritics on top of a base glyph, and the upper
+	  diacritic was a tilde, the vertical centering correction was incorrectly
+	  applied to the lower, non-tilde glyph instead of the tilde.
+
+	- The maximum value allowed to shift a glyph was too strict (and also not
+	  handling rounding issues), causing some diacritics and combinations of
+	  diacritics to be not shifted at all.
+
+	* src/autofit/aflatin.c
+	  (af_glyph_hints_apply_vertical_separation_adjustments): Correctly handle
+	  vertical centering correction.
+
+2025-05-19  Werner Lemberg  <wl@gnu.org>
+
+	[autofit] Code hygiene.
+
+	* src/autofit/aflatin.c
+	  (af_glyph_hints_apply_vertical_separation_adjustments): Use more flag
+	  variables and improve trace messages.
+
+2025-05-19  Werner Lemberg  <wl@gnu.org>
+
+	* src/autofit/aflatin.c (af_latin_hint_edges): Fix handling of serifs.
+
+	This has been discovered while inspecting the auto-hinting results of
+	character 'Ễ' in font `arial.ttf` (version 7.00) at 13ppem.
+
+2025-05-19  Werner Lemberg  <wl@gnu.org>
+
+	[autofit] Minor.
+
+	* src/autofit/aflatin.c (af_latin_hint_edges): Rename `has_serifs` to
+	  `has_non_stem_edges` and make it of type `FT_Bool`.
+
+2025-05-19  Werner Lemberg  <wl@gnu.org>
+
+	[autofit] New algorithm for preventing hinting of tilde glyphs.
+
+	The old algorithm removed segments from edges to make the auto-hinter ignore
+	a tilde.  However, the implementation had two flaws.
+
+	- Edge array elements were moved around without reordering them afterwards.
+	- The linking between edges and segments wasn't correctly updated for moved
+	  edges, which could cause endless loops.
+
+	Correcting both problems are non-trivial; additionally, a fix would make
+	the auto-hinter slower.
+
+	For these reasons, a new, simpler approach is taken: A new flag allows
+	points to be tagged as being ignored, and if such a point is enountered, it
+	doesn't get added to a segment.
+
+	Fixes issue #1333.
+
+	* src/autofit/afhints.h (AF_FLAG_IGNORE): New macro.
+
+	* src/autofit/aflatin.c (af_latin_hints_compute_segments, af_touch_contour):
+	  Use it.
+	  (af_remove_segments_containing_point, af_remove_top_points_from_edges,
+	  af_remove_bottom_points_from_edges): Removed.
+	  (af_latin_stretch_top_tilde): Call `af_touch_top_contours` and
+	  `af_touch_bottom_contours` unconditionally.
+	  (af_latin_hints_apply): Updated.
+
+2025-05-16  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* src/truetype/ttinterp.c (TT_DotFix14): Silence UBSAN.
+
+2025-05-16  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* src/truetype/ttinterp.c (Ins_DELTAP): Flip if-else.
+
+2025-05-15  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	[truetype] Optimize DELTAP and DELTAC.
+
+	* src/truetype/ttinterp.c (Ins_DELTAP,DELTAC): Perform PPEM range-
+	checking and manipulations outside the loop.
+
+2025-05-14  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* src/truetype/ttinterp.c (Compute_Funcs): Replace shifts.
+
+2025-05-14  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	[truetype] Tighten code overflow checks.
+	
+	Fixes #1336.
+	
+	* src/truetype/ttinterp.c (Ins_NPUSHB,NPUSHW,PUSHB, PUSHW):
+	Tighten conditions.
+
+2025-05-14  Chris Liddell  <chris.liddell@artifex.com>
+
+	[type1] Fix memory leak on CharString error.
+
+	In the event that a CharString retrieved via the incremental interface
+	caused an error, the memory for that CharString was not being freed.
+
+	* src/type1/t1gload.c (T1_Parse_Glyph_And_Get_Char_String): Free charstring.
+
+2025-05-14  Werner Lemberg  <wl@gnu.org>
+
+	Whitespace, formatting, minor spelling fix.
+
+2025-05-14  Werner Lemberg  <wl@gnu.org>
+
+	Adminstrativa.
+
+2025-05-13  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	[truetype] Finalize bytecode changes.
+
+	* src/truetype/ttinterp.c: Formatting, minor.
+	(TT_Goto_CodeRange): Initialize 'iniRange' here...
+	(TT_RunIns): ... instead of here.
+	* docs/CHANGES: Updated.
+
+2025-05-13  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	[truetype] Streamline backward compatibility.
+
+	The 'backward_compatibility' is only set in v40: no need to check
+	the interpreter version again and again. In addition, we now track
+	IUP in its lower bits.  After both IUPx and IUPy have been called,
+	'backward_compatibility' becomes equal to 0x7.
+
+	* src/truetype/ttinterp.h (TT_ExecContextRec): Wrap 'iup?_called'
+	into 'backward_compatibility'.
+	* src/truetype/ttinterp.c (Ins_INSTCTRL): Sync 'backward_compatibility'.
+	(Direct_Move, Direct_Move_X/Y, Move_Zp2_Point,
+	Ins_FLIPPT,FLIPRGON,FLIPRGOFF,SHPIX,DELTAP): Updated.
+	(TT_RunIns): Do not mess with IUP flags.
+	* src/truetype/ttgload.c (tt_loader_init): Set 'backward_compatibility'.
+	(TT_Hint_Glyph): Updated.
+
+2025-05-10  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	[truetype] Optimize bytecode movements.
+
+	Replacing FT_MulDiv with FT_MulFix gives large performance gains.
+
+	* src/truetype/ttinterp.h (TT_ExecContextRec): Store "projected"
+	freedom vector.
+	* src/truetype/ttinterp.c (Compute_Funcs): Compute "projected"
+	freedom vector.
+	(Direct_Move, Direct_Move_Orig, Compute_Point_displacement): Use it.
+
+2025-05-10  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	[truetype] Simplify stack access.
+
+	* src/truetype/ttinterp.c (Ins_MINDEX,CINDEX): Use local stack pointers.
+	(Ins_DELTAP,DELTAC): Ditto; limit the number of pairs before looping.
+
+2025-05-10  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	[truetype] Tweak bytecode looping.
+
+	* src/truetype/ttinterp.c (Ins_FLIPPT,SHP,SHPIX,IP,ALIGNRP): Handle
+	counters and stack locally.
+	(TT_RunIns): Updated.
+
+2025-05-10  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	[truetype] Tweak bytecode initiation.
+
+	* src/truetype/ttinterp.c (TT_Load_Context): Init stack tops.
+	* src/truetype/ttinterp.h (TT_ExecContextRec): Document it and clean.
+	* src/truetype/ttobjs.c (tt_size_run_prep,fpgm): Updated.
+	* src/truetype/ttgload.c (tt_loader_init): Minor.
+
+2025-05-10  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	[truetype] Modify stack handling.
+
+	* src/truetype/ttinterp.c (Ins_GETVARIATION): Increment stack.
+	(Ins_NPUSHB,NPUSHW,PUSHB,PUSHW): Handle the code stack here, ...
+	(TT_RunIns): ... instead of here. Consolidate error handling.
+	(SkipCode): Remove preemptive check.
+
+2025-05-10  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	[truetype] Modify bytecode steps.
+
+	* src/truetype/ttinterp.h (TT_Exec_ContextRec): Remove 'step_ins'.
+	* src/truetype/ttinterp.c (TT_RunIns, Ins_Goto_CodeRange,
+	Ins_JMPR,ENDF,PUSHW,NPUSHW): Set and use zero increment 'length' instead.
+	(Ins_CALL,LOOPCALL,UNKNOWN): Updated.
+
+2025-05-10  Werner Lemberg  <wl@gnu.org>
+
+	[autofit] Add safety check for accent adjustments.
+
+	This commit does two things.
+
+	- Ignore accents that have too large heights.  This situation can happen if
+	  an accent outline is unexpectedly not the highest (or lowest) contour.
+	- Add a new adjustment flag `AF_ADJUST_NO_HEIGHT_CHECK` to override the
+	  height check.
+
+	* src/autofit/afadjust.h (AF_ADJUST_NO_HEIGHT_CHECK): New macro.
+
+	* src/autofit/afadjust.c (adjustment_database): Updated.
+
+	* src/autofit/aflatin.c (af_latin_hints_apply): Handle new flag.
+	  (af_glyph_hints_apply_vertical_separation_adjustments): Check limit.
+
+2025-05-10  Werner Lemberg  <wl@gnu.org>
+
+	[autofit] Better handling of characters with attached diacritics. (3/3)
+
+	Fixes issue #136.
+
+	* src/autofit/afadjust.c (adjustment_database): Updated.
+
+2025-05-10  Werner Lemberg  <wl@gnu.org>
+
+	[autofit] Better handling of characters with attached diacritics. (2/3)
+
+	* src/autofit/afadjust.h (AF_IGNORE_CAPITAL_TOP, AF_IGNORE_CAPITAL_BOTTOM,
+	  AF_IGNORE_SMALL_TOP, AF_IGNORE_SMALL_BOTTOM): New macros.
+
+	* src/autofit/afadjust.c (af_reverse_character_map_new)
+	  [FT_DEBUG_LEVEL_TRACE]: Updated.
+	  Also fix debugging strings of other flags.
+
+	* src/autofit/afhints.h (AF_EDGE_NO_BLUE): New edge flag to make the
+	  auto-hinter ignore the edge while assigning blue zones.
+
+	* src/autofit/aflatin.c (af_latin_hints_compute_blue_edges): Use it.
+	  (af_prevent_top_blue_alignment, af_prevent_bottom_blue_alignment,
+	  af_latin_get_base_glyph_blues, af_latin_ignore_top,
+	  af_latin_ignore_bottom): New functions.
+	  (af_latin_hints_apply): Updated.
+
+2025-05-10  Werner Lemberg  <wl@gnu.org>
+
+	[autofit] Better handling of characters with attached diacritics. (1/3)
+
+	Introduce blue zone properties that will be used to make the auto-hinter
+	ignore diacritics attached on the top or the bottom of a base character.
+
+	* src/autofit/afblue.hin (AF_BLUE_PROPERTY_LATIN_CAPITAL_BOTTOM,
+	  AF_BLUE_PROPERTY_LATIN_SMALL_BOTTOM): New properties.
+	* src/autofit/afblue.dat: Use them.
+
+	* src/autofit/afblue.c, src/autofit/afblue.h: Rengenerated.
+
+	* src/autofit/aflatin.h (AF_LATIN_IS_CAPITAL_BOTTOM_BLUE,
+	  AF_LATIN_IS_SMALL_BOTTOM_BLUE, AF_LATIN_BLUE_BOTTOM,
+	  AF_LATIN_BLUE_BOTTOM_SMALL): New macros.
+
+	* src/autofit/aflatin.c (af_latin_metrics_init_blues)[FT_DEBUG_LEVEL_TRACE]:
+	  Updated.
+
+2025-05-09  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* src/raster/ftraster.c (Line_Up): Use 64-bit calculations.
+
+	Attempt to fix #1332.
+
+2025-05-09  Werner Lemberg  <wl@gnu.org>
+
+	[sfnt] Avoid allocation bomb in compressed SVG documents.
+
+	Reported as
+
+	  https://issues.oss-fuzz.com/issues/416538625
+
+	* src/sfnt/ttsvg.c (MAX_SVG_SIZE): New macro.
+	  (tt_face_load_svg_doc): Reject too large buffer.
+
+2025-05-08  Werner Lemberg  <wl@gnu.org>
+
+	* include/freetype/ttnameid.h (TT_UCR_*): Define with unsigned long.
+	  (TT_UCR_PHAGSPA): Fix definition.
+
+	Fixes issue #1300.
+
+2025-05-08  Werner Lemberg  <wl@gnu.org>
+
+	[doc] Mention that there is no rendering support for 'COLR' v1 tables.
+
+	Handles issue #1319.
+
+2025-05-08  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* src/truetype/ttinterp.c (TT_DotFix14): Silence UBSAN.
+
+2025-05-07  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* src/cff/cffgload.c (cff_slot_load): Fix autohinter scaling.
+
+	Fixes #1330.
+
+2025-05-05  Werner Lemberg  <wl@gnu.org>
+
+	[autofit] Avoid division by zero.
+
+	Fixes issue #1331.
+
+	* src/autofit/aflatin.c (af_latin_stretch_bottom_tilde): Don't divide by
+	  zero.
+
+2025-05-04  Carlo Bramini  <carlo.bramix@libero.it>
+
+	Fix Cygwin visibility attributes.
+
+	Reported as compilation warnings in #1329.
+
+	* include/freetype/config/public-macros.h: Check __CYGWIN__.
+	* include/freetype/internal/compiler-macros.h: Ditto.
+
+2025-05-03  KatekovAnton  <void0main@gmail.com>
+
+	* CMakeLists.txt: Fix cmake 4 error by specifying the policy version.
+
+2025-04-29  Werner Lemberg  <wl@gnu.org>
+
+	* docs/CHANGES: Updated.
+
+2025-04-29  Behdad Esfahbod (بهداد اسفهبد)  <behdad@behdad.org>
+
+	Provide configuration option to dynamically load the HarfBuzz library.
+
+	We now request HarfBuzz version 2.6.8 (published in June 2020) or newer to
+	simplify the setup; this version introduced function
+	`hb_ot_layout_lookup_get_glyph_alternates`, which we need for the adjustment
+	database of the auto-hinter.
+
+	No CMake support yet for dynamic loading.
+
+	* include/freetype/config/ftoption.h, devel/ftoption.h
+	  (FT_CONFIG_OPTION_USE_HARFBUZZ_DYNAMIC): New configuration macro.
+
+	* builds/unix/configure.raw: Implement `--with-harfbuzz=dynamic`.
+	  This gets tested automatically if we can't link with `libharfbuzz`.
+	  (ft_option_set, ft_option_unset): Refine.
+	  Require at least HarfBuzz version 2.6.8.
+
+	* meson.build: Do the same as `configure.raw`.
+	* meson_options.txt: Updated.
+
+	* CMakeLists.txt: Require at least HarfBuzz version 2.6.8.
+
+2025-04-29  Behdad Esfahbod (بهداد اسفهبد)  <behdad@behdad.org>
+
+	[autofit] Enable dynamic loading of HarfBuzz. (2/2)
+
+	Handle the case where loading HarfBuzz dynamically fails.
+
+	* src/autofit/ft-hb.c, src/autofit/ft-hb.h (ft_hb_enabled): New function.
+
+	* src/autofit/afglobal.c (af_face_globals_new, af_face_globals_free):
+	  Guard HarfBuzz functions with `ft_hb_enabled`.
+
+	* src/autofit/aflatin.c (af_latin_metrics_init_widths,
+	  af_latin_metrics_init_blues, af_latin_metrics_check_digits): Simplify
+	  setup of `shaper_buf`.
+	  Guard calls of `af_shaper_buf_create` with `ft_hb_enabled`.
+
+	* src/autofit/afcjk.c (af_cjk_metrics_init_widths,
+	  af_cjk_metrics_init_blues, af_cjk_metrics_check_digits): Dito.
+
+	* src/autofit/afshaper.c: Guard all HarfBuzz function calls with
+	  `ft_hb_enabled`.
+
+2025-04-29  Behdad Esfahbod (بهداد اسفهبد)  <behdad@behdad.org>
+
+	[autofit] Enable dynamic loading of HarfBuzz. (1/2)
+
+	This commit activates the mini-HarfBuzz header files and provides the
+	necessary infrastructure for dynamically loading HarfBuzz if
+	`FT_CONFIG_OPTION_USE_HARFBUZZ_DYNAMIC` is defined (this macro gets set up
+	in a follow-up commit).
+
+	* src/autofit/ft-hb.c: New file, providing `ft_hb_funcs_init` and
+	  `ft_hb_funcs_done` for loading HarfBuzz dynamically.  The name of the
+	  library is hold in the macro `FT_LIBHARFBUZZ`, which can be overridden.
+
+	* src/autofit/ft-hb.h: Don't include `hb.h` but `ft-hb-types.h`.
+	  (hb): Modified to handle both standard linking and dynamically
+	  loading of HarfBuzz.
+	  (HB_EXTERN): New macro to load `ft-hb-decls.h`.
+
+	* src/autofit/afadjust.c [FT_CONFIG_OPTION_USE_HARFBUZZ]: For the sake of
+	  dynamically loading the HarfBuzz library, replace the compile-time macro
+	  `HB_VERSION_ATLEAST` with a call to the run-time function
+	  `hb_version_atleast` where necessary – a follow-up commit will set the
+	  minimum version of HarfBuzz to 2.6.8, which provides all necessary
+	  functions needed by FreeType.
+
+	* src/autofit/afmodule.h: Include `ft-hb.h`.
+	  (AF_ModuleRec) [FT_CONFIG_OPTION_USE_HARFBUZZ_DYNAMIC]: Add `hb_funcs`
+	  structure to hold pointers to the dynamically loaded HarfBuzz functions.
+
+	* src/autofit/afmodule.c (af_autofitter_init, af_autofitter_done)
+	  [FT_CONFIG_OPTION_USE_HARFBUZZ_DYNAMIC]: Call `ft_hb_funcs_init` and
+	  `ft_hb_funcs_done`.
+
+	* src/autofit/afshaper.h: Updated.
+	* src/autofit/autofit.c: Include `ft-hb.c`.
+
+	* src/autofit/rules.mk (AUTOF_DRV_SRC, AUTOF_DRV_H): Updated.
+
+2025-04-29  Behdad Esfahbod (بهداد اسفهبد)  <behdad@behdad.org>
+
+	[autofit] Some preparations for loading HarfBuzz dynamically. (4/4)
+
+	Add 'mini' HarfBuzz declarations to make FreeType independent on HarfBuzz
+	header files.
+
+	The files get activated in a follow-up commit.
+
+	* src/autofit/ft-hb-decls.h, src/autofit/ft-hb-types.h: New files, holding
+	  verbatim (or slightly massaged) entries from public HarfBuzz header files.
+
+	* src/autofit/hb-script: New file.
+	  A verbatim copy of a public HarfBuzz header file.
+
+2025-04-29  Behdad Esfahbod (بهداد اسفهبد)  <behdad@behdad.org>
+
+	[autofit] Some preparations for loading HarfBuzz dynamically. (3/4)
+
+	* src/autofit/afshaper.c: Move around code so that the non-HarfBuzz code is
+	  present even if `FT_CONFIG_OPTION_USE_HARFBUZZ` is not defined.  This is a
+	  preliminary step to allow deactivation of HarfBuzz at run-time.
+
+2025-04-29  Behdad Esfahbod (بهداد اسفهبد)  <behdad@behdad.org>
+
+	[autofit] Some preparations for loading HarfBuzz dynamically. (2/4)
+
+	Pass `AF_FaceGlobals` to many functions, or provide it, tagged with
+	`FT_UNUSED`.  We need this later on to access a dynamically linked HarfBuzz
+	library.
+
+	* src/autofit/ft-hb-ft.h (ft_hb_ft_font_create): Use `globals` argument.
+	  Drop unused `destroy` argument.
+	* src/autofit/ft-hb-ft.c (ft_hb_ft_face_create, ft_hb_ft_font_create): Use
+	  `globals` argument.
+	  Drop unused `destroy` argument.
+	  (ft_hb_ft_face_create, ft_hb_ft_reference_table): Cast `user_data` to
+	  `AF_FaceGlobals`.
+
+	* src/autofit/afadjust.c (af_get_glyph_alternates_helper,
+	  af_get_glyph_alternates): Add `globals` argument.
+	  Update callers.
+
+	* src/autofit/afshaper.c, src/autofit/afshaper.h (af_shaper_buf_create,
+	  af_shaper_buf_destroy): Use `globals` argument.
+
+	* src/autofit/afglobal.c (af_face_globals_new): Updated.
+
+	* src/autofit/afcjk.c (af_cjk_metrics_init_widths,
+	  af_cjk_metrics_init_blues, af_cjk_metrics_check_digits): Updated.
+	* src/autofit/aflatin.c (af_latin_metrics_init_widths,
+	  af_latin_metrics_init_blues, af_latin_metrics_check_digits): Updated.
+
+2025-04-29  Behdad Esfahbod (بهداد اسفهبد)  <behdad@behdad.org>
+
+	[autofit] Some preparations for loading HarfBuzz dynamically. (1/4)
+
+	* src/autofit/ft-hb.h: New file, defining the `hb` macro.  Later on, we
+	  provide a different definition of this macro depending on a yet-to-come
+	  configuration option to support dynamic loading of HarfBuzz functions.
+
+	* src/autofit/afadjust.c, src/autofit/afglobal.c, src/autofit/afshaper.c,
+	  stc/ft-hb-ft.c: Use it.
+
+2025-04-29  Behdad Esfahbod (بهداد اسفهبد)  <behdad@behdad.org>
+
+	[autofit] Rename 'ft-hb' to 'ft-hb-ft'.
+
+	Since it's a (shrinked) copy of 'hb-ft'.
+
+	* src/autofit/afglobal.c (af_face_globals_new), src/autofit/afshaper.h,
+	  src/autofit/autofit.c: Updated.
+
+	* src/autofit/ft-hb.c, src/autofit/ft-hb.h: Renamed to...
+	* src/autofit/ft-hb-ft.c, src/autofit/ft-hb-ft.h: ...this; updated.
+
+	* src/autofit/rules.mk (AUTOF_DRV_SRC): Updated.
+
+2025-04-29  Werner Lemberg  <wl@gnu.org>
+
+	* src/autofit/aflatin.c (af_latin_stretch_top_tilde): Don't divide by zero.
+
+	Reported as
+
+	  https://issues.oss-fuzz.com/issues/414320186
+
+2025-04-28  Werner Lemberg  <wl@gnu.org>
+
+	[autofit] Extend adjustment database with characters up to U+1FFF.
+
+	This adds many pre-combined Latin glyphs, Cyrillic, Greek, and some
+	characters from other scripts (or rather, Unicode blocks).
+
+	Fixes issues #112 and #471.
+
+2025-04-28  Werner Lemberg  <wl@gnu.org>
+
+	[autofit] Support diacritics with special vertical minima.
+
+	This code catches situations like U+1F90 ('ᾐ'), where some fonts have
+	exactly the same vertical minimum for the lower accent as for the base
+	glyph.
+
+	* src/autofit/aflatin.c (af_find_highest_contour, af_find_lowest_contour):
+	  Handle it.
+
+2025-04-28  Werner Lemberg  <wl@gnu.org>
+
+	[autofit] More tilde stretch support. (3/3)
+
+	The auto-hinter now supports up to four tilde glyphs (two above and two
+	below a base character).
+
+	Note that diacritics above (or below) a tilde are now also ignored by the
+	auto-hinter.
+
+	* src/autofit/afadjust.h (AF_ADJUST_TILDE_TOP2, AF_ADJUST_TILDE_BOTTOM2):
+	  New macros.
+	* src/autofit/afadjust.c (af_reverse_character_map_new): Updated.
+
+	* src/autofit/aflatin.c (af_remove_top_points_from_edges,
+	  af_remove_bottom_points_from_edges): Make functions also handle all
+	  contours higher (or lower) of the given one in the argument.
+	  (af_touch_top_contours, af_touch_bottom_contours): New functions.
+	  (af_latin_stretch_top_tilde, af_latin_stretch_bottom_tilde): Use it to
+	  also handle all contours higher (or lower) than the tilde contour.
+
+	* (af_latin_hints_apply): Handle more tilde glyphs.
+
+2025-04-28  Werner Lemberg  <wl@gnu.org>
+
+	[autofit] More tilde stretch support. (2/3)
+
+	* src/autofit/aflatin.c (af_latin_stretch_top_tilde,
+	  af_latin_stretch_bottom_tilde): Return vertical size difference between
+	  stretched and original contour.
+	  (af_latin_align_top_tilde, af_latin_align_bottom_tilde): Return applied
+	  delta.
+	  (af_latin_hints_apply): Updated; the return values are not used yet.
+
+2025-04-28  Werner Lemberg  <wl@gnu.org>
+
+	[autofit] More tilde stretch support. (1/3)
+
+	Move some existing code that we soon need elsewhere into separate functions.
+
+	* src/autofit/aflatin.c (af_move_contours_up, af_move_contours, down): New
+	  functions.
+	  (af_glyph_hints_apply_vertical_separation_adjustments): Use them.
+	  (af_touch_contour): New function.
+	  (af_latin_stretch_top_tilde, af_latin_stretch_bottom_tilde): Use it.
+
+	  (af_latin_remove_top_tilde_points_from_edges,
+	  af_latin_remove_bottom_tilde_points_from_edges): Renamed to...
+	  (af_remove_top_points_from_edges, af_remove_bottom_points_from_edges):
+	  ...this.
+	  Update callers.
+
+2025-04-28  Werner Lemberg  <wl@gnu.org>
+
+	[autofit] Support two below/above accents for vertical adjustment. (2/2)
+
+	* src/autofit/afadjust.h (AF_ADJUST_UP2, AF_ADJUST_DOWN2): New macros.
+	* src/autofit/afadjust.c (af_reverse_character_map_new): Updated.
+
+	* src/autofit/aflatin.c
+	  (af_glyph_hints_apply_vertical_separation_adjustments): Implement it.
+
+2025-04-28  Werner Lemberg  <wl@gnu.org>
+
+	[autofit] Support two below/above accents for vertical adjustment. (1/2)
+
+	Some variable renamings.
+
+2025-04-28  Werner Lemberg  <wl@gnu.org>
+
+	[autofit] Routines for finding the second highest/lowest contour.
+
+	* src/autofit/aflatin.c (af_find_second_highest_contour,
+	  af_find_second_lowest_contour): New functions.
+
+2025-04-28  Werner Lemberg  <wl@gnu.org>
+
+	[autofit] Use more functions to reduce code.
+
+	* src/autofit/aflatin.c (af_find_highest_contour, af_find_lowest_contour):
+	  Updated.
+	  (af_glyph_hints_apply_vertical_separation_adjustments): Use
+	  `af_compute_vertical_extrema`, `af_find_highest_contour`, and
+	  `af_find_lowest_contour`.
+	  (af_latin_hints_apply): Use `af_compute_vertical_extrema`,
+
+2025-04-28  Werner Lemberg  <wl@gnu.org>
+
+	* src/autofit/aflatin.c (af_compute_vertical_extrema): New function.
+
+	To be used in a follow-up commit.
+
+2025-04-28  Werner Lemberg  <wl@gnu.org>
+
+	* src/autofit/aflatin.c: Some variable renaming.
+
+2025-04-28  Werner Lemberg  <wl@gnu.org>
+
+	[autofit] Avoid recomputation of highest and lowest contour.
+
+	* src/autofit/aflatin.c (af_latin_hints_apply): Compute highest and lowest
+	  contour in this function.
+	  (af_latin_remove_top_tilde_points_from_edges,
+	  af_latin_remove_bottom_tilde_points_from_edges,
+	  af_latin_stretch_top_tilde, af_latin_stretch_bottom_tilde,
+	  af_latin_align_top_tilde, af_latin_align_bottom_tilde): Updated.
+
+2025-04-28  Werner Lemberg  <wl@gnu.org>
+
+	* src/aflatin.c (af_latin_trace_height): Remove.
+	  Update caller.
+
+	The algorithm works fine.
+
+2025-04-28  Werner Lemberg  <wl@gnu.org>
+
+	[autofit] Support vertical stretching of tilde below base glyph. (2/2)
+
+	* src/autofit/afadjust.h (AF_ADJUST_TILDE_BOTTOM): New macro.
+	* src/autofit/afadjust.c (af_reverse_character_map_new): Updated.
+
+	* src/autofit/aflatin.c (af_find_lowest_contour,
+	  af_latin_remove_bottom_tilde_points_from_edges,
+	  af_latin_stretch_bottom_tilde, af_latin_align_bottom_tilde): New functions
+	  in analogy to the top tilde versions.
+	  (af_glyph_hints_apply_vertical_separation_adjustments): Add support in
+	  analogy to the top tilde code.
+	  (af_latin_hints_apply): Updated.
+
+2025-04-28  Werner Lemberg  <wl@gnu.org>
+
+	[autofit] Support vertical stretching of tilde below base glyph. (1/2)
+
+	* src/autofit/aflatin.c (af_latin_remove_tilde_points_from_edges,
+	  af_latin_stretch_tilde, af_latin_align_tilde): Rename to...
+	  (af_latin_remove_top_tilde_points_from_edges, af_latin_stretch_top_tilde,
+	  af_latin_align_top_tilde): ...this.
+	  Update all callers.
+	  (af_latin_hints_apply): Rename `is_tilde` to `is_top_tilde`.
+
+2025-04-28  Werner Lemberg  <wl@gnu.org>
+
+	[autofit] Allow vertical adjustment at the top and bottom simultaneously.
+
+	This will be used to hint characters like U+1FB7 ('ᾷ').
+
+	* src/autofit/aflatin.c
+	  (af_glyph_hints_apply_vertical_separation_adjustments): Implement it.
+
+2025-04-28  Werner Lemberg  <wl@gnu.org>
+
+	* src/autofit/afadjust.c (af_reverse_character_map_new): Update tracing.
+
+2025-04-28  Werner Lemberg  <wl@gnu.org>
+
+	[autofit] Indicate tilde handling with a flag macro, too.
+
+	* src/autofit/afadjust.h (AF_ADJUST_TILDE_TOP): New macro.
+	  (AF_AdjustmentDatabaseEntry): Remove field `apply_tilde`.
+
+	* src/autofit/afadjust.c (adjustment_database,
+	  af_reverse_character_map_new), src/autofit/aflatin.c
+	  (af_glyph_hints_apply_vertical_separation_adjustments,
+	  af_latin_hints_apply): Updated.
+
+2025-04-28  Werner Lemberg  <wl@gnu.org>
+
+	[aflatin] Convert adjustment database enum to macros.
+
+	We are going to add more values, and we want to use combinations of them.
+
+	* src/autofit/afadjust.h (AF_VerticalSeparationAdjustmentType): Replace
+	  with...
+	  (AF_ADJUST_UP, AF_ADJUST_DOWN, AF_ADJUST_NONE): ... new macros.
+	  (AF_AdjustmentDatabaseEntry): Rename field
+	  `vertical_separation_adjustment_type` to `flags`.
+
+	* src/autofit/afadjust.c (af_reverse_character_map_new),
+	  src/autofit/aflatin.c
+	  (af_glyph_hints_apply_vertical_separation_adjustments): Updated.
+
+2025-04-28  Werner Lemberg  <wl@gnu.org>
+
+	[autofit] Shorten adjustment enum names.
+
+	* src/autofit/afadjust.h (AF_VERTICAL_ADJUSTMENT_TOP_CONTOUR_UP,
+	  AF_VERTICAL_ADJUSTMENT_BOTTOM_CONTOUR_DOWN, AF_VERTICAL_ADJUSTMENT_NONE):
+	  Renamed to...
+	  (AF_ADJUST_UP, AF_ADJUST_DOWN, AF_ADJUST_NONE): ...this.
+
+	* src/autofit/afadjust.c (adjustment_database,
+	  af_reverse_character_map_expand), src/autofit/aflatin.c
+	  (af_glyph_hints_apply_vertical_separation_adjustments): Updated.
+
+2025-04-26  Werner Lemberg  <wl@gnu.org>
+
+	* src/autofit/afranges.c: Updated to Unicode 17.0.
+
+	But no support for new scripts (volunteers welcomed).
+
+2025-04-26  Werner Lemberg  <wl@gnu.org>
+
+	* src/autofit/afranges.c: Updated to Unicode 16.0.
+
+	But no support for new scripts (volunteers welcomed).
+
+2025-04-26  Werner Lemberg  <wl@gnu.org>
+
+	* src/autofit/afranges.c: Updated to Unicode 15.1.
+
+	But no support for new scripts (volunteers welcomed).
+
+2025-04-26  Werner Lemberg  <wl@gnu.org>
+
+	* src/autofit/afranges.c: Updated to Unicode 14.0.
+
+	But no support for new scripts (volunteers welcomed).
+
+2025-04-26  Werner Lemberg  <wl@gnu.org>
+
+	* src/autofit/afranges.c: Updated to Unicode 13.0.
+
+	But no support for new scripts (volunteers welcomed).
+
+2025-04-26  Werner Lemberg  <wl@gnu.org>
+
+	* src/autofit/afranges.c: Updated to Unicode 12.0.
+
+	But no support for new scripts (volunteers welcomed).
+
+2025-04-25  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* include/freetype/internal/ftcalc.h (FT_MulFix_64): Silence UBSAN.
+
+2025-04-22  Behdad Esfahbod  <behdad@behdad.org>
+
+	* src/autofit/afadjust.c (af_get_glyph_alternates): Fix endless loop.
+
+2025-04-20  Werner Lemberg  <wl@gnu.org>
+
+	* src/afadjust.c: Fix test for newer HarfBuzz version (second try).
+
+2025-04-20  Werner Lemberg  <wl@gnu.org>
+
+	* src/afadjust.c: Fix test for newer HarfBuzz version.
+
+2025-04-20  Werner Lemberg  <wl@gnu.org>
+
+	[autofit] Request at least HarfBuzz 7.2.0 for diacritic support. (3/3)
+
+	This version (from April 2023) added 'SingleSubst' support to
+	`hb_ot_layout_lookup_get_glyph_alternates`.
+
+2025-04-20  Werner Lemberg  <wl@gnu.org>
+
+	[autofit] Speed up creation of the adjustment database's reverse map. (2/3)
+
+	Remove the old code and activate the new one.
+
+2025-04-20  Werner Lemberg  <wl@gnu.org>
+
+	[autofit] Speed up creation of the adjustment database's reverse map. (1/3)
+
+	As it turns out, the original implementation using
+	`hb_ot_shape_glyphs_closure` is extremely slow if a font has a rich set of
+	OpenType features.  For example, this function was called 66954 times while
+	loading font `arial.ttf` version 7.00, increasing FreeType's startup time by
+	a factor of 10, which is unacceptable.
+
+	The new algorithm uses a completely different, more low-level approach, no
+	longer working with OpenType features but with OpenType lookups.  It relies
+	on function `hb_ot_layout_lookup_get_glyph_alternates`, also replacing
+	recursion with a simple loop.  In total, this brings the additional startup
+	time back to an acceptable range of a few percent.
+
+	A side effect of the new approach is that it catches more alternate forms:
+	the old code didn't properly handle script-specific features.
+
+	To make the change more readable, this commit only adds new code.
+
+2025-04-18  Werner Lemberg  <wl@gnu.org>
+
+	* src/autofit/afadjust.c (af_reverse_character_map_new): Check `map` limit.
+
+	Reported as
+
+	  https://issues.chromium.org/issues/410925355
+
+2025-04-18  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* include/freetype/internal/ftcalc.h: Fix fringe compilation.
+
+2025-04-18  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* src/base/ftcalc.c (ft_corner_orientation) [!FT_INT32]: Fix up.
+
+2025-04-17  Werner Lemberg  <wl@gnu.org>
+
+	[autofit] Don't access uninitialized memory.
+
+	Reported as
+
+	  https://bugs.ghostscript.com/show_bug.cgi?id=708295
+
+	* src/autofit/aflatin.c
+	  (af_glyph_hints_apply_vertical_separation_adjustments): Initialize all
+	  array elements of `contour_y_minima` and `contour_y_maxima`.
+
+2025-04-17  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* src/truetype/ttinterp.c (TT_MulFix14,TT_DotFix14)[!FT_INT64]: Sync.
+
+2025-04-17  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* src/truetype/ttinterp.c (TT_DotFix14): Silence UBSAN.
+
+2025-04-17  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* src/base/ftcalc.c: Miscellaneous cleanups.
+
+2025-04-16  Werner Lemberg  <wl@gnu.org>
+
+	[autofit] Avoid crash.
+
+	Reported as
+
+	  https://issues.oss-fuzz.com/issues/410811029
+
+	* src/autofit/aflatin.c (af_remove_segments_containing_point): Check
+	  `edge->last`.
+
+2025-04-15  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	[base, truetype] Silence UBSAN (cont'd).
+	
+	* src/truetype/ttinterp.c (TT_MulFix14, TT_DotFix14): Use MUL_INT64.
+	* include/freetype/internal/ftcalc.c (FT_MulFix): Ditto.
+
+2025-04-15  Werner Lemberg  <wl@gnu.org>
+
+	[autofit] Avoid unnecessary recomputation of HarfBuzz data.
+
+	Call the functions once per font instead of once per glyph.
+
+	* src/autofit/afadjust.c (af_all_glyph_variants): Move code to compute the
+	  `feature_tags` and `type_3_lookup_indices` sets to...
+	  (af_reverse_character_map_new): ...this function.
+
+2025-04-15  Werner Lemberg  <wl@gnu.org>
+
+	[autofit] Fix creation of the adjustment database's reverse map.
+
+	Due to the way the reverse map array gets constructed with HarfBuzz, there
+	might be multiple, identical glyph index entries with different character
+	values in the array.  As an example, an OpenType feature like 'unic' might
+	map lowercase glyph 'ae' to uppercase glyph 'AE', in addition to the already
+	present cmap entry for 'AE'.
+
+	In most cases, this incorrect mapping is harmless (but still wrong).
+	However, there exist some lowercase/uppercase character pairs where the
+	diacritic for the uppercase character is on the other vertical side of the
+	base character as for the lowercase character.  An example is U+0122 (LATIN
+	CAPITAL LETTER G WITH CEDILLA) and U+0123 (LATIN SMALL LETTER G WITH
+	CEDILLA): the former has the cedilla below, the latter above.  A wrong
+	mapping would thus shift the base glyph 'G' up by a pixel instead of
+	shifting the cedilla down.
+
+	We fix this by always giving precedence to cmap entries.
+
+	* src/autofit/afadjust.c (af_reverse_character_map_entry_compare): Do a
+	  secondary sort on the character code.
+
+	  (af_reverse_character_map_lookup): Adjust binary search to return the
+	  first occurrence of an entry (i.e., the one with the lowest array index).
+
+	  (af_reverse_character_map_new)[FT_CONFIG_OPTION_USE_HARFBUZZ]: Implement
+	  cmap priority.
+
+2025-04-15  Werner Lemberg  <wl@gnu.org>
+
+	[autofit] Reduce adjustment database lookups.
+
+	This is also in preparation for a follow-up commit.
+
+	* src/autofit/afadjust.h (af_lookup_vertical_separation_type,
+	  af_lookup_tilde_correction_type): Replaced with...
+	  (af_adjustment_database_lookup, af_reverse_character_map_lookup):
+	  ... this.
+
+	* src/autofit/afadjust.c (af_adjustment_database_lookup,
+	  af_adjustment_database_lookup): Updated.
+	  (af_lookup_vertical_separation_type, af_lookup_tilde_correction_type):
+	  Removed.
+	  (af_reverse_character_map_new)[FT_DEBUG_LEVEL_TRACE]: Updated.
+
+	* src/autofit/aflatin.c
+	  (af_glyph_hints_apply_vertical_separation_adjustments,
+	  af_latin_hints_apply): Updated.
+
+2025-04-15  Werner Lemberg  <wl@gnu.org>
+
+	* src/afadjust.c (adjustment_database): Make it complete up to U+017F.
+
+2025-04-15  Werner Lemberg  <wl@gnu.org>
+
+	* src/autofit/afadjust.c (af_reverse_character_map_new): Add tracing code.
+
+2025-04-15  Werner Lemberg  <wl@gnu.org>
+
+	* src/afadjust.c: Minor fixes.
+
+2025-04-15  Werner Lemberg  <wl@gnu.org>
+
+	[autofit] Better vertical separation adjustment support. (2/2)
+
+	* src/autofit/aflatin.c
+	  (af_glyph_hints_apply_vertical_separation_adjustments): Handle diacritics
+	  with more than a single contour.
+
+2025-04-15  Werner Lemberg  <wl@gnu.org>
+
+	[autofit] Better vertical separation adjustment support. (1/2)
+
+	Test vertical maxima instead of vertical minima to identify the highest
+	contour (and vice versa to identify the lowest contour).  Doing so will
+	allow support of diacritics that consist of more than a single outline.
+
+	This works because of the topological constraints ensured by the adjustment
+	database.
+
+	* src/autofit/aflatin.c (af_find_highest_contour,
+	  af_glyph_hints_apply_vertical_separation_adjustments): Implement it.
+
+2025-04-15  Werner Lemberg  <wl@gnu.org>
+
+	[autofit] Use new y extrema arrays.
+
+	* src/autofit/aflatin.c
+	  (af_glyph_hints_apply_vertical_separation_adjustments): Implement it.
+
+2025-04-15  Werner Lemberg  <wl@gnu.org>
+
+	[autofit] Provide infrastructure for storing y extrema of contours.
+
+	We need this for better positioning support of diacritics.
+
+	* src/autofit/afhints.h (AF_GlyphHintsRec): New fields `contour_y_minima`
+	  and `contour_y_maxima`, together with its embedded variants.
+
+	* src/autofit/afhints.c (af_glyph_hints_done, af_glyph_hints_reload): Handle
+	  new arrays.
+
+2025-04-15  Werner Lemberg  <wl@gnu.org>
+
+	[autofit] Avoid crash.
+
+	Reported as
+
+	  https://issues.oss-fuzz.com/issues/410609442
+
+	* src/autofit/aflatin.c (af_remove_segments_containing_point): Check `edge`.
+
+2025-04-14  Werner Lemberg  <wl@gnu.org>
+
+	[autofit] Fix just introduced heap buffer overflow
+
+	Reported as
+
+	  https://issues.oss-fuzz.com/issues/410393975
+
+	* src/autofit/afadjust.c [!FT_CONFIG_OPTION_USE_HARFBUZZ]: Synchronize with
+	  HarfBuzz code.
+
+2025-04-14  Werner Lemberg  <wl@gnu.org>
+
+	* docs/CHANGES: Mention Craig's GSoC 2023 project.
+
+2025-04-14  Craig White  <gerzytet@gmail.com>
+
+	[autofit] Add GSUB table handling to reverse character map generation.
+
+	If HarfBuzz is enabled, the reverse character map generation now considers
+	GSUB entries when looking for glyphs that correspond to a code point.
+
+	* src/autofit/afadjust.c (af_all_glyph_variants_helper,
+	af_all_glyph_variants) [FT_CONFIG_OPTION_USE_HARFBUZZ]: New functions.
+
+	(af_reverse_character_map_new) [FT_CONFIG_OPTION_USE_HARFBUZZ]: Call new
+	code.
+
+2025-04-14  Craig White  <gerzytet@gmail.com>
+
+	[autofit] Add tilde-unflattening algorithm.
+
+	* src/autofit/aflatin.c (af_find_highest_contour,
+	af_remove_segments_containing_point,
+	af_latin_remove_tilde_points_from_edges, af_latin_stretch_tilde,
+	af_latin_align_tilde): New functions.
+	(af_latin_hints_apply): Call tilde-unflatting code if necessary.
+
+2025-04-14  Craig White  <gerzytet@gmail.com>
+
+	[autofit] Implement vertical separation adjustment.
+
+	* src/autofit/aflatin.c: Include `afadjust.h`.
+	(af_latin_metrics_init): Call `af_reverse_character_map_new`.
+	(af_latin_metrics_done): New function.
+
+	(af_move_contour_vertically, af_check_contour_horizontal_overlap,
+	af_glyph_hints_apply_vertical_separation_adjustments): New functions.
+
+	(af_latin_hints_apply): Call
+	`af_glyph_hints_apply_vertical_separation_adjustments`.
+
+	(af_latin_writing_system_class): Updated.
+
+	* src/autofit/aftypes.h (AF_StyleMetricsRec): Add `reverse_charmap` field.
+
+2025-04-14  Craig White  <gerzytet@gmail.com>
+
+	[autofit] Add code for reverse charmaps and adjustment database lookup.
+
+	* src/autofit/aftypes.h (AF_ReverseMapEntry, AF_ReverseCharacterMap): New
+	structures.
+
+	* src/autofit/afadjust.c (af_adjustment_database_lookup,
+	af_reverse_character_map_entry_compare, af_reverse_character_map_lookup,
+	af_lookup_vertical_separation_type, af_lookup_tilde_correction_type,
+	af_reverse_character_map_expand, af_reverse_character_map_new,
+	af_reverse_character_map_done): New functions.
+
+	* src/autofit/afadjust.c: Updated.
+
+2025-04-14  Craig White  <gerzytet@gmail.com>
+
+	[autofit] Add adjustment database.
+
+	* src/autofit/afadjust.c, src/autofit/afadjust.h: New files.
+
+	* include/freetype/internal/fttrace.h: Add 'afadjust' component.
+
+	* src/autofit/autofit.c: Include `afadjust.c`.
+
+	* src/autofit/rules.mk (AUTOF_DRV_SRC): Add `afadjust.c`.
+
+2025-04-14  Craig White  <gerzytet@gmail.com>
+
+	[base] Make `find_unicode_charmap` a base function.
+
+	This is needed for forthcoming changes in the auto-hinter.
+
+	* include/freetype/internal/ftobjs.h, src/base/ftobjs.c: Updated.
+
+2025-04-12  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* src/bdf/bdflib.c (hdigits): Removed.
+
+	Fixes #1325.
+
+2025-04-12  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* include/freetype/internal/ftcalc.h (FT_MSB) [__CC_ARM]: Added.
+
+2025-04-12  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	Typos in macros.
+
+	* include/freetype/internal/ftcalc.h: s/_M_X86/_M_IX86/.
+	* src/truetype/ttinterp.c: s/_M_X86/_M_IX86/.
+
+2025-04-12  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* docs/CHANGES: Updated.
+
+2025-04-12  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	[base, truetype] Silence UBSAN.
+
+	* src/truetype/ttinterp.c (TT_MulFix14_64): Use unsigned multiplication.
+	* include/freetype/internal/ftcalc.h (FT_MulFix_64): Ditto.
+
+2025-04-12  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	[base, truetype] Synchronize MulFix assembly.
+
+	* include/freetype/internal/ftcalc.h (FT_MulFix_*),
+	src/truetype/ttinterp.c (TT_MulFix14_*): Synchronize routines.
+
+2025-04-10  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	[truetype] Modernize bytecode projections.
+	
+	With 64-bit platforms widely available, it is more efficient to use
+	64-bit variables readily. It results in noticeable 10% improvement
+	in glyph loading speed.
+	
+	* src/truetype/ttinterp.c (TT_MulFix14, TT_DotFix14) [FT_INT64]:
+	Prioritize available implementation with arguments adjusted based on
+	the use cases.
+
+2025-04-09  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	[base] Update FT_MulFix inlining.
+
+	Resolves inconsistencies in 64-bit multiplication discussed in !355.
+	Importantly, FT_MulFix arguments and return value is FT_Long,
+	whatever sizeof FT_Long is on 64-bit platforms: 8 bytes on Linux or
+	4 bytes on Windows.
+
+	* include/freetype/internal/ftcalc.h (FT_MulFix_x86_64): Removed.
+	(FT_MulFix_64): Generalize and prioritize the inline implementation
+	for all 64-bit platforms ifdef FT_INT64.
+	* src/base/ftcalc.c (FT_MulFix)[FT_INT64]: Call 'FT_MulFix_64'.
+	* src/base/ftbase.c: Include 'ftcalc.c' after the FT_MulFix callers
+	to enable its inlining.
+
+2025-04-09  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	[base] Update FT_MulFix inlining.
+	                                                                                                                        Resolves inconsistencies in 64-bit multiplication discussed in !355.                                                    Importantly, FT_MulFix arguments and return value is FT_Long,                                                           whatever sizeof FT_Long is on 64-bit platforms: 8 bytes on Linux or                                                     4 bytes on Windows.                                                                                                                                                                                                                             * include/freetype/internal/ftcalc.h (FT_MulFix_x86_64): Removed.                                                       (FT_MulFix_64): Generalize and prioritize the inline implementation
+	for all 64-bit platforms ifdef FT_INT64.                                                                                * src/base/ftcalc.c (FT_MulFix)[FT_INT64]: Call 'FT_MulFix_64'.                                                         * src/base/ftbase.c: Include 'ftcalc.c' after the FT_MulFix callers                                                     to enable its inlining.
+
+2025-04-05  Graham Asher  <graham.asher@cartotype.com>
+
+	Missing header wrappers.
+
+	* include/freetype/config/integer-types.h, src/smooth/ftgrays.h:
+	Add missing FT_BEGIN_HEADER and FT_END_HEADER.
+	* src/smooth/ftgrays.c: Cosmetics.
+
+2025-03-26  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	[bdf] Clarify callback flow.
+
+	* src/bdf/bdflib.c (bdf_line_func_t_): Modify callback prototype.
+	(bdf_parse_*_): Updated.
+	(bdf_load_font, bdf_readstream_): Delay callback initiation.
+
+2025-03-26  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* src/bdf/bdflib.c (bdf_readstream_): Relocate.
+
+2025-03-26  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* src/bdf/bdflib.c (bdf_is_atom_): Do not check tabs.
+
+2025-03-26  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* src/bdf/bdflib.c (_bdf_strncmp): Macro removed, callers updated.
+
+2025-02-26  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	.gitlab-ci.yml: Minor.
+
+2025-02-26  Tim-Philipp Müller  <tim@centricular.com>
+
+	* .gitlab-ci.yml: Switch to arm64 runners for macOS CI.
+
+2025-02-25  Behdad Esfahbod  <behdad@behdad.org>
+
+	[sfnt/CPAL] Return early if user requested currently-set palette
+
+	Before, we were loading a palette (again and again) even if the
+	same was requested. Even if the font only had one palette...
+
+	For a font like NotoColorEmoji that has over 5000 colors in its
+	palette, this was dominating the COLRv1 loading times for HarfBuzz
+	(and I believe all other clients) because they have to set the
+	palette to get access to the colors.
+
+	* src/base/ftcolor.c (FT_Palette_Select): Check the current palette.
+
+2025-01-29  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* src/bdf/bdflib.c (bdf_parse_start_): Move setup of properties.
+
+2025-01-25  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	[bdf] Treat all comments uniformly.
+
+	* src/bdf/bdflib.c (bdf_parse_start_): Reject fonts with initial
+	COMMENTs.
+	(bdf_parse_properties_): Skip COMMENTs so that...
+	(bdf_add_property_): Do not make exception for COMMENT.
+	(bdf_parse_glyphs_, bdf_add_comments): Updated.
+
+2025-01-25  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* src/bdf/bdflib.c (BDF_SWIDTH_ADJ_): Remove clashing flag and update.
+
+2025-01-23  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* src/bdf/bdflib.c (bdf_atous_): Remove unnecessary checks.
+
+2025-01-23  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* src/bdf/bdflib.c (bdf_ato{i.ul.s.us}_]): Remove uncecessary checks.
+
+2025-01-23  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	[bdf] Postpone font default char handling.
+
+	* src/bdf/bdflib.c (bdf_parse_start_, bdf_add_property_): Delay handling
+	of the default char until...
+	* src/bdf/bdfdrivr.c (BDF_Face_Init): ... handles all other properties.
+
+2025-01-23  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	[bdf] Postpone font spacing handling.
+
+	* src/bdf/bdf.h (bdf_font_t): Remove `monowidth`.
+	* src/bdf/bdflib.c (bdf_parse_start_, bdf_add_property_): Delay handling
+	of the font spacing until...
+	* src/bdf/bdfdrivr.c (BDF_Face_Init): ... handles all other properties.
+
+2025-01-23  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	[bdf] Postpone font ascent and descent handling.
+
+	* src/bdf/bdflib.c (bdf_parse_start_, bdf_add_property_): Delay handling
+	of the font ascent and descent until...
+	* src/bdf/bdfdrivr.c (BDF_Face_Init): ... handles all other properties.
+
+2025-01-22  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* src/bdf/bdflib.c (bdf_parse_start_): Relax the header order.
+
+	We now check that the header is complete in no specific order.
+
+2025-01-20  Chad Brokaw  <cbrokaw@gmail.com>
+
+	* src/truetype/ttgxvar.c (tt_face_vary_cvt): Fix all shared values.
+
+	Applying cvar deltas to all shared points was incorrectly omitted.
+	Fixes #1314.
+
+2025-01-19  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* src/bdf/bdflib.c (bdf_parse_glyphs_): Fix tracing.
+
+2025-01-19  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	[bdf] Tokenize input instead of listing.
+
+	Instead of cumbersome field list mamangement, we will tokenize input
+	using custom `bdf_strtok_`.
+
+	* src/bdf/bdflib.c (bdf_list_t_, bdf_list_init_, bdf_list_ensure_,
+	bdf_list_shift_, bdf_list_join_, bdf_list_split_,
+	bdf_set_default_spacing_): Removed.
+	(bdf_strtok_): New function which NUL-terminates the first token at
+	the delimiter position and returns the next token that follows
+	consequtive delimiters.
+	(bdf_parse_*_, bdf_load_font): Updated.
+
+	* docs/CHANGES: Claim overall 75% performance improvement.
+
+2025-01-18  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* src/bdf/bdflib.c (bdf_parse_start_): Prevent another STARTPROPERTIES.
+
+	Only one STARTPROPERTIES was permitted in the old flow preventing
+	leaks and overflows.
+
+	See https://issues.oss-fuzz.com/issues/389968131
+	    https://issues.oss-fuzz.com/issues/390464875
+
+2025-01-17  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* src/bdf/bdflib.c (bdf_parse_start_): Do not overwrite flags.
+
+2025-01-16  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* src/bdf/bdflib.c (bdf_readstream_): Skip all control characters.
+
+	This agrees with specifications and makes the code a lot simpler.
+
+2025-01-16  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* src/bdf/bdflib.c (bdf_parse_start_): Reserve space for artificial properties.
+
+2025-01-15  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* src/bdf/bdflib.c (bdf_add_property_): Add extra protection.
+
+	See https://issues.oss-fuzz.com/issues/389972472
+	    https://issues.oss-fuzz.com/issues/389968131
+
+2025-01-15  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* src/bdf/bdflib.c: Clean up.
+
+2025-01-15  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	[bdf] Use flags instead of options.
+
+	* src/bdf/bdf.h (bdf_options_t): Removed.
+	(BDF_KEEP_COMMENTS, BDF_KEEP_UNENCODED, BDF_CORRECT_METRICS): Updated
+	to avoid collisions with the other parsing flags.
+	* src/bdf/bdfdrivr.c (BDF_Face_Init): Use default flags explicitly.
+	* src/bdf/bdflib.c (bdf_load_font): Use flags as an argument to
+	initialize the parser.
+	(bdf_set_fedault_spacing_): Default to BDF_PROPORTIONAL explicitly.
+	(bdf_parse_*_): Updated.
+
+2025-01-15  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	[bdf] Adjust parsing flow and CHARS handling.
+
+	* src/bdf/bdflib.c (bdf_readstream_): Remove CHARS exception.
+	(bdf_parse_glyphs_): Move glyphs allocation...
+	(bdf_parse_properties_): and missing ascent and descent handling...
+	(bdf_parse_start_): ...to here under CHARS.
+
+2025-01-15  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* src/bdf/bdflib.c (bdf_readstream_): Tweak variables and loop design.
+
+2025-01-13  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* src/bdf/bdflib.c (bdf_parse_glyphs_): Free unused glyph_name.
+
+	See https://issues.oss-fuzz.com/issues/389330334.
+
+2025-01-13  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* src/bdf/bdflib.c (bdf_parse_glyphs_): Store glyph as soon as possible.
+
+2025-01-12  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* src/bdf/bdflib.c (bdf_parse_glyphs_): Avoid possible leak.
+
+2025-01-12  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	[bdf] Speed up bitmap parsing.
+
+	A dedicated parser of bitmap data with minimal error checking and
+	no string comparisons helps to improve performance.
+
+	* src/bdf/bdflib.c (bdf_parse_bitmap_): New dedicated bitmap parser.
+	(bdf_parse_glyphs_): Pass to `bdf_parse_bitmap_` on BITMAP.
+
+2025-01-12  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* src/bdf/bdflib.c (a2i): Formatting.
+
+2025-01-11  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* src/bdf/bdflib.c (bdf_parse_*_): Minor improvements.
+
+2025-01-11  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* src/bdf/bdf.h (bdf_font_t): Correct `internal` type.
+	* src/bdf/bdflib.c (*): Update users.
+
+2025-01-10  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* builds/windows/ftsystem.c: Fix ancient condition.
+
+2025-01-10  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* src/bdf/bdflib.c (bdf_parse_start_): Fix tracing labels.
+
+2025-01-09  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* MSBuild.rsp: Force console color for mintty.
+
+2025-01-09  Heiko Lewin  <hlewin@worldiety.de>
+
+	* CMakeLists.txt: Use modern IMPORTED targets.
+
+	This resolves build problems with newer libPNG versions by switching
+	to using IMPORTED CMake targets for common libraries where provided.
+	To do this the required CMake version is raised to version 3.12.
+	Doing this seems justified as using IMPORTED targets is a cleaner
+	and more powerful solution that can leverage advanced and CMake-specific
+	features that may be utilized by the referred dependencies' CMake modules.
+
+	Resolves #1311.
+
+2025-01-08  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	[cff] Remove size/slot checks.
+
+	After the previous commit, cff_glyph_load is no longer called
+	without first checking for valid size and glyph objects in
+	FT_Glyph_Load and these checks can be removed downstream.
+
+	* src/cff/cffdrivr.c (cff_glyph_load): Remove `size` and `glyph` checks.
+	* src/cff/cffgload.c (cff_slot_load): Ditto.
+
+2025-01-08  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* src/cff/cffdrivr.c (cff_get_advances): Do only fast advances.
+
+	Otherwise, let TT_Get_Advances fall back on cff_load_glyph to do
+	slow advances. This avoids unchecked access to cff_load_glyph and
+	this is how tt_get_advances is implemented.
+
+2025-01-04  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* src/truetype/ttgload.c (TT_Load_Glyph): Consolidate flag setting.
+
+2025-01-04  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	Delay FT_GLYPH_FORMAT_OUTLINE assignmets.
+
+	This assignmets used to be done prematurely before errors were checked
+	and outlines were actually loaded. Delaying the assignment provides
+	certain protection against careless usage of malformed input that
+	should now remain FT_GLYPH_FORMAT_NONE.
+
+	* src/cff/cffgload.c (cff_slot_load): Ditto.
+	* src/cid/cidgload.c (cid_slot_load_glyph): Ditto.
+	* src/pfr/pfrobjs.c (pfr_slot_load): Ditto.
+	* src/truetype/ttgload.c (TT_Load_Glyph): Ditto.
+	* src/type1/t1gload.c (T1_Load_Glyph): Ditto.
+
+2025-01-03  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* builds/compiler/gcc-dev.mk: Silence some warnings.
+
+2025-01-02  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	Remove superfluous outline zeroing.
+	
+	This is already done by `ft_glyphslot_clear`.
+	
+	* src/cff/cffgload.c (cff_slot_load): Do not zero outline fields.
+	* src/cid/cidgload.c (cid_slot_load_glyph: Ditto.
+	* src/pfr/pfrobjs.c (pfr_slot_load): Ditto.
+	* src/truetype/ttgload.c (load_sbit_image): Ditto.
+	* src/type1/t1gload.c (T1_Load_Glyph): Ditto.
+
+2025-01-02  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* src/truetype/ttobjs.c: Abbreviate tracing.
+
+2025-01-02  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* src/sfnt/ttsbit.c (tt_face_load_sbix_image): Refactor `flip`.
+
+2025-01-01  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	[truetype] Consolidate bitmap strike handling.
+
+	* src/truetype/ttgload.c (TT_Load_Glyph): Relocate omitted whitespace
+	strike handling from here...
+	(load_sbit_image): ... to here.
+
+2024-12-31  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	[truetype] Ingnore FT_LOAD_NO_BITMAP in bitmap-only fonts.
+
+	For consistency with other bitmap-only fonts, we should ignore this
+	flag of the font is not scalable.
+
+	* src/truetype/ttgload.c (TT_Load_Glyph): Check if face is scalable
+	when checking for FT_LOAD_NO_BITMAP.
+
+	* docs/CHANGES: Start new chapter wtith this change.
+
+2024-12-16  Ben Wagner  <bungeman@chromium.org>
+
+	[ftstroke] Fix invalid pointer assignement to `arc`
+
+	In `FT_Stroker_ConicTo` and `FT_Stroker_CubicTo` there is a `bez_stack`.
+	`arc` is initialized with `arc = bez_stack` and is never set to point
+	into any different object. The main loop looks like `while ( arc >=
+	bez_stack )` which is depending on a later `arc -= 2` (or `arc -= 3`) to
+	make `arc` point to before `bez_stack`. However, using pointer
+	subtraction to make `arc` point outside the array is undefined behavior,
+	and attempting to use the value in the loop predicate is "very"
+	undefined behavior. (C99 "Additive operators" 6.5.6.8.)
+
+	This particular undefined behavior was discovered as either hangs or
+	MemorySantizer issues after "[InstCombine] Infer nuw for gep inbounds
+	from base of object" [0]. With this change, clang can infer that `arc`
+	must always point into the `bez_stack` object and therefore cannot be at
+	a "negative index" so the predicate is always true.
+
+	[0] https://github.com/llvm/llvm-project/commit/e21ab4d16b555c28ded307571d138f594f33e325
+
+	* src/base/ftstroke.c (FT_Stroker_ConicTo, FT_Stroker_CubicTo): test
+	loop exit condition (there are no more arcs to process) before
+	decrementing `arc`
+
+	Fixes: #1307
+
+2024-12-04  Ben Wagner  <bungeman@chromium.org>
+
+	[cff] Fix leak of cmap data
+
+	When `sfnt->load_face` succeeds it has already loaded any (optional)
+	cmap data. As a result, a subsequent call to `sfnt->load_cmap` will
+	overwrite the cmap data pointer with a new copy of the data but not free
+	the old, leading to a leak.
+
+	This is a fix for "* src/cff/cffobjs.c (cff_face_init): Better handling
+	of Type0 fonts.". This still allows the cmap to be missing but avoids
+	the leak by only calling `sfnt->load_cmap` when there is no `head`
+	table (the font data is not being loaded as OpenType/CFF).
+
+	* src/cff/cffobjs.c (cff_face_init): Fix leak
+
+	Fixes: #1306
+
+2024-11-06  Honnesh Ramachandra  <hramachandra@adobe.com>
+
+	* src/cff/cffobjs.c (cff_face_init): Better handling of Type0 fonts.
+
+	This issue relates to the PDF specification and its usage of CFF-based
+	embedded Type0 fonts.  For Type0 fonts containing CID-keyed descendant
+	CFF-based fonts, the glyph index is the CID present in the content stream.
+	As a result, there is no requirement for a 'cmap' table to be present in the
+	font since the glyph indices are derived directly from the CIDs.  FreeType
+	throws an error when it doesn’t find a 'cmap' table for such an Open Type
+	font containing CFF outlines.  This commit relaxes this requirement for a
+	'cmap' table for such fonts.
+
+2024-10-18  suzuki toshiya  <mpsuzuki@hiroshima-u.ac.jp>
+
+	Download the latest gnu-config files in `make dist`.
+
+	* builds/toplevel.mk: In `make dist`, checkout gnu-config
+	git repository at savannah, copy the latest versions of
+	`config.guess` and `config.sub` to builds/unix/.  Also
+	the latest version of `gitlog-to-changelog` is used to
+	generate `ChangeLog`.
+
+2024-10-16  Behdad Esfahbod  <behdad@behdad.org>
+
+	Move generic destroy to later in the face and size destruction.
+
+	* src/base/ftobjs.c (destroy_size, destroy_face): This is such that the
+	  generic destroy can be used to call `FT_Done_Library`.  For that to work,
+	  it needs to call it *after* having removed the face from the respective
+	  module.
+
+2024-10-14  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* src/truetype/ttgload.c (load_truetype_glyph): Rearrange.
+
+2024-10-14  suzuki toshiya  <mpsuzuki@hiroshima-u.ac.jp>
+
+	* autogen.sh: Fix for Solaris 10.
+
+	o Replace `test -e` by `test -d` (directory) and `-h`
+	  (symlink), because pre-POSIX /bin/sh of Solaris 10
+	  does not support `test -e`.
+	o Replace the combination of `head` and `sed ...` by
+	  single sed command `sed -n 1...p`.  GNU libtoolize
+	  with Solaris 10 /bin/sh complains "Broken Pipe" for
+	  the closure of stdout by `head`.  Let `sed` receive
+	  all stdout and discard.
+
+2024-10-13  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* src/smooth/ftgrays.c (gray_convert_glyph): Clear stack pointers.
+
+	Fixes a dangling pointer warning, see #1299.
+
+2024-10-13  suzuki toshiya  <mpsuzuki@hiroshima-u.ac.jp>
+
+	apinames: Fix a buffer overrun for VMS platform.
+
+	Some output formats may rewrite symbol names during the output,
+	like the concatenation of "64__" suffix on VMS.  To estimate
+	sufficient size to store symbol name, pass the output format
+	info to `names_add`.  For VMS, `names_add` allocates longer
+	buffer to append "64__".
+
+	* apinames.c (SUFFIX_VMS_64ADDR): New macro of "64__".
+	(main): Pass the format info to `read_header_file`.
+	(read_header_file): Pass the format info to `names_add`.
+	(names_add): Receive the format info, and reserve the symbol
+	name buffer 4 byte longer in the case of VMS, to append the
+	suffix in `names_dump`.
+
+2024-10-13  suzuki toshiya  <mpsuzuki@hiroshima-u.ac.jp>
+
+	apinames: Fix out-of-scope reference of a static array.
+
+	* apinames.c (names_dump): For WATCOM_LBC format, the
+	  DLL name with no suffix is constructed on a static
+	  array temp[], but the scope is closed before use it.
+	  The declaration of temp[] is moved to the wider
+	  scope for the dumping part to refer it.
+
+2024-10-12  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* vms_make.com: Format rules.
+
+	Use tabs in rules only à la Makefile.
+
+2024-10-12  Marian Klymov  <nekto1989@gmail.com>
+
+	* meson.build: Define DLL_EXPORT for shared library only.
+
+	Fixes #1298.
+
+2024-10-12  Benoit Pierre  <benoit.pierre+freedesktop@gmail.com>
+
+	* meson.build: Minor improvements.
+
+2024-10-12  Benoit Pierre  <benoit.pierre+freedesktop@gmail.com>
+
+	* meson.build: Fix `bzip2` option handling.
+
+2024-10-12  Benoit Pierre  <benoit.pierre+freedesktop@gmail.com>
+
+	* meson.build: Add support for compiling with error strings.
+	* meson_options.txt: Document it.
+
+2024-10-10  suzuki toshiya  <mpsuzuki@hiroshima-u.ac.jp>
+
+	Fix help message of apinames.
+
+	* src/tools/apinames.c: The first header file must be
+	  given after the options.  All arguments after the
+	  first header file are dealt as header files to be
+	  parsed, regardless with their leading "-".
+
+	  For example,
+	  "apinames include/freetype/freetype.h -dFREETYPE.DLL"
+	  warns "unable to open -dFREETYPE.DLL".
+
+	  Thus, the "header1" must be given after the arguments
+	  to be parsed as the options.
+
+2024-09-21  Jouk Jansen  <joukj@hrem.nano.tudelft.nl>
+
+	Minor fixes for OpenVMS.
+
+	* vms_name.com: Suppress a warning with the latest Clang compiler.
+
+	* builds/vms/apinames_vms.bash: Use absolute path to avoid dependency on the
+	  environment.
+
+2024-09-07  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* src/sfnt/ttsbit.c (tt_face_load_sbix_image): Respect metrics_only.
+
+	Also fixes recursive flip.
+
+2024-09-06  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* src/sfnt/ttsbit.c (tt_face_load_sbix_image): Tweak loop.
+
+2024-09-06  Andrew Murray  <radarhere@users.noreply.github.com>
+
+	[sfnt] Support sbix graphicType 'flip'.
+
+	* src/sfnt/ttsbit.c (tt_face_load_sbix_image): Currently undocumented by
+	Apple, this flips the bitmap data horizontally.  It is used on macOS in
+	Apple Color Emoji; 19.4d6e1; 2024-02-05 (file `Apple Color Emoji.ttc`).
+
+	Fixes issue #1282.
+
+2024-09-05  suzuki toshiya  <mpsuzuki@hiroshima-u.ac.jp>
+
+	Add `clang` to host compiler candidates in cross building.
+
+	* builds/unix/configure.raw: In cross building,
+	`clang` is tried if there is no `gcc`, nor `cc`.
+
+2024-09-05  suzuki toshiya  <mpsuzuki@hiroshima-u.ac.jp>
+
+	Improve the build rule for `apinames`.
+
+	* builds/unix/configure.raw: copy `CFLAGS` &
+	`LDFLAGS` values to `CFLAGS_BUILD` &
+	`LDFLAGS_BUILD`, in a self-hosting case.
+
+	* builds/unix/unix-cc.in: set `CCexe_CFLAGS` &
+	`CCexe_LDFLAGS` by `CFLAGS_BUILD` &
+	`LDFLAGS_BUILD`.
+
+	In some confused environments, simple building
+	like `cc -o apinames apinames.c` is no longer
+	able to build an executable running on the host.
+
+	The validity of `CC` is tested with consideration
+	of `CFLAGS` and `LDFLAGS`, thus, duplicating
+	`CFLAGS` & `LDFLAGS` to `CCexe_CFLAGS` &
+	`CCexe_LDFLAGS` (via XXX_BUILD) would be slightly
+	safer in a self-hosting build.
+
+	Fixes the issue #1296.
+
+2024-08-26  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* src/sfnt/ttcmap.c (tt_cmap*_get_info): Remove casting.
+
+2024-08-25  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* include/freetype/ftimage.h (FT_Bitmap): Describe empty bitmap.
+
+2024-08-14  luz paz  <luzpaz@github.com>
+
+	Fix various typos.
+
+2024-08-13  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* messon.build: Install `include/freetype/ftlogging.h`.
+
+	Fixes #1292.
+
 2024-08-12  Werner Lemberg  <wl@gnu.org>
 
 	* Version 2.13.3 released.

@@ -2,7 +2,7 @@
 # Meson project file for FreeType 2
 #
 
-# Copyright (C) 2020-2024 by
+# Copyright (C) 2020-2025 by
 # David Turner, Robert Wilhelm, and Werner Lemberg.
 #
 # This file is part of the FreeType project, and may only be used, modified,
@@ -159,6 +159,7 @@ ft2_public_headers = files([
   'include/freetype/ftincrem.h',
   'include/freetype/ftlcdfil.h',
   'include/freetype/ftlist.h',
+  'include/freetype/ftlogging.h',
   'include/freetype/ftlzw.h',
   'include/freetype/ftmac.h',
   'include/freetype/ftmm.h',
@@ -319,11 +320,16 @@ else
 endif
 
 # BZip2 support.
-bzip2_dep = dependency('bzip2', required: false)
+bzip2_dep = dependency(
+  'bzip2',
+  required: get_option('bzip2').disabled() ? get_option('bzip2') : false,
+)
 if not bzip2_dep.found()
-  bzip2_dep = cc.find_library('bz2',
+  bzip2_dep = cc.find_library(
+    'bz2',
     has_headers: ['bzlib.h'],
-    required: get_option('bzip2'))
+    required: get_option('bzip2'),
+  )
 endif
 
 if bzip2_dep.found()
@@ -342,15 +348,48 @@ if libpng_dep.found()
   ft2_deps += [libpng_dep]
 endif
 
-# Harfbuzz support.
-harfbuzz_dep = dependency('harfbuzz',
-  version: '>= 2.0.0',
-  required: get_option('harfbuzz'),
-  default_options: ['freetype=disabled'])
+# HarfBuzz support.
+harfbuzz_opt = get_option('harfbuzz')
+harfbuzz_dep = disabler()
 
-if harfbuzz_dep.found()
-  ftoption_command += ['--enable=FT_CONFIG_OPTION_USE_HARFBUZZ']
-  ft2_deps += [harfbuzz_dep]
+if harfbuzz_opt == 'enabled' or harfbuzz_opt == 'auto'
+  harfbuzz_dep = dependency('harfbuzz',
+    version: '>= 2.0.0',
+    required: harfbuzz_opt == 'enabled',
+    default_options: ['freetype=disabled'])
+  if harfbuzz_dep.found()
+    harfbuzz_opt = 'YES'
+    ftoption_command += ['--enable=FT_CONFIG_OPTION_USE_HARFBUZZ']
+    ft2_deps += [harfbuzz_dep]
+  endif
+endif
+
+if not harfbuzz_dep.found() and \
+   (harfbuzz_opt == 'dynamic' or harfbuzz_opt == 'auto')
+  # On Windows we don't need libdl, but on other platforms we need it.
+  if host_machine.system() == 'windows'
+    harfbuzz_opt = 'dynamic'
+    ftoption_command += [
+      '--enable=FT_CONFIG_OPTION_USE_HARFBUZZ',
+      '--enable=FT_CONFIG_OPTION_USE_HARFBUZZ_DYNAMIC',
+    ]
+  else
+    harfbuzz_dep = meson.get_compiler('c').find_library('dl',
+      required: harfbuzz_opt == 'dynamic',
+    )
+    if harfbuzz_dep.found()
+      harfbuzz_opt = 'dynamic'
+      ftoption_command += [
+        '--enable=FT_CONFIG_OPTION_USE_HARFBUZZ',
+        '--enable=FT_CONFIG_OPTION_USE_HARFBUZZ_DYNAMIC',
+      ]
+      ft2_deps += [harfbuzz_dep]
+    endif
+  endif
+endif
+
+if harfbuzz_opt == 'disabled' or harfbuzz_opt == 'auto'
+  harfbuzz_opt = 'NO'
 endif
 
 # Brotli decompression support.
@@ -360,6 +399,10 @@ brotli_dep = dependency('libbrotlidec',
 if brotli_dep.found()
   ftoption_command += ['--enable=FT_CONFIG_OPTION_USE_BROTLI']
   ft2_deps += [brotli_dep]
+endif
+
+if get_option('error_strings')
+  ftoption_command += ['--enable=FT_CONFIG_OPTION_ERROR_STRINGS']
 endif
 
 # We can now generate `ftoption.h`.
@@ -373,7 +416,8 @@ ftoption_h = custom_target('ftoption.h',
 ft2_sources += ftoption_h
 ft2_defines += ['-DFT_CONFIG_OPTIONS_H=<ftoption.h>']
 
-if host_machine.system() == 'windows'
+if host_machine.system() == 'windows' and \
+   get_option('default_library') == 'shared'
   ft2_defines += ['-DDLL_EXPORT=1']
 endif
 
@@ -476,10 +520,10 @@ summary({'OS': host_machine.system(),
         }, section: 'Operating System')
 
 summary({'Zlib': zlib_option,
-         'Bzip2': bzip2_dep.found() ? 'yes' : 'no',
-         'Png': libpng_dep.found() ? 'yes' : 'no',
-         'Harfbuzz': harfbuzz_dep.found() ? 'yes' : 'no',
-         'Brotli': brotli_dep.found() ? 'yes' : 'no',
-        }, section: 'Used Libraries')
+         'Bzip2': bzip2_dep.found(),
+         'Png': libpng_dep.found(),
+         'HarfBuzz': harfbuzz_opt,
+         'Brotli': brotli_dep.found(),
+        }, bool_yn: true, section: 'Used Libraries')
 
 # EOF

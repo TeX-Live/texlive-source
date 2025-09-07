@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="API Reference Documentation for FreeType-2.13.3">
+        <meta name="description" content="API Reference Documentation for FreeType-2.14.0">
       
       
         <meta name="author" content="FreeType Contributors">
@@ -22,15 +22,15 @@
       
       
       <link rel="icon" href="images/favico.ico">
-      <meta name="generator" content="mkdocs-1.6.0, mkdocs-material-9.5.31">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.9">
     
     
       
-        <title>Glyph Retrieval - FreeType-2.13.3 API Reference</title>
+        <title>Glyph Retrieval - FreeType-2.14.0 API Reference</title>
       
     
     
-      <link rel="stylesheet" href="assets/stylesheets/main.3cba04c6.min.css">
+      <link rel="stylesheet" href="assets/stylesheets/main.4af4bdda.min.css">
       
         
         <link rel="stylesheet" href="assets/stylesheets/palette.06af60db.min.css">
@@ -54,7 +54,7 @@
     
       <link rel="stylesheet" href="stylesheets/extra.css">
     
-    <script>__md_scope=new URL(".",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL(".",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -94,20 +94,20 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="index.html" title="FreeType-2.13.3 API Reference" class="md-header__button md-logo" aria-label="FreeType-2.13.3 API Reference" data-md-component="logo">
+    <a href="index.html" title="FreeType-2.14.0 API Reference" class="md-header__button md-logo" aria-label="FreeType-2.14.0 API Reference" data-md-component="logo">
       
   <img src="images/favico.ico" alt="logo">
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
       
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
     </label>
     <div class="md-header__title" data-md-component="header-title">
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            FreeType-2.13.3 API Reference
+            FreeType-2.14.0 API Reference
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -127,7 +127,7 @@
     
       <label class="md-header__button md-icon" for="__search">
         
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
       </label>
       <div class="md-search" data-md-component="search" role="dialog">
   <label class="md-search__overlay" for="__search"></label>
@@ -136,15 +136,15 @@
       <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
       <label class="md-search__icon md-icon" for="__search">
         
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
         
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
       </label>
       <nav class="md-search__options" aria-label="Search">
         
         <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
           
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
         </button>
       </nav>
       
@@ -188,12 +188,12 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="index.html" title="FreeType-2.13.3 API Reference" class="md-nav__button md-logo" aria-label="FreeType-2.13.3 API Reference" data-md-component="logo">
+    <a href="index.html" title="FreeType-2.14.0 API Reference" class="md-nav__button md-logo" aria-label="FreeType-2.14.0 API Reference" data-md-component="logo">
       
   <img src="images/favico.ico" alt="logo">
 
     </a>
-    FreeType-2.13.3 API Reference
+    FreeType-2.14.0 API Reference
   </label>
   
   <ul class="md-nav__list" data-md-scrollfix>
@@ -210,6 +210,7 @@
   
   <span class="md-ellipsis">
     TOC
+    
   </span>
   
 
@@ -230,6 +231,7 @@
   
   <span class="md-ellipsis">
     Index
+    
   </span>
   
 
@@ -260,6 +262,7 @@
   
   <span class="md-ellipsis">
     General Remarks
+    
   </span>
   
 
@@ -285,6 +288,7 @@
   
   <span class="md-ellipsis">
     Preamble
+    
   </span>
   
 
@@ -306,6 +310,7 @@
   
   <span class="md-ellipsis">
     FreeType's header inclusion scheme
+    
   </span>
   
 
@@ -327,6 +332,7 @@
   
   <span class="md-ellipsis">
     User allocation
+    
   </span>
   
 
@@ -367,6 +373,7 @@
   
   <span class="md-ellipsis">
     Core API
+    
   </span>
   
 
@@ -392,6 +399,7 @@
   
   <span class="md-ellipsis">
     Basic Data Types
+    
   </span>
   
 
@@ -413,6 +421,7 @@
   
   <span class="md-ellipsis">
     Library Setup
+    
   </span>
   
 
@@ -434,6 +443,7 @@
   
   <span class="md-ellipsis">
     Face Creation
+    
   </span>
   
 
@@ -455,6 +465,7 @@
   
   <span class="md-ellipsis">
     Font Testing Macros
+    
   </span>
   
 
@@ -476,6 +487,7 @@
   
   <span class="md-ellipsis">
     Sizing and Scaling
+    
   </span>
   
 
@@ -506,6 +518,7 @@
   
   <span class="md-ellipsis">
     Glyph Retrieval
+    
   </span>
   
 
@@ -517,6 +530,7 @@
   
   <span class="md-ellipsis">
     Glyph Retrieval
+    
   </span>
   
 
@@ -675,6 +689,7 @@
   
   <span class="md-ellipsis">
     Character Mapping
+    
   </span>
   
 
@@ -696,6 +711,7 @@
   
   <span class="md-ellipsis">
     Information Retrieval
+    
   </span>
   
 
@@ -717,6 +733,7 @@
   
   <span class="md-ellipsis">
     Other API Data
+    
   </span>
   
 
@@ -755,6 +772,7 @@
   
   <span class="md-ellipsis">
     Extended API
+    
   </span>
   
 
@@ -780,6 +798,7 @@
   
   <span class="md-ellipsis">
     Unicode Variation Sequences
+    
   </span>
   
 
@@ -801,6 +820,7 @@
   
   <span class="md-ellipsis">
     Glyph Color Management
+    
   </span>
   
 
@@ -822,6 +842,7 @@
   
   <span class="md-ellipsis">
     Glyph Layer Management
+    
   </span>
   
 
@@ -843,6 +864,7 @@
   
   <span class="md-ellipsis">
     Glyph Management
+    
   </span>
   
 
@@ -864,6 +886,7 @@
   
   <span class="md-ellipsis">
     Mac Specific Interface
+    
   </span>
   
 
@@ -885,6 +908,7 @@
   
   <span class="md-ellipsis">
     Size Management
+    
   </span>
   
 
@@ -906,6 +930,7 @@
   
   <span class="md-ellipsis">
     Header File Macros
+    
   </span>
   
 
@@ -944,6 +969,7 @@
   
   <span class="md-ellipsis">
     Format-Specific API
+    
   </span>
   
 
@@ -968,7 +994,8 @@
         
   
   <span class="md-ellipsis">
-    Multiple Masters
+    OpenType Font Variations, TrueType GX, and Adobe MM Fonts
+    
   </span>
   
 
@@ -990,6 +1017,7 @@
   
   <span class="md-ellipsis">
     TrueType Tables
+    
   </span>
   
 
@@ -1011,6 +1039,7 @@
   
   <span class="md-ellipsis">
     Type 1 Tables
+    
   </span>
   
 
@@ -1032,6 +1061,7 @@
   
   <span class="md-ellipsis">
     SFNT Names
+    
   </span>
   
 
@@ -1053,6 +1083,7 @@
   
   <span class="md-ellipsis">
     BDF and PCF Files
+    
   </span>
   
 
@@ -1074,6 +1105,7 @@
   
   <span class="md-ellipsis">
     CID Fonts
+    
   </span>
   
 
@@ -1095,6 +1127,7 @@
   
   <span class="md-ellipsis">
     PFR Fonts
+    
   </span>
   
 
@@ -1116,6 +1149,7 @@
   
   <span class="md-ellipsis">
     Window FNT Files
+    
   </span>
   
 
@@ -1137,6 +1171,7 @@
   
   <span class="md-ellipsis">
     OpenType SVG Fonts
+    
   </span>
   
 
@@ -1158,6 +1193,7 @@
   
   <span class="md-ellipsis">
     Font Formats
+    
   </span>
   
 
@@ -1179,6 +1215,7 @@
   
   <span class="md-ellipsis">
     Gasp Table
+    
   </span>
   
 
@@ -1217,6 +1254,7 @@
   
   <span class="md-ellipsis">
     Controlling FreeType Modules
+    
   </span>
   
 
@@ -1242,6 +1280,7 @@
   
   <span class="md-ellipsis">
     The auto-hinter
+    
   </span>
   
 
@@ -1263,6 +1302,7 @@
   
   <span class="md-ellipsis">
     The CFF driver
+    
   </span>
   
 
@@ -1284,6 +1324,7 @@
   
   <span class="md-ellipsis">
     The Type 1 and CID drivers
+    
   </span>
   
 
@@ -1305,6 +1346,7 @@
   
   <span class="md-ellipsis">
     The TrueType driver
+    
   </span>
   
 
@@ -1326,6 +1368,7 @@
   
   <span class="md-ellipsis">
     The PCF driver
+    
   </span>
   
 
@@ -1347,6 +1390,7 @@
   
   <span class="md-ellipsis">
     The SVG driver
+    
   </span>
   
 
@@ -1368,6 +1412,7 @@
   
   <span class="md-ellipsis">
     Driver properties
+    
   </span>
   
 
@@ -1389,6 +1434,7 @@
   
   <span class="md-ellipsis">
     Parameter Tags
+    
   </span>
   
 
@@ -1410,6 +1456,7 @@
   
   <span class="md-ellipsis">
     Subpixel Rendering
+    
   </span>
   
 
@@ -1448,6 +1495,7 @@
   
   <span class="md-ellipsis">
     Cache Sub-System
+    
   </span>
   
 
@@ -1473,6 +1521,7 @@
   
   <span class="md-ellipsis">
     Cache Sub-System
+    
   </span>
   
 
@@ -1511,6 +1560,7 @@
   
   <span class="md-ellipsis">
     Support API
+    
   </span>
   
 
@@ -1536,6 +1586,7 @@
   
   <span class="md-ellipsis">
     Computations
+    
   </span>
   
 
@@ -1557,6 +1608,7 @@
   
   <span class="md-ellipsis">
     List Processing
+    
   </span>
   
 
@@ -1578,6 +1630,7 @@
   
   <span class="md-ellipsis">
     Outline Processing
+    
   </span>
   
 
@@ -1599,6 +1652,7 @@
   
   <span class="md-ellipsis">
     Quick retrieval of advance values
+    
   </span>
   
 
@@ -1620,6 +1674,7 @@
   
   <span class="md-ellipsis">
     Bitmap Handling
+    
   </span>
   
 
@@ -1641,6 +1696,7 @@
   
   <span class="md-ellipsis">
     Scanline Converter
+    
   </span>
   
 
@@ -1662,6 +1718,7 @@
   
   <span class="md-ellipsis">
     Glyph Stroker
+    
   </span>
   
 
@@ -1683,6 +1740,7 @@
   
   <span class="md-ellipsis">
     System Interface
+    
   </span>
   
 
@@ -1704,6 +1762,7 @@
   
   <span class="md-ellipsis">
     Module Management
+    
   </span>
   
 
@@ -1725,6 +1784,7 @@
   
   <span class="md-ellipsis">
     GZIP Streams
+    
   </span>
   
 
@@ -1746,6 +1806,7 @@
   
   <span class="md-ellipsis">
     LZW Streams
+    
   </span>
   
 
@@ -1767,6 +1828,7 @@
   
   <span class="md-ellipsis">
     BZIP2 Streams
+    
   </span>
   
 
@@ -1788,6 +1850,7 @@
   
   <span class="md-ellipsis">
     External Debugging APIs
+    
   </span>
   
 
@@ -1826,6 +1889,7 @@
   
   <span class="md-ellipsis">
     Error Codes
+    
   </span>
   
 
@@ -1851,6 +1915,7 @@
   
   <span class="md-ellipsis">
     Error Enumerations
+    
   </span>
   
 
@@ -1872,6 +1937,7 @@
   
   <span class="md-ellipsis">
     Error Code Values
+    
   </span>
   
 
@@ -1910,6 +1976,7 @@
   
   <span class="md-ellipsis">
     Miscellaneous
+    
   </span>
   
 
@@ -1935,6 +2002,7 @@
   
   <span class="md-ellipsis">
     TrueTypeGX/AAT Validation
+    
   </span>
   
 
@@ -1956,6 +2024,7 @@
   
   <span class="md-ellipsis">
     Incremental Loading
+    
   </span>
   
 
@@ -1977,6 +2046,7 @@
   
   <span class="md-ellipsis">
     The TrueType Engine
+    
   </span>
   
 
@@ -1998,6 +2068,7 @@
   
   <span class="md-ellipsis">
     OpenType Validation
+    
   </span>
   
 
@@ -2172,6 +2243,7 @@
                   
 
 
+
 <p><a href="https://www.freetype.org">FreeType</a> &raquo; <a href="../">Docs</a> &raquo; <a href="index.html#core-api">Core API</a> &raquo; Glyph Retrieval</p>
 <hr />
 <h1 id="glyph-retrieval">Glyph Retrieval<a class="headerlink" href="#glyph-retrieval" title="Permanent link">&para;</a></h1>
@@ -2273,7 +2345,7 @@
 </td></tr>
 <tr><td class="val" id="outline">outline</td><td class="desc">
 <p>The outline descriptor for the current glyph image if its format is <code><a href="ft2-basic_types.html#ft_glyph_format">FT_GLYPH_FORMAT_OUTLINE</a></code>. Once a glyph is loaded, <code>outline</code> can be transformed, distorted, emboldened, etc. However, it must not be freed.</p>
-<p>[Since 2.10.1] If <code><a href="ft2-glyph_retrieval.html#ft_load_xxx">FT_LOAD_NO_SCALE</a></code> is set, outline coordinates of OpenType variation fonts for a selected instance are internally handled as 26.6 fractional font units but returned as (rounded) integers, as expected. To get unrounded font units, don't use <code><a href="ft2-glyph_retrieval.html#ft_load_xxx">FT_LOAD_NO_SCALE</a></code> but load the glyph with <code><a href="ft2-glyph_retrieval.html#ft_load_xxx">FT_LOAD_NO_HINTING</a></code> and scale it, using the font's <code>units_per_EM</code> value as the ppem.</p>
+<p>[Since 2.10.1] If <code><a href="ft2-glyph_retrieval.html#ft_load_xxx">FT_LOAD_NO_SCALE</a></code> is set, outline coordinates of OpenType Font Variations for a selected instance are internally handled as 26.6 fractional font units but returned as (rounded) integers, as expected. To get unrounded font units, don't use <code><a href="ft2-glyph_retrieval.html#ft_load_xxx">FT_LOAD_NO_SCALE</a></code> but load the glyph with <code><a href="ft2-glyph_retrieval.html#ft_load_xxx">FT_LOAD_NO_HINTING</a></code> and scale it, using the font's <code>units_per_EM</code> value as the ppem.</p>
 </td></tr>
 <tr><td class="val" id="num_subglyphs">num_subglyphs</td><td class="desc">
 <p>The number of subglyphs in a composite glyph. This field is only valid for the composite glyph format that should normally only be loaded with the <code><a href="ft2-glyph_retrieval.html#ft_load_xxx">FT_LOAD_NO_RECURSE</a></code> flag.</p>
@@ -2532,7 +2604,7 @@
 <p>Load colored glyphs. FreeType searches in the following order; there are slight differences depending on the font format.</p>
 <p>[Since 2.5] Load embedded color bitmap images (provided <code><a href="ft2-glyph_retrieval.html#ft_load_xxx">FT_LOAD_NO_BITMAP</a></code> is not set). The resulting color bitmaps, if available, have the <code><a href="ft2-basic_types.html#ft_pixel_mode">FT_PIXEL_MODE_BGRA</a></code> format, with pre-multiplied color channels. If the flag is not set and color bitmaps are found, they are converted to 256-level gray bitmaps, using the <code><a href="ft2-basic_types.html#ft_pixel_mode">FT_PIXEL_MODE_GRAY</a></code> format.</p>
 <p>[Since 2.12] If the glyph index maps to an entry in the face's ‘SVG ’ table, load the associated SVG document from this table and set the <code>format</code> field of <code><a href="ft2-glyph_retrieval.html#ft_glyphslotrec">FT_GlyphSlotRec</a></code> to <code><a href="ft2-basic_types.html#ft_glyph_format">FT_GLYPH_FORMAT_SVG</a></code> ([since 2.13.1] provided <code><a href="ft2-glyph_retrieval.html#ft_load_xxx">FT_LOAD_NO_SVG</a></code> is not set). Note that FreeType itself can't render SVG documents; however, the library provides hooks to seamlessly integrate an external renderer. See sections ‘<a href="ft2-ot_svg_driver.html#ot_svg_driver">The SVG driver</a>’ and ‘<a href="ft2-svg_fonts.html#svg_fonts">OpenType SVG Fonts</a>’ for more.</p>
-<p>[Since 2.10, experimental] If the glyph index maps to an entry in the face's ‘COLR’ table with a ‘CPAL’ palette table (as defined in the OpenType specification), make <code><a href="ft2-glyph_retrieval.html#ft_render_glyph">FT_Render_Glyph</a></code> provide a default blending of the color glyph layers associated with the glyph index, using the same bitmap format as embedded color bitmap images. This is mainly for convenience and works only for glyphs in ‘COLR’ v0 tables (or glyphs in ‘COLR’ v1 tables that exclusively use v0 features). For full control of color layers use <code><a href="ft2-layer_management.html#ft_get_color_glyph_layer">FT_Get_Color_Glyph_Layer</a></code> and FreeType's color functions like <code><a href="ft2-color_management.html#ft_palette_select">FT_Palette_Select</a></code> instead of setting <code><a href="ft2-glyph_retrieval.html#ft_load_xxx">FT_LOAD_COLOR</a></code> for rendering so that the client application can handle blending by itself.</p>
+<p>[Since 2.10, experimental] If the glyph index maps to an entry in the face's ‘COLR’ table with a ‘CPAL’ palette table (as defined in the OpenType specification), make <code><a href="ft2-glyph_retrieval.html#ft_render_glyph">FT_Render_Glyph</a></code> provide a default blending of the color glyph layers associated with the glyph index, using the same bitmap format as embedded color bitmap images. This is mainly for convenience and works only for glyphs in ‘COLR’ v0 tables. <strong>There is no rendering support for ‘COLR’ v1</strong> (with the exception of v1 tables that exclusively use v0 features)! You need a graphics library like Skia or Cairo to interpret the graphics commands stored in v1 tables. For full control of color layers use <code><a href="ft2-layer_management.html#ft_get_color_glyph_layer">FT_Get_Color_Glyph_Layer</a></code> and FreeType's color functions like <code><a href="ft2-color_management.html#ft_palette_select">FT_Palette_Select</a></code> instead of setting <code><a href="ft2-glyph_retrieval.html#ft_load_xxx">FT_LOAD_COLOR</a></code> for rendering so that the client application can handle blending by itself.</p>
 </td></tr>
 <tr><td class="val" id="ft_load_no_svg">FT_LOAD_NO_SVG</td><td class="desc">
 <p>[Since 2.13.1] Ignore SVG glyph data when loading.</p>
@@ -2666,7 +2738,7 @@
 </li>
 </ol>
 <p>Internal testing at Adobe found that a target inverse gamma of&nbsp;1.8 for step&nbsp;3 gives good results across a wide range of displays with an sRGB gamma curve or a similar one.</p>
-<p>This process can cost performance. There is an approximation that does not need to know about the background color; see <a href="https://bel.fi/alankila/lcd/">https://bel.fi/alankila/lcd/</a> and <a href="https://bel.fi/alankila/lcd/alpcor.html">https://bel.fi/alankila/lcd/alpcor.html</a> for details.</p>
+<p>This process can cost performance. There is an approximation that does not need to know about the background color; see <a href="https://web.archive.org/web/20211019204945/https://bel.fi/alankila/lcd/">https://web.archive.org/web/20211019204945/https://bel.fi/alankila/lcd/</a> and <a href="https://web.archive.org/web/20210211002939/https://bel.fi/alankila/lcd/alpcor.html">https://web.archive.org/web/20210211002939/https://bel.fi/alankila/lcd/alpcor.html</a> for details.</p>
 <p><strong>ATTENTION</strong>: Linear blending is even more important when dealing with subpixel-rendered glyphs to prevent color-fringing! A subpixel-rendered glyph must first be filtered with a filter that gives equal weight to the three color primaries and does not exceed a sum of 0x100, see section &lsquo;<a href="ft2-lcd_rendering.html#lcd_rendering">Subpixel Rendering</a>&rsquo;. Then the only difference to gray linear blending is that subpixel-rendered linear blending is done 3&nbsp;times per pixel: red foreground subpixel to red background subpixel and so on for green and blue.</p>
 <hr>
 
@@ -2763,7 +2835,7 @@
 <h4>note</h4>
 
 <p>Only horizontal layouts (left-to-right &amp; right-to-left) are supported by this method. Other layouts, or more sophisticated kernings, are out of the scope of this API function &ndash; they can be implemented through format-specific interfaces.</p>
-<p>Note that, for TrueType fonts only, this can extract data from both the &lsquo;kern&rsquo; table and the basic, pair-wise kerning feature from the GPOS table (with <code>TT_CONFIG_OPTION_GPOS_KERNING</code> enabled), though FreeType does not support the more advanced GPOS layout features; use a library like HarfBuzz for those instead. If a font has both a &lsquo;kern&rsquo; table and kern features of a GPOS table, the &lsquo;kern&rsquo; table will be used.</p>
+<p>Note that, for TrueType and OpenType fonts only, this can extract data from both the &lsquo;kern&rsquo; table and the basic, pair-wise kerning feature from the GPOS table (with <code>TT_CONFIG_OPTION_GPOS_KERNING</code> enabled), though FreeType does not support the more advanced GPOS layout features; use a library like HarfBuzz for those instead. If a font has both a &lsquo;kern&rsquo; table and kern features of a GPOS table, the &lsquo;kern&rsquo; table will be used.</p>
 <p>Also note for right-to-left scripts, the functionality may differ for fonts with GPOS tables vs. &lsquo;kern&rsquo; tables. For GPOS, right-to-left fonts typically use both a placement offset and an advance for pair positioning, which this API does not support, so it would output kerning values of zero; though if the right-to-left font used only advances in GPOS pair positioning, then this API could output kerning values for it, but it would use <code>left_glyph</code> to mean the first glyph for that case. Whereas &lsquo;kern&rsquo; tables are always advance-only and always store the left glyph first.</p>
 <p>Use <code><a href="ft2-font_testing_macros.html#ft_has_kerning">FT_HAS_KERNING</a></code> to find out whether a font has data that can be extracted with <code>FT_Get_Kerning</code>.</p>
 <hr>
@@ -2873,7 +2945,7 @@
       <div class="md-copyright">
   
     <div class="md-copyright__highlight">
-      Copyright 2024 <a href = "https://www.freetype.org/license.html">The FreeType Project</a>.
+      Copyright 2025 <a href = "https://www.freetype.org/license.html">The FreeType Project</a>.
     </div>
   
   
@@ -2894,10 +2966,10 @@
     </div>
     
     
-    <script id="__config" type="application/json">{"base": ".", "features": [], "search": "assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    <script id="__config" type="application/json">{"base": ".", "features": [], "search": "assets/javascripts/workers/search.f8cc74c7.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
-      <script src="assets/javascripts/bundle.fe8b6f2b.min.js"></script>
+      <script src="assets/javascripts/bundle.c8b220af.min.js"></script>
       
         <script src="javascripts/extra.js"></script>
       
