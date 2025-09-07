@@ -512,6 +512,10 @@ cf_silent_ = $(cf_silent_@AM_DEFAULT_V@)
 cf_silent_0 = --silent
 cf_silent_1 = 
 CONFIG_AUX = $(recurse_top)subsubdir-conf.cmd
+
+# To omit stripping the installed binaries, change this to "install".
+install_target = install-strip
+
 # Run texlinks here since the binaries won't be there
 # at install-data, and fmtutil.cnf won't be there at install-exec,
 # and there is no install-hook or install-local.
@@ -1049,11 +1053,11 @@ $(CONFIG_AUX):
 # This (world) is the default target for the ./Build script in TeX Live.
 .PHONY: world
 world: all
-# Serialize 'make all' and 'make install-strip'.
-	@echo "top-level make $@: running install-strip..."
-	$(MAKE) $(AM_MAKEFLAGS) install-strip
+# Serialize 'make all' and 'make install[-strip]'.
+	@echo "top-level make $@: running $(install_target)..."
+	$(MAKE) $(AM_MAKEFLAGS) $(install_target)
 #
-# Just in case it's not a full checkout.
+# Check for $(texlinks_dir) in case it's not a full checkout.
 	if test -d "$(texlinks_dir)"; then \
 	  echo "top-level make $@: making run-texlinks in $(texlinks_dir) ..."; \
 	  cd $(texlinks_dir) && $(MAKE) $(AM_MAKEFLAGS) run-texlinks; \
@@ -1084,7 +1088,7 @@ install-exec-hook:
 skip:
 .PHONY: skip
 
-# Convenience targets to run texlinks and reautoconf.
+# Convenience target to run texlinks.
 .PHONY: texlinks
 texlinks:
 	cd $(texlinks_dir) && $(MAKE) $(AM_MAKEFLAGS) run-texlinks

@@ -1,7 +1,7 @@
 ## $Id$
 ## Makefile.am for the TeX Live top-level
 ##
-## Copyright 2016-2020 Karl Berry <tex-live@tug.org>
+## Copyright 2016-2025 Karl Berry <tex-live@tug.org>
 ## Copyright 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
@@ -44,16 +44,20 @@ include $(srcdir)/am/recurse.am
 
 # This (world) is the default target for the ./Build script in TeX Live.
 .PHONY: world
+
+# To omit stripping the installed binaries, change this to "install".
+install_target = install-strip
+
 # Run texlinks here since the binaries won't be there
 # at install-data, and fmtutil.cnf won't be there at install-exec,
 # and there is no install-hook or install-local.
 texlinks_dir = texk/texlive/tl_support
 world: all
-# Serialize 'make all' and 'make install-strip'.
-	@echo "top-level make $@: running install-strip..."
-	$(MAKE) $(AM_MAKEFLAGS) install-strip
+# Serialize 'make all' and 'make install[-strip]'.
+	@echo "top-level make $@: running $(install_target)..."
+	$(MAKE) $(AM_MAKEFLAGS) $(install_target)
 #
-# Just in case it's not a full checkout.
+# Check for $(texlinks_dir) in case it's not a full checkout.
 	if test -d "$(texlinks_dir)"; then \
 	  echo "top-level make $@: making run-texlinks in $(texlinks_dir) ..."; \
 	  cd $(texlinks_dir) && $(MAKE) $(AM_MAKEFLAGS) run-texlinks; \
@@ -94,7 +98,7 @@ endif !cross
 skip:
 .PHONY: skip
 
-# Convenience targets to run texlinks and reautoconf.
+# Convenience target to run texlinks.
 .PHONY: texlinks
 texlinks:
 	cd $(texlinks_dir) && $(MAKE) $(AM_MAKEFLAGS) run-texlinks
