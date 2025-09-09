@@ -970,14 +970,14 @@ You can hyphenate a string directly with:
 lang.hyphenation(<language> l, <string> n)
 \stopfunctioncall
 
+This either returns the current hyphenation exceptions for this language, or adds
+new ones. The syntax of the string is explained in~\in {section}
+[patternsexceptions].
+
 \subsection {\type {clear_hyphenation} and \type {clean}}
 
 \libindex {clear_hyphenation}
 \libindex {clean}
-
-This either returns the current hyphenation exceptions for this language, or adds
-new ones. The syntax of the string is explained in~\in {section}
-[patternsexceptions].
 
 \startfunctioncall
 lang.clear_hyphenation(<language> l)
@@ -1110,4 +1110,3 @@ initialized due to \prm {savinghyphcodes} being larger than zero.
 % 12-34-\vrule width 1em height 1.5ex \par
 % 12-\hbox{34}-56 \par
 % 12-\vrule width 1em height 1.5ex-56 \par
-
