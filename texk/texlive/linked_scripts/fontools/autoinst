@@ -41,7 +41,7 @@ use Getopt::Long ();
 use Pod::Usage ();
 use POSIX ();
 
-my $VERSION = '20250819';
+my $VERSION = '20250909';
 
 my ($d, $m, $y) = (localtime time)[3 .. 5];
 my $TODAY = sprintf "%04d/%02d/%02d", $y + 1900, $m + 1, $d;
@@ -278,6 +278,18 @@ my @WEIGHT = (
                   ultraheavy poster super 1000 ) ],
 );
 
+my %WEIGHT_CLASS = (
+     100  =>  'ultralight',
+     200  =>  'extralight',
+     300  =>  'light',
+     400  =>  'regular',
+     500  =>  'medium',
+     600  =>  'semibold',
+     700  =>  'bold',
+     800  =>  'extrabold',
+     900  =>  'black'
+);
+
 my @WIDTH = (
     uc  =>  [ qw( ultracondensed extracompressed ultracompressed ) ],
     ec  =>  [ qw( extracondensed compressed compact ) ],
@@ -424,7 +436,7 @@ sub unabbreviate {
 sub set_weight {
     my ($key, @values) = @_;
 
-    $WEIGHT{$key} = [ @values, @{$WEIGHT{$key}} ];
+    $WEIGHT{$key} = [ @values ];
     return;
 }
 
@@ -451,7 +463,7 @@ sub get_all_weights {
 sub set_width {
     my ($key, @values) = @_;
 
-    $WIDTH{$key} = [ @values, @{$WIDTH{$key}} ];
+    $WIDTH{$key} = [ @values ];
     return;
 }
 
@@ -634,7 +646,7 @@ sub _new {
     my $self = {
         filename     => $filename,
         width        => 'regular',
-        weight       => 'regular',
+        weight       => undef,
         shape        => 'roman',
         minsize      => 0,
         maxsize      => 0,
@@ -857,6 +869,7 @@ END_ERR_METADATA_MISSING
             last;
         }
     }
+
     my @weights = Attr::get_all_weights();
     for my $weight (@weights) {
         if ($fullinfo =~ m/$weight/xms) {
@@ -866,6 +879,12 @@ END_ERR_METADATA_MISSING
             last;
         }
     }
+    # Suggested by Christoph L. Spiel
+    unless ($self->{weight}) {
+        $self->{weight} = $WEIGHT_CLASS{$self->{weight_class}};
+    }
+    $self->{weight} //= 'regular';
+
     my @shapes = Attr::get_all_shapes();
     for my $shape (@shapes) {
         if ($fullinfo =~ m/$shape/xms) {
@@ -4431,7 +4450,7 @@ GNU General Public License for more details.
 
 =head1 VERSION
 
-This document describes B<autoinst> version 20250819.
+This document describes B<autoinst> version 20250909.
 
 
 =head1 RECENT CHANGES
@@ -4439,6 +4458,16 @@ This document describes B<autoinst> version 20250819.
 (See the source for the full story, all the way back to 2005.)
 
 =over 12
+
+=item I<2025-09-09>
+
+Use the font's WeightClass if its weight cannot be determined
+from other metadata (suggested by Christoph L. Spiel).
+
+=item I<2025-08-25>
+
+Fixed a bug in the processing of the C<-nfssweight> and
+C<-nfsswidth> options.
 
 =item I<2025-08-19>
 
