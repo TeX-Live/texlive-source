@@ -1,3 +1,75 @@
+2025-09-11  Werner Lemberg  <wl@gnu.org>
+
+	* Version 2.14.1 released.
+	==========================
+
+	Tag sources with `VER-2-14-1'.
+
+	* docs/VERSION.TXT: Add entry for version 2.14.1.
+	* docs/CHANGES: Updated.
+	* docs/release, docs/README, builds/macs/README: Updated.
+
+	* README, src/base/ftver.rc, builds/windows/vc2010/index.html,
+	builds/windows/visualc/index.html, builds/windows/visualce/index.html,
+	builds/wince/vc2005-ce/index.html, builds/wince/vc2008-ce/index.html,
+	docs/freetype-config.1: s/2.14.0/2.14.1/, s/2140/2141/.
+
+	* include/freetype/freetype.h (FREETYPE_PATCH): Set to 1.
+
+	* builds/unix/configure.raw (version_info): Set to 26:4:20.
+	* CMakeLists.txt (VERSION_PATCH): Set to 1.
+
+2025-09-10  Behdad Esfahbod  <behdad@behdad.org>
+
+	[base] Fix return values of two Font Variation functions.
+
+	* src/base/ftmm.c (FT_Set_Var_Design_Coordinates,
+	  FT_Set_Var_Blend_Coordinates): Do it.
+
+	Fixes issue #1355.
+
+2025-09-10  Werner Lemberg  <wl@gnu.org>
+
+	* src/autofit/afgsub.c (af_map_lookup): Fix handling of lookup type 7.
+
+	Fixes issue #1356.
+
+2025-09-08  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* src/truetype/ttinterp.c (TT_Run_Context): Fix IUP tracking bits.
+
+	Correctly fixes #1353 and #1349.
+
+2025-09-08  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	Typo!
+
+2025-09-08  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* src/truetype/ttinterp.c (TT_Run_Context): Reset IUP tracking bits.
+
+	Fixes #1353.
+
+2025-09-08  Behdad Esfahbod  <behdad@behdad.org>
+
+	[autofit] Fix HarfBuzz calling.
+
+	* src/autofit/afadjust.c (af_reverse_character_map_new)
+	  [FT_CONFIG_OPTION_USE_HARFBUZZ]: Use `ft_hb_enabled`.
+
+	Fixes issue #1354.
+
+2025-09-08  Werner Lemberg  <wl@gnu.org>
+
+	* docs/release: Use `sshpass` for SourceForge.net password.
+
+2025-09-08  Werner Lemberg  <wl@gnu.org>
+
+	* docs/release: Fix `scp` usage with OpenSSH version >= 9.0.
+
+	Starting with this version, OpenSSH uses `scp` with the SFTP protocol as the
+	default.  However, SFTP is disabled on savannah.gnu.org since January 2025.
+
 2025-09-06  Werner Lemberg  <wl@gnu.org>
 
 	* Version 2.14.0 released.
