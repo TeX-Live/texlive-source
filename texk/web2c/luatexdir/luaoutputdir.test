@@ -14,6 +14,7 @@ TEXMFCNF=$srcdir/../kpathsea; export TEXMFCNF
 outdir=tests/outdirlua
 outfile=outfileLUA.tex
 rm -rf $outdir  # don't let previous runs interfere
+test -d tests || mkdir -p tests # ensure subdir exists
 mkdir $outdir || exit 1
 
 $_luatex -ini -output-directory=$outdir '\immediate\openout1='$outfile'\end' \

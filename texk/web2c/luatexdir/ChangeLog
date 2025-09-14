@@ -1,3 +1,8 @@
+2025-09-14  Karl Berry  <karl@freefriends.org>
+
+	* luaoutputdir.test (tests): mkdir top-level subdir.
+	Report from Maxim Cournoyer, tex-live 12 Sep 2025 22:42:53.
+
 2025-09-02  Luigi Scarso  <luigi.scarso@gmail.com>
 	* Fix field names of mplib.stats (thanks to Josef Friedrich)
           Fixed a wrong date in luatex-nodes.tex.
