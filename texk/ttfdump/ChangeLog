@@ -1,3 +1,11 @@
+2025-09-14  Troy Rollo  <texlive@troyrollo.com.au>
+
+	* src/ttfdump.c (main): remove incorrect heuristic that looked for
+	"ttc" anywhere in the filename. Instead, simply try opening as a
+	ttc first, then as a ttf if that failed. The ttc variable no
+	longer needs to be initialized. Report to tex-live list,
+	https://tug.org/pipermail/tex-live/2025-September/051769.html
+
 2024-01-21  Karl Berry  <karl@freefriends.org>
 
 	* libttf/hdmx.c (ttfLoadHDMX): calloc the number of widths that we

@@ -78,7 +78,7 @@ int
 main(int argc, char *argv[])
 {
   FILE *dp_file;
-  TTCHeaderPtr ttc = NULL;	/* avoid uninitialized warning */
+  TTCHeaderPtr ttc;
 
   int c;
   extern int optind;
@@ -172,13 +172,11 @@ main(int argc, char *argv[])
     exit(EXIT_FAILURE);
   }
 
-  if (strstr (ttfname, "ttc") != NULL || strstr (ttfname, "TTC") != NULL)
+  /* Try to load as a ttc file. */
+  ttc = ttfLoadTTCHeader(ttfname);
+
+  if (ttc != NULL)
   {
-    ttc = ttfLoadTTCHeader(ttfname);
-
-    if (ttc == NULL)
-      exit(EXIT_FAILURE);
-
     if (collection < ttc->DirCount)
       font = ttc->font + collection;
     else
@@ -186,13 +184,14 @@ main(int argc, char *argv[])
                "should between 0 and %d\n", ttc->DirCount - 1);
   }
   else
+    /* If ttc failed, try to load as a ttf. */
     font = ttfInitFont(ttfname);
 
   if (font == NULL)
     exit(EXIT_FAILURE);
 
   print_prologue(dp_file);
-  if (strstr(ttfname, "ttc") != NULL || strstr(ttfname, "TTC") != NULL)
+  if (ttc != NULL)
   {
     print_ttc(ttc, dp_file);
   }
@@ -228,7 +227,7 @@ main(int argc, char *argv[])
     }
   }
 
-  if (strstr(ttfname, "ttc") != NULL || strstr(ttfname, "TTC") != NULL)
+  if (ttc != NULL)
   {
     ttfFreeTTCFont(ttc);
   }
