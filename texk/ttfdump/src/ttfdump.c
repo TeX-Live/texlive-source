@@ -1,3 +1,9 @@
+/* ttfdump - dump contents of a TrueType font file
+   $Id$
+   Originally written by Li-Da Lho, now maintained as part of TeX Live.
+   Released under the GNU GPL (any version).
+*/
+
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
@@ -28,7 +34,7 @@
 #include "ttfutil.h"
 #include "ttc.h"
 
-/* $Id: ttfdump.c,v 1.2 1998/07/04 13:17:52 werner Exp $  */
+/* $Id$  */
 
 #define MAXLEN 256
 #define ALL_GLYF -1

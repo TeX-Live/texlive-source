@@ -1,3 +1,9 @@
+2025-09-14  Karl Berry  <karl@freefriends.org>
+
+	* configure.ac: version 0.5.6.
+	* docs/ttfdump.1: send reports to tex-k, not the original author.
+	* src/ttfdump.c: leading comments.
+
 2025-09-14  Troy Rollo  <texlive@troyrollo.com.au>
 
 	* src/ttfdump.c (main): remove incorrect heuristic that looked for
