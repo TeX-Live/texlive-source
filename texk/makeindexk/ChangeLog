@@ -1,3 +1,10 @@
+2025-09-21  Karl Berry  <karl@freefriends.org>
+
+	* tests/nested-range-test.pl: check return status of test run.
+	Occasionally the output file doesn't exist before we try to open
+	it, for no evident reason. Related to disk caching? Also try
+	sleep(1) if it's not there yet.
+
 2025-08-11  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* tests/pprec.test, tests/range.idx,
