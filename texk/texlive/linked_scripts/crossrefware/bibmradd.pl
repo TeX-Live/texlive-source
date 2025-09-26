@@ -141,7 +141,7 @@ my $parser=new BibTeX::Parser($input);
 
 # Creating the HTTP parameters
 my $mirror =
-    "http://www.ams.org/mathscinet-mref";
+    "https://mathscinet.ams.org/mathscinet-mref";
 my $userAgent = LWP::UserAgent->new;
 
 while (my $entry = $parser->next ) {

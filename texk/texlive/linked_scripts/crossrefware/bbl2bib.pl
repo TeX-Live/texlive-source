@@ -254,7 +254,7 @@ sub ProcessBibitem {
 
 sub SearchMref {
     my $bibitem = shift;
-    my $mirror = "https://www.ams.org/mathscinet-mref";
+    my $mirror = "https://mathscinet.ams.org/mathscinet-mref";
     my $string=uri_escape_utf8($bibitem->{text});
     if ($debug) {
 	print STDOUT "Sending $mirror?ref=$string".'&'."dataType=bibtex\n"
