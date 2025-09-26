@@ -1,3 +1,10 @@
+2025-09-26  Karl Berry  <karl@freefriends.org>
+
+	* writejpg.c (read_jpg_info) <M_SOF2>: check that the PDF major
+	version is 1 before complaining that the minor version is <= 2.
+	Clea Rees, https://tug.org/pipermail/pdftex/2025-September/009457.html.
+	(tests/41-jpeg-dct)
+
 2025-05-17  Karl Berry  <karl@freefriends.org>
 
         * NEWS,
