@@ -1,3 +1,18 @@
+2025-09-30  Karl Berry  <karl@freefriends.org>
+
+	* doc/web2c.texi (tex invocation): try to clarify
+	command-line/first-line processing, including input filename
+	expansion. Original report from Duncan Murdoch,
+	https://tug.org/pipermail/tex-live/2025-August/051650.html.
+	Also, use @code{TRIP} since that's that Knuth does (noticed by Max
+	Chernoff).
+	(\input filename caveats): mention that Windows reserves CON[.tex],
+	etc. From Max.
+	
+	(Formats) <amstex>: no longer AMS's preferred system.
+	<slitex>: mention ltx-talk.
+	Other updates in passing.
+
 2025-08-10  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* ac/web2c.ac (ptex), Makefile.am, uptexdir/am/uptex.am,

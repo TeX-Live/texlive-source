@@ -1,3 +1,15 @@
+2025-09-29  Karl Berry  <karl@freefriends.org>
+
+	* tex.man: try to clarify command-line/first-line processing,
+	including input filename expansion. Original report from Duncan
+	Murdoch, https://tug.org/pipermail/tex-live/2025-August/051650.html.
+	Other updates, suggested by Max Chernoff: - and -- both allowed,
+	etc.; shell escape description updated.
+	Other updates made in passing.
+
+	* Makefile.am (testman, testmans): new targets to generate
+	pdf output from man pages.
+
 2025-07-27  Andreas Scherer  <https://ascherer.github.io>
 
 	* ctwill.man,

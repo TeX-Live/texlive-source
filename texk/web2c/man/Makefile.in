@@ -501,6 +501,11 @@ DITROFF = groff
 DVIS = $(man_files:.1=.dvi)
 PSS = $(man_files:.1=.ps)
 DISTCLEANFILES = sedscript $(man_files) $(DVIS) $(PSS)
+
+# to make a test tex.pdf from tex.man:  make m=tex -C $ww/man testman  
+# where ww=.../Work/texk/web2c, and that's where the pdf file is output.
+# We force a4 since that's what we distribute.
+testopts = -man -Tpdf -P-pa4
 all: all-am
 
 .SUFFIXES:
@@ -800,6 +805,15 @@ uninstall-man1-links:
 install-data-hook: install-man1-links
 
 uninstall-hook: uninstall-man1-links
+testman:
+	pdf=`basename "$m" .man`.pdf; \
+	groff $(testopts) $(srcdir)/$m.man >"$$pdf" \
+	|| { rm -f "$$pdf"; exit 1; }; # ls -l `pwd`/"$$pdf"
+
+# remake pdfs for all *.man files.
+testmans:
+	for m in $(srcdir)/*.man; do \
+	  $(MAKE) m=`basename $$m .man` testman || exit 1; done
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

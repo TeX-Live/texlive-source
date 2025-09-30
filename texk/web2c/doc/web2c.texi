@@ -12,7 +12,7 @@ The latest version is available from ftp://ftp.tug.org/tex/texinfo.tex.}
 @end tex
 
 @set version 2025
-@set month-year July 2025
+@set month-year September 2025
 
 @c Define new indices for commands in auxiliary files, filenames, and options.
 @defcodeindex cm
@@ -255,8 +255,8 @@ available across all the engines; @pxref{TeX extensions}.
 @findex getopt_long_only
 To provide a clean and consistent behavior, we chose to have all these
 programs use the GNU function @code{getopt_long_only} to parse command
-lines.  However, we do use in a restricted mode, where all the options
-have to come before the rest of the arguments.
+lines.  It is used in a restricted mode where all the options have to
+come before the rest of the arguments.
 
 @opindex - @r{starts option names}
 @opindex -- @r{starts option names}
@@ -429,6 +429,7 @@ Enable the filename recorder.  This makes the program save a list of the
 opened files into a file with (by default) extension @samp{.fls}.  For
 Aleph, this option is always on, and the file has extension @samp{.ofl}.
 
+@cindex pid, used in recorder filename
 Ordinarily, the @samp{.fls} file is written to the same location as
 the @samp{.log} file, for example, respecting
 @option{-output-directory} if it is given (@pxref{Output file
@@ -960,6 +961,9 @@ and @samp{%s} is replaced by the name of the current input file.
 @cindex filename conventions, in input files
 @findex \input @r{filenames}
 
+@c Nicer name to use in tex.1 man page.
+@anchor{Input filenames}
+
 @TeX{}, Metafont, and MetaPost source programs can all read other source
 files with the @code{\input} (@TeX{}) and @code{input} (MF and MP)
 primitives:
@@ -976,11 +980,11 @@ Metafont and MetaPost, the statement terminator @samp{;} also works.
 @code{\input} that allow different notation; here we are concerned only
 with the primitive operation.)  
 
-As (allowed) extensions to standard @TeX{}, Web2c also supports
-specifying the filename in double quotes (@code{"some name"}) and in
-braces (@code{@{some name@}}), which is convenient for filenames
-containing spaces or other special characters, as described in the
-sections below.
+As an extension to standard @TeX{} (allowed by Knuth's conditions),
+Web2c also supports specifying the filename in double quotes
+(@code{"some name"}) and in a group, i.e., braces (@code{@{some
+name@}}), which is convenient for filenames containing spaces or other
+special characters, as described in the sections below.
 
 In all cases, space tokens are ignored after the filename is read.
 
@@ -990,11 +994,11 @@ Also, double quote (@code{"}) characters are ignored within the
 filename; there is no way to read files whose names contain a @code{"}.
 
 @cindex portable filenames
-However, for maximal portability of your document across systems, use
-only the characters @samp{a}--@samp{z}, @samp{0}--@samp{9}, and at
-most one @samp{.}.  Do not use anything but simple filenames, since
-directory separators vary among systems; instead, add the necessary
-directories to the appropriate search path.
+For maximal portability of your document across systems, use only the
+characters @samp{a}--@samp{z}, @samp{0}--@samp{9}, and at most one
+@samp{.}. Do not use anything but simple filenames, since directory
+separators vary among systems; instead, add the necessary directories
+to the appropriate search path.
 
 @menu
 * Quotes: \input quoted filename.   \input "some name"
@@ -1074,36 +1078,47 @@ tabs will generally be seen as a single space, active characters such
 as @samp{~} are expanded first (generally causing an error), and so
 on.  More examples below.
 
-@cindex NUL, not allowed in filenames
+@cindex NUL bytes, not allowed in filenames
 @cindex eight-bit characters in filenames
 @cindex meta characters in filenames
-On the other hand, various C library routines and Unix itself use the null
-byte (character code zero, ASCII NUL) to terminate strings.  So
-filenames in Web2c cannot contain nulls, even though @TeX{} itself does
-not treat NUL specially.
+Various C library routines and Unix itself use the null byte
+(character code zero, ASCII NUL) to terminate strings.  So filenames
+in Web2c cannot contain nulls, even though @TeX{} itself does not
+treat NUL specially.
+
+@flindex CON{, reserved filename on Windows}
+@flindex NUL@r{, reserved filename on Windows}
+@flindex COM1@r{@code{..0}, reserved filename on Windows}
+Windows reserves a long list of alphanumeric filenames,
+case-insensitive and with any extension, such as @samp{CON},
+@samp{NUL}, @samp{COM1}, @samp{con.tex}, etc.; see Windows systems
+documentation for the whole list. Trying to use such names will cause
+a system error on Windows.
 
 @kindex ~ @r{expansion in filenames}
 @kindex $ @r{expansion in filenames}
 Finally, the present Web2c implementation does @samp{~} and @samp{$}
-expansion on @var{name}, unlike Knuth's original implementation.
-Thus:
+expansion on @var{name}, on all platforms, unlike Knuth's original
+program. Thus:
+
 @example
 \input ~jsmith/$foo.bar
 @end example
-will dereference the environment variable or Kpathsea config file
+
+@noindent will dereference the environment variable or Kpathsea config file
 value @samp{foo} and read that file, extended with @samp{.bar}, in
 user @samp{jsmith}'s home directory.  You can also use braces in the
 variable expansion, as in @samp{$@{foo@}bar}, if you want to follow
 the variable name with a letter, numeral, or @samp{_}.
 
-(So another way to get a program to read a filename containing
+(So, another way to get a program to read a filename containing
 whitespace is to define an environment variable and dereference it.)
 
 @findex \string@r{, and @code{\input filenames}}
 In all the common @TeX{} formats (plain @TeX{}, @LaTeX{}, Con@TeX{}t,
-AMS@TeX{}, @dots{}), the characters @samp{~} and @samp{$} have special
-category codes, so to actually use these in a document you have to
-change their catcodes or use @code{\string}.
+@dots{}), the characters @samp{~} and @samp{$} have special category
+codes, so to use them within a document you have to change their
+catcodes or use @code{\string}.
 
 
 @node TeX
@@ -1156,10 +1171,20 @@ here) and determine their memory dump (fmt) file in the same way
 (@pxref{Memory dumps}).  Synopses:
 
 @example
-tex [@var{option}]@dots{} [@var{texname}[.tex]] [@var{tex-commands}]
-tex [@var{option}]@dots{} \@var{first-line}
-tex [@var{option}]@dots{} &@var{fmt} @var{args}
+tex [@var{option}]@dots{} [@var{texname}[.tex]] [@var{more-input}]
+tex [@var{option}]@dots{} \@var{more-input}
+tex [@var{option}]@dots{} &@var{fmt} @var{first-line}
 @end example
+
+In short, @TeX{} prepends @code{\input } to non-option command line
+arguments or the input to the @samp{**} prompt, and then processes the
+result as normal @TeX{} input, including expansion.
+
+The most common invocation is @samp{tex somefile}, which reads
+@samp{somefile.tex}, normally from the current directory.  It is
+equivalent to @code{\input somefile}.
+
+In more detail:
 
 @flindex .tex
 @cindex @TeX{}, input files found
@@ -1170,60 +1195,63 @@ relevant paths, set the environment variable @code{KPATHSEA_DEBUG} to
 @samp{-1} before running the program.
 
 After @var{texname} is read, @TeX{} processes any remaining
-@var{tex-commands} on the command line as regular @TeX{} input.  Also,
+@var{more-input} on the command line as regular @TeX{} input.  Also,
 if the first non-option argument begins with a @TeX{} escape character
 (usually @code{\}), @TeX{} processes all non-option command-line
-arguments as a line of regular @TeX{} input.
+arguments as a line of regular @TeX{} input. The backslash or other
+escape character usually has to be escaped to avoid being processed by
+your shell.
 
-If no arguments or options are specified, @TeX{} prompts for an
-input filename with @samp{**}.
+If no arguments or options are specified, @TeX{} prompts for an input
+filename with @samp{**}.  Whatever input is given in response to
+@samp{**} is processed exactly like a command line not starting with
+an escape character, i.e., @code{\input} is prepended and then the
+entire line is processed as normal @TeX{} intput.
+
+Thus, the text of an input filename, as well as any text following a
+filename, is subject to @TeX{}'s normal macro expansion. As a result, a
+@samp{~} character is normally not usable within a filename, since by
+default @samp{~} is defined (in plain @TeX{}, @LaTeX{}, etc.)@: to be
+an active character that expands into several primitive tokens that
+can't be part of a filename. As a special case in Web2c, a @samp{~}
+@emph{beginning} a filename refers to a user's home directory
+(@pxref{\input filename caveats}), but you still have to arrange for
+@TeX{} to see a @samp{~} character rather than the expansion of @samp{~}.
+
+To summarize the usual cases (in all these cases, @code{tex} also
+reads @file{tex.fmt} before starting any processing):
+
+@itemize
+@item @samp{tex foo} executes @samp{\input foo}.
+
+@item @samp{tex foo bar} executes @samp{\input foo bar}, which inputs
+@file{foo.tex} and then typesets @samp{bar}.
+
+@item @samp{tex \\end} executes @samp{\end}; here the double backslash
+is one common way of escaping the backslash for the shell. @TeX{} only
+sees one backslash.
+
+@item @samp{tex} with no arguments prints a @samp{**} prompt.
+Entering @samp{foo bar} at the @samp{**} prompt again executes
+@samp{\input foo} and typesets @samp{bar}.
+@end itemize
 
 @flindex texput
-@TeX{} writes the main DVI output to the file
-@file{@var{basetexname}.dvi}, where @var{basetexname} is the basename of
-@var{texname}, or @samp{texput} if no input file was specified.  A DVI
-file is a device-independent binary representation of your @TeX{}
-document.  The idea is that after running @TeX{}, you translate the DVI
-file using a separate program to the commands for a particular output
-device, such as a PostScript printer
-(@pxref{Top,,Introduction,dvips,Dvips}) or an X Window System display
-(see xdvi(1)).
+@TeX{} writes its main output, a DVI file, to
+@file{@var{basetexname}.dvi}, where @var{basetexname} is the basename
+of @var{texname}, or @samp{texput} if no input file was specified.
 
-@cindex EC fonts
-@pindex mktextfM@r{, disabling}
-@findex \font @r{and dynamic generation}
-@TeX{} also reads TFM files for any fonts you load in your document with
-the @code{\font} primitive.  By default, it runs an external program
-named @file{mktextfm} to create any nonexistent TFM files.  You can
-disable this at configure-time or runtime (@pxref{mktex
-configuration,,, kpathsea, Kpathsea}).  This is enabled mostly for the
-sake of the EC fonts, which can be generated at any size.
-
-@findex \openout @r{and security}
-@cindex security, and @code{\openout}
-@cindex output files, written by @TeX{} programs
-@cindex Trojan horses and @TeX{} programs
-@cindex dot files, written by @TeX{} programs
-@cindex security, and output files
-@TeX{} can write output files, via the @code{\openout} primitive; this opens
-a security hole vulnerable to Trojan horse attack: an unwitting user could
-run a @TeX{} program that overwrites, say, @file{~/.rhosts}.  (MetaPost has
-a @code{write} primitive with similar implications).  To alleviate this and
-similar problems the functions @code{kpathsea_out_name_ok} and
-@code{kpathsea_in_name_ok} from the Kpathsea library (@pxref{Calling
-sequence,,, kpathsea, Kpathsea}) are used to determine if a given filename
-is acceptable to be opened for output or input, depending on the setting of
-the configuration variables @code{openout_any} and @code{openin_any}:
-@samp{a} (for ``any'', the default for @code{openin_any}), @samp{r} (for
-``restricted''), or @samp{p} (for ``paranoid'', the default for
-@code{openout_any}).
-
-In any case, all @code{\openout} filenames are recorded in the log file,
-except those opened on the first line of input, which is processed when
-the log file has not yet been opened.
+A DVI file is a device-independent binary representation of your
+document.  You can translate the DVI file, using independent programs,
+to whatever may be needed, such as a PDF file (see dvipdfmx(1)),
+a PostScript file (@pxref{Top,,Introduction,dvips,Dvips}), an SVG file
+(see dvisvgm(1)), etc.  There are also variants of @TeX{} that can
+produce PDF files directly, namely pdf@TeX{} and Lua@TeX{} (@pxref{TeX
+extensions}).
 
 The program accepts the following options, as well as the standard
 @samp{-help} and @samp{-version} (@pxref{Common options}):
+
 @table @samp
 @item -enc
 @itemx -[no]-file-line-error
@@ -1300,7 +1328,7 @@ config file value @samp{output_comment}.
 @itemx -shell-restricted
 @opindex -shell-restricted
 Enable, or disable, or enable with restrictions the
-@code{\write18@{@var{shell-command}@}} feature for external executing
+@code{\write18@{@var{shell-command}@}} feature for external execution of
 shell commands.  @xref{Shell escapes}.
 
 @item -enable-write18
@@ -1344,10 +1372,50 @@ Redefining @samp{\special} will not affect the functioning of this
 option.  The commands inserted into the token stream are
 hard-coded to always use the @samp{\special} primitive.
 
-@TeX{} does not pass the trip test when this option is enabled.
+@TeX{} does not pass the @code{TRIP} test when this option is enabled.
 
 @end table
 
+Other input and output that can happen:
+
+@itemize
+@item
+@pindex mktextfm@r{, disabling}
+@findex \font @r{and dynamic generation}
+@TeX{} also reads TFM files for any fonts you load in your document with
+the @code{\font} primitive.  By default, it runs an external program
+named @file{mktextfm} to create any nonexistent TFM files.  You can
+disable this at configure-time or runtime (@pxref{mktex
+configuration,,, kpathsea, Kpathsea}).
+
+@item
+@findex \openout @r{and security}
+@cindex security, and @code{\openout}
+@cindex output files, written by @TeX{} programs
+@cindex Trojan horses and @TeX{} programs
+@cindex dot files, written by @TeX{} programs
+@cindex security, and output files
+@TeX{} can write output files, via the @code{\openout} primitive. This
+raises the possibility of a Trojan horse attack: an unwitting user
+could run a @TeX{} program that overwrites, say,
+@file{$HOME/.ssh/authorized_keys}.  (MetaPost has a @code{write}
+primitive with similar implications.)
+
+To alleviate this and similar problems, the functions
+@code{kpathsea_out_name_ok} and @code{kpathsea_in_name_ok} from the
+Kpathsea library (@pxref{Calling sequence,,, kpathsea, Kpathsea}) are
+used to determine if a given filename is acceptable to be opened for
+output or input, depending on the setting of the configuration
+variables @code{openout_any} and @code{openin_any}: @samp{a} (for
+``any'', the default for @code{openin_any}), @samp{r} (for
+``restricted''), or @samp{p} (for ``paranoid'', the default for
+@code{openout_any}).
+
+In any case, all @code{\openout} filenames are recorded in the log file,
+except those opened on the first line of input, which is processed before
+the log file has been opened.
+
+@end itemize
 
 @node Initial TeX
 @section Initial @TeX{}
@@ -1369,26 +1437,27 @@ For a list of options and other information, @pxref{tex invocation}.
 @flindex tex.fmt
 @cindex format files
 Unlike Metafont and MetaPost, many format files are commonly used with
-@TeX{}.  The standard one implementing the features described in the
-@cite{@TeX{}book} is @samp{plain.fmt}, also known as @samp{tex.fmt}
-(again, @pxref{Memory dumps}).  It is created by default during
-installation, but you can also do so by hand if necessary (e.g., if an
-update to @file{plain.tex} is issued):
+@TeX{}.  The standard one implementing the features described in
+@cite{The @TeX{}book} is @samp{plain.fmt}, also known as
+@samp{tex.fmt} (again, @pxref{Memory dumps}).  It is created by
+default during installation, but you can also do so by hand if
+necessary:
+
 @example
 tex -ini '\input plain \dump'
 @end example
+
 @noindent
 (The quotes prevent interpretation of the backslashes from the shell.)
-Then install the resulting @file{plain.fmt} in @samp{$(fmtdir)}
-(@file{/usr/local/share/texmf/web2c} by default), and link
-@file{tex.fmt} to it.
+Then put the resulting @file{plain.fmt} where @TeX{} will find it, and
+link @file{tex.fmt} to it. Any existing @file{tex.fmt} can be found
+with the invocation:
 
-The necessary invocation for generating a format file differs for each
-format, so instructions that come with the format should explain.  The
-top-level @file{web2c} Makefile has targets for making most common
-formats: @t{plain latex amstex texinfo eplain}.  @xref{Formats}, for
-more details on @TeX{} formats.
+@example
+kpsewhich --all --engine=/ tex.fmt
+@end example
 
+@xref{Formats}, for more details on @TeX{} formats.
 
 @node Formats
 @section Formats
@@ -1400,45 +1469,38 @@ more details on @TeX{} formats.
 @TeX{} @dfn{formats} are large collections of macros, often dumped
 into a @file{.fmt} file (@pxref{Memory dumps}) by @code{tex -ini}
 (@pxref{Initial TeX}).  A number of formats are in reasonably
-widespread use, and the Web2c Makefile has targets to make the versions
-current at the time of release.  You can change which formats are
-automatically built by setting the @code{fmts} Make variable; by default,
-only the @samp{plain} and @samp{latex} formats are made.
-
-Nowadays, the formats are generally installed and updated as part of a
-larger @TeX{} distribution, such as @TeX{} Live
+widespread use. The formats are generally selected, installed, and
+updated as part of a larger @TeX{} distribution, such as @TeX{} Live
 (@url{https://tug.org/texlive}).
 
 @table @t
 @item latex
 @cindex @LaTeX{}
-The most widely used format.  The current release is named
-`@LaTeX{}2e'; new versions are released approximately every six
-months, with patches issued as needed.  The old release was called
-`@LaTeX{} 2.09', and is no longer maintained or supported.  @LaTeX{}
-attempts to provide generic markup instructions, such as
-``emphasize'', instead of specific typesetting instructions, such as
-``use the 10@dmn{pt} Computer Modern italic font''.  The @LaTeX{} home
-page: @url{https://www.latex-project.org}.
+The most widely used format, named `@LaTeX{}2e'; new versions are
+released approximately every six months, with patches issued as
+needed.  The old release was called `@LaTeX{} 2.09', and is no longer
+maintained or supported, though compatibility for 2.09 documents is
+retained.  @LaTeX{} attempts to provide generic markup instructions,
+such as ``emphasize'', instead of specific typesetting instructions,
+such as ``use the 10@dmn{pt} Computer Modern italic font''.  The
+@LaTeX{} home page: @url{https://www.latex-project.org}.
 
 @item context
 @cindex Con@TeX{}t
 Con@TeX{}t is an independent macro package which has a basic document
 structuring approach similar to @LaTeX{}.  It also supports creating
 interactive PDF files and has integrated MetaPost support, among many
-other interesting features.  The Con@TeX{}t home page:
+other advanced features.  The Con@TeX{}t home page:
 @url{http://www.pragma-ade.com}.
 
-@item amstex
-@cindex AMS@TeX{}
-@cindex American Mathematical Society, typesetting system
-@cindex Mathematical Reviews
-The official typesetting system of the American Mathematical Society.
-Like @LaTeX{}, it encourages generic markup commands.  The AMS also
-provides many @LaTeX{} packages for authors who prefer @LaTeX{}.  Taken
-together, they are used to produce nearly all AMS publications, e.g.,
-@cite{Mathematical Reviews}.  The AMS@TeX{} home page:
-@url{https://www.ams.org/tex}.
+@item eplain
+@cindex Eplain
+@cindex expanded plain format
+An ``expanded plain'' format that provides various common features
+(e.g., symbolic cross-referencing, tables of contents, indexing,
+citations using Bib@TeX{}), for those authors who prefer to handle
+their own high-level formatting.  The Eplain home page:
+@url{https://tug.org/eplain}.
 
 @item texinfo
 @cindex Texinfo
@@ -1446,27 +1508,33 @@ together, they are used to produce nearly all AMS publications, e.g.,
 @cindex Free Software Foundation documentation system
 The documentation system developed and maintained by the Free Software
 Foundation for their software manuals.  It can be automatically
-converted into plain text, a machine-readable on-line format called
-`info', HTML, etc.  The Texinfo home page:
+converted into HTML, plain text, a machine-readable online format
+called Info, etc.  The Texinfo home page:
 @url{https://www.gnu.org/software/texinfo}.
 
-@item eplain
-@cindex Eplain
-@cindex expanded plain format
-The ``expanded plain'' format provides various common features (e.g.,
-symbolic cross-referencing, tables of contents, indexing, citations
-using Bib@TeX{}), for those authors who prefer to handle their own
-high-level formatting.  The Eplain home page:
-@url{https://tug.org/eplain}.
+@item amstex
+@cindex AMS@TeX{}
+@cindex American Mathematical Society, typesetting system
+@cindex Mathematical Reviews
+This was the official typesetting system of the American Mathematical
+Society; nowadays, the AMS recommends authors use @LaTeX{}; the AMS
+provides a number of @LaTeX{} packages important for math typesetting.
+The AMS's @TeX{} page:
+@url{https://www.ams.org/tex}.
 
 @item slitex
 @cindex Sli@TeX{}
 @cindex slides, producing
 @flindex beamer@r{, package}
-An obsolete @LaTeX{} 2.09 format for making slides.  It is replaced by
-the @samp{slides} document class, although the @samp{beamer} package
-is the most commonly method for making slides nowadays. The Beamer
-page on CTAN: @url{https://ctan.org/pkg/beamer}.
+@flindex slides@r{, package}
+@flindex ltx-talk@r{, package}
+An obsolete @LaTeX{} 2.09 format for making slides.  In core
+@LaTeX{}2e, it is replaced by the @samp{slides} document class. As of
+2025, the @samp{ltx-talk} class is also provided for typesetting
+presentations, including accessibility support:
+@url{https://ctan.org/pkg/ltx-talk}.  The @samp{beamer} package is
+perhaps the most commonly used method for making slides nowadays:
+@url{https://ctan.org/pkg/beamer}.
 
 @end table
 
@@ -2003,7 +2071,7 @@ e-@TeX{} extensions, new primitives for hypertext and
 micro-typography, reading/writing from pipes, and much more.  In
 @TeX{} Live, the command @command{etex} invokes pdf@TeX{} to make all
 these additions available with DVI output. Home page:
-@url{http://pdftex.org}.
+@url{https://pdftex.org}.
 
 @item Lua@TeX{}
 @cindex Lua@TeX{}
@@ -2016,7 +2084,7 @@ Embeds the Lua programming language (@url{http://lua.org}) and opens
 up the @TeX{} typesetting engine to control from Lua, starting from
 the pdf@TeX{} capabilities as a base.  Also natively supports UTF-8
 input, the OpenType and TrueType font formats, and use of system
-fonts. Home page: @url{http://luatex.org}.
+fonts. Home page: @url{https://luatex.org}.
 
 @item Xe@TeX{}
 @cindex Xe@TeX{}
@@ -2233,15 +2301,14 @@ For a list of options and other information, see @ref{mf invocation}.
 The only memory dump file commonly used with Metafont is the default
 @samp{plain.base}, also known as @samp{mf.base} (again, @pxref{Memory
 dumps}).  It is created by default during installation, but you can also
-do so by hand if necessary (e.g., if a Metafont update is issued):
+do so by hand if necessary:
 @example
 mf -ini '\input plain; input modes; dump'
 @end example
 @noindent
 (The quotes prevent interpretation of the backslashes from the shell.)
-Then install the resulting @file{plain.base} in @samp{$(basedir)}
-(@file{/usr/local/share/texmf/web2c} by default), and link
-@file{mf.base} to it.
+Then install the resulting @file{plain.base} where Metafont will find
+it, and link @file{mf.base} to it.
 
 For an explanation of the additional @file{modes.mf} file,
 see @ref{Modes}.  This file has no counterpart in @TeX{} or MetaPost.
@@ -2258,8 +2325,8 @@ additional time required to read @file{cmbase.mf} is exceedingly small,
 usually not enough to be worth the administrative hassle of updating the
 @file{cmmf.base} file when you install a new version of @file{modes.mf}.
 @cindex type design, personal
-People actually working on a typeface may still find it worthwhile to
-create their own base file, of course.
+People developing a typeface with Metafont may find it worthwhile to
+create their own base file.
 
 
 @node Modes
