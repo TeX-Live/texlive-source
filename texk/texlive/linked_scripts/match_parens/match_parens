@@ -2,7 +2,7 @@
 # encoding: utf-8
 
  Myname = File.basename($0)
-Version = '1.44'
+Version = '1.45'
 
 Help=
 <<'DOC'
@@ -17,7 +17,7 @@ match_parens [filename]
 -V,--version	print version and exit
 -l,--latex	convert ``...'' to “...” before testing
 -n,--number=N	set number of mismatching characters shown to N (default: 10)
--p,--pairs=S	set matching pairs to S (default: {}[]()""“”''‘’)
+-p,--pairs=S	set matching pairs to S (default: {}[]()“”«»‘’""'')
    --test	do an internal test and exit
 
 = Description
@@ -59,7 +59,7 @@ supposed to start with |<html>| or |=begin rdoc| and to end with
 	Set number of mismatching characters shown to N. By default, only the
 	first 10 are shown.
 -p,--pairs=S	
-	Set matching pairs to S (default: |{}[]()""“”''‘’|). For
+	Set matching pairs to S (default: |{}[]()“”''«»""‘’|). For
 	example, if you want to look for mismatching ASCII single quotes
 	/only/, use |--pairs="''"|.
 	Or, if you want to match braces and guillemets only, use |-p «»|.
@@ -111,7 +111,7 @@ Matches must be in correct order:
          2 ([)]	
 
 = Author
-[Wybo Dekker](wybo@dekkerdocumenten.nl)
+[Wybo Dekker](wybodekker@me.com)
 
 = Copyright
 Released under the [GNU General Public License](www.gnu.org/copyleft/gpl.html)
@@ -133,7 +133,7 @@ $o = OpenStruct.new(
          :s => '',
       :html => false,
       :test => false,
-:parenstext => %q{{}[]()""“”''‘’}
+:parenstext => %q{{}[]()“”''«»""‘’}
 )
 
 OptionParser.new(
