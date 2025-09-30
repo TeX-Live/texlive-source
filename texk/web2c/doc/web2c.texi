@@ -1086,7 +1086,7 @@ Various C library routines and Unix itself use the null byte
 in Web2c cannot contain nulls, even though @TeX{} itself does not
 treat NUL specially.
 
-@flindex CON{, reserved filename on Windows}
+@flindex CON@r{, reserved filename on Windows}
 @flindex NUL@r{, reserved filename on Windows}
 @flindex COM1@r{@code{..0}, reserved filename on Windows}
 Windows reserves a long list of alphanumeric filenames,
