@@ -1,3 +1,11 @@
+2025-10.02  Andreas Scherer  <https://ascherer.github.io>
+
+	* upbibtex.ch: Minor improvements for TIE and WEAVE.
+
+2025-10-02  Karl Berry  <karl@freefriends.org>
+
+	* upbibtex.ch: adapt to bibtex.web 0.99e and bibtex.ch.
+
 2025-08-10  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* pTeX_doc/{{README,Changes,INSTALL}.txt,ChangeLog,

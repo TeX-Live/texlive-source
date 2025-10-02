@@ -35,10 +35,9 @@
 % 2022-12-03    Version 0.36 by Takuji Tanaka (-> TL'23 version)
 %   * Merge pBibTeX source/binary into upBibTeX.
 
-@x [0] only print chnages
+@x [0] extended version information
 \def\title{\BibTeX\ }
 @y
-\let\maybe=\iffalse
 \def\title{J\BibTeX\ 0.36 Changes for C Version \BibTeX\ }
 @z
 
@@ -912,22 +911,9 @@ begin kpse_set_program_name (argv[0], 'upbibtex');
 @z
 
 @x
-  until j_prime;
-  incr (k);
-  hash_prime := j;
-  primes[k] := hash_prime;
-  end;
-end;
-
+@* Index.
 @y
-  until j_prime;
-  incr (k);
-  hash_prime := j;
-  primes[k] := hash_prime;
-  end;
-end;
-
-@ modules for JBibTeX
+@ Modules for JBibTeX.
 
 @<|execute_fn|({\.{is.kanji.str\$}})@>=
 procedure x_is_kanji_str;
@@ -988,7 +974,7 @@ begin
     else if k=@"1FE then return { Fullwidth digit and latin alphabet }
     else if k=@"1FF then return; { Halfwidth katakana }
     end
-  else { is_internalEUC }
+  else { |is_internalEUC| }
     if is_char_kanji(c) then return;
   is_char_kanji_upbibtex := false;
 exit:end;
@@ -1008,7 +994,7 @@ if (is_internalUPTEX) then
     for i:=@"F0 to @"F4 do char_width[i]:=257; { lead bytes (4bytes) }
   end
 else
-  begin { is_internalEUC }
+  begin { |is_internalEUC| }
     for i:=@'200 to @'240 do lex_class[i] := illegal;
     for i:=@'241 to 254 do lex_class[i] := alpha;
     lex_class[255]:=illegal;
@@ -1019,4 +1005,6 @@ else
     for i:=@'241 to 254 do char_width[i]:=514;
     char_width[e_ss3]:=0;
   end;
+
+@* Index.
 @z
