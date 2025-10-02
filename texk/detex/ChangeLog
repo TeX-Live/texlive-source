@@ -14,7 +14,9 @@
         (getenv) add prototype arg.
 	(TexOpen): avoid decl with no args.
 	Etc.
-	From https://github.com/pkubowicz/opendetex/pull/86.
+	From https://github.com/pkubowicz/opendetex/pull/86
+	originally:
+	https://github.com/debian-tex/texlive-bin/blob/master/debian/patches/gcc-15/86.patch
 
 2024-01-07  Hironobu Yamashita  <h.y.acetaminophen@gmail.com>
 
