@@ -43,13 +43,11 @@
 @z
 
 @x
- \def\titlepage{F}
  \centerline{\:\titlefont The {\:\ttitlefont \BibTeX} preprocessor}
- \vskip 15pt \centerline{(Version 0.99d---\today)} \vfill}
+ \vskip 15pt \centerline{(Version 0.99e---\today)} \vfill}
 @y
- \def\titlepage{F}
  \centerline{\:\titlefont The {\:\ttitlefont J\BibTeX} preprocessor}
- \vskip 15pt \centerline{(Version 0.99d-j0.36---\today)} \vfill}
+ \vskip 15pt \centerline{(Version 0.99e-j0.36---\today)} \vfill}
 @z
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -57,10 +55,10 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 @x
 @d my_name=='bibtex'
-@d banner=='This is BibTeX, Version 0.99d' {printed when the program starts}
+@d banner=='This is BibTeX, Version 0.99e' {printed when the program starts}
 @y
 @d my_name=='upbibtex'
-@d banner=='This is upBibTeX, Version 0.99d-j0.36-u2.01'
+@d banner=='This is upBibTeX, Version 0.99e-j0.36-u2.01'
   {printed when the program starts}
 @z
 
@@ -455,7 +453,7 @@ case (str_pool[sp_ptr]) of
     exclamation_mark :
         repush_string;
     othercases
-        @<Add the |period| (it's necessary) and push@>
+        @<Add the |period|\(t) (it's necessary) and push@>
 @y
 case (str_pool[sp_ptr]) of
     period,
@@ -474,9 +472,9 @@ case (str_pool[sp_ptr]) of
                     if (str_pool[sp_ptr-2]<>e_ss3) then
                        repush_string
                     else
-                       @<Add the |period| (it's necessary) and push@>;
+                       @<Add the |period|\(t) (it's necessary) and push@>;
                 othercases
-                    @<Add the |period| (it's necessary) and push@>;
+                    @<Add the |period|\(t) (it's necessary) and push@>;
             endcases;
             end;
         if (is_internalUPTEX) then
@@ -493,7 +491,7 @@ case (str_pool[sp_ptr]) of
                 u_exclam_question:
                     repush_string;
                 othercases
-                    @<Add the |period| (it's necessary) and push@>;
+                    @<Add the |period|\(t) (it's necessary) and push@>;
             endcases;
             end;
         end;

@@ -1,3 +1,14 @@
+2025-10-02  Karl Berry  <karl@freefriends.org>
+
+	* bibtex.web: version 0.99e, with fixes for weave (only).
+	- No more active `E (reported by Andreas Scherer and Norman Gray).
+	- Use \TeX in \BibTeX and \LaTeX definitions.
+	- Sort names of the sections better (from Andreas).
+	- Remove unused \titlepage macro.
+	- Assorted typos.
+	* bibtex.ch,
+	* uptexdir/upbibtex.ch: adapt.
+
 2025-09-30  Karl Berry  <karl@freefriends.org>
 
 	* doc/web2c.texi (tex invocation): try to clarify

@@ -14,30 +14,18 @@
 % (more recent changes in the ChangeLog)
 
 @x [0]
-\def\(#1){} % this is used to make section names sort themselves better
+\font\sc=cmcsc10
 @y
-\def\({} % this is used to make section names sort themselves better
-@z
+\font\sc=cmcsc10
 
-% [0] Let bibtex.tex work with latest webmac (which defines \ET, hence
-% making E active loses).
-@x [0]
-% Note: WEAVE will typeset an upper-case `E' in a PASCAL identifier a
-% bit strangely so that the `TeX' in the name of this program is typeset
-% correctly; if this becomes a problem remove these three lines to get
-% normal upper-case `E's in PASCAL identifiers
-\def\drop{\kern-.1667em\lower.5ex\hbox{E}\kern-.125em} % middle of TeX
-\catcode`E=13 \uppercase{\def E{e}}
-\def\\#1{\hbox{\let E=\drop\it#1\/\kern.05em}} % italic type for identifiers
-@y
 \let\maybe = \iffalse % process only changed sections
 @z
 
 @x [1] Define my_name
-@d banner=='This is BibTeX, Version 0.99d' {printed when the program starts}
+@d banner=='This is BibTeX, Version 0.99e' {printed when the program starts}
 @y
 @d my_name=='bibtex'
-@d banner=='This is BibTeX, Version 0.99d' {printed when the program starts}
+@d banner=='This is BibTeX, Version 0.99e' {printed when the program starts}
 @z
 
 % [2] `term_in' and `term_out' are standard input and output.  But
@@ -106,11 +94,13 @@ label   close_up_shop @<Labels in the outer block@>;
 @z
 
 @x [10] Don't print the banner unless verbose, and initialize dynamic arrays.
+@#
 begin
 initialize;
 print_ln(banner);@/
 @y
-@<Define \(|parse_arguments|@>
+@;@<Define \(p)|parse_arguments|@>
+@#
 begin
 standard_input := stdin;
 standard_output := stdout;
@@ -124,7 +114,7 @@ max_cites := MAX_CITES;
 wiz_fn_space := WIZ_FN_SPACE;
 lit_stk_size := LIT_STK_SIZE;
 @#
-@<Process a possible command line@>
+@<Process a \(o)possible command line@>@;
 setup_params;
 @#
 {Add one to the sizes because that's what bibtex uses.}
@@ -632,6 +622,7 @@ while (p_ptr < str_start[area+1]) do
 name_length := name_length + length(area);
 end;
 @y
+{procedure |add_area| not used}
 @z
 
 @x [64] now Pascal consts or vars, instead of web macros.
@@ -733,7 +724,7 @@ check_cmnd_line := false;                       {many systems will change this}
 loop
     begin
     if (check_cmnd_line) then
-        @<Process a possible command line@>
+        @<Process a \(o)possible command line@>
       else
         begin
         write (term_out,'Please type input file name (no extension)--');
@@ -788,12 +779,12 @@ end;
 @z
 
 @x [102] Get the aux file name from the command line.
-@<Process a possible command line@>=
+@<Process a \(o)possible command line@>=
 begin
 do_nothing;             {the ``default system'' doesn't use the command line}
 end
 @y
-@<Process a possible command line@>=
+@<Process a \(o)possible command line@>=
 parse_arguments;
 @z
 
@@ -937,9 +928,9 @@ end;
 begin
   {Keep old value of |max_bib_files| for the last array.}
   BIB_XRETALLOC_NOSET ('bib_list', bib_list, str_number, max_bib_files,
-                 max_bib_files + MAX_BIB_FILES);
+                 max_bib_files + MAX_BIB_FILES);@/
   BIB_XRETALLOC_NOSET ('bib_file', bib_file, alpha_file, max_bib_files,
-                 max_bib_files + MAX_BIB_FILES);
+                 max_bib_files + MAX_BIB_FILES);@/
   BIB_XRETALLOC ('s_preamble', s_preamble, str_number, max_bib_files,
                  max_bib_files + MAX_BIB_FILES);
 end;
@@ -1269,11 +1260,11 @@ while (single_ptr + wiz_def_ptr > wiz_fn_space) do
 @y
     begin
     BIB_XRETALLOC_NOSET ('glb_str_ptr', glb_str_ptr, str_number,
-                         max_glob_strs, max_glob_strs + MAX_GLOB_STRS);
+                         max_glob_strs, max_glob_strs + MAX_GLOB_STRS);@/
     BIB_XRETALLOC_STRING ('global_strs', global_strs, glob_str_size,
-                          max_glob_strs, max_glob_strs + MAX_GLOB_STRS);
+                          max_glob_strs, max_glob_strs + MAX_GLOB_STRS);@/
     BIB_XRETALLOC ('glb_str_end', glb_str_end, integer,
-                   max_glob_strs, max_glob_strs + MAX_GLOB_STRS);
+                   max_glob_strs, max_glob_strs + MAX_GLOB_STRS);@/
     str_glb_ptr := num_glb_strs;
     while (str_glb_ptr < max_glob_strs) do      {make new |str_global_var|s empty}
         begin
@@ -1348,11 +1339,11 @@ if (total_fields > max_fields) then
 begin
   {Keep old value of |max_bib_files| for the last array.}
   BIB_XRETALLOC_NOSET ('bib_list', bib_list, str_number, max_bib_files,
-                 max_bib_files + MAX_BIB_FILES);
+                 max_bib_files + MAX_BIB_FILES);@/
   BIB_XRETALLOC_NOSET ('bib_file', bib_file, alpha_file, max_bib_files,
-                 max_bib_files + MAX_BIB_FILES);
+                 max_bib_files + MAX_BIB_FILES);@/
   BIB_XRETALLOC ('s_preamble', s_preamble, str_number, max_bib_files,
-                 max_bib_files + MAX_BIB_FILES);
+                 max_bib_files + MAX_BIB_FILES);@/
 end;
 @z
 
@@ -1639,7 +1630,7 @@ itself will get a new section number.
 @y
 @d argument_is (#) == (strcmp (long_options[option_index].name, #) = 0)
 
-@<Define \(|parse_arguments|@> =
+@<Define \(p)|parse_arguments|@> =
 procedure parse_arguments;
 const n_options = 4; {Pascal won't count array lengths for us.}
 var @!long_options: array[0..n_options] of getopt_struct;
