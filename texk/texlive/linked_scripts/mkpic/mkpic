@@ -1,7 +1,7 @@
 #!/usr/bin/env perl
 
 use constant
-Version => '1.02';
+Version => '1.03';
 
 my $help = 
 <<'DOC'
@@ -10,7 +10,7 @@ my $help =
 = Synopsis
 mkpic [options] [picfile]	
 
-Options:
+= Options
 -c,--clean			remove all but the input file and die
 -p,--pdfsample			create pdf file with sample images
 -f,--font=<font command>	set default font for labels
@@ -23,6 +23,7 @@ Options:
 Without an input file, the DATA section is used.
 
 = Command overview
+
 begin	 name xl yl xmin ymin xmax ymax xlabel ylabel
 end	
 stop	
@@ -71,11 +72,11 @@ ehat
 
 = Description
 mkpic provides an easy interface for making small pictures with mfpic. To
-this end you create an input file has to be created consisting of
-commands, one per line, with space separated parameters (or you modify the
-DATA section of the mkpic script, which is used if you run it without an
-input file). For an extensive description see the file mkpicdoc.pdf, which
-is part of the distribution.
+this end an input file has to be created consisting of commands, one per
+line, with space separated parameters (or you modify the DATA section of
+the mkpic script, which is used if you run it without an input file). For
+an extensive description see the files |mkpicdoc.tex| and |mkpicdoc.pdf|,
+which are part of the distribution.
 
 mkpic produces two files. Assuming an input file named |picfile| defaulting
 to |mkpic| these are:
@@ -119,7 +120,7 @@ begin, end
 	
 	    begin aa ...
 	
-	starts writing |\def\Figaa{...| to the |.mac| file, and the
+	starts writing |\def\Figaa{...}| to the |.mac| file, and the
 	picture can be reproduced in a |TeX| document by importing the |.mac| file
 	and using the |\Figaa| command. 
 	
@@ -265,6 +266,7 @@ anything else
 	only once, or a few times and therefore see no need to define a proper
 	command for it.
 
+
 = Running mkpic/TeX
 The effect of running 
 	mkpic picfile
@@ -290,14 +292,11 @@ Currently only up to 256 pictures can be generated. In the future this
 problem will probably be solved by introducing more than one font and
 generating tex-command names that have the font name in front.
 
-= Changes
-Changes with respect to version 0.1:
-- added mkpicdoc.tex to the distribution
+= Author
+[Wybo Dekker](wybodekker@me.com)
 
-= Author and copyright
-Author	Wybo Dekker
-Email	U{Wybo@dekkerdocumenten.nl}{wybo@dekkerdocumenten.nl}
-License	Released under the U{www.gnu.org/copyleft/gpl.html}{GNU General Public License}
+= Copyright
+Released under the [GNU General Public License](www.gnu.org/copyleft/gpl.html)
 DOC
 ;
 
@@ -649,7 +648,7 @@ sub parse_input {
 }
 
 sub help { undef $/; open(FH,$0); print "Usage:".[split(/= .*\n/,<FH>)]->[3]; exit 1 }
-sub install { system('instscript --extras=mkpicdoc.tex,mkpicdoc.pdf -zp mkpic'); exit 0; }
+sub install { system('instscript --zip --extras=mkpicdoc.tex,mkpicdoc.pdf mkpic'); exit 0; }
 
 use Getopt::Long;
 Getopt::Long::Configure("bundling_override");
