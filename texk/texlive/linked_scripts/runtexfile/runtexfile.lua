@@ -1,6 +1,5 @@
 #!/usr/bin/env texlua
 
---%% $Id: runtexfile.lua 4 2025-08-13 14:58:56Z herbert $
 -----------------------------------------------------------------------
 --         FILE:  runtexfile.lua
 --  DESCRIPTION:  run a latex document with special steps
@@ -8,10 +7,10 @@
 --       AUTHOR:  Herbert Voß
 --      LICENSE:  LPPL 1.3
 --
--- %% $Id: runtexfile.lua 4 2025-08-13 14:58:56Z herbert $
+-- %% $Id: runtexfile.lua 8 2025-10-08 07:43:47Z herbert $
 -----------------------------------------------------------------------
         runtexfile = runtexfile or { }
- local version = 0.05
+ local version = 0.06
 runtexfile.version = version
 
 --[[doc--
@@ -177,7 +176,19 @@ for line in file:lines() do
       flog("Will run: ".. command.." "..para.." "..LTXfile)
       flog("and log into file "..current_dir.."/runtexfile-"..step..".log")
       print("running: " .. command.." "..para.." "..LTXfile)
-      os.execute(command.." "..para.." "..LTXfile.." > "..current_dir.."/runtexfile-"..step..".log") 
+      --os.execute(command.." "..para.." "..LTXfile.." > "..current_dir.."/runtexfile-"..step..".log") 
+      local handle = io.popen(command.." "..para.." "..LTXfile.." > "..current_dir.."/runtexfile-"..step..".log")
+      local result = handle:read("*a")
+      handle:close()
+      if result ~= "" then print("cmd output: " .. result) end
+      logfile = io.open(current_dir.."/runtexfile-"..step..".log","r")
+      if not logfile then
+        for line in logfile:lines() do
+          if string.find(line, "! LaTeX Error:") > 0 then
+            print("There is at least one error!")
+          end
+        end 
+      end    
     else
       break
     end
@@ -188,7 +199,19 @@ end
     
 if commandLineFound == false then
   print("No command line with %! HV <command> defined! running: " .. commands[1])
-  os.execute(commands[1].." "..para.." "..LTXfile.." > "..current_dir.."/runtexfile-"..step..".log") 
+--  os.execute(commands[1].." "..para.." "..LTXfile.." > "..current_dir.."/runtexfile-"..step..".log") 
+  local handle = io.popen(commands[1].." "..para.." "..LTXfile.." > "..current_dir.."/runtexfile-"..step..".log")
+  local result = handle:read("*a")
+  handle:close()
+  if result ~= "" then print("cmd output: " .. result) end
+  logfile = io.open(current_dir.."/runtexfile-"..step..".log","r")
+  if not logfile then
+    for line in logfile:lines() do
+      if string.find(line, "! LaTeX Error:") > 0 then
+        print("There is at least one error!")
+      end
+    end 
+  end    
 end
 file:close()
 if verbose then 
