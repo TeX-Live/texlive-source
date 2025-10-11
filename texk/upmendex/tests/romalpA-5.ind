@@ -1,5 +1,10 @@
 \begin{theindex}
 
+  \item bar, I-1, II-1, III-1, IV-1, V-1, VI-1, VII-1, VIII-1, IX-1, X-1, XI-1, XX-1, XXX-1, XL-1, L-1, LX-1, LXX-1, LXXX-1, XC-1, XCV-1, C-1, CV-1, CX-1, CC-1, CCC-1, CD-1, D-1, DC-1, DCC-1, DCCC-1, CM-1, M-1, MC-1, MD-1, MM-1, MMM-1
+  \item baz, i--xi, xx, xxx, xl, l, lx, lxx, lxxx, xc--cx, cc, ccc, cd, d, dc, dcc, dccc, cm, m, mc, mcc, mccc, mcd, md, mdc, mdcc, mdccc, mcm, mm, mmm
+
+  \indexspace
+
   \item foo, I-13, I-15--I-17, II-10, II-20, II-30
 
 \end{theindex}
