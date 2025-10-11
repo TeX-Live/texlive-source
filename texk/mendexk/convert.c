@@ -479,6 +479,7 @@ int pnumconv(char *page, int attr)
 			case 'c':
 			case 'C':
 				if (i==0) cc=100;
+				else {
 					switch (page[i-1]) {
 					case 'x':
 					case 'X':
@@ -497,6 +498,7 @@ int pnumconv(char *page, int attr)
 					default:
 						break;
 					}
+				}
 				break;
 
 			case 'd':
@@ -523,6 +525,7 @@ int pnumconv(char *page, int attr)
 			case 'm':
 			case 'M':
 				if (i==0) cc=1000;
+				else {
 					switch (page[i-1]) {
 					case 'c':
 					case 'C':
@@ -537,6 +540,7 @@ int pnumconv(char *page, int attr)
 					default:
 						break;
 					}
+				}
 				break;
 
 			default:
