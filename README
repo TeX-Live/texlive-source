@@ -6,20 +6,25 @@ http://tug.org/texlive/build.html.  In brief:
 
 - To configure and make the source tree, run ./Build.
   This builds in subdirectory Work/, and installs into subdirectory inst/.
+  (Nearly everything the Build script does can be overridden via
+   environment variables; just take a look at the script for the details.)
 
 - To build (mostly) without optimization, run ./Build --debug.
 
 - If the make fails and you want to rebuild without starting from scratch:
   cd Work/whatever/subdir && make
 
-Email tlbuild@tug.org if problems.
+- The result of make install is not a working TeX system, unfortunately.
+  Much more needs to be done afterwards.  For a starting point, see
+  the "Installing" chapter in the ./doc/tlbuild* document, online at
+  https://tug.org/texinfohtml/tlbuild.html#Installing.  Looking at how
+  various distros handle TeX can also be useful.
 
-(Nearly everything the Build script does can be overridden via
-environment variables; just take a look to see the names.)
+Email tlbuild@tug.org if problems with the build.
 
 Many more details about the TL build system, such as configuring to work
 on a single program, adding new programs or libraries, documentation
-about the many pieces of the system, etc., are in the doc/tlbuild*
+about the many pieces of the system, etc., are in the ./doc/tlbuild*
 document and the sibling README* files here (which are generated from
 that document).
 
