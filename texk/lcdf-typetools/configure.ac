@@ -1,7 +1,7 @@
 dnl $Id$
 dnl Process this file with autoconf to produce a configure script.
 dnl
-dnl   Copyright 2014-2023 Karl Berry <tex-live@tug.org>
+dnl   Copyright 2014-2025 Karl Berry <tex-live@tug.org>
 dnl   Copyright 2009-2014 Peter Breitenlohner <tex-live@tug.org>
 dnl
 dnl   This file is free software; the copyright holder
@@ -412,7 +412,7 @@ dnl
 
 shell_expand () {
   val=`eval echo '$'"$1"`
-  while echo "x$val" | fgrep '$' >/dev/null 2>&1; do val=`eval echo "$val"`; done
+  while echo "x$val" | grep '\$' >/dev/null 2>&1; do val=`eval echo "$val"`; done
   eval "$1='$val'"
 }
 

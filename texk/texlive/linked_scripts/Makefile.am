@@ -349,7 +349,8 @@ else !WIN32
 	cd $(DESTDIR)$(bindir) && \
 	  for s in $(nobase_dist_texmf_scripts_SCRIPTS); do \
 	    target=`basename $$s | tr '[A-Z]' '[a-z]'`; \
-## we can't portably use egrep or grep -E or ere patterns.
+## We can't portably use fgrep or egrep or grep -E or ere patterns,
+## since the [ef]grep in GNU grep issues gratuitous warnings.
 	    echo "$$s" | grep 'memoize-.*\.' >/dev/null \
 	    || echo "$$s" | grep 'listings-ext.sh' >/dev/null \
 	    || target=`echo $$target | sed 's,\.[^/]*$$,,'`; \

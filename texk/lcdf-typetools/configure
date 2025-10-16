@@ -24962,10 +24962,6 @@ ${top_builddir}/../kpathsea/paths.h:
 	cd ${top_builddir}/../kpathsea && $(MAKE) $(AM_MAKEFLAGS) rebuild'
 fi
 
-
-
-
-
 { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking if libkpathsea supports debugging" >&5
 printf %s "checking if libkpathsea supports debugging... " >&6; }
 if test ${kpse_cv_kpse_debug+y}
@@ -25165,7 +25161,7 @@ printf "%s\n" "#define MMAFM_RUN_MMPFB 1" >>confdefs.h
 
 shell_expand () {
   val=`eval echo '$'"$1"`
-  while echo "x$val" | fgrep '$' >/dev/null 2>&1; do val=`eval echo "$val"`; done
+  while echo "x$val" | grep '\$' >/dev/null 2>&1; do val=`eval echo "$val"`; done
   eval "$1='$val'"
 }
 

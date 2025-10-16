@@ -178,7 +178,7 @@ if test -d "$bindir"; then
 fi
 
 status=`cat exitstatus.txt`
-if echo "$status" | egrep '^[0-9]+$' >/dev/null; then :; else
+if echo "$status" | grep '^[0-9][0-9]*$' >/dev/null; then :; else
   echo "$0: exitstatus.txt does not contain a number; disk full?" >&2
   status=1
 fi

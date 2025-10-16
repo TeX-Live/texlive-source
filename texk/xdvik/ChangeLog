@@ -1,3 +1,9 @@
+2025-10-16  Karl Berry  <karl@freefriends.org>
+
+	* mksedscript (XDVI_VERSION_INFO): avoid using egrep.
+	Report from Jan Kasprzak,
+	https://tug.org/pipermail/tex-k/2025-October/004217.html.
+
 2025-02-17  Karl Berry  <karl@freefriends.org>
 
 	* m4/xdvi-check-xaw.m4: try to discern the type of the list

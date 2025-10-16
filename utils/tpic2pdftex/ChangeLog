@@ -1,3 +1,9 @@
+2025-10-16  Karl Berry  <karl@freefriends.org>
+
+	* tpic2pdftex (ComSpec): avoid using egrep.
+	Report from Jan Kasprzak,
+	https://tug.org/pipermail/tex-k/2025-October/004217.html.
+
 2014-06-16  Peter Breitenlohner  <peb@mppmu.mpg.de>
 
 	* Makefile.am: Drop the obsolete ACLOCAL_AMFLAGS.

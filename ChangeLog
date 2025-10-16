@@ -1,3 +1,9 @@
+2025-10-16  Karl Berry  <karl@freefriends.org>
+
+	* Build (status): avoid using egrep.
+	Report from Jan Kasprzak,
+	https://tug.org/pipermail/tex-k/2025-October/004217.html.
+
 2025-09-07  Karl Berry  <karl@freefriends.org>
 
 	* Makefile.am (install_target): new variable, install-strip by default.

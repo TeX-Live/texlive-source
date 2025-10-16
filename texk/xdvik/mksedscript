@@ -87,7 +87,7 @@ fi
 # get version info and release date from CHANGES file
 
 spacetab=' 	'
-XDVI_VERSION_INFO=`egrep "^[$spacetab]+\*" $srcdir/CHANGES | sed 1q | awk '{print $2 " " $3}'`
+XDVI_VERSION_INFO=`grep "^[$spacetab][$spacetab]*\*" $srcdir/CHANGES | sed 1q | awk '{print $2 " " $3}'`
 XDVI_VERSION=`echo $XDVI_VERSION_INFO | awk '{print $1}'`
 XDVI_DATE=`echo $XDVI_VERSION_INFO | awk '{print $2}' | sed 's/[():]//g'`
 

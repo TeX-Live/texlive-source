@@ -40,10 +40,12 @@
 #         hartmut_henkel@gmx.de
 #
 # NEWS:
+#   16 Oct. 2025 - avoid using egrep, gratuitously made unportable by GNU.
+#   (patch from Karl Berry)
 #   11 Jun. 2011 - sh construct portability
 #   (patch from Nelson Beebe)
 #   24 Dec. 2009 - use gawk for default awk only if it exists
-#   (patch by Karl Berry).
+#   (patch from Karl Berry)
 #   14 Jan. 2007 - make it executable shell script, calling awk
 #   16 Dec. 2004 - Replaced // {print} by {print} (some AWKs did choke)
 #   09 Apr. 2004 - Locale check: Decimal point in float numbers?
@@ -67,15 +69,12 @@
 #
 ########################################################################
 
-# In case someone pedantic insists on using grep -E.
-: ${EGREP=egrep}}
-
 # Systems which define $COMSPEC or $ComSpec use semicolons to separate
 # directories in TEXINPUTS -- except for Cygwin et al., where COMSPEC
 # might be inherited, but : is used.
 
 if test -n "$COMSPEC$ComSpec" \
-   && uname | $EGREP -iv 'cygwin|mingw|djgpp' >/dev/null; then
+   && uname | grep -iv 'cygwin\|mingw\|djgpp' >/dev/null; then
   path_sep=";"
 else
   path_sep=":"
