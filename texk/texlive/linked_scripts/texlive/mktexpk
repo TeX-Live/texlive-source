@@ -7,7 +7,7 @@
 # Originally written by Thomas Esser, Karl Berry, and Olaf Weber.
 # Public domain.
 
-version='$Id: mktexpk 53602 2020-01-30 22:18:33Z karl $'
+version='$Id: mktexpk 76585 2025-10-16 14:46:21Z karl $'
 progname=`echo $0 | sed 's%.*/%%'`
 
 # preferentially use subprograms from our own directory.
@@ -164,8 +164,8 @@ else
       # grep for the font in $PSMAPFILE.  These are base font names, such as
       # rpplr (the original) or pplr0 (an interim step) or pplr8r (current).
       : ${PSMAPFILE=`kpsewhich --format=map psfonts.map ps2pk.map`}
-      pattern="^$NAME"'([ 	]|$)' 
-      psline=`egrep "$pattern" $PSMAPFILE | tail -1`
+      pattern="^$NAME"'\([ 	]|$\)' 
+      psline=`grep "$pattern" $PSMAPFILE | tail -1`
       if test -n "$psline"; then
         set x `echo "$psline" | sed 's%[<["]%%g'`
         shift; shift; shift;

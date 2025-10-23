@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: texconfig.sh 71679 2024-07-01 17:04:58Z karl $
+# $Id: texconfig.sh 76585 2025-10-16 14:46:21Z karl $
 # texconfig version 3.0
 # Originally written by Thomas Esser. Public domain.
 # Now maintained as part of TeX Live; correspondence to tex-live@tug.org.
@@ -28,7 +28,7 @@ PATH="$mydir:$PATH"; export PATH
 progname=texconfig
 
 # the version string
-version='$Id: texconfig.sh 71679 2024-07-01 17:04:58Z karl $'
+version='$Id: texconfig.sh 76585 2025-10-16 14:46:21Z karl $'
 
 envVars="
   AFMFONTS BIBINPUTS BSTINPUTS CMAPFONTS CWEBINPUTS ENCFONTS GFFONTS
@@ -430,7 +430,7 @@ listMfModes()
   sed -e "s/mode_def //" \
       -e "s/ .*%[^ ]* / '/" \
       -e "s/\$/' /" |
-  egrep -v "^(help|%)" | sort
+  grep -v '^\(help\|%\)' | sort
 }
 
 ###############################################################################
