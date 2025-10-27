@@ -574,9 +574,9 @@ FIXED_CONFIGURATION_TEXT
 
 sub show_version {
     print <<VERSION_TEXT;
-typog-grep 0.4
+typog-grep 0.5
 
-Copyright (C) 2024 by Ch. L. Spiel
+Copyright (C) 2025 by Ch. L. Spiel
 License LPPL: LaTeX Project Public License version 1.3c or later
 VERSION_TEXT
 
