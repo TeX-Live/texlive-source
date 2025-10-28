@@ -1,6 +1,6 @@
 \input musixtex
 \input musixplt
-\input soul.sty
+\input soul-ori.sty
 \sodef{\so}{}{0.15em}{0.5em}{0.5em}
 \input musixsty
 \input musixps
@@ -163,6 +163,7 @@
   \ibu3f2\qb3f\tqh3g\ibu3h{-4}\qb3h\tqh3f\en
 \anotes\qa N\cu G&\ibu1i{-2}\qb1i\tqh1h\cu g&\ttie2\ibl2j0\qb2k\nbbl2\qb2j\tqb2k\cl i&\qa g\cu g\en
 \setrightrepeat
+\mulooseness-1%
 \endpiece%
 \eject
 \end

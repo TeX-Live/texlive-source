@@ -1,5 +1,17 @@
 AUTOSP
 
+2025-10-26
+
+   add \doublebar to bar-like commands in process_command
+
+2024-07-01
+
+  retract \scale and \multnoteskip hacks for instrument sizes <> 1 
+
+2024-03-16
+
+  use \multnoteskip rather than \scale for instrument sizes <> 1
+
 2023-10-07
 
   support for musixmtab commands
