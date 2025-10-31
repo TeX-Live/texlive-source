@@ -59,13 +59,13 @@
 -- those in the standard .ins files.
 --
 local metadata = {
-    version   = "3.11.6-0-g340ac223",
+    version   = "3.12.0-0-g746cfc56",
     comment   = "A module for the conversion from markdown "
              .. "to plain TeX",
     author    = "John MacFarlane, Hans Hagen, Vít Starý Novotný, "
              .. "Andrej Genčur",
     copyright = {"2009-2016 John MacFarlane, Hans Hagen",
-                 "2016-2024 Vít Starý Novotný, Andrej Genčur"},
+                 "2016-2025 Vít Starý Novotný, Andrej Genčur"},
     license   = "LPPL 1.3c"
 }
 
