@@ -124,6 +124,11 @@
 %%
 %% Additional fonts 
 %% 
+\font\largetitlefont=cmssbx10 scaled\magstep4
+\font\Largetitlefont=cmssbx10 at 40pt
+\font\hugetitlefont=cmssbx10 at 48pt
+\font\smalltitlefontit=cmbxti10 scaled\magstep3
+\font\smalltitlefont=cmssbx10 scaled\magstep3
 
 \font\tenss=cmss10 % used for the HINT name
 \font\tenssbx=cmssbx10 % used for the bold HINT name
@@ -217,6 +222,8 @@
 \ifhint
 \def\_{{\tt\UL}} % make underline an ordinary character for better searching
 \fi
+\def\ATH{{\<Preprocessor definitions>}} % redefine @h from cwebmac.tex
+
 
 % Bibtex needs this
 \def\mbox#1{\leavevmode\hbox{#1}}
@@ -249,6 +256,14 @@
 
 %{\rm\gdef\strutdepth{\dp\strutbox}}
 
+\def\raggedleft{\leftskip=0pt plus 5em\parfillskip=0pt
+\spaceskip=.3333em \xspaceskip=0.5em \emergencystretch=2em\relax
+\hyphenpenalty=1000\exhyphenpenalty=1000\pretolerance=10000\linepenalty=5000
+}
+\def\raggedright{\rightskip=0pt plus 5em\parindent=0pt
+\spaceskip=.3333em \xspaceskip=0.5em \emergencystretch=2em\relax
+\hyphenpenalty=1000\exhyphenpenalty=1000\pretolerance=10000\linepenalty=5000
+}
 
 %% 
 %% Environments
@@ -338,13 +353,16 @@
 %\everypar{{\setbox0=\lastbox}\everypar{}}% no indentation in the next paragraph
 \noindent\ignorespaces}% beginning of section
 
-\def\N#1#2#3.{\MN{#1}\ifon\stsec\smallskip
+% stared section begin: depth number title
+\def\N#1#2#3.{\MN{#2}\ifon\stsec\smallskip
 %\everypar{{\setbox0=\lastbox}\everypar{}}% no indentation in the next paragraph
 \noindent{\bf#3\quad}\ignorespaces}% beginning of section
 
+\newcount\codeno
+\codeno=0
 \def\MN#1{\smallskip
  {\xdef\secstar{#1}\let\*=\empty\xdef\secno{#1}}%
-  \gdef\thecode{#1}% common code for \M, \N
+  \global\codeno=#1\relax
   \ontrue}
 
 % Used in section text
@@ -603,6 +621,22 @@
 \heading{}{#1}%
 }
 
+\def\part#1{%
+\vfill\eject
+\tocsection{-1}{}{#1}
+\strut
+\vskip -\topskip
+\vskip 0pt plus 1fill
+\vskip -60pt
+{\noindent\baselineskip=60pt\Largetitlefont\raggedleft #1\par}
+\vskip 0pt plus 1fill 
+\everypar{{\setbox0=\lastbox}\everypar{}}% no indentation in the next paragraph
+\ignorespaces
+}
+
+
+
+
 
 \gdef\sectionname{}
 \gdef\subsectionname{}
@@ -701,6 +735,7 @@
 %%
 \iftrue %% No Crossreference of identifiers
   \def\inx{\def\lr{L}} % this tells whether the left or right column is next
+  \def\con{\end} % this tells whether the left or right column is next
 \else
 \def\inx{%
   \hsize=\pagewidth
@@ -824,10 +859,14 @@
 
 
 \def\tocline#1#2#3#4#5{% depth sectionnumber sectiontitle page toccount
-\ifnum#1=0 \smallskip\vskip 0pt plus 12pt\penalty -100\vskip 0pt plus -12pt\fi
+\ifnum#1<0\bigskip\vskip 0pt plus 24pt\penalty -100\vskip 0pt plus -24pt\fi
+\ifnum#1<1 \smallskip\vskip 0pt plus 12pt\penalty -100\vskip 0pt plus -12pt\fi
 \noindent
 \line{%
-\ifnum#1=0%
+\ifnum#1<0%
+  {\smalltitlefont#3\hfill}{}\hfill
+     \hbox to 2em{\hss\bf\tocref{#1}{#3}{#4}{#5}}%
+\else\ifnum#1=0%
   \hbox to 2em{\bf#2\hfill}{\bf#3~}\hfill
      \hbox to 2em{\hss\bf\tocref{#1}{#3}{#4}{#5}}%
 \else \ifnum#1=1%
@@ -835,8 +874,10 @@
       \hbox to 2em{\hss\tocref{#1}{#3}{#4}{#5}}%
 \else
    \kern 2em\hbox to 5em{\rm#2\hfill}{\it#3~}\leaders\hbox to .5em{.\hfil}\hfill
-      \hbox to 2em{\hss\tocref{#1}{#3}{#4}{#5}}\fi\fi
-}}
+      \hbox to 2em{\hss\tocref{#1}{#3}{#4}{#5}}\fi\fi\fi
+}%
+\ifnum#1<0\bigskip\fi
+}
 
 
 
@@ -1240,14 +1281,19 @@
 % Code destinations: by number 
 %
 
-%The number is set be \M and \N and stored as \secno
+%The number is set by \M and \N and stored as \secno
 %The destination is set in \B where we go into C mode
+\newcount\lastcodeno
+\lastcodeno=0
 \def\codedest{%
+\ifnum\lastcodeno<\codeno
+\global\lastcodeno=\codeno\relax
 \ifbook\else
-\ifhint\HINTdest num \thecode top\relax
-\else\ifpdf\pdfdest num \thecode fith\relax
+\ifhint\HINTdest num \the\codeno bot\relax%\message{New destination num \the\codeno bot}
+\else\ifpdf\pdfdest num \the\codeno fith\relax
 \else\relax
 \fi\fi\fi
+\fi
 }
 \def\coderef#1{% used in \X
 \ifbook${}_{#1}$\else
@@ -1299,7 +1345,7 @@
 \else\ifpdf
   \pdfdest name {#1} fith%\message{Defining pdf label #1}%
 \else\ifhint
-  \HINTdest name {#1}%\message{Defining HINT label #1}%
+  \HINTdest name {#1}%\message{Defining HINT label name #1}%
 \fi\fi\fi}
 
 \def\newtopdest#1{% used to make a new destination
@@ -1308,7 +1354,7 @@
 \else\ifpdf
   \pdfdest name {#1} fith%\message{Defining pdf label #1}%
 \else\ifhint
-  \HINTdest name {#1} top%\message{Defining HINT label #1 top}%
+  \HINTdest name {#1} top%\message{Defining HINT label name #1 top: }%
 \fi\fi\fi}
 
 
@@ -1447,7 +1493,7 @@
 
 \ifbook\let\pagelabel=\relax\else
 \ifpdf
-\def\pagelabel{%\message{pagelabel=\thepageno}
+\def\pagelabel{%\message{SETTING pagelabel=\thepageno}
 \pdfdest name {page.\thepageno} fitv\relax}
 \else
 \let\pagelabel=\relax

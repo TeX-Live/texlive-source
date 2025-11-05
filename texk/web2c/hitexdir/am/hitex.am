@@ -22,13 +22,18 @@ endif HITEX
 ## Except we eschew all lex/yacc steps in the Makefile here; see below.
 ## AM_YFLAGS = -d -v -Wno-yacc
 
-hitex_CPPFLAGS = $(AM_CPPFLAGS) $(ZLIB_INCLUDES) 
+hitex_CPPFLAGS = $(AM_CPPFLAGS) $(ZLIB_INCLUDES)
+hitex_CPPFLAGS += $(FREETYPE2_INCLUDES) $(HARFBUZZ_INCLUDES)
 hitex_CPPFLAGS += -I$(srcdir)/libmd5
-hitex_CPPFLAGS += -DINIT -DSTAT -DWEB2CVERSION="\"${WEB2CVERSION}\""
+hitex_CPPFLAGS += -I$(srcdir)/hitexdir
+hitex_CPPFLAGS += -DINIT -DSTAT -DWEB2CVERSION="\"${WEB2CVERSION}\"" -Wno-unused-result
 # -DDEBUG drops into an interactive debugging session.
-hitex_LDADD = $(KPATHSEA_LIBS) $(ZLIB_LIBS) libmd5.a
+hitex_LDADD = $(KPATHSEA_LIBS) $(ZLIB_LIBS)
+hitex_LDADD += $(FREETYPE2_LIBS) $(HARFBUZZ_LIBS)  $(GRAPHITE2_LIBS)
 hitex_LDADD += libmd5.a
-hitex_DEPENDENCIES = $(KPATHSEA_DEPEND) $(ZLIB_DEPEND) libmd5.a
+hitex_DEPENDENCIES = $(KPATHSEA_DEPEND) $(ZLIB_DEPEND)
+hitex_DEPENDENCIES += $(FREETYPE2_DEPEND) $(HARFBUZZ_DEPEND) $(GRAPHITE2_DEPEND)
+hitex_DEPENDENCIES += libmd5.a
 #
 histretch_CPPFLAGS = $(AM_CPPFLAGS) $(ZLIB_INCLUDES) -I$(srcdir)/hitexdir
 histretch_LDADD = $(ZLIB_LIBS)

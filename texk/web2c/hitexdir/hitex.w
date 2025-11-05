@@ -1496,7 +1496,7 @@ by changing |wterm|, |wterm_ln|, and |wterm_cr| in this section.
 #define @[put(F)@]    @[fwrite(&((F).d)@],@[sizeof((F).d),1,(F).f)@]@;
 #define @[get(F)@]    @[(void)fread(&((F).d),sizeof((F).d),1,(F).f)@]
 
-#define @[pascal_close(F)@]    @[fclose((F).f)@]
+#define @[pascal_close(F)@]    @[fclose((F).f),(F).f=NULL@]
 #define @[eof(F)@]    @[feof((F).f)@]
 #define @[eoln(F)@]    @[((F).d=='\n'||eof(F))@]
 #define @[erstat(F)@]   @[((F).f==NULL?-1:ferror((F).f))@]
@@ -1587,7 +1587,7 @@ pool_pointer j; /*current character code position*/
 int @!nl; /*new-line character to restore*/
 if (s >= str_ptr) {print("???"); return;}/*this can't happen*/
 @.???@>
-else if (s < 256)
+else if (s < 0x80)
   if (s < 0) { print("???");return; } /*can't happen*/
   else{@+if (selector > pseudo)
       {@+print_char(s);return; /*internal strings are not expanded*/
@@ -1617,10 +1617,14 @@ be printed using |print_char|. Therefore we use |slow_print| for them:
 @<Basic print...@>=
 static void slow_print(int @!s) /*prints string |s|*/
 {@+pool_pointer j; /*current character code position*/
-if ((s >= str_ptr)||(s < 256)) printn(s);
+if ((s >= str_ptr)||(s < 0x80)) printn(s);
 else{@+j=str_start[s];
   while (j < str_start[s+1])
-    {@+printn(so(str_pool[j]));incr(j);
+    {@+if (str_pool[j]<0x80)
+         printn(str_pool[j]);
+       else
+         print_char(str_pool[j]);
+       incr(j);
     }
   }
 }
@@ -2522,7 +2526,7 @@ can be packed into a halfword, everything should work satisfactorily.
 
 It is usually most efficient to have |min_quarterword==min_halfword==0|,
 so one should try to achieve this unless it causes a severe problem.
-The values defined here are recommended for most 32-bit computers.
+The values defined here are recommended for most 64-bit computers.
 
 @d min_quarterword 0 /*smallest allowable value in a |quarterword|*/
 @d max_quarterword 65535 /*largest allowable value in a |quarterword|*/
@@ -2543,7 +2547,7 @@ if ((min_halfword > 0)||(max_halfword < 32767)) bad=12;
 if ((min_quarterword < min_halfword)||@|
   (max_quarterword > max_halfword)) bad=13;
 if ((mem_min < min_halfword)||(mem_max >= max_halfword)||@|
-  (mem_bot-mem_min > max_halfword+1)) bad=14;
+  (mem_bot-mem_min-1 > max_halfword)) bad=14;
 if ((font_base < min_quarterword)||(font_max > max_quarterword)) bad=15;
 if (font_max > font_base+256) bad=16;
 if ((save_size > max_halfword)||(max_strings > max_halfword)) bad=17;
@@ -2584,6 +2588,7 @@ typedef struct { @;@/
   union {
   halfword @!lh;
   struct { quarterword @!b0;quarterword @!b1;} ;
+  struct { unsigned int b8:8; unsigned int b24:24;} ;
   };} two_halves;
 typedef struct { @;@/
   quarterword @!b0;
@@ -3009,8 +3014,8 @@ Character nodes appear only in horizontal lists, never in vertical lists.
 
 @d is_char_node(A) (A >= hi_mem_min)
    /*does the argument point to a |char_node|?*/
-@d font(A) type(A) /*the font code in a |char_node|*/
-@d character(A) subtype(A) /*the character code in a |char_node|*/
+@d font(A) mem[A].hh.b8 /*the font code in a |char_node|*/
+@d character(A) mem[A].hh.b24 /*the character code in a |char_node|*/
 
 @ An |hlist_node| stands for a box that was made from a horizontal list.
 Each |hlist_node| is seven words long, and contains the following fields
@@ -3696,7 +3701,10 @@ while (p > mem_min)
         else@<Print the font identifier for |font(p)|@>;
         print_char(' ');font_in_short_display=font(p);
         }
-      print_ASCII(qo(character(p)));
+      if (character(p)<0x80)
+        print_ASCII(character(p));
+      else
+        print_utf8(character(p));
       }
     }
   else@<Print a short indication of the contents of node |p|@>;
@@ -4950,13 +4958,23 @@ registers.
 @d box_base etex_pens /*table of 256 box registers*/
 @d cur_font_loc (box_base+256) /*internal font number outside math mode*/
 @d math_font_base (cur_font_loc+1) /*table of 48 math font numbers*/
-@d cat_code_base (math_font_base+48)
-   /*table of 256 command codes (the ``catcodes'')*/
-@d lc_code_base (cat_code_base+256) /*table of 256 lowercase mappings*/
-@d uc_code_base (lc_code_base+256) /*table of 256 uppercase mappings*/
-@d sf_code_base (uc_code_base+256) /*table of 256 spacefactor mappings*/
+@d cat_code_base (math_font_base+48) /*table of 256 command codes (the ``catcodes'')*/
+@d sf_code_base	(cat_code_base+256) /*table of 256 spacefactor mappings*/
 @d math_code_base (sf_code_base+256) /*table of 256 math mode mappings*/
 @d int_base (math_code_base+256) /*beginning of region 5*/
+@#
+@d utf_base_skip 0x200000 /*distance of utf bases, $\hbox{power of 2} > |0x10FFFF|$*/
+@d utf_cp_mask (utf_base_skip-1)
+@d utf_base_mask (~utf_cp_mask)
+@d utf_first_base ((eqtb_size+1+utf_cp_mask)&utf_base_mask) /*$\hbox{first multiple of |utf_base_skip|} > |eqtb_size|$*/
+@d utf_cat_code_base utf_first_base /*0x110000 command codes (the ``catcodes'')*/
+@d utf_sf_code_base (utf_cat_code_base+utf_base_skip) /*0x110000 spacefactor mappings*/
+@d utf_del_code_base (utf_sf_code_base+utf_base_skip) /*0x110000 delimiter mappings*/
+@d utf_math_code_base (utf_del_code_base+utf_base_skip) /*0x110000 mathcode mappings*/
+@d utf_math_codenum_base (utf_math_code_base+utf_base_skip) /*0x110000 mathcodenum mappings*/
+@d utf_lc_code_base (utf_math_codenum_base+utf_base_skip) /*0x110000 lowercase mappings*/
+@d utf_uc_code_base (utf_lc_code_base+utf_base_skip) /*0x110000 uppercase mappings*/
+@d utf_code_limit    (utf_uc_code_base+utf_base_skip) /*upper bound*/ 
 @#
 @d par_shape_ptr equiv(par_shape_loc)
 @d output_routine equiv(output_routine_loc)
@@ -4972,11 +4990,11 @@ registers.
 @d box(A) equiv(box_base+A)
 @d cur_font equiv(cur_font_loc)
 @d fam_fnt(A) equiv(math_font_base+A)
-@d cat_code(A) equiv(cat_code_base+A)
-@d lc_code(A) equiv(lc_code_base+A)
-@d uc_code(A) equiv(uc_code_base+A)
-@d sf_code(A) equiv(sf_code_base+A)
-@d math_code(A) equiv(math_code_base+A)
+@d cat_code(A) ((A)<0x100?equiv(cat_code_base+A):utf_catcode(A))
+@d lc_code(A) utf_lccode(A)
+@d uc_code(A) utf_uccode(A)
+@d sf_code(A)  ((A)<0x100?equiv(sf_code_base+A):utf_sfcode(A))
+@d math_code(A) ((A)<0x100?equiv(math_code_base+A):utf_mathcode(A))
    /*Note: |math_code(c)| is the true math code plus |min_halfword|*/
 
 @<Put each...@>=
@@ -5027,7 +5045,7 @@ packages, not in \TeX\ itself, so that global interchange of formats is
 possible.
 
 @d null_font font_base
-@d var_code 070000 /*math code meaning ``use the current family''*/
+@d utf_var_code (7<<21) /*new utf math code meaning ``use the current family''*/
 
 @<Initialize table entries...@>=
 par_shape_ptr=null;eq_type(par_shape_loc)=shape_ref;
@@ -5045,20 +5063,24 @@ equiv(cat_code_base)=0;eq_type(cat_code_base)=data;
 eq_level(cat_code_base)=level_one;@/
 for (k=cat_code_base+1; k<=int_base-1; k++) eqtb[k]=eqtb[cat_code_base];
 for (k=0; k<=255; k++)
-  {@+cat_code(k)=other_char;math_code(k)=hi(k);sf_code(k)=1000;
+  {@+equiv(cat_code_base+k)=other_char;equiv(math_code_base+k)=hi(k);
+     equiv(sf_code_base+k)=1000;
   }
-cat_code(carriage_return)=car_ret;cat_code(' ')=spacer;
-cat_code('\\')=escape;cat_code('%')=comment;
-cat_code(invalid_code)=invalid_char;cat_code(null_code)=ignore;
-for (k='0'; k<='9'; k++) math_code(k)=hi(k+var_code);
+equiv(cat_code_base+carriage_return)=car_ret;equiv(cat_code_base+' ')=spacer;
+equiv(cat_code_base+'\\')=escape;equiv(cat_code_base+'%')=comment;
+equiv(cat_code_base+invalid_code)=invalid_char;equiv(cat_code_base+null_code)=ignore;
+for (k='0'; k<='9'; k++) equiv(math_code_base+k)=hi(k+utf_var_code);
 for (k='A'; k<='Z'; k++)
-  {@+cat_code(k)=letter;cat_code(k+'a'-'A')=letter;@/
-  math_code(k)=hi(k+var_code+0x100);
-  math_code(k+'a'-'A')=hi(k+'a'-'A'+var_code+0x100);@/
+  {@+equiv(cat_code_base+k)=letter;equiv(cat_code_base+k+'a'-'A')=letter;@/
+  equiv(math_code_base+k)=k+utf_var_code+(1<<24);
+  equiv(math_code_base+k+'a'-'A')=hi(k+'a'-'A'+utf_var_code+(1<<24));@/
+  equiv(sf_code_base+k)=999;
+#if 0
   lc_code(k)=k+'a'-'A';lc_code(k+'a'-'A')=k+'a'-'A';@/
   uc_code(k)=k;uc_code(k+'a'-'A')=k;@/
-  sf_code(k)=999;
+#endif
   }
+  @<Fix some character code assignments for UTF@>@;
 
 @ @<Show equivalent |n|, in region 4@>=
 if ((n==par_shape_loc)||((n >= etex_pen_base)&&(n < etex_pens)))
@@ -5105,18 +5127,13 @@ printn_esc(hash[font_id_base+equiv(n)].rh);
 
 @ @<Show the halfword code in |eqtb[n]|@>=
 if (n < math_code_base)
-  {@+if (n < lc_code_base)
+  {@+if (n < math_code_base)
     {@+print_esc("catcode");print_int(n-cat_code_base);
+       print_char('=');print_int(equiv(n));
     }
-  else if (n < uc_code_base)
-    {@+print_esc("lccode");print_int(n-lc_code_base);
+    else
+    {@+print("This information should be in the utf tables");
     }
-  else if (n < sf_code_base)
-    {@+print_esc("uccode");print_int(n-uc_code_base);
-    }
-  else{@+print_esc("sfcode");print_int(n-sf_code_base);
-    }
-  print_char('=');print_int(equiv(n));
   }
 else{@+print_esc("mathcode");print_int(n-math_code_base);
   print_char('=');print_int(ho(equiv(n)));
@@ -5188,7 +5205,8 @@ that will be defined later.
 @d holding_inserts_code 53 /*do not remove insertion nodes from \.{\\box255}*/
 @d error_context_lines_code 54 /*maximum intermediate line pairs shown*/
 @d tracing_stack_levels_code 55 /*tracing |input_stack| level if |tracingmacros| positive*/
-@d tex_int_pars 56 /*total number of \TeX's integer parameters*/
+@d tracing_fonts_code 56 /*tracing specification, finding, and loading of fonts*/
+@d tex_int_pars 57 /*total number of \TeX's integer parameters*/
 @#
 @d etex_int_base tex_int_pars /*base for \eTeX's integer parameters*/
 @d tracing_assigns_code etex_int_base /*show assignments*/
@@ -5208,7 +5226,7 @@ that will be defined later.
 @d del_code_base (count_base+256) /*256 delimiter code mappings*/
 @d dimen_base (del_code_base+256) /*beginning of region 6*/
 @#
-@d del_code(A) eqtb[del_code_base+A].i
+@d del_code(A) ((A)<0x100?eqtb[del_code_base+A].i:utf_delcode(A))
 @d count(A) eqtb[count_base+A].i
 @d int_par(A) eqtb[int_base+A].i /*an integer parameter*/
 @d pretolerance int_par(pretolerance_code)
@@ -5267,6 +5285,7 @@ that will be defined later.
 @d holding_inserts int_par(holding_inserts_code)
 @d error_context_lines int_par(error_context_lines_code)
 @d tracing_stack_levels int_par(tracing_stack_levels_code)
+@d tracing_fonts int_par(tracing_fonts_code)
 @#
 @d tracing_assigns int_par(tracing_assigns_code)
 @d tracing_groups int_par(tracing_groups_code)
@@ -5343,6 +5362,7 @@ case right_hyphen_min_code: print_esc("righthyphenmin");@+break;
 case holding_inserts_code: print_esc("holdinginserts");@+break;
 case error_context_lines_code: print_esc("errorcontextlines");@+break;
 case tracing_stack_levels_code: print_esc("tracingstacklevels");@+break;
+case tracing_fonts_code: print_esc("tracingfonts");@+break;
 @/@<Cases for |print_param|@>@/
 default:print("[unknown integer parameter!]");
 }
@@ -5466,6 +5486,8 @@ primitive("errorcontextlines", assign_int, int_base+error_context_lines_code);@/
 @!@:error\_context\_lines\_}{\.{\\errorcontextlines} primitive@>
 primitive("tracingstacklevels", assign_int, int_base+tracing_stack_levels_code);@/
 @!@:tracing\_stack\_levels_}{\.{\\tracingstacklevels} primitive@>
+primitive("tracingfonts", assign_int, int_base+tracing_fonts_code);@/
+@!@:tracing\_fonts_}{\.{\\tracingfonts} primitive@>
 
 @ @<Cases of |print_cmd_chr|...@>=
 case assign_int: if (chr_code < count_base) print_param(chr_code-int_base);
@@ -5481,8 +5503,8 @@ complete failure.
 for (k=int_base; k<=del_code_base-1; k++) eqtb[k].i=0;
 mag=1000;tolerance=10000;hang_after=1;max_dead_cycles=25;
 escape_char='\\';end_line_char=carriage_return;
-for (k=0; k<=255; k++) del_code(k)=-1;
-del_code('.')=0; /*this null delimiter is used in error recovery*/
+for (k=0; k<=255; k++)   equiv(del_code_base+k)=-1;
+equiv(del_code_base+'.')=0; /*this null delimiter is used in error recovery*/
 
 @ The following procedure, which is called just before \TeX\ initializes its
 input and output, establishes the initial values of the date and time.
@@ -5708,6 +5730,7 @@ else if (n < local_base) @<Show equivalent |n|, in region 3@>@;
 else if (n < int_base) @<Show equivalent |n|, in region 4@>@;
 else if (n < dimen_base) @<Show equivalent |n|, in region 5@>@;
 else if (n <= eqtb_size) @<Show equivalent |n|, in region 6@>@;
+else if (n <= utf_code_limit)  @<Show equivalent |n|, in the utf tables@>@;
 else print_char('?'); /*this can't happen either*/
 }
 #endif
@@ -5873,7 +5896,7 @@ static void print_cs(int @!p) /*prints a purported control sequence*/
       {@+print_esc("csname");print_esc("endcsname");print_char(' ');
       }
     else{@+printn_esc(p-single_base);
-      if (cat_code(p-single_base)==letter) print_char(' ');
+      if (equiv(cat_code_base+p-single_base)==letter) print_char(' ');
       }
   else if (p < active_base) print_esc("IMPOSSIBLE.");
 @.IMPOSSIBLE@>
@@ -6437,12 +6460,14 @@ loop@+{@+decr(save_ptr);
   else if (save_type(save_ptr)==restore_sa)
     {@+sa_restore();sa_chain=p;sa_level=save_level(save_ptr);
     }
+  else if (save_type(save_ptr)==restore_utf_none) 
+  { utf_unsave_list=save_level(save_ptr); decr(save_ptr); }
+  else if (save_type(save_ptr)==restore_utf) utf_unsave(p); 
   else{@+if (save_type(save_ptr)==restore_old_value)
       {@+l=save_level(save_ptr);decr(save_ptr);
       }
     else save_stack[save_ptr]=eqtb[undefined_control_sequence];
-    @<Store \(s)|save_stack[save_ptr]| in |eqtb[p]|, unless |eqtb[p]| holds
-a global value@>;
+    @<Store \(s)|save_stack[save_ptr]| in |eqtb[p]|, unless |eqtb[p]| holds a global value@>;
     }
   }
 done:
@@ -6561,12 +6586,14 @@ mag_set=mag;
 @* Token lists.
 A \TeX\ token is either a character or a control sequence, and it is
 @^token@>
-represented internally in one of two ways: (1)~A character whose ASCII
+@^UTF@>
+represented internally in one of two ways: 
+(1)~A character whose utf
 code number is |c| and whose command code is |m| is represented as the
-number $2^8m+c$; the command code is in the range |1 <= m <= 14|. (2)~A control
-sequence whose |eqtb| address is |p| is represented as the number
-|cs_token_flag+p|. Here |cs_token_flag==@t$2^{12}-1$@>| is larger than
-$2^8m+c$, yet it is small enough that |cs_token_flag+p < max_halfword|;
+number $2^{24}m+c$; the command code is in the range |1 <= m <= 14|. 
+(2)~A control sequence whose |eqtb| address is |p| is represented as the number
+|cs_token_flag+p|. Here |cs_token_flag==@t$2^{28}-1$@>| is larger than
+$2^{24}m+c$, yet it is small enough that |cs_token_flag+p < max_halfword|;
 thus, a token fits comfortably in a halfword.
 
 A token |t| represents a |left_brace| command if and only if
@@ -6576,21 +6603,23 @@ we have |left_brace_limit <= t < right_brace_limit|; and it represents a |match|
 The following definitions take care of these token-oriented constants
 and a few others.
 
-@d cs_token_flag 07777 /*amount added to the |eqtb| location in a
+@d cs_token_flag ((1<<28)-1) /*amount added to the |eqtb| location in a
   token that stands for a control sequence; is a multiple of~256, less~1*/
-@d left_brace_token 00400 /*$2^8\cdot|left_brace|$*/
-@d left_brace_limit 01000 /*$2^8\cdot(|left_brace|+1)$*/
-@d right_brace_token 01000 /*$2^8\cdot|right_brace|$*/
-@d right_brace_limit 01400 /*$2^8\cdot(|right_brace|+1)$*/
-@d math_shift_token 01400 /*$2^8\cdot|math_shift|$*/
-@d tab_token 02000 /*$2^8\cdot|tab_mark|$*/
-@d out_param_token 02400 /*$2^8\cdot|out_param|$*/
-@d space_token 05040 /*$2^8\cdot|spacer|+|' '|$*/
-@d letter_token 05400 /*$2^8\cdot|letter|$*/
-@d other_token 06000 /*$2^8\cdot|other_char|$*/
-@d match_token 06400 /*$2^8\cdot|match|$*/
-@d end_match_token 07000 /*$2^8\cdot|end_match|$*/
-@d protected_token 07001 /*$2^8\cdot|end_match|+1$*/
+@d cmd_factor (1<<24)
+@d cmd_token(A) ((A)<<24) /*$8^{24}\cdot|A|$*/
+@d left_brace_token (left_brace<<24) /*$2^{24}\cdot|left_brace|$*/
+@d left_brace_limit ((left_brace+1)<<24)  /*$2^{24}\cdot(|left_brace|+1)$*/
+@d right_brace_token (right_brace<<24) /*$2^{24}\cdot|right_brace|$*/
+@d right_brace_limit ((right_brace+1)<<24)  /*$2^{24}\cdot(|right_brace|+1)$*/
+@d math_shift_token (math_shift<<24)  /*$2^{24}\cdot|math_shift|$*/
+@d tab_token (tab_mark<<24) /*$2^{24}\cdot|tab_mark|$*/
+@d out_param_token (out_param<<24) /*$2^{24}\cdot|out_param|$*/
+@d space_token ((spacer<<24)+' ') /*$2^{24}\cdot|spacer|+|' '|$*/
+@d letter_token (letter<<24)/*$2^{24}\cdot|letter|$*/
+@d other_token (other_char<<24) /*$2^{24}\cdot|other_char|$*/
+@d match_token (match<<24) /*$2^{24}\cdot|match|$*/
+@d end_match_token (end_match<<24) /*$2^{24}\cdot|end_match|$*/
+@d protected_token (end_match<<24)+1 /*$2^{24}\cdot|end_match|+1$*/
 
 @ @<Check the ``constant''...@>=
 if (cs_token_flag+undefined_control_sequence > max_halfword) bad=21;
@@ -6691,7 +6720,7 @@ if ((p < hi_mem_min)||(p > mem_end))
 @.CLOBBERED@>
   }
 if (info(p) >= cs_token_flag) print_cs(info(p)-cs_token_flag);
-else{@+m=info(p)/0400;c=info(p)%0400;
+else{@+m=info(p)/cmd_factor;c=info(p)%cmd_factor;
   if (info(p) < 0) print_esc("BAD.");
 @.BAD@>
   else@<Display the token $(|m|,|c|)$@>;
@@ -6706,7 +6735,8 @@ switch (m) {
 case left_brace: case right_brace: case math_shift:
   case tab_mark: case sup_mark: case sub_mark:
   case spacer:
-  case letter: case other_char: printn(c);@+break;
+  case letter: case other_char: 
+    if (c<0x80) printn(c); else print_utf8(c); @+break;
 case mac_param: {@+printn(c);printn(c);
   } @+break;
 case out_param: {@+printn(match_chr);
@@ -7717,7 +7747,7 @@ this routine are executed more often than any other instructions of \TeX.
    /*go here when the next input token has been got*/
 int k; /*an index into |buffer|*/
 halfword @!t; /*a token*/
-int @!cat; /*|cat_code(cur_chr)|, usually*/
+int @!cat; /*|equiv(cat_code_base+cur_chr)|, usually*/
 ASCII_code @!c, @!cc; /*constituents of a possible expanded code*/
 int @!d; /*number of excess characters in an expanded code*/
 restart: cur_cs=0;
@@ -7741,7 +7771,7 @@ if (cur_cmd <= car_ret) if (cur_cmd >= tab_mark) if (align_state==0)
 @ @<Input from external file, |goto restart| if no input found@>=
 @^inner loop@>
 {@+get_cur_chr: if (loc <= limit)  /*current line not yet finished*/
-  {@+cur_chr=buffer[loc];incr(loc);
+  {@+loc=utf8_get_cur_chr(buffer,loc,limit);
   reswitch: cur_cmd=cat_code(cur_chr);
   @<Change state if necessary, and |goto switch| if the current character
 should be ignored, or |goto reswitch| if the current character changes to
@@ -7888,8 +7918,8 @@ buffer and the process is repeated, slowly but surely.
 
 @<Scan a control...@>=
 {@+if (loc > limit) cur_cs=null_cs; /*|state| is irrelevant in this case*/
-else{@+start_cs: k=loc;cur_chr=buffer[k];cat=cat_code(cur_chr);
-  incr(k);
+else{@+start_cs: k=loc;k=utf8_get_cur_chr(buffer, k, limit);
+  cat=cat_code(cur_chr);
   if (cat==letter) state=skip_blanks;
   else if (cat==spacer) state=skip_blanks;
   else state=mid_line;
@@ -7898,7 +7928,14 @@ else{@+start_cs: k=loc;cur_chr=buffer[k];cat=cat_code(cur_chr);
 is encountered, reduce it and |goto start_cs|; otherwise if a multiletter
 control sequence is found, adjust |cur_cs| and |loc|, and |goto found|@>@;
   else@<If an expanded code is present, reduce it and |goto start_cs|@>;
-  cur_cs=single_base+buffer[loc];incr(loc);
+  loc=utf8_get_cur_chr(buffer, loc, limit);
+  if (cur_chr<0x100)
+    cur_cs=single_base+cur_chr;
+  else
+    fatal_error("single character control sequence above 0xff not implemented");
+    /* The simple case that we got here while scanning an alphabetic character code
+       could be handled by setting |cur_cmd| and |cur_chr| directly. 
+    */
   }
 found: cur_cmd=eq_type(cur_cs);cur_chr=equiv(cur_cs);
 if (cur_cmd >= outer_call) check_outer_validity();
@@ -7908,18 +7945,22 @@ if (cur_cmd >= outer_call) check_outer_validity();
 |cur_chr==buffer[k-1]| and |k <= limit+1| and |cat==cat_code(cur_chr)|. If an
 expanded code like \.{\^\^A} or \.{\^\^df} appears in |buffer[(k-1)dotdot(k+1)]|
 or |buffer[(k-1)dotdot(k+2)]|, we
-will store the corresponding code in |buffer[k-1]| and shift the rest of
-the buffer left two or three places.
+will store the corresponding UTF8 code in |buffer[(k-1)dotdot(k+2)]| and shift the rest of
+the buffer left to close the gap.
 
 @<If an expanded...@>=
 {@+if (buffer[k]==cur_chr) @+if (cat==sup_mark) @+if (k < limit)
   {@+c=buffer[k+1];@+if (c < 0200)  /*yes, one is indeed present*/
     {@+d=2;
     if (is_hex(c)) @+if (k+2 <= limit)
-      {@+cc=buffer[k+2];@+if (is_hex(cc)) incr(d);
+      {@+cc=buffer[k+2];@+if (is_hex(cc)) incr(d); 
       }
     if (d > 2)
-      {@+hex_to_cur_chr;buffer[k-1]=cur_chr;
+      {@+hex_to_cur_chr;
+         if (cur_chr<0x80) buffer[k-1]=cur_chr;
+         else 
+         { buffer[k-1]=0xC0|(cur_chr>>6); buffer[k]=0x80|(cur_chr&0x3F);decr(d); incr(k);
+         }
       }
     else if (c < 0100) buffer[k-1]=c+0100;
     else buffer[k-1]=c-0100;
@@ -7933,10 +7974,12 @@ the buffer left two or three places.
 }
 
 @ @<Scan ahead in the buffer...@>=
-{@+@/do@+{cur_chr=buffer[k];cat=cat_code(cur_chr);incr(k);
+{@+int j; 
+@/do@+{j=k; k=utf8_get_cur_chr(buffer,k,limit);
+cat=cat_code(cur_chr);
 }@+ while (!((cat!=letter)||(k > limit)));
 @<If an expanded...@>;
-if (cat!=letter) decr(k);
+if (cat!=letter) k=j;
    /*now |k| points to first nonletter*/
 if (k > loc+1)  /*multiletter control sequence has been scanned*/
   {@+cur_cs=id_lookup(loc, k-loc);loc=k;goto found;
@@ -7958,7 +8001,7 @@ if (loc!=null)  /*list not exhausted*/
         @<Get the next token, suppressing expansion@>@;
       else check_outer_validity();
     }
-  else{@+cur_cmd=t/0400;cur_chr=t%0400;
+  else{@+cur_cmd=t/cmd_factor;cur_chr=t%cmd_factor;
     switch (cur_cmd) {
     case left_brace: incr(align_state);@+break;
     case right_brace: decr(align_state);@+break;
@@ -8120,7 +8163,7 @@ In fact, these three procedures account for almost every use of |get_next|.
 @p static void get_token(void) /*sets |cur_cmd|, |cur_chr|, |cur_tok|*/
 {@+no_new_control_sequence=false;get_next();no_new_control_sequence=true;
 @^inner loop@>
-if (cur_cs==0) cur_tok=(cur_cmd*0400)+cur_chr;
+if (cur_cs==0) cur_tok=cmd_token(cur_cmd)+cur_chr;
 else cur_tok=cs_token_flag+cur_cs;
 }
 
@@ -8273,7 +8316,7 @@ while (p!=null)
       overflow("buffer size", buf_size);
 @:TeX capacity exceeded buffer size}{\quad buffer size@>
     }
-  buffer[j]=info(p)%0400;incr(j);p=link(p);
+  buffer[j]=info(p)%cmd_factor;incr(j);p=link(p);
   }
 if (j==first) cur_cs=null_cs; /*the list is empty*/
 else if (j > first+1)
@@ -8339,7 +8382,7 @@ if (cur_cmd >= call)
     }
 else expand();
 goto restart;
-done: if (cur_cs==0) cur_tok=(cur_cmd*0400)+cur_chr;
+done: if (cur_cs==0) cur_tok=cmd_token(cur_cmd)+cur_chr;
 else cur_tok=cs_token_flag+cur_cs;
 }
 
@@ -8351,7 +8394,7 @@ procedure calls: |get_next;x_token|.
   {@+expand();
   get_next();
   }
-if (cur_cs==0) cur_tok=(cur_cmd*0400)+cur_chr;
+if (cur_cs==0) cur_tok=cmd_token(cur_cmd)+cur_chr;
 else cur_tok=cs_token_flag+cur_cs;
 }
 
@@ -8879,7 +8922,6 @@ the internal quantity to be scanned; an error will be signalled if
 halfword m; /*|chr_code| part of the operand token*/
 pointer @!q, @!r; /*general purpose indices*/
 pointer @!tx; /*effective tail node*/
-four_quarters @!i; /*character info*/
 int @!p; /*index into |nest|*/
 m=cur_chr;
 switch (cur_cmd) {
@@ -8905,7 +8947,8 @@ case set_page_int: @<Fetch the |dead_cycles| or the |insert_penalties|@>@;@+brea
 case set_page_dimen: @<Fetch something on the |page_so_far|@>@;@+break;
 case set_shape: @<Fetch the |par_shape| size@>@;@+break;
 case set_box_dimen: @<Fetch a box dimension@>@;@+break;
-case char_given: case math_given: scanned_result(cur_chr, int_val)@;@+break;
+case char_given: scanned_result(cur_chr, int_val)@;@+break;
+case math_given: Umath_to_math(cur_chr); scanned_result(cur_chr, int_val)@;@+break;
 case assign_font_dimen: @<Fetch a font dimension@>@;@+break;
 case assign_font_int: @<Fetch a font integer@>@;@+break;
 case internal_register: @<Fetch a register@>@;@+break;
@@ -8918,7 +8961,9 @@ while (cur_val_level > level) @<Convert \(c)|cur_val| to a lower level@>;
 
 @ @<Fetch a character code from some table@>=
 {@+scan_char_num();
-if (m==math_code_base) scanned_result(ho(math_code(cur_val)), int_val)@;
+if (m>=utf_first_base && cur_val<0x100) m=utf_adjust_base(m);
+if (m>=utf_first_base) scanned_result(utf_lookup(m,cur_val), int_val)@;
+else if (m==math_code_base) scanned_result(ho(math_code(cur_val)), int_val)@;
 else if (m < math_code_base) scanned_result(equiv(m+cur_val), int_val)@;
 else scanned_result(eqtb[m+cur_val].i, int_val);
 }
@@ -8944,7 +8989,10 @@ else if (cur_cmd <= assign_toks)
         }
       }
     else cur_val=sa_ptr(m);
-  else cur_val=equiv(m);
+  else 
+  { if (m<utf_first_base) cur_val=equiv(m);
+    else cur_val=utf_lookup(m&utf_base_mask,m&utf_cp_mask);
+  }
   cur_val_level=tok_val;
   }
 else{@+back_input();scan_font_ident();
@@ -9225,7 +9273,7 @@ if ((cur_val < 0)||(cur_val > 255))
 @ @<Declare procedures that scan restricted classes of integers@>=
 static void scan_char_num(void)
 {@+scan_int();
-if ((cur_val < 0)||(cur_val > 255))
+if ((cur_val < 0)||(cur_val > 0x10ffff))
   {@+print_err("Bad character code");
 @.Bad character code@>
   help2("A character number must be between 0 and 255.",@/
@@ -9339,7 +9387,7 @@ if (cur_tok < cs_token_flag)
 else if (cur_tok < cs_token_flag+single_base)
   cur_val=cur_tok-cs_token_flag-active_base;
 else cur_val=cur_tok-cs_token_flag-single_base;
-if (cur_val > 255)
+if (cur_val > 0x10ffff)
   {@+print_err("Improper alphabetic constant");
 @.Improper alphabetic constant@>
   help2("A one-character control sequence belongs after a ` mark.",@/
@@ -10657,9 +10705,9 @@ to place.
 @ Here now is the first of the system-dependent routines for file name scanning.
 @^system dependencies@>
 
-@p static bool quoted_filename;
+@p static bool quoted_filename,inside_quote;
 static void begin_name(void)
-{@+area_delimiter=0;ext_delimiter=0; quoted_filename=false;
+{@+area_delimiter=0;ext_delimiter=0; quoted_filename=inside_quote=false;
 }
 
 @ And here's the second. The string pool might change as the file name is
@@ -10669,8 +10717,9 @@ string, instead of assigning an absolute address like |pool_ptr| to them.
 @^system dependencies@>
 
 @p static bool more_name(ASCII_code @!c)
-{@+if (c==' ' && !quoted_filename) return false;
-else if (c=='"') {@+quoted_filename=!quoted_filename; return true; }
+{@+if (c==' ' && !inside_quote) return false;
+else if (c=='"') {@+ if (cur_length==0) quoted_filename=true;
+  inside_quote=!inside_quote; return true; }
 else {@+str_room(1);append_char(c); /*contribute |c| to the current string*/
   if (IS_DIR_SEP(c)) {@+area_delimiter=cur_length;ext_delimiter=0; }
   else if (c=='.') ext_delimiter=cur_length;
@@ -11380,10 +11429,10 @@ static str_number @!font_name0[font_max-font_base+1],
   *const @!font_name = @!font_name0-font_base; /*name of the font*/
 static str_number @!font_area0[font_max-font_base+1],
   *const @!font_area = @!font_area0-font_base; /*area of the font*/
-static eight_bits @!font_bc0[font_max-font_base+1],
+static int @!font_bc0[font_max-font_base+1],
   *const @!font_bc = @!font_bc0-font_base;
    /*beginning (smallest) character code*/
-static eight_bits @!font_ec0[font_max-font_base+1],
+static int @!font_ec0[font_max-font_base+1],
   *const @!font_ec = @!font_ec0-font_base;
    /*ending (largest) character code*/
 static pointer @!font_glue0[font_max-font_base+1],
@@ -11504,13 +11553,13 @@ as fast as possible under the circumstances.
 @^inner loop@>
 
 @d char_info(A, B) font_info[char_base[A]+B].qqqq
-@d char_width(A, B) font_info[width_base[A]+B.b0].sc
-@d char_exists(A) (A.b0 > min_quarterword)
-@d char_italic(A, B) font_info[italic_base[A]+(qo(B.b2))/4].sc
+@d char_width(A, B) (IS_X_FONT(A)? x_char_width(A,B):font_info[width_base[A]+char_info(A,B).b0].sc)
+@d char_exists(A,B)  (IS_X_FONT(A)?ft_exists(font_face[A],B): char_info(A,B).b0 > min_quarterword)
+@d char_italic(A, B) (IS_X_FONT(A)? x_char_italic(A,B):font_info[italic_base[A]+(char_info(A,B).b2)/4].sc)
 @d height_depth(A) qo(A.b1)
-@d char_height(A, B) font_info[height_base[A]+(B)/16].sc
-@d char_depth(A, B) font_info[depth_base[A]+(B)%16].sc
-@d char_tag(A) ((qo(A.b2))%4)
+@d char_height(A, B) (IS_X_FONT(A)? x_char_height(A,B):font_info[height_base[A]+(char_info(A,B).b1)/16].sc)
+@d char_depth(A, B) (IS_X_FONT(A)? x_char_depth(A,B):font_info[depth_base[A]+(char_info(A,B).b1)%16].sc)
+@d char_tag(A,B) (IS_X_FONT(A)? no_tag:((qo(B.b2))%4)) /*we need extended font |A|*/
 
 @ The global variable |null_character| is set up to be a word of
 |char_info| for a character that doesn't exist. Such a word provides a
@@ -11574,10 +11623,10 @@ information is stored; |null_font| is returned in this case.
 @d abort goto bad_tfm /*do this when the \.{TFM} data is wrong*/
 
 @p static internal_font_number read_font_info(pointer @!u, str_number @!nom, str_number @!aire,
-  scaled @!s) /*input a \.{TFM} file*/
+  scaled @!s) /*input a font file*/
 {@+
 int k; /*index into |font_info|*/
-bool @!file_opened; /*was |tfm_file| successfully opened?*/
+bool @!file_opened; /*was the file successfully opened?*/
 halfword @!lf, @!lh, @!bc, @!ec, @!nw, @!nh, @!nd, @!ni, @!nl, @!nk, @!ne, @!np;
    /*sizes of subfiles*/
 internal_font_number @!f; /*the new font's number*/
@@ -11587,14 +11636,16 @@ four_quarters @!qw;scaled @!sw; /*accumulators*/
 int @!bch_label; /*left boundary start location, or infinity*/
 int @!bchar; /*boundary character, or 256*/
 scaled @!z; /*the design size or the ``at'' size*/
-int @!alpha;int @!beta;
-   /*auxiliary quantities used in fixed-point multiplication*/
+int @!alpha;int @!beta;  /*auxiliary quantities used in fixed-point multiplication*/
+char* path = NULL; /*the path of the new font file*/
 g=null_font;@/
-@<Read and check the font data; |abort| if the \.{TFM} file is malformed;
+file_opened=false;
+@<Read and check the font data; |abort| if the font file is malformed;
 if there's no room for this font, say so and |goto done|; otherwise |incr(font_ptr)|
 and |goto done|@>;
 bad_tfm: @<Report that the font won't be loaded@>;
-done: if (file_opened) b_close(&tfm_file);
+done: if (tfm_file.f!=NULL) b_close(&tfm_file);
+@<Trace the new font@>@;
 return g;
 }
 
@@ -11617,9 +11668,9 @@ precise details about why it rejects a particular \.{TFM} file.
 @<Report that the font won't be loaded@>=
 start_font_error_message;
 @.Font x=xx not loadable...@>
-if (file_opened) print(" not loadable: Bad metric (TFM) file");
-else print(" not loadable: Metric (TFM) file not found");
-help5("I wasn't able to read the size data for this font,",@/
+if (file_opened) print(" not loadable: Bad font file");
+else print(" not loadable: font file not found");
+help5("I wasn't able to read the data for this font,",@/
 "so I will ignore the font specification.",@/
 "[Wizards can fix TFM files using TFtoPL/PLtoTF.]",@/
 "You might try inserting a different font spec;",@/
@@ -11628,6 +11679,7 @@ error()
 
 @ @<Read and check...@>=
 @<Open |tfm_file| for input@>;
+if (file_opened) {
 @<Read the {\.{TFM}} size fields@>;
 @<Use size fields to allocate font information@>;
 @<Read the {\.{TFM}} header@>;
@@ -11638,11 +11690,12 @@ error()
 @<Read font parameters@>;
 @<Make final adjustments and |goto done|@>@;
 
+}
+
 @ @<Open |tfm_file| for input@>=
-file_opened=false;
 pack_file_name(nom, empty_string,empty_string,".tfm"); /* \TeX\ Live */
-if (!b_open_in(&tfm_file)) abort;
-file_opened=true
+path=kpse_find_file((char*)name_of_file+1, kpse_tfm_format, 0);
+if (path!=NULL && b_open_in(&tfm_file)) file_opened=true;
 
 @ Note: A malformed \.{TFM} file might be shorter than it claims to be;
 thus |eof(tfm_file)| might be true when |read_font_info| refers to
@@ -11763,7 +11816,7 @@ the largest character code in the cycle.
 while (d < current_character_being_worked_on)
   {@+qw=char_info(f, d);
    /*N.B.: not |qi(d)|, since |char_base[f]| hasn't been adjusted yet*/
-  if (char_tag(qw)!=list_tag) goto not_found;
+  if (char_tag(f,qw)!=list_tag) goto not_found;
   d=qo(rem_byte(qw)); /*next character on the list*/
   }
 if (d==current_character_being_worked_on) abort; /*yes, there's a cycle*/
@@ -11814,7 +11867,7 @@ beta=256/alpha;alpha=alpha*z;
 @ @d check_existence(A) @t@>@;@/
   {@+check_byte_range(A);
   qw=char_info(f, A); /*N.B.: not |qi(A)|*/
-  if (!char_exists(qw)) abort;
+  if (!char_exists(f,A)) abort;
   }
 
 @<Read ligature/kern program@>=
@@ -11878,7 +11931,7 @@ font_bchar[f]=qi(bchar);
 font_false_bchar[f]=qi(bchar);
 if (bchar <= ec) if (bchar >= bc)
   {@+qw=char_info(f, bchar); /*N.B.: not |qi(bchar)|*/
-  if (char_exists(qw)) font_false_bchar[f]=non_char;
+  if (char_exists(f,bchar)) font_false_bchar[f]=non_char;
   }
 font_name[f]=nom;
 font_area[f]=aire;
@@ -11886,7 +11939,7 @@ font_bc[f]=bc;font_ec[f]=ec;font_glue[f]=null;
 adjust(char_base);adjust(width_base);adjust(lig_kern_base);
 adjust(kern_base);adjust(exten_base);
 decr(param_base[f]);
-fmem_ptr=fmem_ptr+lf;font_ptr=f;g=f;goto done
+fmem_ptr=fmem_ptr+lf;font_ptr=f;g=f;goto done;
 
 @ Before we forget about the format of these tables, let's deal with two
 of \TeX's basic scanning routines related to font information.
@@ -11982,7 +12035,7 @@ given character in a given font. If that character doesn't exist,
 {@+
 pointer p; /*newly allocated node*/
 if (font_bc[f] <= c) if (font_ec[f] >= c)
-  if (char_exists(char_info(f, qi(c))))
+  if (char_exists(f, qi(c)))
     {@+p=get_avail();font(p)=f;character(p)=qi(c);
     return p;
     }
@@ -13040,7 +13093,7 @@ reswitch: if (is_char_node(p))
   if (f!=dvi_f) @<Change font |dvi_f| to |f|@>;
   if (c >= qi(128)) dvi_out(set1);
   dvi_out(qo(c));@/
-  cur_h=cur_h+char_width(f, char_info(f, c));
+  cur_h=cur_h+char_width(f, c);
   p=link(p);
   }@+ while (!(!is_char_node(p)));
   dvi_h=cur_h;
@@ -13612,10 +13665,24 @@ to be exercised one more time.
 @^inner loop@>
 
 @<Incorporate character dimensions into the dimensions of the hbox...@>=
-{@+f=font(p);i=char_info(f, character(p));hd=height_depth(i);
-x=x+char_width(f, i);@/
-s=char_height(f, hd);@+if (s > h) h=s;
-s=char_depth(f, hd);@+if (s > d) d=s;
+{@+f=font(p);
+if (IS_X_FONT(f))
+{ scaled s=x_font[f]->s;
+  FT_Face ft_face=font_face[f];
+  FT_UInt ft_gid=ft_glyph(ft_face, character(p));
+  if (ft_gid!=0)
+  { scaled ph, pd;
+    x=x+ft_glyph_width(ft_face,ft_gid,s);
+    ft_glyph_height_depth(ft_face,ft_gid,&ph, &pd, s);
+    if (ph>h) h=ph;
+    if (pd>d) d=pd;
+  } 
+}
+else
+{ x=x+char_width(f, character(p));@/
+  s=char_height(f, character(p));@+if (s > h) h=s;
+  s=char_depth(f, character(p));@+if (s > d) d=s;
+}
 p=link(p);
 }
 
@@ -14542,7 +14609,6 @@ int @!m, @!n; /*the number of extensible pieces*/
 scaled @!u; /*height-plus-depth of a tentative character*/
 scaled @!w; /*largest height-plus-depth so far*/
 four_quarters @!q; /*character info*/
-eight_bits @!hd; /*height-depth byte*/
 four_quarters @!r; /*extensible pieces*/
 small_number @!z; /*runs through font family members*/
 bool @!large_attempt; /*are we trying the ``large'' variant?*/
@@ -14581,17 +14647,16 @@ enough variant is encountered@>;
 {@+y=x;
 if ((qo(y) >= font_bc[g])&&(qo(y) <= font_ec[g]))
   {@+resume: q=char_info(g, y);
-  if (char_exists(q))
-    {@+if (char_tag(q)==ext_tag)
+  if (char_exists(g,y))
+    {@+if (char_tag(g,q)==ext_tag)
       {@+f=g;c=y;goto found;
       }
-    hd=height_depth(q);
-    u=char_height(g, hd)+char_depth(g, hd);
+    u= height_plus_depth(g,y);  
     if (u > w)
       {@+f=g;c=y;w=u;
       if (u >= v) goto found;
       }
-    if (char_tag(q)==list_tag)
+    if (char_tag(g,q)==list_tag)
       {@+y=rem_byte(q);goto resume;
       }
     }
@@ -14606,20 +14671,34 @@ may deliver a slightly different result than |hpack| would produce.
 
 @<Declare subprocedures for |var_delimiter|@>=
 static pointer char_box(internal_font_number @!f, quarterword @!c)
-{@+four_quarters q;
-eight_bits @!hd; /*|height_depth| byte*/
-pointer @!b, @!p; /*the new box and its character node*/
-q=char_info(f, c);hd=height_depth(q);
-b=new_null_box();width(b)=char_width(f, q)+char_italic(f, q);
-height(b)=char_height(f, hd);depth(b)=char_depth(f, hd);
+{@+pointer @!b, @!p; /*the new box and its character node*/
+b=new_null_box();
+if (IS_X_FONT(f))
+{ scaled s=x_font[f]->s;
+  FT_Face ft_face=font_face[g];
+  FT_UInt ft_gid=ft_glyph(ft_face, c);
+  if (ft_gid==0) width(b)=height(b)=depth(b)=0;
+  else
+  { scaled ch, cd;
+    width(b)=ft_glyph_width(ft_face,ft_gid,s)+ x_char_italic(f,c);
+    /* the above could be optimized because the computation of
+    |x_char_italic| includes the computation of |ft_glyph_width|.*/
+    ft_glyph_height_depth(ft_face,ft_gid,&ch, &cd, s);
+    height(b)=ch; depth(b)=cd;
+  }
+} 
+else
+{ width(b)=char_width(f, c)+char_italic(f, c);
+  height(b)=char_height(f, c);depth(b)=char_depth(f, c);
+}
 p=get_avail();character(p)=c;font(p)=f;list_ptr(b)=p;return b;
 }
 
-@ When the following code is executed, |char_tag(q)| will be equal to
+@ When the following code is executed, |char_tag(f,q)| will be equal to
 |ext_tag| if and only if a built-up symbol is supposed to be returned.
 
 @<Make variable |b| point to a box for |(f,c)|@>=
-if (char_tag(q)==ext_tag)
+if (char_tag(f,q)==ext_tag)
   @<Construct an extensible character in a new box |b|, using recipe |rem_byte(q)|
 and font |f|@>@;
 else b=char_box(f, c)
@@ -14641,10 +14720,13 @@ a given character:
 
 @<Declare subprocedures for |var_delimiter|@>=
 static scaled height_plus_depth(internal_font_number @!f, quarterword @!c)
-{@+four_quarters q;
-eight_bits @!hd; /*|height_depth| byte*/
-q=char_info(f, c);hd=height_depth(q);
-return char_height(f, hd)+char_depth(f, hd);
+{ if (IS_X_FONT(f))
+  { scaled hc,dc;
+    ft_height_depth(font_face[f], c,&hc, &dc, x_font[f]->s);
+    return hc+dc;
+  }
+  else
+    return char_height(f, c)+char_depth(f, c);
 }
 
 @ @<Construct an extensible...@>=
@@ -14674,7 +14756,7 @@ we don't use any copies of it, otherwise we use as few as possible
 
 @<Compute the minimum suitable height, |w|, and...@>=
 c=ext_rep(r);u=height_plus_depth(f, c);
-w=0;q=char_info(f, c);width(b)=char_width(f, q)+char_italic(f, q);@/
+w=0;q=char_info(f, c);width(b)=char_width(f, c)+char_italic(f, c);@/
 c=ext_bot(r);@+if (c!=min_quarterword) w=w+height_plus_depth(f, c);
 c=ext_mid(r);@+if (c!=min_quarterword) w=w+height_plus_depth(f, c);
 c=ext_top(r);@+if (c!=min_quarterword) w=w+height_plus_depth(f, c);
@@ -14705,7 +14787,7 @@ if ((width(b)!=w)&&(list_ptr(b)!=null))
   {@+if (type(b)==vlist_node) b=hpack(b, natural);
   p=list_ptr(b);
   if ((is_char_node(p))&&(link(p)==null))
-    {@+f=font(p);v=char_width(f, char_info(f, character(p)));
+    {@+f=font(p);v=char_width(f, character(p));
     if (v!=width(b)) link(p)=new_kern(width(b)-v);
     }
   list_ptr(b)=null; flush_node_list(b);
@@ -14851,7 +14933,7 @@ if (cur_f==null_font)
 else{@+if ((qo(cur_c) >= font_bc[cur_f])&&(qo(cur_c) <= font_ec[cur_f]))
     cur_i=char_info(cur_f, cur_c);
   else cur_i=null_character;
-  if (!(char_exists(cur_i)))
+  if (!(char_exists(cur_f,cur_c)))
     {@+char_warning(cur_f, qo(cur_c));
     math_type(a)=empty;cur_i=null_character;
     }
@@ -15137,7 +15219,7 @@ scaled @!h; /*height of character being accented*/
 scaled @!delta; /*space to remove between accent and accentee*/
 scaled @!w; /*width of the accentee, not including sub/superscripts*/
 fetch(accent_chr(q));
-if (char_exists(cur_i))
+if (char_exists(cur_f,cur_c))
   {@+i=cur_i;c=cur_c;f=cur_f;@/
   @<Compute the amount of skew@>;
   x=clean_box(nucleus(q), cramped_style(cur_style));w=width(x);h=height(x);
@@ -15162,11 +15244,11 @@ height(y)=h;
 }
 
 @ @<Switch to a larger accent if available and appropriate@>=
-loop@+{@+if (char_tag(i)!=list_tag) goto done;
+loop@+{@+if (char_tag(f,i)!=list_tag) goto done;
   y=rem_byte(i);
   i=char_info(f, y);
-  if (!char_exists(i)) goto done;
-  if (char_width(f, i) > w) goto done;
+  if (!char_exists(f,y)) goto done;
+  if (char_width(f, y) > w) goto done;
   c=y;
   }
 done:
@@ -15175,7 +15257,7 @@ done:
 s=0;
 if (math_type(nucleus(q))==math_char)
   {@+fetch(nucleus(q));
-  if (char_tag(cur_i)==lig_tag)
+  if (char_tag(cur_f, cur_i)==lig_tag)
     {@+a=lig_kern_start(cur_f, cur_i);
     cur_i=font_info[a].qqqq;
     if (skip_byte(cur_i) > stop_flag)
@@ -15314,13 +15396,13 @@ if ((subtype(q)==normal)&&(cur_style < text_style))
   subtype(q)=limits;
 if (math_type(nucleus(q))==math_char)
   {@+fetch(nucleus(q));
-  if ((cur_style < text_style)&&(char_tag(cur_i)==list_tag))  /*make it larger*/
+  if ((cur_style < text_style)&&(char_tag(cur_f, cur_i)==list_tag))  /*make it larger*/
     {@+c=rem_byte(cur_i);i=char_info(cur_f, c);
-    if (char_exists(i))
+    if (char_exists(cur_f,c))
       {@+cur_c=c;cur_i=i;character(nucleus(q))=c;
       }
     }
-  delta=char_italic(cur_f, cur_i);x=clean_box(nucleus(q), cur_style);
+  delta=char_italic(cur_f, cur_c);x=clean_box(nucleus(q), cur_style);
   if ((math_type(subscr(q))!=empty)&&(subtype(q)!=limits))
     width(x)=width(x)-delta; /*remove italic correction*/
   shift_amount(x)=half(height(x)-depth(x))-axis_height(cur_size);
@@ -15399,7 +15481,7 @@ if (math_type(subscr(q))==empty) if (math_type(supscr(q))==empty)
     if (fam(nucleus(p))==fam(nucleus(q)))
       {@+math_type(nucleus(q))=math_text_char;
       fetch(nucleus(q));
-      if (char_tag(cur_i)==lig_tag)
+      if (char_tag(cur_f, cur_i)==lig_tag)
         {@+a=lig_kern_start(cur_f, cur_i);
         cur_c=character(nucleus(p));
         cur_i=font_info[a].qqqq;
@@ -15491,8 +15573,8 @@ make_scripts(q, delta)
 
 @ @<Create a character node |p| for |nucleus(q)|...@>=
 {@+fetch(nucleus(q));
-if (char_exists(cur_i))
-  {@+delta=char_italic(cur_f, cur_i);p=new_character(cur_f, qo(cur_c));
+if (char_exists(cur_f,cur_c))
+  {@+delta=char_italic(cur_f, cur_c);p=new_character(cur_f, qo(cur_c));
   if ((math_type(nucleus(q))==math_text_char)&&(space(cur_f)!=0))
     delta=0; /*no italic correction in mid-word of text font*/
   if ((math_type(subscr(q))==empty)&&(delta!=0))
@@ -17262,12 +17344,12 @@ only character nodes, kern nodes, ligature nodes, and box or rule nodes.
 @<Subtract the width of node |v|...@>=
 if (is_char_node(v))
   {@+f=font(v);
-  break_width[1]=break_width[1]-char_width(f, char_info(f, character(v)));
+  break_width[1]=break_width[1]-char_width(f, character(v));
   }
 else switch (type(v)) {
   case ligature_node: {@+f=font(lig_char(v));@/
     break_width[1]=@|break_width[1]-
-      char_width(f, char_info(f, character(lig_char(v))));
+      char_width(f, character(lig_char(v)));
     } @+break;
   case hlist_node: case vlist_node: case rule_node:
   case kern_node:
@@ -17279,12 +17361,12 @@ else switch (type(v)) {
 @ @<Add the width of node |s| to |b...@>=
 if (is_char_node(s))
   {@+f=font(s);
-  break_width[1]=@|break_width[1]+char_width(f, char_info(f, character(s)));
+  break_width[1]=@|break_width[1]+char_width(f, character(s));
   }
 else switch (type(s)) {
   case ligature_node: {@+f=font(lig_char(s));
     break_width[1]=break_width[1]+
-      char_width(f, char_info(f, character(lig_char(s))));
+      char_width(f, character(lig_char(s)));
     } @+break;
   case hlist_node: case vlist_node: case rule_node:
   case kern_node:
@@ -17784,7 +17866,7 @@ then update the active widths by including the glue in |glue_ptr(cur_p)|@>;
 case kern_node: if (subtype(cur_p)==explicit) kern_break@;
   else act_width=act_width+width(cur_p);@+break;
 case ligature_node: {@+f=font(lig_char(cur_p));
-  act_width=act_width+char_width(f, char_info(f, character(lig_char(cur_p))));
+  act_width=act_width+char_width(f, character(lig_char(cur_p)));
   } @+break;
 case disc_node: @<Try to break after a discretionary fragment, then |goto
 done5|@>@;
@@ -17808,7 +17890,7 @@ character node.
 @<Advance \(c)|cur_p| to the node following the present string...@>=
 {@+prev_p=cur_p;
 @/do@+{f=font(cur_p);
-act_width=act_width+char_width(f, char_info(f, character(cur_p)));
+act_width=act_width+char_width(f, character(cur_p));
 cur_p=link(cur_p);
 }@+ while (!(!is_char_node(cur_p)));
 }
@@ -17853,12 +17935,12 @@ prev_p=cur_p;cur_p=s;goto done5;
 @ @<Add the width of node |s| to |disc_width|@>=
 if (is_char_node(s))
   {@+f=font(s);
-  disc_width=disc_width+char_width(f, char_info(f, character(s)));
+  disc_width=disc_width+char_width(f, character(s));
   }
 else switch (type(s)) {
   case ligature_node: {@+f=font(lig_char(s));
     disc_width=disc_width+
-      char_width(f, char_info(f, character(lig_char(s))));
+      char_width(f, character(lig_char(s)));
     } @+break;
   case hlist_node: case vlist_node: case rule_node:
   case kern_node:
@@ -17870,12 +17952,12 @@ else switch (type(s)) {
 @ @<Add the width of node |s| to |act_width|@>=
 if (is_char_node(s))
   {@+f=font(s);
-  act_width=act_width+char_width(f, char_info(f, character(s)));
+  act_width=act_width+char_width(f, character(s));
   }
 else switch (type(s)) {
   case ligature_node: {@+f=font(lig_char(s));
     act_width=act_width+
-      char_width(f, char_info(f, character(lig_char(s))));
+      char_width(f, character(lig_char(s)));
     } @+break;
   case hlist_node: case vlist_node: case rule_node:
   case kern_node:
@@ -18598,7 +18680,7 @@ if (cur_l==non_char)
   if (k==non_address) goto done;@+else q=font_info[k].qqqq;
   }
 else{@+q=char_info(hf, cur_l);
-  if (char_tag(q)!=lig_tag) goto done;
+  if (char_tag(hf,q)!=lig_tag) goto done;
   k=lig_kern_start(hf, q);q=font_info[k].qqqq;
   if (skip_byte(q) > stop_flag)
     {@+k=lig_kern_restart(hf, q);q=font_info[k].qqqq;
@@ -20987,7 +21069,7 @@ main_loop_move2: if ((cur_chr < font_bc[main_f])||(cur_chr > font_ec[main_f]))
   {@+char_warning(main_f, cur_chr);free_avail(lig_stack);goto big_switch;
   }
 main_i=char_info(main_f, cur_l);
-if (!char_exists(main_i))
+if (!char_exists(main_f,cur_l))
   {@+char_warning(main_f, cur_chr);free_avail(lig_stack);goto big_switch;
   }
 link(tail)=lig_stack;tail=lig_stack /*|main_loop_lookahead| is next*/
@@ -21040,7 +21122,7 @@ lig/kern commands were investigated for every such character.
 At the beginning of this code we have |main_i==char_info(main_f, cur_l)|.
 
 @<If there's a ligature/kern command...@>=
-if (char_tag(main_i)!=lig_tag) goto main_loop_wrapup;
+if (char_tag(main_f, main_i)!=lig_tag) goto main_loop_wrapup;
 if (cur_r==non_char) goto main_loop_wrapup;
 main_k=lig_kern_start(main_f, main_i);main_j=font_info[main_k].qqqq;
 if (skip_byte(main_j) <= stop_flag) goto main_lig_loop2;
@@ -21137,7 +21219,7 @@ use of \.{\\fontdimen}, the |find_font_dimen| procedure deallocates the
 if (main_p==null)
   {@+main_p=new_spec(zero_glue);main_k=param_base[cur_font]+space_code;
   width(main_p)=font_info[main_k].sc; /*that's |space(cur_font)|*/
-  stretch(main_p)=font_info[main_k+1].sc; /*and |space_stretch(cur_font)|*/
+  stretch(main_p)=font_info[main_k+1].sc; /*and |space_cur_font)|*/
   shrink(main_p)=font_info[main_k+2].sc; /*and |space_shrink(cur_font)|*/
   font_glue[cur_font]=main_p;
   }
@@ -22216,7 +22298,7 @@ if (tail!=head)
   else if (type(tail)==ligature_node) p=lig_char(tail);
   else return;
   f=font(p);
-  tail_append(new_kern(char_italic(f, char_info(f, character(p)))));
+  tail_append(new_kern(char_italic(f, character(p))));
   subtype(tail)=explicit;
   }
 }
@@ -22342,12 +22424,11 @@ static void make_accent(void)
 pointer @!p, @!q, @!r; /*character, box, and kern nodes*/
 internal_font_number @!f; /*relevant font*/
 scaled @!a, @!h, @!x, @!w, @!delta; /*heights and widths, as explained above*/
-four_quarters @!i; /*character information*/
 scan_char_num();f=cur_font;p=new_character(f, cur_val);
 if (p!=null)
   {@+x=x_height(f);s=slant(f)/float_constant(65536);
 @^real division@>
-  a=char_width(f, char_info(f, character(p)));@/
+  a=char_width(f, character(p));@/
   do_assignments();@/
   @<Create a character node |q| for the next character, but set |q:=null|
 if problems arise@>;
@@ -22375,8 +22456,20 @@ because the user cannot remove these nodes nor access them via \.{\\lastkern}.
 @<Append the accent with appropriate kerns...@>=
 {@+t=slant(f)/float_constant(65536);
 @^real division@>
-i=char_info(f, character(q));
-w=char_width(f, i);h=char_height(f, height_depth(i));
+if (IS_X_FONT(f))
+{ scaled s=x_font[f]->s;
+  FT_Face ft_face=font_face[g];
+  FT_UInt ft_gid=ft_glyph(ft_face, character(q));
+  if (ft_gid==0)
+    w=h=0;
+  else
+  { scaled pd;
+    w=ft_glyph_width(ft_face,ft_gid,s);
+    ft_glyph_height_depth(ft_face,ft_gid,&h, &pd, s);
+  }
+}
+else
+{  w=char_width(f, character(q));h=char_height(f,  character(q));}
 if (h!=x)  /*the accent must be shifted up or down*/
   {@+p=hpack(p, natural);shift_amount(p)=x-h;
   }
@@ -22637,7 +22730,7 @@ done:
 
 @ @<Let |d| be the natural width of node |p|...@>=
 reswitch: if (is_char_node(p))
-  {@+f=font(p);d=char_width(f, char_info(f, character(p)));
+  {@+f=font(p);d=char_width(f, character(p));
   goto found;
   }
 switch (type(p)) {
@@ -22726,7 +22819,7 @@ int c; /*math character code*/
 restart: @<Get the next non-blank non-relax...@>;
 reswitch: switch (cur_cmd) {
 case letter: case other_char: case char_given: {@+c=ho(math_code(cur_chr));
-    if (c==0100000)
+    if (c==active_math_character_code)
       {@+@<Treat |cur_chr| as an active character@>;
       goto restart;
       }
@@ -22734,16 +22827,16 @@ case letter: case other_char: case char_given: {@+c=ho(math_code(cur_chr));
 case char_num: {@+scan_char_num();cur_chr=cur_val;cur_cmd=char_given;
   goto reswitch;
   }
-case math_char_num: {@+scan_fifteen_bit_int();c=cur_val;
+case math_char_num: {@+scan_fifteen_bit_int(); math_to_Umath(cur_val); c=cur_val;
   } @+break;
 case math_given: c=cur_chr;@+break;
-case delim_num: {@+scan_twenty_seven_bit_int();c=cur_val/010000;
+case delim_num: {@+scan_twenty_seven_bit_int();c=cur_val/010000; math_to_Umath(c);
   } @+break;
 default:@<Scan a subformula enclosed in braces and |return|@>@;
 } @/
-math_type(p)=math_char;character(p)=qi(c%256);
-if ((c >= var_code)&&fam_in_range) fam(p)=cur_fam;
-else fam(p)=(c/256)%16;
+math_type(p)=math_char;character(p)=math_code_char(c);
+if ((math_code_class(c) >= 7)&&fam_in_range) fam(p)=cur_fam;
+else fam(p)=math_code_fam(c);
 }
 
 @ An active character that is an |outer_call| is allowed here.
@@ -22776,11 +22869,11 @@ case mmode+letter: case mmode+other_char:
 case mmode+char_num: {@+scan_char_num();cur_chr=cur_val;
   set_math_char(ho(math_code(cur_chr)));
   } @+break;
-case mmode+math_char_num: {@+scan_fifteen_bit_int();set_math_char(cur_val);
+case mmode+math_char_num: {@+scan_fifteen_bit_int(); math_to_Umath(cur_val); set_math_char(cur_val);
   } @+break;
 case mmode+math_given: set_math_char(cur_chr);@+break;
-case mmode+delim_num: {@+scan_twenty_seven_bit_int();
-  set_math_char(cur_val/010000);
+case mmode+delim_num: {@+scan_twenty_seven_bit_int();  cur_val=cur_val/010000; math_to_Umath(cur_val);
+  set_math_char(cur_val);
   } @+break;
 
 @ The |set_math_char| procedure creates a new noad appropriate to a given
@@ -22791,16 +22884,16 @@ nothing is appended.
 @<Declare act...@>=
 static void set_math_char(int @!c)
 {@+pointer p; /*the new noad*/
-if (c >= 0100000)
+if (c == active_math_character_code)
   @<Treat |cur_chr|...@>@;
 else{@+p=new_noad();math_type(nucleus(p))=math_char;
-  character(nucleus(p))=qi(c%256);
-  fam(nucleus(p))=(c/256)%16;
-  if (c >= var_code)
+  character(nucleus(p))=math_code_char(c);
+  fam(nucleus(p))=math_code_fam(c);
+  if (math_code_class(c) >= 7)
     {@+if (fam_in_range) fam(nucleus(p))=cur_fam;
     type(p)=ord_noad;
     }
-  else type(p)=ord_noad+(c/010000);
+  else type(p)=ord_noad+math_code_class(c);
   link(tail)=p;tail=p;
   }
 }
@@ -22933,9 +23026,9 @@ mem[subscr(tail)].hh=empty_field;
 mem[supscr(tail)].hh=empty_field;
 math_type(accent_chr(tail))=math_char;
 scan_fifteen_bit_int();
-character(accent_chr(tail))=qi(cur_val%256);
-if ((cur_val >= var_code)&&fam_in_range) fam(accent_chr(tail))=cur_fam;
-else fam(accent_chr(tail))=(cur_val/256)%16;
+character(accent_chr(tail))=cur_val&0xFF;
+if ((cur_val >= 0x7000)&&fam_in_range) fam(accent_chr(tail))=cur_fam;
+else fam(accent_chr(tail))=(cur_val>>8)&0xF;
 scan_math(nucleus(tail));
 }
 
@@ -23363,6 +23456,9 @@ mlist_to_hlist();p=link(temp_head); link(temp_head)=null;@/
    q=new_disp_node();
    if (!danger) { display_formula(q)=p; display_eqno(q)=a; display_left(q)=l; }
   /* adding parameter nodes */
+  /* these are paragraph parameters
+     needed for the baseline skip before the above display skip
+  */
   if (hang_indent!=0)
   { new_param_node(dimen_type,hang_indent_code,hang_indent);
     if (hang_after!=1)
@@ -23371,6 +23467,18 @@ mlist_to_hlist();p=link(temp_head); link(temp_head)=null;@/
   new_param_node(dimen_type,line_skip_limit_code,line_skip_limit);
   new_param_node(glue_type,line_skip_code,line_skip);
   new_param_node(glue_type,baseline_skip_code,baseline_skip);
+
+#if 0 /* unsure */ 
+   new_param_node(dimen_type,math_quad_no ...)
+#endif
+
+  new_param_node(int_type,pre_display_penalty_code,pre_display_penalty);
+  new_param_node(int_type,post_display_penalty_code,post_display_penalty);
+  new_param_node(glue_type,above_display_skip_code,above_display_skip);
+  new_param_node(glue_type,below_display_skip_code,below_display_skip);
+  new_param_node(glue_type,above_display_short_skip_code,above_display_short_skip);
+  new_param_node(glue_type,below_display_short_skip_code,below_display_short_skip);
+  
   display_params(q)=link(temp_head); link(temp_head)=null;
   display_no_bs(q)= prev_depth <= ignore_depth;
   tail_append(q);
@@ -23781,7 +23889,7 @@ case shorthand_def: switch (chr_code) {
   } @+break;
 case char_given: {@+print_esc("char");print_hex(chr_code);
   } @+break;
-case math_given: {@+print_esc("mathchar");print_hex(chr_code);
+case math_given: {@+print_esc("mathchar"); Umath_to_math(chr_code); print_hex(chr_code);
   } @+break;
 
 @ We temporarily define |p| to be |relax|, so that an occurrence of |p|
@@ -23795,7 +23903,7 @@ case shorthand_def: {@+n=cur_chr;get_r_token();p=cur_cs;define(p, relax, 256);
   switch (n) {
   case char_def_code: {@+scan_char_num();define(p, char_given, cur_val);
     } @+break;
-  case math_char_def_code: {@+scan_fifteen_bit_int();define(p, math_given, cur_val);
+  case math_char_def_code: {@+scan_fifteen_bit_int(); math_to_Umath(cur_val); define(p, math_given, cur_val);
     } @+break;
   default:{@+scan_register_num();
     if (cur_val > 255)
@@ -23916,17 +24024,21 @@ static void trap_zero_glue(void)
 and the font families are declared by |def_family|.
 
 @<Put each...@>=
-primitive("catcode", def_code, cat_code_base);
+primitive("catcode", def_code, utf_cat_code_base);
 @!@:cat\_code\_}{\.{\\catcode} primitive@>
 primitive("mathcode", def_code, math_code_base);
 @!@:math\_code\_}{\.{\\mathcode} primitive@>
-primitive("lccode", def_code, lc_code_base);
+primitive("Umathcode", def_code, utf_math_code_base);
+@!@:Umath\_code\_}{\.{\\Umathcode} primitive@>
+primitive("Umathcodenum", def_code, utf_math_codenum_base);
+@!@:Umath\_code\_num}{\.{\\Umathcodenum} primitive@>
+primitive("lccode", def_code, utf_lc_code_base);
 @!@:lc\_code\_}{\.{\\lccode} primitive@>
-primitive("uccode", def_code, uc_code_base);
+primitive("uccode", def_code, utf_uc_code_base);
 @!@:uc\_code\_}{\.{\\uccode} primitive@>
-primitive("sfcode", def_code, sf_code_base);
+primitive("sfcode", def_code, utf_sf_code_base);
 @!@:sf\_code\_}{\.{\\sfcode} primitive@>
-primitive("delcode", def_code, del_code_base);
+primitive("delcode", def_code, utf_del_code_base);
 @!@:del\_code\_}{\.{\\delcode} primitive@>
 primitive("textfont", def_family, math_font_base);
 @!@:text\_font\_}{\.{\\textfont} primitive@>
@@ -23936,11 +24048,12 @@ primitive("scriptscriptfont", def_family, math_font_base+script_script_size);
 @!@:script\_script\_font\_}{\.{\\scriptscriptfont} primitive@>
 
 @ @<Cases of |print_cmd_chr|...@>=
-case def_code: if (chr_code==cat_code_base) print_esc("catcode");
-  else if (chr_code==math_code_base) print_esc("mathcode");
-  else if (chr_code==lc_code_base) print_esc("lccode");
-  else if (chr_code==uc_code_base) print_esc("uccode");
-  else if (chr_code==sf_code_base) print_esc("sfcode");
+case def_code: if (chr_code==utf_cat_code_base) print_esc("catcode");
+  else if (chr_code==utf_math_code_base) print_esc("Umathcode");
+  else if (chr_code==utf_math_codenum_base) print_esc("Umathcodenum");
+  else if (chr_code==utf_lc_code_base) print_esc("lccode");
+  else if (chr_code==utf_uc_code_base) print_esc("uccode");
+  else if (chr_code==utf_sf_code_base) print_esc("sfcode");
   else print_esc("delcode");@+break;
 case def_family: print_size(chr_code-math_font_base);@+break;
 
@@ -23948,9 +24061,19 @@ case def_family: print_size(chr_code-math_font_base);@+break;
 following program is careful to check each case properly.
 
 @<Assignments@>=
-case def_code: {@+@<Let |n| be the largest legal code value, based on |cur_chr|@>;
-  p=cur_chr;scan_char_num();p=p+cur_val;scan_optional_equals();
-  scan_int();
+case def_code: {@+int cp;
+  @<Let |n| be the largest legal code value, based on |cur_chr|@>;
+  p=cur_chr;scan_char_num();cp=cur_val;scan_optional_equals();
+  if (p==utf_math_code_base)
+  {  @<Read the arguments of \.{\\Umathcode}@>@;
+     p=utf_math_codenum_base;
+  }
+  else
+    scan_int();
+  if (p==math_code_base)
+  {  math_to_Umath(cur_val); p=utf_math_codenum_base;
+  }
+  if (p>=utf_first_base && cp<0x100) p=utf_adjust_base(p);
   if (((cur_val < 0)&&(p < del_code_base))||(cur_val > n))
     {@+print_err("Invalid code (");print_int(cur_val);
 @.Invalid code@>
@@ -23960,16 +24083,21 @@ case def_code: {@+@<Let |n| be the largest legal code value, based on |cur_chr|@
     help1("I'm going to use 0 instead of that illegal code value.");@/
     error();cur_val=0;
     }
-  if (p < math_code_base) define(p, data, cur_val);
-  else if (p < del_code_base) define(p, data, hi(cur_val));
-  else word_define(p, cur_val);
+  if (p>=utf_first_base) utf_define(p,cp,cur_val,global); 
+  else if (p < math_code_base) define(p+cp, data, cur_val);
+  else if (p < del_code_base) define(p+cp, data, hi(cur_val));
+  else word_define(p+cp, cur_val);
   } @+break;
 
 @ @<Let |n| be the largest...@>=
-if (cur_chr==cat_code_base) n=max_char_code;
-else if (cur_chr==math_code_base) n=0100000;
-else if (cur_chr==sf_code_base) n=077777;
-else if (cur_chr==del_code_base) n=077777777;
+if (cur_chr==math_code_base) n=0x7FFFFFFF;
+else if (cur_chr==utf_cat_code_base) n=max_char_code;
+else if (cur_chr==utf_math_code_base) n=0x7FFFFFFF;
+else if (cur_chr==utf_math_codenum_base) n=0x7FFFFFFF;
+else if (cur_chr==utf_sf_code_base) n=077777;
+else if (cur_chr==utf_lc_code_base) n=0x10FFFF;
+else if (cur_chr==utf_uc_code_base) n=0x10FFFF;
+else if (cur_chr==utf_del_code_base) n=077777777;
 else n=255
 
 @ @<Assignments@>=
@@ -24308,10 +24436,12 @@ else{@+old_setting=selector;selector=new_string;
   }
 define(u, set_font, null_font);scan_optional_equals();scan_file_name();
 @<Scan the font size specification@>;
+@<Trace the font specification@>@;
 @<If this font has already been loaded, set |f| to the internal font number
 and |goto common_ending|@>;
 f=read_font_info(u, cur_name, cur_area, s);
-common_ending: define(u, set_font, f);eqtb[font_id_base+f]=eqtb[u];font_id_text(f)=t;
+common_ending:
+define(u, set_font, f);eqtb[font_id_base+f]=eqtb[u];font_id_text(f)=t;
 }
 
 @ @<Scan the font size specification@>=
@@ -24537,13 +24667,13 @@ building a token list and then changing the cases of the letters in it.
 any_mode(case_shift): shift_case();@+break;
 
 @ @<Put each...@>=
-primitive("lowercase", case_shift, lc_code_base);
+primitive("lowercase", case_shift, utf_lc_code_base);
 @!@:lowercase\_}{\.{\\lowercase} primitive@>
-primitive("uppercase", case_shift, uc_code_base);
+primitive("uppercase", case_shift, utf_uc_code_base);
 @!@:uppercase\_}{\.{\\uppercase} primitive@>
 
 @ @<Cases of |print_cmd_chr|...@>=
-case case_shift: if (chr_code==lc_code_base) print_esc("lowercase");
+case case_shift: if (chr_code==utf_lc_code_base) print_esc("lowercase");
   else print_esc("uppercase");@+break;
 
 @ @<Declare act...@>=
@@ -24551,7 +24681,7 @@ static void shift_case(void)
 {@+pointer b; /*|lc_code_base| or |uc_code_base|*/
 pointer @!p; /*runs through the token list*/
 halfword @!t; /*token*/
-eight_bits @!c; /*character code*/
+int @!c; /*character code*/
 b=cur_chr;p=scan_toks(false, false);p=link(def_ref);
 while (p!=null)
   {@+@<Change the case of the token in |p|, if a change is appropriate@>;
@@ -24568,9 +24698,16 @@ We also change active characters, using the fact that
 @<Change the case of the token in |p|, if a change is appropriate@>=
 t=info(p);
 if (t < cs_token_flag+single_base)
-  {@+c=t%256;
-  if (equiv(b+c)!=0) info(p)=t-c+equiv(b+c);
+{@+c=t%cmd_factor;
+  if (b==utf_lc_code_base)
+  { int d = utf_lccode(c);
+    if (d!=0) info(p)=t-c+d;
   }
+  else if (b==utf_uc_code_base)
+  { int d = utf_uccode(c);
+    if (d!=0) info(p)=t-c+d;
+  }
+}
 
 @ We come finally to the last pieces missing from |main_control|, namely the
 `\.{\\show}' commands that are useful when debugging.
@@ -25029,7 +25166,9 @@ dump_int(fmem_ptr);
 for (k=0; k<=fmem_ptr-1; k++) dump_wd(font_info[k]);
 dump_int(font_ptr);
 for (k=null_font; k<=font_ptr; k++)
+{ if (IS_X_FONT(k)) fatal_error("I can't dump extended fonts. Sorry!");
   @<Dump the array info for internal font number |k|@>;
+}
 print_ln();print_int(fmem_ptr-7);print(" words of font info for ");
 print_int(font_ptr-font_base);print(" preloaded font");
 if (font_ptr!=font_base+1) print_char('s')
@@ -25359,6 +25498,8 @@ if (log_opened)
     param_size,
     buf_size,
     save_size );
+  wlog_ln(" %d/%d utf block/info records out of %d/%d",
+    utf_b_used, utf_i_used, 0x100, 0x100);
   }
 
 @ We get to the |final_cleanup| routine when \.{\\end} or \.{\\dump} has
@@ -27026,12 +27167,12 @@ case font_char_ht_code:
 case font_char_dp_code:
 case font_char_ic_code: {@+scan_font_ident();q=cur_val;scan_char_num();
   if ((font_bc[q] <= cur_val)&&(font_ec[q] >= cur_val))
-    {@+i=char_info(q, qi(cur_val));
+    {@+
     switch (m) {
-    case font_char_wd_code: cur_val=char_width(q, i);@+break;
-    case font_char_ht_code: cur_val=char_height(q, height_depth(i));@+break;
-    case font_char_dp_code: cur_val=char_depth(q, height_depth(i));@+break;
-    case font_char_ic_code: cur_val=char_italic(q, i);
+    case font_char_wd_code: cur_val=char_width(q, qi(cur_val));@+break;
+    case font_char_ht_code: cur_val=char_height(q,  qi(cur_val));@+break;
+    case font_char_dp_code: cur_val=char_depth(q,  qi(cur_val));@+break;
+    case font_char_ic_code: cur_val=char_italic(q, qi(cur_val));
     }  /*there are no other cases*/
     }
   else cur_val=0;
@@ -27587,7 +27728,7 @@ while (p!=null)
       overflow("buffer size", buf_size);
 @:TeX capacity exceeded buffer size}{\quad buffer size@>
     }
-  buffer[m]=info(p)%0400;incr(m);p=link(p);
+  buffer[m]=info(p)%cmd_factor;incr(m);p=link(p); /* this is to be checked */
   }
 if (m==first) cur_cs=null_cs; /*the list is empty*/
 else if (m > first+1)
@@ -27600,7 +27741,7 @@ a font.
 @<Cases for |conditional|@>=
 case if_font_char_code: {@+scan_font_ident();n=cur_val;scan_char_num();
   if ((font_bc[n] <= cur_val)&&(font_ec[n] >= cur_val))
-    b=char_exists(char_info(n, qi(cur_val)));
+    b=char_exists(n, qi(cur_val));
   else b=false;
   } @+break;
 
@@ -30849,7 +30990,7 @@ static void hline_break(int final_widow_penalty)
     if (is_char_node(cur_p))
 	{ /* Advance |cur_p| to the node following the present string...*/
       do { int f=font(cur_p);
-           scaled d = char_depth(f,height_depth(char_info(f,character(cur_p))));
+           scaled d = char_depth(f,character(cur_p));
            if (d>par_max_depth) par_max_depth=d;
            cur_p=link(cur_p);
       } while (is_char_node(cur_p));
@@ -31284,7 +31425,7 @@ static void hout_color_ref(uint8_t c)
 @ The output of color definitions is more complex:
 
 @<Output color definitions@>=
-  DBG(DBGDEF,"DEfining %d color references\n",max_ref[color_kind]);
+  DBG(DBGDEF,"Defining %d color references\n",max_ref[color_kind]);
   HPUTX((1+1+1+sizeof(ColorSet)+1)*(max_ref[color_kind]+1));
   for (i=max_fixed[color_kind]+1;i<=max_default[color_kind]; i++)
     { if (!colorset_equal(colors[i],color_defaults[i]))
@@ -31553,9 +31694,9 @@ static int insert_hash(int h, int num, char *nom)
   e->next= label_hash[h];
   label_hash[h]=e;
   if (e->nom!=NULL)
-    DBG(DBGLABEL,"Creating new label *%d: name='%s'\n",e->n,e->nom);
+    DBG(DBGLABEL,"Creating new label hash *%d: name='%s'\n",e->n,e->nom);
   else
-    DBG(DBGLABEL,"Creating new label *%d: num=%d\n",e->n,e->num);
+    DBG(DBGLABEL,"Creating new label hash *%d: num=%d\n",e->n,e->num);
   return e->n;
 }
 @ There are two cases: finding a label by name or by number.
@@ -31566,6 +31707,7 @@ The process is straight forward:
 static int find_label_by_number(int p)
 { unsigned int h=(unsigned int)p%LABEL_HASH;
   HashEntry *e= label_hash[h];
+  DBG(DBGLABEL,"Looking up label num %d\n",(unsigned int)p);
   while (e!=NULL)
     if (e->nom==NULL && e->num==p) return e->n;
     else e=e->next;
@@ -31588,8 +31730,8 @@ static char *tokens_to_name(pointer p)
   int i=0;
   bool skip_space=0;
   while (i<255 && p!=0)@/
-  { int m = info(p)/0400;@+
-    int c = info(p)%0400;
+  { int m = info(p)/cmd_factor;@+
+    int c = info(p)%cmd_factor;
     if (m==spacer && ! skip_space) @/
     { s[i++]=' '; skip_space=true;@+}
     else if ((m==letter || m==other_char) && ' '< c && c < 0x7F)@/
@@ -31611,6 +31753,7 @@ static int find_label_by_name(pointer p)
 { char *s=tokens_to_name(link(p));
   unsigned int h=name_hash(s)%LABEL_HASH;
   HashEntry *e= label_hash[h];
+  DBG(DBGLABEL,"Looking up label name %s\n", s);
   while (e!=NULL)
     if (e->nom!=NULL && strcmp(e->nom,s)==0) return e->n;
     else e=e->next;
@@ -31635,7 +31778,9 @@ moving lists.
 
 @<Hi\TeX\ auxiliary routines@>=
 static void new_label(pointer p)
-{ int n=find_label(p);
+{ int n;
+  DBG(DBGLABEL,"Label at pos=0x%x\n",(unsigned int)(hpos-hstart));
+  n=find_label(p);
   if (n!=zero_label_no && labels[n].where!=LABEL_UNDEF)
   { MESSAGE("WARNING: Ignoring duplicate definition of label ");
     if (label_has_name(p)) MESSAGE("name %s\n",tokens_to_name(link(label_ptr(p))));
@@ -32107,7 +32252,6 @@ static pointer hpack(pointer p,scaled w, scaled hf, scaled vf, small_number m, b
   glue_ord o, sto, sho; /*order of infinity*/
   internal_font_number f; /*the font in a |char_node|*/
   four_quarters i;  /*font information about a |char_node|*/
-  eight_bits hd; /*height and depth indices for a character*/
   bool repack=false; /* whether repacking is necessary */
   if (!keep_cs) { @<initialize the color stack@>@;}
   last_badness= 0;r= get_node(box_node_size);type(r)= hlist_node;
@@ -33659,7 +33803,7 @@ typedef struct {
   pointer g; /* space glue */
   pointer h; /* default hyphen */
   pointer p[MAX_FONT_PARAMS]; /* font parameters */
-  uint16_t m; /* section number of font metric file */
+  int m;      /* section number of font metric file */
   uint16_t y; /* section number of font glyph file */
 } Font;
 
@@ -33668,6 +33812,7 @@ static int hmap_font[MAX_FONTS];
 @ @<Initialize definitions for fonts@>=
   for (i=0;i<0x100;i++) hmap_font[i]=-1;
   max_ref[font_kind]=-1;
+  
 @ Allocation of a |Font| record takes place when we translate a \TeX\ font
 number to a \HINT\ font number using the function |hget_font_no|, and while
 doing so discover that the corresponding \HINT\ font number does not yet exist.
@@ -33751,7 +33896,6 @@ static char *hfind_glyphs(char *filename)
 }
 
 static uint8_t hget_font_no(uint8_t f)
-
 { int g;
   char *n,*fn;
   int l;
@@ -33771,20 +33915,28 @@ static uint8_t hget_font_no(uint8_t f)
   hmap_font[f]=g;
   hfonts[g]->g=hget_font_space(f);
   hfonts[g]->h=hget_font_hyphen(f);
-  pack_file_name(font_name[f], empty_string,empty_string,".tfm");
-  n = kpse_find_tfm((char*)name_of_file+1);
-  if (n==NULL)
-    QUIT("Unable to find .tfm file for font %s",(char*)name_of_file+1);
-  hfonts[g]->m= hnew_file_section(n);
-  free(n);
-  pack_file_name(font_name[f], empty_string,empty_string,"");
-  n= hfind_glyphs((char*)name_of_file+1);
-  if (n==NULL)
-    QUIT("Unable to find glyph file for font %s",(char*)name_of_file+1);
-  hfonts[g]->y= hnew_file_section(n);
-  free(n);
+  if (IS_X_FONT(f))
+  { hfonts[g]->m= -1;
+    pack_file_name(font_area[f], empty_string, empty_string,"");
+    hfonts[g]->y= hnew_file_section((char*)name_of_file+1);
+  }
+  else
+  { pack_file_name(font_name[f], empty_string,empty_string,".tfm");
+    n = kpse_find_tfm((char*)name_of_file+1);
+    if (n==NULL)
+      QUIT("Unable to find .tfm file for font %s",(char*)name_of_file+1);
+    hfonts[g]->m= hnew_file_section(n);
+    free(n);
+    pack_file_name(font_name[f], empty_string,empty_string,"");
+    n= hfind_glyphs((char*)name_of_file+1);
+    if (n==NULL)
+      QUIT("Unable to find glyph file for font %s",(char*)name_of_file+1);
+    hfonts[g]->y= hnew_file_section(n);
+    free(n);
+  }
   return g;
 }
+
 @ Surprisingly, not all characters that occur in a \HINT\ file are inside the
 content section; some characters might hide in the definition section
 inside the pre- or post-break list of a predefined discretionary break.
@@ -33809,14 +33961,15 @@ static void ensure_font_no(pointer p)
     { Font *hf=hfonts[f];
       internal_font_number g=hf->i;
       uint32_t pos=hpos-hstart;
-      Info i= b000;
+      Info i;
       DBG(DBGDEF,"Defining font %d size 0x%x\n",f,font_size[g]);
       hpos++; HPUTNODE;  /* space for the tag and the node */
       HPUT8(f); /* reference */
       hout_string(font_id_text(g));
       if(font_size[g]>0) HPUT32(font_size[g]);
       else  HPUT32(font_dsize[g]);
-      HPUT16(hf->m);HPUT16(hf->y);
+      if (hf->m>=0) { i=b000; HPUT16(hf->m);} else i=b001;
+      HPUT16(hf->y);
       DBG(DBGDEF,"Defining font space\n");
       HPUTCONTENT(hout_glue_spec,hf->g);
       DBG(DBGDEF,"Defining font hyphen\n");
@@ -35295,9 +35448,10 @@ One can provide the name of a file as the content of an other file.
   @<Suppress double quotes in braced input file name@>@;
   j=pool_ptr-1;while ((j >= str_start[str_ptr])&&(area_delimiter==0))
     {@+
-      if ((str_pool[j]=='/')) area_delimiter=j-str_start[str_ptr];
+      if ((str_pool[j]=='/')) 
+        area_delimiter=j-str_start[str_ptr]+1;
       if ((ext_delimiter==0)&&(str_pool[j]=='.'))
-        ext_delimiter=j-str_start[str_ptr];
+        ext_delimiter=j-str_start[str_ptr]+1;
       decr(j);
     }
   flush_list(link(garbage));
@@ -35514,6 +35668,10 @@ fprintf(stderr,"\t XX=%04X \t buffer debugging\n", DBGBUFFER);@/
 fprintf(stderr,"\t XX=%04X \t TeX debugging\n", DBGTEX);@/
 fprintf(stderr,"\t XX=%04X \t page debugging\n", DBGPAGE);@/
 fprintf(stderr,"\t XX=%04X \t font debugging\n", DBGFONT);@/
+#if 0 /* currently not used in hitex */
+fprintf(stderr,"\t XX=%04X \t render debugging\n", DBGRENDER);@/
+#endif
+fprintf(stderr,"\t XX=%04X \t label debugging\n", DBGLABEL);@/
 exit(0);
 }
 #endif
@@ -36184,6 +36342,1064 @@ static int get_md5_sum(int s, int file)
   }
   return DIGEST_SIZE;
 }
+
+
+@* UTF8 processing.
+
+The first function we need is the function that inputs one character |cur_chr|
+from an input buffer |b| at index |i|. We advance |i| for each byte
+read from the buffer and check that |i<=k|.
+Character codes less than |0x80| are stored as a single byte. This is the easy case.
+
+@<input a single byte utf8 code@>=
+  cur_chr=b[i]; incr(i);
+  if (cur_chr<0x80) return i;
+
+@ Values in the range |0x80| to |0x7ff| are encoded using two byte 
+with the first byte having three high bits |110|, indicating a two byte sequence, 
+and the lower five bits equal to the five high bits of |c|. 
+It is followed by a continuation byte. having two high bits |10|
+and the lower six bits equal to the lower six bits of |c|.
+
+@<input a two byte utf8 code@>=
+if ((cur_chr&0xE0)==0xC0)
+{ @<input a continuation byte |d|@>@;
+  cur_chr= ((cur_chr&0x1F)<<6)+(d&0x3F);
+  return i;
+}
+
+@ Reading a continuation byte is simple, but all error conditions need to be
+checked. Some \TeX\ input files test for UTF8 aware engines and skip
+parts of the input file that a considered to be read by 8-bit \TeX\ engines.
+So when the |scanner_status| is |skipping|, we should not produce errors.
+
+@<input a continuation byte |d|@>=
+if (i <= k)
+{  d=b[i]; incr(i); 
+   if ((d&0xC0)!=0x80 && scanner_status!=skipping)
+   { print_err("Invallid UTF8 continuation byte in the input");
+     cur_chr=invalid_code;
+     return i;
+   }
+}
+else if (scanner_status!=skipping)
+{ print_err("Missing UTF8 continuation byte in the input");
+  cur_chr=invalid_code;
+  return i;
+}
+
+@ Values in the range |0x800| to |0xFFFF| are encoded in three byte 
+with the first byte having the high bits |1110| indicating a three 
+byte sequence followed by two continuation bytes.
+
+@<input a three byte utf8 code@>=
+if ((cur_chr&0xF0)==0xE0)
+{ @<input a continuation byte |d|@>@;
+  cur_chr= ((cur_chr&0x0F)<<6)+(d&0x3F);
+ @<input a continuation byte |d|@>@;
+  cur_chr= (cur_chr<<6)+(d&0x3F);
+  return i;
+}
+
+@ Values in the range |0x1000| to |0x1FFFFF| are encoded in four byte 
+with the first byte having the high bits |11110| indicating a four byte 
+sequence followed by three continuation bytes. 
+This range is far greater than the actual range of UTF8 codes which
+ends with |0x10FFFF|. 
+
+@<input a four byte utf8 code@>=
+if ((cur_chr&0xF8)==0xF0)
+{ @<input a continuation byte |d|@>@;
+  cur_chr= ((cur_chr&0x07)<<6)+(d&0x3F);
+  @<input a continuation byte |d|@>@;
+  cur_chr= (cur_chr<<6)+(d&0x3F);
+  @<input a continuation byte |d|@>@;
+  cur_chr= (cur_chr<<6)+(d&0x3F);
+  if (cur_chr>0x10FFFF && scanner_status!=skipping)
+  { print_err("UTF8 code out of range in the input");
+    cur_chr=invalid_code;
+  }
+  return i;
+}
+
+
+@ The following function combines all the cases considered before.
+The parameters are a pointer |b| into an array of byte where
+the next characters is expected at index |i|, and a maximum value for
+the index |k|. The function advances the index |i| for each byte taken from the
+buffer and returns the updated value.
+
+
+
+@p static int utf8_get_cur_chr(unsigned char *b, int i, int k)
+{ uint8_t d;
+  @<input a single byte utf8 code@>@;
+  @<input a two byte utf8 code@>@;
+  @<input a three byte utf8 code@>@;
+  @<input a four byte utf8 code@>@;
+  print_err("Malformed UTF8 code in the input; character ignored");
+  cur_chr=invalid_code;
+  return i;
+}
+
+@ This process can be reverted by printing an UTF8 character
+assuming the the users terminal an log file are UTF8 capable.
+
+@p static void print_utf8(uint32_t c)
+{@+ if (c<0x80) 
+  { print_char(c); }
+  else if (c<0x800)@/
+  { print_char(0xC0|(c>>6)); print_char(0x80|(c&0x3F)); } 
+  else if (c<0x10000)@/
+  { print_char(0xE0|(c>>12)); print_char(0x80|((c>>6)&0x3F));
+    print_char(0x80|(c&0x3F)); } 
+  else if (c<0x180000)@/
+  { print_char(0xF0|(c>>18)); print_char(0x80|((c>>12)&0x3F)); 
+    print_char(0x80|((c>>6)&0x3F)); print_char(0x80|(c&0x3F)); }
+  else
+    print("???");
+} 
+
+
+@ All the information about utf characters comes from a generated file.
+
+@p
+
+#include "utf/hitex.dat.c"
+
+@ The functions defined there replace the definitions of the
+\.{\\catcode}, \.{\\mathcode}, \.{\\uccode}, \.{\\lccode}, and \.{\\delcode}
+tables. \TeX's way to access such information was (and is) to provide an index
+into a table where the index is the sum of a base index depending on the
+type of information desired and an offset depending on the character code.
+The following function requires both parameters to deliver the requested result.
+
+@p static int utf_lookup(pointer b, int i )
+{if (b==utf_lc_code_base) return utf_lccode(i);
+ else if (b==utf_uc_code_base) return utf_uccode(i);
+ else if (i<0x100) 
+ { if (b==utf_cat_code_base) return equiv(cat_code_base+i);
+   else if (b==utf_sf_code_base) return equiv(sf_code_base+i);
+   else if (b==utf_del_code_base) return equiv(del_code_base+i);
+   else if (b==utf_math_codenum_base) return equiv(math_code_base+i);
+   else if (b==utf_math_code_base) return equiv(math_code_base+i);
+   else return 0;
+ }
+ else if (b==utf_cat_code_base) return utf_catcode(i);
+ else if (b==utf_sf_code_base) return utf_sfcode(i);
+ else if (b==utf_math_code_base) return utf_mathcode(i);
+ else if (b==utf_math_codenum_base) return utf_mathcode(i);
+ else if (b==utf_del_code_base) return utf_delcode(i);
+ else return 0;
+}
+
+@ Using |utf_base_mask| and |utf_cp_mask| it is easy to separate base 
+and utf code point from the sum.
+
+@<Show equivalent |n|, in the utf tables@>=
+switch (n&utf_base_mask)
+{@+case utf_cat_code_base:
+   print_esc("catcode");print_int(n&utf_cp_mask);
+   print_char('=');print_int(cat_code(n&utf_cp_mask));
+   break;
+case utf_lc_code_base:
+   print_esc("lccode");print_int(n&utf_cp_mask);
+   print_char('=');print_int(utf_lccode(n&utf_cp_mask));
+   break;
+case utf_uc_code_base:
+   print_esc("uccode");print_int(n&utf_cp_mask);
+   print_char('=');print_int(utf_uccode(n&utf_cp_mask));
+   break;
+case utf_sf_code_base:
+   print_esc("sfcode");print_int(n&utf_cp_mask);
+   print_char('=');print_int(sf_code(n&utf_cp_mask));
+   break;
+case utf_del_code_base:
+   print_esc("delcode");print_int(n&utf_cp_mask);
+   print_char('=');print_int(del_code(n&utf_cp_mask));
+   break;
+case utf_math_code_base:
+   print_esc("mathcode");print_int(n&utf_cp_mask);
+   print_char('=');print_int(math_code(n&utf_cp_mask));
+   break;
+case utf_math_codenum_base:
+   print_esc("mathcodenum");print_int(n&utf_cp_mask);
+   print_char('=');print_int(math_code(n&utf_cp_mask));
+   break;
+}
+
+@ The definition of math codes with \.{\\mathcode} requires a single number.
+In its four digit hexadecimal form the most significat digit is the class,
+the next digit the font family and the lowest two digits the glyph number in the font.
+For the extended range of utf characters, a bit packed format can be used
+where the most significant 8 bits contain the font family, and the lower 24 bits
+are split between the top 3 bit for the class and the low 21 bit for the glyph number.
+Since this bit packed format is not very convenient, there are now two primitives
+to specify math codes:  \.{\\Umathcodenum} expects a single
+number in bit packed format; while \.{\\Umathcode} expects three numbers in the order
+class, family, and glyph number. The three numbers are then converted to the bit packed
+format which is used for internal storage.
+
+@<Read the arguments of \.{\\Umathcode}@>=
+{ int fam, class;
+  scan_int(); class=cur_val; scan_int();fam=cur_val; scan_int();
+  if (fam<0||fam>0xff)
+  { print_err("Invalid family (");print_int(fam);
+    print("), should be in the range 0..255");
+    error();fam=1;
+  }
+  if (class<0||class>7)
+  { print_err("Invalid class (");print_int(class);
+    print("), should be in the range 0..7");
+    error();class=7;
+  }
+  cur_val=(((fam<<3)|class)<<21)|cur_val;
+}
+
+@ Since now all math codes are stored in the bit packed format,
+also the argument of \.{\\mathcode} is converted to the new format.
+The special value |0x8000| is now represented as |0xFFFFFFFF|. 
+Fortunately the 64bit memory words used in Hi\TeX\ are big enough
+to store these values in the available halfword (32 bit) of |eqtb|. 
+
+@d active_math_character_code  0xFFFFFFFF 
+@d math_code_fam(A) (((A)>>24)&0xFF)
+@d math_code_class(A) (((A)>>21)&0x7)
+@d math_code_char(A) ((A)&0x1FFFFF)
+@d Umath_to_math(A) { int fam=math_code_fam(A); int class=math_code_class(A); int cp=math_code_char(A);
+  if (cp<=0xFF && fam<=0xF && class<=0xF) A =(((class<<4)|fam)<<8)|cp; }
+@d math_to_Umath(A) { int class = (A>>12)&0xF, fam = (A>>8)&0xF, cp = A&0xFF; A =(((fam<<3)|class)<<21)|cp;}
+
+
+
+@ Changing values in the utf tables is delegated to the following function
+that combines the function of |eq_define| and |geq_define|.
+We use two new |save_type|s: |restore_utf| and |restore_utf_none|. 
+Changing the |save_type| from |restore_utf| to |restore_utf_none|
+means, that the entry is invalid and must no longer be used to restore a value
+because it was supersedet by the assignment of a global value.
+We implement global assignments by going down the |save_stack| 
+and invalidate all coresponding local assignments.
+We do this because we do not want to store assignment levels
+which would need extra data fields in the utf tables that would
+not be compatible with the table compression.
+For now we use two entries on the save stack, 
+but with 64 bits of memory in a memory word, a single entry could suffice.
+To find all relevant entries in the save stack, we use the |save_level|
+to link together all entries of |restore_utf| or |restore_utf_none|
+keeping the index to the top level entry in |utf_restore_list|.
+
+@d restore_utf_none (restore_sa+1)
+@d restore_utf      (restore_utf_none+1)
+
+@p
+static int utf_unsave_list=0;
+static void utf_save(pointer p,int cp, int e)
+{ if (cur_level>level_one)
+  { check_full_save_stack;
+    save_stack[save_ptr].i=e;
+    incr(save_ptr);
+    save_type(save_ptr)=restore_utf;
+    save_level(save_ptr)=utf_unsave_list;
+    utf_unsave_list=save_ptr;
+    save_index(save_ptr)=p+cp;
+    incr(save_ptr);
+  }
+}
+
+static void utf_unsave(pointer p)
+{ int cp, e;
+  int l;
+  utf_unsave_list=save_level(save_ptr);
+  decr(save_ptr);
+  e= save_stack[save_ptr].i;
+  cp=p&utf_cp_mask;
+  p=p&utf_base_mask;
+  if (p==utf_cat_code_base) utf_set_catcode(cp,e);
+  else if (p==utf_lc_code_base) utf_set_lccode(cp,e);
+  else if (p==utf_uc_code_base) utf_set_uccode(cp,e);
+  else if (p==utf_sf_code_base) utf_set_sfcode(cp,e);
+  else if (p==utf_del_code_base) utf_set_delcode(cp,e);
+  else if (p==utf_math_codenum_base) utf_set_mathcode(cp,e);
+}
+
+static void utf_global(pointer p)
+{ /* mark matching save stack entries as |restore_utf_none| */
+  int i=utf_unsave_list;
+  while (i>0)
+  { if (save_type(i)==restore_utf && save_index(i)==p)
+      save_type(i)=restore_utf_none;
+    i=save_level(i);
+  }
+}
+
+
+static void utf_define(pointer p,int cp, int e,bool g)
+{ if (g) assign_trace(p,"globally changing")@;
+  else assign_trace(p,"changing")@;
+  if (p==utf_cat_code_base) e=utf_set_catcode(cp,e);
+  else if (p==utf_lc_code_base) e=utf_set_lccode(cp,e);
+  else if (p==utf_uc_code_base) e=utf_set_uccode(cp,e);
+  else if (p==utf_sf_code_base) e=utf_set_sfcode(cp,e);
+  else if (p==utf_del_code_base) e=utf_set_delcode(cp,e);
+  else if (p==utf_math_codenum_base) e=utf_set_mathcode(cp,e);
+  if (g) utf_global(p+cp);
+  else utf_save(p,cp,e);
+  assign_trace(p,"into")@;@/
+}
+
+@ For characters below |0x100| all codes, except the lower- and uppercase codes
+are still stored in the |eqtb|. The following function is called with an |utf_|\dots|_base|
+and returns the correct base pointer to |eqtb| for character codes below |0x100|.
+
+@p static pointer utf_adjust_base(pointer p)
+{  if (p==utf_cat_code_base) p=cat_code_base;  
+   else if (p==utf_sf_code_base) p=sf_code_base; 
+   else if (p==utf_math_codenum_base) p=math_code_base; 
+   else if (p==utf_math_code_base) p=math_code_base; 
+   else if (p==utf_del_code_base) p=del_code_base; 
+   return p;
+}
+
+
+@ @p static void utf_restore(pointer p, int e)
+{ if (p<utf_lc_code_base) utf_set_catcode(p-utf_cat_code_base,e  );
+  else if (p<utf_uc_code_base) utf_set_lccode(p-utf_lc_code_base,e);
+  else if (p<utf_sf_code_base) utf_set_uccode(p-utf_uc_code_base,e);
+  else if (p<utf_code_limit) utf_set_sfcode(p-utf_sf_code_base,e) ;
+#ifdef @!STAT
+  if (tracing_restores > 0) restore_trace(p,"retaining");
+#endif
+}
+
+@ While most character codes for UTF are in the tables just defined
+some are still in the |eqtb| table. These are fixed when in init mode
+using the following code:
+
+@<Fix some character code assignments for UTF@>=
+/* changes to make hitex match luatex */
+ /* 125/007D: RIGHT CURLY BRACKET */
+equiv(sf_code_base+'}')=0;
+ /*170/00AA: FEMININE ORDINAL INDICATOR */
+equiv(cat_code_base+170)=11;equiv(math_code_base+170)=31457450; 
+ /*181/B5: MICRO SIGN */
+equiv(cat_code_base+181)=11;equiv(math_code_base+181)=31457461; 
+ /*186/BA: MASCULINE ORDINAL INDICATOR */
+equiv(cat_code_base+186)=11;equiv(math_code_base+186)=31457466; 
+ /*187/BB: RIGHT-POINTING DOUBLE ANGLE QUOTATION MARK */
+equiv(sf_code_base+187)=0;
+ /*192/C0: LATIN CAPITAL LETTER A WITH GRAVE to 214/D6 LATIN CAPITAL LETTER O WITH DIAERESIS*/
+for (k=192; k<=214; k++)
+{ equiv(cat_code_base+k)=11;
+  equiv(sf_code_base+k)=999;
+  equiv(math_code_base+k)=0x1E00000+k;
+}
+ /*216/D8: LATIN CAPITAL LETTER O WITH STROKE to 222/DE LATIN CAPITAL LETTER THORN*/
+for (k=216; k<=222; k++)
+{ equiv(cat_code_base+k)=11;
+  equiv(sf_code_base+k)=999;
+  equiv(math_code_base+k)=0x1E00000+k;
+}
+/*223/DF LATIN SMALL LETTER SHARP S to 246/F6 LATIN SMALL LETTER O WITH DIAERESIS*/
+for (k=223; k<=246; k++)
+{ equiv(cat_code_base+k)=11;
+  equiv(math_code_base+k)=0x1E00000+k;
+}
+/* 248/F8  LATIN SMALL LETTER O WITH STROKE to 255/FF  LATIN SMALL LETTER Y WITH DIAERESIS */
+for (k=248; k<=255; k++)
+{ equiv(cat_code_base+k)=11;
+  equiv(math_code_base+k)=0x1E00000+k;
+}
+
+
+
+@ @<Forward declarations@>=
+static int utf8_get_cur_chr(unsigned char *b, int i, int k);
+static void print_utf8(uint32_t c);
+static uint8_t utf_catcode(uint32_t i);
+static uint32_t utf_set_catcode(uint32_t i, uint8_t cat);
+static uint32_t utf_lccode(uint32_t i);
+static uint32_t utf_set_lccode(uint32_t i, uint32_t lc);
+static uint32_t utf_uccode(uint32_t i);
+static uint32_t utf_set_uccode(uint32_t i, uint32_t uc);
+static uint16_t utf_sfcode(uint32_t i);
+static uint32_t utf_set_sfcode(uint32_t i, uint16_t sf);
+
+static uint32_t utf_set_delcode(uint32_t i, uint32_t dc);
+static int utf_delcode(uint32_t i);
+
+static uint32_t utf_set_mathcode(uint32_t i, uint32_t mc);
+static uint32_t utf_mathcode(uint32_t i);
+static void utf_unsave(pointer p);
+static int utf_lookup(pointer b, int i );
+static void utf_define(pointer p,int c,int e,bool g);
+static void utf_restore(pointer p, int e);
+static pointer utf_adjust_base(pointer p);
+static int utf_b_used, utf_i_used, utf_unsave_list;
+static scaled x_char_width(internal_font_number g, int c);
+static scaled x_char_height(internal_font_number g, int c);
+static scaled x_char_depth(internal_font_number g, int c);
+static scaled x_char_italic(internal_font_number g, int c);
+
+
+
+
+@* Fonts revisited.
+To use a font for typeseting, \TeX\ needs only a very limited amount
+of information.  The required information is found in a font metric
+file or \.{TFM} file as described before.
+@:TFM files}{\.{TFM} files@>
+@^font metric files@>
+For a typical font used on a modern computer, a \.{TFM} is usually not
+available.  While it is possible to create \.{TFM} files, for example
+with \.{otftotfm}, this is not the best solution, because modern font
+files contain much more information about the best way to typset a
+given text than what would fit into a \.{TFM} file.  This is
+especially true for ``non-latin'' texts. For this reason, modern \TeX\
+engines, like \.{luatex} or \.{xetex}, load and use the font files
+directly. 
+
+The basic library to load and access the fonts is the \.{freetype}
+library. It is used in Hi\TeX\ to extract font information like
+the width, height, and depth of a character from the font file
+replacing information that otherwise needs to be provided by
+a \.{TFM} file. The viewer for \HINT\ files can use the  
+\.{freetype} library also to generate bitmap images scaled to the
+required size and resolution. Because it is essential that Hi\TeX\
+and viewer use the same metric data, the functions that extract
+the shared data are defined in an include file. This makes sure, that
+both programs work with identical numbers. 
+
+Asside from basic information, like character dimensions, font files
+contain further information to enable proper spacing of characters,
+called ``kerning'', and the use of ligatures. Using this information
+is a more complicated process and it needs to be done entirely in
+Hi\TeX\ to keep the viewer lean, fast, and simple.
+
+To convert a unicode encoded text into a list of glyphs and
+their positions, Hi\TeX\ like other engines uses an other 
+specialized library called \.{harfbuzz}.  
+
+But let us start with the  \.{freetype} library first.
+Shared functions are implemented in an include file
+
+@ To use the \.{freetype} libraray, a few
+header files are needed.
+
+@<Header files and function declarations@>=
+#include <freetype/tttags.h>
+#include <freetype/tttables.h>
+#include <freetype/ftglyph.h>
+#include <freetype/ftadvanc.h>
+
+
+
+@ For the library, we need a global variable.
+The |ft_err| variable is here for convenience.
+
+@<FreeType variables@>=
+FT_Library ft_library=0;
+FT_Face font_face[font_max-font_base+1]={NULL};
+static FT_Error ft_err;
+
+@ Before the library can be used, it is necessary to
+initialize it.
+
+@<Initialize the FreeType library@>=
+if (! ft_library)
+{ int i;
+  FT_Error ft_err =  FT_Init_FreeType(&ft_library);
+  if (ft_err)
+    QUIT("Unable to initialize the FreeType Library.");
+  for (i=0; i<=font_max-font_base;i++)
+    font_face[i]=NULL;
+}
+
+@ @<Destroy the FreeType library@>=
+if (ft_library)
+{ int i;
+  FT_Error ft_err;
+  for (i=0;i<=font_max-font_base+1;i++)
+    if (font_face[i]!=NULL)
+    {  ft_err= FT_Done_Face(font_face[i]); font_face[i]=NULL; }
+  ft_err =  FT_Done_FreeType(ft_library);
+  if (ft_err)
+    MESSAGE("Error releasing the FreeType Library.");
+  ft_library=NULL;
+  for (i=0;i<0x100;i++)
+  { free(fonts[i]); fonts[i]=NULL;} 
+}
+
+@ Once the library is initialized, it is possible to
+create a font face from it either from a file
+using |FT_New_Face| or from memory using |FT_New_Memory_Face|.
+Both functions need an index to select a font face
+in case the file or memory image contains multiple
+faces. The functions that follow often have such a font face
+as parameter.
+
+The first example is a function to get the ``width'' of
+a character. What \TeX\ calls the ``width'' of the character
+is called the ``advance'' in freetype: it is the distance
+from one character to the next character including the
+space between the characters; while the ``width'' of the
+character is the distance between the left and right egdge
+of the characters glyph. The latter is not needed by \TeX.
+We give two version, one will accept a character code, the
+other assumes that the glyph id is already available.
+
+@<freetype file metric functions@>=
+static FT_UInt ft_glyph(FT_Face ft_face, int c)
+{ FT_UInt ft_gid;
+  ft_gid = FT_Get_Char_Index(ft_face, c);
+  return ft_gid;
+}
+
+bool ft_exists(FT_Face ft_face, int c)
+{ return FT_Get_Char_Index(ft_face, c)!=0;
+}
+
+scaled ft_glyph_width(FT_Face ft_face, FT_UInt ft_gid, scaled s)
+{ FT_Fixed a;
+  scaled w;
+  ft_err=FT_Get_Advance(ft_face, ft_gid, FT_LOAD_NO_SCALE, &a);
+  if (ft_err!=0) return 0;
+  w= (scaled)((double)s*(double)a/(double)ft_face->units_per_EM +0.5);
+  return w;
+}
+
+static scaled ft_width(FT_Face ft_face, int c, scaled s)
+{ FT_UInt ft_gid;
+  ft_gid = FT_Get_Char_Index(ft_face, c);
+  if (ft_gid==0) return 0;
+  return ft_glyph_width(ft_face, ft_gid, s);
+}
+
+@ Finding the height and depth of a character is
+slightly more complex. It requires loading the glyph
+and retrieving its bounding box.
+Since most of the time we need the height and the depth
+together, we provide one function for both.
+We use |FT_Glyph_Get_CBox| to get the control box which is supposed to be fast.
+Because the glyph has been loaded with |FT_LOAD_NO_SCALE| we call
+|FT_Glyph_Get_CBox| with mode |FT_GLYPH_BBOX_UNSCALED| and
+get unscaled font units in 26.6 pixel format. 
+
+@<freetype file metric functions@>=
+static FT_Error ft_glyph_bbox(FT_Face ft_face, FT_UInt ft_gid, FT_BBox *ft_bbox)
+{ FT_Glyph ft_glyph;
+  ft_err = FT_Load_Glyph(ft_face, ft_gid, FT_LOAD_NO_SCALE);
+  if (ft_err!=0) return ft_err;
+  ft_err = FT_Get_Glyph(ft_face->glyph, &ft_glyph);
+  if (ft_err!=0) return ft_err;
+  FT_Glyph_Get_CBox(ft_glyph, FT_GLYPH_BBOX_UNSCALED, ft_bbox);
+  return 0;
+}
+
+void ft_glyph_height_depth(FT_Face ft_face, FT_UInt ft_gid,
+  scaled *h, scaled *d, scaled s)
+{ FT_BBox ft_bbox;
+  *h=*d=0;
+  ft_err= ft_glyph_bbox(ft_face, ft_gid, &ft_bbox);
+  if (ft_err!=0)
+    return;
+  if (ft_bbox.yMax>0)
+   *h=(scaled)((double)s*(double)(ft_bbox.yMax)/(double)ft_face->units_per_EM +0.5);
+  if (ft_bbox.yMin<0)
+   *d= (scaled)((double)s*(double)(-ft_bbox.yMin)/(double)ft_face->units_per_EM +0.5);
+}
+
+static void ft_height_depth(FT_Face ft_face, int c,
+  scaled *h, scaled *d, scaled s)
+{ FT_UInt ft_gid;
+  ft_gid = FT_Get_Char_Index(ft_face, c);
+  if (ft_gid==0)
+  { *h=*d=0; return; }
+  ft_glyph_height_depth(ft_face, ft_gid, h, d, s);
+}
+
+
+
+
+
+@ The first character of a font can be obtained using
+|FT_Get_First_Char|. For now, I do not know a way to determine
+the last one.
+
+@<freetype file metric functions@>=
+static int ft_last(FT_Face ft_face)
+{ return 0x10FFFF; }
+
+static int ft_first(FT_Face ft_face)
+{ FT_UInt ft_gid;
+  FT_ULong c;
+  c = FT_Get_First_Char(ft_face,&ft_gid);
+  if (ft_gid==0) /* charmap empty*/
+    return ft_last(ft_face)+1;
+  else
+    return c;
+}
+
+
+
+@ The functions just defined are listed here:
+
+@<Forward declarations@>=
+
+static FT_UInt ft_glyph(FT_Face ft_face, int c);
+static bool ft_exists(FT_Face ft_face, int c);
+static scaled ft_glyph_width(FT_Face ft_face, FT_UInt ft_gid, scaled s);
+static scaled ft_width(FT_Face ft_face, int c, scaled s);
+static FT_Error ft_glyph_bbox(FT_Face ft_face, FT_UInt ft_gid, FT_BBox *ft_bbox);
+static void ft_glyph_height_depth(FT_Face ft_face, FT_UInt ft_gid,
+  scaled *h, scaled *d, scaled s);
+static void ft_height_depth(FT_Face ft_face, int c,
+  scaled *h, scaled *d, scaled s);
+static int ft_last(FT_Face ft_face);
+static int ft_first(FT_Face ft_face);
+
+
+
+
+@ The FreeType variables defined are part of the global variables.
+
+@<Global...@>=
+  @<FreeType variables@>@;
+
+@ To move the functions to the program:
+
+@p 
+  @<freetype file metric functions@>@;
+
+
+
+@ Using the functions defined above, we have simple implementations for some
+important functions.
+
+@p static scaled x_char_width(internal_font_number g, int c)
+{ scaled w;
+  w= ft_width(font_face[g],c,x_font[g]->s);
+#if 0
+  hb_font_t *f;
+  hb_codepoint_t glyph;
+  f= x_font[g]->f;
+  hb_font_get_nominal_glyph (f,c, &glyph);
+  w=hb_font_get_glyph_h_advance (f, glyph);
+  w=HB_TO_SCALED(w);
+#endif  
+  return w;
+}
+
+static scaled x_char_height(internal_font_number g, int c)
+{ scaled h, d;
+  ft_height_depth(font_face[g],c,&h, &d,x_font[g]->s);
+  return h;
+}
+
+static scaled x_char_depth(internal_font_number g, int c)
+{ scaled h, d;
+  ft_height_depth(font_face[g],c,&h, &d,x_font[g]->s);
+  return d;
+}
+
+static scaled x_char_italic(internal_font_number g, int c)
+{ scaled w,d;
+  FT_BBox ft_bbox;
+  FT_Face ft_face=font_face[g];
+  FT_UShort ft_units_per_EM= ft_face->units_per_EM;
+  scaled s =  x_font[g]->s;
+  int ft_gid= ft_glyph(ft_face,c);
+  if (ft_gid==0) return 0;
+  w = ft_glyph_width(ft_face,ft_gid,s);
+  ft_glyph_bbox(ft_face,ft_gid, &ft_bbox);
+  d=FT_UNITS_TO_SCALED(ft_bbox.xMax);
+  if (d > w)
+    return d-w;
+  else     
+    return 0;
+}
+
+
+@ We will need some more freetype specific functions just for Hi\TeX\
+and we define them next.
+
+@d WITH_FT 1
+
+@<Load a FreeType font from file@>=
+  ft_err = FT_New_Face(ft_library, path, f_index, &ft_face);
+  if (ft_err)
+    fatal_error("Unable to open extended font file!");
+  ft_err = FT_Select_Charmap(ft_face,FT_ENCODING_UNICODE);
+  ft_err= FT_Set_Char_Size(ft_face, 0, 1000, 600, 600); /* I dont know the size here */
+
+@ Here is the code to get the basic font parameters for an extended font.
+Let us start with the x-height: the size of one ex in the font.
+|x_height(A)| is defined as |font_info[param_base[g]+x_height_code].sc| with |x_height_code==5|.
+For a freetype font, we find the |x_height| in the \.{OS2} table.
+Its given in ``units'' and needs to be scaled by the "units per EM" where one EM
+is just the size |s| in points. Similar we set the height and depth of the font
+using the ascent and descent from the font.
+
+@d FT_UNITS_TO_SCALED(A) (scaled)(((double)s*(double)(A)/(double)ft_units_per_EM)+0.5)
+
+@<get the extended fonts parameters@>=
+param_base[g]=fmem_ptr;
+fmem_ptr=fmem_ptr+font_params[g]+1;
+font_info[param_base[g]].sc =0;
+{ FT_ULong ft_len = 0;
+  FT_Short ft_x_height=0;
+  TT_OS2 *ft_table=NULL;
+  ft_units_per_EM = ft_face->units_per_EM;
+#if 0
+  FT_Short ft_ascender, ft_descender;
+
+  ft_ascender = ft_face->ascender;
+  ft_descender = ft_face->descender;
+  x_font[g]->ascender=FT_UNITS_TO_SCALED(ft_ascender);
+  x_font[g]->descender=FT_UNITS_TO_SCALED(ft_descender);
+#endif
+  if (FT_IS_SFNT(ft_face))
+  { ft_table = (TT_OS2 *)FT_Get_Sfnt_Table(ft_face, FT_SFNT_OS2);
+     if (ft_table!=NULL)
+       ft_x_height=  ft_table->sxHeight;
+  }
+  if (ft_x_height!=0)
+    x_height(g)= FT_UNITS_TO_SCALED(ft_x_height);
+  else
+  { scaled hx,dx;
+    ft_height_depth(ft_face,'x',&hx, &dx,s);
+    x_height(g)=hx;
+  }
+}
+
+@ To get the slant, Hi\TeX\ reads the font's \.{TT\_Postscript} structure
+and extract the italic angle. The italic angle in degrees is returned as a fixed point integer
+with 16 binary digits right of the binary point; this is the same as \TeX's |sacled|
+data type. Zero degrees is equivalent to an upright font without slant.
+Positive values indicate a slant to the right (clockwise) while negative values
+indicate a slant to the left (counter-clockwise).
+The slant vlaue, as neede by \TeX\ is the horizontal extent to the right for character 1pt high.
+
+@<get the extended fonts parameters@>=
+#ifdef WITH_FT
+{ TT_Postscript *ft_table=NULL;
+  FT_Fixed ft_italicAngle=0;
+  scaled slnt=0;
+   if (FT_IS_SFNT(ft_face))
+   { ft_table = (TT_Postscript *)FT_Get_Sfnt_Table(ft_face,FT_SFNT_POST);
+     if (ft_table!=NULL)
+     { double x, y;
+       ft_italicAngle=  ft_table->italicAngle;
+       y= ((double)ft_italicAngle)/(double)ONE;
+       y= -y*M_PI/180.0;
+       x= tan(y);
+       slnt=(scaled)(ONE*x+0.5);
+       slant(g)=slnt;
+     }
+   }
+}
+#else
+{ double r= hb_style_get_value (f, HB_STYLE_TAG_SLANT_RATIO); 
+  scaled slnt=0;
+  slant=(scaled)(ONE*x+0.5);
+  slant(g)=slant;
+}
+#endif   
+
+
+
+
+
+
+@ We call the fonts that Hi\TeX\ will handle by using harfbuzz 
+``extended fonts'', and variables or functions dealing with 
+such fonts will often have an |x_|\dots\  prefix in therir name. 
+
+While Hi\TeX\ wants to be compatible with other \TeX\ engines, its
+implementation of the \.{\\font} primitive still uses a simplified
+version of the extended syntax used in \.{xetex}.  For now when the
+\.{\\font} primitive calls the |read_font_info| procedure, the current
+file name may must simply be a file name; it is permissible however to
+enclose the file name in double quotes, curly braces, or square
+brackets. Trailing text after the closing square bracket is ignored.
+
+@<Split the font name into its components@>=
+{ int i=1;
+  int name_start=1;
+  if (name_of_file[i]=='[')
+  { i++;
+    name_start=i;
+    while (name_of_file[i]!=0)
+      if (name_of_file[i]==']') 
+      { name_of_file[i]=0; break; }
+      else i++;
+  }
+  f_name=(char*)name_of_file+name_start;
+}
+
+@ If a file name was given, we use the kpathsearch library to find the file.
+The use of type1 fonts with harfbuzz requires the use of \.{.afm} files
+and this does not work well and is deprecated. For type1 fonts,
+one should use \.{afm2tfm} to convert the \.{.afm} files to \.{tfm} 
+files and put the new \.{tfm} files in a place where the \.{kpathserach} library
+can find them. Then run \.{mktexls}.
+
+ @<Read and check...@>=
+{  char *f_name;
+   int f_index=0; 
+ /*As soon as I allow other index values, options, and features,
+   I have to extend the test for ``If this font has already been loaded\dots''*/
+   pack_file_name(nom, aire,empty_string,""); /* \TeX\ Live */
+   @<Split the font name into its components@>@;
+   path=kpse_find_file(f_name, kpse_opentype_format, 0);
+   if (path == NULL)
+     path = kpse_find_file(f_name, kpse_truetype_format, 0);
+#if 0
+   if (path == NULL)
+     path = kpse_find_file(f_name, kpse_type1_format, 0);
+#endif
+   if (path!=NULL)
+   { @<load an extended font@>@;
+     if (g!=null_font) file_opened=true; 
+     goto done;
+   }
+}
+
+
+@ Since specifying, finding, and loading a font can be quite complex process,
+the primitive \.{\\tracingfonts} is almost a necessity.
+After reading the font specification, we use this code:
+
+@<Trace the font specification@>=
+if (tracing_fonts>0)
+{@+
+  begin_diagnostic();
+  print_nl("Requested font \"");
+   printn(cur_area);printn(cur_name);
+  print_char('"');
+  if (s < 0) {@+
+    print(" scaled ");
+    print_int(-s);
+  } else{@+
+    print(" at ");
+    print_scaled(s);
+    print("pt");
+  }
+  end_diagnostic(false);
+}
+
+@ After a font file was found, we trace it with this code:
+
+@<Trace the new font@>=
+if (tracing_fonts>0)
+{@+begin_diagnostic();
+   print_nl(" -> ");
+   if (path!=NULL)
+   {  print(path);
+      if (!file_opened) print_nl("Not loadable: font file not found");
+   }
+   else
+     print("no matching file found.");
+  if (g==null_font) print_nl("Font not found, using \"nullfont\"");
+  end_diagnostic(false);
+}
+#if 0
+if (IS_X_FONT(g))
+{ int x_scale, y_scale;
+  unsigned int x_ppem,y_ppem;
+  float x_ptem ;
+  hb_codepoint_t glyph;
+  hb_glyph_extents_t e;
+  unsigned int designSize, minSize, maxSize, subFamilyID, nameCode;
+  hb_position_t ax;
+
+  fprintf(stderr,"\n");
+  fprintf(stderr,"%s\n",path);
+  
+  hb_font_get_scale(x_font[g]->f,&x_scale,&y_scale);
+  fprintf(stderr,"given scale %d/%d\n",x_scale,y_scale);
+  hb_font_get_ppem(x_font[g]->f,&x_ppem,&y_ppem);
+  fprintf(stderr,"given ppem %d/%d\n",x_ppem,y_ppem);
+  x_ptem=hb_font_get_ptem(x_font[g]->f);
+  fprintf(stderr,"given ptem %f\n",x_ptem);
+  
+  hb_font_get_nominal_glyph (x_font[g]->f,'A', &glyph);
+  hb_font_get_glyph_extents (x_font[g]->f,glyph,&e);
+  fprintf(stderr,"char= %c/%d, glyph=%d width=0x%x (%0.2fpt) height=0x%x (%0.2fpt)\n",
+     'A','A', glyph, e.width, HB_TO_PT(e.width), -e.height,HB_TO_PT(-e.height));
+  ax=hb_font_get_glyph_h_advance (x_font[g]->f, glyph);   
+  fprintf(stderr,"char= %c/%d, glyph=%d h advance=0x%x (%0.2fpt)\n",
+     'A','A', glyph, ax, HB_TO_PT(ax));
+  ax=x_char_width (g, 'A');   
+  fprintf(stderr,"char= %c/%d, x_char_width=0x%x (%0.2fpt)\n",
+     'A','A', ax, ax/(double)ONE);
+  fprintf(stderr,"\n");
+}
+#endif
+
+
+
+
+
+@* Harfbuzz.
+Harfbuzz is a library that can determine the correct positions of characters in a word
+or line of text. This is called ``layout'' and 
+Hi\TeX\ is using harfbuzz to do just that for open type fonts or free type fonts.
+The function prototypes used are fond in these header files:
+
+@<Header files and function declarations@>=
+#include <harfbuzz/hb.h>
+#include <harfbuzz/hb-ot.h>
+#include <harfbuzz/hb-ft.h>
+
+@ When we define an extended font, we allocate an |x_font_info| record
+for the necessary data and store a pointer to it in the |x_font| array
+indexed by the font number. This array can then be used to decide
+whether a font is an extended font or a traditional \TeX\ font.
+
+The \.{\\dump} primitive will not store the contents of the
+|x_font_info| records in the format file. So extended fonts can not be
+preloaded using a format file but must be loaded by \TeX\ each time
+\TeX\ runs.  This decission was made because keeping open type or free
+type fonts in a format file would make formats very big. And there is
+no benefit in loading a font from a format compared to loading a font
+directly from the font file.  To enforce this rule, the \.{\\dump}
+will issue an error message if it encounters an extended font.
+
+@d IS_X_FONT(F) (x_font[F]!=NULL)
+
+
+@<Glob...@>=
+typedef struct {
+  hb_blob_t *blob; /* can be shared for different faces */
+   /* |hb_face_t *face;| we can get the face from the font*/
+   hb_font_t *f;
+   //scaled ascender, descender;
+   int i; /* index */
+   scaled s; /* size */
+} x_font_info;
+typedef x_font_info *x_font_ptr;
+
+static x_font_ptr @!x_font0[font_max-font_base+1]={NULL},
+  *const @!x_font = @!x_font0-font_base;
+
+@ @<load an extended font@>=
+{ hb_blob_t *blob;
+  hb_face_t *face;
+  hb_font_t *f;
+  scaled f_dsize;
+#ifdef WITH_FT
+  FT_Face ft_face;
+  FT_UShort ft_units_per_EM ;
+  @<Initialize the FreeType library@>@;
+  @<Load a FreeType font from file@>@;
+  face=hb_ft_face_create_referenced(ft_face);
+  if (face==NULL)
+    fatal_error("Unable to open extended font face!");
+#else
+  blob = hb_blob_create_from_file(path); 
+  if (blob==NULL) fatal_error("Unable to open extended font file!");
+  face = hb_face_create(blob, f_index);
+  if (face==NULL) fatal_error("Unable to open extended font face!");
+#endif
+  f = hb_font_create(face);
+  if (f==NULL)
+    fatal_error("Unable to open extended font!");
+  if (font_ptr==font_max|| fmem_ptr+8 > font_mem_size)
+  @<Apologize for not loading the font, |goto done|@>;
+  font_ptr++;
+  g=font_ptr;
+  @<determine the design size@>@;
+  @<adjust the extended font for the given scale factor@>@; 
+  @<initialize the font tables for the extended font |g|@>@;
+}
+
+@ Most of the info in \TeX's font tables is not needed for extended fonts.
+Hi\TeX\ uses the |font_name| and |font_area|, as well as the |font_size|
+and the |font_dsize|.
+
+@<initialize the font tables for the extended font |g|@>=
+x_font[g]= (x_font_ptr)xmalloc(sizeof(x_font_info));
+x_font[g]->blob=blob;
+x_font[g]->i=f_index;
+x_font[g]->f=f;
+x_font[g]->s=s;
+font_face[g]=ft_face;
+
+font_name[g]=s_no(f_name);font_area[g]=s_no(path);
+font_size[g]=s;font_dsize[g]=f_dsize;
+hyphen_char[g]='-';skew_char[g]=-1;
+bchar_label[g]=non_address;
+font_bchar[g]=non_char;font_false_bchar[g]=non_char;
+font_bc[g]=ft_first(ft_face);
+font_ec[g]=ft_last(ft_face);
+char_base[g]=0;width_base[g]=0;
+height_base[g]=0;depth_base[g]=0;
+italic_base[g]=0;lig_kern_base[g]=0;
+kern_base[g]=0;exten_base[g]=0;
+font_glue[g]=null;
+font_params[g]=7;
+if ((font_ptr==font_max)||(fmem_ptr+font_params[g]+1 > font_mem_size))
+  @<Apologize for not loading the font, |goto done|@>;
+font_used[g]=false;
+@<get the extended fonts parameters@>;
+
+
+
+
+@ Last, we look at the space character.
+@<get the extended fonts parameters@>=
+{ space(g)=ft_width(ft_face,' ',s);
+  space_stretch(g)=space(g)/2;
+  space_shrink(g)=space(g)/3;
+  extra_space(g)=space(g)/3;
+  quad(g)=s;
+}
+
+
+@ Harfbuzz has no fixed units like point, meter, or milimeter to work with,
+and since the variables that hold a position or width are integer variables,
+it might be necessary for any unit to use fractions of it.
+For a given font, you can choose a unit and the relation of this unit to the
+integer value used to represent it.
+For example, if we can use the unit pt and represent 1pt by the integer
+value 100. This would allow a precission of $1/100$pt because the smallest
+non zero difference beween two integers is 1 and this represents  $1/100$pt.
+When working with TeX, the natural choice for the unit is a printers point
+and its integer representation is a scaled point with one scaled point equal to
+$2^{-16}$ printer's points, or |0x10000|sp equal to 1pt.
+Unfortunately Harfbuzz will allow scale values only in the range
+$2^4$ to $2^{13}$ and typical values are in the range 1000 to $2^{11}$.
+So we use $2^{11}$ which means that we need to shift the values returned
+by harfbuzz by another 5 bits to obtain \TeX's scaled points.
+
+@d HB_PT_BITS 11 /*Bits of Harfbuzz binary fraction*/ 
+@d HB_ONE_PT (1<<HB_PT_BITS) /*1pt in Harfbuzz*/ 
+@d HB_EPS (1<<(16-HB_PT_BITS-1)) /*$\epsilon$ is $1/2$ of smallest Harfbuzz value*/ 
+@d HB_TO_SCALED(A) ((A)<<(16-HB_PT_BITS)) /*Convert Harfbuzz to scaled point*/
+@d HB_FROM_SCALED(A) (((A)+HB_EPS)>>(16-HB_PT_BITS)) /*Convert scaled to Harfbuzz*/
+@d HB_TO_PT(A) (HB_TO_SCALED(A)/(double)ONE)
+
+@<adjust the extended font for the given scale factor@>=
+if (s<0)
+{  if (s==-1000) s=f_dsize;
+  else s= xn_over_d(f_dsize,-s, 1000);
+}
+hb_font_set_scale(f,HB_FROM_SCALED(s), HB_FROM_SCALED(s));
+
+
+@ The function |hb_ot_layout_get_size_params| can be used to obtain the
+  design size of the font face in units of $1/10$ of a point with 72 points per inch.
+
+@<determine the design size@>=
+{ unsigned int designSize, minSize, maxSize, subFamilyID, nameCode;
+  hb_ot_layout_get_size_params(face, &designSize, &subFamilyID,
+    &nameCode, &minSize, &maxSize);
+  if (designSize==0)
+    designSize=100;  /*use 10pt instead on zero*/
+  f_dsize=(((designSize/72.0)*72.27)/10.0)*ONE+0.5; /* round to a scaled value */
+}  
+
 
 
 @* Index.
