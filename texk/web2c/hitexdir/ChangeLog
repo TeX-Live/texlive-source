@@ -1,3 +1,9 @@
+2025-11-05  Karl Berry  <karl@freefriends.org>
+
+	* am/hitex.am (nodist_EXTRA_hitex_SOURCES): dummy.cxx
+	to force Automake to use CXXLD for linking, since
+	HarfBuzz/FreeType are C++.
+
 2025-03-07  Karl Berry  <karl@tug.org>
 
 	* TL'25 release.

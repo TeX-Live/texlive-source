@@ -1,3 +1,11 @@
+2025-11-05  Karl Berry  <karl@freefriends.org>
+
+	* ac/web2c.ac (kpse_tex_progs) <hitex>: now depends on harfbuzz.
+	* configure,
+	* Makefile.in: reautoconf.
+	However, undefined reference to `hb_ft_face_create_referenced' remains.
+	https://tug.org/pipermail/tlbuild/2025q4/005883.html
+
 2025-10-02  Karl Berry  <karl@freefriends.org>
 
 	* bibtex.web: version 0.99e, with fixes for weave (only).
