@@ -8,6 +8,9 @@ if HITEX
 bin_PROGRAMS += hitex hishrink histretch
 noinst_PROGRAMS += himktables
 
+# Force Automake to use CXXLD for linking
+nodist_EXTRA_hitex_SOURCES = dummy.cxx
+
 # convenience target to build all the programs here.
 hiall: hitex hishrink histretch
 

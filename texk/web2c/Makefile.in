@@ -1741,9 +1741,9 @@ am__depfiles_remade = ./$(DEPDIR)/aleph-aleph-pool.Po \
 	./$(DEPDIR)/hishrink-hishrink.Po \
 	./$(DEPDIR)/hishrink-hitables.Po \
 	./$(DEPDIR)/histretch-histretch.Po \
-	./$(DEPDIR)/histretch-hitables.Po ./$(DEPDIR)/hitex-hiput.Po \
-	./$(DEPDIR)/hitex-hitables.Po ./$(DEPDIR)/hitex-hitex.Po \
-	./$(DEPDIR)/initex-callexe.Po \
+	./$(DEPDIR)/histretch-hitables.Po ./$(DEPDIR)/hitex-dummy.Po \
+	./$(DEPDIR)/hitex-hiput.Po ./$(DEPDIR)/hitex-hitables.Po \
+	./$(DEPDIR)/hitex-hitex.Po ./$(DEPDIR)/initex-callexe.Po \
 	./$(DEPDIR)/libluahbtexspecific_a-luainit-hb.Po \
 	./$(DEPDIR)/libluahbtexspecific_a-luastuff-hb.Po \
 	./$(DEPDIR)/libluahbtexspecific_a-printing-hb.Po \
@@ -2487,9 +2487,9 @@ SOURCES = $(libff_a_SOURCES) $(nodist_libluaffi_a_SOURCES) \
 	$(gftodvi_SOURCES) $(nodist_gftodvi_SOURCES) \
 	$(nodist_gftopk_SOURCES) $(nodist_gftype_SOURCES) himktables.c \
 	$(nodist_hishrink_SOURCES) $(nodist_histretch_SOURCES) \
-	$(nodist_hitex_SOURCES) $(nodist_initex_SOURCES) \
-	$(nodist_luahbtex_SOURCES) $(nodist_EXTRA_luahbtex_SOURCES) \
-	$(nodist_luajithbtex_SOURCES) \
+	$(nodist_hitex_SOURCES) $(nodist_EXTRA_hitex_SOURCES) \
+	$(nodist_initex_SOURCES) $(nodist_luahbtex_SOURCES) \
+	$(nodist_EXTRA_luahbtex_SOURCES) $(nodist_luajithbtex_SOURCES) \
 	$(nodist_EXTRA_luajithbtex_SOURCES) \
 	$(nodist_luajittex_SOURCES) $(nodist_luatex_SOURCES) \
 	$(md5main_SOURCES) $(dist_mf_SOURCES) $(dist_mf_nowin_SOURCES) \
@@ -4561,6 +4561,9 @@ euptex_tests = \
 	euptexdir/euptex-ucs.test euptexdir/euptex-widow.test
 
 
+# Force Automake to use CXXLD for linking
+@HITEX_TRUE@nodist_EXTRA_hitex_SOURCES = dummy.cxx
+
 # At the moment, these are the only man pages handled in the
 # conglomerated web2c/Makefile[.am]. (All the others are in man/.)
 # If that changes, have to set at top level and use +=.
@@ -4570,11 +4573,16 @@ euptex_tests = \
 
 # See hitex.am for comments about handling man.
 @TEXPROF_TRUE@man1_MANS = texprofdir/man/texprof.man texprofdir/man/texprofile.man 
-hitex_CPPFLAGS = $(AM_CPPFLAGS) $(ZLIB_INCLUDES) -I$(srcdir)/libmd5 \
-	-DINIT -DSTAT -DWEB2CVERSION="\"${WEB2CVERSION}\""
+hitex_CPPFLAGS = $(AM_CPPFLAGS) $(ZLIB_INCLUDES) $(FREETYPE2_INCLUDES) \
+	$(HARFBUZZ_INCLUDES) -I$(srcdir)/libmd5 -I$(srcdir)/hitexdir \
+	-DINIT -DSTAT -DWEB2CVERSION="\"${WEB2CVERSION}\"" \
+	-Wno-unused-result
 # -DDEBUG drops into an interactive debugging session.
-hitex_LDADD = $(KPATHSEA_LIBS) $(ZLIB_LIBS) libmd5.a libmd5.a
-hitex_DEPENDENCIES = $(KPATHSEA_DEPEND) $(ZLIB_DEPEND) libmd5.a
+hitex_LDADD = $(KPATHSEA_LIBS) $(ZLIB_LIBS) $(FREETYPE2_LIBS) \
+	$(HARFBUZZ_LIBS) $(GRAPHITE2_LIBS) libmd5.a
+hitex_DEPENDENCIES = $(KPATHSEA_DEPEND) $(ZLIB_DEPEND) \
+	$(FREETYPE2_DEPEND) $(HARFBUZZ_DEPEND) $(GRAPHITE2_DEPEND) \
+	libmd5.a
 #
 histretch_CPPFLAGS = $(AM_CPPFLAGS) $(ZLIB_INCLUDES) -I$(srcdir)/hitexdir
 histretch_LDADD = $(ZLIB_LIBS)
@@ -8076,7 +8084,7 @@ histretch$(EXEEXT): $(histretch_OBJECTS) $(histretch_DEPENDENCIES) $(EXTRA_histr
 
 hitex$(EXEEXT): $(hitex_OBJECTS) $(hitex_DEPENDENCIES) $(EXTRA_hitex_DEPENDENCIES) 
 	@rm -f hitex$(EXEEXT)
-	$(AM_V_CCLD)$(LINK) $(hitex_OBJECTS) $(hitex_LDADD) $(LIBS)
+	$(AM_V_CXXLD)$(CXXLINK) $(hitex_OBJECTS) $(hitex_LDADD) $(LIBS)
 
 initex$(EXEEXT): $(initex_OBJECTS) $(initex_DEPENDENCIES) $(EXTRA_initex_DEPENDENCIES) 
 	@rm -f initex$(EXEEXT)
@@ -8482,6 +8490,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hishrink-hitables.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/histretch-histretch.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/histretch-hitables.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hitex-dummy.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hitex-hiput.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hitex-hitables.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hitex-hitex.Po@am__quote@ # am--include-marker
@@ -18670,6 +18679,20 @@ xetexdir/libxetex_a-XeTeXFontMgr_FC.obj: xetexdir/XeTeXFontMgr_FC.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libxetex_a_CPPFLAGS) $(CPPFLAGS) $(libxetex_a_CXXFLAGS) $(CXXFLAGS) -c -o xetexdir/libxetex_a-XeTeXFontMgr_FC.obj `if test -f 'xetexdir/XeTeXFontMgr_FC.cpp'; then $(CYGPATH_W) 'xetexdir/XeTeXFontMgr_FC.cpp'; else $(CYGPATH_W) '$(srcdir)/xetexdir/XeTeXFontMgr_FC.cpp'; fi`
 
+hitex-dummy.o: dummy.cxx
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hitex_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT hitex-dummy.o -MD -MP -MF $(DEPDIR)/hitex-dummy.Tpo -c -o hitex-dummy.o `test -f 'dummy.cxx' || echo '$(srcdir)/'`dummy.cxx
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/hitex-dummy.Tpo $(DEPDIR)/hitex-dummy.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='dummy.cxx' object='hitex-dummy.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hitex_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o hitex-dummy.o `test -f 'dummy.cxx' || echo '$(srcdir)/'`dummy.cxx
+
+hitex-dummy.obj: dummy.cxx
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hitex_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT hitex-dummy.obj -MD -MP -MF $(DEPDIR)/hitex-dummy.Tpo -c -o hitex-dummy.obj `if test -f 'dummy.cxx'; then $(CYGPATH_W) 'dummy.cxx'; else $(CYGPATH_W) '$(srcdir)/dummy.cxx'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/hitex-dummy.Tpo $(DEPDIR)/hitex-dummy.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='dummy.cxx' object='hitex-dummy.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(hitex_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o hitex-dummy.obj `if test -f 'dummy.cxx'; then $(CYGPATH_W) 'dummy.cxx'; else $(CYGPATH_W) '$(srcdir)/dummy.cxx'; fi`
+
 luahbtex-dummy.o: dummy.cxx
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(luahbtex_CPPFLAGS) $(CPPFLAGS) $(luahbtex_CXXFLAGS) $(CXXFLAGS) -MT luahbtex-dummy.o -MD -MP -MF $(DEPDIR)/luahbtex-dummy.Tpo -c -o luahbtex-dummy.o `test -f 'dummy.cxx' || echo '$(srcdir)/'`dummy.cxx
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/luahbtex-dummy.Tpo $(DEPDIR)/luahbtex-dummy.Po
@@ -19717,6 +19740,7 @@ distclean: distclean-recursive
 	-rm -f ./$(DEPDIR)/hishrink-hitables.Po
 	-rm -f ./$(DEPDIR)/histretch-histretch.Po
 	-rm -f ./$(DEPDIR)/histretch-hitables.Po
+	-rm -f ./$(DEPDIR)/hitex-dummy.Po
 	-rm -f ./$(DEPDIR)/hitex-hiput.Po
 	-rm -f ./$(DEPDIR)/hitex-hitables.Po
 	-rm -f ./$(DEPDIR)/hitex-hitex.Po
@@ -20489,6 +20513,7 @@ maintainer-clean: maintainer-clean-recursive
 	-rm -f ./$(DEPDIR)/hishrink-hitables.Po
 	-rm -f ./$(DEPDIR)/histretch-histretch.Po
 	-rm -f ./$(DEPDIR)/histretch-hitables.Po
+	-rm -f ./$(DEPDIR)/hitex-dummy.Po
 	-rm -f ./$(DEPDIR)/hitex-hiput.Po
 	-rm -f ./$(DEPDIR)/hitex-hitables.Po
 	-rm -f ./$(DEPDIR)/hitex-hitex.Po

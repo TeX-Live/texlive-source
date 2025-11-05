@@ -21956,6 +21956,7 @@ case $enable_hitex in #(
 esac
 
 test "x$enable_web2c:$enable_hitex" = xyes:yes && {
+  need_harfbuzz=yes
   need_zlib=yes
 }
 # Check whether --enable-pdftex was given.
@@ -22286,6 +22287,7 @@ then :
   enableval=$enable_synctex;
 fi
 
+# end texk/web2c/ac/web2c.ac.
 
 
 # XeTeX requires C++11 because ICU does :(.

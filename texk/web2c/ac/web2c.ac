@@ -1,7 +1,7 @@
 dnl $Id$
 # texk/web2c/ac/web2c.ac: configure.ac fragment for TL subdir
 dnl
-dnl Copyright 2015-2024 Karl Berry <tex-live@tug.org>
+dnl Copyright 2015-2025 Karl Berry <tex-live@tug.org>
 dnl Copyright 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 dnl You may freely use, modify and/or distribute this file.
 dnl
@@ -34,7 +34,7 @@ m4_define([kpse_tex_progs], [dnl
 [[uptex],     [no],  [],    [upTeX],      [ptexenc zlib]],
 [[euptex],    [yes], [yes], [e-upTeX],    [ptexenc zlib]],
 [[aleph],     [yes], [],    [Aleph],      []],
-[[hitex],     [yes], [],    [HiTeX],      [zlib]],
+[[hitex],     [yes], [],    [HiTeX],      [harfbuzz zlib]],
 [[pdftex],    [yes], [yes], [pdfTeX],     [xpdf libpng zlib]],
 [[luatex],    [yes], [],    [LuaTeX],     [pplib libpng zziplib lua53]],
 [[luajittex], [yes], [],    [LuaJITTeX],  [pplib libpng zziplib luajit]],
@@ -86,3 +86,4 @@ AC_ARG_ENABLE([synctex],
                              [do not build the SyncTeX library and tool],
                              kpse_indent_26))[]dnl
 
+# end texk/web2c/ac/web2c.ac.
