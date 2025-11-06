@@ -37293,7 +37293,7 @@ static x_font_ptr @!x_font0[font_max-font_base+1]={NULL},
   FT_UShort ft_units_per_EM ;
   @<Initialize the FreeType library@>@;
   @<Load a FreeType font from file@>@;
-  face=hb_ft_face_create_referenced(ft_face);
+  face=NULL; /* hb_ft_face_create_referenced(ft_face); */
   if (face==NULL)
     fatal_error("Unable to open extended font face!");
 #else

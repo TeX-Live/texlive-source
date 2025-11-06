@@ -1,3 +1,10 @@
+2025-11-06  Karl Berry  <karl@freefriends.org>
+
+	* hitex.w (hb_ft_face_create_referenced): comment out unresolvable
+	call, as temporary workaround for lack of all hb_ft_* functions in
+	hb, so the build can succeed again.
+	https://tug.org/pipermail/tlbuild/2025q4/005888.html
+
 2025-11-05  Karl Berry  <karl@freefriends.org>
 
 	* am/hitex.am (nodist_EXTRA_hitex_SOURCES): dummy.cxx
