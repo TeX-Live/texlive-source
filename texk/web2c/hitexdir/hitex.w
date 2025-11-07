@@ -11554,7 +11554,7 @@ as fast as possible under the circumstances.
 
 @d char_info(A, B) font_info[char_base[A]+B].qqqq
 @d char_width(A, B) (IS_X_FONT(A)? x_char_width(A,B):font_info[width_base[A]+char_info(A,B).b0].sc)
-@d char_exists(A,B)  (IS_X_FONT(A)?ft_exists(font_face[A],B): char_info(A,B).b0 > min_quarterword)
+@d char_exists(A,B)  (IS_X_FONT(A)?x_char_exists(A,B): char_info(A,B).b0 > min_quarterword)
 @d char_italic(A, B) (IS_X_FONT(A)? x_char_italic(A,B):font_info[italic_base[A]+(char_info(A,B).b2)/4].sc)
 @d height_depth(A) qo(A.b1)
 @d char_height(A, B) (IS_X_FONT(A)? x_char_height(A,B):font_info[height_base[A]+(char_info(A,B).b1)/16].sc)
@@ -11689,8 +11689,9 @@ if (file_opened) {
 @<Read extensible character recipes@>;
 @<Read font parameters@>;
 @<Make final adjustments and |goto done|@>@;
-
 }
+else
+@<Open an extended font file for input@>@;
 
 @ @<Open |tfm_file| for input@>=
 pack_file_name(nom, empty_string,empty_string,".tfm"); /* \TeX\ Live */
@@ -13667,13 +13668,11 @@ to be exercised one more time.
 @<Incorporate character dimensions into the dimensions of the hbox...@>=
 {@+f=font(p);
 if (IS_X_FONT(f))
-{ scaled s=x_font[f]->s;
-  FT_Face ft_face=font_face[f];
-  FT_UInt ft_gid=ft_glyph(ft_face, character(p));
-  if (ft_gid!=0)
+{ hb_codepoint_t glyph;
+  if (x_glyph(f,character(p),&glyph))
   { scaled ph, pd;
-    x=x+ft_glyph_width(ft_face,ft_gid,s);
-    ft_glyph_height_depth(ft_face,ft_gid,&ph, &pd, s);
+    x+=x_glyph_width(f,glyph);
+    x_glyph_height_depth(f,glyph,&ph,&pd);
     if (ph>h) h=ph;
     if (pd>d) d=pd;
   } 
@@ -14674,18 +14673,16 @@ static pointer char_box(internal_font_number @!f, quarterword @!c)
 {@+pointer @!b, @!p; /*the new box and its character node*/
 b=new_null_box();
 if (IS_X_FONT(f))
-{ scaled s=x_font[f]->s;
-  FT_Face ft_face=font_face[g];
-  FT_UInt ft_gid=ft_glyph(ft_face, c);
-  if (ft_gid==0) width(b)=height(b)=depth(b)=0;
-  else
-  { scaled ch, cd;
-    width(b)=ft_glyph_width(ft_face,ft_gid,s)+ x_char_italic(f,c);
-    /* the above could be optimized because the computation of
-    |x_char_italic| includes the computation of |ft_glyph_width|.*/
-    ft_glyph_height_depth(ft_face,ft_gid,&ch, &cd, s);
-    height(b)=ch; depth(b)=cd;
+{ hb_codepoint_t glyph;
+  if (x_glyph(f,character(p),&glyph))
+  { scaled ph, pd;
+    width(b)=x_glyph_width(f,glyph)+x_glyph_italic(f,glyph);
+    x_glyph_height_depth(f,glyph,&ph,&pd);
+    height(b)=ph;
+    depth(b)=pd;
   }
+  else 
+    width(b)=height(b)=depth(b)=0;
 } 
 else
 { width(b)=char_width(f, c)+char_italic(f, c);
@@ -14722,7 +14719,7 @@ a given character:
 static scaled height_plus_depth(internal_font_number @!f, quarterword @!c)
 { if (IS_X_FONT(f))
   { scaled hc,dc;
-    ft_height_depth(font_face[f], c,&hc, &dc, x_font[f]->s);
+    x_char_height_depth(f, c,&hc, &dc);
     return hc+dc;
   }
   else
@@ -22457,16 +22454,14 @@ because the user cannot remove these nodes nor access them via \.{\\lastkern}.
 {@+t=slant(f)/float_constant(65536);
 @^real division@>
 if (IS_X_FONT(f))
-{ scaled s=x_font[f]->s;
-  FT_Face ft_face=font_face[g];
-  FT_UInt ft_gid=ft_glyph(ft_face, character(q));
-  if (ft_gid==0)
-    w=h=0;
-  else
-  { scaled pd;
-    w=ft_glyph_width(ft_face,ft_gid,s);
-    ft_glyph_height_depth(ft_face,ft_gid,&h, &pd, s);
+{ hb_codepoint_t glyph;
+  if (x_glyph(g,c,&glyph))
+  { scaled dummy;
+    w=x_glyph_width(f,glyph);
+    x_glyph_height_depth(f,glyph,&h,&dummy);
   }
+  else
+    w=h=0;
 }
 else
 {  w=char_width(f, character(q));h=char_height(f,  character(q));}
@@ -35181,6 +35176,8 @@ Here is the list of possible options and their explanation:
   @t\qquad@>"\t process STRING like a line in texmf.cnf\n"@/
   " -compress             "@/
   @t\qquad@>"\t enable compression of section 1 and 2\n"@/
+  " [-no]-subset          "@/
+  @t\qquad@>"\t disable/enable the embedding of font subsets\n"@/
   " [-no]-empty-page      "@/
   @t\qquad@>"\t disable/enable empty pages\n"@/
   " [-no]-hyphenate-first-word "@/
@@ -35223,6 +35220,7 @@ static int option_dpi=600;
 static const char *option_mfmode="ljfour", *option_dpi_str="600";
 extern int option_compress;
 extern unsigned int debugflags;
+static int option_subset=true;
 
 static struct option long_options[] = {@/
       { "help",                      0, 0, 0 },@/
@@ -35245,6 +35243,8 @@ static struct option long_options[] = {@/
       { "file-line-error",           0, &filelineerrorstylep, 1 },@/
       { "no-file-line-error",        0, &filelineerrorstylep, 0 },@/
       { "compress",                  0, &option_compress, 1 },@/
+      { "no-subset",                 0, &option_subset, 0 },@/
+      { "subset",                    0, &option_subset, 1 },@/
       { "no-empty-page",             0, &option_no_empty_page, 1 },@/
       { "empty-page",                0, &option_no_empty_page, 0 },@/
       { "hyphenate-first-word",      0, &option_hyphen_first, 1 },@/
@@ -36465,7 +36465,7 @@ assuming the the users terminal an log file are UTF8 capable.
 
 @p
 
-#include "utf/hitex.dat.c"
+#include "hitex.dat.c"
 
 @ The functions defined there replace the definitions of the
 \.{\\catcode}, \.{\\mathcode}, \.{\\uccode}, \.{\\lccode}, and \.{\\delcode}
@@ -36759,121 +36759,10 @@ especially true for ``non-latin'' texts. For this reason, modern \TeX\
 engines, like \.{luatex} or \.{xetex}, load and use the font files
 directly. 
 
-The basic library to load and access the fonts is the \.{freetype}
-library. It is used in Hi\TeX\ to extract font information like
-the width, height, and depth of a character from the font file
-replacing information that otherwise needs to be provided by
-a \.{TFM} file. The viewer for \HINT\ files can use the  
-\.{freetype} library also to generate bitmap images scaled to the
-required size and resolution. Because it is essential that Hi\TeX\
-and viewer use the same metric data, the functions that extract
-the shared data are defined in an include file. This makes sure, that
-both programs work with identical numbers. 
-
-Asside from basic information, like character dimensions, font files
-contain further information to enable proper spacing of characters,
-called ``kerning'', and the use of ligatures. Using this information
-is a more complicated process and it needs to be done entirely in
-Hi\TeX\ to keep the viewer lean, fast, and simple.
-
 To convert a unicode encoded text into a list of glyphs and
 their positions, Hi\TeX\ like other engines uses an other 
 specialized library called \.{harfbuzz}.  
 
-But let us start with the  \.{freetype} library first.
-Shared functions are implemented in an include file
-
-@ To use the \.{freetype} libraray, a few
-header files are needed.
-
-@<Header files and function declarations@>=
-#include <freetype/tttags.h>
-#include <freetype/tttables.h>
-#include <freetype/ftglyph.h>
-#include <freetype/ftadvanc.h>
-
-
-
-@ For the library, we need a global variable.
-The |ft_err| variable is here for convenience.
-
-@<FreeType variables@>=
-FT_Library ft_library=0;
-FT_Face font_face[font_max-font_base+1]={NULL};
-static FT_Error ft_err;
-
-@ Before the library can be used, it is necessary to
-initialize it.
-
-@<Initialize the FreeType library@>=
-if (! ft_library)
-{ int i;
-  FT_Error ft_err =  FT_Init_FreeType(&ft_library);
-  if (ft_err)
-    QUIT("Unable to initialize the FreeType Library.");
-  for (i=0; i<=font_max-font_base;i++)
-    font_face[i]=NULL;
-}
-
-@ @<Destroy the FreeType library@>=
-if (ft_library)
-{ int i;
-  FT_Error ft_err;
-  for (i=0;i<=font_max-font_base+1;i++)
-    if (font_face[i]!=NULL)
-    {  ft_err= FT_Done_Face(font_face[i]); font_face[i]=NULL; }
-  ft_err =  FT_Done_FreeType(ft_library);
-  if (ft_err)
-    MESSAGE("Error releasing the FreeType Library.");
-  ft_library=NULL;
-  for (i=0;i<0x100;i++)
-  { free(fonts[i]); fonts[i]=NULL;} 
-}
-
-@ Once the library is initialized, it is possible to
-create a font face from it either from a file
-using |FT_New_Face| or from memory using |FT_New_Memory_Face|.
-Both functions need an index to select a font face
-in case the file or memory image contains multiple
-faces. The functions that follow often have such a font face
-as parameter.
-
-The first example is a function to get the ``width'' of
-a character. What \TeX\ calls the ``width'' of the character
-is called the ``advance'' in freetype: it is the distance
-from one character to the next character including the
-space between the characters; while the ``width'' of the
-character is the distance between the left and right egdge
-of the characters glyph. The latter is not needed by \TeX.
-We give two version, one will accept a character code, the
-other assumes that the glyph id is already available.
-
-@<freetype file metric functions@>=
-static FT_UInt ft_glyph(FT_Face ft_face, int c)
-{ FT_UInt ft_gid;
-  ft_gid = FT_Get_Char_Index(ft_face, c);
-  return ft_gid;
-}
-
-bool ft_exists(FT_Face ft_face, int c)
-{ return FT_Get_Char_Index(ft_face, c)!=0;
-}
-
-scaled ft_glyph_width(FT_Face ft_face, FT_UInt ft_gid, scaled s)
-{ FT_Fixed a;
-  scaled w;
-  ft_err=FT_Get_Advance(ft_face, ft_gid, FT_LOAD_NO_SCALE, &a);
-  if (ft_err!=0) return 0;
-  w= (scaled)((double)s*(double)a/(double)ft_face->units_per_EM +0.5);
-  return w;
-}
-
-static scaled ft_width(FT_Face ft_face, int c, scaled s)
-{ FT_UInt ft_gid;
-  ft_gid = FT_Get_Char_Index(ft_face, c);
-  if (ft_gid==0) return 0;
-  return ft_glyph_width(ft_face, ft_gid, s);
-}
 
 @ Finding the height and depth of a character is
 slightly more complex. It requires loading the glyph
@@ -36885,67 +36774,23 @@ Because the glyph has been loaded with |FT_LOAD_NO_SCALE| we call
 |FT_Glyph_Get_CBox| with mode |FT_GLYPH_BBOX_UNSCALED| and
 get unscaled font units in 26.6 pixel format. 
 
-@<freetype file metric functions@>=
-static FT_Error ft_glyph_bbox(FT_Face ft_face, FT_UInt ft_gid, FT_BBox *ft_bbox)
-{ FT_Glyph ft_glyph;
-  ft_err = FT_Load_Glyph(ft_face, ft_gid, FT_LOAD_NO_SCALE);
-  if (ft_err!=0) return ft_err;
-  ft_err = FT_Get_Glyph(ft_face->glyph, &ft_glyph);
-  if (ft_err!=0) return ft_err;
-  FT_Glyph_Get_CBox(ft_glyph, FT_GLYPH_BBOX_UNSCALED, ft_bbox);
-  return 0;
-}
-
-void ft_glyph_height_depth(FT_Face ft_face, FT_UInt ft_gid,
-  scaled *h, scaled *d, scaled s)
-{ FT_BBox ft_bbox;
-  *h=*d=0;
-  ft_err= ft_glyph_bbox(ft_face, ft_gid, &ft_bbox);
-  if (ft_err!=0)
-    return;
-  if (ft_bbox.yMax>0)
-   *h=(scaled)((double)s*(double)(ft_bbox.yMax)/(double)ft_face->units_per_EM +0.5);
-  if (ft_bbox.yMin<0)
-   *d= (scaled)((double)s*(double)(-ft_bbox.yMin)/(double)ft_face->units_per_EM +0.5);
-}
-
-static void ft_height_depth(FT_Face ft_face, int c,
-  scaled *h, scaled *d, scaled s)
-{ FT_UInt ft_gid;
-  ft_gid = FT_Get_Char_Index(ft_face, c);
-  if (ft_gid==0)
-  { *h=*d=0; return; }
-  ft_glyph_height_depth(ft_face, ft_gid, h, d, s);
-}
 
 
 
-
-
-@ The first character of a font can be obtained using
-|FT_Get_First_Char|. For now, I do not know a way to determine
-the last one.
-
-@<freetype file metric functions@>=
-static int ft_last(FT_Face ft_face)
-{ return 0x10FFFF; }
-
-static int ft_first(FT_Face ft_face)
-{ FT_UInt ft_gid;
-  FT_ULong c;
-  c = FT_Get_First_Char(ft_face,&ft_gid);
-  if (ft_gid==0) /* charmap empty*/
-    return ft_last(ft_face)+1;
-  else
-    return c;
-}
 
 
 
 @ The functions just defined are listed here:
 
 @<Forward declarations@>=
-
+static bool x_char_exists(internal_font_number g, int c);
+static bool x_glyph(internal_font_number g, int c, hb_codepoint_t *glyph);
+static scaled x_char_height(internal_font_number g, int c);
+static scaled x_glyph_width(internal_font_number g, hb_codepoint_t glyph);
+static scaled x_glyph_italic(internal_font_number g, hb_codepoint_t glyph);
+static void x_glyph_height_depth(internal_font_number g, hb_codepoint_t glyph, scaled *h, scaled *d);
+static void x_char_height_depth(internal_font_number g, int c, scaled *h, scaled *d);
+#if 0
 static FT_UInt ft_glyph(FT_Face ft_face, int c);
 static bool ft_exists(FT_Face ft_face, int c);
 static scaled ft_glyph_width(FT_Face ft_face, FT_UInt ft_gid, scaled s);
@@ -36957,159 +36802,39 @@ static void ft_height_depth(FT_Face ft_face, int c,
   scaled *h, scaled *d, scaled s);
 static int ft_last(FT_Face ft_face);
 static int ft_first(FT_Face ft_face);
-
-
-
-
-@ The FreeType variables defined are part of the global variables.
-
-@<Global...@>=
-  @<FreeType variables@>@;
+#endif
 
 @ To move the functions to the program:
 
 @p 
-  @<freetype file metric functions@>@;
+  @<harfbuzz font metric functions@>@;
 
 
-
-@ Using the functions defined above, we have simple implementations for some
-important functions.
-
-@p static scaled x_char_width(internal_font_number g, int c)
-{ scaled w;
-  w= ft_width(font_face[g],c,x_font[g]->s);
-#if 0
-  hb_font_t *f;
-  hb_codepoint_t glyph;
-  f= x_font[g]->f;
-  hb_font_get_nominal_glyph (f,c, &glyph);
-  w=hb_font_get_glyph_h_advance (f, glyph);
-  w=HB_TO_SCALED(w);
-#endif  
-  return w;
-}
-
-static scaled x_char_height(internal_font_number g, int c)
-{ scaled h, d;
-  ft_height_depth(font_face[g],c,&h, &d,x_font[g]->s);
-  return h;
-}
-
-static scaled x_char_depth(internal_font_number g, int c)
-{ scaled h, d;
-  ft_height_depth(font_face[g],c,&h, &d,x_font[g]->s);
-  return d;
-}
-
-static scaled x_char_italic(internal_font_number g, int c)
-{ scaled w,d;
-  FT_BBox ft_bbox;
-  FT_Face ft_face=font_face[g];
-  FT_UShort ft_units_per_EM= ft_face->units_per_EM;
-  scaled s =  x_font[g]->s;
-  int ft_gid= ft_glyph(ft_face,c);
-  if (ft_gid==0) return 0;
-  w = ft_glyph_width(ft_face,ft_gid,s);
-  ft_glyph_bbox(ft_face,ft_gid, &ft_bbox);
-  d=FT_UNITS_TO_SCALED(ft_bbox.xMax);
-  if (d > w)
-    return d-w;
-  else     
-    return 0;
-}
-
-
-@ We will need some more freetype specific functions just for Hi\TeX\
-and we define them next.
-
-@d WITH_FT 1
-
-@<Load a FreeType font from file@>=
-  ft_err = FT_New_Face(ft_library, path, f_index, &ft_face);
-  if (ft_err)
-    fatal_error("Unable to open extended font file!");
-  ft_err = FT_Select_Charmap(ft_face,FT_ENCODING_UNICODE);
-  ft_err= FT_Set_Char_Size(ft_face, 0, 1000, 600, 600); /* I dont know the size here */
 
 @ Here is the code to get the basic font parameters for an extended font.
 Let us start with the x-height: the size of one ex in the font.
 |x_height(A)| is defined as |font_info[param_base[g]+x_height_code].sc| with |x_height_code==5|.
-For a freetype font, we find the |x_height| in the \.{OS2} table.
-Its given in ``units'' and needs to be scaled by the "units per EM" where one EM
-is just the size |s| in points. Similar we set the height and depth of the font
-using the ascent and descent from the font.
-
-@d FT_UNITS_TO_SCALED(A) (scaled)(((double)s*(double)(A)/(double)ft_units_per_EM)+0.5)
 
 @<get the extended fonts parameters@>=
 param_base[g]=fmem_ptr;
 fmem_ptr=fmem_ptr+font_params[g]+1;
 font_info[param_base[g]].sc =0;
-{ FT_ULong ft_len = 0;
-  FT_Short ft_x_height=0;
-  TT_OS2 *ft_table=NULL;
-  ft_units_per_EM = ft_face->units_per_EM;
-#if 0
-  FT_Short ft_ascender, ft_descender;
-
-  ft_ascender = ft_face->ascender;
-  ft_descender = ft_face->descender;
-  x_font[g]->ascender=FT_UNITS_TO_SCALED(ft_ascender);
-  x_font[g]->descender=FT_UNITS_TO_SCALED(ft_descender);
-#endif
-  if (FT_IS_SFNT(ft_face))
-  { ft_table = (TT_OS2 *)FT_Get_Sfnt_Table(ft_face, FT_SFNT_OS2);
-     if (ft_table!=NULL)
-       ft_x_height=  ft_table->sxHeight;
-  }
-  if (ft_x_height!=0)
-    x_height(g)= FT_UNITS_TO_SCALED(ft_x_height);
-  else
-  { scaled hx,dx;
-    ft_height_depth(ft_face,'x',&hx, &dx,s);
-    x_height(g)=hx;
-  }
+{  hb_position_t h;
+  hb_ot_metrics_get_position_with_fallback(x_font[g]->f,HB_OT_METRICS_TAG_X_HEIGHT,&h);
+  /* if this is not working, I could use |x_char_height(f,'x')| */
+  x_height(g)= HB_TO_SCALED(h);
 }
 
-@ To get the slant, Hi\TeX\ reads the font's \.{TT\_Postscript} structure
-and extract the italic angle. The italic angle in degrees is returned as a fixed point integer
-with 16 binary digits right of the binary point; this is the same as \TeX's |sacled|
-data type. Zero degrees is equivalent to an upright font without slant.
-Positive values indicate a slant to the right (clockwise) while negative values
-indicate a slant to the left (counter-clockwise).
-The slant vlaue, as neede by \TeX\ is the horizontal extent to the right for character 1pt high.
+
+@ The slant vlaue, as neede by \TeX\ is the horizontal extent to the right for a 
+character 1pt high.
 
 @<get the extended fonts parameters@>=
-#ifdef WITH_FT
-{ TT_Postscript *ft_table=NULL;
-  FT_Fixed ft_italicAngle=0;
-  scaled slnt=0;
-   if (FT_IS_SFNT(ft_face))
-   { ft_table = (TT_Postscript *)FT_Get_Sfnt_Table(ft_face,FT_SFNT_POST);
-     if (ft_table!=NULL)
-     { double x, y;
-       ft_italicAngle=  ft_table->italicAngle;
-       y= ((double)ft_italicAngle)/(double)ONE;
-       y= -y*M_PI/180.0;
-       x= tan(y);
-       slnt=(scaled)(ONE*x+0.5);
-       slant(g)=slnt;
-     }
-   }
+{ double r;
+  r= hb_style_get_value (f, HB_STYLE_TAG_SLANT_RATIO);
+  slant(g)=(ONE*r+0.5);
 }
-#else
-{ double r= hb_style_get_value (f, HB_STYLE_TAG_SLANT_RATIO); 
-  scaled slnt=0;
-  slant=(scaled)(ONE*x+0.5);
-  slant(g)=slant;
-}
-#endif   
-
-
-
-
-
+  
 
 @ We call the fonts that Hi\TeX\ will handle by using harfbuzz 
 ``extended fonts'', and variables or functions dealing with 
@@ -37144,7 +36869,7 @@ one should use \.{afm2tfm} to convert the \.{.afm} files to \.{tfm}
 files and put the new \.{tfm} files in a place where the \.{kpathserach} library
 can find them. Then run \.{mktexls}.
 
- @<Read and check...@>=
+@<Open an extended font file for input@>=
 {  char *f_name;
    int f_index=0; 
  /*As soon as I allow other index values, options, and features,
@@ -37154,10 +36879,6 @@ can find them. Then run \.{mktexls}.
    path=kpse_find_file(f_name, kpse_opentype_format, 0);
    if (path == NULL)
      path = kpse_find_file(f_name, kpse_truetype_format, 0);
-#if 0
-   if (path == NULL)
-     path = kpse_find_file(f_name, kpse_type1_format, 0);
-#endif
    if (path!=NULL)
    { @<load an extended font@>@;
      if (g!=null_font) file_opened=true; 
@@ -37203,54 +36924,98 @@ if (tracing_fonts>0)
   if (g==null_font) print_nl("Font not found, using \"nullfont\"");
   end_diagnostic(false);
 }
-#if 0
+#if DEBUG
 if (IS_X_FONT(g))
 { int x_scale, y_scale;
   unsigned int x_ppem,y_ppem;
-  float x_ptem ;
-  hb_codepoint_t glyph;
+  hb_codepoint_t glyph, cp;
   hb_glyph_extents_t e;
+  hb_font_t *f;
+  float x_ptem ;
   unsigned int designSize, minSize, maxSize, subFamilyID, nameCode;
   hb_position_t ax;
 
   fprintf(stderr,"\n");
   fprintf(stderr,"%s\n",path);
-  
-  hb_font_get_scale(x_font[g]->f,&x_scale,&y_scale);
+  f=x_font[g]->f;
+  hb_font_get_scale(f,&x_scale,&y_scale);
   fprintf(stderr,"given scale %d/%d\n",x_scale,y_scale);
-  hb_font_get_ppem(x_font[g]->f,&x_ppem,&y_ppem);
+  hb_font_get_ppem(f,&x_ppem,&y_ppem);
   fprintf(stderr,"given ppem %d/%d\n",x_ppem,y_ppem);
-  x_ptem=hb_font_get_ptem(x_font[g]->f);
+  x_ptem=hb_font_get_ptem(f);
   fprintf(stderr,"given ptem %f\n",x_ptem);
-  
-  hb_font_get_nominal_glyph (x_font[g]->f,'A', &glyph);
-  hb_font_get_glyph_extents (x_font[g]->f,glyph,&e);
-  fprintf(stderr,"char= %c/%d, glyph=%d width=0x%x (%0.2fpt) height=0x%x (%0.2fpt)\n",
-     'A','A', glyph, e.width, HB_TO_PT(e.width), -e.height,HB_TO_PT(-e.height));
-  ax=hb_font_get_glyph_h_advance (x_font[g]->f, glyph);   
-  fprintf(stderr,"char= %c/%d, glyph=%d h advance=0x%x (%0.2fpt)\n",
-     'A','A', glyph, ax, HB_TO_PT(ax));
-  ax=x_char_width (g, 'A');   
-  fprintf(stderr,"char= %c/%d, x_char_width=0x%x (%0.2fpt)\n",
-     'A','A', ax, ax/(double)ONE);
-  fprintf(stderr,"\n");
+  { hb_set_t *uset= hb_set_create ();
+    hb_face_t *face=hb_font_get_face(f); 
+    hb_face_collect_unicodes (face,uset);
+    fprintf(stderr,"Unicode range %d - %d\n",hb_set_get_min (uset),hb_set_get_max (uset));
+  }
+  cp='A'; @<debug font |f| and codepoint |cp|@>@;
+  cp='g'; @<debug font |f| and codepoint |cp|@>@;
+  cp='T'; @<debug font |f| and codepoint |cp|@>@;
+
+fprintf(stderr,"\n");
 }
 #endif
 
+@ For debugging hitex creates some more output. This part will be deleted after
+the code has stabilized.
 
+  @<debug font |f| and codepoint |cp|@>=
+  { scaled h,d,w;
+    hb_font_get_nominal_glyph (f,cp, &glyph);
+    hb_font_get_glyph_extents (f,glyph,&e);
+    fprintf(stderr,"char= %c/%d id=%d\n", cp,cp,glyph);
+    fprintf(stderr,"\thb: height=y_bearing=%0.2fpt,  depth= %0.2fpt, bbox height= %0.2fpt\n",
+      HB_TO_PT(e.y_bearing),HB_TO_PT(-(e.height+e.y_bearing)),HB_TO_PT(e.height)
+     );
+     h=x_char_height(g,cp);
+     d=x_char_depth(g,cp);
+    fprintf(stderr,"\tft: height=0x%x (%0.2fpt), depth=0x%x (%0.2fpt)\n",
+      h,h/(double)ONE,d,d/(double)ONE
+     );
+     ax=hb_font_get_glyph_h_advance (f, glyph);   
+     fprintf(stderr,"\thb: width=0x%x (%0.2fpt)\n", ax, HB_TO_PT(ax));
+     w=x_char_width (g, cp);   
+     fprintf(stderr,"\tft: width=0x%x (%0.2fpt)\n", w, w/(double)ONE);
+     ax=e.width;
+     fprintf(stderr,"\thb: bbox width=0x%x (%0.2fpt)\n", ax, HB_TO_PT(ax));
+     ax=e.x_bearing;
+     fprintf(stderr,"\thb: bbox x_bearing=0x%x (%0.2fpt)\n", ax, HB_TO_PT(ax));
+     ax=hb_font_get_glyph_h_advance (f, glyph);
+     ax= e.x_bearing+e.width-ax;
+     if (ax<0) ax=0;
+     fprintf(stderr,"\thb: italics=0x%x (%0.2fpt)\n", ax, HB_TO_PT(ax));
+     ax=x_char_italic(g,cp);
+     fprintf(stderr,"\tft: italics=0x%x (%0.2fpt)\n",
+     ax, ax/(double)ONE);
+  }
+
+
+
+
+
+@*Font subsets.
+Very often only a small subset of the glyphs in a font are used in the document at hand.
+For example, the title of this document is ``Hi\TeX'' and if set using aspecial font,
+only 5 glyphs are actually used. In such cases, it is a waste of memory to embedd the
+entire font in the \HINT\ document. So it is desirable to construct from a font
+a subset font, that contains only a subset of all glyphs in the font.
+This can be done easily using the Harfbuzz library.
+
+Embedding only subsets is the default for Hi\TeX. This can be changed by using the
+option \.{-no-subset} on the command line setting the |option_subset| variable to |false|.
 
 
 
 @* Harfbuzz.
 Harfbuzz is a library that can determine the correct positions of characters in a word
 or line of text. This is called ``layout'' and 
-Hi\TeX\ is using harfbuzz to do just that for open type fonts or free type fonts.
-The function prototypes used are fond in these header files:
+Hi\TeX\ is using harfbuzz to do just that for OpenType fonts or TrueType fonts.
+The function prototypes used are found in these header files:
 
 @<Header files and function declarations@>=
 #include <harfbuzz/hb.h>
 #include <harfbuzz/hb-ot.h>
-#include <harfbuzz/hb-ft.h>
 
 @ When we define an extended font, we allocate an |x_font_info| record
 for the necessary data and store a pointer to it in the |x_font| array
@@ -37260,11 +37025,11 @@ whether a font is an extended font or a traditional \TeX\ font.
 The \.{\\dump} primitive will not store the contents of the
 |x_font_info| records in the format file. So extended fonts can not be
 preloaded using a format file but must be loaded by \TeX\ each time
-\TeX\ runs.  This decission was made because keeping open type or free
-type fonts in a format file would make formats very big. And there is
+\TeX\ runs.  This decission was made because keeping OPenType or FreeType
+fonts in a format file would make formats very big. And there is
 no benefit in loading a font from a format compared to loading a font
 directly from the font file.  To enforce this rule, the \.{\\dump}
-will issue an error message if it encounters an extended font.
+primitive will issue an error message if it encounters an extended font.
 
 @d IS_X_FONT(F) (x_font[F]!=NULL)
 
@@ -37272,11 +37037,9 @@ will issue an error message if it encounters an extended font.
 @<Glob...@>=
 typedef struct {
   hb_blob_t *blob; /* can be shared for different faces */
-   /* |hb_face_t *face;| we can get the face from the font*/
-   hb_font_t *f;
-   //scaled ascender, descender;
-   int i; /* index */
-   scaled s; /* size */
+  hb_font_t *f;
+  int i; /* index */
+  scaled s; /* size */
 } x_font_info;
 typedef x_font_info *x_font_ptr;
 
@@ -37288,20 +37051,11 @@ static x_font_ptr @!x_font0[font_max-font_base+1]={NULL},
   hb_face_t *face;
   hb_font_t *f;
   scaled f_dsize;
-#ifdef WITH_FT
-  FT_Face ft_face;
-  FT_UShort ft_units_per_EM ;
-  @<Initialize the FreeType library@>@;
-  @<Load a FreeType font from file@>@;
-  face=NULL; /* hb_ft_face_create_referenced(ft_face); */
-  if (face==NULL)
-    fatal_error("Unable to open extended font face!");
-#else
+
   blob = hb_blob_create_from_file(path); 
   if (blob==NULL) fatal_error("Unable to open extended font file!");
   face = hb_face_create(blob, f_index);
   if (face==NULL) fatal_error("Unable to open extended font face!");
-#endif
   f = hb_font_create(face);
   if (f==NULL)
     fatal_error("Unable to open extended font!");
@@ -37324,15 +37078,12 @@ x_font[g]->blob=blob;
 x_font[g]->i=f_index;
 x_font[g]->f=f;
 x_font[g]->s=s;
-font_face[g]=ft_face;
 
 font_name[g]=s_no(f_name);font_area[g]=s_no(path);
 font_size[g]=s;font_dsize[g]=f_dsize;
 hyphen_char[g]='-';skew_char[g]=-1;
 bchar_label[g]=non_address;
 font_bchar[g]=non_char;font_false_bchar[g]=non_char;
-font_bc[g]=ft_first(ft_face);
-font_ec[g]=ft_last(ft_face);
 char_base[g]=0;width_base[g]=0;
 height_base[g]=0;depth_base[g]=0;
 italic_base[g]=0;lig_kern_base[g]=0;
@@ -37344,12 +37095,18 @@ if ((font_ptr==font_max)||(fmem_ptr+font_params[g]+1 > font_mem_size))
 font_used[g]=false;
 @<get the extended fonts parameters@>;
 
-
-
+@ We start with finding the first and the last character in the font:
+@<get the extended fonts parameters@>=
+{ hb_set_t *uset= hb_set_create ();
+  hb_face_t *face=hb_font_get_face(x_font[g]->f); 
+  hb_face_collect_unicodes (face,uset);
+  font_bc[g]=hb_set_get_min (uset);
+  font_ec[g]=hb_set_get_max (uset);
+}
 
 @ Last, we look at the space character.
 @<get the extended fonts parameters@>=
-{ space(g)=ft_width(ft_face,' ',s);
+{ space(g)=x_char_width(g,' ');
   space_stretch(g)=space(g)/2;
   space_shrink(g)=space(g)/3;
   extra_space(g)=space(g)/3;
@@ -37362,11 +37119,11 @@ and since the variables that hold a position or width are integer variables,
 it might be necessary for any unit to use fractions of it.
 For a given font, you can choose a unit and the relation of this unit to the
 integer value used to represent it.
-For example, if we can use the unit pt and represent 1pt by the integer
+For example, we can use the unit pt and represent 1pt by the integer
 value 100. This would allow a precission of $1/100$pt because the smallest
 non zero difference beween two integers is 1 and this represents  $1/100$pt.
 When working with TeX, the natural choice for the unit is a printers point
-and its integer representation is a scaled point with one scaled point equal to
+and its integer representation is a scaled point (sp)with one scaled point equal to
 $2^{-16}$ printer's points, or |0x10000|sp equal to 1pt.
 Unfortunately Harfbuzz will allow scale values only in the range
 $2^4$ to $2^{13}$ and typical values are in the range 1000 to $2^{11}$.
@@ -37385,7 +37142,11 @@ if (s<0)
 {  if (s==-1000) s=f_dsize;
   else s= xn_over_d(f_dsize,-s, 1000);
 }
+#if DEBUG
+fprintf(stderr,"\thb: scale %d(0x%x)\n",HB_FROM_SCALED(s),HB_FROM_SCALED(s));
+#endif
 hb_font_set_scale(f,HB_FROM_SCALED(s), HB_FROM_SCALED(s));
+hb_font_set_ptem(f,(72.0/72.27)*s/(double)ONE);
 
 
 @ The function |hb_ot_layout_get_size_params| can be used to obtain the
@@ -37396,10 +37157,123 @@ hb_font_set_scale(f,HB_FROM_SCALED(s), HB_FROM_SCALED(s));
   hb_ot_layout_get_size_params(face, &designSize, &subFamilyID,
     &nameCode, &minSize, &maxSize);
   if (designSize==0)
-    designSize=100;  /*use 10pt instead on zero*/
+    designSize=100;  /*use 10pt instead of zero*/
   f_dsize=(((designSize/72.0)*72.27)/10.0)*ONE+0.5; /* round to a scaled value */
 }  
 
+@ The set of all unicode code points of a font is used
+to determine |font_bc[g]| and |font_ec[g]|.
+
+@<determine |font_bc[g]| and |font_ec[g]| for the extended font |g|@>=
+{ hb_set_t *uset= hb_set_create ();
+  hb_face_t *face=hb_font_get_face(x_font[g]->f); 
+  hb_face_collect_unicodes (face,uset);
+  font_bc[g]=hb_set_get_min (uset);
+  font_ec[g]=hb_set_get_max (uset));
+}
+
+@ To get glyph specific information, for example a characters width,
+we first need to obtain the glyph number that belongs to the character in
+the given font.
+
+@<harfbuzz font metric functions@>=
+
+static bool x_glyph(internal_font_number g, int c, hb_codepoint_t *glyph)
+{ 
+  return hb_font_get_nominal_glyph (x_font[g]->f,c, glyph);
+}
+
+static bool x_char_exists(internal_font_number g, int c)
+{ if (font_bc[g]>c || c>font_ec[g])
+    return false;
+  else
+  { hb_codepoint_t glyph;
+    return x_glyph(g,c, &glyph);
+  }
+}
+
+
+static scaled x_glyph_width(internal_font_number g, hb_codepoint_t glyph)
+{ return  HB_TO_SCALED(hb_font_get_glyph_h_advance (x_font[g]->f, glyph)); 
+}
+
+static scaled x_char_width(internal_font_number g, int c)
+{  hb_codepoint_t glyph;
+   if (x_glyph(g,c,&glyph))
+     return x_glyph_width(g, glyph);
+   else
+     return 0;
+}
+
+@ Finding the height and depth of a character is
+slightly more complex. It requires retrieving its bounding box.
+Since most of the time we need the height and the depth
+together, we provide one function for both.
+
+
+@<harfbuzz font metric functions@>=
+static void x_glyph_height_depth(internal_font_number g, hb_codepoint_t glyph,
+       scaled *h, scaled *d)
+{ hb_glyph_extents_t e;
+  hb_font_get_glyph_extents (x_font[g]->f,glyph,&e);
+  *h=HB_TO_SCALED(e.y_bearing);
+  *d=HB_TO_SCALED(-(e.height+e.y_bearing));
+}
+
+
+static void x_char_height_depth(internal_font_number g, int c,
+       scaled *h, scaled *d)
+{  hb_codepoint_t glyph;
+   if (x_glyph(g,c,&glyph))
+     x_glyph_height_depth(g,glyph,h,d);
+   else
+     *h=*d=0;
+}
+
+
+static scaled x_char_height(internal_font_number g, int c)
+{ hb_glyph_extents_t e;
+  hb_codepoint_t glyph;
+   if (x_glyph(g,c,&glyph))
+   { hb_font_get_glyph_extents (x_font[g]->f,glyph,&e);
+     return HB_TO_SCALED(e.y_bearing);
+   }
+   else
+     return 0;
+}
+
+static scaled x_char_depth(internal_font_number g, int c)
+{ hb_glyph_extents_t e;
+  hb_codepoint_t glyph;
+   if (x_glyph(g,c,&glyph))
+   { hb_font_get_glyph_extents (x_font[g]->f,glyph,&e);
+     return HB_TO_SCALED(-(e.height+e.y_bearing));
+   }
+   else
+     return 0;
+}
+
+
+
+static scaled x_glyph_italic(internal_font_number g, hb_codepoint_t glyph)
+{ hb_position_t a,b;
+  hb_glyph_extents_t e;
+  hb_font_get_glyph_extents (x_font[g]->f,glyph,&e);
+  b=hb_font_get_glyph_h_advance (x_font[g]->f, glyph);
+  a= e.x_bearing+e.width-b;
+  if (a<0) a=0;
+  return HB_TO_SCALED(a);
+}
+
+static scaled x_char_italic(internal_font_number g, int c)
+{ hb_glyph_extents_t e;
+  hb_codepoint_t glyph;
+   if (x_glyph(g,c,&glyph))
+   { return x_glyph_italic(g,glyph);
+   }
+   else
+     return 0;
+}
 
 
 @* Index.

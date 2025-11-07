@@ -7495,10 +7495,11 @@ The big picture is captured by the |put_hint| function:
 @<put functions@>=
 static size_t hput_root(void);
 static size_t hput_section(uint16_t n);
-static size_t hput_optional_sections(void);
+static size_t hput_optional_section(int i);
 
 size_t hput_hint(char * str)
 { size_t s;
+  int i;
   DBG(DBGBASIC,"Writing hint output %s\n",str); 
   s=hput_banner("hint",str);
   DBG(DBGDIR,@["Root entry at " SIZE_F "\n"@],s);
@@ -7510,7 +7511,8 @@ size_t hput_hint(char * str)
   DBG(DBGDIR,@["Content section at " SIZE_F "\n"@],s);
   s+=hput_section(2);
   DBG(DBGDIR,@["Auxiliary sections at " SIZE_F "\n"@],s);
-  s+=hput_optional_sections();
+  for (i=3; i<=max_section_no; i++)@/
+    s+=hput_optional_section(i);
   DBG(DBGDIR,@["Total number of bytes written " SIZE_F "\n"@],s);
   return s;
 }
@@ -8393,35 +8395,30 @@ are described in the directory entries 3 and above to a \HINT\ file in short for
 
 \putcode
 @<put functions@>=
-static size_t hput_optional_sections(void)
-{ int i;
-  size_t s=0;
-  DBG(DBGDIR,"Optional Sections\n");
-  for (i=3; i<=max_section_no; i++)@/
-   { FILE *f;
-     size_t fsize;
-     char *file_name=dir[i].file_name;
-     DBG(DBGDIR,"adding file %d: %s\n",dir[i].section_no,file_name);
-     if (dir[i].xsize!=0) @/
-       DBG(DBGDIR,"Compressing of auxiliary files currently not supported");
-     f=fopen(file_name,"rb");
-     if (f==NULL) QUIT("Unable to read section %d, file %s",
-       dir[i].section_no,file_name);
-     fsize=0;
-     while (!feof(f))@/
-     { size_t s,t;
-       char buffer[1<<13]; /* 8kByte */       
-       s=fread(buffer,1,1<<13,f);@/
-       t=fwrite(buffer,1,s,hout);
-       if (s!=t) QUIT("writing file %s",file_name);
-       fsize=fsize+t;
-     }
-     fclose(f);
-     if (fsize!=dir[i].size) 
-       QUIT(@["File size " SIZE_F " does not match section[0] size %u"@],@|fsize,dir[i].size);
-     s=s+fsize;
-   }
-   return s;
+static size_t hput_optional_section(int i)
+{ FILE *f;
+  size_t fsize;
+  char *file_name=dir[i].file_name;
+  DBG(DBGDIR,"Adding file %d: %s\n",dir[i].section_no,file_name);
+  if (dir[i].xsize!=0) @/
+    DBG(DBGDIR,"Compressing of auxiliary files currently not supported");
+  f=fopen(file_name,"rb");
+  if (f==NULL) QUIT("Unable to read section %d, file %s",
+    dir[i].section_no,file_name);
+  fsize=0;
+  while (!feof(f))@/
+  { size_t s,t;
+    char buffer[1<<13]; /* 8kByte */       
+    s=fread(buffer,1,1<<13,f);@/
+    t=fwrite(buffer,1,s,hout);
+    if (s!=t) QUIT("writing file %s",file_name);
+    fsize=fsize+t;
+  }
+  fclose(f);
+  if (fsize!=dir[i].size) 
+    QUIT(@["File size " SIZE_F " does not match section[0] size %u"@],
+           @|fsize,dir[i].size);
+  return fsize;
 }
 @
 
