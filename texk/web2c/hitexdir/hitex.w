@@ -37011,11 +37011,13 @@ option \.{-no-subset} on the command line setting the |option_subset| variable t
 Harfbuzz is a library that can determine the correct positions of characters in a word
 or line of text. This is called ``layout'' and 
 Hi\TeX\ is using harfbuzz to do just that for OpenType fonts or TrueType fonts.
-The function prototypes used are found in these header files:
+The function prototypes used are found in these header files.  We use
+|#include "..."| instead of |<...>| because we need to prefer the
+HarfBuzz that is included in \TeX\ Live when doing a ``native'' build there.
 
 @<Header files and function declarations@>=
-#include <harfbuzz/hb.h>
-#include <harfbuzz/hb-ot.h>
+#include "hb.h"
+#include "hb-ot.h"
 
 @ When we define an extended font, we allocate an |x_font_info| record
 for the necessary data and store a pointer to it in the |x_font| array
