@@ -1,3 +1,13 @@
+2025-11-09  Karl Berry  <karl@freefriends.org>
+
+	* am/hitex.am (hitex_OBJECTS): also depend on hitex-tangle,
+	so changes to hitex.w rebuild the whole chain.
+
+2025-11-08  Karl Berry  <karl@freefriends.org>
+
+	* hitex.w: use #include "hb.h" instead of <hb.h> in order to find
+	the HarfBuzz files included with TL before the system ones.
+
 2025-11-06  Karl Berry  <karl@freefriends.org>
 
 	* hitex.w (hb_ft_face_create_referenced): comment out unresolvable

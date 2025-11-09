@@ -1,7 +1,7 @@
 ## $Id$
 ## texk/web2c/hitexdir/am/hitex.am: Makefile fragment for HiTeX
 ##
-## Copyright 2021-2022 Martin Ruckert <ruckert@cs.hm.edu>
+## Copyright 2021-2025 Martin Ruckert <ruckert@cs.hm.edu>
 ## You may freely use, modify and/or distribute this file.
 
 if HITEX
@@ -50,7 +50,8 @@ hishrink_DEPENDENCIES = $(ZLIB_DEPEND)
 # HiTeX CWEB sources
 hitex_web = hitexdir/hiformat.w hitexdir/hitex.w
 
-# Creating several files: need stamp file and two rules with identical recipes
+# Creating several files: need stamp file (named *-tangle) and two rules
+# with identical recipes (see ./tangle-sh for background).
 hi_ctangle_sh = CWEBINPUTS=$(srcdir)/hitexdir AM_V_P=$(AM_V_P) $(SHELL) ./tangle-sh $@ $(CTANGLE)
 
 # HiTeX C/yacc/lex sources generated using ctangle.
@@ -70,14 +71,10 @@ hiformat_c_h_l_y = \
 hitex_c = hitex.c 
 
 $(hiformat_c_h_l_y): hiformat-tangle
-
-#
 hiformat-tangle: ctangle$(EXEEXT) hitexdir/hiformat.w tangle-sh
 	$(hi_ctangle_sh) hiformat
 
 $(hitex_c): hitex-tangle
-
-#
 hitex-tangle: ctangle$(EXEEXT) hitexdir/hitex.w tangle-sh
 	$(hi_ctangle_sh) hitex
 
@@ -104,14 +101,15 @@ nodist_hishrink_SOURCES = hitables.c \
 # hitex, histretch, and hishrink all need (at least) some 
 # of the sources generated from hiformat.w.
 #
-$(hitex_OBJECTS): hiformat-tangle
+$(hitex_OBJECTS): hitex-tangle hiformat-tangle
 $(hishrink_OBJECTS): hiformat-tangle
 $(histretch_OBJECTS): hiformat-tangle
-#
-# By the way, the $(BUILT_SOURCES) suggestion in the Automake manual for
-# this does not work for us, because we want to be able to invoke
-# specific targets (hiall, hitex, hishrink, ...), and $(BUILT_SOURCES)
-# is only a dependency on general targets (all, install, ...).
+
+# By the way, we might be able to use the $(BUILT_SOURCES) suggestion in
+# the Automake manual. In order to be able to invoke specific targets
+# (hiall, hitex, hishrink, ...), we'd have to add an explicit dependency
+# on $(BUILT_SOURCES), but this seems feasible. But since the above
+# _OBJECTS dependencies apparently work ok, go with it until a problem arises.
 
 EXTRA_DIST += hitexdir/ChangeLog $(hitex_web)
 
