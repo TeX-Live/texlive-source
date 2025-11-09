@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 76753 2025-11-04 09:09:18Z preining $
+# $Id: tlmgr.pl 76773 2025-11-06 19:43:29Z preining $
 # Copyright 2008-2025 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
@@ -8,8 +8,8 @@
 
 use strict; use warnings;
 
-my $svnrev = '$Revision: 76753 $';
-my $datrev = '$Date: 2025-11-04 10:09:18 +0100 (Tue, 04 Nov 2025) $';
+my $svnrev = '$Revision: 76773 $';
+my $datrev = '$Date: 2025-11-06 20:43:29 +0100 (Thu, 06 Nov 2025) $';
 my $tlmgrrevision;
 my $tlmgrversion;
 my $prg;
@@ -3529,8 +3529,8 @@ sub action_update {
         if (wndws()) {
           # w32 is notorious for not releasing a file immediately
           # we experienced permission denied errors
-          my $newname = $unwind_package;
-          $newname =~ s/__BACKUP/___BACKUP/;
+          my ($suffix) = $unwind_package =~ /(\.tar\.[^.\s]+)$/;
+          my $newname = TeXLive::TLUtils::tl_tmpfile(SUFFIX => $suffix);
           copy ("-f", $unwind_package, $newname);
           # try to remove the file if has been created by us
           unlink($unwind_package) if $remove_unwind_container;
@@ -10634,7 +10634,7 @@ This script and its documentation were written for the TeX Live
 distribution (L<https://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 76753 2025-11-04 09:09:18Z preining $
+$Id: tlmgr.pl 76773 2025-11-06 19:43:29Z preining $
 =cut
 
 # test HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html
