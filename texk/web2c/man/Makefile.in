@@ -812,8 +812,8 @@ testman:
 
 # remake pdfs for all *.man files.
 testmans:
-	for m in $(srcdir)/*.man; do \
-	  $(MAKE) m=`basename $$m .man` testman || exit 1; done
+	for m in $(srcdir)/*.man; do echo $$m; \
+	  $(MAKE) -s m=`basename $$m .man` testman || exit 1; done
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
