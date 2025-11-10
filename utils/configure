@@ -4987,6 +4987,7 @@ case $enable_hitex in #(
 esac
 
 test "x$enable_web2c:$enable_hitex" = xyes:yes && {
+  need_harfbuzz=yes
   need_zlib=yes
 }
 # Check whether --enable-pdftex was given.
@@ -5317,6 +5318,7 @@ then :
   enableval=$enable_synctex;
 fi
 
+# end texk/web2c/ac/web2c.ac.
 
 ## texk/afm2pl/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/afm2pl/
 ## configure options and TL libraries required for afm2pl
