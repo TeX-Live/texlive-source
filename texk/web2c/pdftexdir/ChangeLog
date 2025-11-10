@@ -1,3 +1,7 @@
+2025-11-10  Karl Berry  <karl@freefriends.org>
+
+	* NEWS: typo.
+
 2025-09-26  Karl Berry  <karl@freefriends.org>
 
 	* writejpg.c (read_jpg_info) <M_SOF2>: check that the PDF major

@@ -1,3 +1,7 @@
+2025-11-10  Karl Berry  <karl@freefriends.org>
+
+	* PROJECTS: typo.
+
 2025-11-05  Karl Berry  <karl@freefriends.org>
 
 	* ac/web2c.ac (kpse_tex_progs) <hitex>: now depends on harfbuzz.
@@ -10742,7 +10746,7 @@ Tue Apr 11 17:53:15 1995  Ulrik Vieth  <vieth@thphy.uni-duesseldorf.de>
 	* mpext.c: discarded, using routines from ../lib/lib.a instead.
 	Moved code for callmakempx() to file ../lib/openinout.c.
 
-	* mpmath.c: preserved without changes. Ccomments refererring to 
+	* mpmath.c: preserved without changes. Comments refererring to 
 	site.h are no longer applicable when using ../lib/c-auto.h instead.
 
 	* pathexp.c: moved to ../mpware as only DMP uses the pathexpand() 

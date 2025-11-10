@@ -1,3 +1,7 @@
+2025-11-10  Karl Berry  <karl@freefriends.org>
+
+	* synctex.c: typo.
+
 2025-08-10  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* synctex-{p,up,ep}tex.h: Remove.

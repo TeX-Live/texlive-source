@@ -1012,7 +1012,7 @@ the commands for character~|c| starting at
 commands occupy positions |fbase[f]| through |ftop[f]-1| in the |font_num|
 table and the |internal_num| array gives the corresponding internal font
 numbers.  If such an internal font number~|i| does not correspond to
-some font occuring in the \.{DVI} file, then |font_num[i]| has not been
+some font occurring in the \.{DVI} file, then |font_num[i]| has not been
 assigned a meaningful value; this is indicated by |local_only[i]=true|.
 
 If font~|f| is not virtual, then |fbase[f]=0| and |ftop[f]=0|.  The |start_cmd|

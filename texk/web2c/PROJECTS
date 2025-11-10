@@ -20,7 +20,7 @@ mail to tex-k@tug.org (https://lists.tug.org/tex-k).
 
 * Implement overflow checking for adding and subtracting dimensions.
   According to Knuth "a few dozen checks" would be needed (section 104).
-  Knuth calls the chances of it occuring unlikely, but unfortunately you
+  Knuth calls the chances of it occurring unlikely, but unfortunately you
   will get a bad DVI file when it does.  The following source demonstrates
   the problem. (Reported many times.)
 %

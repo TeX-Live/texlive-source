@@ -67,7 +67,7 @@
  Versioning:
  -----------
  As synctex is embedded into different TeX implementation, there is an independent
- versionning system.
+ versioning system.
  For TeX implementations, the actual version is: 3
  For .synctex file format, the actual version is SYNCTEX_VERSION below
  

@@ -27056,7 +27056,7 @@ static void scan_mu_glue(void)
 @ Parenthesized subexpressions can be inside expressions, and this
 nesting has a stack.  Seven local variables represent the top of the
 expression stack:  |p| points to pushed-down entries, if any; |l|
-specifies the type of expression currently beeing evaluated; |e| is the
+specifies the type of expression currently being evaluated; |e| is the
 expression so far and |r| is the state of its evaluation; |t| is the
 term so far and |s| is the state of its evaluation; finally |n| is the
 numerator for a combined multiplication and division, if any.
@@ -31089,7 +31089,7 @@ where the tokens come from.
 If a token comes from an external file, then \TeX's variable |line| will
 contain the correct line number, and |cur_file| contains the current file.
 |cur_file| is an abbreviation for |input_file[index]| with
-|index| beeing a short hand for |cur_input.index_field|.
+|index| being a short hand for |cur_input.index_field|.
 We can not use the |index| number to identify input files,
 because \TeX\ will reuse these numbers, possibly many times, after a file
 has been closed. Instead we make a new array |input_file_num| that 

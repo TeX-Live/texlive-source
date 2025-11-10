@@ -612,7 +612,7 @@ pdfTeX 3.141592-1.30.0 was released on 2005-08-01
 ------------------------------------------------
 pdfTeX 3.141592-1.21a was released on 2005-02-04
 - ttf2afm 1.0:
-    - added support for refering to glyphs via unicode in encoding files (ie 'uniXXX')
+    - added support for referring to glyphs via unicode in encoding files (ie 'uniXXX')
     - added some more info to the AFM output
     - some minor bug fixes
     - a short documentation available
