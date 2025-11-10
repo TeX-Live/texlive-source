@@ -82,11 +82,11 @@
 % A reward of $327.68 will be paid to the first finder of any remaining bug.
 
 % This is the 1.1 version of Prote, developed during August 2021,
-% and corrected during september/october 2021 and amended in august 2023
+% and corrected during September/October 2021 and amended in august 2023
 % for file primitives behavior matching input behavior.
 %
 % 1.0: adds primitives needed by LaTeX as listed in ltnews31.
-%    - 2022-07-21: tiddying formal fix: a spurious line was a left over
+%    - 2022-07-21: tidying formal fix: a spurious line was a left over
 %      of a removed paragraph (pointed by Martin Ruckert). Suppressed.
 %
 % 1.1: 2023-08-01: the new file primitives are used in LaTeX expecting
@@ -98,14 +98,14 @@
 %      - typos and style corrections provided by Martin Ruckert for
 %      clean translation in Pascal (forward declarations and underscores
 %      omitted);
-%      - adjustements against e-TeX 2.6 instead of 2.1 (T. Laronde).
+%      - adjustments against e-TeX 2.6 instead of 2.1 (T. Laronde).
 %    0.99.7:
 %      - \expanded was using an e-TeX procedure not doing def handling
 %        => using scan_toks() now. Reported by Martin Ruckert and
 %        test code narrowed down by Phelype Oleinik.
 %    0.99.8:
 %      - \expanded again: scan_toks() sets def_ref. But back_list()
-%        has to take not the refernce count, but the first token.
+%        has to take not the reference count, but the first token.
 %        Passing def_ref, a next invocation of scan_toks() was inserting
 %        a missing left brace and then reading pass the end of the token
 %        list to find a matching right one. def_ref => link(def_ref).
@@ -429,7 +429,7 @@ sections \gglob, \dots,'' also make it possible to look at the set of
 all global variables, if desired.  Similar remarks apply to the other
 portions of the program.
 
-The program starts with inserting header files and occassionaly a function
+The program starts with inserting header files and occasionally a function
 must be placed before declaring \TeX's macros, because the function
 uses identifiers that \TeX will declare as macros.
 
@@ -942,7 +942,6 @@ static bool b_open_in(byte_file *f);   /*open a binary file for input*/
 static bool w_open_in(word_file *f);   /*open a word file for input*/
 static FILE *open_out(const char *file_name, const char *file_mode);  /* \TeX\ Live*/
 static bool a_open_out(alpha_file *f);  /*open a text file for output*/
-static bool b_open_out(byte_file *f);  /*open a binary file for output*/
 #ifdef @!INIT
 static bool w_open_out(word_file *f);  /*open a word file for output*/
 #endif
@@ -8920,7 +8919,7 @@ the internal quantity to be scanned; an error will be signalled if
    /*fetch an internal parameter*/
 {@+
 halfword m; /*|chr_code| part of the operand token*/
-pointer @!q, @!r; /*general purpose indices*/
+pointer @!q; /*general purpose indices*/
 pointer @!tx; /*effective tail node*/
 int @!p; /*index into |nest|*/
 m=cur_chr;
@@ -10833,9 +10832,7 @@ else{@+for (k=1; k<=name_length; k++) append_char(xord[name_of_file[k]]);
 static str_number a_make_name_string(alpha_file *f)
 {@+return make_name_string();
 }
-static str_number b_make_name_string(byte_file *f)
-{@+return make_name_string();
-}
+
 #ifdef @!INIT
 static str_number w_make_name_string(word_file *f)
 {@+return make_name_string();
@@ -12664,12 +12661,6 @@ else{@+write_dvi(half_buf, dvi_buf_size-1);dvi_limit=dvi_buf_size;
 dvi_gone=dvi_gone+half_buf;
 }
 
-@ Here is how we clean out the buffer when \TeX\ is all through; |dvi_ptr|
-will be a multiple of~4.
-
-@<Empty the last bytes out of |dvi_buf|@>=
-if (dvi_limit==half_buf) write_dvi(half_buf, dvi_buf_size-1);
-if (dvi_ptr > 0) write_dvi(0, dvi_ptr-1)
 
 @ The |dvi_four| procedure outputs four bytes in two's complement notation,
 without risking arithmetic overflow.
@@ -13011,24 +13002,6 @@ static scaled @!dvi_h, @!dvi_v; /*a \.{DVI} reader program thinks we are here*/
 static scaled @!cur_h, @!cur_v; /*\TeX\ thinks we are here*/
 static internal_font_number @!dvi_f; /*the current font*/
 static int @!cur_s; /*current depth of output box nesting, initially $-1$*/
-
-@ @<Initialize variables as |ship_out| begins@>=
-dvi_h=0;dvi_v=0;cur_h=h_offset;dvi_f=null_font;
-ensure_dvi_open;
-if (total_pages==0)
-  {@+dvi_out(pre);dvi_out(id_byte); /*output the preamble*/
-@^preamble of \.{DVI} file@>
-  dvi_four(25400000);dvi_four(473628672); /*conversion ratio for sp*/
-  prepare_mag();dvi_four(mag); /*magnification factor is frozen*/
-  old_setting=selector;selector=new_string;
-  print(" TeX output ");print_int(year);print_char('.');
-  print_two(month);print_char('.');print_two(day);
-  print_char(':');print_two(time/60);
-  print_two(time%60);
-  selector=old_setting;dvi_out(cur_length);
-  for (s=str_start[str_ptr]; s<=pool_ptr-1; s++) dvi_out(so(str_pool[s]));
-  pool_ptr=str_start[str_ptr]; /*flush the current string*/
-  }
 
 @ When |hlist_out| is called, its duty is to output the box represented
 by the |hlist_node| pointed to by |temp_ptr|. The reference point of that
@@ -13404,106 +13377,6 @@ execute_output(p);
 flush_node_list(p);
 }
 
-@ @<Flush the box from memory, showing statistics if requested@>=
-#ifdef @!STAT
-if (tracing_stats > 1)
-  {@+print_nl("Memory usage before: ");
-@.Memory usage...@>
-  print_int(var_used);print_char('&');
-  print_int(dyn_used);print_char(';');
-  }
-#endif
-flush_node_list(p);
-#ifdef @!STAT
-if (tracing_stats > 1)
-  {@+print(" after: ");
-  print_int(var_used);print_char('&');
-  print_int(dyn_used);print("; still untouched: ");
-  print_int(hi_mem_min-lo_mem_max-1);print_ln();
-  }
-#endif
-
-@ @<Ship box |p| out@>=
-@<Update the values of |max_h| and |max_v|; but if the page is too large,
-|goto done|@>;
-@<Initialize variables as |ship_out| begins@>;
-page_loc=dvi_offset+dvi_ptr;
-dvi_out(bop);
-for (k=0; k<=9; k++) dvi_four(count(k));
-dvi_four(last_bop);last_bop=page_loc;
-cur_v=height(p)+v_offset;temp_ptr=p;
-if (type(p)==vlist_node) vlist_out();@+else hlist_out();
-dvi_out(eop);incr(total_pages);cur_s=-1;
-done:
-
-@ Sometimes the user will generate a huge page because other error messages
-are being ignored. Such pages are not output to the \.{dvi} file, since they
-may confuse the printing software.
-
-@<Update the values of |max_h| and |max_v|; but if the page is too large...@>=
-if ((height(p) > max_dimen)||@|(depth(p) > max_dimen)||@|
-   (height(p)+depth(p)+v_offset > max_dimen)||@|
-   (width(p)+h_offset > max_dimen))
-  {@+print_err("Huge page cannot be shipped out");
-@.Huge page...@>
-  help2("The page just created is more than 18 feet tall or",@/
-   "more than 18 feet wide, so I suspect something went wrong.");
-  error();
-  if (tracing_output <= 0)
-    {@+begin_diagnostic();
-    print_nl("The following box has been deleted:");
-@.The following...deleted@>
-    show_box(p);
-    end_diagnostic(true);
-    }
-  goto done;
-  }
-if (height(p)+depth(p)+v_offset > max_v) max_v=height(p)+depth(p)+v_offset;
-if (width(p)+h_offset > max_h) max_h=width(p)+h_offset
-
-@ At the end of the program, we must finish things off by writing the
-post\-amble. If |total_pages==0|, the \.{DVI} file was never opened.
-If |total_pages >= 65536|, the \.{DVI} file will lie. And if
-|max_push >= 65536|, the user deserves whatever chaos might ensue.
-
-An integer variable |k| will be declared for use by this routine.
-
-@<Finish the \.{DVI} file@>=
-while (cur_s > -1)
-  {@+if (cur_s > 0) dvi_out(pop)@;
-  else{@+dvi_out(eop);incr(total_pages);
-    }
-  decr(cur_s);
-  }
-if (total_pages==0) print_nl("No pages of output.");
-@.No pages of output@>
-else{@+dvi_out(post); /*beginning of the postamble*/
-  dvi_four(last_bop);last_bop=dvi_offset+dvi_ptr-5; /*|post| location*/
-  dvi_four(25400000);dvi_four(473628672); /*conversion ratio for sp*/
-  prepare_mag();dvi_four(mag); /*magnification factor*/
-  dvi_four(max_v);dvi_four(max_h);@/
-  dvi_out(max_push/256);dvi_out(max_push%256);@/
-  dvi_out((total_pages/256)%256);dvi_out(total_pages%256);@/
-  @<Output the font definitions for all fonts that were used@>;
-  dvi_out(post_post);dvi_four(last_bop);dvi_out(id_byte);@/
-  k=4+((dvi_buf_size-dvi_ptr)%4); /*the number of 223's*/
-  while (k > 0)
-    {@+dvi_out(223);decr(k);
-    }
-  @<Empty the last bytes out of |dvi_buf|@>;
-  print_nl("Output written on ");slow_print(output_file_name);
-@.Output written on x@>
-  print(" (");print_int(total_pages);print(" page");
-  if (total_pages!=1) print_char('s');
-  print(", ");print_int(dvi_offset+dvi_ptr);print(" bytes).");
-  b_close(&dvi_file);
-  }
-
-@ @<Output the font definitions...@>=
-while (font_ptr > font_base)
-  {@+if (font_used[font_ptr]) dvi_font_def(font_ptr);
-  decr(font_ptr);
-  }
 
 @* Packaging.
 We're essentially done with the parts of \TeX\ that are concerned with
@@ -13619,29 +13492,6 @@ total_stretch[normal]=0;total_shrink[normal]=0;
 total_stretch[fil]=0;total_shrink[fil]=0;
 total_stretch[fill]=0;total_shrink[fill]=0;
 total_stretch[filll]=0;total_shrink[filll]=0
-
-@ @<Examine node |p| in the hlist, taking account of its effect...@>=
-@^inner loop@>
-{@+reswitch: while (is_char_node(p))
-  @<Incorporate character dimensions into the dimensions of the hbox that
-will contain~it, then move to the next node@>;
-if (p!=null)
-  {@+switch (type(p)) {
-  case hlist_node: case vlist_node: case rule_node:
-  case unset_node: case unset_set_node: case unset_pack_node:
-    @<Incorporate box dimensions into the dimensions of the hbox that will
-contain~it@>@;@+break;
-  case ins_node: case mark_node: case adjust_node: if (adjust_tail!=null)
-    @<Transfer node |p| to the adjustment list@>@;@+break;
-  case whatsit_node: @<Incorporate a whatsit node into an hbox@>;@+break;
-  case glue_node: @<Incorporate glue into the horizontal totals@>@;@+break;
-  case kern_node: case math_node: x=x+width(p);@+break;
-  case ligature_node: @<Make node |p| look like a |char_node| and |goto reswitch|@>@;
-  default:do_nothing;
-  } @/
-  p=link(p);
-  }
-}
 
 
 @ @<Make node |p| look like a |char_node| and |goto reswitch|@>=
@@ -13775,21 +13625,6 @@ static int @!pack_begin_line; /*source file line where the current paragraph
 @ @<Set init...@>=
 pack_begin_line=0;
 
-@ @<Finish issuing a diagnostic message for an overfull or underfull hbox@>=
-if (output_active) print(") has occurred while \\output is active");
-else{@+if (pack_begin_line!=0)
-    {@+if (pack_begin_line > 0) print(") in paragraph at lines ");
-    else print(") in alignment at lines ");
-    print_int(abs(pack_begin_line));
-    print("--");
-    }
-  else print(") detected at line ");
-  print_int(line);
-  }
-print_ln();@/
-font_in_short_display=null_font;short_display(list_ptr(r));print_ln();@/
-begin_diagnostic();show_box(r);end_diagnostic(true)
-
 @ @<Determine horizontal glue shrink setting...@>=
 {@+@<Determine the shrink order@>;
 glue_order(r)=o;glue_sign(r)=shrinking;
@@ -13849,132 +13684,6 @@ point is simply moved down until the limiting depth is attained.
 @p
 #define vpack(...) @[vpackage(__VA_ARGS__, max_dimen)@] /*special case of unconstrained depth*/
 static pointer vpackage(pointer p, scaled h, scaled hf, scaled vf, small_number m, bool keep_cs, scaled l);
-
-@ @<Examine node |p| in the vlist, taking account of its effect...@>=
-{@+if (is_char_node(p)) confusion("vpack");
-@:this can't happen vpack}{\quad vpack@>
-else switch (type(p)) {
-  case hlist_node: case vlist_node: case rule_node:
-  case unset_node: case unset_set_node: case unset_pack_node:
-    @<Incorporate box dimensions into the dimensions of the vbox that will
-contain~it@>@;@+break;
-  case whatsit_node: @<Incorporate a whatsit node into a vbox@>;@+break;
-  case glue_node: @<Incorporate glue into the vertical totals@>@;@+break;
-  case kern_node: {@+x=x+d+width(p);d=0;
-    } @+break;
-  default:do_nothing;
-  }
-p=link(p);
-}
-
-@ @<Incorporate box dimensions into the dimensions of the vbox...@>=
-{@+x=x+d+height(p);d=depth(p);
-if (type(p) >= rule_node) s=0;@+else s=shift_amount(p);
-if (width(p)+s > w) w=width(p)+s;
-}
-
-@ @<Incorporate glue into the vertical totals@>=
-{@+x=x+d;d=0;@/
-g=glue_ptr(p);x=x+width(g);@/
-o=stretch_order(g);total_stretch[o]=total_stretch[o]+stretch(g);
-o=shrink_order(g);total_shrink[o]=total_shrink[o]+shrink(g);
-if (subtype(p) >= a_leaders)
-  {@+g=leader_ptr(p);
-  if (width(g) > w) w=width(g);
-  }
-}
-
-@ When we get to the present part of the program, |x| is the natural height
-of the box being packaged.
-
-@<Determine the value of |height(r)| and the appropriate glue setting...@>=
-if (m==additional) h=x+h;
-height(r)=h;x=h-x; /*now |x| is the excess to be made up*/
-if (x==0)
-  {@+glue_sign(r)=normal;glue_order(r)=normal;
-  set_glue_ratio_zero(glue_set(r));
-  goto end;
-  }
-else if (x > 0) @<Determine vertical glue stretch setting, then |return| or
-\hbox{|goto common_ending|}@>@;
-else@<Determine vertical glue shrink setting, then |return| or \hbox{|goto
-common_ending|}@>@;
-
-@ @<Determine vertical glue stretch setting...@>=
-{@+@<Determine the stretch order@>;
-glue_order(r)=o;glue_sign(r)=stretching;
-if (total_stretch[o]!=0) glue_set(r)=fix(x/(double)total_stretch[o]);
-@^real division@>
-else{@+glue_sign(r)=normal;
-  set_glue_ratio_zero(glue_set(r)); /*there's nothing to stretch*/
-  }
-if (o==normal) if (list_ptr(r)!=null)
-  @<Report an underfull vbox and |goto common_ending|, if this box is sufficiently
-bad@>;
-goto end;
-}
-
-@ @<Report an underfull vbox and |goto common_ending|, if...@>=
-{@+last_badness=badness(x, total_stretch[normal]);
-if (last_badness > vbadness)
-  {@+print_ln();
-  if (last_badness > 100) print_nl("Underfull");@+else print_nl("Loose");
-  print(" \\vbox (badness ");print_int(last_badness);
-@.Underfull \\vbox...@>
-@.Loose \\vbox...@>
-  goto common_ending;
-  }
-}
-
-@ @<Finish issuing a diagnostic message for an overfull or underfull vbox@>=
-if (output_active) print(") has occurred while \\output is active");
-else{@+if (pack_begin_line!=0)  /*it's actually negative*/
-    {@+print(") in alignment at lines ");
-    print_int(abs(pack_begin_line));
-    print("--");
-    }
-  else print(") detected at line ");
-  print_int(line);
-  print_ln();@/
-  }
-begin_diagnostic();show_box(r);end_diagnostic(true)
-
-@ @<Determine vertical glue shrink setting...@>=
-{@+@<Determine the shrink order@>;
-glue_order(r)=o;glue_sign(r)=shrinking;
-if (total_shrink[o]!=0) glue_set(r)=fix((-x)/(double)total_shrink[o]);
-@^real division@>
-else{@+glue_sign(r)=normal;
-  set_glue_ratio_zero(glue_set(r)); /*there's nothing to shrink*/
-  }
-if ((total_shrink[o] < -x)&&(o==normal)&&(list_ptr(r)!=null))
-  {@+last_badness=1000000;
-  set_glue_ratio_one(glue_set(r)); /*use the maximum shrinkage*/
-  @<Report an overfull vbox and |goto common_ending|, if this box is sufficiently
-bad@>;
-  }
-else if (o==normal) if (list_ptr(r)!=null)
-  @<Report a tight vbox and |goto common_ending|, if this box is sufficiently
-bad@>;
-goto end;
-}
-
-@ @<Report an overfull vbox and |goto common_ending|, if...@>=
-if ((-x-total_shrink[normal] > vfuzz)||(vbadness < 100))
-  {@+print_ln();print_nl("Overfull \\vbox (");
-@.Overfull \\vbox...@>
-  print_scaled(-x-total_shrink[normal]);print("pt too high");
-  goto common_ending;
-  }
-
-@ @<Report a tight vbox and |goto common_ending|, if...@>=
-{@+last_badness=badness(-x, total_shrink[normal]);
-if (last_badness > vbadness)
-  {@+print_ln();print_nl("Tight \\vbox (badness ");print_int(last_badness);
-@.Tight \\vbox...@>
-  goto common_ending;
-  }
-}
 
 @ When a box is being appended to the current vertical list, the
 baselineskip calculation is handled by the |append_to_vlist| routine.
@@ -17747,7 +17456,7 @@ used in special calculations.
 @<Local variables for line breaking@>=
 bool @!auto_breaking; /*is node |cur_p| outside a formula?*/
 pointer @!prev_p; /*helps to determine when glue nodes are breakpoints*/
-pointer @!q, @!r, @!s, @!prev_s; /*miscellaneous nodes of temporary interest*/
+pointer @!q, @!r, @!s; /*miscellaneous nodes of temporary interest*/
 internal_font_number @!f; /*used when calculating character widths*/
 
 @ The `\ignorespaces|loop|\unskip' in the following code is performed at most
@@ -18343,11 +18052,6 @@ static ASCII_code @!cur_lang, @!init_cur_lang; /*current hyphenation table of in
 static int @!l_hyf, @!r_hyf, @!init_l_hyf, @!init_r_hyf; /*limits on fragment sizes*/
 static halfword @!hyf_bchar; /*boundary character after $c_n$*/
 
-@ Hyphenation routines need a few more local variables.
-
-@<Local variables for line...@>=
-small_number @!j; /*an index into |hc| or |hu|*/
-int @!c; /*character being considered for hyphenation*/
 
 @ When the following code is activated, the |line_break| procedure is in its
 second pass, and |cur_p| points to a glue node.
@@ -20018,9 +19722,7 @@ stored in |best_size|.
 static pointer @!page_tail; /*the final node on the current page*/
 static int @!page_contents; /*what is on the current page so far?*/
 static scaled @!page_max_depth; /*maximum box depth on page being built*/
-static pointer @!best_page_break; /*break here to get the best page known so far*/
 static int @!least_page_cost; /*the score for this currently best page*/
-static scaled @!best_size; /*its |page_goal|*/
 
 @ The page builder has another data structure to keep track of insertions.
 This is a list of four-word nodes, starting and ending at |page_ins_head|.
@@ -20261,22 +19963,6 @@ show_box(box(n));end_diagnostic(true);
 flush_node_list(box(n));box(n)=null;
 }
 
-@ The following procedure guarantees that a given box register
-does not contain an \.{\\hbox}.
-
-@p static void ensure_vbox(eight_bits @!n)
-{@+pointer p; /*the box register contents*/
-p=box(n);
-if (p!=null) if (type(p)==hlist_node)
-  {@+print_err("Insertions can only be added to a vbox");
-@.Insertions can only...@>
-  help3("Tut tut: You're trying to \\insert into a",@/
-    "\\box register that now contains an \\hbox.",@/
-    "Proceed, and I'll discard its present contents.");
-  box_error(n);
-  }
-}
-
 @ \TeX\ is not always in vertical mode at the time |build_page|
 is called; the current mode reflects what \TeX\ should return to, after
 the contribution list has been emptied. A call on |build_page| should
@@ -20306,502 +19992,6 @@ else{@+last_glue=max_halfword;
   else if (type(p)==kern_node) last_kern=width(p);
   }
 
-@ The code here is an example of a many-way switch into routines that
-merge together in different places. Some people call this unstructured
-programming, but the author doesn't see much wrong with it, as long as
-@^Knuth, Donald Ervin@>
-the various labels have a well-understood meaning.
-
-@<Move node |p| to the current page;...@>=
-@<If the current page is empty and node |p| is to be deleted, |goto done1|;
-otherwise use node |p| to update the state of the current page; if this node
-is an insertion, |goto contribute|; otherwise if this node is not a legal
-breakpoint, |goto contribute| or |update_heights|; otherwise set |pi| to the
-penalty associated with this breakpoint@>;
-@<Check if node |p| is a new champion breakpoint; then \(if)if it is time
-for a page break, prepare for output, and either fire up the user's output
-routine and |return| or ship out the page and |goto done|@>;
-if ((type(p) < glue_node)||(type(p) > kern_node)) goto contribute;
-update_heights: @<Update the current page measurements with respect to the
-glue or kern specified by node~|p|@>;
-contribute: @<Make sure that |page_max_depth| is not exceeded@>;
-@<Link node |p| into the current page and |goto done|@>;
-done1: @<Recycle node |p|@>;
-done:
-
-@ @<Link node |p| into the current page and |goto done|@>=
-link(page_tail)=p;page_tail=p;
-link(contrib_head)=link(p);link(p)=null;goto done
-
-@ @<Recycle node |p|@>=
-link(contrib_head)=link(p);link(p)=null;
-if (saving_vdiscards > 0)
-  {@+if (page_disc==null) page_disc=p;@+else link(tail_page_disc)=p;
-  tail_page_disc=p;
-  }
-else flush_node_list(p)
-
-@ The title of this section is already so long, it seems best to avoid
-making it more accurate but still longer, by mentioning the fact that a
-kern node at the end of the contribution list will not be contributed until
-we know its successor.
-
-@<If the current page is empty...@>=
-switch (type(p)) {
-case hlist_node: case vlist_node: case rule_node: if (page_contents < box_there)
-    @<Initialize the current page, insert the \.{\\topskip} glue ahead of
-|p|, and |goto resume|@>@;
-  else@<Prepare to move a box or rule node to the current page, then |goto
-contribute|@>@;@+break;
-case whatsit_node: @<Prepare to move whatsit |p| to the current page, then
-|goto contribute|@>;
-case glue_node: if (page_contents < box_there) goto done1;
-  else if (precedes_break(page_tail)) pi=0;
-  else goto update_heights;@+break;
-case kern_node: if (page_contents < box_there) goto done1;
-  else if (link(p)==null) return;
-  else if (type(link(p))==glue_node) pi=0;
-  else goto update_heights;@+break;
-case penalty_node: if (page_contents < box_there) goto done1;@+else pi=penalty(p);@+break;
-case mark_node: goto contribute;
-case ins_node: @<Append an insertion to the current page and |goto contribute|@>@;
-default:confusion("page");
-@:this can't happen page}{\quad page@>
-}
-
-@ @<Initialize the current page, insert the \.{\\topskip} glue...@>=
-{@+if (page_contents==empty) freeze_page_specs(box_there);
-else page_contents=box_there;
-q=new_skip_param(top_skip_code); /*now |temp_ptr==glue_ptr(q)|*/
-if (width(temp_ptr) > height(p)) width(temp_ptr)=width(temp_ptr)-height(p);
-else width(temp_ptr)=0;
-link(q)=p;link(contrib_head)=q;goto resume;
-}
-
-@ @<Prepare to move a box or rule node to the current page...@>=
-{@+page_total=page_total+page_depth+height(p);
-page_depth=depth(p);
-goto contribute;
-}
-
-@ @<Make sure that |page_max_depth| is not exceeded@>=
-if (page_depth > page_max_depth)
-  {@+page_total=@|
-    page_total+page_depth-page_max_depth;@/
-  page_depth=page_max_depth;
-  }
-
-@ @<Update the current page measurements with respect to the glue...@>=
-if (type(p)==kern_node) q=p;
-else{@+q=glue_ptr(p);
-  page_so_far[2+stretch_order(q)]=@|
-    page_so_far[2+stretch_order(q)]+stretch(q);@/
-  page_shrink=page_shrink+shrink(q);
-  if ((shrink_order(q)!=normal)&&(shrink(q)!=0))
-    {@+@t@>@;@/
-    print_err("Infinite glue shrinkage found on current page");@/
-@.Infinite glue shrinkage...@>
-    help4("The page about to be output contains some infinitely",@/
-      "shrinkable glue, e.g., `\\vss' or `\\vskip 0pt minus 1fil'.",@/
-      "Such glue doesn't belong there; but you can safely proceed,",@/
-      "since the offensive shrinkability has been made finite.");
-    error();
-    r=new_spec(q);shrink_order(r)=normal;delete_glue_ref(q);
-    glue_ptr(p)=r;q=r;
-    }
-  }
-page_total=page_total+page_depth+width(q);page_depth=0
-
-@ @<Check if node |p| is a new champion breakpoint; then \(if)...@>=
-if (pi < inf_penalty)
-  {@+@<Compute the badness, |b|, of the current page, using |awful_bad| if
-the box is too full@>;
-  if (b < awful_bad)
-    if (pi <= eject_penalty) c=pi;
-    else if (b < inf_bad) c=b+pi+insert_penalties;
-      else c=deplorable;
-  else c=b;
-  if (insert_penalties >= 10000) c=awful_bad;
-#ifdef @!STAT
-  if (tracing_pages > 0) @<Display the page break cost@>;
-#endif
-@;@/
-  if (c <= least_page_cost)
-    {@+best_page_break=p;best_size=page_goal;
-    least_page_cost=c;
-    r=link(page_ins_head);
-    while (r!=page_ins_head)
-      {@+best_ins_ptr(r)=last_ins_ptr(r);
-      r=link(r);
-      }
-    }
-  if ((c==awful_bad)||(pi <= eject_penalty))
-    {@+fire_up(p); /*output the current page at the best place*/
-    if (output_active) return; /*user's output routine will act*/
-    goto done; /*the page has been shipped out by default output routine*/
-    }
-  }
-
-@ @<Display the page break cost@>=
-{@+begin_diagnostic();print_nl("%");
-print(" t=");print_totals();@/
-print(" g=");print_scaled(page_goal);@/
-print(" b=");
-if (b==awful_bad) print_char('*');@+else print_int(b);
-@.*\relax@>
-print(" p=");print_int(pi);
-print(" c=");
-if (c==awful_bad) print_char('*');@+else print_int(c);
-if (c <= least_page_cost) print_char('#');
-end_diagnostic(false);
-}
-
-@ @<Compute the badness, |b|, of the current page...@>=
-if (page_total < page_goal)
-  if ((page_so_far[3]!=0)||(page_so_far[4]!=0)||@|
-    (page_so_far[5]!=0)) b=0;
-  else b=badness(page_goal-page_total, page_so_far[2]);
-else if (page_total-page_goal > page_shrink) b=awful_bad;
-else b=badness(page_total-page_goal, page_shrink)
-
-@ @<Append an insertion to the current page and |goto contribute|@>=
-{@+if (page_contents==empty) freeze_page_specs(inserts_only);
-n=subtype(p);r=page_ins_head;
-while (n >= subtype(link(r))) r=link(r);
-n=qo(n);
-if (subtype(r)!=qi(n))
-  @<Create a page insertion node with |subtype(r)=qi(n)|, and include the
-glue correction for box |n| in the current page state@>;
-if (type(r)==split_up) insert_penalties=insert_penalties+float_cost(p);
-else{@+last_ins_ptr(r)=p;
-  delta=page_goal-page_total-page_depth+page_shrink;
-     /*this much room is left if we shrink the maximum*/
-  if (count(n)==1000) h=height(p);
-  else h=x_over_n(height(p), 1000)*count(n); /*this much room is needed*/
-  if (((h <= 0)||(h <= delta))&&(height(p)+height(r) <= dimen(n)))
-    {@+page_goal=page_goal-h;height(r)=height(r)+height(p);
-    }
-  else@<Find the best way to split the insertion, and change |type(r)| to
-|split_up|@>;
-  }
-goto contribute;
-}
-
-@ We take note of the value of \.{\\skip} |n| and the height plus depth
-of \.{\\box}~|n| only when the first \.{\\insert}~|n| node is
-encountered for a new page. A user who changes the contents of \.{\\box}~|n|
-after that first \.{\\insert}~|n| had better be either extremely careful
-or extremely lucky, or both.
-
-@<Create a page insertion node...@>=
-{@+q=get_node(page_ins_node_size);link(q)=link(r);link(r)=q;r=q;
-subtype(r)=qi(n);type(r)=inserting;ensure_vbox(n);
-if (box(n)==null) height(r)=0;
-else height(r)=height(box(n))+depth(box(n));
-best_ins_ptr(r)=null;@/
-q=skip(n);
-if (count(n)==1000) h=height(r);
-else h=x_over_n(height(r), 1000)*count(n);
-page_goal=page_goal-h-width(q);@/
-page_so_far[2+stretch_order(q)]=@|page_so_far[2+stretch_order(q)]+stretch(q);@/
-page_shrink=page_shrink+shrink(q);
-if ((shrink_order(q)!=normal)&&(shrink(q)!=0))
-  {@+print_err("Infinite glue shrinkage inserted from ");print_esc("skip");
-@.Infinite glue shrinkage...@>
-  print_int(n);
-  help3("The correction glue for page breaking with insertions",@/
-    "must have finite shrinkability. But you may proceed,",@/
-    "since the offensive shrinkability has been made finite.");
-  error();
-  }
-}
-
-@ Here is the code that will split a long footnote between pages, in an
-emergency. The current situation deserves to be recapitulated: Node |p|
-is an insertion into box |n|; the insertion will not fit, in its entirety,
-either because it would make the total contents of box |n| greater than
-\.{\\dimen} |n|, or because it would make the incremental amount of growth
-|h| greater than the available space |delta|, or both. (This amount |h| has
-been weighted by the insertion scaling factor, i.e., by \.{\\count} |n|
-over 1000.) Now we will choose the best way to break the vlist of the
-insertion, using the same criteria as in the \.{\\vsplit} operation.
-
-@<Find the best way to split the insertion...@>=
-{@+if (count(n) <= 0) w=max_dimen;
-else{@+w=page_goal-page_total-page_depth;
-  if (count(n)!=1000) w=x_over_n(w, count(n))*1000;
-  }
-if (w > dimen(n)-height(r)) w=dimen(n)-height(r);
-q=vert_break(ins_ptr(p), w, depth(p));
-height(r)=height(r)+best_height_plus_depth;
-#ifdef @!STAT
-if (tracing_pages > 0) @<Display the insertion split cost@>;
-#endif
-@;@/
-if (count(n)!=1000)
-  best_height_plus_depth=x_over_n(best_height_plus_depth, 1000)*count(n);
-page_goal=page_goal-best_height_plus_depth;
-type(r)=split_up;broken_ptr(r)=q;broken_ins(r)=p;
-if (q==null) insert_penalties=insert_penalties+eject_penalty;
-else if (type(q)==penalty_node) insert_penalties=insert_penalties+penalty(q);
-}
-
-@ @<Display the insertion split cost@>=
-{@+begin_diagnostic();print_nl("% split");print_int(n);
-@.split@>
-print(" to ");print_scaled(w);
-print_char(',');print_scaled(best_height_plus_depth);@/
-print(" p=");
-if (q==null) print_int(eject_penalty);
-else if (type(q)==penalty_node) print_int(penalty(q));
-else print_char('0');
-end_diagnostic(false);
-}
-
-@ When the page builder has looked at as much material as could appear before
-the next page break, it makes its decision. The break that gave minimum
-badness will be used to put a completed ``page'' into box 255, with insertions
-appended to their other boxes.
-
-We also set the values of |top_mark|, |first_mark|, and |bot_mark|. The
-program uses the fact that |bot_mark!=null| implies |first_mark!=null|;
-it also knows that |bot_mark==null| implies |top_mark==first_mark==null|.
-
-The |fire_up| subroutine prepares to output the current page at the best
-place; then it fires up the user's output routine, if there is one,
-or it simply ships out the page. There is one parameter, |c|, which represents
-the node that was being contributed to the page when the decision to
-force an output was made.
-
-@<Declare the procedure called |fire_up|@>=
-static void fire_up(pointer @!c)
-{@+
-pointer p, @!q, @!r, @!s; /*nodes being examined and/or changed*/
-pointer @!prev_p; /*predecessor of |p|*/
-int @!n; /*insertion box number*/
-bool @!wait; /*should the present insertion be held over?*/
-int @!save_vbadness; /*saved value of |vbadness|*/
-scaled @!save_vfuzz; /*saved value of |vfuzz|*/
-pointer @!save_split_top_skip; /*saved value of |split_top_skip|*/
-@<Set the value of |output_penalty|@>;
-if (sa_mark!=null)
-  if (do_marks(fire_up_init, 0, sa_mark)) sa_mark=null;
-if (bot_mark!=null)
-  {@+if (top_mark!=null) delete_token_ref(top_mark);
-  top_mark=bot_mark;add_token_ref(top_mark);
-  delete_token_ref(first_mark);first_mark=null;
-  }
-@<Put the \(o)optimal current page into box 255, update |first_mark| and |bot_mark|,
-append insertions to their boxes, and put the remaining nodes back on the
-contribution list@>;
-if (sa_mark!=null)
-  if (do_marks(fire_up_done, 0, sa_mark)) sa_mark=null;
-if ((top_mark!=null)&&(first_mark==null))
-  {@+first_mark=top_mark;add_token_ref(top_mark);
-  }
-if (output_routine!=null)
-  if (dead_cycles >= max_dead_cycles)
-    @<Explain that too many dead cycles have occurred in a row@>@;
-  else@<Fire up the user's output routine and |return|@>;
-@<Perform the default output routine@>;
-}
-
-@ @<Set the value of |output_penalty|@>=
-if (type(best_page_break)==penalty_node)
-  {@+geq_word_define(int_base+output_penalty_code, penalty(best_page_break));
-  penalty(best_page_break)=inf_penalty;
-  }
-else geq_word_define(int_base+output_penalty_code, inf_penalty)
-
-@ As the page is finally being prepared for output,
-pointer |p| runs through the vlist, with |prev_p| trailing behind;
-pointer |q| is the tail of a list of insertions that
-are being held over for a subsequent page.
-
-@<Put the \(o)optimal current page into box 255...@>=
-if (c==best_page_break) best_page_break=null; /*|c| not yet linked in*/
-@<Ensure that box 255 is empty before output@>;
-insert_penalties=0; /*this will count the number of insertions held over*/
-save_split_top_skip=split_top_skip;
-if (holding_inserts <= 0)
-  @<Prepare all the boxes involved in insertions to act as queues@>;
-q=hold_head;link(q)=null;prev_p=page_head;p=link(prev_p);
-while (p!=best_page_break)
-  {@+if (type(p)==ins_node)
-    {@+if (holding_inserts <= 0)
-       @<Either insert the material specified by node |p| into the appropriate
-box, or hold it for the next page; also delete node |p| from the current page@>;
-    }
-  else if (type(p)==mark_node)
-    if (mark_class(p)!=0) @<Update the current marks for |fire_up|@>@;
-    else@<Update the values of |first_mark| and |bot_mark|@>;
-  prev_p=p;p=link(prev_p);
-  }
-split_top_skip=save_split_top_skip;
-@<Break the current page at node |p|, put it in box~255, and put the remaining
-nodes on the contribution list@>;
-@<Delete \(t)the page-insertion nodes@>@;
-
-@ @<Ensure that box 255 is empty before output@>=
-if (box(255)!=null)
-  {@+print_err("");print_esc("box");print("255 is not void");
-@:box255}{\.{\\box255 is not void}@>
-  help2("You shouldn't use \\box255 except in \\output routines.",@/
-    "Proceed, and I'll discard its present contents.");
-  box_error(255);
-  }
-
-@ @<Update the values of |first_mark| and |bot_mark|@>=
-{@+if (first_mark==null)
-  {@+first_mark=mark_ptr(p);
-  add_token_ref(first_mark);
-  }
-if (bot_mark!=null) delete_token_ref(bot_mark);
-bot_mark=mark_ptr(p);add_token_ref(bot_mark);
-}
-
-@ When the following code is executed, the current page runs from node
-|link(page_head)| to node |prev_p|, and the nodes from |p| to |page_tail|
-are to be placed back at the front of the contribution list. Furthermore
-the heldover insertions appear in a list from |link(hold_head)| to |q|; we
-will put them into the current page list for safekeeping while the user's
-output routine is active.  We might have |q==hold_head|; and |p==null| if
-and only if |prev_p==page_tail|. Error messages are suppressed within
-|vpackage|, since the box might appear to be overfull or underfull simply
-because the stretch and shrink from the \.{\\skip} registers for inserts
-are not actually present in the box.
-
-@<Break the current page at node |p|, put it...@>=
-if (p!=null)
-  {@+if (link(contrib_head)==null)
-    if (nest_ptr==0) tail=page_tail;
-    else contrib_tail=page_tail;
-  link(page_tail)=link(contrib_head);
-  link(contrib_head)=p;
-  link(prev_p)=null;
-  }
-save_vbadness=vbadness;vbadness=inf_bad;
-save_vfuzz=vfuzz;vfuzz=max_dimen; /*inhibit error messages*/
-box(255)=vpackage(link(page_head), best_size, 0, 0, exactly, false, page_max_depth);
-vbadness=save_vbadness;vfuzz=save_vfuzz;
-if (last_glue!=max_halfword) delete_glue_ref(last_glue);
-@<Start a new current page@>; /*this sets |last_glue=max_halfword|*/
-if (q!=hold_head)
-  {@+link(page_head)=link(hold_head);page_tail=q;
-  }
-
-@ If many insertions are supposed to go into the same box, we want to know
-the position of the last node in that box, so that we don't need to waste time
-when linking further information into it. The |last_ins_ptr| fields of the
-page insertion nodes are therefore used for this purpose during the
-packaging phase.
-
-@<Prepare all the boxes involved in insertions to act as queues@>=
-{@+r=link(page_ins_head);
-while (r!=page_ins_head)
-  {@+if (best_ins_ptr(r)!=null)
-    {@+n=qo(subtype(r));ensure_vbox(n);
-    if (box(n)==null) box(n)=new_null_box();
-    p=box(n)+list_offset;
-    while (link(p)!=null) p=link(p);
-    last_ins_ptr(r)=p;
-    }
-  r=link(r);
-  }
-}
-
-@ @<Delete \(t)the page-insertion nodes@>=
-r=link(page_ins_head);
-while (r!=page_ins_head)
-  {@+q=link(r);free_node(r, page_ins_node_size);r=q;
-  }
-link(page_ins_head)=page_ins_head
-
-@ We will set |best_ins_ptr=null| and package the box corresponding to
-insertion node~|r|, just after making the final insertion into that box.
-If this final insertion is `|split_up|', the remainder after splitting
-and pruning (if any) will be carried over to the next page.
-
-@<Either insert the material specified by node |p| into...@>=
-{@+r=link(page_ins_head);
-while (subtype(r)!=subtype(p)) r=link(r);
-if (best_ins_ptr(r)==null) wait=true;
-else{@+wait=false;s=last_ins_ptr(r);link(s)=ins_ptr(p);
-  if (best_ins_ptr(r)==p)
-    @<Wrap up the box specified by node |r|, splitting node |p| if called
-for; set |wait:=true| if node |p| holds a remainder after splitting@>@;
-  else{@+while (link(s)!=null) s=link(s);
-    last_ins_ptr(r)=s;
-    }
-  }
-@<Either append the insertion node |p| after node |q|, and remove it from
-the current page, or delete |node(p)|@>;
-}
-
-@ @<Wrap up the box specified by node |r|, splitting node |p| if...@>=
-{@+if (type(r)==split_up)
-  if ((broken_ins(r)==p)&&(broken_ptr(r)!=null))
-    {@+while (link(s)!=broken_ptr(r)) s=link(s);
-    link(s)=null;
-    split_top_skip=split_top_ptr(p);
-    ins_ptr(p)=prune_page_top(broken_ptr(r), false);
-    if (ins_ptr(p)!=null)
-      {@+temp_ptr=vpack(ins_ptr(p), natural);
-      height(p)=height(temp_ptr)+depth(temp_ptr);
-      list_ptr(temp_ptr)=null;flush_node_list(temp_ptr);wait=true;
-      }
-    }
-best_ins_ptr(r)=null;
-n=qo(subtype(r));
-temp_ptr=list_ptr(box(n));
-list_ptr(box(n))=null;flush_node_list(box(n));
-box(n)=vpack(temp_ptr, natural);
-}
-
-@ @<Either append the insertion node |p|...@>=
-link(prev_p)=link(p);link(p)=null;
-if (wait)
-  {@+link(q)=p;q=p;incr(insert_penalties);
-  }
-else{@+delete_glue_ref(split_top_ptr(p));
-  free_node(p, ins_node_size);
-  }
-p=prev_p
-
-@ The list of heldover insertions, running from |link(page_head)| to
-|page_tail|, must be moved to the contribution list when the user has
-specified no output routine.
-
-@<Perform the default output routine@>=
-{@+if (link(page_head)!=null)
-  {@+if (link(contrib_head)==null)
-    if (nest_ptr==0) tail=page_tail;@+else contrib_tail=page_tail;
-  else link(page_tail)=link(contrib_head);
-  link(contrib_head)=link(page_head);
-  link(page_head)=null;page_tail=page_head;
-  }
-flush_node_list(page_disc);page_disc=null;
-ship_out(box(255));box(255)=null;
-}
-
-@ @<Explain that too many dead cycles have occurred in a row@>=
-{@+print_err("Output loop---");print_int(dead_cycles);
-@.Output loop...@>
-print(" consecutive dead cycles");
-help3("I've concluded that your \\output is awry; it never does a",@/
-"\\shipout, so I'm shipping \\box255 out myself. Next time",@/
-"increase \\maxdeadcycles if you want me to be more patient!");error();
-}
-
-@ @<Fire up the user's output routine and |return|@>=
-{@+output_active=true;
-incr(dead_cycles);
-push_nest();mode=-vmode;prev_depth=ignore_depth;mode_line=-line;
-begin_token_list(output_routine, output_text);
-new_save_level(output_group);normal_paragraph();
-scan_left_brace();
-return;
-}
 
 @ When the user's output routine finishes, it has constructed a vlist
 in internal vertical mode, and \TeX\ will do the following:
@@ -22636,11 +21826,7 @@ scaled w; /*new or partial |pre_display_size|*/
 scaled @!l; /*new |display_width|*/
 scaled @!s; /*new |display_indent|*/
 pointer @!p; /*current node when calculating |pre_display_size|*/
-pointer @!q; /*glue specification when calculating |pre_display_size|*/
-internal_font_number @!f; /*font in current |char_node|*/
 int @!n; /*scope of paragraph shape specification*/
-scaled @!v; /*|w| plus possible glue amount*/
-scaled @!d; /*increment to |v|*/
 get_token(); /*|get_x_token| would fail on \.{\\ifmmode}\thinspace!*/
 if ((cur_cmd==math_shift)&&(mode > 0)) @<Go into display math mode@>@;
 else{@+back_input();@<Go into ordinary math mode@>;
@@ -22704,60 +21890,6 @@ eq_word_define(dimen_base+display_width_code, l); cur_hfactor=0;
 eq_word_define(dimen_base+pre_display_size_code, w);
 eq_word_define(dimen_base+display_indent_code, s);
 if (every_display!=null) begin_token_list(every_display, every_display_text);
-}
-
-@ @<Calculate the natural width, |w|, by which...@>=
-v=shift_amount(just_box)+2*quad(cur_font);w=-max_dimen;
-p=list_ptr(just_box);
-while (p!=null)
-  {@+@<Let |d| be the natural width of node |p|; if the node is ``visible,''
-|goto found|; if the node is glue that stretches or shrinks, set |v:=max_dimen|@>;
-  if (v < max_dimen) v=v+d;
-  goto not_found;
-  found: if (v < max_dimen)
-    {@+v=v+d;w=v;
-    }
-  else{@+w=max_dimen;goto done;
-    }
-  not_found: p=link(p);
-  }
-done:
-
-@ @<Let |d| be the natural width of node |p|...@>=
-reswitch: if (is_char_node(p))
-  {@+f=font(p);d=char_width(f, character(p));
-  goto found;
-  }
-switch (type(p)) {
-case hlist_node: case vlist_node: case rule_node: {@+d=width(p);goto found;
-  }
-case ligature_node: @<Make node |p| look like a |char_node|...@>@;
-case kern_node: case math_node: d=width(p);@+break;
-case glue_node: @<Let |d| be the natural width of this glue; if stretching
-or shrinking, set |v:=max_dimen|; |goto found| in the case of leaders@>@;@+break;
-case whatsit_node: @<Let |d| be the width of the whatsit |p|@>;@+break;
-default:d=0;
-}
-
-@ We need to be careful that |w|, |v|, and |d| do not depend on any |glue_set|
-values, since such values are subject to system-dependent rounding.
-System-dependent numbers are not allowed to infiltrate parameters like
-|pre_display_size|, since \TeX82 is supposed to make the same decisions on all
-machines.
-
-@<Let |d| be the natural width of this glue...@>=
-{@+q=glue_ptr(p);d=width(q);
-if (glue_sign(just_box)==stretching)
-  {@+if ((glue_order(just_box)==stretch_order(q))&&@|
-     (stretch(q)!=0))
-    v=max_dimen;
-  }
-else if (glue_sign(just_box)==shrinking)
-  {@+if ((glue_order(just_box)==shrink_order(q))&&@|
-     (shrink(q)!=0))
-    v=max_dimen;
-  }
-if (subtype(p) >= a_leaders) goto found;
 }
 
 @ A displayed equation is considered to be three lines long, so we
@@ -23424,21 +22556,6 @@ if (cur_cmd!=math_shift)
   }
 }
 
-@ We have saved the worst for last: The fussiest part of math mode processing
-occurs when a displayed formula is being centered and placed with an optional
-equation number.
-
-@<Local variables for finishing...@>=
-pointer @!b; /*box containing the equation*/
-scaled @!w; /*width of the equation*/
-scaled @!z; /*width of the line*/
-scaled @!e; /*width of equation number*/
-scaled @!q; /*width of equation number plus space to separate from equation*/
-scaled @!d; /*displacement of equation in the line*/
-scaled @!s; /*move the line right this much*/
-small_number @!g1, @!g2; /*glue parameter codes for before and after*/
-pointer @!r; /*kern node used to position the display*/
-pointer @!t; /*tail of adjustment list*/
 
 @ At this time |p| points to the mlist for the formula; |a| is either
 |null| or it points to a box containing the equation number; and we are in
@@ -23490,85 +22607,6 @@ prev_graf=(norm_min(left_hyphen_min)*0100+norm_min(right_hyphen_min))
              *0200000+cur_lang;
 @<Scan an optional space@>;
 }
-
-@ The user can force the equation number to go on a separate line
-by causing its width to be zero.
-
-@<Squeeze the equation as much as possible...@>=
-{@+if ((e!=0)&&((w-total_shrink[normal]+q <= z)||@|
-   (total_shrink[fil]!=0)||(total_shrink[fill]!=0)||
-   (total_shrink[filll]!=0)))
-  {@+list_ptr(b)=null;flush_node_list(b);
-  b=hpack(p, z-q, 0, 0, exactly, false);
-  }
-else{@+e=0;
-  if (w > z)
-    {@+list_ptr(b)=null;flush_node_list(b);
-    b=hpack(p, z, 0, 0, exactly, false);
-    }
-  }
-w=width(b);
-}
-
-@ We try first to center the display without regard to the existence of
-the equation number. If that would make it too close (where ``too close''
-means that the space between display and equation number is less than the
-width of the equation number), we either center it in the remaining space
-or move it as far from the equation number as possible. The latter alternative
-is taken only if the display begins with glue, since we assume that the
-user put glue there to control the spacing precisely.
-
-@<Determine the displacement, |d|, of the left edge of the equation...@>=
-d=half(z-w);
-if ((e > 0)&&(d < 2*e))  /*too close*/
-  {@+d=half(z-w-e);
-  if (p!=null) if (!is_char_node(p)) if (type(p)==glue_node) d=0;
-  }
-
-@ If the equation number is set on a line by itself, either before or
-after the formula, we append an infinite penalty so that no page break will
-separate the display from its number; and we use the same size and
-displacement for all three potential lines of the display, even though
-`\.{\\parshape}' may specify them differently.
-
-@<Append the glue or equation number preceding the display@>=
-tail_append(new_penalty(pre_display_penalty));@/
-if ((d+s <= pre_display_size)||l)  /*not enough clearance*/
-  {@+g1=above_display_skip_code;g2=below_display_skip_code;
-  }
-else{@+g1=above_display_short_skip_code;
-  g2=below_display_short_skip_code;
-  }
-if (l&&(e==0))  /*it follows that |type(a)==hlist_node|*/
-  {@+shift_amount(a)=s;append_to_vlist(a);
-  tail_append(new_penalty(inf_penalty));
-  }
-else tail_append(new_param_glue(g1))
-
-@ @<Append the display and perhaps also the equation number@>=
-if (e!=0)
-  {@+r=new_kern(z-w-e-d);
-  if (l)
-    {@+link(a)=r;link(r)=b;b=a;d=0;
-    }
-  else{@+link(b)=r;link(r)=a;
-    }
-  b=hpack(b, natural);
-  }
-shift_amount(b)=s+d;append_to_vlist(b)
-
-@ @<Append the glue or equation number following the display@>=
-if ((a!=null)&&(e==0)&&!l)
-  {@+tail_append(new_penalty(inf_penalty));
-  shift_amount(a)=s+z-width(a);
-  append_to_vlist(a);
-  g2=0;
-  }
-if (t!=adjust_head)  /*migrating material comes after equation number*/
-  {@+link(tail)=link(adjust_head);tail=t;
-  }
-tail_append(new_penalty(post_display_penalty));
-if (g2 > 0) tail_append(new_param_glue(g2))
 
 @ When \.{\\halign} appears in a display, the alignment routines operate
 essentially as they do in vertical mode. Then the following program is
@@ -26675,12 +25713,6 @@ default:confusion("ext3");
 goto done;
 }
 
-@ @<Incorporate a whatsit node into a vbox@>=do_nothing
-
-@ @<Incorporate a whatsit node into an hbox@>=do_nothing
-
-@ @<Let |d| be the width of the whatsit |p|@>=d=0
-
 @ @d adv_past(A) @+if (subtype(A)==language_node)
     {@+cur_lang=what_lang(A);l_hyf=what_lhm(A);r_hyf=what_rhm(A);
     set_hyph_index;
@@ -26692,8 +25724,6 @@ adv_past(cur_p)
 @ @<Advance \(p)past a whatsit node in the \(p)pre-hyphenation loop@>=@+
 adv_past(s)
 
-@ @<Prepare to move whatsit |p| to the current page, then |goto contribute|@>=
-goto contribute
 
 @ @<Process whatsit |p| in |vert_break| loop, |goto not_found|@>=
 goto not_found
@@ -26788,7 +25818,7 @@ help2("On this page there's a \\write with fewer real {'s than }'s.",@/
 |vlist_out| and |hlist_out|\kern-.3pt.
 
 @<Declare procedures needed in |hlist_out|, |vlist_out|@>=
-@t\4@>@<Declare procedures needed in |out_what|@>@;
+
 static void out_what(pointer @!p)
 {@+small_number j; /*write stream number*/
 switch (subtype(p)) {
@@ -26960,20 +25990,6 @@ if (eTeX_ex)
   }
 else{@+@<Initialize variables for \eTeX\ compatibility mode@>;
   }
-
-@ The |eTeX_enabled| function simply returns its first argument as
-result.  This argument is |true| if an optional \eTeX\ feature is
-currently enabled; otherwise, if the argument is |false|, the function
-gives an error message.
-
-@<Declare \eTeX\ procedures for use...@>=
-static bool eTeX_enabled(bool @!b, quarterword @!j, halfword @!k)
-{@+if (!b)
-  {@+print_err("Improper ");print_cmd_chr(j, k);
-  help1("Sorry, this optional e-TeX feature has been disabled.");error();
-  }
-return b;
-}
 
 @ First we implement the additional \eTeX\ parameters in the table of
 equivalents.
@@ -28043,7 +27059,7 @@ static void scan_mu_glue(void)
 @ Parenthesized subexpressions can be inside expressions, and this
 nesting has a stack.  Seven local variables represent the top of the
 expression stack:  |p| points to pushed-down entries, if any; |l|
-specifies the type of expression currently beeing evaluated; |e| is the
+specifies the type of expression currently being evaluated; |e| is the
 expression so far and |r| is the state of its evaluation; |t| is the
 term so far and |s| is the state of its evaluation; finally |n| is the
 numerator for a combined multiplication and division, if any.
@@ -28583,7 +27599,7 @@ words contain the five types of current marks
 @d word_node_size 3 /*size of an element with a word value*/
 @d sa_num(A) sa_ptr(A) /*the register number*/
 @d sa_int(A) mem[A+2].i /*an integer*/
-@d sa_dim(A) mem[A+2].sc /*a dimension (a somewhat esotheric distinction)*/
+@d sa_dim(A) mem[A+2].sc /*a dimension (a somewhat esoteric distinction)*/
 @#
 @d mark_class_node_size 4 /*size of an element for a mark class*/
 @#
@@ -28812,18 +27828,8 @@ case fire_up_done: if ((sa_top_mark(q)!=null)&&(sa_first_mark(q)==null))
   {@+sa_first_mark(q)=sa_top_mark(q);add_token_ref(sa_top_mark(q));
   } @+break;
 
-@ @<Update the current marks for |fire_up|@>=
-{@+find_sa_element(mark_val, mark_class(p), true);
-if (sa_first_mark(cur_ptr)==null)
-  {@+sa_first_mark(cur_ptr)=mark_ptr(p);
-  add_token_ref(mark_ptr(p));
-  }
-if (sa_bot_mark(cur_ptr)!=null) delete_token_ref(sa_bot_mark(cur_ptr));
-sa_bot_mark(cur_ptr)=mark_ptr(p);add_token_ref(mark_ptr(p));
-}
-
 @ Here we use the fact that the five current mark pointers in a mark
-class node occupy the same locations as the the first five pointers of
+class node occupy the same locations as the first five pointers of
 an index node.  For systems using a run-time switch to distinguish
 between \.{VIRTEX} and \.{INITEX}, the codewords `$|@t\#\&{ifdef} \.{INIT}@>|\ldots|@t\#\&{endif}@>|$'
 surrounding the following piece of code should be removed.
@@ -28877,7 +27883,7 @@ case toks_register: case internal_register:
 essentially the same when the register is realized as sparse array
 element or entry in |eqtb|.  The global variable |sa_chain| is the head
 of a linked list of entries saved at the topmost level |sa_level|; the
-lists for lowel levels are kept in special save stack entries.
+lists for lower levels are kept in special save stack entries.
 
 @<Glob...@>=
 static pointer @!sa_chain; /*chain of saved sparse array entries*/
@@ -29197,7 +28203,7 @@ else{@+if (cur_val > penalty(equiv(m))) cur_val=penalty(equiv(m));
 
 @ |expand_depth| and |expand_depth_count| are used in the \eTeX\ code
 above, but not defined. So we correct this in the following modules,
-|expand_depth| having been defined by us as an integer paramater (hence
+|expand_depth| having been defined by us as an integer parameter (hence
 there is a new primitive to create in \eTeX\ mode), and
 |expand_depth_count| needing to be a global. Both have to be defined to
 some sensible value.
@@ -29219,7 +28225,7 @@ expand_depth_count=0;
 @* The extended features of \Prote.
 \Prote\ extends furthermore \eTeX\ i.e. \eTeX\ is thus required
 before adding \Prote\ own extensions. But if \eTeX\ mode has not
-be enabled, the engine is still compatible with \TeX with no added
+be enabled, the engine is still compatible with \TeX\ with no added
 primitive commands and with a modification of code---from
 \eTeX\ exclusively for now---that is sufficiently minor so that
 the engine still deserves the name \TeX.
@@ -29363,7 +28369,7 @@ case Prote_revision_code: print(Prote_revision);@+break;
 @*1 \Prote\ added token lists routines.
 
 We will, more than once, convert a general normally expanded text
-to a string. Due to the unfelicity of \PASCAL\ about forward
+to a string. Due to the infelicity of \PASCAL\ about forward
 declarations of functions, we declare procedures that do their task
 by defining global variables. In this case, |garbage| is used.
 
@@ -29415,7 +28421,7 @@ exceeds the size of the name buffer and doesn't use |cur_area| and
 |cur_ext|, but |name_length| is set to the real name length (without
 truncating) so a test about |k <= file_name_size| allows to detect the
 impossibility of opening the file without having to call external code.
-The string is not flushed: it is the responsability of the code calling
+The string is not flushed: it is the responsibility of the code calling
 the procedure to flush it if wanted.
 
 @<Declare \Prote\ procedures for strings@>=
@@ -29536,7 +28542,7 @@ Since we need to redefine the token and hence give a valid control
 sequence in the |eqtb|, we have defined |frozen_primitive|. This
 ``frozen'' is, actually, not quite frozen by itself since we will
 redefine its values according to the primitive definition we have
-to restablish momentarily.  But it is indeed ``permanent'' since
+to reestablish momentarily.  But it is indeed ``permanent'' since
 it only refers to the permanently defined meanings. Hence, the
 initialization of the |frozen_primitive| address is just to document
 the code: these values will be overwritten on each actual call.
@@ -29576,7 +28582,7 @@ order to re-use the macro definitions set for the table of equivalents.
 The one character primitives are added by direct addressing relative to
 |single_base|. The multiletter primitives are added starting at
 |frozen_control_sequence-1|, downwards; but there are only, at the
-moment, $322$ multileter primitives defined by \TeX, $78$ such
+moment, $322$ multiletter primitives defined by \TeX, $78$ such
 primitives defined by \eTeX, and we are adding $24$ more. It is clear
 that, looking at primitives, region 2 of |eqtb| is really a sparse array
 and that, when |hash_size| is increased for format needs, there will be
@@ -29659,7 +28665,7 @@ back_input();
 
 @ The next primitive changes the expansion of its argument that is like
 a general text expanded, except that protected macros (an \eTeX\
-extension) are not extanded.
+extension) are not extended.
 
 @ @<Generate all \Prote\ primitives@>=
 primitive("expanded", expand_after, expanded_code);@/
@@ -29701,7 +28707,7 @@ characters are converted according to the |xord| array. Thus it is
 an |ASCII_code|---in the \TeX\ sense explained at the very beginning
 of the web file, part 2---comparison and the result is the same,
 as long as relative characters are mapped to the same value, whatever
-the system. Nul strings are valid.
+the system. Null strings are valid.
 
 @<Cases of `Scan the argument for command |c|'@>=
 case strcmp_code: {@+scan_general_x_text();toks_to_str();
@@ -29801,7 +28807,7 @@ case elapsed_time_code: cur_val=get_elapsed_time;@+break;
 
 @ The reference moment can be reset by a call to the primitive
 \.{\\resettimer}. It simply resets the reference moment to the moment
-the primitive was called. The counter is not regularily incremented.
+the primitive was called. The counter is not regularly incremented.
 When asked about the time elapsed what is returned is the difference, in
 scaled seconds, from the moment of the call to the moment of reference.
 So there is no persistent variable neither a kind of clock implemented.
@@ -29913,7 +28919,7 @@ case file_dump_code: print_esc("filedump");@+break;
 
 Since ``offset'' and ``length'' may be given in that order, we assign
 the variables \.{k} and \.{l}, in alphabetical order. These have to be
-positive or nul values.
+positive or null values.
 
 Contrary to other blocks, and for optimization purposes (in order not to
 clobber the string pool with data that we can read, when necessary, one
@@ -30003,83 +29009,6 @@ representation of this hash.
 case mdfive_sum_code: for (k=0; k<l; k++)
 {@+dig[0]=md5_digest[k]%16;@+dig[1]=md5_digest[k]/16;print_the_digs(2);
 } @+break;
-
-@ This is something that we will be doing several times. We have scanned
-a general text. The result is a token list that we will interpret as a
-file name. We must then put this name in |name_of_file| and try to open
-it, as a binary file.
-
-|cur_area| and |cur_ext| are not set: we use the string as is.
-
-@<Generate the MD5 hash for a file@>=
-{@+str_to_name(s);
-xchg_buffer_length=0; /*empty if file not opened*/
-if ((name_length <= file_name_size)&&(b_open_in(&data_in))) {@+
-  mdfive_init;
-  r=false; /*reset it to indicate eof*/
-  while (!r)
-    {@+if (xchg_buffer_length==64) mdfive_update; /*resets length*/
-    if (!eof(data_in))
-      {@+pascal_read(data_in, i);xchg_buffer[xchg_buffer_length+1]=i;
-      incr(xchg_buffer_length);
-      }
-    else r=true;
-    }
-  if (xchg_buffer_length!=0) mdfive_update; /*treats remaining*/
-  b_close(&data_in);
-  mdfive_final; /*may yield the empty file/nul string hash if nothing input*/
-  }
-}
-
-@ For a string, the procedure is very similar. It is not an error for
-the string to be the null one.
-
-@<Generate the MD5 hash for a string@>=
-{@+mdfive_init;xchg_buffer_length=0; /*proceed by 64 chunks*/
-for (k=str_start[s]; k<=str_start[s+1]-1; k++)
-  {@+if (xchg_buffer_length==64) mdfive_update; /*resets length*/
-  xchg_buffer[xchg_buffer_length+1]=xchr[so(str_pool[k])];
-  incr(xchg_buffer_length);
-  }
-if (xchg_buffer_length!=0) mdfive_update; /*treats remaining*/
-mdfive_final;
-}
-
-@ A MD5 hash signature can be requested for a stream of bytes, this
-being a string directly passed or a file.
-
-Since the MD5 algorithm does a lot of bitwise operations, a standard
-Pascal implementation has not been attempted. But since we aim to
-limitate and to segregate the calls to external routines so that they do
-not tamper with the internals of \TeX, we have to find a way to
-communicate with the routines.
-
-@ To obtain the MD5 hash signature of a file will need an external
-implementation, since the algorithm requires bitwise operation that
-standard \PASCAL does not provide. So we do not bother to try. The
-present implementation returns nothing.
-@^system dependencies@>
-
-@ |mdfive_init| shall reinit the state to compute the hash value.
-Nothing is taken from |xchg_buffer| and |xchg_buffer_length| is
-unchanged.
-
-@d mdfive_init do_nothing
-
-@ |mdfive_update| takes |xchg_buffer_length| bytes to contribute to the
-hash. The bytes being consumed, |xchg_buffer_length| shall be reset to
-$0$.
-
-@d mdfive_update xchg_buffer_length=0
-
-@ |md5_final| puts the binary $16$ bytes long hash into |xchg_buffer|
-and sets |xchg_buffer_length| to $16$.
-
-Here, by default, we do nothing except carefully set
-|xchg_buffer_length| to $0$ in order to state that we have consumed
-the data.
-
-@d mdfive_final xchg_buffer_length=0
 
 @*1 Pseudo-random number generation.
 
@@ -30176,7 +29105,7 @@ help2("Since I don't take logs of non-positive numbers,",@/
 error();return 0;
 }
 
-@ Here is introduced the special 28bits significand |mpfract|.
+@ Here is introduced the special 28bits significant |mpfract|.
 
 @d el_gordo 017777777777 /*$2^{31}-1$, the largest value that \TeX\ likes*/
 @d mpfract_half 01000000000 /*$2^{27}$, represents 0.50000000*/
@@ -30580,10 +29509,6 @@ static scaled @!last_saved_xpos, last_saved_ypos; /*last (x,y) DVI pos saved*/
 @ @<\Prote\ initializations@>=
 last_saved_xpos=0;last_saved_ypos=0;
 
-@ @<Set |last_saved_xpos| and |last_saved_ypos| with transformed coordinates@>=
-last_saved_xpos=cur_h+DVI_std_x_offset;
-last_saved_ypos=page_height-(cur_v+DVI_std_y_offset);
-
 @ @<Generate all \Prote\ primitives@>=
 primitive("lastxpos", last_item, last_xpos_code);@/
 @!@:lastxpos\_}{\.{\\lastxpos} primitive@>
@@ -30599,7 +29524,7 @@ case last_xpos_code: cur_val=last_saved_xpos;@+break;
 case last_ypos_code: cur_val=last_saved_ypos;
 
 @ |last_saved_xpos| and |last_saved_ypos| are only defined when
-instructed to by the call the the \.{\\savepos} primitive. Since the
+instructed to by the call to the \.{\\savepos} primitive. Since the
 real work has to be done at \.{shipout} time, it is a case to be treated
 like the \.{\\special} primitive, that is it belongs to the
 \.{extension} class.
@@ -30644,40 +29569,6 @@ case save_pos_code: {@+r=get_node(small_node_size);
 
 @ @<Cases for wiping out the whatsit node@>=
 case save_pos_code: free_node(p, small_node_size);@+break;
-
-@ So, after these trivial initializations, what will we effectively do?
-When the following procedure will be called, we define |last_saved_xpos|,
-|last_saved_ypos|, increment |last_save_pos_number|, and a |warning|
-followed by three
-|key==value| space separated definitions as a \.{\\special}, the first
-being prefixed by the string |__PROTE_| (shall be considered a reserved
-prefix) and the string |SAVEPOS_|, equal to the index of the call, and
-the |XPOS| and |YPOS| definitions.
-
-This is obviously, from the previous description, a variation around
-|special_out|.
-
-@<Declare procedures needed in |out_what|@>=
-static void save_pos_out(pointer @!p)
-{@+int old_setting; /*holds print |selector|*/
-int @!k; /*index into |str_pool|*/
-synch_h;synch_v;incr(last_save_pos_number);
-@<Set |last_saved_xpos| and |last_saved_ypos|...@>@;
-old_setting=selector;selector=new_string;
-print("warning __PROTE_");print("SAVEPOS");print_char('=');
-print_int(last_save_pos_number);print_char(' ');
-print("XPOS");print("=");print_int(last_saved_xpos);print_char(' ');
-print("YPOS");print("=");print_int(last_saved_ypos);
-selector=old_setting;
-str_room(1); /*abort if probably overflowed and truncated*/
-dvi_out(xxx1);dvi_out(cur_length); /*it's less than 256*/
-for (k=str_start[str_ptr]; k<=pool_ptr-1; k++) dvi_out(so(str_pool[k]));
-pool_ptr=str_start[str_ptr]; /*forget the not commited tentative string*/
-}
-
-@ @<Cases for |out_what|@>=
-case save_pos_code: save_pos_out(p);@+break;
-
 
 @* Hi\TeX.
 In the following we present macros, variables, and routines that
@@ -30828,7 +29719,6 @@ static pointer new_image_node( str_number n, str_number a, str_number e)
 { pointer p;
   int i;
   char *fn;
-  int l;
 
   p=get_node(image_node_size);type(p)=whatsit_node;subtype(p)=image_node;
   image_name(p)=n;
@@ -31224,8 +30114,7 @@ static uint32_t scan_cmyk_color(bool expect_reals)
 }
 
 static uint32_t scan_color(bool expect_reals)
-{ uint8_t r,g,b,a;
-  scan_left_brace();
+{ scan_left_brace();
   if (scan_keyword("cmyk"))
      return scan_cmyk_color(expect_reals);
   else if (scan_keyword("rgb"))
@@ -31490,7 +30379,7 @@ else
 @<Incorporate a |start_link_node| into the box@>=
 if (link_tos!=null)
 {@+begin_diagnostic();
-  print_err("This link is preceeded by a \\HINTlink without \\HINTendlink:");
+  print_err("This link is preceded by a \\HINTlink without \\HINTendlink:");
   end_diagnostic(true);
 }
 @<Incorporate a |color_node| into the box@>@;
@@ -31532,11 +30421,11 @@ places and to switch to the correct color, we might need to insert color
 nodes at all points where a new page might start.
 
 Page breaks are possible
-at glue nodes if the preceeding node was descardable
-(a node is descardable if its type is less than |math_node|),
+at glue nodes if the preceding node was discardable
+(a node is discardable if its type is less than |math_node|),
 at kern nodes if they precede a glue node
 and at penalty nodes. It is inconvenient to test whether a kern node is
-followed by glue node; but because the kern node will disapear
+followed by glue node; but because the kern node will disappear
 in the page break, it is sufficient to postpone the color information
 and insert it after the following glue node. If there are several
 glue or kern nodes in a row, it is sufficient to insert the color
@@ -31846,8 +30735,7 @@ Here is the new |build_page| routine of Hi\TeX:
 
 @<Hi\TeX\ routines@>=
 static void build_page(void)
-{ static bool initial=true;
-  @<Define the top level color stack@>@;
+{ @<Define the top level color stack@>@;
   if(link(contrib_head)==null||output_active)return;
   do
   { pointer p= link(contrib_head);
@@ -32246,7 +31134,6 @@ static pointer hpack(pointer p,scaled w, scaled hf, scaled vf, small_number m, b
   pointer g; /*points to a glue specification*/
   glue_ord o, sto, sho; /*order of infinity*/
   internal_font_number f; /*the font in a |char_node|*/
-  four_quarters i;  /*font information about a |char_node|*/
   bool repack=false; /* whether repacking is necessary */
   if (!keep_cs) { @<initialize the color stack@>@;}
   last_badness= 0;r= get_node(box_node_size);type(r)= hlist_node;
@@ -32847,8 +31734,7 @@ primitive and by the current values of certain
 
 @<Hi\TeX\ routines@>=
 static void hfinish_page_group(void)
-{ uint8_t k;
-  pointer p,q,r;
+{ pointer p;
   end_graf();
   p=hget_current_page();
   if (p!=null)
@@ -33091,7 +31977,6 @@ maximum values do no longer change.
 static void  hput_definitions()
 /* write the definitions into the definitions buffer */
 {  int i;
-   uint32_t d, m, s;
    hput_definitions_start();
    hput_max_definitions();
    @<Output language definitions@>@;
@@ -33892,8 +32777,7 @@ static char *hfind_glyphs(char *filename)
 
 static uint8_t hget_font_no(uint8_t f)
 { int g;
-  char *n,*fn;
-  int l;
+  char *n;
   if (f==0)
   { DBG(DBGFONT,"TeX nullfont -> 0\n");
     return 0;@+
@@ -34848,7 +33732,7 @@ primitive("HINTimage", extension, image_node);@/
 
 @ @<cases to output whatsit content nodes@>=
      case image_node:
-        { Xdimen w={0},h={0}; List d; uint32_t pos;
+        { Xdimen w={0},h={0}; 
           if (image_xwidth(p)!=null)
           { pointer r=image_xwidth(p);
             w.w=xdimen_width(r);
@@ -35409,7 +34293,7 @@ static char *normalize_quotes (const char *nom, const char *mesg)
 }
 
 @ If the output directory was specified on the command line,
-we save it in an environment variable so that subbrocesses can
+we save it in an environment variable so that subprocesses can
 get the value. If on the other hand the environment specifies
 a directory and the command line does not, save the value from
 the environment to the global variable so that it is used in the
@@ -35800,7 +34684,7 @@ static int texmf_yesno(const char *var)
 
 @ We need a stack, matching the |line_stack| that
 contains the source file names. For the full source filenames we use
-poiters to |char| because these names are just used for output.
+pointers to |char| because these names are just used for output.
 
 @<Global...@>=
 static char * @!source_filename_stack0[max_in_open]={NULL}, **const @!source_filename_stack = @!source_filename_stack0-1;
@@ -35997,11 +34881,6 @@ static FILE *open_out(const char *file_name, const char *file_mode)
 static bool a_open_out(alpha_file *f)  /*open a text file for output*/
 {@+f->f=open_out((char*)name_of_file+1,"w");
   return f->f!=NULL && ferror(f->f)==0;@+
-}
-
-static bool b_open_out(byte_file *f)  /*open a binary file for output*/
-{@+f->f=open_out((char *)name_of_file+1,"wb");
-return f->f!=NULL && ferror(f->f)==0;@+
 }
 
 #ifdef @!INIT
@@ -36377,7 +35256,7 @@ So when the |scanner_status| is |skipping|, we should not produce errors.
 if (i <= k)
 {  d=b[i]; incr(i); 
    if ((d&0xC0)!=0x80 && scanner_status!=skipping)
-   { print_err("Invallid UTF8 continuation byte in the input");
+   { print_err("Invalid UTF8 continuation byte in the input");
      cur_chr=invalid_code;
      return i;
    }
@@ -36443,7 +35322,7 @@ buffer and returns the updated value.
 }
 
 @ This process can be reverted by printing an UTF8 character
-assuming the the users terminal an log file are UTF8 capable.
+assuming the user's terminal and log file are UTF8 capable.
 
 @p static void print_utf8(uint32_t c)
 {@+ if (c<0x80) 
@@ -36529,7 +35408,7 @@ case utf_math_codenum_base:
 }
 
 @ The definition of math codes with \.{\\mathcode} requires a single number.
-In its four digit hexadecimal form the most significat digit is the class,
+In its four digit hexadecimal form the most significant digit is the class,
 the next digit the font family and the lowest two digits the glyph number in the font.
 For the extended range of utf characters, a bit packed format can be used
 where the most significant 8 bits contain the font family, and the lower 24 bits
@@ -36577,9 +35456,9 @@ that combines the function of |eq_define| and |geq_define|.
 We use two new |save_type|s: |restore_utf| and |restore_utf_none|. 
 Changing the |save_type| from |restore_utf| to |restore_utf_none|
 means, that the entry is invalid and must no longer be used to restore a value
-because it was supersedet by the assignment of a global value.
+because it was superseded by the assignment of a global value.
 We implement global assignments by going down the |save_stack| 
-and invalidate all coresponding local assignments.
+and invalidate all corresponding local assignments.
 We do this because we do not want to store assignment levels
 which would need extra data fields in the utf tables that would
 not be compatible with the table compression.
@@ -36609,7 +35488,6 @@ static void utf_save(pointer p,int cp, int e)
 
 static void utf_unsave(pointer p)
 { int cp, e;
-  int l;
   utf_unsave_list=save_level(save_ptr);
   decr(save_ptr);
   e= save_stack[save_ptr].i;
@@ -36662,7 +35540,9 @@ and returns the correct base pointer to |eqtb| for character codes below |0x100|
 }
 
 
-@ @p static void utf_restore(pointer p, int e)
+@ @p 
+#if 0 /* currently not used */
+static void utf_restore(pointer p, int e)
 { if (p<utf_lc_code_base) utf_set_catcode(p-utf_cat_code_base,e  );
   else if (p<utf_uc_code_base) utf_set_lccode(p-utf_lc_code_base,e);
   else if (p<utf_sf_code_base) utf_set_uccode(p-utf_uc_code_base,e);
@@ -36671,6 +35551,7 @@ and returns the correct base pointer to |eqtb| for character codes below |0x100|
   if (tracing_restores > 0) restore_trace(p,"retaining");
 #endif
 }
+#endif
 
 @ While most character codes for UTF are in the tables just defined
 some are still in the |eqtb| table. These are fixed when in init mode
@@ -36727,13 +35608,11 @@ static uint32_t utf_set_sfcode(uint32_t i, uint16_t sf);
 
 static uint32_t utf_set_delcode(uint32_t i, uint32_t dc);
 static int utf_delcode(uint32_t i);
-
 static uint32_t utf_set_mathcode(uint32_t i, uint32_t mc);
 static uint32_t utf_mathcode(uint32_t i);
 static void utf_unsave(pointer p);
 static int utf_lookup(pointer b, int i );
 static void utf_define(pointer p,int c,int e,bool g);
-static void utf_restore(pointer p, int e);
 static pointer utf_adjust_base(pointer p);
 static int utf_b_used, utf_i_used, utf_unsave_list;
 static scaled x_char_width(internal_font_number g, int c);
@@ -36745,7 +35624,7 @@ static scaled x_char_italic(internal_font_number g, int c);
 
 
 @* Fonts revisited.
-To use a font for typeseting, \TeX\ needs only a very limited amount
+To use a font for typesetting, \TeX\ needs only a very limited amount
 of information.  The required information is found in a font metric
 file or \.{TFM} file as described before.
 @:TFM files}{\.{TFM} files@>
@@ -36753,7 +35632,7 @@ file or \.{TFM} file as described before.
 For a typical font used on a modern computer, a \.{TFM} is usually not
 available.  While it is possible to create \.{TFM} files, for example
 with \.{otftotfm}, this is not the best solution, because modern font
-files contain much more information about the best way to typset a
+files contain much more information about the best way to typeset a
 given text than what would fit into a \.{TFM} file.  This is
 especially true for ``non-latin'' texts. For this reason, modern \TeX\
 engines, like \.{luatex} or \.{xetex}, load and use the font files
@@ -36826,7 +35705,7 @@ font_info[param_base[g]].sc =0;
 }
 
 
-@ The slant vlaue, as neede by \TeX\ is the horizontal extent to the right for a 
+@ The slant value, as needed by \TeX\ is the horizontal extent to the right for a 
 character 1pt high.
 
 @<get the extended fonts parameters@>=
@@ -36838,7 +35717,7 @@ character 1pt high.
 
 @ We call the fonts that Hi\TeX\ will handle by using harfbuzz 
 ``extended fonts'', and variables or functions dealing with 
-such fonts will often have an |x_|\dots\  prefix in therir name. 
+such fonts will often have an |x_|\dots\  prefix in their name. 
 
 While Hi\TeX\ wants to be compatible with other \TeX\ engines, its
 implementation of the \.{\\font} primitive still uses a simplified
@@ -36866,7 +35745,7 @@ brackets. Trailing text after the closing square bracket is ignored.
 The use of type1 fonts with harfbuzz requires the use of \.{.afm} files
 and this does not work well and is deprecated. For type1 fonts,
 one should use \.{afm2tfm} to convert the \.{.afm} files to \.{tfm} 
-files and put the new \.{tfm} files in a place where the \.{kpathserach} library
+files and put the new \.{tfm} files in a place where the \.{kpathsearch} library
 can find them. Then run \.{mktexls}.
 
 @<Open an extended font file for input@>=
@@ -36932,7 +35811,6 @@ if (IS_X_FONT(g))
   hb_glyph_extents_t e;
   hb_font_t *f;
   float x_ptem ;
-  unsigned int designSize, minSize, maxSize, subFamilyID, nameCode;
   hb_position_t ax;
 
   fprintf(stderr,"\n");
@@ -36996,8 +35874,8 @@ the code has stabilized.
 
 @*Font subsets.
 Very often only a small subset of the glyphs in a font are used in the document at hand.
-For example, the title of this document is ``Hi\TeX'' and if set using aspecial font,
-only 5 glyphs are actually used. In such cases, it is a waste of memory to embedd the
+For example, the title of this document is ``Hi\TeX'' and if set using a special font,
+only 5 glyphs are actually used. In such cases, it is a waste of memory to embed the
 entire font in the \HINT\ document. So it is desirable to construct from a font
 a subset font, that contains only a subset of all glyphs in the font.
 This can be done easily using the Harfbuzz library.
@@ -37027,7 +35905,7 @@ whether a font is an extended font or a traditional \TeX\ font.
 The \.{\\dump} primitive will not store the contents of the
 |x_font_info| records in the format file. So extended fonts can not be
 preloaded using a format file but must be loaded by \TeX\ each time
-\TeX\ runs.  This decission was made because keeping OPenType or FreeType
+\TeX\ runs.  This decision was made because keeping OpenType or FreeType
 fonts in a format file would make formats very big. And there is
 no benefit in loading a font from a format compared to loading a font
 directly from the font file.  To enforce this rule, the \.{\\dump}
@@ -37116,14 +35994,14 @@ font_used[g]=false;
 }
 
 
-@ Harfbuzz has no fixed units like point, meter, or milimeter to work with,
+@ Harfbuzz has no fixed units like point, meter, or millimeter to work with,
 and since the variables that hold a position or width are integer variables,
 it might be necessary for any unit to use fractions of it.
 For a given font, you can choose a unit and the relation of this unit to the
 integer value used to represent it.
 For example, we can use the unit pt and represent 1pt by the integer
-value 100. This would allow a precission of $1/100$pt because the smallest
-non zero difference beween two integers is 1 and this represents  $1/100$pt.
+value 100. This would allow a precision of $1/100$pt because the smallest
+non zero difference between two integers is 1 and this represents  $1/100$pt.
 When working with TeX, the natural choice for the unit is a printers point
 and its integer representation is a scaled point (sp)with one scaled point equal to
 $2^{-16}$ printer's points, or |0x10000|sp equal to 1pt.
@@ -37163,16 +36041,6 @@ hb_font_set_ptem(f,(72.0/72.27)*s/(double)ONE);
   f_dsize=(((designSize/72.0)*72.27)/10.0)*ONE+0.5; /* round to a scaled value */
 }  
 
-@ The set of all unicode code points of a font is used
-to determine |font_bc[g]| and |font_ec[g]|.
-
-@<determine |font_bc[g]| and |font_ec[g]| for the extended font |g|@>=
-{ hb_set_t *uset= hb_set_create ();
-  hb_face_t *face=hb_font_get_face(x_font[g]->f); 
-  hb_face_collect_unicodes (face,uset);
-  font_bc[g]=hb_set_get_min (uset);
-  font_ec[g]=hb_set_get_max (uset));
-}
 
 @ To get glyph specific information, for example a characters width,
 we first need to obtain the glyph number that belongs to the character in
@@ -37268,13 +36136,12 @@ static scaled x_glyph_italic(internal_font_number g, hb_codepoint_t glyph)
 }
 
 static scaled x_char_italic(internal_font_number g, int c)
-{ hb_glyph_extents_t e;
-  hb_codepoint_t glyph;
-   if (x_glyph(g,c,&glyph))
-   { return x_glyph_italic(g,glyph);
-   }
-   else
-     return 0;
+{ hb_codepoint_t glyph;
+  if (x_glyph(g,c,&glyph))
+  { return x_glyph_italic(g,glyph);
+  }
+  else
+    return 0;
 }
 
 
