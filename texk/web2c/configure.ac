@@ -276,10 +276,12 @@ KPSE_XPDF_FLAGS
 KPSE_ZZIPLIB_FLAGS
 KPSE_TECKIT_FLAGS
 
-# XeTeX and lua[jit]hbtex need harfbuzz, but not regular luatex[53].
+# XeTeX and lua[jit]hbtex and hitex need harfbuzz, though regular
+# luatex[53] does not.
 if test "x$enable_xetex" = xyes \
    || test "x$enable_luahbtex" = xyes \
-   || test "x$enable_luajithbtex" = xyes; then
+   || test "x$enable_luajithbtex" = xyes \
+   || test "x$enable_hitex" = xyes; then
   KPSE_HARFBUZZ_FLAGS
 fi # end xetex/luatex for harfbuzz
 
@@ -307,9 +309,9 @@ AC_CHECK_SIZEOF([off_t], , AC_INCLUDES_DEFAULT
 [#include <kpathsea/config.h>])
 
 if test "x$with_system_kpathsea" = xyes; then
-dnl It is possible to build Web2C (TeX & Co)
-dnl using installed (system) kpathsea headers and library.
-dnl In that case we need the location of <kpathsea/paths.h>.
+  # We want to support building Web2C (TeX & co.)
+  # using installed (system) kpathsea headers and library.
+  # In that case we need the location of <kpathsea/paths.h>.
   list="/usr/include /usr/local/include `echo $KPATHSEA_INCLUDES | sed 's/-I//g'`"
   found=no
   for KPATHSEA_PATHS_H in $list; do

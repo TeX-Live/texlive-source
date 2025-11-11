@@ -1,3 +1,9 @@
+2025-11-11  Karl Berry  <karl@freefriends.org>
+
+	* configure.ac (KPSE_HARFBUZZ_FLAGS): enable if hitex is enabled.
+	Report from balducci,
+	https://tug.org/pipermail/tex-k/2025-November/004229.html.
+
 2025-11-10  Karl Berry  <karl@freefriends.org>
 
 	* PROJECTS: typo.

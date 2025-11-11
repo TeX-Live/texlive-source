@@ -29622,10 +29622,12 @@ ${top_builddir}/../../libs/teckit/include/teckit/TECkit_Common.h:
 fi
 
 
-# XeTeX and lua[jit]hbtex need harfbuzz, but not regular luatex[53].
+# XeTeX and lua[jit]hbtex and hitex need harfbuzz, though regular
+# luatex[53] does not.
 if test "x$enable_xetex" = xyes \
    || test "x$enable_luahbtex" = xyes \
-   || test "x$enable_luajithbtex" = xyes; then
+   || test "x$enable_luajithbtex" = xyes \
+   || test "x$enable_hitex" = xyes; then
   ##tldbg _KPSE_LIB_FLAGS: Setup graphite2 (-lgraphite2) flags.
 echo 'tldbg:_KPSE_LIB_FLAGS called: libdir=graphite2, libname=graphite2, options=, tlincl=-IBLD/libs/graphite2/include -DGRAPHITE2_STATIC, tllib=BLD/libs/graphite2/libgraphite2.a, tlextra=, rebuildsrcdeps=, rebuildblddeps=${top_builddir}/../../libs/graphite2/include/graphite2/Font.h.' >&5
 ##tldbg _KPSE_LIB_FLAGS_TL: graphite2 (graphite2) .
@@ -30135,6 +30137,9 @@ printf "%s\n" "#define SIZEOF_OFF_T $ac_cv_sizeof_off_t" >>confdefs.h
 
 
 if test "x$with_system_kpathsea" = xyes; then
+  # We want to support building Web2C (TeX & co.)
+  # using installed (system) kpathsea headers and library.
+  # In that case we need the location of <kpathsea/paths.h>.
   list="/usr/include /usr/local/include `echo $KPATHSEA_INCLUDES | sed 's/-I//g'`"
   found=no
   for KPATHSEA_PATHS_H in $list; do
