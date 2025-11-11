@@ -1,5 +1,14 @@
 2025-11-11  Karl Berry  <karl@freefriends.org>
 
+	* elt-dirs.c (do_subdir): mention that btrfs also breaks the
+	semantics of having st_nlink==2 in leaf directories.
+	* tests/cnfnlink.test: comment out that test, since we don't want
+	to try to detect what filesystem we're on or other bad st_nlink cases.
+	Report from Jan Kasprzak,
+	https://tug.org/pipermail/tex-k/2025-October/004212.html.
+
+2025-11-11  Karl Berry  <karl@freefriends.org>
+
 	* NEWS,
 	* texmf.cnf: doc tweaks.
 

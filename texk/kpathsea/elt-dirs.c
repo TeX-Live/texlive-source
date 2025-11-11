@@ -293,6 +293,8 @@ do_subdir (kpathsea kpse, str_llist_type *str_list_ptr, string elt,
                    http://cygwin.com/ml/cygwin-developers/2008-04/msg00110.html
                  The gvisor sandboxing package also left it at 1, until 2025:
                    https://github.com/google/gvisor/issues/11925
+                 The btrfs filesystem also leaves it at 1:
+                   https://tug.org/pipermail/tex-k/2025-October/004212.html
                  */
               if (links != 2 || !kpse_cnf_p (kpathsea_var_value
                                                 (kpse, "texmf_nlink_for_leaf"))

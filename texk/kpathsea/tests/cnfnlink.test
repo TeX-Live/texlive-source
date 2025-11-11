@@ -50,18 +50,25 @@ else
 fi
 
 # 
-# st_nlink check enabled, file through symlinked dir should not be found:
-val=`$_kpsewhich $cnf_line throughfile.tex`
-if test "$ExeExt" = .exe; then val=`echo $val | sed -e 's/\\r//'`; fi
-#
-# This should not find the file, because with st_nlink, kpse cannot know
-# to descend into the symlinked subdir.
-if test -z "$val"; then
-  echo "for throughfile.tex, with st_nlink check, not found as expected."
-else
-  echo "for throughfile.tex, with st_nlink check, failed since found: $val"
-  fail=1
-fi
+# We can't enable this part of the test, since if the current filesystem
+# is btrfs, or other cases (as noted in elt-dirs.c), Kpathsea will
+# descend anyway, because leaf dirs won't have the traditional semantics
+# of st_nlinks=2. Let's not try to determine that just for the sake of a
+# test; instead, leave it here commented out in case it's needed for
+# future development testing, which can take place on a normal filesystem.
+# 
+## st_nlink check enabled, file through symlinked dir should not be found:
+#val=`$_kpsewhich $cnf_line throughfile.tex`
+#if test "$ExeExt" = .exe; then val=`echo $val | sed -e 's/\\r//'`; fi
+##
+## This should not find the file, because with st_nlink, kpse cannot know
+## to descend into the symlinked subdir.
+#if test -z "$val"; then
+#  echo "for throughfile.tex, with st_nlink check, not found as expected."
+#else
+#  echo "for throughfile.tex, with st_nlink check, failed since found: $val"
+#  fail=1
+#fi
 
 # 
 cnf_line=--cnf-line=texmf_nlink_for_leaf=0 # don't do the check
@@ -80,7 +87,7 @@ else
   fail=1
 fi
 
-#exit 1
+#exit 1 # to force creation of the log for debugging wrong success
 exit $fail
 
 # BTW, to run just this one test:
