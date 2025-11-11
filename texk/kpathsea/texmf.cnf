@@ -790,7 +790,8 @@ texmf_casefold_search = 1
 % This variable is specific to Unix, to enable or disable the check
 % for st_nlink=2 to determine if a directory is a leaf.  The check is
 % disabled by default, since it's relevant only for non-!!
-% trees, such as TEXMFHOME and TEXMF[SYS]VAR, which are almost always tiny.
+% trees, such as TEXMFHOME and TEXMF[SYS]VAR, which are almost always tiny,
+% and new filesystems tend to break the longstanding semantics.
 % See https://tug.org/texinfohtml/kpathsea.html#Subdirectory-expansion.
 %
 texmf_nlink_for_leaf = 0 % set to 1 to enable st_nlink check in non-!! trees

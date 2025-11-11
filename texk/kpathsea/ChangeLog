@@ -1,3 +1,8 @@
+2025-11-11  Karl Berry  <karl@freefriends.org>
+
+	* NEWS,
+	* texmf.cnf: doc tweaks.
+
 2025-07-20  Karl Berry  <karl@freefriends.org>
 
 	* tests/cnfnlink.test: forgot to export TEXINPUTS.
