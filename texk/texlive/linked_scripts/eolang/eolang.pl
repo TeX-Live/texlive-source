@@ -2,7 +2,7 @@
 # SPDX-FileCopyrightText: Copyright (c) 2021-2025 Yegor Bugayenko
 # SPDX-License-Identifier: MIT
 
-# 2025/11/05 0.20.0
+# 0.20.1 2025/11/12
 package eolang;
 
 use warnings;
@@ -59,7 +59,7 @@ if (@ARGV+0 eq 0 or exists $args{'--help'} or exists $args{'-?'}) {
     "      --tmpdir=path    Temp directory with .tex files ('_eolang' by default)\n\n" .
     "If any issues, report to GitHub: https://github.com/yegor256/bibcop");
 } elsif (exists $args{'--version'} or exists $args{'-v'}) {
-  info('0.20.0 0000-00-00');
+  info('0.20.1 2025/11/12');
 } else {
   my ($src, $target) = grep { not($_ =~ /^-.*$/) } @ARGV;
   if (not $src) {
