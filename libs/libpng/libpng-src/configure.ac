@@ -25,7 +25,7 @@ AC_PREREQ([2.68])
 
 dnl Version number stuff here:
 
-AC_INIT([libpng],[1.6.50],[png-mng-implement@lists.sourceforge.net])
+AC_INIT([libpng],[1.6.51],[png-mng-implement@lists.sourceforge.net])
 AC_CONFIG_MACRO_DIR([scripts/autoconf])
 
 # libpng does not follow GNU file name conventions (hence 'foreign')
@@ -46,10 +46,10 @@ dnl automake, so the following is not necessary (and is not defined anyway):
 dnl AM_PREREQ([1.11.2])
 dnl stop configure from automagically running automake
 
-PNGLIB_VERSION=1.6.50
+PNGLIB_VERSION=1.6.51
 PNGLIB_MAJOR=1
 PNGLIB_MINOR=6
-PNGLIB_RELEASE=50
+PNGLIB_RELEASE=51
 
 dnl End of version number stuff
 
@@ -707,10 +707,6 @@ then
 
    AC_COMPILE_IFELSE([AC_LANG_SOURCE([[
 #include <riscv_vector.h>
-#include <asm/hwcap.h>
-#ifndef COMPAT_HWCAP_ISA_V /* added in linux-6.5 */
-#error "COMPAT_HWCAP_ISA_V is not available"
-#endif
 int main() {
    const float src[] = { 0.0f, 0.0f, 0.0f, 0.0f };
    uint64_t ptr[2] = {0x0908060504020100, 0xFFFFFFFF0E0D0C0A};
