@@ -24570,10 +24570,6 @@ ${top_builddir}/../kpathsea/paths.h:
 	cd ${top_builddir}/../kpathsea && $(MAKE) $(AM_MAKEFLAGS) rebuild'
 fi
 
-
-
-
-
 { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking if libkpathsea supports debugging" >&5
 printf %s "checking if libkpathsea supports debugging... " >&6; }
 if test ${kpse_cv_kpse_debug+y}
@@ -24655,10 +24651,6 @@ $(ZLIB_DEPEND): ${top_builddir}/../../libs/zlib/include/zconf.h
 ${top_builddir}/../../libs/zlib/include/zconf.h:
 	cd ${top_builddir}/../../libs/zlib && $(MAKE) $(AM_MAKEFLAGS) rebuild'
 fi
-
-
-
-
 { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking if <zlib.h> defines 'z_const'" >&5
 printf %s "checking if <zlib.h> defines 'z_const'... " >&6; }
 if test ${kpse_cv_have_decl_z_const+y}
@@ -24941,10 +24933,6 @@ ${top_builddir}/../../libs/freetype2/freetype2/ft2build.h:
 	cd ${top_builddir}/../../libs/freetype2 && $(MAKE) $(AM_MAKEFLAGS) rebuild'
 fi
 
-
-
-
-
 ##tldbg _KPSE_LIB_FLAGS: Setup zlib (-lz) flags.
 echo 'tldbg:_KPSE_LIB_FLAGS called: libdir=zlib, libname=z, options=, tlincl=-IBLD/libs/zlib/include, tllib=BLD/libs/zlib/libz.a, tlextra=, rebuildsrcdeps=, rebuildblddeps=${top_builddir}/../../libs/zlib/include/zconf.h.' >&5
 ##tldbg _KPSE_LIB_FLAGS_TL: zlib (z) .
@@ -24985,10 +24973,6 @@ $(ZLIB_DEPEND): ${top_builddir}/../../libs/zlib/include/zconf.h
 ${top_builddir}/../../libs/zlib/include/zconf.h:
 	cd ${top_builddir}/../../libs/zlib && $(MAKE) $(AM_MAKEFLAGS) rebuild'
 fi
-
-
-
-
 { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking if <zlib.h> defines 'z_const'" >&5
 printf %s "checking if <zlib.h> defines 'z_const'... " >&6; }
 if test ${kpse_cv_have_decl_z_const+y}
@@ -25075,10 +25059,6 @@ $(POTRACE_DEPEND): ${top_builddir}/../../libs/potrace/include/potrace.h
 ${top_builddir}/../../libs/potrace/include/potrace.h:
 	cd ${top_builddir}/../../libs/potrace && $(MAKE) $(AM_MAKEFLAGS) rebuild'
 fi
-
-
-
-
 
 
 kpse_save_CPPFLAGS=$CPPFLAGS

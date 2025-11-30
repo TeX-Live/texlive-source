@@ -7651,10 +7651,6 @@ ${top_builddir}/../../libs/pixman/include/pixman.h:
 fi
 
 
-
-
-
-
 if test "x$enable_build" != xno || test -f config.force; then
 
 kpse_save_CPPFLAGS=$CPPFLAGS

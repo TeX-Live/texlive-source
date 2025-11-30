@@ -6600,10 +6600,6 @@ $(ZLIB_DEPEND): ${top_builddir}/../../libs/zlib/include/zconf.h
 ${top_builddir}/../../libs/zlib/include/zconf.h:
 	cd ${top_builddir}/../../libs/zlib && $(MAKE) $(AM_MAKEFLAGS) rebuild'
 fi
-
-
-
-
 { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking if <zlib.h> defines 'z_const'" >&5
 printf %s "checking if <zlib.h> defines 'z_const'... " >&6; }
 if test ${kpse_cv_have_decl_z_const+y}
@@ -6858,10 +6854,6 @@ ${top_builddir}/../../libs/libpng/include/png.h:
 	cd ${top_builddir}/../../libs/libpng && $(MAKE) $(AM_MAKEFLAGS) rebuild'
 fi
 
-
-
-
-
 ##tldbg _KPSE_LIB_FLAGS: Setup freetype2 (-lfreetype) flags.
 echo 'tldbg:_KPSE_LIB_FLAGS called: libdir=freetype2, libname=freetype, options=, tlincl=-IBLD/libs/freetype2/freetype2, tllib=BLD/libs/freetype2/libfreetype.a, tlextra=, rebuildsrcdeps=, rebuildblddeps=${top_builddir}/../../libs/freetype2/freetype2/ft2build.h.' >&5
 ##tldbg _KPSE_LIB_FLAGS_TL: freetype2 (freetype) .
@@ -7097,10 +7089,6 @@ $(FREETYPE2_DEPEND): ${top_builddir}/../../libs/freetype2/freetype2/ft2build.h
 ${top_builddir}/../../libs/freetype2/freetype2/ft2build.h:
 	cd ${top_builddir}/../../libs/freetype2 && $(MAKE) $(AM_MAKEFLAGS) rebuild'
 fi
-
-
-
-
 
 
  if test "x$enable_build" != xno; then

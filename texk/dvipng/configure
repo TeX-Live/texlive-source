@@ -18420,10 +18420,6 @@ ${top_builddir}/../kpathsea/paths.h:
 	cd ${top_builddir}/../kpathsea && $(MAKE) $(AM_MAKEFLAGS) rebuild'
 fi
 
-
-
-
-
 { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking if libkpathsea supports debugging" >&5
 printf %s "checking if libkpathsea supports debugging... " >&6; }
 if test ${kpse_cv_kpse_debug+y}
@@ -18505,10 +18501,6 @@ $(ZLIB_DEPEND): ${top_builddir}/../../libs/zlib/include/zconf.h
 ${top_builddir}/../../libs/zlib/include/zconf.h:
 	cd ${top_builddir}/../../libs/zlib && $(MAKE) $(AM_MAKEFLAGS) rebuild'
 fi
-
-
-
-
 { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking if <zlib.h> defines 'z_const'" >&5
 printf %s "checking if <zlib.h> defines 'z_const'... " >&6; }
 if test ${kpse_cv_have_decl_z_const+y}
@@ -18581,10 +18573,6 @@ $(LIBPNG_DEPEND): ${top_builddir}/../../libs/libpng/include/png.h
 ${top_builddir}/../../libs/libpng/include/png.h:
 	cd ${top_builddir}/../../libs/libpng && $(MAKE) $(AM_MAKEFLAGS) rebuild'
 fi
-
-
-
-
 
 ##tldbg _KPSE_LIB_FLAGS: Setup freetype2 (-lfreetype) flags.
 echo 'tldbg:_KPSE_LIB_FLAGS called: libdir=freetype2, libname=freetype, options=, tlincl=-IBLD/libs/freetype2/freetype2, tllib=BLD/libs/freetype2/libfreetype.a, tlextra=, rebuildsrcdeps=, rebuildblddeps=${top_builddir}/../../libs/freetype2/freetype2/ft2build.h.' >&5
@@ -18822,10 +18810,6 @@ ${top_builddir}/../../libs/freetype2/freetype2/ft2build.h:
 	cd ${top_builddir}/../../libs/freetype2 && $(MAKE) $(AM_MAKEFLAGS) rebuild'
 fi
 
-
-
-
-
 { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for native WIN32 or MINGW32" >&5
 printf %s "checking for native WIN32 or MINGW32... " >&6; }
 if test ${kpse_cv_have_win32+y}
@@ -18919,10 +18903,6 @@ $(GD_DEPEND): ${top_builddir}/../../libs/gd/include/gd.h
 ${top_builddir}/../../libs/gd/include/gd.h:
 	cd ${top_builddir}/../../libs/gd && $(MAKE) $(AM_MAKEFLAGS) rebuild'
 fi
-
-
-
-
 
 
 # Assume we have freetype2.

@@ -6346,10 +6346,6 @@ ${top_builddir}/../../libs/gmp/include/gmp.h:
 	cd ${top_builddir}/../../libs/gmp && $(MAKE) $(AM_MAKEFLAGS) rebuild'
 fi
 
-
-
-
-
 ##tldbg _KPSE_LIB_FLAGS: Setup mpfr (-lmpfr) flags.
 echo 'tldbg:_KPSE_LIB_FLAGS called: libdir=mpfr, libname=mpfr, options=, tlincl=-IBLD/libs/mpfr/include, tllib=BLD/libs/mpfr/libmpfr.a, tlextra=, rebuildsrcdeps=, rebuildblddeps=${top_builddir}/../../libs/mpfr/include/mpfr.h.' >&5
 ##tldbg _KPSE_LIB_FLAGS_TL: mpfr (mpfr) .
@@ -6390,10 +6386,6 @@ $(MPFR_DEPEND): ${top_builddir}/../../libs/mpfr/include/mpfr.h
 ${top_builddir}/../../libs/mpfr/include/mpfr.h:
 	cd ${top_builddir}/../../libs/mpfr && $(MAKE) $(AM_MAKEFLAGS) rebuild'
 fi
-
-
-
-
 
 
 ac_fn_c_check_type "$LINENO" "size_t" "ac_cv_type_size_t" "$ac_includes_default"

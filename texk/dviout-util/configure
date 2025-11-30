@@ -17112,10 +17112,6 @@ ${top_builddir}/../kpathsea/paths.h:
 	cd ${top_builddir}/../kpathsea && $(MAKE) $(AM_MAKEFLAGS) rebuild'
 fi
 
-
-
-
-
 { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking if libkpathsea supports debugging" >&5
 printf %s "checking if libkpathsea supports debugging... " >&6; }
 if test ${kpse_cv_kpse_debug+y}
@@ -17181,10 +17177,6 @@ else
 $(PTEXENC_DEPEND): ${top_srcdir}/../ptexenc/*.c ${top_srcdir}/../ptexenc/ptexenc/*.h
 	cd ${top_builddir}/../ptexenc && $(MAKE) $(AM_MAKEFLAGS) rebuild'
 fi
-
-
-
-
 
 
 ac_config_files="$ac_config_files Makefile"
