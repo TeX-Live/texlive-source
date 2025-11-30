@@ -23659,7 +23659,7 @@ then :
 printf "%s\n" "$as_me: WARNING: Sorry, no socket library: disabling luatex" >&2;}
 if test "x$enable_missing" = xno
 then :
-  as_fn_error $? "terminating." "$LINENO" 5
+  as_fn_error $? "kpse_msg_warn: terminating rather than warning since we have disable-missing." "$LINENO" 5
 fi
 
                        enable_luatex=no
@@ -23671,7 +23671,7 @@ then :
 printf "%s\n" "$as_me: WARNING: Sorry, no socket library: disabling luatex53" >&2;}
 if test "x$enable_missing" = xno
 then :
-  as_fn_error $? "terminating." "$LINENO" 5
+  as_fn_error $? "kpse_msg_warn: terminating rather than warning since we have disable-missing." "$LINENO" 5
 fi
 
                        enable_luatex53=no
@@ -23683,7 +23683,7 @@ then :
 printf "%s\n" "$as_me: WARNING: Sorry, no socket library: disabling ipc" >&2;}
 if test "x$enable_missing" = xno
 then :
-  as_fn_error $? "terminating." "$LINENO" 5
+  as_fn_error $? "kpse_msg_warn: terminating rather than warning since we have disable-missing." "$LINENO" 5
 fi
 
                        enable_ipc=no
@@ -24237,7 +24237,7 @@ then :
 printf "%s\n" "$as_me: WARNING: Sorry, no hstrerror(): disabling luatex" >&2;}
 if test "x$enable_missing" = xno
 then :
-  as_fn_error $? "terminating." "$LINENO" 5
+  as_fn_error $? "kpse_msg_warn: terminating rather than warning since we have disable-missing." "$LINENO" 5
 fi
 
                        enable_luatex=no
@@ -24248,7 +24248,7 @@ then :
 printf "%s\n" "$as_me: WARNING: Sorry, no hstrerror(): disabling luatex53" >&2;}
 if test "x$enable_missing" = xno
 then :
-  as_fn_error $? "terminating." "$LINENO" 5
+  as_fn_error $? "kpse_msg_warn: terminating rather than warning since we have disable-missing." "$LINENO" 5
 fi
 
                        enable_luatex53=no
@@ -24267,7 +24267,7 @@ then :
 printf "%s\n" "$as_me: WARNING: Sorry, no inet_aton(): disabling luatex" >&2;}
 if test "x$enable_missing" = xno
 then :
-  as_fn_error $? "terminating." "$LINENO" 5
+  as_fn_error $? "kpse_msg_warn: terminating rather than warning since we have disable-missing." "$LINENO" 5
 fi
 
                        enable_luatex=no
@@ -24278,7 +24278,7 @@ then :
 printf "%s\n" "$as_me: WARNING: Sorry, no inet_aton(): disabling luatex53" >&2;}
 if test "x$enable_missing" = xno
 then :
-  as_fn_error $? "terminating." "$LINENO" 5
+  as_fn_error $? "kpse_msg_warn: terminating rather than warning since we have disable-missing." "$LINENO" 5
 fi
 
                        enable_luatex53=no
@@ -24297,7 +24297,7 @@ then :
 printf "%s\n" "$as_me: WARNING: Sorry, no gethostbyname(): disabling luatex" >&2;}
 if test "x$enable_missing" = xno
 then :
-  as_fn_error $? "terminating." "$LINENO" 5
+  as_fn_error $? "kpse_msg_warn: terminating rather than warning since we have disable-missing." "$LINENO" 5
 fi
 
                        enable_luatex=no
@@ -24308,7 +24308,7 @@ then :
 printf "%s\n" "$as_me: WARNING: Sorry, no gethostbyname(): disabling luatex53" >&2;}
 if test "x$enable_missing" = xno
 then :
-  as_fn_error $? "terminating." "$LINENO" 5
+  as_fn_error $? "kpse_msg_warn: terminating rather than warning since we have disable-missing." "$LINENO" 5
 fi
 
                        enable_luatex53=no
@@ -24327,7 +24327,7 @@ then :
 printf "%s\n" "$as_me: WARNING: Sorry, no nanosleep(): disabling luatex" >&2;}
 if test "x$enable_missing" = xno
 then :
-  as_fn_error $? "terminating." "$LINENO" 5
+  as_fn_error $? "kpse_msg_warn: terminating rather than warning since we have disable-missing." "$LINENO" 5
 fi
 
                        enable_luatex=no
@@ -24338,7 +24338,7 @@ then :
 printf "%s\n" "$as_me: WARNING: Sorry, no nanosleep(): disabling luatex53" >&2;}
 if test "x$enable_missing" = xno
 then :
-  as_fn_error $? "terminating." "$LINENO" 5
+  as_fn_error $? "kpse_msg_warn: terminating rather than warning since we have disable-missing." "$LINENO" 5
 fi
 
                        enable_luatex53=no
@@ -24392,7 +24392,7 @@ then :
 printf "%s\n" "$as_me: WARNING: Sorry, no getaddrinfo(): disabling luatex" >&2;}
 if test "x$enable_missing" = xno
 then :
-  as_fn_error $? "terminating." "$LINENO" 5
+  as_fn_error $? "kpse_msg_warn: terminating rather than warning since we have disable-missing." "$LINENO" 5
 fi
 
                        enable_luatex=no
@@ -24403,7 +24403,7 @@ then :
 printf "%s\n" "$as_me: WARNING: Sorry, no getaddrinfo(): disabling luatex53" >&2;}
 if test "x$enable_missing" = xno
 then :
-  as_fn_error $? "terminating." "$LINENO" 5
+  as_fn_error $? "kpse_msg_warn: terminating rather than warning since we have disable-missing." "$LINENO" 5
 fi
 
                        enable_luatex53=no
@@ -30074,7 +30074,7 @@ then :
 printf "%s\n" "$as_me: WARNING: Sorry, neither ApplicationServices framework nor fontconfig library: disabling xetex" >&2;}
 if test "x$enable_missing" = xno
 then :
-  as_fn_error $? "terminating." "$LINENO" 5
+  as_fn_error $? "kpse_msg_warn: terminating rather than warning since we have disable-missing." "$LINENO" 5
 fi
 
                        enable_xetex=no
@@ -30085,7 +30085,8 @@ fi
 fi # end xetex for icu/graphite and fontconfig/mac font lookups.
 
 # Are we building XeTeX on Mac? Automake conditional required regardless.
- if test "x$kpse_cv_have_ApplicationServices" = xyes; then
+ if (test "x$enable_xetex" = xyes \
+                 && test "x$kpse_cv_have_ApplicationServices" = xyes); then
   XETEX_MACOSX_TRUE=
   XETEX_MACOSX_FALSE='#'
 else

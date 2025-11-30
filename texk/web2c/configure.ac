@@ -301,7 +301,8 @@ fi # end xetex for icu/graphite and fontconfig/mac font lookups.
 
 # Are we building XeTeX on Mac? Automake conditional required regardless.
 AM_CONDITIONAL([XETEX_MACOSX],
-               [test "x$kpse_cv_have_ApplicationServices" = xyes])
+               [(test "x$enable_xetex" = xyes \
+                 && test "x$kpse_cv_have_ApplicationServices" = xyes)])
 
 # Check size of off_t (using <kpathsea/config.h>)
 KPSE_ADD_FLAGS([kpathsea])
