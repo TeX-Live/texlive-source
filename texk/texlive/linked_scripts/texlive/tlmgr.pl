@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 76773 2025-11-06 19:43:29Z preining $
+# $Id: tlmgr.pl 76962 2025-11-28 17:48:14Z karl $
 # Copyright 2008-2025 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
@@ -8,8 +8,8 @@
 
 use strict; use warnings;
 
-my $svnrev = '$Revision: 76773 $';
-my $datrev = '$Date: 2025-11-06 20:43:29 +0100 (Thu, 06 Nov 2025) $';
+my $svnrev = '$Revision: 76962 $';
+my $datrev = '$Date: 2025-11-28 18:48:14 +0100 (Fri, 28 Nov 2025) $';
 my $tlmgrrevision;
 my $tlmgrversion;
 my $prg;
@@ -46,9 +46,9 @@ BEGIN {
   $^W = 1;
   # make subprograms (including kpsewhich) have the right path:
   my $kpsewhichname;
+  $Master = __FILE__;
   if ($^O =~ /^MSWin/i) {
     # on w32 $0 and __FILE__ point directly to tlmgr.pl; they can be relative
-    $Master = __FILE__;
     $Master =~ s!\\!/!g;
     $Master =~ s![^/]*$!../../..!
       unless ($Master =~ s!/texmf-dist/scripts/texlive/tlmgr\.pl$!!i);
@@ -56,11 +56,9 @@ BEGIN {
     $kpsewhichname = "kpsewhich.exe";
     # path already set by wrapper batchfile
   } else {
-    $Master = __FILE__;
     $Master =~ s,/*[^/]*$,,;
     $bindir = $Master;
     $Master = "$Master/../..";
-    # make subprograms (including kpsewhich) have the right path:
     $ENV{"PATH"} = "$bindir:$ENV{PATH}";
     $kpsewhichname = "kpsewhich";
   }
@@ -72,8 +70,12 @@ BEGIN {
   # if we have no directory in which to find our modules,
   # no point in going on.
   if (! $Master) {
-    die ("Could not determine directory of tlmgr executable, "
-         . "maybe shared library woes?\nCheck for error messages above");
+    warn "$0: Could not determine (Master) directory of tlmgr executable.\n";
+    warn "$0:   with __FILE__: ", __FILE__, "\n";
+    warn "$0:   and bindir: $bindir\n";
+    warn "$0:   and PATH: $ENV{PATH}\n";
+    die  "$0: Check for error messages above.\n";
+
   }
 
   $::installerdir = $Master;  # for config.guess et al., see TLUtils.pm
@@ -10634,7 +10636,7 @@ This script and its documentation were written for the TeX Live
 distribution (L<https://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 76773 2025-11-06 19:43:29Z preining $
+$Id: tlmgr.pl 76962 2025-11-28 17:48:14Z karl $
 =cut
 
 # test HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html

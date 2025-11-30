@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: updmap.pl 70707 2024-03-19 22:03:22Z karl $
+# $Id: updmap.pl 76962 2025-11-28 17:48:14Z karl $
 # updmap - maintain map files for outline fonts.
 # (Maintained in TeX Live:Master/texmf-dist/scripts/texlive.)
 # 
@@ -13,23 +13,43 @@
 # later adaptions by Reinhard Kotucha, and Karl Berry.
 # The current implementation is a complete rewrite.
 
-my $svnid = '$Id: updmap.pl 70707 2024-03-19 22:03:22Z karl $';
+my $svnid = '$Id: updmap.pl 76962 2025-11-28 17:48:14Z karl $';
+
+use strict; use warnings;
 
 my $TEXMFROOT;
 BEGIN {
   $^W = 1;
+  # make subprograms (including kpsewhich) have the right path:
+  my $bindir;
+  my $Master = __FILE__;
+  if ($^O =~ /^MSWin/i) {
+    # on w32 $0 and __FILE__ point directly to tlmgr.pl; they can be relative
+    $Master =~ s!\\!/!g;
+    $Master =~ s![^/]*$!../../..!
+      unless ($Master =~ s!/texmf-dist/scripts/texlive/tlmgr\.pl$!!i);
+    $bindir = "$Master/bin/windows";
+    # path already set by wrapper batchfile
+  } else {
+    $Master =~ s,/*[^/]*$,,;
+    $bindir = $Master;
+    $Master = "$Master/../..";
+    $ENV{"PATH"} = "$bindir:$ENV{PATH}";
+  }
   $TEXMFROOT = `kpsewhich -var-value=TEXMFROOT`;
-  if ($?) {
-    die "$0: kpsewhich -var-value=TEXMFROOT failed, aborting early.\n";
+  if ($? || ! $TEXMFROOT) {
+    warn "$0: kpsewhich -var-value=TEXMFROOT failed, aborting early.\n";
+    warn "$0:   got TEXMFROOT value: $TEXMFROOT" if $TEXMFROOT;
+    die  "$0:   had PATH: $ENV{PATH}\n";
   }
   chomp($TEXMFROOT);
   unshift(@INC, "$TEXMFROOT/tlpkg");
 }
 
-my $lastchdate = '$Date: 2024-03-19 23:03:22 +0100 (Tue, 19 Mar 2024) $';
+my $lastchdate = '$Date: 2025-11-28 18:48:14 +0100 (Fri, 28 Nov 2025) $';
 $lastchdate =~ s/^\$Date:\s*//;
 $lastchdate =~ s/ \(.*$//;
-my $svnrev = '$Revision: 70707 $';
+my $svnrev = '$Revision: 76962 $';
 $svnrev =~ s/^\$Revision:\s*//;
 $svnrev =~ s/\s*\$$//;
 my $version = "r$svnrev ($lastchdate)";
@@ -2531,6 +2551,7 @@ For step-by-step instructions on making new fonts known to TeX, read
 https://tug.org/fonts/fontinstall.html.  For even more terse
 instructions, read the beginning of the main updmap.cfg file.
 
+Executable location: $0
 Report bugs to: tex-live\@tug.org
 TeX Live home page: <https://tug.org/texlive/>
 EOF

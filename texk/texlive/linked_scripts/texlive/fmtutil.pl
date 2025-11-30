@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: fmtutil.pl 75097 2025-05-04 17:51:06Z karl $
+# $Id: fmtutil.pl 76962 2025-11-28 17:48:14Z karl $
 # fmtutil - utility to maintain format files.
 # (Maintained in TeX Live:Master/texmf-dist/scripts/texlive.)
 # 
@@ -10,13 +10,32 @@
 # History:
 # Original shell script 2001 Thomas Esser, public domain
 
+use strict; use warnings;
 my $TEXMFROOT;
 
 BEGIN {
   $^W = 1;
+  # make subprograms (including kpsewhich) have the right path:
+  my $bindir;
+  my $Master = __FILE__;
+  if ($^O =~ /^MSWin/i) {
+    # on w32 $0 and __FILE__ point directly to tlmgr.pl; they can be relative
+    $Master =~ s!\\!/!g;
+    $Master =~ s![^/]*$!../../..!
+      unless ($Master =~ s!/texmf-dist/scripts/texlive/tlmgr\.pl$!!i);
+    $bindir = "$Master/bin/windows";
+    # path already set by wrapper batchfile
+  } else {
+    $Master =~ s,/*[^/]*$,,;
+    $bindir = $Master;
+    $Master = "$Master/../..";
+    $ENV{"PATH"} = "$bindir:$ENV{PATH}";
+  }
   $TEXMFROOT = `kpsewhich -var-value=TEXMFROOT`;
-  if ($?) {
-    die "$0: kpsewhich -var-value=TEXMFROOT failed, aborting early.\n";
+  if ($? || ! $TEXMFROOT) {
+    warn "$0: kpsewhich -var-value=TEXMFROOT failed, aborting early.\n";
+    warn "$0:   got TEXMFROOT value: $TEXMFROOT" if $TEXMFROOT;
+    die  "$0:   had PATH: $ENV{PATH}\n";
   }
   chomp($TEXMFROOT);
   unshift(@INC, "$TEXMFROOT/tlpkg", "$TEXMFROOT/texmf-dist/scripts/texlive");
@@ -24,11 +43,11 @@ BEGIN {
   TeX::Update->import();
 }
 
-my $svnid = '$Id: fmtutil.pl 75097 2025-05-04 17:51:06Z karl $';
-my $lastchdate = '$Date: 2025-05-04 19:51:06 +0200 (Sun, 04 May 2025) $';
+my $svnid = '$Id: fmtutil.pl 76962 2025-11-28 17:48:14Z karl $';
+my $lastchdate = '$Date: 2025-11-28 18:48:14 +0100 (Fri, 28 Nov 2025) $';
 $lastchdate =~ s/^\$Date:\s*//;
 $lastchdate =~ s/ \(.*$//;
-my $svnrev = '$Revision: 75097 $';
+my $svnrev = '$Revision: 76962 $';
 $svnrev =~ s/^\$Revision:\s*//;
 $svnrev =~ s/\s*\$$//;
 my $version = "r$svnrev ($lastchdate)";
@@ -153,6 +172,7 @@ my $mktexfmtMode = 0;
 my $mktexfmtFirst = 1;
 
 my $status = &main();
+print_info("executable location: $0\n");
 print_info("exiting with status $status\n");
 exit $status;
 
@@ -1649,6 +1669,7 @@ Environment:
   thus all normal environment variables and search path rules for TeX/MF
   apply.
 
+Executable location: $0
 Report bugs to: tex-live\@tug.org
 TeX Live home page: <https://tug.org/texlive/>
 EOF
