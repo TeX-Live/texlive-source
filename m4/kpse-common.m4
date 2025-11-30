@@ -297,12 +297,12 @@ AC_DEFUN([KPSE_MSG_WARN],
 [AC_REQUIRE([_KPSE_MSG_WARN_PREPARE])[]dnl
 AC_MSG_WARN([$1])
 AS_IF([test "x$enable_missing" = xno],
-      [AC_MSG_ERROR([terminating.])])
+      [AC_MSG_ERROR([kpse_msg_warn: terminating rather than warning since we have disable-missing.])])
 ]) # KPSE_MSG_WARN
 
 # _KPSE_MSG_WARN_PREPARE
 # ----------------------
-# Internal subroutine.
+# Declare the --enable-missing option.
 AC_DEFUN([_KPSE_MSG_WARN_PREPARE],
 [AC_ARG_ENABLE([missing],
                AS_HELP_STRING([--disable-missing],

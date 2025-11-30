@@ -1,3 +1,8 @@
+2025-11-30  Karl Berry  <karl@freefriends.org>
+
+	* kpse-common.m4 (KPSE_MSG_WARN): explain termination due to
+	--disable-missing.
+
 2025-07-22  Karl Berry  <karl@freefriends.org>
 
 	* kpse-setup.m4: add tldbg debugging lines to help understand
