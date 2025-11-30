@@ -1,3 +1,10 @@
+2025-11-30  Karl Berry  <karl@freefriends.org>
+
+	* configure.ac (XETEX_MACOSX): check for enable_xetex=yes
+	as well as for ApplicationServices. Stemmed from original report at
+	https://tug.org/pipermail/tex-k/2025-November/004226.html.
+	* configure: regenerate.
+
 2025-11-11  Karl Berry  <karl@freefriends.org>
 
 	* configure.ac (KPSE_HARFBUZZ_FLAGS): enable if hitex is enabled.

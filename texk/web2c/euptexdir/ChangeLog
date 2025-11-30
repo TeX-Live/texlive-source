@@ -1,3 +1,9 @@
+2025-11-30  Karl Berry  <karl@freefriends.org>
+
+	* am/euptex.am (euptex_tests): depend on eup-basic.fmt
+	here to avoid race condition when running the tests. Define rules
+	to build it.
+
 2025-08-10  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* euptexextra.h, am/euptex.am: Remove ptex and ptexdir/.

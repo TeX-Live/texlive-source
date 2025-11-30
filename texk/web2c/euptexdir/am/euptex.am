@@ -90,6 +90,7 @@ EXTRA_DIST += \
 	euptexdir/ChangeLog \
 	euptexdir/EUPTEX.txt
 
+# emacs-page
 # e-upTeX Tests
 #
 euptex_tests = \
@@ -113,6 +114,22 @@ euptexdir/eupver.log euptexdir/upkcat.log \
 	euptexdir/euptex-ofm.log euptexdir/euptex-prim.log \
 	euptexdir/euptex-ucs.log euptexdir/euptex-widow.log: euptex$(EXEEXT)
 
+# Although not all the euptex tests depend on these files, several do,
+# and there's no harm in ensuring they are built first. The individual
+# tests also try to build them, but since the names are the same among
+# the tests, that's subject to the usual parallel build race condition.
+# So make them a dependency here.
+# 
+$(euptex_tests): eup-basic.fmt
+#
+eup-basic.fmt: eup-basic.tex
+	TEXMFCNF=$(srcdir)/../kpathsea TEXINPUTS=$(srcdir)/tests: \
+	  ./euptex -ini -etex eup-basic.tex
+	test -s eup-basic.fmt # just in case tex succeeded but no .fmt
+#
+eup-basic.tex: $(srcdir)/tests/dump-basic.tex
+	cp $srcdir/tests/dump-basic.tex ./eup-basic.tex
+
 EXTRA_DIST += $(euptex_tests)
 
 if EUPTEX
@@ -130,7 +147,6 @@ EXTRA_DIST += \
 	euptexdir/euptrip/euptrip.diffs \
 	euptexdir/euptrip/texmf.cnf
 DISTCLEANFILES += euptrip.diffs
-## euptexdir/pdfprimitive.test
 EXTRA_DIST += \
 	euptexdir/pdfprimitive.test \
 	euptexdir/tests/pdfprimitive-test.tex \

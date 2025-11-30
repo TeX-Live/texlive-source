@@ -182,6 +182,7 @@ EXTRA_DIST += \
 	uptexdir/COPYRIGHT.ja \
 	uptexdir/ChangeLog
 
+# emacs-page
 # upTeX Tests
 uptex_tests = \
 	uptexdir/uptriptest.test uptexdir/ptriptest.test \
@@ -232,6 +233,25 @@ uptexdir/sample.log: updvitype$(EXEEXT)
 uptexdir/yokotate.log uptexdir/skipjfmp.log \
 	uptexdir/newjfm.log uptexdir/uparse.log \
 	uptexdir/gkhuge.log uptexdir/gk256.log: uppltotf$(EXEEXT) uptftopl$(EXEEXT)
+
+# See comments in euptex.am, except we have to build multiple test fmts here.
+$(uptex_tests): up-basic.fmt up-basic-euc.fmt up-basic-sjis.fmt
+#
+# Must find some files in $(srcdir) to build the test fmts.
+uptex_ini = TEXMFCNF=$(srcdir)/../kpathsea TEXINPUTS=$(srcdir)/tests: ./uptex -ini
+#
+up-basic.fmt: up-basic.tex
+	$(uptex_ini) -kanji-internal=uptex -jobname=up-basic      up-basic
+	test -s up-basic-sjis.fmt
+up-basic-euc.fmt: up-basic.tex
+	$(uptex_ini) -kanji-internal=euc   -jobname=up-basic-euc  up-basic
+	test -s up-basic-euc.fmt
+up-basic-sjis.fmt: up-basic.tex
+	$(uptex_ini) -kanji-internal=sjis  -jobname=up-basic-sjis up-basic
+	test -s up-basic-euc.fmt
+#
+up-basic.tex: $(srcdir)/tests/dump-basic.tex
+	cp $srcdir/tests/dump-basic.tex ./up-basic.tex
 
 EXTRA_DIST += $(uptex_tests) $(upweb_tests)
 DISTCLEANFILES += $(upweb_programs:=.c) $(upweb_programs:=.h) \

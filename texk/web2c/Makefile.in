@@ -4480,6 +4480,7 @@ uptftopl_CPPFLAGS = $(uptex_cppflags)
 uptftopl_LDADD = $(uptex_ldadd)
 uptftopl_DEPENDENCIES = $(uptex_dependencies)
 
+# emacs-page
 # upTeX Tests
 uptex_tests = \
 	uptexdir/uptriptest.test uptexdir/ptriptest.test \
@@ -4502,6 +4503,9 @@ upweb_tests = uptexdir/upbibtex.test uptexdir/updvitype.test \
 	uptexdir/yokotate.test uptexdir/skipjfmp.test \
 	uptexdir/newjfm.test uptexdir/uparse.test uptexdir/gkhuge.test \
 	uptexdir/gk256.test
+#
+# Must find some files in $(srcdir) to build the test fmts.
+uptex_ini = TEXMFCNF=$(srcdir)/../kpathsea TEXINPUTS=$(srcdir)/tests: ./uptex -ini
 euptex_CPPFLAGS = $(PTEXENC_INCLUDES) $(AM_CPPFLAGS) \
 	-I$(srcdir)/libmd5 $(ZLIB_INCLUDES) $(am__append_132)
 
@@ -4547,6 +4551,7 @@ euptex_ch_srcs = \
 	tex-binpool.ch
 
 
+# emacs-page
 # e-upTeX Tests
 #
 euptex_tests = \
@@ -21955,6 +21960,22 @@ uptexdir/yokotate.log uptexdir/skipjfmp.log \
 	uptexdir/newjfm.log uptexdir/uparse.log \
 	uptexdir/gkhuge.log uptexdir/gk256.log: uppltotf$(EXEEXT) uptftopl$(EXEEXT)
 
+# See comments in euptex.am, except we have to build multiple test fmts here.
+$(uptex_tests): up-basic.fmt up-basic-euc.fmt up-basic-sjis.fmt
+#
+up-basic.fmt: up-basic.tex
+	$(uptex_ini) -kanji-internal=uptex -jobname=up-basic      up-basic
+	test -s up-basic-sjis.fmt
+up-basic-euc.fmt: up-basic.tex
+	$(uptex_ini) -kanji-internal=euc   -jobname=up-basic-euc  up-basic
+	test -s up-basic-euc.fmt
+up-basic-sjis.fmt: up-basic.tex
+	$(uptex_ini) -kanji-internal=sjis  -jobname=up-basic-sjis up-basic
+	test -s up-basic-euc.fmt
+#
+up-basic.tex: $(srcdir)/tests/dump-basic.tex
+	cp $srcdir/tests/dump-basic.tex ./up-basic.tex
+
 uptrip.diffs: uptex$(EXEEXT) dvitype$(EXEEXT) pltotf$(EXEEXT) tftopl$(EXEEXT)
 	$(triptrap_diffs) $@
 .PHONY: uptrip-clean
@@ -21994,6 +22015,22 @@ euptexdir/eupver.log euptexdir/upkcat.log \
 	euptexdir/euptex-kinsoku.log \
 	euptexdir/euptex-ofm.log euptexdir/euptex-prim.log \
 	euptexdir/euptex-ucs.log euptexdir/euptex-widow.log: euptex$(EXEEXT)
+
+# Although not all the euptex tests depend on these files, several do,
+# and there's no harm in ensuring they are built first. The individual
+# tests also try to build them, but since the names are the same among
+# the tests, that's subject to the usual parallel build race condition.
+# So make them a dependency here.
+# 
+$(euptex_tests): eup-basic.fmt
+#
+eup-basic.fmt: eup-basic.tex
+	TEXMFCNF=$(srcdir)/../kpathsea TEXINPUTS=$(srcdir)/tests: \
+	  ./euptex -ini -etex eup-basic.tex
+	test -s eup-basic.fmt # just in case tex succeeded but no .fmt
+#
+eup-basic.tex: $(srcdir)/tests/dump-basic.tex
+	cp $srcdir/tests/dump-basic.tex ./eup-basic.tex
 
 euptrip.diffs: euptex$(EXEEXT) dvitype$(EXEEXT) pltotf$(EXEEXT) tftopl$(EXEEXT)
 	$(triptrap_diffs) $@

@@ -1,3 +1,9 @@
+2025-11-30  Karl Berry  <karl@freefriends.org>
+
+	* am/uptex.am (uptex_tests): depend on up-basic{,-{euc,sjis}}.fmt
+	here to avoid race condition when running the tests. Define rules
+	to build them.
+
 2025-10.02  Andreas Scherer  <https://ascherer.github.io>
 
 	* upbibtex.ch: Minor improvements for TIE and WEAVE.
