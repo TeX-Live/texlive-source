@@ -85,7 +85,7 @@ const_string LUATEX_IHELP[] = {
     "   --kpathsea-debug=NUMBER       set path searching debugging flags according to the bits of NUMBER",
     "   --lua=FILE                    load and execute a lua initialization script",
     "   --luadebug                    enable lua debug library",
-    "   --[no-]mktex=FMT              disable/enable mktexFMT generation (FMT=tex/tfm)",
+    "   --[no-]mktex=FMT              disable/enable mktexFMT generation (FMT=tex/tfm/fmt)",
     "   --nosocket                    disable the lua socket library",
     "   --no-socket                   disable the lua socket library",
     "   --socket                      enable the lua socket library",
