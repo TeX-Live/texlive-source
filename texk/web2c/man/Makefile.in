@@ -815,6 +815,9 @@ testmans:
 	for m in $(srcdir)/*.man; do echo $$m; \
 	  $(MAKE) -s m=`basename $$m .man` testman || exit 1; done
 
+spell:
+	EXTRADICT=`realpath $(srcdir)/spell.add` myspell $(srcdir)/*.man
+
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:

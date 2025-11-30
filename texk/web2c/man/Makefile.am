@@ -127,5 +127,8 @@ testmans:
 	for m in $(srcdir)/*.man; do echo $$m; \
 	  $(MAKE) -s m=`basename $$m .man` testman || exit 1; done
 
+spell:
+	EXTRADICT=`realpath $(srcdir)/spell.add` myspell $(srcdir)/*.man
+
 EXTRA_DIST += \
 	spell.add

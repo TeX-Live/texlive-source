@@ -1,3 +1,7 @@
+2025-11-30  Karl Berry  <karl@freefriends.org>
+
+	* Makefile.am (spell): new target as hint for spellcheck.
+
 2025-09-29  Karl Berry  <karl@freefriends.org>
 
 	* tex.man: try to clarify command-line/first-line processing,
