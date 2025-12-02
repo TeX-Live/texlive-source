@@ -251,7 +251,7 @@ up-basic-sjis.fmt: up-basic.tex
 	test -s up-basic-euc.fmt
 #
 up-basic.tex: $(srcdir)/tests/dump-basic.tex
-	cp $srcdir/tests/dump-basic.tex ./up-basic.tex
+	cp $(srcdir)/tests/dump-basic.tex ./up-basic.tex
 
 EXTRA_DIST += $(uptex_tests) $(upweb_tests)
 DISTCLEANFILES += $(upweb_programs:=.c) $(upweb_programs:=.h) \

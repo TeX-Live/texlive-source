@@ -128,7 +128,7 @@ eup-basic.fmt: eup-basic.tex
 	test -s eup-basic.fmt # just in case tex succeeded but no .fmt
 #
 eup-basic.tex: $(srcdir)/tests/dump-basic.tex
-	cp $srcdir/tests/dump-basic.tex ./eup-basic.tex
+	cp $(srcdir)/tests/dump-basic.tex ./eup-basic.tex
 
 EXTRA_DIST += $(euptex_tests)
 

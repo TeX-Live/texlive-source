@@ -21974,7 +21974,7 @@ up-basic-sjis.fmt: up-basic.tex
 	test -s up-basic-euc.fmt
 #
 up-basic.tex: $(srcdir)/tests/dump-basic.tex
-	cp $srcdir/tests/dump-basic.tex ./up-basic.tex
+	cp $(srcdir)/tests/dump-basic.tex ./up-basic.tex
 
 uptrip.diffs: uptex$(EXEEXT) dvitype$(EXEEXT) pltotf$(EXEEXT) tftopl$(EXEEXT)
 	$(triptrap_diffs) $@
@@ -22030,7 +22030,7 @@ eup-basic.fmt: eup-basic.tex
 	test -s eup-basic.fmt # just in case tex succeeded but no .fmt
 #
 eup-basic.tex: $(srcdir)/tests/dump-basic.tex
-	cp $srcdir/tests/dump-basic.tex ./eup-basic.tex
+	cp $(srcdir)/tests/dump-basic.tex ./eup-basic.tex
 
 euptrip.diffs: euptex$(EXEEXT) dvitype$(EXEEXT) pltotf$(EXEEXT) tftopl$(EXEEXT)
 	$(triptrap_diffs) $@
