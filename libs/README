@@ -37,7 +37,7 @@ icu 76.1 - checked 27oct24 (requires C++17, e.g., g++13)
 libpaper 1.1.29 - checked 07jan24
   https://ftp.debian.org/debian/pool/main/libp/libpaper/
 
-libpng 1.6.51 - checked 24nov25
+libpng 1.6.52 - checked 04dec25
   https://sourceforge.net/projects/libpng/files/ - used by many
 
 lua 5.3.6 - checked 04oct20
