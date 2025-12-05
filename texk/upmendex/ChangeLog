@@ -1,3 +1,13 @@
+2025-12-05  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* version 1.22  Stable version.
+	* configure.ac: Bump version.
+	* main.c: Add command line option '--version'.
+	* tests/upmendex.test: Add tests for command line options.
+	Thank Ernst Reissner for the proposal.
+	https://github.com/t-tk/upmendex-package/issues/16
+	* fwrite.c: Better treatment of Ö,ö,Ő,ő in Estonian.
+
 2025-10-11  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* convert.c: Fix bug of out of bound read.

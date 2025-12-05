@@ -22,7 +22,7 @@ KpathseaSupportInfo kp_ist,kp_dict;
 
 int main(int argc, char **argv)
 {
-	int i,j,k,cc=0,startpagenum=-1,ecount=0,chkopt=1;
+	int i,j,k,cc=0,startpagenum=-1,ecount=0,chkopt=1,version=0;
 	const char *envbuff;
 	UVersionInfo icuVersion;
 	char icu_version[U_MAX_VERSION_STRING_LENGTH] = "";
@@ -147,12 +147,14 @@ int main(int argc, char **argv)
 
 			case '-':
 				if (strlen(argv[i])==2) chkopt=0;
-				if (strcmp(argv[i],"--help")!=0) break;
+				if (strcmp(argv[i],"--version")==0) version=1;
+				if (strcmp(argv[i],"--help")!=0 && strcmp(argv[i],"--version")!=0) break;
 
 			default:
 				fprintf(stderr,"upmendex - index processor, %s (%s).\n",VERSION, TL_VERSION);
 				fprintf(stderr," Copyright 2009 ASCII MEDIA WORKS, 2015-2025 TANAKA Takuji\n");
 				fprintf(stderr," using ICU version %s\n",icu_version);
+				if (version) exit(0);
 				fprintf(stderr,"usage:\n");
 				fprintf(stderr,"%% upmendex [-ilqrcgf] [-s sty] [-d dic] [-o ind] [-t log] [-p no] [--] [idx0 idx1 ...]\n");
 				fprintf(stderr,"options:\n");

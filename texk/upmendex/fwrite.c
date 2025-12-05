@@ -1061,16 +1061,22 @@ static void index_normalize(UChar *istr, UChar *ini, int *chset)
 		/* check Ö,ö versus Ő,ő for Hungarian
 		         Ø,ø versus Ö,ö for Danish, Norwegian
 		         Ö,ö versus Ø,ø,Ő,ő,Õ,õ for Finnish SFS 4600
-		         Ö,ö versus Ø,ø,Ő,ő,Ô,ô for Swedish */
+		         Ö,ö versus Ø,ø,Ő,ő,Ô,ô for Swedish
+		         Ö,ö versus Õ,õ for Estonian */
 		if (o_o_mode==0) {
 			strgth = ucol_getStrength(icu_collator);
 			ucol_setStrength(icu_collator, UCOL_PRIMARY);
 			strX[0] = 0x0D6;  strX[1] = 0x00; /* Ö */
 			strY[0] = 0x0D8;  strY[1] = 0x00; /* Ø */
 			strZ[0] = 0x04F;  strZ[1] = 0x00; /* O */
+			strW[0] = 0x0D5;  strW[1] = 0x00; /* Õ */
 			order  = ucol_strcoll(icu_collator, strZ, -1, strX, -1);
 			order1 = ucol_strcoll(icu_collator, strZ, -1, strY, -1);
-			if (order==UCOL_LESS || order1==UCOL_LESS) {
+			order2 = ucol_strcoll(icu_collator, strW, -1, strX, -1);
+			order3 = ucol_strcoll(icu_collator, strZ, -1, strW, -1);
+			if (order!=UCOL_EQUAL && order2!=UCOL_EQUAL && order3!=UCOL_EQUAL) {
+				o_o_mode = 20;
+			} else if (order==UCOL_LESS || order1==UCOL_LESS) {
 				o_o_mode = 2;
 			} else {
 				o_o_mode = 1;
@@ -1086,7 +1092,7 @@ static void index_normalize(UChar *istr, UChar *ini, int *chset)
 			order2 = ucol_strcoll(icu_collator, strY, -1, strZ, -1);
 			order3 = ucol_strcoll(icu_collator, strZ, -1, strX, -1);
 			order4 = ucol_strcoll(icu_collator, strY, -1, strX, -1);
-			strW[0] = 0x0D5;  strZ[1] = 0x00; /* Õ */
+			strW[0] = 0x0D5;  strW[1] = 0x00; /* Õ */
 			strY[0] = 0x0D4;  strY[1] = 0x00; /* Ô */
 			order5 = ucol_strcoll(icu_collator, strW, -1, strX, -1);
 			order6 = ucol_strcoll(icu_collator, strY, -1, strX, -1);
@@ -1120,8 +1126,13 @@ static void index_normalize(UChar *istr, UChar *ini, int *chset)
 		                     ch==0x0D8||ch==0x0F8||ch==0x0D5||ch==0x0F5)) || /* Ő,Ø,Õ */
 		    (o_o_mode==9 && (ch==0x150||ch==0x151||
 		                     ch==0x0D8||ch==0x0F8||ch==0x0D4||ch==0x0F4)) || /* Ő,Ø,Ô */
-		    (o_o_mode>=5 && o_o_mode<=9 && (ch==0x0D6||ch==0x0F6))) { /* Ö */
+		    ((o_o_mode>=5 && o_o_mode<=9 || o_o_mode==20)
+		                 && (ch==0x0D6||ch==0x0F6))) { /* Ö */
 			ini[0] = 0x0D6; /* Ö */
+			return;
+		}
+		if (o_o_mode==20 && (ch==0x0D5||ch==0x0F5)) { /* Õ */
+			ini[0] = 0x0D5; /* Õ */
 			return;
 		}
 	}
