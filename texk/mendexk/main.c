@@ -22,7 +22,7 @@ KpathseaSupportInfo kp_ist,kp_dict;
 
 int main(int argc, char **argv)
 {
-	int i,j,k,cc=0,startpagenum=-1,ecount=0,chkopt=1;
+	int i,j,k,cc=0,startpagenum=-1,ecount=0,chkopt=1,version=0;
 	const char *envbuff;
 	char *p;
 
@@ -173,11 +173,13 @@ int main(int argc, char **argv)
 				if (strlen(argv[i])==2) chkopt=0;
 				if (strcmp(argv[i],"--guess-input-enc"   )==0) infile_enc_auto=1;
 				if (strcmp(argv[i],"--no-guess-input-enc")==0) infile_enc_auto=0;
-				if (strcmp(argv[i],"--help")!=0) break;
+				if (strcmp(argv[i],"--version")==0) version=1;
+				if (strcmp(argv[i],"--help")!=0 && strcmp(argv[i],"--version")!=0) break;
 
 			default:
 				fprintf(stderr,"mendex - Japanese index processor, %s (%s) (%s).\n",VERSION, get_enc_string(), TL_VERSION);
 				fprintf(stderr," Copyright 2009 ASCII MEDIA WORKS, 2017-2025 Japanese TeX Development Community\n");
+				if (version) exit(0);
 				fprintf(stderr,"usage:\n");
 				fprintf(stderr,"%% mendex [-ilqrcgfEJSU] [-s sty] [-d dic] [-o ind] [-t log] [-p no] [-I enc] [--[no-]guess-input-enc] [--] [idx0 idx1 ...]\n");
 				fprintf(stderr,"options:\n");
