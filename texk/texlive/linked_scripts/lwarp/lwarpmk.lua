@@ -2,7 +2,7 @@
 
 -- Copyright 2016-2025 Brian Dunn
 
-printversion = "v0.919"
+printversion = "v0.920"
 requiredconfversion = "2" -- also at *lwarpmk.conf
 
 function printhelp ()
