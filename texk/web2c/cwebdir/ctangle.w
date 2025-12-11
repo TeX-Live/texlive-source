@@ -1187,7 +1187,7 @@ static eight_bits next_control;
 static void
 scan_repl( /* creates a replacement text */
 eight_bits t)
-{
+{ bool first_bracket=true; /* for cleaner output */
   sixteen_bits a; /* the current token */
   if (t==section_name) @<Insert the line number into |tok_mem|@>@;
   while (true) switch (a=get_next()) {
@@ -1196,7 +1196,7 @@ eight_bits t)
         that should be stored, or |continue| if |a| should be ignored,
         or |goto done| if |a| signals the end of this replacement text@>@;
       case ')': app_repl(a);
-        if (t==macro) app_repl(' ');
+        if (t==macro&&first_bracket) {app_repl(' '); first_bracket=false;}
         break;
       default: app_repl(a); /* store |a| in |tok_mem| */
     }

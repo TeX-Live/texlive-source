@@ -33,15 +33,15 @@
 #define colon_colon 06
 #define period_ast 026
 #define minus_gt_ast 027
-#define compress(c) if(loc++<=limit) return c
-#define xisalpha(c) (isalpha((int) (c) ) &&!ishigh(c) )
-#define xisdigit(c) (isdigit((int) (c) ) &&!ishigh(c) )
-#define xisspace(c) (isspace((int) (c) ) &&!ishigh(c) )
-#define xislower(c) (islower((int) (c) ) &&!ishigh(c) )
-#define xisupper(c) (isupper((int) (c) ) &&!ishigh(c) )
-#define xisxdigit(c) (isxdigit((int) (c) ) &&!ishigh(c) )
-#define isxalpha(c) ((c) =='_'||(c) =='$')
-#define ishigh(c) ((eight_bits) (c) > 0177)
+#define compress(c) if(loc++<=limit)return c
+#define xisalpha(c) (isalpha((int)(c))&&!ishigh(c))
+#define xisdigit(c) (isdigit((int)(c))&&!ishigh(c))
+#define xisspace(c) (isspace((int)(c))&&!ishigh(c))
+#define xislower(c) (islower((int)(c))&&!ishigh(c))
+#define xisupper(c) (isupper((int)(c))&&!ishigh(c))
+#define xisxdigit(c) (isxdigit((int)(c))&&!ishigh(c))
+#define isxalpha(c) ((c)=='_'||(c)=='$')
+#define ishigh(c) ((eight_bits)(c)> 0177)
 #define max_include_depth 10
 #define max_file_name_length 60
 #define cur_file file[include_depth]
@@ -49,8 +49,8 @@
 #define cur_line line[include_depth]
 #define web_file file[0]
 #define web_file_name file_name[0]
-#define length(c) (size_t) ((c+1) ->byte_start-(c) ->byte_start)
-#define print_id(c) term_write((c) ->byte_start,length(c) )
+#define length(c) (size_t)((c+1)->byte_start-(c)->byte_start)
+#define print_id(c) term_write((c)->byte_start,length(c))
 #define llink link
 #define rlink dummy.Rlink
 #define root name_dir->rlink
@@ -59,7 +59,7 @@
 #define harmless_message 1
 #define error_message 2
 #define fatal_message 3
-#define mark_harmless() if(history==spotless) history= harmless_message
+#define mark_harmless() if(history==spotless)history= harmless_message
 #define mark_error() history= error_message
 #define confusion(s) fatal("! This can't happen: ",s)
 #define show_banner flags['b']
@@ -69,7 +69,7 @@
 #define make_xrefs flags['x']
 #define update_terminal() fflush(stdout)
 #define new_line() putchar('\n')
-#define term_write(a,b) fflush(stdout) ,fwrite(a,sizeof(char) ,b,stdout)
+#define term_write(a,b) fflush(stdout),fwrite(a,sizeof(char),b,stdout)
 #define buf_size 200
 #define longest_name 10000
 #define long_buf_size (buf_size+longest_name)
@@ -101,7 +101,7 @@
 #define verbatim 4
 #define max_files 256
 #define C_printf(c,a) fprintf(C_file,c,a)
-#define C_putc(c) fputc((int) (c) ,C_file)
+#define C_putc(c) fputc((int)(c),C_file)
 #define translit_length 10
 #define ignore 00
 #define ord 0302
@@ -114,11 +114,11 @@
 #define section_name 0311
 #define new_section 0312
 #define app_repl(c) { \
-if(tok_ptr==tok_mem_end) overflow("token") ; \
-else*(tok_ptr++) = (eight_bits) c; \
+if(tok_ptr==tok_mem_end)overflow("token"); \
+else*(tok_ptr++)= (eight_bits)c; \
 }
-#define store_id(a) a= id_lookup(id_first,id_loc,'\0') -name_dir; \
-app_repl((a/0400) +0200) ; \
+#define store_id(a) a= id_lookup(id_first,id_loc,'\0')-name_dir; \
+app_repl((a/0400)+0200); \
 app_repl(a%0400)
 #define keep_digit_separators flags['k']
 
@@ -1230,7 +1230,7 @@ return c;
 static void
 scan_repl(
 eight_bits t)
-{
+{bool first_bracket= true;
 sixteen_bits a;
 if(t==section_name)/*85:*/
 #line 1218 "ctangle.w"
@@ -1420,7 +1420,7 @@ case new_section:goto done;
 #line 1197 "ctangle.w"
 
 case')':app_repl(a);
-if(t==macro)app_repl(' ');
+if(t==macro&&first_bracket){app_repl(' ');first_bracket= false;}
 break;
 default:app_repl(a);
 }

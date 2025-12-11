@@ -32,15 +32,15 @@
 #define colon_colon 06
 #define period_ast 026
 #define minus_gt_ast 027
-#define compress(c) if(loc++<=limit) return c
-#define xisalpha(c) (isalpha((int) (c) ) &&!ishigh(c) )
-#define xisdigit(c) (isdigit((int) (c) ) &&!ishigh(c) )
-#define xisspace(c) (isspace((int) (c) ) &&!ishigh(c) )
-#define xislower(c) (islower((int) (c) ) &&!ishigh(c) )
-#define xisupper(c) (isupper((int) (c) ) &&!ishigh(c) )
-#define xisxdigit(c) (isxdigit((int) (c) ) &&!ishigh(c) )
-#define isxalpha(c) ((c) =='_'||(c) =='$')
-#define ishigh(c) ((eight_bits) (c) > 0177)
+#define compress(c) if(loc++<=limit)return c
+#define xisalpha(c) (isalpha((int)(c))&&!ishigh(c))
+#define xisdigit(c) (isdigit((int)(c))&&!ishigh(c))
+#define xisspace(c) (isspace((int)(c))&&!ishigh(c))
+#define xislower(c) (islower((int)(c))&&!ishigh(c))
+#define xisupper(c) (isupper((int)(c))&&!ishigh(c))
+#define xisxdigit(c) (isxdigit((int)(c))&&!ishigh(c))
+#define isxalpha(c) ((c)=='_'||(c)=='$')
+#define ishigh(c) ((eight_bits)(c)> 0177)
 #define max_include_depth 10
 #define max_file_name_length 60
 #define cur_file file[include_depth]
@@ -48,8 +48,8 @@
 #define cur_line line[include_depth]
 #define web_file file[0]
 #define web_file_name file_name[0]
-#define length(c) (size_t) ((c+1) ->byte_start-(c) ->byte_start)
-#define print_id(c) term_write((c) ->byte_start,length(c) )
+#define length(c) (size_t)((c+1)->byte_start-(c)->byte_start)
+#define print_id(c) term_write((c)->byte_start,length(c))
 #define llink link
 #define rlink dummy.Rlink
 #define root name_dir->rlink
@@ -58,7 +58,7 @@
 #define harmless_message 1
 #define error_message 2
 #define fatal_message 3
-#define mark_harmless() if(history==spotless) history= harmless_message
+#define mark_harmless() if(history==spotless)history= harmless_message
 #define mark_error() history= error_message
 #define confusion(s) fatal("! This can't happen: ",s)
 #define show_banner flags['b']
@@ -68,7 +68,7 @@
 #define make_xrefs flags['x']
 #define update_terminal() fflush(stdout)
 #define new_line() putchar('\n')
-#define term_write(a,b) fflush(stdout) ,fwrite(a,sizeof(char) ,b,stdout)
+#define term_write(a,b) fflush(stdout),fwrite(a,sizeof(char),b,stdout)
 #define buf_size 200
 #define longest_name 10000
 #define long_buf_size (buf_size+longest_name)
@@ -76,20 +76,20 @@
 #define max_names 5000
 #define max_sections 2000
 #define lines_dont_match (change_limit-change_buffer!=limit-buffer|| \
-strncmp(buffer,change_buffer,(size_t) (limit-buffer) ) !=0)
+strncmp(buffer,change_buffer,(size_t) (limit-buffer))!=0)
 #define if_section_start_make_pending(b)  \
 *limit= '!'; \
-for(loc= buffer;xisspace(*loc) ;loc++) ; \
+for(loc= buffer;xisspace(*loc);loc++); \
 *limit= ' '; \
-if(*loc=='@'&&(xisspace(*(loc+1) ) ||*(loc+1) =='*') ) change_pending= b
+if(*loc=='@'&&(xisspace(*(loc+1))||*(loc+1)=='*'))change_pending= b
 #define too_long() {include_depth--; \
-err_print("! Include file name too long") ;goto restart;}
+err_print("! Include file name too long");goto restart;}
 #define hash_size 353
-#define first_chunk(p) ((p) ->byte_start+2)
-#define prefix_length(p) (size_t) ((eight_bits) *((p) ->byte_start) *256+ \
-(eight_bits) *((p) ->byte_start+1) )
-#define set_prefix_length(p,m) (*((p) ->byte_start) = (char) ((m) /256) , \
-*((p) ->byte_start+1) = (char) ((m) %256) )
+#define first_chunk(p) ((p)->byte_start+2)
+#define prefix_length(p) (size_t)((eight_bits)*((p)->byte_start)*256+ \
+(eight_bits)*((p)->byte_start+1))
+#define set_prefix_length(p,m) (*((p)->byte_start)= (char)((m)/256), \
+*((p)->byte_start+1)= (char)((m)%256))
 #define less 0
 #define equal 1
 #define greater 2

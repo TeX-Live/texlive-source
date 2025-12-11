@@ -1,3 +1,9 @@
+2025-12-11  Andreas Scherer  <https://ascherer.github.io>
+
+	* common.c,
+	* ctangle.c,
+	* ctangle.w: Avoid spurious spaces in macro output.
+
 2025-07-27  Andreas Scherer  <https://ascherer.github.io>
 
 	* Makefile,
