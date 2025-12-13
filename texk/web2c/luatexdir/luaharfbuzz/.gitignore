@@ -1,0 +1,12 @@
+*.la
+*.lo
+*.o
+*.so
+.libs/*
+build/*
+luacov.report.out
+luacov.stats.out
+.luacheckcache
+api
+*.src.rock
+docs

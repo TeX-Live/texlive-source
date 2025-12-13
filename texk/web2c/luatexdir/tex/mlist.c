@@ -3536,6 +3536,7 @@ static scaled math_kern_at(internal_font_number f, int c, int side, int v)
         /*tex Not reached: */
         confusion("math_kern_at");
         kerns_heights = NULL;
+        exit(1);
     }
     if (v < kerns_heights[0])
         return kerns_heights[1];

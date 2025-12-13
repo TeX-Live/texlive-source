@@ -2545,7 +2545,10 @@ static void finish_displayed_math(boolean l, pointer eqno_box, pointer p)
         g2 = below_display_short_skip_code;
        }
     } else {
-      if ((d + line_s <= pre_display_size_par) || ((! dir_math_save && l) || (dir_math_save && ! l))) {
+      boolean math_and_par_reversed = math_and_text_reversed_p();
+      if ((d + line_s <= pre_display_size_par) || (eqno_box != null
+              && ((! math_and_par_reversed && l)
+              || (math_and_par_reversed && ! l)))) {
         /*tex not enough clearance */
         g1 = above_display_skip_code;
         g2 = below_display_skip_code;

@@ -1127,9 +1127,10 @@ void lua_initialize(int ac, char **av)
                 exit(1);
             }
             init_tex_table(Luas);
-            if (lua_pcall(Luas, 0, 0, 0)) {
+            lua_pushcfunction(Luas, lua_traceback);
+            lua_insert(Luas, -2);
+            if (lua_pcall(Luas, 0, 0, -2)) {
                 fprintf(stdout, "%s\n", lua_tostring(Luas, -1));
-                lua_traceback(Luas);
              /*tex lua_close(Luas); */
                 exit(1);
             } else {
@@ -1138,6 +1139,7 @@ void lua_initialize(int ac, char **av)
                 /*tex lua_close(Luas); */
                 exit(0);
             }
+            lua_remove(Luas, -1);
         }
         /*tex a normal tex run */
         init_tex_table(Luas);
@@ -1149,11 +1151,13 @@ void lua_initialize(int ac, char **av)
             fprintf(stdout, "%s\n", lua_tostring(Luas, -1));
             exit(1);
         }
-        if (lua_pcall(Luas, 0, 0, 0)) {
+        lua_pushcfunction(Luas, lua_traceback);
+        lua_insert(Luas, -2);
+        if (lua_pcall(Luas, 0, 0, -2)) {
             fprintf(stdout, "%s\n", lua_tostring(Luas, -1));
-            lua_traceback(Luas);
             exit(1);
         }
+        lua_remove(Luas, -1);
         if (!input_name) {
             get_lua_string("texconfig", "jobname", &input_name);
         }

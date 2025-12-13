@@ -1,0 +1,54 @@
+name: "Build + Deploy"
+
+on:
+  push:
+    branches: [ main ]
+    tags: [ "v*.*.*" ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        luaVersion: ["5.3", "5.4"]
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Install Harfbuzz
+      run: sudo apt-get install libharfbuzz0b libharfbuzz-dev libharfbuzz-subset0
+
+    - uses: actions/checkout@master
+
+    - uses: leafo/gh-actions-lua@master
+      with:
+        luaVersion: ${{ matrix.luaVersion }}
+
+    - uses: leafo/gh-actions-luarocks@master
+
+    - name: Install Lua dependencies
+      run: |
+        luarocks install busted
+        luarocks install luacheck
+        luarocks install ldoc
+
+    - name: build
+      run: make build
+
+    - name: test
+      run: make test
+
+    - name: lint
+      run: make lint
+
+    - name: docs
+      run: make doc
+
+    - name: deploy docs
+      if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && matrix.luaVersion == '5.4' }}
+      uses: peaceiris/actions-gh-pages@v4
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./docs

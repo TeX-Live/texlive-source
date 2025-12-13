@@ -2,18 +2,18 @@ rockspec_format = "3.0"
 package = "luaharfbuzz"
 version = "scm-1"
 source = {
-  url = "git://github.com/ufytex/luaharfbuzz"
+  url = "git://github.com/harfbuzz/luaharfbuzz"
+}
+dependencies = {
+  "lua >= 5.3"
 }
 description = {
   summary = "Lua bindings for the Harfbuzz text shaping library",
-  homepage = "https://github.com/ufytex/luaharfbuzz",
+  homepage = "https://github.com/harfbuzz/luaharfbuzz",
   license = "MIT",
   maintainer = "Deepak Jois <deepak.jois@gmail.com>",
-  issues_url = "https://github.com/ufytex/luaharfbuzz/issues",
+  issues_url = "https://github.com/harfbuzz/luaharfbuzz/issues",
   labels = {"unicode", "fonts"}
-}
-dependencies = {
-  "lua >= 5.2"
 }
 build = {
   type = "builtin",
@@ -21,22 +21,33 @@ build = {
     harfbuzz ="src/harfbuzz.lua",
     luaharfbuzz= {
       sources = {
-      "src/luaharfbuzz/luaharfbuzz.c",
-      "src/luaharfbuzz/blob.c",
-      "src/luaharfbuzz/face.c",
-      "src/luaharfbuzz/font.c",
-      "src/luaharfbuzz/buffer.c",
-      "src/luaharfbuzz/feature.c",
-      "src/luaharfbuzz/tag.c",
-      "src/luaharfbuzz/ot.c",
-      "src/luaharfbuzz/unicode.c",
-      "src/luaharfbuzz/script.c",
-      "src/luaharfbuzz/direction.c",
-      "src/luaharfbuzz/language.c",
-      "src/luaharfbuzz/variation.c",
-      "src/luaharfbuzz/class_utils.c"
+        "src/luaharfbuzz/luaharfbuzz.c",
+        "src/luaharfbuzz/blob.c",
+        "src/luaharfbuzz/face.c",
+        "src/luaharfbuzz/font.c",
+        "src/luaharfbuzz/buffer.c",
+        "src/luaharfbuzz/feature.c",
+        "src/luaharfbuzz/tag.c",
+        "src/luaharfbuzz/ot.c",
+        "src/luaharfbuzz/unicode.c",
+        "src/luaharfbuzz/set.c",
+        "src/luaharfbuzz/script.c",
+        "src/luaharfbuzz/direction.c",
+        "src/luaharfbuzz/language.c",
+        "src/luaharfbuzz/variation.c",
+        "src/class_utils.c",
       },
       libraries = {"harfbuzz"},
+      incdirs = {"$(HARFBUZZ_INCDIR)/harfbuzz"},
+      libdirs = {"$(HARFBUZZ_LIBDIR)"}
+    },
+    luaharfbuzzsubset = {
+      sources = {
+        "src/luaharfbuzzsubset/luaharfbuzzsubset.c",
+        "src/luaharfbuzzsubset/subset-input.c",
+        "src/class_utils.c",
+      },
+      libraries = {"harfbuzz-subset"},
       incdirs = {"$(HARFBUZZ_INCDIR)/harfbuzz"},
       libdirs = {"$(HARFBUZZ_LIBDIR)"}
     }

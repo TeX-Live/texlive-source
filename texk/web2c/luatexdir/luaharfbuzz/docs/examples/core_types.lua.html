@@ -27,6 +27,10 @@
 <h1>luaharfbuzz</h1>
 
 
+<ul>
+  <li><a href="../index.html">Index</a></li>
+</ul>
+
 
 
 <h2>Examples</h2>
@@ -35,7 +39,8 @@
 </ul>
 <h2>Modules</h2>
 <ul class="nowrap">
-  <li><a href="../index.html">harfbuzz</a></li>
+  <li><a href="../modules/harfbuzz.html">harfbuzz</a></li>
+  <li><a href="../modules/harfbuzzsubset.html">harfbuzzsubset</a></li>
 </ul>
 
 </div>
@@ -48,60 +53,60 @@
 <span class="keyword">local</span> serpent  = <span class="global">require</span>(<span class="string">'serpent'</span>) <span class="comment">-- luarocks install serpent
 </span>
 <span class="comment">-- Harfbuzz API Version
-</span><span class="global">print</span>(<span class="string">"Harfbuzz API version"</span>, harfbuzz.version())
+</span><span class="global">print</span>(<span class="string">"Harfbuzz API version"</span>, harfbuzz.<span class="function-name">version</span>())
 
 <span class="comment">-- Shapers available
-</span><span class="global">print</span>(<span class="string">"Shapers:"</span>, serpent.line({ harfbuzz.shapers() }, {comment = <span class="keyword">false</span>}))
+</span><span class="global">print</span>(<span class="string">"Shapers:"</span>, serpent.<span class="function-name">line</span>({ harfbuzz.<span class="function-name">shapers</span>() }, {comment = <span class="keyword">false</span>}))
 
 <span class="comment">-- harfbuzz.Face
-</span><span class="keyword">local</span> face = harfbuzz.Face.new(<span class="string">'../fonts/notonastaliq.ttf'</span>)
-<span class="global">print</span>(<span class="string">'\nFace upem = '</span>..face:get_upem())
+</span><span class="keyword">local</span> face = harfbuzz.Face.<span class="function-name">new</span>(<span class="string">'../fonts/notonastaliq.ttf'</span>)
+<span class="global">print</span>(<span class="string">'\nFace upem = '</span>..face:<span class="function-name">get_upem</span>())
 
 <span class="comment">-- harfbuzz.Font
-</span><span class="keyword">local</span> font = harfbuzz.Font.new(face)
-<span class="keyword">local</span> xs, xy = font:get_scale()
+</span><span class="keyword">local</span> font = harfbuzz.Font.<span class="function-name">new</span>(face)
+<span class="keyword">local</span> xs, xy = font:<span class="function-name">get_scale</span>()
 <span class="global">print</span>(<span class="string">"\nDefault font scale = X: "</span>..xs..<span class="string">", Y: "</span>..xy)
 
 <span class="comment">-- harfbuzz.Buffer
 </span><span class="keyword">local</span> text = <span class="string">"یہ"</span> <span class="comment">-- U+06CC U+06C1
-</span><span class="keyword">local</span> buf = harfbuzz.Buffer.new()
-buf:add_utf8(text)
+</span><span class="keyword">local</span> buf = harfbuzz.Buffer.<span class="function-name">new</span>()
+buf:<span class="function-name">add_utf8</span>(text)
 
 <span class="comment">-- harfbuzz.shape (Shapes text)
 </span><span class="global">print</span>(<span class="string">"\nShaping '"</span>..text..<span class="string">"' set with Noto Nastaliq Urdu"</span>)
-harfbuzz.shape(font, buf, { language = harfbuzz.Language.new(<span class="string">"urd"</span>), script = harfbuzz.Script.new(<span class="string">"Arab"</span>), direction = harfbuzz.Direction.RTL})
+harfbuzz.<span class="function-name">shape</span>(font, buf, { language = harfbuzz.Language.<span class="function-name">new</span>(<span class="string">"urd"</span>), script = harfbuzz.Script.<span class="function-name">new</span>(<span class="string">"Arab"</span>), direction = harfbuzz.Direction.RTL})
 
-<span class="keyword">local</span> glyphs = buf:get_glyphs()
+<span class="keyword">local</span> glyphs = buf:<span class="function-name">get_glyphs</span>()
 <span class="global">print</span>(<span class="string">"No. of glyphs"</span>, #glyphs)
-<span class="global">print</span>(serpent.line(glyphs, {comment = <span class="keyword">false</span>}))
+<span class="global">print</span>(serpent.<span class="function-name">line</span>(glyphs, {comment = <span class="keyword">false</span>}))
 
-<span class="keyword">local</span> opts = { language = harfbuzz.Language.new(<span class="string">"eng"</span>), script = harfbuzz.Script.new(<span class="string">"Latn"</span>), direction = harfbuzz.Direction.LTR }
-<span class="keyword">local</span> amiri_face = harfbuzz.Face.new(<span class="string">'../fonts/amiri-regular.ttf'</span>)
-<span class="keyword">local</span> amiri_font = harfbuzz.Font.new(amiri_face)
+<span class="keyword">local</span> opts = { language = harfbuzz.Language.<span class="function-name">new</span>(<span class="string">"eng"</span>), script = harfbuzz.Script.<span class="function-name">new</span>(<span class="string">"Latn"</span>), direction = harfbuzz.Direction.LTR }
+<span class="keyword">local</span> amiri_face = harfbuzz.Face.<span class="function-name">new</span>(<span class="string">'../fonts/amiri-regular.ttf'</span>)
+<span class="keyword">local</span> amiri_font = harfbuzz.Font.<span class="function-name">new</span>(amiri_face)
 
 <span class="comment">-- shaping '123' w/o features
 </span><span class="global">print</span>(<span class="string">"\nShaping '123' set with Amiri Regular and no features"</span>)
-buf= harfbuzz.Buffer.new()
-buf:add_utf8(<span class="string">"123"</span>)
-harfbuzz.shape(amiri_font, buf, opts)
-glyphs = buf:get_glyphs()
-<span class="global">print</span>(serpent.line(glyphs, {comment = <span class="keyword">false</span>}))
+buf= harfbuzz.Buffer.<span class="function-name">new</span>()
+buf:<span class="function-name">add_utf8</span>(<span class="string">"123"</span>)
+harfbuzz.<span class="function-name">shape</span>(amiri_font, buf, opts)
+glyphs = buf:<span class="function-name">get_glyphs</span>()
+<span class="global">print</span>(serpent.<span class="function-name">line</span>(glyphs, {comment = <span class="keyword">false</span>}))
 
 <span class="comment">-- shaping '123' with '+numr' (numerators)
 </span><span class="global">print</span>(<span class="string">"\nShaping '123' set with Amiri Regular with 'numr' feature turned on"</span>)
-buf= harfbuzz.Buffer.new()
-buf:add_utf8(<span class="string">"123"</span>)
+buf= harfbuzz.Buffer.<span class="function-name">new</span>()
+buf:<span class="function-name">add_utf8</span>(<span class="string">"123"</span>)
 opts.features = <span class="string">"+numr"</span>
-harfbuzz.shape(amiri_font, buf, opts)
-glyphs = buf:get_glyphs()
-<span class="global">print</span>(serpent.line(glyphs, {comment = <span class="keyword">false</span>}))</pre>
+harfbuzz.<span class="function-name">shape</span>(amiri_font, buf, opts)
+glyphs = buf:<span class="function-name">get_glyphs</span>()
+<span class="global">print</span>(serpent.<span class="function-name">line</span>(glyphs, {comment = <span class="keyword">false</span>}))</pre>
 
 
 </div> <!-- id="content" -->
 </div> <!-- id="main" -->
 <div id="about">
-<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.6</a></i>
-<i style="float:right;">Last updated 2019-07-31 18:39:39 </i>
+<i>generated by <a href="http://github.com/lunarmodules/LDoc">LDoc 1.5.0</a></i>
+<i style="float:right;">Last updated 2025-11-28 09:40:52 </i>
 </div> <!-- id="about" -->
 </div> <!-- id="container" -->
 </body>

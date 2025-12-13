@@ -4,7 +4,7 @@
 ## Copyright 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
-## LuaTeX and LuaJITTeX 
+## LuaTeX and LuaJITTeX
 ## LuaHBTeX and LuaJITHBTex
 if LUATEX
 bin_PROGRAMS += luatex
@@ -94,11 +94,11 @@ luajittex_LDFLAGS = -export-dynamic $(LUAJIT_LDEXTRA)
 luahbtex_LDFLAGS = -export-dynamic
 luajithbtex_LDFLAGS = -export-dynamic $(LUAJIT_LDEXTRA)
 
-luatex_postldadd = libmplibcore.a 
+luatex_postldadd = libmplibcore.a
 luatex_postldadd += $(ZZIPLIB_LIBS) $(LIBPNG_LIBS) $(PPLIB_LIBS) $(ZLIB_LIBS)
 luatex_postldadd += $(LDADD) libmputil.a libunilib.a libmd5.a $(lua_socketlibs)
 
-luahbtex_postldadd = libmplibcore.a 
+luahbtex_postldadd = libmplibcore.a
 luahbtex_postldadd += $(ZZIPLIB_LIBS) $(LIBPNG_LIBS) $(HARFBUZZ_LIBS) $(GRAPHITE2_LIBS) $(PPLIB_LIBS) $(ZLIB_LIBS)
 luahbtex_postldadd += $(LDADD) libmputil.a libunilib.a libmd5.a $(lua_socketlibs)
 
@@ -106,8 +106,8 @@ luahbtex_postldadd += $(LDADD) libmputil.a libunilib.a libmd5.a $(lua_socketlibs
 luatex_LDADD = libluatex.a libluatexspecific.a libluatex.a libff.a libluamisc.a libluasocket.a libluaffi.a  $(LUA_LIBS) $(luatex_postldadd)
 luajittex_LDADD = libluajittex.a libluajittexspecific.a libluajittex.a libff.a libluajitmisc.a libluajitsocket.a   $(LUAJIT_LIBS) $(luatex_postldadd)
 
-luahbtex_LDADD = libluatex.a libluahbtexspecific.a libluatex.a libff.a libluamisc.a libluasocket.a libluaffi.a  libluaharfbuzz.a $(LUA_LIBS) $(luahbtex_postldadd)
-luajithbtex_LDADD = libluajittex.a libluajithbtexspecific.a libluajittex.a libff.a libluajitmisc.a libluajitsocket.a libluajitharfbuzz.a $(LUAJIT_LIBS) $(luahbtex_postldadd)
+luahbtex_LDADD = libluatex.a libluahbtexspecific.a libluatex.a libff.a libluamisc.a libluasocket.a libluaffi.a  libluaharfbuzz.a libluaharfbuzzsubset.a $(LUA_LIBS) $(luahbtex_postldadd)
+luajithbtex_LDADD = libluajittex.a libluajithbtexspecific.a libluajittex.a libff.a libluajitmisc.a libluajitsocket.a libluajitharfbuzz.a libluajitharfbuzzsubset.a $(LUAJIT_LIBS) $(luahbtex_postldadd)
 
 
 #not here ?
@@ -119,8 +119,8 @@ luatex_DEPENDENCIES = $(luatex_depend) libluatex.a libluatexspecific.a
 luajittex_DEPENDENCIES = $(luatex_depend) libluajittex.a libluajittexspecific.a
 
 luahbtex_depend = $(proglib) $(KPATHSEA_DEPEND) $(LIBPNG_DEPEND) libmputil.a libmd5.a
-luahbtex_DEPENDENCIES = $(luahbtex_depend) libluatex.a libluahbtexspecific.a libluaharfbuzz.a
-luajithbtex_DEPENDENCIES = $(luatex_depend) libluajittex.a libluajithbtexspecific.a libluajitharfbuzz.a
+luahbtex_DEPENDENCIES = $(luahbtex_depend) libluatex.a libluahbtexspecific.a libluaharfbuzz.a libluaharfbuzzsubset.a
+luajithbtex_DEPENDENCIES = $(luatex_depend) libluajittex.a libluajithbtexspecific.a libluajitharfbuzz.a libluajitharfbuzzsubset.a
 
 
 
@@ -147,7 +147,7 @@ luatex_sources = \
 	mplibdir/lmplib.c
 
 EXTRA_DIST += \
-	$(luatex_sources) 
+	$(luatex_sources)
 
 call_luatex_CPPFLAGS = -DEXEPROG=\"luatex.exe\"
 nodist_call_luatex_SOURCES = callexe.c

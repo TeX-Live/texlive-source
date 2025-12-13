@@ -1,3 +1,17 @@
+2025-12-06  Luigi Scarso  <luigi.scarso@gmail.com>
+	* set_macro needs to check if the space is the only character
+	  after a backslash before removing a "trailing" space
+	  (thanks to Udi Fogiel and H.Hagen)
+	* fixed wrong spacing around display with \matheqdirmode=1. WORK IN PROGRESS (Udi Fogiel)
+	* fixed Errors in "texlua" do not print a traceback (Max Chernoff)
+
+
+
+	
+2025-09-23  Luigi Scarso  <luigi.scarso@gmail.com>
+	* Fixed scan_keywordcs typo in the manual  (Max Chernoff)
+
+
 2025-09-19  Luigi Scarso  <luigi.scarso@gmail.com>
 	* Included in writeimg.c the correct header  <kpathsea/absolute.h>
 	  for kpse_absolute_p 

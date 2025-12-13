@@ -1,0 +1,24 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "gomain",
+            "type": "shell",
+            "command": "luarocks --local make luaharfbuzz-1.1.0-1.rockspec HARFBUZZ_INCDIR=/opt/homebrew/Cellar/harfbuzz/11.3.3/include HARFBUZZ_LIBDIR=/opt/homebrew/Cellar/harfbuzz/11.3.3/lib",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+             "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared",
+                "showReuseMessage": true,
+                "clear": true
+            }
+        }
+    ]
+}

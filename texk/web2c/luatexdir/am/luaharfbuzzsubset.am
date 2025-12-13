@@ -1,0 +1,30 @@
+## texk/web2c/luatexdir/am/luaharfbuzzsubset.am: Makefile fragment for luaharfbuzzsubset.
+##
+## Copyright (C) 2019 Khaled Hosny
+## You may freely use, modify and/or distribute this file.
+
+## luaharfbuzzsubset
+##
+EXTRA_LIBRARIES += libluaharfbuzzsubset.a libluajitharfbuzzsubset.a
+
+libluaharfbuzzsubset_a_DEPENDENCIES = $(HARFBUZZ_DEPEND) $(GRAPHITE2_DEPEND)
+libluajitharfbuzzsubset_a_DEPENDENCIES = $(HARFBUZZ_DEPEND) $(GRAPHITE2_DEPEND)
+
+$(libluaharfbuzzsubset_a_OBJECTS): $(LUA_DEPEND)
+$(libluajitharfbuzzsubset_a_OBJECTS): $(LUAJIT_DEPEND)
+
+
+libluaharfbuzzsubset_a_CPPFLAGS = $(AM_CPPFLAGS) $(LUA_INCLUDES) $(HARFBUZZ_INCLUDES) $(GRAPHITE2_INCLUDES)
+libluajitharfbuzzsubset_a_CPPFLAGS = $(AM_CPPFLAGS) $(LUAJIT_INCLUDES) $(LUAJIT_DEFINES) $(HARFBUZZ_INCLUDES) $(GRAPHITE2_INCLUDES)
+libluajitharfbuzzsubset_a_CPPFLAGS += -DLuajitTeX
+
+libluaharfbuzzsubset_a_CFLAGS = # $(WARNING_CFLAGS)
+libluajitharfbuzzsubset_a_CFLAGS = # $(WARNING_CFLAGS)
+
+libluaharfbuzzsubset_a_SOURCES = \
+	luatexdir/luaharfbuzz/src/luaharfbuzzsubset/luaharfbuzzsubset.c \
+	luatexdir/luaharfbuzz/src/luaharfbuzzsubset/subset-input.c
+
+libluajitharfbuzzsubset_a_SOURCES = $(libluaharfbuzzsubset_a_SOURCES)
+
+

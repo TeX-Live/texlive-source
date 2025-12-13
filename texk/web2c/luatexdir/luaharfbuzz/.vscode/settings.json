@@ -1,0 +1,10 @@
+{
+    "files.associations": {
+        "*.html": "html",
+        "*.tmpl": "gohtml",
+        "*.mpiv": "metapost",
+        "luaharfbuzz.h": "c",
+        "hb.h": "c",
+        "hb-subset.h": "c"
+    }
+}

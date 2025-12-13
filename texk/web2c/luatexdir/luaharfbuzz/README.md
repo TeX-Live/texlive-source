@@ -1,3 +1,5 @@
+[![Build + Deploy](https://github.com/harfbuzz/luaharfbuzz/actions/workflows/ci.yml/badge.svg)](https://github.com/harfbuzz/luaharfbuzz/actions/workflows/ci.yml)
+
 # _luaharfbuzz_
 
 Lua bindings for [Harfbuzz].
@@ -20,17 +22,18 @@ Pango, Firefox, Chromium, XeTeX and LibreOffice.
 
 _luaharfbuzz_ provides bindings for the most common types in Harfbuzz. The
 initial motivation for building it was to use Harfbuzz with the [LuaTeX]
-typesetting system. However, the module isn’t tied to LuaTeX in any way. It
+typesetting system. However, the module isn’t tied to LuaTeX. It
 can be used with any Lua codebase.
 
-luaharfbuzz is currently being used inside [HarfTeX], a TeX engine built
-on top of LuaTeX and designed to use Harfbuzz for shaping text. For more
-details read this TUGboat journal article titled [Bringing world scripts to LuaTeX: The
-HarfBuzz experiment][tugboat-article]
+As of 2020, luaharfbuzz is bundled with [LuaTeX]. Additional support to use
+the HarfBuzz renderer with LuaLaTeX and other formats is available via [luaotfload]. Read more:
 
-[HarfTeX]: https://github.com/khaledhosny/harftex
-[tugboat-article]: https://tug.org/TUGboat/tb40-1/tb124hosny-harfbuzz.pdf
+* [TUG 2020 — Marcel Krüger — HarfBuzz in LuaLaTeX](https://www.youtube.com/watch?v=xPj6vNo8exY&t=2120s)
+* [Typesetting Bangla script with LuaLaTeX](http://tug.org/TUGboat/tb41-1/tb127fischer-bangla.pdf)
+* [Bringing world scripts to LuaTeX: The HarfBuzz experiment](https://tug.org/TUGboat/tb40-1/tb124hosny-harfbuzz.pdf)
+
 [LuaTeX]:luatex.org
+[luaotfload]: https://github.com/latex3/luaotfload
 
 ## Installing Harfbuzz
 
@@ -68,8 +71,8 @@ luarocks install luaharfbuzz
 [Luarocks]: https://luarocks.org
 
 ## Documentation
-* [API Docs](http://ufytex.github.io/luaharfbuzz/)
-* [Wiki](http://github.com/ufytex/luaharfbuzz/wiki)
+* [API Docs](http://harfbuzz.github.io/luaharfbuzz/)
+* [Wiki](http://github.com/harfbuzz/luaharfbuzz/wiki)
 
 ## Sample Code
 
@@ -132,10 +135,10 @@ print(serpent.line(glyphs, {comment = false}))
 ## Development
 
 #### Building
-You can build the package for development purposes using LuaRocks as well. It is recommended that you build it to your local tree (using `--local`) to isolate it from your actual installation.
+You can build the package for development purposes using LuaRocks as well. It is recommended that you build it to your local tree (using `--local`) to isolate it from your actual installation. For convenience, you can use `make`:
 
 ```
-luarocks --local make
+make build
 ```
 
 #### Testing and Linting
@@ -143,12 +146,11 @@ In order to make changes to the code and run the tests, the following dependenci
 
 * [Busted](http://olivinelabs.com/busted/) – `luarocks install busted`
 * [luacheck](luacheck.readthedocs.org) – `luarocks install luacheck`
-* [luacov](https://keplerproject.github.io/luacov/) – `luarocks install luacov`
 * [ldoc](https://stevedonovan.github.io/ldoc/) – `luarocks install ldoc`
 
 Run the test suite:
 ```
-make spec
+make test
 ```
 
 Lint the codebase:

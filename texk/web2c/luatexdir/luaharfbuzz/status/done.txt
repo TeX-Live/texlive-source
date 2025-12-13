@@ -32,11 +32,16 @@ hb_language_to_string
 hb_script_from_iso15924_tag
 hb_script_from_string
 hb_script_to_iso15924_tag
+hb_set_add
 hb_shape
 hb_shape_full
 hb_shape_list_shapers
+hb_subset_input_create_or_fail
+hb_subset_input_keep_everything
+hb_subset_input_pin_axis_location
+hb_subset_input_unicode_set
+hb_subset_or_fail
 hb_tag_from_string
 hb_tag_to_string
 hb_unicode_script
 hb_version
-

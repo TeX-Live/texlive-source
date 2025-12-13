@@ -28,9 +28,9 @@ libluatex_a_preflags += -I$(srcdir)/luatexdir/luafontloader/fontforge/inc
 libluatex_a_preflags += -DLUA_FF_LIB=1 -I$(srcdir)/luatexdir/luafontloader/fontforge/fontforge
 libluatex_a_preflags += -DSYNCTEX_ENGINE_H='<synctex-luatex.h>' -I$(srcdir)/synctexdir
 
-libluatex_a_CPPFLAGS = $(libluatex_a_preflags) $(LUA_INCLUDES)
+libluatex_a_CPPFLAGS = $(libluatex_a_preflags) $(LUA_INCLUDES) $(ENVLUATEXCPPFLAGS)
 libluajittex_a_CPPFLAGS = $(libluatex_a_preflags) $(LUAJIT_INCLUDES) $(LUAJIT_DEFINES)
-libluajittex_a_CPPFLAGS += -DLuajitTeX
+libluajittex_a_CPPFLAGS += -DLuajitTeX $(ENVLUAJITEXCPPFLAGS)
 
 libluatex_a_CXXFLAGS = $(WARNING_CXXFLAGS)
 libluajittex_a_CXXFLAGS = $(WARNING_CXXFLAGS)
