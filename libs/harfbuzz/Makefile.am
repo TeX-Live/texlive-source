@@ -33,7 +33,25 @@ AM_CPPFLAGS = -DHB_NO_MT -DHAVE_FALLBACK=1 \
 AM_CXXFLAGS = $(VISIBILITY_CXXFLAGS) $(WARNING_CXXFLAGS)
 
 libharfbuzz_dependencies =
-libharfbuzz_a_SOURCES = @HARFBUZZ_TREE@/src/harfbuzz.cc
+libharfbuzz_a_SOURCES = \
+	@HARFBUZZ_TREE@/src/harfbuzz.cc \
+	@HARFBUZZ_TREE@/src/graph/gsubgpos-context.cc \
+	@HARFBUZZ_TREE@/src/hb-subset-cff-common.cc \
+	@HARFBUZZ_TREE@/src/hb-subset-cff1.cc \
+	@HARFBUZZ_TREE@/src/hb-subset-cff2.cc \
+	@HARFBUZZ_TREE@/src/hb-subset-input.cc \
+	@HARFBUZZ_TREE@/src/hb-subset-instancer-iup.cc \
+	@HARFBUZZ_TREE@/src/hb-subset-instancer-solver.cc \
+	@HARFBUZZ_TREE@/src/hb-subset-plan-layout.cc \
+	@HARFBUZZ_TREE@/src/hb-subset-plan-var.cc \
+	@HARFBUZZ_TREE@/src/hb-subset-plan.cc \
+	@HARFBUZZ_TREE@/src/hb-subset-serialize.cc \
+	@HARFBUZZ_TREE@/src/hb-subset-table-cff.cc \
+	@HARFBUZZ_TREE@/src/hb-subset-table-color.cc \
+	@HARFBUZZ_TREE@/src/hb-subset-table-layout.cc \
+	@HARFBUZZ_TREE@/src/hb-subset-table-other.cc \
+	@HARFBUZZ_TREE@/src/hb-subset-table-var.cc \
+	@HARFBUZZ_TREE@/src/hb-subset.cc
 
 ## Graphite library
 AM_CPPFLAGS += $(GRAPHITE2_INCLUDES)
@@ -72,4 +90,3 @@ rebuild_target = all
 CLEANFILES =
 
 include $(srcdir)/../../am/rebuild.am
-

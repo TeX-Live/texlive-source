@@ -122,7 +122,24 @@ libharfbuzz_a_AR = $(AR) $(ARFLAGS)
 libharfbuzz_a_RANLIB = $(RANLIB)
 libharfbuzz_a_LIBADD =
 am__dirstamp = $(am__leading_dot)dirstamp
-am_libharfbuzz_a_OBJECTS = @HARFBUZZ_TREE@/src/harfbuzz.$(OBJEXT)
+am_libharfbuzz_a_OBJECTS = @HARFBUZZ_TREE@/src/harfbuzz.$(OBJEXT) \
+	@HARFBUZZ_TREE@/src/graph/gsubgpos-context.$(OBJEXT) \
+	@HARFBUZZ_TREE@/src/hb-subset-cff-common.$(OBJEXT) \
+	@HARFBUZZ_TREE@/src/hb-subset-cff1.$(OBJEXT) \
+	@HARFBUZZ_TREE@/src/hb-subset-cff2.$(OBJEXT) \
+	@HARFBUZZ_TREE@/src/hb-subset-input.$(OBJEXT) \
+	@HARFBUZZ_TREE@/src/hb-subset-instancer-iup.$(OBJEXT) \
+	@HARFBUZZ_TREE@/src/hb-subset-instancer-solver.$(OBJEXT) \
+	@HARFBUZZ_TREE@/src/hb-subset-plan-layout.$(OBJEXT) \
+	@HARFBUZZ_TREE@/src/hb-subset-plan-var.$(OBJEXT) \
+	@HARFBUZZ_TREE@/src/hb-subset-plan.$(OBJEXT) \
+	@HARFBUZZ_TREE@/src/hb-subset-serialize.$(OBJEXT) \
+	@HARFBUZZ_TREE@/src/hb-subset-table-cff.$(OBJEXT) \
+	@HARFBUZZ_TREE@/src/hb-subset-table-color.$(OBJEXT) \
+	@HARFBUZZ_TREE@/src/hb-subset-table-layout.$(OBJEXT) \
+	@HARFBUZZ_TREE@/src/hb-subset-table-other.$(OBJEXT) \
+	@HARFBUZZ_TREE@/src/hb-subset-table-var.$(OBJEXT) \
+	@HARFBUZZ_TREE@/src/hb-subset.$(OBJEXT)
 libharfbuzz_a_OBJECTS = $(am_libharfbuzz_a_OBJECTS)
 am_hbtest_OBJECTS = hbtest-hbtest.$(OBJEXT)
 hbtest_OBJECTS = $(am_hbtest_OBJECTS)
@@ -147,7 +164,24 @@ depcomp = $(SHELL) $(top_srcdir)/../../build-aux/depcomp
 am__maybe_remake_depfiles = depfiles
 am__depfiles_remade = ./$(DEPDIR)/hbtest-dummy.Po \
 	./$(DEPDIR)/hbtest-hbtest.Po \
-	@HARFBUZZ_TREE@/src/$(DEPDIR)/harfbuzz.Po
+	@HARFBUZZ_TREE@/src/$(DEPDIR)/harfbuzz.Po \
+	@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-subset-cff-common.Po \
+	@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-subset-cff1.Po \
+	@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-subset-cff2.Po \
+	@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-subset-input.Po \
+	@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-subset-instancer-iup.Po \
+	@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-subset-instancer-solver.Po \
+	@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-subset-plan-layout.Po \
+	@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-subset-plan-var.Po \
+	@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-subset-plan.Po \
+	@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-subset-serialize.Po \
+	@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-subset-table-cff.Po \
+	@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-subset-table-color.Po \
+	@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-subset-table-layout.Po \
+	@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-subset-table-other.Po \
+	@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-subset-table-var.Po \
+	@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-subset.Po \
+	@HARFBUZZ_TREE@/src/graph/$(DEPDIR)/gsubgpos-context.Po
 am__mv = mv -f
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
@@ -624,7 +658,26 @@ noinst_LIBRARIES = libharfbuzz.a
 AM_CPPFLAGS = -DHB_NO_MT -DHAVE_FALLBACK=1 \
 	-I$(top_srcdir)/$(HARFBUZZ_SRC) $(GRAPHITE2_INCLUDES)
 libharfbuzz_dependencies = $(GRAPHITE2_DEPEND)
-libharfbuzz_a_SOURCES = @HARFBUZZ_TREE@/src/harfbuzz.cc
+libharfbuzz_a_SOURCES = \
+	@HARFBUZZ_TREE@/src/harfbuzz.cc \
+	@HARFBUZZ_TREE@/src/graph/gsubgpos-context.cc \
+	@HARFBUZZ_TREE@/src/hb-subset-cff-common.cc \
+	@HARFBUZZ_TREE@/src/hb-subset-cff1.cc \
+	@HARFBUZZ_TREE@/src/hb-subset-cff2.cc \
+	@HARFBUZZ_TREE@/src/hb-subset-input.cc \
+	@HARFBUZZ_TREE@/src/hb-subset-instancer-iup.cc \
+	@HARFBUZZ_TREE@/src/hb-subset-instancer-solver.cc \
+	@HARFBUZZ_TREE@/src/hb-subset-plan-layout.cc \
+	@HARFBUZZ_TREE@/src/hb-subset-plan-var.cc \
+	@HARFBUZZ_TREE@/src/hb-subset-plan.cc \
+	@HARFBUZZ_TREE@/src/hb-subset-serialize.cc \
+	@HARFBUZZ_TREE@/src/hb-subset-table-cff.cc \
+	@HARFBUZZ_TREE@/src/hb-subset-table-color.cc \
+	@HARFBUZZ_TREE@/src/hb-subset-table-layout.cc \
+	@HARFBUZZ_TREE@/src/hb-subset-table-other.cc \
+	@HARFBUZZ_TREE@/src/hb-subset-table-var.cc \
+	@HARFBUZZ_TREE@/src/hb-subset.cc
+
 @build_TRUE@dist_check_SCRIPTS = harfbuzz.test
 @build_TRUE@TESTS = harfbuzz.test
 hbtest_SOURCES = hbtest.c
@@ -713,6 +766,63 @@ clean-noinstLIBRARIES:
 @HARFBUZZ_TREE@/src/harfbuzz.$(OBJEXT):  \
 	@HARFBUZZ_TREE@/src/$(am__dirstamp) \
 	@HARFBUZZ_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@HARFBUZZ_TREE@/src/graph/$(am__dirstamp):
+	@$(MKDIR_P) @HARFBUZZ_TREE@/src/graph
+	@: >>@HARFBUZZ_TREE@/src/graph/$(am__dirstamp)
+@HARFBUZZ_TREE@/src/graph/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) @HARFBUZZ_TREE@/src/graph/$(DEPDIR)
+	@: >>@HARFBUZZ_TREE@/src/graph/$(DEPDIR)/$(am__dirstamp)
+@HARFBUZZ_TREE@/src/graph/gsubgpos-context.$(OBJEXT):  \
+	@HARFBUZZ_TREE@/src/graph/$(am__dirstamp) \
+	@HARFBUZZ_TREE@/src/graph/$(DEPDIR)/$(am__dirstamp)
+@HARFBUZZ_TREE@/src/hb-subset-cff-common.$(OBJEXT):  \
+	@HARFBUZZ_TREE@/src/$(am__dirstamp) \
+	@HARFBUZZ_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@HARFBUZZ_TREE@/src/hb-subset-cff1.$(OBJEXT):  \
+	@HARFBUZZ_TREE@/src/$(am__dirstamp) \
+	@HARFBUZZ_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@HARFBUZZ_TREE@/src/hb-subset-cff2.$(OBJEXT):  \
+	@HARFBUZZ_TREE@/src/$(am__dirstamp) \
+	@HARFBUZZ_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@HARFBUZZ_TREE@/src/hb-subset-input.$(OBJEXT):  \
+	@HARFBUZZ_TREE@/src/$(am__dirstamp) \
+	@HARFBUZZ_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@HARFBUZZ_TREE@/src/hb-subset-instancer-iup.$(OBJEXT):  \
+	@HARFBUZZ_TREE@/src/$(am__dirstamp) \
+	@HARFBUZZ_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@HARFBUZZ_TREE@/src/hb-subset-instancer-solver.$(OBJEXT):  \
+	@HARFBUZZ_TREE@/src/$(am__dirstamp) \
+	@HARFBUZZ_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@HARFBUZZ_TREE@/src/hb-subset-plan-layout.$(OBJEXT):  \
+	@HARFBUZZ_TREE@/src/$(am__dirstamp) \
+	@HARFBUZZ_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@HARFBUZZ_TREE@/src/hb-subset-plan-var.$(OBJEXT):  \
+	@HARFBUZZ_TREE@/src/$(am__dirstamp) \
+	@HARFBUZZ_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@HARFBUZZ_TREE@/src/hb-subset-plan.$(OBJEXT):  \
+	@HARFBUZZ_TREE@/src/$(am__dirstamp) \
+	@HARFBUZZ_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@HARFBUZZ_TREE@/src/hb-subset-serialize.$(OBJEXT):  \
+	@HARFBUZZ_TREE@/src/$(am__dirstamp) \
+	@HARFBUZZ_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@HARFBUZZ_TREE@/src/hb-subset-table-cff.$(OBJEXT):  \
+	@HARFBUZZ_TREE@/src/$(am__dirstamp) \
+	@HARFBUZZ_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@HARFBUZZ_TREE@/src/hb-subset-table-color.$(OBJEXT):  \
+	@HARFBUZZ_TREE@/src/$(am__dirstamp) \
+	@HARFBUZZ_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@HARFBUZZ_TREE@/src/hb-subset-table-layout.$(OBJEXT):  \
+	@HARFBUZZ_TREE@/src/$(am__dirstamp) \
+	@HARFBUZZ_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@HARFBUZZ_TREE@/src/hb-subset-table-other.$(OBJEXT):  \
+	@HARFBUZZ_TREE@/src/$(am__dirstamp) \
+	@HARFBUZZ_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@HARFBUZZ_TREE@/src/hb-subset-table-var.$(OBJEXT):  \
+	@HARFBUZZ_TREE@/src/$(am__dirstamp) \
+	@HARFBUZZ_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@HARFBUZZ_TREE@/src/hb-subset.$(OBJEXT):  \
+	@HARFBUZZ_TREE@/src/$(am__dirstamp) \
+	@HARFBUZZ_TREE@/src/$(DEPDIR)/$(am__dirstamp)
 
 libharfbuzz.a: $(libharfbuzz_a_OBJECTS) $(libharfbuzz_a_DEPENDENCIES) $(EXTRA_libharfbuzz_a_DEPENDENCIES) 
 	$(AM_V_at)-rm -f libharfbuzz.a
@@ -726,6 +836,7 @@ hbtest$(EXEEXT): $(hbtest_OBJECTS) $(hbtest_DEPENDENCIES) $(EXTRA_hbtest_DEPENDE
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
 	-rm -f @HARFBUZZ_TREE@/src/*.$(OBJEXT)
+	-rm -f @HARFBUZZ_TREE@/src/graph/*.$(OBJEXT)
 
 distclean-compile:
 	-rm -f *.tab.c
@@ -733,6 +844,23 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hbtest-dummy.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hbtest-hbtest.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/harfbuzz.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-subset-cff-common.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-subset-cff1.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-subset-cff2.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-subset-input.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-subset-instancer-iup.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-subset-instancer-solver.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-subset-plan-layout.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-subset-plan-var.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-subset-plan.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-subset-serialize.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-subset-table-cff.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-subset-table-color.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-subset-table-layout.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-subset-table-other.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-subset-table-var.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-subset.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/graph/$(DEPDIR)/gsubgpos-context.Po@am__quote@ # am--include-marker
 
 $(am__depfiles_remade):
 	@$(MKDIR_P) $(@D)
@@ -1350,6 +1478,8 @@ distclean-generic:
 	-$(am__rm_f) $(DISTCLEANFILES)
 	-$(am__rm_f) @HARFBUZZ_TREE@/src/$(DEPDIR)/$(am__dirstamp)
 	-$(am__rm_f) @HARFBUZZ_TREE@/src/$(am__dirstamp)
+	-$(am__rm_f) @HARFBUZZ_TREE@/src/graph/$(DEPDIR)/$(am__dirstamp)
+	-$(am__rm_f) @HARFBUZZ_TREE@/src/graph/$(am__dirstamp)
 
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
@@ -1364,6 +1494,23 @@ distclean: distclean-recursive
 	-rm -f ./$(DEPDIR)/hbtest-dummy.Po
 	-rm -f ./$(DEPDIR)/hbtest-hbtest.Po
 	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/harfbuzz.Po
+	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-subset-cff-common.Po
+	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-subset-cff1.Po
+	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-subset-cff2.Po
+	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-subset-input.Po
+	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-subset-instancer-iup.Po
+	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-subset-instancer-solver.Po
+	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-subset-plan-layout.Po
+	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-subset-plan-var.Po
+	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-subset-plan.Po
+	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-subset-serialize.Po
+	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-subset-table-cff.Po
+	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-subset-table-color.Po
+	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-subset-table-layout.Po
+	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-subset-table-other.Po
+	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-subset-table-var.Po
+	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-subset.Po
+	-rm -f @HARFBUZZ_TREE@/src/graph/$(DEPDIR)/gsubgpos-context.Po
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-hdr distclean-tags
@@ -1414,6 +1561,23 @@ maintainer-clean: maintainer-clean-recursive
 	-rm -f ./$(DEPDIR)/hbtest-dummy.Po
 	-rm -f ./$(DEPDIR)/hbtest-hbtest.Po
 	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/harfbuzz.Po
+	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-subset-cff-common.Po
+	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-subset-cff1.Po
+	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-subset-cff2.Po
+	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-subset-input.Po
+	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-subset-instancer-iup.Po
+	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-subset-instancer-solver.Po
+	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-subset-plan-layout.Po
+	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-subset-plan-var.Po
+	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-subset-plan.Po
+	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-subset-serialize.Po
+	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-subset-table-cff.Po
+	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-subset-table-color.Po
+	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-subset-table-layout.Po
+	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-subset-table-other.Po
+	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-subset-table-var.Po
+	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-subset.Po
+	-rm -f @HARFBUZZ_TREE@/src/graph/$(DEPDIR)/gsubgpos-context.Po
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 
