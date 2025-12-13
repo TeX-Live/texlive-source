@@ -187,29 +187,29 @@ AM_TESTS_ENVIRONMENT += KPSEWHICH='$(KPSEWHICH)'; export KPSEWHICH;
 
 # To run, e.g., just the original trip test, in the build directory:
 #   make -C $ww TRIPTRAP=trip.diffs triptrap
-# where $ww is the web2c build directory.   
-# 
+# where $ww is the web2c build directory.
+#
 # This will run the triptrap-sh script
 #   which then runs make TEST=triptest.test check-am,
 #   which then runs the (srcdir file) triptest.test script;
 #   its output will be in (builddir file) trip.diffs,
-#   and triptest.out if the test failed,   
+#   and triptest.out if the test failed,
 #   plus various created files in the tripdir/ subdirectory.
 # The triptest.diffs file will have the actual abs_srcdir value replaced
 #  with the constant string "SRCDIR" to minimize differences, and "../"
 #  replaced with "./" to match the canonical output. Confusing. For the
 #  real output, see triptest.log.
-# 
+#
 # To build only tex, make -C $ww tex (i.e., in builddir) should do it.
 # Unfortunately the check-am target depends on all-am, so all engines
 # are built before any tests are run. If this is a problem, just have to
 # edit the generated Makefile in builddir to remove the dependency.
-# 
+#
 # Other per-engine invocations (see triptrap-sh for complete list):
 #   make -C $ww mf && make -C $ww TRIPTRAP=mftrap.diffs triptrap
-#   make -C $ww etex && make -C $ww TRIPTRAP=etrip.diffs triptrap   
-#   make -C $ww ptex && make -C $ww TRIPTRAP=ptrip.diffs triptrap   
-#   
+#   make -C $ww etex && make -C $ww TRIPTRAP=etrip.diffs triptrap
+#   make -C $ww ptex && make -C $ww TRIPTRAP=ptrip.diffs triptrap
+#
 triptrap_diffs = $(AM_V_GEN)srcdir=$(srcdir) abs_srcdir=$(abs_srcdir) MAKE=$(MAKE) $(SHELL) $(srcdir)/triptrap-sh
 
 .PHONY: triptrap
@@ -295,6 +295,8 @@ include $(srcdir)/luatexdir/am/luatex.am
 
 ## luahbTeX
 include $(srcdir)/luatexdir/am/luaharfbuzz.am
+
+include $(srcdir)/luatexdir/am/luaharfbuzzsubset.am
 
 ## texprof
 include $(srcdir)/texprofdir/am/texprof.am

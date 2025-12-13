@@ -548,10 +548,17 @@ am_libluaharfbuzz_a_OBJECTS = luatexdir/luaharfbuzz/src/luaharfbuzz/libluaharfbu
 	luatexdir/luaharfbuzz/src/luaharfbuzz/libluaharfbuzz_a-luaharfbuzz.$(OBJEXT) \
 	luatexdir/luaharfbuzz/src/luaharfbuzz/libluaharfbuzz_a-ot.$(OBJEXT) \
 	luatexdir/luaharfbuzz/src/luaharfbuzz/libluaharfbuzz_a-script.$(OBJEXT) \
+	luatexdir/luaharfbuzz/src/luaharfbuzz/libluaharfbuzz_a-set.$(OBJEXT) \
 	luatexdir/luaharfbuzz/src/luaharfbuzz/libluaharfbuzz_a-tag.$(OBJEXT) \
 	luatexdir/luaharfbuzz/src/luaharfbuzz/libluaharfbuzz_a-unicode.$(OBJEXT) \
 	luatexdir/luaharfbuzz/src/luaharfbuzz/libluaharfbuzz_a-variation.$(OBJEXT)
 libluaharfbuzz_a_OBJECTS = $(am_libluaharfbuzz_a_OBJECTS)
+libluaharfbuzzsubset_a_AR = $(AR) $(ARFLAGS)
+libluaharfbuzzsubset_a_RANLIB = $(RANLIB)
+libluaharfbuzzsubset_a_LIBADD =
+am_libluaharfbuzzsubset_a_OBJECTS = luatexdir/luaharfbuzz/src/luaharfbuzzsubset/libluaharfbuzzsubset_a-luaharfbuzzsubset.$(OBJEXT) \
+	luatexdir/luaharfbuzz/src/luaharfbuzzsubset/libluaharfbuzzsubset_a-subset-input.$(OBJEXT)
+libluaharfbuzzsubset_a_OBJECTS = $(am_libluaharfbuzzsubset_a_OBJECTS)
 libluahbtexspecific_a_AR = $(AR) $(ARFLAGS)
 libluahbtexspecific_a_RANLIB = $(RANLIB)
 libluahbtexspecific_a_LIBADD =
@@ -576,25 +583,34 @@ am__objects_3 = luatexdir/luaharfbuzz/src/luaharfbuzz/libluajitharfbuzz_a-blob.$
 	luatexdir/luaharfbuzz/src/luaharfbuzz/libluajitharfbuzz_a-luaharfbuzz.$(OBJEXT) \
 	luatexdir/luaharfbuzz/src/luaharfbuzz/libluajitharfbuzz_a-ot.$(OBJEXT) \
 	luatexdir/luaharfbuzz/src/luaharfbuzz/libluajitharfbuzz_a-script.$(OBJEXT) \
+	luatexdir/luaharfbuzz/src/luaharfbuzz/libluajitharfbuzz_a-set.$(OBJEXT) \
 	luatexdir/luaharfbuzz/src/luaharfbuzz/libluajitharfbuzz_a-tag.$(OBJEXT) \
 	luatexdir/luaharfbuzz/src/luaharfbuzz/libluajitharfbuzz_a-unicode.$(OBJEXT) \
 	luatexdir/luaharfbuzz/src/luaharfbuzz/libluajitharfbuzz_a-variation.$(OBJEXT)
 am_libluajitharfbuzz_a_OBJECTS = $(am__objects_3)
 libluajitharfbuzz_a_OBJECTS = $(am_libluajitharfbuzz_a_OBJECTS)
+libluajitharfbuzzsubset_a_AR = $(AR) $(ARFLAGS)
+libluajitharfbuzzsubset_a_RANLIB = $(RANLIB)
+libluajitharfbuzzsubset_a_LIBADD =
+am__objects_4 = luatexdir/luaharfbuzz/src/luaharfbuzzsubset/libluajitharfbuzzsubset_a-luaharfbuzzsubset.$(OBJEXT) \
+	luatexdir/luaharfbuzz/src/luaharfbuzzsubset/libluajitharfbuzzsubset_a-subset-input.$(OBJEXT)
+am_libluajitharfbuzzsubset_a_OBJECTS = $(am__objects_4)
+libluajitharfbuzzsubset_a_OBJECTS =  \
+	$(am_libluajitharfbuzzsubset_a_OBJECTS)
 libluajithbtexspecific_a_AR = $(AR) $(ARFLAGS)
 libluajithbtexspecific_a_RANLIB = $(RANLIB)
 libluajithbtexspecific_a_LIBADD =
-am__objects_4 = libluajithbtexspecific_a-utils-hb.$(OBJEXT) \
+am__objects_5 = libluajithbtexspecific_a-utils-hb.$(OBJEXT) \
 	libluajithbtexspecific_a-luastuff-hb.$(OBJEXT) \
 	libluajithbtexspecific_a-luainit-hb.$(OBJEXT) \
 	libluajithbtexspecific_a-printing-hb.$(OBJEXT)
-nodist_libluajithbtexspecific_a_OBJECTS = $(am__objects_4)
+nodist_libluajithbtexspecific_a_OBJECTS = $(am__objects_5)
 libluajithbtexspecific_a_OBJECTS =  \
 	$(nodist_libluajithbtexspecific_a_OBJECTS)
 libluajitmisc_a_AR = $(AR) $(ARFLAGS)
 libluajitmisc_a_RANLIB = $(RANLIB)
 libluajitmisc_a_LIBADD =
-am__objects_5 =  \
+am__objects_6 =  \
 	luatexdir/luafilesystem/src/libluajitmisc_a-lfs.$(OBJEXT) \
 	luatexdir/luamd5/libluajitmisc_a-md5.$(OBJEXT) \
 	luatexdir/luamd5/libluajitmisc_a-md5lib.$(OBJEXT) \
@@ -603,12 +619,12 @@ am__objects_5 =  \
 	luatexdir/luazlib/libluajitmisc_a-lgzip.$(OBJEXT) \
 	luatexdir/luazlib/libluajitmisc_a-lzlib.$(OBJEXT) \
 	luatexdir/slnunicode/libluajitmisc_a-slnunico.$(OBJEXT)
-nodist_libluajitmisc_a_OBJECTS = $(am__objects_5)
+nodist_libluajitmisc_a_OBJECTS = $(am__objects_6)
 libluajitmisc_a_OBJECTS = $(nodist_libluajitmisc_a_OBJECTS)
 libluajitsocket_a_AR = $(AR) $(ARFLAGS)
 libluajitsocket_a_RANLIB = $(RANLIB)
 libluajitsocket_a_LIBADD =
-am__objects_6 =  \
+am__objects_7 =  \
 	luatexdir/luasocket/src/libluajitsocket_a-auxiliar.$(OBJEXT) \
 	luatexdir/luasocket/src/libluajitsocket_a-buffer.$(OBJEXT) \
 	luatexdir/luasocket/src/libluajitsocket_a-compat.$(OBJEXT) \
@@ -625,7 +641,7 @@ am__objects_6 =  \
 	luatexdir/luasocket/src/libluajitsocket_a-tcp.$(OBJEXT) \
 	luatexdir/luasocket/src/libluajitsocket_a-timeout.$(OBJEXT) \
 	luatexdir/luasocket/src/libluajitsocket_a-udp.$(OBJEXT)
-nodist_libluajitsocket_a_OBJECTS = $(am__objects_6)
+nodist_libluajitsocket_a_OBJECTS = $(am__objects_7)
 libluajitsocket_a_OBJECTS = $(nodist_libluajitsocket_a_OBJECTS)
 libluajittex_a_AR = $(AR) $(ARFLAGS)
 libluajittex_a_RANLIB = $(RANLIB)
@@ -633,7 +649,7 @@ libluajittex_a_LIBADD =
 dist_libluajittex_a_OBJECTS =  \
 	luatexdir/lua/libluajittex_a-lstrlibext.$(OBJEXT) \
 	luatexdir/lua/libluajittex_a-texluajitc.$(OBJEXT)
-am__objects_7 = luatexdir/luafontloader/src/libluajittex_a-ffdummies.$(OBJEXT) \
+am__objects_8 = luatexdir/luafontloader/src/libluajittex_a-ffdummies.$(OBJEXT) \
 	luatexdir/luafontloader/src/libluajittex_a-luafflib.$(OBJEXT) \
 	luatexdir/dvi/libluajittex_a-dvigen.$(OBJEXT) \
 	luatexdir/font/libluajittex_a-dofont.$(OBJEXT) \
@@ -745,25 +761,25 @@ am__objects_7 = luatexdir/luafontloader/src/libluajittex_a-ffdummies.$(OBJEXT) \
 	luatexdir/utils/libluajittex_a-managed-sa.$(OBJEXT) \
 	luatexdir/utils/libluajittex_a-unistring.$(OBJEXT) \
 	synctexdir/libluajittex_a-synctex.$(OBJEXT)
-am__objects_8 =
-nodist_libluajittex_a_OBJECTS = $(am__objects_7) $(am__objects_8)
+am__objects_9 =
+nodist_libluajittex_a_OBJECTS = $(am__objects_8) $(am__objects_9)
 libluajittex_a_OBJECTS = $(dist_libluajittex_a_OBJECTS) \
 	$(nodist_libluajittex_a_OBJECTS)
 libluajittexspecific_a_AR = $(AR) $(ARFLAGS)
 libluajittexspecific_a_RANLIB = $(RANLIB)
 libluajittexspecific_a_LIBADD =
-am__objects_9 =  \
+am__objects_10 =  \
 	luatexdir/utils/libluajittexspecific_a-utils.$(OBJEXT) \
 	luatexdir/lua/libluajittexspecific_a-luastuff.$(OBJEXT) \
 	luatexdir/lua/libluajittexspecific_a-luainit.$(OBJEXT) \
 	luatexdir/tex/libluajittexspecific_a-printing.$(OBJEXT)
-nodist_libluajittexspecific_a_OBJECTS = $(am__objects_9)
+nodist_libluajittexspecific_a_OBJECTS = $(am__objects_10)
 libluajittexspecific_a_OBJECTS =  \
 	$(nodist_libluajittexspecific_a_OBJECTS)
 libluamisc_a_AR = $(AR) $(ARFLAGS)
 libluamisc_a_RANLIB = $(RANLIB)
 libluamisc_a_LIBADD =
-am__objects_10 =  \
+am__objects_11 =  \
 	luatexdir/luafilesystem/src/libluamisc_a-lfs.$(OBJEXT) \
 	luatexdir/luamd5/libluamisc_a-md5.$(OBJEXT) \
 	luatexdir/luamd5/libluamisc_a-md5lib.$(OBJEXT) \
@@ -772,12 +788,12 @@ am__objects_10 =  \
 	luatexdir/luazlib/libluamisc_a-lgzip.$(OBJEXT) \
 	luatexdir/luazlib/libluamisc_a-lzlib.$(OBJEXT) \
 	luatexdir/slnunicode/libluamisc_a-slnunico.$(OBJEXT)
-nodist_libluamisc_a_OBJECTS = $(am__objects_10)
+nodist_libluamisc_a_OBJECTS = $(am__objects_11)
 libluamisc_a_OBJECTS = $(nodist_libluamisc_a_OBJECTS)
 libluasocket_a_AR = $(AR) $(ARFLAGS)
 libluasocket_a_RANLIB = $(RANLIB)
 libluasocket_a_LIBADD =
-am__objects_11 =  \
+am__objects_12 =  \
 	luatexdir/luasocket/src/libluasocket_a-auxiliar.$(OBJEXT) \
 	luatexdir/luasocket/src/libluasocket_a-buffer.$(OBJEXT) \
 	luatexdir/luasocket/src/libluasocket_a-compat.$(OBJEXT) \
@@ -794,7 +810,7 @@ am__objects_11 =  \
 	luatexdir/luasocket/src/libluasocket_a-tcp.$(OBJEXT) \
 	luatexdir/luasocket/src/libluasocket_a-timeout.$(OBJEXT) \
 	luatexdir/luasocket/src/libluasocket_a-udp.$(OBJEXT)
-nodist_libluasocket_a_OBJECTS = $(am__objects_11)
+nodist_libluasocket_a_OBJECTS = $(am__objects_12)
 libluasocket_a_OBJECTS = $(nodist_libluasocket_a_OBJECTS)
 libluatex_a_AR = $(AR) $(ARFLAGS)
 libluatex_a_RANLIB = $(RANLIB)
@@ -803,7 +819,7 @@ dist_libluatex_a_OBJECTS =  \
 	luatexdir/lua/libluatex_a-lstrlibext.$(OBJEXT) \
 	luatexdir/lua/libluatex_a-helpers.$(OBJEXT) \
 	luatexdir/lua/libluatex_a-texluac.$(OBJEXT)
-am__objects_12 =  \
+am__objects_13 =  \
 	luatexdir/luafontloader/src/libluatex_a-ffdummies.$(OBJEXT) \
 	luatexdir/luafontloader/src/libluatex_a-luafflib.$(OBJEXT) \
 	luatexdir/dvi/libluatex_a-dvigen.$(OBJEXT) \
@@ -916,17 +932,17 @@ am__objects_12 =  \
 	luatexdir/utils/libluatex_a-managed-sa.$(OBJEXT) \
 	luatexdir/utils/libluatex_a-unistring.$(OBJEXT) \
 	synctexdir/libluatex_a-synctex.$(OBJEXT)
-nodist_libluatex_a_OBJECTS = $(am__objects_12) $(am__objects_8)
+nodist_libluatex_a_OBJECTS = $(am__objects_13) $(am__objects_9)
 libluatex_a_OBJECTS = $(dist_libluatex_a_OBJECTS) \
 	$(nodist_libluatex_a_OBJECTS)
 libluatexspecific_a_AR = $(AR) $(ARFLAGS)
 libluatexspecific_a_RANLIB = $(RANLIB)
 libluatexspecific_a_LIBADD =
-am__objects_13 = luatexdir/utils/libluatexspecific_a-utils.$(OBJEXT) \
+am__objects_14 = luatexdir/utils/libluatexspecific_a-utils.$(OBJEXT) \
 	luatexdir/lua/libluatexspecific_a-luastuff.$(OBJEXT) \
 	luatexdir/lua/libluatexspecific_a-luainit.$(OBJEXT) \
 	luatexdir/tex/libluatexspecific_a-printing.$(OBJEXT)
-nodist_libluatexspecific_a_OBJECTS = $(am__objects_13)
+nodist_libluatexspecific_a_OBJECTS = $(am__objects_14)
 libluatexspecific_a_OBJECTS = $(nodist_libluatexspecific_a_OBJECTS)
 libmd5_a_AR = $(AR) $(ARFLAGS)
 libmd5_a_RANLIB = $(RANLIB)
@@ -936,17 +952,17 @@ libmd5_a_OBJECTS = $(am_libmd5_a_OBJECTS)
 libmf_a_AR = $(AR) $(ARFLAGS)
 libmf_a_RANLIB = $(RANLIB)
 libmf_a_LIBADD =
-am__objects_14 = mfini.$(OBJEXT) mf0.$(OBJEXT)
-nodist_libmf_a_OBJECTS = $(am__objects_14) mf-pool.$(OBJEXT)
+am__objects_15 = mfini.$(OBJEXT) mf0.$(OBJEXT)
+nodist_libmf_a_OBJECTS = $(am__objects_15) mf-pool.$(OBJEXT)
 libmf_a_OBJECTS = $(nodist_libmf_a_OBJECTS)
 libmflua_a_AR = $(AR) $(ARFLAGS)
 libmflua_a_RANLIB = $(RANLIB)
 libmflua_a_LIBADD =
 dist_libmflua_a_OBJECTS = luatexdir/lua/libmflua_a-lkpselib.$(OBJEXT) \
 	mfluadir/libmflua_a-mfluac.$(OBJEXT)
-am__objects_15 = libmflua_a-mfluaini.$(OBJEXT) \
+am__objects_16 = libmflua_a-mfluaini.$(OBJEXT) \
 	libmflua_a-mflua0.$(OBJEXT)
-nodist_libmflua_a_OBJECTS = $(am__objects_15) \
+nodist_libmflua_a_OBJECTS = $(am__objects_16) \
 	libmflua_a-mflua-pool.$(OBJEXT)
 libmflua_a_OBJECTS = $(dist_libmflua_a_OBJECTS) \
 	$(nodist_libmflua_a_OBJECTS)
@@ -956,9 +972,9 @@ libmfluajit_a_LIBADD =
 dist_libmfluajit_a_OBJECTS =  \
 	luatexdir/lua/libmfluajit_a-lkpselib.$(OBJEXT) \
 	mfluadir/libmfluajit_a-mfluac.$(OBJEXT)
-am__objects_16 = libmfluajit_a-mfluajitini.$(OBJEXT) \
+am__objects_17 = libmfluajit_a-mfluajitini.$(OBJEXT) \
 	libmfluajit_a-mfluajit0.$(OBJEXT)
-nodist_libmfluajit_a_OBJECTS = $(am__objects_16) \
+nodist_libmfluajit_a_OBJECTS = $(am__objects_17) \
 	libmfluajit_a-mfluajit-pool.$(OBJEXT)
 libmfluajit_a_OBJECTS = $(dist_libmfluajit_a_OBJECTS) \
 	$(nodist_libmfluajit_a_OBJECTS)
@@ -1103,31 +1119,31 @@ libmfluapotrace_a_OBJECTS = $(am_libmfluapotrace_a_OBJECTS)
 libmplibbackends_a_AR = $(AR) $(ARFLAGS)
 libmplibbackends_a_RANLIB = $(RANLIB)
 libmplibbackends_a_LIBADD =
-am__objects_17 = libmplibbackends_a-pngout.$(OBJEXT)
-am__objects_18 = libmplibbackends_a-svgout.$(OBJEXT)
-nodist_libmplibbackends_a_OBJECTS = $(am__objects_17) \
-	$(am__objects_18)
+am__objects_18 = libmplibbackends_a-pngout.$(OBJEXT)
+am__objects_19 = libmplibbackends_a-svgout.$(OBJEXT)
+nodist_libmplibbackends_a_OBJECTS = $(am__objects_18) \
+	$(am__objects_19)
 libmplibbackends_a_OBJECTS = $(nodist_libmplibbackends_a_OBJECTS)
 libmplibcore_a_AR = $(AR) $(ARFLAGS)
 libmplibcore_a_RANLIB = $(RANLIB)
 libmplibcore_a_LIBADD =
-am__objects_19 = libmplibcore_a-mp.$(OBJEXT)
-am__objects_20 = libmplibcore_a-mpmath.$(OBJEXT)
-am__objects_21 = libmplibcore_a-mpmathdecimal.$(OBJEXT)
-am__objects_22 = libmplibcore_a-mpmathdouble.$(OBJEXT)
-am__objects_23 = libmplibcore_a-mpstrings.$(OBJEXT)
-am__objects_24 = libmplibcore_a-psout.$(OBJEXT)
+am__objects_20 = libmplibcore_a-mp.$(OBJEXT)
+am__objects_21 = libmplibcore_a-mpmath.$(OBJEXT)
+am__objects_22 = libmplibcore_a-mpmathdecimal.$(OBJEXT)
+am__objects_23 = libmplibcore_a-mpmathdouble.$(OBJEXT)
+am__objects_24 = libmplibcore_a-mpstrings.$(OBJEXT)
+am__objects_25 = libmplibcore_a-psout.$(OBJEXT)
 nodist_libmplibcore_a_OBJECTS = libmplibcore_a-tfmin.$(OBJEXT) \
-	$(am__objects_19) $(am__objects_20) $(am__objects_21) \
-	$(am__objects_22) $(am__objects_23) $(am__objects_24)
+	$(am__objects_20) $(am__objects_21) $(am__objects_22) \
+	$(am__objects_23) $(am__objects_24) $(am__objects_25)
 libmplibcore_a_OBJECTS = $(nodist_libmplibcore_a_OBJECTS)
 libmplibextramath_a_AR = $(AR) $(ARFLAGS)
 libmplibextramath_a_RANLIB = $(RANLIB)
 libmplibextramath_a_LIBADD =
-am__objects_25 = libmplibextramath_a-mpmathbinary.$(OBJEXT)
-am__objects_26 = libmplibextramath_a-mpmathinterval.$(OBJEXT)
-nodist_libmplibextramath_a_OBJECTS = $(am__objects_25) \
-	$(am__objects_26)
+am__objects_26 = libmplibextramath_a-mpmathbinary.$(OBJEXT)
+am__objects_27 = libmplibextramath_a-mpmathinterval.$(OBJEXT)
+nodist_libmplibextramath_a_OBJECTS = $(am__objects_26) \
+	$(am__objects_27)
 libmplibextramath_a_OBJECTS = $(nodist_libmplibextramath_a_OBJECTS)
 libmputil_a_AR = $(AR) $(ARFLAGS)
 libmputil_a_RANLIB = $(RANLIB)
@@ -1151,7 +1167,7 @@ am__libpdftex_a_SOURCES_DIST = pdftexdir/avl.c pdftexdir/avl.h \
 	pdftexdir/writepng.c pdftexdir/writet1.c pdftexdir/writet3.c \
 	pdftexdir/writettf.c pdftexdir/writettf.h pdftexdir/writezip.c \
 	pdftexdir/regex/regex.c pdftexdir/regex/regex.h
-@MINGW32_TRUE@am__objects_27 =  \
+@MINGW32_TRUE@am__objects_28 =  \
 @MINGW32_TRUE@	pdftexdir/regex/libpdftex_a-regex.$(OBJEXT)
 am_libpdftex_a_OBJECTS = pdftexdir/libpdftex_a-avl.$(OBJEXT) \
 	pdftexdir/libpdftex_a-avlstuff.$(OBJEXT) \
@@ -1172,14 +1188,14 @@ am_libpdftex_a_OBJECTS = pdftexdir/libpdftex_a-avl.$(OBJEXT) \
 	pdftexdir/libpdftex_a-writet1.$(OBJEXT) \
 	pdftexdir/libpdftex_a-writet3.$(OBJEXT) \
 	pdftexdir/libpdftex_a-writettf.$(OBJEXT) \
-	pdftexdir/libpdftex_a-writezip.$(OBJEXT) $(am__objects_27)
+	pdftexdir/libpdftex_a-writezip.$(OBJEXT) $(am__objects_28)
 libpdftex_a_OBJECTS = $(am_libpdftex_a_OBJECTS)
 libsynctex_a_AR = $(AR) $(ARFLAGS)
 libsynctex_a_RANLIB = $(RANLIB)
 libsynctex_a_LIBADD =
-am__objects_28 = synctexdir/libsynctex_a-synctex_parser.$(OBJEXT) \
+am__objects_29 = synctexdir/libsynctex_a-synctex_parser.$(OBJEXT) \
 	synctexdir/libsynctex_a-synctex_parser_utils.$(OBJEXT)
-nodist_libsynctex_a_OBJECTS = $(am__objects_28)
+nodist_libsynctex_a_OBJECTS = $(am__objects_29)
 libsynctex_a_OBJECTS = $(nodist_libsynctex_a_OBJECTS)
 libukanji_a_AR = $(AR) $(ARFLAGS)
 libukanji_a_RANLIB = $(RANLIB)
@@ -1222,10 +1238,10 @@ am__libxetex_a_SOURCES_DIST = xetexdir/XeTeXFontInst.cpp \
 	xetexdir/XeTeXFontInst_Mac.h xetexdir/XeTeXFontMgr_Mac.mm \
 	xetexdir/XeTeXFontMgr_Mac.h xetexdir/XeTeX_mac.c \
 	xetexdir/XeTeXFontMgr_FC.cpp xetexdir/XeTeXFontMgr_FC.h
-@XETEX_MACOSX_TRUE@am__objects_29 = xetexdir/libxetex_a-XeTeXFontInst_Mac.$(OBJEXT) \
+@XETEX_MACOSX_TRUE@am__objects_30 = xetexdir/libxetex_a-XeTeXFontInst_Mac.$(OBJEXT) \
 @XETEX_MACOSX_TRUE@	xetexdir/libxetex_a-XeTeXFontMgr_Mac.$(OBJEXT) \
 @XETEX_MACOSX_TRUE@	xetexdir/libxetex_a-XeTeX_mac.$(OBJEXT)
-@XETEX_MACOSX_FALSE@am__objects_30 = xetexdir/libxetex_a-XeTeXFontMgr_FC.$(OBJEXT)
+@XETEX_MACOSX_FALSE@am__objects_31 = xetexdir/libxetex_a-XeTeXFontMgr_FC.$(OBJEXT)
 am_libxetex_a_OBJECTS = xetexdir/libxetex_a-XeTeXFontInst.$(OBJEXT) \
 	xetexdir/libxetex_a-XeTeXFontMgr.$(OBJEXT) \
 	xetexdir/libxetex_a-XeTeXLayoutInterface.$(OBJEXT) \
@@ -1239,8 +1255,8 @@ am_libxetex_a_OBJECTS = xetexdir/libxetex_a-XeTeXFontInst.$(OBJEXT) \
 	xetexdir/image/libxetex_a-jpegimage.$(OBJEXT) \
 	xetexdir/image/libxetex_a-mfileio.$(OBJEXT) \
 	xetexdir/image/libxetex_a-numbers.$(OBJEXT) \
-	xetexdir/image/libxetex_a-pngimage.$(OBJEXT) $(am__objects_29) \
-	$(am__objects_30)
+	xetexdir/image/libxetex_a-pngimage.$(OBJEXT) $(am__objects_30) \
+	$(am__objects_31)
 libxetex_a_OBJECTS = $(am_libxetex_a_OBJECTS)
 am__DEPENDENCIES_1 =
 libsynctex_la_DEPENDENCIES = $(am__DEPENDENCIES_1) \
@@ -1258,8 +1274,8 @@ libsynctex_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
 dist_aleph_OBJECTS = alephdir/aleph-aleph.$(OBJEXT) \
 	alephdir/aleph-alephbis.$(OBJEXT) \
 	alephdir/aleph-alephextra.$(OBJEXT)
-am__objects_31 = aleph-alephini.$(OBJEXT) aleph-aleph0.$(OBJEXT)
-nodist_aleph_OBJECTS = $(am__objects_31) aleph-aleph-pool.$(OBJEXT)
+am__objects_32 = aleph-alephini.$(OBJEXT) aleph-aleph0.$(OBJEXT)
+nodist_aleph_OBJECTS = $(am__objects_32) aleph-aleph-pool.$(OBJEXT)
 aleph_OBJECTS = $(dist_aleph_OBJECTS) $(nodist_aleph_OBJECTS)
 am__DEPENDENCIES_2 = $(proglib) $(am__DEPENDENCIES_1)
 aleph_DEPENDENCIES = $(am__DEPENDENCIES_2) $(am__DEPENDENCIES_1)
@@ -1336,22 +1352,22 @@ am__dist_etex_SOURCES_DIST = etexdir/etexextra.c etexdir/etexextra.h \
 	etexdir/etex_version.h synctexdir/synctex.c \
 	synctexdir/synctex.h synctexdir/synctex-common.h \
 	synctexdir/synctex-etex.h
-@ETEX_SYNCTEX_TRUE@am__objects_32 = synctexdir/etex-synctex.$(OBJEXT)
-dist_etex_OBJECTS = etexdir/etex-etexextra.$(OBJEXT) $(am__objects_32)
-am__objects_33 = etex-etexini.$(OBJEXT) etex-etex0.$(OBJEXT)
-nodist_etex_OBJECTS = $(am__objects_33) etex-etex-pool.$(OBJEXT)
+@ETEX_SYNCTEX_TRUE@am__objects_33 = synctexdir/etex-synctex.$(OBJEXT)
+dist_etex_OBJECTS = etexdir/etex-etexextra.$(OBJEXT) $(am__objects_33)
+am__objects_34 = etex-etexini.$(OBJEXT) etex-etex0.$(OBJEXT)
+nodist_etex_OBJECTS = $(am__objects_34) etex-etex-pool.$(OBJEXT)
 etex_OBJECTS = $(dist_etex_OBJECTS) $(nodist_etex_OBJECTS)
 @ETEX_SYNCTEX_TRUE@am__DEPENDENCIES_3 = $(am__DEPENDENCIES_1)
 am__dist_euptex_SOURCES_DIST = euptexdir/euptexextra.c \
 	euptexdir/euptexextra.h synctexdir/synctex.c \
 	synctexdir/synctex.h synctexdir/synctex-common.h \
 	synctexdir/synctex-euptex.h
-@EUPTEX_SYNCTEX_TRUE@am__objects_34 =  \
+@EUPTEX_SYNCTEX_TRUE@am__objects_35 =  \
 @EUPTEX_SYNCTEX_TRUE@	synctexdir/euptex-synctex.$(OBJEXT)
 dist_euptex_OBJECTS = euptexdir/euptex-euptexextra.$(OBJEXT) \
-	$(am__objects_34)
-am__objects_35 = euptex-euptexini.$(OBJEXT) euptex-euptex0.$(OBJEXT)
-nodist_euptex_OBJECTS = $(am__objects_35) euptex-euptex-pool.$(OBJEXT)
+	$(am__objects_35)
+am__objects_36 = euptex-euptexini.$(OBJEXT) euptex-euptex0.$(OBJEXT)
+nodist_euptex_OBJECTS = $(am__objects_36) euptex-euptex-pool.$(OBJEXT)
 euptex_OBJECTS = $(dist_euptex_OBJECTS) $(nodist_euptex_OBJECTS)
 @EUPTEX_SYNCTEX_TRUE@am__DEPENDENCIES_4 = $(am__DEPENDENCIES_1)
 am_gftodvi_OBJECTS =
@@ -1379,16 +1395,16 @@ hishrink_OBJECTS = $(nodist_hishrink_OBJECTS)
 nodist_histretch_OBJECTS = histretch-hitables.$(OBJEXT) \
 	histretch-histretch.$(OBJEXT)
 histretch_OBJECTS = $(nodist_histretch_OBJECTS)
-am__objects_36 = hitex-hitex.$(OBJEXT)
+am__objects_37 = hitex-hitex.$(OBJEXT)
 nodist_hitex_OBJECTS = hitex-hitables.$(OBJEXT) hitex-hiput.$(OBJEXT) \
-	$(am__objects_36)
+	$(am__objects_37)
 hitex_OBJECTS = $(nodist_hitex_OBJECTS)
 nodist_initex_OBJECTS = initex-callexe.$(OBJEXT)
 initex_OBJECTS = $(nodist_initex_OBJECTS)
 initex_DEPENDENCIES =
-am__objects_37 = luatexdir/luahbtex-luatex.$(OBJEXT) \
+am__objects_38 = luatexdir/luahbtex-luatex.$(OBJEXT) \
 	mplibdir/luahbtex-lmplib.$(OBJEXT)
-nodist_luahbtex_OBJECTS = $(am__objects_37)
+nodist_luahbtex_OBJECTS = $(am__objects_38)
 luahbtex_OBJECTS = $(nodist_luahbtex_OBJECTS)
 am__DEPENDENCIES_5 = $(am__DEPENDENCIES_1)
 am__DEPENDENCIES_6 = libmplibcore.a $(am__DEPENDENCIES_1) \
@@ -1399,16 +1415,16 @@ am__DEPENDENCIES_6 = libmplibcore.a $(am__DEPENDENCIES_1) \
 luahbtex_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(luahbtex_CXXFLAGS) \
 	$(CXXFLAGS) $(luahbtex_LDFLAGS) $(LDFLAGS) -o $@
-am__objects_38 = luatexdir/luajithbtex-luatex.$(OBJEXT) \
+am__objects_39 = luatexdir/luajithbtex-luatex.$(OBJEXT) \
 	mplibdir/luajithbtex-lmplib.$(OBJEXT)
-nodist_luajithbtex_OBJECTS = $(am__objects_38)
+nodist_luajithbtex_OBJECTS = $(am__objects_39)
 luajithbtex_OBJECTS = $(nodist_luajithbtex_OBJECTS)
 luajithbtex_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(luajithbtex_CXXFLAGS) \
 	$(CXXFLAGS) $(luajithbtex_LDFLAGS) $(LDFLAGS) -o $@
-am__objects_39 = luatexdir/luajittex-luatex.$(OBJEXT) \
+am__objects_40 = luatexdir/luajittex-luatex.$(OBJEXT) \
 	mplibdir/luajittex-lmplib.$(OBJEXT)
-nodist_luajittex_OBJECTS = $(am__objects_39)
+nodist_luajittex_OBJECTS = $(am__objects_40)
 luajittex_OBJECTS = $(nodist_luajittex_OBJECTS)
 am__DEPENDENCIES_7 = libmplibcore.a $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
@@ -1417,9 +1433,9 @@ am__DEPENDENCIES_7 = libmplibcore.a $(am__DEPENDENCIES_1) \
 luajittex_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
 	$(luajittex_LDFLAGS) $(LDFLAGS) -o $@
-am__objects_40 = luatexdir/luatex-luatex.$(OBJEXT) \
+am__objects_41 = luatexdir/luatex-luatex.$(OBJEXT) \
 	mplibdir/luatex-lmplib.$(OBJEXT)
-nodist_luatex_OBJECTS = $(am__objects_40)
+nodist_luatex_OBJECTS = $(am__objects_41)
 luatex_OBJECTS = $(nodist_luatex_OBJECTS)
 luatex_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
@@ -1447,8 +1463,8 @@ mflua_DEPENDENCIES = libmflua.a libmfluaotfcc.a libmfluapotrace.a \
 mflua_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
 	$(mflua_LDFLAGS) $(LDFLAGS) -o $@
-am__objects_41 = mfluadir/mflua_nowin-mfluaextra.$(OBJEXT)
-nodist_mflua_nowin_OBJECTS = $(am__objects_41)
+am__objects_42 = mfluadir/mflua_nowin-mfluaextra.$(OBJEXT)
+nodist_mflua_nowin_OBJECTS = $(am__objects_42)
 mflua_nowin_OBJECTS = $(nodist_mflua_nowin_OBJECTS)
 mflua_nowin_DEPENDENCIES = libmflua.a libmfluaotfcc.a \
 	libmfluapotrace.a libmflualpeg.a $(am__DEPENDENCIES_2) \
@@ -1465,8 +1481,8 @@ mfluajit_DEPENDENCIES = libmfluajit.a libmfluaotfcc.a \
 mfluajit_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
 	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
 	$(mfluajit_LDFLAGS) $(LDFLAGS) -o $@
-am__objects_42 = mfluajitdir/mfluajit_nowin-mfluajitextra.$(OBJEXT)
-nodist_mfluajit_nowin_OBJECTS = $(am__objects_42)
+am__objects_43 = mfluajitdir/mfluajit_nowin-mfluajitextra.$(OBJEXT)
+nodist_mfluajit_nowin_OBJECTS = $(am__objects_43)
 mfluajit_nowin_OBJECTS = $(nodist_mfluajit_nowin_OBJECTS)
 mfluajit_nowin_DEPENDENCIES = libmfluajit.a libmfluaotfcc.a \
 	libmfluapotrace.a libmfluajitlpeg.a $(am__DEPENDENCIES_2) \
@@ -1479,8 +1495,8 @@ nodist_mft_OBJECTS = mft.$(OBJEXT)
 mft_OBJECTS = $(nodist_mft_OBJECTS)
 mft_LDADD = $(LDADD)
 mft_DEPENDENCIES = $(proglib) $(am__DEPENDENCIES_1)
-am__objects_43 = mpost-mpxout.$(OBJEXT)
-nodist_mpost_OBJECTS = mpost-mpost.$(OBJEXT) $(am__objects_43)
+am__objects_44 = mpost-mpxout.$(OBJEXT)
+nodist_mpost_OBJECTS = mpost-mpost.$(OBJEXT) $(am__objects_44)
 mpost_OBJECTS = $(nodist_mpost_OBJECTS)
 mpost_DEPENDENCIES = libmplibcore.a libmplibextramath.a \
 	libmplibbackends.a $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
@@ -1508,12 +1524,12 @@ am__dist_pdftex_SOURCES_DIST = pdftexdir/pdftexextra.c \
 	pdftexdir/etex_version.h synctexdir/synctex.c \
 	synctexdir/synctex.h synctexdir/synctex-common.h \
 	synctexdir/synctex-pdftex.h
-@PDFTEX_SYNCTEX_TRUE@am__objects_44 =  \
+@PDFTEX_SYNCTEX_TRUE@am__objects_45 =  \
 @PDFTEX_SYNCTEX_TRUE@	synctexdir/pdftex-synctex.$(OBJEXT)
 dist_pdftex_OBJECTS = pdftexdir/pdftex-pdftexextra.$(OBJEXT) \
-	$(am__objects_44)
-am__objects_45 = pdftex-pdftexini.$(OBJEXT) pdftex-pdftex0.$(OBJEXT)
-nodist_pdftex_OBJECTS = $(am__objects_45) pdftex-pdftex-pool.$(OBJEXT)
+	$(am__objects_45)
+am__objects_46 = pdftex-pdftexini.$(OBJEXT) pdftex-pdftex0.$(OBJEXT)
+nodist_pdftex_OBJECTS = $(am__objects_46) pdftex-pdftex-pool.$(OBJEXT)
 pdftex_OBJECTS = $(dist_pdftex_OBJECTS) $(nodist_pdftex_OBJECTS)
 am__DEPENDENCIES_9 = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1) libmd5.a
@@ -1537,22 +1553,22 @@ nodist_pltotf_OBJECTS = pltotf.$(OBJEXT)
 pltotf_OBJECTS = $(nodist_pltotf_OBJECTS)
 pltotf_LDADD = $(LDADD)
 pltotf_DEPENDENCIES = $(proglib) $(am__DEPENDENCIES_1)
-am__objects_46 = pmpost-pmp.$(OBJEXT)
-am__objects_47 = pmpost-pmpmath.$(OBJEXT)
-am__objects_48 = pmpost-pmpmathinterval.$(OBJEXT)
-am__objects_49 = pmpost-pmpmathbinary.$(OBJEXT)
-am__objects_50 = pmpost-pmpmathdecimal.$(OBJEXT)
-am__objects_51 = pmpost-pmpmathdouble.$(OBJEXT)
-am__objects_52 = pmpost-pmpstrings.$(OBJEXT)
-am__objects_53 = pmpost-pmpxout.$(OBJEXT)
-am__objects_54 = pmpost-ppngout.$(OBJEXT)
-am__objects_55 = pmpost-ppsout.$(OBJEXT)
-am__objects_56 = pmpost-psvgout.$(OBJEXT)
-nodist_pmpost_OBJECTS = $(am__objects_46) $(am__objects_47) \
-	$(am__objects_48) $(am__objects_49) $(am__objects_50) \
-	$(am__objects_51) pmpost-pmpost.$(OBJEXT) $(am__objects_52) \
-	$(am__objects_53) $(am__objects_54) $(am__objects_55) \
-	$(am__objects_56) pmpost-ptfmin.$(OBJEXT)
+am__objects_47 = pmpost-pmp.$(OBJEXT)
+am__objects_48 = pmpost-pmpmath.$(OBJEXT)
+am__objects_49 = pmpost-pmpmathinterval.$(OBJEXT)
+am__objects_50 = pmpost-pmpmathbinary.$(OBJEXT)
+am__objects_51 = pmpost-pmpmathdecimal.$(OBJEXT)
+am__objects_52 = pmpost-pmpmathdouble.$(OBJEXT)
+am__objects_53 = pmpost-pmpstrings.$(OBJEXT)
+am__objects_54 = pmpost-pmpxout.$(OBJEXT)
+am__objects_55 = pmpost-ppngout.$(OBJEXT)
+am__objects_56 = pmpost-ppsout.$(OBJEXT)
+am__objects_57 = pmpost-psvgout.$(OBJEXT)
+nodist_pmpost_OBJECTS = $(am__objects_47) $(am__objects_48) \
+	$(am__objects_49) $(am__objects_50) $(am__objects_51) \
+	$(am__objects_52) pmpost-pmpost.$(OBJEXT) $(am__objects_53) \
+	$(am__objects_54) $(am__objects_55) $(am__objects_56) \
+	$(am__objects_57) pmpost-ptfmin.$(OBJEXT)
 pmpost_OBJECTS = $(nodist_pmpost_OBJECTS)
 pmpost_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
@@ -1579,10 +1595,10 @@ tangleboot_LDADD = $(LDADD)
 am__dist_tex_SOURCES_DIST = texextra.c synctexdir/synctex.c \
 	synctexdir/synctex.h synctexdir/synctex-common.h \
 	synctexdir/synctex-tex.h
-@TEX_SYNCTEX_TRUE@am__objects_57 = synctexdir/tex-synctex.$(OBJEXT)
-dist_tex_OBJECTS = tex-texextra.$(OBJEXT) $(am__objects_57)
-am__objects_58 = tex-texini.$(OBJEXT) tex-tex0.$(OBJEXT)
-nodist_tex_OBJECTS = $(am__objects_58) tex-tex-pool.$(OBJEXT)
+@TEX_SYNCTEX_TRUE@am__objects_58 = synctexdir/tex-synctex.$(OBJEXT)
+dist_tex_OBJECTS = tex-texextra.$(OBJEXT) $(am__objects_58)
+am__objects_59 = tex-texini.$(OBJEXT) tex-tex0.$(OBJEXT)
+nodist_tex_OBJECTS = $(am__objects_59) tex-tex-pool.$(OBJEXT)
 tex_OBJECTS = $(dist_tex_OBJECTS) $(nodist_tex_OBJECTS)
 @TEX_SYNCTEX_TRUE@am__DEPENDENCIES_12 = $(am__DEPENDENCIES_1)
 tex_DEPENDENCIES = $(am__DEPENDENCIES_2) $(am__DEPENDENCIES_1) \
@@ -1615,23 +1631,23 @@ am_updvitype_OBJECTS =
 nodist_updvitype_OBJECTS = updvitype-updvitype.$(OBJEXT)
 updvitype_OBJECTS = $(am_updvitype_OBJECTS) \
 	$(nodist_updvitype_OBJECTS)
-am__objects_59 = upmpost-pmp.$(OBJEXT)
-am__objects_60 = upmpost-pmpmath.$(OBJEXT)
-am__objects_61 = upmpost-pmpmathinterval.$(OBJEXT)
-am__objects_62 = upmpost-pmpmathbinary.$(OBJEXT)
-am__objects_63 = upmpost-pmpmathdecimal.$(OBJEXT)
-am__objects_64 = upmpost-pmpmathdouble.$(OBJEXT)
-am__objects_65 = upmpost-pmpstrings.$(OBJEXT)
-am__objects_66 = upmpost-pmpxout.$(OBJEXT)
-am__objects_67 = upmpost-ppngout.$(OBJEXT)
-am__objects_68 = upmpost-ppsout.$(OBJEXT)
-am__objects_69 = upmpost-psvgout.$(OBJEXT)
-am__objects_70 = $(am__objects_59) $(am__objects_60) $(am__objects_61) \
-	$(am__objects_62) $(am__objects_63) $(am__objects_64) \
-	upmpost-pmpost.$(OBJEXT) $(am__objects_65) $(am__objects_66) \
-	$(am__objects_67) $(am__objects_68) $(am__objects_69) \
+am__objects_60 = upmpost-pmp.$(OBJEXT)
+am__objects_61 = upmpost-pmpmath.$(OBJEXT)
+am__objects_62 = upmpost-pmpmathinterval.$(OBJEXT)
+am__objects_63 = upmpost-pmpmathbinary.$(OBJEXT)
+am__objects_64 = upmpost-pmpmathdecimal.$(OBJEXT)
+am__objects_65 = upmpost-pmpmathdouble.$(OBJEXT)
+am__objects_66 = upmpost-pmpstrings.$(OBJEXT)
+am__objects_67 = upmpost-pmpxout.$(OBJEXT)
+am__objects_68 = upmpost-ppngout.$(OBJEXT)
+am__objects_69 = upmpost-ppsout.$(OBJEXT)
+am__objects_70 = upmpost-psvgout.$(OBJEXT)
+am__objects_71 = $(am__objects_60) $(am__objects_61) $(am__objects_62) \
+	$(am__objects_63) $(am__objects_64) $(am__objects_65) \
+	upmpost-pmpost.$(OBJEXT) $(am__objects_66) $(am__objects_67) \
+	$(am__objects_68) $(am__objects_69) $(am__objects_70) \
 	upmpost-ptfmin.$(OBJEXT)
-nodist_upmpost_OBJECTS = $(am__objects_70)
+nodist_upmpost_OBJECTS = $(am__objects_71)
 upmpost_OBJECTS = $(nodist_upmpost_OBJECTS)
 am__DEPENDENCIES_14 = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
@@ -1643,8 +1659,8 @@ am_uppltotf_OBJECTS =
 nodist_uppltotf_OBJECTS = uppltotf-uppltotf.$(OBJEXT)
 uppltotf_OBJECTS = $(am_uppltotf_OBJECTS) $(nodist_uppltotf_OBJECTS)
 dist_uptex_OBJECTS = uptexdir/uptex-uptexextra.$(OBJEXT)
-am__objects_71 = uptex-uptexini.$(OBJEXT) uptex-uptex0.$(OBJEXT)
-nodist_uptex_OBJECTS = $(am__objects_71) uptex-uptex-pool.$(OBJEXT)
+am__objects_72 = uptex-uptexini.$(OBJEXT) uptex-uptex0.$(OBJEXT)
+nodist_uptex_OBJECTS = $(am__objects_72) uptex-uptex-pool.$(OBJEXT)
 uptex_OBJECTS = $(dist_uptex_OBJECTS) $(nodist_uptex_OBJECTS)
 am_uptftopl_OBJECTS =
 nodist_uptftopl_OBJECTS = uptftopl-uptftopl.$(OBJEXT)
@@ -1682,12 +1698,12 @@ am__dist_xetex_SOURCES_DIST = xetexdir/xetexextra.c \
 	xetexdir/xetex_version.h synctexdir/synctex.c \
 	synctexdir/synctex.h synctexdir/synctex-common.h \
 	synctexdir/synctex-xetex.h
-@XETEX_SYNCTEX_TRUE@am__objects_72 =  \
+@XETEX_SYNCTEX_TRUE@am__objects_73 =  \
 @XETEX_SYNCTEX_TRUE@	synctexdir/xetex-synctex.$(OBJEXT)
 dist_xetex_OBJECTS = xetexdir/xetex-xetexextra.$(OBJEXT) \
-	$(am__objects_72)
-am__objects_73 = xetex-xetexini.$(OBJEXT) xetex-xetex0.$(OBJEXT)
-nodist_xetex_OBJECTS = $(am__objects_73) xetex-xetex-pool.$(OBJEXT)
+	$(am__objects_73)
+am__objects_74 = xetex-xetexini.$(OBJEXT) xetex-xetex0.$(OBJEXT)
+nodist_xetex_OBJECTS = $(am__objects_74) xetex-xetex-pool.$(OBJEXT)
 xetex_OBJECTS = $(dist_xetex_OBJECTS) $(nodist_xetex_OBJECTS)
 @XETEX_MACOSX_FALSE@am__DEPENDENCIES_15 = $(am__DEPENDENCIES_1)
 am__DEPENDENCIES_16 = $(libxetex) $(am__DEPENDENCIES_1) \
@@ -2002,6 +2018,7 @@ am__depfiles_remade = ./$(DEPDIR)/aleph-aleph-pool.Po \
 	luatexdir/luaharfbuzz/src/luaharfbuzz/$(DEPDIR)/libluaharfbuzz_a-luaharfbuzz.Po \
 	luatexdir/luaharfbuzz/src/luaharfbuzz/$(DEPDIR)/libluaharfbuzz_a-ot.Po \
 	luatexdir/luaharfbuzz/src/luaharfbuzz/$(DEPDIR)/libluaharfbuzz_a-script.Po \
+	luatexdir/luaharfbuzz/src/luaharfbuzz/$(DEPDIR)/libluaharfbuzz_a-set.Po \
 	luatexdir/luaharfbuzz/src/luaharfbuzz/$(DEPDIR)/libluaharfbuzz_a-tag.Po \
 	luatexdir/luaharfbuzz/src/luaharfbuzz/$(DEPDIR)/libluaharfbuzz_a-unicode.Po \
 	luatexdir/luaharfbuzz/src/luaharfbuzz/$(DEPDIR)/libluaharfbuzz_a-variation.Po \
@@ -2016,9 +2033,14 @@ am__depfiles_remade = ./$(DEPDIR)/aleph-aleph-pool.Po \
 	luatexdir/luaharfbuzz/src/luaharfbuzz/$(DEPDIR)/libluajitharfbuzz_a-luaharfbuzz.Po \
 	luatexdir/luaharfbuzz/src/luaharfbuzz/$(DEPDIR)/libluajitharfbuzz_a-ot.Po \
 	luatexdir/luaharfbuzz/src/luaharfbuzz/$(DEPDIR)/libluajitharfbuzz_a-script.Po \
+	luatexdir/luaharfbuzz/src/luaharfbuzz/$(DEPDIR)/libluajitharfbuzz_a-set.Po \
 	luatexdir/luaharfbuzz/src/luaharfbuzz/$(DEPDIR)/libluajitharfbuzz_a-tag.Po \
 	luatexdir/luaharfbuzz/src/luaharfbuzz/$(DEPDIR)/libluajitharfbuzz_a-unicode.Po \
 	luatexdir/luaharfbuzz/src/luaharfbuzz/$(DEPDIR)/libluajitharfbuzz_a-variation.Po \
+	luatexdir/luaharfbuzz/src/luaharfbuzzsubset/$(DEPDIR)/libluaharfbuzzsubset_a-luaharfbuzzsubset.Po \
+	luatexdir/luaharfbuzz/src/luaharfbuzzsubset/$(DEPDIR)/libluaharfbuzzsubset_a-subset-input.Po \
+	luatexdir/luaharfbuzz/src/luaharfbuzzsubset/$(DEPDIR)/libluajitharfbuzzsubset_a-luaharfbuzzsubset.Po \
+	luatexdir/luaharfbuzz/src/luaharfbuzzsubset/$(DEPDIR)/libluajitharfbuzzsubset_a-subset-input.Po \
 	luatexdir/luamd5/$(DEPDIR)/libluajitmisc_a-md5.Po \
 	luatexdir/luamd5/$(DEPDIR)/libluajitmisc_a-md5lib.Po \
 	luatexdir/luamd5/$(DEPDIR)/libluamisc_a-md5.Po \
@@ -2445,9 +2467,10 @@ am__v_OBJCXXLD_ = $(am__v_OBJCXXLD_@AM_DEFAULT_V@)
 am__v_OBJCXXLD_0 = @echo "  OBJCXXLD" $@;
 am__v_OBJCXXLD_1 = 
 SOURCES = $(libff_a_SOURCES) $(nodist_libluaffi_a_SOURCES) \
-	$(libluaharfbuzz_a_SOURCES) \
+	$(libluaharfbuzz_a_SOURCES) $(libluaharfbuzzsubset_a_SOURCES) \
 	$(nodist_libluahbtexspecific_a_SOURCES) \
 	$(libluajitharfbuzz_a_SOURCES) \
+	$(libluajitharfbuzzsubset_a_SOURCES) \
 	$(nodist_libluajithbtexspecific_a_SOURCES) \
 	$(nodist_libluajitmisc_a_SOURCES) \
 	$(nodist_libluajitsocket_a_SOURCES) \
@@ -2520,22 +2543,25 @@ SOURCES = $(libff_a_SOURCES) $(nodist_libluaffi_a_SOURCES) \
 	$(nodist_wovp2ovf_SOURCES) $(dist_xetex_SOURCES) \
 	$(nodist_xetex_SOURCES) $(nodist_EXTRA_xetex_SOURCES)
 DIST_SOURCES = $(libff_a_SOURCES) $(libluaharfbuzz_a_SOURCES) \
-	$(libluajitharfbuzz_a_SOURCES) $(dist_libluajittex_a_SOURCES) \
-	$(dist_libluatex_a_SOURCES) $(libmd5_a_SOURCES) \
-	$(dist_libmflua_a_SOURCES) $(dist_libmfluajit_a_SOURCES) \
-	$(libmfluajitlpeg_a_SOURCES) $(libmflualpeg_a_SOURCES) \
-	$(libmfluaotfcc_a_SOURCES) $(libmfluapotrace_a_SOURCES) \
-	$(libmputil_a_SOURCES) $(am__libpdftex_a_SOURCES_DIST) \
-	$(EXTRA_libpdftex_a_SOURCES) $(libukanji_a_SOURCES) \
-	$(libunilib_a_SOURCES) $(am__libxetex_a_SOURCES_DIST) \
-	$(libsynctex_la_SOURCES) $(dist_aleph_SOURCES) \
-	$(am__dist_etex_SOURCES_DIST) $(am__dist_euptex_SOURCES_DIST) \
-	$(gftodvi_SOURCES) himktables.c $(md5main_SOURCES) \
-	$(dist_mf_SOURCES) $(dist_mf_nowin_SOURCES) \
-	$(dist_mflua_SOURCES) $(dist_mfluajit_SOURCES) \
-	$(am__dist_pdftex_SOURCES_DIST) $(pdftosrc_SOURCES) \
-	$(synctex_SOURCES) $(am__dist_tex_SOURCES_DIST) texprof.c \
-	texprofile.c $(ttf2afm_SOURCES) $(EXTRA_ttf2afm_SOURCES) \
+	$(libluaharfbuzzsubset_a_SOURCES) \
+	$(libluajitharfbuzz_a_SOURCES) \
+	$(libluajitharfbuzzsubset_a_SOURCES) \
+	$(dist_libluajittex_a_SOURCES) $(dist_libluatex_a_SOURCES) \
+	$(libmd5_a_SOURCES) $(dist_libmflua_a_SOURCES) \
+	$(dist_libmfluajit_a_SOURCES) $(libmfluajitlpeg_a_SOURCES) \
+	$(libmflualpeg_a_SOURCES) $(libmfluaotfcc_a_SOURCES) \
+	$(libmfluapotrace_a_SOURCES) $(libmputil_a_SOURCES) \
+	$(am__libpdftex_a_SOURCES_DIST) $(EXTRA_libpdftex_a_SOURCES) \
+	$(libukanji_a_SOURCES) $(libunilib_a_SOURCES) \
+	$(am__libxetex_a_SOURCES_DIST) $(libsynctex_la_SOURCES) \
+	$(dist_aleph_SOURCES) $(am__dist_etex_SOURCES_DIST) \
+	$(am__dist_euptex_SOURCES_DIST) $(gftodvi_SOURCES) \
+	himktables.c $(md5main_SOURCES) $(dist_mf_SOURCES) \
+	$(dist_mf_nowin_SOURCES) $(dist_mflua_SOURCES) \
+	$(dist_mfluajit_SOURCES) $(am__dist_pdftex_SOURCES_DIST) \
+	$(pdftosrc_SOURCES) $(synctex_SOURCES) \
+	$(am__dist_tex_SOURCES_DIST) texprof.c texprofile.c \
+	$(ttf2afm_SOURCES) $(EXTRA_ttf2afm_SOURCES) \
 	$(upbibtex_SOURCES) $(updvitype_SOURCES) $(uppltotf_SOURCES) \
 	$(dist_uptex_SOURCES) $(uptftopl_SOURCES) \
 	$(am__dist_xetex_SOURCES_DIST)
@@ -2791,6 +2817,7 @@ am__DIST_COMMON = $(dist_man_MANS) $(srcdir)/../../am/bin_links.am \
 	$(srcdir)/luatexdir/am/luaffi.am \
 	$(srcdir)/luatexdir/am/luafontforge.am \
 	$(srcdir)/luatexdir/am/luaharfbuzz.am \
+	$(srcdir)/luatexdir/am/luaharfbuzzsubset.am \
 	$(srcdir)/luatexdir/am/luamisc.am \
 	$(srcdir)/luatexdir/am/luasocket.am \
 	$(srcdir)/luatexdir/am/luatex.am \
@@ -3137,8 +3164,8 @@ EXTRA_LIBRARIES = libmf.a libmflua.a libmfluaotfcc.a libmfluapotrace.a \
 	libunilib.a libff.a libluatex.a libluajittex.a \
 	libluatexspecific.a libluajittexspecific.a \
 	libluahbtexspecific.a libluajithbtexspecific.a libluaffi.a \
-	libluaharfbuzz.a libluajitharfbuzz.a libxetex.a libsynctex.a \
-	libmd5.a
+	libluaharfbuzz.a libluajitharfbuzz.a libluaharfbuzzsubset.a \
+	libluajitharfbuzzsubset.a libxetex.a libsynctex.a libmd5.a
 EXTRA_LTLIBRARIES = libsynctex.la
 lib_LIBRARIES = $(am__append_120)
 lib_LTLIBRARIES = $(am__append_119)
@@ -3795,29 +3822,29 @@ AM_TESTS_ENVIRONMENT = abs_srcdir=$(abs_srcdir); export abs_srcdir; \
 
 # To run, e.g., just the original trip test, in the build directory:
 #   make -C $ww TRIPTRAP=trip.diffs triptrap
-# where $ww is the web2c build directory.   
-# 
+# where $ww is the web2c build directory.
+#
 # This will run the triptrap-sh script
 #   which then runs make TEST=triptest.test check-am,
 #   which then runs the (srcdir file) triptest.test script;
 #   its output will be in (builddir file) trip.diffs,
-#   and triptest.out if the test failed,   
+#   and triptest.out if the test failed,
 #   plus various created files in the tripdir/ subdirectory.
 # The triptest.diffs file will have the actual abs_srcdir value replaced
 #  with the constant string "SRCDIR" to minimize differences, and "../"
 #  replaced with "./" to match the canonical output. Confusing. For the
 #  real output, see triptest.log.
-# 
+#
 # To build only tex, make -C $ww tex (i.e., in builddir) should do it.
 # Unfortunately the check-am target depends on all-am, so all engines
 # are built before any tests are run. If this is a problem, just have to
 # edit the generated Makefile in builddir to remove the dependency.
-# 
+#
 # Other per-engine invocations (see triptrap-sh for complete list):
 #   make -C $ww mf && make -C $ww TRIPTRAP=mftrap.diffs triptrap
-#   make -C $ww etex && make -C $ww TRIPTRAP=etrip.diffs triptrap   
-#   make -C $ww ptex && make -C $ww TRIPTRAP=ptrip.diffs triptrap   
-#   
+#   make -C $ww etex && make -C $ww TRIPTRAP=etrip.diffs triptrap
+#   make -C $ww ptex && make -C $ww TRIPTRAP=ptrip.diffs triptrap
+#
 triptrap_diffs = $(AM_V_GEN)srcdir=$(srcdir) abs_srcdir=$(abs_srcdir) MAKE=$(MAKE) $(SHELL) $(srcdir)/triptrap-sh
 
 # The environment for making dumps.
@@ -4918,9 +4945,9 @@ libluatex_a_preflags = $(AM_CPPFLAGS) $(ZLIB_INCLUDES) \
 	-DLUA_FF_LIB=1 \
 	-I$(srcdir)/luatexdir/luafontloader/fontforge/fontforge \
 	-DSYNCTEX_ENGINE_H='<synctex-luatex.h>' -I$(srcdir)/synctexdir
-libluatex_a_CPPFLAGS = $(libluatex_a_preflags) $(LUA_INCLUDES)
+libluatex_a_CPPFLAGS = $(libluatex_a_preflags) $(LUA_INCLUDES) $(ENVLUATEXCPPFLAGS)
 libluajittex_a_CPPFLAGS = $(libluatex_a_preflags) $(LUAJIT_INCLUDES) \
-	$(LUAJIT_DEFINES) -DLuajitTeX
+	$(LUAJIT_DEFINES) -DLuajitTeX $(ENVLUAJITEXCPPFLAGS)
 libluatex_a_CXXFLAGS = $(WARNING_CXXFLAGS)
 libluajittex_a_CXXFLAGS = $(WARNING_CXXFLAGS)
 libluatexspecific_a_CPPFLAGS = $(libluatex_a_CPPFLAGS)
@@ -5292,8 +5319,8 @@ luahbtex_postldadd = libmplibcore.a $(ZZIPLIB_LIBS) $(LIBPNG_LIBS) \
 	$(LDADD) libmputil.a libunilib.a libmd5.a $(lua_socketlibs)
 luatex_LDADD = libluatex.a libluatexspecific.a libluatex.a libff.a libluamisc.a libluasocket.a libluaffi.a  $(LUA_LIBS) $(luatex_postldadd)
 luajittex_LDADD = libluajittex.a libluajittexspecific.a libluajittex.a libff.a libluajitmisc.a libluajitsocket.a   $(LUAJIT_LIBS) $(luatex_postldadd)
-luahbtex_LDADD = libluatex.a libluahbtexspecific.a libluatex.a libff.a libluamisc.a libluasocket.a libluaffi.a  libluaharfbuzz.a $(LUA_LIBS) $(luahbtex_postldadd)
-luajithbtex_LDADD = libluajittex.a libluajithbtexspecific.a libluajittex.a libff.a libluajitmisc.a libluajitsocket.a libluajitharfbuzz.a $(LUAJIT_LIBS) $(luahbtex_postldadd)
+luahbtex_LDADD = libluatex.a libluahbtexspecific.a libluatex.a libff.a libluamisc.a libluasocket.a libluaffi.a  libluaharfbuzz.a libluaharfbuzzsubset.a $(LUA_LIBS) $(luahbtex_postldadd)
+luajithbtex_LDADD = libluajittex.a libluajithbtexspecific.a libluajittex.a libff.a libluajitmisc.a libluajitsocket.a libluajitharfbuzz.a libluajitharfbuzzsubset.a $(LUAJIT_LIBS) $(luahbtex_postldadd)
 
 #not here ?
 #LIBTOOLFLAGS += --preserve-dup-deps
@@ -5301,8 +5328,8 @@ luatex_depend = $(proglib) $(KPATHSEA_DEPEND) $(LIBPNG_DEPEND) libmputil.a libmd
 luatex_DEPENDENCIES = $(luatex_depend) libluatex.a libluatexspecific.a
 luajittex_DEPENDENCIES = $(luatex_depend) libluajittex.a libluajittexspecific.a
 luahbtex_depend = $(proglib) $(KPATHSEA_DEPEND) $(LIBPNG_DEPEND) libmputil.a libmd5.a
-luahbtex_DEPENDENCIES = $(luahbtex_depend) libluatex.a libluahbtexspecific.a libluaharfbuzz.a
-luajithbtex_DEPENDENCIES = $(luatex_depend) libluajittex.a libluajithbtexspecific.a libluajitharfbuzz.a
+luahbtex_DEPENDENCIES = $(luahbtex_depend) libluatex.a libluahbtexspecific.a libluaharfbuzz.a libluaharfbuzzsubset.a
+luajithbtex_DEPENDENCIES = $(luatex_depend) libluajittex.a libluajithbtexspecific.a libluajitharfbuzz.a libluajitharfbuzzsubset.a
 nodist_luatex_SOURCES = $(luatex_sources)
 nodist_luajittex_SOURCES = $(luatex_sources)
 nodist_luahbtex_SOURCES = $(luatex_sources)
@@ -5356,11 +5383,25 @@ libluaharfbuzz_a_SOURCES = \
 	luatexdir/luaharfbuzz/src/luaharfbuzz/luaharfbuzz.h \
 	luatexdir/luaharfbuzz/src/luaharfbuzz/ot.c \
 	luatexdir/luaharfbuzz/src/luaharfbuzz/script.c \
+	luatexdir/luaharfbuzz/src/luaharfbuzz/set.c \
 	luatexdir/luaharfbuzz/src/luaharfbuzz/tag.c \
 	luatexdir/luaharfbuzz/src/luaharfbuzz/unicode.c \
 	luatexdir/luaharfbuzz/src/luaharfbuzz/variation.c
 
 libluajitharfbuzz_a_SOURCES = $(libluaharfbuzz_a_SOURCES)
+libluaharfbuzzsubset_a_DEPENDENCIES = $(HARFBUZZ_DEPEND) $(GRAPHITE2_DEPEND)
+libluajitharfbuzzsubset_a_DEPENDENCIES = $(HARFBUZZ_DEPEND) $(GRAPHITE2_DEPEND)
+libluaharfbuzzsubset_a_CPPFLAGS = $(AM_CPPFLAGS) $(LUA_INCLUDES) $(HARFBUZZ_INCLUDES) $(GRAPHITE2_INCLUDES)
+libluajitharfbuzzsubset_a_CPPFLAGS = $(AM_CPPFLAGS) $(LUAJIT_INCLUDES) \
+	$(LUAJIT_DEFINES) $(HARFBUZZ_INCLUDES) $(GRAPHITE2_INCLUDES) \
+	-DLuajitTeX
+libluaharfbuzzsubset_a_CFLAGS = # $(WARNING_CFLAGS)
+libluajitharfbuzzsubset_a_CFLAGS = # $(WARNING_CFLAGS)
+libluaharfbuzzsubset_a_SOURCES = \
+	luatexdir/luaharfbuzz/src/luaharfbuzzsubset/luaharfbuzzsubset.c \
+	luatexdir/luaharfbuzz/src/luaharfbuzzsubset/subset-input.c
+
+libluajitharfbuzzsubset_a_SOURCES = $(libluaharfbuzzsubset_a_SOURCES)
 texprof_CPPFLAGS = $(AM_CPPFLAGS) -I$(srcdir)/libmd5 -DINIT -DSTAT \
 	-DWEB2CVERSION="\"${WEB2CVERSION}\""
 # -DDEBUG drops into an interactive debugging session.
@@ -5644,7 +5685,7 @@ all: ff-config.h
 .SUFFIXES: .c .cc .cin .cpp .cxx .h .hin .lo .log .mm .o .obj .p .pin .pl .pl$(EXEEXT) .test .test$(EXEEXT) .trs
 am--refresh: Makefile
 	@:
-$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am $(srcdir)/../../am/dist_hook.am $(srcdir)/am/bootstrap.am $(srcdir)/am/web.am $(srcdir)/am/cweb.am $(srcdir)/am/texmf.am $(srcdir)/mfluadir/am/mflua.am $(srcdir)/mfluadir/am/mfluaotfcc.am $(srcdir)/mfluadir/am/mfluapotrace.am $(srcdir)/mfluadir/am/mflualpeg.am $(srcdir)/mfluajitdir/am/mfluajit.am $(srcdir)/mfluajitdir/am/mfluajitlpeg.am $(srcdir)/mplibdir/am/mplib.am $(srcdir)/pmpostdir/am/pmpost.am $(srcdir)/mplibdir/am/libmputil.am $(srcdir)/mplibdir/am/libmplib.am $(srcdir)/etexdir/am/etex.am $(srcdir)/uptexdir/am/uptex.am $(srcdir)/euptexdir/am/euptex.am $(srcdir)/hitexdir/am/hitex.am $(srcdir)/pdftexdir/am/libpdftex.am $(srcdir)/pdftexdir/am/pdftex.am $(srcdir)/pdftexdir/am/ttf2afm.am $(srcdir)/pdftexdir/am/pdftosrc.am $(srcdir)/luatexdir/am/luasocket.am $(srcdir)/luatexdir/am/luamisc.am $(srcdir)/luatexdir/am/libunilib.am $(srcdir)/luatexdir/am/luafontforge.am $(srcdir)/luatexdir/am/libluatex.am $(srcdir)/luatexdir/am/luaffi.am $(srcdir)/luatexdir/am/luatex.am $(srcdir)/luatexdir/am/luaharfbuzz.am $(srcdir)/texprofdir/am/texprof.am $(srcdir)/xetexdir/am/xetex.am $(srcdir)/omegaware/am/omegaware.am $(srcdir)/alephdir/am/aleph.am $(srcdir)/synctexdir/am/synctex.am $(srcdir)/libmd5/am/md5.am $(srcdir)/../../am/bin_links.am $(am__configure_deps)
+$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am $(srcdir)/../../am/dist_hook.am $(srcdir)/am/bootstrap.am $(srcdir)/am/web.am $(srcdir)/am/cweb.am $(srcdir)/am/texmf.am $(srcdir)/mfluadir/am/mflua.am $(srcdir)/mfluadir/am/mfluaotfcc.am $(srcdir)/mfluadir/am/mfluapotrace.am $(srcdir)/mfluadir/am/mflualpeg.am $(srcdir)/mfluajitdir/am/mfluajit.am $(srcdir)/mfluajitdir/am/mfluajitlpeg.am $(srcdir)/mplibdir/am/mplib.am $(srcdir)/pmpostdir/am/pmpost.am $(srcdir)/mplibdir/am/libmputil.am $(srcdir)/mplibdir/am/libmplib.am $(srcdir)/etexdir/am/etex.am $(srcdir)/uptexdir/am/uptex.am $(srcdir)/euptexdir/am/euptex.am $(srcdir)/hitexdir/am/hitex.am $(srcdir)/pdftexdir/am/libpdftex.am $(srcdir)/pdftexdir/am/pdftex.am $(srcdir)/pdftexdir/am/ttf2afm.am $(srcdir)/pdftexdir/am/pdftosrc.am $(srcdir)/luatexdir/am/luasocket.am $(srcdir)/luatexdir/am/luamisc.am $(srcdir)/luatexdir/am/libunilib.am $(srcdir)/luatexdir/am/luafontforge.am $(srcdir)/luatexdir/am/libluatex.am $(srcdir)/luatexdir/am/luaffi.am $(srcdir)/luatexdir/am/luatex.am $(srcdir)/luatexdir/am/luaharfbuzz.am $(srcdir)/luatexdir/am/luaharfbuzzsubset.am $(srcdir)/texprofdir/am/texprof.am $(srcdir)/xetexdir/am/xetex.am $(srcdir)/omegaware/am/omegaware.am $(srcdir)/alephdir/am/aleph.am $(srcdir)/synctexdir/am/synctex.am $(srcdir)/libmd5/am/md5.am $(srcdir)/../../am/bin_links.am $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
 	    *$$dep*) \
@@ -5666,7 +5707,7 @@ Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	    echo ' cd $(top_builddir) && $(SHELL) ./config.status $@ $(am__maybe_remake_depfiles)'; \
 	    cd $(top_builddir) && $(SHELL) ./config.status $@ $(am__maybe_remake_depfiles);; \
 	esac;
-$(srcdir)/../../am/dist_hook.am $(srcdir)/am/bootstrap.am $(srcdir)/am/web.am $(srcdir)/am/cweb.am $(srcdir)/am/texmf.am $(srcdir)/mfluadir/am/mflua.am $(srcdir)/mfluadir/am/mfluaotfcc.am $(srcdir)/mfluadir/am/mfluapotrace.am $(srcdir)/mfluadir/am/mflualpeg.am $(srcdir)/mfluajitdir/am/mfluajit.am $(srcdir)/mfluajitdir/am/mfluajitlpeg.am $(srcdir)/mplibdir/am/mplib.am $(srcdir)/pmpostdir/am/pmpost.am $(srcdir)/mplibdir/am/libmputil.am $(srcdir)/mplibdir/am/libmplib.am $(srcdir)/etexdir/am/etex.am $(srcdir)/uptexdir/am/uptex.am $(srcdir)/euptexdir/am/euptex.am $(srcdir)/hitexdir/am/hitex.am $(srcdir)/pdftexdir/am/libpdftex.am $(srcdir)/pdftexdir/am/pdftex.am $(srcdir)/pdftexdir/am/ttf2afm.am $(srcdir)/pdftexdir/am/pdftosrc.am $(srcdir)/luatexdir/am/luasocket.am $(srcdir)/luatexdir/am/luamisc.am $(srcdir)/luatexdir/am/libunilib.am $(srcdir)/luatexdir/am/luafontforge.am $(srcdir)/luatexdir/am/libluatex.am $(srcdir)/luatexdir/am/luaffi.am $(srcdir)/luatexdir/am/luatex.am $(srcdir)/luatexdir/am/luaharfbuzz.am $(srcdir)/texprofdir/am/texprof.am $(srcdir)/xetexdir/am/xetex.am $(srcdir)/omegaware/am/omegaware.am $(srcdir)/alephdir/am/aleph.am $(srcdir)/synctexdir/am/synctex.am $(srcdir)/libmd5/am/md5.am $(srcdir)/../../am/bin_links.am $(am__empty):
+$(srcdir)/../../am/dist_hook.am $(srcdir)/am/bootstrap.am $(srcdir)/am/web.am $(srcdir)/am/cweb.am $(srcdir)/am/texmf.am $(srcdir)/mfluadir/am/mflua.am $(srcdir)/mfluadir/am/mfluaotfcc.am $(srcdir)/mfluadir/am/mfluapotrace.am $(srcdir)/mfluadir/am/mflualpeg.am $(srcdir)/mfluajitdir/am/mfluajit.am $(srcdir)/mfluajitdir/am/mfluajitlpeg.am $(srcdir)/mplibdir/am/mplib.am $(srcdir)/pmpostdir/am/pmpost.am $(srcdir)/mplibdir/am/libmputil.am $(srcdir)/mplibdir/am/libmplib.am $(srcdir)/etexdir/am/etex.am $(srcdir)/uptexdir/am/uptex.am $(srcdir)/euptexdir/am/euptex.am $(srcdir)/hitexdir/am/hitex.am $(srcdir)/pdftexdir/am/libpdftex.am $(srcdir)/pdftexdir/am/pdftex.am $(srcdir)/pdftexdir/am/ttf2afm.am $(srcdir)/pdftexdir/am/pdftosrc.am $(srcdir)/luatexdir/am/luasocket.am $(srcdir)/luatexdir/am/luamisc.am $(srcdir)/luatexdir/am/libunilib.am $(srcdir)/luatexdir/am/luafontforge.am $(srcdir)/luatexdir/am/libluatex.am $(srcdir)/luatexdir/am/luaffi.am $(srcdir)/luatexdir/am/luatex.am $(srcdir)/luatexdir/am/luaharfbuzz.am $(srcdir)/luatexdir/am/luaharfbuzzsubset.am $(srcdir)/texprofdir/am/texprof.am $(srcdir)/xetexdir/am/xetex.am $(srcdir)/omegaware/am/omegaware.am $(srcdir)/alephdir/am/aleph.am $(srcdir)/synctexdir/am/synctex.am $(srcdir)/libmd5/am/md5.am $(srcdir)/../../am/bin_links.am $(am__empty):
 
 $(top_builddir)/config.status: $(top_srcdir)/configure $(CONFIG_STATUS_DEPENDENCIES)
 	$(SHELL) ./config.status --recheck
@@ -6026,6 +6067,9 @@ luatexdir/luaharfbuzz/src/luaharfbuzz/libluaharfbuzz_a-ot.$(OBJEXT):  \
 luatexdir/luaharfbuzz/src/luaharfbuzz/libluaharfbuzz_a-script.$(OBJEXT):  \
 	luatexdir/luaharfbuzz/src/luaharfbuzz/$(am__dirstamp) \
 	luatexdir/luaharfbuzz/src/luaharfbuzz/$(DEPDIR)/$(am__dirstamp)
+luatexdir/luaharfbuzz/src/luaharfbuzz/libluaharfbuzz_a-set.$(OBJEXT):  \
+	luatexdir/luaharfbuzz/src/luaharfbuzz/$(am__dirstamp) \
+	luatexdir/luaharfbuzz/src/luaharfbuzz/$(DEPDIR)/$(am__dirstamp)
 luatexdir/luaharfbuzz/src/luaharfbuzz/libluaharfbuzz_a-tag.$(OBJEXT):  \
 	luatexdir/luaharfbuzz/src/luaharfbuzz/$(am__dirstamp) \
 	luatexdir/luaharfbuzz/src/luaharfbuzz/$(DEPDIR)/$(am__dirstamp)
@@ -6040,6 +6084,23 @@ libluaharfbuzz.a: $(libluaharfbuzz_a_OBJECTS) $(libluaharfbuzz_a_DEPENDENCIES) $
 	$(AM_V_at)-rm -f libluaharfbuzz.a
 	$(AM_V_AR)$(libluaharfbuzz_a_AR) libluaharfbuzz.a $(libluaharfbuzz_a_OBJECTS) $(libluaharfbuzz_a_LIBADD)
 	$(AM_V_at)$(libluaharfbuzz_a_RANLIB) libluaharfbuzz.a
+luatexdir/luaharfbuzz/src/luaharfbuzzsubset/$(am__dirstamp):
+	@$(MKDIR_P) luatexdir/luaharfbuzz/src/luaharfbuzzsubset
+	@: >>luatexdir/luaharfbuzz/src/luaharfbuzzsubset/$(am__dirstamp)
+luatexdir/luaharfbuzz/src/luaharfbuzzsubset/$(DEPDIR)/$(am__dirstamp):
+	@$(MKDIR_P) luatexdir/luaharfbuzz/src/luaharfbuzzsubset/$(DEPDIR)
+	@: >>luatexdir/luaharfbuzz/src/luaharfbuzzsubset/$(DEPDIR)/$(am__dirstamp)
+luatexdir/luaharfbuzz/src/luaharfbuzzsubset/libluaharfbuzzsubset_a-luaharfbuzzsubset.$(OBJEXT):  \
+	luatexdir/luaharfbuzz/src/luaharfbuzzsubset/$(am__dirstamp) \
+	luatexdir/luaharfbuzz/src/luaharfbuzzsubset/$(DEPDIR)/$(am__dirstamp)
+luatexdir/luaharfbuzz/src/luaharfbuzzsubset/libluaharfbuzzsubset_a-subset-input.$(OBJEXT):  \
+	luatexdir/luaharfbuzz/src/luaharfbuzzsubset/$(am__dirstamp) \
+	luatexdir/luaharfbuzz/src/luaharfbuzzsubset/$(DEPDIR)/$(am__dirstamp)
+
+libluaharfbuzzsubset.a: $(libluaharfbuzzsubset_a_OBJECTS) $(libluaharfbuzzsubset_a_DEPENDENCIES) $(EXTRA_libluaharfbuzzsubset_a_DEPENDENCIES) 
+	$(AM_V_at)-rm -f libluaharfbuzzsubset.a
+	$(AM_V_AR)$(libluaharfbuzzsubset_a_AR) libluaharfbuzzsubset.a $(libluaharfbuzzsubset_a_OBJECTS) $(libluaharfbuzzsubset_a_LIBADD)
+	$(AM_V_at)$(libluaharfbuzzsubset_a_RANLIB) libluaharfbuzzsubset.a
 
 libluahbtexspecific.a: $(libluahbtexspecific_a_OBJECTS) $(libluahbtexspecific_a_DEPENDENCIES) $(EXTRA_libluahbtexspecific_a_DEPENDENCIES) 
 	$(AM_V_at)-rm -f libluahbtexspecific.a
@@ -6078,6 +6139,9 @@ luatexdir/luaharfbuzz/src/luaharfbuzz/libluajitharfbuzz_a-ot.$(OBJEXT):  \
 luatexdir/luaharfbuzz/src/luaharfbuzz/libluajitharfbuzz_a-script.$(OBJEXT):  \
 	luatexdir/luaharfbuzz/src/luaharfbuzz/$(am__dirstamp) \
 	luatexdir/luaharfbuzz/src/luaharfbuzz/$(DEPDIR)/$(am__dirstamp)
+luatexdir/luaharfbuzz/src/luaharfbuzz/libluajitharfbuzz_a-set.$(OBJEXT):  \
+	luatexdir/luaharfbuzz/src/luaharfbuzz/$(am__dirstamp) \
+	luatexdir/luaharfbuzz/src/luaharfbuzz/$(DEPDIR)/$(am__dirstamp)
 luatexdir/luaharfbuzz/src/luaharfbuzz/libluajitharfbuzz_a-tag.$(OBJEXT):  \
 	luatexdir/luaharfbuzz/src/luaharfbuzz/$(am__dirstamp) \
 	luatexdir/luaharfbuzz/src/luaharfbuzz/$(DEPDIR)/$(am__dirstamp)
@@ -6092,6 +6156,17 @@ libluajitharfbuzz.a: $(libluajitharfbuzz_a_OBJECTS) $(libluajitharfbuzz_a_DEPEND
 	$(AM_V_at)-rm -f libluajitharfbuzz.a
 	$(AM_V_AR)$(libluajitharfbuzz_a_AR) libluajitharfbuzz.a $(libluajitharfbuzz_a_OBJECTS) $(libluajitharfbuzz_a_LIBADD)
 	$(AM_V_at)$(libluajitharfbuzz_a_RANLIB) libluajitharfbuzz.a
+luatexdir/luaharfbuzz/src/luaharfbuzzsubset/libluajitharfbuzzsubset_a-luaharfbuzzsubset.$(OBJEXT):  \
+	luatexdir/luaharfbuzz/src/luaharfbuzzsubset/$(am__dirstamp) \
+	luatexdir/luaharfbuzz/src/luaharfbuzzsubset/$(DEPDIR)/$(am__dirstamp)
+luatexdir/luaharfbuzz/src/luaharfbuzzsubset/libluajitharfbuzzsubset_a-subset-input.$(OBJEXT):  \
+	luatexdir/luaharfbuzz/src/luaharfbuzzsubset/$(am__dirstamp) \
+	luatexdir/luaharfbuzz/src/luaharfbuzzsubset/$(DEPDIR)/$(am__dirstamp)
+
+libluajitharfbuzzsubset.a: $(libluajitharfbuzzsubset_a_OBJECTS) $(libluajitharfbuzzsubset_a_DEPENDENCIES) $(EXTRA_libluajitharfbuzzsubset_a_DEPENDENCIES) 
+	$(AM_V_at)-rm -f libluajitharfbuzzsubset.a
+	$(AM_V_AR)$(libluajitharfbuzzsubset_a_AR) libluajitharfbuzzsubset.a $(libluajitharfbuzzsubset_a_OBJECTS) $(libluajitharfbuzzsubset_a_LIBADD)
+	$(AM_V_at)$(libluajitharfbuzzsubset_a_RANLIB) libluajitharfbuzzsubset.a
 
 libluajithbtexspecific.a: $(libluajithbtexspecific_a_OBJECTS) $(libluajithbtexspecific_a_DEPENDENCIES) $(EXTRA_libluajithbtexspecific_a_DEPENDENCIES) 
 	$(AM_V_at)-rm -f libluajithbtexspecific.a
@@ -8401,6 +8476,7 @@ mostlyclean-compile:
 	-rm -f luatexdir/luafontloader/fontforge/gutils/*.$(OBJEXT)
 	-rm -f luatexdir/luafontloader/src/*.$(OBJEXT)
 	-rm -f luatexdir/luaharfbuzz/src/luaharfbuzz/*.$(OBJEXT)
+	-rm -f luatexdir/luaharfbuzz/src/luaharfbuzzsubset/*.$(OBJEXT)
 	-rm -f luatexdir/luamd5/*.$(OBJEXT)
 	-rm -f luatexdir/luapeg/*.$(OBJEXT)
 	-rm -f luatexdir/luasocket/src/*.$(OBJEXT)
@@ -8791,6 +8867,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@luatexdir/luaharfbuzz/src/luaharfbuzz/$(DEPDIR)/libluaharfbuzz_a-luaharfbuzz.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@luatexdir/luaharfbuzz/src/luaharfbuzz/$(DEPDIR)/libluaharfbuzz_a-ot.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@luatexdir/luaharfbuzz/src/luaharfbuzz/$(DEPDIR)/libluaharfbuzz_a-script.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@luatexdir/luaharfbuzz/src/luaharfbuzz/$(DEPDIR)/libluaharfbuzz_a-set.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@luatexdir/luaharfbuzz/src/luaharfbuzz/$(DEPDIR)/libluaharfbuzz_a-tag.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@luatexdir/luaharfbuzz/src/luaharfbuzz/$(DEPDIR)/libluaharfbuzz_a-unicode.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@luatexdir/luaharfbuzz/src/luaharfbuzz/$(DEPDIR)/libluaharfbuzz_a-variation.Po@am__quote@ # am--include-marker
@@ -8805,9 +8882,14 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@luatexdir/luaharfbuzz/src/luaharfbuzz/$(DEPDIR)/libluajitharfbuzz_a-luaharfbuzz.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@luatexdir/luaharfbuzz/src/luaharfbuzz/$(DEPDIR)/libluajitharfbuzz_a-ot.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@luatexdir/luaharfbuzz/src/luaharfbuzz/$(DEPDIR)/libluajitharfbuzz_a-script.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@luatexdir/luaharfbuzz/src/luaharfbuzz/$(DEPDIR)/libluajitharfbuzz_a-set.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@luatexdir/luaharfbuzz/src/luaharfbuzz/$(DEPDIR)/libluajitharfbuzz_a-tag.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@luatexdir/luaharfbuzz/src/luaharfbuzz/$(DEPDIR)/libluajitharfbuzz_a-unicode.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@luatexdir/luaharfbuzz/src/luaharfbuzz/$(DEPDIR)/libluajitharfbuzz_a-variation.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@luatexdir/luaharfbuzz/src/luaharfbuzzsubset/$(DEPDIR)/libluaharfbuzzsubset_a-luaharfbuzzsubset.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@luatexdir/luaharfbuzz/src/luaharfbuzzsubset/$(DEPDIR)/libluaharfbuzzsubset_a-subset-input.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@luatexdir/luaharfbuzz/src/luaharfbuzzsubset/$(DEPDIR)/libluajitharfbuzzsubset_a-luaharfbuzzsubset.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@luatexdir/luaharfbuzz/src/luaharfbuzzsubset/$(DEPDIR)/libluajitharfbuzzsubset_a-subset-input.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@luatexdir/luamd5/$(DEPDIR)/libluajitmisc_a-md5.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@luatexdir/luamd5/$(DEPDIR)/libluajitmisc_a-md5lib.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@luatexdir/luamd5/$(DEPDIR)/libluamisc_a-md5.Po@am__quote@ # am--include-marker
@@ -10008,6 +10090,20 @@ luatexdir/luaharfbuzz/src/luaharfbuzz/libluaharfbuzz_a-script.obj: luatexdir/lua
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluaharfbuzz_a_CPPFLAGS) $(CPPFLAGS) $(libluaharfbuzz_a_CFLAGS) $(CFLAGS) -c -o luatexdir/luaharfbuzz/src/luaharfbuzz/libluaharfbuzz_a-script.obj `if test -f 'luatexdir/luaharfbuzz/src/luaharfbuzz/script.c'; then $(CYGPATH_W) 'luatexdir/luaharfbuzz/src/luaharfbuzz/script.c'; else $(CYGPATH_W) '$(srcdir)/luatexdir/luaharfbuzz/src/luaharfbuzz/script.c'; fi`
 
+luatexdir/luaharfbuzz/src/luaharfbuzz/libluaharfbuzz_a-set.o: luatexdir/luaharfbuzz/src/luaharfbuzz/set.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluaharfbuzz_a_CPPFLAGS) $(CPPFLAGS) $(libluaharfbuzz_a_CFLAGS) $(CFLAGS) -MT luatexdir/luaharfbuzz/src/luaharfbuzz/libluaharfbuzz_a-set.o -MD -MP -MF luatexdir/luaharfbuzz/src/luaharfbuzz/$(DEPDIR)/libluaharfbuzz_a-set.Tpo -c -o luatexdir/luaharfbuzz/src/luaharfbuzz/libluaharfbuzz_a-set.o `test -f 'luatexdir/luaharfbuzz/src/luaharfbuzz/set.c' || echo '$(srcdir)/'`luatexdir/luaharfbuzz/src/luaharfbuzz/set.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) luatexdir/luaharfbuzz/src/luaharfbuzz/$(DEPDIR)/libluaharfbuzz_a-set.Tpo luatexdir/luaharfbuzz/src/luaharfbuzz/$(DEPDIR)/libluaharfbuzz_a-set.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='luatexdir/luaharfbuzz/src/luaharfbuzz/set.c' object='luatexdir/luaharfbuzz/src/luaharfbuzz/libluaharfbuzz_a-set.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluaharfbuzz_a_CPPFLAGS) $(CPPFLAGS) $(libluaharfbuzz_a_CFLAGS) $(CFLAGS) -c -o luatexdir/luaharfbuzz/src/luaharfbuzz/libluaharfbuzz_a-set.o `test -f 'luatexdir/luaharfbuzz/src/luaharfbuzz/set.c' || echo '$(srcdir)/'`luatexdir/luaharfbuzz/src/luaharfbuzz/set.c
+
+luatexdir/luaharfbuzz/src/luaharfbuzz/libluaharfbuzz_a-set.obj: luatexdir/luaharfbuzz/src/luaharfbuzz/set.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluaharfbuzz_a_CPPFLAGS) $(CPPFLAGS) $(libluaharfbuzz_a_CFLAGS) $(CFLAGS) -MT luatexdir/luaharfbuzz/src/luaharfbuzz/libluaharfbuzz_a-set.obj -MD -MP -MF luatexdir/luaharfbuzz/src/luaharfbuzz/$(DEPDIR)/libluaharfbuzz_a-set.Tpo -c -o luatexdir/luaharfbuzz/src/luaharfbuzz/libluaharfbuzz_a-set.obj `if test -f 'luatexdir/luaharfbuzz/src/luaharfbuzz/set.c'; then $(CYGPATH_W) 'luatexdir/luaharfbuzz/src/luaharfbuzz/set.c'; else $(CYGPATH_W) '$(srcdir)/luatexdir/luaharfbuzz/src/luaharfbuzz/set.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) luatexdir/luaharfbuzz/src/luaharfbuzz/$(DEPDIR)/libluaharfbuzz_a-set.Tpo luatexdir/luaharfbuzz/src/luaharfbuzz/$(DEPDIR)/libluaharfbuzz_a-set.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='luatexdir/luaharfbuzz/src/luaharfbuzz/set.c' object='luatexdir/luaharfbuzz/src/luaharfbuzz/libluaharfbuzz_a-set.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluaharfbuzz_a_CPPFLAGS) $(CPPFLAGS) $(libluaharfbuzz_a_CFLAGS) $(CFLAGS) -c -o luatexdir/luaharfbuzz/src/luaharfbuzz/libluaharfbuzz_a-set.obj `if test -f 'luatexdir/luaharfbuzz/src/luaharfbuzz/set.c'; then $(CYGPATH_W) 'luatexdir/luaharfbuzz/src/luaharfbuzz/set.c'; else $(CYGPATH_W) '$(srcdir)/luatexdir/luaharfbuzz/src/luaharfbuzz/set.c'; fi`
+
 luatexdir/luaharfbuzz/src/luaharfbuzz/libluaharfbuzz_a-tag.o: luatexdir/luaharfbuzz/src/luaharfbuzz/tag.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluaharfbuzz_a_CPPFLAGS) $(CPPFLAGS) $(libluaharfbuzz_a_CFLAGS) $(CFLAGS) -MT luatexdir/luaharfbuzz/src/luaharfbuzz/libluaharfbuzz_a-tag.o -MD -MP -MF luatexdir/luaharfbuzz/src/luaharfbuzz/$(DEPDIR)/libluaharfbuzz_a-tag.Tpo -c -o luatexdir/luaharfbuzz/src/luaharfbuzz/libluaharfbuzz_a-tag.o `test -f 'luatexdir/luaharfbuzz/src/luaharfbuzz/tag.c' || echo '$(srcdir)/'`luatexdir/luaharfbuzz/src/luaharfbuzz/tag.c
 @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) luatexdir/luaharfbuzz/src/luaharfbuzz/$(DEPDIR)/libluaharfbuzz_a-tag.Tpo luatexdir/luaharfbuzz/src/luaharfbuzz/$(DEPDIR)/libluaharfbuzz_a-tag.Po
@@ -10049,6 +10145,34 @@ luatexdir/luaharfbuzz/src/luaharfbuzz/libluaharfbuzz_a-variation.obj: luatexdir/
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='luatexdir/luaharfbuzz/src/luaharfbuzz/variation.c' object='luatexdir/luaharfbuzz/src/luaharfbuzz/libluaharfbuzz_a-variation.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluaharfbuzz_a_CPPFLAGS) $(CPPFLAGS) $(libluaharfbuzz_a_CFLAGS) $(CFLAGS) -c -o luatexdir/luaharfbuzz/src/luaharfbuzz/libluaharfbuzz_a-variation.obj `if test -f 'luatexdir/luaharfbuzz/src/luaharfbuzz/variation.c'; then $(CYGPATH_W) 'luatexdir/luaharfbuzz/src/luaharfbuzz/variation.c'; else $(CYGPATH_W) '$(srcdir)/luatexdir/luaharfbuzz/src/luaharfbuzz/variation.c'; fi`
+
+luatexdir/luaharfbuzz/src/luaharfbuzzsubset/libluaharfbuzzsubset_a-luaharfbuzzsubset.o: luatexdir/luaharfbuzz/src/luaharfbuzzsubset/luaharfbuzzsubset.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluaharfbuzzsubset_a_CPPFLAGS) $(CPPFLAGS) $(libluaharfbuzzsubset_a_CFLAGS) $(CFLAGS) -MT luatexdir/luaharfbuzz/src/luaharfbuzzsubset/libluaharfbuzzsubset_a-luaharfbuzzsubset.o -MD -MP -MF luatexdir/luaharfbuzz/src/luaharfbuzzsubset/$(DEPDIR)/libluaharfbuzzsubset_a-luaharfbuzzsubset.Tpo -c -o luatexdir/luaharfbuzz/src/luaharfbuzzsubset/libluaharfbuzzsubset_a-luaharfbuzzsubset.o `test -f 'luatexdir/luaharfbuzz/src/luaharfbuzzsubset/luaharfbuzzsubset.c' || echo '$(srcdir)/'`luatexdir/luaharfbuzz/src/luaharfbuzzsubset/luaharfbuzzsubset.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) luatexdir/luaharfbuzz/src/luaharfbuzzsubset/$(DEPDIR)/libluaharfbuzzsubset_a-luaharfbuzzsubset.Tpo luatexdir/luaharfbuzz/src/luaharfbuzzsubset/$(DEPDIR)/libluaharfbuzzsubset_a-luaharfbuzzsubset.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='luatexdir/luaharfbuzz/src/luaharfbuzzsubset/luaharfbuzzsubset.c' object='luatexdir/luaharfbuzz/src/luaharfbuzzsubset/libluaharfbuzzsubset_a-luaharfbuzzsubset.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluaharfbuzzsubset_a_CPPFLAGS) $(CPPFLAGS) $(libluaharfbuzzsubset_a_CFLAGS) $(CFLAGS) -c -o luatexdir/luaharfbuzz/src/luaharfbuzzsubset/libluaharfbuzzsubset_a-luaharfbuzzsubset.o `test -f 'luatexdir/luaharfbuzz/src/luaharfbuzzsubset/luaharfbuzzsubset.c' || echo '$(srcdir)/'`luatexdir/luaharfbuzz/src/luaharfbuzzsubset/luaharfbuzzsubset.c
+
+luatexdir/luaharfbuzz/src/luaharfbuzzsubset/libluaharfbuzzsubset_a-luaharfbuzzsubset.obj: luatexdir/luaharfbuzz/src/luaharfbuzzsubset/luaharfbuzzsubset.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluaharfbuzzsubset_a_CPPFLAGS) $(CPPFLAGS) $(libluaharfbuzzsubset_a_CFLAGS) $(CFLAGS) -MT luatexdir/luaharfbuzz/src/luaharfbuzzsubset/libluaharfbuzzsubset_a-luaharfbuzzsubset.obj -MD -MP -MF luatexdir/luaharfbuzz/src/luaharfbuzzsubset/$(DEPDIR)/libluaharfbuzzsubset_a-luaharfbuzzsubset.Tpo -c -o luatexdir/luaharfbuzz/src/luaharfbuzzsubset/libluaharfbuzzsubset_a-luaharfbuzzsubset.obj `if test -f 'luatexdir/luaharfbuzz/src/luaharfbuzzsubset/luaharfbuzzsubset.c'; then $(CYGPATH_W) 'luatexdir/luaharfbuzz/src/luaharfbuzzsubset/luaharfbuzzsubset.c'; else $(CYGPATH_W) '$(srcdir)/luatexdir/luaharfbuzz/src/luaharfbuzzsubset/luaharfbuzzsubset.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) luatexdir/luaharfbuzz/src/luaharfbuzzsubset/$(DEPDIR)/libluaharfbuzzsubset_a-luaharfbuzzsubset.Tpo luatexdir/luaharfbuzz/src/luaharfbuzzsubset/$(DEPDIR)/libluaharfbuzzsubset_a-luaharfbuzzsubset.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='luatexdir/luaharfbuzz/src/luaharfbuzzsubset/luaharfbuzzsubset.c' object='luatexdir/luaharfbuzz/src/luaharfbuzzsubset/libluaharfbuzzsubset_a-luaharfbuzzsubset.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluaharfbuzzsubset_a_CPPFLAGS) $(CPPFLAGS) $(libluaharfbuzzsubset_a_CFLAGS) $(CFLAGS) -c -o luatexdir/luaharfbuzz/src/luaharfbuzzsubset/libluaharfbuzzsubset_a-luaharfbuzzsubset.obj `if test -f 'luatexdir/luaharfbuzz/src/luaharfbuzzsubset/luaharfbuzzsubset.c'; then $(CYGPATH_W) 'luatexdir/luaharfbuzz/src/luaharfbuzzsubset/luaharfbuzzsubset.c'; else $(CYGPATH_W) '$(srcdir)/luatexdir/luaharfbuzz/src/luaharfbuzzsubset/luaharfbuzzsubset.c'; fi`
+
+luatexdir/luaharfbuzz/src/luaharfbuzzsubset/libluaharfbuzzsubset_a-subset-input.o: luatexdir/luaharfbuzz/src/luaharfbuzzsubset/subset-input.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluaharfbuzzsubset_a_CPPFLAGS) $(CPPFLAGS) $(libluaharfbuzzsubset_a_CFLAGS) $(CFLAGS) -MT luatexdir/luaharfbuzz/src/luaharfbuzzsubset/libluaharfbuzzsubset_a-subset-input.o -MD -MP -MF luatexdir/luaharfbuzz/src/luaharfbuzzsubset/$(DEPDIR)/libluaharfbuzzsubset_a-subset-input.Tpo -c -o luatexdir/luaharfbuzz/src/luaharfbuzzsubset/libluaharfbuzzsubset_a-subset-input.o `test -f 'luatexdir/luaharfbuzz/src/luaharfbuzzsubset/subset-input.c' || echo '$(srcdir)/'`luatexdir/luaharfbuzz/src/luaharfbuzzsubset/subset-input.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) luatexdir/luaharfbuzz/src/luaharfbuzzsubset/$(DEPDIR)/libluaharfbuzzsubset_a-subset-input.Tpo luatexdir/luaharfbuzz/src/luaharfbuzzsubset/$(DEPDIR)/libluaharfbuzzsubset_a-subset-input.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='luatexdir/luaharfbuzz/src/luaharfbuzzsubset/subset-input.c' object='luatexdir/luaharfbuzz/src/luaharfbuzzsubset/libluaharfbuzzsubset_a-subset-input.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluaharfbuzzsubset_a_CPPFLAGS) $(CPPFLAGS) $(libluaharfbuzzsubset_a_CFLAGS) $(CFLAGS) -c -o luatexdir/luaharfbuzz/src/luaharfbuzzsubset/libluaharfbuzzsubset_a-subset-input.o `test -f 'luatexdir/luaharfbuzz/src/luaharfbuzzsubset/subset-input.c' || echo '$(srcdir)/'`luatexdir/luaharfbuzz/src/luaharfbuzzsubset/subset-input.c
+
+luatexdir/luaharfbuzz/src/luaharfbuzzsubset/libluaharfbuzzsubset_a-subset-input.obj: luatexdir/luaharfbuzz/src/luaharfbuzzsubset/subset-input.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluaharfbuzzsubset_a_CPPFLAGS) $(CPPFLAGS) $(libluaharfbuzzsubset_a_CFLAGS) $(CFLAGS) -MT luatexdir/luaharfbuzz/src/luaharfbuzzsubset/libluaharfbuzzsubset_a-subset-input.obj -MD -MP -MF luatexdir/luaharfbuzz/src/luaharfbuzzsubset/$(DEPDIR)/libluaharfbuzzsubset_a-subset-input.Tpo -c -o luatexdir/luaharfbuzz/src/luaharfbuzzsubset/libluaharfbuzzsubset_a-subset-input.obj `if test -f 'luatexdir/luaharfbuzz/src/luaharfbuzzsubset/subset-input.c'; then $(CYGPATH_W) 'luatexdir/luaharfbuzz/src/luaharfbuzzsubset/subset-input.c'; else $(CYGPATH_W) '$(srcdir)/luatexdir/luaharfbuzz/src/luaharfbuzzsubset/subset-input.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) luatexdir/luaharfbuzz/src/luaharfbuzzsubset/$(DEPDIR)/libluaharfbuzzsubset_a-subset-input.Tpo luatexdir/luaharfbuzz/src/luaharfbuzzsubset/$(DEPDIR)/libluaharfbuzzsubset_a-subset-input.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='luatexdir/luaharfbuzz/src/luaharfbuzzsubset/subset-input.c' object='luatexdir/luaharfbuzz/src/luaharfbuzzsubset/libluaharfbuzzsubset_a-subset-input.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluaharfbuzzsubset_a_CPPFLAGS) $(CPPFLAGS) $(libluaharfbuzzsubset_a_CFLAGS) $(CFLAGS) -c -o luatexdir/luaharfbuzz/src/luaharfbuzzsubset/libluaharfbuzzsubset_a-subset-input.obj `if test -f 'luatexdir/luaharfbuzz/src/luaharfbuzzsubset/subset-input.c'; then $(CYGPATH_W) 'luatexdir/luaharfbuzz/src/luaharfbuzzsubset/subset-input.c'; else $(CYGPATH_W) '$(srcdir)/luatexdir/luaharfbuzz/src/luaharfbuzzsubset/subset-input.c'; fi`
 
 libluahbtexspecific_a-utils-hb.o: utils-hb.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluahbtexspecific_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libluahbtexspecific_a-utils-hb.o -MD -MP -MF $(DEPDIR)/libluahbtexspecific_a-utils-hb.Tpo -c -o libluahbtexspecific_a-utils-hb.o `test -f 'utils-hb.c' || echo '$(srcdir)/'`utils-hb.c
@@ -10260,6 +10384,20 @@ luatexdir/luaharfbuzz/src/luaharfbuzz/libluajitharfbuzz_a-script.obj: luatexdir/
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluajitharfbuzz_a_CPPFLAGS) $(CPPFLAGS) $(libluajitharfbuzz_a_CFLAGS) $(CFLAGS) -c -o luatexdir/luaharfbuzz/src/luaharfbuzz/libluajitharfbuzz_a-script.obj `if test -f 'luatexdir/luaharfbuzz/src/luaharfbuzz/script.c'; then $(CYGPATH_W) 'luatexdir/luaharfbuzz/src/luaharfbuzz/script.c'; else $(CYGPATH_W) '$(srcdir)/luatexdir/luaharfbuzz/src/luaharfbuzz/script.c'; fi`
 
+luatexdir/luaharfbuzz/src/luaharfbuzz/libluajitharfbuzz_a-set.o: luatexdir/luaharfbuzz/src/luaharfbuzz/set.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluajitharfbuzz_a_CPPFLAGS) $(CPPFLAGS) $(libluajitharfbuzz_a_CFLAGS) $(CFLAGS) -MT luatexdir/luaharfbuzz/src/luaharfbuzz/libluajitharfbuzz_a-set.o -MD -MP -MF luatexdir/luaharfbuzz/src/luaharfbuzz/$(DEPDIR)/libluajitharfbuzz_a-set.Tpo -c -o luatexdir/luaharfbuzz/src/luaharfbuzz/libluajitharfbuzz_a-set.o `test -f 'luatexdir/luaharfbuzz/src/luaharfbuzz/set.c' || echo '$(srcdir)/'`luatexdir/luaharfbuzz/src/luaharfbuzz/set.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) luatexdir/luaharfbuzz/src/luaharfbuzz/$(DEPDIR)/libluajitharfbuzz_a-set.Tpo luatexdir/luaharfbuzz/src/luaharfbuzz/$(DEPDIR)/libluajitharfbuzz_a-set.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='luatexdir/luaharfbuzz/src/luaharfbuzz/set.c' object='luatexdir/luaharfbuzz/src/luaharfbuzz/libluajitharfbuzz_a-set.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluajitharfbuzz_a_CPPFLAGS) $(CPPFLAGS) $(libluajitharfbuzz_a_CFLAGS) $(CFLAGS) -c -o luatexdir/luaharfbuzz/src/luaharfbuzz/libluajitharfbuzz_a-set.o `test -f 'luatexdir/luaharfbuzz/src/luaharfbuzz/set.c' || echo '$(srcdir)/'`luatexdir/luaharfbuzz/src/luaharfbuzz/set.c
+
+luatexdir/luaharfbuzz/src/luaharfbuzz/libluajitharfbuzz_a-set.obj: luatexdir/luaharfbuzz/src/luaharfbuzz/set.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluajitharfbuzz_a_CPPFLAGS) $(CPPFLAGS) $(libluajitharfbuzz_a_CFLAGS) $(CFLAGS) -MT luatexdir/luaharfbuzz/src/luaharfbuzz/libluajitharfbuzz_a-set.obj -MD -MP -MF luatexdir/luaharfbuzz/src/luaharfbuzz/$(DEPDIR)/libluajitharfbuzz_a-set.Tpo -c -o luatexdir/luaharfbuzz/src/luaharfbuzz/libluajitharfbuzz_a-set.obj `if test -f 'luatexdir/luaharfbuzz/src/luaharfbuzz/set.c'; then $(CYGPATH_W) 'luatexdir/luaharfbuzz/src/luaharfbuzz/set.c'; else $(CYGPATH_W) '$(srcdir)/luatexdir/luaharfbuzz/src/luaharfbuzz/set.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) luatexdir/luaharfbuzz/src/luaharfbuzz/$(DEPDIR)/libluajitharfbuzz_a-set.Tpo luatexdir/luaharfbuzz/src/luaharfbuzz/$(DEPDIR)/libluajitharfbuzz_a-set.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='luatexdir/luaharfbuzz/src/luaharfbuzz/set.c' object='luatexdir/luaharfbuzz/src/luaharfbuzz/libluajitharfbuzz_a-set.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluajitharfbuzz_a_CPPFLAGS) $(CPPFLAGS) $(libluajitharfbuzz_a_CFLAGS) $(CFLAGS) -c -o luatexdir/luaharfbuzz/src/luaharfbuzz/libluajitharfbuzz_a-set.obj `if test -f 'luatexdir/luaharfbuzz/src/luaharfbuzz/set.c'; then $(CYGPATH_W) 'luatexdir/luaharfbuzz/src/luaharfbuzz/set.c'; else $(CYGPATH_W) '$(srcdir)/luatexdir/luaharfbuzz/src/luaharfbuzz/set.c'; fi`
+
 luatexdir/luaharfbuzz/src/luaharfbuzz/libluajitharfbuzz_a-tag.o: luatexdir/luaharfbuzz/src/luaharfbuzz/tag.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluajitharfbuzz_a_CPPFLAGS) $(CPPFLAGS) $(libluajitharfbuzz_a_CFLAGS) $(CFLAGS) -MT luatexdir/luaharfbuzz/src/luaharfbuzz/libluajitharfbuzz_a-tag.o -MD -MP -MF luatexdir/luaharfbuzz/src/luaharfbuzz/$(DEPDIR)/libluajitharfbuzz_a-tag.Tpo -c -o luatexdir/luaharfbuzz/src/luaharfbuzz/libluajitharfbuzz_a-tag.o `test -f 'luatexdir/luaharfbuzz/src/luaharfbuzz/tag.c' || echo '$(srcdir)/'`luatexdir/luaharfbuzz/src/luaharfbuzz/tag.c
 @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) luatexdir/luaharfbuzz/src/luaharfbuzz/$(DEPDIR)/libluajitharfbuzz_a-tag.Tpo luatexdir/luaharfbuzz/src/luaharfbuzz/$(DEPDIR)/libluajitharfbuzz_a-tag.Po
@@ -10301,6 +10439,34 @@ luatexdir/luaharfbuzz/src/luaharfbuzz/libluajitharfbuzz_a-variation.obj: luatexd
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='luatexdir/luaharfbuzz/src/luaharfbuzz/variation.c' object='luatexdir/luaharfbuzz/src/luaharfbuzz/libluajitharfbuzz_a-variation.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluajitharfbuzz_a_CPPFLAGS) $(CPPFLAGS) $(libluajitharfbuzz_a_CFLAGS) $(CFLAGS) -c -o luatexdir/luaharfbuzz/src/luaharfbuzz/libluajitharfbuzz_a-variation.obj `if test -f 'luatexdir/luaharfbuzz/src/luaharfbuzz/variation.c'; then $(CYGPATH_W) 'luatexdir/luaharfbuzz/src/luaharfbuzz/variation.c'; else $(CYGPATH_W) '$(srcdir)/luatexdir/luaharfbuzz/src/luaharfbuzz/variation.c'; fi`
+
+luatexdir/luaharfbuzz/src/luaharfbuzzsubset/libluajitharfbuzzsubset_a-luaharfbuzzsubset.o: luatexdir/luaharfbuzz/src/luaharfbuzzsubset/luaharfbuzzsubset.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluajitharfbuzzsubset_a_CPPFLAGS) $(CPPFLAGS) $(libluajitharfbuzzsubset_a_CFLAGS) $(CFLAGS) -MT luatexdir/luaharfbuzz/src/luaharfbuzzsubset/libluajitharfbuzzsubset_a-luaharfbuzzsubset.o -MD -MP -MF luatexdir/luaharfbuzz/src/luaharfbuzzsubset/$(DEPDIR)/libluajitharfbuzzsubset_a-luaharfbuzzsubset.Tpo -c -o luatexdir/luaharfbuzz/src/luaharfbuzzsubset/libluajitharfbuzzsubset_a-luaharfbuzzsubset.o `test -f 'luatexdir/luaharfbuzz/src/luaharfbuzzsubset/luaharfbuzzsubset.c' || echo '$(srcdir)/'`luatexdir/luaharfbuzz/src/luaharfbuzzsubset/luaharfbuzzsubset.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) luatexdir/luaharfbuzz/src/luaharfbuzzsubset/$(DEPDIR)/libluajitharfbuzzsubset_a-luaharfbuzzsubset.Tpo luatexdir/luaharfbuzz/src/luaharfbuzzsubset/$(DEPDIR)/libluajitharfbuzzsubset_a-luaharfbuzzsubset.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='luatexdir/luaharfbuzz/src/luaharfbuzzsubset/luaharfbuzzsubset.c' object='luatexdir/luaharfbuzz/src/luaharfbuzzsubset/libluajitharfbuzzsubset_a-luaharfbuzzsubset.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluajitharfbuzzsubset_a_CPPFLAGS) $(CPPFLAGS) $(libluajitharfbuzzsubset_a_CFLAGS) $(CFLAGS) -c -o luatexdir/luaharfbuzz/src/luaharfbuzzsubset/libluajitharfbuzzsubset_a-luaharfbuzzsubset.o `test -f 'luatexdir/luaharfbuzz/src/luaharfbuzzsubset/luaharfbuzzsubset.c' || echo '$(srcdir)/'`luatexdir/luaharfbuzz/src/luaharfbuzzsubset/luaharfbuzzsubset.c
+
+luatexdir/luaharfbuzz/src/luaharfbuzzsubset/libluajitharfbuzzsubset_a-luaharfbuzzsubset.obj: luatexdir/luaharfbuzz/src/luaharfbuzzsubset/luaharfbuzzsubset.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluajitharfbuzzsubset_a_CPPFLAGS) $(CPPFLAGS) $(libluajitharfbuzzsubset_a_CFLAGS) $(CFLAGS) -MT luatexdir/luaharfbuzz/src/luaharfbuzzsubset/libluajitharfbuzzsubset_a-luaharfbuzzsubset.obj -MD -MP -MF luatexdir/luaharfbuzz/src/luaharfbuzzsubset/$(DEPDIR)/libluajitharfbuzzsubset_a-luaharfbuzzsubset.Tpo -c -o luatexdir/luaharfbuzz/src/luaharfbuzzsubset/libluajitharfbuzzsubset_a-luaharfbuzzsubset.obj `if test -f 'luatexdir/luaharfbuzz/src/luaharfbuzzsubset/luaharfbuzzsubset.c'; then $(CYGPATH_W) 'luatexdir/luaharfbuzz/src/luaharfbuzzsubset/luaharfbuzzsubset.c'; else $(CYGPATH_W) '$(srcdir)/luatexdir/luaharfbuzz/src/luaharfbuzzsubset/luaharfbuzzsubset.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) luatexdir/luaharfbuzz/src/luaharfbuzzsubset/$(DEPDIR)/libluajitharfbuzzsubset_a-luaharfbuzzsubset.Tpo luatexdir/luaharfbuzz/src/luaharfbuzzsubset/$(DEPDIR)/libluajitharfbuzzsubset_a-luaharfbuzzsubset.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='luatexdir/luaharfbuzz/src/luaharfbuzzsubset/luaharfbuzzsubset.c' object='luatexdir/luaharfbuzz/src/luaharfbuzzsubset/libluajitharfbuzzsubset_a-luaharfbuzzsubset.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluajitharfbuzzsubset_a_CPPFLAGS) $(CPPFLAGS) $(libluajitharfbuzzsubset_a_CFLAGS) $(CFLAGS) -c -o luatexdir/luaharfbuzz/src/luaharfbuzzsubset/libluajitharfbuzzsubset_a-luaharfbuzzsubset.obj `if test -f 'luatexdir/luaharfbuzz/src/luaharfbuzzsubset/luaharfbuzzsubset.c'; then $(CYGPATH_W) 'luatexdir/luaharfbuzz/src/luaharfbuzzsubset/luaharfbuzzsubset.c'; else $(CYGPATH_W) '$(srcdir)/luatexdir/luaharfbuzz/src/luaharfbuzzsubset/luaharfbuzzsubset.c'; fi`
+
+luatexdir/luaharfbuzz/src/luaharfbuzzsubset/libluajitharfbuzzsubset_a-subset-input.o: luatexdir/luaharfbuzz/src/luaharfbuzzsubset/subset-input.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluajitharfbuzzsubset_a_CPPFLAGS) $(CPPFLAGS) $(libluajitharfbuzzsubset_a_CFLAGS) $(CFLAGS) -MT luatexdir/luaharfbuzz/src/luaharfbuzzsubset/libluajitharfbuzzsubset_a-subset-input.o -MD -MP -MF luatexdir/luaharfbuzz/src/luaharfbuzzsubset/$(DEPDIR)/libluajitharfbuzzsubset_a-subset-input.Tpo -c -o luatexdir/luaharfbuzz/src/luaharfbuzzsubset/libluajitharfbuzzsubset_a-subset-input.o `test -f 'luatexdir/luaharfbuzz/src/luaharfbuzzsubset/subset-input.c' || echo '$(srcdir)/'`luatexdir/luaharfbuzz/src/luaharfbuzzsubset/subset-input.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) luatexdir/luaharfbuzz/src/luaharfbuzzsubset/$(DEPDIR)/libluajitharfbuzzsubset_a-subset-input.Tpo luatexdir/luaharfbuzz/src/luaharfbuzzsubset/$(DEPDIR)/libluajitharfbuzzsubset_a-subset-input.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='luatexdir/luaharfbuzz/src/luaharfbuzzsubset/subset-input.c' object='luatexdir/luaharfbuzz/src/luaharfbuzzsubset/libluajitharfbuzzsubset_a-subset-input.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluajitharfbuzzsubset_a_CPPFLAGS) $(CPPFLAGS) $(libluajitharfbuzzsubset_a_CFLAGS) $(CFLAGS) -c -o luatexdir/luaharfbuzz/src/luaharfbuzzsubset/libluajitharfbuzzsubset_a-subset-input.o `test -f 'luatexdir/luaharfbuzz/src/luaharfbuzzsubset/subset-input.c' || echo '$(srcdir)/'`luatexdir/luaharfbuzz/src/luaharfbuzzsubset/subset-input.c
+
+luatexdir/luaharfbuzz/src/luaharfbuzzsubset/libluajitharfbuzzsubset_a-subset-input.obj: luatexdir/luaharfbuzz/src/luaharfbuzzsubset/subset-input.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluajitharfbuzzsubset_a_CPPFLAGS) $(CPPFLAGS) $(libluajitharfbuzzsubset_a_CFLAGS) $(CFLAGS) -MT luatexdir/luaharfbuzz/src/luaharfbuzzsubset/libluajitharfbuzzsubset_a-subset-input.obj -MD -MP -MF luatexdir/luaharfbuzz/src/luaharfbuzzsubset/$(DEPDIR)/libluajitharfbuzzsubset_a-subset-input.Tpo -c -o luatexdir/luaharfbuzz/src/luaharfbuzzsubset/libluajitharfbuzzsubset_a-subset-input.obj `if test -f 'luatexdir/luaharfbuzz/src/luaharfbuzzsubset/subset-input.c'; then $(CYGPATH_W) 'luatexdir/luaharfbuzz/src/luaharfbuzzsubset/subset-input.c'; else $(CYGPATH_W) '$(srcdir)/luatexdir/luaharfbuzz/src/luaharfbuzzsubset/subset-input.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) luatexdir/luaharfbuzz/src/luaharfbuzzsubset/$(DEPDIR)/libluajitharfbuzzsubset_a-subset-input.Tpo luatexdir/luaharfbuzz/src/luaharfbuzzsubset/$(DEPDIR)/libluajitharfbuzzsubset_a-subset-input.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='luatexdir/luaharfbuzz/src/luaharfbuzzsubset/subset-input.c' object='luatexdir/luaharfbuzz/src/luaharfbuzzsubset/libluajitharfbuzzsubset_a-subset-input.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluajitharfbuzzsubset_a_CPPFLAGS) $(CPPFLAGS) $(libluajitharfbuzzsubset_a_CFLAGS) $(CFLAGS) -c -o luatexdir/luaharfbuzz/src/luaharfbuzzsubset/libluajitharfbuzzsubset_a-subset-input.obj `if test -f 'luatexdir/luaharfbuzz/src/luaharfbuzzsubset/subset-input.c'; then $(CYGPATH_W) 'luatexdir/luaharfbuzz/src/luaharfbuzzsubset/subset-input.c'; else $(CYGPATH_W) '$(srcdir)/luatexdir/luaharfbuzz/src/luaharfbuzzsubset/subset-input.c'; fi`
 
 libluajithbtexspecific_a-utils-hb.o: utils-hb.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libluajithbtexspecific_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT libluajithbtexspecific_a-utils-hb.o -MD -MP -MF $(DEPDIR)/libluajithbtexspecific_a-utils-hb.Tpo -c -o libluajithbtexspecific_a-utils-hb.o `test -f 'utils-hb.c' || echo '$(srcdir)/'`utils-hb.c
@@ -19594,6 +19760,8 @@ distclean-generic:
 	-$(am__rm_f) luatexdir/luafontloader/src/$(am__dirstamp)
 	-$(am__rm_f) luatexdir/luaharfbuzz/src/luaharfbuzz/$(DEPDIR)/$(am__dirstamp)
 	-$(am__rm_f) luatexdir/luaharfbuzz/src/luaharfbuzz/$(am__dirstamp)
+	-$(am__rm_f) luatexdir/luaharfbuzz/src/luaharfbuzzsubset/$(DEPDIR)/$(am__dirstamp)
+	-$(am__rm_f) luatexdir/luaharfbuzz/src/luaharfbuzzsubset/$(am__dirstamp)
 	-$(am__rm_f) luatexdir/luamd5/$(DEPDIR)/$(am__dirstamp)
 	-$(am__rm_f) luatexdir/luamd5/$(am__dirstamp)
 	-$(am__rm_f) luatexdir/luapeg/$(DEPDIR)/$(am__dirstamp)
@@ -20041,6 +20209,7 @@ distclean: distclean-recursive
 	-rm -f luatexdir/luaharfbuzz/src/luaharfbuzz/$(DEPDIR)/libluaharfbuzz_a-luaharfbuzz.Po
 	-rm -f luatexdir/luaharfbuzz/src/luaharfbuzz/$(DEPDIR)/libluaharfbuzz_a-ot.Po
 	-rm -f luatexdir/luaharfbuzz/src/luaharfbuzz/$(DEPDIR)/libluaharfbuzz_a-script.Po
+	-rm -f luatexdir/luaharfbuzz/src/luaharfbuzz/$(DEPDIR)/libluaharfbuzz_a-set.Po
 	-rm -f luatexdir/luaharfbuzz/src/luaharfbuzz/$(DEPDIR)/libluaharfbuzz_a-tag.Po
 	-rm -f luatexdir/luaharfbuzz/src/luaharfbuzz/$(DEPDIR)/libluaharfbuzz_a-unicode.Po
 	-rm -f luatexdir/luaharfbuzz/src/luaharfbuzz/$(DEPDIR)/libluaharfbuzz_a-variation.Po
@@ -20055,9 +20224,14 @@ distclean: distclean-recursive
 	-rm -f luatexdir/luaharfbuzz/src/luaharfbuzz/$(DEPDIR)/libluajitharfbuzz_a-luaharfbuzz.Po
 	-rm -f luatexdir/luaharfbuzz/src/luaharfbuzz/$(DEPDIR)/libluajitharfbuzz_a-ot.Po
 	-rm -f luatexdir/luaharfbuzz/src/luaharfbuzz/$(DEPDIR)/libluajitharfbuzz_a-script.Po
+	-rm -f luatexdir/luaharfbuzz/src/luaharfbuzz/$(DEPDIR)/libluajitharfbuzz_a-set.Po
 	-rm -f luatexdir/luaharfbuzz/src/luaharfbuzz/$(DEPDIR)/libluajitharfbuzz_a-tag.Po
 	-rm -f luatexdir/luaharfbuzz/src/luaharfbuzz/$(DEPDIR)/libluajitharfbuzz_a-unicode.Po
 	-rm -f luatexdir/luaharfbuzz/src/luaharfbuzz/$(DEPDIR)/libluajitharfbuzz_a-variation.Po
+	-rm -f luatexdir/luaharfbuzz/src/luaharfbuzzsubset/$(DEPDIR)/libluaharfbuzzsubset_a-luaharfbuzzsubset.Po
+	-rm -f luatexdir/luaharfbuzz/src/luaharfbuzzsubset/$(DEPDIR)/libluaharfbuzzsubset_a-subset-input.Po
+	-rm -f luatexdir/luaharfbuzz/src/luaharfbuzzsubset/$(DEPDIR)/libluajitharfbuzzsubset_a-luaharfbuzzsubset.Po
+	-rm -f luatexdir/luaharfbuzz/src/luaharfbuzzsubset/$(DEPDIR)/libluajitharfbuzzsubset_a-subset-input.Po
 	-rm -f luatexdir/luamd5/$(DEPDIR)/libluajitmisc_a-md5.Po
 	-rm -f luatexdir/luamd5/$(DEPDIR)/libluajitmisc_a-md5lib.Po
 	-rm -f luatexdir/luamd5/$(DEPDIR)/libluamisc_a-md5.Po
@@ -20814,6 +20988,7 @@ maintainer-clean: maintainer-clean-recursive
 	-rm -f luatexdir/luaharfbuzz/src/luaharfbuzz/$(DEPDIR)/libluaharfbuzz_a-luaharfbuzz.Po
 	-rm -f luatexdir/luaharfbuzz/src/luaharfbuzz/$(DEPDIR)/libluaharfbuzz_a-ot.Po
 	-rm -f luatexdir/luaharfbuzz/src/luaharfbuzz/$(DEPDIR)/libluaharfbuzz_a-script.Po
+	-rm -f luatexdir/luaharfbuzz/src/luaharfbuzz/$(DEPDIR)/libluaharfbuzz_a-set.Po
 	-rm -f luatexdir/luaharfbuzz/src/luaharfbuzz/$(DEPDIR)/libluaharfbuzz_a-tag.Po
 	-rm -f luatexdir/luaharfbuzz/src/luaharfbuzz/$(DEPDIR)/libluaharfbuzz_a-unicode.Po
 	-rm -f luatexdir/luaharfbuzz/src/luaharfbuzz/$(DEPDIR)/libluaharfbuzz_a-variation.Po
@@ -20828,9 +21003,14 @@ maintainer-clean: maintainer-clean-recursive
 	-rm -f luatexdir/luaharfbuzz/src/luaharfbuzz/$(DEPDIR)/libluajitharfbuzz_a-luaharfbuzz.Po
 	-rm -f luatexdir/luaharfbuzz/src/luaharfbuzz/$(DEPDIR)/libluajitharfbuzz_a-ot.Po
 	-rm -f luatexdir/luaharfbuzz/src/luaharfbuzz/$(DEPDIR)/libluajitharfbuzz_a-script.Po
+	-rm -f luatexdir/luaharfbuzz/src/luaharfbuzz/$(DEPDIR)/libluajitharfbuzz_a-set.Po
 	-rm -f luatexdir/luaharfbuzz/src/luaharfbuzz/$(DEPDIR)/libluajitharfbuzz_a-tag.Po
 	-rm -f luatexdir/luaharfbuzz/src/luaharfbuzz/$(DEPDIR)/libluajitharfbuzz_a-unicode.Po
 	-rm -f luatexdir/luaharfbuzz/src/luaharfbuzz/$(DEPDIR)/libluajitharfbuzz_a-variation.Po
+	-rm -f luatexdir/luaharfbuzz/src/luaharfbuzzsubset/$(DEPDIR)/libluaharfbuzzsubset_a-luaharfbuzzsubset.Po
+	-rm -f luatexdir/luaharfbuzz/src/luaharfbuzzsubset/$(DEPDIR)/libluaharfbuzzsubset_a-subset-input.Po
+	-rm -f luatexdir/luaharfbuzz/src/luaharfbuzzsubset/$(DEPDIR)/libluajitharfbuzzsubset_a-luaharfbuzzsubset.Po
+	-rm -f luatexdir/luaharfbuzz/src/luaharfbuzzsubset/$(DEPDIR)/libluajitharfbuzzsubset_a-subset-input.Po
 	-rm -f luatexdir/luamd5/$(DEPDIR)/libluajitmisc_a-md5.Po
 	-rm -f luatexdir/luamd5/$(DEPDIR)/libluajitmisc_a-md5lib.Po
 	-rm -f luatexdir/luamd5/$(DEPDIR)/libluamisc_a-md5.Po
@@ -22221,6 +22401,9 @@ luatexdir/luajithbtex.log luatexdir/luajithbimage.log: luajithbtex$(EXEEXT)
 
 $(libluaharfbuzz_a_OBJECTS): $(LUA_DEPEND)
 $(libluajitharfbuzz_a_OBJECTS): $(LUAJIT_DEPEND)
+
+$(libluaharfbuzzsubset_a_OBJECTS): $(LUA_DEPEND)
+$(libluajitharfbuzzsubset_a_OBJECTS): $(LUAJIT_DEPEND)
 
 # convenience target to build all the programs here.
 @TEXPROF_TRUE@texprofall: texprof texprofile
