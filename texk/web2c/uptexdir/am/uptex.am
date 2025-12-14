@@ -242,13 +242,13 @@ uptex_ini = TEXMFCNF=$(srcdir)/../kpathsea TEXINPUTS=$(srcdir)/tests: ./uptex -i
 #
 up-basic.fmt: up-basic.tex
 	$(uptex_ini) -kanji-internal=uptex -jobname=up-basic      up-basic
-	test -s up-basic-sjis.fmt
+	test -s up-basic.fmt
 up-basic-euc.fmt: up-basic.tex
 	$(uptex_ini) -kanji-internal=euc   -jobname=up-basic-euc  up-basic
 	test -s up-basic-euc.fmt
 up-basic-sjis.fmt: up-basic.tex
 	$(uptex_ini) -kanji-internal=sjis  -jobname=up-basic-sjis up-basic
-	test -s up-basic-euc.fmt
+	test -s up-basic-sjis.fmt
 #
 up-basic.tex: $(srcdir)/tests/dump-basic.tex
 	cp $(srcdir)/tests/dump-basic.tex ./up-basic.tex

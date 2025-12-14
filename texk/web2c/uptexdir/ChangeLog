@@ -1,3 +1,7 @@
+2025-12-14  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* am/uptex.am (uptex_tests): Fix typo.
+
 2025-12-02  Karl Berry  <karl@freefriends.org>
 
 	* am/uptex.am (up-basic.tex): $(srcdir) not $srcdir.
