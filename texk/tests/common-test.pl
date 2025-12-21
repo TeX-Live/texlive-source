@@ -3,7 +3,12 @@
 # Common definitions for Perl tests in TeX Live.  We want to use Perl to
 # have a chance of running the tests on Windows.
 
-# absolute path
+# Try to avoid output files (nested-range.ind) not being created due to
+# caching, although apparently this is not likely to help. When the
+# subprogram exits, that should ensure all caches are updated..
+$| = 1;
+
+# Find absolute path.
 chomp (my $TL_TESTS_DIR = `cd "$srcdir/../tests" && pwd`);
 
 # srcdir must be a sibling dir to kpathsea, e.g., web2c.

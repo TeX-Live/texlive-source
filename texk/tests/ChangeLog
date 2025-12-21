@@ -1,3 +1,8 @@
+2025-12-21  Karl Berry  <karl@freefriends.org>
+
+	* common-test.pl: set $| = 1 in vain hope of avoiding random
+	failure with nested-range.pl.
+
 2011-10-02  Karl Berry  <karl@tug.org>
 
 	* TeXLive: new subdir for TL*.pm copies to be used by tests.

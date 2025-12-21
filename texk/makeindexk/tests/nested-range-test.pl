@@ -26,8 +26,9 @@ sub main {
   
   # Seems that unpredictably the output file doesn't exist yet?
   if (! -e $IND) {
-    warn `pwd; ls -lt`;
-    sleep 1;
+    warn "test_run succeeded, but $IND doesn't exist? Sleeping (cmd=@test_args)\n";
+    warn `pwd; ls -lt; ps auxww | grep make`;
+    sleep 2;
   }
   
   # The test fails if the output contains \(.
