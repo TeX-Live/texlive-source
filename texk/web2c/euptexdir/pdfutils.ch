@@ -990,8 +990,9 @@ we have to create a temporary string that is destroyed immediately after.
 @x
 begin c:=cur_chr; @<Scan the argument for command |c|@>;
 @y
-begin cat:=0; c:=cur_chr; @<Scan the argument for command |c|@>;
+begin cat:=0; c:=cur_chr;
 u:=0; { will become non-nil if a string is already being built}
+@<Scan the argument for command |c|@>;
 @z
 
 @x
