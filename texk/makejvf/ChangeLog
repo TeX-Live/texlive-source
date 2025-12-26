@@ -1,3 +1,9 @@
+2025-12-26  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* uniblock.c: Update references Unicode blocks Blocks-17.0.0.txt.
+	* version.h, configure.ac: Bump version to 20251226.
+	* COPYRIGHT: Update copyright year.
+
 2024-12-29  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* uniblock.c: Update references Unicode blocks Blocks-16.0.0.txt.
