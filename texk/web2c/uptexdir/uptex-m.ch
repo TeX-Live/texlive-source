@@ -52,6 +52,7 @@
 % (2024-10-20) TTK  upTeX u2.00
 % (2025-01-02) TTK  Accept extended upTeX internal encoding also in pTeX-compatible EUC/SJIS mode.
 % (2025-04-05) TTK  upTeX u2.01
+% (2025-12-26) TTK  upTeX u2.02
 
 @x
 \def\pTeX{p\kern-.15em\TeX}
@@ -66,8 +67,8 @@
   {printed when \pTeX\ starts}
 @#
 @d upTeX_version=2
-@d upTeX_revision==".01"
-@d upTeX_version_string=='-u2.01' {current \upTeX\ version}
+@d upTeX_revision==".02"
+@d upTeX_version_string=='-u2.02' {current \upTeX\ version}
 @#
 @d upTeX_banner=='This is upTeX, Version 3.141592653',pTeX_version_string,upTeX_version_string
 @d upTeX_banner_k==upTeX_banner
@@ -376,9 +377,9 @@ if (isinternalUPTEX) then begin
   @t\hskip10pt@>kcat_code(@"99):=kanji; { CJK Compatibility Ideographs }
   @t\hskip10pt@>kcat_code(@"9C):=modifier; { Variation Selectors }
   { \hskip10pt|kcat_code(@"A2):=other_kchar;| Halfwidth and Fullwidth Forms }
-  @+@t\1@>for k:=@"115 to @"118 do kcat_code(k):=kana; { Kana Extended-B .. Small Kana Extension }
-  @+@t\1@>for k:=@"145 to @"14F do kcat_code(k):=kanji; { CJK Unified Ideographs Extension B .. J }
-  @t\hskip10pt@>kcat_code(@"15B):=modifier; { Variation Selectors Supplement }
+  @+@t\1@>for k:=@"11A to @"11D do kcat_code(k):=kana; { Kana Extended-B .. Small Kana Extension }
+  @+@t\1@>for k:=@"14C to @"156 do kcat_code(k):=kanji; { CJK Unified Ideographs Extension B .. J }
+  @t\hskip10pt@>kcat_code(@"162):=modifier; { Variation Selectors Supplement }
   @+@t\1@>for k:=@"1F9 to @"1FC do kcat_code(k):=modifier;
     { Combining Katakana-Hiragana (Semi-)Voiced Sound Mark .. Emoji Modifier Fitzpatrick }
   @t\hskip10pt@>kcat_code(@"1FD):=not_cjk; { Latin-1 Letters }
@@ -393,10 +394,10 @@ end else begin
   { $\.{@@"20}+|k| = |kcatcodekey|(|fromKUTEN|(|HILO|(k,1))$ }
   @+@t\1@>for k:=16 to 94 do kcat_code(@"A0+k):=kanji; {2 men 16 ku ... 94 ku}
 end;
-@+@t\1@>for k:=@"15F to @"162 do kcat_code(k):=kanji; { for japanese-otf, japanese-otf-uptex }
-@+@t\1@>for k:=@"170 to @"171 do kcat_code(k):=kana; { Kana with (Semi-)Voiced Sound Mark }
-@t\hskip10pt@>kcat_code(@"175):=kanji; { Standardized Variation Sequence }
-@+@t\1@>for k:=@"177 to @"178 do kcat_code(k):=kanji; { Ideographic Variation Sequence }
+@+@t\1@>for k:=@"166 to @"169 do kcat_code(k):=kanji; { for japanese-otf, japanese-otf-uptex }
+@+@t\1@>for k:=@"177 to @"178 do kcat_code(k):=kana; { Kana with (Semi-)Voiced Sound Mark }
+@t\hskip10pt@>kcat_code(@"17C):=kanji; { Standardized Variation Sequence }
+@+@t\1@>for k:=@"17E to @"17F do kcat_code(k):=kanji; { Ideographic Variation Sequence }
 @z
 
 @x

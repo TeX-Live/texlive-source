@@ -1,3 +1,12 @@
+2025-12-26  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* uptex-m.ch, upbibtex.ch, uptex_version.h:
+	upTeX version u2.02.
+	* uptex-m.ch, upbibtex.ch, kanji.c:
+	Update reference of Unicode blocks to
+	"Blocks-17.0.0.txt Date: 2025-08-01".
+	* tests/kcat.tex, tests/upkcat.txt: Update a test.
+
 2025-12-14  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* am/uptex.am (uptex_tests): Fix typo.
