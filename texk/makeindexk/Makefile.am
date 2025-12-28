@@ -1,6 +1,8 @@
+## $Id$
 ## Makefile.am for the TeX Live subdirectory texk/makeindexk/
 ##
-## Copyright (C) 2009-2015 Peter Breitenlohner <tex-live@tug.org>
+## Copyright 2015-2025 Karl Berry <tex-live@tug.org>
+## Copyright 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
 AM_CPPFLAGS = $(KPATHSEA_INCLUDES) -DUNIX -DKPATHSEA
@@ -36,7 +38,7 @@ dist_man1_MANS = makeindex.1 mkindex.1
 
 EXTRA_DIST = CONTRIB NOTES ind-src
 
-## Tests
+## emacs-page Tests
 ##
 TEST_EXTENSIONS = .pl .test
 TESTS = tests/nested-range-test.pl tests/makeindex.test \
@@ -44,16 +46,17 @@ TESTS = tests/nested-range-test.pl tests/makeindex.test \
 	tests/nest.test
 tests/nested-range-test.log tests/makeindex.log: makeindex$(EXEEXT)
 EXTRA_DIST += $(TESTS)
-
-## tests/nested-range-test.pl
+##
 EXTRA_DIST += tests/nested-range.tex tests/nested-range.idx \
 	tests/nested-range-bb.tex tests/nested-range-bb.idx
 DISTCLEANFILES = nested-range.ilg nested-range.ind
+##
 ## tests/makeindex.test
 EXTRA_DIST += tests/sample.idx tests/sample.ind \
 	tests/tort.idx tests/tortW.idx tests/head1.ist \
 	tests/ok-tort.ind tests/ok-tort2.ind
 DISTCLEANFILES += sample.* tort*.*
+##
 ## tests/pprec.test
 EXTRA_DIST += tests/range.idx \
 	tests/range1.ist tests/range2.ist tests/range3.ist tests/range4.ist \
@@ -67,8 +70,8 @@ EXTRA_DIST += tests/range.idx \
 	tests/romalpC.idx tests/romalpC-5.ind \
 	tests/romalpD.idx tests/romalpD-5.ind tests/romalpD-6.ind tests/romalpD-7.ind
 DISTCLEANFILES += range*.* pprec*.* romalp*.*
+##
 ## tests/nest.test
 EXTRA_DIST += tests/nested3.ist tests/nested3.ind \
 	tests/toodeep.idx
 DISTCLEANFILES += nested*.* toodeep*.*
-
