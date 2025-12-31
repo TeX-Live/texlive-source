@@ -1,6 +1,6 @@
 /*
 	TxtConv.c
-	Copyright (c) 2002-2016 SIL International.
+	Copyright (c) 2002-2016 SIL Global.
 
 	2008-01-23  jk  revised endian-ness stuff to allow Universal build
 	 5-May-2005		jk	added include <stdlib.h> and <string.h> to keep gcc happy

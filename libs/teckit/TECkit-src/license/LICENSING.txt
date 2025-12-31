@@ -3,7 +3,7 @@
 A few parts, noted here, have a different license than most of TECkit.
 
 The files SFconv/UtfCodec.* are
-Copyright 2010-2011 SIL International
+Copyright 2010-2011 SIL Global
 with a license of LGPL-2+ or GPL-2+ or Mozilla Public License (http://mozilla.org/MPL)
 
 The files deb-source/copyright and docs/*.1 are
@@ -12,7 +12,7 @@ with a license of LGPL-2+
 
 Rest of the project:
 
-		   Copyright 2002-2023, SIL International
+		   Copyright 2002-2025, SIL Global
 			    All rights reserved.
 
     This library is free software; you can redistribute it and/or modify

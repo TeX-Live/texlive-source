@@ -1,7 +1,7 @@
 	+ should be +=. Found by Clerk Ma, 5feb25.
 
---- Compiler.cpp	(revision 73732)
-+++ Compiler.cpp	(working copy)
+--- teckit-2.5.13/source/Compiler.cpp	Tue Dec 16 22:47:30 2025
++++ TECkit-src/source/Compiler.cpp	Wed Dec 31 13:22:00 2025
 @@ -708,7 +708,7 @@
  							if (currentRule.lhsPreContext.size() != 0) {
  								contextID = getContextID(currentRule.lhsPreContext, sourceUni);

@@ -1,5 +1,5 @@
 /*------------------------------------------------------------------------
-Copyright (C) 2002-2016 SIL International. All rights reserved.
+Copyright (C) 2002-2016 SIL Global. All rights reserved.
 
 Distributable under the terms of either the Common Public License or the
 GNU Lesser General Public License, as specified in the LICENSING.txt file.
@@ -50,9 +50,9 @@ Description:
 /* additional recommended names (parallel to UTR-22) */
 #define kNameID_Version			4		/* "1.0b1" */
 #define kNameID_Contact			5		/* "mailto:nrsi@sil.org" */
-#define kNameID_RegAuthority	6		/* "SIL International" */
+#define kNameID_RegAuthority	6		/* "SIL Global" */
 #define kNameID_RegName			7		/* "Greek (Galatia)" */
-#define kNameID_Copyright		8		/* "(c)2002 SIL International" */
+#define kNameID_Copyright		8		/* "(c)2002 SIL Global" */
 /* additional name IDs may be defined in the future */
 
 /*

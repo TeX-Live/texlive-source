@@ -65,8 +65,8 @@ potrace 1.16 - checked 29aug22
 pplib 2.05.0 - checked 21apr20
   https://github.com/contextgarden/pplib
 
-teckit 2.5.12 - checked 26aug23
-  https://github.com/silnrsi/teckit/archive/2.5.12.tar.gz
+teckit 2.5.13 - checked 31dec25
+  https://github.com/silnrsi/teckit/archive/refs/tags/v2.5.13.tar.gz
 
 xpdf 4.04 - checked 24apr22
   https://www.xpdfreader.com/download.html

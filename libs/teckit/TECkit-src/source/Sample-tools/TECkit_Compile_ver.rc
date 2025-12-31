@@ -24,13 +24,13 @@ BEGIN
     BEGIN
         BLOCK "040904b0"
         BEGIN
-            VALUE "Comments", "TECkit character mapping engine\0"
+            VALUE "Comments", "TECkit mapping table compiler\0"
             VALUE "CompanyName", VER_COMPANY_NAME_STR
-            VALUE "FileDescription", "TECkit character mapping engine\0"
+            VALUE "FileDescription", "TECkit mapping table compiler\0"
             VALUE "FileVersion", VER_FILEVERSION_STR
-            VALUE "InternalName", "TECkit_x86\0"
+            VALUE "InternalName", "teckit_compile\0"
             VALUE "LegalCopyright", VER_COPYRIGHT_STR
-            VALUE "OriginalFilename", "TECkit_x86.dll\0"
+            VALUE "OriginalFilename", "teckit_compile.exe\0"
             VALUE "ProductName", VER_PRODUCT_NAME_STR
             VALUE "ProductVersion", VER_PRODUCTVERSION_STR
         END

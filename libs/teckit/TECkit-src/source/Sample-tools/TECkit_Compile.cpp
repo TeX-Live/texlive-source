@@ -1,6 +1,6 @@
 /*
 	TECkit_Compile.c
-	Copyright (c) 2002-2016 SIL International.
+	Copyright (c) 2002-2016 SIL Global.
 	
 	2004-03-12	updated to use v2.1 compiler
 				added -u option to force UTF8 mode
