@@ -56,7 +56,7 @@ printversionandexit (const_string banner,
 #endif
 
   if (copyright_holder) {
-    printf ("Copyright 2025 %s.\n", copyright_holder);
+    printf ("Copyright 2026 %s.\n", copyright_holder);
     if (!author)
       author = copyright_holder;
   }
