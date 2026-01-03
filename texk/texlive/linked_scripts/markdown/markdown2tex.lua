@@ -21,7 +21,7 @@
 -- TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 -- SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 --
--- Copyright (C) 2016-2025 Vít Starý Novotný, Andrej Genčur
+-- Copyright (C) 2016-2026 Vít Starý Novotný, Andrej Genčur
 --
 -- This work may be distributed and/or modified under the
 -- conditions of the LaTeX Project Public License, either version 1.3
@@ -59,17 +59,20 @@
 -- those in the standard .ins files.
 --
 local metadata = {
-    version   = "3.12.0-0-g746cfc56",
+    version   = "3.13.0-0-gdd212d58",
     comment   = "A module for the conversion from markdown "
              .. "to plain TeX",
     author    = "John MacFarlane, Hans Hagen, Vít Starý Novotný, "
              .. "Andrej Genčur",
     copyright = {"2009-2016 John MacFarlane, Hans Hagen",
-                 "2016-2025 Vít Starý Novotný, Andrej Genčur"},
+                 "2016-2026 Vít Starý Novotný, Andrej Genčur"},
     license   = "LPPL 1.3c"
 }
 
 local defaultOptions = {}
+local experimentalOptions = {}
+setmetatable(experimentalOptions, { __index = function (_, key)
+  return defaultOptions[key] end })
 defaultOptions.eagerCache = true
 defaultOptions.experimental = false
 defaultOptions.singletonCache = true
@@ -84,6 +87,7 @@ defaultOptions.blankBeforeBlockquote = false
 defaultOptions.blankBeforeCodeFence = false
 defaultOptions.blankBeforeDivFence = false
 defaultOptions.blankBeforeHeading = false
+defaultOptions.blankBeforeHtmlBlock = false
 defaultOptions.blankBeforeList = false
 defaultOptions.bracketedSpans = false
 defaultOptions.breakableBlockquotes = true
@@ -107,6 +111,8 @@ defaultOptions.gfmAutoIdentifiers = false
 defaultOptions.hashEnumerators = false
 defaultOptions.headerAttributes = false
 defaultOptions.html = true
+defaultOptions.htmlOverLinks = false
+experimentalOptions.htmlOverLinks = true
 defaultOptions.hybrid = false
 defaultOptions.inlineCodeAttributes = false
 defaultOptions.inlineNotes = false
