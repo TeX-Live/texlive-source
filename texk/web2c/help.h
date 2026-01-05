@@ -661,7 +661,8 @@ const_string TWILLHELP[] = {
     "  unless otherwise specified by OUTFILE;",
     "  in this case, '-' specifies a null CHANGEFILE.",
     "",
-    "-x          omit cross-reference information",
+    "-c          use original 'twimac.tex' macros",
+    "-x          omit end-index, section names, table of contents",
     "-help       display this help and exit",
     "-version    output version information and exit",
     NULL

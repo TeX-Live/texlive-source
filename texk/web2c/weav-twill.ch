@@ -453,7 +453,7 @@ Section 124.
 @.\\input webmac@>
 @.webmac@>
 
-If the user has sent the |pdf_output| flag (the `\.{-p}' option of the
+If the user has sent the |pdf_output| flag (the `\.{-p}' option on the
 command line), then we use alternative \TeX\ macros from `\.{\\input pwebmac}'.
 @.\\input pwebmac@>
 @.pwebmac@>
@@ -461,6 +461,12 @@ command line), then we use alternative \TeX\ macros from `\.{\\input pwebmac}'.
 `\.{\\input twimac-web}'.
 @.\\input twimac-web@>
 @.twimac-web@>
+
+If the user has sent the |CT_output| flag (the `\.{-c}' option on the
+command line), then we use alternative \TeX\ macros from `\.{\\input twimac}'
+with specific formatting for ``Computers \AM\ Typesetting''.
+@.\\input twimac@>
+@.twimac@>
 @z
 
 @x 2204c2367
@@ -468,7 +474,13 @@ out_ptr:=1; out_line:=1; out_buf[1]:="c";
 if pdf_output then write(tex_file,'\input pwebma')
 else write(tex_file,'\input webma');
 @y
-out_ptr:=1; out_line:=1; out_buf[1]:="b"; write(tex_file,'\input twimac-we');
+out_ptr:=1; out_line:=1;
+if CT_output then begin
+  out_buf[1]:="c"; write(tex_file,'\input twima');
+  end
+else begin
+  out_buf[1]:="b"; write(tex_file,'\input twimac-we');
+  end;
 @z
 
 Section 125.
@@ -716,12 +728,6 @@ var lhs:integer;
 Section 264.
 
 @x WEAVE.CH
-const n_options = 4; {Pascal won't count array lengths for us.}
-@y
-const n_options = 3; {Pascal won't count array lengths for us.}
-@z
-
-@x WEAVE.CH
       usage_help (WEAVE_HELP, nil);
 @y
       usage_help (TWILL_HELP, nil);
@@ -737,15 +743,22 @@ Section 268.
 long_options[current_option].name := char_to_string ('p');
 long_options[current_option].has_arg := 0;
 long_options[current_option].flag := address_of (pdf_output);
-long_options[current_option].val := 1;
-incr (current_option);
-
 @y
+@ Use alternative \TeX\ macros more suited for ``Computers \AM\ Typesetting''?
+@.-c@>
+
+@<Define the option...@> =
+long_options[current_option].name := char_to_string ('c');
+long_options[current_option].has_arg := 0;
+long_options[current_option].flag := address_of (CT_output);
 @z
 
 @x
+@!no_xref:c_int_type;
 @!pdf_output:c_int_type;
 @y
+@!CT_output:c_int_type;
+@!no_xref:c_int_type;
 @z
 
 @x

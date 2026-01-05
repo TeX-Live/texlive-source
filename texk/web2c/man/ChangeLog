@@ -1,3 +1,7 @@
+2026-01-05  Andreas Scherer  <https://ascherer.github.io>
+
+	* twill.man: Document new option '-c'.
+
 2025-11-30  Karl Berry  <karl@freefriends.org>
 
 	* Makefile.am (spell): new target as hint for spellcheck.
