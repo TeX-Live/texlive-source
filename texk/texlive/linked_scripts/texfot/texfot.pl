@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: texfot,v 1.53 2024/04/17 16:52:12 karl Exp $
+# $Id: texfot,v 1.54 2026/01/05 17:14:08 karl Exp $
 # Invoke a TeX command, filtering all but interesting terminal output;
 # do not look at the log or check any output files.
 # Exit status is that of the subprogram.
@@ -8,7 +8,7 @@
 # 
 # Public domain.  Originally written 2014 by Karl Berry.
 
-my $ident = '$Id: texfot,v 1.53 2024/04/17 16:52:12 karl Exp $';
+my $ident = '$Id: texfot,v 1.54 2026/01/05 17:14:08 karl Exp $';
 (my $prg = $0) =~ s,^.*/,,;
 select STDERR; $| = 1;  # no buffering
 select STDOUT; $| = 1;
@@ -191,7 +191,7 @@ sub process_output {
       This\ is
      |Output\ written
      |No\ pages\ of\ output
-     |\(.*end\ occurred\ inside\ a\ group
+     |\(.*end\ occurred
      |(Und|Ov)erfull
      |(LaTeX|Package|Class|Module).*(Error|Warning)
      |.*Citation.*undefined
@@ -472,6 +472,6 @@ are released to the public domain. Email C<karl@freefriends.org> with
 bug reports. It has no home page beyond the package page on CTAN:
 L<https://ctan.org/pkg/texfot>.
 
-  $Id: texfot,v 1.53 2024/04/17 16:52:12 karl Exp $
+  $Id: texfot,v 1.54 2026/01/05 17:14:08 karl Exp $
 
 =cut
