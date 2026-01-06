@@ -305,7 +305,7 @@ var q:xref_number; {pointer to previous cross reference}
 @!m,@!n: sixteen_bits; {new and previous cross-reference value}
 begin if (reserved(p)or(byte_start[p]+1=byte_start[p+ww]))and
 @y
-If the user has sent the |no_xref| flag (the `\.{-x}' option of the
+If the user has sent the |no_xref| flag (the `\.{-x}' option on the
 command line), then it is unnecessary to keep track of cross references
 for identifiers.
 If one were careful, one could probably make more changes around module
@@ -362,7 +362,7 @@ end;
 @.\\input webmac@>
 @.webmac@>
 
-If the user has sent the |pdf_output| flag (the `\.{-p}' option of the
+If the user has sent the |pdf_output| flag (the `\.{-p}' option on the
 command line), then we use alternative \TeX\ macros from `\.{\\input pwebmac}'.
 @.\\input pwebmac@>
 @.pwebmac@>

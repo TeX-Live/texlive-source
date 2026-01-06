@@ -453,7 +453,7 @@ Section 124.
 @.\\input webmac@>
 @.webmac@>
 
-If the user has sent the |pdf_output| flag (the `\.{-p}' option of the
+If the user has sent the |pdf_output| flag (the `\.{-p}' option on the
 command line), then we use alternative \TeX\ macros from `\.{\\input pwebmac}'.
 @.\\input pwebmac@>
 @.pwebmac@>
