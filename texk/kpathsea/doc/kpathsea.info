@@ -3,7 +3,7 @@ kpathsea.texi.
 
 This file documents the Kpathsea library for path searching.
 
-   Copyright © 1996-2025 Karl Berry & Olaf Weber.
+   Copyright © 1996-2026 Karl Berry & Olaf Weber.
 
    Permission is granted to make and distribute verbatim copies of this
 manual provided the copyright notice and this permission notice are
@@ -37,7 +37,7 @@ Kpathsea library
 ****************
 
 This manual documents the Kpathsea library for path searching.  It
-corresponds to version 6.4.2/dev, released in July 2025.
+corresponds to version 6.4.2/dev, released in January 2026.
 
 * Menu:
 
@@ -62,7 +62,7 @@ File: kpathsea.info,  Node: Introduction,  Next: unixtex.ftp,  Prev: Top,  Up: T
 **************
 
 This manual corresponds to version 6.4.2/dev of the Kpathsea library,
-released in July 2025.
+released in January 2026.
 
    The library's fundamental purpose is to return a filename from a list
 of directories specified by the user, similar to what shells do when
@@ -239,20 +239,21 @@ illegitimate root access.
 
    Thus, the general goal of our security measures is to make an
 untrusted TeX document safe to execute, in the sense of no document
-being able to change the system or user configuration, or somehow
-transmit information to an attacker.  Here are some of the steps that
-have been taken to make the TeX system safe in this regard:
+being able to change the system or user configuration, or transmit
+information to an attacker.  Here are some of the steps that have been
+taken to make the TeX system safe in this regard:
 
    • A TeX document can write to arbitrary files via ‘\openout’, e.g.,
      ‘~/.profile’, and thus an unwitting user who runs TeX on an
      untrusted document is vulnerable to a trojan horse attack.  This
      loophole is closed by default, but you can be permissive if you so
-     desire in ‘texmf.cnf’.  *Note (web2c)tex invocation::.  MetaPost
-     has the same issue.
+     desire in ‘texmf.cnf’; see the variable ‘openout_any’.  *Note
+     (web2c)tex invocation::.  MetaPost has the same issue (Metafont
+     cannot write arbitrary files).
 
    • Dvips, Xdvi, TeX, and others can execute shell commands.  By
-     default, only a handful of commands that are believed to be safe
-     (to the best of our ability to check) are allowed.  For the list,
+     default, only a handful of commands that are believed to be safe,
+     to the best of our ability to check, are allowed.  For the list,
      see the ‘shell_escape_commands’ variable in ‘texmf.cnf’ (*note
      (web2c)Shell escapes::).  For more information, e.g., to disable
      this completely, see the ‘-R’ option in *note (dvips)Option
@@ -261,20 +262,21 @@ have been taken to make the TeX system safe in this regard:
 
    • LuaTeX is a special case.  Since Lua is a general-purpose
      programming language, it has all the usual functionality for
-     writing files, executing shell commands, and plenty more.  When
-     LuaTeX is used in its so-called "kpse" mode, as with LuaLaTeX, we
-     have nevertheless done our best to also make it safe to execute by
-     default, by disabling or restricting the various problematic Lua
-     features.  *Note Safe filenames::, for a bit more about this.  (By
-     the way, when LuaTeX is run in non-kpse mode, as with ConTeXt MkIV,
-     everything is allowed; thus, untrusted documents should not be
-     processed without checking.)
+     writing files, executing shell commands, opening network
+     connections, and plenty more.  When LuaTeX is used in its so-called
+     "kpse" mode, as with LuaLaTeX, we have nevertheless done our best
+     to also make it safe to execute by default, by disabling or
+     restricting the various problematic Lua features.  *Note Safe
+     filenames::, for a bit more about this.  (When LuaTeX is run in
+     non-kpse mode, as with ConTeXt MkIV, everything is allowed; thus,
+     untrusted documents should not be processed.)
 
-   • There are some well-known ways to crash TeX, using (deliberately
-     unchecked) arithmetic overflow and other nefarious constructs (some
-     are listed at <https://tug.org/texmfbug/nobug.html>.  While
-     disturbing, TeX has no special system access and so these crashes
-     don't present a security risk.
+   • There are some well-known ways to crash TeX, using arithmetic
+     overflow, which Knuth deliberately left unchecked, and other
+     nefarious constructs; some are listed at
+     <https://tug.org/texmfbug/nobug.html>.  While disturbing, TeX has
+     no special system access and so these crashes don't present a
+     security risk.
 
    • One more issue is the desire for a globally writable font cache
      directory; see the section below for this (*note Global font cache
@@ -311,7 +313,7 @@ directories under ‘texmf’ be append-only with an option in ‘mktex.cnf’.
 make the ‘texmf’ tree writable only to that group (or user), and make
 ‘mktexpk’ et al. setgid to that group (or setuid to that user).  Then
 users must invoke the scripts to install things.  (If you're worried
-about the inevitable security holes in scripts, then you could write a C
+about the likelihood of security holes in scripts, you could write a C
 wrapper to exec the script.)
 
    The ‘mktex...’ scripts install files with the same read and write
@@ -323,8 +325,8 @@ permissions as their parent directory, unless the ‘appendonlydir’
 feature is used, in which case the sticky bit is always set.
 
    Nowadays, with bitmap files rarely used, and with individual systems
-being so much more powerful, this is less of an issue than it was in the
-past.  But the question still comes up occasionally.
+being so much more powerful, this is less of an issue than in the past.
+But the question still comes up occasionally.
 
 
 File: kpathsea.info,  Node: TeX directory structure,  Next: Path searching,  Prev: Security,  Up: Top
@@ -2652,7 +2654,8 @@ another.  *Note (web2c)Shell escapes::.
 if the final result is an acceptable directory; they are simply
 forbidden.  That is, Kpathsea merely considers the value as a string,
 not looking on the filesystem at all.  (However, if another program
-wants to do such resolutions and check the result, that's ok.)
+wants to do such resolutions and check the result, that's ok; possibly
+preferable.)
 
    For backwards compatibility, ‘y’ and ‘1’ are synonyms of ‘a’, while
 ‘n’ and ‘0’ are synonyms for ‘r’.
@@ -2666,12 +2669,13 @@ output or ‘false’ otherwise.  The Kpsewhich program has an option
 ‘kpathsea_out_name_ok_extended’, and the Kpsewhich option is
 ‘--safe-extended-out-name’.
 
-   Similarly, the function ‘kpathsea_in_name_ok’ (resp. ‘_extended’,
-with a filename as second argument, returns ‘true’ if that filename is
-acceptable to be opend for input or ‘false’ otherwise, depending on the
-value of the configuration variable ‘openin_any’.  Unfortunately, for
-reading, ‘a’ is the default default; too many system directories and
-files get involved to make ‘r’ or ‘p’ feasible.
+   Although the analogous functions ‘kpathsea_in_name_ok’ (resp.
+‘_extended’, as well as the others below, exist to check a filename
+being acceptable for reading, as of 2026, they always return true
+without checking anything.  This is because no other value was useful
+(or used) in practice.  More comments about this are in the default
+‘texmf.cnf’, at ‘openin_any’ (which variable is defined, but is now
+ignored).
 
    The functions above write a message to standard error if the usage is
 forbidden (so every caller does not have to do so).  Each function has a
@@ -3513,10 +3517,11 @@ Index
 * configuration file, source for path:   Path sources.        (line  20)
 * configuration of mktex scripts:        mktex configuration. (line   6)
 * configure options for mktex scripts:   mktex configuration. (line  12)
+* ConTeXt and (no) security:             Security.            (line  33)
 * context diff:                          Bug checklist.       (line  52)
 * continuation character:                Config files.        (line  37)
 * core dumps, reporting:                 Bug checklist.       (line  58)
-* crashes of TeX and security:           Security.            (line  43)
+* crashes of TeX and security:           Security.            (line  44)
 * crashes, reporting:                    Bug checklist.       (line  58)
 * CWEBINPUTS:                            Supported file formats.
                                                               (line  53)
@@ -3698,25 +3703,25 @@ Index
 * kpathsea_find_glyph:                   Glyph lookup.        (line  26)
 * kpathsea_find_glyph <1>:               Calling sequence.    (line  70)
 * kpathsea_finish:                       Calling sequence.    (line  87)
-* kpathsea_in_name_ok:                   Safe filenames.      (line  59)
-* kpathsea_in_name_ok_extended:          Safe filenames.      (line  59)
-* kpathsea_in_name_ok_silent:            Safe filenames.      (line  72)
-* kpathsea_in_name_ok_silent_extended:   Safe filenames.      (line  72)
+* kpathsea_in_name_ok:                   Safe filenames.      (line  60)
+* kpathsea_in_name_ok_extended:          Safe filenames.      (line  60)
+* kpathsea_in_name_ok_silent:            Safe filenames.      (line  74)
+* kpathsea_in_name_ok_silent_extended:   Safe filenames.      (line  74)
 * kpathsea_init_prog:                    Fallback font.       (line  15)
 * kpathsea_init_prog <1>:                Calling sequence.    (line  53)
 * kpathsea_new:                          Calling sequence.    (line   9)
 * kpathsea_open_file:                    Calling sequence.    (line  79)
-* kpathsea_out_name_ok:                  Safe filenames.      (line  50)
-* kpathsea_out_name_ok_extended:         Safe filenames.      (line  55)
-* kpathsea_out_name_ok_silent:           Safe filenames.      (line  72)
-* kpathsea_out_name_ok_silent_extended:  Safe filenames.      (line  72)
+* kpathsea_out_name_ok:                  Safe filenames.      (line  51)
+* kpathsea_out_name_ok_extended:         Safe filenames.      (line  56)
+* kpathsea_out_name_ok_silent:           Safe filenames.      (line  74)
+* kpathsea_out_name_ok_silent_extended:  Safe filenames.      (line  74)
 * kpathsea_set_program_name:             Calling sequence.    (line  14)
 * kpathsea_var_value:                    Programming with config files.
                                                               (line  10)
 * KPATHSEA_WARNING:                      Config files.        (line  18)
 * kpathsea.h:                            Programming overview.
                                                               (line  26)
-* kpse mode of LuaTeX:                   Security.            (line  32)
+* kpse mode of LuaTeX:                   Security.            (line  33)
 * KPSE_BITMAP_TOLERANCE:                 Basic glyph lookup.  (line  15)
 * KPSE_DEBUG_EXPAND (16):                Debugging.           (line  68)
 * KPSE_DEBUG_FOPEN (4):                  Debugging.           (line  53)
@@ -3763,7 +3768,7 @@ Index
 * LUAINPUTS:                             Supported file formats.
                                                               (line  94)
 * luaotfload:                            Safe filenames.      (line  26)
-* LuaTeX and security:                   Security.            (line  32)
+* LuaTeX and security:                   Security.            (line  33)
 * Mac filesystem, case-insensitive:      Casefolding rationale.
                                                               (line   6)
 * MacKenzie, David:                      History.             (line  44)
@@ -3850,6 +3855,7 @@ Index
                                                               (line 145)
 * online Metafont display, spurious:     Unable to generate fonts.
                                                               (line  36)
+* openin_any:                            Safe filenames.      (line  60)
 * openout_any:                           Safe filenames.      (line   6)
 * OPENTYPEFONTS:                         Supported file formats.
                                                               (line 149)
@@ -3951,7 +3957,7 @@ Index
                                                               (line  23)
 * SFDFONTS:                              Supported file formats.
                                                               (line 181)
-* shell commands, security:              Security.            (line  23)
+* shell commands, security:              Security.            (line  24)
 * shell variables:                       Variable expansion.  (line  17)
 * shell_escape, example for code:        Programming with config files.
                                                               (line  10)
@@ -4179,66 +4185,66 @@ Index
 
 Tag Table:
 Node: Top1479
-Node: Introduction2262
-Node: History4366
-Node: unixtex.ftp8986
-Node: Security10468
-Node: Global font cache and security13181
-Node: TeX directory structure15172
-Node: Path searching19347
-Node: Searching overview20305
-Node: Path sources24212
-Node: Config files25482
-Node: Path expansion30530
-Node: Default expansion31499
-Node: Variable expansion33621
-Node: Tilde expansion35090
-Node: Brace expansion36138
-Node: KPSE_DOT expansion37133
-Node: Subdirectory expansion37658
-Node: Casefolding search40819
-Node: Casefolding rationale41596
-Node: Casefolding examples42954
-Node: Filename database48176
-Node: ls-R49190
-Node: Filename aliases53062
-Node: Database format54304
-Node: Invoking kpsewhich55353
-Node: kpsewhich examples56744
-Node: Path searching options57632
-Node: Specially-recognized files67806
-Node: Auxiliary tasks69281
-Node: Standard options73425
-Node: TeX support73793
-Node: Supported file formats75151
-Node: File lookup83902
-Node: Glyph lookup85707
-Node: Basic glyph lookup86855
-Node: Fontmap87763
-Node: Fallback font90374
-Node: Suppressing warnings91310
-Node: mktex scripts92473
-Node: mktex configuration93716
-Node: mktex script names99809
-Node: mktex script arguments101492
-Node: Programming102407
-Node: Programming overview103050
-Node: Calling sequence105961
-Node: Safe filenames111298
-Ref: openout_any111457
-Node: Program-specific files115266
-Node: Programming with config files116319
-Node: Reporting bugs117966
-Node: Bug checklist118644
-Node: Mailing lists122201
-Node: Debugging122878
-Node: Logging128135
-Node: Common problems130042
-Node: Unable to find files130519
-Node: Slow path searching133362
-Node: Unable to generate fonts134757
-Node: TeX or Metafont failing137293
-Node: Index138495
+Node: Introduction2265
+Node: History4372
+Node: unixtex.ftp8992
+Node: Security10474
+Node: Global font cache and security13282
+Node: TeX directory structure15263
+Node: Path searching19438
+Node: Searching overview20396
+Node: Path sources24303
+Node: Config files25573
+Node: Path expansion30621
+Node: Default expansion31590
+Node: Variable expansion33712
+Node: Tilde expansion35181
+Node: Brace expansion36229
+Node: KPSE_DOT expansion37224
+Node: Subdirectory expansion37749
+Node: Casefolding search40910
+Node: Casefolding rationale41687
+Node: Casefolding examples43045
+Node: Filename database48267
+Node: ls-R49281
+Node: Filename aliases53153
+Node: Database format54395
+Node: Invoking kpsewhich55444
+Node: kpsewhich examples56835
+Node: Path searching options57723
+Node: Specially-recognized files67897
+Node: Auxiliary tasks69372
+Node: Standard options73516
+Node: TeX support73884
+Node: Supported file formats75242
+Node: File lookup83993
+Node: Glyph lookup85798
+Node: Basic glyph lookup86946
+Node: Fontmap87854
+Node: Fallback font90465
+Node: Suppressing warnings91401
+Node: mktex scripts92564
+Node: mktex configuration93807
+Node: mktex script names99900
+Node: mktex script arguments101583
+Node: Programming102498
+Node: Programming overview103141
+Node: Calling sequence106052
+Node: Safe filenames111389
+Ref: openout_any111548
+Node: Program-specific files115378
+Node: Programming with config files116431
+Node: Reporting bugs118078
+Node: Bug checklist118756
+Node: Mailing lists122313
+Node: Debugging122990
+Node: Logging128247
+Node: Common problems130154
+Node: Unable to find files130631
+Node: Slow path searching133474
+Node: Unable to generate fonts134869
+Node: TeX or Metafont failing137405
+Node: Index138607
 
 End Tag Table
 

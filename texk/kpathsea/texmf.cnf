@@ -686,15 +686,30 @@ shell_escape.initex = f
 TEXMF_RESTRICTED_SCRIPTS = \
   {!!$TEXMFLOCAL,!!$TEXMFDIST}/scripts/{$progname,$engine,}//
 
-% Do we allow TeX \input or \openin (openin_any), or \openout
-% (openout_any) on filenames starting with `.' (e.g., .rhosts) or
-% outside the current tree (e.g., /etc/passwd)?
+% The openout_any parameter says whether to allow TeX \openout, etc. on
+% filenames starting with `.' (e.g., .rhosts) or outside the current
+% tree (e.g., /etc/passwd). Not likely,
 % a (any)        : any file can be opened.
 % r (restricted) : disallow opening dot files
 % p (paranoid)   : as `r' and disallow going to parent directories, and
 %                  restrict absolute paths to be under $TEXMFOUTPUT.
-openin_any = a
 openout_any = p
+
+% On the other hand, as of 2026, openin_any no longer has any effect;
+% the underlying kpse_in_name_ok and related functions always return
+% true. It used to be analogous to openout_any, but in practice, normal
+% (La)TeXruns would fail with anything but `a', e.g., luaotfload uses
+% absolute paths. Meanwhile, there were obscure ways to inject arbitrary
+% input from the supposedly-forbidden areas, so it gave a false sense of
+% security. Since it apparently has no practical use, seems best to
+% simply declare it a no-op.
+% 
+% We leave the openin_any variable in place despite being a no-op, so that any
+% workflows that might depend on retrieving it, e.g., with kpsewhich,
+% don't gratuitously fail, but it has no effect.  Similarly, the
+% underlying functions remain in the library to avoid linking failures.
+% Thread: https://tug.org/pipermail/tex-live/2025-December/051965.html
+openin_any = a
 
 % Write .log/.dvi/.aux/etc. files here, if they can't be written in the
 % current directory.

@@ -1213,6 +1213,10 @@ abs_fname_ok (const_string fname, const_string checkdir)
 
 /* Here is the general internal subroutine, kpathsea_name_ok, for
    checking if a filename is acceptable to open for reading or writing.
+   This is string-based, not file-based, and does not look on the filesystem.
+   Analogous implementations in minted and memoize do check for the
+   actual file, not just the filename as a string.
+
    Parameters:
   kpse - the usual structure.
   fname - the filename to check.
@@ -1222,10 +1226,22 @@ abs_fname_ok (const_string fname, const_string checkdir)
   silent - whether to write a message to stderr if not ok.
   extended - whether to also allow TEXMF[SYS]VAR; see comments below for more.
   
+   As of 2026, if ACTION is ok_reading, we simply return true, that is,
+   we allow anything. A specific example as to why:
+   Because this function is string-based, with openin_any=p,
+     \input /usr/local/texlive/2025/texmf-dist/tex/plain/knuth-lib/story.tex
+   will fail because it's an absolute filename, even though
+     \input story
+   finds that same file. We would have to implement completely
+   different to make this work as expected. Meanwhile, no one seems to
+   have any requirement for restricted reading. So skip it.
+   More comments at openin_any in texmf.cnf about this.
+
    The public functions below (and declared in tex-file.h), provide
    convenience calls with defaults for the various combinations.
    
-   The general idea is described in the Kpathsea manual, node Calling sequence.
+   The general idea is described in the Kpathsea manual,
+   https://tug.org/texinfohtml/kpathsea.html#Calling-sequence.
 */
 
 
@@ -1234,30 +1250,41 @@ kpathsea_name_ok (kpathsea kpse, const_string fname, const_string check_var,
                   const_string default_choice, ok_type action,
                   boolean silent, boolean extended)
 {
+  const_string open_choice;
   const_string expanded_fname = NULL;
+
+  /* As mentioned above, as of 2026, allow anything for reading.
+     See more comments in texmf.cnf.  */
+  if (action == ok_reading) {
+    return true;
+  }
 
   /* We distinguish three cases:
      'a' (any)        allows any file to be opened.
      'r' (restricted) means disallowing special filenames.
-     'p' (paranoid)   means being really paranoid: disallowing special
-                      filenames and restricting output files to be in or
-                      below the working directory or $TEXMFOUTPUT or
-                      $TEXMF_OUTPUT_DIRECTORY; and, if EXTENDED is true,
-                      $TEXMFVAR and $TEXMFSYSVAR.
-                        Input files must be below the current directory,
-                      the envvars, or (only implicitly) in the system
-                      areas. Unfortunately, in practice this does not
-                      suffice to make TeX usable, so we allow anything.
-     We default to "paranoid" for writing and "any" for reading. 
+     'p' (paranoid)   means being more paranoid: disallowing special
+                      filenames, and restricting files to be a relative
+                      name ("mydoc.tex", "story.tex") that might ultimately
+                      be found along a path,
+                      or $TEXMFOUTPUT or $TEXMF_OUTPUT_DIRECTORY;
+                      or, only if EXTENDED is true, $TEXMFVAR and $TEXMFSYSVAR.
+     We default to "paranoid" for writing.
+
+     The above paranoia works ok for output files, which is the
+     important case.
+
+     The above checks on TEXMFVAR and TEXMFSYSVAR are the only places in
+     all of Kpathsea where the "tree" variables set in texmf.cnf are
+     embedded. It would be nicer if we didn't have to.
 
      This function contains several return and goto statements, be careful.
-     Paranoia originally supplied by Charles Karney.  */
+     Paranoia originally supplied by Charles Karney. */
 
-  const_string open_choice = kpathsea_var_value (kpse, check_var);
+  open_choice = kpathsea_var_value (kpse, check_var);
   if (!open_choice)
     open_choice = default_choice;
 
-  /* If setting is a(nything), we're done.  This is the case for reading. */
+  /* If setting is a(nything), we're done.  */
   if (*open_choice == 'a' || *open_choice == 'y' || *open_choice == '1')
     return true;
 
@@ -1268,8 +1295,8 @@ kpathsea_name_ok (kpathsea kpse, const_string fname, const_string check_var,
 #if !defined(MSDOS) && !defined(_WIN32)
   { /* On non-Windows ... */
     /* Disallow .rhosts, .login, .ssh/, ..somefile, ..somedir/somefile,
-       etc.  But allow .tex (for base LaTeX).  Also specially allow
-       /foo/.whatever if extended, since it might match against
+       etc.  Specially allow /foo/.whatever if EXTENDED, since it
+       might match against
        TEXMF[SYS]VAR below.  */
     const_string q;
     const_string qq = fname;
@@ -1302,6 +1329,7 @@ kpathsea_name_ok (kpathsea kpse, const_string fname, const_string check_var,
   if (*open_choice == 'r' || *open_choice == 'n' || *open_choice == '0')
     return true;
 
+  /* Continuing on with p(aranoid) checks.  */
   if (kpathsea_absolute_p (kpse, expanded_fname, false)) {
     /* We'll check TEXMF_OUTPUT_DIRECTORY first.  This must be an
        environment variable, not a configuration file setting.  */
@@ -1355,7 +1383,7 @@ kpathsea_name_ok (kpathsea kpse, const_string fname, const_string check_var,
          because the "../" case was handled above. */
       if (IS_DIR_SEP (dotpair[2]) && IS_DIR_SEP (dotpair[-1]))
         goto not_ok;
-      /* Continue after the dotpair. */
+      /* Continue after the dotpair.  */
       dotpair = strstr (dotpair+2, "..");
     }
   }
