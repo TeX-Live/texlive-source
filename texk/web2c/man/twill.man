@@ -1,4 +1,4 @@
-.TH TWILL 1 "05 January 2026" "Web2C @VERSION@"
+.TH TWILL 1 "20 March 2024" "Web2C @VERSION@"
 .\"=====================================================================
 .if n .ds MF Metafont
 .if t .ds MF Metafont
@@ -19,7 +19,7 @@
 twill, twill-refsort \- translate \*(WB to \*(TX with mini-indexes
 .SH SYNOPSIS
 .PP
-\f[B]twill\f[R] [\f[B]\-c\f[R]] [\f[B]\-x\f[R]]
+\f[B]twill\f[R] [\f[B]\-x\f[R]]
 \f[I]webfile\f[R][\f[B].web\f[R]]
 [{\f[I]changefile\f[R][\f[B].ch\f[R]]|\f[B]\-\f[R]}
 [\f[I]outfile\f[R][\f[B].tex\f[R]]]]
@@ -41,23 +41,13 @@ spread of pages and a 'master index' at the end that it gathers automatically.
 .PP
 The command line arguments are the same as for
 .B weave
-except for the options:
-.B \-c
-loads the original macros
-.I twimac.tex
-that provide specific formatting for
-.I Computers and Typesetting
-instead of the default macros
-.I twimac-web.tex
-that are suited for generic \*(WB programs.
-.B -p
-is inactive. (There are no \*(TX macros for PDF output).
+including the option:
 .B \-x
-omits the index, module name list, and table of contents page.
+says to omit the indexes, module name list, and table of contents pages.
 (A
 .I CONTENTS.tex
-file will still be written when the \*(TX file is processed.
-However, it is ignored unless some macros in
+file will still be written when the \*(TX file is processed,
+however, unless some macros in
 .I twimac-web.tex
 are redefined.)
 .PP
@@ -100,15 +90,8 @@ for the details of the searching.
 .\"=====================================================================
 .SH FILES
 .TP \w'@@'u+2n
-.I https://mirrors.ctan.org/systems/knuth/local/lib/twimac.tex
-\*(TX macros used by
-.B twill
-output for
-.I Computers and Typesetting.
-
-.TP \w'@@'u+2n
 .I $TEXMFMAIN/tex/plain/cweb/cwebbin/twimac-web.tex
-\*(TX macros used by generic
+\*(TX macros used by
 .B twill
 output.
 .\"=====================================================================
