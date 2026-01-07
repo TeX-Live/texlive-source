@@ -2,7 +2,7 @@
 @setfilename tlbuild.info
 
 @set version 2025
-@set month-year January 2025
+@set month-year January 2026
 
 @set mytitle Building @TeX{} Live (@value{version})
 @settitle @value{mytitle}
@@ -807,18 +807,28 @@ source tree.
 @pindex texlive.tlpdb@r{, @TL{} database}
 @pindex install-tl@r{, @TL{} installer}
 @pindex plain.tex@r{, not in source tree}
-The main consideration is that @code{make install} is not enough to
-make a usable @TeX{} installation.  Beyond the compiled binaries,
-(thousands of) support files are needed; just as a first example,
-@file{plain.tex} is not in the source tree.
+The main consideration is that @code{make install} is nothing like
+enough to make a usable @TeX{} installation.  It creates the compiled
+binaries, but (thousands of) support files are also needed; just as a
+first example, @file{plain.tex} is not installed.  All the support
+files are maintained completely independently and are not present in
+the TL @file{Build/source} tree of sources to be compiled.
 
-These support files are maintained completely independently and are
-not present in the TL source tree.  The best basis for dealing with them
-is the @TL{} (plain text) database in
+Thus, perhaps the simplest way to get a running @TeX{} system after
+building new binaries from these sources is to do a normal
+installation of @TeX{} Live, and then use the new binaries as a
+so-called ``custom'' platform
+(@url{https://tug.org/texlive/custom-bin.html}).
+
+Alternatively, the best general basis for dealing with them, for
+example if you're trying to figure out how to support @TeX{} in a
+general distro, is the @TL{} (plain text) database in
 @file{Master/tlpkg/texlive.tlpdb}, and/or the @TL{} installer,
-@code{install-tl}.  More information is under @file{Master/tlpkg} and
-at @url{https://tug.org/texlive/distro.html} and 
- @url{https://tug.org/texlive/build.html#deploy}.
+@code{install-tl}.
+
+More information is under @file{Master/tlpkg} and at
+@url{https://tug.org/texlive/distro.html} and
+@url{https://tug.org/texlive/build.html#deploy}.
  
 @menu
 * Installation directories::    The prefix, @code{bindir}, etc., directories.
