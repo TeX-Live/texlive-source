@@ -1,3 +1,12 @@
+2026-01-07  Karl Berry  <karl@freefriends.org>
+
+	* NEWS,
+	* afm2tfm.c,
+	* dvips.c,
+	* dvips.h,
+	* dvips.texi,
+	* configure.ac: version 2026.1 and copyright 2026.
+
 2025-04-08  Karl Berry  <karl@freefriends.org>
 
 	* t1part.h (search),

@@ -1,3 +1,10 @@
+2026-01-07  Karl Berry  <karl@freefriends.org>
+
+        * NEWS,
+        * pdftex_version.h,
+        * pdftex.web (pdftex_revision, pdftex_version_string):
+        version [1.40.]29 for TL26.
+
 2025-11-10  Karl Berry  <karl@freefriends.org>
 
 	* NEWS: typo.

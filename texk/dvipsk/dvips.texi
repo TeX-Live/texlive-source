@@ -2,8 +2,8 @@
 @setfilename dvips.info
 @settitle Dvips: A DVI-to-PostScript translator
 
-@set version 2025.1
-@set month-year January 2025
+@set version 2026.1
+@set month-year January 2026
 
 @copying
 This manual documents Dvips version @value{version}

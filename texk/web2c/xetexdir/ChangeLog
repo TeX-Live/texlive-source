@@ -1,3 +1,10 @@
+2026-01-07  Karl Berry  <karl@freefriends.org>
+
+        * NEWS,
+        * xetex_version.h,
+        * xetex.web (xetex_revision, xetex_version_string):
+        version 0.999998 for TL26.
+
 2025-11-10  Karl Berry  <karl@freefriends.org>
 
 	* xetex.web: typo.

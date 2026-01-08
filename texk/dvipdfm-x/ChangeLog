@@ -1,3 +1,9 @@
+2026-01-07  Karl Berry  <karl@freefriends.org>
+
+	* configure.ac,
+	* xbb.c (show_version),
+	* dvipdfmx.c (show_version): copyright 2026, version 260107.
+
 2025-04-13  Akira Kakuto  <kakuto@jcom.zaq.ne.jp>
 
 	* dvipdfmx.c: Reinstate an option -o - to send output to

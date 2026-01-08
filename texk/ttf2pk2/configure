@@ -15672,7 +15672,7 @@ ac_config_headers="$ac_config_headers config.h"
 
 
 
-printf "%s\n" "#define TL_VERSION \"TeX Live 2026/dev\"" >>confdefs.h
+printf "%s\n" "#define TL_VERSION \"TeX Live 2026\"" >>confdefs.h
 
 
 { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for library containing floor" >&5

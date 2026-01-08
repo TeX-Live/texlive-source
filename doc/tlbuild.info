@@ -3,7 +3,7 @@ tlbuild.texi.
 
 This file documents the TeX Live build system and more.
 
-Copyright (C) 2016-2025 Karl Berry.
+Copyright (C) 2016-2026 Karl Berry.
 Copyright (C) 2013-2015 Karl Berry & Peter Breitenlohner.
 
    Permission is granted to make and distribute verbatim copies of this
@@ -33,7 +33,7 @@ END-INFO-DIR-ENTRY
 
 File: tlbuild.info,  Node: Top,  Next: Introduction,  Up: (dir)
 
-Building TeX Live (2025)
+Building TeX Live (2026)
 ************************
 
 For an overview of this manual, *note Introduction::.
@@ -59,7 +59,7 @@ File: tlbuild.info,  Node: Introduction,  Next: Overview of build system,  Prev:
 1 Introduction
 **************
 
-This manual (dated January 2026) corresponds to the TeX Live 2025
+This manual (dated January 2026) corresponds to the TeX Live 2026
 release.
 
    This manual is aimed at system installers and programmers, and
