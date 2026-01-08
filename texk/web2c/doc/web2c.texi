@@ -12,7 +12,7 @@ The latest version is available from ftp://ftp.tug.org/tex/texinfo.tex.}
 @end tex
 
 @set version 2025
-@set month-year September 2025
+@set month-year January 2026
 
 @c Define new indices for commands in auxiliary files, filenames, and options.
 @defcodeindex cm
@@ -730,7 +730,7 @@ memory dump file.
 In typical use, @TeX{} and Metafont require a large number of
 macros to be predefined; therefore, they support @dfn{memory dump}
 files, which can be read much more efficiently than ordinary source
-code. 
+code.
 
 @menu
 * Creating memory dumps::
@@ -746,7 +746,7 @@ code.
 @cindex creating memory dumps
 @cindex writing memory dumps
 
-The programs all create memory dumps in slightly idiosyncratic (thought
+The programs both create memory dumps in slightly idiosyncratic (thought
 substantially similar) way, so we describe the details in separate
 sections (references below).  The basic idea is to run the initial
 version of the program (@pxref{Initial and virgin}), read the source
@@ -754,10 +754,10 @@ file to define the macros, and then execute the @code{\dump} primitive.
 
 Also, each program uses a different filename extension for its memory
 dumps, since although they are completely analogous they are not
-interchangeable (@TeX{} cannot read a Metafont memory dump, for
-example).
+interchangeable (@TeX{} cannot read a Metafont memory dump, or vice
+versa).
 
-Here is a list of filename extensions with references to examples of
+Here are the filename extensions with references to examples of
 creating memory dumps:
 
 @table @asis
@@ -767,6 +767,9 @@ creating memory dumps:
 @item Metafont
 (@samp{.base}) @xref{Initial Metafont}.
 @end table
+
+MetaPost used to have an equivalent memory dump, called @samp{.mem},
+but no longer uses this; it now reads only source files.
 
 When making memory dumps, the programs read environment variables and
 configuration files for path searching and other values as usual.  If
@@ -781,7 +784,6 @@ difficulties.
 @cindex memory dump to use, determining
 @cindex fmt file, determining
 @cindex base file, determining
-@cindex mem file, determining
 
 The virgin form (@pxref{Initial and virgin}) of each program always
 reads a memory dump before processing normal source input.  All three
@@ -791,8 +793,9 @@ programs determine the memory dump to use in the same way:
 @item
 If the first non-option command-line argument begins with @samp{&}, the
 program uses the remainder of that argument as the memory dump name.
-For example, running @samp{tex \&super} reads @file{super.fmt}.  (The
-backslash protects the @samp{&} against interpretation by the shell.)
+For example, running @samp{tex \&super} reads @file{super.fmt}.  The
+backslash merely protects the @samp{&} against interpretation by the
+shell; quotes could also be used. @TeX{} must see only the @samp{&}.
 
 @item
 @opindex -fmt=@var{fmt}
@@ -806,10 +809,10 @@ If the @samp{-progname} option is specified, its value is used.
 
 @item
 @kindex %& @r{magic number}
-If the first line of the main input file (which must be specified on the
-command line, not in response to @samp{**}) is @code{%&@var{dump}}, and
-@var{dump} is an existing memory dump of the appropriate type,
-@var{dump} is used.
+If the first line of the main input file (which must be specified on
+the command line, not in response to the @samp{**} prompt) is
+@code{%&@var{dump}}, and @var{dump} is an existing memory dump of the
+appropriate type, @var{dump} is used.
 
 The first line of the main input file can also specify which character
 translation file is to be used: @code{%&-translate-file=@var{tcxfile}}
@@ -822,13 +825,12 @@ must be given first.
 @item
 @cindex program name, determines memory dump
 @cindex links to binaries
-Otherwise, the program uses the program invocation name, most commonly
+Otherwise, the program uses the program invocation name, most simply
 @file{tex} resp.@: @file{mf}.  For example, if @file{latex} is a link
 to @file{tex}, and the user runs @samp{latex foo}, @file{latex.fmt}
 will be used.
 
 @end enumerate
-
 
 @node Hardware and memory dumps
 @subsection Hardware and memory dumps
@@ -836,9 +838,9 @@ will be used.
 @cindex hardware and memory dumps
 @cindex memory dumps and hardware
 @cindex sharing memory dumps
+@cindex portable memory dumps
 @cindex fmt files, sharing
 @cindex base files, sharing
-@cindex mem files, sharing
 
 @cindex LittleEndian machines
 @cindex BigEndian machines
@@ -849,12 +851,22 @@ will be used.
 @cindex 32-bit architecture
 @cindex 64-bit architecture
 @cindex @code{long} data type, size of
-By default, memory dump files are sharable between architectures of
-different types; specifically, on machines of different endianness
+By default, most memory dump files are sharable among architectures of
+different types; specifically, among machines of different endianness
 (@pxref{Byte order,,, libc, GNU C Library}) and with different word
 sizes (4-byte @code{long} vs.@: 8-byte @code{long}).  This is a
 feature of the Web2c implementation, and is not true of all @TeX{}
 implementations.
+
+@cindex Lua, and unportable memory dumps
+However, with the advent of Lua as an embedded scripting language,
+some dumps have become unportable, namely @code{lualatex},
+@code{optex}, and @code{context}. These formats precompile Lua code
+into bytecode, which is architecture-specific for the sake of speed.
+With @TeX{} Live, if you need to support multiple architectures with
+the same tree, you can explicitly set @code{TEXMFSYSVAR} to different
+directories on the different systems. More discussion:
+@url{https://github.com/latex3/latex2e/issues/775}.
 
 @pindex tl-check-fmtshare
 The script @code{tl-check-fmtshare} in the @TeX{} Live source tree
@@ -871,8 +883,8 @@ is speed.  To achieve endian-independence, the reading of memory dumps
 on LittleEndian architectures, such as PC's and DEC architectures, is
 somewhat slowed (all the multibyte values have to be swapped).
 Usually, this is not noticeable, and the advantage of being able to
-share memory dumps across all platforms at a site far outweighs the
-speed loss.  But if you're trying to squeeze out every possible bit of
+share memory dumps across all platforms at a site outweighs the speed
+loss.  But if you're trying to squeeze out every possible bit of
 performance, you may wish to do this.
 
 @cindex floating-point values
@@ -889,9 +901,9 @@ any dumped value at all.
 @cindex date and time, in memory dumps
 @cindex time and date, in memory dumps
 @cindex memory dumps, contain date and time
-Incidentally, different memory dump files will never compare equal
-byte-for-byte, because the programs dump the current date and time. So
-don't be alarmed by a few bytes difference.
+Different memory dump files will never compare equal byte-for-byte,
+because the programs dump the current date and time. So don't be
+alarmed by this difference.
 
 @cindex Harbison, Samuel P.
 @cindex Steele Jr., Guy L.
@@ -2401,27 +2413,43 @@ For more information on the use of @code{smode}, or if you are not using
 @cindex Metafont graphics
 
 The Web2c implementation of Metafont can do online graphics with a
-number of devices. (See the Metafont manual for more information about
-how to draw on your screen.)  By default, no graphics support is
-enabled.
+number of devices. (See @cite{The Metafontbook} for more information
+about how to draw on your screen.) The default graphics support is
+determined at compile time.
+
+The two Kpathsea configuration variables @code{screen_width} and
+@code{screen_depth} define the width and height of the window used by
+Metafont. They can be set in the environment or a Kpathsea
+configuration file (@pxref{path sources,,, Kpathsea, kpathsea}). They
+default to 1664 and 1200, respectively.
 
 @vindex MFTERM
 @vindex TERM
 Metafont examines the @code{MFTERM} environment variable or config file
 value at runtime, or the @code{TERM} environment variable if
 @code{MFTERM} is not set, to determine the device support to use.
-Naturally, only the devices for which support has been compiled in can
-be selected.
+Some devices are system-specific and not always available.
+
+@vindex DISPLAY
+@cindex X server, and Metafont
+If @code{MFTERM} is not set, but the @code{DISPLAY} environment
+variable is set (to a valid X server specification like @samp{:0}),
+the Metafont window support for X is used, assuming it was detected
+and included at compile time.
 
 Here is a table of the possibilities, showing the @code{MFTERM} value
 and the corresponding @code{configure} option(s) in parentheses.
 
 @vtable @code
+@item amiga
+@opindex --enable-amigawin
+(@samp{--enable-amigawin}) Amiga systems.
+
 @item epsf
 @cindex Herberts, Mathias
 @opindex --enable-epsfwin
 (@samp{--enable-epsfwin}) Pseudo-window server for Encapsulated
-PostScript (see @file{web2c/window/epsf.c}). This device produces an
+PostScript (see @file{web2c/window/epsf.c}).  This device produces an
 EPS file containing the graphics which would be displayed online on
 other devices. The name of the EPS file defaults to metafont.eps but
 can be changed by setting the MFEPSF environment variable to the new
@@ -2434,15 +2462,15 @@ filename.  Contributed by Mathias Herberts.
 @item mftalk
 @opindex --enable-mftalkwin
 (@samp{--enable-mftalkwin}) Generic window server (see
-@file{web2c/window/mftalk.c}). @c insignificantly overfull:
+@file{web2c/window/mftalk.c}). @c insignificantly overfull, so:
 @tex
 \hfuzz=1.7pt\par
 @end tex
 
 @item next
-@pindex DrawingServant
 @opindex --enable-next
-(@samp{--enable-next}) NeXT window system. This requires a separate
+@pindex DrawingServant
+(@samp{--enable-nextwin}) NeXT window system. This requires a separate
 program, called @code{DrawingServant}, available separately. See the
 @file{web2c/window/next.c}.
 
@@ -2458,44 +2486,45 @@ program, called @code{DrawingServant}, available separately. See the
 @flindex sun-gfx.c
 (@samp{--enable-suntoolswin}) The old Suntools (not any flavor of X)
 window system. (You can get the even older SunWindows @code{gfx} system
-by using @file{sun-gfx.c}.)
+with @file{sun-gfx.c}.)
 
 @item tek
 @cindex Tektronix
 @opindex --enable-tektronixwin
 (@samp{--enable-tektronixwin}) Tektronix terminals.
 
-@cindex Poole, Simon
 @item uniterm
+@cindex Poole, Simon
 @cindex Tektronix 4014
 @opindex --enable-unitermwin
 (@samp{--enable-unitermwin}) Uniterm, Simon Poole's emulator of a smart
 Tektronix 4014 terminal.  This may work with regular Tektronix terminals
 as well; it's faster than the driver @samp{--enable-tektronixwin} selects.
 
-@vindex NO_X11WIN
+@item win32win
+Microsoft Windows.
+
 @pindex Xt
 @pindex Xlib
 @item xterm
 @opindex --with-x
 @samp{--with-x} The X window system (version 11).
 
-@opindex --with-mf-x-toolkit=@var{kit}
+@opindex --with-mf-x-toolkit
 @cindex toolkits, X
 @cindex X toolkits and Metafont
 @cindex Xt support
 @cindex Xlib support
 There are two variants of the X11 support, one that works with the Xt
-toolkit, and another that works directly with Xlib. The Xt support is
-more efficient and has more functionality, so it is the default. If you
-must use the Xlib support, use @samp{configure --with-x
---with-kf-x-toolkit=no}.
+toolkit (@file{X11-Xt.c}), and another that works directly with Xlib
+(@file{X11-Xlib.c}).  If @code{--with-mf-x-toolkit} is specified when
+building Metafont, the Xt version is used, else Xlib.
 
 @opindex --disable-mf-nowin
 @cindex non-windows-capable Metafont
+@cindex Metafont without online graphics
 Specify @samp{--disable-mf-nowin} in order not to build a separate
-non-windows-capable Metafont executable @code{mf-nowin} (or
-@code{mf-nowin.exe}).
+non-windows-capable Metafont executable @code{mf-nowin}.
 
 @cindex X resources
 @cindex X class name for Metafont
@@ -2620,25 +2649,27 @@ position is too crowded with other information.
 @section MFT: Prettyprinting Metafont source
 
 @pindex mft
-@cindex Metafont source, prettyprinting
-@cindex prettyprinting Metafont source
-@cindex @TeX{}, creating from Metafont
+@cindex Metafont or MetaPost source, prettyprinting
+@cindex prettyprinting Metafont or MetaPost source
+@cindex @TeX{}, creating from Metafont or MetaPost
 
 @flindex mftmac.tex
-MFT translates a Metafont program into a @TeX{} document suitable for
-typesetting, with the aid of @TeX{} macros defined in the file
-@file{mftmac.tex}.  Synopsis:
+MFT translates a Metafont or MetaPost program into a @TeX{} document
+suitable for typesetting. Synopsis:
 
 @example
-mft [@var{option}]@dots{} @var{mfname}[.mf]
+mft [@var{option}]@dots{} @var{sourcename}[.mf|.mp]
 @end example
 
-MFT searches the usual places for @var{mfname} (@pxref{Supported file
+MFT searches the usual places for @var{sourcename} (@pxref{Supported file
 formats,,, kpathsea, Kpathsea}).  To see all the relevant paths, set the
 environment variable @code{KPATHSEA_DEBUG} to @samp{-1} before running
-the program.  The output goes to the basename of @var{mfname} extended
+the program.  The output goes to the basename of @var{sourcename} extended
 with @file{.tex}, e.g., @samp{mft /wherever/foo.mf} creates
 @file{./foo.tex}.
+
+The output uses the @TeX{} macros defined in the file
+@file{mftmac.tex} (for Metafont) or @file{mptmac.tex} (for MetaPost).
 
 Line breaks in the input are carried over into the output; moreover,
 blank spaces at the beginning of a line are converted to quads of
@@ -2646,16 +2677,17 @@ indentation in the output. Thus, you have full control over the
 indentation and line breaks. Each line of input is translated
 independently of the others.
 
-Further control is allowed via Metafont comments:
+Further control is allowed via comments:
 @cindex comments, MFT control
 @itemize @bullet
 @item
-Metafont comments following a single @samp{%} should be valid @TeX{}
-input.  But Metafont material can be included within vertical bars in a
-comment; this will be translated by MFT as if it were regular Metafont
-code.  For example, a comment like @samp{% |x2r| is the tip of the bowl}
-will be translated into the @TeX{} @samp{% $x_@{2r@}$ is the @dots{}},
-i.e., the @samp{x2r} is treated as an identifier.
+Metafont/MetaPost comments following a single @samp{%} should be valid
+@TeX{} input.  But Metafont/MetaPost source material can be included
+within vertical bars in a comment; this will be translated by MFT as
+if it were regular code.  For example, a Metafont comment like @samp{%
+|x2r| is the tip of the bowl} will be translated into the @TeX{}
+@samp{% $x_@{2r@}$ is the @dots{}}, i.e., the @samp{x2r} is treated as
+an identifier.
 
 @item 
 @samp{%%} indicates that the remainder of an input line should be copied
@@ -2692,8 +2724,8 @@ Five or more @samp{%} signs should not be used.
 @end itemize
 
 @cindex Knuth, Donald E.
-(The above description was edited from @file{mft.web}, written by
-@w{D.E. Knuth}.)
+(The above description was based on that in @file{mft.web}, written by
+Donald Knuth.)
 
 The program accepts the following options, as well as the standard
 @samp{-help} and @samp{-version} (@pxref{Common options}):
@@ -2704,15 +2736,20 @@ The program accepts the following options, as well as the standard
 Apply the change file @var{chfile} as with Tangle and Weave
 (@pxref{WEB}).
 
+@item -metapost
+@opindex -metapost
+Force interpretation of the input as MetaPost; this is the default of
+the filename extension is @samp{.mp}.
+
 @item -style=@var{mftfile}[.mft]
 @opindex -style=@var{mftfile}
 @cindex style files
 @flindex plain.mft
 Read @var{mftfile} before anything else; a MFT style file typically
-contains only MFT directives as described above.  The default style file
-is named @file{plain.mft}, which defines this properly for programs
-using plain Metafont.  The MFT files is searched along the
-@code{MFTINPUTS} path; see @ref{Supported file formats,,, kpathsea, Kpathsea}.
+contains only MFT directives as described above.  The default style
+file is @file{plain.mft} (for Metafont) or @file{mplain.mft} (for
+MetaPost).  MFT files are searched along the @code{MFTINPUTS} path
+(@pxref{Supported file formats,,, kpathsea, Kpathsea}).
 
 @flindex cmbase.mft
 @flindex e.mft

@@ -1,3 +1,8 @@
+2026-01-08  Karl Berry  <karl@freefriends.org>
+
+	* doc/web2c.texi: updates for memory dumps, LuaTeX, Metafont
+	windows, mft -metapost option.
+
 2026-01-06  Andreas Scherer  <https://ascherer.github.io>
 
 	* weav-twill.ch,
