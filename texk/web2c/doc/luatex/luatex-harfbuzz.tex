@@ -21,15 +21,20 @@
 
 \startsection[title={The \type {luaharfbuzz} library}][library=luaharfbuzz]
 
-At the moment the documentation of the library is a raw "html-to-pdf" 
-rendering of the \type{index.html} file under \type{luaharfbuzz/docs} 
-folder of the source code. The example is almost the verbatim copy
-of the file under \type{luaharfbuzz/examples}.
+The documentation of the library is a raw "html-to-pdf" 
+rendering of the API at \type{https://harfbuzz.github.io/luaharfbuzz}; 
+the  example is almost the verbatim copy \type{core_type.lua}.
 \page
 
 
-\dorecurse{17}{%
-\setlayer[hbpage][x=0mm,y=0mm,]{\externalfigure[graphics/luaharfbuzz.pdf][page=\recurselevel]}
+\dorecurse{15}{%
+\setlayer[hbpage][x=0mm,y=0mm,]{\externalfigure[graphics/luaharfbuzz-Documentation.pdf][page=\recurselevel,scale=950]}
+\blank
+\page[empty]
+}
+
+\dorecurse{3}{%
+\setlayer[hbpage][x=0mm,y=0mm,]{\externalfigure[graphics/luaharfbuzz-Documentation-subset.pdf][page=\recurselevel,scale=950]}
 \blank
 \page[empty]
 }
@@ -218,7 +223,8 @@ The example:
 
 
 \startbuffer[hbout]
-Harfbuzz API version	2.6.4
+
+Harfbuzz API version	12.2.0
 Shapers:	graphite2	ot	fallback
 
 Face upem = 2048
@@ -228,81 +234,80 @@ Default font scale = X: 2048, Y: 2048
 Shaping 'یہ' set with Noto Nastaliq Urdu
 No. of glyphs	4
 1
-    flags	1.0
-    cluster	2
-    codepoint	277
-    x_advance	472.0
-    y_advance	0.0
-    x_offset	0.0
-    y_offset	0.0
+	codepoint	277
+	y_advance	0.0
+	cluster	2
+	flags	1.0
+	y_offset	0.0
+	x_advance	472.0
+	x_offset	0.0
 2
-    cluster	0
-    codepoint	19
-    x_advance	0.0
-    y_advance	0.0
-    x_offset	310.0
-    y_offset	-383.0
+	codepoint	19
+	y_advance	0.0
+	cluster	0
+	y_offset	-383.0
+	x_advance	0.0
+	x_offset	310.0
 3
-    cluster	0
-    codepoint	985
-    x_advance	0.0
-    y_advance	0.0
-    x_offset	0.0
-    y_offset	0.0
+	codepoint	985
+	y_advance	0.0
+	cluster	0
+	y_offset	0.0
+	x_advance	0.0
+	x_offset	0.0
 4
-    cluster	0
-    codepoint	316
-    x_advance	731.0
-    y_advance	0.0
-    x_offset	0.0
-    y_offset	-68.0
+	codepoint	316
+	y_advance	0.0
+	cluster	0
+	y_offset	-68.0
+	x_advance	731.0
+	x_offset	0.0
 
 Shaping '123' set with Amiri Regular and no features
 1
-    cluster	0
-    codepoint	20
-    x_advance	1090.0
-    y_advance	0.0
-    x_offset	0.0
-    y_offset	0.0
+	codepoint	20
+	y_advance	0.0
+	cluster	0
+	y_offset	0.0
+	x_advance	1090.0
+	x_offset	0.0
 2
-    cluster	1
-    codepoint	21
-    x_advance	1090.0
-    y_advance	0.0
-    x_offset	0.0
-    y_offset	0.0
+	codepoint	21
+	y_advance	0.0
+	cluster	1
+	y_offset	0.0
+	x_advance	1090.0
+	x_offset	0.0
 3
-    cluster	2
-    codepoint	22
-    x_advance	1090.0
-    y_advance	0.0
-    x_offset	0.0
-    y_offset	0.0
+	codepoint	22
+	y_advance	0.0
+	cluster	2
+	y_offset	0.0
+	x_advance	1090.0
+	x_offset	0.0
 
 Shaping '123' set with Amiri Regular with 'numr' feature turned on
 1
-    cluster	0
-    codepoint	6673
-    x_advance	600.0
-    y_advance	0.0
-    x_offset	0.0
-    y_offset	0.0
+	codepoint	6673
+	y_advance	0.0
+	cluster	0
+	y_offset	0.0
+	x_advance	600.0
+	x_offset	0.0
 2
-    cluster	1
-    codepoint	6674
-    x_advance	600.0
-    y_advance	0.0
-    x_offset	0.0
-    y_offset	0.0
+	codepoint	6674
+	y_advance	0.0
+	cluster	1
+	y_offset	0.0
+	x_advance	600.0
+	x_offset	0.0
 3
-    cluster	2
-    codepoint	6675
-    x_advance	600.0
-    y_advance	0.0
-    x_offset	0.0
-    y_offset	0.0
-
+	codepoint	6675
+	y_advance	0.0
+	cluster	2
+	y_offset	0.0
+	x_advance	600.0
+	x_offset	0.0
 \stopbuffer
 
 \blank[3*big]

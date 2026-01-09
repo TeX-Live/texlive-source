@@ -2093,7 +2093,7 @@ what you're doing (or more precise: what \TEX\ is doing with input).
 \topicindex{tokens}
 
 \libindex{scan_keyword}
-\libindex{scan_keywordcs}
+\libindex{scan_keyword_cs}
 \libindex{scan_int}
 \libindex{scan_real}
 \libindex{scan_float}
@@ -2122,7 +2122,7 @@ most intriguing.
 \NC \type{scan_keyword}   \NC string             \NC returns true if the given keyword is gobbled; as with
                                                      the regular \TEX\ keyword scanner this is case insensitive
                                                      (and \ASCII\ based) \NC \NR
-\NC \type{scan_keywordcs} \NC string             \NC returns true if the given keyword is gobbled; this variant
+\NC \type{scan_keyword_cs} \NC string             \NC returns true if the given keyword is gobbled; this variant
                                                      is case sensitive and also suitable for \UTF8 \NC \NR
 \NC \type{scan_int}       \NC                    \NC returns an integer \NC \NR
 \NC \type{scan_real}      \NC                    \NC returns a number from e.g.\ \type {1},  \type {1.1}, \type {.1} with optional collapsed signs \NC \NR

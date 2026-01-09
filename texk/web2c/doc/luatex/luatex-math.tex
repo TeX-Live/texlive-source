@@ -1317,10 +1317,10 @@ works.
 
 \topicindex {math+fractions}
 
-The \prm {abovewithdelims} command accepts a keyword \type {exact}. When issued
-the extra space relative to the rule thickness is not added. One can of course
-use the \type {\Umathfraction..gap} commands to influence the spacing. Also the
-rule is still positioned around the math axis.
+The \prm {abovewithdelims} command accepts keywords \type {exact} and \type
+{norule}. When issued the extra space relative to the rule thickness is not
+added. One can of course use the \type {\Umathfraction..gap} commands to
+influence the spacing. Also the rule is still positioned around the math axis.
 
 \starttyping
 $$ { {a} \abovewithdelims() exact 4pt {b} }$$
@@ -1376,9 +1376,6 @@ For Latin Modern the result looks as follows:
         \NR
     \stoptabulate
 \stop
-
-The keyword \type {norule} will hide the rule with the above variants while
-keeping the rule related spacing.
 
 \subsection {Delimiters: \type{\Uleft}, \prm {Umiddle} and \prm {Uright}}
 
