@@ -1,3 +1,7 @@
+2026-01-09  Andreas Scherer  <https://ascherer.github.io>
+
+	* weav-twill.ch: Limit index into 'dig' array.,
+
 2026-01-08  Karl Berry  <karl@freefriends.org>
 
 	* doc/web2c.texi: updates for memory dumps, LuaTeX, Metafont
