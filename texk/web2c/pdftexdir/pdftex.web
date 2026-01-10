@@ -16237,8 +16237,10 @@ begin
     must_insert_space := false;
     must_end_string := false;
 
-    if not pdf_doing_text then
+    if not pdf_doing_text then begin
         pdf_begin_text;
+        must_set_text_pos := true;
+    end;
 
     {delay font switch if we must insert interword space}
     if (not gen_faked_interword_space and pdf_f <> f)
@@ -16275,10 +16277,12 @@ begin
         v_out := 0;
     end;
 
-    must_set_text_pos := (v <> 0)
-        or (abs(s) >= @'100000)
-        or (get_font_auto_expand_ratio(f) <> pdf_cur_Tm_a)
-        or get_font_auto_expand_ratio(f) <> get_font_auto_expand_ratio(pdf_f);
+    if not must_set_text_pos then begin
+      must_set_text_pos := (v <> 0)
+          or (abs(s) >= @'100000)
+          or (get_font_auto_expand_ratio(f) <> pdf_cur_Tm_a)
+          or get_font_auto_expand_ratio(f) <> get_font_auto_expand_ratio(pdf_f);
+    end;
 
     if must_set_text_pos then begin
         must_end_string := true;
