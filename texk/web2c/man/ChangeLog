@@ -1,3 +1,7 @@
+2025-01-11  Andreas Scherer  <https://ascherer.github.io>
+
+	* twill.man: Fix info about CONTENTS.tex.
+
 2025-11-30  Karl Berry  <karl@freefriends.org>
 
 	* Makefile.am (spell): new target as hint for spellcheck.

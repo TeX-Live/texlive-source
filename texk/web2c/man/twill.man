@@ -46,8 +46,8 @@ including the option:
 says to omit the indexes, module name list, and table of contents pages.
 (A
 .I CONTENTS.tex
-file will still be written when the \*(TX file is processed,
-however, unless some macros in
+file will still be written when the \*(TX file is processed.
+However, it is ignored unless some macros in
 .I twimac-web.tex
 are redefined.)
 .PP
