@@ -1,3 +1,10 @@
+2026-01-12  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* scanid.c: Check malformed inputs before EOF.
+	Thank report by V-One Giri.
+	* tests/sample.idx: Add tests for malformed inputs.
+	* configure.ac, mkind.h: Bump version to 2.18
+
 2025-12-28  Karl Berry  <karl@freefriends.org>
 
 	* tests/nested-range-test.pl: for more debuggin, show all
