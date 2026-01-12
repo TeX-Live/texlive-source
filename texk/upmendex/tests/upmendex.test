@@ -1,6 +1,6 @@
 #! /bin/sh -vx
 # $Id$
-# Copyright 2021-2025 TANAKA Takuji <ttk@t-lab.opal.ne.jp>
+# Copyright 2021-2026 TANAKA Takuji <ttk@t-lab.opal.ne.jp>
 # Copyright 2017-2022 Karl Berry <tex-live@tug.org>
 # Copyright 2013 Peter Breitenlohner <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
@@ -12,11 +12,14 @@ _upmendex=$BinDir/upmendex$ExeExt
 TEXMFCNF=$srcdir/../kpathsea
 export TEXMFCNF
 
-rm -f foo.* uni.* tort*.*
+rm -f sample.* foo.* uni.* tort*.*
 rc=0
 
 $_upmendex --help || rc=100
 $_upmendex --version || rc=101
+
+$_upmendex $srcdir/tests/sample.idx -o sample.ind1 -t sample.ilg1 \
+	&& diff $srcdir/tests/sample.ind sample.ind1 || rc=51
 
 $_upmendex $srcdir/tests/foo.idx -o foo.ind1 -t foo.ilg1 \
 	&& diff $srcdir/tests/foo.ind foo.ind1 || rc=1

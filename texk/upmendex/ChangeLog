@@ -1,3 +1,9 @@
+2026-01-12  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* tests/upmendex.test, tests/sample.idx, tests/sample.ind:
+	Add tests for malformed inputs.
+	* Makefile.am: Adjust.
+
 2026-01-07  Karl Berry  <karl@freefriends.org>
 
 	* COPYRIGHT,
