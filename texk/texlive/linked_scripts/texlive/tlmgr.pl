@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 76962 2025-11-28 17:48:14Z karl $
+# $Id: tlmgr.pl 77314 2026-01-09 16:20:28Z karl $
 # Copyright 2008-2025 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
@@ -8,8 +8,8 @@
 
 use strict; use warnings;
 
-my $svnrev = '$Revision: 76962 $';
-my $datrev = '$Date: 2025-11-28 18:48:14 +0100 (Fri, 28 Nov 2025) $';
+my $svnrev = '$Revision: 77314 $';
+my $datrev = '$Date: 2026-01-09 17:20:28 +0100 (Fri, 09 Jan 2026) $';
 my $tlmgrrevision;
 my $tlmgrversion;
 my $prg;
@@ -54,13 +54,13 @@ BEGIN {
       unless ($Master =~ s!/texmf-dist/scripts/texlive/tlmgr\.pl$!!i);
     $bindir = "$Master/bin/windows";
     $kpsewhichname = "kpsewhich.exe";
-    # path already set by wrapper batchfile
+    # PATH already set by wrapper batchfile
   } else {
     $Master =~ s,/*[^/]*$,,;
     $bindir = $Master;
     $Master = "$Master/../..";
-    $ENV{"PATH"} = "$bindir:$ENV{PATH}";
     $kpsewhichname = "kpsewhich";
+    $ENV{"PATH"} = "$bindir:$ENV{PATH}";
   }
   if (-r "$bindir/$kpsewhichname") {
     # not in bootstrapping mode => kpsewhich exists, so use it to get $Master
@@ -10636,7 +10636,7 @@ This script and its documentation were written for the TeX Live
 distribution (L<https://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 76962 2025-11-28 17:48:14Z karl $
+$Id: tlmgr.pl 77314 2026-01-09 16:20:28Z karl $
 =cut
 
 # test HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html

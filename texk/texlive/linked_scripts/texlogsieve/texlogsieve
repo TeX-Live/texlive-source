@@ -2,7 +2,7 @@
 
 -- texlogsieve - filter and summarize LaTeX log files
 --
--- Copyright (C) 2021-2025 Nelson Lago <lago@ime.usp.br>
+-- Copyright (C) 2021-2026 Nelson Lago <lago@ime.usp.br>
 --
 -- This program is free software: you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -825,6 +825,7 @@ function registerHandlers()
   table.insert(beginningOfLineHandlers, beginningOfLineInfoStringsHandler)
   table.insert(beginningOfLineHandlers, beginningOfLineWarningStringsHandler)
   table.insert(beginningOfLineHandlers, beginningOfLineCriticalStringsHandler)
+  table.insert(beginningOfLineHandlers, scontentsHandler)
   table.insert(anywhereHandlers, anywhereDebugStringsHandler)
   table.insert(anywhereHandlers, anywhereInfoStringsHandler)
   table.insert(anywhereHandlers, anywhereWarningStringsHandler)
@@ -993,8 +994,8 @@ Options:
   --version                              print program version]]
 
 versionmsg = [[
-texlogsieve 1.6.0
-Copyright (C) 2021-2025 Nelson Lago <lago@ime.usp.br>
+texlogsieve 1.6.1
+Copyright (C) 2021-2026 Nelson Lago <lago@ime.usp.br>
 License GPLv3+: GNU GPL version 3 or later <https://gnu.org/licenses/gpl.html>.
 This is free software: you are free to change and redistribute it.
 There is NO WARRANTY, to the extent permitted by law.]]
@@ -2403,33 +2404,40 @@ epilogueHandler.beginPatterns = {
   -- apparently, pdflatex writes this on stdout:
   "^%(see the transcript file for additional information%)",
   -- while lualatex writes this on stdout:
-  "^ *%d+ words of node memory still in use:",
+  "^%s*%d+ words of node memory still in use:", -- also in patterns, below
 }
 
 epilogueHandler.patterns = {
-  "^%s*%d+ strings out of %d+",
+  "^%s*%d+ strings? out of %d+",
   "^%s*%d+ string characters out of %d+",
   "^%s*%d+ words of memory out of %d+",
   "^%s*%d+ words of font info for %d+ fonts, out of %d+ for %d+",
   "^%s*%d+,%d+ words of node,token memory allocated",
-  "^%s*%d+ words of node memory still in use:",
+  "^%s*%d+ words of node memory still in use:", -- also in beginPatterns, above
   "^%s*%d+ hyphenation exceptions out of %d+",
 
   -- This line lists several different values that may or may not
   -- be present in a given execution; hopefully this will catch
   -- all variations.
-  "^%s*%d+ hlist, %d+ vlist,.*, %d+ pdf%_%S+ nodes",
-
-  "^%s*avail lists: %d+:%d+,%d+:%d+,%d+:%d+,%d+:%d+,%d+:%d+,%d+:%d+,"
-          .. "%d+:%d+,%d+:%d+,%d+:%d+,%d+:%d+,%d+:%d+,%d+:%d+",
-
-  "^%s*avail lists: %d+:%d+,%d+:%d+,%d+:%d+,%d+:%d+,%d+:%d+,%d+:%d+,"
-          .. "%d+:%d+,%d+:%d+,%d+:%d+,%d+:%d+,%d+:%d+",
-
+  "^%s*%d+ .list,.*, %d+ %S+ nodes",
+  -- This is ugly, but it is the only way to account for line wrapping
+  "^%s*avail lists: " ..  string.rep('%d+:%d+,', 13) .. "%d+:%d+",
+  "^%s*avail lists: " ..  string.rep('%d+:%d+,', 12) .. "%d+:%d+",
+  "^%s*avail lists: " ..  string.rep('%d+:%d+,', 11) .. "%d+:%d+",
+  "^%s*avail lists: " ..  string.rep('%d+:%d+,', 10) .. "%d+:%d+",
+  "^%s*avail lists: " ..  string.rep('%d+:%d+,', 9) .. "%d+:%d+",
+  "^%s*avail lists: " ..  string.rep('%d+:%d+,', 8) .. "%d+:%d+",
+  "^%s*avail lists: " ..  string.rep('%d+:%d+,', 7) .. "%d+:%d+",
+  "^%s*avail lists: " ..  string.rep('%d+:%d+,', 6) .. "%d+:%d+",
+  "^%s*avail lists: " ..  string.rep('%d+:%d+,', 5) .. "%d+:%d+",
+  "^%s*avail lists: " ..  string.rep('%d+:%d+,', 4) .. "%d+:%d+",
+  -- OK, there should be no wrapping for < 4 repetitions
+  "^%s*avail lists: %d+:%d+,[0-9:,]+,%d+:%d+",
   "^%s*%d+ multiletter control sequences out of %d+%+%d+",
-  "^%s*%d+ fonts using %d+ bytes",
+  "^%s*%d+ fonts? using %d+ bytes",
   "^%s*%d+i,%d+n,%d+p,%d+b,%d+s stack positions out of %d+i,%d+n,%d+p,%d+b,%d+s",
-  "^Output written on " .. filepat .. " %(%d+ pages, %d+ bytes%)%.",
+
+  "^Output written on " .. filepat .. " %(%d+ pages?, %d+ bytes%)%.",
   "^Transcript written on " .. filepat .. "%.",
 
   -- pdftex outputs these two separately; luatex outputs both on a single line
@@ -2437,7 +2445,7 @@ epilogueHandler.patterns = {
   "^PDF statistics:",
   "^%s*%d+ PDF objects out of %d+ %(max%. %d+%)",
 
-  "^%s*%d+ compressed objects within %d+ object streams",
+  "^%s*%d+ compressed objects? within %d+ object streams?",
   "^%s*%d+ named destinations out of %d+ %(max%. %d+%)",
   "^%s*%d+ words of extra memory for PDF output out of %d+ %(max%. %d+%)",
 }
@@ -3084,6 +3092,7 @@ beginningOfLineDebugStringsHandler.patterns = {
   "^For additional information on amsmath, use the `%?' option%.",
 
   "^Loading configuration file `" .. filepat .. "'%.",
+  "^No configuration file `contour.cfg' found%.",
   "^contour: Using driver file `" .. filepat .. "'%.",
 
   '^%[Loading MPS to PDF converter %(version ' .. datepat .. '%)%.%]',
@@ -3203,6 +3212,14 @@ beginningOfLineDebugStringsHandler.patterns = {
 
   "^`newtxtext' v[%d%.]+, " .. datepat .. " Text macros taking advantage of "
               .. "TeXGyre Termes and its extensions %(msharpe%)",
+
+  "^%=%=%> First Aid for %S+%.%S+ applied%!",
+  "^%=%=%> First Aid for %S+%.%S+ no longer applied%!\n"
+      .. "%s+Expected%:\n"
+      .. "%s+" .. datepat .. ".+\n"
+      .. "%s+but found%:\n"
+      .. "%s+" .. datepat .. ".+\n"
+      .. "so I'm assuming it got fixed%."
 }
 
 
@@ -3411,6 +3428,9 @@ beginningOfLineInfoStringsHandler.patterns = {
                                        .. "on input line %S+%.",
    "^Already applied%: [" .. datepat .. "] Usage of raw or classic "
                                        .. "option list on input line %S+%.",
+   "^contour: Using real outline for %b`' on input line %S+%.",
+   "^contour: Using %S+ copies for %b`' on input line %S+%.",
+
 }
 
 
@@ -4728,6 +4748,129 @@ function utf8FontMapHandler:handleOtherLines()
   self.foundOtherLines = false
   return true
 end
+
+-------------------------------------------------------------------------------
+-- scontentsHandler
+--
+-- A handler for the scontents package, which potentially writes large
+-- chunks of input text to the logfile.
+--
+-- WARNING!
+--
+-- This handler works by gobbling everything until the string '%^^Ascheol%.'
+-- is found; if for some reason it is *not* found, it will happily consume
+-- everything until the end of the file.
+
+-- HOW THIS WORKS
+--
+-- In "normal" usage, we can detect the input text dumped by scontents
+-- because it adds a specific prefix and a specific suffix to it. However,
+-- the \typestored command adds only a prefix and not a suffix, so detecting
+-- the end of the text gets complicated. Thankfully, \typestored only works
+-- after a "normal" text dump to the log, so we keep all previous dumped
+-- texts in memory and, when the \typestored prefix is detected, we compare
+-- the subsequent text with the previously seen messages to detect the end.
+--
+-- Things are similar with \meaningsc, but it eliminates line breaks, so
+-- processing becomes again complicated (especially so in light of line
+-- wrapping). Therefore, we currently do not handle it.
+
+scontentsHandler = HandlerPrototype:new()
+scontentsHandler.repetition = false
+scontentsHandler.currentLineNumber = 2
+scontentsHandler.seenMessages = {}
+
+function scontentsHandler:canDoit(position)
+  if position == nil then position = 0 end
+  local line = Lines:get(position)
+  if line == nil then return false, {} end
+
+  local _, last = string.find(line, '^> \\l__scontents_macro_tmp_tl=')
+  if last ~= nil then return true, {repetition = false, last = last} end
+
+  local _, last = string.find(line, '^> \\l__scontents_temp_tl=')
+  if last ~= nil and #self.seenMessages > 0 then
+      return true, {repetition = true, last = last}
+  end
+
+  return false
+end
+
+function scontentsHandler:handleFirstLine()
+  local myTurn, data = self:canDoit()
+  if not myTurn then return false end
+
+  flushUnrecognizedMessages()
+  self.message = Message:new()
+  self.message.content = string.sub(Lines.current, 1, data.last)
+  self.message.severity = DEBUG
+  Lines:handledChars(data.last)
+
+  self.doit = self.handleOtherLines
+  nextHandler = self
+  self.repetition = data.repetition
+  return true
+end
+
+function scontentsHandler:handleOtherLines()
+    if self.repetition then self:handleRepetition() else self:handleNormal() end
+end
+
+function scontentsHandler:handleNormal()
+  self.message.content = self.message.content .. '\n' .. Lines.current
+
+  local first, last = string.find(Lines.current, '%%%^%^Ascheol%%%.')
+  if last ~= nil then
+      local tmp = self.message.content
+      tmp = string.sub(tmp, 1, string.len('%^^Ascheol%.') * -1 -1)
+      table.insert(self.seenMessages, linesToTable(tmp))
+
+      dispatch(self.message)
+      self.message = nil
+      self.repetition = false
+      self.doit = self.handleFirstLine
+  else
+      nextHandler = self
+  end
+
+  Lines:handledChars()
+  return true
+end
+
+function scontentsHandler:handleRepetition()
+  local ok
+  local currentLines = self.message.content .. '\n' .. Lines.current
+  currentLines = linesToTable(currentLines)
+  for _, seen in ipairs(self.seenMessages) do
+      ok = true
+      for linenum=2,self.currentLineNumber do
+          if #seen < linenum then ok = false break end
+          patLine = protect_metachars(seen[linenum])
+          line = currentLines[linenum]
+          local _, last = string.find(line, patLine .. '%.?$')
+          if last == nil then ok = false break end
+      end
+      if ok then break end
+  end
+
+  if ok then
+      -- The current line belongs to this message
+      self.currentLineNumber = self.currentLineNumber + 1
+      self.message.content = self.message.content .. '\n' .. Lines.current
+      Lines:handledChars()
+      nextHandler = self
+  else
+      dispatch(self.message)
+      self.message = nil
+      self.repetition = false
+      self.doit = self.handleFirstLine
+      self.currentLineNumber = 2
+  end
+
+  return true
+end
+
+scontentsHandler.doit = scontentsHandler.handleFirstLine
 
 
 --[[ ##################################################################### ]]--

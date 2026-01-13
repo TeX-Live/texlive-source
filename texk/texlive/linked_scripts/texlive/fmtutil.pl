@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: fmtutil.pl 76962 2025-11-28 17:48:14Z karl $
+# $Id: fmtutil.pl 77314 2026-01-09 16:20:28Z karl $
 # fmtutil - utility to maintain format files.
 # (Maintained in TeX Live:Master/texmf-dist/scripts/texlive.)
 # 
@@ -19,18 +19,17 @@ BEGIN {
   my $bindir;
   my $Master = __FILE__;
   if ($^O =~ /^MSWin/i) {
-    # on w32 $0 and __FILE__ point directly to tlmgr.pl; they can be relative
+    # on w32 $0 and __FILE__ point directly to this script; they can be relative
     $Master =~ s!\\!/!g;
     $Master =~ s![^/]*$!../../..!
       unless ($Master =~ s!/texmf-dist/scripts/texlive/tlmgr\.pl$!!i);
     $bindir = "$Master/bin/windows";
-    # path already set by wrapper batchfile
   } else {
     $Master =~ s,/*[^/]*$,,;
     $bindir = $Master;
     $Master = "$Master/../..";
-    $ENV{"PATH"} = "$bindir:$ENV{PATH}";
   }
+  $ENV{"PATH"} = "$bindir:$ENV{PATH}";
   $TEXMFROOT = `kpsewhich -var-value=TEXMFROOT`;
   if ($? || ! $TEXMFROOT) {
     warn "$0: kpsewhich -var-value=TEXMFROOT failed, aborting early.\n";
@@ -43,11 +42,11 @@ BEGIN {
   TeX::Update->import();
 }
 
-my $svnid = '$Id: fmtutil.pl 76962 2025-11-28 17:48:14Z karl $';
-my $lastchdate = '$Date: 2025-11-28 18:48:14 +0100 (Fri, 28 Nov 2025) $';
+my $svnid = '$Id: fmtutil.pl 77314 2026-01-09 16:20:28Z karl $';
+my $lastchdate = '$Date: 2026-01-09 17:20:28 +0100 (Fri, 09 Jan 2026) $';
 $lastchdate =~ s/^\$Date:\s*//;
 $lastchdate =~ s/ \(.*$//;
-my $svnrev = '$Revision: 76962 $';
+my $svnrev = '$Revision: 77314 $';
 $svnrev =~ s/^\$Revision:\s*//;
 $svnrev =~ s/\s*\$$//;
 my $version = "r$svnrev ($lastchdate)";

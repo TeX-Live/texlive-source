@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: updmap.pl 76962 2025-11-28 17:48:14Z karl $
+# $Id: updmap.pl 77314 2026-01-09 16:20:28Z karl $
 # updmap - maintain map files for outline fonts.
 # (Maintained in TeX Live:Master/texmf-dist/scripts/texlive.)
 # 
@@ -13,7 +13,7 @@
 # later adaptions by Reinhard Kotucha, and Karl Berry.
 # The current implementation is a complete rewrite.
 
-my $svnid = '$Id: updmap.pl 76962 2025-11-28 17:48:14Z karl $';
+my $svnid = '$Id: updmap.pl 77314 2026-01-09 16:20:28Z karl $';
 
 use strict; use warnings;
 
@@ -24,18 +24,17 @@ BEGIN {
   my $bindir;
   my $Master = __FILE__;
   if ($^O =~ /^MSWin/i) {
-    # on w32 $0 and __FILE__ point directly to tlmgr.pl; they can be relative
+    # on w32 $0 and __FILE__ point directly to this script; they can be relative
     $Master =~ s!\\!/!g;
     $Master =~ s![^/]*$!../../..!
       unless ($Master =~ s!/texmf-dist/scripts/texlive/tlmgr\.pl$!!i);
     $bindir = "$Master/bin/windows";
-    # path already set by wrapper batchfile
   } else {
     $Master =~ s,/*[^/]*$,,;
     $bindir = $Master;
     $Master = "$Master/../..";
-    $ENV{"PATH"} = "$bindir:$ENV{PATH}";
   }
+  $ENV{"PATH"} = "$bindir:$ENV{PATH}";
   $TEXMFROOT = `kpsewhich -var-value=TEXMFROOT`;
   if ($? || ! $TEXMFROOT) {
     warn "$0: kpsewhich -var-value=TEXMFROOT failed, aborting early.\n";
@@ -46,10 +45,10 @@ BEGIN {
   unshift(@INC, "$TEXMFROOT/tlpkg");
 }
 
-my $lastchdate = '$Date: 2025-11-28 18:48:14 +0100 (Fri, 28 Nov 2025) $';
+my $lastchdate = '$Date: 2026-01-09 17:20:28 +0100 (Fri, 09 Jan 2026) $';
 $lastchdate =~ s/^\$Date:\s*//;
 $lastchdate =~ s/ \(.*$//;
-my $svnrev = '$Revision: 76962 $';
+my $svnrev = '$Revision: 77314 $';
 $svnrev =~ s/^\$Revision:\s*//;
 $svnrev =~ s/\s*\$$//;
 my $version = "r$svnrev ($lastchdate)";
