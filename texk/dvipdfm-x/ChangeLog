@@ -1,3 +1,14 @@
+2026-01-13  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* pst_obj.c: Check NULL pointer for a new ojbect.
+	* configure.ac: version 20260113.
+
+2026-01-11  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
+	* pst.h: Increase PST_STRING_LEN_MAX to 32767
+	to avoid buffer overflow. Report from David Carlisle:
+	https://tug.org/pipermail/tex-live/2026-January/051972.html
+	https://tug.org/pipermail/dvipdfmx/2026-January/000393.html
+
 2026-01-07  Karl Berry  <karl@freefriends.org>
 
 	* configure.ac,
