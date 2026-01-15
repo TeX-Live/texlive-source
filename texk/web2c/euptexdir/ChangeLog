@@ -1,3 +1,9 @@
+2026-01-15  Karl Berry  <karl@freefriends.org>
+
+	* suppresserrors.ch: omit word "error" in message
+	to avoid false positives by humans and editors (cross-engine).
+	https://tug.org/pipermail/pdftex/2026-January/009463.html
+
 2025-12-25  Hironori Kitagawa  <h_kitagawa2001@yahoo.co.jp>
 
 	* eptex.ech

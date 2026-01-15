@@ -1888,7 +1888,7 @@ amounts of user interaction:
   print_nl("! "); print(#);
   end
 @d print_ignored_err(#)==begin if interaction=error_stop_mode then wake_up_terminal;
-  print_nl("ignored error: "); print(#);
+  print_nl("ignored: "); print(#);
   end
 
 @<Glob...@>=

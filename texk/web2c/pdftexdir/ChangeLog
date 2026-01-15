@@ -1,3 +1,10 @@
+2026-01-15  Karl Berry  <karl@freefriends.org>
+
+	* pdftex.web,
+	* pdftex.ch (print_ignored_err): omit word "error" in message
+	to avoid false positives by humans and editors (cross-engine).
+	https://tug.org/pipermail/pdftex/2026-January/009463.html
+
 2026-01-10  Thanh Han The  <hanthethanh@gmail.com>
 
 	* pdftex.web (pdf_begin_string): must_set_text_pos if doing
