@@ -1,3 +1,10 @@
+2026-01-18  Karl Berry  <karl@freefriends.org>
+
+	* xetex.web (print_ignored_err): send "ignored error"
+	output only to log file.
+	* NEWS: mention this.
+	* xetex.ch: change for --file-line-error no longer worthwhile.
+
 2026-01-15  Karl Berry  <karl@freefriends.org>
 
 	* xetex.web,

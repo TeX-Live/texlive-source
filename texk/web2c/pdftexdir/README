@@ -14,10 +14,11 @@ actively maintained, but stability is paramount now; only bug fixes and
 small enhancements are expected.  Releases are made through TeX Live.
 
 See the file NEWS for changes to the program.
-Documentation about pdfTeX can be found at http://www.pdftex.org.
+Documentation about pdfTeX can be found at https://www.pdftex.org.
 Mailing lists:
-http://lists.tug.org/pdftex - help requests, general user discussion
-http://www.ntg.nl/mailman/listinfo/ntg-pdftex - bug reports, development
+https://lists.tug.org/pdftex - help requests, general user discussion
+https://mailman.ntg.nl/mailman3/lists/ntg-pdftex.ntg.nl/
+   - bug reports, development
 
 
 LEGAL ISSUES

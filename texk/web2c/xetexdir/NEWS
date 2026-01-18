@@ -1,7 +1,10 @@
 ==============================================================
 XeTeX 0.999998
 
-* No substantive user-visible updates.
+Cross-engine change:
+
+* send \ignoreprimitiveerror output only to log file, and
+  without the word "error".
 
 ==============================================================
 XeTeX 0.999997 (7 March 2025)

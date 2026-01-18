@@ -2,6 +2,10 @@ This file records noteworthy changes.  (Public domain.)
 See also */NEWS, */ChangeLog, etc.
 
 2026
+* Most engines: the "Infinite glue shrinkage" message resulting from
+  \ignoreprimitiveerror=1 is now written only to the log file, and without
+  the word "error" (since it isn't).
+
 * bibtex 0.99e: fixes for weave (only); no code changes.
 
 

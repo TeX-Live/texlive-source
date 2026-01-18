@@ -1817,10 +1817,16 @@ message may be printed.
 
 @<Error handling...@>=
 static void print_ignored_err(char *s)
-{@+if (interaction==error_stop_mode) wake_up_terminal;
+{@+
+/* An error in original \TeX, but we want to send it only to the log in
+   other engines, and without the word |"error"|, which humans and
+   software look for. */
+  old_selector_ignored_err = selector;
+  selector = log_only;
   if (filelineerrorstylep) print_file_line(); /* \TeX\ Live */
-  else  print_nl("");
-  print("ignored: ");print(s);
+  else wlog_cr;
+  wlog("ignored: "); print(s);
+  selector = old_selector_ignored_err;
 }
 
 static void print_err(char *s)
@@ -5563,6 +5569,8 @@ routines are going to work.
 
 @<Glob...@>=
 static int @!old_setting;
+static int @!old_selector_ignored_err;
+     /*for |print_ignored_err|*/
 static int @!sys_time, @!sys_day, @!sys_month, @!sys_year;
      /*date and time supplied by external system*/
 

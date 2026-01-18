@@ -1,3 +1,8 @@
+2026-01-18  Karl Berry  <karl@freefriends.org>
+
+	* NEWS: \ignoreprimitiveerror output now goes only to the
+	log file, and without the word "error".
+
 2026-01-09  Andreas Scherer  <https://ascherer.github.io>
 
 	* weav-twill.ch: Limit index into 'dig' array.,

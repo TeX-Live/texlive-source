@@ -1,6 +1,8 @@
 pdfTeX 3.141592653-2.6-1.40.29 (TeX Live 2026)
 - changes:
   - don't complain about minor version <=2 unless major version == 1.
+  - send \ignoreprimitiveerror output only to log file, and
+    without the word "error".
 
 - bugfixes:
   - do not shift fraction denominator if \pdfpageheight is used.

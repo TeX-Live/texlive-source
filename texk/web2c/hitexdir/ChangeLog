@@ -1,3 +1,8 @@
+2026-01-18  Karl Berry  <karl@freefriends.org>
+
+	* hitex.w (print_ignored_error): send "ignored error"
+	output only to log file.
+
 2026-01-15  Karl Berry  <karl@freefriends.org>
 
 	* hitex.w (print_ignored_error): omit word "error" in message
