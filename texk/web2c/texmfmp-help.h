@@ -401,7 +401,7 @@ const_string PDFTEXHELP[] = {
     "-help                   display this help and exit",
     "-version                output version information and exit",
     "",
-    "pdfTeX home page: <http://pdftex.org>",
+    "pdfTeX home page: <https://pdftex.org>",
     NULL
 };
 #endif /* pdfTeX */
