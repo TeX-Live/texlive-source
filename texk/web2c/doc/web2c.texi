@@ -63,7 +63,7 @@ This file documents the installation and use of the programs in Web2c,
 an implementation of Donald Knuth's TeX system.
 
 Copyright @copyright{} 1996, 1997, 1998, 1999, 2000, 2001, 2002, 2003,
-2004, 2005, 2007, 2008, 2009, 2010--2023 Karl Berry & Olaf Weber.
+2004, 2005, 2007, 2008, 2009, 2010--2026 Karl Berry & Olaf Weber.
 
 Permission is granted to make and distribute verbatim copies of this
 manual provided the copyright notice and this permission notice are
@@ -1312,7 +1312,7 @@ specified to @code{configure} during installation of Web2c.
 @opindex -no-mktex=@var{filetype}
 Turn on or off the @samp{mktex} script associated with @var{filetype}.
 For @TeX{} proper, @var{filetype} can only be @samp{tex} and
-@samp{tfm}, but for pdf@TeX{} and lua@TeX{}, it can also be @samp{pk}.
+@samp{tfm}, but for pdf@TeX{} and Lua@TeX{}, it can also be @samp{pk}.
 
 @item -mltex
 @opindex -mltex
@@ -1488,21 +1488,36 @@ updated as part of a larger @TeX{} distribution, such as @TeX{} Live
 @table @t
 @item latex
 @cindex @LaTeX{}
-The most widely used format, named `@LaTeX{}2e'; new versions are
-released approximately every six months, with patches issued as
-needed.  The old release was called `@LaTeX{} 2.09', and is no longer
-maintained or supported, though compatibility for 2.09 documents is
-retained.  @LaTeX{} attempts to provide generic markup instructions,
-such as ``emphasize'', instead of specific typesetting instructions,
-such as ``use the 10@dmn{pt} Computer Modern italic font''.  The
-@LaTeX{} home page: @url{https://www.latex-project.org}.
+The most widely used format, called @LaTeX{}, based on @LaTeX{}2e and
+also incorporating @LaTeX{}3; new versions are released approximately
+every six months, with patches issued as needed.  The old release was
+called `@LaTeX{} 2.09', and is no longer maintained or supported,
+though compatibility for 2.09 documents is retained.  @LaTeX{}
+attempts to provide generic markup instructions, such as
+``emphasize'', instead of specific typesetting instructions, such as
+``use the 10@dmn{pt} Computer Modern italic font''.  The @LaTeX{} home
+page: @url{https://www.latex-project.org}.
+
+@item latex-dev
+@cindex @command{latex-dev}
+@cindex @LaTeX{} testing
+@cindex testing @LaTeX{}
+A set of formats and executables made so that anyone interested can
+easily help test upcoming @LaTeX{} releases.  They correspond to new
+formats which have been tested by the @LaTeX{} team for stability and
+usability.  Testing by as many users as possible is desired and
+requested. Simply changing the regular engine name (e.g.,
+@command{pdflatex}), to have a @t{-dev} suffix
+(@command{pdflatex-dev}) in your invocations is all that should be
+needed.  No changes to source documents should be required.
 
 @item context
 @cindex Con@TeX{}t
-Con@TeX{}t is an independent macro package which has a basic document
-structuring approach similar to @LaTeX{}.  It also supports creating
-interactive PDF files and has integrated MetaPost support, among many
-other advanced features.  The Con@TeX{}t home page:
+Con@TeX{}t is an independent macro package which also supports a
+document structuring approach.  It can also create interactive PDF
+files and has an integrated MetaPost library for graphics, among many
+other advanced features.  It uses its own engine, LuaMeta@TeX{},
+developed in tandem. The Con@TeX{}t home page:
 @url{http://www.pragma-ade.com}.
 
 @item eplain
@@ -1996,7 +2011,7 @@ shell_escape_commands = bibtex,kpsewhich,repstopdf,...
 @findex \input@r{, and pipes}
 @findex \openout@r{, and pipes}
 @findex \pdfshellescape
-pdf@TeX{} and lua@TeX{} support reading (via @code{\input} and
+pdf@TeX{} and Lua@TeX{} support reading (via @code{\input} and
 @code{\openin}) and writing (via @code{\openout}) from pipes if the
 first character is @samp{|}.  The following command is then treated
 exactly the same as the argument to @code{\write18}.  In these
@@ -2050,7 +2065,7 @@ extended functionality is in a @cite{@LaTeX{} News} article,
 @url{https://www.latex-project.org/news/latex2e-news/ltnews31.pdf}.
 For engines in @TeX{} Live, the detailed documentation for these
 primitives is mostly in the pdf@TeX{} manual
-(@url{http://pdftex.org}).
+(@url{https://pdftex.org}).
 
 In addition, each engine (naturally) has its own particular features,
 described in its own manual.  Here's a partial list of the engines.
