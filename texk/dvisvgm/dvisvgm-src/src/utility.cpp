@@ -18,12 +18,12 @@
 ** along with this program; if not, see <http://www.gnu.org/licenses/>. **
 *************************************************************************/
 
-#include <algorithm>
 #include <cctype>
 #include <cmath>
 #include <fstream>
 #include <functional>
 #include <iterator>
+#include "algorithm.hpp"
 #include "utility.hpp"
 
 using namespace std;
@@ -129,7 +129,7 @@ string util::normalize_space (string str, const char *ws) {
 }
 
 
-/** Replaces all occurences of a substring with another string.
+/** Replaces all occurrences of a substring with another string.
  *  @param[in] str string to search through
  *  @param[in] find string to look for
  *  @param[in] repl replacement for "find"
@@ -146,7 +146,7 @@ string util::replace (string str, const string &find, const string &repl) {
 }
 
 
-/** Splits a string at all occurences of a given separator string and
+/** Splits a string at all occurrences of a given separator string and
  *  returns the substrings.
  *  @param[in] str string to split
  *  @param[in] sep separator to look for
@@ -176,7 +176,7 @@ vector<string> util::split (const string &str, const string &sep, bool allowEmpt
 
 string util::tolower (const string &str) {
 	string ret=str;
-	transform(str.begin(), str.end(), ret.begin(), ::tolower);
+	algo::transform(str, ret.begin(), ::tolower);
 	return ret;
 }
 
@@ -207,7 +207,7 @@ int util::ilog10 (int n) {
  *  @param[in] is stream to read from
  *  @param[out] str the read string is appended to this one
  *  @param[in] allow_leading_sign true if the first character may be '+' or '-'
- *  @return true if the string coule be read successfully */
+ *  @return true if the string could be read successfully */
 static bool read_int_string (istream &is, string &str, bool allow_leading_sign=true) {
 	string intstr;
 	if (is.peek() == '-' || is.peek() == '+') {
@@ -269,12 +269,12 @@ string util::read_file_contents (const string &fname) {
 
 
 /** Writes a sequence of bytes given as a string to a file.
- *  @param[in] name/path of the file to write
+ *  @param[in] fname name/path of the file to write
  *  @param[in] start iterator pointing to the begin of the byte sequence
  *  @param[in] end iterator pointing to the first byte after the byte sequence to write */
 void util::write_file_contents (const string &fname, string::iterator start, string::iterator end) {
 	ofstream ofs(fname, ios::binary);
-	copy(start, end, ostream_iterator<char>(ofs));
+	std::copy(start, end, ostream_iterator<char>(ofs));
 }
 
 

@@ -1,16 +1,16 @@
---- dvisvgm-3.4.3/configure.ac	2025-01-04 03:40:14.000000000 -0800
-+++ ./configure.ac	2025-01-11 10:11:01.398834796 -0800
+--- dvisvgm-3.6/configure.ac	2025-12-08 14:45:06.000000000 -0800
++++ ./configure.ac	2026-01-19 14:49:49.761213947 -0800
 @@ -1,18 +1,31 @@
 -# This file is part of dvisvgm
 -# Copyright (C) 2005-2025 Martin Gieseking <martin.gieseking@uos.de>
 -#
 -# Process this file with autoconf to produce a configure script.
 -
-+dnl $Id: configure.ac 70487 2024-03-07 22:55:09Z karl $
++dnl $Id: configure.ac 73430 2025-01-12 14:58:51Z karl $
 +dnl Process this file with autoconf to produce a configure script
 +dnl for dvisvgm in TeX Live.
 +dnl
-+dnl   Copyright 2015-2025 Karl Berry <tex-live@tug.org>
++dnl   Copyright 2015-2026 Karl Berry <tex-live@tug.org>
 +dnl   Copyright 2009-2014 Peter Breitenlohner <tex-live@tug.org>
 +dnl
 +dnl   This file is free software; the copyright holder
@@ -21,10 +21,10 @@
 +dnl  Copyright 2005-2025 Martin Gieseking
 +dnl
  AC_PREREQ([2.69])
--AC_INIT([dvisvgm],[3.4.3],[martin.gieseking@uos.de])
+-AC_INIT([dvisvgm],[3.6],[martin.gieseking@uos.de])
 +m4_include([version.ac])[] dnl define dvisvgm_version
 +AC_INIT([dvisvgm (TeX Live)], dvisvgm_version, [tex-k@tug.org])
- DATE="January 2025"
+ DATE="October 2025"
 -AC_CONFIG_SRCDIR(src)
 +AC_CONFIG_SRCDIR([dvisvgm-src/src/dvisvgm.cpp])
  AC_CONFIG_HEADERS([config.h])
@@ -273,7 +273,7 @@
  
 -# add options for selection of "optional" library locations
 -# currently these libraries are mandatory; the --with-foo options
--# are used to specify the locations explicitely
+-# are used to specify the locations explicitly
 -
 -AC_ARG_WITH(zlib,
 -	[AS_HELP_STRING([--with-zlib=DIR], [set location of the zlib library])],

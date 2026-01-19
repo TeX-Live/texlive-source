@@ -18,8 +18,9 @@
 ** along with this program; if not, see <http://www.gnu.org/licenses/>. **
 *************************************************************************/
 
-#include <algorithm>
+#include <iterator>
 #include <sstream>
+#include "algorithm.hpp"
 #include "BoundingBox.hpp"
 #include "Matrix.hpp"
 #include "utility.hpp"
@@ -69,16 +70,13 @@ BoundingBox::BoundingBox (const string &boxstr)
 
 /** Extracts a sequence of length values from a string like "5cm, 2.4in, 0pt".
  *  @param[in] boxstr whitespace and/or comma separated string of lengths.
- *  @param[out] the extracted lengths */
+ *  @return the extracted lengths */
 vector<Length> BoundingBox::extractLengths (string boxstr) {
 	vector<Length> lengths;
 	boxstr = util::replace(boxstr, ",", " ");
 	boxstr = util::normalize_space(boxstr);
 	vector<string> lengthStrings = util::split(boxstr, " ");
-	for (const string &lenstr : lengthStrings) {
-		if (!lenstr.empty())
-			lengths.emplace_back(lenstr);
-	}
+	algo::copy_if(lengthStrings, back_inserter(lengths), std::not1(util::IsEmptyString()));
 	return lengths;
 }
 
@@ -277,11 +275,7 @@ unique_ptr<XMLElement> BoundingBox::createSVGRect () const {
 
 unique_ptr<XMLElement> BoundingBox::createSVGPath () const {
 	GraphicsPath<double> path;
-	path.moveto(minX(), minY());
-	path.lineto(maxX(), minY());
-	path.lineto(maxX(), maxY());
-	path.lineto(minX(), maxY());
-	path.closepath();
+	path.rect(minX(), minY(), maxX(), maxY());
 	ostringstream oss;
 	path.writeSVG(oss, SVGTree::RELATIVE_PATH_CMDS);
 	auto pathElem = util::make_unique<XMLElement>("path");

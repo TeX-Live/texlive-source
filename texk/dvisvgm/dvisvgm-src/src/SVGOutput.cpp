@@ -18,7 +18,6 @@
 ** along with this program; if not, see <http://www.gnu.org/licenses/>. **
 *************************************************************************/
 
-#include <algorithm>
 #include <cmath>
 #include <fstream>
 #include <iomanip>
@@ -43,7 +42,7 @@ SVGOutput::SVGOutput (const string &base, string pattern, int zipLevel)
 /** Returns an output stream for the given page.
  *  @param[in] page number of current page
  *  @param[in] numPages total number of pages in the DVI file
- *  @param[in] hash hash value of the current page
+ *  @param[in] hashes hash values of the current page
  *  @return output stream for the given page */
 ostream& SVGOutput::getPageStream (int page, int numPages, const HashTriple &hashes) const {
 	FilePath path = filepath(page, numPages, hashes);
@@ -75,7 +74,7 @@ ostream& SVGOutput::getPageStream (int page, int numPages, const HashTriple &has
 /** Returns the path of the SVG file containing the given page number.
  *  @param[in] page number of current page
  *  @param[in] numPages total number of pages
- *  @param[in] hash hash value of current page */
+ *  @param[in] hashes hash values of current page */
 FilePath SVGOutput::filepath (int page, int numPages, const HashTriple &hashes) const {
 	FilePath outpath;
 	if (!_stdout) {
@@ -104,7 +103,7 @@ FilePath SVGOutput::filepath (int page, int numPages, const HashTriple &hashes) 
  *  @param[in] str string to expand
  *  @param[in] page number of current page
  *  @param[in] numPages total number of pages
- *  @param[in] hash hash value of current page (skipped if empty) */
+ *  @param[in] hashes hash values of current page (skipped if empty) */
 string SVGOutput::expandFormatString (string str, int page, int numPages, const HashTriple &hashes) const {
 	string result;
 	while (!str.empty()) {
@@ -153,7 +152,7 @@ string SVGOutput::expandFormatString (string str, int page, int numPages, const 
 					auto endpos = str.find(')', pos);
 					if (endpos == string::npos)
 						throw MessageException("missing ')' in filename pattern");
-					else if (endpos-pos-1 > 1) {
+					if (endpos-pos-1 > 1) {
 						try {
 							Calculator calculator;
 							calculator.setVariable("p", page);

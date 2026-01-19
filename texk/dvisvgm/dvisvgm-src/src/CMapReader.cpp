@@ -18,10 +18,10 @@
 ** along with this program; if not, see <http://www.gnu.org/licenses/>. **
 *************************************************************************/
 
-#include <algorithm>
 #include <array>
 #include <fstream>
 #include <sstream>
+#include "algorithm.hpp"
 #include "CMap.hpp"
 #include "CMapManager.hpp"
 #include "CMapReader.hpp"
@@ -42,13 +42,13 @@ unique_ptr<CMap> CMapReader::read (const string &fname) {
 			return read(ifs, fname);
 	}
 	_tokens.clear();
-	return unique_ptr<CMap>();
+	return {};
 }
 
 
 /** Reads cmap data from a given stream and returns the corresponding CMap object.
- *  @param is[in] cmap data input stream
- *  @param is[in] name name of CMap to be read
+ *  @param[in] is cmap data input stream
+ *  @param[in] name name of CMap to be read
  *  @return CMap object representing the read data, or 0 if file could not be read */
 unique_ptr<CMap> CMapReader::read (std::istream& is, const string &name) {
 	_tokens.clear();
@@ -69,7 +69,7 @@ unique_ptr<CMap> CMapReader::read (std::istream& is, const string &name) {
 				_inCMap = true;
 		}
 	}
-	catch (CMapReaderException &e) {
+	catch (CMapReaderException &) {
 		_cmap.reset();
 		throw;
 	}
@@ -94,7 +94,7 @@ void CMapReader::executeOperator (const string &opname, InputReader &ir) {
 		{"endcmap",       &CMapReader::op_endcmap},
 		{"usecmap",       &CMapReader::op_usecmap},
 	}};
-	auto it = find_if(operators.begin(), operators.end(), [&](const Operator &op) {
+	auto it = algo::find_if(operators, [&](const Operator &op) {
 		return op.name == opname;
 	});
 	if (it != operators.end())

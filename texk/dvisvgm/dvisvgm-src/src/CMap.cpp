@@ -18,8 +18,8 @@
 ** along with this program; if not, see <http://www.gnu.org/licenses/>. **
 *************************************************************************/
 
-#include <algorithm>
 #include <sstream>
+#include "algorithm.hpp"
 #include "CMap.hpp"
 #include "CMapManager.hpp"
 #include "FileFinder.hpp"
@@ -65,12 +65,10 @@ string SegmentedCMap::getROString() const {
 
 bool SegmentedCMap::mapsToUnicode () const {
 	vector<string> encstrings = {"UTF8", "UTF16", "UCS2", "UCS4", "UCS32"};
-	for (const string &encstr : encstrings) {
-		auto pos = _filename.find(encstr);
-		if (pos != string::npos && (pos == 0 || _filename[pos-1] == '-'))
-			return true;
-	}
-	return false;
+	return algo::any_of(encstrings, [&](const string& s) {
+		auto pos = _filename.find(s);
+		return (pos != string::npos && (pos == 0 || _filename[pos-1] == '-'));
+	});
 }
 
 

@@ -4,8 +4,8 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.69])
-AC_INIT([dvisvgm],[3.4.3],[martin.gieseking@uos.de])
-DATE="January 2025"
+AC_INIT([dvisvgm],[3.6],[martin.gieseking@uos.de])
+DATE="October 2025"
 AC_CONFIG_SRCDIR(src)
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_MACRO_DIR([m4])
@@ -160,7 +160,7 @@ AX_GCC_BUILTIN(__builtin_clz)
 
 # add options for selection of "optional" library locations
 # currently these libraries are mandatory; the --with-foo options
-# are used to specify the locations explicitely
+# are used to specify the locations explicitly
 
 AC_ARG_WITH(zlib,
 	[AS_HELP_STRING([--with-zlib=DIR], [set location of the zlib library])],

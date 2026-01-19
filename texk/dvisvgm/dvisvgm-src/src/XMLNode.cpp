@@ -18,11 +18,12 @@
 ** along with this program; if not, see <http://www.gnu.org/licenses/>. **
 *************************************************************************/
 
-#include <algorithm>
 #include <fstream>
+#include <iterator>
 #include <list>
 #include <map>
 #include <sstream>
+#include "algorithm.hpp"
 #include "FileSystem.hpp"
 #include "utility.hpp"
 #include "XMLNode.hpp"
@@ -116,11 +117,10 @@ void XMLElement::clear () {
 bool XMLElement::empty (bool ignoreWhitespace) const {
 	if (!_firstChild || !ignoreWhitespace)
 		return _firstChild == nullptr;
-	for (const XMLNode *node : *this) {
-		if (!node->toWSNode())
-			return false;
-	}
-	return true;
+
+	return algo::all_of(*this, [](const XMLNode *node) {
+		return node->toWSNode();
+	});
 }
 
 
@@ -137,8 +137,14 @@ void XMLElement::addAttribute (const string &name, double value) {
 }
 
 
+void XMLElement::addAttributes (const map<string, string> &attribs) {
+	for (auto &attr : attribs)
+		_attributes.emplace_back(attr);
+}
+
+
 void XMLElement::removeAttribute (const std::string &name) {
-	_attributes.erase(find_if(_attributes.begin(), _attributes.end(), [&](const Attribute &attr) {
+	_attributes.erase(algo::find_if(_attributes, [&](const Attribute &attr) {
 		return attr.name == name;
 	}));
 }
@@ -233,7 +239,7 @@ XMLNode* XMLElement::prepend (unique_ptr<XMLNode> child) {
  *  @param[in] child node to be inserted
  *  @param[in] sibling following sibling of 'child'
  *  @return raw pointer to inserted node */
-XMLNode* XMLElement::insertBefore (unique_ptr<XMLNode> child, XMLNode *sibling) {
+XMLNode* XMLElement::insertBefore (unique_ptr<XMLNode> child, const XMLNode *sibling) {
 	if (!child || (sibling && sibling->parent() != this))
 		return nullptr;
 	if (!sibling)
@@ -269,7 +275,7 @@ XMLNode* XMLElement::insertAfter (unique_ptr<XMLNode> child, XMLNode *sibling) {
  *  @param[in] last last node to wrap (or nullptr if all following siblings of 'first' are to be wrapped)
  *  @param[in] name name of the wrapper element to be created
  *  @return raw pointer to the new wrapper element */
-XMLElement* XMLElement::wrap (XMLNode *first, XMLNode *last, const string &name) {
+XMLElement* XMLElement::wrap (XMLNode *first, const XMLNode *last, const string &name) {
 	if (!first || !first->parent() || (last && first->parent() != last->parent()))
 		return nullptr;
 	XMLElement *parent = first->parent()->toElement();
@@ -297,7 +303,7 @@ XMLElement* XMLElement::wrap (XMLNode *first, XMLNode *last, const string &name)
  *  followed by C2,...,Cn.
  *  Example: unwrap a child element b of a:
  *  <a>text1<b><c/>text2<d/></b></a> => <a>text1<c/>text2<d/></a>
- *  @param[in] child child element to unwrap
+ *  @param[in] element element to unwrap
  *  @return raw pointer to the first node C1 of the unwrapped sequence or nullptr if element was empty */
 XMLNode* XMLElement::unwrap (XMLElement *element) {
 	if (!element || !element->parent())
@@ -394,7 +400,7 @@ ostream& XMLElement::write (ostream &os) const {
 				ifstream ifs(fname, ios::binary);
 				if (ifs) {
 					os << '\n';
-					util::base64_copy(ifs, os, 200);
+					util::base64_encode(ifs, os, 200);
 					ifs.close();
 					if (!KEEP_ENCODED_FILES && !keep)
 						FileSystem::remove(fname);
@@ -441,7 +447,7 @@ const char* XMLElement::getAttributeValue (const std::string& name) const {
 
 
 XMLElement::Attribute* XMLElement::getAttribute (const string &name) {
-	auto it = find_if(_attributes.begin(), _attributes.end(), [&](const Attribute &attr) {
+	auto it = algo::find_if(_attributes, [&](const Attribute &attr) {
 		return attr.name == name;
 	});
 	return it != _attributes.end() ? &(*it) : nullptr;
@@ -449,7 +455,7 @@ XMLElement::Attribute* XMLElement::getAttribute (const string &name) {
 
 
 const XMLElement::Attribute* XMLElement::getAttribute (const string &name) const {
-	auto it = find_if(_attributes.begin(), _attributes.end(), [&](const Attribute &attr) {
+	auto it = algo::find_if(_attributes, [&](const Attribute &attr) {
 		return attr.name == name;
 	});
 	return it != _attributes.end() ? &(*it) : nullptr;
@@ -473,7 +479,7 @@ bool XMLElement::Attribute::inheritable () const {
 			"stroke-linecap", "stroke-linejoin", "stroke-miterlimit", "stroke-opacity", "stroke-width", "transform",
 			"visibility", "word-spacing", "writing-mode"
 	};
-	return binary_search(std::begin(names), std::end(names), name, [](const string &name1, const string &name2) {
+	return algo::binary_search(names, name, [](const string &name1, const string &name2) {
 		return name1 < name2;
 	});
 }
@@ -495,7 +501,7 @@ void XMLText::append (unique_ptr<XMLNode> node) {
 }
 
 
-void XMLText::append (unique_ptr<XMLText> node) {
+void XMLText::append (const unique_ptr<XMLText> &node) {
 	if (node)
 		_text += node->_text;
 }
@@ -506,7 +512,7 @@ void XMLText::append (const string &str) {
 }
 
 
-void XMLText::prepend (unique_ptr<XMLNode> node) {
+void XMLText::prepend (const unique_ptr<XMLNode> &node) {
 	if (XMLText *textNode = node->toText())
 		_text = textNode->_text + _text;
 }
@@ -525,7 +531,7 @@ ostream& XMLCData::write (ostream &os) const {
 }
 
 
-void XMLCData::append (string &&str) {
+void XMLCData::append (string str) {
 	if (_data.empty())
 		_data = std::move(str);
 	else

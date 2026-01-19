@@ -126,9 +126,10 @@ libbrotli_a_RANLIB = $(RANLIB)
 libbrotli_a_LIBADD =
 am__libbrotli_a_SOURCES_DIST = common/constants.c common/constants.h \
 	common/context.c common/context.h common/dictionary.c \
-	common/dictionary.h common/platform.c common/platform.h \
-	common/shared_dictionary_internal.h common/transform.c \
-	common/transform.h common/version.h enc/backward_references.c \
+	common/dictionary.h common/dictionary_inc.h common/platform.c \
+	common/platform.h common/shared_dictionary_internal.h \
+	common/static_init.h common/transform.c common/transform.h \
+	common/version.h enc/backward_references.c \
 	enc/backward_references.h enc/backward_references_hq.c \
 	enc/backward_references_hq.h enc/backward_references_inc.h \
 	enc/bit_cost.c enc/bit_cost.h enc/bit_cost_inc.h \
@@ -140,22 +141,28 @@ am__libbrotli_a_SOURCES_DIST = common/constants.c common/constants.h \
 	enc/compress_fragment.c enc/compress_fragment.h \
 	enc/compress_fragment_two_pass.c \
 	enc/compress_fragment_two_pass.h enc/dictionary_hash.c \
-	enc/dictionary_hash.h enc/encode.c enc/encoder_dict.c \
-	enc/encoder_dict.h enc/entropy_encode.c enc/entropy_encode.h \
-	enc/entropy_encode_static.h enc/fast_log.c enc/fast_log.h \
-	enc/find_match_length.h enc/hash_composite_inc.h \
-	enc/hash_forgetful_chain_inc.h enc/hash.h \
-	enc/hash_longest_match64_inc.h enc/hash_longest_match_inc.h \
-	enc/hash_longest_match_quickly_inc.h enc/hash_rolling_inc.h \
+	enc/dictionary_hash.h enc/dictionary_hash_inc.h enc/encode.c \
+	enc/encoder_dict.c enc/encoder_dict.h enc/entropy_encode.c \
+	enc/entropy_encode.h enc/entropy_encode_static.h \
+	enc/fast_log.c enc/fast_log.h enc/find_match_length.h \
+	enc/hash.h enc/hash_base.h enc/hash_composite_inc.h \
+	enc/hash_forgetful_chain_inc.h enc/hash_longest_match64_inc.h \
+	enc/hash_longest_match64_simd_inc.h \
+	enc/hash_longest_match_inc.h \
+	enc/hash_longest_match_quickly_inc.h \
+	enc/hash_longest_match_simd_inc.h enc/hash_rolling_inc.h \
 	enc/hash_to_binary_tree_inc.h enc/histogram.c enc/histogram.h \
 	enc/histogram_inc.h enc/literal_cost.c enc/literal_cost.h \
-	enc/memory.c enc/memory.h enc/metablock.c enc/metablock.h \
-	enc/metablock_inc.h enc/params.h enc/prefix.h enc/quality.h \
-	enc/ringbuffer.h enc/state.h enc/static_dict.c \
-	enc/static_dict.h enc/static_dict_lut.h enc/utf8_util.c \
-	enc/utf8_util.h enc/write_bits.h include/brotli/decode.h \
-	include/brotli/encode.h include/brotli/port.h \
-	include/brotli/shared_dictionary.h include/brotli/types.h
+	enc/matching_tag_mask.h enc/memory.c enc/memory.h \
+	enc/metablock.c enc/metablock.h enc/metablock_inc.h \
+	enc/params.h enc/prefix.h enc/quality.h enc/ringbuffer.h \
+	enc/state.h enc/static_dict.c enc/static_dict.h \
+	enc/static_dict_lut.c enc/static_dict_lut.h \
+	enc/static_dict_lut_inc.h enc/static_init.c enc/static_init.h \
+	enc/utf8_util.c enc/utf8_util.h enc/write_bits.h \
+	include/brotli/decode.h include/brotli/encode.h \
+	include/brotli/port.h include/brotli/shared_dictionary.h \
+	include/brotli/types.h
 am__dirstamp = $(am__leading_dot)dirstamp
 @HAVE_BROTLI_FALSE@am_libbrotli_a_OBJECTS =  \
 @HAVE_BROTLI_FALSE@	common/constants.$(OBJEXT) \
@@ -182,6 +189,8 @@ am__dirstamp = $(am__leading_dot)dirstamp
 @HAVE_BROTLI_FALSE@	enc/memory.$(OBJEXT) \
 @HAVE_BROTLI_FALSE@	enc/metablock.$(OBJEXT) \
 @HAVE_BROTLI_FALSE@	enc/static_dict.$(OBJEXT) \
+@HAVE_BROTLI_FALSE@	enc/static_dict_lut.$(OBJEXT) \
+@HAVE_BROTLI_FALSE@	enc/static_init.$(OBJEXT) \
 @HAVE_BROTLI_FALSE@	enc/utf8_util.$(OBJEXT)
 libbrotli_a_OBJECTS = $(am_libbrotli_a_OBJECTS)
 AM_V_P = $(am__v_P_@AM_V@)
@@ -214,6 +223,7 @@ am__depfiles_remade = common/$(DEPDIR)/constants.Po \
 	enc/$(DEPDIR)/fast_log.Po enc/$(DEPDIR)/histogram.Po \
 	enc/$(DEPDIR)/literal_cost.Po enc/$(DEPDIR)/memory.Po \
 	enc/$(DEPDIR)/metablock.Po enc/$(DEPDIR)/static_dict.Po \
+	enc/$(DEPDIR)/static_dict_lut.Po enc/$(DEPDIR)/static_init.Po \
 	enc/$(DEPDIR)/utf8_util.Po
 am__mv = mv -f
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
@@ -431,9 +441,11 @@ top_srcdir = @top_srcdir@
 @HAVE_BROTLI_FALSE@	common/context.h \
 @HAVE_BROTLI_FALSE@	common/dictionary.c \
 @HAVE_BROTLI_FALSE@	common/dictionary.h \
+@HAVE_BROTLI_FALSE@	common/dictionary_inc.h \
 @HAVE_BROTLI_FALSE@	common/platform.c \
 @HAVE_BROTLI_FALSE@	common/platform.h \
 @HAVE_BROTLI_FALSE@	common/shared_dictionary_internal.h \
+@HAVE_BROTLI_FALSE@	common/static_init.h \
 @HAVE_BROTLI_FALSE@	common/transform.c \
 @HAVE_BROTLI_FALSE@	common/transform.h \
 @HAVE_BROTLI_FALSE@	common/version.h \
@@ -464,6 +476,7 @@ top_srcdir = @top_srcdir@
 @HAVE_BROTLI_FALSE@	enc/compress_fragment_two_pass.h \
 @HAVE_BROTLI_FALSE@	enc/dictionary_hash.c \
 @HAVE_BROTLI_FALSE@	enc/dictionary_hash.h \
+@HAVE_BROTLI_FALSE@	enc/dictionary_hash_inc.h \
 @HAVE_BROTLI_FALSE@	enc/encode.c \
 @HAVE_BROTLI_FALSE@	enc/encoder_dict.c \
 @HAVE_BROTLI_FALSE@	enc/encoder_dict.h \
@@ -473,12 +486,15 @@ top_srcdir = @top_srcdir@
 @HAVE_BROTLI_FALSE@	enc/fast_log.c \
 @HAVE_BROTLI_FALSE@	enc/fast_log.h \
 @HAVE_BROTLI_FALSE@	enc/find_match_length.h \
+@HAVE_BROTLI_FALSE@	enc/hash.h \
+@HAVE_BROTLI_FALSE@	enc/hash_base.h \
 @HAVE_BROTLI_FALSE@	enc/hash_composite_inc.h \
 @HAVE_BROTLI_FALSE@	enc/hash_forgetful_chain_inc.h \
-@HAVE_BROTLI_FALSE@	enc/hash.h \
 @HAVE_BROTLI_FALSE@	enc/hash_longest_match64_inc.h \
+@HAVE_BROTLI_FALSE@	enc/hash_longest_match64_simd_inc.h \
 @HAVE_BROTLI_FALSE@	enc/hash_longest_match_inc.h \
 @HAVE_BROTLI_FALSE@	enc/hash_longest_match_quickly_inc.h \
+@HAVE_BROTLI_FALSE@	enc/hash_longest_match_simd_inc.h \
 @HAVE_BROTLI_FALSE@	enc/hash_rolling_inc.h \
 @HAVE_BROTLI_FALSE@	enc/hash_to_binary_tree_inc.h \
 @HAVE_BROTLI_FALSE@	enc/histogram.c \
@@ -486,6 +502,7 @@ top_srcdir = @top_srcdir@
 @HAVE_BROTLI_FALSE@	enc/histogram_inc.h \
 @HAVE_BROTLI_FALSE@	enc/literal_cost.c \
 @HAVE_BROTLI_FALSE@	enc/literal_cost.h \
+@HAVE_BROTLI_FALSE@	enc/matching_tag_mask.h \
 @HAVE_BROTLI_FALSE@	enc/memory.c \
 @HAVE_BROTLI_FALSE@	enc/memory.h \
 @HAVE_BROTLI_FALSE@	enc/metablock.c \
@@ -498,7 +515,11 @@ top_srcdir = @top_srcdir@
 @HAVE_BROTLI_FALSE@	enc/state.h \
 @HAVE_BROTLI_FALSE@	enc/static_dict.c \
 @HAVE_BROTLI_FALSE@	enc/static_dict.h \
+@HAVE_BROTLI_FALSE@	enc/static_dict_lut.c \
 @HAVE_BROTLI_FALSE@	enc/static_dict_lut.h \
+@HAVE_BROTLI_FALSE@	enc/static_dict_lut_inc.h \
+@HAVE_BROTLI_FALSE@	enc/static_init.c \
+@HAVE_BROTLI_FALSE@	enc/static_init.h \
 @HAVE_BROTLI_FALSE@	enc/utf8_util.c \
 @HAVE_BROTLI_FALSE@	enc/utf8_util.h \
 @HAVE_BROTLI_FALSE@	enc/write_bits.h \
@@ -609,6 +630,10 @@ enc/metablock.$(OBJEXT): enc/$(am__dirstamp) \
 	enc/$(DEPDIR)/$(am__dirstamp)
 enc/static_dict.$(OBJEXT): enc/$(am__dirstamp) \
 	enc/$(DEPDIR)/$(am__dirstamp)
+enc/static_dict_lut.$(OBJEXT): enc/$(am__dirstamp) \
+	enc/$(DEPDIR)/$(am__dirstamp)
+enc/static_init.$(OBJEXT): enc/$(am__dirstamp) \
+	enc/$(DEPDIR)/$(am__dirstamp)
 enc/utf8_util.$(OBJEXT): enc/$(am__dirstamp) \
 	enc/$(DEPDIR)/$(am__dirstamp)
 
@@ -650,6 +675,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@enc/$(DEPDIR)/memory.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@enc/$(DEPDIR)/metablock.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@enc/$(DEPDIR)/static_dict.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@enc/$(DEPDIR)/static_dict_lut.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@enc/$(DEPDIR)/static_init.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@enc/$(DEPDIR)/utf8_util.Po@am__quote@ # am--include-marker
 
 $(am__depfiles_remade):
@@ -843,6 +870,8 @@ distclean: distclean-am
 	-rm -f enc/$(DEPDIR)/memory.Po
 	-rm -f enc/$(DEPDIR)/metablock.Po
 	-rm -f enc/$(DEPDIR)/static_dict.Po
+	-rm -f enc/$(DEPDIR)/static_dict_lut.Po
+	-rm -f enc/$(DEPDIR)/static_init.Po
 	-rm -f enc/$(DEPDIR)/utf8_util.Po
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
@@ -914,6 +943,8 @@ maintainer-clean: maintainer-clean-am
 	-rm -f enc/$(DEPDIR)/memory.Po
 	-rm -f enc/$(DEPDIR)/metablock.Po
 	-rm -f enc/$(DEPDIR)/static_dict.Po
+	-rm -f enc/$(DEPDIR)/static_dict_lut.Po
+	-rm -f enc/$(DEPDIR)/static_init.Po
 	-rm -f enc/$(DEPDIR)/utf8_util.Po
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic

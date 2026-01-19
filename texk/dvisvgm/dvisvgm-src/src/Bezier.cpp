@@ -18,8 +18,8 @@
 ** along with this program; if not, see <http://www.gnu.org/licenses/>. **
 *************************************************************************/
 
-#include <algorithm>
 #include <utility>
+#include "algorithm.hpp"
 #include "Bezier.hpp"
 #include "Matrix.hpp"
 #include "utility.hpp"
@@ -258,6 +258,7 @@ int CubicBezier::reduceDegree (double delta, vector<DPair> &p) const {
 
 /** Approximates the cubic Bézier curve by a sequence of quadratic ones.
  *  @param[in] precision specifies the precision of the approximation
+ *  @param[out] splitParams parameters t where the curve was split
  *  @return map containing the split parameters t_n together with the qudratic curves */
 vector<QuadBezier> CubicBezier::toQuadBeziers (double precision, vector<double> *splitParams) const {
 	vector<QuadBezier> qbeziers;
@@ -387,8 +388,9 @@ BoundingBox CubicBezier::getBBox () const {
 
 
 CubicBezier& CubicBezier::transform (const Matrix &matrix) {
-	for (auto &point : _points)
-		point = matrix * point;
+	algo::transform(_points, begin(_points), [&matrix](const DPair &p) {
+		return matrix * p;
+	});
 	return *this;
 }
 

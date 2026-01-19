@@ -2,12 +2,12 @@
 .\"     Title: dvisvgm
 .\"    Author: Martin Gieseking <martin.gieseking@uos.de>
 .\" Generator: DocBook XSL Stylesheets vsnapshot <http://docbook.sf.net/>
-.\"      Date: 2025-01-04
+.\"      Date: 2025-10-28
 .\"    Manual: dvisvgm Manual
-.\"    Source: dvisvgm 3.4.3
+.\"    Source: dvisvgm 3.6
 .\"  Language: English
 .\"
-.TH "DVISVGM" "1" "2025\-01\-04" "dvisvgm 3\&.4\&.3" "dvisvgm Manual"
+.TH "DVISVGM" "1" "2025\-10\-28" "dvisvgm 3\&.6" "dvisvgm Manual"
 .\" -----------------------------------------------------------------
 .\" * Define some portability stuff
 .\" -----------------------------------------------------------------
@@ -721,7 +721,7 @@ must be the only or the first entry in the list of module names\&.
 .PP
 \fBcollapse\-groups\fR
 .RS 4
-Combines nested group elements (\fB<g>\fR\&...\fB</g>\fR) that contain only a single group each\&. If possible, the group attributes are moved to the outermost element of the processed subtree\&. This module also unwraps group elements that have no attributes at all\&.
+Combines nested group elements (\fB<g>\fR\&...\fB</g>\fR) that contain only a single attribute each\&. If possible, the group attributes are moved to the outermost element of the processed subtree\&. This module also unwraps group elements that have no attributes at all\&.
 .RE
 .PP
 \fBgroup\-attributes\fR
@@ -763,7 +763,9 @@ element only contains whitespace nodes and
 \fBtspan\fR
 elements, all common inheritable attributes of the latter are moved to the enclosing text element\&. All
 \fBtspan\fR
-elements without further attributes are unwrapped\&.
+elements without further attributes are unwrapped, i\&.e\&. the
+\fBtspan\fR
+tags are removed\&.
 .RE
 .PP
 \fBsimplify\-transform\fR
@@ -854,13 +856,28 @@ This option selects the pages to be processed\&. Parameter
 \fIranges\fR
 consists of a comma\-separated list of single page numbers and/or page ranges\&. A page range is a pair of numbers separated by a hyphen, e\&.g\&. 5\-12\&. Thus, a page sequence might look like this: 2\-4,6,9\-12,15\&. It doesn\(cqt matter if a page is given more than once or if page ranges overlap\&. dvisvgm always extracts the page numbers in ascending order and converts them only once\&.
 .sp
-In order to stay compatible with previous versions, the default page sequence is 1\&. dvisvgm therefore converts only the first page and not the whole document if option
+In order to stay compatible with previous versions, the default page sequence is
+\fB1\fR\&. dvisvgm therefore converts only the first page and not the whole document if option
 \fB\-\-page\fR
 is omitted\&. Usually, page ranges consist of two numbers denoting the first and last page to be converted\&. If the conversion should start at page 1, or if it should continue up to the last DVI page, the first or second range number can be omitted, respectively\&. Example:
 \fB\-\-page=\-10\fR
 converts all pages up to page 10,
 \fB\-\-page=10\-\fR
 converts all pages starting with page 10\&. Please consider that the page values don\(cqt refer to the page numbers printed on the corresponding page\&. Instead, the physical page count is expected, where the first page always gets number 1\&.
+.sp
+To select the last page, expression
+\fB%P\fR
+can be used instead of an explicit page number\&. It\(cqs replaced by the number of the last page\&. For example,
+\fB\-\-page=1,%P\fR
+converts the first and the last page of the document\&.
+.sp
+Additionally, arithmetic expressions of the form
+\fB%(\fR\fIexpr\fR\fB)\fR
+in place of numbers are valid too\&. The resulting values are always rounded down to the nearest integer\&. See option
+\fB\-\-output\fR
+for more information about the syntax and the supported arithmetic operators\&. Example:
+\fB\-\-page=%(P\-2)\-\fR
+converts the last three pages\&.
 .sp
 At the end of the range sequence an optional filter specifier can be appended in order to remove certain page numbers from the sequence\&. Currently, the two filters
 \fB:even\fR
@@ -947,7 +964,7 @@ If this option is given, dvisvgm does not expect a DVI but a PDF input file, and
 \fB\-\-page\fR
 can be used to select different pages, page ranges, and/or page sequences\&.
 .sp
-If a Ghostcript version < 10\&.01\&.0 is found, dvisvgm uses Ghostscript to process the PDF file\&. In this case, the conversion is realized by creating a single
+If a Ghostscript version < 10\&.01\&.0 is found, dvisvgm uses Ghostscript to process the PDF file\&. In this case, the conversion is realized by creating a single
 \fIpdffile\fR
 special command which is forwarded to dvisvgm\(cqs PostScript special handler\&. Therefore, this option is only available if dvisvgm was built with PostScript support enabled, and requires Ghostscript to be accessible\&. See option
 \fB\-\-libgs\fR
@@ -1423,7 +1440,7 @@ and
 \fIy\fR
 represent the current coordinates\&. Invalid operations, like divisions by zero, lead to an error message on the console\&. Example:
 \fB{?(\-10*(x+2y)\-5)}\fR
-is a valid expresssion and expands to the corresponding numeric string\&.
+is a valid expression and expands to the corresponding numeric string\&.
 .RE
 .PP
 \fBdvisvgm:rawdef\fR \fItext\fR
@@ -1563,7 +1580,7 @@ This variant of the bbox special assigns an absolute (final) bounding box to the
 \fBtransform\fR
 allows for applying the current transformation matrix to the bounding box\&.
 .sp
-The following TeX snippet adds two raw SVG elements to the output and updates the bounding box accordingly:
+The following TeX fragment adds two raw SVG elements to the output and updates the bounding box accordingly:
 .sp
 .if n \{\
 .RS 4
@@ -1638,7 +1655,7 @@ on the command\-line\&. Otherwise, dvisvgm ignores them and computes tight bound
 pdfTeX and dvipdfmx introduced several special commands related to the generation of PDF files\&. Currently, only
 \fIpdf:mapfile\fR,
 \fIpdf:mapline\fR,
-\fIpdf:pagesize\fR, and PDF hyperlink specials are supported by dvisvgm\&. The latter are the PDF pendants to the HTML HyperTeX specials generated by the hyperref package in PDF mode\&.
+\fIpdf:pagesize\fR, and PDF hyperlink specials are supported by dvisvgm\&. The latter are the PDF pendants to the HTML HyperTeX specials\&. They are generated by the hyperref package in PDF mode, for example\&. If a DVI page contains unsupported PDF specials, dvisvgm prints a warning message showing the number of ignored special commands\&.
 .sp
 \fIpdf:pagesize\fR
 is similar to the
@@ -1660,7 +1677,7 @@ pdfTeX user manual (\m[blue]https://ctan.org/pkg/pdftex\m[])\&.
 .RS 4
 The famous DVI driver
 \fIdvips\fR (\m[blue]https://www.tug.org/texinfohtml/dvips.html\m[])
-introduced its own set of specials in order to embed PostScript code into DVI files, which greatly improves the capabilities of DVI documents\&. One aim of dvisvgm is to completely evaluate all PostScript fragments and to convert as many of them as possible to SVG\&. In contrast to dvips, dvisvgm uses floating point arithmetics to compute the precise position of each graphic element, i\&.e\&. it doesn\(cqt round the coordinates\&. Therefore, the relative locations of the graphic elements may slightly differ from those computed by dvips\&.
+introduced its own set of specials in order to embed PostScript code into DVI files, which greatly improves the capabilities of DVI documents\&. One aim of dvisvgm is to completely evaluate all PostScript fragments and to convert as many of them as possible to SVG\&. In contrast to dvips, dvisvgm uses floating point arithmetic to compute the precise position of each graphic element, i\&.e\&. it doesn\(cqt round the coordinates\&. Therefore, the relative locations of the graphic elements may slightly differ from those computed by dvips\&.
 .sp
 Since PostScript is a rather complex language, dvisvgm does not implement its own PostScript interpreter but relies on
 Ghostscript (\m[blue]https://ghostscript.com\m[])

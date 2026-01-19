@@ -25,6 +25,7 @@
 #include "FileFinder.hpp"
 #include "FilePath.hpp"
 #include "FileSystem.hpp"
+#include "InputReader.hpp"
 #include "Message.hpp"
 #include "PathClipper.hpp"
 #include "PSPattern.hpp"
@@ -142,7 +143,7 @@ void PsSpecialHandler::moveToDVIPos () {
 }
 
 
-/** Executes a PS snippet and optionally synchronizes the DVI cursor position
+/** Executes a PS fragment and optionally synchronizes the DVI cursor position
  *  with the current PS point.
  *  @param[in] is  stream to read the PS code from
  *  @param[in] updatePos if true, move the DVI drawing position to the current PS point */
@@ -231,8 +232,7 @@ bool PsSpecialHandler::process (const string &prefix, istream &is, SpecialAction
 					fileType = FileType::BITMAP;
 			}
 			map<string,string> attr;
-			in.parseAttributes(attr, false);
-			imgfile(fileType, fname, attr);
+			imgfile(fileType, fname, in.parseAttributes(false));
 		}
 	}
 	else if (prefix == "ps::") {
@@ -393,7 +393,7 @@ static string image_base_path (const SpecialActions &actions) {
  *  @param[in] bbox bounding box of the image
  *  @param[in] clip if true, the image is clipped to its bounding box
  *  @return pointer to the element or nullptr if there's no image data */
-PsSpecialHandler::ImageNode PsSpecialHandler::createImageNode (FileType type, const string &fname, int pageno, BoundingBox bbox, bool clip) {
+PsSpecialHandler::ImageNode PsSpecialHandler::createImageNode (FileType type, const string &fname, int pageno, const BoundingBox &bbox, bool clip) {
 	ImageNode imgnode;
 	string pathstr;
 	if (const char *path = FileFinder::instance().lookup(fname, false))
@@ -412,7 +412,7 @@ PsSpecialHandler::ImageNode PsSpecialHandler::createImageNode (FileType type, co
 }
 
 
-PsSpecialHandler::ImageNode PsSpecialHandler::createBitmapNode (const string &fname, const string &path, int pageno, BoundingBox bbox) {
+PsSpecialHandler::ImageNode PsSpecialHandler::createBitmapNode (const string &fname, const string &path, int pageno, const BoundingBox &bbox) const {
 	ImageNode imgnode(util::make_unique<SVGElement>("image"));
 	imgnode.element->addAttribute("x", 0);
 	imgnode.element->addAttribute("y", 0);
@@ -434,7 +434,7 @@ PsSpecialHandler::ImageNode PsSpecialHandler::createBitmapNode (const string &fn
 }
 
 
-PsSpecialHandler::ImageNode PsSpecialHandler::createPSNode (const string &fname, const string &path, int pageno, BoundingBox bbox, bool clip) {
+PsSpecialHandler::ImageNode PsSpecialHandler::createPSNode (const string &fname, const string &path, int pageno, const BoundingBox &bbox, bool clip) {
 	ImageNode imgnode(util::make_unique<SVGElement>("g")); // put SVG nodes created from the EPS/PDF file in this group
 	_xmlnode = imgnode.element.get();
 	_psi.execute(
@@ -462,7 +462,7 @@ PsSpecialHandler::ImageNode PsSpecialHandler::createPSNode (const string &fname,
 }
 
 
-PsSpecialHandler::ImageNode PsSpecialHandler::createPDFNode (const string &fname, const string &path, int pageno, BoundingBox bbox, bool clip) {
+PsSpecialHandler::ImageNode PsSpecialHandler::createPDFNode (const string &fname, const string &path, int pageno, const BoundingBox &bbox, bool clip) {
 	if (_pdfProc == "gs" || (_pdfProc.empty() && _psi.supportsPDF()))
 		return createPSNode(fname, path, pageno, bbox, clip);
 
@@ -540,8 +540,8 @@ void PsSpecialHandler::dviEndPage (unsigned, SpecialActions &actions) {
 	_previewHandler.readDataFromStack();
 	BoundingBox bbox;
 	if (_previewHandler.getBoundingBox(bbox)) {  // is there any data written by preview package?
-		double w=0, h=0, d=0;
 		if (actions.getBBoxFormatString() == "preview" || actions.getBBoxFormatString() == "min") {
+			double w=0, h=0, d=0;
 			if (actions.getBBoxFormatString() == "preview") {
 				w = max(0.0, _previewHandler.width());
 				h = max(0.0, _previewHandler.height());
@@ -553,6 +553,10 @@ void PsSpecialHandler::dviEndPage (unsigned, SpecialActions &actions) {
 				w = actions.bbox().width();
 				h = max(0.0, -actions.bbox().minY());
 				d = max(0.0, actions.bbox().maxY());
+				if (d == 0)
+					h = actions.bbox().height();
+				else if (h == 0)
+					d = actions.bbox().height();
 				Message::mstream() << "\ncomputing extents based on data set by";
 			}
 			Message::mstream() << " preview package (version " << _previewHandler.version() << ")\n";
@@ -565,7 +569,7 @@ void PsSpecialHandler::dviEndPage (unsigned, SpecialActions &actions) {
 			if (!isBaselineHorizontal)
 				Message::mstream() << "can't determine height, width, and depth due to non-horizontal baseline\n";
 			else {
-				const double bp2pt = 72.27/72.0;
+				constexpr double bp2pt = 72.27/72.0;
 				Message::mstream() <<
 					"width=" << XMLString(w*bp2pt) << "pt, "
 					"height=" << XMLString(h*bp2pt) << "pt, "
@@ -666,7 +670,7 @@ void PsSpecialHandler::closepath (vector<double>&) {
 
 void PsSpecialHandler::setblendmode (vector<double> &p) {
 	int mode = static_cast<int>(p[0]);
-	static const Opacity::BlendMode blendmodes[] = {
+	static constexpr Opacity::BlendMode blendmodes[] = {
 		Opacity::BM_NORMAL, Opacity::BM_MULTIPLY, Opacity::BM_SCREEN, Opacity::BM_OVERLAY,
 		Opacity::BM_SOFTLIGHT, Opacity::BM_HARDLIGHT, Opacity::BM_COLORDODGE, Opacity::BM_COLORBURN,
 		Opacity::BM_DARKEN, Opacity::BM_LIGHTEN, Opacity::BM_DIFFERENCE, Opacity::BM_EXCLUSION,
@@ -952,8 +956,7 @@ void PsSpecialHandler::setpattern (vector<double> &p) {
 }
 
 
-/** Clears the current clipping path.
- *  @param[in] p not used */
+/** Clears the current clipping path. */
 void PsSpecialHandler::initclip (vector<double> &) {
 	_clipStack.pushEmptyPath();
 }
@@ -970,7 +973,6 @@ void PsSpecialHandler::clippath (std::vector<double>&) {
  *  If the graphics state already contains a clipping path, the new one is
  *  computed by intersecting the current clipping path with the current graphics
  *  path (see PS language reference, 3rd edition, pp. 193, 542)
- *  @param[in] p not used
  *  @param[in] evenodd true: use even-odd fill algorithm, false: use nonzero fill algorithm */
 void PsSpecialHandler::clip (vector<double>&, bool evenodd) {
 	clip(_path, evenodd);
@@ -1063,11 +1065,7 @@ void PsSpecialHandler::shfill (vector<double> &params) {
 		const double &y1 = *it++;
 		const double &x2 = *it++;
 		const double &y2 = *it++;
-		bboxPath.moveto(x1, y1);
-		bboxPath.lineto(x2, y1);
-		bboxPath.lineto(x2, y2);
-		bboxPath.lineto(x1, y2);
-		bboxPath.closepath();
+		bboxPath.rect(x1, y1, x2, y2);
 		clip(std::move(bboxPath), false);
 	}
 	try {
@@ -1080,7 +1078,7 @@ void PsSpecialHandler::shfill (vector<double> &params) {
 		Message::estream(false) << "PostScript error: " << e.what() << '\n';
 		it.invalidate();  // stop processing the remaining patch data
 	}
-	catch (IteratorException &e) {
+	catch (IteratorException &) {
 		Message::estream(false) << "PostScript error: incomplete shading data\n";
 	}
 	if (bboxGiven)
@@ -1089,9 +1087,8 @@ void PsSpecialHandler::shfill (vector<double> &params) {
 
 
 /** Reads position and color data of a single shading patch from the data vector.
- *  @param[in] shadingTypeID PS shading type ID identifying the format of the subsequent patch data
+ *  @param[in] patch patch to be processed
  *  @param[in] edgeflag edge flag specifying how to connect the current patch to the preceding one
- *  @param[in] cspace color space used to compute the color gradient
  *  @param[in,out] it iterator used to sequentially access the patch data
  *  @param[out] points the points defining the geometry of the patch
  *  @param[out] colors the colors assigned to the vertices of the patch */
@@ -1167,7 +1164,7 @@ class ShadingCallback : public ShadingPatch::Callback {
 
 /** Handle all patch meshes whose patches and their connections can be processed sequentially.
  *  This comprises free-form triangular, Coons, and tensor-product patch meshes. */
-void PsSpecialHandler::processSequentialPatchMesh (int shadingTypeID, ColorSpace colorSpace, VectorIterator<double> &it) {
+void PsSpecialHandler::processSequentialPatchMesh (int shadingTypeID, ColorSpace colorSpace, VectorIterator<double> &it) const {
 	unique_ptr<ShadingPatch> previousPatch;
 	while (it.valid()) {
 		int edgeflag = static_cast<int>(*it++);
@@ -1197,7 +1194,7 @@ void PsSpecialHandler::processSequentialPatchMesh (int shadingTypeID, ColorSpace
 }
 
 
-void PsSpecialHandler::processLatticeTriangularPatchMesh (ColorSpace colorSpace, VectorIterator<double> &it) {
+void PsSpecialHandler::processLatticeTriangularPatchMesh (ColorSpace colorSpace, VectorIterator<double> &it) const {
 	int verticesPerRow = static_cast<int>(*it++);
 	if (verticesPerRow < 2)
 		return;

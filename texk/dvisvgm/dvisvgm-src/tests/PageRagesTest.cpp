@@ -45,7 +45,7 @@ static bool is_equal (const PageRanges &pr, const Range *r) {
 TEST(PageRangesTest, single) {
 	PageRanges pr;
 	ASSERT_TRUE(pr.parse("123"));
-	ASSERT_FALSE(pr.ranges().empty());
+	ASSERT_FALSE(pr.empty());
 	ASSERT_EQ(pr.ranges().front(), PageRanges::Range(123,123));
 	ASSERT_EQ(pr.numberOfPages(), 1u);
 }
@@ -54,7 +54,7 @@ TEST(PageRangesTest, single) {
 TEST(PageRangesTest, single_range) {
 	PageRanges pr;
 	ASSERT_TRUE(pr.parse("3-19"));
-	ASSERT_FALSE(pr.ranges().empty());
+	ASSERT_FALSE(pr.empty());
 	ASSERT_EQ(pr.ranges().front(), PageRanges::Range(3,19));
 	ASSERT_EQ(pr.numberOfPages(), 17u);
 }
@@ -63,7 +63,7 @@ TEST(PageRangesTest, single_range) {
 TEST(PageRangesTest, single_range_inv) {
 	PageRanges pr;
 	ASSERT_TRUE(pr.parse("19-3"));
-	ASSERT_FALSE(pr.ranges().empty());
+	ASSERT_FALSE(pr.empty());
 	ASSERT_EQ(pr.ranges().front(), PageRanges::Range(3,19));
 	ASSERT_EQ(pr.numberOfPages(), 17u);
 }
@@ -72,7 +72,7 @@ TEST(PageRangesTest, single_range_inv) {
 TEST(PageRangesTest, single_range_lopen) {
 	PageRanges pr;
 	ASSERT_TRUE(pr.parse("-19"));
-	ASSERT_FALSE(pr.ranges().empty());
+	ASSERT_FALSE(pr.empty());
 	ASSERT_EQ(pr.ranges().front(), PageRanges::Range(1,19));
 	ASSERT_EQ(pr.numberOfPages(), 19u);
 }
@@ -81,9 +81,44 @@ TEST(PageRangesTest, single_range_lopen) {
 TEST(PageRangesTest, single_range_ropen) {
 	PageRanges pr;
 	ASSERT_TRUE(pr.parse("4-", 100));
-	ASSERT_FALSE(pr.ranges().empty());
+	ASSERT_FALSE(pr.empty());
 	ASSERT_EQ(pr.ranges().front(), PageRanges::Range(4,100));
 	ASSERT_EQ(pr.numberOfPages(), 97u);
+}
+
+
+TEST(PageRangesTest, out_of_bounds1) {
+	PageRanges pr;
+	ASSERT_TRUE(pr.parse("11", 10));
+	ASSERT_TRUE(pr.empty());
+	ASSERT_EQ(pr.numberOfPages(), 0u);
+	pr.clear();
+	ASSERT_TRUE(pr.parse("11-20", 10));
+	ASSERT_TRUE(pr.empty());
+	ASSERT_EQ(pr.numberOfPages(), 0u);
+}
+
+
+TEST(PageRangesTest, out_of_bounds2) {
+	PageRanges pr;
+	ASSERT_TRUE(pr.parse("10-20", 10));
+	ASSERT_FALSE(pr.empty());
+	ASSERT_EQ(pr.ranges().front(), PageRanges::Range(10,10));
+	ASSERT_EQ(pr.numberOfPages(), 1u);
+	pr.clear();
+	ASSERT_TRUE(pr.parse("10-20"));
+	ASSERT_FALSE(pr.empty());
+	ASSERT_EQ(pr.ranges().front(), PageRanges::Range(10,20));
+	ASSERT_EQ(pr.numberOfPages(), 11u);
+}
+
+
+TEST(PageRangesTest, out_of_bounds3) {
+	PageRanges pr;
+	ASSERT_TRUE(pr.parse("10-20,20-,20-30,8-", 10));
+	ASSERT_FALSE(pr.empty());
+	ASSERT_EQ(pr.ranges().front(), PageRanges::Range(8,10));
+	ASSERT_EQ(pr.numberOfPages(), 3u);
 }
 
 
@@ -186,6 +221,47 @@ TEST(PageRangesTest, odd2) {
 }
 
 
+TEST(PageRangesTest, expr1) {
+	PageRanges pr;
+	ASSERT_TRUE(pr.parse("%P", 10));
+	EXPECT_EQ(pr.size(), 1u);
+	EXPECT_EQ(pr.ranges().front(), PageRanges::Range(10,10));
+	pr.clear();
+	ASSERT_TRUE(pr.parse("-%P", 10));
+	EXPECT_EQ(pr.size(), 1u);
+	EXPECT_EQ(pr.ranges().front(), PageRanges::Range(1,10));
+	pr.clear();
+	ASSERT_TRUE(pr.parse("%P-", 10));
+	EXPECT_EQ(pr.size(), 1u);
+	EXPECT_EQ(pr.ranges().front(), PageRanges::Range(10,10));
+	pr.clear();
+	ASSERT_TRUE(pr.parse("5-%P", 10));
+	EXPECT_EQ(pr.size(), 1u);
+	EXPECT_EQ(pr.ranges().front(), PageRanges::Range(5,10));
+	pr.clear();
+	ASSERT_TRUE(pr.parse("1,%P,2", 10));
+	EXPECT_EQ(pr.size(), 2u);
+	EXPECT_EQ(pr.ranges().front(), PageRanges::Range(1,2));
+	EXPECT_EQ(pr.ranges().back(), PageRanges::Range(10,10));
+}
+
+
+TEST(PageRangesTest, expr2) {
+	PageRanges pr;
+	ASSERT_TRUE(pr.parse("%(P-1)", 10));
+	EXPECT_EQ(pr.size(), 1u);
+	EXPECT_EQ(pr.ranges().front(), PageRanges::Range(9,9));
+	pr.clear();
+	ASSERT_TRUE(pr.parse("%(P-2)-", 10));
+	EXPECT_EQ(pr.size(), 1u);
+	EXPECT_EQ(pr.ranges().front(), PageRanges::Range(8,10));
+	pr.clear();
+	ASSERT_TRUE(pr.parse("-%(P-2)", 10));
+	EXPECT_EQ(pr.size(), 1u);
+	EXPECT_EQ(pr.ranges().front(), PageRanges::Range(1,8));
+}
+
+
 TEST(PageRangesTest, error) {
 	PageRanges pr;
 	EXPECT_FALSE(pr.parse("x"));
@@ -193,4 +269,7 @@ TEST(PageRangesTest, error) {
 	EXPECT_FALSE(pr.parse("5 6"));
 	EXPECT_FALSE(pr.parse("5,"));
 	EXPECT_FALSE(pr.parse("1-9:dummy"));
+	EXPECT_FALSE(pr.parse("%p"));
+	EXPECT_FALSE(pr.parse("%(p-1)"));
+	EXPECT_FALSE(pr.parse("%(1/0)"));
 }

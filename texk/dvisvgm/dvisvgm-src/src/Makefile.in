@@ -562,6 +562,7 @@ dvisvgm_LDADD = $(noinst_LTLIBRARIES) ../libs/clipper/libclipper.a \
 dvisvgm_DEPENDENCIES = $(noinst_LTLIBRARIES) $(am__append_9)
 libdvisvgm_la_SOURCES = \
 	AGLTable.hpp \
+	algorithm.hpp \
 	BasicDVIReader.hpp           BasicDVIReader.cpp \
 	Bezier.hpp                   Bezier.cpp \
 	BgColorSpecialHandler.hpp    BgColorSpecialHandler.cpp \

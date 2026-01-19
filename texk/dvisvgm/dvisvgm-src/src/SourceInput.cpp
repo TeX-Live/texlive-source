@@ -18,6 +18,7 @@
 ** along with this program; if not, see <http://www.gnu.org/licenses/>. **
 *************************************************************************/
 
+#include <algorithm>
 #include <fstream>
 #include <iostream>
 #include "FileSystem.hpp"
@@ -88,7 +89,7 @@ bool TemporaryFile::create () {
  *  @param[in] buf buffer containing the characters to write
  *  @param[in] len number of characters to write
  *  @return true on success */
-bool TemporaryFile::write (const char *buf, size_t len) {
+bool TemporaryFile::write (const char *buf, size_t len) const {
 	return opened() && fdwrite(_fd, buf, len) >= 0;
 }
 
@@ -121,8 +122,8 @@ istream& SourceInput::getInputStream (bool showMessages) {
 				throw MessageException("can't create temporary file for writing");
 			if (showMessages)
 				Message::mstream() << "reading from " << getMessageFileName() << '\n';
-			char buf[1024];
 			while (cin) {
+				char buf[1024];
 				cin.read(buf, 1024);
 				size_t count = cin.gcount();
 				if (!_tmpfile.write(buf, count))

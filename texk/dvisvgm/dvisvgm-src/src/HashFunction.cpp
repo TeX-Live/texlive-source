@@ -18,9 +18,9 @@
 ** along with this program; if not, see <http://www.gnu.org/licenses/>. **
 *************************************************************************/
 
-#include <algorithm>
 #include <iomanip>
 #include <sstream>
+#include "algorithm.hpp"
 #include "HashFunction.hpp"
 #include "utility.hpp"
 #include "MD5HashFunction.hpp"
@@ -43,7 +43,7 @@ vector<string> HashFunction::supportedAlgorithms () {
 /** Returns true if 'algo' is the name of a supported hash algorithm. */
 bool HashFunction::isSupportedAlgorithm (const std::string &algo) {
 	auto algos = supportedAlgorithms();
-	return find(algos.begin(), algos.end(), algo) != algos.end();
+	return algo::find(algos, algo) != algos.end();
 }
 
 
@@ -84,8 +84,8 @@ std::unique_ptr<HashFunction> HashFunction::create (const string &name, const ve
 
 
 void HashFunction::update (istream &is) {
-	char buf[4096];
 	while (is) {
+		char buf[4096];
 		is.read(buf, 4096);
 		update(buf, is.gcount());
 	}

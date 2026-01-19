@@ -35,6 +35,7 @@
 #include <fstream>
 #include <map>
 #include <set>
+#include "algorithm.hpp"
 #include "FileFinder.hpp"
 #include "FilePath.hpp"
 #include "FileSystem.hpp"
@@ -50,10 +51,7 @@ std::string FileFinder::_pathbuf;
 bool FileFinder::_enableMktex = false;
 
 
-/** Constructs a new file finder.
- *  @param[in] argv0 argv[0] of main() function
- *  @param[in] progname name of application using the FileFinder
- *  @param[in] enable_mktexmf if true, tfm and mf file generation is activated */
+/** Constructs a new file finder. */
 FileFinder::FileFinder () {
 	addLookupDir(".");  // always lookup files in the current working directory
 #ifdef MIKTEX
@@ -148,12 +146,12 @@ const char* FileFinder::findFile (const std::string &fname, const char *ftype) c
 			suffixes.emplace_back("ttc");
 			suffixes.emplace_back("dfont");
 		}
-		for (const auto &suffix : suffixes) {
-			if (const char *path = _miktex->findFile((fname+"."+suffix).c_str()))
-				return path;
-		}
+		auto it = algo::find_if(suffixes, [&](const std::string &suffix) {
+			return _miktex->findFile((fname+"."+suffix).c_str()) != nullptr;
+		});
+		return it != suffixes.end() ? it->c_str() : nullptr;
 	}
-	catch (const MessageException &e) {
+	catch (const MessageException &) {
 		return nullptr;
 	}
 #endif  // MIKTEX
@@ -193,8 +191,8 @@ const char* FileFinder::findFile (const std::string &fname, const char *ftype) c
 		std::free(path);
 		return _pathbuf.c_str();
 	}
-#endif  // !MIKTEX
 	return nullptr;
+#endif  // !MIKTEX
 }
 
 

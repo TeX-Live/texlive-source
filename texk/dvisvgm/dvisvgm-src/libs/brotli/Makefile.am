@@ -7,9 +7,11 @@ libbrotli_a_SOURCES = \
 	common/context.h \
 	common/dictionary.c \
 	common/dictionary.h \
+	common/dictionary_inc.h \
 	common/platform.c \
 	common/platform.h \
 	common/shared_dictionary_internal.h \
+	common/static_init.h \
 	common/transform.c \
 	common/transform.h \
 	common/version.h \
@@ -40,6 +42,7 @@ libbrotli_a_SOURCES = \
 	enc/compress_fragment_two_pass.h \
 	enc/dictionary_hash.c \
 	enc/dictionary_hash.h \
+	enc/dictionary_hash_inc.h \
 	enc/encode.c \
 	enc/encoder_dict.c \
 	enc/encoder_dict.h \
@@ -49,12 +52,15 @@ libbrotli_a_SOURCES = \
 	enc/fast_log.c \
 	enc/fast_log.h \
 	enc/find_match_length.h \
+	enc/hash.h \
+	enc/hash_base.h \
 	enc/hash_composite_inc.h \
 	enc/hash_forgetful_chain_inc.h \
-	enc/hash.h \
 	enc/hash_longest_match64_inc.h \
+	enc/hash_longest_match64_simd_inc.h \
 	enc/hash_longest_match_inc.h \
 	enc/hash_longest_match_quickly_inc.h \
+	enc/hash_longest_match_simd_inc.h \
 	enc/hash_rolling_inc.h \
 	enc/hash_to_binary_tree_inc.h \
 	enc/histogram.c \
@@ -62,6 +68,7 @@ libbrotli_a_SOURCES = \
 	enc/histogram_inc.h \
 	enc/literal_cost.c \
 	enc/literal_cost.h \
+	enc/matching_tag_mask.h \
 	enc/memory.c \
 	enc/memory.h \
 	enc/metablock.c \
@@ -74,7 +81,11 @@ libbrotli_a_SOURCES = \
 	enc/state.h \
 	enc/static_dict.c \
 	enc/static_dict.h \
+	enc/static_dict_lut.c \
 	enc/static_dict_lut.h \
+	enc/static_dict_lut_inc.h \
+	enc/static_init.c \
+	enc/static_init.h \
 	enc/utf8_util.c \
 	enc/utf8_util.h \
 	enc/write_bits.h \

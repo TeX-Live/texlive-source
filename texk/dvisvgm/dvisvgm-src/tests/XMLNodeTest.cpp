@@ -24,6 +24,7 @@
 #include <memory>
 #include "utility.hpp"
 #include "XMLNode.hpp"
+#include "XMLString.hpp"
 
 using namespace std;
 
@@ -199,7 +200,7 @@ TEST(XMLNodeTest, prependText) {
 }
 
 
-TEST(XMLNodeTest, attributes) {
+TEST(XMLNodeTest, attributes1) {
 	XMLElement root("root");
 	root.addAttribute("string", "text");
 	root.addAttribute("integer", 42);
@@ -208,10 +209,25 @@ TEST(XMLNodeTest, attributes) {
 	EXPECT_TRUE(root.hasAttribute("string"));
 	EXPECT_TRUE(root.hasAttribute("integer"));
 	EXPECT_TRUE(root.hasAttribute("double"));
-	EXPECT_FALSE(root.hasAttribute("noname	"));
+	EXPECT_FALSE(root.hasAttribute("noname"));
 	EXPECT_STREQ(root.getAttributeValue("string"), "text");
 	EXPECT_STREQ(root.getAttributeValue("integer"), "42");
 	EXPECT_STREQ(root.getAttributeValue("double"), "42.24");
+	EXPECT_EQ(root.getAttributeValue("none"), nullptr);
+}
+
+
+TEST(XMLNodeTest, attributes2) {
+	XMLElement root("root");
+	root.addAttributes({{"attr1", "val1"}, {"attr2", "val2"}, {"attr3", "val3"}});
+	EXPECT_TRUE(root.empty());
+	EXPECT_TRUE(root.hasAttribute("attr1"));
+	EXPECT_TRUE(root.hasAttribute("attr2"));
+	EXPECT_TRUE(root.hasAttribute("attr3"));
+	EXPECT_FALSE(root.hasAttribute("noname"));
+	EXPECT_STREQ(root.getAttributeValue("attr1"), "val1");
+	EXPECT_STREQ(root.getAttributeValue("attr2"), "val2");
+	EXPECT_STREQ(root.getAttributeValue("attr3"), "val3");
 	EXPECT_EQ(root.getAttributeValue("none"), nullptr);
 }
 
@@ -390,4 +406,28 @@ TEST(XMLNodeTest, cdata) {
 	str = oss.str();
 	str.erase(remove(str.begin(), str.end(), '\n'), str.end());
 	EXPECT_EQ(str, "<root><element/><![CDATA[text & <text>]]></root>");
+}
+
+
+TEST(XMLNodeTest, empty) {
+	XMLElement root("root");
+	EXPECT_TRUE(root.empty());
+	EXPECT_TRUE(root.empty(true));
+	EXPECT_TRUE(root.attributes().empty());
+
+	root.append(XMLString(" \n "));
+	EXPECT_FALSE(root.empty());
+	EXPECT_TRUE(root.empty(true));
+
+	root.append(XMLString("\n"));
+	EXPECT_FALSE(root.empty());
+	EXPECT_TRUE(root.empty(true));
+
+	root.append(util::make_unique<XMLElement>("child"));
+	EXPECT_FALSE(root.empty());
+	EXPECT_FALSE(root.empty(true));
+
+	root.append(XMLString("\n"));
+	EXPECT_FALSE(root.empty());
+	EXPECT_FALSE(root.empty(true));
 }
