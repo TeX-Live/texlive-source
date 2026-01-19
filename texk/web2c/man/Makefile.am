@@ -95,8 +95,7 @@ EXTRA_DIST += $(misc_man_sources)
 misc_man_sources = \
 	amstex.man \
 	latex.man \
-	latex-dev.man \
-	pdfetex.man
+	latex-dev.man
 
 man1_links += latex-dev:pdflatex-dev \
   latex-dev:xelatex-dev \

@@ -1,3 +1,8 @@
+2026-01-19  Karl Berry  <karl@freefriends.org>
+
+	* pdfetex.man: remove, will add to pdftex.man.
+	* Makefile.am (misc_man_sources): remove here too.
+
 2025-01-11  Andreas Scherer  <https://ascherer.github.io>
 
 	* twill.man: Fix info about CONTENTS.tex.
