@@ -25,6 +25,9 @@
 #include "cstring.h"
 #include "caltest.h"  // for fieldName
 #include "charstr.h"
+#include "loctest.h" // for LocaleTest::date
+
+#include <array>
 
 #if U_PLATFORM_USES_ONLY_WIN32_API
 #include "windttst.h"
@@ -137,6 +140,8 @@ void DateFormatTest::runIndexedTest( int32_t index, UBool exec, const char* &nam
     TESTCASE_AUTO(TestHCInLocale);
     TESTCASE_AUTO(TestBogusLocale);
     TESTCASE_AUTO(TestLongLocale);
+    TESTCASE_AUTO(TestChineseCalendar23043);
+    TESTCASE_AUTO(TestAmPmLengths23114);
 
     TESTCASE_AUTO_END;
 }
@@ -1863,8 +1868,8 @@ void DateFormatTest::TestNarrowNames()
         const char *CA_DATA[] = {
             "yyyy MM dd HH:mm:ss",
 
-            "h:mm a",     "2015 01 01 10:00:00", "10:00 a.\\u00A0m.",
-            "h:mm a",     "2015 01 01 22:00:00", "10:00 p.\\u00A0m.",
+            "h:mm a",     "2015 01 01 10:00:00", "10:00 a.\\u202Fm.",
+            "h:mm a",     "2015 01 01 22:00:00", "10:00 p.\\u202Fm.",
             "h:mm aaaaa", "2015 01 01 10:00:00", "10:00 a.\\u202Fm.",
             "h:mm aaaaa", "2015 01 01 22:00:00", "10:00 p.\\u202Fm.",
         };
@@ -2725,7 +2730,7 @@ void DateFormatTest::TestTimeZoneDisplayName()
         { "en", "Australia/ACT", "2004-07-15T00:00:00Z", "z", "GMT+10", "+10:00" },
         { "en", "Australia/ACT", "2004-07-15T00:00:00Z", "zzzz", "Australian Eastern Standard Time", "+10:00" },
         { "en", "Australia/ACT", "2004-07-15T00:00:00Z", "v", "Sydney Time", "Australia/Sydney" },
-        { "en", "Australia/ACT", "2004-07-15T00:00:00Z", "vvvv", "Eastern Australia Time", "Australia/Sydney" },
+        { "en", "Australia/ACT", "2004-07-15T00:00:00Z", "vvvv", "Australian Eastern Time", "Australia/Sydney" },
         { "en", "Australia/ACT", "2004-07-15T00:00:00Z", "VVVV", "Sydney Time", "Australia/Sydney" },
 
         { "en", "Australia/Sydney", "2004-01-15T00:00:00Z", "Z", "+1100", "+11:00" },
@@ -2737,11 +2742,11 @@ void DateFormatTest::TestTimeZoneDisplayName()
         { "en", "Australia/Sydney", "2004-07-15T00:00:00Z", "z", "GMT+10", "+10:00" },
         { "en", "Australia/Sydney", "2004-07-15T00:00:00Z", "zzzz", "Australian Eastern Standard Time", "+10:00" },
         { "en", "Australia/Sydney", "2004-07-15T00:00:00Z", "v", "Sydney Time", "Australia/Sydney" },
-        { "en", "Australia/Sydney", "2004-07-15T00:00:00Z", "vvvv", "Eastern Australia Time", "Australia/Sydney" },
+        { "en", "Australia/Sydney", "2004-07-15T00:00:00Z", "vvvv", "Australian Eastern Time", "Australia/Sydney" },
         { "en", "Australia/Sydney", "2004-07-15T00:00:00Z", "VVVV", "Sydney Time", "Australia/Sydney" },
 
         { "en", "Europe/London", "2004-01-15T00:00:00Z", "Z", "+0000", "+0:00" },
-        { "en", "Europe/London", "2004-01-15T00:00:00Z", "ZZZZ", "GMT", "+0:00" },
+        { "en", "Europe/London", "2004-01-15T00:00:00Z", "ZZZZ", "GMT+00:00", "+0:00" },
         { "en", "Europe/London", "2004-01-15T00:00:00Z", "z", "GMT", "+0:00" },
         { "en", "Europe/London", "2004-01-15T00:00:00Z", "zzzz", "Greenwich Mean Time", "+0:00" },
         { "en", "Europe/London", "2004-07-15T00:00:00Z", "Z", "+0100", "+1:00" },
@@ -2778,7 +2783,7 @@ void DateFormatTest::TestTimeZoneDisplayName()
 
         // Proper CLDR primary zone support #9733
         { "en", "America/Santiago", "2013-01-01T00:00:00Z", "VVVV", "Chile Time", "America/Santiago" },
-        { "en", "Pacific/Easter", "2013-01-01T00:00:00Z", "VVVV", "Easter Time", "Pacific/Easter" },
+        { "en", "Pacific/Easter", "2013-01-01T00:00:00Z", "VVVV", "Easter Island Time", "Pacific/Easter" },
 
         // ==========
 
@@ -2852,8 +2857,8 @@ void DateFormatTest::TestTimeZoneDisplayName()
         { "de", "Australia/Sydney", "2004-07-15T00:00:00Z", "vvvv", "Ostaustralische Zeit", "Australia/Sydney" },
 
         { "de", "Europe/London", "2004-01-15T00:00:00Z", "Z", "+0000", "+0:00" },
-        { "de", "Europe/London", "2004-01-15T00:00:00Z", "ZZZZ", "GMT", "+0:00" },
-        { "de", "Europe/London", "2004-01-15T00:00:00Z", "z", "GMT", "+0:00" },
+        { "de", "Europe/London", "2004-01-15T00:00:00Z", "ZZZZ", "GMT+00:00", "+0:00" },
+        { "de", "Europe/London", "2004-01-15T00:00:00Z", "z", "GMT+0", "+0:00" },
         { "de", "Europe/London", "2004-01-15T00:00:00Z", "zzzz", "Mittlere Greenwich-Zeit", "+0:00" },
         { "de", "Europe/London", "2004-07-15T00:00:00Z", "Z", "+0100", "+1:00" },
         { "de", "Europe/London", "2004-07-15T00:00:00Z", "ZZZZ", "GMT+01:00", "+1:00" },
@@ -2956,10 +2961,10 @@ void DateFormatTest::TestTimeZoneDisplayName()
         { "zh", "Australia/Sydney", "2004-07-15T00:00:00Z", "vvvv", "\\u6fb3\\u5927\\u5229\\u4e9a\\u4e1c\\u90e8\\u65f6\\u95f4", "Australia/Sydney" },
 
         { "zh", "Europe/London", "2004-01-15T00:00:00Z", "Z", "+0000", "+0:00" },
-        { "zh", "Europe/London", "2004-01-15T00:00:00Z", "ZZZZ", "GMT", "+0:00" },
-        { "zh", "Europe/London", "2004-01-15T00:00:00Z", "z", "GMT", "+0:00" },
-        { "zh", "Europe/London", "2004-01-15T00:00:00Z", "ZZZZ", "GMT", "+0:00" },
-        { "zh", "Europe/London", "2004-01-15T00:00:00Z", "z", "GMT", "+0:00" },
+        { "zh", "Europe/London", "2004-01-15T00:00:00Z", "ZZZZ", "GMT+00:00", "+0:00" },
+        { "zh", "Europe/London", "2004-01-15T00:00:00Z", "z", "GMT+0", "+0:00" },
+        { "zh", "Europe/London", "2004-01-15T00:00:00Z", "ZZZZ", "GMT+00:00", "+0:00" },
+        { "zh", "Europe/London", "2004-01-15T00:00:00Z", "z", "GMT+0", "+0:00" },
         { "zh", "Europe/London", "2004-01-15T00:00:00Z", "zzzz", "\\u683C\\u6797\\u5C3C\\u6CBB\\u6807\\u51C6\\u65F6\\u95F4", "+0:00" },
         { "zh", "Europe/London", "2004-07-15T00:00:00Z", "Z", "+0100", "+1:00" },
         { "zh", "Europe/London", "2004-07-15T00:00:00Z", "ZZZZ", "GMT+01:00", "+1:00" },
@@ -3061,8 +3066,8 @@ void DateFormatTest::TestTimeZoneDisplayName()
         { "hi", "Australia/Sydney", "2004-07-15T00:00:00Z", "vvvv", "\\u092a\\u0942\\u0930\\u094d\\u0935\\u0940 \\u0911\\u0938\\u094d\\u091f\\u094d\\u0930\\u0947\\u0932\\u093f\\u092f\\u093e \\u0938\\u092e\\u092f", "Australia/Sydney" },
 
         { "hi", "Europe/London", "2004-01-15T00:00:00Z", "Z", "+0000", "+0:00" },
-        { "hi", "Europe/London", "2004-01-15T00:00:00Z", "ZZZZ", "GMT", "+0:00" },
-        { "hi", "Europe/London", "2004-01-15T00:00:00Z", "z", "GMT", "+0:00" },
+        { "hi", "Europe/London", "2004-01-15T00:00:00Z", "ZZZZ", "GMT+00:00", "+0:00" },
+        { "hi", "Europe/London", "2004-01-15T00:00:00Z", "z", "GMT+0", "+0:00" },
         { "hi", "Europe/London", "2004-01-15T00:00:00Z", "zzzz", "\\u0917\\u094d\\u0930\\u0940\\u0928\\u0935\\u093f\\u091a \\u092e\\u0940\\u0928 \\u091f\\u093e\\u0907\\u092e", "+0:00" },
         { "hi", "Europe/London", "2004-07-15T00:00:00Z", "Z", "+0100", "+1:00" },
         { "hi", "Europe/London", "2004-07-15T00:00:00Z", "ZZZZ", "GMT+01:00", "+1:00" },
@@ -3165,8 +3170,8 @@ void DateFormatTest::TestTimeZoneDisplayName()
         { "bg", "Australia/Sydney", "2004-07-15T00:00:00Z", "vvvv", "\\u0418\\u0437\\u0442\\u043E\\u0447\\u043D\\u043E\\u0430\\u0432\\u0441\\u0442\\u0440\\u0430\\u043B\\u0438\\u0439\\u0441\\u043A\\u043E \\u0432\\u0440\\u0435\\u043C\\u0435", "Australia/Sydney" },
 
         { "bg", "Europe/London", "2004-01-15T00:00:00Z", "Z", "+0000", "+0:00" },
-        { "bg", "Europe/London", "2004-01-15T00:00:00Z", "ZZZZ", "\\u0413\\u0440\\u0438\\u043D\\u0443\\u0438\\u0447", "+0:00" },
-        { "bg", "Europe/London", "2004-01-15T00:00:00Z", "z", "\\u0413\\u0440\\u0438\\u043D\\u0443\\u0438\\u0447", "+0:00" },
+        { "bg", "Europe/London", "2004-01-15T00:00:00Z", "ZZZZ", "\\u0413\\u0440\\u0438\\u043D\\u0443\\u0438\\u0447+00:00", "+0:00" },
+        { "bg", "Europe/London", "2004-01-15T00:00:00Z", "z", "\\u0413\\u0440\\u0438\\u043D\\u0443\\u0438\\u0447+0", "+0:00" },
         { "bg", "Europe/London", "2004-01-15T00:00:00Z", "zzzz", "\\u0421\\u0440\\u0435\\u0434\\u043d\\u043e \\u0433\\u0440\\u0438\\u043d\\u0443\\u0438\\u0447\\u043a\\u043e \\u0432\\u0440\\u0435\\u043c\\u0435", "+0:00" },
         { "bg", "Europe/London", "2004-07-15T00:00:00Z", "Z", "+0100", "+1:00" },
         { "bg", "Europe/London", "2004-07-15T00:00:00Z", "ZZZZ", "\\u0413\\u0440\\u0438\\u043D\\u0443\\u0438\\u0447+01:00", "+1:00" },
@@ -3202,14 +3207,14 @@ void DateFormatTest::TestTimeZoneDisplayName()
         { "ja", "America/Los_Angeles", "2004-01-15T00:00:00Z", "Z", "-0800", "-8:00" },
         { "ja", "America/Los_Angeles", "2004-01-15T00:00:00Z", "ZZZZ", "GMT-08:00", "-8:00" },
         { "ja", "America/Los_Angeles", "2004-01-15T00:00:00Z", "z", "GMT-8", "America/Los_Angeles" },
-        { "ja", "America/Los_Angeles", "2004-01-15T00:00:00Z", "zzzz", "\\u30a2\\u30e1\\u30ea\\u30ab\\u592a\\u5e73\\u6d0b\\u6a19\\u6e96\\u6642", "America/Los_Angeles" },
+        { "ja", "America/Los_Angeles", "2004-01-15T00:00:00Z", "zzzz", "\\u7c73\\u56fd\\u592a\\u5e73\\u6d0b\\u6a19\\u6e96\\u6642", "America/Los_Angeles" },
         { "ja", "America/Los_Angeles", "2004-07-15T00:00:00Z", "Z", "-0700", "-700" },
         { "ja", "America/Los_Angeles", "2004-07-15T00:00:00Z", "ZZZZ", "GMT-07:00", "-7:00" },
         { "ja", "America/Los_Angeles", "2004-07-15T00:00:00Z", "z", "GMT-7", "America/Los_Angeles" },
-        { "ja", "America/Los_Angeles", "2004-07-15T00:00:00Z", "zzzz", "\\u30a2\\u30e1\\u30ea\\u30ab\\u592a\\u5e73\\u6d0b\\u590f\\u6642\\u9593", "America/Los_Angeles" },
+        { "ja", "America/Los_Angeles", "2004-07-15T00:00:00Z", "zzzz", "\\u7c73\\u56fd\\u592a\\u5e73\\u6d0b\\u590f\\u6642\\u9593", "America/Los_Angeles" },
     // icu ja.txt has exemplar city for this time zone
         { "ja", "America/Los_Angeles", "2004-07-15T00:00:00Z", "v", "\\u30ED\\u30B5\\u30F3\\u30BC\\u30EB\\u30B9\\u6642\\u9593", "America/Los_Angeles" },
-        { "ja", "America/Los_Angeles", "2004-07-15T00:00:00Z", "vvvv", "\\u30A2\\u30E1\\u30EA\\u30AB\\u592A\\u5e73\\u6D0B\\u6642\\u9593", "America/Los_Angeles" },
+        { "ja", "America/Los_Angeles", "2004-07-15T00:00:00Z", "vvvv", "\\u7c73\\u56fd\\u592a\\u5e73\\u6d0b\\u6642\\u9593", "America/Los_Angeles" },
         { "ja", "America/Los_Angeles", "2004-07-15T00:00:00Z", "VVVV", "\\u30ED\\u30B5\\u30F3\\u30BC\\u30EB\\u30B9\\u6642\\u9593", "America/Los_Angeles" },
 
         { "ja", "America/Argentina/Buenos_Aires", "2004-01-15T00:00:00Z", "Z", "-0300", "-3:00" },
@@ -3270,8 +3275,8 @@ void DateFormatTest::TestTimeZoneDisplayName()
         { "ja", "Australia/Sydney", "2004-07-15T00:00:00Z", "vvvv", "\\u30AA\\u30FC\\u30B9\\u30C8\\u30E9\\u30EA\\u30A2\\u6771\\u90E8\\u6642\\u9593", "Australia/Sydney" },
 
         { "ja", "Europe/London", "2004-01-15T00:00:00Z", "Z", "+0000", "+0:00" },
-        { "ja", "Europe/London", "2004-01-15T00:00:00Z", "ZZZZ", "GMT", "+0:00" },
-        { "ja", "Europe/London", "2004-01-15T00:00:00Z", "z", "GMT", "+0:00" },
+        { "ja", "Europe/London", "2004-01-15T00:00:00Z", "ZZZZ", "GMT+00:00", "+0:00" },
+        { "ja", "Europe/London", "2004-01-15T00:00:00Z", "z", "GMT+0", "+0:00" },
         { "ja", "Europe/London", "2004-01-15T00:00:00Z", "zzzz", "\\u30B0\\u30EA\\u30CB\\u30C3\\u30B8\\u6A19\\u6E96\\u6642", "+0:00" },
         { "ja", "Europe/London", "2004-07-15T00:00:00Z", "Z", "+0100", "+1:00" },
         { "ja", "Europe/London", "2004-07-15T00:00:00Z", "ZZZZ", "GMT+01:00", "+1:00" },
@@ -3373,8 +3378,8 @@ void DateFormatTest::TestTimeZoneDisplayName()
         { "ti", "Australia/Sydney", "2004-07-15T00:00:00Z", "vvvv", "\\u1293\\u12ed \\u121d\\u1265\\u122b\\u1253\\u12ca \\u12a3\\u12cd\\u1235\\u1275\\u122b\\u120d\\u12eb \\u130d\\u12d8", "Australia/Sydney" },
 
         { "ti", "Europe/London", "2004-01-15T00:00:00Z", "Z", "+0000", "+0:00" },
-        { "ti", "Europe/London", "2004-01-15T00:00:00Z", "ZZZZ", "GMT", "+0:00" },
-        { "ti", "Europe/London", "2004-01-15T00:00:00Z", "z", "GMT", "+0:00" },
+        { "ti", "Europe/London", "2004-01-15T00:00:00Z", "ZZZZ", "GMT+00:00", "+0:00" },
+        { "ti", "Europe/London", "2004-01-15T00:00:00Z", "z", "GMT+0", "+0:00" },
         { "ti", "Europe/London", "2004-01-15T00:00:00Z", "zzzz", "GMT", "+0:00" },
         { "ti", "Europe/London", "2004-07-15T00:00:00Z", "Z", "+0100", "+1:00" },
         { "ti", "Europe/London", "2004-07-15T00:00:00Z", "ZZZZ", "GMT+01:00", "+1:00" },
@@ -4895,6 +4900,24 @@ void DateFormatTest::TestCreateInstanceForSkeleton() {
     result.remove();
     fmt->format(date(98, 5-1, 25), result, pos);
     assertEquals("format yMd", "5/25/1998", result);
+
+    UnicodeString result2;
+    fmt.adoptInstead(DateFormat::createInstanceForSkeleton(
+            "yMd", "en-u-ca-ethiopic-amete-alem", status));
+    if (!assertSuccess("Create with pattern yMd", status)) {
+        return;
+    }
+    fmt->format(date(98, 5-1, 25), result2, pos);
+    assertEquals("format yMd", "9/17/7490 AA", result2);
+
+    fmt.adoptInstead(DateFormat::createInstanceForSkeleton(
+            "uMd", "en-u-ca-ethiopic-amete-alem", status));
+    if (!assertSuccess("Create with pattern uMd", status)) {
+        return;
+    }
+    result.remove();
+    fmt->format(date(98, 5-1, 25), result, pos);
+    assertEquals("format uMd", result2, result);
 }
 
 void DateFormatTest::TestCreateInstanceForSkeletonDefault() {
@@ -5188,9 +5211,9 @@ void DateFormatTest::TestFlexibleDayPeriod() {
     sdf.applyPattern(UnicodeString("hh:mm:ss BBB"));
 
     // assertEquals("hh:mm:ss BBB | 00:00:00", "12:00:00 midnight", sdf.format(k000000, out.remove()));
-    assertEquals("hh:mm:ss BBB | 00:00:00", "12:00:00 at night", sdf.format(k000000, out.remove()));
-    assertEquals("hh:mm:ss BBB | 00:00:30", "12:00:30 at night", sdf.format(k000030, out.remove()));
-    assertEquals("hh:mm:ss BBB | 00:30:00", "12:30:00 at night", sdf.format(k003000, out.remove()));
+    assertEquals("hh:mm:ss BBB | 00:00:00", "12:00:00 in the morning", sdf.format(k000000, out.remove()));
+    assertEquals("hh:mm:ss BBB | 00:00:30", "12:00:30 in the morning", sdf.format(k000030, out.remove()));
+    assertEquals("hh:mm:ss BBB | 00:30:00", "12:30:00 in the morning", sdf.format(k003000, out.remove()));
     assertEquals("hh:mm:ss BBB | 06:00:00", "06:00:00 in the morning", sdf.format(k060000, out.remove()));
     assertEquals("hh:mm:ss BBB | 12:00:00", "12:00:00 noon", sdf.format(k120000, out.remove()));
     assertEquals("hh:mm:ss BBB | 18:00:00", "06:00:00 in the evening", sdf.format(k180000, out.remove()));
@@ -5198,27 +5221,27 @@ void DateFormatTest::TestFlexibleDayPeriod() {
     sdf.applyPattern(UnicodeString("hh:mm BBB"));
 
     // assertEquals("hh:mm BBB | 00:00:00", "12:00 midnight", sdf.format(k000000, out.remove()));
-    assertEquals("hh:mm BBB | 00:00:00", "12:00 at night", sdf.format(k000000, out.remove()));
+    assertEquals("hh:mm BBB | 00:00:00", "12:00 in the morning", sdf.format(k000000, out.remove()));
     // assertEquals("hh:mm BBB | 00:00:30", "12:00 midnight", sdf.format(k000030, out.remove()));
-    assertEquals("hh:mm BBB | 00:00:00", "12:00 at night", sdf.format(k000000, out.remove()));
-    assertEquals("hh:mm BBB | 00:30:00", "12:30 at night", sdf.format(k003000, out.remove()));
+    assertEquals("hh:mm BBB | 00:00:00", "12:00 in the morning", sdf.format(k000000, out.remove()));
+    assertEquals("hh:mm BBB | 00:30:00", "12:30 in the morning", sdf.format(k003000, out.remove()));
 
     sdf.applyPattern(UnicodeString("hh BBB"));
 
     // assertEquals("hh BBB | 00:00:00", "12 midnight", sdf.format(k000000, out.remove()));
-    assertEquals("hh BBB | 00:00:30", "12 at night", sdf.format(k000030, out.remove()));
+    assertEquals("hh BBB | 00:00:30", "12 in the morning", sdf.format(k000030, out.remove()));
     // assertEquals("hh BBB | 00:00:30", "12 midnight", sdf.format(k000030, out.remove()));
-    assertEquals("hh BBB | 00:00:30", "12 at night", sdf.format(k000030, out.remove()));
+    assertEquals("hh BBB | 00:00:30", "12 in the morning", sdf.format(k000030, out.remove()));
     // assertEquals("hh BBB | 00:30:00", "12 midnight", sdf.format(k003000, out.remove()));
-    assertEquals("hh BBB | 00:30:00", "12 at night", sdf.format(k003000, out.remove()));
+    assertEquals("hh BBB | 00:30:00", "12 in the morning", sdf.format(k003000, out.remove()));
 
     // Wide.
     sdf.applyPattern(UnicodeString("hh:mm:ss BBBB"));
 
     // assertEquals("hh:mm:ss BBBB | 00:00:00", "12:00:00 midnight", sdf.format(k000000, out.remove()));
-    assertEquals("hh:mm:ss BBBB | 00:00:00", "12:00:00 at night", sdf.format(k000000, out.remove()));
-    assertEquals("hh:mm:ss BBBB | 00:00:30", "12:00:30 at night", sdf.format(k000030, out.remove()));
-    assertEquals("hh:mm:ss BBBB | 00:30:00", "12:30:00 at night", sdf.format(k003000, out.remove()));
+    assertEquals("hh:mm:ss BBBB | 00:00:00", "12:00:00 in the morning", sdf.format(k000000, out.remove()));
+    assertEquals("hh:mm:ss BBBB | 00:00:30", "12:00:30 in the morning", sdf.format(k000030, out.remove()));
+    assertEquals("hh:mm:ss BBBB | 00:30:00", "12:30:00 in the morning", sdf.format(k003000, out.remove()));
     assertEquals("hh:mm:ss BBBB | 06:00:00", "06:00:00 in the morning", sdf.format(k060000, out.remove()));
     assertEquals("hh:mm:ss BBBB | 12:00:00", "12:00:00 noon", sdf.format(k120000, out.remove()));
     assertEquals("hh:mm:ss BBBB | 18:00:00", "06:00:00 in the evening", sdf.format(k180000, out.remove()));
@@ -5226,27 +5249,27 @@ void DateFormatTest::TestFlexibleDayPeriod() {
     sdf.applyPattern(UnicodeString("hh:mm BBBB"));
 
     // assertEquals("hh:mm BBBB | 00:00:00", "12:00 midnight", sdf.format(k000000, out.remove()));
-    assertEquals("hh:mm BBBB | 00:00:00", "12:00 at night", sdf.format(k000000, out.remove()));
+    assertEquals("hh:mm BBBB | 00:00:00", "12:00 in the morning", sdf.format(k000000, out.remove()));
     // assertEquals("hh:mm BBBB | 00:00:30", "12:00 midnight", sdf.format(k000030, out.remove()));
-    assertEquals("hh:mm BBBB | 00:00:30", "12:00 at night", sdf.format(k000030, out.remove()));
-    assertEquals("hh:mm BBBB | 00:30:00", "12:30 at night", sdf.format(k003000, out.remove()));
+    assertEquals("hh:mm BBBB | 00:00:30", "12:00 in the morning", sdf.format(k000030, out.remove()));
+    assertEquals("hh:mm BBBB | 00:30:00", "12:30 in the morning", sdf.format(k003000, out.remove()));
 
     sdf.applyPattern(UnicodeString("hh BBBB"));
 
     // assertEquals("hh BBBB | 00:00:00", "12 midnight", sdf.format(k000000, out.remove()));
-    assertEquals("hh BBBB | 00:00:00", "12 at night", sdf.format(k000000, out.remove()));
+    assertEquals("hh BBBB | 00:00:00", "12 in the morning", sdf.format(k000000, out.remove()));
     // assertEquals("hh BBBB | 00:00:30", "12 midnight", sdf.format(k000030, out.remove()));
-    assertEquals("hh BBBB | 00:00:00", "12 at night", sdf.format(k000000, out.remove()));
+    assertEquals("hh BBBB | 00:00:00", "12 in the morning", sdf.format(k000000, out.remove()));
     // assertEquals("hh BBBB | 00:80:00", "12 midnight", sdf.format(k003000, out.remove()));
-    assertEquals("hh BBBB | 00:00:00", "12 at night", sdf.format(k000000, out.remove()));
+    assertEquals("hh BBBB | 00:00:00", "12 in the morning", sdf.format(k000000, out.remove()));
 
     // Narrow.
     sdf.applyPattern(UnicodeString("hh:mm:ss BBBBB"));
 
     // assertEquals("hh:mm:ss BBBBB | 00:00:00", "12:00:00 mi", sdf.format(k000000, out.remove()));
-    assertEquals("hh:mm:ss BBBBB | 00:00:00", "12:00:00 at night", sdf.format(k000000, out.remove()));
-    assertEquals("hh:mm:ss BBBBB | 00:00:30", "12:00:30 at night", sdf.format(k000030, out.remove()));
-    assertEquals("hh:mm:ss BBBBB | 00:30:00", "12:30:00 at night", sdf.format(k003000, out.remove()));
+    assertEquals("hh:mm:ss BBBBB | 00:00:00", "12:00:00 in the morning", sdf.format(k000000, out.remove()));
+    assertEquals("hh:mm:ss BBBBB | 00:00:30", "12:00:30 in the morning", sdf.format(k000030, out.remove()));
+    assertEquals("hh:mm:ss BBBBB | 00:30:00", "12:30:00 in the morning", sdf.format(k003000, out.remove()));
     assertEquals("hh:mm:ss BBBBB | 06:00:00", "06:00:00 in the morning", sdf.format(k060000, out.remove()));
     assertEquals("hh:mm:ss BBBBB | 12:00:00", "12:00:00 n", sdf.format(k120000, out.remove()));
     assertEquals("hh:mm:ss BBBBB | 18:00:00", "06:00:00 in the evening", sdf.format(k180000, out.remove()));
@@ -5254,19 +5277,19 @@ void DateFormatTest::TestFlexibleDayPeriod() {
     sdf.applyPattern(UnicodeString("hh:mm BBBBB"));
 
     // assertEquals("hh:mm BBBBB | 00:00:00", "12:00 mi", sdf.format(k000000, out.remove()));
-    assertEquals("hh:mm BBBBB | 00:00:00", "12:00 at night", sdf.format(k000000, out.remove()));
+    assertEquals("hh:mm BBBBB | 00:00:00", "12:00 in the morning", sdf.format(k000000, out.remove()));
     // assertEquals("hh:mm BBBBB | 00:00:30", "12:00 mi", sdf.format(k000030, out.remove()));
-    assertEquals("hh:mm BBBBB | 00:00:30", "12:00 at night", sdf.format(k000030, out.remove()));
-    assertEquals("hh:mm BBBBB | 00:30:00", "12:30 at night", sdf.format(k003000, out.remove()));
+    assertEquals("hh:mm BBBBB | 00:00:30", "12:00 in the morning", sdf.format(k000030, out.remove()));
+    assertEquals("hh:mm BBBBB | 00:30:00", "12:30 in the morning", sdf.format(k003000, out.remove()));
 
     sdf.applyPattern(UnicodeString("hh BBBBB"));
 
     // assertEquals("hh BBBBB | 00:00:00", "12 mi", sdf.format(k000000, out.remove()));
-    assertEquals("hh BBBBB | 00:00:00", "12 at night", sdf.format(k000000, out.remove()));
+    assertEquals("hh BBBBB | 00:00:00", "12 in the morning", sdf.format(k000000, out.remove()));
     // assertEquals("hh BBBBB | 00:00:30", "12 mi", sdf.format(k000030, out.remove()));
-    assertEquals("hh BBBBB | 00:00:30", "12 at night", sdf.format(k000030, out.remove()));
+    assertEquals("hh BBBBB | 00:00:30", "12 in the morning", sdf.format(k000030, out.remove()));
     // assertEquals("hh BBBBB | 00:30:00", "12 mi", sdf.format(k003000, out.remove()));
-    assertEquals("hh BBBBB | 00:30:00", "12 at night", sdf.format(k003000, out.remove()));
+    assertEquals("hh BBBBB | 00:30:00", "12 in the morning", sdf.format(k003000, out.remove()));
 }
 
 void DateFormatTest::TestDayPeriodWithLocales() {
@@ -5343,9 +5366,9 @@ void DateFormatTest::TestDayPeriodWithLocales() {
 
     // assertEquals("hh:mm:ss BBBB | 00:00:00 | en_US", "12:00:00 midnight",
     //     sdf.format(k000000, out.remove()));
-    assertEquals("hh:mm:ss BBBB | 00:00:00 | en_US", "12:00:00 at night",
+    assertEquals("hh:mm:ss BBBB | 00:00:00 | en_US", "12:00:00 in the morning",
          sdf.format(k000000, out.remove()));
-    assertEquals("hh:mm:ss BBBB | 01:00:00 | en_US", "01:00:00 at night",
+    assertEquals("hh:mm:ss BBBB | 01:00:00 | en_US", "01:00:00 in the morning",
         sdf.format(k010000, out.remove()));
     assertEquals("hh:mm:ss BBBB | 12:00:00 | en_US", "12:00:00 noon",
         sdf.format(k120000, out.remove()));
@@ -5373,7 +5396,7 @@ void DateFormatTest::TestDayPeriodWithLocales() {
     sdf.setTimeZone(*tz);
 
     sdf.applyPattern(UnicodeString("hh:mm:ss BBBB"));
-    assertEquals("hh:mm:ss BBBB | 01:00:00 | en@calendar=buddhist", "01:00:00 at night",
+    assertEquals("hh:mm:ss BBBB | 01:00:00 | en@calendar=buddhist", "01:00:00 in the morning",
         sdf.format(k010000, out.remove()));
 }
 
@@ -5413,7 +5436,7 @@ void DateFormatTest::TestMinuteSecondFieldsInOddPlaces() {
 
     // assertEquals("hh:mm 'ss' BBBB | 00:00:30", "12:00 ss midnight",
     //     sdf.format(k000030, out.remove()));
-    assertEquals("hh:mm 'ss' BBBB | 00:00:30", "12:00 ss at night",
+    assertEquals("hh:mm 'ss' BBBB | 00:00:30", "12:00 ss in the morning",
         sdf.format(k000030, out.remove()));
     assertEquals("hh:mm 'ss' BBBB | 06:00:30", "06:00 ss in the morning",
         sdf.format(k060030, out.remove()));
@@ -5432,7 +5455,7 @@ void DateFormatTest::TestMinuteSecondFieldsInOddPlaces() {
 
     // assertEquals("hh 'mm ss' BBBB | 00:30:00", "12 mm ss midnight",
     //     sdf.format(k003000, out.remove()));
-    assertEquals("hh 'mm ss' BBBB | 00:30:00", "12 mm ss at night",
+    assertEquals("hh 'mm ss' BBBB | 00:30:00", "12 mm ss in the morning",
         sdf.format(k003000, out.remove()));
     assertEquals("hh 'mm ss' BBBB | 06:30:00", "06 mm ss in the morning",
         sdf.format(k063000, out.remove()));
@@ -5453,28 +5476,28 @@ void DateFormatTest::TestMinuteSecondFieldsInOddPlaces() {
 
     // assertEquals("BBBB hh:mm:ss | 00:00:00", "midnight 12:00:00",
     //     sdf.format(k000000, out.remove()));
-    assertEquals("BBBB hh:mm:ss | 00:00:00", "at night 12:00:00",
+    assertEquals("BBBB hh:mm:ss | 00:00:00", "in the morning 12:00:00",
         sdf.format(k000000, out.remove()));
-    assertEquals("BBBB hh:mm:ss | 00:00:30", "at night 12:00:30",
+    assertEquals("BBBB hh:mm:ss | 00:00:30", "in the morning 12:00:30",
         sdf.format(k000030, out.remove()));
-    assertEquals("BBBB hh:mm:ss | 00:30:00", "at night 12:30:00",
+    assertEquals("BBBB hh:mm:ss | 00:30:00", "in the morning 12:30:00",
         sdf.format(k003000, out.remove()));
 
     // Confirm applyPattern() reparses the pattern string.
     sdf.applyPattern(UnicodeString("BBBB hh"));
     // assertEquals("BBBB hh | 00:00:30", "midnight 12",
     //     sdf.format(k000030, out.remove()));
-    assertEquals("BBBB hh | 00:00:30", "at night 12",
+    assertEquals("BBBB hh | 00:00:30", "in the morning 12",
          sdf.format(k000030, out.remove()));
 
     sdf.applyPattern(UnicodeString("BBBB hh:mm:'ss'"));
     // assertEquals("BBBB hh:mm:'ss' | 00:00:30", "midnight 12:00:ss",
     //     sdf.format(k000030, out.remove()));
-    assertEquals("BBBB hh | 00:00:30", "at night 12:00:ss",
+    assertEquals("BBBB hh | 00:00:30", "in the morning 12:00:ss",
         sdf.format(k000030, out.remove()));
 
     sdf.applyPattern(UnicodeString("BBBB hh:mm:ss"));
-    assertEquals("BBBB hh:mm:ss | 00:00:30", "at night 12:00:30",
+    assertEquals("BBBB hh:mm:ss | 00:00:30", "in the morning 12:00:30",
         sdf.format(k000030, out.remove()));
 }
 
@@ -5483,7 +5506,6 @@ void DateFormatTest::TestDayPeriodParsing() {
     UDate k000000 = 1447372800000.0;
     UDate k003700 = 1447375020000.0;
     UDate k010000 = 1447376400000.0;
-    UDate k013000 = 1447378200000.0;
     UDate k030000 = 1447383600000.0;
     UDate k090000 = 1447405200000.0;
     UDate k120000 = 1447416000000.0;
@@ -5494,6 +5516,7 @@ void DateFormatTest::TestDayPeriodParsing() {
     UDate k193000 = 1447443000000.0;
     UDate k200000 = 1447444800000.0;
     UDate k210000 = 1447448400000.0;
+    UDate k223000 = 1447453800000.0;
 
     UErrorCode errorCode = U_ZERO_ERROR;
     SimpleDateFormat sdf(UnicodeString(), errorCode);
@@ -5517,7 +5540,7 @@ void DateFormatTest::TestDayPeriodParsing() {
     assertEquals("yyyy-MM-dd B | 2015-11-13 in the evening",
         k193000, sdf.parse(UnicodeString("2015-11-13 in the evening"), errorCode));
     assertEquals("yyyy-MM-dd B | 2015-11-13 at night",
-        k013000, sdf.parse(UnicodeString("2015-11-13 at night"), errorCode));
+        k223000, sdf.parse(UnicodeString("2015-11-13 at night"), errorCode));
 
     // If time and day period are consistent with each other then time is parsed accordingly.
     sdf.applyPattern(UnicodeString("yyyy-MM-dd hh:mm B"));
@@ -5525,8 +5548,8 @@ void DateFormatTest::TestDayPeriodParsing() {
         k000000, sdf.parse(UnicodeString("2015-11-13 12:00 midnight"), errorCode));
     assertEquals("yyyy-MM-dd hh:mm B | 2015-11-13 12:00 noon",
         k120000, sdf.parse(UnicodeString("2015-11-13 12:00 noon"), errorCode));
-    assertEquals("yyyy-MM-dd hh:mm B | 2015-11-13 01:00 at night",
-        k010000, sdf.parse(UnicodeString("2015-11-13 01:00 at night"), errorCode));
+    assertEquals("yyyy-MM-dd hh:mm B | 2015-11-13 01:00 in the morning",
+        k010000, sdf.parse(UnicodeString("2015-11-13 01:00 in the morning"), errorCode));
     assertEquals("yyyy-MM-dd hh:mm B | 2015-11-13 01:00 in the afternoon",
         k130000, sdf.parse(UnicodeString("2015-11-13 01:00 in the afternoon"), errorCode));
     assertEquals("yyyy-MM-dd hh:mm B | 2015-11-13 09:00 in the morning",
@@ -5580,8 +5603,8 @@ void DateFormatTest::TestDayPeriodParsing() {
         k000000, sdf.parse(UnicodeString("2015-11-13 12:00 midnight"), errorCode));
     assertEquals("yyyy-MM-dd HH:mm B | 2015-11-13 12:00 noon",
         k120000, sdf.parse(UnicodeString("2015-11-13 12:00 noon"), errorCode));
-    assertEquals("yyyy-MM-dd HH:mm B | 2015-11-13 01:00 at night",
-        k010000, sdf.parse(UnicodeString("2015-11-13 01:00 at night"), errorCode));
+    assertEquals("yyyy-MM-dd HH:mm B | 2015-11-13 01:00 in the morning",
+        k010000, sdf.parse(UnicodeString("2015-11-13 01:00 in the morning"), errorCode));
     assertEquals("yyyy-MM-dd HH:mm B | 2015-11-13 01:00 in the afternoon",
         k130000, sdf.parse(UnicodeString("2015-11-13 01:00 in the afternoon"), errorCode));
     assertEquals("yyyy-MM-dd HH:mm B | 2015-11-13 09:00 in the morning",
@@ -5930,6 +5953,88 @@ void DateFormatTest::TestHCInLocale() {
         }
         i++;
     }
+}
+void DateFormatTest::TestChineseCalendar23043() {
+  IcuTestErrorCode status(*this, "TestChineseCalendar23043");
+  Locale l("zh@calendar=chinese");
+  SimpleDateFormat sdf(u"r年MMMd", l, status);
+  sdf.adoptTimeZone(TimeZone::createTimeZone(u"Europe/Moscow"));
+  UDate d = 3363150585600000;
+  UnicodeString appendTo;
+  sdf.format(d, appendTo, nullptr, status);
+  status.expectErrorAndReset(U_ILLEGAL_ARGUMENT_ERROR);
+}
+
+void DateFormatTest::TestAmPmLengths23114() {
+    IcuTestErrorCode status(*this, "TestAmPmLengths23114");
+
+    Locale locale(Locale::forLanguageTag("th", status));
+    status.assertSuccess();
+
+    LocalPointer<SimpleDateFormat> sdf(
+        new SimpleDateFormat(u"h:mm:ss a", locale, status),
+        status
+    );
+    status.assertSuccess();
+    UDate sampleDate = LocaleTest::date(99, 9, 13, 23, 58, 59);
+    UnicodeString formatResult;
+    sdf->format(sampleDate, formatResult);
+
+    assertEquals("SimpleDateFormat abbreviated", u"11:58:59 PM", formatResult);
+
+    sdf.adoptInsteadAndCheckErrorCode(
+        new SimpleDateFormat(u"h:mm:ss aaaa", locale, status),
+        status
+    );
+    status.assertSuccess();
+    formatResult.remove();
+    sdf->format(sampleDate, formatResult);
+
+    assertEquals("SimpleDateFormat wide", u"11:58:59 หลังเที่ยง", formatResult);
+
+    sdf.adoptInsteadAndCheckErrorCode(
+        new SimpleDateFormat(u"h:mm:ss aaaaa", locale, status),
+        status
+    );
+    status.assertSuccess();
+    formatResult.remove();
+    sdf->format(sampleDate, formatResult);
+
+    assertEquals("SimpleDateFormat narrow", u"11:58:59 p", formatResult);
+
+    LocalPointer<DateFormatSymbols> dfs(
+        new DateFormatSymbols(locale, status),
+        status
+    );
+    status.assertSuccess();
+    int32_t countAmPm = 0;
+    const UnicodeString* borrowedAmPm = dfs->getAmPmStrings(countAmPm);
+
+    assertEquals("DateFormatSymbols default", "AM", borrowedAmPm[0]);
+
+    std::array<UnicodeString, 2> amPmStrings = { u"am!", u"pm!" };
+
+    DateFormatSymbols::DtContextType ignoredContext = DateFormatSymbols::FORMAT;
+    borrowedAmPm = dfs->getAmPmStrings(countAmPm, ignoredContext, DateFormatSymbols::ABBREVIATED);
+    assertEquals("DateFormatSymbols abbreviated", u"AM", borrowedAmPm[0]);
+
+    dfs->setAmPmStrings(amPmStrings.data(), 2, ignoredContext, DateFormatSymbols::ABBREVIATED);
+    borrowedAmPm = dfs->getAmPmStrings(countAmPm, ignoredContext, DateFormatSymbols::ABBREVIATED);
+    assertEquals("DateFormatSymbols abbreviated after set", u"am!", borrowedAmPm[0]);
+
+    borrowedAmPm = dfs->getAmPmStrings(countAmPm, ignoredContext, DateFormatSymbols::WIDE);
+    assertEquals("DateFormatSymbols wide", u"ก่อนเที่ยง", borrowedAmPm[0]);
+
+    dfs->setAmPmStrings(amPmStrings.data(), 2, ignoredContext, DateFormatSymbols::WIDE);
+    borrowedAmPm = dfs->getAmPmStrings(countAmPm, ignoredContext, DateFormatSymbols::WIDE);
+    assertEquals("DateFormatSymbols wide after set", u"am!", borrowedAmPm[0]);
+
+    borrowedAmPm = dfs->getAmPmStrings(countAmPm, ignoredContext, DateFormatSymbols::NARROW);
+    assertEquals("DateFormatSymbols narrow", u"a", borrowedAmPm[0]);
+
+    dfs->setAmPmStrings(amPmStrings.data(), 2, ignoredContext, DateFormatSymbols::NARROW);
+    borrowedAmPm = dfs->getAmPmStrings(countAmPm, ignoredContext, DateFormatSymbols::NARROW);
+    assertEquals("DateFormatSymbols narrow after set", u"am!", borrowedAmPm[0]);
 }
 
 #endif /* #if !UCONFIG_NO_FORMATTING */

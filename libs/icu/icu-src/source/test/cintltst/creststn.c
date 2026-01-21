@@ -2185,7 +2185,7 @@ static void TestFallback(void)
         UResourceBundle* myResB = ures_open(NULL,"no_NO_NY",&err);
         UResourceBundle* resLocID = ures_getByKey(myResB, "Version", NULL, &err);
         const UChar* version = NULL;
-        static const UChar versionStr[] = u"46"; // 46 in nn_NO or in a parent bundle/root
+        static const UChar versionStr[] = u"48"; // 48 in nn_NO or in a parent bundle/root
 
         if(U_FAILURE(err)) {
             log_data_err("Expected success when trying to test no_NO_NY aliased to nn_NO for Version "
@@ -3035,7 +3035,6 @@ tres_getString(const UResourceBundle *resB,
     const char *s8;
     UChar32 c16, c8;
     int32_t length16, length8, i16, i8;
-    UBool forceCopy;
 
     if(length == NULL) {
         length = &length16;
@@ -3053,7 +3052,7 @@ tres_getString(const UResourceBundle *resB,
     length16 = *length;
 
     /* try the UTF-8 variant of ures_getStringXYZ() */
-    for(forceCopy = false; forceCopy <= true; ++forceCopy) {
+    for (int8_t forceCopy = 0; forceCopy <= 1; ++forceCopy) {
         p8 = buffer8;
         length8 = (int32_t)sizeof(buffer8);
         if(idx >= 0) {

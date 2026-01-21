@@ -35,7 +35,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <CompileAs>Default</CompileAs>
-      <AdditionalIncludeDirectories>..\..\..\include;..\..\common;..\toolutil;..\ctestfw;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\common;..\toolutil;..\ctestfw;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeaderOutputFile>$(OutDir)/gentest.pch</PrecompiledHeaderOutputFile>
       <AssemblerListingLocation>$(OutDir)/</AssemblerListingLocation>
       <ObjectFileName>$(OutDir)/</ObjectFileName>
@@ -51,7 +51,6 @@
   <!-- Options that are common to all 'Debug' project configurations -->
   <ItemDefinitionGroup Condition="'$(Configuration)'=='Debug'">
     <ClCompile>
-      <BrowseInformation>true</BrowseInformation>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <Link>

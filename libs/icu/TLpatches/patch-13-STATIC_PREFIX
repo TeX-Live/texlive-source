@@ -1,7 +1,7 @@
 	No `s' for STATIC_PREFIX.
 
---- source/config/Makefile.inc.in~	2024-10-24 11:24:00.000000000 -0700
-+++ source/config/Makefile.inc.in	2024-10-27 14:32:34.140056410 -0700
+--- source/config/Makefile.inc.in~	2026-01-08 11:02:41.000000000 -0800
++++ source/config/Makefile.inc.in	2026-01-21 14:37:08.830531431 -0800
 @@ -47,5 +47,5 @@
  
  # Static library prefix and file extension

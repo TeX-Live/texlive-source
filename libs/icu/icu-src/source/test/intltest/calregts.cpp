@@ -1561,7 +1561,7 @@ void CalendarRegressionTest::Test13745()
         errln("%s:%d Failure setting INT32_MAX+1 change on calendar: %s\n", __FILE__, __LINE__, u_errorName(status));
         return;
     }
-    assertEquals("getGregorianChange()", static_cast<double>(INT32_MAX) * MILLIS_IN_DAY, cal->getGregorianChange());
+    assertEquals("getGregorianChange()", INT32_MAX * MILLIS_IN_DAY, cal->getGregorianChange());
 
     // test underflow
     cal->setGregorianChange((static_cast<double>(INT32_MIN) - 1.0) * MILLIS_IN_DAY, status);
@@ -2433,7 +2433,7 @@ void CalendarRegressionTest::TestT5555()
 
     // Should be set to Wednesday, February 24, 2010
     if (U_FAILURE(ec) || yy != 2010 || mm != UCAL_FEBRUARY || dd != 24 || ee != UCAL_WEDNESDAY) {
-        errln("FAIL: got date %4d/%02d/%02d, expected 210/02/24: ", yy, mm + 1, dd);
+        errln("FAIL: got date %4d/%02d/%02d (wd=%d), expected 2010/02/24: ", yy, mm + 1, dd, ee);
     }
     delete cal;
 }

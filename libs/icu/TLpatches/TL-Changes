@@ -1,9 +1,9 @@
 Changes applied to the icu tree as obtained from:
-  github.com/unicode-org/icu/releases/download/release-76-1/icu4c-76_1-src.tgz
+  github.com/unicode-org/icu/releases/download/release-78.2/icu4c-78.2-sources.tgz
 
 cd $Build/source/libs/icu       # for whatever $Build directory
 # update version.ac
-tar xf /tmp/icu4c-*-src.tgz     # check that unpacks into icu/*
+tar xf /tmp/icu4c-*-sources.tgz # first check that it unpacks into icu/*
 mv icu-src icu-prev
 mv icu icu-src
 cd icu-src
@@ -21,18 +21,18 @@ svn status | sed -n 's/^\!//p'  # rerun, should be empty now
 
 # update generic files (still in icu-src):
 aux=$Build/source/build-aux
-cp -p $aux/config.guess $aux/config.sub $aux/install-sh source
+\cp -pf $aux/config.guess $aux/config.sub $aux/install-sh source
 
 # patch --backup -p0 for all ../TLpatches/patch-* files.
-# Save original (since not committed yet)
-# and diff -u2 after each to update patch-* file.
+# We use --backup to save the original version (since not committed yet).
+# diff -u2 after each to update patch-* file.
 # Don't lose our leading comments.
 
 # autoreconf in the TL directory (Build/source/libs/icu); 
 # don't run autoreconf in the icu-src/source/ directory, it fails due to
-# missing pkg-config prerequisites.
+# missing pkg-config prerequisites, and isn't what we want anyway.
 # 
-# For ICU 76, C++ 17 is required. To build on an older GNU/Linux, such
+# As of ICU 76, C++-17 is required. To build on an older GNU/Linux, such
 # as tug.org, yum install gcc-toolset-13.
 # 
 # rebuild; must rerun configure (not just config.status),
@@ -42,7 +42,7 @@ cp -p $aux/config.guess $aux/config.sub $aux/install-sh source
 # Assuming all seems ok, reduce size of source/data/in/icudt*.dat
 # to decrease data segment size, e.g., for old BSD.  First, check
 # that we successfully built the full .dat:
-ver=76
+ver=78
 srcdat=$Build/source/libs/icu/icu-src/source/data/in/icudt${ver}l.dat 
 cd $Work/libs/icu/icu-build/data/out/build/icudt${ver}l
 indat=../../tmp/icudt${ver}l.dat

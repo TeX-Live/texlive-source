@@ -7,6 +7,8 @@
 #include "unicode/rep.h"
 #include "unicode/utypes.h"
 
+#if !UCONFIG_NO_NORMALIZATION
+
 #if !UCONFIG_NO_FORMATTING
 
 #if !UCONFIG_NO_MF2
@@ -91,6 +93,7 @@ private:
 
     void testHighLoneSurrogate(void);
     void testLowLoneSurrogate(void);
+    void testLoneSurrogateInQuotedLiteral(void);
 }; // class TestMessageFormat2
 
 U_NAMESPACE_BEGIN
@@ -186,5 +189,7 @@ U_NAMESPACE_END
 #endif /* #if !UCONFIG_NO_MF2 */
 
 #endif /* #if !UCONFIG_NO_FORMATTING */
+
+#endif /* #if !UCONFIG_NO_NORMALIZATION */
 
 #endif

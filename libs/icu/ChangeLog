@@ -1,3 +1,7 @@
+2026-01-21  Karl Berry  <karl@freefriends.org>
+
+	* Import 78.2.
+
 2024-10-30  Karl Berry  <karl@freefriends.org>
 
 	* icu-src/source/common/uposixdefs.h: undo #define of

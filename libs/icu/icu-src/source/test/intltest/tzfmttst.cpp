@@ -171,14 +171,6 @@ TimeZoneFormatTest::TestTimeZoneRoundTrip() {
 
     // Run the roundtrip test
     for (int32_t locidx = 0; locidx < nLocales; locidx++) {
-        UnicodeString localGMTString;
-        SimpleDateFormat gmtFmt(UnicodeString("ZZZZ"), LOCALES[locidx], status);
-        if (U_FAILURE(status)) {
-            dataerrln("Error creating SimpleDateFormat - %s", u_errorName(status));
-            continue;
-        }
-        gmtFmt.setTimeZone(*TimeZone::getGMT());
-        gmtFmt.format(0.0, localGMTString);
 
         for (int32_t patidx = 0; patidx < UPRV_LENGTHOF(PATTERNS); patidx++) {
             SimpleDateFormat* sdf = new SimpleDateFormat(UnicodeString(PATTERNS[patidx]), LOCALES[locidx], status);
@@ -321,7 +313,7 @@ TimeZoneFormatTest::TestTimeZoneRoundTrip() {
                             }
                             isOffsetFormat = (numDigits > 0);
                         }
-                        if (isOffsetFormat || tzstr == localGMTString) {
+                        if (isOffsetFormat) {
                             // Localized GMT or ISO: total offset (raw + dst) must be preserved.
                             int32_t inOffset = inRaw + inDst;
                             int32_t outOffset = outRaw + outDst;
@@ -338,10 +330,6 @@ TimeZoneFormatTest::TestTimeZoneRoundTrip() {
                         } else {
                             // Specific or generic: raw offset must be preserved.
                             if (inRaw != outRaw) {
-                            	if ((strcmp(LOCALES[locidx].getName(), "tg") == 0 || strcmp(LOCALES[locidx].getName(), "tg_TJ") == 0) 
-                            		&& logKnownIssue("ICU-22857", "Time zone round test fails for tg/tg_TJ")) {
-                            		continue;
-                            	}
                                 errln(UnicodeString("Raw offset round trip failed; tz=") + *tzid
                                     + ", locale=" + LOCALES[locidx].getName() + ", pattern=" + PATTERNS[patidx]
                                     + ", time=" + DATES[datidx] + ", str=" + tzstr
@@ -533,9 +521,9 @@ TimeZoneFormatTest::TestTimeRoundTrip() {
 
 // TimeZoneFormatTest::RunTimeRoundTripTests()
 //    This function loops, running time zone format round trip test cases until there are no more, then returns.
-//    Threading: multiple invocations of this function are started in parallel 
+//    Threading: multiple invocations of this function are started in parallel
 //               by TimeZoneFormatTest::TestTimeRoundTrip()
-//    
+//
 void TimeZoneFormatTest::RunTimeRoundTripTests(int32_t threadNumber) {
     UErrorCode status = U_ZERO_ERROR;
     UBool REALLY_VERBOSE = false;
@@ -574,10 +562,9 @@ void TimeZoneFormatTest::RunTimeRoundTripTests(int32_t threadNumber) {
     int32_t patidx = -1;
 
     while (gLocaleData->nextTest(locidx, patidx)) {
-
         UnicodeString pattern(BASEPATTERN);
         pattern.append(" ").append(PATTERNS[patidx]);
-        logln("    Thread %d, Locale %s, Pattern %s", 
+        logln("    Thread %d, Locale %s, Pattern %s",
                 threadNumber, gLocaleData->locales[locidx].getName(), CStr(pattern)());
 
         SimpleDateFormat *sdf = new SimpleDateFormat(pattern, gLocaleData->locales[locidx], status);
@@ -596,6 +583,13 @@ void TimeZoneFormatTest::RunTimeRoundTripTests(int32_t threadNumber) {
         timer = Calendar::getNow();
 
         while ((tzid = tzids->snext(status))) {
+        	// NOTE: This test only fails in the exhaustive tests.  If you take out this check,
+        	// make sure you run the exhaustive tests!
+            if (logKnownIssue("CLDR-18924", "Time round trip issues for Pacific/Apia in various locales" ) &&
+                (tzid->compare(u"Pacific/Apia", -1) == 0)) {
+                continue;
+            }
+
             if (uprv_strcmp(PATTERNS[patidx], "V") == 0) {
                 // Some zones do not have short ID assigned, such as Asia/Riyadh87.
                 // The time roundtrip will fail for such zones with pattern "V" (short zone ID).
@@ -612,12 +606,6 @@ void TimeZoneFormatTest::RunTimeRoundTripTests(int32_t threadNumber) {
                     || tzid->indexOf(SYSTEMV_SLASH, -1, 0) >= 0 || tzid->indexOf(RIYADH8, -1, 0) >= 0) {
                     continue;
                 }
-            }
-
-            if ((*tzid == "Pacific/Apia" || *tzid == "Pacific/Midway" || *tzid == "Pacific/Pago_Pago")
-                    && uprv_strcmp(PATTERNS[patidx], "vvvv") == 0
-                    && logKnownIssue("11052", "Ambiguous zone name - Samoa Time")) {
-                continue;
             }
 
             BasicTimeZone *tz = dynamic_cast<BasicTimeZone*>(TimeZone::createTimeZone(*tzid));
@@ -1088,7 +1076,7 @@ TimeZoneFormatTest::TestFormat() {
     const FormatTestData DATA[] = {
         {
             "en",
-            "America/Los_Angeles", 
+            "America/Los_Angeles",
             dateJan,
             UTZFMT_STYLE_GENERIC_LOCATION,
             "Los Angeles Time",
@@ -1187,7 +1175,7 @@ TimeZoneFormatTest::TestFormatTZDBNames() {
     const FormatTestData DATA[] = {
         {
             "en",
-            "America/Chicago", 
+            "America/Chicago",
             dateJan,
             UTZFMT_STYLE_SPECIFIC_SHORT,
             "CST",
@@ -1195,7 +1183,7 @@ TimeZoneFormatTest::TestFormatTZDBNames() {
         },
         {
             "en",
-            "Asia/Shanghai", 
+            "Asia/Shanghai",
             dateJan,
             UTZFMT_STYLE_SPECIFIC_SHORT,
             "CST",
@@ -1203,7 +1191,7 @@ TimeZoneFormatTest::TestFormatTZDBNames() {
         },
         {
             "zh_Hans",
-            "Asia/Shanghai", 
+            "Asia/Shanghai",
             dateJan,
             UTZFMT_STYLE_SPECIFIC_SHORT,
             "CST",

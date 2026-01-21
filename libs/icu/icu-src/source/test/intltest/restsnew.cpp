@@ -325,7 +325,7 @@ NewResourceBundleTest::TestConstruction()
     char *versionID1 = new char[1 + strlen(U_ICU_VERSION) + strlen(version1)]; // + 1 for zero byte
     char *versionID2 = new char[1 + strlen(U_ICU_VERSION) + strlen(version2)]; // + 1 for zero byte
 
-    strcpy(versionID1, "45.0");  // hardcoded, please change if the default.txt file or ResourceBundle::kVersionSeparater is changed.
+    strcpy(versionID1, "48.0");  // hardcoded, please change if the default.txt file or ResourceBundle::kVersionSeparater is changed.
 
     strcpy(versionID2, "55.0");  // hardcoded, please change if the te_IN.txt file or ResourceBundle::kVersionSeparater is changed.
 
@@ -1489,7 +1489,7 @@ void NewResourceBundleTest::TestTrace() {
 
     assertEquals("Start position stability coverage", 0x3000, UTRACE_UDATA_START);
 
-    const void* context;
+    const void* context = nullptr;
     utrace_setFunctions(context, nullptr, nullptr, traceData);
     utrace_setLevel(UTRACE_VERBOSE);
 

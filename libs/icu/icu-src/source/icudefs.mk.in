@@ -40,8 +40,9 @@ cross_buildroot = @cross_buildroot@
 # Package information
 
 PACKAGE_ICU_DESCRIPTION = "International Components for Unicode"
-PACKAGE_ICU_URL = "http://icu-project.org"
+PACKAGE_ICU_URL = "https://icu.unicode.org"
 PACKAGE = @PACKAGE@
+PACKAGE_VERSION = @PACKAGE_VERSION@
 VERSION = @VERSION@
 UNICODE_VERSION = @UNICODE_VERSION@
 SO_TARGET_VERSION = @LIB_VERSION@
@@ -208,13 +209,13 @@ LIBICU = $(LIBPREFIX)$(ICUPREFIX)
 
 ## If we can't use the shared libraries, use the static libraries
 ifneq ($(ENABLE_SHARED),YES)
-STATIC_PREFIX_WHEN_USED = 
+STATIC_PREFIX_WHEN_USED = s
 else
 STATIC_PREFIX_WHEN_USED = 
 endif
 
 # Static library prefix and file extension
-STATIC_PREFIX = 
+STATIC_PREFIX = s
 LIBSICU = $(LIBPREFIX)$(STATIC_PREFIX)$(ICUPREFIX)
 A = a
 SOBJ = $(SO)

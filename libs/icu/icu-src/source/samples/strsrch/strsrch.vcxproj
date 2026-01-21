@@ -36,7 +36,7 @@
     </Midl>
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\common;..\..\i18n;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <PrecompiledHeader>
       </PrecompiledHeader>
@@ -44,7 +44,6 @@
       <AssemblerListingLocation>.\x86\Debug/</AssemblerListingLocation>
       <ObjectFileName>.\x86\Debug/</ObjectFileName>
       <ProgramDataBaseFileName>.\x86\Debug/</ProgramDataBaseFileName>
-      <BrowseInformation>true</BrowseInformation>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <CompileAs>Default</CompileAs>
@@ -66,7 +65,7 @@
       <TypeLibraryName>.\x64\Debug/strsrch.tlb</TypeLibraryName>
     </Midl>
     <ClCompile>
-      <AdditionalIncludeDirectories>..\..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\common;..\..\i18n;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <PrecompiledHeader>
       </PrecompiledHeader>
@@ -74,7 +73,6 @@
       <AssemblerListingLocation>.\x64\Debug/</AssemblerListingLocation>
       <ObjectFileName>.\x64\Debug/</ObjectFileName>
       <ProgramDataBaseFileName>.\x64\Debug/</ProgramDataBaseFileName>
-      <BrowseInformation>true</BrowseInformation>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <CompileAs>Default</CompileAs>
@@ -96,7 +94,7 @@
     </Midl>
     <ClCompile>
       <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
-      <AdditionalIncludeDirectories>..\..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\common;..\..\i18n;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <PrecompiledHeader>
@@ -125,7 +123,7 @@
     </Midl>
     <ClCompile>
       <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
-      <AdditionalIncludeDirectories>..\..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\common;..\..\i18n;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <PrecompiledHeader>

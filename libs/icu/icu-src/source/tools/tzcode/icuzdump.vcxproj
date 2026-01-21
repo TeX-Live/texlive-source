@@ -53,7 +53,7 @@
     </CustomBuildStep>
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\..\..\include;..\toolutil;..\..\common;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\toolutil;..\..\common;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CRT_SECURE_NO_DEPRECATE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -64,7 +64,6 @@
       <AssemblerListingLocation>.\x86\Debug/</AssemblerListingLocation>
       <ObjectFileName>.\x86\Debug/</ObjectFileName>
       <ProgramDataBaseFileName>.\x86\Debug/</ProgramDataBaseFileName>
-      <BrowseInformation>true</BrowseInformation>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <CompileAs>Default</CompileAs>

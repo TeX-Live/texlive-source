@@ -1,6 +1,9 @@
 // © 2024 and later: Unicode, Inc. and others.
+// License & terms of use: https://www.unicode.org/copyright.html
 
 #include "unicode/utypes.h"
+
+#if !UCONFIG_NO_NORMALIZATION
 
 #if !UCONFIG_NO_FORMATTING
 
@@ -157,3 +160,5 @@ void TestMessageFormat2::messageFormat1Tests() {
 #endif /* #if !UCONFIG_NO_MF2 */
 
 #endif /* #if !UCONFIG_NO_FORMATTING */
+
+#endif /* #if !UCONFIG_NO_NORMALIZATION */

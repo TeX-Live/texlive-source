@@ -1,6 +1,9 @@
+2026-01-21  Karl Berry  <karl@freefriends.org>
+
+	* Update for icu-78.2.
+
 2024-10-30  Karl Berry  <karl@freefriends.org>
 
-	* 
 	* patch-19-netbsd: remove
 	Per Marc Baudoin,
 	https://tug.org/pipermail/tlbuild/2024q4/005581.html

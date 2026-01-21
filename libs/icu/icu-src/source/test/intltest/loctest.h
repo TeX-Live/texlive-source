@@ -91,6 +91,7 @@ public:
    void TestGetUnicodeKeywordValueStdString();
 
    /* Test setting keyword values */
+   void TestSetKeywordValueImp();
    void TestSetKeywordValue();
    void TestSetKeywordValueStringPiece();
    void TestSetUnicodeKeywordValueStringPiece();
@@ -125,6 +126,7 @@ public:
     void TestBug13554();
     void TestBug20410();
     void TestBug20900();
+    void TestChromiumBug451657601();
     void TestLocaleCanonicalizationFromFile();
     void TestKnownCanonicalizedListCorrect();
     void TestConstructorAcceptsBCP47();
@@ -164,6 +166,7 @@ public:
     void TestLongLocaleSetKeywordAssign();
     void TestLongLocaleSetKeywordMoveAssign();
     void TestSierraLeoneCurrency21997();
+    void TestPayload();
 
 private:
     void _checklocs(const char* label,

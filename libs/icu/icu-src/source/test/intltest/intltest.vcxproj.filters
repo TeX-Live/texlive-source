@@ -490,6 +490,12 @@
     <ClCompile Include="ustrtest.cpp">
       <Filter>strings</Filter>
     </ClCompile>
+    <ClCompile Include="utfiteratortest.cpp">
+      <Filter>strings</Filter>
+    </ClCompile>
+    <ClCompile Include="utfstringtest.cpp">
+      <Filter>strings</Filter>
+    </ClCompile>
     <ClCompile Include="utxttest.cpp">
       <Filter>strings</Filter>
     </ClCompile>
@@ -568,12 +574,30 @@
     <ClCompile Include="units_test.cpp">
       <Filter>formatting</Filter>
     </ClCompile>
+    <ClCompile Include="cplusplus_header_api_build_test.cpp">
+      <Filter>configuration</Filter>
+    </ClCompile>
     <ClCompile Include="uchar_type_build_test.cpp">
       <Filter>configuration</Filter>
     </ClCompile>
-    <ClCompile Include="messageformat2test.cpp" />
-    <ClCompile Include="messageformat2test_custom.cpp" />
-    <ClCompile Include="messageformat2test_read_json.cpp" />
+    <ClCompile Include="messageformat2test.cpp">
+      <Filter>formatting</Filter>
+    </ClCompile>
+    <ClCompile Include="messageformat2test_custom.cpp">
+      <Filter>formatting</Filter>
+    </ClCompile>
+    <ClCompile Include="messageformat2test_read_json.cpp">
+      <Filter>formatting</Filter>
+    </ClCompile>
+    <ClCompile Include="ucolheaderonlytest.cpp">
+      <Filter>misc</Filter>
+    </ClCompile>
+    <ClCompile Include="usetheaderonlytest.cpp">
+      <Filter>misc</Filter>
+    </ClCompile>
+    <ClCompile Include="intltesttest.cpp">
+      <Filter>misc</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="itrbbi.h">

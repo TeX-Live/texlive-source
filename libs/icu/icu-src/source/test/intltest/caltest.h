@@ -329,12 +329,15 @@ public: // package
     void TestCalendarRollOrdinalMonth();
     void TestLimitsOrdinalMonth();
     void TestActualLimitsOrdinalMonth();
+    void TestMaxActualLimitsWithoutGet23006();
     void TestDangiOverflowIsLeapMonthBetween22507();
 
     void TestFWWithISO8601();
     void TestAddOverflow();
     void TestRollWeekOfYear();
     void Test22633ChineseOverflow();
+    void Test22962ChineseOverflow();
+    void Test22962BuddhistOverflow();
     void Test22633IndianOverflow();
     void Test22633IslamicUmalquraOverflow();
     void Test22633PersianOverflow();
@@ -348,6 +351,8 @@ public: // package
     void Test22633RollTwiceGetTimeOverflow();
     void Test22730JapaneseOverflow();
     void Test22730CopticOverflow();
+    void Test22962ComputeJulianDayOverflow();
+    void Test22962MonthAddOneOverflow();
 
     void Test22750Roll();
 
@@ -358,6 +363,7 @@ public: // package
 
     void TestChineseCalendarComputeMonthStart();
     void Test22633HebrewLargeNegativeDay();
+    void Test23069HebrewHanukkah();
 
     void RunChineseCalendarInTemporalLeapYearTest(Calendar* cal);
     void RunIslamicCalendarInTemporalLeapYearTest(Calendar* cal);

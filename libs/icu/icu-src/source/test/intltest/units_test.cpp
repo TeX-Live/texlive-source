@@ -26,6 +26,7 @@
 #include "units_router.h"
 #include "uparse.h"
 #include "uresimp.h"
+#include <climits>
 
 struct UnitConversionTestCase {
     const StringPiece source;
@@ -50,6 +51,9 @@ class UnitsTest : public IntlTest {
     void testComplexUnitsConverter();
     void testComplexUnitsConverterSorting();
     void testUnitPreferencesWithCLDRTests();
+    void testUnitsConstantsDenomenator();
+    void testMeasureUnit_withConstantDenominator();
+    void testUnitsConstantsDenomenator_getIdentifier();
     void testConverter();
 };
 
@@ -67,6 +71,9 @@ void UnitsTest::runIndexedTest(int32_t index, UBool exec, const char *&name, cha
     TESTCASE_AUTO(testComplexUnitsConverter);
     TESTCASE_AUTO(testComplexUnitsConverterSorting);
     TESTCASE_AUTO(testUnitPreferencesWithCLDRTests);
+    TESTCASE_AUTO(testUnitsConstantsDenomenator);
+    TESTCASE_AUTO(testMeasureUnit_withConstantDenominator);
+    TESTCASE_AUTO(testUnitsConstantsDenomenator_getIdentifier);
     TESTCASE_AUTO(testConverter);
     TESTCASE_AUTO_END;
 }
@@ -142,7 +149,7 @@ void UnitsTest::testExtractConvertibility() {
         {"millimeter", "meter", CONVERTIBLE},                                        //
         {"yard", "meter", CONVERTIBLE},                                              //
         {"ounce-troy", "kilogram", CONVERTIBLE},                                     //
-        {"percent", "portion", CONVERTIBLE},                                         //
+        {"percent", "part", CONVERTIBLE},                                         //
         {"ofhg", "kilogram-per-square-meter-square-second", CONVERTIBLE},            //
         {"second-per-meter", "meter-per-second", RECIPROCAL},                        //
         {"mile-per-hour", "meter-per-second", CONVERTIBLE},                        //
@@ -356,6 +363,24 @@ void UnitsTest::testConverter() {
         {"dot-per-inch", "pixel-per-inch", 1.0, 1.0},
         {"dot", "pixel", 1.0, 1.0},
 
+        // Test with constants
+        {"meter-per-10", "foot", 1.0, 0.328084},
+        {"meter", "foot-per-10", 1.0, 32.8084},
+        {"meter", "foot-per-100", 1.0, 328.084},
+        {"part", "part-per-1000", 1.0, 1000},
+        {"part", "part-per-10000", 1.0, 10000},
+        {"part", "part-per-100000", 1.0, 100000},
+        {"part", "part-per-1000000", 1.0, 1000000},
+        {"part-per-10", "part", 1.0, 0.1},
+        {"part-per-100", "part", 1.0, 0.01},
+        {"part-per-1000", "part", 1.0, 0.001},
+        {"part-per-10000", "part", 1.0, 0.0001},
+        {"part-per-100000", "part", 1.0, 0.00001},
+        {"part-per-1000000", "part", 1.0, 0.000001},
+        {"mile-per-hour", "meter-per-second", 1.0, 0.44704},
+        {"mile-per-100-hour", "meter-per-100-second", 1.0, 0.44704},
+        {"mile-per-hour", "meter-per-100-second", 1.0, 44.704},
+        {"mile-per-100-hour", "meter-per-second", 1.0, 0.0044704},
     };
 
     for (const auto &testCase : testCases) {
@@ -1154,6 +1179,228 @@ void UnitsTest::testUnitPreferencesWithCLDRTests() {
                           errorCode);
     if (errorCode.errIfFailureAndReset("error parsing %s: %s\n", path.data(), u_errorName(errorCode))) {
         return;
+    }
+}
+
+void UnitsTest::testUnitsConstantsDenomenator() {
+    IcuTestErrorCode status(*this, "UnitTests::testUnitsConstantsDenomenator");
+
+    // Test Cases
+    struct TestCase {
+        const char *source;
+        const uint64_t expectedConstant;
+    } testCases[]{
+        {"meter-per-1000", 1000},
+        {"liter-per-1000-kiloliter", 1000},
+        {"meter-per-100-kilometer", 100},
+        {"liter-per-kilometer", 0},
+        {"second-per-1000-minute", 1000},
+        {"gram-per-1000-kilogram", 1000},
+        {"meter-per-100", 100},
+        {"part-per-1", 1},
+        {"part-per-2", 2},
+        {"part-per-3", 3},
+        {"part-per-4", 4},
+        {"part-per-5", 5},
+        {"part-per-6", 6},
+        {"part-per-7", 7},
+        {"part-per-8", 8},
+        {"part-per-9", 9},
+
+        // Test for constant denominators that are powers of 10
+        {"part-per-10", 10},
+        {"part-per-100", 100},
+        {"part-per-1000", 1000},
+        {"part-per-10000", 10000},
+        {"part-per-100000", 100000},
+        {"part-per-1000000", 1000000},
+        {"part-per-10000000", 10000000},
+        {"part-per-100000000", 100000000},
+        {"part-per-1000000000", 1000000000},
+        {"part-per-10000000000", 10000000000},
+        {"part-per-100000000000", 100000000000},
+        {"part-per-1000000000000", 1000000000000},
+        {"part-per-10000000000000", 10000000000000},
+        {"part-per-100000000000000", 100000000000000},
+        {"part-per-1000000000000000", 1000000000000000},
+        {"part-per-10000000000000000", 10000000000000000},
+        {"part-per-100000000000000000", 100000000000000000},
+        {"part-per-1000000000000000000", 1000000000000000000},
+        {"part-per-1e3-kilometer", 1000},
+
+        // Test for constant denominators that are represented as scientific notation
+        // numbers.
+        {"part-per-1e1", 10},
+        {"part-per-1E1", 10},
+        {"part-per-1e2", 100},
+        {"part-per-1E2", 100},
+        {"part-per-1e3", 1000},
+        {"part-per-1E3", 1000},
+        {"part-per-1e4", 10000},
+        {"part-per-1E4", 10000},
+        {"part-per-1e5", 100000},
+        {"part-per-1E5", 100000},
+        {"part-per-1e6", 1000000},
+        {"part-per-1E6", 1000000},
+        {"part-per-1e9", 1000000000},
+        {"part-per-1E9", 1000000000},
+        {"part-per-1e10", 10000000000},
+        {"part-per-1E10", 10000000000},
+        {"part-per-1e18", 1000000000000000000},
+        {"part-per-1E18", 1000000000000000000},
+
+        // Test for constant denominators that are randomly selected.
+        {"liter-per-12345-kilometer", 12345},
+        {"per-1000-kilometer", 1000},
+        {"liter-per-1000-kiloliter", 1000},
+
+        // Test for constant denominators that give 0.
+        {"meter", 0},
+        {"meter-per-second", 0},
+        {"meter-per-square-second", 0},
+    };
+
+    for (const auto &testCase : testCases) {
+        MeasureUnit unit = MeasureUnit::forIdentifier(testCase.source, status);
+        if (status.errIfFailureAndReset("forIdentifier(\"%s\")", testCase.source)) {
+            continue;
+        }
+
+        uint64_t constant = unit.getConstantDenominator(status);
+        if (status.errIfFailureAndReset("getConstantDenominator(\"%s\")", testCase.source)) {
+            continue;
+        }
+
+        auto complexity = unit.getComplexity(status);
+        if (status.errIfFailureAndReset("getComplexity(\"%s\")", testCase.source)) {
+            continue;
+        }
+
+        if (constant != testCase.expectedConstant) {
+            CharString msg;
+            msg.append("getConstantDenominator (\"", status);
+            msg.append(testCase.source, status);
+            msg.append("\")", status);
+            assertTrue(msg.data(), false);
+            status.reset();
+        }
+
+        if (constant != 0) {
+            CharString msg;
+            msg.append("getComplexity (\"", status);
+            msg.append(testCase.source, status);
+            msg.append("\")", status);
+            assertEquals(msg.data(), UMEASURE_UNIT_COMPOUND, complexity);
+            status.reset();
+        }
+    }
+}
+
+void UnitsTest::testMeasureUnit_withConstantDenominator() {
+    IcuTestErrorCode status(*this, "UnitsTest::testMeasureUnit_withConstantDenominator");
+
+    // Test Cases
+    struct TestCase {
+        const char *source;
+        const uint64_t constantDenominator;
+        const UMeasureUnitComplexity expectedComplexity;
+    } testCases[]{
+        {"meter-per-second", 100, UMEASURE_UNIT_COMPOUND},
+        {"meter-per-100-second", 0, UMEASURE_UNIT_COMPOUND},
+        {"part", 100, UMEASURE_UNIT_COMPOUND},
+        {"part-per-100", 0, UMEASURE_UNIT_SINGLE},
+
+    };
+
+    for (auto testCase : testCases) {
+        auto unit = MeasureUnit::forIdentifier(testCase.source, status);
+        if (status.errIfFailureAndReset("forIdentifier(\"%s\")", testCase.source)) {
+            continue;
+        }
+
+        unit = unit.withConstantDenominator(testCase.constantDenominator, status);
+        if (status.errIfFailureAndReset("withConstantDenominator(\"%s\")", testCase.source)) {
+            continue;
+        }
+
+        auto actualConstantDenominator = unit.getConstantDenominator(status);
+        if (status.errIfFailureAndReset("getConstantDenominator(\"%s\")", testCase.source)) {
+            continue;
+        }
+
+        auto actualComplexity = unit.getComplexity(status);
+        if (status.errIfFailureAndReset("getComplexity(\"%s\")", testCase.source)) {
+            continue;
+        }
+
+        CharString msg;
+        if (actualConstantDenominator != testCase.constantDenominator) {
+            msg.clear();
+            msg.append("getConstantDenominator (\"", status);
+            msg.append(testCase.source, status);
+            msg.append("\")", status);
+            assertTrue(msg.data(), false);
+            status.reset();
+        }
+        msg.clear();
+        msg.append("getComplexity (\"", status);
+        msg.append(testCase.source, status);
+        msg.append("\")", status);
+        assertEquals(msg.data(), testCase.expectedComplexity, actualComplexity);
+        status.reset();
+    }
+
+    // Test for invalid constant denominator
+    auto unit = MeasureUnit::forIdentifier("part", status);
+    if (status.errIfFailureAndReset("forIdentifier(\"part\")")) {
+        return;
+    }
+
+    uint64_t denominator = LONG_MAX;
+    denominator++;
+    unit = unit.withConstantDenominator(denominator, status);
+    assertTrue("There is a failure caused by withConstantDenominator(\"part\")", status.isFailure());
+    status.reset();
+}
+
+void UnitsTest::testUnitsConstantsDenomenator_getIdentifier() {
+    IcuTestErrorCode status(*this, "UnitTests::testUnitsConstantsDenomenator_getIdentifier");
+
+    // Test Cases
+    struct TestCase {
+        const char *source;
+        const char *expectedIdentifier;
+    } testCases[]{
+        {"meter-per-1000", "meter-per-1000"},
+        {"meter-per-1000-kilometer", "meter-per-1000-kilometer"},
+        {"meter-per-1000000", "meter-per-1e6"},
+        {"meter-per-1000000-kilometer", "meter-per-1e6-kilometer"},
+        {"meter-per-1000000000", "meter-per-1e9"},
+        {"meter-per-1000000000-kilometer", "meter-per-1e9-kilometer"},
+        {"meter-per-1000000000000", "meter-per-1e12"},
+        {"meter-per-1000000000000-kilometer", "meter-per-1e12-kilometer"},
+        {"meter-per-1000000000000000", "meter-per-1e15"},
+        {"meter-per-1e15-kilometer", "meter-per-1e15-kilometer"},
+        {"meter-per-1000000000000000000", "meter-per-1e18"},
+        {"meter-per-1e18-kilometer", "meter-per-1e18-kilometer"},
+        {"meter-per-1000000000000001", "meter-per-1000000000000001"},
+        {"meter-per-1000000000000001-kilometer", "meter-per-1000000000000001-kilometer"},
+    };
+
+    for (const auto &testCase : testCases) {
+        MeasureUnit unit = MeasureUnit::forIdentifier(testCase.source, status);
+        if (status.errIfFailureAndReset("forIdentifier(\"%s\")", testCase.source)) {
+            continue;
+        }
+
+        auto actualIdentifier = unit.getIdentifier();
+
+        CharString msg;
+        msg.append("getIdentifier (\"", status);
+        msg.append(testCase.source, status);
+        msg.append("\")", status);
+        assertEquals(msg.data(), testCase.expectedIdentifier, actualIdentifier);
+        status.reset();
     }
 }
 
