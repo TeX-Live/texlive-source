@@ -82,7 +82,7 @@
 
 #define	reg	register
 
-typedef	int	bool;
+typedef	int	mybooltype;
 #define	TRUE	1
 #define	FALSE	0
 
@@ -176,8 +176,8 @@ CODE_RANGE {
 	BM_FILE		*code_bm_file;
 	long		code_offset;
 	CHAR_INDEX	code_pos;
-	bool		code_transposed;
-	bool		code_inverted;
+	mybooltype		code_transposed;
+	mybooltype		code_inverted;
 	CODE_RANGE	*code_next;
 };
 
@@ -222,7 +222,7 @@ typedef struct {
 #endif
 
 static	void	add_b2r _((B2_RANGE **last_b2r, int start, int finish));
-static	bool	add_code_range _((HBF_STRUCT *hbf, const char *line));
+static	mybooltype	add_code_range _((HBF_STRUCT *hbf, const char *line));
 static	void	add_property _((HBF_STRUCT *hbf, const char *lp));
 static	CHAR_INDEX	b2_pos _((HBF_STRUCT *hbf, HBF_CHAR code));
 static	int	b2_size _((B2_RANGE *b2r));
@@ -235,17 +235,17 @@ static	const	byte *get_bitmap
 static	byte	*local_buffer _((HBF_STRUCT *hbf));
 static	void	invert _((byte *buffer, unsigned length));
 #ifdef IN_MEMORY
-static	bool	read_bitmap_file _((BM_FILE *bmf, FILE *f));
-static	bool	copy_transposed
+static	mybooltype	read_bitmap_file _((BM_FILE *bmf, FILE *f));
+static	mybooltype	copy_transposed
 		_((HBF *hbf, byte *bitmap, const byte *source));
 #else
-static	bool	get_transposed _((HBF *hbf, FILE *f, byte *bitmap));
+static	mybooltype	get_transposed _((HBF *hbf, FILE *f, byte *bitmap));
 #endif
-static	bool	match _((const char *lp, const char *sp));
-static	bool	parse_file _((FILE *f, HBF_STRUCT *hbf));
+static	mybooltype	match _((const char *lp, const char *sp));
+static	mybooltype	parse_file _((FILE *f, HBF_STRUCT *hbf));
 static	FILE	*path_open
 		_((const char *path, const char *filename, char **fullp));
-static	bool	real_open _((const char *filename, HBF_STRUCT *hbf));
+static	mybooltype	real_open _((const char *filename, HBF_STRUCT *hbf));
 
 /* Error reporting */
 
@@ -371,7 +371,7 @@ reg	B2_RANGE *b2r;
  *	String stuff
  */
 
-static bool
+static mybooltype
 match(reg const char *lp, reg const char *sp)
 {
 	while (*lp == *sp && *sp != '\0') {
@@ -619,7 +619,7 @@ reg	BM_FILE	*file;
 	char	*bmfname;
 #ifdef IN_MEMORY
 #ifdef unix
-	bool	from_pipe;
+	mybooltype	from_pipe;
 #endif
 #endif
 
@@ -690,7 +690,7 @@ reg	BM_FILE	*file;
 #ifdef IN_MEMORY
 #define	GRAIN_SIZE	512
 
-static bool
+static mybooltype
 read_bitmap_file(BM_FILE *bmf, FILE *f)
 {
 	byte	*contents, *cp;
@@ -727,7 +727,7 @@ read_bitmap_file(BM_FILE *bmf, FILE *f)
  */
 
 /* check that a code range fits within its bitmap file */
-static bool
+static mybooltype
 too_short(HBF_STRUCT *hbf, CODE_RANGE *cp)
 {
 	int	bm_size;
@@ -790,7 +790,7 @@ parse_keywords(CODE_RANGE *cp, const char *s)
 	}
 }
 
-static bool
+static mybooltype
 add_code_range(HBF_STRUCT *hbf, const char *line)
 {
 	CODE_RANGE *cp;
@@ -855,7 +855,7 @@ add_code_range(HBF_STRUCT *hbf, const char *line)
  */
 
 /* get line, truncating to len, and trimming trailing spaces */
-static bool
+static mybooltype
 get_line(char *buf, int len, FILE *f)
 {
 	int	c;
@@ -882,7 +882,7 @@ get_line(char *buf, int len, FILE *f)
 }
 
 /* get next non-COMMENT line */
-static bool
+static mybooltype
 get_text_line(char *buf, int len, FILE *f)
 {
 	while (get_line(buf, len, f))
@@ -891,7 +891,7 @@ get_text_line(char *buf, int len, FILE *f)
 	return FALSE;
 }
 
-static bool
+static mybooltype
 get_property(const char *line, const char *keyword, HBF_STRUCT *hbf)
 {
 	if (! match(line, keyword)) {
@@ -902,7 +902,7 @@ get_property(const char *line, const char *keyword, HBF_STRUCT *hbf)
 	return TRUE;
 }
 
-static bool
+static mybooltype
 get_bbox(const char *line, const char *keyword, HBF_BBOX *bbox)
 {
 	int	w, h, xd, yd;
@@ -942,7 +942,7 @@ get_bbox(const char *line, const char *keyword, HBF_BBOX *bbox)
  * Anything after HBF_END_FONT is ignored.
  */
 
-static bool
+static mybooltype
 parse_file(FILE *f, reg HBF_STRUCT *hbf)
 {
 	char	line[MAXLINE];
@@ -1068,7 +1068,7 @@ path_open(const char *path, const char *filename, char **fullp)
 	}
 }
 
-static bool
+static mybooltype
 real_open(const char *filename, reg HBF_STRUCT *hbf)
 {
 	FILE	*f;
@@ -1275,7 +1275,7 @@ invert(byte *buffer, unsigned int length)
 }
 
 #ifdef IN_MEMORY
-static bool
+static mybooltype
 copy_transposed(HBF *hbf, reg byte *bitmap, reg const byte *source)
 {
 reg	byte	*pos;
@@ -1321,7 +1321,7 @@ end_column:
 	return TRUE;
 }
 #else /* ! IN_MEMORY */
-static bool
+static mybooltype
 get_transposed(HBF *hbf, FILE *f, reg byte *bitmap)
 {
 reg	byte	*pos;
