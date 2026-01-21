@@ -138,6 +138,7 @@ ttf2pk2
 ttfdump
 upmendex
 xdvik
+xdvipsk
 texlive
 ])]) # KPSE_TEXK_PKGS
 

@@ -1,0 +1,378 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx</Extensions>
+    </Filter>
+    <Filter Include="dvipsk">
+      <UniqueIdentifier>{e09d813a-573f-4c98-88d3-633f95a918e1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="otflib">
+      <UniqueIdentifier>{f9181c4f-29ce-442b-8ad1-d520129a4992}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="graphlib">
+      <UniqueIdentifier>{292ed76b-4518-423a-a050-f7a28af616a0}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\bbox.c">
+      <Filter>dvipsk</Filter>
+    </ClCompile>
+    <ClCompile Include="..\charcode.c">
+      <Filter>dvipsk</Filter>
+    </ClCompile>
+    <ClCompile Include="..\color.c">
+      <Filter>dvipsk</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dopage.c">
+      <Filter>dvipsk</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dosection.c">
+      <Filter>dvipsk</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dospecial.c">
+      <Filter>dvipsk</Filter>
+    </ClCompile>
+    <ClCompile Include="..\download.c">
+      <Filter>dvipsk</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dpicheck.c">
+      <Filter>dvipsk</Filter>
+    </ClCompile>
+    <ClCompile Include="..\drawPS.c">
+      <Filter>dvipsk</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dviinput.c">
+      <Filter>dvipsk</Filter>
+    </ClCompile>
+    <ClCompile Include="..\finclude.c">
+      <Filter>dvipsk</Filter>
+    </ClCompile>
+    <ClCompile Include="..\fontdef.c">
+      <Filter>dvipsk</Filter>
+    </ClCompile>
+    <ClCompile Include="..\header.c">
+      <Filter>dvipsk</Filter>
+    </ClCompile>
+    <ClCompile Include="..\hps.c">
+      <Filter>dvipsk</Filter>
+    </ClCompile>
+    <ClCompile Include="..\loadfont.c">
+      <Filter>dvipsk</Filter>
+    </ClCompile>
+    <ClCompile Include="..\output.c">
+      <Filter>dvipsk</Filter>
+    </ClCompile>
+    <ClCompile Include="..\papersiz.c">
+      <Filter>dvipsk</Filter>
+    </ClCompile>
+    <ClCompile Include="..\pprescan.c">
+      <Filter>dvipsk</Filter>
+    </ClCompile>
+    <ClCompile Include="..\prescan.c">
+      <Filter>dvipsk</Filter>
+    </ClCompile>
+    <ClCompile Include="..\repack.c">
+      <Filter>dvipsk</Filter>
+    </ClCompile>
+    <ClCompile Include="..\resident.c">
+      <Filter>dvipsk</Filter>
+    </ClCompile>
+    <ClCompile Include="..\scalewidth.c">
+      <Filter>dvipsk</Filter>
+    </ClCompile>
+    <ClCompile Include="..\scanpage.c">
+      <Filter>dvipsk</Filter>
+    </ClCompile>
+    <ClCompile Include="..\search.c">
+      <Filter>dvipsk</Filter>
+    </ClCompile>
+    <ClCompile Include="..\sfntload.c">
+      <Filter>dvipsk</Filter>
+    </ClCompile>
+    <ClCompile Include="..\skippage.c">
+      <Filter>dvipsk</Filter>
+    </ClCompile>
+    <ClCompile Include="..\t1part.c">
+      <Filter>dvipsk</Filter>
+    </ClCompile>
+    <ClCompile Include="..\tfmload.c">
+      <Filter>dvipsk</Filter>
+    </ClCompile>
+    <ClCompile Include="..\unpack.c">
+      <Filter>dvipsk</Filter>
+    </ClCompile>
+    <ClCompile Include="..\virtualfont.c">
+      <Filter>dvipsk</Filter>
+    </ClCompile>
+    <ClCompile Include="..\writecid.c">
+      <Filter>dvipsk</Filter>
+    </ClCompile>
+    <ClCompile Include="..\writet1.c">
+      <Filter>dvipsk</Filter>
+    </ClCompile>
+    <ClCompile Include="..\otflib\cff.c">
+      <Filter>otflib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\otflib\cff_dict.c">
+      <Filter>otflib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\otflib\cidsysinfo.c">
+      <Filter>otflib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\otflib\cidtype0.c">
+      <Filter>otflib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\otflib\cidtype2.c">
+      <Filter>otflib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\otflib\cmap.c">
+      <Filter>otflib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\otflib\cmap_write.c">
+      <Filter>otflib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\otflib\cs_type2.c">
+      <Filter>otflib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\otflib\dpxfile.c">
+      <Filter>otflib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\otflib\dpxutil.c">
+      <Filter>otflib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\otflib\error.c">
+      <Filter>otflib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\otflib\mem.c">
+      <Filter>otflib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\otflib\mfileio.c">
+      <Filter>otflib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\otflib\numbers.c">
+      <Filter>otflib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\otflib\sfnt.c">
+      <Filter>otflib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\otflib\tt_aux.c">
+      <Filter>otflib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\otflib\tt_cmap.c">
+      <Filter>otflib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\otflib\tt_glyf.c">
+      <Filter>otflib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\otflib\tt_post.c">
+      <Filter>otflib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\otflib\tt_table.c">
+      <Filter>otflib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\otflib\unicode.c">
+      <Filter>otflib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\graphlib\bitmapIO.cpp">
+      <Filter>graphlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\graphlib\bitmap.cpp">
+      <Filter>graphlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\graphlib\bitmapAccess.cpp">
+      <Filter>graphlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\graphlib\conversion8.cpp">
+      <Filter>graphlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\graphlib\conversion24.cpp">
+      <Filter>graphlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\graphlib\conversion32.cpp">
+      <Filter>graphlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\graphlib\rescale.cpp">
+      <Filter>graphlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\graphlib\resize.cpp">
+      <Filter>graphlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\graphlib\resample.cpp">
+      <Filter>graphlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\graphlib\loadBMP.cpp">
+      <Filter>graphlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\graphlib\loadPCX.cpp">
+      <Filter>graphlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\graphlib\loadJPEG.cpp">
+      <Filter>graphlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\graphlib\loadPNG.cpp">
+      <Filter>graphlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\graphlib\loadTIFF.cpp">
+      <Filter>graphlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\graphlib\colors.cpp">
+      <Filter>graphlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\graphlib\tiffLogLuv.cpp">
+      <Filter>graphlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\graphlib\conversion.cpp">
+      <Filter>graphlib</Filter>
+    </ClCompile>
+    <ClCompile Include="..\emspecialex.c">
+      <Filter>dvipsk</Filter>
+    </ClCompile>
+    <ClCompile Include="..\luamap.c">
+      <Filter>dvipsk</Filter>
+    </ClCompile>
+    <ClCompile Include="..\xdvips.c">
+      <Filter>dvipsk</Filter>
+    </ClCompile>
+    <ClCompile Include="..\bitmapenc.c">
+      <Filter>dvipsk</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\config.h">
+      <Filter>dvipsk</Filter>
+    </ClInclude>
+    <ClInclude Include="..\debug.h">
+      <Filter>dvipsk</Filter>
+    </ClInclude>
+    <ClInclude Include="..\paths.h">
+      <Filter>dvipsk</Filter>
+    </ClInclude>
+    <ClInclude Include="..\protos.h">
+      <Filter>dvipsk</Filter>
+    </ClInclude>
+    <ClInclude Include="..\protos_add.h">
+      <Filter>dvipsk</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ptexmac.h">
+      <Filter>dvipsk</Filter>
+    </ClInclude>
+    <ClInclude Include="..\t1part.h">
+      <Filter>dvipsk</Filter>
+    </ClInclude>
+    <ClInclude Include="..\uthash.h">
+      <Filter>dvipsk</Filter>
+    </ClInclude>
+    <ClInclude Include="..\otflib\cff.h">
+      <Filter>otflib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\otflib\cff_dict.h">
+      <Filter>otflib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\otflib\cff_limits.h">
+      <Filter>otflib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\otflib\cff_stdstr.h">
+      <Filter>otflib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\otflib\cff_types.h">
+      <Filter>otflib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\otflib\cidsysinfo.h">
+      <Filter>otflib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\otflib\cidtype0.h">
+      <Filter>otflib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\otflib\cidtype2.h">
+      <Filter>otflib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\otflib\cmap.h">
+      <Filter>otflib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\otflib\cmap_p.h">
+      <Filter>otflib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\otflib\cmap_write.h">
+      <Filter>otflib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\otflib\cs_type2.h">
+      <Filter>otflib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\otflib\dpxfile.h">
+      <Filter>otflib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\otflib\dpxutil.h">
+      <Filter>otflib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\otflib\error.h">
+      <Filter>otflib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\otflib\mem.h">
+      <Filter>otflib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\otflib\mfileio.h">
+      <Filter>otflib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\otflib\numbers.h">
+      <Filter>otflib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\otflib\sfnt.h">
+      <Filter>otflib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\otflib\system.h">
+      <Filter>otflib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\otflib\tt_aux.h">
+      <Filter>otflib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\otflib\tt_cmap.h">
+      <Filter>otflib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\otflib\tt_glyf.h">
+      <Filter>otflib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\otflib\tt_post.h">
+      <Filter>otflib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\otflib\tt_table.h">
+      <Filter>otflib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\otflib\unicode.h">
+      <Filter>otflib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\graphlib\bitmap.h">
+      <Filter>graphlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\graphlib\bitmapIO.h">
+      <Filter>graphlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\graphlib\utilities.h">
+      <Filter>graphlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\graphlib\filters.h">
+      <Filter>graphlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\graphlib\resize.h">
+      <Filter>graphlib</Filter>
+    </ClInclude>
+    <ClInclude Include="..\graphlib\loaders.h">
+      <Filter>graphlib</Filter>
+    </ClInclude>
+    <ClInclude Include="c-auto.h">
+      <Filter>dvipsk</Filter>
+    </ClInclude>
+    <ClInclude Include="..\xdvips.h">
+      <Filter>dvipsk</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

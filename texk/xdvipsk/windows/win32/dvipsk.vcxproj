@@ -1,0 +1,257 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{7F9BD431-6DBE-48D8-89A1-02FA70F5B88B}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <OutDir>Debug\</OutDir>
+    <IntDir>Debug\</IntDir>
+    <LinkIncremental>true</LinkIncremental>
+    <GenerateManifest>true</GenerateManifest>
+    <TargetName>xdvipsk</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <OutDir>Release\</OutDir>
+    <IntDir>Release\</IntDir>
+    <LinkIncremental>false</LinkIncremental>
+    <TargetName>xdvipsk</TargetName>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>.\include;.\include\jpeglib;.\include\libpng;.\include\libtiff;.\include\zlib;.\include\kpathsea;..\;..\otflib;..\graphlib;.\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_WARNINGS;_DEBUG;_CONSOLE;DEBUG;KPATHSEA;SHIFTLOWCHARS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>true</MinimalRebuild>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <PrecompiledHeader />
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <CompileAs>Default</CompileAs>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>kpathsea634d.lib;jpegstatic.lib;libpngstatic.lib;tiffstatic.lib;zlibstatic.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
+      <AdditionalLibraryDirectories>.\libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <ProgramDatabaseFile>$(OutDir)xdvipsk.pdb</ProgramDatabaseFile>
+      <SubSystem>Console</SubSystem>
+      <RandomizedBaseAddress>false</RandomizedBaseAddress>
+      <DataExecutionPrevention />
+      <TargetMachine>MachineX86</TargetMachine>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>.\include;.\include\jpeglib;.\include\libpng;.\include\libtiff;.\include\zlib;.\include\kpathsea;..\;..\otflib;..\graphlib;.\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_WARNINGS;NDEBUG;_CONSOLE;DEBUG;KPATHSEA;SHIFTLOWCHARS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <PrecompiledHeader />
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <CompileAs>Default</CompileAs>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>kpathsea634.lib;jpegstatic.lib;libpngstatic.lib;tiffstatic.lib;zlibstatic.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <OutputFile>$(OutDir)$(TargetName)$(TargetExt)</OutputFile>
+      <AdditionalLibraryDirectories>.\libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Console</SubSystem>
+      <OptimizeReferences>true</OptimizeReferences>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <RandomizedBaseAddress>false</RandomizedBaseAddress>
+      <DataExecutionPrevention />
+      <TargetMachine>MachineX86</TargetMachine>
+    </Link>
+    <PostBuildEvent>
+      <Command>copy release\xdvipsk.exe ..\..\..\..\..\Master\bin\win32</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\bbox.c" />
+    <ClCompile Include="..\bitmapenc.c" />
+    <ClCompile Include="..\charcode.c" />
+    <ClCompile Include="..\color.c" />
+    <ClCompile Include="..\dopage.c" />
+    <ClCompile Include="..\dosection.c" />
+    <ClCompile Include="..\dospecial.c" />
+    <ClCompile Include="..\download.c" />
+    <ClCompile Include="..\dpicheck.c" />
+    <ClCompile Include="..\drawPS.c" />
+    <ClCompile Include="..\dviinput.c" />
+    <ClCompile Include="..\emspecialex.c" />
+    <ClCompile Include="..\finclude.c" />
+    <ClCompile Include="..\fontdef.c" />
+    <ClCompile Include="..\graphlib\bitmap.cpp">
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Default</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\graphlib\bitmapAccess.cpp">
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Default</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\graphlib\bitmapIO.cpp">
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Default</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\graphlib\colors.cpp">
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Default</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\graphlib\conversion.cpp">
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Default</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\graphlib\conversion24.cpp">
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Default</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\graphlib\conversion32.cpp">
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Default</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\graphlib\conversion8.cpp">
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Default</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\graphlib\loadBMP.cpp">
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Default</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\graphlib\loadJPEG.cpp">
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Default</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\graphlib\loadPCX.cpp">
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Default</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\graphlib\loadPNG.cpp">
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Default</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\graphlib\loadTIFF.cpp">
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Default</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\graphlib\resample.cpp">
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Default</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\graphlib\rescale.cpp">
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Default</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\graphlib\resize.cpp">
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Default</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\graphlib\tiffLogLuv.cpp">
+      <CompileAs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Default</CompileAs>
+    </ClCompile>
+    <ClCompile Include="..\header.c" />
+    <ClCompile Include="..\hps.c" />
+    <ClCompile Include="..\loadfont.c" />
+    <ClCompile Include="..\luamap.c" />
+    <ClCompile Include="..\otflib\cff.c" />
+    <ClCompile Include="..\otflib\cff_dict.c" />
+    <ClCompile Include="..\otflib\cidsysinfo.c" />
+    <ClCompile Include="..\otflib\cidtype0.c" />
+    <ClCompile Include="..\otflib\cidtype2.c" />
+    <ClCompile Include="..\otflib\cmap.c" />
+    <ClCompile Include="..\otflib\cmap_write.c" />
+    <ClCompile Include="..\otflib\cs_type2.c" />
+    <ClCompile Include="..\otflib\dpxfile.c" />
+    <ClCompile Include="..\otflib\dpxutil.c" />
+    <ClCompile Include="..\otflib\error.c" />
+    <ClCompile Include="..\otflib\mem.c" />
+    <ClCompile Include="..\otflib\mfileio.c" />
+    <ClCompile Include="..\otflib\numbers.c" />
+    <ClCompile Include="..\otflib\sfnt.c" />
+    <ClCompile Include="..\otflib\tt_aux.c" />
+    <ClCompile Include="..\otflib\tt_cmap.c" />
+    <ClCompile Include="..\otflib\tt_glyf.c" />
+    <ClCompile Include="..\otflib\tt_post.c" />
+    <ClCompile Include="..\otflib\tt_table.c" />
+    <ClCompile Include="..\otflib\unicode.c" />
+    <ClCompile Include="..\output.c" />
+    <ClCompile Include="..\papersiz.c" />
+    <ClCompile Include="..\pprescan.c" />
+    <ClCompile Include="..\prescan.c" />
+    <ClCompile Include="..\repack.c" />
+    <ClCompile Include="..\resident.c" />
+    <ClCompile Include="..\scalewidth.c" />
+    <ClCompile Include="..\scanpage.c" />
+    <ClCompile Include="..\search.c" />
+    <ClCompile Include="..\sfntload.c" />
+    <ClCompile Include="..\skippage.c" />
+    <ClCompile Include="..\t1part.c" />
+    <ClCompile Include="..\tfmload.c" />
+    <ClCompile Include="..\unpack.c" />
+    <ClCompile Include="..\virtualfont.c" />
+    <ClCompile Include="..\writecid.c" />
+    <ClCompile Include="..\writet1.c" />
+    <ClCompile Include="..\xdvips.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\config.h" />
+    <ClInclude Include="..\debug.h" />
+    <ClInclude Include="..\graphlib\bitmap.h" />
+    <ClInclude Include="..\graphlib\bitmapIO.h" />
+    <ClInclude Include="..\graphlib\filters.h" />
+    <ClInclude Include="..\graphlib\loaders.h" />
+    <ClInclude Include="..\graphlib\resize.h" />
+    <ClInclude Include="..\graphlib\utilities.h" />
+    <ClInclude Include="..\otflib\cff.h" />
+    <ClInclude Include="..\otflib\cff_dict.h" />
+    <ClInclude Include="..\otflib\cff_limits.h" />
+    <ClInclude Include="..\otflib\cff_stdstr.h" />
+    <ClInclude Include="..\otflib\cff_types.h" />
+    <ClInclude Include="..\otflib\cidsysinfo.h" />
+    <ClInclude Include="..\otflib\cidtype0.h" />
+    <ClInclude Include="..\otflib\cidtype2.h" />
+    <ClInclude Include="..\otflib\cmap.h" />
+    <ClInclude Include="..\otflib\cmap_p.h" />
+    <ClInclude Include="..\otflib\cmap_write.h" />
+    <ClInclude Include="..\otflib\cs_type2.h" />
+    <ClInclude Include="..\otflib\dpxfile.h" />
+    <ClInclude Include="..\otflib\dpxutil.h" />
+    <ClInclude Include="..\otflib\error.h" />
+    <ClInclude Include="..\otflib\mem.h" />
+    <ClInclude Include="..\otflib\mfileio.h" />
+    <ClInclude Include="..\otflib\numbers.h" />
+    <ClInclude Include="..\otflib\sfnt.h" />
+    <ClInclude Include="..\otflib\system.h" />
+    <ClInclude Include="..\otflib\tt_aux.h" />
+    <ClInclude Include="..\otflib\tt_cmap.h" />
+    <ClInclude Include="..\otflib\tt_glyf.h" />
+    <ClInclude Include="..\otflib\tt_post.h" />
+    <ClInclude Include="..\otflib\tt_table.h" />
+    <ClInclude Include="..\otflib\unicode.h" />
+    <ClInclude Include="..\paths.h" />
+    <ClInclude Include="..\protos.h" />
+    <ClInclude Include="..\protos_add.h" />
+    <ClInclude Include="..\ptexmac.h" />
+    <ClInclude Include="..\t1part.h" />
+    <ClInclude Include="..\uthash.h" />
+    <ClInclude Include="..\xdvips.h" />
+    <ClInclude Include="c-auto.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

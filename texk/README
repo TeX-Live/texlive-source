@@ -139,7 +139,7 @@ web2c - maintained here, by us - core web2c, plain tex, etc.
                old info: https://asciidwango.github.io/ptex/
        xetex - https://tug.org/xetex/
    
-xdvik 22.87.06 - checked 31may22
+xdvik 22.87.06 - checked 21jan26
   https://sourceforge.net/projects/xdvi/files/xdvik/
   Procedure for updating xdvik from sourceforge release:
 tar xf ...
@@ -153,3 +153,6 @@ add import entry to ChangeLog, update texk/README
 remove unpacked ../xdvik-*
 make sure it builds.
 commit.
+
+xdvipsk 2025.12.19 - checked 21jan26
+  https://github.com/vtex-soft/xdvipsk

@@ -1,3 +1,7 @@
+2026-01-21  Karl Berry  <karl@freefriends.org>
+
+	* kpse-pkgs.m4 (KPSE_TEXK_PKGS): add xdvipsk.
+
 2025-11-30  Karl Berry  <karl@freefriends.org>
 
 	* kpse-common.m4 (KPSE_MSG_WARN): explain termination due to

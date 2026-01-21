@@ -1,0 +1,16 @@
+This is extended dvipsk (TL git#bc2b83b09b) fork with some additional functionality.
+
+For more info see files:
+```
+    DeveloperNotes.md
+    xdvipsk.help
+```
+
+For some extra initial information see files from `texk/dvipsk`:
+```
+    Authors
+    ChangeLog
+    NEWS
+    README
+    TODO
+```

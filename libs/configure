@@ -865,6 +865,7 @@ enable_ttfdump
 enable_upmendex
 enable_xdvik
 with_xdvi_x_toolkit
+enable_xdvipsk
 enable_texlive
 enable_linked_scripts
 with_system_harfbuzz
@@ -1667,6 +1668,7 @@ Optional Features:
   --disable-ttfdump       do not build the ttfdump package
   --disable-upmendex      do not build the upmendex package
   --disable-xdvik         do not build the xdvik package
+  --disable-xdvipsk       do not build the xdvipsk package
   --disable-texlive       do not build the texlive (TeX Live scripts) package
   --disable-linked-scripts  do not install the linked scripts
   --disable-mktexmf-default   do not run mktexmf if MF source missing
@@ -6416,6 +6418,41 @@ then :
   withval=$with_xdvi_x_toolkit;
 fi
 
+
+## texk/xdvipsk/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/xdvipsk/
+## configure options and TL libraries required for xdvipsk
+echo 'tldbg:KPSE_ENABLE_PROG called: prog=xdvipsk, libs=kpathsea zlib libpng freetype2 lua53, options=, comment=.' >&5
+echo 'tldbg:KPSE_ENABLE_PROG enabling: xdvipsk -> yes' >&5
+# Check whether --enable-xdvipsk was given.
+if test ${enable_xdvipsk+y}
+then :
+  enableval=$enable_xdvipsk;
+fi
+#
+#
+case $enable_xdvipsk in #(
+  yes|no) :
+     ;; #(
+  *) :
+
+   enable_xdvipsk=$enable_all_pkgs
+     { printf "%s\n" "$as_me:${as_lineno-$LINENO}: Assuming \`--enable-xdvipsk=$enable_xdvipsk'" >&5
+printf "%s\n" "$as_me: Assuming \`--enable-xdvipsk=$enable_xdvipsk'" >&6;}
+     ac_configure_args="$ac_configure_args '--enable-xdvipsk=$enable_xdvipsk'"
+    ;;
+esac
+#
+# setting need_ for each of [kpathsea zlib libpng freetype2 lua53]:
+
+test "x$enable_xdvipsk" = xno || {
+  need_kpathsea=yes
+  need_zlib=yes
+  need_libpng=yes
+  need_freetype2=yes
+  need_lua53=yes
+}
+
+echo 'tldbg:KPSE_ENABLE_PROG done (prog=xdvipsk)' >&5
 
 ## texk/texlive/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/texlive/
 ## configure options and TL libraries required for texlive
