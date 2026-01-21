@@ -62,6 +62,12 @@ universal-darwin: See Master/source/mactexdoc.tar.xz.
 windows:
   Makefiles written by hand, see Master/source/windows-src.tar.xz.
   Visual Studio 2010 and Visual Studio 2015.
+  
+  Although we do not use mingw for the distributed Windows
+  binaries, TL can be built with mingw by passing
+    --host=x86_64-w64-mingw32 --build=x86_64-linux-gnu
+  to configure. For a full invocation as of 2025, see:
+    https://tug.org/pipermail/tlbuild/2025q3/005847.html
 
 x86_64-darwinlegacy: Built on ConTeXtGarden.
   Mac OS X 10.6, clang 5.0, libc++ required

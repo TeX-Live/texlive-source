@@ -1,3 +1,7 @@
+2026-01-19  Karl Berry  <karl@freefriends.org>
+
+	* texmfmp-help.h: https for pdftex.org.
+
 2026-01-18  Karl Berry  <karl@freefriends.org>
 
 	* NEWS: \ignoreprimitiveerror output now goes only to the
