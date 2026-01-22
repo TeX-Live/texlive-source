@@ -192,6 +192,9 @@
 \def\Prote{{\tenrm P\kern-0.1em R\kern-0.15em\raise.11ex\hbox{o}%
   \kern-0.22em T\kern-0.05em E}}
 \def\eTeX{$\varepsilon$-\TeX}
+\def\XeTeX{X\kern-.125em\lower.5ex\hbox{E}\kern-.1667em\TeX}
+\def\LuaTeX{Lua\TeX}
+\def\HiTeX{Hi\TeX}
 \def\HINT{\leavevmode\hbox{\sf HINT\spacefactor1000}}
 \def\cweb{\leavevmode\hbox{\tt cweb}}
 \def\web2w{\leavevmode\hbox{\tt web2w}}
@@ -201,8 +204,9 @@
 \def\kpse{\leavevmode\hbox{\tt kpathsearch\spacefactor1000}}
 \def\TUB{{\sl TUGboat\/}}
 \def\TUG{\TeX\ \UG}
-\def\tug{\acro{TUG}}
+\def\tug{{\mc TUG}}
 \def\UG{Users Group}
+\def\UTF{{\mc UTF}}
 \ifpdf
 \sanitizecommand{\TeX}{TeX}
 \sanitizecommand{\eTeX}{eTeX}
@@ -843,17 +847,18 @@
 \newbox\tocbox
 \def\maketoc{%
   \typeout{Reading table of contents}
-  \setbox\tocbox\vbox{%
+  \setbox\tocbox\vbox\bgroup%
   \let\ZZ=\tocline
-  \ifbook\else\ifpdf\startpdf\fi\fi
-  \readcontents\relax
-  }
-  \typeout{Writing \contentsfile}
+  \ifbook\relax\else\ifpdf\startpdf\fi\fi
+  \readcontents
+  \relax
+  \egroup
+  \typeout{Writing \contentsfile} 
   \immediate\openout\cont=\contentsfile\relax
   \immediate\write\cont{\catcode `\noexpand\@=11\relax} 
 }
 
-\def\tableofcontent{\plainsection{Contents}\ifhint\HINTdest name {HINT.home}\fi
+\def\tableofcontent{\plainsection{Contents}\ifhint\HINTdest name {HINT.home}\relax\fi
 \unvbox\tocbox  
 }
 
@@ -1289,7 +1294,7 @@
 \ifnum\lastcodeno<\codeno
 \global\lastcodeno=\codeno\relax
 \ifbook\else
-\ifhint\HINTdest num \the\codeno bot\relax%\message{New destination num \the\codeno bot}
+\ifhint\HINTdest num \the\codeno\relax%\message{New destination num \the\codeno }%
 \else\ifpdf\pdfdest num \the\codeno fith\relax
 \else\relax
 \fi\fi\fi
@@ -1301,6 +1306,8 @@
 \else\ifpdf{\eightrm\pdfnote#1.}
 \else${}_{#1}$\fi\fi\fi
 }
+
+\newcount\countC
 
 \def\codenote#1.{% replaces \pdfnote
   \setbox0=\hbox{\toksA={#1.}\toksB={}\maketoks}\the\toksA}
@@ -1354,7 +1361,7 @@
 \else\ifpdf
   \pdfdest name {#1} fith%\message{Defining pdf label #1}%
 \else\ifhint
-  \HINTdest name {#1} top%\message{Defining HINT label name #1 top: }%
+  \HINTdest name {#1} top %\message{Defining HINT label name #1 top}%
 \fi\fi\fi}
 
 

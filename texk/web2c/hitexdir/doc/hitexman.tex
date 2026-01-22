@@ -1,5 +1,5 @@
 % This file is part of HINT
-% Copyright 2017-2022 Martin Ruckert, Hochschule Muenchen, Lothstrasse 64, 80336 Muenchen
+% Copyright 2017-2025 Martin Ruckert, Hochschule Muenchen, Lothstrasse 64, 80336 Muenchen
 %
 % Permission is hereby granted, free of charge, to any person obtaining a copy
 % of this software and associated documentation files (the "Software"), to deal
@@ -46,18 +46,32 @@
 \hyphenation{HINT-before}
 \hyphenation{HINT-after}
 
+
 \makeindex
+
 \maketoc
+
 
 \titletrue
 
 \null
 
-\font\largetitlefont=cmssbx10 scaled\magstep4
-\font\Largetitlefont=cmssbx10 at 40pt
-\font\hugetitlefont=cmssbx10 at 48pt
-\font\smalltitlefontit=cmbxti10 scaled\magstep3
-\font\smalltitlefont=cmssbx10 scaled\magstep3
+%fonts
+%\font\largetitlefont=cmssbx10 scaled\magstep4
+%\font\largetitlefont=lmsans10-bold.otf scaled\magstep4
+%\font\smalltitlefont=cmssbx10 scaled\magstep3
+%\font\smalltitlefont=lmsans10-bold.otf scaled\magstep3
+%\font\tenrm=lmroman10-regular.otf
+%\font\tenit=lmroman10-italic.otf
+%\font\tenbf=lmroman10-bold.otf
+%\font\tt=lmmono10-regular.otf
+%\font\figrm=cmr9 scaled\magstep0
+%\font\figrm=lmroman9-regular.otf
+%\font\largebf=cmbx12 scaled\magstep1
+%\font\largebf=lmroman12-bold.otf scaled\magstep1
+
+
+\font\utf={[/usr/share/fonts/truetype/dejavu/DejaVuSansMono]} at 9pt
 
 \hbox{}
 \vskip 0pt plus 1fill
@@ -68,17 +82,18 @@
   \leftline{\smalltitlefont User Manual} 
   \vskip-3pt
   \vskip 10pt plus 0.5fill
-  \hskip 0pt plus 2fill \it  F\"ur Beatriz\hskip 0pt plus 0.5fill\hbox{}
+  \hskip 0pt plus 2fill {\it  F\"ur Beatriz}\hskip 0pt plus 0.5fill\hbox{}
   \vskip 10pt plus 3fill
   \leftline{\smalltitlefont Version 1.1 (Draft)}
   \bigskip
   \raggedright\baselineskip=12pt
-  \bf MARTIN RUCKERT \ \it Munich University of Applied Sciences\par
+  {\bf MARTIN RUCKERT}\ {\it Munich University of Applied Sciences}\par
   \bigskip
 }
 \eject
 
 \titletrue
+
 \begingroup
 \figrm
 \parindent=0pt
@@ -114,29 +129,32 @@ Germany.
 \medskip
 {\tt ruckert\:@cs.hm.edu}
 \medskip
-Last commit: Tue Jan 21 19:09:13 2025
+Last commit: Thu Jan 22 15:28:21 2026
 \par
 }
 \eject
 \endgroup
+\rm
 
 \frontmatter
 \pageno=3%
 
+
 \tableofcontent
 
 \mainmatter
+\parindent 2em\parskip 3pt plus 3pt
+
 
 %\def\rs{\penalty100\hskip 2pt plus 3pt minus 2pt\penalty100\relax}
 %\def\rs{\kern 2pt}
-\def\rule#1:#2.{\par{\hangindent32pt\hangafter1\parindent0pt\rightskip 0pt plus 60pt#1{\bf:}\quad%
-  \hskip 0pt plus 60pt\penalty-300\hskip 0pt plus -60pt#2{\bf.}\par}}
+\def\rule#1:#2.{\par{\parskip 0pt\hangindent32pt\hangafter1\parindent0pt\rightskip 0pt plus 60pt#1 $\longrightarrow$ %
+  \hskip 0pt plus 60pt\penalty-300\hskip 0pt plus -60pt#2\par}}
 \def\prim#1.{\par{\hangindent32pt\hangafter1\parindent0pt\rightskip 0pt plus 60pt#1\par}}  
-\def\sym#1{$\left<\right.${\it #1\/}$\left.\right>$}
-\def\OR{${}\vert{}$}
+\def\sym#1{$\langle\hbox{\it #1\/}\rangle$}
+\def\OR{${\,}\vert{\,}$}
 \def\opt#1{$\left[\right.$#1$\left.\right]$}
 \def\ctl#1{{\tt\BS #1}}
-
 
 \section{Introduction}
 When I started the \HINT\ project in 2017,
@@ -229,25 +247,25 @@ are enclosed in \opt{square brackets}.
 \item Some symbols refer to text that is defined as part of standard \TeX. These are explained here by an example:
 
 \medskip
-\rule\sym{integer}: \index{integer+\sym{integer}}
-  an integer as in  \ctl{penalty}\sym{integer}.
-\rule\sym{number}: \index{number+\sym{number}}
-  a general number as in  \ctl{kern}\sym{number}\.{pt}.
-\rule\sym{normal dimension}:\index{normal dimension+\sym{normal dimension}}
-  a dimension as in \ctl{hrule} \.{width} \sym{normal dimension}.
-\rule\sym{dimension}:\index{dimension+\sym{dimension}}
-  a dimension as in \ctl{vskip} \.{0pt} \.{plus} \sym{dimension}.
-\rule\sym{name}:\index{dimension+\sym{dimension}}
-  a name as in \ctl{input} \sym{name}.
-\rule\sym{vertical list}:\index{vertical list+\sym{vertical list}}
+\rule\sym{integer}: 
+  an integer as in  \ctl{penalty}\sym{integer}.\index{integer+\sym{integer}}
+\rule\sym{number}: 
+  a general number as in  \ctl{kern}\sym{number}\.{pt}.\index{number+\sym{number}}
+\rule\sym{normal\ dimension}:
+  a dimension as in \ctl{hrule} \.{width} \sym{normal\ dimension}.\index{normal dimension+\sym{normal\ dimension}}
+\rule\sym{dimension}:
+  a dimension as in \ctl{vskip} \.{0pt} \.{plus} \sym{dimension}.\index{dimension+\sym{dimension}}
+\rule\sym{name}:
+  a name as in \ctl{input} \sym{name}.\index{name+\sym{name}}
+\rule\sym{vertical\ list}:
   a token list  with matching braces as in
-  \ctl{vbox}\.{\{}\sym{vertical list}\.{\}}.
-\rule\sym{horizontal list}:\index{horizontal list+\sym{horizontal list}}
+  \ctl{vbox}\.{\{}\sym{vertical\ list}\.{\}}.\index{vertical list+\sym{vertical\ list}}
+\rule\sym{horizontal list}:
   a token list  with matching braces as in
-  \ctl{hbox}\.{\{}\sym{horizontal list}\.{\}}.
-\rule\sym{general text}:\index{general text+\sym{general text}}
+  \ctl{hbox}\.{\{}\sym{horizontal\ list}\.{\}}.\index{horizontal list+\sym{horizontal\ list}}
+\rule\sym{general text}:
   a token list with matching braces as in
-  \ctl{write}\.{\{}\sym{general text}\.{\}}.
+  \ctl{write}\.{\{}\sym{general\ text}\.{\}}.\index{general text+\sym{general\ text}}
 \medskip
 \enditemize
 
@@ -270,6 +288,347 @@ contains the following code:
   \hintfalse\else\hinttrue\fi/
 
 
+\subsection{UTF8 Input}
+Starting with \HiTeX\ version 2.0, published with \TeX\ Live 2026,
+the one and only input encoding supported by \HiTeX\ is \UTF8.
+While other input encodings may be supported by loading special
+packages, it is recomended not to use such packages but instead
+use one of the commonly available tools, like {\tt iconv} or {\tt Notepad++}
+to convert the input files before processing them with \HiTeX.
+
+On the technical level, \HiTeX\ converts any (multibyte) \UTF8 codepoint from an input file
+into a single character token with a character value in the range 0 to \.{"10FFFF}.
+On output, a character token with a value within the ASCII range 0 to  \.{"7F}
+is conveted using the ``classic'' output routines of \TeX\ that attempt to
+present even non-printable characters in a readable form,
+while a character token with a value greater than \.{"7F} is converted to
+its multibyte \UTF8 encoding.
+
+Following the example of \LuaTeX\ and \XeTeX, a number of primitives were
+extended and others were added to cope with the larger range of character codes.
+The syntax and semantics of these primitives are described in the following.
+
+\subsubsection{Scanning character codes}
+\TeX\ allows the use of the  {\tt `} (left quote) character as a prefix to
+any character to specify its numeric value. For example {\tt\ctl{count}1=98}
+is equivalent to {\tt\ctl{count}1=`b}. \HiTeX\ allows this for all unicode characters.
+For example  {\tt\ctl{count}1=8491} is equivalent to  {\tt\ctl{count}1=`}{\utf Å}
+using the Angstr\"om symbol.
+
+\HiTeX\ makes it possible to use any unicode character as an active character or
+define a single character control sequence using such a character.
+
+With a small exception, \ctl{if}, \ctl{ifcat}, and \ctl{ifx}
+work for unicode characters exactly as described in the \TeX\ book:
+If the argument of \ctl{if} is a control sequence,
+\TeX\ considers it to have category code 16
+and character code 256 which is 1 bigger than \TeX's largest character code;
+\HiTeX\ will consider it to have category code 16 as well, but the
+character code will be \.{"110000} which is 1 bigger than the largest
+unicode character code.
+
+
+\subsubsection{Setting and retrieving character information}
+To typeset characters correctly, \TeX\ relies on a number of properties
+associated with a character: its
+\ctl{catcode},  \ctl{sfcode}, \ctl{uccode}, \ctl{lccode}, 
+%\ctl{Umathcode}, \ctl{Umathcodenum},
+\ctl{mathcode}, and \ctl{delcode}.
+
+While \TeX\ traditionaly stores this information in arrays indexed
+by the character code, this approach is no longer appropriate if
+character codes span a range from 0 to 1114111 as is the case for
+\UTF\ coded characters. For this reason, \HiTeX\ uses a compressed
+tree representation that is compact (about 40kByte) and allows very fast access.
+Modifying the data stored this way is less convenient and will run out of
+table space if more than a few dozend character codes need to be changed.
+Since traditionaly character data is changed only for
+code vales less than 256, \HiTeX\ assumes that most changes of
+\ctl{catcode}, \ctl{sfcode},
+\ctl{mathcode}, % family, class, slot
+and \ctl{delcode} occur in this range and keeps this data in \TeX's
+traditional arrays where changes will not affect the compressed tables.
+
+It is to bee seen if this approach will work in practice or
+some other data structure will deliver similar performance while
+allowing large scale across the whole range of unicode characters.
+
+Because the compression is a complicated operation, it is not done at run time,
+but a separate program computes the compressed tables which are loaded into
+the \HiTeX\ engine at compiletime. Therefore \HiTeX\ is different from other
+unicode \TeX\ engines: With \HiTeX, it is not a good idea
+to load the unicode character data at runtime. The loading would destroy the
+compression and would sooner or later produce and overflow error.
+Instead the character data is already part of the \HiTeX\ engine when it starts
+with exactly the same values it would and should have after the runtime initialization.
+
+Now let's consider the details.
+
+\subsubsection{\ctl{catcode} and \ctl{sfcode}}
+These primitives work pretty much as usual, except that their argument
+is no longer an \sym{\hbox{8-bit}\  number} but \sym{utf\ character\ code}:
+\medskip
+\rule\sym{utf\ character\ code}: 
+a \sym{number} in the range 0 to \.{"10FFFF}. \index{utf character code+\sym{utf\ character\ code}}
+\medskip
+
+The values---category codes are in the range from 1 to 15 and
+space factor codes are in the range from 0 to 32767---can be retrieved like this:
+\medskip
+\rule\sym{internal\ integer}:
+\ctl{catcode}\sym{utf\ character\ code}.
+\rule\sym{internal\ integer}:
+\ctl{sfcode}\sym{utf\ character\ code}.
+\medskip
+Setting new values is equaly simple. The assigned \sym{number} must be in the
+propper range.
+\medskip
+\rule\sym{code\ assignment}:
+\ctl{catcode}\sym{utf\ character\ code} \opt{\.{=}} \sym{number}.
+\rule\sym{code\ assignment}:
+\ctl{sfcode}\sym{utf\ character\ code} \opt{\.{=}} \sym{number}.
+\medskip
+
+\subsubsection{\ctl{uccode} and \ctl{lccode}}
+These primitives are again extended to work with the full range of unicode
+characters. It is expected that the assignment of new lower case or upper case
+values is relatively rare. Sometimes it is used in certain coding tricks.
+So \TeX's traditional tables are not retained and all information is stored
+in the new compressed format. Take this into accound before attempting to
+large scale rearangements of these assignments. Information about ``title case''
+is currently not implemented.
+\medskip
+\rule\sym{internal\ integer}:
+\ctl{lccode}\sym{utf\ character\ code}.
+\rule\sym{internal\ integer}:
+\ctl{uccode}\sym{utf\ character\ code}.
+\rule\sym{code\ assignment}:
+\ctl{lccode}\sym{utf\ character\ code} \opt{\.{=}} \sym{utf\ character\ code}.
+\rule\sym{code\ assignment}:
+\ctl{uccode}\sym{utf\ character\ code} \opt{\.{=}} \sym{utf\ character\ code}.
+\medskip
+
+
+\subsubsection{\ctl{mathcode}, \ctl{delcode} and friends}
+Before diving deeper into this section, there is a confession due:
+using \HiTeX\ with unicode fonts in math mode is a largely untested area.
+But the basics are implemented in the \HiTeX\ engine.
+
+Making the \ctl{mathcode} primitive work nicely with unicode values
+requires some extra work because \TeX\ packs three different values,
+the class, the family, and the character code into one integer.
+In hexadecimal notation a mathcode contains four hexadecimal digits:
+the leading hex-digit specifies the class,
+the next hex-digit specifies the familiy and the lowest two digits
+a one byte character code.
+\medskip
+\rule\sym{class}: \sym{hexdigit}.
+\rule\sym{family}: \sym{hexdigit}.
+\rule\sym{byte}: \sym{hexdigit}\sym{hexdigit}.
+\rule\sym{math\ code}:\sym{class}\sym{familiy}\sym{byte}.
+\medskip
+It is not strictly necessary to give the number in hexadecimal;
+it is possible to convert the hexadecimal number into a decimal
+number and write it down in decimal; or in any other format that
+\TeX\ provides for the representation of numbers.
+
+To be compatible with existing \TeX\ code this format is retained when
+using  \ctl{mathcode}, only the argument of  \ctl{mathcode} now can be
+any unicode character.
+\medskip
+\rule\sym{math\ code}:
+\ctl{mathcode}\sym{utf\ character\ code}.
+\rule\sym{code\ assignment}:
+\ctl{mathcode}\sym{utf\ character\ code} \opt{\.{=}} \sym{math\ code}.
+\medskip
+So you can say \ctl{mathcode}\.{96} as well as \ctl{mathcode}\.{9600}
+and in both cases, you will get a math code in the range 0 to \.{"FFFF}.
+If however the class stored for the character in question is not
+in the range 0 to \.{"F}, or the family is not in the range \.{"F},
+or the character code does not fit into one byte, \ctl{mathcode} will
+return zero. You can also use \ctl{mathcode}\.{9600} to give a new math code
+value to the unicode character 9600, but the new value is limited to a
+one byte character code.
+Note also that you can continue to use the special math code value \.{"8000}
+to make an ``active'' math character.
+
+
+To set or retrieve math codes with arbitrary unicode characters,
+\HiTeX\ follows the example of \LuaTeX\ and \XeTeX\ and
+packs a 3-bit class number, a 8-bit family number and a 21-bit unicode character
+into a 32-bit value: the 8 most siginficant bits contain the family, the
+next 3 bits contain the class, and the 21 least significant bits contain
+the unicode character.
+\medskip
+\rule\sym{Uclass}: \sym{\hbox{3-bit}}.
+\rule\sym{Ufamily}: \sym{\hbox{8-bit}}.
+\rule\sym{Ucode}: \sym{\hbox{21-bit}}.
+\rule\sym{Umath\ code}:\sym{Ufamily}\sym{Uclass}\sym{Ucode}.
+\medskip
+
+Because the three values are not nicely aligned
+on the four bit boundaries of an hexadecimal notation
+two new primitives \ctl{Umathcode} and \ctl{Umathcodenum} are provided.
+\ctl{Umathcodenum} is a simple extension of \ctl{mathcode}. It returns
+a single number in the bit-packed format as just described and when
+a new value is set it must already be in the correct bit-packed format.
+\medskip
+\rule\sym{Umath\ code}:
+\ctl{Umathcodenum}\sym{utf\ character\ code}.
+\rule\sym{code\ assignment}:
+\ctl{Umathcodenum}\sym{utf\ character\ code} \opt{\.{=}} \sym{Umath\ code}.
+\medskip
+\ctl{Umathcode} is a little easier to use because it does not require
+the user to do the bit packing. Instead a new math code can be set by
+giving three separate numbers: one for the class, one for the family and
+one for the character code. 
+\medskip
+\rule\sym{class\ number}: a \sym{number} in the range 0 to 7.
+\rule\sym{family\ number}: a \sym{number} in the range 0 to 255.
+\rule\sym{Umath\ code}:
+\ctl{Umathcode}\sym{utf\ character\ code}.
+\rule\sym{code\ assignment}:
+\ctl{Umathcode}\sym{utf\ character\ code} \opt{\.{=}}
+    \sym{class\ number} \sym{family\ number} \sym{utf\ character\ code}.
+\medskip
+
+\HiTeX's \ctl{delcode} primitive offers no surprise. For any unicode
+character, you can use \ctl{delcode} to set or retrieve its delimiter code.
+The traditional delimiter code is in the range -1 to \.{"FFFFFF}.
+
+\medskip
+\rule\sym{internal\ integer}: \ctl{delcode}\sym{utf\ character\ code}.
+\rule\sym{code\ assignment}:
+\ctl{delcode}\sym{utf\ character\ code} \opt{\.{=}} \sym{number}.
+\medskip
+
+The primitives \ctl{Udelcode} and \ctl{Udelcodenum}, as known from \XeTeX\ or
+\LuaTeX, are not yet implemented.
+
+\subsection{OpenType fonts}
+When \TeX\ was invented, digital fonts, especially fonts suitable to typeset
+mathematics, were a scarce commodity. But \TeX\ came with a companion, \MF, to
+create digital fonts. These fonts had their own glyph encoding
+and their own file format for glyphs  (\.{.pk} files)
+and for font metrics (\.{.tfm} files).
+Soon after that, the American Mathematical Society commissioned
+a collection of \TeX\ font files in the PostScript Type 1 format, which allowed
+the creation of PostScript (and much later \PDF) output files with \TeX.
+The PostScript Type 1 fonts largely replaced the original \.{.pk} files.
+A replacement for the font metric files was not necessary and so the \.{.tfm} files
+are still in use today.
+
+In the meantime, the number of high quality, freely available, digital fonts has
+exploded. And ``high quality'' is no longer equivalent to ``PostScript Type 1''.
+Today, the most popular file format for fonts is the OpenType format, an extension
+of the slightly simpler TrueType format. So it seems natural to extend the
+capabilities of \TeX\ to work with these types of font files.
+OpenType font files not only contain the glyphs, but they also contain the
+necessary font metrics. So an OpenType font file can replace both the \.{.pk} file
+and the \.{.tfm} file.
+
+To define fonts, \HiTeX\ extents the syntax and semantics of \TeX's \ctl{font}
+primitive. It tries to be simple and as much as possible compatible with
+the implementation of the \ctl{font} primitive in \LuaTeX\ and \XeTeX.
+
+The syntax is:
+\medskip
+\rule\sym{font\ assignment}: \ctl{font}\sym{control\ sequence} \opt{\.{=}}
+  \sym{input\ file} \opt{\sym{at\ clause}}.
+\rule\sym{input\ file}: \.{"}\sym{font\ specifier}\.{"}.
+\rule\sym{input\ file}: \.{\{}\sym{font\ specifier}\.{\}}.
+\rule\sym{input\ file}: \sym{font\ specifier}.
+\rule\sym{font\ specifier}: \sym{pathname}.
+\rule\sym{at\ clause}: \.{at} \sym{dimen} \OR\ \.{scaled} \sym{number}.
+\medskip
+The \sym{at\ clause} to adjust the font size is described in the \TeX\ book
+and has not changed.
+
+In modern \TeX\ engines, an \sym{input\ file} can be more than just a sequence of characters
+terminated by a space token or a \ctl{relax}.
+If the name of the \sym{input\ file} contains spaces, it is possible to enclose it
+in  \.{"} (double quote) characters. In fact, if a file name contains
+double quote characters they switch quoting alternatingly on and off and are
+otherwise ignored as parts of the file name. Inside the quoted parts, space characters
+are part of the file name; the first space character outside of a quoted part
+terminates the file name.
+A more convenient way to define an arbitrary \sym{input\ file} is enclosing it
+in curly braces \.{\{}\dots\.{\}}.
+In this case the general text inside the braces---with spaces, special symbols,
+expanded macros, and all double quotes removed---is considered the \sym{input\ file}.
+
+After \HiTeX\ has done all this preprocessing of the \sym{input\ file},
+the result is a \sym{font\ specifier} 
+Before we look at the more complex forms of a \sym{font\ specifier}
+we look at the simple case of a \sym{pathname}.
+In this case, \HiTeX\  passes it to the \.{kpathsearch} library to find a matching \.{.tfm} file.
+If the \.{.tfm} file is found, \HiTeX\ will assume that
+the font is one of the traditional \TeX\ fonts, using \TeX's traditional encoding.
+Later, \HiTeX\ will then use again the \.{kpathsearch} library to
+find and open the matching PostScript Type 1 font and if that is not possible
+a matching \.{.pk} file. Thats all.
+
+If the  \.{kpathsearch} library can not find a suitable \.{.tfm} file,
+\HiTeX\ assumes that an OpenType or TrueType file should be loaded.
+In this case, a \sym{font\ specifier} is not just simply the name of a file,
+but it has a very sophisticated syntax---mostly due to the attempt to be
+compatibel with existing implementations.
+
+\medskip
+\rule\sym{font\ specifier}: \sym{font\ file\ name} \opt{\.{:} \sym{font\ features}}.
+\rule\sym{font\ file\ name}: \.{file:}\sym{pathname} \opt{\sym{font\ selector}}.
+\rule\sym{font\ file\ name}: \.{[}\sym{pathname}\.{]}\opt{\sym{font\ selector}}.
+\rule\sym{font\ selector}: \.{(}\sym{number}\.{)}.
+\rule\sym{font\ specifier}: \.{name:}\sym{font\ name} \opt{\.{:} \sym{font\ features}}.
+\smallskip
+$\bullet$ Note that the use of \sym{font\ features} is currently not yet implemented.
+Any \sym{font\ features} given will be silently ignored.
+
+$\bullet$ Note that font lookup using the \.{name:} prefix to indicate the use
+of ``font names'' as opposed to ``file names'' is currently not yet implemented.
+Currently only file name lookup is implemented.
+
+$\bullet$ Note that a \sym{font\ selector} must be an index number.
+Using the PostScript name to select a font is not yet implemented.
+
+$\bullet$ Note that \HiTeX\ in an attempt to maintain compatibility with other engines
+will not give up on a font specifier that neither leads to a matching \.{.tfm} file
+nor has a \.{file:} or \.{name:} prefix and is not bracketed either.
+Instead \HiTeX\ will issue a warning and tries to resolve the problem.
+First, it tries to assume that the \.{file} prefix is missing, and if
+that does not help, it tries to assume that the \.{name:} prefix is missing.
+Only if none of this leads to a usable font file, \HiTeX\ succumbs.
+
+\medskip
+
+The extended font specifiers used for OpenType fonts
+assign special meaning to the colon ``\.{:}'', the slash ``\.{/}'',
+and the opening parenthesis ``\.{(}''.
+If these characters occur in the \sym{pathname} of a font file, it is possible to use
+a bracketed notation of the \sym{pathname} as a alternative to using the \.{file:} prefix.
+If the pathname is enclosed in square brackets, it may
+contain any character except the closing square bracket; otherwise it must not contain
+the colon ``\.{:}'', the slash ``\.{/}'', nor the opening parenthesis ``\.{(}''.
+Since the colon can be necessary after a drive letter in Windows and the slash serves as
+a directory separator in Linux, the bracketed verions is quite common. The paraenthesis
+is excluded from the unbracketed version because is start the optional \sym{font\ selector}.
+
+Once \HiTeX\ has determined the \sym{pathname}, it uses the \.{kpathsearch} library to
+find a matching OpenType font and if this does not succeed, it tries to find a matching
+TrueType font. Once the file is found, the Harfbuzz library is used to open the font file.
+
+$\bullet$ Note that it is possible to open PostScript Type 1 font files without a \.{.tfm} file
+using Harfbuzz. The use of Type 1 fonts with Harfbuzz, however,
+requires the use of \.{.afm} files, and this does not work well and is deprecated.
+Therefore \HiTeX\ does not support it.
+For Type 1 fonts, one should use \.{afm2tfm} to convert the \.{.afm} files to \.{tfm} 
+files and put the new \.{tfm} files in a place where the \.{kpathsearch} library
+can find them. Then run \.{mktexls}.
+
+\subsubsection{Embedding subsets of fonts}
+
+
+
 \subsection{Images}
 The primitive \ctl{HINTimage}\index{HINTimage+\ctl{HINTimage}}
 includes an image\index{image} in a document.
@@ -287,11 +646,11 @@ Hi\TeX\ tries to determine the image's width from the image file.
 The same holds for the height specification.
 
 \medskip
-\rule \sym{width}\index{width+\sym{width}}:\.{width} \sym{normal dimension}.
-\rule \sym{height}\index{height+\sym{height}}:\.{height} \sym{normal dimension}.
+\rule \sym{width}:\.{width} \sym{normal\ dimension}.\index{width+\sym{width}}
+\rule \sym{height}:\.{height} \sym{normal\ dimension}.\index{height+\sym{height}}
 \medskip
 
-Note that a \sym{normal dimension} that is computed from \ctl{hsize}
+Note that a \sym{normal\ dimension} that is computed from \ctl{hsize}
 or \ctl{vsize} retains this dependency when processed by Hi\TeX.
 This allows an image to adapt to the size of the viewing area.
 Scaling in the \HINT\ viewer will, however, never change the
@@ -329,8 +688,9 @@ A foreground color can be specified using
 the following syntax:
 
 \medskip
-\rule\sym{foreground}\index{foreground+\sym{foreground}}:
+\rule\sym{foreground}:
    \.{FG\{} \sym{integer} \sym{integer} \sym{integer} \opt{\sym{integer}} \.{\}}.
+   \index{foreground+\sym{foreground}}
 \medskip
 
 Note that for convenience, the alpha value
@@ -357,7 +717,8 @@ representation (with the smaller numbers) uses the lowercase
 keyword \.{fg} instead of \.{FG}. Here is the syntax:
 
 \medskip
-\rule\sym{foreground}\index{foreground+\sym{foreground}}:
+\index{foreground+\sym{foreground}}
+\rule\sym{foreground}:
 \.{fg\{} \sym{number} \sym{number} \sym{number} \opt{\sym{number}} \.{\}}.
 \medskip
 
@@ -382,24 +743,25 @@ can be written \.{fg\{cmyk 0 0 1 0 0.5\}},  \.{FG\{cmyk 0 0 "FF 0 "7F\}},
 The additional syntax rules are:
 
 \medskip
-\rule\sym{foreground}\index{foreground+\sym{foreground}}:
+\index{foreground+\sym{foreground}}
+\rule\sym{foreground}:
 \.{fg\{ rgb \sym{number} \sym{number} \sym{number} \opt{\sym{number}} \}}.
-\rule\sym{foreground}\index{foreground+\sym{foreground}}:
+\rule\sym{foreground}:
 \.{fg\{ cmyk \sym{number} \sym{number} \sym{number} \sym{number} \opt{\sym{number}} \}}.
-\rule\sym{foreground}\index{foreground+\sym{foreground}}:
+\rule\sym{foreground}:
    \.{FG\{ rgb \sym{integer} \sym{integer} \sym{integer} \opt{\sym{integer}} \}}.
-\rule\sym{foreground}\index{foreground+\sym{foreground}}:
+\rule\sym{foreground}:
    \.{FG\{ cmyk \sym{integer} \sym{integer} \sym{integer} \sym{integer} \opt{\sym{integer}} \}}.
 \medskip
 
 \subsubsection{Defining and Using Colors}
 As we will see, colors come in whole sets of colors.
 To define such a set of colors, Hi\TeX\ provides
-the primitive \ctl{HINTcolor}. It syntax is
+the primitive \ctl{HINTcolor}. Its syntax is
 \medskip
-\prim\ctl{HINTcolor} \.{\{ \sym{color specification} \}}.
+\prim\ctl{HINTcolor} \.{\{} \sym{color\ specification} \.{\}}.
 \medskip
-Before we give the complete definition of a  \sym{color specification},
+Before we give the complete definition of a  \sym{color\ specification},
 we start with some examples.
 In its simplest form this primitive just specifies a single color.
 For example \ctl{HINTcolor}\.{\{fg\{0 0 0\}\}} specifies
@@ -423,24 +785,28 @@ different color. You can specify the highlight color right after
 the normal text color and the focus color right after the highlight color.
 The same can be done for the colors in ``dark'' mode.
 
-Here are the remaining rules that complete the \sym{color specification}:
+Here are the remaining rules that complete the \sym{color\ specification}:
 
 \medskip
-\rule\sym{color specification}\index{color specification+\sym{color specification}}: \sym{color set} \opt{\.{dark} \sym{color set}}.
-\rule\sym{color set}\index{color set+\sym{color set}}:
+\index{color\ specification+\sym{color\ specification}}
+\rule\sym{color\ specification}: \sym{color\ set} \opt{\.{dark} \sym{color\ set}}.
+\index{color set+\sym{color\ set}}
+\rule\sym{color set}:
     \sym{color} \opt{\sym{color} \opt{\sym{color}}}.
-\rule\sym{color}\index{color+\sym{color}}:
+\index{color+\sym{color}}
+\rule\sym{color}:
     \sym{foreground} \opt{\sym{background}}.
-\rule\sym{background}\index{foreground+\sym{foreground}}:
+    \index{background+\sym{background}}
+\rule\sym{background}:
    \.{FG\{ \opt{\.{rgb}} \sym{integer} \sym{integer} \sym{integer} \opt{\sym{integer}} \}}.
-\rule\sym{background}\index{foreground+\sym{foreground}}:
+\rule\sym{background}:
    \.{fg\{ \opt{\.{rgb}} \sym{number} \sym{number} \sym{number} \opt{\sym{number}} \}}.
-\rule\sym{background}\index{foreground+\sym{foreground}}:
+\rule\sym{background}:
    \.{FG\{ cmyk \sym{integer} \sym{integer} \sym{integer} \sym{integer} \opt{\sym{integer}} \}}.
-\rule\sym{background}\index{foreground+\sym{foreground}}:
+\rule\sym{background}:
   \.{fg\{ cmyk \sym{number} \sym{number} \sym{number} \sym{number} \opt{\sym{number}} \}}.
 \medskip
-If some of the optional parts in the \sym{color specification} are missing,
+If some of the optional parts in the \sym{color\ specification} are missing,
 the corresponding colors from the set of default colors, as described below,
 are used.
 
@@ -481,7 +847,7 @@ Hi\TeX\ provides the primitive \ctl{HINTdefaultcolor} to overwrite these
 default colors. This primitive must not be used after defining any custom
 colors using \ctl{HINTcolor}. Its syntax is
 \medskip
-\prim\ctl{HINTdefaultcolor} \.{\{} \sym{color specification} \.{\}}.
+\prim\ctl{HINTdefaultcolor} \.{\{} \sym{color\ specification} \.{\}}.
 \medskip
 The \HINT\ format specifies the following default colors:
 Normal text is black \.{FG\{0 0 0\}},
@@ -572,8 +938,8 @@ with the  primitive \ctl{HINTdefaultlinkcolor} and change
 the current link color with the primitive \ctl{HINTlinkcolor}.
 The syntax is:
 \medskip
-\prim\ctl{HINTdefaultlinkcolor} \.{\{} \sym{color specification} \.{\}}.
-\prim\ctl{HINTlinkcolor} \.{\{} \sym{color specification} \.{\}}.
+\prim\ctl{HINTdefaultlinkcolor} \.{\{} \sym{color\ specification} \.{\}}.
+\prim\ctl{HINTlinkcolor} \.{\{} \sym{color\ specification} \.{\}}.
 \medskip
 
 For convenience, the \HINT\ file format specifies default colors
@@ -794,9 +1160,11 @@ and
 with
 
 \medskip
-\rule \sym{destination}\index{destination+\sym{destination}}:\.{goto} \sym{label}.
-\rule \sym{label}\index{label+\sym{label}}:
-  \.{name} \.{\{}\sym{general text}\.{\}} \OR\ \.{num} \sym{integer}.
+\index{destination+\sym{destination}}
+\rule \sym{destination}:\.{goto} \sym{label}.
+\index{label+\sym{label}}
+\rule \sym{label}:
+  \.{name} \.{\{}\sym{general\ text}\.{\}} \OR\ \.{num} \sym{integer}.
 \medskip
 
 As you can see, the link refers to its destination using a label
@@ -814,8 +1182,9 @@ The syntax is
 \medskip
 with
 \medskip
-\rule\sym{placement}\index{placement+\sym{placement}}:
-\.{top}\index{top+{\tt top}} \OR\ \.{bot}\index{bot+{\tt bot}}.
+\index{placement+\sym{placement}}\index{top+{\tt top}}\index{bot+{\tt bot}}
+\rule\sym{placement}:
+\.{top} \OR\ \.{bot}.
 \medskip
 
 The optional placement argument specifies how to build the page 
@@ -848,12 +1217,13 @@ refers to a specific location in the document.
 The syntax is
 \medskip
 \prim\ctl{HINToutline}\index{HINToutline+\ctl{HINToutline}}
-\sym{destination} \opt{\sym{depth}} \.{\{}\sym{horizontal list}\.{\}}.
+\sym{destination} \opt{\sym{depth}} \.{\{}\sym{horizontal\ list}\.{\}}.
 \medskip
-\rule \sym{depth}\index{depth+\sym{depth}}: \.{depth} \sym{integer}.
+\index{depth+\sym{depth}}
+\rule \sym{depth}: \.{depth} \sym{integer}.
 \medskip
 
-The user interface can format the \sym{horizontal list} much like 
+The user interface can format the \sym{horizontal\ list} much like 
 a \ctl{hbox} would do and display it to the user. When the user selects
 this text, the document will be repositioned to show the destination location
 in the same way as with a link. In order to support also simpler
@@ -888,7 +1258,7 @@ The syntax of a page template specification is:
 \prim\ctl{HINTsetpage}\index{HINTsetpage+\ctl{HINTsetpage}}
 \sym{integer} \opt{\.{=}} \sym{name} 
 \opt{\sym{priority}} \opt{\sym{width}} \opt{\sym{height}}
-\.{\{}\sym{vertical list} \sym{stream definition list}\.{\}}.
+\.{\{}\sym{vertical\ list} \sym{stream\ definition list}\.{\}}.
 \medskip
 
 The \sym{integer} specifies the page templates number in the range 1
@@ -904,7 +1274,8 @@ After the name follows an optional priority; it is used to select the
 default value is~1. The build-in template has priority~0.
 
 \medskip
-\rule\sym{priority}\index{priority+\sym{priority}}: {\tt priority} \sym{integer}.
+\index{priority+\sym{priority}}
+\rule\sym{priority}: {\tt priority} \sym{integer}.
 \medskip
 
 
@@ -921,14 +1292,15 @@ grow with the magnification factor.  Of course both methods can be
 used together.  The default is \ctl{hsize} for the width and \ctl{vsize}
 for the height so there are no margins.
 
-The following \sym{vertical list} defines the page itself. It should assign suitable values
+The following \sym{vertical\ list} defines the page itself. It should assign suitable values
 to \ctl{topskip} and \ctl{maxdepth} because the values valid at the end of the vertical list
 are stored in the page template and are used in the page building process. 
 The vertical list usually also specifies the insertion of content streams
-using a \sym{stream insert point}.
+using a \sym{stream\ insert point}.
 
 \medskip
-\rule\sym{stream insert point}\index{stream insert point+\sym{stream insert point}}:
+\index{stream insert point+\sym{stream\ insert\ point}}
+\rule\sym{stream\ insert\ point}:
   \ctl{HINTstream} \sym{integer}.
 \medskip
 
@@ -938,26 +1310,28 @@ box 255 before calling the output routine).
 Otherwise, the \sym{integer} is \TeX's insertion number, that is the number of \TeX's box 
 containing the insertions. As usual, this box is filled using \TeX's \ctl{insert} primitive. 
 So after plain \TeX\ has defined \ctl{footins},
-the footnotes for the current page can be inserted after the main body of text in the \sym{vertical list}
+the footnotes for the current page can be inserted after the main body of text in the \sym{vertical\ list}
 by saying \ctl{HINTstream}\.0 followed by \ctl{HINTstream}\ctl{footins}.
 Of course you might want to have a footnote rule and a small skip to separate the 
 footnotes ---if there are any---from the main text. This can be achieved by a suitable
-\sym{stream definition} in the \sym{stream definition list}.
+\sym{stream\ definition} in the \sym{stream\ definition\ list}.
 
 \medskip
-\rule\sym{stream definition list}\index{stream definition list+\sym{stream definition list}}:
-  \OR\ \sym{stream definition list} \sym{stream definition}.
-\rule\sym{stream definition}\index{stream definition+\sym{stream definition}}:
+\index{stream definition list+\sym{stream\ definition\ list}}
+\rule\sym{stream\ definition\ list}:
+  \OR\ \sym{stream\ definition\ list} \sym{stream\ definition}.
+\index{stream definition+\sym{stream\ definition}}
+\rule\sym{stream\ definition}:
   \ctl{HINTsetstream} \sym{integer}  \opt{\.{=}}
 \opt{{\tt preferred} \sym{integer}}
 \opt{\.{next} \sym{integer}}
-\opt{\.{ratio} \sym{integer}} \.{\{}\sym{vertical list}\.{\}}.
+\opt{\.{ratio} \sym{integer}} \.{\{}\sym{vertical\ list}\.{\}}.
 \medskip
 
 
 The first \sym{integer} is the streams insertion number $i$,
 and it must match the \sym{integer} 
-previously used in the \sym{stream insert point}.
+previously used in the \sym{stream\ insert\ point}.
 Then follows the optional specification of a preferred stream with insertion number $p$,
 a next stream with insertion number $n$, and a split ratio $r$.
 If $r>0$, the contributions to stream $i$ are split between
@@ -974,13 +1348,15 @@ and \ctl{skip}$i$ should be set to the extra space needed if an insertion in cla
 
 This extra space is usually taken up by material that is inserted before and after the insertions,
 such as for example the footnote rule. This material can be defined by a 
-\sym{before list} and an \sym{after list}.
+\sym{before\ list} and an \sym{after\ list}.
 
 \medskip\index{HINTbefore+\ctl{HINTbefore}}\index{HINTafter+\ctl{HINTafter}}
-\rule \sym{before list}\index{before list+\sym{before list}}:
-  \ctl{HINTbefore} \opt{\.{=}} \.{\{}\sym{vertical list}\.{\}}.
-\rule \sym{after list}\index{after list+\sym{after list}}:
-  \ctl{HINTafter} \opt{\.{=}} \.{\{}\sym{vertical list}\.{\}}.
+\index{before list+\sym{before\ list}}
+\rule \sym{before\ list}:
+  \ctl{HINTbefore} \opt{\.{=}} \.{\{}\sym{vertical\ list}\.{\}}.
+\index{after list+\sym{after\ list}}
+\rule \sym{after\ list}:
+  \ctl{HINTafter} \opt{\.{=}} \.{\{}\sym{vertical\ list}\.{\}}.
 \medskip
 
 If you are interested in the design decision that motivate the definitions that have
@@ -1183,7 +1559,7 @@ for processing them. Hence, \HINT\ does not support mark nodes.
 
 
 Instead of output routines, \HINT\ uses page templates.
-Page templates are basically vertical boxes with \sym{stream insert points} marking the 
+Page templates are basically vertical boxes with \sym{stream\ insert\ points} marking the 
 positions where the content of the box registers, filled by the page builder,
 should appear. 
 To output the page, the viewer traverses the page template,
@@ -1326,12 +1702,14 @@ than the width of the page and {\tt vsize} larger than its height.
 %\bibliographystyle{plain}
 %}
 
+
+
 \plainsection{Index}
-{
+\begingroup
 \def\_{{\tt \UL}} % underline in a string
-\catcode`\_=\active \let_=\_ % underline is a letter
-\input hitexman.ind
-}
+\catcode`\_=\active \let_=\UL % underline is a letter
+\input hitexman.ind\relax
+\endgroup
 
 \write\cont{} % ensure that the contents file isn't empty
 %  \write\cont{\catcode `\noexpand\@=12\relax}   % \makeatother
