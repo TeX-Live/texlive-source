@@ -1,3 +1,8 @@
+2026-01-21  Karl Berry  <karl@freefriends.org>
+
+	* kpsewhich.c (format_abbrs): add src as another abbreviation for
+	kpse_texsource_format, and various others to 
+
 2026-01-07  Karl Berry  <karl@freefriends.org>
 
 	* version.ac (kpse_dev): remove /dev, for TL26.

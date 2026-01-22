@@ -797,7 +797,8 @@ kpathsea_init_format_return_varlist(kpathsea kpse,kpse_file_format_type format)
       FMT_INFO.suffix_search_only = true;
       break;
     case kpse_fea_format:
-      INIT_FORMAT("font feature files", DEFAULT_FONTFEATURES, FONTFEATURES_ENVS);
+      INIT_FORMAT ("font feature files", DEFAULT_FONTFEATURES,
+                   FONTFEATURES_ENVS);
       SUFFIXES (".fea");
       FMT_INFO.suffix_search_only = true;
       break;

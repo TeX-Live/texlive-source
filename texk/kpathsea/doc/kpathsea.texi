@@ -1714,31 +1714,31 @@ graphic/figure:  .eps .epsi
 tex: .tex  .sty .cls .fd .aux .bbl .def .clo .ldf
 TeX system documentation (doc):
 texpool: .pool
-TeX system sources (source):  .dtx .ins
-PostScript header:  .pro
+TeX system source (source, src):  .dtx .ins
+PostScript header (psheader):  .pro
 Troff fonts (trofffont):
 type1 fonts: .pfa .pfb
 vf: .vf
 dvips config (dvipsconfig):
 ist: .ist
-truetype fonts: .ttf .ttc .TTF .TTC .dfont
-type42 fonts: .t42 .T42
+truetype fonts (truetype, ttf): .ttf .ttc .TTF .TTC .dfont
+type42 fonts (type42): .t42 .T42
 web2c files (web2c):
 other text files (othertext):
 other binary files (otherbin):
 misc fonts (miscfont):
 web: .web  .ch
 cweb: .w .web  .ch
-enc files: .enc
+enc files (enc): .enc
 cmap files (cmap):
-subfont definition files: .sfd
-opentype fonts: .otf .OTF
+subfont definition files (sfd): .sfd
+opentype fonts (opentype, otf): .otf .OTF
 pdftex config (pdftexconfig):
-lig files: .lig
+lig files (lig): .lig
 texmfscripts:
 lua: .lua .luatex .luc .luctex .texlua .texluc .tlu
-font feature files: .fea
-cid maps: .cid .cidmap
+font feature files (fea): .fea
+cid maps (cidmap): .cid .cidmap
 mlbib: .mlbib .bib
 mlbst: .mlbst .bst
 clua: .dll .so

@@ -1395,31 +1395,31 @@ lookups.
           tex: .tex  .sty .cls .fd .aux .bbl .def .clo .ldf
           TeX system documentation (doc):
           texpool: .pool
-          TeX system sources (source):  .dtx .ins
-          PostScript header:  .pro
+          TeX system source (source, src):  .dtx .ins
+          PostScript header (psheader):  .pro
           Troff fonts (trofffont):
           type1 fonts: .pfa .pfb
           vf: .vf
           dvips config (dvipsconfig):
           ist: .ist
-          truetype fonts: .ttf .ttc .TTF .TTC .dfont
-          type42 fonts: .t42 .T42
+          truetype fonts (truetype, ttf): .ttf .ttc .TTF .TTC .dfont
+          type42 fonts (type42): .t42 .T42
           web2c files (web2c):
           other text files (othertext):
           other binary files (otherbin):
           misc fonts (miscfont):
           web: .web  .ch
           cweb: .w .web  .ch
-          enc files: .enc
+          enc files (enc): .enc
           cmap files (cmap):
-          subfont definition files: .sfd
-          opentype fonts: .otf .OTF
+          subfont definition files (sfd): .sfd
+          opentype fonts (opentype, otf): .otf .OTF
           pdftex config (pdftexconfig):
-          lig files: .lig
+          lig files (lig): .lig
           texmfscripts:
           lua: .lua .luatex .luc .luctex .texlua .texluc .tlu
-          font feature files: .fea
-          cid maps: .cid .cidmap
+          font feature files (fea): .fea
+          cid maps (cidmap): .cid .cidmap
           mlbib: .mlbib .bib
           mlbst: .mlbst .bst
           clua: .dll .so
@@ -4212,39 +4212,39 @@ Node: Database format54395
 Node: Invoking kpsewhich55444
 Node: kpsewhich examples56835
 Node: Path searching options57723
-Node: Specially-recognized files67897
-Node: Auxiliary tasks69372
-Node: Standard options73516
-Node: TeX support73884
-Node: Supported file formats75242
-Node: File lookup83993
-Node: Glyph lookup85798
-Node: Basic glyph lookup86946
-Node: Fontmap87854
-Node: Fallback font90465
-Node: Suppressing warnings91401
-Node: mktex scripts92564
-Node: mktex configuration93807
-Node: mktex script names99900
-Node: mktex script arguments101583
-Node: Programming102498
-Node: Programming overview103141
-Node: Calling sequence106052
-Node: Safe filenames111389
-Ref: openout_any111548
-Node: Program-specific files115378
-Node: Programming with config files116431
-Node: Reporting bugs118078
-Node: Bug checklist118756
-Node: Mailing lists122313
-Node: Debugging122990
-Node: Logging128247
-Node: Common problems130154
-Node: Unable to find files130631
-Node: Slow path searching133474
-Node: Unable to generate fonts134869
-Node: TeX or Metafont failing137405
-Node: Index138607
+Node: Specially-recognized files67986
+Node: Auxiliary tasks69461
+Node: Standard options73605
+Node: TeX support73973
+Node: Supported file formats75331
+Node: File lookup84082
+Node: Glyph lookup85887
+Node: Basic glyph lookup87035
+Node: Fontmap87943
+Node: Fallback font90554
+Node: Suppressing warnings91490
+Node: mktex scripts92653
+Node: mktex configuration93896
+Node: mktex script names99989
+Node: mktex script arguments101672
+Node: Programming102587
+Node: Programming overview103230
+Node: Calling sequence106141
+Node: Safe filenames111478
+Ref: openout_any111637
+Node: Program-specific files115467
+Node: Programming with config files116520
+Node: Reporting bugs118167
+Node: Bug checklist118845
+Node: Mailing lists122402
+Node: Debugging123079
+Node: Logging128336
+Node: Common problems130243
+Node: Unable to find files130720
+Node: Slow path searching133563
+Node: Unable to generate fonts134958
+Node: TeX or Metafont failing137494
+Node: Index138696
 
 End Tag Table
 
