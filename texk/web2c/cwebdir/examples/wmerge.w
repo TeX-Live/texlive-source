@@ -5,7 +5,7 @@
 @* Introduction.  This file contains the program \.{wmerge},
 which takes two or more files and merges them according
 to the conventions of \.{CWEB}. Namely, it takes an ordinary \.{.w}
-file and and optional \.{.ch} file and sends the corresponding
+file and an optional \.{.ch} file and sends the corresponding
 \.{.w}-style file to standard output (or to a named file),
 expanding all ``includes''
 that might be specified by \.{@@i} in the original \.{.w} file.

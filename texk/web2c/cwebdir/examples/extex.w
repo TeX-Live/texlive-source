@@ -108,7 +108,7 @@ the input file. Otherwise malformed input files could lead to
 infinite loops.
 
 @<Procedures@>=
-int get()
+int get(void)
 {@+register int x;
   x=getchar();
   if (x==EOF) exit(0);
@@ -187,7 +187,7 @@ case '\\': if (controlseq()) goto control_seq_in_word;
 goto main_cycle;
 
 @ @<Procedures@>=
-int controlseq()
+int controlseq(void)
 {
   int l; /* number of letters in the control sequence */
   char a,b; /* the first two characters after `\.\\' */
