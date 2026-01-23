@@ -92,11 +92,12 @@ a nonzero value is returned.
 @p
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 @#
 @<Typedefs@>@;
-int main(argc,argv)
-  int argc; /* the number of command-line arguments */
-  char *argv[]; /* the arguments themselves */
+int main(
+  int argc, /* the number of command-line arguments */
+  char *argv[]) /* the arguments themselves */
 {
   @<Local variables@>;
   @<Scan the command line arguments@>;
@@ -111,8 +112,8 @@ typedef unsigned char byte; /* our bytes will range from 0 to 255 */
 @ @<Local variables@>=
 int targc; /* temporary modifications to |argc| */
 byte **targv; /* pointer to the current argument of interest */
-unsigned delta; /* the offset used in the \.{-a} and \.{-d} options */
-unsigned max_length=MAX_LENGTH_DEFAULT; /* longest allowable word */
+unsigned int delta; /* the offset used in the \.{-a} and \.{-d} options */
+unsigned int max_length=MAX_LENGTH_DEFAULT; /* longest allowable word */
 byte breakchar; /* break character to use in the output */
 int ord[256]; /* table of ord values */
 register int c; /* an all-purpose index */
@@ -312,7 +313,7 @@ node *next_node=NULL, *bad_node=NULL;
 byte *next_string=NULL, *bad_string=NULL;
 node *root=NULL;
 byte *buffer;
-int l; /* length of current string in |buffer| */
+unsigned int l; /* length of current string in |buffer| */
 
 @ The mechanisms for sorting the input words are now all in place.
 We merely need to invoke them at the right times.
@@ -320,7 +321,7 @@ We merely need to invoke them at the right times.
 @<Sort the input into memory@>=
 buffer=(byte*)malloc(max_length+1);
 if (buffer==NULL) out_of_mem(-5);
-while (1) {
+while (true) {
   @<Set |buffer| to the next word from |stdin|; |goto done| if file ends@>;
   if (l) {
    @<Search for |buffer| in the treap; |goto found| if it's there@>;
@@ -360,7 +361,7 @@ of their right subtrees).
 if (root!=NULL) {@+register node *p,*q;
   p=root;
   root=NULL;
-  while (1) {
+  while (true) {
     while (p->left!=NULL) {
       q=p->left;
       p->left=root; /* |left| links are now used for the stack */
@@ -473,7 +474,7 @@ A null character always appears in |curfile->limit|.
 @<Read a new word into |curfile->curword|...@>=
 v=curfile->curword;
 l=max_length; /* here |l| represents max characters to put in |curword| */
-while (1) {@+register byte *w=curfile->limit;
+while (true) {@+register byte *w=curfile->limit;
   u=curfile->pos;
   if (u+l>=w)
     while (ord[*u]>0) *v++=*u++; /* this is the inner loop */

@@ -20,9 +20,9 @@ to use the printer's line-drawing set, rather than the terminal's.
 @<Global declarations@>@;
 
 @#
-main(argc, argv)
-     int argc;
-     char **argv;
+int main(
+     int argc,
+     char **argv)
 {
 @<|main| variable declarations@>;
 @<Search for options and set special characters on |"-p"|@>;
@@ -53,9 +53,9 @@ Reading the tree is simple---we read one line at a time, and call on the
 recursive |add_tree| procedure.
 
 @c
-read_tree (fp, rootptr)
-   FILE *fp;
-   struct tnode **rootptr;
+void read_tree (
+   FILE *fp,
+   struct tnode **rootptr)
 {
    char buf[255], *p;
 
@@ -78,9 +78,9 @@ To add a string, we split off the first part of the name and insert it into
 the sibling list. We then do the rest of the string as a child of the new node.
 
 @c
-add_tree(rootptr, p)
-     struct tnode **rootptr;
-     char *p;
+void add_tree(
+     struct tnode **rootptr,
+     char *p)
 {
      char *s;
      int slashed;
@@ -126,7 +126,9 @@ whole string or the last piece, we will restore the slash or advance
        (*rootptr)->data = malloc (strlen(p)+1);
 
 @
-@<Global decl...@>= char *malloc();
+@<Global incl...@>=
+#include <stdlib.h>
+#include <string.h>
 
 @ In this simple implementation, we just read from standard input.
 @<Read...@>= read_tree(stdin,&root);
@@ -192,10 +194,10 @@ We define a predicate telling us when a sibling is the last in a series.
 @d is_last(S) (S->sibling==NULL)
 
 @c
-print_node(fp, indent_string, node)
-     FILE *fp;
-     char *indent_string;
-     struct tnode *node;
+void print_node(
+     FILE *fp,
+     char *indent_string,
+     struct tnode *node)
 {
   char string[255];
      int i;
@@ -244,5 +246,19 @@ a group.
 @ For this simple implementation, we just write on standard output.
 
 @<Write...@>= print_node(stdout, indent_string, root);
+
+@ @<Global decl...@>=
+void read_tree (
+   FILE *fp,
+   struct tnode **rootptr);
+
+void print_node(
+     FILE *fp,
+     char *indent_string,
+     struct tnode *node);
+
+void add_tree(
+     struct tnode **rootptr,
+     char *p);
 
 @*Index.

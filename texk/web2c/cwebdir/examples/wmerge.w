@@ -14,13 +14,15 @@ arguments'' below.)
 
 @c
 #include <stdio.h>
+#include <stdbool.h>
 #include <stdlib.h> /* declaration of |getenv| */
+#include <string.h> /* declaration of |strlen| */
 #include <ctype.h> /* definition of |isalpha|, |isdigit| and so on */
 @<Definitions@>@;
 @<Predeclarations of functions@>@;
 @<Functions@>@;
-main (ac,av)
-int ac; char **av;
+int main (
+int ac, char **av)
 {
   argc=ac; argv=av;
   @<Set the default options@>;
@@ -35,22 +37,18 @@ int ac; char **av;
 }
 
 @ @<Definitions@>=
-typedef short boolean;
 typedef unsigned char eight_bits;
 typedef char ASCII; /* type of characters inside \.{WEB} */
 
-@ We predeclare some standard string-handling functions here instead of
-including their system header files, because the names of the header files
-are not as standard as the names of the functions. (There's confusion
-between \.{<string.h>} and \.{<strings.h>}.)
-
-@<Predecl...@>=
-extern size_t strlen(); /* length of string */
-extern char* strcpy(); /* copy one string to another */
-extern int strncmp(); /* compare up to $n$ string characters */
-extern char* strncpy(); /* copy up to $n$ string characters */
-
 @ @<Predec...@>=
+bool input_ln(FILE *fp);
+bool wrap_up(void);
+void prime_the_change_buffer(void);
+void check_change(void);
+void reset_input(void);
+bool get_line(void);
+void put_line(void);
+void check_complete(void);
 
 @ The lowest level of input to the \.{WEB} programs
 is performed by |input_ln|, which must be told which file to read from.
@@ -93,12 +91,12 @@ using \.{WEB}'s format command (saying \.{@@f caddr\_t int}).  Either of
 these will make {\bf caddr\_t} be treated in the same way as |int|.
 
 @<Func...@>=
-input_ln(fp) /* copies a line into |buffer| or returns 0 */
-FILE *fp; /* what file to read from */
+bool input_ln( /* copies a line into |buffer| or returns 0 */
+FILE *fp) /* what file to read from */
 {
   register int  c=EOF; /* character read; initialized so some compilers won't complain */
   register char *k;  /* where next character goes */
-  if (feof(fp)) return(0);  /* we have hit end-of-file */
+  if (feof(fp)) return false;  /* we have hit end-of-file */
   limit = k = buffer;  /* beginning of buffer */
   while (k<=buffer_end && (c=getc(fp)) != EOF && c!='\n')
     if ((*(k++) = c) != ' ') limit = k;
@@ -107,9 +105,9 @@ FILE *fp; /* what file to read from */
       ungetc(c,fp); loc=buffer; err_print("! Input line too long");
 @.Input line too long@>
   }
-  if (c==EOF && limit==buffer) return(0);  /* there was nothing after
+  if (c==EOF && limit==buffer) return false;  /* there was nothing after
     the last newline */
-  return(1);
+  return true;
 }
 
 @ Now comes the problem of deciding which file to read from next.
@@ -144,11 +142,11 @@ char alt_web_file_name[max_file_name_length]; /* alternate name to try */
 int line[max_include_depth]; /* number of current line in the stacked files */
 int change_line; /* number of current line in change file */
 int change_depth; /* where \.{@@y} originated during a change */
-boolean input_has_ended; /* if there is no more input */
-boolean changing; /* if the current line is from |change_file| */
-boolean web_file_open=0; /* if the web file is being read */
+bool input_has_ended; /* if there is no more input */
+bool changing; /* if the current line is from |change_file| */
+bool web_file_open=false; /* if the web file is being read */
 
-@ When |changing=0|, the next line of |change_file| is kept in
+@ When |changing=false|, the next line of |change_file| is kept in
 |change_buffer|, for purposes of comparison with the next
 line of |cur_file|. After the change file has been completely input, we
 set |change_limit=change_buffer|,
@@ -168,11 +166,11 @@ preparation for the next matching operation. Since blank lines in the change
 file are not used for matching, we have
 |(change_limit==change_buffer && !changing)| if and only if
 the change file is exhausted. This procedure is called only when
-|changing| is 1; hence error messages will be reported correctly.
+|changing| is |true|; hence error messages will be reported correctly.
 
 @<Func...@>=
 void
-prime_the_change_buffer()
+prime_the_change_buffer(void)
 {
   change_limit=change_buffer; /* this value is used if the change file ends */
   @<Skip over comment lines in the change file; |return| if end of file@>;
@@ -185,7 +183,7 @@ allow lines that begin with \.{@@}, as long as they don't begin with \.{@@y},
 \.{@@z} or \.{@@i} (which would probably mean that the change file is fouled up).
 
 @<Skip over comment lines in the change file...@>=
-while(1) {
+while (true) {
   change_line++;
   if (!input_ln(change_file)) return;
   if (limit<buffer+2) continue;
@@ -218,7 +216,7 @@ do {
 }
 
 @ The following procedure is used to see if the next change entry should
-go into effect; it is called only when |changing| is 0.
+go into effect; it is called only when |changing| is |false|.
 The idea is to test whether or not the current
 contents of |buffer| matches the current contents of |change_buffer|.
 If not, there's nothing more to do; but if so, a change is called for:
@@ -231,16 +229,16 @@ current line is nonempty.
 
 @<Func...@>=
 void
-check_change() /* switches to |change_file| if the buffers match */
+check_change(void) /* switches to |change_file| if the buffers match */
 {
   int n=0; /* the number of discrepancies found */
   if (lines_dont_match) return;
-  while (1) {
-    changing=1; change_line++;
+  while (true) {
+    changing=true; change_line++;
     if (!input_ln(change_file)) {
       err_print("! Change file ended before @@y");
 @.Change file ended...@>
-      change_limit=change_buffer; changing=0;
+      change_limit=change_buffer; changing=false;
       return;
     }
     if (limit>buffer+1 && buffer[0]=='@@') {
@@ -249,7 +247,7 @@ check_change() /* switches to |change_file| if the buffers match */
         report any discrepancies and |return|@>;
     }
     @<Move |buffer| and |limit|...@>;
-    changing=0; cur_line++;
+    changing=false; cur_line++;
     while (!input_ln(cur_file)) { /* pop the stack or quit */
       if (include_depth==0) {
         err_print("! CWEB file ended during a change");
@@ -283,13 +281,13 @@ user's \.{WEB} input.
 
 @<Func...@>=
 void
-reset_input()
+reset_input(void)
 {
   limit=buffer; loc=buffer+1; buffer[0]=' ';
   @<Open input files@>;
   include_depth=0; cur_line=0; change_line=0;
   change_depth=include_depth;
-  changing=1; prime_the_change_buffer(); changing=!changing;
+  changing=true; prime_the_change_buffer(); changing=!changing;
   limit=buffer; loc=buffer+1; buffer[0]=' '; input_has_ended=0;
 }
 
@@ -315,7 +313,7 @@ This procedure returns |!input_has_ended| because we often want to
 check the value of that variable after calling the procedure.
 
 @<Fun...@>=
-int get_line() /* inputs the next line */
+bool get_line(void) /* inputs the next line */
 {
   restart:
   if (changing && include_depth==change_depth)
@@ -324,7 +322,7 @@ int get_line() /* inputs the next line */
     @<Read from |cur_file| and maybe turn on |changing|@>;
     if (changing && include_depth==change_depth) goto restart;
   }
-  if (input_has_ended) return 0;
+  if (input_has_ended) return false;
   loc=buffer; *limit=' ';
   if (buffer[0]=='@@' && (buffer[1]=='i' || buffer[1]=='I')) {
     loc=buffer+2; *limit='"';
@@ -342,10 +340,10 @@ int get_line() /* inputs the next line */
     include_depth++; /* push input stack */
     @<Try to open include file, abort push if unsuccessful, go to |restart|@>;
   }
-  return 1;
+  return true;
 }
 
-void put_line()
+void put_line(void)
 {
   char *ptr=buffer;
   while (ptr<limit) putc(*ptr++,out_file);
@@ -456,11 +454,12 @@ had a line that didn't match any relevant line in |web_file|.
 
 @<Funct...@>=
 void
-check_complete(){
-  if (change_limit!=change_buffer) { /* |changing| is 0 */
+check_complete(void)
+{
+  if (change_limit!=change_buffer) { /* |changing| is |false| */
     strncpy(buffer,change_buffer,change_limit-change_buffer+1);
     limit=buffer+(int)(change_limit-change_buffer);
-    changing=1; change_depth=include_depth; loc=buffer;
+    changing=true; change_depth=include_depth; loc=buffer;
     err_print("! Change file entry did not match");
   @.Change file entry did not match@>
   }
@@ -496,13 +495,12 @@ if the string begins with |"!"|.
 The actual error indications are provided by a procedure called |error|.
 
 @<Predecl...@>=
-void  err_print();
+void  err_print(char *s);
 
-@
-@<Functions...@>=
+@ @<Functions...@>=
 void
-err_print(s) /* prints `\..' and location of error message */
-char *s;
+err_print( /* prints `\..' and location of error message */
+char *s)
 {
   char *k,*l; /* pointers into |buffer| */
   fprintf(stderr,*s=='!'? "\n%s" : "%s",s);
@@ -553,10 +551,10 @@ a status of 0 if and only if only harmless messages were printed.
 @^system dependencies@>
 
 @<Func...@>=
-wrap_up() {
+bool wrap_up(void) {
   @<Print the job |history|@>;
-  if (history > harmless_message) return(1);
-  else return(0);
+  if (history > harmless_message) return true;
+  else return false;
 }
 
 @ @<Print the job |history|@>=
@@ -585,7 +583,7 @@ for future extensions.
 int argc; /* copy of |ac| parameter to |main| */
 char **argv; /* copy of |av| parameter to |main| */
 char out_file_name[max_file_name_length]; /* name of |out_file| */
-boolean flags[128]; /* an option for each 7-bit code */
+bool flags[128]; /* an option for each 7-bit code */
 
 @ The |flags| will be initially 1.
 
@@ -606,18 +604,17 @@ when no changes are desired.
 If there's a third file name, it will be the output file.
 
 @<Pred...@>=
-void scan_args();
+void scan_args(void);
 
-@
-@<Function...@>=
+@ @<Function...@>=
 void
-scan_args()
+scan_args(void)
 {
   char *dot_pos; /* position of |'.'| in the argument */
   register char *s; /* register for scanning strings */
-  boolean found_web=0,found_change=0,found_out=0;
+  bool found_web=false,found_change=false,found_out=false;
              /* have these names have been seen? */
-  boolean flag_change;
+  bool flag_change;
 
   while (--argc > 0) {
     if (**(++argv)=='-' || **argv=='+') @<Handle flag argument@>@;
@@ -657,7 +654,7 @@ after the dot.  We must check that there is enough room in
   }
   sprintf(alt_web_file_name,"%s.web",*argv);
   *out_file_name='\0'; /* this will print to stdout */
-  found_web=1;
+  found_web=true;
 }
 
 @ @<Make |change_file_name|...@>=
@@ -667,7 +664,7 @@ after the dot.  We must check that there is enough room in
   if (dot_pos==NULL)
     sprintf(change_file_name,"%s.ch",*argv);
   else strcpy(change_file_name,*argv);
-  found_change=1;
+  found_change=true;
 }
 
 @ @<Override...@>=
@@ -676,7 +673,7 @@ after the dot.  We must check that there is enough room in
     @<Complain about argument length@>;
   if (dot_pos==NULL) sprintf(out_file_name,"%s.out",*argv);
   else strcpy(out_file_name,*argv);
-  found_out=1;
+  found_out=true;
 }
 
 @ @<Handle flag...@>=
@@ -684,7 +681,7 @@ after the dot.  We must check that there is enough room in
   if (**argv=='-') flag_change=0;
   else flag_change=1;
   for(dot_pos=*argv+1;*dot_pos>'\0';dot_pos++)
-    flags[*dot_pos]=flag_change;
+    flags[(int)*dot_pos]=flag_change;
 }
 
 @ @<Print usage error message and quit@>=

@@ -46,17 +46,17 @@ any other programs that simulate finite-state automata.)
 
 @c
 #include <stdio.h>
+#include <stdlib.h>
 #include <ctype.h>
 #include <string.h>
-extern void exit(); /* system routine that terminates execution */
 @#
 @<Global variables@>@;
 @<Procedures@>@;
 @#
-int main(argc,argv)
-  int argc; /* the number of arguments (should be 1, but this isn't checked) */
-  char *argv[]; /* the arguments (|*argv| is the program name) */
-{
+int main(
+  int argc, /* the number of arguments (should be 1, but this isn't checked) */
+  char *argv[]) /* the arguments (|*argv| is the program name) */
+{ @+ (void)argc;
   @<Local variables@>;
   if (strlen(*argv)>=6 && strcmp(*argv+strlen(*argv)-6,"excweb")==0) {
     web=1;
@@ -219,9 +219,9 @@ if ((a>='"' && a<='~' && ptab[a-'"']==l) ||
     c=getchar();
   }
   if (c=='{') {
-    do@+{putchar(c);
+    do {putchar(c);
       c=get();
-    }@+while (c!='}'); /* optional argument after special control sequence */
+    } while (c!='}'); /* optional argument after special control sequence */
     putchar(c);
     c=0;
   }
@@ -334,7 +334,7 @@ skip_C_prime: skipping=1;
   C_switch: switch(c) {
    case '/': c=get();
      if (c!='*') goto C_switch;
-     comment=1; /* fall through to the next case, returning to \TEX/ mode */
+     comment=1; @+@=/* fall through */@>@; /* to the next case, returning to \TEX/ mode */
    case '|': if (save_skipping==2) continue; /* |'|'| as \CEE/ operator */
      skipping=save_skipping;@+goto restart; /* |'|'| as \.{CWEB} delimiter */
    case '@@': c=getchar();
@@ -344,7 +344,7 @@ skip_C_prime: skipping=1;
     case start_section: web++;
      comment=skipping=0;@+goto restart;
     case start_name: case start_index: goto restart;
-    case start_insert: do@+discard_to('@@')@;@+while ((c=getchar())=='@@');
+    case start_insert: do discard_to('@@')@; while ((c=getchar())=='@@');
       goto inner_switch; /* now |c| should equal |'>'| */
     case ignore_line: discard_to('\n');
      continue;

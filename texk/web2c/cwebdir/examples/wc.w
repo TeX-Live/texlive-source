@@ -40,7 +40,10 @@ by this \.{CWEB} program \.{wc.w}:
 formatted output to |stdout| and |stderr|.
 
 @<Header files...@>=
-#include <stdio.h>
+#include <stdio.h> /* |printf()| */
+#include <stdlib.h> /* |exit()| */
+#include <fcntl.h> /* |open()| */
+#include <unistd.h> /* |close()| */
 
 @  The |status| variable will tell the operating system if the run was
 successful or not, and |prog_name| is used in case there's an error message to
@@ -57,9 +60,9 @@ char *prog_name; /* who we are */
 @ Now we come to the general layout of the |main| function. 
 
 @<The main...@>=
-main (argc,argv)
-    int argc; /* the number of arguments on the \UNIX/ command line */
-    char **argv; /* the arguments themselves, an array of strings */
+int main (
+    int argc, /* the number of arguments on the \UNIX/ command line */
+    char **argv) /* the arguments themselves, an array of strings */
 {
   @<Variables local to |main|@>@;
   prog_name=argv[0];
@@ -104,14 +107,14 @@ standard input if no file name is given.
 
 @<Process...@>=
 argc--;
-do@+{
+do {
   @<If a file is given, try to open |*(++argv)|; |continue| if unsuccessful@>;
   @<Initialize pointers and counters@>;
   @<Scan file@>;
   @<Write statistics for file@>;
   @<Close file@>;
   @<Update grand totals@>; /* even if there is only one file */
-}@+while (--argc>0);
+} while (--argc>0);
 
 @ Here's the code to open the file.  A special trick allows us to
 handle input from |stdin| when no name is given.
@@ -225,9 +228,9 @@ the user about proper usage of the command. Counts are printed in
 @d print_count(n) printf("%8ld",n)
 
 @<Fun...@>=
-wc_print(which, char_count, word_count, line_count)
-char *which; /* which counts to print */
-long char_count, word_count, line_count; /* given totals */
+void wc_print(
+char *which, /* which counts to print */
+long char_count, long word_count, long line_count) /* given totals */
 {
   while (*which) 
     switch (*which++) {
