@@ -29,6 +29,7 @@
 % Version 3.64 [p22] --- Andreas Scherer, March 2016
 % Version 4.9  --- Andreas Scherer, June 2022
 % Version 4.12 --- Andreas Scherer, August 2024
+% Version 4.12.2 --- Andreas Scherer, January 2026
 
 % french translations --- Denis Roegel, 18 September 1994
 
@@ -92,7 +93,7 @@
   \ifpdf \def\outsecname{Noms des sections} \let\Xpdf\X
 %  \ifpdflua \makebookmarks \pdfdest name {NOS} fitb % in versions < 3.68
   \ifpdflua \pdfdest name {NOS} fith % changed in version 3.69
-    \pdfoutline goto name {NOS} count -\the\countD {\outsecname}
+    \pdfoutline goto name {NOS} count -\the\countNOS {\outsecname}
     \def\X##1:##2\X{\Xpdf##1:##2\X \firstsecno##1.%
       {\toksF={}\makeoutlinetoks##2\outlinedone\outlinedone}%
       \pdfoutline goto num \the\toksA \expandafter{\the\toksE}}
