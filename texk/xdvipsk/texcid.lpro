@@ -16,7 +16,7 @@ TeXDict	begin
 %Procedure to remember start point of text which will be stroked to achieve embolden effect
 /ct_np{/ct_saveX currentpoint/ct_saveY X def}def 
 %
-Procedure to stroke text to achieve embolden effect. Parameter - stroke width after magnification, in pixels.
+%Procedure to stroke text to achieve embolden effect. Parameter - stroke width after magnification, in pixels.
 /ct_st{setlinewidth false charpath stroke ct_saveX ct_saveY moveto}def
 %
 /ct_cid
