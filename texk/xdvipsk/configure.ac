@@ -7,7 +7,7 @@ dnl   This file is free software; the copyright holder
 dnl   gives unlimited permission to copy and/or distribute it,
 dnl   with or without modifications, as long as this notice is preserved.
 dnl
-AC_INIT([xdvipsk (TeX Live)], [2024.1], [tex-k@tug.org])
+AC_INIT([xdvipsk (TeX Live)], [2026.1], [tex-k@tug.org])
 AC_PREREQ([2.65])
 AC_CONFIG_SRCDIR([xdvips.c])
 AC_CONFIG_AUX_DIR([../../build-aux])
@@ -31,23 +31,6 @@ KPSE_COMMON([xdvipsk])
 KPSE_CANONICAL_HOST
 AC_CANONICAL_HOST
 AM_CONDITIONAL([cross], [test "x$cross_compiling" = xyes])
-
-ARCH_LIBS_DIR="win32"
-AS_CASE([$host_os],
-        [linux*],
-        [
-           AS_CASE([$host_cpu],
-                   [x86_64], [ARCH_LIBS_DIR="x86_64-linux"],
-                   [i?86], [ARCH_LIBS_DIR="i386-linux"])
-        ],
-        [darwin*],
-        [
-           AS_CASE([$host_cpu],
-                   [x86_64], [ARCH_LIBS_DIR="x86_64-darwin"],
-                   [i?86], [ARCH_LIBS_DIR="universal-darwin"])
-        ],
-)
-AC_SUBST([ARCH_LIBS_DIR])
 
 KPSE_LUA53_DEFINES
 
@@ -78,9 +61,9 @@ AC_SUBST([LIBS])
 AC_CONFIG_FILES([Makefile])
 
 # The subdirectory squeeze must be configured for the build system.
-##KPSE_NATIVE_SUBDIRS([squeeze])
 KPSE_NATIVE_SUBDIRS()
 
-AC_CHECK_LIB(stdc++, main,,AC_MSG_ERROR(xdvipsk requires libstdc++))
+# Force Automake to use CXXLD for linking
+nodist_EXTRA_pdftex_SOURCES = dummy.cxx
 
 AC_OUTPUT

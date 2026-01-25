@@ -32,6 +32,9 @@
 #include <direct.h>
 #define access _access
 #define mkdir _mkdir
+#ifndef ACCESSPERMS
+#define ACCESSPERMS 0755
+#endif
 #else
 #include <sys/stat.h> 
 #include <sys/types.h> 
@@ -355,22 +358,22 @@ static void writecidtype0(cff_font *cffont, struct tt_head_table *head, CIDSysIn
         if ( cff_dict_known(cffont->topdict,"FontMatrix") ) {
             dbl = cff_dict_get(cffont->topdict, "FontMatrix", 0);
             fprintf(bitfile, " ");
-            fprintf(bitfile, dtoa_(dbl));
+            fprintf(bitfile, "%s", dtoa_(dbl));
             dbl = cff_dict_get(cffont->topdict, "FontMatrix", 1);
             fprintf(bitfile, " ");
-            fprintf(bitfile, dtoa_(dbl));
+            fprintf(bitfile, "%s", dtoa_(dbl));
             dbl = cff_dict_get(cffont->topdict, "FontMatrix", 2);
             fprintf(bitfile, " ");
-            fprintf(bitfile, dtoa_(dbl));
+            fprintf(bitfile, "%s", dtoa_(dbl));
             dbl = cff_dict_get(cffont->topdict, "FontMatrix", 3);
             fprintf(bitfile, " ");
-            fprintf(bitfile, dtoa_(dbl));
+            fprintf(bitfile, "%s", dtoa_(dbl));
             dbl = cff_dict_get(cffont->topdict, "FontMatrix", 4);
             fprintf(bitfile, " ");
-            fprintf(bitfile, dtoa_(dbl));
+            fprintf(bitfile, "%s", dtoa_(dbl));
             dbl = cff_dict_get(cffont->topdict, "FontMatrix", 5);
             fprintf(bitfile, " ");
-            fprintf(bitfile, dtoa_(dbl));
+            fprintf(bitfile, "%s", dtoa_(dbl));
         }
         else
         {

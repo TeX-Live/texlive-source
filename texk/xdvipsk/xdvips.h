@@ -1,5 +1,5 @@
 /*   $Id$
- *   Copyright 1986-2025 Tomas Rokicki.
+ *   Copyright 1986-2026 Tomas Rokicki.
  *   This is dvips, a freely redistributable PostScript driver
  *   for dvi files. You may freely use, modify and/or distribute this
  *   program or any portion thereof.
@@ -17,13 +17,13 @@
 
 #ifdef XDVIPSK
 #define BANNER \
-"This is xdvips(k)+lua+freetype " VTEX_VERSION " (" TL_VERSION ")  Copyright 2025 Radical Eye Software"
+"This is xdvips(k)+lua+freetype " VTEX_VERSION " (" TL_VERSION ")  Copyright 2026 Radical Eye Software"
 #define BANNER2 "(www.vtex.lt)"
 #define BANNER3 \
-"Based on dvips(k) " VERSION " (" TL_VERSION ")  Copyright 2025 Radical Eye Software"
+"Based on dvips(k) " VERSION " (" TL_VERSION ")  Copyright 2026 Radical Eye Software"
 #else
 #define BANNER \
-"This is dvips(k) " VERSION " (" TL_VERSION ")  Copyright 2025 Radical Eye Software"
+"This is dvips(k) " VERSION " (" TL_VERSION ")  Copyright 2026 Radical Eye Software"
 #define BANNER2 "(www.radicaleye.com)"
 #endif /* XDVIPSK */
 #ifdef KPATHSEA
@@ -451,12 +451,12 @@ struct papsiz {
 #define BITS_PER_USED_ELEM (sizeof(UsedMapElem) * 8)
 #define ADD_TO_USED_CHARS(b, c) { \
     int ix = (c) / BITS_PER_USED_ELEM; \
-    if (ix >= USED_CHARS_BUF_SIZE) { PRINTF_PR("\nError: Used chars buffer overflow", ""); } \
+    if (ix >= USED_CHARS_BUF_SIZE) { PRINTF_PR("\nError: %s", "Used chars buffer overflow"); } \
     else (b)[ix] |= (1 << (BITS_PER_USED_ELEM - 1 - ((c) % BITS_PER_USED_ELEM))); \
     }
 #define REMOVE_FROM_USED_CHARS(b, c) { \
     int ix = (c) / BITS_PER_USED_ELEM; \
-    if (ix >= USED_CHARS_BUF_SIZE) { PRINTF_PR("\nError: Used chars buffer overflow", ""); } \
+    if (ix >= USED_CHARS_BUF_SIZE) { PRINTF_PR("\nError: %s", "Used chars buffer overflow"); } \
     else (b)[ix] &= ~(1 << (BITS_PER_USED_ELEM - 1 - ((c) % BITS_PER_USED_ELEM))); \
     }
 #define IS_USED_CHAR(b, c) (((c) / BITS_PER_USED_ELEM < USED_CHARS_BUF_SIZE) ? (((b)[(c) / BITS_PER_USED_ELEM]) & (1 << (BITS_PER_USED_ELEM - 1 - ((c) % BITS_PER_USED_ELEM)))) : TRUE)

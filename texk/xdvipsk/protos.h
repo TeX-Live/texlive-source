@@ -335,11 +335,7 @@ extern void printf_pr(const char* fmt, ...);
 extern const char *err_file;
 extern int err_line;
 
-#ifdef _MSC_VER
 #define PRINTF_PR(fmt, ...) { err_file = __FILE__; err_line = __LINE__; printf_pr(fmt, __VA_ARGS__); }
-#else
-#define PRINTF_PR(fmt, ...) { err_file = __FILE__; err_line = __LINE__; printf_pr(fmt __VA_OPT__(,) __VA_ARGS__); }
-#endif
 
 extern void load_touni_tables(void);
 /* verbose: 2 - all messages; 1 -- info messages, no file not found error; 0 -- critical messages only */

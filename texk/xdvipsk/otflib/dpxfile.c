@@ -33,14 +33,12 @@
 #include "error.h"
 #include "mem.h"
 
-// #define PROG_NAME "dvipdfmx"
 #define PROG_NAME "dvips"
 
 #include "dpxutil.h"
 #include "mfileio.h"
 
 #include "dpxfile.h"
-//#include "dpxcrypt.h"
 #define MAX_KEY_LEN 16
 
 #include <kpathsea/lib.h>
@@ -50,6 +48,8 @@
 #include <process.h>
 #include <wchar.h>
 #else
+#include <sys/types.h>
+#include <unistd.h>
 #if HAVE_SYS_WAIT_H
 #include <sys/wait.h>
 #endif
