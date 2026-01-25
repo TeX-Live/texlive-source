@@ -1,7 +1,7 @@
 2026-01-25  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* configure.ac, version.h:
-	Bump version to 4.02 (16 dec 2023).
+	Bump version to 4.03 (25 jan 2026).
 	* bibtex-4.c:
 	Support characters defined by Unicode 17.0.
 	It works with ICU 78.1 or later.
