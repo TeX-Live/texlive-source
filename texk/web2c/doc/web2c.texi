@@ -565,11 +565,10 @@ thus all output files are written to @code{TEXMFOUTPUT}, but
 technically it works on a file-by-file basis.
 
 None of these explicitly-given output locations are checked until (and
-unless) the program actually needs to write a file.  For example, the
-invocation@*
-@code{tex --output-directory=/nonesuch \\end}@*
-won't generate an error until @TeX{} tries to write the log file:@*
-@samp{! I can't write on file `texput.log'.}.
+unless) the program needs to write a file.  For example, the
+invocation@* @code{tex --output-directory=/nonesuch \\end}@* won't
+generate an error until @TeX{} tries to write the log file:@* @samp{!
+I can't write on file `texput.log'.}.
 
 
 @node Three programs
@@ -1703,9 +1702,9 @@ use of @code{\charsubdef} will be reported.  This can help track down
 when a character is redefined.
 
 @findex \tracinglostchars @r{and ML@TeX{}}
-In addition, if the @TeX{} parameter @code{\tracinglostchars} is 100 or
-more, the character substitutions actually performed at
-@code{\shipout}-time will be recorded.
+In addition, if the @TeX{} parameter @code{\tracinglostchars} is 100
+or more, the character substitutions performed at @code{\shipout}-time
+will be recorded.
 
 
 @node TCX files
@@ -2609,7 +2608,7 @@ GFtoDVI uses several fonts besides @var{gfname} itself:
 @itemize @bullet
 @item
 @cindex gray font
-@dfn{gray font} (default @file{gray}): for the pixels that actually make
+@dfn{gray font} (default @file{gray}): for the pixels that make
 up the character.  Simply using black is not right, since then labels,
 key points, and other information could not be shown.
 
@@ -3427,10 +3426,9 @@ As an example of the output, here is the (edited) output for @file{tex.pool}:
 
 @cindex representation of strings
 @cindex string representation
-In Metafont and MetaPost, the first 256 characters are actually
-represented as single bytes (i.e., themselves), not in the @samp{^^}
-notation.  Consider Pooltype as showing the results after conversion for
-output.
+In Metafont and MetaPost, the first 256 characters are represented as
+single bytes (i.e., themselves), not in the @samp{^^} notation.  Thus,
+Pooltype shows the results after conversion for output.
 
 
 @node DVI utilities

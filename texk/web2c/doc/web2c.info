@@ -627,8 +627,8 @@ writable, and thus all output files are written to ‘TEXMFOUTPUT’, but
 technically it works on a file-by-file basis.
 
    None of these explicitly-given output locations are checked until
-(and unless) the program actually needs to write a file.  For example,
-the invocation
+(and unless) the program needs to write a file.  For example, the
+invocation
 ‘tex --output-directory=/nonesuch \\end’
 won't generate an error until TeX tries to write the log file:
 ‘! I can't write on file `texput.log'.’.
@@ -1496,8 +1496,8 @@ primitive parameter, ‘\tracingcharsubdef’.  If positive, every use of
 character is redefined.
 
    In addition, if the TeX parameter ‘\tracinglostchars’ is 100 or more,
-the character substitutions actually performed at ‘\shipout’-time will
-be recorded.
+the character substitutions performed at ‘\shipout’-time will be
+recorded.
 
 
 File: web2c.info,  Node: TCX files,  Next: patgen invocation,  Prev: MLTeX,  Up: Languages and hyphenation
@@ -2140,9 +2140,9 @@ with labels, titles, and annotations, as specified in Appendix H
 
    GFtoDVI uses several fonts besides GFNAME itself:
 
-   • “gray font” (default ‘gray’): for the pixels that actually make up
-     the character.  Simply using black is not right, since then labels,
-     key points, and other information could not be shown.
+   • “gray font” (default ‘gray’): for the pixels that make up the
+     character.  Simply using black is not right, since then labels, key
+     points, and other information could not be shown.
 
    • “title font” (default ‘cmr8’): for the header information at the
      top of each output page.
@@ -2731,10 +2731,9 @@ options::).
      1314: "Using character substitution: "
      (23617 characters in all.)
 
-   In Metafont and MetaPost, the first 256 characters are actually
-represented as single bytes (i.e., themselves), not in the ‘^^’
-notation.  Consider Pooltype as showing the results after conversion for
-output.
+   In Metafont and MetaPost, the first 256 characters are represented as
+single bytes (i.e., themselves), not in the ‘^^’ notation.  Thus,
+Pooltype shows the results after conversion for output.
 
 
 File: web2c.info,  Node: DVI utilities,  Next: Font utilities,  Prev: WEB,  Up: Top
@@ -4755,68 +4754,68 @@ Node: Option conventions16597
 Node: Common options17871
 Node: Path searching22781
 Node: Output file location23777
-Node: Three programs26998
-Node: Runtime options27709
-Node: Initial and virgin30894
-Node: Memory dumps31875
-Node: Creating memory dumps32331
-Node: Determining the memory dump to use33677
-Node: Hardware and memory dumps35405
-Node: Editor invocation38696
-Node: \input filenames39607
-Ref: Input filenames39750
-Node: \input quoted filename41244
-Node: \input braced filename42037
-Node: \input filename caveats42987
-Node: TeX44808
-Node: tex invocation45980
-Node: Initial TeX55405
-Node: Formats56576
-Node: Languages and hyphenation59899
-Node: MLTeX60329
-Node: \charsubdef61985
-Node: \tracingcharsubdef64380
-Node: TCX files64979
-Node: patgen invocation70513
-Node: Shell escapes71236
-Node: IPC and TeX75126
-Node: TeX extensions75712
-Node: Metafont78504
-Node: mf invocation79796
-Node: Initial Metafont83777
-Node: Modes85376
-Node: Online Metafont graphics87694
-Node: gftodvi invocation91842
-Node: mft invocation94794
-Node: MetaPost99152
-Node: mpost invocation99988
-Node: Initial MetaPost105694
-Node: dvitomp invocation106691
-Node: BibTeX107388
-Node: bibtex invocation107749
-Node: Basic BibTeX style files110355
-Node: WEB111753
-Node: tangle invocation112986
-Node: weave invocation115186
-Node: pooltype invocation116805
-Node: DVI utilities117955
-Node: dvicopy invocation118901
-Node: dvitype invocation120230
-Node: dvitype output example122639
-Node: Font utilities125764
-Node: Font file formats126956
-Node: gftopk invocation130287
-Node: pktogf invocation131522
-Node: pktype invocation132732
-Node: gftype invocation135651
-Node: tftopl invocation140270
-Node: pltotf invocation145015
-Node: vftovp invocation146094
-Node: vptovf invocation148421
-Node: Font utilities available elsewhere149480
-Node: Legalisms151747
-Node: References153206
-Node: Index157424
+Node: Three programs26989
+Node: Runtime options27700
+Node: Initial and virgin30885
+Node: Memory dumps31866
+Node: Creating memory dumps32322
+Node: Determining the memory dump to use33668
+Node: Hardware and memory dumps35396
+Node: Editor invocation38687
+Node: \input filenames39598
+Ref: Input filenames39741
+Node: \input quoted filename41235
+Node: \input braced filename42028
+Node: \input filename caveats42978
+Node: TeX44799
+Node: tex invocation45971
+Node: Initial TeX55396
+Node: Formats56567
+Node: Languages and hyphenation59890
+Node: MLTeX60320
+Node: \charsubdef61976
+Node: \tracingcharsubdef64371
+Node: TCX files64961
+Node: patgen invocation70495
+Node: Shell escapes71218
+Node: IPC and TeX75108
+Node: TeX extensions75694
+Node: Metafont78486
+Node: mf invocation79778
+Node: Initial Metafont83759
+Node: Modes85358
+Node: Online Metafont graphics87676
+Node: gftodvi invocation91824
+Node: mft invocation94767
+Node: MetaPost99125
+Node: mpost invocation99961
+Node: Initial MetaPost105667
+Node: dvitomp invocation106664
+Node: BibTeX107361
+Node: bibtex invocation107722
+Node: Basic BibTeX style files110328
+Node: WEB111726
+Node: tangle invocation112959
+Node: weave invocation115159
+Node: pooltype invocation116778
+Node: DVI utilities117911
+Node: dvicopy invocation118857
+Node: dvitype invocation120186
+Node: dvitype output example122595
+Node: Font utilities125720
+Node: Font file formats126912
+Node: gftopk invocation130243
+Node: pktogf invocation131478
+Node: pktype invocation132688
+Node: gftype invocation135607
+Node: tftopl invocation140226
+Node: pltotf invocation144971
+Node: vftovp invocation146050
+Node: vptovf invocation148377
+Node: Font utilities available elsewhere149436
+Node: Legalisms151703
+Node: References153162
+Node: Index157380
 
 End Tag Table
 

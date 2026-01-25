@@ -1,5 +1,5 @@
 $Id$
-Copyright 2006-2025 TeX Users Group.
+Copyright 2006-2026 TeX Users Group.
 You may freely use, modify and/or distribute this file.
 
 This TeX Live directory contains the programs that use the kpathsea
@@ -29,7 +29,7 @@ chktex 1.7.9 - checked 12jun24
   https://mirror.ctan.org/support/chktex/
   https://download.savannah.gnu.org/releases/chktex/
 
-cjkutils 4.8.5 - checked 22jan22
+cjkutils 4.8.5 - checked 21jan26
   https://git.savannah.gnu.org/gitweb/?p=cjk.git;a=summary
   https://www.nongnu.org/cjk/
 
@@ -47,7 +47,7 @@ dvi2tty 6.0.2 - checked 1may22
 
 dvidvi - maintained here
 
-dviljk - maintained here, by Joachim Schrod
+dviljk - maintained here, by Joachim Schrod et al.
 
 dviout-util - by Japanese TeX Development Community (Hironobu, Takuji et al.)
   https://github.com/texjporg/tex-jp-build
