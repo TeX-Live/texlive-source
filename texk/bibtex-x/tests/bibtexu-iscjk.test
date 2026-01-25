@@ -1,6 +1,6 @@
 #! /bin/sh -vx
 # $Id$
-# Copyright 2022-2023 TANAKA Takuji <ttk@t-lab.opal.ne.jp>
+# Copyright 2022-2026 TANAKA Takuji <ttk@t-lab.opal.ne.jp>
 # You may freely use, modify and/or distribute this file.
 
 BinDir=${BinDir:-.}
@@ -32,10 +32,15 @@ if test -z "$icuver"; then
 fi
 
 echo "*** icuver="$icuver
+if [ $icuver -lt 78 ]; then
+  # skip CJK Ideograph Extension J
+  # ex. U+323B0
+  uchr='\x{323B0}'
+fi
 if [ $icuver -lt 74 ]; then
   # skip CJK Ideograph Extension I
   # ex. U+2EBF0
-  uchr='\x{2EBF0}'
+  uchr=${uchr}'|\x{2EBF0}'
 fi
 if [ $icuver -lt 72 ]; then
   # skip CJK Ideograph Extension H
@@ -55,8 +60,8 @@ fi
 cp $srcdir/tests/iscjku.aux tests/xiscjku.aux
 $_bibtexu tests/xiscjku || rc=1
 cp $srcdir/tests/iscjku.bbl tests/oiscjku.bbl
-if [ $icuver -le 73 ]; then
-  echo "*** skip checking CJK Ideograph Extension G, H or I"
+if [ $icuver -le 77 ]; then
+  echo "*** skip checking CJK Ideograph Extension G, H, I or J"
   perl -i".bak" -CD -ne "print unless /${uchr}/" tests/oiscjku.bbl
   perl -i".bak" -CD -ne "print unless /${uchr}/" tests/xiscjku.bbl
 fi

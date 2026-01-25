@@ -1,3 +1,14 @@
+2026-01-25  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* configure.ac, version.h:
+	Bump version to 4.02 (16 dec 2023).
+	* bibtex-4.c:
+	Support characters defined by Unicode 17.0.
+	It works with ICU 78.1 or later.
+	* tests/bibtexu-iscjk.test,
+	tests/iscjku.bbl, tests/testiscjku.bib:
+	Update tests.
+
 2025-01-21  Vincenzo Mantova <vlmantova@gmail.com>
 
 	* configure.ac (KPSE_KPATHSEA_FLAGS): call even if bibtexu is disabled.
