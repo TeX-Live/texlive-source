@@ -15689,12 +15689,6 @@ then :
   printf "%s\n" "#define HAVE_GETCWD 1" >>confdefs.h
 
 fi
-ac_fn_c_check_func "$LINENO" "getwd" "ac_cv_func_getwd"
-if test "x$ac_cv_func_getwd" = xyes
-then :
-  printf "%s\n" "#define HAVE_GETWD 1" >>confdefs.h
-
-fi
 ac_fn_c_check_func "$LINENO" "memcmp" "ac_cv_func_memcmp"
 if test "x$ac_cv_func_memcmp" = xyes
 then :

@@ -1,3 +1,9 @@
+2026-01-25  Karl Berry  <karl@freefriends.org>
+
+	* kpse-common.m4 (KPSE_COMMON): do not check for getwd,
+	since recent GNU ld gives an unconditional warning if it is
+	used. (We didn't in fact use it on any normal system.)
+
 2026-01-21  Karl Berry  <karl@freefriends.org>
 
 	* kpse-pkgs.m4 (KPSE_TEXK_PKGS): add xdvipsk.

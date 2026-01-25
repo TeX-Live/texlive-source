@@ -1,6 +1,7 @@
-/* xgetcwd.c: a from-scratch version of getwd.  Ideas from tcsh 5.20 source.
+/* xgetcwd.c: a from-scratch version of getwd, returning result in new
+   memory.  Never uses a system getwd.  Ideas from tcsh 5.20 source.
 
-   Copyright 1992, 1994, 1996, 2008, 2011, 2016 Karl Berry.
+   Copyright 1992, 1994, 1996, 2008, 2011, 2016, 2026 Karl Berry.
    Copyright 2005 Olaf Weber.
 
    This library is free software; you can redistribute it and/or
@@ -18,41 +19,41 @@
 
 #include <kpathsea/config.h>
 
-#if (defined (HAVE_GETCWD) && !defined (GETCWD_FORKS)) || defined (HAVE_GETWD)
+#if defined (HAVE_GETCWD) && !defined (GETCWD_FORKS)
 #include <kpathsea/c-pathmx.h>
-#else /* (not HAVE_GETCWD || GETCWD_FORKS) && not HAVE_GETWD */
+
+#else /* not HAVE_GETCWD || GETCWD_FORKS */
 #include <kpathsea/c-dir.h>
 #include <kpathsea/xopendir.h>
 #include <kpathsea/xstat.h>
 
-
 static void
 xchdir (string dirname)
 {
-    if (chdir(dirname) != 0)
-        FATAL_PERROR(dirname);
+    if (chdir (dirname) != 0) {
+        FATAL_PERROR (dirname);
+    }
 }
+#endif /* not HAVE_GETCWD || GETCWD_FORKS */
 
-#endif /* (not HAVE_GETCWD || GETCWD_FORKS) && not HAVE_GETWD */
 
-
-/* Return the pathname of the current directory, or give a fatal error.  */
+/* Return the pathname of the current directory in new memory, or give a
+   fatal error.  */
 
 string
 xgetcwd (void)
 {
-    /* If the system provides getcwd, use it.  If not, use getwd if
-       available.  But provide a way not to use getcwd: on some systems
-       getcwd forks, which is expensive and may in fact be impossible for
-       large programs like tex.  If your system needs this define and it
-       is not detected by configure, let me know.
-                                       -- Olaf Weber <infovore@xs4all.nl */
+    /* If the system provides getcwd, and it doesn't fork, use it.
+       This should be the case on just about all systems nowadays.
+       But just in case, if getcwd does fork, provide a fallback
+       implemented from scratch. Don't ever use getwd, since some
+       versions of GNU ld (as of 2025 or so) give an unconditional
+       warning that it's dangerous.  */
 #if defined (HAVE_GETCWD) && !defined (GETCWD_FORKS)
     char path[PATH_MAX + 1];
 #if defined(WIN32)
     string pp;
 #endif
-
     if (getcwd (path, PATH_MAX + 1) == NULL) {
         FATAL_PERROR ("getcwd");
     }
@@ -69,15 +70,9 @@ xgetcwd (void)
 #endif
 
     return xstrdup (path);
-#elif defined (HAVE_GETWD)
-    char path[PATH_MAX + 1];
 
-    if (getwd (path) == NULL) {
-        FATAL_PERROR ("getwd");
-    }
-
-    return xstrdup (path);
-#else /* (not HAVE_GETCWD || GETCWD_FORKS) && not HAVE_GETWD */
+#else /* not HAVE_GETCWD || GETCWD_FORKS */
+    /* Our own implementation, written by Olaf.  */
     struct stat root_stat, cwd_stat;
     string cwd_path = (string)xmalloc(2); /* In case we assign "/" below.  */
 
@@ -155,5 +150,5 @@ xgetcwd (void)
 #endif
 
     return cwd_path;
-#endif /* (not HAVE_GETCWD || GETCWD_FORKS) && not HAVE_GETWD */
+#endif /* not HAVE_GETCWD || GETCWD_FORKS */
 }

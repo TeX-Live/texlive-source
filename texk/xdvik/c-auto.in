@@ -91,9 +91,6 @@
 /* Define to 1 if you have the 'getuid' function. */
 #undef HAVE_GETUID
 
-/* Define to 1 if you have the 'getwd' function. */
-#undef HAVE_GETWD
-
 /* Define if your system allows setsid() within vfork(). */
 #undef HAVE_GOOD_SETSID_VFORK
 

@@ -42,9 +42,6 @@
 /* Define to 1 if you have the 'getenv' function. */
 #undef HAVE_GETENV
 
-/* Define to 1 if you have the 'getwd' function. */
-#undef HAVE_GETWD
-
 /* Define to 1 if you have the <inttypes.h> header file. */
 #undef HAVE_INTTYPES_H
 

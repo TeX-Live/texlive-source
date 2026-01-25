@@ -1,3 +1,11 @@
+2026-01-25  Karl Berry  <karl@freefriends.org>
+
+	* xgetcwd.c: remove all traces of getwd, since recent GNU
+	ld gives an unconditional warning if it is used. We didn't in	
+	fact use it on any system with a non-forking getcwd, i.e.,
+	essentially all of them nowadays, but a call to it was still
+	compiled in.
+
 2026-01-21  Karl Berry  <karl@freefriends.org>
 
 	* kpsewhich.c (format_abbrs): add src as another abbreviation for

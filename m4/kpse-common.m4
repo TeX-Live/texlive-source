@@ -1,6 +1,6 @@
 # $Id$
 # Public macros for the TeX Live (TL) tree.
-# Copyright 1995-2009, 2015-2024 Karl Berry <tex-live@tug.org>
+# Copyright 1995-2009, 2015-2026 Karl Berry <tex-live@tug.org>
 # Copyright 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 #
 # This file is free software; the copyright holders
@@ -269,11 +269,11 @@ AC_HEADER_DIRENT
 AC_FUNC_CLOSEDIR_VOID
 AC_CHECK_HEADERS([assert.h float.h limits.h pwd.h stdlib.h sys/param.h])
 dnl
-dnl Replacement functions that may be required on ancient broken system.
+dnl Replacement functions that may be required on old systems.
 AC_CHECK_FUNCS([putenv])
 dnl
-dnl More common functions
-AC_CHECK_FUNCS([getcwd getwd memcmp memcpy mkstemp mktemp strchr strrchr])
+dnl More common functions.
+AC_CHECK_FUNCS([getcwd memcmp memcpy mkstemp mktemp strchr strrchr])
 dnl
 AC_C_CONST
 AC_C_INLINE

@@ -37,9 +37,6 @@
 /* Define to 1 if you have the 'getcwd' function. */
 #undef HAVE_GETCWD
 
-/* Define to 1 if you have the 'getwd' function. */
-#undef HAVE_GETWD
-
 /* Define to 1 if you have the 'iconv' function. */
 #undef HAVE_ICONV
 
