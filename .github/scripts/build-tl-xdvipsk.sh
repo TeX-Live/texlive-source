@@ -1,0 +1,136 @@
+#!/bin/sh -l
+
+set -e
+
+if [ "x$2" = "x" ]
+then
+  echo "Usage: `basename $0` arch buildsys [no-prepare]" >&2
+  exit 1
+fi
+
+arch="$1"
+echo "Building TL/xdvipsk for arch = $arch"
+shift
+
+buildsys=$1
+echo "Building on $buildsys"
+shift
+
+do_prepare=1
+if [ "$1" = "no-prepare" ]
+then
+  do_prepare=0
+fi
+
+if [ $do_prepare = 1 ]
+then
+  case $buildsys in 
+     ubuntu|debian)
+       export DEBIAN_FRONTEND=noninteractive
+       export LANG=C.UTF-8
+       export LC_ALL=C.UTF-8
+       apt-get update -q -y
+       apt-get install -y --no-install-recommends bash gcc g++ make perl libfontconfig-dev libx11-dev libxmu-dev libxaw7-dev build-essential
+       ;;
+     almalinux)
+       yum update -y
+       yum install -y gcc-toolset-11 fontconfig-devel libX11-devel libXmu-devel libXaw-devel
+       . /opt/rh/gcc-toolset-11/enable
+       ;;
+     centos)
+       yum update -y
+       yum install -y centos-release-scl
+       yum install -y devtoolset-9 fontconfig-devel libX11-devel libXmu-devel libXaw-devel
+       . /opt/rh/devtoolset-9/enable
+       ;;
+     alpine)
+       apk update
+       apk add --no-progress bash gcc g++ make perl fontconfig-dev libx11-dev libxmu-dev libxaw-dev
+       ;;
+     freebsd)
+       env ASSUME_ALWAYS_YES=YES pkg install -y gmake gcc pkgconf libX11 libXt libXaw fontconfig perl5
+       ;;
+     netbsd)
+       pkg_add gmake gcc pkgconf libX11 libXt libXaw fontconfig perl5
+       ;;
+     solaris)
+       # pkg install pkg://solaris/developer/gcc-5
+       # maybe only the following is enough, and fortran and gobjc needs not be installed?
+       # pkg install pkg://solaris/developer/gcc/gcc-c++-5
+       /opt/csw/bin/pkgutil -U
+       /opt/csw/bin/pkgutil -y -i autoconf automake gcc5core libtool
+       ;;
+     *)
+       echo "Unsupported build system: $buildsys" >&2
+       exit 1
+       ;;
+  esac
+fi
+
+find . -name \*.info -exec touch '{}' \;
+touch ./texk/detex/detex-src/detex.c
+touch ./texk/detex/detex-src/detex.h
+touch ./texk/gregorio/gregorio-src/src/gabc/gabc-score-determination.c
+touch ./texk/gregorio/gregorio-src/src/gabc/gabc-score-determination.h
+touch ./texk/gregorio/gregorio-src/src/vowel/vowel-rules.h
+touch ./texk/web2c/omegafonts/pl-lexer.c
+touch ./texk/web2c/omegafonts/pl-parser.c
+touch ./texk/web2c/omegafonts/pl-parser.h
+touch ./texk/web2c/otps/otp-lexer.c
+touch ./texk/web2c/otps/otp-parser.c
+touch ./texk/web2c/otps/otp-parser.h
+touch ./texk/web2c/web2c/web2c-lexer.c
+touch ./texk/web2c/web2c/web2c-parser.c
+touch ./texk/web2c/web2c/web2c-parser.h
+touch ./utils/asymptote/camp.tab.cc
+touch ./utils/asymptote/camp.tab.h
+touch ./utils/lacheck/lacheck.c
+touch ./utils/xindy/xindy-src/tex2xindy/tex2xindy.c
+# sometimes dvipng.1 seems to be outdated
+touch ./texk/dvipng/doc/dvipng.1
+touch ./texk/dvipng/dvipng-src/dvipng.1
+
+# default settings
+TL_MAKE_FLAGS="-j 2"
+BUILDARGS=""
+
+# special cases
+case "$arch" in
+  armhf-linux) # debian:buster
+    TL_MAKE_FLAGS="-j 1"
+    export CXXFLAGS='-std=c++17'
+    ;;
+  aarch64-linux) # debian:buster
+    BUILDARGS="--enable-arm-neon=on"
+    export CXXFLAGS='-std=c++17'
+    ;;
+  *-solaris)
+    export PATH=/opt/csw/bin:$PATH
+    export TL_MAKE=gmake
+    if [ $arch = "i386-solaris" ]
+    then
+      export CC="gcc -m32"
+      export CXX="g++ -m32"
+    else
+      export CC="gcc -m64"
+      export CXX="g++ -m64"
+    fi
+    ;;
+  *-freebsd)
+    export TL_MAKE=gmake
+    export CC=gcc 
+    export CXX=g++
+    export CFLAGS=-D_NETBSD_SOURCE
+    export CXXFLAGS='-D_NETBSD_SOURCE -std=c++17'
+    ;;
+  x86_64-linux|i386-linux|x86_64-linuxmusl)
+    export CXXFLAGS='-std=c++17'
+    ;;
+esac
+export TL_MAKE_FLAGS
+
+./Build -C $BUILDARGS --disable-all-pkgs --enable-xdvipsk
+
+mv inst/bin/* $arch
+
+tar czvf texlive-bin-$arch.tar.gz $arch
