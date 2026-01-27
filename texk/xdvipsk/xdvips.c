@@ -130,8 +130,7 @@ sectiontype *sections;       /* sections to process document in */
 #ifndef XDVIPSK
 Boolean partialdownload = 1; /* turn on partial downloading */
 #else
-/*!!!!!partial T1 download turned OFF by default!!!!*/
-Boolean t1_partialdownload = 0;  /* turn off Type1 font partial downloading */
+Boolean t1_partialdownload = 1;  /* turn off Type1 font partial downloading */
 Boolean cid_partialdownload = 1; /* turn on OpenType font partial downloading */
 #endif /* XDVIPSK */
 Boolean manualfeed;          /* manual feed? */
@@ -1391,7 +1390,7 @@ For more information about these matters, see the files\n\
 named COPYING and dvips.h.\n\
 Primary author of Dvips: T. Rokicki.");
 #else
-        puts ("Copyright 2025 VTeX Ltd.\n\
+        puts ("Copyright 2026 VTeX Ltd.\n\
 There is NO warranty.  You may redistribute this software\n\
 under the terms of the GNU General Public License\n\
 and the xdvips copyright.\n\
