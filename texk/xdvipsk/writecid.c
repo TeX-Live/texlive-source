@@ -32,12 +32,12 @@
 #include <direct.h>
 #define access _access
 #define mkdir _mkdir
-#ifndef ACCESSPERMS
-#define ACCESSPERMS 0755
-#endif
 #else
 #include <sys/stat.h> 
 #include <sys/types.h> 
+#ifndef ACCESSPERMS
+#define ACCESSPERMS 0755
+#endif
 #endif
 
 #define CID_HEXLINE_WIDTH 64
