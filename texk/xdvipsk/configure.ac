@@ -64,6 +64,6 @@ AC_CONFIG_FILES([Makefile])
 KPSE_NATIVE_SUBDIRS()
 
 # Force Automake to use CXXLD for linking
-nodist_EXTRA_pdftex_SOURCES = dummy.cxx
+nodist_EXTRA_xdvipsk_SOURCES = dummy.cxx
 
 AC_OUTPUT
