@@ -1,12 +1,13 @@
-/* Declarations for getopt.
+/* Declarations for getopt (for kpathsea).
 
-   Copyright 2008, 2010-2012 Karl Berry.
+   Copyright 2008, 2010-2026 Karl Berry.
    Copyright 1989,90,91,92,93,94,96,97,2000,05 Free Software Foundation, Inc.
 
    The original version of this file was part of the GNU C Library.
    Its master source is NOT part of the C library, however.
    The master source lives in libc.
-   This version has been modified for use with libkpathsea.
+   This version has been modified for use with libkpathsea
+   and is maintained independently.
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -130,8 +131,12 @@ extern KPSEDLL int getopt (int argc, char *const *argv, const char *shortopts);
 #define __GETOPT_H__ /* Avoid that <unistd.h> redeclares the getopt API.  */
 #endif
 #elif !defined (__cplusplus)
+/* Also, C23 made empty parentheses in declarations an error, breaking
+   compatibility with C since day one. So avoid declaring in C23 too.  */
+#if ! (defined(__STDC_VERSION__) && __STDC_VERSION__ >= 202311L)
 extern KPSEDLL int getopt ();
-#endif
+#endif /* not C23 */
+#endif /* not C++ */
 
 #ifndef __need_getopt
 extern KPSEDLL int getopt_long (int argc, char *const *argv, const char *shortopts,

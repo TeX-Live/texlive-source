@@ -1,3 +1,10 @@
+2026-01-28  Karl Berry  <karl@freefriends.org>
+
+	* getopt.h (getopt): do not declare with empty parens under C23:
+	defined(__STDC_VERSION__) && __STDC_VERSION__ >= 202311L
+	Otherwise compilation breaks on musl systems, such as Alpine.
+	https://tug.org/pipermail/tex-k/2026-January/004247.html
+
 2026-01-25  Karl Berry  <karl@freefriends.org>
 
 	* xgetcwd.c: remove all traces of getwd, since recent GNU
