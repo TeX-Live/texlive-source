@@ -6,7 +6,7 @@
 #else
 #include "xdvips.h" /* The copyright notice in that file is included too! */
 #define VERSION "2026.1"
-#define VTEX_VERSION "2026.01.25"
+#define VTEX_VERSION "2026.01.29"
 #endif /* XDVIPSK */
 #ifdef KPATHSEA
 #include <kpathsea/c-pathch.h>
@@ -130,7 +130,7 @@ sectiontype *sections;       /* sections to process document in */
 #ifndef XDVIPSK
 Boolean partialdownload = 1; /* turn on partial downloading */
 #else
-Boolean t1_partialdownload = 1;  /* turn off Type1 font partial downloading */
+Boolean t1_partialdownload = 1;  /* turn on Type1 font partial downloading */
 Boolean cid_partialdownload = 1; /* turn on OpenType font partial downloading */
 #endif /* XDVIPSK */
 Boolean manualfeed;          /* manual feed? */
