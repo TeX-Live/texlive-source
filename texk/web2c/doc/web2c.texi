@@ -2369,8 +2369,8 @@ device characteristics, so Metafont can properly rasterize the shapes.
 @flindex modes.mf @r{recommended modes file}
 When making a base file, a file containing modes for locally-available
 devices should be input after @file{plain.mf}.  One commonly used file
-is @url{ftp://ftp.tug.org/tex/modes.mf}; it includes all known
-definitions.
+is @file{modes.mf} (@url{https://ctan.org/pkg/modes}); it includes all
+known definitions.
 
 @cindex small Metafont memory and modes
 @findex mode_def
@@ -3252,9 +3252,9 @@ provides Pascal and @TeX{}, the implementation languages for the
 original @TeX{}, Metafont, MetaPost, and related programs to come from
 the @TeX{} project at Stanford.
 
-The original WEB language is documented in the file @file{webman.tex},
-which is included in the @url{ftp://ftp.tug.org/tex/lib.tar.gz} archive
-(and available in many other places, of course).
+Knuth's original WEB language is documented in the file
+@file{webman.tex}, available as a formatted pdf in the
+@code{knuth-pdf} page (@url{https://ctan.org/pkg/knuth-pdf}).
 
 @menu
 * tangle invocation::           
@@ -3902,8 +3902,7 @@ The only options are @samp{-help} and @samp{-version}
 
 As an example of the output, here is the (abridged) translation of the
 letter `K' in @samp{cmr10}, as rendered at 600@dmn{dpi} with the mode
-@samp{ljfour} from @url{modes.mf} (available from
-@file{ftp://ftp.tug.org/tex/modes.mf}).
+@samp{ljfour} from @file{modes.mf} (@url{https://ctan.org/pkg/modes}).
 
 @smallexample
 955:  Flag byte = 184  Character = 75  Packet length = 174
@@ -4028,9 +4027,8 @@ Translate all commands in the GF file.
 
 As an example of the output, here is the (abridged) translation of the
 letter `K' in @samp{cmr10}, as rendered at 600@dmn{dpi} with the mode
-@samp{ljfour} from @file{modes.mf} (available from
-@url{ftp://ftp.tug.org/tex/modes.mf}), with both @samp{-mnemonics} and
-@samp{-images} enabled.
+@samp{ljfour} from @file{modes.mf} (@url{https://ctan.org/pkg/modes}),
+with both @samp{-mnemonics} and @samp{-images} enabled.
 
 GFtype outputs the information about a character in two places: a main
 definition and a one-line summary at the end. We show both.  Here is the
@@ -4453,10 +4451,10 @@ BDF (the X bitmap format) conversion:
 @item
 @pindex metatype1
 @cindex Latin Modern
-Creating fonts using MetaPost: MetaType1.
-@url{ftp://bop.eps.gda.pl/pub/metatype1}.  This is used to create
-the excellent Latin Modern font family (@file{@var{CTAN:}/fonts/lm}),
-which extends Computer Modern to a vast repertoire of scripts.
+Creating fonts using MetaPost: MetaType1:
+@url{https://ctan.org/pkg/metatype1}.  This was used to create the
+Latin Modern font family (@url{https://ctan.org/pkg/lm}), which
+extends Computer Modern to a larger repertoire of scripts.
 
 @item
 @cindex editing of bitmap fonts
@@ -4467,20 +4465,18 @@ which extends Computer Modern to a vast repertoire of scripts.
 @pindex chtopx
 @pindex pxtoch
 Editing of bitmap fonts: Xbfe from the GNU font utilities mentioned
-below; the X BDF-editing programs available from
-@url{ftp://ftp.x.org/R5contrib/xfed.tar.Z} and
-@url{ftp://ftp.x.org/R5contrib/xfedor.tar.Z}; and finally, if your
-fonts have only 128 characters, you can use the old @code{gftopxl},
-@code{pxtoch}, and @code{chtopx} programs from
+below; the X BDF-editing programs @code{xfed} and @code{xfedor};
+finally, if your fonts have only 128 characters, you can use the old
+@code{gftopxl}, @code{pxtoch}, and @code{chtopx} programs from
 @url{ftp://ftp.tug.org/tex/web}.
 
 @item
 @pindex fontforge
 @pindex pfaedit
-Editing of outline fonts: FontForge, @url{fontforge.sourceforge.net}.
-This is a very elaborate program with support for many outline formats
-(Type@tie{}1, OpenType, TrueType, @dots{}), and many advanced font
-editing features.
+Editing of outline fonts: FontForge,
+@url{https://fontforge.sourceforge.net}.  This is a very elaborate
+program with support for many outline formats (Type@tie{}1, OpenType,
+TrueType, @dots{}), and many advanced font editing features.
 
 @item
 @cindex PK bitmaps from PostScript
@@ -4570,7 +4566,8 @@ TUGboat, the principal journal for the @TeX{} world:
 
 @item
 @TeX{} and computer typesetting in general:@*
-@url{ftp://ftp.math.utah.edu/pub/tex/bib/texbook1.bib}.
+@url{https://ftp.math.utah.edu/pub/tex/bib/texbook1.bib} and
+@file{texbook3.bib}, among others.
 
 @item
 For a bibliography of formal articles and technical reports on the

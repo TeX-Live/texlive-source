@@ -582,9 +582,9 @@ reversal, use '-r0'.  Such options are marked with a trailing '*'.
      (something greater than 400 dpi, say) is selected, the '-Z' flag
      should probably also be used.  If you are using fonts made with
      Metafont, such as Computer Modern, 'mktexpk' needs to know about
-     the value for NUM that you use or Metafont will fail.  See the file
-     <ftp://ftp.tug.org/tex/modes.mf> for a list of resolutions and mode
-     names for most devices.
+     the value for NUM that you use or Metafont will fail.  See the
+     'modes.mf' file (<https://ctan.org/pkg/modes>) for a list of
+     resolutions and mode names for most devices.
 
 '-e NUM'
      Maximum drift in pixels of each character from its 'true'
@@ -2560,9 +2560,7 @@ ff, ffi, and ffl.)
    Different typesetting systems use different metric file formats:
 
    * Each PostScript font has an "Adobe font metrics" ('.afm') file.
-     These files are plain text, so you can inspect them easily.  You
-     can get AFM files for Adobe's fonts from
-     <ftp://ftp.adobe.com/pub/adobe/Fonts/AFMs>.
+     These files are plain text, so you can inspect them easily.
 
    * TeX uses "TeX font metrics" ('.tfm') files.  When you say '\font =
      FONT' in your TeX document, TeX reads a file named 'FONT.tfm'.
@@ -2650,8 +2648,8 @@ for understanding enough about virtual fonts to use them with Dvips.  It
 isn't a reference manual on virtual fonts.  For more information: The
 primary document on virtual fonts is Donald E. Knuth, 'TUGboat' 11(1),
 Apr. 1990, pp. 13-23, "Virtual Fonts: More Fun for Grand Wizards"
-(<mirror.ctan.org/info/virtual-fonts.knuth>).  (Don't be intimidated by
-the subtitle.)
+(<https://mirror.ctan.org/info/virtual-fonts.knuth>).  (Don't be
+intimidated by the subtitle.)
 
    A virtual font ('.vf') file specifies, for each character in the
 virtual font, a recipe for typesetting that character.  A VF file, like
@@ -3909,10 +3907,10 @@ Index
 * .pfb extension required for partial downloading: psfonts.map.
                                                               (line  46)
 * .pfb printer font binary files:        Glyph files.         (line  25)
-* .pfm printer font metric files:        Metric files.        (line  48)
-* .pl property list files:               Metric files.        (line  39)
+* .pfm printer font metric files:        Metric files.        (line  46)
+* .pl property list files:               Metric files.        (line  37)
 * .pro prologue files:                   Header files.        (line  12)
-* .tfm TeX font metric files:            Metric files.        (line  31)
+* .tfm TeX font metric files:            Metric files.        (line  29)
 * /#copies:                              Option details.      (line  31)
 * /#copies <1>:                          Option details.      (line  46)
 * /magscale:                             EPSF scaling.        (line  66)
@@ -4487,7 +4485,7 @@ Index
 * pfa files:                             Glyph files.         (line  25)
 * pfb files:                             Glyph files.         (line  25)
 * pfb files, automatically unpacked:     psfonts.map.         (line  49)
-* pfm files:                             Metric files.        (line  48)
+* pfm files:                             Metric files.        (line  46)
 * Phaser printer, used for color calibration: Color device configuration.
                                                               (line  18)
 * physical page number, and -l:          Option details.      (line 176)
@@ -4498,7 +4496,7 @@ Index
 * PKFONTS, overrides P:                  Configuration file commands.
                                                               (line 141)
 * plotfile, ps subspecial:               ps special.          (line  29)
-* pltotf:                                Metric files.        (line  39)
+* pltotf:                                Metric files.        (line  37)
 * popen for output:                      Option details.      (line 266)
 * portrait orientation, defined:         Paper size and landscape.
                                                               (line  11)
@@ -4545,7 +4543,7 @@ Index
 * PRINTER, avoided with -f:              Option details.      (line 103)
 * printer, driving directly:             Option details.      (line 115)
 * problems:                              Diagnosing problems. (line   6)
-* property list files:                   Metric files.        (line  39)
+* property list files:                   Metric files.        (line  37)
 * prototype printer configuration file:  config.ps installation.
                                                               (line  14)
 * ps special:                            ps special.          (line   6)
@@ -4677,10 +4675,10 @@ Index
 * TEXSIZES, overrides R:                 Configuration file commands.
                                                               (line 166)
 * text in figures, chopped off:          EPSF clipping.       (line   6)
-* tfm files:                             Metric files.        (line  31)
+* tfm files:                             Metric files.        (line  29)
 * TFMFONTS, overrides T:                 Configuration file commands.
                                                               (line 183)
-* tftopl:                                Metric files.        (line  39)
+* tftopl:                                Metric files.        (line  37)
 * Theisen, Tim:                          Ghostscript installation.
                                                               (line  12)
 * tight bounding box, finding:           Option details.      (line  87)
@@ -4772,66 +4770,66 @@ Node: Basic usage17035
 Node: Command-line options18033
 Node: Option summary18481
 Node: Option details20756
-Node: Environment variables41579
-Node: Config files44440
-Node: Configuration file searching45110
-Node: Configuration file commands48307
-Node: Paper size and landscape56512
-Node: papersize special58137
-Node: Config file paper sizes59844
-Node: Paper trays64867
-Node: Interaction with PostScript66201
-Node: PostScript figures66854
-Node: Bounding box67580
-Node: \includegraphics70952
-Node: EPSF macros73244
-Node: EPSF scaling75212
-Node: EPSF clipping77782
-Node: psfile special78424
-Node: Dynamic creation of graphics80816
-Node: Fonts in figures82134
-Node: Header files83784
-Node: Including headers from TeX84990
-Node: Including headers from the command line87028
-Node: Headers and memory usage88127
-Node: Literal PS89338
-Node: " special89920
-Node: ps special90661
-Node: Literal headers92159
-Node: PostScript hooks92868
-Node: Literal examples94964
-Node: Hypertext96418
-Node: Hypertext caveats97592
-Node: Hypertext specials101720
-Node: PostScript fonts104354
-Node: Font concepts105471
-Node: Metric files106701
-Node: Glyph files109481
-Node: Virtual fonts111840
-Node: Encodings113995
-Node: Bitmap font encodings116397
-Node: PostScript typesetting118927
-Node: Making a font available122024
-Node: Invoking afm2tfm127058
-Node: Changing font encodings128078
-Node: Changing TeX encodings128869
-Node: Changing PostScript encodings129971
-Node: Changing both encodings131315
-Node: Reencoding with Afm2tfm131989
-Node: Encoding file format135092
-Node: Special font effects139296
-Node: Afm2tfm options141556
-Node: psfonts.map145081
-Node: Color149811
-Node: Color macro files150855
-Node: User-definable colors154065
-Node: Color subtleties155341
-Node: Ted Turner156993
-Node: Color device configuration158218
-Node: Color support details160662
-Node: Color specifications161040
-Node: Color specials162444
-Node: Index164573
+Node: Environment variables41588
+Node: Config files44449
+Node: Configuration file searching45119
+Node: Configuration file commands48316
+Node: Paper size and landscape56521
+Node: papersize special58146
+Node: Config file paper sizes59853
+Node: Paper trays64876
+Node: Interaction with PostScript66210
+Node: PostScript figures66863
+Node: Bounding box67589
+Node: \includegraphics70961
+Node: EPSF macros73253
+Node: EPSF scaling75221
+Node: EPSF clipping77791
+Node: psfile special78433
+Node: Dynamic creation of graphics80825
+Node: Fonts in figures82143
+Node: Header files83793
+Node: Including headers from TeX84999
+Node: Including headers from the command line87037
+Node: Headers and memory usage88136
+Node: Literal PS89347
+Node: " special89929
+Node: ps special90670
+Node: Literal headers92168
+Node: PostScript hooks92877
+Node: Literal examples94973
+Node: Hypertext96427
+Node: Hypertext caveats97601
+Node: Hypertext specials101729
+Node: PostScript fonts104363
+Node: Font concepts105480
+Node: Metric files106710
+Node: Glyph files109390
+Node: Virtual fonts111749
+Node: Encodings113912
+Node: Bitmap font encodings116314
+Node: PostScript typesetting118844
+Node: Making a font available121941
+Node: Invoking afm2tfm126975
+Node: Changing font encodings127995
+Node: Changing TeX encodings128786
+Node: Changing PostScript encodings129888
+Node: Changing both encodings131232
+Node: Reencoding with Afm2tfm131906
+Node: Encoding file format135009
+Node: Special font effects139213
+Node: Afm2tfm options141473
+Node: psfonts.map144998
+Node: Color149728
+Node: Color macro files150772
+Node: User-definable colors153982
+Node: Color subtleties155258
+Node: Ted Turner156910
+Node: Color device configuration158135
+Node: Color support details160579
+Node: Color specifications160957
+Node: Color specials162361
+Node: Index164490
 
 End Tag Table
 

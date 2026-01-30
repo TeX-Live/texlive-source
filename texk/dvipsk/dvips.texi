@@ -628,8 +628,8 @@ and vertical resolution.  If a high resolution (something greater than
 400 dpi, say) is selected, the @samp{-Z} flag should probably also be
 used.  If you are using fonts made with Metafont, such as Computer
 Modern, @file{mktexpk} needs to know about the value for @var{num}
-that you use or Metafont will fail.  See the file
-@url{ftp://ftp.tug.org/tex/modes.mf} for a list of resolutions and mode
+that you use or Metafont will fail.  See the @code{modes.mf} file
+(@url{https://ctan.org/pkg/modes}) for a list of resolutions and mode
 names for most devices.
 
 @item -e @var{num}
@@ -3211,9 +3211,7 @@ Different typesetting systems use different metric file formats:
 @cindex afm files
 @flindex .afm @r{Adobe metric files}
 Each PostScript font has an @dfn{Adobe font metrics} (@samp{.afm})
-file. These files are plain text, so you can inspect them easily.  You
-can get AFM files for Adobe's fonts from
-@url{ftp://ftp.adobe.com/pub/adobe/Fonts/AFMs}.
+file. These files are plain text, so you can inspect them easily.
 
 @item 
 @cindex tfm files
@@ -3331,7 +3329,7 @@ use them with Dvips. It isn't a reference manual on virtual fonts.
 For more information: The primary document on virtual fonts is
 Donald@tie{}E. Knuth, @cite{TUGboat} 11(1), Apr.@: 1990, pp.@: 13--23,
 ``Virtual Fonts: More Fun for Grand Wizards''
-(@url{mirror.ctan.org/info/virtual-fonts.knuth}).  (Don't be
+(@url{https://mirror.ctan.org/info/virtual-fonts.knuth}).  (Don't be
 intimidated by the subtitle.)
 
 @cindex vf files

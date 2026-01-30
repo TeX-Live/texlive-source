@@ -1973,8 +1973,8 @@ characteristics, so Metafont can properly rasterize the shapes.
 
    When making a base file, a file containing modes for
 locally-available devices should be input after ‘plain.mf’.  One
-commonly used file is <ftp://ftp.tug.org/tex/modes.mf>; it includes all
-known definitions.
+commonly used file is ‘modes.mf’ (<https://ctan.org/pkg/modes>); it
+includes all known definitions.
 
    If, however, for some reason you have decreased the memory available
 in your Metafont, you may need to copy ‘modes.mf’ and remove the
@@ -2602,9 +2602,9 @@ original WEB provides Pascal and TeX, the implementation languages for
 the original TeX, Metafont, MetaPost, and related programs to come from
 the TeX project at Stanford.
 
-   The original WEB language is documented in the file ‘webman.tex’,
-which is included in the <ftp://ftp.tug.org/tex/lib.tar.gz> archive (and
-available in many other places, of course).
+   Knuth's original WEB language is documented in the file ‘webman.tex’,
+available as a formatted pdf in the ‘knuth-pdf’ page
+(<https://ctan.org/pkg/knuth-pdf>).
 
 * Menu:
 
@@ -3111,7 +3111,7 @@ not an extension; no ‘.’ precedes it: for instance, ‘cmr10.600pk’.
 
    As an example of the output, here is the (abridged) translation of
 the letter 'K' in ‘cmr10’, as rendered at 600dpi with the mode ‘ljfour’
-from <modes.mf> (available from ‘ftp://ftp.tug.org/tex/modes.mf’).
+from ‘modes.mf’ (<https://ctan.org/pkg/modes>).
 
      955:  Flag byte = 184  Character = 75  Packet length = 174
        Dynamic packing variable = 11
@@ -3196,8 +3196,8 @@ not an extension; no ‘.’ precedes it: for instance, ‘cmr10.600gf’.
 
    As an example of the output, here is the (abridged) translation of
 the letter 'K' in ‘cmr10’, as rendered at 600dpi with the mode ‘ljfour’
-from ‘modes.mf’ (available from <ftp://ftp.tug.org/tex/modes.mf>), with
-both ‘-mnemonics’ and ‘-images’ enabled.
+from ‘modes.mf’ (<https://ctan.org/pkg/modes>), with both ‘-mnemonics’
+and ‘-images’ enabled.
 
    GFtype outputs the information about a character in two places: a
 main definition and a one-line summary at the end.  We show both.  Here
@@ -3511,22 +3511,20 @@ items:
    • BDF (the X bitmap format) conversion:
      <ftp://ftp.tug.org/tex/bdf.tar.gz>.
 
-   • Creating fonts using MetaPost: MetaType1.
-     <ftp://bop.eps.gda.pl/pub/metatype1>.  This is used to create the
-     excellent Latin Modern font family (‘CTAN:/fonts/lm’), which
-     extends Computer Modern to a vast repertoire of scripts.
+   • Creating fonts using MetaPost: MetaType1:
+     <https://ctan.org/pkg/metatype1>.  This was used to create the
+     Latin Modern font family (<https://ctan.org/pkg/lm>), which extends
+     Computer Modern to a larger repertoire of scripts.
 
    • Editing of bitmap fonts: Xbfe from the GNU font utilities mentioned
-     below; the X BDF-editing programs available from
-     <ftp://ftp.x.org/R5contrib/xfed.tar.Z> and
-     <ftp://ftp.x.org/R5contrib/xfedor.tar.Z>; and finally, if your
-     fonts have only 128 characters, you can use the old ‘gftopxl’,
+     below; the X BDF-editing programs ‘xfed’ and ‘xfedor’; finally, if
+     your fonts have only 128 characters, you can use the old ‘gftopxl’,
      ‘pxtoch’, and ‘chtopx’ programs from <ftp://ftp.tug.org/tex/web>.
 
-   • Editing of outline fonts: FontForge, <fontforge.sourceforge.net>.
-     This is a very elaborate program with support for many outline
-     formats (Type 1, OpenType, TrueType, ...), and many advanced font
-     editing features.
+   • Editing of outline fonts: FontForge,
+     <https://fontforge.sourceforge.net>.  This is a very elaborate
+     program with support for many outline formats (Type 1, OpenType,
+     TrueType, ...), and many advanced font editing features.
 
    • PK bitmaps from PostScript outline fonts: gsftopk from the ‘xdvi’
      distribution.  Alternatively, ‘ps2pk’, from
@@ -3592,7 +3590,8 @@ Appendix B References
      <https://tug.org/TUGboat>.
 
   5. TeX and computer typesetting in general:
-     <ftp://ftp.math.utah.edu/pub/tex/bib/texbook1.bib>.
+     <https://ftp.math.utah.edu/pub/tex/bib/texbook1.bib> and
+     ‘texbook3.bib’, among others.
 
   6. For a bibliography of formal articles and technical reports on the
      TeX project, see the books ‘TeX: The Program’ or ‘Metafont: The
@@ -3902,7 +3901,7 @@ Index
 * assembly language routines:            Compile-time options.
                                                               (line  21)
 * autotrace:                             Font utilities available elsewhere.
-                                                              (line  42)
+                                                              (line  40)
 * Awk, WEB for:                          WEB.                 (line  12)
 * base file, determining:                Determining the memory dump to use.
                                                               (line   6)
@@ -4128,9 +4127,9 @@ Index
 * font utilities, non-Web2c:             Font utilities available elsewhere.
                                                               (line   6)
 * fontforge:                             Font utilities available elsewhere.
-                                                              (line  30)
+                                                              (line  28)
 * fontinst, for creating virtual fonts:  Font utilities available elsewhere.
-                                                              (line  49)
+                                                              (line  47)
 * fonts, basic:                          Installation.        (line  33)
 * format files:                          Initial TeX.         (line  13)
 * formats for TeX:                       Formats.             (line   6)
@@ -4167,7 +4166,7 @@ Index
                                                               (line   6)
 * Gruff, Billy Goat:                     Triptrap.            (line   6)
 * gsftopk:                               Font utilities available elsewhere.
-                                                              (line  35)
+                                                              (line  33)
 * Harbison, Samuel P.:                   Hardware and memory dumps.
                                                               (line  47)
 * hardware and memory dumps:             Hardware and memory dumps.
@@ -4408,16 +4407,16 @@ Index
 * pdfTeX:                                TeX extensions.      (line  32)
 * permissions, legal:                    Legalisms.           (line   6)
 * PFA and PFB conversion:                Font utilities available elsewhere.
-                                                              (line  39)
+                                                              (line  37)
 * pfaedit:                               Font utilities available elsewhere.
-                                                              (line  30)
+                                                              (line  28)
 * PiCTeX, increasing memory for:         Runtime options.     (line  20)
 * pid, used in recorder filename:        Common options.      (line  96)
 * pipes, reading and writing:            Shell escapes.       (line  64)
 * pixel height:                          pktype invocation.   (line  62)
 * pixel width:                           pktype invocation.   (line  62)
 * PK bitmaps from PostScript:            Font utilities available elsewhere.
-                                                              (line  35)
+                                                              (line  33)
 * PK files, explained:                   Font file formats.   (line  39)
 * PK files, not output by Metafont:      mf invocation.       (line  34)
 * PK format definition:                  Font utilities.      (line  11)
@@ -4451,12 +4450,12 @@ Index
 * PostScript meets Metafont:             MetaPost.            (line   6)
 * PostScript output:                     mpost invocation.    (line  30)
 * PostScript to PK bitmaps:              Font utilities available elsewhere.
-                                                              (line  35)
+                                                              (line  33)
 * PostScript Type 1 font conversion:     Font utilities available elsewhere.
-                                                              (line  39)
+                                                              (line  37)
 * PostScript, and font scaling:          Font file formats.   (line  21)
 * potrace:                               Font utilities available elsewhere.
-                                                              (line  42)
+                                                              (line  40)
 * predefined macros and memory dumps:    Memory dumps.        (line   6)
 * prettyprinting Metafont or MetaPost source: mft invocation. (line   6)
 * prettyprinting WEB programs:           weave invocation.    (line   6)
@@ -4477,7 +4476,7 @@ Index
 * property list, converting TFM to:      tftopl invocation.   (line   6)
 * property list, converting VF to virtual: vftovp invocation. (line   6)
 * ps2pk:                                 Font utilities available elsewhere.
-                                                              (line  35)
+                                                              (line  33)
 * psfonts.map, read by MetaPost:         mpost invocation.    (line  75)
 * pTeX:                                  TeX extensions.      (line  59)
 * PXL files, explained:                  Font file formats.   (line  39)
@@ -4653,7 +4652,7 @@ Index
 * TrueType support:                      TeX extensions.      (line  40)
 * TUGboat bibliography:                  bibtex invocation.   (line  58)
 * Type 1 conversion:                     Font utilities available elsewhere.
-                                                              (line  39)
+                                                              (line  37)
 * type design, personal:                 Initial Metafont.    (line  31)
 * type programs, DVI:                    dvitype invocation.  (line   6)
 * type programs, GF:                     gftype invocation.   (line   6)
@@ -4684,7 +4683,7 @@ Index
 * vftovp:                                vftovp invocation.   (line   6)
 * virgin programs:                       Initial and virgin.  (line  15)
 * virtual font creation:                 Font utilities available elsewhere.
-                                                              (line  49)
+                                                              (line  47)
 * virtual fonts, expanding:              dvicopy invocation.  (line   6)
 * virtual-fonts.knuth:                   Font file formats.   (line  56)
 * virtualfonts.txt:                      Font file formats.   (line  56)
@@ -4784,38 +4783,38 @@ Node: Metafont78486
 Node: mf invocation79778
 Node: Initial Metafont83759
 Node: Modes85358
-Node: Online Metafont graphics87676
-Node: gftodvi invocation91824
-Node: mft invocation94767
-Node: MetaPost99125
-Node: mpost invocation99961
-Node: Initial MetaPost105667
-Node: dvitomp invocation106664
-Node: BibTeX107361
-Node: bibtex invocation107722
-Node: Basic BibTeX style files110328
-Node: WEB111726
-Node: tangle invocation112959
-Node: weave invocation115159
-Node: pooltype invocation116778
-Node: DVI utilities117911
-Node: dvicopy invocation118857
-Node: dvitype invocation120186
-Node: dvitype output example122595
-Node: Font utilities125720
-Node: Font file formats126912
-Node: gftopk invocation130243
-Node: pktogf invocation131478
-Node: pktype invocation132688
-Node: gftype invocation135607
-Node: tftopl invocation140226
-Node: pltotf invocation144971
-Node: vftovp invocation146050
-Node: vptovf invocation148377
-Node: Font utilities available elsewhere149436
-Node: Legalisms151703
-Node: References153162
-Node: Index157380
+Node: Online Metafont graphics87689
+Node: gftodvi invocation91837
+Node: mft invocation94780
+Node: MetaPost99138
+Node: mpost invocation99974
+Node: Initial MetaPost105680
+Node: dvitomp invocation106677
+Node: BibTeX107374
+Node: bibtex invocation107735
+Node: Basic BibTeX style files110341
+Node: WEB111739
+Node: tangle invocation112952
+Node: weave invocation115152
+Node: pooltype invocation116771
+Node: DVI utilities117904
+Node: dvicopy invocation118850
+Node: dvitype invocation120179
+Node: dvitype output example122588
+Node: Font utilities125713
+Node: Font file formats126905
+Node: gftopk invocation130236
+Node: pktogf invocation131471
+Node: pktype invocation132681
+Node: gftype invocation135581
+Node: tftopl invocation140181
+Node: pltotf invocation144926
+Node: vftovp invocation146005
+Node: vptovf invocation148332
+Node: Font utilities available elsewhere149391
+Node: Legalisms151576
+Node: References153035
+Node: Index157297
 
 End Tag Table
 
