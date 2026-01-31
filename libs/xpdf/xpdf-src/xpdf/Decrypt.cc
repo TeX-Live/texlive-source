@@ -8,10 +8,6 @@
 
 #include <aconf.h>
 
-#ifdef USE_GCC_PRAGMAS
-#pragma implementation
-#endif
-
 #include <string.h>
 #include "gmem.h"
 #include "gmempp.h"
@@ -1492,14 +1488,14 @@ static void sha512(Guchar *msg, int msgLen, Guchar *hash) {
   SHA512Uint64 H[8];
   int blkLen, i;
 
-  H[0] = 0x6a09e667f3bcc908LL;
-  H[1] = 0xbb67ae8584caa73bLL;
-  H[2] = 0x3c6ef372fe94f82bLL;
-  H[3] = 0xa54ff53a5f1d36f1LL;
-  H[4] = 0x510e527fade682d1LL;
-  H[5] = 0x9b05688c2b3e6c1fLL;
-  H[6] = 0x1f83d9abfb41bd6bLL;
-  H[7] = 0x5be0cd19137e2179LL;
+  H[0] = 0x6a09e667f3bcc908ULL;
+  H[1] = 0xbb67ae8584caa73bULL;
+  H[2] = 0x3c6ef372fe94f82bULL;
+  H[3] = 0xa54ff53a5f1d36f1ULL;
+  H[4] = 0x510e527fade682d1ULL;
+  H[5] = 0x9b05688c2b3e6c1fULL;
+  H[6] = 0x1f83d9abfb41bd6bULL;
+  H[7] = 0x5be0cd19137e2179ULL;
 
   blkLen = 0;
   for (i = 0; i + 128 <= msgLen; i += 128) {
@@ -1558,14 +1554,14 @@ static void sha384(Guchar *msg, int msgLen, Guchar *hash) {
   SHA512Uint64 H[8];
   int blkLen, i;
 
-  H[0] = 0xcbbb9d5dc1059ed8LL;
-  H[1] = 0x629a292a367cd507LL;
-  H[2] = 0x9159015a3070dd17LL;
-  H[3] = 0x152fecd8f70e5939LL;
-  H[4] = 0x67332667ffc00b31LL;
-  H[5] = 0x8eb44a8768581511LL;
-  H[6] = 0xdb0c2e0d64f98fa7LL;
-  H[7] = 0x47b5481dbefa4fa4LL;
+  H[0] = 0xcbbb9d5dc1059ed8ULL;
+  H[1] = 0x629a292a367cd507ULL;
+  H[2] = 0x9159015a3070dd17ULL;
+  H[3] = 0x152fecd8f70e5939ULL;
+  H[4] = 0x67332667ffc00b31ULL;
+  H[5] = 0x8eb44a8768581511ULL;
+  H[6] = 0xdb0c2e0d64f98fa7ULL;
+  H[7] = 0x47b5481dbefa4fa4ULL;
 
   blkLen = 0;
   for (i = 0; i + 128 <= msgLen; i += 128) {

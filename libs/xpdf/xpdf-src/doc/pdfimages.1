@@ -1,8 +1,8 @@
-.\" Copyright 1998-2022 Glyph & Cog, LLC
-.TH pdfimages 1 "18 Apr 2022"
+.\" Copyright 1998-2025 Glyph & Cog, LLC
+.TH pdfimages 1 "14 Nov 2025"
 .SH NAME
 pdfimages \- Portable Document Format (PDF) image extractor
-(version 4.04)
+(version 4.06)
 .SH SYNOPSIS
 .B pdfimages
 [options]
@@ -51,17 +51,33 @@ option, images in DCT format are saved as JPEG files.  All non-DCT
 images are saved in PBM/PGM/PPM format as usual.  (Inline images are
 always saved in PBM/PGM/PPM format.)
 .TP
+.B \-J
+Write JPX / JPEG 2000 images as JPEG 2000 files (similar to "-j", but
+for JPEG 2000).
+.TP
 .B \-raw
 Write all images in PDF-native formats.  Most of the formats are not
 standard image formats, so this option is primarily useful as input to
 a tool that generates PDF files.  (Inline images are always saved in
 PBM/PGM/PPM format.)
 .TP
+.B \-u
+Write only one copy of each unique image. If the same image is used
+multiple times, possibly across multiple pages, pdfimages will only
+write one image file. "Uniqueness" is determined by looking for reuse
+of image objects withiin the PDF file; if multiiple copies of an image
+are embedded, pdfimages will treat them as separate, unique images.
+.TP
 .B \-list
 Write a one-line summary to stdout for each image.  The summary
 provides the image file name, the page number, the image width and
 height, the horizontal and vertical resolution (DPI) as drawn, the
 color space type, and the number of bits per component (BPC).
+.TP
+.B \-listonly
+Write a one-line summary to stdout for each image (similar to
+"-list"), but do not generate any image files. If this option is used,
+the "image-root" argument must not be provided.
 .TP
 .BI \-opw " password"
 Specify the owner password for the PDF file.  Providing this will
@@ -77,6 +93,11 @@ Print a status message (to stdout) before processing each page.
 .B \-q
 Don't print any messages or errors.
 .RB "[config file: " errQuiet ]
+.TP
+.BI \-cfg " config-file"
+Read
+.I config-file
+in place of ~/.xpdfrc or the system-wide config file.
 .TP
 .B \-v
 Print copyright and version information.
@@ -102,10 +123,13 @@ Error opening an output file.
 3
 Error related to PDF permissions.
 .TP
+98
+Out of memory.
+.TP
 99
 Other error.
 .SH AUTHOR
-The pdfimages software and documentation are copyright 1998-2022 Glyph
+The pdfimages software and documentation are copyright 1998-2025 Glyph
 & Cog, LLC.
 .SH "SEE ALSO"
 .BR xpdf (1),

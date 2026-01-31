@@ -11,10 +11,6 @@
 
 #include <aconf.h>
 
-#ifdef USE_GCC_PRAGMAS
-#pragma interface
-#endif
-
 #include <stdio.h>
 #include "gtypes.h"
 #include "GfxFont.h"
@@ -23,6 +19,7 @@
 class GList;
 class UnicodeMap;
 class UnicodeRemapping;
+class PDFDoc;
 
 class TextBlock;
 class TextChar;
@@ -90,6 +87,7 @@ public:
          marginRight,		//   discarded
          marginTop,
          marginBottom;
+  GBool cmykColors;		// false for RGB, true for CMYK
 };
 
 //------------------------------------------------------------------------
@@ -122,6 +120,11 @@ public:
   // Get the width of the 'm' character, if available.
   double getMWidth() { return mWidth; }
 
+  double getAscent() { return ascent; }
+  double getDescent() { return descent; }
+
+  GBool isProblematic() { return problematic; }
+
   Ref getFontID() { return fontID; }
 
 private:
@@ -131,6 +134,7 @@ private:
   int flags;
   double mWidth;
   double ascent, descent;
+  GBool problematic;
 
   friend class TextLine;
   friend class TextPage;
@@ -158,6 +162,8 @@ public:
   GString *getFontName() { return font->fontName; }
   void getColor(double *r, double *g, double *b)
     { *r = colorR; *g = colorG; *b = colorB; }
+  void getCMYKColor(double *c, double *m, double *y, double *k)
+    { *c = colorR; *m = colorG; *y = colorB; *k = colorK; }
   GBool isInvisible() { return invisible; }
   void getBBox(double *xMinA, double *yMinA, double *xMaxA, double *yMaxA)
     { *xMinA = xMin; *yMinA = yMin; *xMaxA = xMax; *yMaxA = yMax; }
@@ -173,6 +179,7 @@ public:
   double getBaseline();
   GBool isUnderlined() { return underlined; }
   GString *getLinkURI();
+  int getLinkPage(PDFDoc *doc);
 
 private:
 
@@ -192,9 +199,10 @@ private:
   TextFontInfo *font;		// font information
   double fontSize;		// font size
   TextLink *link;
-  double colorR,		// word color
+  double colorR,		// word color (RGB or CMYK)
          colorG,
-         colorB;
+         colorB,
+         colorK;
   GBool invisible;		// set for invisible text (render mode 3)
 
   // group the byte-size fields to minimize object size
@@ -474,9 +482,17 @@ public:
   TextWordList *makeWordListForRect(double xMin, double yMin,
 				    double xMax, double yMax);
 
+  // Get the primary rotation of text on the page.
+  int getPrimaryRotation() { return primaryRot; }
+
   // Returns true if the primary character direction is left-to-right,
   // false if it is right-to-left.
   GBool primaryDirectionIsLR();
+
+  // Get the counter values.
+  int getNumVisibleChars() { return nVisibleChars; }
+  int getNumInvisibleChars() { return nInvisibleChars; }
+  int getNumRemovedDupChars() { return nRemovedDupChars; }
 
   // Returns true if any of the fonts used on this page are likely to
   // be problematic when converting text to Unicode.
@@ -557,7 +573,7 @@ private:
   GList *separateOverlappingText(GList *charsA);
   TextColumn *buildOverlappingTextColumn(GList *overlappingChars);
   TextBlock *splitChars(GList *charsA);
-  TextBlock *split(GList *charsA, int rot, GBool vertOnly);
+  TextBlock *split(GList *charsA, int rot);
   GList *getChars(GList *charsA, double xMin, double yMin,
 		  double xMax, double yMax);
   void findGaps(GList *charsA, int rot,
@@ -571,7 +587,9 @@ private:
   void insertLargeChars(GList *largeChars, TextBlock *blk);
   void insertLargeCharsInFirstLeaf(GList *largeChars, TextBlock *blk);
   void insertLargeCharInLeaf(TextChar *ch, TextBlock *blk);
-  void insertIntoTree(TextBlock *subtree, TextBlock *primaryTree);
+  void insertIntoTree(TextBlock *subtree, TextBlock *primaryTree,
+		      GBool doReorder);
+  void reorderBlocks(TextBlock *blk);
   void insertColumnIntoTree(TextBlock *column, TextBlock *tree);
   void insertClippedChars(GList *clippedChars, TextBlock *tree);
   TextBlock *findClippedCharLeaf(TextChar *ch, TextBlock *tree);
@@ -589,6 +607,7 @@ private:
 		      double xMin, double yMin, double xMax, double yMax);
   void getLineChars(TextBlock *blk, GList *charsA);
   double computeWordSpacingThreshold(GList *charsA, int rot);
+  void adjustCombiningChars(GList *charsA, int rot);
   int getCharDirection(TextChar *ch);
   int getCharDirection(TextChar *ch, TextChar *left, TextChar *right);
   int assignPhysLayoutPositions(GList *columns);
@@ -640,9 +659,14 @@ private:
   GList *chars;			// [TextChar]
   GList *fonts;			// all font info objects used on this
 				//   page [TextFontInfo]
+  int primaryRot;		// primary rotation
 
   GList *underlines;		// [TextUnderline]
   GList *links;			// [TextLink]
+
+  int nVisibleChars;		// number of visible chars on the page
+  int nInvisibleChars;		// number of invisible chars on the page
+  int nRemovedDupChars;		// number of duplicate chars removed
 
   GList *findCols;		// text used by the findText**/findPoint**
 				//   functions [TextColumn]
@@ -725,7 +749,8 @@ public:
   virtual void drawChar(GfxState *state, double x, double y,
 			double dx, double dy,
 			double originX, double originY,
-			CharCode c, int nBytes, Unicode *u, int uLen);
+			CharCode c, int nBytes, Unicode *u, int uLen,
+			GBool fill, GBool stroke, GBool makePath);
   virtual void incCharCount(int nChars);
   virtual void beginActualText(GfxState *state, Unicode *u, int uLen);
   virtual void endActualText(GfxState *state);
@@ -784,9 +809,15 @@ public:
   // Turn extra processing for HTML conversion on or off.
   void enableHTMLExtras(GBool html) { control.html = html; }
 
+  // Get the counter values.
+  int getNumVisibleChars() { return text->nVisibleChars; }
+  int getNumInvisibleChars() { return text->nInvisibleChars; }
+  int getNumRemovedDupChars() { return text->nRemovedDupChars; }
+
 private:
 
   void generateBOM();
+  void handleCoveredText();
 
   TextOutputFunc outputFunc;	// output function
   void *outputStream;		// output stream

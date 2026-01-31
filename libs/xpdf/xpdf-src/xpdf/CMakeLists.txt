@@ -53,6 +53,7 @@ add_library(xpdf_objs OBJECT
   JPXStream.cc
   Lexer.cc
   Link.cc
+  LocalParams.cc
   NameToCharCode.cc
   Object.cc
   OptionalContent.cc

@@ -8,10 +8,6 @@
 
 #include <aconf.h>
 
-#ifdef USE_GCC_PRAGMAS
-#pragma implementation
-#endif
-
 #include <stdlib.h>
 #include <limits.h>
 #include "gmempp.h"
@@ -1726,12 +1722,9 @@ GBool JBIG2Stream::readSymbolDictSeg(Guint segNum, Guint length,
   while (i < numNewSyms) {
 
     // read the height class delta height
-    if (huff) {
-      huffDecoder->decodeInt(&dh, huffDHTable);
-    } else {
-      arithDecoder->decodeInt(&dh, iadhStats);
-    }
-    if ((dh <= 0 && (Guint)-dh >= symHeight) ||
+    if (!(huff ? huffDecoder->decodeInt(&dh, huffDHTable) :
+	         arithDecoder->decodeInt(&dh, iadhStats)) ||
+	(dh <= 0 && (Guint)-dh >= symHeight) ||
 	(dh > 0 && (Guint)dh > UINT_MAX - symHeight)) {
       error(errSyntaxError, getPos(),
 	    "Bad delta-height value in JBIG2 symbol dictionary");
@@ -1797,6 +1790,11 @@ GBool JBIG2Stream::readSymbolDictSeg(Guint segNum, Guint length,
 	  if (!arithDecoder->decodeInt(&refAggNum, iaaiStats)) {
 	    break;
 	  }
+	}
+	if (refAggNum <= 0 || refAggNum > 10000) {
+	  error(errSyntaxError, getPos(),
+		"Invalid refinement/aggregation instance count in JBIG2 symbol dictionary");
+	  goto syntaxError;
 	}
 #if 0 //~ This special case was added about a year before the final draft
       //~ of the JBIG2 spec was released.  I have encountered some old
@@ -2440,6 +2438,18 @@ JBIG2Bitmap *JBIG2Stream::readTextRegion(GBool huff, GBool refine,
 	  refDX = ((rdw >= 0) ? rdw : rdw - 1) / 2 + rdx;
 	  refDY = ((rdh >= 0) ? rdh : rdh - 1) / 2 + rdy;
 
+	  if (rdw > INT_MAX - syms[symID]->getWidth() ||
+	      rdh > INT_MAX - syms[symID]->getHeight()) {
+	    error(errSyntaxError, getPos(),
+		  "Invalid refinement size in JBIG2 text region");
+	    continue;
+	  }
+	  // sanity check
+	  if (rdw > 1000 || rdh > 1000) {
+	    error(errSyntaxError, getPos(),
+		  "Invalid refinement size in JBIG2 text region");
+	    continue;
+	  }
 	  symbolBitmap =
 	    readGenericRefinementRegion(rdw + syms[symID]->getWidth(),
 					rdh + syms[symID]->getHeight(),
@@ -2527,7 +2537,8 @@ void JBIG2Stream::readPatternDictSeg(Guint segNum, Guint length) {
       !readULong(&grayMax)) {
     goto eofError;
   }
-  if (patternW == 0 || patternH == 0) {
+  if (patternW == 0 || patternH == 0 ||
+      grayMax > UINT_MAX / patternW - 1) {
     error(errSyntaxError, getPos(),
 	  "Bad size in JBIG2 pattern dictionary segment");
     return;
@@ -2716,7 +2727,18 @@ void JBIG2Stream::readHalftoneRegionSeg(Guint segNum, GBool imm,
     yy = gridY + m * stepX;
     for (n = 0; n < gridW; ++n) {
       if (!(enableSkip && skipBitmap->getPixel(n, m))) {
-	patternBitmap = patternDict->getBitmap(grayImg[i]);
+	Guint gray = grayImg[i];
+	if (gray >= patternDict->getSize()) {
+	  error(errSyntaxError, getPos(),
+		"Invalid gray value in JBIG2 halftone segment");
+	  gfree(grayImg);
+	  if (skipBitmap) {
+	    delete skipBitmap;
+	  }
+	  delete bitmap;
+	  return;
+	}
+	patternBitmap = patternDict->getBitmap(gray);
 	bitmap->combine(patternBitmap, xx >> 8, yy >> 8, combOp);
       }
       xx += stepX;
@@ -3948,7 +3970,9 @@ void JBIG2Stream::readPageInfoSeg(Guint length) {
       !readUByte(&flags) || !readUWord(&striping)) {
     goto eofError;
   }
-  if (pageW == 0 || pageH == 0 || pageW > INT_MAX / pageW) {
+  if (pageW == 0 || pageH == 0 ||
+      pageW > INT_MAX || pageH > INT_MAX ||
+      pageH > INT_MAX / pageW) {
     error(errSyntaxError, getPos(), "Bad page size in JBIG2 stream");
     return;
   }

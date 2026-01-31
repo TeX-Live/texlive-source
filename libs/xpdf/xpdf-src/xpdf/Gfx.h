@@ -11,10 +11,6 @@
 
 #include <aconf.h>
 
-#ifdef USE_GCC_PRAGMAS
-#pragma interface
-#endif
-
 #include "gtypes.h"
 #include "gfile.h"
 #include "GfxState.h"
@@ -34,6 +30,7 @@ class GfxFont;
 class Gfx;
 class PDFRectangle;
 class AnnotBorderStyle;
+class LocalParams;
 
 //------------------------------------------------------------------------
 
@@ -106,6 +103,8 @@ private:
 enum GfxMarkedContentKind {
   gfxMCOptionalContent,
   gfxMCActualText,
+  gfxMCStructureItem,
+  gfxMCStructureItemAndActualText,
   gfxMCOther
 };
 
@@ -131,15 +130,16 @@ class Gfx {
 public:
 
   // Constructor for regular output.
-  Gfx(PDFDoc *docA, OutputDev *outA, int pageNum, Dict *resDict,
+  Gfx(PDFDoc *docA, OutputDev *outA, LocalParams *localParams,
+      int pageNum, Dict *resDict,
       double hDPI, double vDPI, PDFRectangle *box,
       PDFRectangle *cropBox, int rotate,
       GBool (*abortCheckCbkA)(void *data) = NULL,
       void *abortCheckCbkDataA = NULL);
 
   // Constructor for a sub-page object.
-  Gfx(PDFDoc *docA, OutputDev *outA, Dict *resDict,
-      PDFRectangle *box, PDFRectangle *cropBox,
+  Gfx(PDFDoc *docA, OutputDev *outA, LocalParams *localParams,
+      Dict *resDict, PDFRectangle *box, PDFRectangle *cropBox,
       GBool (*abortCheckCbkA)(void *data) = NULL,
       void *abortCheckCbkDataA = NULL);
 
@@ -162,6 +162,9 @@ public:
 
   // Get the current graphics state object.
   GfxState *getState() { return state; }
+
+  // Get the current base matrix.
+  double *getBaseMatrix() { return baseMatrix; }
 
   void drawForm(Object *strRef, Dict *resDict, double *matrix, double *bbox,
 		GBool transpGroup = gFalse, GBool softMask = gFalse,
@@ -194,6 +197,7 @@ private:
 
   GfxState *state;		// current graphics state
   GBool fontChanged;		// set if font or text matrix has changed
+  GBool haveSavedClipPath;
   GfxClipType clip;		// do a clip?
   int ignoreUndef;		// current BX/EX nesting level
   double baseMatrix[6];		// default matrix for most recent
@@ -273,7 +277,7 @@ private:
   void opCloseEOFillStroke(Object args[], int numArgs);
   void doPatternFill(GBool eoFill);
   void doPatternStroke();
-  void doPatternText();
+  void doPatternText(GBool stroke);
   void doPatternImageMask(Object *ref, Stream *str, int width, int height,
 			  GBool invert, GBool inlineImg, GBool interpolate);
   void doTilingPatternFill(GfxTilingPattern *tPat,

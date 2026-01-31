@@ -11,11 +11,8 @@
 
 #include <aconf.h>
 
-#ifdef USE_GCC_PRAGMAS
-#pragma interface
-#endif
-
 #include <stdlib.h>
+#include <atomic>
 #include "SplashTypes.h"
 #include "CharTypes.h"
 #include "DisplayState.h"
@@ -31,7 +28,6 @@ class Links;
 class LinkDest;
 class LinkAction;
 class Annot;
-class Annots;
 class AcroFormField;
 class TextPage;
 class HighlightFile;
@@ -74,6 +70,33 @@ struct FindResult {
     : page(pageA), xMin(xMinA), yMin(yMinA), xMax(xMaxA), yMax(yMaxA) {}
   int page;
   double xMin, yMin, xMax, yMax;
+};
+
+//------------------------------------------------------------------------
+// AsyncFindAll
+//------------------------------------------------------------------------
+
+class AsyncFindAll {
+public:
+
+  AsyncFindAll(PDFCore *coreA): core(coreA), canceled(gFalse) {}
+
+  void reset() { canceled = false; }
+
+  // Run the search, returning a list of FindResults -- same as
+  // PDFCore::findAll().  This can be run on a separate thread.  If
+  // cancel() is called while the search is running, this function
+  // returns null.
+  GList *run(PDFDoc *doc, Unicode *u, int len, GBool caseSensitive,
+	     GBool wholeWord, int firstPage, int lastPage);
+
+  // Cancel a running search, causing run() to return null.
+  void cancel() { canceled = true; }
+
+private:
+
+  PDFCore *core;
+  std::atomic<bool> canceled;
 };
 
 //------------------------------------------------------------------------
@@ -256,7 +279,6 @@ public:
   LinkAction *findLink(int pg, double x, double y);
   Annot *findAnnot(int pg, double x, double y);
   int findAnnotIdx(int pg, double x, double y);
-  Annot *getAnnot(int idx);
   AcroFormField *findFormField(int pg, double x, double y);
   int findFormFieldIdx(int pg, double x, double y);
   AcroFormField *getFormField(int idx);
@@ -288,6 +310,11 @@ protected:
 
   //--- callbacks to PDFCore subclass
 
+  // Subclasses can return true here to force PDFCore::finishUpdate()
+  // to always invalidate the window.  This is necessary to avoid
+  // flickering on some backends.
+  virtual GBool alwaysInvalidateOnUpdate() { return gFalse; }
+
   // Invalidate the specified rectangle (in window coordinates).
   virtual void invalidate(int x, int y, int w, int h) = 0;
 
@@ -304,13 +331,17 @@ protected:
   // This is called just after a PDF file is loaded.
   virtual void postLoad() {}
 
+  // This is called just before deleting the PDFDoc.  The PDFCore
+  // subclass must shut down any secondary threads that are using the
+  // PDFDoc pointer.
+  virtual void aboutToDeleteDoc() {}
+
   //--- internal
 
   int loadFile2(PDFDoc *newDoc);
   void addToHistory();
   void clearPage();
   void loadLinks(int pg);
-  void loadAnnots(int pg);
   void loadText(int pg);
   void getSelectionBBox(int *wxMin, int *wyMin, int *wxMax, int *wyMax);
   void getSelectRectListBBox(GList *rects, int *wxMin, int *wyMin,
@@ -318,13 +349,12 @@ protected:
   void checkInvalidate(int x, int y, int w, int h);
   void invalidateWholeWindow();
 
+  friend class AsyncFindAll;
+
   PDFDoc *doc;
 
   int linksPage;		// cached links for one page
   Links *links;
-
-  int annotsPage;		// cached annotations for one page
-  Annots *annots;
 
   int textPage;			// cached extracted text for one page
   double textDPI;

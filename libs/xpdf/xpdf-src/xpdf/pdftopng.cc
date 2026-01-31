@@ -99,6 +99,10 @@ static void writePNGData(png_structp png, SplashBitmap *bitmap);
 static void finishPNG(png_structp *png, png_infop *pngInfo);
 
 int main(int argc, char *argv[]) {
+#if USE_EXCEPTIONS
+  try {
+#endif
+
   PDFDoc *doc;
   char *fileName;
   char *pngRoot;
@@ -126,12 +130,15 @@ int main(int argc, char *argv[]) {
     fprintf(stderr, "The -alpha flag cannot be used with -mono\n");
     goto err0;
   }
-  if (!ok || argc != 3 || printVersion || printHelp) {
+  if (printVersion) {
+    printf("pdftopng version %s [www.xpdfreader.com]\n", xpdfVersion);
+    printf("%s\n", xpdfCopyright);
+    goto err0;
+  }
+  if (!ok || argc != 3 || printHelp) {
     fprintf(stderr, "pdftopng version %s [www.xpdfreader.com]\n", xpdfVersion);
     fprintf(stderr, "%s\n", xpdfCopyright);
-    if (!printVersion) {
-      printUsage("pdftopng", "<PDF-file> <PNG-root>", argDesc);
-    }
+    printUsage("pdftopng", "<PDF-file> <PNG-root>", argDesc);
     goto err0;
   }
   fileName = argv[1];
@@ -221,7 +228,7 @@ int main(int argc, char *argv[]) {
       printf("[processing page %d]\n", pg);
       fflush(stdout);
     }
-    doc->displayPage(splashOut, pg, resolution, resolution, rotate,
+    doc->displayPage(splashOut, NULL, pg, resolution, resolution, rotate,
 		     gFalse, gTrue, gFalse);
     if (mono) {
       if (toStdout) {
@@ -296,6 +303,13 @@ int main(int argc, char *argv[]) {
   gMemReport(stderr);
 
   return exitCode;
+
+#if USE_EXCEPTIONS
+  } catch (GMemException e) {
+    fprintf(stderr, "Out of memory\n");
+    return 98;
+  }
+#endif
 }
 
 static void setupPNG(png_structp *png, png_infop *pngInfo, FILE *f,

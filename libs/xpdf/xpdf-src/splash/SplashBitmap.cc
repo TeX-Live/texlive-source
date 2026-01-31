@@ -8,10 +8,6 @@
 
 #include <aconf.h>
 
-#ifdef USE_GCC_PRAGMAS
-#pragma implementation
-#endif
-
 #include <stdio.h>
 #include <limits.h>
 #include "gmem.h"
@@ -22,18 +18,95 @@
 #include "SplashBitmap.h"
 
 //------------------------------------------------------------------------
+// SplashBitmapMemCache
+//------------------------------------------------------------------------
+
+#define splashBitmapMemCacheThreshold 4000000
+
+SplashBitmapMemCache::SplashBitmapMemCache() {
+  for (int i = 0; i < splashBitmapMemCacheSize; ++i) {
+    cache[i].data = NULL;
+    cache[i].height = 0;
+    cache[i].rowSize = 0;
+  }
+}
+
+SplashBitmapMemCache::~SplashBitmapMemCache() {
+  for (int i = 0; i < splashBitmapMemCacheSize; ++i) {
+    if (cache[i].data) {
+      gfree(cache[i].data);
+      cache[i].data = NULL;
+      cache[i].height = 0;
+      cache[i].rowSize = 0;
+    }
+  }
+}
+
+void *SplashBitmapMemCache::alloc(int height, SplashBitmapRowSize rowSize) {
+  // if the block is small, just allocate it
+  if (rowSize < splashBitmapMemCacheThreshold / height) {
+    return gmallocn64(height, rowSize);
+  }
+
+  // if a match is found in the cache, return it
+  for (int i = splashBitmapMemCacheSize - 1; i >= 0; --i) {
+    if (cache[i].data &&
+	cache[i].height == height &&
+	cache[i].rowSize == rowSize) {
+      void *data = cache[i].data;
+      for (int j = i; j < splashBitmapMemCacheSize - 1; ++j) {
+	cache[j] = cache[j + 1];
+      }
+      cache[splashBitmapMemCacheSize - 1].data = NULL;
+      cache[splashBitmapMemCacheSize - 1].height = 0;
+      cache[splashBitmapMemCacheSize - 1].rowSize = 0;
+      return data;
+    }
+  }
+
+  // if no match was found, clear the cache and allcoate the block
+  for (int i = 0; i < splashBitmapMemCacheSize; ++i) {
+    if (cache[i].data) {
+      gfree(cache[i].data);
+      cache[i].data = NULL;
+      cache[i].height = 0;
+      cache[i].rowSize = 0;
+    }
+  }
+  return gmallocn64(height, rowSize);
+}
+
+void SplashBitmapMemCache::free(void *data, int height,
+				SplashBitmapRowSize rowSize) {
+  if (rowSize < splashBitmapMemCacheThreshold / height) {
+    gfree(data);
+    return;
+  }
+  if (cache[0].data) {
+    gfree(cache[0].data);
+  }
+  for (int i = 0; i < splashBitmapMemCacheSize - 1; ++i) {
+    cache[i] = cache[i + 1];
+  }
+  cache[splashBitmapMemCacheSize - 1].data = data;
+  cache[splashBitmapMemCacheSize - 1].height = height;
+  cache[splashBitmapMemCacheSize - 1].rowSize = rowSize;
+}
+
+//------------------------------------------------------------------------
 // SplashBitmap
 //------------------------------------------------------------------------
 
 SplashBitmap::SplashBitmap(int widthA, int heightA, int rowPad,
 			   SplashColorMode modeA, GBool alphaA,
-			   GBool topDown, SplashBitmap *parentA) {
+			   GBool topDown, SplashBitmapMemCache *cacheA) {
   // NB: this code checks that rowSize fits in a signed 32-bit
   // integer, because some code (outside this class) makes that
   // assumption
   width = widthA;
   height = heightA;
   mode = modeA;
+  rowSize = 0; // make gcc happy
   switch (mode) {
   case splashModeMono1:
     if (width <= 0) {
@@ -71,25 +144,11 @@ SplashBitmap::SplashBitmap(int widthA, int heightA, int rowPad,
 	     alphaA ? "with alpha" : "without alpha",
 	     height * rowSize + (alphaA ? height * width : 0));
 
-  parent = parentA;
-  oldData = NULL;
-  oldAlpha = NULL;
-  oldRowSize = 0;
-  oldAlphaRowSize = 0;
-  oldHeight = 0;
-  if (parent && parent->oldData &&
-      parent->oldRowSize == rowSize &&
-      parent->oldHeight == height) {
-    data = parent->oldData;
-    parent->oldData = NULL;
-    traceMessage("reusing bitmap memory");
+  cache = cacheA;
+  if (cache) {
+    data = (SplashColorPtr)cache->alloc(height, rowSize);
   } else {
     data = (SplashColorPtr)gmallocn64(height, rowSize);
-    traceMessage("not reusing bitmap memory"
-		 " (parent=%p parent->oldData=%p same-size=%d)",
-		 parent, parent ? parent->oldData : NULL,
-		 parent ? (parent->oldRowSize == rowSize &&
-			   parent->oldHeight == height) : 0);
   }
   if (!topDown) {
     data += (height - 1) * rowSize;
@@ -97,11 +156,8 @@ SplashBitmap::SplashBitmap(int widthA, int heightA, int rowPad,
   }
   if (alphaA) {
     alphaRowSize = width;
-    if (parent && parent->oldAlpha &&
-	parent->oldAlphaRowSize == alphaRowSize &&
-	parent->oldHeight == height) {
-      alpha = parent->oldAlpha;
-      parent->oldAlpha = NULL;
+    if (cache) {
+      alpha = (Guchar *)cache->alloc(height, alphaRowSize);
     } else {
       alpha = (Guchar *)gmallocn64(height, alphaRowSize);
     }
@@ -117,20 +173,15 @@ SplashBitmap::~SplashBitmap() {
     rowSize = -rowSize;
     data -= (height - 1) * rowSize;
   }
-  if (parent && rowSize > 4000000 / height) {
-    gfree(parent->oldData);
-    gfree(parent->oldAlpha);
-    parent->oldData = data;
-    parent->oldAlpha = alpha;
-    parent->oldRowSize = rowSize;
-    parent->oldAlphaRowSize = alphaRowSize;
-    parent->oldHeight = height;
+  if (cache) {
+    cache->free(data, height, rowSize);
+    if (alpha) {
+      cache->free(alpha, height, alphaRowSize);
+    }
   } else {
     gfree(data);
     gfree(alpha);
   }
-  gfree(oldData);
-  gfree(oldAlpha);
 }
 
 SplashError SplashBitmap::writePNMFile(char *fileName) {
@@ -286,3 +337,37 @@ SplashColorPtr SplashBitmap::takeData() {
   return data2;
 }
 
+void SplashBitmap::doNotCache() {
+  cache = NULL;
+}
+
+
+//------------------------------------------------------------------------
+// SplashAlphaBitmap
+//------------------------------------------------------------------------
+
+SplashAlphaBitmap::SplashAlphaBitmap(int widthA, int heightA,
+				     SplashBitmapMemCache *cacheA) {
+  width = widthA;
+  height = heightA;
+  alphaRowSize = width;
+
+  traceAlloc(this, "alloc alpha bitmap: %d x %d -> %lld bytes",
+	     width, height, height * alphaRowSize);
+
+  cache = cacheA;
+  if (cache) {
+    alpha = (Guchar *)cache->alloc(height, alphaRowSize);
+  } else {
+    alpha = (Guchar *)gmallocn64(height, alphaRowSize);
+  }
+}
+
+SplashAlphaBitmap::~SplashAlphaBitmap() {
+  traceFree(this, "free alpha bitmap");
+  if (cache) {
+    cache->free(alpha, height, alphaRowSize);
+  } else {
+    gfree(alpha);
+  }
+}

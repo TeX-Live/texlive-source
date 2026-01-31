@@ -8,10 +8,6 @@
 
 #include <aconf.h>
 
-#ifdef USE_GCC_PRAGMAS
-#pragma implementation
-#endif
-
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
@@ -181,16 +177,16 @@ GString *FoFiType1C::getGlyphName(int gid) {
 
 GHash *FoFiType1C::getNameToGIDMap() {
   GHash *map;
-  char name[256];
+  char glyphName[256];
   GBool ok;
   int gid;
 
   map = new GHash(gTrue);
   for (gid = 0; gid < nGlyphs; ++gid) {
     ok = gTrue;
-    getString(charset[gid], name, &ok);
+    getString(charset[gid], glyphName, &ok);
     if (ok) {
-      map->add(new GString(name), gid);
+      map->add(new GString(glyphName), gid);
     }
   }
   return map;
@@ -1527,7 +1523,7 @@ void FoFiType1C::cvtGlyph(int offset, int nBytes, GString *charBuf,
 	if (nOps < 6 || nOps % 6 != 0) {
 	  //~ error(-1, "Wrong number of args (%d) to Type 2 rrcurveto", nOps);
 	}
-	for (k = 0; k < nOps; k += 6) {
+	for (k = 0; k+5 < nOps; k += 6) {
 	  cvtNum(ops[k], charBuf);
 	  cvtNum(ops[k+1], charBuf);
 	  cvtNum(ops[k+2], charBuf);
@@ -1696,9 +1692,11 @@ void FoFiType1C::cvtGlyph(int offset, int nBytes, GString *charBuf,
 	  cvtNum(ops[k+5], charBuf);
 	  charBuf->append((char)8);
 	}
-	cvtNum(ops[k], charBuf);
-	cvtNum(ops[k+1], charBuf);
-	charBuf->append((char)5);
+	if (k+1 < nOps) {
+	  cvtNum(ops[k], charBuf);
+	  cvtNum(ops[k+1], charBuf);
+	  charBuf->append((char)5);
+	}
 	nOps = 0;
 	openPath = gTrue;
 	break;
@@ -1711,13 +1709,15 @@ void FoFiType1C::cvtGlyph(int offset, int nBytes, GString *charBuf,
 	  cvtNum(ops[k+1], charBuf);
 	  charBuf->append((char)5);
 	}
-	cvtNum(ops[k], charBuf);
-	cvtNum(ops[k+1], charBuf);
-	cvtNum(ops[k+2], charBuf);
-	cvtNum(ops[k+3], charBuf);
-	cvtNum(ops[k+4], charBuf);
-	cvtNum(ops[k+5], charBuf);
-	charBuf->append((char)8);
+	if (k+5 < nOps) {
+	  cvtNum(ops[k], charBuf);
+	  cvtNum(ops[k+1], charBuf);
+	  cvtNum(ops[k+2], charBuf);
+	  cvtNum(ops[k+3], charBuf);
+	  cvtNum(ops[k+4], charBuf);
+	  cvtNum(ops[k+5], charBuf);
+	  charBuf->append((char)8);
+	}
 	nOps = 0;
 	openPath = gTrue;
 	break;
@@ -2251,43 +2251,7 @@ void FoFiType1C::convertToOpenType(FoFiOutputFunc outputFunc,
 				   void *outputStream,
 				   int nWidths, Gushort *widths,
 				   Guchar *cmapTable, int cmapTableLen) {
-  // dummy OS/2 table (taken from FoFiTrueType::writeTTF)
-  static Guchar os2Tab[86] = {
-    0, 1,			// version
-    0, 1,			// xAvgCharWidth
-    0x01, 0x90,			// usWeightClass
-    0, 5,			// usWidthClass
-    0, 0,			// fsType
-    0, 0,			// ySubscriptXSize
-    0, 0,			// ySubscriptYSize
-    0, 0,			// ySubscriptXOffset
-    0, 0,			// ySubscriptYOffset
-    0, 0,			// ySuperscriptXSize
-    0, 0,			// ySuperscriptYSize
-    0, 0,			// ySuperscriptXOffset
-    0, 0,			// ySuperscriptYOffset
-    0, 0,			// yStrikeoutSize
-    0, 0,			// yStrikeoutPosition
-    0, 0,			// sFamilyClass
-    0, 0, 0, 0, 0,		// panose
-    0, 0, 0, 0, 0,
-    0, 0, 0, 0,			// ulUnicodeRange1
-    0, 0, 0, 0,			// ulUnicodeRange2
-    0, 0, 0, 0,			// ulUnicodeRange3
-    0, 0, 0, 0,			// ulUnicodeRange4
-    0, 0, 0, 0,			// achVendID
-    0, 0,			// fsSelection
-    0, 0,			// usFirstCharIndex
-    0, 0,			// usLastCharIndex
-    0, 0,			// sTypoAscender
-    0, 0,			// sTypoDescender
-    0, 0,			// sTypoLineGap
-    0x20, 0x00,			// usWinAscent
-    0x20, 0x00,			// usWinDescent
-    0, 0, 0, 1,			// ulCodePageRange1
-    0, 0, 0, 0			// ulCodePageRange2
-  };
-  Guchar headTable[54], hheaTable[36], maxpTable[6];
+  Guchar os2Table[96], headTable[54], hheaTable[36], maxpTable[6];
   Guchar nameTable[26], postTable[32];
   Guchar *hmtxTable;
   static const char *tableTag[9] = {
@@ -2307,15 +2271,118 @@ void FoFiType1C::convertToOpenType(FoFiOutputFunc outputFunc,
   double mat[6];
   Gushort maxWidth;
   Guint checksum, fileChecksum;
-  int unitsPerEm, xMin, yMin, xMax, yMax, offset, i;
+  int unitsPerEm, xMin, yMin, xMax, yMax, ascent, descent, offset, i;
+
+  xMin = (int)(topDict.fontBBox[0] + 0.5);
+  yMin = (int)(topDict.fontBBox[1] + 0.5);
+  xMax = (int)(topDict.fontBBox[2] + 0.5);
+  yMax = (int)(topDict.fontBBox[3] + 0.5);
+  ascent = yMax;
+  descent = -yMin;
 
   //--- CFF_ table
   tableData[0] = file;
   tableLength[0] = len;
 
   //--- OS/2 table
-  tableData[1] = os2Tab;
-  tableLength[1] = 86;
+  os2Table[ 0] = 0;		// version
+  os2Table[ 1] = 4;
+  os2Table[ 2] = 0;		// xAvgCharWidth
+  os2Table[ 3] = 1;
+  os2Table[ 4] = 0x01;		// usWeightClass
+  os2Table[ 5] = 0x90;
+  os2Table[ 6] = 0;		// usWidthClass
+  os2Table[ 7] = 5;
+  os2Table[ 8] = 0;		// fsType
+  os2Table[ 9] = 0;
+  os2Table[10] = 0;		// ySubscriptXSize
+  os2Table[11] = 0;
+  os2Table[12] = 0;		// ySubscriptYSize
+  os2Table[13] = 0;
+  os2Table[14] = 0;		// ySubscriptXOffset
+  os2Table[15] = 0;
+  os2Table[16] = 0;		// ySubscriptYOffset
+  os2Table[17] = 0;
+  os2Table[18] = 0;		// ySuperscriptXSize
+  os2Table[19] = 0;
+  os2Table[20] = 0;		// ySuperscriptYSize
+  os2Table[21] = 0;
+  os2Table[22] = 0;		// ySuperscriptXOffset
+  os2Table[23] = 0;
+  os2Table[24] = 0;		// ySuperscriptYOffset
+  os2Table[25] = 0;
+  os2Table[26] = 0;		// yStrikeoutSize
+  os2Table[27] = 0;
+  os2Table[28] = 0;		// yStrikeoutPosition
+  os2Table[29] = 0;
+  os2Table[30] = 0;		// sFamilyClass
+  os2Table[31] = 0;
+  os2Table[32] = 0;		// panose
+  os2Table[33] = 0;
+  os2Table[34] = 0;
+  os2Table[35] = 0;
+  os2Table[36] = 0;
+  os2Table[37] = 0;
+  os2Table[38] = 0;
+  os2Table[39] = 0;
+  os2Table[40] = 0;
+  os2Table[41] = 0;
+  os2Table[42] = 0;		// ulUnicodeRange1
+  os2Table[43] = 0;
+  os2Table[44] = 0;
+  os2Table[45] = 0;
+  os2Table[46] = 0;		// ulUnicodeRange2
+  os2Table[47] = 0;
+  os2Table[48] = 0;
+  os2Table[49] = 0;
+  os2Table[50] = 0;		// ulUnicodeRange3
+  os2Table[51] = 0;
+  os2Table[52] = 0;
+  os2Table[53] = 0;
+  os2Table[54] = 0;		// ulUnicodeRange4
+  os2Table[55] = 0;
+  os2Table[56] = 0;
+  os2Table[57] = 0;
+  os2Table[58] = 0;		// achVendID
+  os2Table[59] = 0;
+  os2Table[60] = 0;
+  os2Table[61] = 0;
+  os2Table[62] = 0;		// fsSelection
+  os2Table[63] = 0;
+  os2Table[64] = 0;		// usFirstCharIndex
+  os2Table[65] = 0;
+  os2Table[66] = 0;		// usLastCharIndex
+  os2Table[67] = 0;
+  os2Table[68] = 0;		// sTypoAscender
+  os2Table[69] = 0;
+  os2Table[70] = 0;		// sTypoDescender
+  os2Table[71] = 0;
+  os2Table[72] = 0;		// sTypoLineGap
+  os2Table[73] = 0;
+  os2Table[74] = (Guchar)(ascent >> 8);    // usWinAscent
+  os2Table[75] = (Guchar)ascent;
+  os2Table[76] = (Guchar)(descent >> 8);   // usWinDescent
+  os2Table[77] = (Guchar)descent;
+  os2Table[78] = 0;		// ulCodePageRange1
+  os2Table[79] = 0;
+  os2Table[80] = 0;
+  os2Table[81] = 1;
+  os2Table[82] = 0;		// ulCodePageRange2
+  os2Table[83] = 0;
+  os2Table[84] = 0;
+  os2Table[85] = 0;
+  os2Table[86] = 0;		// sxHeight
+  os2Table[87] = 0;
+  os2Table[88] = 0;		// sCapHeight
+  os2Table[89] = 0;
+  os2Table[90] = 0;		// usDefaultChar
+  os2Table[91] = 0;
+  os2Table[92] = 0;		// usBreakChar
+  os2Table[93] = 0;
+  os2Table[94] = 0;		// usMaxContext
+  os2Table[95] = 0;
+  tableData[1] = os2Table;
+  tableLength[1] = 96;
 
   //--- cmap table
   tableData[2] = cmapTable;
@@ -2328,18 +2395,14 @@ void FoFiType1C::convertToOpenType(FoFiOutputFunc outputFunc,
   } else {
     unitsPerEm = (int)(1 / mat[0] + 0.5);
   }
-  xMin = (int)(topDict.fontBBox[0] + 0.5);
-  yMin = (int)(topDict.fontBBox[1] + 0.5);
-  xMax = (int)(topDict.fontBBox[2] + 0.5);
-  yMax = (int)(topDict.fontBBox[3] + 0.5);
   headTable[ 0] = 0x00;				// version
   headTable[ 1] = 0x01;
   headTable[ 2] = 0x00;
   headTable[ 3] = 0x00;
   headTable[ 4] = 0x00;				// revision
-  headTable[ 5] = 0x00;
+  headTable[ 5] = 0x01;				//   (needs to be non-zero)
   headTable[ 6] = 0x00;
-  headTable[ 7] = 0x00;
+  headTable[ 7] = 0x01;
   headTable[ 8] = 0x00;				// checksumAdjustment
   headTable[ 9] = 0x00;				//   (set later)
   headTable[10] = 0x00;
@@ -2390,8 +2453,8 @@ void FoFiType1C::convertToOpenType(FoFiOutputFunc outputFunc,
   tableLength[3] = 54;
 
   //--- hhea table
-  maxWidth = widths[0];
-  for (i = 1; i < nWidths; ++i) {
+  maxWidth = 0;
+  for (i = 0; i < nWidths; ++i) {
     if (widths[i] > maxWidth) {
       maxWidth = widths[i];
     }
@@ -2659,6 +2722,10 @@ GBool FoFiType1C::parse() {
 	return gFalse;
       }
       nFDs = fdIdx.len;
+      if (nFDs < 1) {
+	parsedOk = gFalse;
+	return gFalse;
+      }
       privateDicts = (Type1CPrivateDict *)
 	                 gmallocn(nFDs, sizeof(Type1CPrivateDict));
       for (i = 0; i < nFDs; ++i) {

@@ -8,10 +8,6 @@
 
 #include <aconf.h>
 
-#ifdef USE_GCC_PRAGMAS
-#pragma implementation
-#endif
-
 #include <stdlib.h>
 #include <string.h>
 #include "gmem.h"
@@ -98,6 +94,11 @@ void *GList::del(int i) {
 
 void GList::sort(int (*cmp)(const void *obj1, const void *obj2)) {
   qsort(data, length, sizeof(void *), cmp);
+}
+
+void GList::sort(int first, int n,
+		 int (*cmp)(const void *ptr1, const void *ptr2)) {
+  qsort(data + first, n, sizeof(void *), cmp);
 }
 
 void GList::reverse() {

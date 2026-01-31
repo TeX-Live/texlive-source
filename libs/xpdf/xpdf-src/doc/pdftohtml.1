@@ -1,8 +1,8 @@
-.\" Copyright 1997-2022 Glyph & Cog, LLC
-.TH pdftohtml 1 "18 Apr 2022"
+.\" Copyright 1997-2025 Glyph & Cog, LLC
+.TH pdftohtml 1 "14 Nov 2025"
 .SH NAME
 pdftohtml \- Portable Document Format (PDF) to HTML converter
-(version 4.04)
+(version 4.06)
 .SH SYNOPSIS
 .B pdftohtml
 [options]
@@ -49,6 +49,13 @@ zoom level is controlled by the \'-z' option.  Specifying a larger
 \'-r' value will allow the viewer to zoom in farther without upscaling
 artifacts in the background.
 .TP
+.B \-noframe
+The default is to generate an \'index.html\' page with a sidebar
+listing all of the pages and a viewing area containing the current
+page in an HTML iframe. This option switches back to the older
+(pre-4.06) behavior of generating a very simple index page that just
+has links to the pages.
+.TP
 .BI \-vstretch " number"
 Specifies a vertical stretch factor.  Setting this to a value greater
 than 1.0 will stretch each page vertically, spreading out the lines.
@@ -84,11 +91,20 @@ Convert AcroForm text and checkbox fields to HTML input elements.
 This also removes text (e.g., underscore characters) and erases
 background image content (e.g., lines or boxes) in the field areas.
 .TP
+.B \-meta
+Include PDF document metadata as 'meta' elements in the HTML header.
+.TP
 .B \-table
 Use table mode when performing the underlying text extraction.  This
 will generally produce better output when the PDF content is a
 full-page table.  NB: This does not generate HTML tables; it just
 changes the way text is split up.
+.TP
+.B \-overwrite
+By default pdftohtml will not overwrite the specified output
+directory.  If the directory already exists, pdftohtml will exit with
+an error.  This option tells pdftohtml to instead overwrite the
+existing directory.
 .TP
 .BI \-opw " password"
 Specify the owner password for the PDF file.  Providing this will
@@ -138,10 +154,13 @@ Error opening an output file.
 3
 Error related to PDF permissions.
 .TP
+98
+Out of memory.
+.TP
 99
 Other error.
 .SH AUTHOR
-The pdftohtml software and documentation are copyright 1996-2022 Glyph
+The pdftohtml software and documentation are copyright 1996-2025 Glyph
 & Cog, LLC.
 .SH "SEE ALSO"
 .BR xpdf (1),

@@ -98,6 +98,10 @@ static ArgDesc argDesc[] = {
 };
 
 int main(int argc, char *argv[]) {
+#if USE_EXCEPTIONS
+  try {
+#endif
+
   PDFDoc *doc;
   char *fileName;
   char *ppmRoot;
@@ -139,12 +143,15 @@ int main(int argc, char *argv[]) {
   if (n > 1) {
     ok = gFalse;
   }
-  if (!ok || argc != 3 || printVersion || printHelp) {
+  if (printVersion) {
+    printf("pdftoppm version %s [www.xpdfreader.com]\n", xpdfVersion);
+    printf("%s\n", xpdfCopyright);
+    goto err0;
+  }
+  if (!ok || argc != 3 || printHelp) {
     fprintf(stderr, "pdftoppm version %s [www.xpdfreader.com]\n", xpdfVersion);
     fprintf(stderr, "%s\n", xpdfCopyright);
-    if (!printVersion) {
-      printUsage("pdftoppm", "<PDF-file> <PPM-root>", argDesc);
-    }
+    printUsage("pdftoppm", "<PDF-file> <PPM-root>", argDesc);
     goto err0;
   }
   fileName = argv[1];
@@ -249,7 +256,7 @@ int main(int argc, char *argv[]) {
       printf("[processing page %d]\n", pg);
       fflush(stdout);
     }
-    doc->displayPage(splashOut, pg, resolution, resolution, rotate,
+    doc->displayPage(splashOut, NULL, pg, resolution, resolution, rotate,
 		     gFalse, gTrue, gFalse);
     if (toStdout) {
 #ifdef _WIN32
@@ -277,4 +284,11 @@ int main(int argc, char *argv[]) {
   gMemReport(stderr);
 
   return exitCode;
+
+#if USE_EXCEPTIONS
+  } catch (GMemException e) {
+    fprintf(stderr, "Out of memory\n");
+    return 98;
+  }
+#endif
 }

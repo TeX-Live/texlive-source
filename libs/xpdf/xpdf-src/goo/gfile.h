@@ -64,6 +64,9 @@ extern GString *makePathAbsolute(GString *path);
 // Returns true if [path] exists and is a regular file.
 extern GBool pathIsFile(const char *path);
 
+// Returns true if [path] exists and is a directory.
+extern GBool pathIsDir(const char *path);
+
 // Get the modification time for <fileName>.  Returns 0 if there is an
 // error.
 extern time_t getModTime(char *fileName);
@@ -74,8 +77,11 @@ extern time_t getModTime(char *fileName);
 // should be done to the returned file pointer; the file may be
 // reopened later for reading, but not for writing.  The <mode> string
 // should be "w" or "wb".  Returns true on success.
+
+#ifndef PDF_PARSER_ONLY
 extern GBool openTempFile(GString **name, FILE **f,
 			  const char *mode, const char *ext);
+#endif /* !PDF_PARSER_ONLY */
 
 // Create a directory.  Returns true on success.
 extern GBool createDir(char *path, int mode);
@@ -90,6 +96,9 @@ extern GString *fileNameToUTF8(char *path);
 // Convert a file name from UCS-2 to UTF-8.
 extern GString *fileNameToUTF8(wchar_t *path);
 
+// Convert a file name from the OEM code page to UTF-8.
+extern GString *fileNameMultiByteToUTF8(char *path);
+
 // Convert a file name from UTF-8 to UCS-2.  [out] has space for
 // [outSize] wchar_t elements (including the trailing zero).  Returns
 // [out].
@@ -101,12 +110,10 @@ extern wchar_t *fileNameToUCS2(const char *path, wchar_t *out, size_t outSize);
 extern FILE *openFile(const char *path, const char *mode);
 
 #if 0
-#ifdef _WIN32
 // If [wPath] is a Windows shortcut (.lnk file), read the target path
 // and store it back into [wPath].
 extern void readWindowsShortcut(wchar_t *wPath, size_t wPathSize);
 #endif
-#endif /* 0 */
 
 // Create a directory.  On Windows, this converts the path from UTF-8
 // to UCS-2 and calls _wmkdir(), ignoring the mode argument.  On other

@@ -11,10 +11,6 @@
 
 #include <aconf.h>
 
-#ifdef USE_GCC_PRAGMAS
-#pragma interface
-#endif
-
 #include "gtypes.h"
 #include "SplashTypes.h"
 #include "SplashMath.h"
@@ -72,16 +68,16 @@ public:
   // splashFontFraction = 1 << splashFontFractionBits.  Subclasses
   // should override this to zero out xFrac and/or yFrac if they don't
   // support fractional coordinates.
-  virtual GBool getGlyph(int c, int xFrac, int yFrac,
+  virtual GBool getGlyph(Guint c, int xFrac, int yFrac,
 			 SplashGlyphBitmap *bitmap);
 
   // Rasterize a glyph.  The <xFrac> and <yFrac> values are the same
   // as described for getGlyph.
-  virtual GBool makeGlyph(int c, int xFrac, int yFrac,
+  virtual GBool makeGlyph(Guint c, int xFrac, int yFrac,
 			  SplashGlyphBitmap *bitmap) = 0;
 
   // Return the path for a glyph.
-  virtual SplashPath *getGlyphPath(int c) = 0;
+  virtual SplashPath *getGlyphPath(Guint c) = 0;
 
   // Return the font transform matrix.
   SplashCoord *getMatrix() { return mat; }

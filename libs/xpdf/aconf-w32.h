@@ -8,8 +8,6 @@
 #ifndef ACONF_H
 #define ACONF_H
 
-#include <aconf2.h>
-
 /*
  * Use A4 paper size instead of Letter for PostScript output.
  */
@@ -91,15 +89,9 @@ extern "C" {
 #undef HAVE_X11_XPM_H
 
 /*
- * One of these is defined if using FreeType (version 1 or 2).
+ * This is defined if using FreeType.
  */
-#undef HAVE_FREETYPE_H
-#define HAVE_FREETYPE_FREETYPE_H 1
-
-/*
- * This is defined if using FreeType version 2.
- */
-#define FREETYPE2 1
+#define HAVE_FREETYPE_H 1
 
 /*
  * This is defined if using libpaper.
@@ -122,15 +114,9 @@ extern "C" {
 #define SPLASH_CMYK 1
 
 #ifdef _WIN32
-#ifdef LINKDLL
-#define XPDFDLL __declspec(dllimport)
-#else
-#define XPDFDLL extern
-#endif
 #ifdef __cplusplus
 extern "C" {
 #endif
-XPDFDLL
 FILE *fsyscp_fopen (const char *filename, const char *mode);
 #ifdef __cplusplus
 }

@@ -62,6 +62,10 @@ static ArgDesc argDesc[] = {
 };
 
 int main(int argc, char *argv[]) {
+#if USE_EXCEPTIONS
+  try {
+#endif
+
   char *fileName;
   UnicodeMap *uMap;
   GString *ownerPW, *userPW;
@@ -83,12 +87,15 @@ int main(int argc, char *argv[]) {
       (saveAll ? 1 : 0) != 1) {
     ok = gFalse;
   }
-  if (!ok || argc != 2 || printVersion || printHelp) {
+  if (printVersion) {
+    printf("pdfdetach version %s [www.xpdfreader.com]\n", xpdfVersion);
+    printf("%s\n", xpdfCopyright);
+    goto err0;
+  }
+  if (!ok || argc != 2 || printHelp) {
     fprintf(stderr, "pdfdetach version %s [www.xpdfreader.com]\n", xpdfVersion);
     fprintf(stderr, "%s\n", xpdfCopyright);
-    if (!printVersion) {
-      printUsage("pdfdetach", "<PDF-file>", argDesc);
-    }
+    printUsage("pdfdetach", "<PDF-file>", argDesc);
     goto err0;
   }
   fileName = argv[1];
@@ -213,4 +220,11 @@ int main(int argc, char *argv[]) {
   gMemReport(stderr);
 
   return exitCode;
+
+#if USE_EXCEPTIONS
+  } catch (GMemException e) {
+    fprintf(stderr, "Out of memory\n");
+    return 98;
+  }
+#endif
 }

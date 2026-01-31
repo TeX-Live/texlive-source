@@ -4,7 +4,7 @@ pdfimages(1)                General Commands Manual               pdfimages(1)
 
 NAME
        pdfimages  -  Portable  Document  Format (PDF) image extractor (version
-       4.04)
+       4.06)
 
 SYNOPSIS
        pdfimages [options] PDF-file image-root
@@ -47,16 +47,31 @@ OPTIONS
               All non-DCT images are saved in  PBM/PGM/PPM  format  as  usual.
               (Inline images are always saved in PBM/PGM/PPM format.)
 
+       -J     Write  JPX  /  JPEG  2000  images as JPEG 2000 files (similar to
+              "-j", but for JPEG 2000).
+
        -raw   Write all images in PDF-native formats.  Most of the formats are
-              not standard image formats, so this option is  primarily  useful
+              not  standard  image formats, so this option is primarily useful
               as input to a tool that generates PDF files.  (Inline images are
               always saved in PBM/PGM/PPM format.)
+
+       -u     Write  only  one copy of each unique image. If the same image is
+              used multiple times, possibly across multiple  pages,  pdfimages
+              will  only  write  one image file. "Uniqueness" is determined by
+              looking for reuse of image objects withiin the PDF file; if mul-
+              tiiple  copies  of  an  image are embedded, pdfimages will treat
+              them as separate, unique images.
 
        -list  Write a one-line summary to stdout for each image.  The  summary
               provides  the  image file name, the page number, the image width
               and height, the horizontal  and  vertical  resolution  (DPI)  as
               drawn,  the  color space type, and the number of bits per compo-
               nent (BPC).
+
+       -listonly
+              Write a one-line summary to stdout for each  image  (similar  to
+              "-list"), but do not generate any image files. If this option is
+              used, the "image-root" argument must not be provided.
 
        -opw password
               Specify the owner password for the  PDF  file.   Providing  this
@@ -70,6 +85,10 @@ OPTIONS
               [config file: printStatusInfo]
 
        -q     Don't print any messages or errors.  [config file: errQuiet]
+
+       -cfg config-file
+              Read config-file in place of ~/.xpdfrc or the system-wide config
+              file.
 
        -v     Print copyright and version information.
 
@@ -86,17 +105,19 @@ EXIT CODES
 
        3      Error related to PDF permissions.
 
+       98     Out of memory.
+
        99     Other error.
 
 AUTHOR
-       The pdfimages software and documentation are copyright 1998-2022  Glyph
+       The  pdfimages software and documentation are copyright 1998-2025 Glyph
        & Cog, LLC.
 
 SEE ALSO
-       xpdf(1),   pdftops(1),  pdftotext(1),  pdftohtml(1),  pdfinfo(1),  pdf-
+       xpdf(1),  pdftops(1),  pdftotext(1),  pdftohtml(1),  pdfinfo(1),   pdf-
        fonts(1), pdfdetach(1), pdftoppm(1), pdftopng(1), xpdfrc(5)
        http://www.xpdfreader.com/
 
 
 
-                                  18 Apr 2022                     pdfimages(1)
+                                  14 Nov 2025                     pdfimages(1)

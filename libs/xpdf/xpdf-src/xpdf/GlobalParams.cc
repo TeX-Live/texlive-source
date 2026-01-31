@@ -8,10 +8,6 @@
 
 #include <aconf.h>
 
-#ifdef USE_GCC_PRAGMAS
-#pragma implementation
-#endif
-
 #include <string.h>
 #include <stdio.h>
 #include <stdarg.h>
@@ -43,13 +39,12 @@
 #include "FontEncodingTables.h"
 #include "GlobalParams.h"
 
-#ifdef _WIN32
-#  undef strcasecmp
-#  undef strncasecmp
-#  define strcasecmp _stricmp
-#  define strncasecmp _strnicmp
-#else
-#  include <strings.h>
+/* defined in kpathsea/win32lib.h for Visual Studio */
+#if defined(_WIN32) && !defined(_MSC_VER)
+#ifndef __GNUC__
+#  define strcasecmp stricmp
+#  define strncasecmp strnicmp
+#endif
 #endif
 
 #if MULTITHREADED
@@ -85,34 +80,119 @@ static struct {
   const char *ttFileName;
   const char *macFileName;	// may be .dfont, .ttf, or .ttc
   const char *macFontName;	// font name inside .dfont or .ttc
+  const char *fcFontName;       // fontconfig font name
   const char *obliqueFont;	// name of font to oblique
   double obliqueFactor;		// oblique sheer factor
 } displayFontTab[] = {
-  {"Courier",               "n022003l.pfb", "cour.ttf",    "Courier",      "Courier",                NULL,             0},
-  {"Courier-Bold",          "n022004l.pfb", "courbd.ttf",  "Courier",      "Courier Bold",           NULL,             0},
-  {"Courier-BoldOblique",   "n022024l.pfb", "courbi.ttf",  "Courier",      "Courier Bold Oblique",   "Courier-Bold",   0.212557},
-  {"Courier-Oblique",       "n022023l.pfb", "couri.ttf",   "Courier",      "Courier Oblique",        "Courier",        0.212557},
-  {"Helvetica",             "n019003l.pfb", "arial.ttf",   "Helvetica",    "Helvetica",              NULL,             0},
-  {"Helvetica-Bold",        "n019004l.pfb", "arialbd.ttf", "Helvetica",    "Helvetica Bold",         NULL,             0},
-  {"Helvetica-BoldOblique", "n019024l.pfb", "arialbi.ttf", "Helvetica",    "Helvetica Bold Oblique", "Helvetica-Bold", 0.212557},
-  {"Helvetica-Oblique",     "n019023l.pfb", "ariali.ttf",  "Helvetica",    "Helvetica Oblique",      "Helvetica",      0.212557},
-  {"Symbol",                "s050000l.pfb", NULL,          "Symbol",       "Symbol",                 NULL,             0},
-  {"Times-Bold",            "n021004l.pfb", "timesbd.ttf", "Times",        "Times Bold",             NULL,             0},
-  {"Times-BoldItalic",      "n021024l.pfb", "timesbi.ttf", "Times",        "Times Bold Italic",       NULL,             0},
-  {"Times-Italic",          "n021023l.pfb", "timesi.ttf",  "Times",        "Times Italic",           NULL,             0},
-  {"Times-Roman",           "n021003l.pfb", "times.ttf",   "Times",        "Times Roman",            NULL,             0},
-  {"ZapfDingbats",          "d050000l.pfb", NULL,          "ZapfDingbats", "Zapf Dingbats",          NULL,             0},
+  {"Courier",                               // name
+   "n022003l.pfb",                          // t1FileName
+   "cour.ttf",                              // ttFileName
+   "Courier", "Courier",                    // macFileName, macFontName
+   "NimbusMonoPS-Regular",                  // fcFontName
+   NULL, 0                                  // obliqueFont, obliqueFactor
+  },
+  {"Courier-Bold",                          // name
+   "n022004l.pfb",                          // t1FileName
+   "courbd.ttf",                            // ttFileName
+   "Courier", "Courier Bold",               // macFileName, macFontName
+   "NimbusMonoPS-Bold",                     // fcFontName
+   NULL, 0                                  // obliqueFont, obliqueFactor
+  },
+  {"Courier-BoldOblique",                   // name
+   "n022024l.pfb",                          // t1FileName
+   "courbi.ttf",                            // ttFileName
+   "Courier", "Courier Bold Oblique",       // macFileName, macFontName
+   "NimbusMonoPS-BoldItalic",               // fcFontName
+   "Courier-Bold", 0.212557                 // obliqueFont, obliqueFactor
+  },
+  {"Courier-Oblique",                       // name
+   "n022023l.pfb",                          // t1FileName
+   "couri.ttf",                             // ttFileName
+   "Courier", "Courier Oblique",            // macFileName, macFontName
+   "NimbusMonoPS-Italic",                   // fcFontName
+   "Courier", 0.212557                      // obliqueFont, obliqueFactor
+  },
+  {"Helvetica",                             // name
+   "n019003l.pfb",                          // t1FileName
+   "arial.ttf",                             // ttFileName
+   "Helvetica", "Helvetica",                // macFileName, macFontName
+   "NimbusSans-Regular",                    // fcFontName
+   NULL, 0                                  // obliqueFont, obliqueFactor
+  },
+  {"Helvetica-Bold",                        // name
+   "n019004l.pfb",                          // t1FileName
+   "arialbd.ttf",                           // ttFileName
+   "Helvetica", "Helvetica Bold",           // macFileName, macFontName
+   "NimbusSans-Bold",                       // fcFontName
+   NULL, 0                                  // obliqueFont, obliqueFactor
+  },
+  {"Helvetica-BoldOblique",                 // name
+   "n019024l.pfb",                          // t1FileName
+   "arialbi.ttf",                           // ttFileName
+   "Helvetica", "Helvetica Bold Oblique",   // macFileName, macFontName
+   "NimbusSans-BoldItalic",                 // fcFontName
+   "Helvetica-Bold", 0.212557               // obliqueFont, obliqueFactor
+  },
+  {"Helvetica-Oblique",                     // name
+   "n019023l.pfb",                          // t1FileName
+   "ariali.ttf",                            // ttFileName
+   "Helvetica", "Helvetica Oblique",        // macFileName, macFontName
+   "NimbusSans-Italic",                     // fcFontName
+   "Helvetica", 0.212557                    // obliqueFont, obliqueFactor
+  },
+  {"Symbol",                                // name
+   "s050000l.pfb",                          // t1FileName
+   NULL,                                    // ttFileName
+   "Symbol", "Symbol",                      // macFileName, macFontName
+   "Standard Symbols PS",                   // fcFontName
+   NULL, 0                                  // obliqueFont, obliqueFactor
+  },
+  {"Times-Bold",                            // name
+   "n021004l.pfb",                          // t1FileName
+   "timesbd.ttf",                           // ttFileName
+   "Times", "Times Bold",                   // macFileName, macFontName
+   "NimbusRoman-Bold",                      // fcFontName
+   NULL, 0                                  // obliqueFont, obliqueFactor
+  },
+  {"Times-BoldItalic",                      // name
+   "n021024l.pfb",                          // t1FileName
+   "timesbi.ttf",                           // ttFileName
+   "Times", "Times Bold Italic",            // macFileName, macFontName
+   "NimbusRoman-BoldItalic",                // fcFontName
+   NULL, 0                                  // obliqueFont, obliqueFactor
+  },
+  {"Times-Italic",                          // name
+   "n021023l.pfb",                          // t1FileName
+   "timesi.ttf",                            // ttFileName
+   "Times", "Times Italic",                 // macFileName, macFontName
+   "NimbusRoman-Italic",                    // fcFontName
+   NULL, 0                                  // obliqueFont, obliqueFactor
+  },
+  {"Times-Roman",                           // name
+   "n021003l.pfb",                          // t1FileName
+   "times.ttf",                             // ttFileName
+   "Times", "Times Roman",                  // macFileName, macFontName
+   "NimbusRoman-Regular",                   // fcFontName
+   NULL, 0                                  // obliqueFont, obliqueFactor
+  },
+  {"ZapfDingbats",                          // name
+   "d050000l.pfb",                          // t1FileName
+   NULL,                                    // ttFileName
+   "ZapfDingbats", "Zapf Dingbats",         // macFileName, macFontName
+   "D050000L",                              // fcFontName
+   NULL, 0                                  // obliqueFont, obliqueFactor
+  },
   {NULL}
 };
 
-#ifdef _WIN32
 static const char *displayFontDirs[] = {
+#ifdef BASE14_FONT_DIR
+  BASE14_FONT_DIR,
+#endif
+#ifdef _WIN32
   "c:/windows/fonts",
   "c:/winnt/fonts",
-  NULL
-};
-#else
-static const char *displayFontDirs[] = {
+#else // _WIN32
   "/usr/share/ghostscript/fonts",
   "/usr/local/share/ghostscript/fonts",
   "/usr/share/fonts/default/Type1",
@@ -121,9 +201,9 @@ static const char *displayFontDirs[] = {
 #if defined(__sun) && defined(__SVR4)
   "/usr/sfw/share/ghostscript/fonts",
 #endif
+#endif // _WIN32
   NULL
 };
-#endif
 
 #ifdef __APPLE__
 static const char *macSystemFontPath = "/System/Library/Fonts";
@@ -183,7 +263,7 @@ public:
   ~SysFontInfo();
   GString *mungeName1(GString *in);
   GString *mungeName2(GString *in);
-  void mungeName3(GString *name, GBool *bold, GBool *italic);
+  void mungeName3(GString *nameA, GBool *bold, GBool *italic);
   int match(GString *nameA);
 };
 
@@ -260,24 +340,24 @@ GString *SysFontInfo::mungeName2(GString *in) {
 
 // Remove trailing bold/italic/regular/roman tags from the name.
 // (Note: the names have already been uppercased by mungeName1/2.)
-void SysFontInfo::mungeName3(GString *name, GBool *bold, GBool *italic) {
+void SysFontInfo::mungeName3(GString *nameA, GBool *bold, GBool *italic) {
   *bold = gFalse;
   *italic = gFalse;
-  int n = name->getLength();
+  int n = nameA->getLength();
   while (1) {
-    if (n >= 4 && !strcmp(name->getCString() + n - 4, "BOLD")) {
-      name->del(n - 4, 4);
+    if (n >= 4 && !strcmp(nameA->getCString() + n - 4, "BOLD")) {
+      nameA->del(n - 4, 4);
       n -= 4;
       *bold = gTrue;
-    } else if (n >= 6 && !strcmp(name->getCString() + n - 6, "ITALIC")) {
-      name->del(n - 6, 6);
+    } else if (n >= 6 && !strcmp(nameA->getCString() + n - 6, "ITALIC")) {
+      nameA->del(n - 6, 6);
       n -= 6;
       *italic = gTrue;
-    } else if (n >= 7 && !strcmp(name->getCString() + n - 7, "REGULAR")) {
-      name->del(n - 7, 7);
+    } else if (n >= 7 && !strcmp(nameA->getCString() + n - 7, "REGULAR")) {
+      nameA->del(n - 7, 7);
       n -= 7;
-    } else if (n >= 5 && !strcmp(name->getCString() + n - 5, "ROMAN")) {
-      name->del(n - 5, 5);
+    } else if (n >= 5 && !strcmp(nameA->getCString() + n - 5, "ROMAN")) {
+      nameA->del(n - 5, 5);
       n -= 5;
     } else {
       break;
@@ -659,7 +739,7 @@ GlobalParams::GlobalParams(const char *cfgFileName) {
   base14SysFonts = new GHash(gTrue);
   sysFonts = new SysFontList();
 #if HAVE_PAPER_H
-  char *paperName;
+  const char *paperName;
   const struct paper *paperType;
   paperinit();
   if ((paperName = systempapername())) {
@@ -685,7 +765,7 @@ GlobalParams::GlobalParams(const char *cfgFileName) {
   psShrinkLarger = gTrue;
   psCenter = gTrue;
   psDuplex = gFalse;
-  psLevel = psLevel2;
+  psLevel = psLevel3;
   psResidentFonts = new GHash(gTrue);
   psResidentFonts16 = new GList();
   psResidentFontsCC = new GList();
@@ -715,11 +795,27 @@ GlobalParams::GlobalParams(const char *cfgFileName) {
   textKeepTinyChars = gTrue;
   initialZoom = new GString("125");
   defaultFitZoom = 0;
+  zoomScaleFactor = 1;
+  zoomValues = new GList();
+  zoomValues->append(new GString("25"));
+  zoomValues->append(new GString("50"));
+  zoomValues->append(new GString("75"));
+  zoomValues->append(new GString("100"));
+  zoomValues->append(new GString("110"));
+  zoomValues->append(new GString("125"));
+  zoomValues->append(new GString("150"));
+  zoomValues->append(new GString("175"));
+  zoomValues->append(new GString("200"));
+  zoomValues->append(new GString("300"));
+  zoomValues->append(new GString("400"));
+  zoomValues->append(new GString("600"));
+  zoomValues->append(new GString("800"));
   initialDisplayMode = new GString("continuous");
   initialToolbarState = gTrue;
   initialSidebarState = gTrue;
   initialSidebarWidth = 0;
   initialSelectMode = new GString("linear");
+  initialMaximized = gFalse;
   maxTileWidth = 1500;
   maxTileHeight = 1500;
   tileCacheSize = 10;
@@ -742,12 +838,14 @@ GlobalParams::GlobalParams(const char *cfgFileName) {
   drawAnnotations = gTrue;
   drawFormFields = gTrue;
   enableXFA = gTrue;
+  preferXFAFieldValues = gTrue;
   overprintPreview = gFalse;
   paperColor = new GString("#ffffff");
   matteColor = new GString("#808080");
   fullScreenMatteColor = new GString("#000000");
   selectionColor = new GString("#8080ff");
   reverseVideoInvertImages = gFalse;
+  allowLinksToChangeZoom = gTrue;
   launchCommand = NULL;
   movieCommand = NULL;
   defaultPrinter = NULL;
@@ -755,10 +853,14 @@ GlobalParams::GlobalParams(const char *cfgFileName) {
   mapUnknownCharNames = gFalse;
   mapExtTrueTypeFontsViaUnicode = gTrue;
   useTrueTypeUnicodeMapping = gFalse;
+  ignoreWrongSizeToUnicode = gFalse;
   droppedFonts = new GHash(gTrue);
+  separateRotatedText = gFalse;
+  discardCoveredText = gFalse;
   createDefaultKeyBindings();
   popupMenuCmds = new GList();
-  tabStateFile = appendToPath(getHomeDir(), ".xpdf.tab-state");
+  initStateFilePaths();
+  saveSessionOnQuit = gTrue;
   savePageNumbers = gTrue;
   printCommands = gFalse;
   printStatusInfo = gFalse;
@@ -794,44 +896,12 @@ GlobalParams::GlobalParams(const char *cfgFileName) {
   map = new UnicodeMap("UCS-2", gTrue, &mapUCS2);
   residentUnicodeMaps->add(map->getEncodingName(), map);
 
-  // look for a user config file, then a system-wide config file
-  f = NULL;
-  fileName = NULL;
-  if (cfgFileName && cfgFileName[0]) {
-#ifndef PDF_PARSER_ONLY
-    fileName = new GString(cfgFileName);
-    if (!(f = fopen(fileName->getCString(), "r"))) {
-      delete fileName;
-    }
-  }
-  if (!f) {
-    fileName = appendToPath(getHomeDir(), xpdfUserConfigFile);
-    if (!(f = fopen(fileName->getCString(), "r"))) {
-      delete fileName;
-    }
-  }
-  if (!f) {
-#ifdef _WIN32
-    char buf[512];
-    i = GetModuleFileNameA(NULL, buf, sizeof(buf));
-    if (i <= 0 || i >= sizeof(buf)) {
-      // error or path too long for buffer - just use the current dir
-      buf[0] = '\0';
-    }
-    fileName = grabPath(buf);
-    appendToPath(fileName, xpdfSysConfigFile);
-#else
-    fileName = new GString(xpdfSysConfigFile);
-#endif
-    if (!(f = fopen(fileName->getCString(), "r"))) {
-      delete fileName;
-    }
-  }
+  // read the config file
+  f = openConfigFile(cfgFileName, &fileName);
   if (f) {
     parseFile(fileName, f);
     delete fileName;
     fclose(f);
-#endif /* !PDF_PARSER_ONLY */
   }
 }
 
@@ -1017,6 +1087,130 @@ void GlobalParams::createDefaultKeyBindings() {
 				     xpdfKeyContextAny, "zoomFitWidth"));
 }
 
+void GlobalParams::initStateFilePaths() {
+#ifdef _WIN32
+  // Windows state files are {APPDATA}/xpdf/xpdf.pages etc
+  char path[MAX_PATH];
+  if (SHGetFolderPathA(NULL, CSIDL_APPDATA, NULL,
+		       SHGFP_TYPE_CURRENT, path) != S_OK) {
+    return;
+  }
+  GString *stateDir = appendToPath(new GString(path), "xpdf");
+  CreateDirectoryA(stateDir->getCString(), NULL);
+  pagesFile = appendToPath(stateDir->copy(), "xpdf.pages");
+  tabStateFile = appendToPath(stateDir->copy(), "xpdf.tab-state");
+  sessionFile = appendToPath(stateDir, "xpdf.session");
+#elif USE_XDG
+  // XDG state files are {XDG_STATE}/xpdf/pages etc
+  char *path = getenv("XDG_STATE_HOME");
+  GString *stateDir;
+  if (path) {
+    stateDir = new GString(path);
+  } else {
+    stateDir = appendToPath(getHomeDir(), ".local/state");
+  }
+  createDir(stateDir->getCString(), 0700);
+  appendToPath(stateDir, "xpdf");
+  createDir(stateDir->getCString(), 0700);
+  pagesFile = appendToPath(stateDir->copy(), "pages");
+  tabStateFile = appendToPath(stateDir->copy(), "tab-state");
+  sessionFile = appendToPath(stateDir, "session");
+#else
+  // Unix (non-XDG) state files are ~/.xpdf.pages etc
+  GString *stateDir = getHomeDir();
+  pagesFile = appendToPath(stateDir->copy(), ".xpdf.pages");
+  tabStateFile = appendToPath(stateDir->copy(), ".xpdf.tab-state");
+  sessionFile = appendToPath(stateDir, ".xpdf.session");
+#endif
+}
+
+// Try all supported paths for the config file.
+FILE *GlobalParams::openConfigFile(const char *cfgFileName,
+				   GString **fileName) {
+  FILE *f = NULL;
+  GString *actualName = NULL;
+
+  //--- try the path specified on the command line
+  if (cfgFileName && cfgFileName[0]) {
+    actualName = new GString(cfgFileName);
+    if (!(f = fopen(actualName->getCString(), "r"))) {
+      delete actualName;
+    }
+  }
+
+  //--- try the XDG config path: {XDG_CONFIG}/xpdf/xpdfrc
+#if USE_XDG
+  if (!f) {
+    char *path = getenv("XDG_CONFIG_HOME");
+    if (path) {
+      actualName = new GString(path);
+    } else {
+      actualName = appendToPath(getHomeDir(), ".config");
+    }
+    appendToPath(actualName, "xpdf/xpdfrc");
+    if (!(f = fopen(actualName->getCString(), "r"))) {
+      delete actualName;
+    }
+  }
+#endif
+
+#ifdef _WIN32
+  //--- try the Windows user path: {APPDATA}/xpdf/xpdfrc
+  if (!f) {
+    char path[MAX_PATH];
+    if (SHGetFolderPathA(NULL, CSIDL_APPDATA, NULL, SHGFP_TYPE_CURRENT, path)
+	== S_OK) {
+      actualName = appendToPath(new GString(path), "xpdf/xpdfrc");
+      if (!(f = fopen(actualName->getCString(), "r"))) {
+	delete actualName;
+      }
+    }
+  }
+
+#else
+  //--- try the Unix user path: ~/.xpdfrc
+  if (!f) {
+    actualName = appendToPath(getHomeDir(), ".xpdfrc");
+    if (!(f = fopen(actualName->getCString(), "r"))) {
+      delete actualName;
+    }
+  }
+#endif
+
+#ifdef _WIN32
+  //--- try the Windows system path: {EXEDIR}/xpdfrc
+  if (!f) {
+    char buf[512];
+    int i = GetModuleFileNameA(NULL, buf, sizeof(buf));
+    if (i <= 0 || i >= sizeof(buf)) {
+      // error or path too long for buffer - just use the current dir
+      buf[0] = '\0';
+    }
+    actualName = grabPath(buf);
+    appendToPath(actualName, "xpdfrc");
+    if (!(f = fopen(actualName->getCString(), "r"))) {
+      delete actualName;
+    }
+  }
+
+#else
+  //--- try the Unix system path: {xpdfSysConfigFile}
+  if (!f) {
+    actualName = new GString(xpdfSysConfigFile);
+    if (!(f = fopen(actualName->getCString(), "r"))) {
+      delete actualName;
+    }
+  }
+#endif
+
+  if (f) {
+    *fileName = actualName;
+  } else {
+    *fileName = NULL;
+  }
+  return f;
+}
+
 void GlobalParams::parseFile(GString *fileName, FILE *f) {
   int line;
   char buf[512];
@@ -1157,6 +1351,10 @@ void GlobalParams::parseLine(char *buf, GString *fileName, int line) {
       parseString("initialZoom", &initialZoom, tokens, fileName, line);
     } else if (!cmd->cmp("defaultFitZoom")) {
       parseInteger("defaultFitZoom", &defaultFitZoom, tokens, fileName, line);
+    } else if (!cmd->cmp("zoomScaleFactor")) {
+      parseZoomScaleFactor(tokens, fileName, line);
+    } else if (!cmd->cmp("zoomValues")) {
+      parseZoomValues(tokens, fileName, line);
     } else if (!cmd->cmp("initialDisplayMode")) {
       parseString("initialDisplayMode", &initialDisplayMode,
 		  tokens, fileName, line);
@@ -1172,6 +1370,9 @@ void GlobalParams::parseLine(char *buf, GString *fileName, int line) {
     } else if (!cmd->cmp("initialSelectMode")) {
       parseString("initialSelectMode", &initialSelectMode,
 		  tokens, fileName, line);
+    } else if (!cmd->cmp("initialMaximized")) {
+      parseYesNo("initialMaximized", &initialMaximized,
+		 tokens, fileName, line);
     } else if (!cmd->cmp("maxTileWidth")) {
       parseInteger("maxTileWidth", &maxTileWidth, tokens, fileName, line);
     } else if (!cmd->cmp("maxTileHeight")) {
@@ -1229,6 +1430,9 @@ void GlobalParams::parseLine(char *buf, GString *fileName, int line) {
     } else if (!cmd->cmp("enableXFA")) {
       parseYesNo("enableXFA", &enableXFA,
 		 tokens, fileName, line);
+    } else if (!cmd->cmp("preferXFAFieldValues")) {
+      parseYesNo("preferXFAFieldValues", &preferXFAFieldValues,
+		 tokens, fileName, line);
     } else if (!cmd->cmp("overprintPreview")) {
       parseYesNo("overprintPreview", &overprintPreview,
 		 tokens, fileName, line);
@@ -1243,6 +1447,9 @@ void GlobalParams::parseLine(char *buf, GString *fileName, int line) {
       parseString("selectionColor", &selectionColor, tokens, fileName, line);
     } else if (!cmd->cmp("reverseVideoInvertImages")) {
       parseYesNo("reverseVideoInvertImages", &reverseVideoInvertImages,
+		 tokens, fileName, line);
+    } else if (!cmd->cmp("allowLinksToChangeZoom")) {
+      parseYesNo("allowLinksToChangeZoom", &allowLinksToChangeZoom,
 		 tokens, fileName, line);
     } else if (!cmd->cmp("launchCommand")) {
       parseString("launchCommand", &launchCommand, tokens, fileName, line);
@@ -1261,11 +1468,19 @@ void GlobalParams::parseLine(char *buf, GString *fileName, int line) {
 		 &mapExtTrueTypeFontsViaUnicode,
 		 tokens, fileName, line);
     } else if (!cmd->cmp("useTrueTypeUnicodeMapping")) {
-      parseYesNo("useTrueTypeUnicodeMapping",
-		 &useTrueTypeUnicodeMapping,
+      parseYesNo("useTrueTypeUnicodeMapping", &useTrueTypeUnicodeMapping,
+		 tokens, fileName, line);
+    } else if (!cmd->cmp("ignoreWrongSizeToUnicode")) {
+      parseYesNo("ignoreWrongSizeToUnicode", &ignoreWrongSizeToUnicode,
 		 tokens, fileName, line);
     } else if (!cmd->cmp("dropFont")) {
       parseDropFont(tokens, fileName, line);
+    } else if (!cmd->cmp("separateRotatedText")) {
+      parseYesNo("separateRotatedText", &separateRotatedText,
+		 tokens, fileName, line);
+    } else if (!cmd->cmp("discardCoveredText")) {
+      parseYesNo("discardCoveredText", &discardCoveredText,
+		 tokens, fileName, line);
     } else if (!cmd->cmp("bind")) {
       parseBind(tokens, fileName, line);
     } else if (!cmd->cmp("unbind")) {
@@ -1274,6 +1489,11 @@ void GlobalParams::parseLine(char *buf, GString *fileName, int line) {
       parsePopupMenuCmd(tokens, fileName, line);
     } else if (!cmd->cmp("tabStateFile")) {
       parseString("tabStateFile", &tabStateFile, tokens, fileName, line);
+    } else if (!cmd->cmp("sessionFile")) {
+      parseString("sessionFile", &sessionFile, tokens, fileName, line);
+    } else if (!cmd->cmp("saveSessionOnQuit")) {
+      parseYesNo("saveSessionOnQuit", &saveSessionOnQuit,
+		 tokens, fileName, line);
     } else if (!cmd->cmp("savePageNumbers")) {
       parseYesNo("savePageNumbers", &savePageNumbers, tokens, fileName, line);
     } else if (!cmd->cmp("printCommands")) {
@@ -1973,6 +2193,59 @@ void GlobalParams::parsePopupMenuCmd(GList *tokens,
 					 cmds));
 }
 
+void GlobalParams::parseZoomScaleFactor(GList *tokens,
+					GString *fileName, int line) {
+  if (tokens->getLength() != 2) {
+    error(errConfig, -1, "Bad 'zoomScaleFactor' config file command ({0:t}:{1:d})",
+	  fileName, line);
+    return;
+  }
+  GString *tok = (GString *)tokens->get(1);
+  if (tok->getLength() == 0) {
+    error(errConfig, -1, "Bad 'zoomScaleFactor' config file command ({0:t}:{1:d})",
+	  fileName, line);
+    return;
+  }
+  if (tok->cmp("actual") == 0) {
+    zoomScaleFactor = -1;
+  } else {
+    for (int i = 0; i < tok->getLength(); ++i) {
+      if (!((tok->getChar(i) >= '0' && tok->getChar(i) <= '9') ||
+	    tok->getChar(i) == '.')) {
+	error(errConfig, -1, "Bad 'zoomScaleFactor' config file command ({0:t}:{1:d})",
+	      fileName, line);
+	return;
+      }
+    }
+    zoomScaleFactor = atof(tok->getCString());
+  }
+}
+
+void GlobalParams::parseZoomValues(GList *tokens,
+				   GString *fileName, int line) {
+  if (tokens->getLength() < 2) {
+    error(errConfig, -1, "Bad 'zoomValues' config file command ({0:t}:{1:d})",
+	  fileName, line);
+    return;
+  }
+  for (int i = 1; i < tokens->getLength(); ++i) {
+    GString *tok = (GString *)tokens->get(i);
+    for (int j = 0; j < tok->getLength(); ++j) {
+      if (tok->getChar(j) < '0' || tok->getChar(j) > '9') {
+	error(errConfig, -1, "Bad 'zoomValues' config file command ({0:t}:{1:d})",
+	      fileName, line);
+	return;
+      }
+    }
+  }
+  deleteGList(zoomValues, GString);
+  zoomValues = new GList();
+  for (int i = 1; i < tokens->getLength(); ++i) {
+    GString *tok = (GString *)tokens->get(i);
+    zoomValues->append(tok->copy());
+  }
+}
+
 void GlobalParams::parseYesNo(const char *cmdName, GBool *flag,
 			      GList *tokens, GString *fileName, int line) {
   GString *tok;
@@ -2104,6 +2377,7 @@ GlobalParams::~GlobalParams() {
   deleteGList(psResidentFontsCC, PSFontParam16);
   delete textEncoding;
   delete initialZoom;
+  deleteGList(zoomValues, GString);
   delete initialDisplayMode;
   delete initialSelectMode;
   if (paperColor) {
@@ -2130,7 +2404,9 @@ GlobalParams::~GlobalParams() {
   delete droppedFonts;
   deleteGList(keyBindings, KeyBinding);
   deleteGList(popupMenuCmds, PopupMenuCmd);
+  delete pagesFile;
   delete tabStateFile;
+  delete sessionFile;
   delete debugLogFile;
 
   cMapDirs->startIter(&iter);
@@ -2256,6 +2532,10 @@ void GlobalParams::setupBaseFonts(const char *dir) {
   GBool found;
   int k;
 #endif
+#if HAVE_FONTCONFIG
+  SysFontInfo *fi;
+  GString *fcName;
+#endif
   FILE *f;
   int i, j;
 
@@ -2264,6 +2544,14 @@ void GlobalParams::setupBaseFonts(const char *dir) {
 #endif
 #ifdef __APPLE__
   dfontFontNames = NULL;
+#endif
+#ifdef _WIN32
+  if (winFontDir[0]) {
+    sysFonts->scanWindowsFonts(winFontDir);
+  }
+#endif
+#if HAVE_FONTCONFIG
+  sysFonts->scanFontconfigFonts();
 #endif
   for (i = 0; displayFontTab[i].name; ++i) {
     if (fontFiles->lookup(displayFontTab[i].name)) {
@@ -2340,6 +2628,16 @@ void GlobalParams::setupBaseFonts(const char *dir) {
       }
     }
 #endif // __APPLE__
+#if HAVE_FONTCONFIG
+    if (!fileName) {
+      fcName = new GString(displayFontTab[i].fcFontName);
+      if ((fi = sysFonts->find(fcName))) {
+	fileName = fi->path->copy();
+	fontNum = fi->fontNum;
+      }
+      delete fcName;
+    }
+#endif // HAVE_FONTCONFIG
     // On Linux, this checks the "standard" ghostscript font
     // directories.  On Windows, it checks the "standard" system font
     // directories (because SHGetSpecialFolderPath(CSIDL_FONTS)
@@ -2384,22 +2682,11 @@ void GlobalParams::setupBaseFonts(const char *dir) {
 				   base14->fontNum,
 				   displayFontTab[i].obliqueFactor));
       } else {
-// Do not display unnecessary looking message on W32
-#ifndef _WIN32
 	error(errConfig, -1, "No display font for '{0:s}'",
 	      displayFontTab[i].name);
-#endif
       }
     }
   }
-#ifdef _WIN32
-  if (winFontDir[0]) {
-    sysFonts->scanWindowsFonts(winFontDir);
-  }
-#endif
-#if HAVE_FONTCONFIG
-  sysFonts->scanFontconfigFonts();
-#endif
 }
 
 //------------------------------------------------------------------------
@@ -2959,6 +3246,19 @@ int GlobalParams::getDefaultFitZoom() {
   return z;
 }
 
+double GlobalParams::getZoomScaleFactor() {
+  double z;
+
+  lockGlobalParams;
+  z = zoomScaleFactor;
+  unlockGlobalParams;
+  return z;
+}
+
+GList *GlobalParams::getZoomValues() {
+  return zoomValues;
+}
+
 GString *GlobalParams::getInitialDisplayMode() {
   GString *s;
 
@@ -3002,6 +3302,15 @@ GString *GlobalParams::getInitialSelectMode() {
   s = initialSelectMode->copy();
   unlockGlobalParams;
   return s;
+}
+
+GBool GlobalParams::getInitialMaximized() {
+  GBool state;
+
+  lockGlobalParams;
+  state = initialMaximized;
+  unlockGlobalParams;
+  return state;
 }
 
 int GlobalParams::getMaxTileWidth() {
@@ -3203,6 +3512,15 @@ GBool GlobalParams::getEnableXFA() {
   return xfa;
 }
 
+GBool GlobalParams::getPreferXFAFieldValues() {
+  GBool xfa;
+
+  lockGlobalParams;
+  xfa = preferXFAFieldValues;
+  unlockGlobalParams;
+  return xfa;
+}
+
 
 
 GString *GlobalParams::getPaperColor() {
@@ -3250,6 +3568,15 @@ GBool GlobalParams::getReverseVideoInvertImages() {
   return invert;
 }
 
+GBool GlobalParams::getAllowLinksToChangeZoom() {
+  GBool allow;
+
+  lockGlobalParams;
+  allow = allowLinksToChangeZoom;
+  unlockGlobalParams;
+  return allow;
+}
+
 GString *GlobalParams::getDefaultPrinter() {
   GString *s;
 
@@ -3295,6 +3622,15 @@ GBool GlobalParams::getUseTrueTypeUnicodeMapping() {
   return use;
 }
 
+GBool GlobalParams::getIgnoreWrongSizeToUnicode() {
+  GBool ignore;
+
+  lockGlobalParams;
+  ignore = ignoreWrongSizeToUnicode;
+  unlockGlobalParams;
+  return ignore;
+}
+
 GBool GlobalParams::isDroppedFont(const char *fontName) {
   GBool isDropped;
 
@@ -3302,6 +3638,24 @@ GBool GlobalParams::isDroppedFont(const char *fontName) {
   isDropped = droppedFonts->lookupInt(fontName) != 0;
   unlockGlobalParams;
   return isDropped;
+}
+
+GBool GlobalParams::getSeparateRotatedText() {
+  GBool sep;
+
+  lockGlobalParams;
+  sep = separateRotatedText;
+  unlockGlobalParams;
+  return sep;
+}
+
+GBool GlobalParams::getDiscardCoveredText() {
+  GBool discard;
+
+  lockGlobalParams;
+  discard = discardCoveredText;
+  unlockGlobalParams;
+  return discard;
 }
 
 GList *GlobalParams::getKeyBinding(int code, int mods, int context) {
@@ -3356,6 +3710,15 @@ PopupMenuCmd *GlobalParams::getPopupMenuCmd(int idx) {
   return cmd;
 }
 
+GString *GlobalParams::getPagesFile() {
+  GString *s;
+
+  lockGlobalParams;
+  s = pagesFile->copy();
+  unlockGlobalParams;
+  return s;
+}
+
 GString *GlobalParams::getTabStateFile() {
   GString *s;
 
@@ -3365,11 +3728,29 @@ GString *GlobalParams::getTabStateFile() {
   return s;
 }
 
+GString *GlobalParams::getSessionFile() {
+  GString *s;
+
+  lockGlobalParams;
+  s = sessionFile->copy();
+  unlockGlobalParams;
+  return s;
+}
+
 GBool GlobalParams::getSavePageNumbers() {
   GBool s;
 
   lockGlobalParams;
   s = savePageNumbers;
+  unlockGlobalParams;
+  return s;
+}
+
+GBool GlobalParams::getSaveSessionOnQuit() {
+  GBool s;
+
+  lockGlobalParams;
+  s = saveSessionOnQuit;
   unlockGlobalParams;
   return s;
 }
@@ -3712,6 +4093,12 @@ void GlobalParams::setInitialZoom(char *s) {
   unlockGlobalParams;
 }
 
+void GlobalParams::setDefaultFitZoom(int z) {
+  lockGlobalParams;
+  defaultFitZoom = z;
+  unlockGlobalParams;
+}
+
 GBool GlobalParams::setEnableFreeType(char *s) {
   GBool ok;
 
@@ -3812,6 +4199,13 @@ void GlobalParams::setTabStateFile(char *tabStateFileA) {
   lockGlobalParams;
   delete tabStateFile;
   tabStateFile = new GString(tabStateFileA);
+  unlockGlobalParams;
+}
+
+void GlobalParams::setSessionFile(char *sessionFileA) {
+  lockGlobalParams;
+  delete sessionFile;
+  sessionFile = new GString(sessionFileA);
   unlockGlobalParams;
 }
 

@@ -75,7 +75,6 @@ AH_TOP([/*
 #ifndef ACONF_H
 #define ACONF_H
 
-#include <aconf2.h>
 
 /*
  * Enable C++ exceptions.
@@ -86,8 +85,6 @@ AH_BOTTOM([#endif])
 XPDF_TREE=xpdf-src
 AC_SUBST([XPDF_TREE])
 
-dnl Use $XPDF_TREE to exclude $XPDF_TREE/aconf2.h from DIST_COMMON
-AC_CONFIG_LINKS([aconf2.h:$XPDF_TREE/aconf2.h])
 
 AC_CONFIG_FILES([Makefile goo/Makefile fofi/Makefile splash/Makefile xpdf/Makefile])
 

@@ -8,10 +8,6 @@
 
 #include <aconf.h>
 
-#ifdef USE_GCC_PRAGMAS
-#pragma implementation
-#endif
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <stddef.h>
@@ -22,23 +18,52 @@
 #include "config.h"
 #include "Error.h"
 #include "GfxState.h"
+#include "Gfx.h"
 #include "Object.h"
+#include "XRef.h"
 #include "Stream.h"
+#include "JPXStream.h"
 #include "ImageOutputDev.h"
 
 ImageOutputDev::ImageOutputDev(char *fileRootA, GBool dumpJPEGA,
-			       GBool dumpRawA, GBool listA) {
-  fileRoot = copyString(fileRootA);
+			       GBool dumpJPXA, GBool dumpRawA,
+			       GBool uniqueA, GBool listA, GBool listOnlyA) {
+  fileRoot = fileRootA ? copyString(fileRootA) : NULL;
   dumpJPEG = dumpJPEGA;
+  dumpJPX = dumpJPXA;
   dumpRaw = dumpRawA;
+  unique = uniqueA;
   list = listA;
+  listOnly = listOnlyA;
   imgNum = 0;
   curPageNum = 0;
+  imgFileNames = NULL;
+  imgFileNamesSize = 0;
   ok = gTrue;
 }
 
 ImageOutputDev::~ImageOutputDev() {
   gfree(fileRoot);
+  for (int i = 0; i < imgFileNamesSize; ++i) {
+    if (imgFileNames[i]) {
+      delete imgFileNames[i];
+    }
+  }
+  gfree(imgFileNames);
+}
+
+void ImageOutputDev::startDoc(XRef *xref) {
+  for (int i = 0; i < imgFileNamesSize; ++i) {
+    if (imgFileNames[i]) {
+      delete imgFileNames[i];
+    }
+  }
+  gfree(imgFileNames);
+  imgFileNamesSize = xref->getNumObjects();
+  imgFileNames = (GString **)gmallocn(imgFileNamesSize, sizeof(GString));
+  for (int i = 0; i < imgFileNamesSize; ++i) {
+    imgFileNames[i] = NULL;
+  }  
 }
 
 void ImageOutputDev::startPage(int pageNum, GfxState *state) {
@@ -52,7 +77,8 @@ void ImageOutputDev::tilingPatternFill(GfxState *state, Gfx *gfx,
 				       double *mat, double *bbox,
 				       int x0, int y0, int x1, int y1,
 				       double xStep, double yStep) {
-  // do nothing -- this avoids the potentially slow loop in Gfx.cc
+  // draw the tile once, just in case it contains image(s)
+  gfx->drawForm(strRef, resDict, mat, bbox);
 }
 
 void ImageOutputDev::drawImageMask(GfxState *state, Object *ref, Stream *str,
@@ -62,6 +88,21 @@ void ImageOutputDev::drawImageMask(GfxState *state, Object *ref, Stream *str,
   FILE *f;
   char buf[4096];
   int size, n, i;
+
+  if (listOnly) {
+    writeImageInfo(NULL, width, height, state, NULL);
+    return;
+  }
+
+  if (unique &&
+      ref && ref->isRef() && ref->getRefNum() < imgFileNamesSize &&
+      imgFileNames[ref->getRefNum()]) {
+    if (list) {
+      writeImageInfo(imgFileNames[ref->getRefNum()],
+		     width, height, state, NULL);
+    }
+    return;
+  }
 
   // dump raw file
   if (dumpRaw && !inlineImg) {
@@ -149,7 +190,12 @@ void ImageOutputDev::drawImageMask(GfxState *state, Object *ref, Stream *str,
     writeImageInfo(fileName, width, height, state, NULL);
   }
 
-  delete fileName;
+  if (unique &&
+      ref && ref->isRef() && ref->getRefNum() < imgFileNamesSize) {
+    imgFileNames[ref->getRefNum()] = fileName;
+  } else {
+    delete fileName;
+  }
 }
 
 void ImageOutputDev::drawImage(GfxState *state, Object *ref, Stream *str,
@@ -167,6 +213,21 @@ void ImageOutputDev::drawImage(GfxState *state, Object *ref, Stream *str,
   int x, y;
   char buf[4096];
   int size, n, i, j;
+
+  if (listOnly) {
+    writeImageInfo(NULL, width, height, state, colorMap);
+    return;
+  }
+
+  if (unique &&
+      ref && ref->isRef() && ref->getRefNum() < imgFileNamesSize &&
+      imgFileNames[ref->getRefNum()]) {
+    if (list) {
+      writeImageInfo(imgFileNames[ref->getRefNum()],
+		     width, height, state, colorMap);
+    }
+    return;
+  }
 
   csMode = colorMap->getColorSpace()->getMode();
   if (csMode == csIndexed) {
@@ -216,6 +277,31 @@ void ImageOutputDev::drawImage(GfxState *state, Object *ref, Stream *str,
 
     // initialize stream
     str = ((DCTStream *)str)->getRawStream();
+    str->reset();
+
+    // copy the stream
+    while ((n = str->getBlock(buf, sizeof(buf))) > 0) {
+      fwrite(buf, 1, n, f);
+    }
+
+    str->close();
+    fclose(f);
+
+  // dump JPX file
+  } else if (dumpJPX && str->getKind() == strJPX &&
+	     !inlineImg) {
+
+    // open the image file
+    fileName = GString::format("{0:s}-{1:04d}.jp2", fileRoot, imgNum);
+    ++imgNum;
+    if (!(f = openFile(fileName->getCString(), "wb"))) {
+      error(errIO, -1, "Couldn't open image file '{0:t}'", fileName);
+      delete fileName;
+      return;
+    }
+
+    // initialize stream
+    str = ((JPXStream *)str)->getRawStream();
     str->reset();
 
     // copy the stream
@@ -356,7 +442,12 @@ void ImageOutputDev::drawImage(GfxState *state, Object *ref, Stream *str,
     writeImageInfo(fileName, width, height, state, colorMap);
   }
 
-  delete fileName;
+  if (unique &&
+      ref && ref->isRef() && ref->getRefNum() < imgFileNamesSize) {
+    imgFileNames[ref->getRefNum()] = fileName;
+  } else {
+    delete fileName;
+  }
 }
 
 void ImageOutputDev::drawMaskedImage(GfxState *state, Object *ref, Stream *str,
@@ -445,8 +536,11 @@ void ImageOutputDev::writeImageInfo(GString *fileName,
     bpc = 1;
   }
 
-  printf("%s: page=%d width=%d height=%d hdpi=%.2f vdpi=%.2f %s%s bpc=%d\n",
-	 fileName->getCString(), curPageNum, width, height, hdpi, vdpi,
+  if (fileName) {
+    printf("%s: ", fileName->getCString());
+  }
+  printf("page=%d width=%d height=%d hdpi=%.2f vdpi=%.2f %s%s bpc=%d\n",
+	 curPageNum, width, height, hdpi, vdpi,
 	 mode ? "colorspace=" : "mask",
 	 mode ? mode : "",
 	 bpc);

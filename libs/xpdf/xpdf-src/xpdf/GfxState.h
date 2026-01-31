@@ -11,10 +11,6 @@
 
 #include <aconf.h>
 
-#ifdef USE_GCC_PRAGMAS
-#pragma interface
-#endif
-
 #include "gtypes.h"
 #include "Object.h"
 #include "Function.h"
@@ -26,6 +22,7 @@ class GfxDeviceNColorSpace;
 class GfxSeparationColorSpace;
 class GfxShading;
 class GfxState;
+class LocalParams;
 
 //------------------------------------------------------------------------
 // GfxBlendMode
@@ -663,6 +660,7 @@ public:
     { return resDict.isDict() ? resDict.getDict() : (Dict *)NULL; }
   double *getMatrix() { return matrix; }
   Object *getContentStreamRef() { return &contentStreamRef; }
+  GBool usesBlendMode(XRef *xref);
 
 private:
 
@@ -670,6 +668,16 @@ private:
 		   double *bboxA, double xStepA, double yStepA,
 		   Object *resDictA, double *matrixA,
 		   Object *contentStreamA);
+  GBool scanResourcesForBlendMode(Object *resDict2,
+				  char *scannedObjs, XRef *xref);
+  GBool scanExtGStateForBlendMode(Object *gsObj,
+				  char *scannedObjs, XRef *xref);
+  GBool scanSoftMaskForBlendMode(Object *softMaskObj,
+				 char *scannedObjs, XRef *xref);
+  GBool scanPatternForBlendMode(Object *patternObj,
+				char *scannedObjs, XRef *xref);
+  GBool scanXObjectForBlendMode(Object *xObj,
+				char *scannedObjs, XRef *xref);
 
   int paintType;
   int tilingType;
@@ -883,7 +891,7 @@ public:
   void getTriangle(int i, double *x0, double *y0, double *color0,
 		   double *x1, double *y1, double *color1,
 		   double *x2, double *y2, double *color2);
-  void getBBox(double *xMin, double *yMin, double *xMax, double *yMax);
+  void getBBox(double *xMinA, double *yMinA, double *xMaxA, double *yMaxA);
   void getColor(double *in, GfxColor *out);
 
 private:
@@ -923,7 +931,7 @@ public:
   int getNComps() { return nComps; }
   int getNPatches() { return nPatches; }
   GfxPatch *getPatch(int i) { return &patches[i]; }
-  void getBBox(double *xMin, double *yMin, double *xMax, double *yMax);
+  void getBBox(double *xMinA, double *yMinA, double *xMaxA, double *yMaxA);
   void getColor(double *in, GfxColor *out);
 
 private:
@@ -1121,7 +1129,8 @@ public:
   // Construct a default GfxState, for a device with resolution <hDPI>
   // x <vDPI>, page box <pageBox>, page rotation <rotateA>, and
   // coordinate system specified by <upsideDown>.
-  GfxState(double hDPIA, double vDPIA, PDFRectangle *pageBox,
+  GfxState(LocalParams *localParamsA,
+	   double hDPIA, double vDPIA, PDFRectangle *pageBox,
 	   int rotateA, GBool upsideDown
 	   );
 
@@ -1177,6 +1186,7 @@ public:
   int getLineCap() { return lineCap; }
   double getMiterLimit() { return miterLimit; }
   GBool getStrokeAdjust() { return strokeAdjust; }
+  GBool getAlphaIsShape() { return alphaIsShape; }
   GfxFont *getFont() { return font; }
   double getFontSize() { return fontSize; }
   double *getTextMat() { return textMat; }
@@ -1238,7 +1248,7 @@ public:
   void setFillOverprint(GBool op) { fillOverprint = op; }
   void setStrokeOverprint(GBool op) { strokeOverprint = op; }
   void setOverprintMode(int opm) { overprintMode = opm; }
-  void setRenderingIntent(GfxRenderingIntent ri) { renderingIntent = ri; }
+  void setRenderingIntent(GfxRenderingIntent ri);
   void setTransfer(Function **funcs);
   void setLineWidth(double width) { lineWidth = width; }
   void setLineDash(double *dash, int length, double start);
@@ -1247,6 +1257,7 @@ public:
   void setLineCap(int lineCap1) { lineCap = lineCap1; }
   void setMiterLimit(double limit) { miterLimit = limit; }
   void setStrokeAdjust(GBool sa) { strokeAdjust = sa; }
+  void setAlphaIsShape(GBool ais) { alphaIsShape = ais; }
   void setFont(GfxFont *fontA, double fontSizeA)
     { font = fontA; fontSize = fontSizeA; }
   void setTextMat(double a, double b, double c,
@@ -1306,6 +1317,8 @@ public:
 
 private:
 
+  LocalParams *localParams;
+
   double hDPI, vDPI;		// resolution
   double ctm[6];		// coord transform matrix
   double px1, py1, px2, py2;	// page corners (user coords)
@@ -1339,6 +1352,7 @@ private:
   int lineCap;			// line cap style
   double miterLimit;		// line miter limit
   GBool strokeAdjust;		// stroke adjustment
+  GBool alphaIsShape;
 
   GfxFont *font;		// font
   double fontSize;		// font size

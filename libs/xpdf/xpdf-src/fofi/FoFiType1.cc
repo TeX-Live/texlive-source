@@ -8,10 +8,6 @@
 
 #include <aconf.h>
 
-#ifdef USE_GCC_PRAGMAS
-#pragma implementation
-#endif
-
 #include <stdlib.h>
 #include <string.h>
 #include "gmem.h"
@@ -197,7 +193,8 @@ void FoFiType1::parse() {
   char *line, *line1, *p, *p2;
   char buf[256];
   char c;
-  int n, code, base, i, j;
+  unsigned int code;
+  int n, base, i, j;
   GBool gotMatrix, startsWithDup, endsWithDup;
 
   gotMatrix = gFalse;
@@ -266,7 +263,7 @@ void FoFiType1::parse() {
 	    }
 	    ++p;
 	    for (p2 = p; *p2 && *p2 != ' ' && *p2 != '\t'; ++p2) ;
-	    if (code >= 0 && code < 256) {
+	    if (code < 256) {
 	      c = *p2;
 	      *p2 = '\0';
 	      gfree(encoding[code]);

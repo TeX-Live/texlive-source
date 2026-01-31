@@ -8,10 +8,6 @@
 
 #include <aconf.h>
 
-#ifdef USE_GCC_PRAGMAS
-#pragma implementation
-#endif
-
 #include <string.h>
 #include <math.h>
 #include <limits.h>
@@ -596,8 +592,14 @@ struct T3GlyphStack {
 struct SplashTransparencyGroup {
   int tx, ty;			// translation coordinates
   SplashBitmap *tBitmap;	// bitmap for transparency group
+  SplashAlphaBitmap *alpha0Bitmap;
+  SplashAlphaBitmap *shapeBitmap;
   GfxColorSpace *blendingColorSpace;
   GBool isolated;
+  GBool inKnockoutGroup;	// true if this, or any containing
+				//   group, is a knockout group
+  GBool inSoftMask;		// true if this, or any containing
+				//   group, is a soft mask
 
   //----- modified region in tBitmap
   int modXMin, modYMin, modXMax, modYMax;
@@ -605,7 +607,6 @@ struct SplashTransparencyGroup {
   //----- saved state
   SplashBitmap *origBitmap;
   Splash *origSplash;
-  SplashBitmap *backdropBitmap;
 
   SplashTransparencyGroup *next;
 };
@@ -637,8 +638,10 @@ SplashOutputDev::SplashOutputDev(SplashColorMode colorModeA,
 
   xref = NULL;
 
+  bitmapMemCache = new SplashBitmapMemCache();
   bitmap = new SplashBitmap(1, 1, bitmapRowPad, colorMode,
-			    colorMode != splashModeMono1, bitmapTopDown, NULL);
+			    colorMode != splashModeMono1, bitmapTopDown,
+			    bitmapMemCache);
   splash = new Splash(bitmap, vectorAntialias, NULL, &screenParams);
   splash->setMinLineWidth(globalParams->getMinLineWidth());
   splash->setStrokeAdjust(
@@ -652,9 +655,15 @@ SplashOutputDev::SplashOutputDev(SplashColorMode colorModeA,
   nT3Fonts = 0;
   t3GlyphStack = NULL;
 
+  tileCacheRef.num = -1;
+  tileCacheRef.gen = -1;
+  tileCacheBitmap = NULL;
+  tileCacheOverprintMaskBitmap = NULL;
+
   font = NULL;
   needFontUpdate = gFalse;
-  textClipPath = NULL;
+  savedTextPath = NULL;
+  savedClipPath = NULL;
 
   transpGroupStack = NULL;
 
@@ -719,6 +728,10 @@ void SplashOutputDev::setupScreenParams(double hDPI, double vDPI) {
 SplashOutputDev::~SplashOutputDev() {
   int i;
 
+  if (tileCacheBitmap) {
+    delete tileCacheBitmap;
+  }
+  gfree(tileCacheOverprintMaskBitmap);
   for (i = 0; i < nT3Fonts; ++i) {
     delete t3FontCache[i];
   }
@@ -731,8 +744,12 @@ SplashOutputDev::~SplashOutputDev() {
   if (bitmap) {
     delete bitmap;
   }
-  if (textClipPath) {
-    delete textClipPath;
+  delete bitmapMemCache;
+  if (savedTextPath) {
+    delete savedTextPath;
+  }
+  if (savedClipPath) {
+    delete savedClipPath;
   }
 }
 
@@ -756,6 +773,13 @@ void SplashOutputDev::startDoc(XRef *xrefA) {
     delete t3FontCache[i];
   }
   nT3Fonts = 0;
+  if (tileCacheBitmap) {
+    delete tileCacheBitmap;
+    tileCacheBitmap = NULL;
+  }
+  gfree(tileCacheOverprintMaskBitmap);
+  tileCacheRef.num = -1;
+  tileCacheRef.gen = -1;
 }
 
 void SplashOutputDev::startPage(int pageNum, GfxState *state) {
@@ -789,7 +813,7 @@ void SplashOutputDev::startPage(int pageNum, GfxState *state) {
     traceMessage("page bitmap");
     bitmap = new SplashBitmap(w, h, bitmapRowPad, colorMode,
 			      colorMode != splashModeMono1, bitmapTopDown,
-			      NULL);
+			      bitmapMemCache);
   }
   splash = new Splash(bitmap, vectorAntialias, NULL, &screenParams);
   splash->setMinLineWidth(globalParams->getMinLineWidth());
@@ -1074,7 +1098,10 @@ void SplashOutputDev::setOverprintMask(GfxState *state,
   Guint mask;
   GfxCMYK cmyk;
 
-  if (overprintFlag && globalParams->getOverprintPreview()) {
+  // Adobe ignores overprint in soft masks.
+  if (overprintFlag &&
+      !(transpGroupStack && transpGroupStack->inSoftMask) &&
+      globalParams->getOverprintPreview()) {
     mask = colorSpace->getOverprintMask();
     // The OPM (overprintMode) setting is only relevant when the color
     // space is DeviceCMYK or is "implicitly converted to DeviceCMYK".
@@ -1164,6 +1191,10 @@ void SplashOutputDev::updateTransfer(GfxState *state) {
     }
   }
   splash->setTransfer(red, green, blue, gray);
+}
+
+void SplashOutputDev::updateAlphaIsShape(GfxState *state) {
+  splash->setAlphaIsShape(state->getAlphaIsShape());
 }
 
 void SplashOutputDev::updateFont(GfxState *state) {
@@ -1762,7 +1793,7 @@ void SplashOutputDev::tilingPatternFill(GfxState *state, Gfx *gfx,
   Splash *origSplash;
   SplashColor color;
   Guint *overprintMaskBitmap;
-  double *ctm;
+  double *ctm, *baseMatrix;
   double ictm[6], tileMat[6], mat1[6], mat2[6];
   double tileXMin, tileYMin, tileXMax, tileYMax;
   double xStepX, xStepY, yStepX, yStepY;
@@ -1770,6 +1801,7 @@ void SplashOutputDev::tilingPatternFill(GfxState *state, Gfx *gfx,
   double sx, sy;
   double clipXMin, clipYMin, clipXMax, clipYMax, clipXC, clipYC;
   double tx, ty, idet, txMin, tyMin, txMax, tyMax;
+  GBool clipped;
   int tileW, tileH, tileSize;
   int ixMin, ixMax, iyMin, iyMax, ix, iy, x, y;
   int i;
@@ -1962,8 +1994,32 @@ void SplashOutputDev::tilingPatternFill(GfxState *state, Gfx *gfx,
   iyMin = (int)ceil(tyMin);
   iyMax = (int)floor(tyMax) + 1;
 
+  // check for an excessively large tiling range, which
+  // can happen if the pattern matrix is "non-rectangular"
+  // (casting to double to avoid integer overflow)
+  if ((double)(ixMax - ixMin) * (double)(iyMax - iyMin) >
+      10 * (double)(x1 - x0) * (double)(y1 - y0)) {
+    mat1[0] = mat[0];
+    mat1[1] = mat[1];
+    mat1[2] = mat[2];
+    mat1[3] = mat[3];
+    for (iy = y0; iy < y1; ++iy) {
+      for (ix = x0; ix < x1; ++ix) {
+	tx = ix * xStep;
+	ty = iy * yStep;
+	mat1[4] = tx * mat[0] + ty * mat[2] + mat[4];
+	mat1[5] = tx * mat[1] + ty * mat[3] + mat[5];
+	gfx->drawForm(strRef, resDict, mat1, bbox);
+      }
+    }
+    return;
+  }
+
   // special case: pattern tile is larger than clipping bbox
-  if (ixMax - ixMin == 1 && iyMax - iyMin == 1) {
+  if (ixMax - ixMin == 1 && iyMax - iyMin == 1 &&
+      (clipXMax - clipXMin < 0.5 * tileW ||
+       clipYMax - clipYMin < 0.5 * tileH)) {
+    clipped = gTrue;
     // reduce the tile size to just the clipping bbox -- this improves
     // performance in cases where just a small portion of one tile is
     // needed
@@ -1983,6 +2039,8 @@ void SplashOutputDev::tilingPatternFill(GfxState *state, Gfx *gfx,
     iyMax = 1;
     adjXMin = clipXMin;
     adjYMin = clipYMin;
+  } else {
+    clipped = gFalse;
   }
 
   // compute tile matrix = PTM * BTM * Mtranslate * Mscale * iCTM
@@ -2017,58 +2075,87 @@ void SplashOutputDev::tilingPatternFill(GfxState *state, Gfx *gfx,
   tileMat[4] = mat2[4] * ictm[0] + mat2[5] * ictm[2] + ictm[4];
   tileMat[5] = mat2[4] * ictm[1] + mat2[5] * ictm[3] + ictm[5];
 
-  // create a temporary bitmap
-  origBitmap = bitmap;
-  origSplash = splash;
-  traceMessage("tiling pattern bitmap");
-  bitmap = tileBitmap = new SplashBitmap(tileW, tileH, bitmapRowPad,
-					 colorMode, gTrue, bitmapTopDown,
-					 origBitmap);
-  splash = new Splash(bitmap, vectorAntialias,
-		      origSplash->getImageCache(), origSplash->getScreen());
-  for (i = 0; i < splashMaxColorComps; ++i) {
-    color[i] = 0;
-  }
-  splash->clear(color);
-#if SPLASH_CMYK
-  // if we're doing overprint preview, we need to track the overprint
-  // mask at each pixel in the tile bitmap
-  if (globalParams->getOverprintPreview() &&
-      colorMode == splashModeCMYK8) {
-    overprintMaskBitmap = (Guint *)gmallocn(tileH, tileW * (int)sizeof(Guint));
-    memset(overprintMaskBitmap, 0, tileH * tileW * sizeof(Guint));
-    splash->setOverprintMaskBitmap(overprintMaskBitmap);
+  baseMatrix = gfx->getBaseMatrix();
+  if (paintType == 1 &&   // colored tiling pattern
+      !clipped &&
+      strRef->isRef() &&
+      strRef->getRefNum() == tileCacheRef.num &&
+      strRef->getRefGen() == tileCacheRef.gen &&
+      tileCacheBitmap &&
+      tileCacheBitmap->getWidth() == tileW &&
+      tileCacheBitmap->getHeight() == tileH &&
+      tileCacheBaseMatrix[0] == baseMatrix[0] &&
+      tileCacheBaseMatrix[1] == baseMatrix[1] &&
+      tileCacheBaseMatrix[2] == baseMatrix[2] &&
+      tileCacheBaseMatrix[3] == baseMatrix[3] &&
+      tileCacheBaseMatrix[4] == baseMatrix[4] &&
+      tileCacheBaseMatrix[5] == baseMatrix[5]) {
+    tileBitmap = tileCacheBitmap;
+    overprintMaskBitmap = tileCacheOverprintMaskBitmap;
+
   } else {
-    overprintMaskBitmap = NULL;
-  }
+    if (tileCacheBitmap) {
+      delete tileCacheBitmap;
+      tileCacheBitmap = NULL;
+    }
+    gfree(tileCacheOverprintMaskBitmap);
+    tileCacheOverprintMaskBitmap = NULL;
+
+    // create a temporary bitmap
+    origBitmap = bitmap;
+    origSplash = splash;
+    traceMessage("tiling pattern bitmap");
+    bitmap = tileBitmap = new SplashBitmap(tileW, tileH, bitmapRowPad,
+					   colorMode, gTrue, bitmapTopDown,
+					   bitmapMemCache);
+    splash = new Splash(bitmap, vectorAntialias,
+			origSplash->getImageCache(), origSplash->getScreen());
+    for (i = 0; i < splashMaxColorComps; ++i) {
+      color[i] = 0;
+    }
+    splash->clear(color);
+#if SPLASH_CMYK
+    // if we're doing overprint preview, we need to track the overprint
+    // mask at each pixel in the tile bitmap
+    if (globalParams->getOverprintPreview() &&
+        colorMode == splashModeCMYK8) {
+      overprintMaskBitmap =
+	  (Guint *)gmallocn(tileH, tileW * (int)sizeof(Guint));
+      memset(overprintMaskBitmap, 0, tileH * tileW * sizeof(Guint));
+      splash->setOverprintMaskBitmap(overprintMaskBitmap);
+    } else {
+      overprintMaskBitmap = NULL;
+    }
 #else // SPLASH_CMYK
-  overprintMaskBitmap = NULL;
+    overprintMaskBitmap = NULL;
 #endif // SPLASH_CMYK
-  splash->setMinLineWidth(globalParams->getMinLineWidth());
-  splash->setStrokeAdjust(
-		 mapStrokeAdjustMode[globalParams->getStrokeAdjust()]);
-  splash->setEnablePathSimplification(
-		 globalParams->getEnablePathSimplification());
-  ++nestCount;
+    splash->setMinLineWidth(globalParams->getMinLineWidth());
+    splash->setStrokeAdjust(
+		   mapStrokeAdjustMode[globalParams->getStrokeAdjust()]);
+    splash->setEnablePathSimplification(
+		   globalParams->getEnablePathSimplification());
+    ++nestCount;
 
-  // copy the fill color (for uncolored tiling patterns)
-  // (and stroke color, to handle buggy PDF files)
-  // -- Acrobat apparently doesn't copy the full state here
-  splash->setFillPattern(origSplash->getFillPattern()->copy());
-  splash->setStrokePattern(origSplash->getStrokePattern()->copy());
+    // copy the fill color (for uncolored tiling patterns)
+    // (and stroke color, to handle buggy PDF files)
+    // -- Acrobat apparently doesn't copy the full state here
+    splash->setFillPattern(origSplash->getFillPattern()->copy());
+    splash->setStrokePattern(origSplash->getStrokePattern()->copy());
 
-  // reset the clip rectangle
-  state->resetDevClipRect(0, 0, tileW, tileH);
+    // reset the clip rectangle
+    state->resetDevClipRect(0, 0, tileW, tileH);
 
-  // render the tile
-  gfx->drawForm(strRef, resDict, tileMat, bbox);
+    // render the tile
+    gfx->drawForm(strRef, resDict, tileMat, bbox);
 
-  // restore the original bitmap
-  --nestCount;
-  delete splash;
-  bitmap = origBitmap;
-  splash = origSplash;
-  splash->setOverprintMask(0xffffffff);
+    // restore the original bitmap
+    --nestCount;
+    delete splash;
+    bitmap = origBitmap;
+    splash = origSplash;
+    splash->setOverprintMask(0xffffffff);
+
+  }
 
   // draw the tiles
   if (tileW == 1 && tileH == 1 &&
@@ -2084,7 +2171,7 @@ void SplashOutputDev::tilingPatternFill(GfxState *state, Gfx *gfx,
     iyMax = (int)floor(clipYMax) + 1;
     for (iy = iyMin; iy < iyMax; ++iy) {
       for (ix = ixMin; ix < ixMax; ++ix) {
-	splash->composite(tileBitmap, 0, 0, ix, iy, tileW, tileH,
+	splash->composite(tileBitmap, NULL, 0, 0, ix, iy, tileW, tileH,
 			  gFalse, gFalse);
       }
     }
@@ -2094,19 +2181,39 @@ void SplashOutputDev::tilingPatternFill(GfxState *state, Gfx *gfx,
 	x = (int)floor(adjXMin + ix * xStepX + iy * yStepX + 0.5);
 	y = (int)floor(adjYMin + ix * xStepY + iy * yStepY + 0.5);
 	if (overprintMaskBitmap) {
-	  splash->compositeWithOverprint(tileBitmap, overprintMaskBitmap,
+	  splash->compositeWithOverprint(tileBitmap, NULL, overprintMaskBitmap,
 					 0, 0, x, y, tileW, tileH,
 					 gFalse, gFalse);
 	} else {
-	  splash->composite(tileBitmap, 0, 0, x, y, tileW, tileH,
+	  splash->composite(tileBitmap, NULL, 0, 0, x, y, tileW, tileH,
 			    gFalse, gFalse);
 	}
       }
     }
   }
 
-  gfree(overprintMaskBitmap);
-  delete tileBitmap;
+  // NB: a nested pattern might have been cached
+  if (tileBitmap != tileCacheBitmap) {
+    if (paintType == 1 &&   // colored tiling pattern
+	!clipped) {
+      tileCacheRef = strRef->getRef();
+      tileCacheBaseMatrix[0] = baseMatrix[0];
+      tileCacheBaseMatrix[1] = baseMatrix[1];
+      tileCacheBaseMatrix[2] = baseMatrix[2];
+      tileCacheBaseMatrix[3] = baseMatrix[3];
+      tileCacheBaseMatrix[4] = baseMatrix[4];
+      tileCacheBaseMatrix[5] = baseMatrix[5];
+      if (tileCacheBitmap) {
+	delete tileCacheBitmap;
+      }
+      tileCacheBitmap = tileBitmap;
+      gfree(tileCacheOverprintMaskBitmap);
+      tileCacheOverprintMaskBitmap = overprintMaskBitmap;
+    } else {
+      delete tileBitmap;
+      gfree(overprintMaskBitmap);
+    }
+  }
 }
 
 GBool SplashOutputDev::shadedFill(GfxState *state, GfxShading *shading) {
@@ -2123,7 +2230,8 @@ GBool SplashOutputDev::shadedFill(GfxState *state, GfxShading *shading) {
   int x, y;
   SplashBitmap *tBitmap = ShadingImage::generateBitmap(state, shading, srcMode,
 						       reverseVideo,
-						       splash, bitmap, &x, &y);
+						       splash, bitmapMemCache,
+						       &x, &y);
   if (!tBitmap) {
     // clip region is empty - nothing to draw
     return gTrue;
@@ -2140,7 +2248,7 @@ GBool SplashOutputDev::shadedFill(GfxState *state, GfxShading *shading) {
     setOverprintMask(state, state->getFillColorSpace(),
 		     state->getFillOverprint(), state->getOverprintMode(),
 		     NULL);
-    splash->composite(tBitmap, xMin - x, yMin - y, xMin, yMin,
+    splash->composite(tBitmap, NULL, xMin - x, yMin - y, xMin, yMin,
 		      xMax - xMin, yMax - yMin,
 		      clipRes == splashClipAllInside, gFalse);
   }
@@ -2218,27 +2326,24 @@ void SplashOutputDev::drawChar(GfxState *state, double x, double y,
 			       double dx, double dy,
 			       double originX, double originY,
 			       CharCode code, int nBytes,
-			       Unicode *u, int uLen) {
-  SplashPath *path;
-  int render;
-  GBool doFill, doStroke, doClip;
-  SplashStrokeAdjustMode strokeAdjust;
-  double m[4];
-  GBool horiz;
-
+			       Unicode *u, int uLen,
+			       GBool fill, GBool stroke, GBool makePath) {
   if (skipHorizText || skipRotatedText) {
+    double m[4];
     state->getFontTransMat(&m[0], &m[1], &m[2], &m[3]);
     // this matches the 'diagonal' test in TextPage::updateFont()
-    horiz = m[0] > 0 && fabs(m[1]) < 0.001 &&
-            fabs(m[2]) < 0.001 && m[3] < 0;
+    GBool horiz = m[0] > 0 && fabs(m[1]) < 0.001 &&
+                  fabs(m[2]) < 0.001 && m[3] < 0;
     if ((skipHorizText && horiz) || (skipRotatedText && !horiz)) {
       return;
     }
   }
 
+  fill = fill && !state->getFillColorSpace()->isNonMarking();
+  stroke = stroke && !state->getStrokeColorSpace()->isNonMarking();
+
   // check for invisible text -- this is used by Acrobat Capture
-  render = state->getRender();
-  if (render == 3) {
+  if (!fill && !stroke && !makePath) {
     return;
   }
 
@@ -2252,13 +2357,8 @@ void SplashOutputDev::drawChar(GfxState *state, double x, double y,
   x -= originX;
   y -= originY;
 
-  doFill = !(render & 1) && !state->getFillColorSpace()->isNonMarking();
-  doStroke = ((render & 3) == 1 || (render & 3) == 2) &&
-             !state->getStrokeColorSpace()->isNonMarking();
-  doClip = render & 4;
-
-  path = NULL;
-  if (doStroke || doClip) {
+  SplashPath *path = NULL;
+  if (stroke || makePath) {
     if ((path = font->getGlyphPath(code))) {
       path->offset((SplashCoord)x, (SplashCoord)y);
     }
@@ -2267,14 +2367,19 @@ void SplashOutputDev::drawChar(GfxState *state, double x, double y,
   // don't use stroke adjustment when stroking text -- the results
   // tend to be ugly (because characters with horizontal upper or
   // lower edges get misaligned relative to the other characters)
-  strokeAdjust = splashStrokeAdjustOff; // make gcc happy
-  if (doStroke) {
-    strokeAdjust = splash->getStrokeAdjust();
+  SplashStrokeAdjustMode savedStrokeAdjust = splashStrokeAdjustOff;
+  if (stroke) {
+    savedStrokeAdjust = splash->getStrokeAdjust();
     splash->setStrokeAdjust(splashStrokeAdjustOff);
   }
 
-  // fill and stroke
-  if (doFill && doStroke) {
+  // the possible operations are:
+  //   - fill
+  //   - stroke
+  //   - fill + stroke
+  //   - makePath
+
+  if (fill && stroke) {
     if (path) {
       setOverprintMask(state, state->getFillColorSpace(),
 		       state->getFillOverprint(), state->getOverprintMode(),
@@ -2286,42 +2391,105 @@ void SplashOutputDev::drawChar(GfxState *state, double x, double y,
       splash->stroke(path);
     }
 
-  // fill
-  } else if (doFill) {
+  } else if (fill) {
     setOverprintMask(state, state->getFillColorSpace(),
 		     state->getFillOverprint(), state->getOverprintMode(),
 		     state->getFillColor());
     splash->fillChar((SplashCoord)x, (SplashCoord)y, code, font);
 
-  // stroke
-  } else if (doStroke) {
+  } else if (stroke) {
     if (path) {
       setOverprintMask(state, state->getStrokeColorSpace(),
 		       state->getStrokeOverprint(), state->getOverprintMode(),
 		       state->getStrokeColor());
       splash->stroke(path);
     }
-  }
 
-  // clip
-  if (doClip) {
+  } else if (makePath) {
     if (path) {
-      if (textClipPath) {
-	textClipPath->append(path);
+      if (savedTextPath) {
+	savedTextPath->append(path);
       } else {
-	textClipPath = path;
+	savedTextPath = path;
 	path = NULL;
       }
     }
   }
 
-  if (doStroke) {
-    splash->setStrokeAdjust(strokeAdjust);
+  if (stroke) {
+    splash->setStrokeAdjust(savedStrokeAdjust);
   }
 
   if (path) {
     delete path;
   }
+}
+
+void SplashOutputDev::fillTextPath(GfxState *state) {
+  if (!savedTextPath) {
+    return;
+  }
+  setOverprintMask(state, state->getFillColorSpace(),
+		   state->getFillOverprint(), state->getOverprintMode(),
+		   state->getFillColor());
+  splash->fill(savedTextPath, gFalse);
+}
+
+void SplashOutputDev::strokeTextPath(GfxState *state) {
+  if (!savedTextPath) {
+    return;
+  }
+  setOverprintMask(state, state->getStrokeColorSpace(),
+		   state->getStrokeOverprint(), state->getOverprintMode(),
+		   state->getStrokeColor());
+  splash->stroke(savedTextPath);
+}
+
+void SplashOutputDev::clipToTextPath(GfxState *state) {
+  if (!savedTextPath) {
+    return;
+  }
+  splash->clipToPath(savedTextPath, gFalse);
+}
+
+void SplashOutputDev::clipToTextStrokePath(GfxState *state) {
+  if (!savedTextPath) {
+    return;
+  }
+  SplashPath *path = splash->makeStrokePath(savedTextPath,
+					    state->getLineWidth(),
+					    state->getLineCap(),
+					    state->getLineJoin());
+  splash->clipToPath(path, gFalse);
+  delete path;
+}
+
+void SplashOutputDev::clearTextPath(GfxState *state) {
+  if (savedTextPath) {
+    delete savedTextPath;
+    savedTextPath = NULL;
+  }
+}
+
+void SplashOutputDev::addTextPathToSavedClipPath(GfxState *state) {
+  if (savedTextPath) {
+    if (savedClipPath) {
+      savedClipPath->append(savedTextPath);
+      delete savedTextPath;
+    } else {
+      savedClipPath = savedTextPath;
+    }
+    savedTextPath = NULL;
+  }
+}
+
+void SplashOutputDev::clipToSavedClipPath(GfxState *state) {
+  if (!savedClipPath) {
+    return;
+  }
+  splash->clipToPath(savedClipPath, gFalse);
+  delete savedClipPath;
+  savedClipPath = NULL;
 }
 
 GBool SplashOutputDev::beginType3Char(GfxState *state, double x, double y,
@@ -2629,7 +2797,7 @@ void SplashOutputDev::type3D1(GfxState *state, double wx, double wy,
     colorMode = splashModeMono1;
     traceMessage("T3 glyph bitmap");
     bitmap = new SplashBitmap(t3Font->glyphW, t3Font->glyphH, 1,
-			      splashModeMono1, gFalse, gTrue, bitmap);
+			      splashModeMono1, gFalse, gTrue, bitmapMemCache);
     splash = new Splash(bitmap, gFalse,
 			t3GlyphStack->origSplash->getImageCache(), 
 			t3GlyphStack->origSplash->getScreen());
@@ -2640,7 +2808,7 @@ void SplashOutputDev::type3D1(GfxState *state, double wx, double wy,
     colorMode = splashModeMono8;
     traceMessage("T3 glyph bitmap");
     bitmap = new SplashBitmap(t3Font->glyphW, t3Font->glyphH, 1,
-			      splashModeMono8, gFalse, gTrue, bitmap);
+			      splashModeMono8, gFalse, gTrue, bitmapMemCache);
     splash = new Splash(bitmap, vectorAntialias,
 			t3GlyphStack->origSplash->getImageCache(), 
 			t3GlyphStack->origSplash->getScreen());
@@ -2679,11 +2847,6 @@ void SplashOutputDev::drawType3Glyph(GfxState *state, T3FontCache *t3Font,
 }
 
 void SplashOutputDev::endTextObject(GfxState *state) {
-  if (textClipPath) {
-    splash->clipToPath(textClipPath, gFalse);
-    delete textClipPath;
-    textClipPath = NULL;
-  }
 }
 
 struct SplashOutImageMaskData {
@@ -2790,7 +2953,8 @@ void SplashOutputDev::setSoftMaskFromImageMask(GfxState *state,
   imgMaskData.y = 0;
   traceMessage("image mask soft mask bitmap");
   maskBitmap = new SplashBitmap(bitmap->getWidth(), bitmap->getHeight(),
-				1, splashModeMono8, gFalse, gTrue, bitmap);
+				1, splashModeMono8, gFalse, gTrue,
+				bitmapMemCache);
   maskSplash = new Splash(maskBitmap, gTrue, splash->getImageCache());
   maskSplash->setStrokeAdjust(
 		     mapStrokeAdjustMode[globalParams->getStrokeAdjust()]);
@@ -2827,10 +2991,8 @@ struct SplashOutImageData {
 GBool SplashOutputDev::imageSrc(void *data, SplashColorPtr colorLine,
 				Guchar *alphaLine) {
   SplashOutImageData *imgData = (SplashOutImageData *)data;
-  Guchar *p;
-  SplashColorPtr q, col;
-  int n, x;
 
+  Guchar *p;
   if (imgData->y == imgData->height ||
       !(p = imgData->imgStr->getLine())) {
     memset(colorLine, 0,
@@ -2838,58 +3000,143 @@ GBool SplashOutputDev::imageSrc(void *data, SplashColorPtr colorLine,
     return gFalse;
   }
 
-  if (imgData->lookup) {
-    switch (imgData->colorMode) {
-    case splashModeMono1:
-    case splashModeMono8:
-      for (x = 0, q = colorLine; x < imgData->width; ++x, ++p) {
-	*q++ = imgData->lookup[*p];
-      }
-      break;
-    case splashModeRGB8:
-    case splashModeBGR8:
-      for (x = 0, q = colorLine; x < imgData->width; ++x, ++p) {
-	col = &imgData->lookup[3 * *p];
-	*q++ = col[0];
-	*q++ = col[1];
-	*q++ = col[2];
-      }
-      break;
+  int x;
+  switch (imgData->colorMode) {
+  case splashModeMono1:
+  case splashModeMono8:
+    imgData->colorMap->getGrayByteLine(p, colorLine, imgData->width,
+				       imgData->ri);
+    break;
+  case splashModeRGB8:
+  case splashModeBGR8:
+    imgData->colorMap->getRGBByteLine(p, colorLine, imgData->width,
+				      imgData->ri);
+    break;
 #if SPLASH_CMYK
-    case splashModeCMYK8:
-      for (x = 0, q = colorLine; x < imgData->width; ++x, ++p) {
-	col = &imgData->lookup[4 * *p];
-	*q++ = col[0];
-	*q++ = col[1];
-	*q++ = col[2];
-	*q++ = col[3];
-      }
-      break;
+  case splashModeCMYK8:
+    imgData->colorMap->getCMYKByteLine(p, colorLine, imgData->width,
+				       imgData->ri);
+    break;
 #endif
-    }
-  } else {
-    switch (imgData->colorMode) {
-    case splashModeMono1:
-    case splashModeMono8:
-      imgData->colorMap->getGrayByteLine(p, colorLine, imgData->width,
-					 imgData->ri);
-      break;
-    case splashModeRGB8:
-    case splashModeBGR8:
-      imgData->colorMap->getRGBByteLine(p, colorLine, imgData->width,
-					imgData->ri);
-      break;
-#if SPLASH_CMYK
-    case splashModeCMYK8:
-      imgData->colorMap->getCMYKByteLine(p, colorLine, imgData->width,
-					 imgData->ri);
-      break;
-#endif
-    }
   }
 
   if (imgData->invert) {
-    n = imgData->width * splashColorModeNComps[imgData->colorMode];
+    int n = imgData->width * splashColorModeNComps[imgData->colorMode];
+    for (x = 0, p = colorLine; x < n; ++x, ++p) {
+      *p ^= 0xff;
+    }
+  }
+
+  ++imgData->y;
+  return gTrue;
+}
+
+GBool SplashOutputDev::imageLookup1Src(void *data, SplashColorPtr colorLine,
+				       Guchar *alphaLine) {
+  SplashOutImageData *imgData = (SplashOutImageData *)data;
+
+  Guchar *p;
+  if (imgData->y == imgData->height ||
+      !(p = imgData->imgStr->getLine())) {
+    memset(colorLine, 0,
+	   imgData->width * splashColorModeNComps[imgData->colorMode]);
+    return gFalse;
+  }
+
+  int x;
+  SplashColorPtr q, col;
+  switch (imgData->colorMode) {
+  case splashModeMono1:
+  case splashModeMono8:
+    for (x = 0, q = colorLine; x < imgData->width; ++x, ++p) {
+      *q++ = imgData->lookup[*p];
+    }
+    break;
+  case splashModeRGB8:
+  case splashModeBGR8:
+    for (x = 0, q = colorLine; x < imgData->width; ++x, ++p) {
+      col = &imgData->lookup[3 * *p];
+      *q++ = col[0];
+      *q++ = col[1];
+      *q++ = col[2];
+    }
+    break;
+#if SPLASH_CMYK
+  case splashModeCMYK8:
+    for (x = 0, q = colorLine; x < imgData->width; ++x, ++p) {
+      col = &imgData->lookup[4 * *p];
+      *q++ = col[0];
+      *q++ = col[1];
+      *q++ = col[2];
+      *q++ = col[3];
+    }
+    break;
+#endif
+  }
+
+  if (imgData->invert) {
+    int n = imgData->width * splashColorModeNComps[imgData->colorMode];
+    for (x = 0, p = colorLine; x < n; ++x, ++p) {
+      *p ^= 0xff;
+    }
+  }
+
+  ++imgData->y;
+  return gTrue;
+}
+
+GBool SplashOutputDev::imageLookup2Src(void *data, SplashColorPtr colorLine,
+				       Guchar *alphaLine) {
+  SplashOutImageData *imgData = (SplashOutImageData *)data;
+
+  Guchar *p;
+  if (imgData->y == imgData->height ||
+      !(p = imgData->imgStr->getLine())) {
+    memset(colorLine, 0,
+	   imgData->width * splashColorModeNComps[imgData->colorMode]);
+    return gFalse;
+  }
+
+  int bpc = imgData->colorMap->getBits();
+  if (bpc > 8) {
+    bpc = 8;
+  }
+  int x;
+  SplashColorPtr q, col;
+  switch (imgData->colorMode) {
+  case splashModeMono1:
+  case splashModeMono8:
+    for (x = 0, q = colorLine; x < imgData->width; ++x, p += 2) {
+      int k = (p[0] << bpc) + p[1];
+      *q++ = imgData->lookup[k];
+    }
+    break;
+  case splashModeRGB8:
+  case splashModeBGR8:
+    for (x = 0, q = colorLine; x < imgData->width; ++x, p += 2) {
+      int k = (p[0] << bpc) + p[1];
+      col = &imgData->lookup[3 * k];
+      *q++ = col[0];
+      *q++ = col[1];
+      *q++ = col[2];
+    }
+    break;
+#if SPLASH_CMYK
+  case splashModeCMYK8:
+    for (x = 0, q = colorLine; x < imgData->width; ++x, p += 2) {
+      int k = (p[0] << bpc) + p[1];
+      col = &imgData->lookup[4 * k];
+      *q++ = col[0];
+      *q++ = col[1];
+      *q++ = col[2];
+      *q++ = col[3];
+    }
+    break;
+#endif
+  }
+
+  if (imgData->invert) {
+    int n = imgData->width * splashColorModeNComps[imgData->colorMode];
     for (x = 0, p = colorLine; x < n; ++x, ++p) {
       *p ^= 0xff;
     }
@@ -2902,11 +3149,8 @@ GBool SplashOutputDev::imageSrc(void *data, SplashColorPtr colorLine,
 GBool SplashOutputDev::alphaImageSrc(void *data, SplashColorPtr colorLine,
 				     Guchar *alphaLine) {
   SplashOutImageData *imgData = (SplashOutImageData *)data;
-  Guchar *p0, *p, *aq;
-  SplashColorPtr q, col;
-  Guchar alpha;
-  int nComps, x, n, i;
 
+  Guchar *p0;
   if (imgData->y == imgData->height ||
       !(p0 = imgData->imgStr->getLine())) {
     memset(colorLine, 0,
@@ -2915,61 +3159,33 @@ GBool SplashOutputDev::alphaImageSrc(void *data, SplashColorPtr colorLine,
     return gFalse;
   }
 
-  nComps = imgData->colorMap->getNumPixelComps();
+  int nComps = imgData->colorMap->getNumPixelComps();
 
-  if (imgData->lookup) {
-    switch (imgData->colorMode) {
-    case splashModeMono1:
-    case splashModeMono8:
-      for (x = 0, p = p0, q = colorLine; x < imgData->width; ++x, ++p) {
-	*q++ = imgData->lookup[*p];
-      }
-      break;
-    case splashModeRGB8:
-    case splashModeBGR8:
-      for (x = 0, p = p0, q = colorLine; x < imgData->width; ++x, ++p) {
-	col = &imgData->lookup[3 * *p];
-	*q++ = col[0];
-	*q++ = col[1];
-	*q++ = col[2];
-      }
-      break;
+  int x;
+  Guchar *p;
+  switch (imgData->colorMode) {
+  case splashModeMono1:
+  case splashModeMono8:
+    imgData->colorMap->getGrayByteLine(p0, colorLine, imgData->width,
+				       imgData->ri);
+    break;
+  case splashModeRGB8:
+  case splashModeBGR8:
+    imgData->colorMap->getRGBByteLine(p0, colorLine, imgData->width,
+				      imgData->ri);
+    break;
 #if SPLASH_CMYK
-    case splashModeCMYK8:
-      for (x = 0, p = p0, q = colorLine; x < imgData->width; ++x, ++p) {
-	col = &imgData->lookup[4 * *p];
-	*q++ = col[0];
-	*q++ = col[1];
-	*q++ = col[2];
-	*q++ = col[3];
-      }
-      break;
+  case splashModeCMYK8:
+    imgData->colorMap->getCMYKByteLine(p0, colorLine, imgData->width,
+				       imgData->ri);
+    break;
 #endif
-    }
-  } else {
-    switch (imgData->colorMode) {
-    case splashModeMono1:
-    case splashModeMono8:
-      imgData->colorMap->getGrayByteLine(p0, colorLine, imgData->width,
-					 imgData->ri);
-      break;
-    case splashModeRGB8:
-    case splashModeBGR8:
-      imgData->colorMap->getRGBByteLine(p0, colorLine, imgData->width,
-					imgData->ri);
-      break;
-#if SPLASH_CMYK
-    case splashModeCMYK8:
-      imgData->colorMap->getCMYKByteLine(p0, colorLine, imgData->width,
-					 imgData->ri);
-      break;
-#endif
-    }
   }
 
+  Guchar *aq;
   for (x = 0, p = p0, aq = alphaLine; x < imgData->width; ++x, p += nComps) {
-    alpha = 0;
-    for (i = 0; i < nComps; ++i) {
+    Guchar alpha = 0;
+    for (int i = 0; i < nComps; ++i) {
       if (p[i] < imgData->maskColors[2*i] ||
 	  p[i] > imgData->maskColors[2*i+1]) {
 	alpha = 0xff;
@@ -2980,7 +3196,158 @@ GBool SplashOutputDev::alphaImageSrc(void *data, SplashColorPtr colorLine,
   }
 
   if (imgData->invert) {
-    n = imgData->width * splashColorModeNComps[imgData->colorMode];
+    int n = imgData->width * splashColorModeNComps[imgData->colorMode];
+    for (x = 0, p = colorLine; x < n; ++x, ++p) {
+      *p ^= 0xff;
+    }
+  }
+
+  ++imgData->y;
+  return gTrue;
+}
+
+GBool SplashOutputDev::alphaImageLookup1Src(void *data,
+					    SplashColorPtr colorLine,
+					    Guchar *alphaLine) {
+  SplashOutImageData *imgData = (SplashOutImageData *)data;
+
+  Guchar *p0;
+  if (imgData->y == imgData->height ||
+      !(p0 = imgData->imgStr->getLine())) {
+    memset(colorLine, 0,
+	   imgData->width * splashColorModeNComps[imgData->colorMode]);
+    memset(alphaLine, 0, imgData->width);
+    return gFalse;
+  }
+
+  int nComps = imgData->colorMap->getNumPixelComps();
+
+  int x;
+  Guchar *p;
+  SplashColorPtr q, col;
+  switch (imgData->colorMode) {
+  case splashModeMono1:
+  case splashModeMono8:
+    for (x = 0, p = p0, q = colorLine; x < imgData->width; ++x, ++p) {
+      *q++ = imgData->lookup[*p];
+    }
+    break;
+  case splashModeRGB8:
+  case splashModeBGR8:
+    for (x = 0, p = p0, q = colorLine; x < imgData->width; ++x, ++p) {
+      col = &imgData->lookup[3 * *p];
+      *q++ = col[0];
+      *q++ = col[1];
+      *q++ = col[2];
+    }
+    break;
+#if SPLASH_CMYK
+  case splashModeCMYK8:
+    for (x = 0, p = p0, q = colorLine; x < imgData->width; ++x, ++p) {
+      col = &imgData->lookup[4 * *p];
+      *q++ = col[0];
+      *q++ = col[1];
+      *q++ = col[2];
+      *q++ = col[3];
+    }
+    break;
+#endif
+  }
+
+  Guchar *aq;
+  for (x = 0, p = p0, aq = alphaLine; x < imgData->width; ++x, p += nComps) {
+    Guchar alpha = 0;
+    for (int i = 0; i < nComps; ++i) {
+      if (p[i] < imgData->maskColors[2*i] ||
+	  p[i] > imgData->maskColors[2*i+1]) {
+	alpha = 0xff;
+	break;
+      }
+    }
+    *aq++ = alpha;
+  }
+
+  if (imgData->invert) {
+    int n = imgData->width * splashColorModeNComps[imgData->colorMode];
+    for (x = 0, p = colorLine; x < n; ++x, ++p) {
+      *p ^= 0xff;
+    }
+  }
+
+  ++imgData->y;
+  return gTrue;
+}
+
+GBool SplashOutputDev::alphaImageLookup2Src(void *data,
+					    SplashColorPtr colorLine,
+					    Guchar *alphaLine) {
+  SplashOutImageData *imgData = (SplashOutImageData *)data;
+
+  Guchar *p0;
+  if (imgData->y == imgData->height ||
+      !(p0 = imgData->imgStr->getLine())) {
+    memset(colorLine, 0,
+	   imgData->width * splashColorModeNComps[imgData->colorMode]);
+    memset(alphaLine, 0, imgData->width);
+    return gFalse;
+  }
+
+  int nComps = imgData->colorMap->getNumPixelComps();
+
+  int bpc = imgData->colorMap->getBits();
+  if (bpc > 8) {
+    bpc = 8;
+  }
+  int x;
+  Guchar *p;
+  SplashColorPtr q, col;
+  switch (imgData->colorMode) {
+  case splashModeMono1:
+  case splashModeMono8:
+    for (x = 0, p = p0, q = colorLine; x < imgData->width; ++x, p += 2) {
+      int k = (p[0] << bpc) + p[1];
+      *q++ = imgData->lookup[k];
+    }
+    break;
+  case splashModeRGB8:
+  case splashModeBGR8:
+    for (x = 0, p = p0, q = colorLine; x < imgData->width; ++x, p += 2) {
+      int k = (p[0] << bpc) + p[1];
+      col = &imgData->lookup[3 * k];
+      *q++ = col[0];
+      *q++ = col[1];
+      *q++ = col[2];
+    }
+    break;
+#if SPLASH_CMYK
+  case splashModeCMYK8:
+    for (x = 0, p = p0, q = colorLine; x < imgData->width; ++x, p += 2) {
+      int k = (p[0] << bpc) + p[1];
+      col = &imgData->lookup[4 * k];
+      *q++ = col[0];
+      *q++ = col[1];
+      *q++ = col[2];
+      *q++ = col[3];
+    }
+    break;
+#endif
+  }
+
+  Guchar *aq;
+  for (x = 0, p = p0, aq = alphaLine; x < imgData->width; ++x, p += nComps) {
+    Guchar alpha = 0;
+    for (int i = 0; i < nComps; ++i) {
+      if (p[i] < imgData->maskColors[2*i] ||
+	  p[i] > imgData->maskColors[2*i+1]) {
+	alpha = 0xff;
+	break;
+      }
+    }
+    *aq++ = alpha;
+  }
+
+  if (imgData->invert) {
+    int n = imgData->width * splashColorModeNComps[imgData->colorMode];
     for (x = 0, p = colorLine; x < n; ++x, ++p) {
       *p ^= 0xff;
     }
@@ -2996,25 +3363,13 @@ void SplashOutputDev::drawImage(GfxState *state, Object *ref, Stream *str,
 				GfxImageColorMap *colorMap,
 				int *maskColors, GBool inlineImg,
 				GBool interpolate) {
-  double *ctm;
-  SplashCoord mat[6];
-  SplashOutImageData imgData;
-  SplashColorMode srcMode;
-  SplashImageSource src;
-  GString *imgTag;
-  GfxGray gray;
-  GfxRGB rgb;
-#if SPLASH_CMYK
-  GfxCMYK cmyk;
-#endif
-  Guchar pix;
-  int n, i;
 
   setOverprintMask(state, colorMap->getColorSpace(),
 		   state->getFillOverprint(), state->getOverprintMode(),
 		   NULL);
 
-  ctm = state->getCTM();
+  double *ctm = state->getCTM();
+  SplashCoord mat[6];
   mat[0] = ctm[0];
   mat[1] = ctm[1];
   mat[2] = -ctm[2];
@@ -3024,6 +3379,7 @@ void SplashOutputDev::drawImage(GfxState *state, Object *ref, Stream *str,
 
   reduceImageResolution(str, ctm, &width, &height);
 
+  SplashOutImageData imgData;
   imgData.imgStr = new ImageStream(str, width,
 				   colorMap->getNumPixelComps(),
 				   colorMap->getBits());
@@ -3039,51 +3395,22 @@ void SplashOutputDev::drawImage(GfxState *state, Object *ref, Stream *str,
 
   // special case for one-channel (monochrome/gray/separation) images:
   // build a lookup table here
+  SplashImageSource src = maskColors ? &alphaImageSrc : &imageSrc;
   imgData.lookup = NULL;
   if (colorMap->getNumPixelComps() == 1) {
-    if (colorMap->getBits() <= 8) {
-      n = 1 << colorMap->getBits();
-    } else {
-      // GfxImageColorMap and ImageStream compress 16-bit samples to 8-bit
-      n = 1 << 8;
+    imgData.lookup = buildColorMapLookupTable1Idx(colorMap, state);
+    if (imgData.lookup) {
+      src = maskColors ? &alphaImageLookup1Src : &imageLookup1Src;
     }
-    switch (colorMode) {
-    case splashModeMono1:
-    case splashModeMono8:
-      imgData.lookup = (SplashColorPtr)gmalloc(n);
-      for (i = 0; i < n; ++i) {
-	pix = (Guchar)i;
-	colorMap->getGray(&pix, &gray, state->getRenderingIntent());
-	imgData.lookup[i] = colToByte(gray);
-      }
-      break;
-    case splashModeRGB8:
-    case splashModeBGR8:
-      imgData.lookup = (SplashColorPtr)gmallocn(n, 3);
-      for (i = 0; i < n; ++i) {
-	pix = (Guchar)i;
-	colorMap->getRGB(&pix, &rgb, state->getRenderingIntent());
-	imgData.lookup[3*i] = colToByte(rgb.r);
-	imgData.lookup[3*i+1] = colToByte(rgb.g);
-	imgData.lookup[3*i+2] = colToByte(rgb.b);
-      }
-      break;
-#if SPLASH_CMYK
-    case splashModeCMYK8:
-      imgData.lookup = (SplashColorPtr)gmallocn(n, 4);
-      for (i = 0; i < n; ++i) {
-	pix = (Guchar)i;
-	colorMap->getCMYK(&pix, &cmyk, state->getRenderingIntent());
-	imgData.lookup[4*i] = colToByte(cmyk.c);
-	imgData.lookup[4*i+1] = colToByte(cmyk.m);
-	imgData.lookup[4*i+2] = colToByte(cmyk.y);
-	imgData.lookup[4*i+3] = colToByte(cmyk.k);
-      }
-      break;
-#endif
+  } else if (colorMap->getNumPixelComps() == 2 &&
+	     height > 65536 / width) {
+    imgData.lookup = buildColorMapLookupTable2Idx(colorMap, state);
+    if (imgData.lookup) {
+      src = maskColors ? &alphaImageLookup2Src : &imageLookup2Src;
     }
   }
 
+  SplashColorMode srcMode;
   if (colorMode == splashModeMono1) {
     srcMode = splashModeMono8;
   } else if (colorMode == splashModeBGR8) {
@@ -3091,9 +3418,9 @@ void SplashOutputDev::drawImage(GfxState *state, Object *ref, Stream *str,
   } else {
     srcMode = colorMode;
   }
-  src = maskColors ? &alphaImageSrc : &imageSrc;
-  imgTag = makeImageTag(ref, state->getRenderingIntent(),
-			colorMap->getColorSpace());
+
+  GString *imgTag = makeImageTag(ref, state->getRenderingIntent(),
+				 colorMap->getColorSpace());
   splash->drawImage(imgTag,
 		    src, &imgData, srcMode, maskColors ? gTrue : gFalse,
 		    width, height, mat, interpolate);
@@ -3103,12 +3430,13 @@ void SplashOutputDev::drawImage(GfxState *state, Object *ref, Stream *str,
       ++imgData.y;
     }
   }
-
   delete imgTag;
+
   gfree(imgData.lookup);
   delete imgData.imgStr;
   str->close();
 }
+
 
 struct SplashOutMaskedImageData {
   ImageStream *imgStr;
@@ -3124,13 +3452,8 @@ struct SplashOutMaskedImageData {
 GBool SplashOutputDev::maskedImageSrc(void *data, SplashColorPtr colorLine,
 				      Guchar *alphaLine) {
   SplashOutMaskedImageData *imgData = (SplashOutMaskedImageData *)data;
-  Guchar *p, *aq;
-  SplashColorPtr q, col;
-  static Guchar bitToByte[2] = {0x00, 0xff};
-  Guchar *maskPtr;
-  int maskShift;
-  int n, x;
 
+  Guchar *p;
   if (imgData->y == imgData->height ||
       !(p = imgData->imgStr->getLine())) {
     memset(colorLine, 0,
@@ -3139,9 +3462,11 @@ GBool SplashOutputDev::maskedImageSrc(void *data, SplashColorPtr colorLine,
     return gFalse;
   }
 
-  maskPtr = imgData->mask->getDataPtr() +
-              imgData->y * imgData->mask->getRowSize();
-  aq = alphaLine;
+  Guchar *maskPtr = imgData->mask->getDataPtr() +
+                      imgData->y * imgData->mask->getRowSize();
+  Guchar *aq = alphaLine;
+  static Guchar bitToByte[2] = {0x00, 0xff};
+  int x;
   for (x = 0; x <= imgData->width - 8; x += 8) {
     aq[0] = bitToByte[(*maskPtr >> 7) & 1];
     aq[1] = bitToByte[(*maskPtr >> 6) & 1];
@@ -3154,64 +3479,111 @@ GBool SplashOutputDev::maskedImageSrc(void *data, SplashColorPtr colorLine,
     aq += 8;
     ++maskPtr;
   }
-  maskShift = 7;
+  int maskShift = 7;
   for (; x < imgData->width; ++x) {
     *aq++ = bitToByte[(*maskPtr >> maskShift) & 1];
     --maskShift;
   }
 
-  if (imgData->lookup) {
-    switch (imgData->colorMode) {
-    case splashModeMono1:
-    case splashModeMono8:
-      for (x = 0, q = colorLine; x < imgData->width; ++x, ++p) {
-	*q++ = imgData->lookup[*p];
-      }
-      break;
-    case splashModeRGB8:
-    case splashModeBGR8:
-      for (x = 0, q = colorLine; x < imgData->width; ++x, ++p) {
-	col = &imgData->lookup[3 * *p];
-	*q++ = col[0];
-	*q++ = col[1];
-	*q++ = col[2];
-      }
-      break;
+  switch (imgData->colorMode) {
+  case splashModeMono1:
+  case splashModeMono8:
+    imgData->colorMap->getGrayByteLine(p, colorLine, imgData->width,
+				       imgData->ri);
+    break;
+  case splashModeRGB8:
+  case splashModeBGR8:
+    imgData->colorMap->getRGBByteLine(p, colorLine, imgData->width,
+				      imgData->ri);
+    break;
 #if SPLASH_CMYK
-    case splashModeCMYK8:
-      for (x = 0, q = colorLine; x < imgData->width; ++x, ++p) {
-	col = &imgData->lookup[4 * *p];
-	*q++ = col[0];
-	*q++ = col[1];
-	*q++ = col[2];
-	*q++ = col[3];
-      }
-      break;
+  case splashModeCMYK8:
+    imgData->colorMap->getCMYKByteLine(p, colorLine, imgData->width,
+				       imgData->ri);
+    break;
 #endif
-    }
-  } else {
-    switch (imgData->colorMode) {
-    case splashModeMono1:
-    case splashModeMono8:
-      imgData->colorMap->getGrayByteLine(p, colorLine, imgData->width,
-					 imgData->ri);
-      break;
-    case splashModeRGB8:
-    case splashModeBGR8:
-      imgData->colorMap->getRGBByteLine(p, colorLine, imgData->width,
-					imgData->ri);
-      break;
-#if SPLASH_CMYK
-    case splashModeCMYK8:
-      imgData->colorMap->getCMYKByteLine(p, colorLine, imgData->width,
-					 imgData->ri);
-      break;
-#endif
-    }
   }
 
   if (imgData->invert) {
-    n = imgData->width * splashColorModeNComps[imgData->colorMode];
+    int n = imgData->width * splashColorModeNComps[imgData->colorMode];
+    for (x = 0, p = colorLine; x < n; ++x, ++p) {
+      *p ^= 0xff;
+    }
+  }
+
+  ++imgData->y;
+  return gTrue;
+}
+
+GBool SplashOutputDev::maskedImageLookup1Src(void *data,
+					     SplashColorPtr colorLine,
+					     Guchar *alphaLine) {
+  SplashOutMaskedImageData *imgData = (SplashOutMaskedImageData *)data;
+
+  Guchar *p;
+  if (imgData->y == imgData->height ||
+      !(p = imgData->imgStr->getLine())) {
+    memset(colorLine, 0,
+	   imgData->width * splashColorModeNComps[imgData->colorMode]);
+    memset(alphaLine, 0, imgData->width);
+    return gFalse;
+  }
+
+  Guchar *maskPtr = imgData->mask->getDataPtr() +
+                      imgData->y * imgData->mask->getRowSize();
+  Guchar *aq = alphaLine;
+  static Guchar bitToByte[2] = {0x00, 0xff};
+  int x;
+  for (x = 0; x <= imgData->width - 8; x += 8) {
+    aq[0] = bitToByte[(*maskPtr >> 7) & 1];
+    aq[1] = bitToByte[(*maskPtr >> 6) & 1];
+    aq[2] = bitToByte[(*maskPtr >> 5) & 1];
+    aq[3] = bitToByte[(*maskPtr >> 4) & 1];
+    aq[4] = bitToByte[(*maskPtr >> 3) & 1];
+    aq[5] = bitToByte[(*maskPtr >> 2) & 1];
+    aq[6] = bitToByte[(*maskPtr >> 1) & 1];
+    aq[7] = bitToByte[*maskPtr & 1];
+    aq += 8;
+    ++maskPtr;
+  }
+  int maskShift = 7;
+  for (; x < imgData->width; ++x) {
+    *aq++ = bitToByte[(*maskPtr >> maskShift) & 1];
+    --maskShift;
+  }
+
+  SplashColorPtr q, col;
+  switch (imgData->colorMode) {
+  case splashModeMono1:
+  case splashModeMono8:
+    for (x = 0, q = colorLine; x < imgData->width; ++x, ++p) {
+      *q++ = imgData->lookup[*p];
+    }
+    break;
+  case splashModeRGB8:
+  case splashModeBGR8:
+    for (x = 0, q = colorLine; x < imgData->width; ++x, ++p) {
+      col = &imgData->lookup[3 * *p];
+      *q++ = col[0];
+      *q++ = col[1];
+      *q++ = col[2];
+    }
+    break;
+#if SPLASH_CMYK
+  case splashModeCMYK8:
+    for (x = 0, q = colorLine; x < imgData->width; ++x, ++p) {
+      col = &imgData->lookup[4 * *p];
+      *q++ = col[0];
+      *q++ = col[1];
+      *q++ = col[2];
+      *q++ = col[3];
+    }
+    break;
+#endif
+  }
+
+  if (imgData->invert) {
+    int n = imgData->width * splashColorModeNComps[imgData->colorMode];
     for (x = 0, p = colorLine; x < n; ++x, ++p) {
       *p ^= 0xff;
     }
@@ -3228,174 +3600,133 @@ void SplashOutputDev::drawMaskedImage(GfxState *state, Object *ref,
 				      Object *maskRef, Stream *maskStr,
 				      int maskWidth, int maskHeight,
 				      GBool maskInvert, GBool interpolate) {
-  GfxImageColorMap *maskColorMap;
-  Object maskDecode, decodeLow, decodeHigh;
-  double *ctm;
-  SplashCoord mat[6];
-  SplashOutMaskedImageData imgData;
-  SplashOutImageMaskData imgMaskData;
-  SplashColorMode srcMode;
-  SplashBitmap *maskBitmap;
-  Splash *maskSplash;
-  GString *imgTag;
-  SplashColor maskColor;
-  GfxGray gray;
-  GfxRGB rgb;
-#if SPLASH_CMYK
-  GfxCMYK cmyk;
-#endif
-  Guchar pix;
-  int n, i;
-
-  setOverprintMask(state, colorMap->getColorSpace(),
-		   state->getFillOverprint(), state->getOverprintMode(),
-		   NULL);
-
-  ctm = state->getCTM();
-  reduceImageResolution(str, ctm, &width, &height);
-  reduceImageResolution(maskStr, ctm, &maskWidth, &maskHeight);
-
   // If the mask is higher resolution than the image, use
   // drawSoftMaskedImage() instead.
   if (maskWidth > width || maskHeight > height) {
+    Object decodeLow, decodeHigh, maskDecode;
     decodeLow.initInt(maskInvert ? 0 : 1);
     decodeHigh.initInt(maskInvert ? 1 : 0);
     maskDecode.initArray(xref);
     maskDecode.arrayAdd(&decodeLow);
     maskDecode.arrayAdd(&decodeHigh);
-    maskColorMap = new GfxImageColorMap(1, &maskDecode,
-					new GfxDeviceGrayColorSpace());
+    GfxImageColorMap *maskColorMap =
+        new GfxImageColorMap(1, &maskDecode, new GfxDeviceGrayColorSpace());
     maskDecode.free();
     drawSoftMaskedImage(state, ref, str, width, height, colorMap,
 			maskRef, maskStr, maskWidth, maskHeight, maskColorMap,
 			NULL, interpolate);
     delete maskColorMap;
-
-  } else {
-
-    //----- scale the mask image to the same size as the source image
-
-    mat[0] = (SplashCoord)width;
-    mat[1] = 0;
-    mat[2] = 0;
-    mat[3] = (SplashCoord)height;
-    mat[4] = 0;
-    mat[5] = 0;
-    imgMaskData.imgStr = new ImageStream(maskStr, maskWidth, 1, 1);
-    imgMaskData.imgStr->reset();
-    imgMaskData.invert = maskInvert ? 0 : 1;
-    imgMaskData.width = maskWidth;
-    imgMaskData.height = maskHeight;
-    imgMaskData.y = 0;
-    traceMessage("masked image bitmap");
-    maskBitmap = new SplashBitmap(width, height, 1, splashModeMono1,
-				  gFalse, gTrue, bitmap);
-    maskSplash = new Splash(maskBitmap, gFalse, splash->getImageCache());
-    maskSplash->setStrokeAdjust(
-		       mapStrokeAdjustMode[globalParams->getStrokeAdjust()]);
-    maskSplash->setEnablePathSimplification(
-		       globalParams->getEnablePathSimplification());
-    maskColor[0] = 0;
-    maskSplash->clear(maskColor);
-    maskColor[0] = 0xff;
-    maskSplash->setFillPattern(new SplashSolidColor(maskColor));
-    // use "glyph mode" here to get the correct scaled size
-    maskSplash->fillImageMask(NULL, &imageMaskSrc, &imgMaskData,
-			      maskWidth, maskHeight, mat, gTrue, interpolate,
-			      globalParams->getImageMaskAntialias());
-    delete imgMaskData.imgStr;
-    maskStr->close();
-    delete maskSplash;
-
-    //----- draw the source image
-
-    mat[0] = ctm[0];
-    mat[1] = ctm[1];
-    mat[2] = -ctm[2];
-    mat[3] = -ctm[3];
-    mat[4] = ctm[2] + ctm[4];
-    mat[5] = ctm[3] + ctm[5];
-
-    imgData.imgStr = new ImageStream(str, width,
-				     colorMap->getNumPixelComps(),
-				     colorMap->getBits());
-    imgData.imgStr->reset();
-    imgData.colorMap = colorMap;
-    imgData.ri = state->getRenderingIntent();
-    imgData.mask = maskBitmap;
-    imgData.colorMode = colorMode;
-    imgData.invert = reverseVideo && reverseVideoInvertImages;
-    imgData.width = width;
-    imgData.height = height;
-    imgData.y = 0;
-
-    // special case for one-channel (monochrome/gray/separation) images:
-    // build a lookup table here
-    imgData.lookup = NULL;
-    if (colorMap->getNumPixelComps() == 1) {
-      if (colorMap->getBits() <= 8) {
-	n = 1 << colorMap->getBits();
-      } else {
-	// GfxImageColorMap and ImageStream compress 16-bit samples to 8-bit
-	n = 1 << 8;
-      }
-      switch (colorMode) {
-      case splashModeMono1:
-      case splashModeMono8:
-	imgData.lookup = (SplashColorPtr)gmalloc(n);
-	for (i = 0; i < n; ++i) {
-	  pix = (Guchar)i;
-	  colorMap->getGray(&pix, &gray, state->getRenderingIntent());
-	  imgData.lookup[i] = colToByte(gray);
-	}
-	break;
-      case splashModeRGB8:
-      case splashModeBGR8:
-	imgData.lookup = (SplashColorPtr)gmallocn(n, 3);
-	for (i = 0; i < n; ++i) {
-	  pix = (Guchar)i;
-	  colorMap->getRGB(&pix, &rgb, state->getRenderingIntent());
-	  imgData.lookup[3*i] = colToByte(rgb.r);
-	  imgData.lookup[3*i+1] = colToByte(rgb.g);
-	  imgData.lookup[3*i+2] = colToByte(rgb.b);
-	}
-	break;
-#if SPLASH_CMYK
-      case splashModeCMYK8:
-	imgData.lookup = (SplashColorPtr)gmallocn(n, 4);
-	for (i = 0; i < n; ++i) {
-	  pix = (Guchar)i;
-	  colorMap->getCMYK(&pix, &cmyk, state->getRenderingIntent());
-	  imgData.lookup[4*i] = colToByte(cmyk.c);
-	  imgData.lookup[4*i+1] = colToByte(cmyk.m);
-	  imgData.lookup[4*i+2] = colToByte(cmyk.y);
-	  imgData.lookup[4*i+3] = colToByte(cmyk.k);
-	}
-	break;
-#endif
-      }
-    }
-
-    if (colorMode == splashModeMono1) {
-      srcMode = splashModeMono8;
-    } else if (colorMode == splashModeBGR8) {
-      srcMode = splashModeRGB8;
-    } else {
-      srcMode = colorMode;
-    }
-    imgTag = makeImageTag(ref, state->getRenderingIntent(),
-			  colorMap->getColorSpace());
-    splash->drawImage(imgTag,
-		      &maskedImageSrc, &imgData, srcMode, gTrue,
-		      width, height, mat, interpolate);
-
-    delete imgTag;
-    delete maskBitmap;
-    gfree(imgData.lookup);
-    delete imgData.imgStr;
-    str->close();
+    return;
   }
+
+
+  drawMaskedImage8(state, ref, str, width, height, colorMap,
+		   maskRef, maskStr, maskWidth, maskHeight,
+		   maskInvert, interpolate);
 }
+
+void SplashOutputDev::drawMaskedImage8(GfxState *state, Object *ref,
+				       Stream *str, int width, int height,
+				       GfxImageColorMap *colorMap,
+				       Object *maskRef, Stream *maskStr,
+				       int maskWidth, int maskHeight,
+				       GBool maskInvert, GBool interpolate) {
+  setOverprintMask(state, colorMap->getColorSpace(),
+		   state->getFillOverprint(), state->getOverprintMode(),
+		   NULL);
+
+  double *ctm = state->getCTM();
+  reduceImageResolution(str, ctm, &width, &height);
+  reduceImageResolution(maskStr, ctm, &maskWidth, &maskHeight);
+
+  //----- scale the mask image to the same size as the source image
+
+  SplashCoord mat[6];
+  mat[0] = (SplashCoord)width;
+  mat[1] = 0;
+  mat[2] = 0;
+  mat[3] = (SplashCoord)height;
+  mat[4] = 0;
+  mat[5] = 0;
+  SplashOutImageMaskData imgMaskData;
+  imgMaskData.imgStr = new ImageStream(maskStr, maskWidth, 1, 1);
+  imgMaskData.imgStr->reset();
+  imgMaskData.invert = maskInvert ? 0 : 1;
+  imgMaskData.width = maskWidth;
+  imgMaskData.height = maskHeight;
+  imgMaskData.y = 0;
+  traceMessage("masked image bitmap");
+  SplashBitmap *maskBitmap = new SplashBitmap(width, height, 1, splashModeMono1,
+					      gFalse, gTrue, bitmapMemCache);
+  Splash *maskSplash = new Splash(maskBitmap, gFalse, splash->getImageCache());
+  maskSplash->setStrokeAdjust(
+		  mapStrokeAdjustMode[globalParams->getStrokeAdjust()]);
+  maskSplash->setEnablePathSimplification(
+		  globalParams->getEnablePathSimplification());
+  SplashColor maskColor;
+  maskColor[0] = 0;
+  maskSplash->clear(maskColor);
+  maskColor[0] = 0xff;
+  maskSplash->setFillPattern(new SplashSolidColor(maskColor));
+  // use "glyph mode" here to get the correct scaled size
+  maskSplash->fillImageMask(NULL, &imageMaskSrc, &imgMaskData,
+			    maskWidth, maskHeight, mat, gTrue, interpolate,
+			    globalParams->getImageMaskAntialias());
+  delete imgMaskData.imgStr;
+  maskStr->close();
+  delete maskSplash;
+
+  //----- draw the source image
+
+  mat[0] = ctm[0];
+  mat[1] = ctm[1];
+  mat[2] = -ctm[2];
+  mat[3] = -ctm[3];
+  mat[4] = ctm[2] + ctm[4];
+  mat[5] = ctm[3] + ctm[5];
+  SplashOutMaskedImageData imgData;
+  imgData.imgStr = new ImageStream(str, width,
+				   colorMap->getNumPixelComps(),
+				   colorMap->getBits());
+  imgData.imgStr->reset();
+  imgData.colorMap = colorMap;
+  imgData.ri = state->getRenderingIntent();
+  imgData.mask = maskBitmap;
+  imgData.colorMode = colorMode;
+  imgData.invert = reverseVideo && reverseVideoInvertImages;
+  imgData.width = width;
+  imgData.height = height;
+  imgData.y = 0;
+
+  // special case for one-channel (monochrome/gray/separation) images:
+  // build a lookup table here
+  imgData.lookup = NULL;
+  if (colorMap->getNumPixelComps() == 1) {
+    imgData.lookup = buildColorMapLookupTable1Idx(colorMap, state);
+  }
+
+  SplashColorMode srcMode;
+  if (colorMode == splashModeMono1) {
+    srcMode = splashModeMono8;
+  } else if (colorMode == splashModeBGR8) {
+    srcMode = splashModeRGB8;
+  } else {
+    srcMode = colorMode;
+  }
+  GString *imgTag = makeImageTag(ref, state->getRenderingIntent(),
+				 colorMap->getColorSpace());
+  splash->drawImage(imgTag,
+		    imgData.lookup ? &maskedImageLookup1Src : &maskedImageSrc,
+		    &imgData, srcMode, gTrue,
+		    width, height, mat, interpolate);
+  delete imgTag;
+
+  delete maskBitmap;
+  gfree(imgData.lookup);
+  delete imgData.imgStr;
+  str->close();
+}
+
 
 struct SplashOutSoftMaskMatteImageData {
   ImageStream *imgStr;
@@ -3512,29 +3843,35 @@ void SplashOutputDev::drawSoftMaskedImage(GfxState *state, Object *ref,
 					  int maskWidth, int maskHeight,
 					  GfxImageColorMap *maskColorMap,
 					  double *matte, GBool interpolate) {
-  double *ctm;
-  SplashCoord mat[6];
-  SplashOutImageData imgData;
-  SplashOutImageData imgMaskData;
-  SplashOutSoftMaskMatteImageData matteImgData;
-  GString *imgTag;
-  SplashColorMode srcMode;
-  SplashBitmap *maskBitmap;
-  Splash *maskSplash;
-  GfxColor matteColor;
-  GfxGray gray;
-  GfxRGB rgb;
-#if SPLASH_CMYK
-  GfxCMYK cmyk;
-#endif
-  Guchar pix;
-  int n, i;
+  // handle a preblended image
+  if (matte && width == maskWidth && height == maskHeight) {
+    drawSoftMaskedMatteImage8(state, ref, str, width, height,
+			      colorMap, maskRef, maskStr,
+			      maskWidth, maskHeight, maskColorMap,
+			      matte, interpolate);
+    return;
+  }
 
+
+  drawSoftMaskedImage8(state, ref, str, width, height,
+		       colorMap, maskRef, maskStr,
+		       maskWidth, maskHeight, maskColorMap,
+		       matte, interpolate);
+}
+
+void SplashOutputDev::drawSoftMaskedImage8(GfxState *state, Object *ref,
+					   Stream *str, int width, int height,
+					   GfxImageColorMap *colorMap,
+					   Object *maskRef, Stream *maskStr,
+					   int maskWidth, int maskHeight,
+					   GfxImageColorMap *maskColorMap,
+					   double *matte, GBool interpolate) {
   setOverprintMask(state, colorMap->getColorSpace(),
 		   state->getFillOverprint(), state->getOverprintMode(),
 		   NULL);
 
-  ctm = state->getCTM();
+  double *ctm = state->getCTM();
+  SplashCoord mat[6];
   mat[0] = ctm[0];
   mat[1] = ctm[1];
   mat[2] = -ctm[2];
@@ -3542,6 +3879,7 @@ void SplashOutputDev::drawSoftMaskedImage(GfxState *state, Object *ref,
   mat[4] = ctm[2] + ctm[4];
   mat[5] = ctm[3] + ctm[5];
 
+  SplashColorMode srcMode;
   if (colorMode == splashModeMono1) {
     srcMode = splashModeMono8;
   } else if (colorMode == splashModeBGR8) {
@@ -3550,198 +3888,324 @@ void SplashOutputDev::drawSoftMaskedImage(GfxState *state, Object *ref,
     srcMode = colorMode;
   }
 
-  //----- handle a preblended image
+  reduceImageResolution(str, ctm, &width, &height);
+  reduceImageResolution(maskStr, ctm, &maskWidth, &maskHeight);
 
-  if (matte && width == maskWidth && height == maskHeight) {
+  //----- set up the soft mask
 
-    // the image and mask must be the same size, so don't call
-    // reduceImageResolution(), which might result in different
-    // reductions (e.g., if the image filter supports resolution
-    // reduction but the mask filter doesn't)
-
-    matteImgData.imgStr = new ImageStream(str, width,
-					  colorMap->getNumPixelComps(),
-					  colorMap->getBits());
-    matteImgData.imgStr->reset();
-    matteImgData.maskStr = new ImageStream(maskStr, maskWidth,
-					   maskColorMap->getNumPixelComps(),
-					   maskColorMap->getBits());
-    matteImgData.maskStr->reset();
-    matteImgData.colorMap = colorMap;
-    matteImgData.ri = state->getRenderingIntent();
-    n = colorMap->getNumPixelComps();
-    for (i = 0; i < n; ++i) {
-      matteColor.c[i] = dblToCol(matte[i]);
-    }
-    switch (colorMode) {
-    case splashModeMono1:
-    case splashModeMono8:
-      colorMap->getColorSpace()->getGray(&matteColor, &gray,
-					 state->getRenderingIntent());
-      matteImgData.matte[0] = colToByte(gray);
-      break;
-    case splashModeRGB8:
-    case splashModeBGR8:
-      colorMap->getColorSpace()->getRGB(&matteColor, &rgb,
-					state->getRenderingIntent());
-      matteImgData.matte[0] = colToByte(rgb.r);
-      matteImgData.matte[1] = colToByte(rgb.g);
-      matteImgData.matte[2] = colToByte(rgb.b);
-      break;
-#if SPLASH_CMYK
-    case splashModeCMYK8:
-      colorMap->getColorSpace()->getCMYK(&matteColor, &cmyk,
-					 state->getRenderingIntent());
-      matteImgData.matte[0] = colToByte(cmyk.c);
-      matteImgData.matte[1] = colToByte(cmyk.m);
-      matteImgData.matte[2] = colToByte(cmyk.y);
-      matteImgData.matte[3] = colToByte(cmyk.k);
-      break;
-#endif
-    }
-    //~ could add the matteImgData.lookup special case
-    matteImgData.colorMode = colorMode;
-    matteImgData.invert = reverseVideo && reverseVideoInvertImages;
-    matteImgData.width = width;
-    matteImgData.height = height;
-    matteImgData.y = 0;
-    imgTag = makeImageTag(ref, state->getRenderingIntent(),
-			  colorMap->getColorSpace());
-    splash->drawImage(imgTag, &softMaskMatteImageSrc, &matteImgData,
-		      srcMode, gTrue, width, height, mat, interpolate);
-    delete imgTag;
-    delete matteImgData.maskStr;
-    delete matteImgData.imgStr;
-    maskStr->close();
-    str->close();
-
+  SplashOutImageData imgMaskData;
+  imgMaskData.imgStr = new ImageStream(maskStr, maskWidth,
+				       maskColorMap->getNumPixelComps(),
+				       maskColorMap->getBits());
+  imgMaskData.imgStr->reset();
+  imgMaskData.colorMap = maskColorMap;
+  imgMaskData.ri = state->getRenderingIntent();
+  imgMaskData.maskColors = NULL;
+  imgMaskData.colorMode = splashModeMono8;
+  imgMaskData.invert = gFalse;
+  imgMaskData.width = maskWidth;
+  imgMaskData.height = maskHeight;
+  imgMaskData.y = 0;
+  int n;
+  if (maskColorMap->getBits() <= 8) {
+    n = 1 << maskColorMap->getBits();
   } else {
+    // GfxImageColorMap and ImageStream compress 16-bit samples to 8-bit
+    n = 1 << 8;
+  }
+  imgMaskData.lookup = (SplashColorPtr)gmalloc(n);
+  GfxGray gray;
+  for (int i = 0; i < n; ++i) {
+    Guchar pix = (Guchar)i;
+    maskColorMap->getGray(&pix, &gray, state->getRenderingIntent());
+    imgMaskData.lookup[i] = colToByte(gray);
+  }
+  traceMessage("soft masked image bitmap");
+  SplashBitmap *maskBitmap = new SplashBitmap(bitmap->getWidth(),
+					      bitmap->getHeight(),
+					      1, splashModeMono8,
+					      gFalse, gTrue,
+					      bitmapMemCache);
+  Splash *maskSplash = new Splash(maskBitmap, vectorAntialias,
+			  splash->getImageCache());
+  maskSplash->setStrokeAdjust(
+		  mapStrokeAdjustMode[globalParams->getStrokeAdjust()]);
+  maskSplash->setEnablePathSimplification(
+		  globalParams->getEnablePathSimplification());
+  clearMaskRegion(state, maskSplash, 0, 0, 1, 1);
+  maskSplash->drawImage(NULL, &imageLookup1Src, &imgMaskData,
+			splashModeMono8, gFalse,
+			maskWidth, maskHeight, mat, interpolate);
+  delete imgMaskData.imgStr;
+  maskStr->close();
+  gfree(imgMaskData.lookup);
+  delete maskSplash;
+  splash->setSoftMask(maskBitmap);
 
-    reduceImageResolution(str, ctm, &width, &height);
-    reduceImageResolution(maskStr, ctm, &maskWidth, &maskHeight);
+  //----- draw the source image
 
-    //----- set up the soft mask
+  SplashOutImageData imgData;
+  imgData.imgStr = new ImageStream(str, width,
+				   colorMap->getNumPixelComps(),
+				   colorMap->getBits());
+  imgData.imgStr->reset();
+  imgData.colorMap = colorMap;
+  imgData.ri = state->getRenderingIntent();
+  imgData.maskColors = NULL;
+  imgData.colorMode = colorMode;
+  imgData.invert = reverseVideo && reverseVideoInvertImages;
+  imgData.width = width;
+  imgData.height = height;
+  imgData.y = 0;
 
-    imgMaskData.imgStr = new ImageStream(maskStr, maskWidth,
+  // special case for one-channel (monochrome/gray/separation) images:
+  // build a lookup table here
+  imgData.lookup = NULL;
+  if (colorMap->getNumPixelComps() == 1) {
+    imgData.lookup = buildColorMapLookupTable1Idx(colorMap, state);
+  }
+
+  GString *imgTag = makeImageTag(ref, state->getRenderingIntent(),
+				 colorMap->getColorSpace());
+  splash->drawImage(imgTag, imgData.lookup ? imageLookup1Src : imageSrc,
+		    &imgData, srcMode, gFalse, width, height, mat,
+		    interpolate);
+  delete imgTag;
+
+  splash->setSoftMask(NULL);
+  gfree(imgData.lookup);
+  delete imgData.imgStr;
+  str->close();
+}
+
+
+void SplashOutputDev::drawSoftMaskedMatteImage8(
+			  GfxState *state, Object *ref,
+			  Stream *str, int width, int height,
+			  GfxImageColorMap *colorMap,
+			  Object *maskRef, Stream *maskStr,
+			  int maskWidth, int maskHeight,
+			  GfxImageColorMap *maskColorMap,
+			  double *matte, GBool interpolate) {
+  setOverprintMask(state, colorMap->getColorSpace(),
+		   state->getFillOverprint(), state->getOverprintMode(),
+		   NULL);
+
+  double *ctm = state->getCTM();
+  SplashCoord mat[6];
+  mat[0] = ctm[0];
+  mat[1] = ctm[1];
+  mat[2] = -ctm[2];
+  mat[3] = -ctm[3];
+  mat[4] = ctm[2] + ctm[4];
+  mat[5] = ctm[3] + ctm[5];
+
+  SplashColorMode srcMode;
+  if (colorMode == splashModeMono1) {
+    srcMode = splashModeMono8;
+  } else if (colorMode == splashModeBGR8) {
+    srcMode = splashModeRGB8;
+  } else {
+    srcMode = colorMode;
+  }
+
+  // the image and mask must be the same size, so don't call
+  // reduceImageResolution(), which might result in different
+  // reductions (e.g., if the image filter supports resolution
+  // reduction but the mask filter doesn't)
+
+  SplashOutSoftMaskMatteImageData matteImgData;
+  matteImgData.imgStr = new ImageStream(str, width,
+					colorMap->getNumPixelComps(),
+					colorMap->getBits());
+  matteImgData.imgStr->reset();
+  matteImgData.maskStr = new ImageStream(maskStr, maskWidth,
 					 maskColorMap->getNumPixelComps(),
 					 maskColorMap->getBits());
-    imgMaskData.imgStr->reset();
-    imgMaskData.colorMap = maskColorMap;
-    imgMaskData.ri = state->getRenderingIntent();
-    imgMaskData.maskColors = NULL;
-    imgMaskData.colorMode = splashModeMono8;
-    imgMaskData.invert = gFalse;
-    imgMaskData.width = maskWidth;
-    imgMaskData.height = maskHeight;
-    imgMaskData.y = 0;
-    if (maskColorMap->getBits() <= 8) {
-      n = 1 << maskColorMap->getBits();
-    } else {
-      // GfxImageColorMap and ImageStream compress 16-bit samples to 8-bit
-      n = 1 << 8;
-    }
-    imgMaskData.lookup = (SplashColorPtr)gmalloc(n);
-    for (i = 0; i < n; ++i) {
-      pix = (Guchar)i;
-      maskColorMap->getGray(&pix, &gray, state->getRenderingIntent());
-      imgMaskData.lookup[i] = colToByte(gray);
-    }
-    traceMessage("soft masked image bitmap");
-    maskBitmap = new SplashBitmap(bitmap->getWidth(), bitmap->getHeight(),
-				  1, splashModeMono8, gFalse, gTrue, bitmap);
-    maskSplash = new Splash(maskBitmap, vectorAntialias,
-			    splash->getImageCache());
-    maskSplash->setStrokeAdjust(
-		       mapStrokeAdjustMode[globalParams->getStrokeAdjust()]);
-    maskSplash->setEnablePathSimplification(
-		       globalParams->getEnablePathSimplification());
-    clearMaskRegion(state, maskSplash, 0, 0, 1, 1);
-    maskSplash->drawImage(NULL,
-			  &imageSrc, &imgMaskData, splashModeMono8, gFalse,
-			  maskWidth, maskHeight, mat, interpolate);
-    delete imgMaskData.imgStr;
-    maskStr->close();
-    gfree(imgMaskData.lookup);
-    delete maskSplash;
-    splash->setSoftMask(maskBitmap);
-
-    //----- draw the source image
-
-    imgData.imgStr = new ImageStream(str, width,
-				     colorMap->getNumPixelComps(),
-				     colorMap->getBits());
-    imgData.imgStr->reset();
-    imgData.colorMap = colorMap;
-    imgData.ri = state->getRenderingIntent();
-    imgData.maskColors = NULL;
-    imgData.colorMode = colorMode;
-    imgData.invert = reverseVideo && reverseVideoInvertImages;
-    imgData.width = width;
-    imgData.height = height;
-    imgData.y = 0;
-
-    // special case for one-channel (monochrome/gray/separation) images:
-    // build a lookup table here
-    imgData.lookup = NULL;
-    if (colorMap->getNumPixelComps() == 1) {
-      if (colorMap->getBits() <= 8) {
-	n = 1 << colorMap->getBits();
-      } else {
-	// GfxImageColorMap and ImageStream compress 16-bit samples to 8-bit
-	n = 1 << 8;
-      }
-      switch (colorMode) {
-      case splashModeMono1:
-      case splashModeMono8:
-	imgData.lookup = (SplashColorPtr)gmalloc(n);
-	for (i = 0; i < n; ++i) {
-	  pix = (Guchar)i;
-	  colorMap->getGray(&pix, &gray, state->getRenderingIntent());
-	  imgData.lookup[i] = colToByte(gray);
-	}
-	break;
-      case splashModeRGB8:
-      case splashModeBGR8:
-	imgData.lookup = (SplashColorPtr)gmallocn(n, 3);
-	for (i = 0; i < n; ++i) {
-	  pix = (Guchar)i;
-	  colorMap->getRGB(&pix, &rgb, state->getRenderingIntent());
-	  imgData.lookup[3*i] = colToByte(rgb.r);
-	  imgData.lookup[3*i+1] = colToByte(rgb.g);
-	  imgData.lookup[3*i+2] = colToByte(rgb.b);
-	}
-	break;
-#if SPLASH_CMYK
-      case splashModeCMYK8:
-	imgData.lookup = (SplashColorPtr)gmallocn(n, 4);
-	for (i = 0; i < n; ++i) {
-	  pix = (Guchar)i;
-	  colorMap->getCMYK(&pix, &cmyk, state->getRenderingIntent());
-	  imgData.lookup[4*i] = colToByte(cmyk.c);
-	  imgData.lookup[4*i+1] = colToByte(cmyk.m);
-	  imgData.lookup[4*i+2] = colToByte(cmyk.y);
-	  imgData.lookup[4*i+3] = colToByte(cmyk.k);
-	}
-	break;
-#endif
-      }
-    }
-
-    imgTag = makeImageTag(ref, state->getRenderingIntent(),
-			  colorMap->getColorSpace());
-    splash->drawImage(imgTag,
-		      &imageSrc, &imgData, srcMode, gFalse, width, height, mat,
-		      interpolate);
-
-    splash->setSoftMask(NULL);
-    delete imgTag;
-    gfree(imgData.lookup);
-    delete imgData.imgStr;
-
-
-    str->close();
+  matteImgData.maskStr->reset();
+  matteImgData.colorMap = colorMap;
+  matteImgData.ri = state->getRenderingIntent();
+  int n = colorMap->getNumPixelComps();
+  GfxColor matteColor;
+  for (int i = 0; i < n; ++i) {
+    matteColor.c[i] = dblToCol(matte[i]);
   }
+  switch (colorMode) {
+  case splashModeMono1:
+  case splashModeMono8: {
+    GfxGray gray;
+    colorMap->getColorSpace()->getGray(&matteColor, &gray,
+				       state->getRenderingIntent());
+    matteImgData.matte[0] = colToByte(gray);
+    break;
+  }
+  case splashModeRGB8:
+  case splashModeBGR8: {
+    GfxRGB rgb;
+    colorMap->getColorSpace()->getRGB(&matteColor, &rgb,
+				      state->getRenderingIntent());
+    matteImgData.matte[0] = colToByte(rgb.r);
+    matteImgData.matte[1] = colToByte(rgb.g);
+    matteImgData.matte[2] = colToByte(rgb.b);
+    break;
+  }
+#if SPLASH_CMYK
+  case splashModeCMYK8: {
+    GfxCMYK cmyk;
+    colorMap->getColorSpace()->getCMYK(&matteColor, &cmyk,
+				       state->getRenderingIntent());
+    matteImgData.matte[0] = colToByte(cmyk.c);
+    matteImgData.matte[1] = colToByte(cmyk.m);
+    matteImgData.matte[2] = colToByte(cmyk.y);
+    matteImgData.matte[3] = colToByte(cmyk.k);
+    break;
+  }
+#endif
+  }
+  //~ could add the matteImgData.lookup special case
+  matteImgData.colorMode = colorMode;
+  matteImgData.invert = reverseVideo && reverseVideoInvertImages;
+  matteImgData.width = width;
+  matteImgData.height = height;
+  matteImgData.y = 0;
+  GString *imgTag = makeImageTag(ref, state->getRenderingIntent(),
+				 colorMap->getColorSpace());
+  splash->drawImage(imgTag, &softMaskMatteImageSrc, &matteImgData,
+		    srcMode, gTrue, width, height, mat, interpolate);
+  delete imgTag;
+
+  delete matteImgData.maskStr;
+  delete matteImgData.imgStr;
+  maskStr->close();
+  str->close();
 }
+
+
+SplashColorPtr SplashOutputDev::buildColorMapLookupTable1Idx(
+				    GfxImageColorMap *colorMap,
+				    GfxState *state) {
+  SplashColorPtr lookup = NULL;
+  int n;
+  if (colorMap->getBits() <= 8) {
+    n = 1 << colorMap->getBits();
+  } else {
+    // GfxImageColorMap and ImageStream compress 16-bit samples to 8-bit
+    n = 1 << 8;
+  }
+  switch (colorMode) {
+  case splashModeMono1:
+  case splashModeMono8:
+    lookup = (SplashColorPtr)gmalloc(n);
+    GfxGray gray;
+    for (int i = 0; i < n; ++i) {
+      Guchar pix = (Guchar)i;
+      colorMap->getGray(&pix, &gray, state->getRenderingIntent());
+      lookup[i] = colToByte(gray);
+    }
+    break;
+  case splashModeRGB8:
+  case splashModeBGR8:
+    lookup = (SplashColorPtr)gmallocn(n, 3);
+    GfxRGB rgb;
+    for (int i = 0; i < n; ++i) {
+      Guchar pix = (Guchar)i;
+      colorMap->getRGB(&pix, &rgb, state->getRenderingIntent());
+      lookup[3*i] = colToByte(rgb.r);
+      lookup[3*i+1] = colToByte(rgb.g);
+      lookup[3*i+2] = colToByte(rgb.b);
+    }
+    break;
+#if SPLASH_CMYK
+  case splashModeCMYK8:
+    lookup = (SplashColorPtr)gmallocn(n, 4);
+    GfxCMYK cmyk;
+    for (int i = 0; i < n; ++i) {
+      Guchar pix = (Guchar)i;
+      colorMap->getCMYK(&pix, &cmyk, state->getRenderingIntent());
+      lookup[4*i] = colToByte(cmyk.c);
+      lookup[4*i+1] = colToByte(cmyk.m);
+      lookup[4*i+2] = colToByte(cmyk.y);
+      lookup[4*i+3] = colToByte(cmyk.k);
+    }
+    break;
+#endif
+  }
+  return lookup;
+}
+
+SplashColorPtr SplashOutputDev::buildColorMapLookupTable2Idx(
+				    GfxImageColorMap *colorMap,
+				    GfxState *state) {
+  SplashColorPtr lookup = NULL;
+  int n;
+  if (colorMap->getBits() <= 8) {
+    n = 1 << colorMap->getBits();
+  } else {
+    // GfxImageColorMap and ImageStream compress 16-bit samples to 8-bit
+    n = 1 << 8;
+  }
+  switch (colorMode) {
+  case splashModeMono1:
+  case splashModeMono8: {
+    lookup = (SplashColorPtr)gmalloc(n * n);
+    GfxGray gray;
+    Guchar pix[2];
+    int k = 0;
+    for (int i0 = 0; i0 < n; ++i0) {
+      pix[0] = (Guchar)i0;
+      for (int i1 = 0; i1 < n; ++i1) {
+	pix[1] = (Guchar)i1;
+	colorMap->getGray(pix, &gray, state->getRenderingIntent());
+	lookup[k] = colToByte(gray);
+	++k;
+      }
+    }
+    break;
+  }
+  case splashModeRGB8:
+  case splashModeBGR8: {
+    lookup = (SplashColorPtr)gmallocn(n * n, 3);
+    GfxRGB rgb;
+    Guchar pix[2];
+    int k = 0;
+    for (int i0 = 0; i0 < n; ++i0) {
+      pix[0] = (Guchar)i0;
+      for (int i1 = 0; i1 < n; ++i1) {
+	pix[1] = (Guchar)i1;
+	colorMap->getRGB(pix, &rgb, state->getRenderingIntent());
+	lookup[k  ] = colToByte(rgb.r);
+	lookup[k+1] = colToByte(rgb.g);
+	lookup[k+2] = colToByte(rgb.b);
+	k += 3;
+      }
+    }
+    break;
+  }
+#if SPLASH_CMYK
+  case splashModeCMYK8: {
+    lookup = (SplashColorPtr)gmallocn(n * n, 4);
+    GfxCMYK cmyk;
+    Guchar pix[2];
+    int k = 0;
+    for (int i0 = 0; i0 < n; ++i0) {
+      pix[0] = (Guchar)i0;
+      for (int i1 = 0; i1 < n; ++i1) {
+	pix[1] = (Guchar)i1;
+	colorMap->getCMYK(pix, &cmyk, state->getRenderingIntent());
+	lookup[k  ] = colToByte(cmyk.c);
+	lookup[k+1] = colToByte(cmyk.m);
+	lookup[k+2] = colToByte(cmyk.y);
+	lookup[k+3] = colToByte(cmyk.k);
+	k += 4;
+      }
+    }
+    break;
+  }
+#endif
+  }
+  return lookup;
+}
+
 
 GString *SplashOutputDev::makeImageTag(Object *ref, GfxRenderingIntent ri,
 				       GfxColorSpace *colorSpace) {
@@ -3852,10 +4316,9 @@ GBool SplashOutputDev::beginTransparencyGroup(GfxState *state, double *bbox,
 					      GBool isolated, GBool knockout,
 					      GBool forSoftMask) {
   SplashTransparencyGroup *transpGroup;
-  SplashBitmap *backdropBitmap;
-  SplashColor color;
+  SplashAlphaBitmap *alpha0Bitmap;
   double xMin, yMin, xMax, yMax, x, y;
-  int bw, bh, tx, ty, w, h, i;
+  int bw, bh, tx, ty, w, h, xx, yy;
 
   // transform the bbox
   state->transform(bbox[0], bbox[1], &x, &y);
@@ -3928,21 +4391,23 @@ GBool SplashOutputDev::beginTransparencyGroup(GfxState *state, double *bbox,
   } else if (ty >= bh) {
     ty = bh - 1;
   }
-  w = (int)ceil(xMax) - tx + 1;
-  // NB bw and tx are both non-negative, so 'bw - tx' can't overflow
-  if (bw - tx < w) {
-    w = bw - tx;
-  }
-  if (w < 1) {
+  xx = (int)ceil(xMax);
+  if (xx < tx) {
     w = 1;
+  } else if (xx > bw - 1) {
+    // NB bw and tx are both non-negative, so 'bw - tx' can't overflow
+    w = bw - tx;
+  } else {
+    w = xx - tx + 1;
   }
-  h = (int)ceil(yMax) - ty + 1;
-  // NB bh and ty are both non-negative, so 'bh - ty' can't overflow
-  if (bh - ty < h) {
-    h = bh - ty;
-  }
-  if (h < 1) {
+  yy = (int)ceil(yMax);
+  if (yy < ty) {
     h = 1;
+  } else if (yy > bh - 1) {
+    // NB bh and ty are both non-negative, so 'bh - ty' can't overflow
+    h = bh - ty;
+  } else {
+    h = yy - ty + 1;
   }
 
   // optimization: a non-isolated group drawn with alpha=1 and
@@ -3973,6 +4438,11 @@ GBool SplashOutputDev::beginTransparencyGroup(GfxState *state, double *bbox,
   transpGroup->ty = ty;
   transpGroup->blendingColorSpace = blendingColorSpace;
   transpGroup->isolated = isolated;
+  transpGroup->inKnockoutGroup = (transpGroupStack &&
+				  transpGroupStack->inKnockoutGroup)
+                                 || knockout;    
+  transpGroup->inSoftMask = (transpGroupStack && transpGroupStack->inSoftMask)
+                            || forSoftMask;
   transpGroup->next = transpGroupStack;
   transpGroupStack = transpGroup;
 
@@ -4008,7 +4478,7 @@ GBool SplashOutputDev::beginTransparencyGroup(GfxState *state, double *bbox,
   // create the temporary bitmap
   traceMessage("t-group bitmap");
   bitmap = new SplashBitmap(w, h, bitmapRowPad, colorMode, gTrue,
-			    bitmapTopDown, transpGroup->origBitmap); 
+			    bitmapTopDown, bitmapMemCache); 
   splash = new Splash(bitmap, vectorAntialias,
 		      transpGroup->origSplash->getImageCache(),
 		      transpGroup->origSplash->getScreen());
@@ -4018,78 +4488,31 @@ GBool SplashOutputDev::beginTransparencyGroup(GfxState *state, double *bbox,
   splash->setEnablePathSimplification(
 		 globalParams->getEnablePathSimplification());
   copyState(transpGroup->origSplash, gTrue);
-  if (!isolated || knockout) {
-    // non-isolated and knockout groups nested in another group will
-    // read the parent group bitmap, so we need to force any deferred
-    // initialization on the parent
-    transpGroup->origSplash->forceDeferredInit(ty, h);
-  }
-  if (isolated) {
-    // isolated group
-    backdropBitmap = transpGroup->origBitmap;
-    transpGroup->backdropBitmap = NULL;
-    if (forSoftMask) {
-      // setSoftMask uses the whole bitmap, not just the mod region,
-      // so we can't use the deferred initialization optimization
-      for (i = 0; i < splashMaxColorComps; ++i) {
-	color[i] = 0;
-      }
-      splash->clear(color, 0);
-      splash->setInTransparencyGroup(backdropBitmap, tx, ty,
-				     splashGroupDestPreInit,
-				     gFalse, knockout);
-    } else {
-      splash->setInTransparencyGroup(backdropBitmap, tx, ty,
-				     splashGroupDestInitZero,
-				     gFalse, knockout);
-    }
-  } else if (transpGroup->origBitmap->getAlphaPtr() &&
-	     transpGroup->origSplash->getInNonIsolatedGroup() &&
-	     colorMode != splashModeMono1) {
-    // non-isolated group drawn in another non-isolated group:
-    // compute a backdrop bitmap with corrected alpha values
-    traceMessage("t-group backdrop bitmap");
-    backdropBitmap = new SplashBitmap(w, h, bitmapRowPad, colorMode, gTrue,
-				      bitmapTopDown, transpGroup->origBitmap);
-    transpGroup->origSplash->blitCorrectedAlpha(backdropBitmap,
-						tx, ty, 0, 0, w, h);
-    transpGroup->backdropBitmap = backdropBitmap;
-    if (forSoftMask) {
-      // setSoftMask uses the whole bitmap, not just the mod region,
-      // so we can't use the deferred initialization optimization
-      splash->blitTransparent(transpGroup->origBitmap, tx, ty, 0, 0, w, h);
-      splash->setInTransparencyGroup(backdropBitmap, 0, 0,
-				     splashGroupDestPreInit,
-				     gTrue, knockout);
-    } else {
-      splash->setInTransparencyGroup(backdropBitmap, 0, 0,
-				     splashGroupDestInitCopy,
-				     gTrue, knockout);
-    }
+  if (transpGroupStack->inKnockoutGroup) {
+    transpGroup->shapeBitmap = new SplashAlphaBitmap(w, h, bitmapMemCache);
+    memset(transpGroup->shapeBitmap->getAlphaPtr(), 0,
+	   h * transpGroup->shapeBitmap->getAlphaRowSize());
   } else {
-    // other non-isolated group
-    backdropBitmap = transpGroup->origBitmap;
-    transpGroup->backdropBitmap = NULL;
-    if (forSoftMask) {
-      // setSoftMask uses the whole bitmap, not just the mod region,
-      // so we can't use the deferred initialization optimization
-      splash->blitTransparent(transpGroup->origBitmap, tx, ty, 0, 0, w, h);
-      splash->setInTransparencyGroup(backdropBitmap, tx, ty,
-				     splashGroupDestPreInit,
-				     gTrue, knockout);
-    } else {
-      splash->setInTransparencyGroup(backdropBitmap, tx, ty,
-				     splashGroupDestInitCopy,
-				     gTrue, knockout);
-    }
+    transpGroup->shapeBitmap = NULL;
   }
+  if (!isolated &&
+      transpGroup->origBitmap->getAlphaPtr() &&
+      transpGroup->origSplash->getInNonIsolatedGroup() &&
+      colorMode != splashModeMono1) {
+    // non-isolated group drawn in another non-isolated group:
+    // allocate an alpha0 bitmap (which will be initialized as needed
+    // by Splash)
+    traceMessage("t-group alpha0 bitmap");
+    alpha0Bitmap = new SplashAlphaBitmap(w, h, bitmapMemCache);
+  } else {
+    alpha0Bitmap = NULL;
+  }
+  splash->setInTransparencyGroup(transpGroup->origSplash, tx, ty,
+				 alpha0Bitmap, transpGroup->shapeBitmap,
+				 !isolated, knockout);
   splash->clearModRegion();
   transpGroup->tBitmap = bitmap;
-#if 1 //~tmp
-  if (knockout) {
-    splash->setInShading(gTrue);
-  }
-#endif
+  transpGroup->alpha0Bitmap = alpha0Bitmap;
   state->shiftCTM(-tx, -ty);
   updateCTM(state, 0, 0, 0, 0, 0, 0);
   ++nestCount;
@@ -4100,6 +4523,12 @@ GBool SplashOutputDev::beginTransparencyGroup(GfxState *state, double *bbox,
 void SplashOutputDev::endTransparencyGroup(GfxState *state) {
   splash->getModRegion(&transpGroupStack->modXMin, &transpGroupStack->modYMin,
 		       &transpGroupStack->modXMax, &transpGroupStack->modYMax);
+
+  // setSoftMask uses the whole bitmap, not just the mod region,
+  // so we need to force any deferred initialization
+  if (transpGroupStack->inSoftMask) {
+      splash->forceDeferredInit(0, transpGroupStack->tBitmap->getHeight());
+  }
 
   // restore state
   --nestCount;
@@ -4113,6 +4542,7 @@ void SplashOutputDev::endTransparencyGroup(GfxState *state) {
 
 void SplashOutputDev::paintTransparencyGroup(GfxState *state, double *bbox) {
   SplashBitmap *tBitmap;
+  SplashAlphaBitmap *shapeBitmap;
   SplashTransparencyGroup *transpGroup;
   GBool isolated;
   int xSrc, ySrc, xDest, yDest, w, h;
@@ -4124,6 +4554,7 @@ void SplashOutputDev::paintTransparencyGroup(GfxState *state, double *bbox) {
   w = transpGroupStack->modXMax - transpGroupStack->modXMin + 1;
   h = transpGroupStack->modYMax - transpGroupStack->modYMin + 1;
   tBitmap = transpGroupStack->tBitmap;
+  shapeBitmap = transpGroupStack->shapeBitmap;
   isolated = transpGroupStack->isolated;
 
   // paint the transparency group onto the parent bitmap
@@ -4131,13 +4562,18 @@ void SplashOutputDev::paintTransparencyGroup(GfxState *state, double *bbox) {
   if (xDest < bitmap->getWidth() && yDest < bitmap->getHeight() &&
       w > 0 && h > 0) {
     splash->setOverprintMask(0xffffffff);
-    splash->composite(tBitmap, xSrc, ySrc, xDest, yDest, w, h,
+    splash->composite(tBitmap, shapeBitmap, xSrc, ySrc, xDest, yDest, w, h,
 		      gFalse, !isolated);
   }
 
-  // free the temporary backdrop bitmap
-  if (transpGroupStack->backdropBitmap) {
-    delete transpGroupStack->backdropBitmap;
+  // free the shape bitmap
+  if (shapeBitmap) {
+    delete shapeBitmap;
+  }
+
+  // free the alpha0 bitmap
+  if (transpGroupStack->alpha0Bitmap) {
+    delete transpGroupStack->alpha0Bitmap;
   }
 
   // pop the stack
@@ -4237,7 +4673,8 @@ void SplashOutputDev::setSoftMask(GfxState *state, double *bbox,
 
   traceMessage("soft mask bitmap");
   softMask = new SplashBitmap(bitmap->getWidth(), bitmap->getHeight(),
-			      1, splashModeMono8, gFalse, gTrue, bitmap);
+			      1, splashModeMono8, gFalse, gTrue,
+			      bitmapMemCache);
   memset(softMask->getDataPtr(), (int)(backdrop2 * 255.0 + 0.5),
 	 softMask->getRowSize() * softMask->getHeight());
   if (tx < softMask->getWidth() && ty < softMask->getHeight()) {
@@ -4279,7 +4716,7 @@ void SplashOutputDev::setSoftMask(GfxState *state, double *bbox,
 	    // [0.3, 0.59, 0.11] * 255 = [77, 150, 28]
 	    lum8 = div255(77 * colorPtr2[0] +
 			  150 * colorPtr2[1] +
-			  28 * colorPtr2[1]);
+			  28 * colorPtr2[2]);
 	    break;
 #if SPLASH_CMYK
 	  case splashModeCMYK8:
@@ -4305,9 +4742,9 @@ void SplashOutputDev::setSoftMask(GfxState *state, double *bbox,
   }
   splash->setSoftMask(softMask);
 
-  // free the temporary backdrop bitmap
-  if (transpGroupStack->backdropBitmap) {
-    delete transpGroupStack->backdropBitmap;
+  // free the alpha0 bitmap
+  if (transpGroupStack->alpha0Bitmap) {
+    delete transpGroupStack->alpha0Bitmap;
   }
 
   // pop the stack
@@ -4338,8 +4775,10 @@ SplashBitmap *SplashOutputDev::takeBitmap() {
   SplashBitmap *ret;
 
   ret = bitmap;
+  ret->doNotCache();
   bitmap = new SplashBitmap(1, 1, bitmapRowPad, colorMode,
-			    colorMode != splashModeMono1, bitmapTopDown, NULL);
+			    colorMode != splashModeMono1, bitmapTopDown,
+			    bitmapMemCache);
   return ret;
 }
 
@@ -4538,13 +4977,3 @@ void SplashOutputDev::copyState(Splash *oldSplash, GBool copyColors) {
   splash->setLineJoin(oldSplash->getLineJoin());
   splash->setLineWidth(oldSplash->getLineWidth());
 }
-
-#if 1 //~tmp: turn off anti-aliasing temporarily
-// This was originally used with gradient shadings -- that's no longer
-// necessary, now that shadings are all converted to device space
-// images.  It's still used with knockout groups, however, because the
-// rasterizer doesn't properly separate opacity and shape.
-void SplashOutputDev::setInShading(GBool sh) {
-  splash->setInShading(sh);
-}
-#endif

@@ -11,10 +11,6 @@
 
 #include <aconf.h>
 
-#ifdef USE_GCC_PRAGMAS
-#pragma interface
-#endif
-
 #include <stdio.h>
 #include "XRef.h"
 #include "Catalog.h"
@@ -23,9 +19,11 @@
 class GString;
 class BaseStream;
 class OutputDev;
+class Annots;
 class Links;
 class LinkAction;
 class LinkDest;
+class LocalParams;
 class Outline;
 class OutlineItem;
 class OptionalContent;
@@ -74,6 +72,9 @@ public:
   // Get catalog.
   Catalog *getCatalog() { return catalog; }
 
+  // Get annotations.
+  Annots *getAnnots() { return annots; }
+
   // Get base stream.
   BaseStream *getBaseStream() { return str; }
 
@@ -100,26 +101,28 @@ public:
   Object *getStructTreeRoot() { return catalog->getStructTreeRoot(); }
 
   // Display a page.
-  void displayPage(OutputDev *out, int page,
+  void displayPage(OutputDev *out, LocalParams *localParams, int page,
 		   double hDPI, double vDPI, int rotate,
 		   GBool useMediaBox, GBool crop, GBool printing,
 		   GBool (*abortCheckCbk)(void *data) = NULL,
 		   void *abortCheckCbkData = NULL);
 
   // Display a range of pages.
-  void displayPages(OutputDev *out, int firstPage, int lastPage,
+  void displayPages(OutputDev *out, LocalParams *localParams,
+		    int firstPage, int lastPage,
 		    double hDPI, double vDPI, int rotate,
 		    GBool useMediaBox, GBool crop, GBool printing,
 		    GBool (*abortCheckCbk)(void *data) = NULL,
 		    void *abortCheckCbkData = NULL);
 
   // Display part of a page.
-  void displayPageSlice(OutputDev *out, int page,
+  void displayPageSlice(OutputDev *out, LocalParams *localParams, int page,
 			double hDPI, double vDPI, int rotate,
 			GBool useMediaBox, GBool crop, GBool printing,
 			int sliceX, int sliceY, int sliceW, int sliceH,
 			GBool (*abortCheckCbk)(void *data) = NULL,
 			void *abortCheckCbkData = NULL);
+
 
   // Find a page, given its object ID.  Returns page number, or 0 if
   // not found.
@@ -195,6 +198,9 @@ public:
 #endif
   char *getEmbeddedFileMem(int idx, int *size);
 
+  // Return true if the document uses JavaScript.
+  GBool usesJavaScript() { return catalog->usesJavaScript(); }
+
 
 private:
 
@@ -216,6 +222,7 @@ private:
   double pdfVersion;
   XRef *xref;
   Catalog *catalog;
+  Annots *annots;
 #ifndef DISABLE_OUTLINE
   Outline *outline;
 #endif

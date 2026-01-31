@@ -8,10 +8,6 @@
 
 #include <aconf.h>
 
-#ifdef USE_GCC_PRAGMAS
-#pragma implementation
-#endif
-
 #include <stdio.h>
 #include <stddef.h>
 #include <stdarg.h>
@@ -108,7 +104,8 @@ static const char *prolog[] = {
   "/pdfOpNames [",
   "  /pdfFill /pdfStroke /pdfLastFill /pdfLastStroke",
   "  /pdfTextMat /pdfFontSize /pdfCharSpacing /pdfTextRender",
-  "  /pdfTextRise /pdfWordSpacing /pdfHorizScaling /pdfTextClipPath",
+  "  /pdfTextRise /pdfWordSpacing /pdfHorizScaling /pdfTextPath",
+  "  /pdfTextClipPath",
   "] def",
   "~123ngs",
   "/pdfStartPage {",
@@ -145,6 +142,7 @@ static const char *prolog[] = {
   "  /pdfTextRise 0 def",
   "  /pdfWordSpacing 0 def",
   "  /pdfHorizScaling 1 def",
+  "  /pdfTextPath [] def",
   "  /pdfTextClipPath [] def",
   "} def",
   "/pdfEndPage { end } def",
@@ -475,32 +473,34 @@ static const char *prolog[] = {
   "/Tj {",
   "  fCol",  // because stringwidth has to draw Type 3 chars
   "  0 pdfTextRise pdfTextMat dtransform rmoveto",
-  "  currentpoint 4 2 roll",
-  "  pdfTextRender 1 and 0 eq {",
-  "    2 copy xyshow2",
-  "  } if",
-  "  pdfTextRender 3 and dup 1 eq exch 2 eq or {",
-  "    3 index 3 index moveto",
-  "    2 copy",
-  "    currentfont /FontType get 3 eq { fCol } { sCol } ifelse",
-  "    xycp currentpoint stroke moveto",
-  "  } if",
-  "  pdfTextRender 4 and 0 ne {",
-  "    4 2 roll moveto xycp",
-  "    /pdfTextClipPath [ pdfTextClipPath aload pop",
-  "      {/moveto cvx}",
-  "      {/lineto cvx}",
-  "      {/curveto cvx}",
-  "      {/closepath cvx}",
-  "    pathforall ] def",
-  "    currentpoint newpath moveto",
-  "  } {",
-  "    pop pop pop pop",
-  "  } ifelse",
+  "  xyshow2",
+  "  0 pdfTextRise neg pdfTextMat dtransform rmoveto",
+  "} def",
+  "/TjS {",
+  "  fCol",  // because stringwidth has to draw Type 3 chars
+  "  0 pdfTextRise pdfTextMat dtransform rmoveto",
+  "  currentfont /FontType get 3 eq { fCol } { sCol } ifelse",
+  "  xycp currentpoint stroke moveto",
+  "  0 pdfTextRise neg pdfTextMat dtransform rmoveto",
+  "} def",
+  "/TjFS {",
+  "  2 copy currentpoint 4 2 roll Tj moveto TjS",
+  "} def",
+  "/TjSave {",
+  "  fCol",  // because stringwidth has to draw Type 3 chars
+  "  0 pdfTextRise pdfTextMat dtransform rmoveto",
+  "  xycp",
+  "  /pdfTextPath [ pdfTextPath aload pop",
+  "    {/moveto cvx}",
+  "    {/lineto cvx}",
+  "    {/curveto cvx}",
+  "    {/closepath cvx}",
+  "  pathforall ] def",
+  "  currentpoint newpath moveto",
   "  0 pdfTextRise neg pdfTextMat dtransform rmoveto",
   "} def",
   "/Tj3 {",
-  "  pdfTextRender 3 and 3 ne {"
+  "  pdfTextRender 3 and 3 ne {",
   "    fCol",  // because stringwidth has to draw Type 3 chars
   "    0 pdfTextRise pdfTextMat dtransform rmoveto",
   "    xyshow2",
@@ -513,8 +513,19 @@ static const char *prolog[] = {
   "       pdfTextMat dtransform rmoveto } def",
   "/TJmV { 0.001 mul pdfFontSize mul neg 0 exch",
   "        pdfTextMat dtransform rmoveto } def",
-  "/Tclip { pdfTextClipPath cvx exec clip newpath",
-  "         /pdfTextClipPath [] def } def",
+  "/Tfill { fCol pdfTextPath cvx exec fill } def",
+  "/Tstroke { sCol pdfTextPath cvx exec stroke } def",
+  "/Tclip { pdfTextPath cvx exec clip newpath } def",
+  "/Tstrokeclip { pdfTextPath cvx exec strokepath clip newpath } def",
+  "/Tclear { /pdfTextPath [] def } def",
+  "/Tsave {",
+  "  /pdfTextClipPath [ pdfTextClipPath aload pop pdfTextPath aload pop ] def",
+  "  /pdfTextPath [] def",
+  "} def",
+  "/Tclip2 {",
+  "  pdfTextClipPath cvx exec clip newpath",
+  "  /pdfTextClipPath [] def",
+  "} def",
   "~1ns",
   "% Level 1 image operators",
   "~1n",
@@ -1309,7 +1320,8 @@ PSOutputDev::PSOutputDev(char *fileName, PDFDoc *docA,
   paperSizes = NULL;
   embFontList = NULL;
   customColors = NULL;
-  haveTextClip = gFalse;
+  haveSavedTextPath = gFalse;
+  haveSavedClipPath = gFalse;
   t3String = NULL;
 
   // open file or pipe
@@ -1376,7 +1388,8 @@ PSOutputDev::PSOutputDev(PSOutputFunc outputFuncA, void *outputStreamA,
   paperSizes = NULL;
   embFontList = NULL;
   customColors = NULL;
-  haveTextClip = gFalse;
+  haveSavedTextPath = gFalse;
+  haveSavedClipPath = gFalse;
   t3String = NULL;
 
   init(outputFuncA, outputStreamA, psGeneric,
@@ -1748,7 +1761,6 @@ void PSOutputDev::writeXpdfProcset() {
 void PSOutputDev::writeDocSetup(Catalog *catalog) {
   Page *page;
   Dict *resDict;
-  Annots *annots;
   AcroForm *form;
   Object obj1, obj2, obj3;
   GString *s;
@@ -1774,6 +1786,7 @@ void PSOutputDev::writeDocSetup(Catalog *catalog) {
   } else {
     writePS("xpdf begin\n");
   }
+  Annots *annots = doc->getAnnots();
   needDefaultFont = gFalse;
   for (pg = firstPage; pg <= lastPage; ++pg) {
     if (rasterizePage[pg - firstPage]) {
@@ -1783,13 +1796,12 @@ void PSOutputDev::writeDocSetup(Catalog *catalog) {
     if ((resDict = page->getResourceDict())) {
       setupResources(resDict);
     }
-    annots = new Annots(doc, page->getAnnots(&obj1));
-    obj1.free();
-    if (annots->getNumAnnots()) {
+    int nAnnots = annots->getNumAnnots(pg);
+    if (nAnnots > 0) {
       needDefaultFont = gTrue;
     }
-    for (i = 0; i < annots->getNumAnnots(); ++i) {
-      if (annots->getAnnot(i)->getAppearance(&obj1)->isStream()) {
+    for (i = 0; i < nAnnots; ++i) {
+      if (annots->getAnnot(pg, i)->getAppearance(&obj1)->isStream()) {
 	obj1.streamGetDict()->lookup("Resources", &obj2);
 	if (obj2.isDict()) {
 	  setupResources(obj2.getDict());
@@ -1798,7 +1810,6 @@ void PSOutputDev::writeDocSetup(Catalog *catalog) {
       }
       obj1.free();
     }
-    delete annots;
   }
   if ((form = catalog->getForm())) {
     if (form->getNumFields() > 0) {
@@ -1910,7 +1921,7 @@ GBool PSOutputDev::checkIfPageNeedsToBeRasterized(int pg) {
     //~ this could depend on the printing flag, e.g., if an annotation
     //~   uses transparency --> need to pass the printing flag into
     //~   constructor, init, writeDocSetup
-    doc->getCatalog()->getPage(pg)->display(scan, 72, 72, 0,
+    doc->getCatalog()->getPage(pg)->display(scan, NULL, 72, 72, 0,
 					    gTrue, gTrue, gTrue);
     rasterize = scan->usesTransparency() || scan->usesPatternImageMask();
     delete scan;
@@ -1926,7 +1937,7 @@ GBool PSOutputDev::checkIfPageNeedsToBeRasterized(int pg) {
 
 void PSOutputDev::setupResources(Dict *resDict) {
   Object xObjDict, xObjRef, xObj, patDict, patRef, pat;
-  Object gsDict, gsRef, gs, smask, smaskGroup, resObj;
+  Object gsDict, gsRef, gs, smask, smaskGroup, resObj, resRef;
   Ref ref0;
   GBool skip;
   int i;
@@ -1941,7 +1952,7 @@ void PSOutputDev::setupResources(Dict *resDict) {
 
       // check for an already-visited XObject
       skip = gFalse;
-      if ((xObjDict.dictGetValNF(i, &xObjRef)->isRef())) {
+      if (xObjDict.dictGetValNF(i, &xObjRef)->isRef()) {
 	ref0 = xObjRef.getRef();
 	if (ref0.num < 0 || ref0.num >= xref->getNumObjects()) {
 	  skip = gTrue;
@@ -1955,11 +1966,23 @@ void PSOutputDev::setupResources(Dict *resDict) {
 	// process the XObject's resource dictionary
 	xObjDict.dictGetVal(i, &xObj);
 	if (xObj.isStream()) {
-	  xObj.streamGetDict()->lookup("Resources", &resObj);
-	  if (resObj.isDict()) {
-	    setupResources(resObj.getDict());
+	  if (xObj.streamGetDict()->lookupNF("Resources", &resRef)->isRef()) {
+	    ref0 = resRef.getRef();
+	    if (ref0.num < 0 || ref0.num >= xref->getNumObjects()) {
+	      skip = gTrue;
+	    } else {
+	      skip = (GBool)visitedResources[ref0.num];
+	      visitedResources[ref0.num] = 1;
+	    }
 	  }
-	  resObj.free();
+	  if (!skip) {
+	    xObj.streamGetDict()->lookup("Resources", &resObj);
+	    if (resObj.isDict()) {
+	      setupResources(resObj.getDict());
+	    }
+	    resObj.free();
+	  }
+	  resRef.free();
 	}
 	xObj.free();
       }
@@ -1977,7 +2000,7 @@ void PSOutputDev::setupResources(Dict *resDict) {
 
       // check for an already-visited Pattern
       skip = gFalse;
-      if ((patDict.dictGetValNF(i, &patRef)->isRef())) {
+      if (patDict.dictGetValNF(i, &patRef)->isRef()) {
 	ref0 = patRef.getRef();
 	if (ref0.num < 0 || ref0.num >= xref->getNumObjects()) {
 	  skip = gTrue;
@@ -1991,11 +2014,23 @@ void PSOutputDev::setupResources(Dict *resDict) {
 	// process the Pattern's resource dictionary
 	patDict.dictGetVal(i, &pat);
 	if (pat.isStream()) {
-	  pat.streamGetDict()->lookup("Resources", &resObj);
-	  if (resObj.isDict()) {
-	    setupResources(resObj.getDict());
+	  if (pat.streamGetDict()->lookupNF("Resources", &resRef)->isRef()) {
+	    ref0 = resRef.getRef();
+	    if (ref0.num < 0 || ref0.num >= xref->getNumObjects()) {
+	      skip = gTrue;
+	    } else {
+	      skip = (GBool)visitedResources[ref0.num];
+	      visitedResources[ref0.num] = 1;
+	    }
 	  }
-	  resObj.free();
+	  if (!skip) {
+	    pat.streamGetDict()->lookup("Resources", &resObj);
+	    if (resObj.isDict()) {
+	      setupResources(resObj.getDict());
+	    }
+	    resObj.free();
+	  }
+	  resRef.free();
 	}
 	pat.free();
       }
@@ -2014,7 +2049,7 @@ void PSOutputDev::setupResources(Dict *resDict) {
 
       // check for an already-visited ExtGState
       skip = gFalse;
-      if ((gsDict.dictGetValNF(i, &gsRef)->isRef())) {
+      if (gsDict.dictGetValNF(i, &gsRef)->isRef()) {
 	ref0 = gsRef.getRef();
 	if (ref0.num < 0 || ref0.num >= xref->getNumObjects()) {
 	  skip = gTrue;
@@ -2029,11 +2064,24 @@ void PSOutputDev::setupResources(Dict *resDict) {
 	if (gsDict.dictGetVal(i, &gs)->isDict()) {
 	  if (gs.dictLookup("SMask", &smask)->isDict()) {
 	    if (smask.dictLookup("G", &smaskGroup)->isStream()) {
-	      smaskGroup.streamGetDict()->lookup("Resources", &resObj);
-	      if (resObj.isDict()) {
-		setupResources(resObj.getDict());
+	      if (smaskGroup.streamGetDict()->lookupNF("Resources", &resRef)
+		                            ->isRef()) {
+		ref0 = resRef.getRef();
+		if (ref0.num < 0 || ref0.num >= xref->getNumObjects()) {
+		  skip = gTrue;
+		} else {
+		  skip = (GBool)visitedResources[ref0.num];
+		  visitedResources[ref0.num] = 1;
+		}
 	      }
-	      resObj.free();
+	      if (!skip) {
+		smaskGroup.streamGetDict()->lookup("Resources", &resObj);
+		if (resObj.isDict()) {
+		  setupResources(resObj.getDict());
+		}
+		resObj.free();
+	      }
+	      resRef.free();
 	    }
 	    smaskGroup.free();
 	  }
@@ -2149,6 +2197,9 @@ void PSOutputDev::setupFont(GfxFont *font, Dict *parentResDict) {
 	switch (fontLoc->fontType) {
 	case fontType1:
 	  fi->ff = setupExternalType1Font(font, fontLoc->path);
+	  break;
+	case fontType1COT:
+	  fi->ff = setupExternalOpenTypeT1CFont(font, fontLoc->path);
 	  break;
 	case fontTrueType:
 	case fontTrueTypeOT:
@@ -2569,6 +2620,48 @@ PSFontFileInfo *PSOutputDev::setupEmbeddedOpenTypeT1CFont(GfxFont *font,
 
   ff = new PSFontFileInfo(psName, font->getType(), psFontFileEmbedded);
   ff->embFontID = *id;
+  fontFileInfo->add(ff->psName, ff);
+  return ff;
+}
+
+PSFontFileInfo *PSOutputDev::setupExternalOpenTypeT1CFont(GfxFont *font,
+							  GString *fileName) {
+  GString *psName;
+  PSFontFileInfo *ff;
+  FoFiTrueType *ffTT;
+
+  if (font->getName()) {
+    // check if font is already embedded
+    if ((ff = (PSFontFileInfo *)fontFileInfo->lookup(font->getName()))) {
+      return ff;
+    }
+    // this assumes that the PS font name matches the PDF font name
+    psName = font->getName()->copy();
+  } else {
+    // generate name
+    psName = makePSFontName(font, font->getID());
+  }
+
+  // beginning comment
+  writePSFmt("%%BeginResource: font {0:t}\n", psName);
+  embFontList->append("%%+ font ");
+  embFontList->append(psName->getCString());
+  embFontList->append("\n");
+
+  // convert it to a Type 1 font
+  if ((ffTT = FoFiTrueType::load(fileName->getCString(), 0, gTrue))) {
+    if (ffTT->isOpenTypeCFF()) {
+      ffTT->convertToType1(psName->getCString(), NULL, gTrue,
+			   outputFunc, outputStream);
+    }
+    delete ffTT;
+  }
+
+  // ending comment
+  writePS("%%EndResource\n");
+
+  ff = new PSFontFileInfo(psName, font->getType(), psFontFileExternal);
+  ff->extFileName = fileName->copy();
   fontFileInfo->add(ff->psName, ff);
   return ff;
 }
@@ -3191,7 +3284,7 @@ PSFontFileInfo *PSOutputDev::setupType3Font(GfxFont *font,
     box.y1 = m[1];
     box.x2 = m[2];
     box.y2 = m[3];
-    gfx = new Gfx(doc, this, resDict, &box, NULL);
+    gfx = new Gfx(doc, this, NULL, resDict, &box, NULL);
     inType3Char = gTrue;
     for (i = 0; i < charProcs->getLength(); ++i) {
       t3FillColorOnly = gFalse;
@@ -3867,8 +3960,14 @@ void PSOutputDev::setupImage(Ref id, Stream *str, GBool mask,
     } else {
       s = str->getPSFilter(level < psLevel3 ? 2 : 3, "", gTrue);
       if (s) {
-	useLZW = useRLE = gFalse;
-	useCompressed = gTrue;
+	if (globalParams->getPSLZW() && !str->hasStrongCompression()) {
+	  useRLE = gFalse;
+	  useLZW = gTrue;
+	  useCompressed = gFalse;
+	} else {
+	  useLZW = useRLE = gFalse;
+	  useCompressed = gTrue;
+	}
 	delete s;
       } else {
 	if (globalParams->getPSLZW()) {
@@ -4109,7 +4208,7 @@ void PSOutputDev::setupForm(Object *strRef, Object *strObj) {
   box.y1 = bbox[1];
   box.x2 = bbox[2];
   box.y2 = bbox[3];
-  gfx = new Gfx(doc, this, resDict, &box, &box);
+  gfx = new Gfx(doc, this, NULL, resDict, &box, &box);
   gfx->display(strRef);
   delete gfx;
 
@@ -4140,12 +4239,15 @@ GBool PSOutputDev::checkPageSlice(Page *page, double hDPI, double vDPI,
   Stream *str0, *str;
   Object obj;
   Guchar *p;
-  Guchar col[4];
   char buf[4096];
   double userUnit, hDPI2, vDPI2;
   double m0, m1, m2, m3, m4, m5;
   int nStripes, stripeH, stripeY;
-  int w, h, x, y, comp, i, n;
+  int w, h, x, y, i, n;
+#if SPLASH_CMYK
+  Guchar col[4];
+  int comp;
+#endif
 #endif
 
   pg = page->getNum();
@@ -4179,7 +4281,7 @@ GBool PSOutputDev::checkPageSlice(Page *page, double hDPI, double vDPI,
   } else if (rotateA < 0) {
     rotateA += 360;
   }
-  state = new GfxState(dpi, dpi, &box, rotateA, gFalse);
+  state = new GfxState(NULL, dpi, dpi, &box, rotateA, gFalse);
   startPage(page->getNum(), state);
   delete state;
 
@@ -4240,7 +4342,7 @@ GBool PSOutputDev::checkPageSlice(Page *page, double hDPI, double vDPI,
     m3 = box.y2 - box.y1;
     m4 = box.x1;
     m5 = box.y1;
-    page->displaySlice(splashOut, hDPI2, vDPI2,
+    page->displaySlice(splashOut, NULL, hDPI2, vDPI2,
 		       (360 - page->getRotate()) % 360, useMediaBox, crop,
 		       sliceX, stripeY, sliceW, stripeH,
 		       printing, abortCheckCbk, abortCheckCbkData);
@@ -4541,10 +4643,21 @@ void PSOutputDev::startPage(int pageNum, GfxState *state) {
       tx -= xScale * x1;
       ty -= yScale * y1;
     }
-    // center
+    // offset or center
     if (tx0 >= 0 && ty0 >= 0) {
-      tx += (rotate == 0 || rotate == 180) ? tx0 : ty0;
-      ty += (rotate == 0 || rotate == 180) ? ty0 : -tx0;
+      if (rotate == 0) {
+	tx += tx0;
+	ty += ty0;
+      } else if (rotate == 90) {
+	tx += ty0;
+	ty += (imgWidth - yScale * height) - tx0;
+      } else if (rotate == 180) {
+	tx += (imgWidth - xScale * width) - tx0;
+	ty += (imgHeight - yScale * height) - ty0;
+      } else { // rotate == 270
+	tx += (imgHeight - xScale * width) - ty0;
+	ty += tx0;
+      }
     } else if (globalParams->getPSCenter()) {
       if (clipLLX0 < clipURX0 && clipLLY0 < clipURY0) {
 	tx += (imgWidth2 - xScale * (clipURX0 - clipLLX0)) / 2;
@@ -4554,8 +4667,19 @@ void PSOutputDev::startPage(int pageNum, GfxState *state) {
 	ty += (imgHeight2 - yScale * height) / 2;
       }
     }
-    tx += (rotate == 0 || rotate == 180) ? imgLLX : imgLLY;
-    ty += (rotate == 0 || rotate == 180) ? imgLLY : -imgLLX;
+    if (rotate == 0) {
+      tx += imgLLX;
+      ty += imgLLY;
+    } else if (rotate == 90) {
+      tx += imgLLY;
+      ty -= imgLLX;
+    } else if (rotate == 180) {
+      tx -= imgLLY;
+      ty -= imgLLX;
+    } else { // rotate == 270
+      tx -= imgLLY;
+      ty += imgLLX;
+    }
     if (tx != 0 || ty != 0) {
       writePSFmt("{0:.6g} {1:.6g} translate\n", tx, ty);
     }
@@ -5103,16 +5227,6 @@ void PSOutputDev::updateTextShift(GfxState *state, double shift) {
   noStateChanges = gFalse;
 }
 
-void PSOutputDev::saveTextPos(GfxState *state) {
-  writePS("currentpoint\n");
-  noStateChanges = gFalse;
-}
-
-void PSOutputDev::restoreTextPos(GfxState *state) {
-  writePS("m\n");
-  noStateChanges = gFalse;
-}
-
 void PSOutputDev::stroke(GfxState *state) {
   doPath(state->getPath());
   if (inType3Char && t3FillColorOnly) {
@@ -5186,7 +5300,7 @@ void PSOutputDev::tilingPatternFillL1(GfxState *state, Gfx *gfx,
   box.y1 = bbox[1];
   box.x2 = bbox[2];
   box.y2 = bbox[3];
-  gfx2 = new Gfx(doc, this, resDict, &box, NULL);
+  gfx2 = new Gfx(doc, this, NULL, resDict, &box, NULL);
   gfx2->takeContentStreamStack(gfx);
   writePS("/x {\n");
   if (paintType == 2) {
@@ -5253,7 +5367,7 @@ void PSOutputDev::tilingPatternFillL2(GfxState *state, Gfx *gfx,
   box.y1 = bbox[1];
   box.x2 = bbox[2];
   box.y2 = bbox[3];
-  gfx2 = new Gfx(doc, this, resDict, &box, NULL);
+  gfx2 = new Gfx(doc, this, NULL, resDict, &box, NULL);
   gfx2->takeContentStreamStack(gfx);
   t3FillColorOnly = paintType == 2;
   inType3Char = gTrue;
@@ -5766,23 +5880,10 @@ void PSOutputDev::doPath(GfxPath *path) {
   }
 }
 
-void PSOutputDev::drawString(GfxState *state, GString *s) {
-  GfxFont *font;
-  int wMode;
-  int *codeToGID;
-  GString *s2;
-  double dx, dy, originX, originY, originX0, originY0, tOriginX0, tOriginY0;
-  char *p;
-  PSFontInfo *fi;
-  UnicodeMap *uMap;
-  CharCode code;
-  Unicode u[8];
-  char buf[8];
-  double *dxdy;
-  int dxdySize, len, nChars, uLen, n, m, i, j;
-
+void PSOutputDev::drawString(GfxState *state, GString *s,
+			     GBool fill, GBool stroke, GBool makePath) {
   // check for invisible text -- this is used by Acrobat Capture
-  if (state->getRender() == 3) {
+  if (!fill && !stroke && !makePath) {
     return;
   }
 
@@ -5792,13 +5893,14 @@ void PSOutputDev::drawString(GfxState *state, GString *s) {
   }
 
   // get the font
-  if (!(font = state->getFont())) {
+  GfxFont *font = state->getFont();
+  if (!font) {
     return;
   }
-  wMode = font->getWMode();
+  int wMode = font->getWMode();
 
-  fi = NULL;
-  for (i = 0; i < fontInfo->getLength(); ++i) {
+  PSFontInfo *fi = NULL;
+  for (int i = 0; i < fontInfo->getLength(); ++i) {
     fi = (PSFontInfo *)fontInfo->get(i);
     if (fi->fontID.num == font->getID()->num &&
 	fi->fontID.gen == font->getID()->gen) {
@@ -5808,8 +5910,8 @@ void PSOutputDev::drawString(GfxState *state, GString *s) {
   }
 
   // check for a subtitute 16-bit font
-  uMap = NULL;
-  codeToGID = NULL;
+  UnicodeMap *uMap = NULL;
+  int *codeToGID = NULL;
   if (font->isCIDFont()) {
     if (!(fi && fi->ff)) {
       // font substitution failed, so don't output any text
@@ -5827,17 +5929,21 @@ void PSOutputDev::drawString(GfxState *state, GString *s) {
   }
 
   // compute the positioning (dx, dy) for each char in the string
-  nChars = 0;
-  p = s->getCString();
-  len = s->getLength();
-  s2 = new GString();
-  dxdySize = font->isCIDFont() ? 8 : s->getLength();
-  dxdy = (double *)gmallocn(2 * dxdySize, sizeof(double));
-  originX0 = originY0 = 0; // make gcc happy
+  int nChars = 0;
+  char *p = s->getCString();
+  int len = s->getLength();
+  GString *s2 = new GString();
+  int dxdySize = font->isCIDFont() ? 8 : s->getLength();
+  double *dxdy = (double *)gmallocn(2 * dxdySize, sizeof(double));
+  double originX0 = 0, originY0 = 0;
   while (len > 0) {
-    n = font->getNextChar(p, len, &code,
-			  u, (int)(sizeof(u) / sizeof(Unicode)), &uLen,
-			  &dx, &dy, &originX, &originY);
+    CharCode code;
+    Unicode u[8];
+    int uLen;
+    double dx, dy, originX, originY;
+    int n = font->getNextChar(p, len, &code,
+			      u, (int)(sizeof(u) / sizeof(Unicode)), &uLen,
+			      &dx, &dy, &originX, &originY);
     //~ this doesn't handle the case where the origin offset changes
     //~   within a string of characters -- which could be fixed by
     //~   modifying dx,dy as needed for each character
@@ -5867,9 +5973,10 @@ void PSOutputDev::drawString(GfxState *state, GString *s) {
 	  } while (nChars + uLen > dxdySize);
 	  dxdy = (double *)greallocn(dxdy, 2 * dxdySize, sizeof(double));
 	}
-	for (i = 0; i < uLen; ++i) {
-	  m = uMap->mapUnicode(u[i], buf, (int)sizeof(buf));
-	  for (j = 0; j < m; ++j) {
+	char buf[8];
+	for (int i = 0; i < uLen; ++i) {
+	  int m = uMap->mapUnicode(u[i], buf, (int)sizeof(buf));
+	  for (int j = 0; j < m; ++j) {
 	    s2->append(buf[j]);
 	  }
 	  //~ this really needs to get the number of chars in the target
@@ -5906,25 +6013,45 @@ void PSOutputDev::drawString(GfxState *state, GString *s) {
   }
   originX0 *= state->getFontSize();
   originY0 *= state->getFontSize();
+  double tOriginX0, tOriginY0;
   state->textTransformDelta(originX0, originY0, &tOriginX0, &tOriginY0);
 
   if (nChars > 0) {
     if (wMode) {
       writePSFmt("{0:.6g} {1:.6g} rmoveto\n", -tOriginX0, -tOriginY0);
     }
+
     writePSString(s2);
     writePS("\n[");
-    for (i = 0; i < 2 * nChars; ++i) {
+    for (int i = 0; i < 2 * nChars; ++i) {
       if (i > 0) {
 	writePS("\n");
       }
       writePSFmt("{0:.6g}", dxdy[i]);
     }
+    writePS("] ");
+
+    // the possible operations are:
+    //   - fill
+    //   - stroke
+    //   - fill + stroke
+    //   - makePath
+
     if (font->getType() == fontType3) {
-      writePS("] Tj3\n");
+      writePS("Tj3\n");
     } else {
-      writePS("] Tj\n");
+      if (fill && stroke) {
+	writePS("TjFS\n");
+      } else if (fill) {
+	writePS("Tj\n");
+      } else if (stroke) {
+	writePS("TjS\n");
+      } else if (makePath) {
+	writePS("TjSave\n");
+	haveSavedTextPath = gTrue;
+      }
     }
+
     if (wMode) {
       writePSFmt("{0:.6g} {1:.6g} rmoveto\n", tOriginX0, tOriginY0);
     }
@@ -5932,19 +6059,49 @@ void PSOutputDev::drawString(GfxState *state, GString *s) {
   gfree(dxdy);
   delete s2;
 
-  if ((state->getRender() & 4) && font->getType() != fontType3) {
-    haveTextClip = gTrue;
-  }
-
   noStateChanges = gFalse;
 }
 
-void PSOutputDev::endTextObject(GfxState *state) {
-  if (haveTextClip) {
-    writePS("Tclip\n");
-    haveTextClip = gFalse;
-    noStateChanges = gFalse;
+void PSOutputDev::fillTextPath(GfxState *state) {
+  writePS("Tfill\n");
+}
+
+void PSOutputDev::strokeTextPath(GfxState *state) {
+  writePS("Tstroke\n");
+}
+
+void PSOutputDev::clipToTextPath(GfxState *state) {
+  writePS("Tclip\n");
+}
+
+void PSOutputDev::clipToTextStrokePath(GfxState *state) {
+  writePS("Tstrokeclip\n");
+}
+
+void PSOutputDev::clearTextPath(GfxState *state) {
+  if (haveSavedTextPath) {
+    writePS("Tclear\n");
+    haveSavedTextPath = gFalse;
   }
+}
+
+void PSOutputDev::addTextPathToSavedClipPath(GfxState *state) {
+  if (haveSavedTextPath) {
+    writePS("Tsave\n");
+    haveSavedTextPath = gFalse;
+    haveSavedClipPath = gTrue;
+  }
+}
+
+void PSOutputDev::clipToSavedClipPath(GfxState *state) {
+  if (!haveSavedClipPath) {
+    return;
+  }
+  writePS("Tclip2\n");
+  haveSavedClipPath = gFalse;
+}
+
+void PSOutputDev::endTextObject(GfxState *state) {
 }
 
 void PSOutputDev::drawImageMask(GfxState *state, Object *ref, Stream *str,
@@ -6394,6 +6551,11 @@ void PSOutputDev::doImageL2(Object *ref, GfxState *state,
 	useRLE = gTrue;
 	useLZW = gFalse;
       }
+      useASCII = !(mode == psModeForm || inType3Char || preload);
+      useCompressed = gFalse;
+    } else if (globalParams->getPSLZW() && !str->hasStrongCompression()) {
+      useRLE = gFalse;
+      useLZW = gTrue;
       useASCII = !(mode == psModeForm || inType3Char || preload);
       useCompressed = gFalse;
     } else {
@@ -6869,6 +7031,11 @@ void PSOutputDev::doImageL3(Object *ref, GfxState *state,
 	}
 	maskUseASCII = !(mode == psModeForm || inType3Char || preload);
 	maskUseCompressed = gFalse;
+      } else if (globalParams->getPSLZW() && !maskStr->hasStrongCompression()) {
+	maskUseRLE = gFalse;
+	maskUseLZW = gTrue;
+	maskUseASCII = !(mode == psModeForm || inType3Char || preload);
+	maskUseCompressed = gFalse;
       } else {
 	maskUseLZW = maskUseRLE = gFalse;
 	maskUseASCII = maskStr->isBinary() &&
@@ -7095,6 +7262,11 @@ void PSOutputDev::doImageL3(Object *ref, GfxState *state,
 	useRLE = gTrue;
 	useLZW = gFalse;
       }
+      useASCII = !(mode == psModeForm || inType3Char || preload);
+      useCompressed = gFalse;
+    } else if (globalParams->getPSLZW() && !str->hasStrongCompression()) {
+      useRLE = gFalse;
+      useLZW = gTrue;
       useASCII = !(mode == psModeForm || inType3Char || preload);
       useCompressed = gFalse;
     } else {

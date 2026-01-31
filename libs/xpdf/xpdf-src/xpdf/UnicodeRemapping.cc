@@ -8,10 +8,6 @@
 
 #include <aconf.h>
 
-#ifdef USE_GCC_PRAGMAS
-#pragma implementation
-#endif
-
 #include <stdio.h>
 #include <string.h>
 #include "gmem.h"
@@ -173,6 +169,10 @@ int UnicodeRemapping::findSMap(Unicode u) {
 
 int UnicodeRemapping::map(Unicode in, Unicode *out, int size) {
   int a, b, m, i;
+
+  if (size <= 0) {
+    return 0;
+  }
 
   if (in < 256 && page0[in] != 0xffffffff) {
     out[0] = page0[in];

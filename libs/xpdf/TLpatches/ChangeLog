@@ -1,21 +1,31 @@
+2026-01-31  Akira Kakuto  <kakuto@jcom.zaq.ne.jp>
+
+	* Import xpdf-4.06.
+	* patch-bunched: Adjust.
+
 2022-04-24  Akira Kakuto  <kakuto@jcom.zaq.ne.jp>
 
+	* Import xpdf-4.04.
 	* patch-bunched: Adjust.
 
 2021-02-01  Akira Kakuto  <kakuto@w32tex.org>
 
+	* Import xpdf-4.03.
 	* patch-bunched: Adjust.
 
 2019-09-29  Akira Kakuto  <kakuto@w32tex.org>
 
+	* Import xpdf-4.02.
 	* patch-bunched: Adjust.
 
 2019-05-03  Akira Kakuto  <kakuto@w32tex.org>
 
+	* Import xpdf-4.01.01.
 	* patch-bunched: Adjust.
 
 2019-02-25  Akira Kakuto  <kakuto@w32tex.org>
 
+	* Import xpdf-4.01.
 	* patch-bunched: Adjust.
 
 2018-10-02  Akira Kakuto  <kakuto@fuk.kindai.ac.jp>

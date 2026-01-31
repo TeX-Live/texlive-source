@@ -11,10 +11,6 @@
 
 #include <aconf.h>
 
-#ifdef USE_GCC_PRAGMAS
-#pragma interface
-#endif
-
 #include <stdio.h>
 #include "gtypes.h"
 #include "OutputDev.h"
@@ -30,13 +26,15 @@ class ImageOutputDev: public OutputDev {
 public:
 
   // Create an OutputDev which will write images to files named
-  // <fileRoot>-NNN.<type>.  Normally, all images are written as PBM
-  // (.pbm) or PPM (.ppm) files.  If <dumpJPEG> is set, JPEG images
-  // are written as JPEG (.jpg) files.  If <dumpRaw> is set, all
-  // images are written in PDF-native formats.  If <list> is set, a
-  // one-line summary will be written to stdout for each image.
-  ImageOutputDev(char *fileRootA, GBool dumpJPEGA, GBool dumpRawA,
-		 GBool listA);
+  // <fileRoot>-NNN.<type>. Normally, all images are written as PBM
+  // (.pbm) or PPM (.ppm) files. If <dumpJPEG> is set, JPEG images are
+  // written as JPEG (.jpg) files. If <dumpRaw> is set, all images are
+  // written in PDF-native formats. If <list> is set, a one-line
+  // summary will be written to stdout for each image. If <listOnly>
+  // is set, the summary lines are written, but image files are not
+  // written.
+  ImageOutputDev(char *fileRootA, GBool dumpJPEGA, GBool dumpJPXA,
+		 GBool dumpRawA, GBool uniqueA, GBool listA, GBool listOnlyA);
 
   // Destructor.
   virtual ~ImageOutputDev();
@@ -96,6 +94,9 @@ public:
 				   GfxImageColorMap *maskColorMap,
 				   double *matte, GBool interpolate);
 
+  //----- special access
+  void startDoc(XRef *xref);
+
 private:
 
   Stream *getRawStream(Stream *str);
@@ -106,10 +107,15 @@ private:
 
   char *fileRoot;		// root of output file names
   GBool dumpJPEG;		// set to dump native JPEG files
+  GBool dumpJPX;		// set to dump native JPX files
   GBool dumpRaw;		// set to dump raw PDF-native image files
+  GBool unique;			// set to write one copy of each image
   GBool list;			// set to write image info to stdout
+  GBool listOnly;		// write image info but not images
   int imgNum;			// current image number
   int curPageNum;		// current page number
+  GString **imgFileNames;	// file names indexed by object number
+  int imgFileNamesSize;
   GBool ok;			// set up ok?
 };
 

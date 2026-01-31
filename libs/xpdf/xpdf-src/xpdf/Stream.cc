@@ -8,10 +8,6 @@
 
 #include <aconf.h>
 
-#ifdef USE_GCC_PRAGMAS
-#pragma implementation
-#endif
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <stddef.h>
@@ -138,6 +134,7 @@ Stream *Stream::addFilters(Object *dict, int recursion) {
   Object obj, obj2;
   Object params, params2;
   Stream *str;
+  GBool ok;
   int i;
 
   str = this;
@@ -151,20 +148,23 @@ Stream *Stream::addFilters(Object *dict, int recursion) {
     params.free();
     dict->dictLookup("DP", &params, recursion);
   }
+  ok = gTrue;
   if (obj.isName()) {
-    str = makeFilter(obj.getName(), str, &params, recursion);
+    str = makeFilter(obj.getName(), str, &params, recursion, &ok);
   } else if (obj.isArray()) {
-    for (i = 0; i < obj.arrayGetLength(); ++i) {
+    for (i = 0; ok && i < obj.arrayGetLength(); ++i) {
       obj.arrayGet(i, &obj2, recursion);
-      if (params.isArray() && i < params.arrayGetLength())
+      if (params.isArray() && i < params.arrayGetLength()) {
 	params.arrayGet(i, &params2, recursion);
-      else
+      } else {
 	params2.initNull();
+      }
       if (obj2.isName()) {
-	str = makeFilter(obj2.getName(), str, &params2, recursion);
+	str = makeFilter(obj2.getName(), str, &params2, recursion, &ok);
       } else {
 	error(errSyntaxError, getPos(), "Bad filter name");
 	str = new EOFStream(str);
+	ok = gFalse;
       }
       obj2.free();
       params2.free();
@@ -179,7 +179,7 @@ Stream *Stream::addFilters(Object *dict, int recursion) {
 }
 
 Stream *Stream::makeFilter(char *name, Stream *str, Object *params,
-			   int recursion) {
+			   int recursion, GBool *ok) {
   int pred;			// parameters
   int colors;
   int bits;
@@ -318,6 +318,7 @@ Stream *Stream::makeFilter(char *name, Stream *str, Object *params,
   } else {
     error(errSyntaxError, getPos(), "Unknown filter '{0:s}'", name);
     str = new EOFStream(str);
+    *ok = gFalse;
   }
   return str;
 }
@@ -2673,6 +2674,7 @@ DCTStream::DCTStream(Stream *strA, GBool colorXformA):
     frameBuf[i] = NULL;
   }
   rowBuf = NULL;
+  memset(quantTables, 0, sizeof(quantTables));
   memset(dcHuffTables, 0, sizeof(dcHuffTables));
   memset(acHuffTables, 0, sizeof(acHuffTables));
 
@@ -2844,10 +2846,10 @@ int DCTStream::getBlock(char *blk, int size) {
   if (!prepared) {
     prepare();
   }
+  if (y >= height) {
+    return 0;
+  }
   if (progressive || !interleaved) {
-    if (y >= height) {
-      return 0;
-    }
     for (nRead = 0; nRead < size; ++nRead) {
       blk[nRead] = (char)frameBuf[comp][y * bufWidth + x];
       if (++comp == numComps) {
@@ -2894,7 +2896,7 @@ void DCTStream::prepare() {
     bufWidth = ((width + mcuWidth - 1) / mcuWidth) * mcuWidth;
     bufHeight = ((height + mcuHeight - 1) / mcuHeight) * mcuHeight;
     if (bufWidth <= 0 || bufHeight <= 0 ||
-	bufWidth > INT_MAX / bufWidth / (int)sizeof(int)) {
+	bufWidth > INT_MAX / bufHeight / (int)sizeof(int)) {
       error(errSyntaxError, getPos(), "Invalid image size in DCT stream");
       y = height;
       prepared = gTrue;
@@ -2942,7 +2944,14 @@ void DCTStream::prepare() {
 
     // allocate a buffer for one row of MCUs
     bufWidth = ((width + mcuWidth - 1) / mcuWidth) * mcuWidth;
-    rowBuf = (Guchar *)gmallocn(numComps * mcuHeight, bufWidth);
+    if (bufWidth <= 0 || bufWidth > INT_MAX / numComps / mcuHeight) {
+      error(errSyntaxError, getPos(), "Invalid image size in DCT stream");
+      y = height;
+      rowBuf = rowBufPtr = rowBufEnd = NULL;
+      prepared = gTrue;
+      return;
+    }
+    rowBuf = (Guchar *)gmallocn(bufWidth, numComps * mcuHeight);
     rowBufPtr = rowBufEnd = rowBuf;
 
     // initialize counters
@@ -3848,11 +3857,12 @@ int DCTStream::readBit() {
 }
 
 GBool DCTStream::readHeader(GBool frame) {
-  GBool doScan;
+  GBool haveSOF, doScan;
   int n, i;
   int c = 0;
 
   // read headers
+  haveSOF = gFalse;
   doScan = gFalse;
   while (!doScan) {
     c = readMarker();
@@ -3867,6 +3877,7 @@ GBool DCTStream::readHeader(GBool frame) {
       if (!readBaselineSOF()) {
 	return gFalse;
       }
+      haveSOF = gTrue;
       break;
     case 0xc2:			// SOF2 (progressive)
       if (!frame) {
@@ -3877,6 +3888,7 @@ GBool DCTStream::readHeader(GBool frame) {
       if (!readProgressiveSOF()) {
 	return gFalse;
       }
+      haveSOF = gTrue;
       break;
     case 0xc4:			// DHT
       if (!readHuffmanTables()) {
@@ -3893,6 +3905,10 @@ GBool DCTStream::readHeader(GBool frame) {
     case 0xd9:			// EOI
       return gFalse;
     case 0xda:			// SOS
+      if (frame && !haveSOF) {
+	error(errSyntaxError, getPos(), "Missing SOF in DCT stream");
+	return gFalse;
+      }
       if (!readScanInfo()) {
 	return gFalse;
       }

@@ -11,10 +11,6 @@
 
 #include <aconf.h>
 
-#ifdef USE_GCC_PRAGMAS
-#pragma interface
-#endif
-
 #include <stddef.h>
 #include "config.h"
 #include "Object.h"
@@ -199,8 +195,6 @@ public:
   virtual void updateHorizScaling(GfxState *state);
   virtual void updateTextPos(GfxState *state);
   virtual void updateTextShift(GfxState *state, double shift);
-  virtual void saveTextPos(GfxState *state);
-  virtual void restoreTextPos(GfxState *state);
 
   //----- path painting
   virtual void stroke(GfxState *state);
@@ -219,7 +213,15 @@ public:
   virtual void clipToStrokePath(GfxState *state);
 
   //----- text drawing
-  virtual void drawString(GfxState *state, GString *s);
+  virtual void drawString(GfxState *state, GString *s,
+			  GBool fill, GBool stroke, GBool makePath);
+  virtual void fillTextPath(GfxState *state);
+  virtual void strokeTextPath(GfxState *state);
+  virtual void clipToTextPath(GfxState *state);
+  virtual void clipToTextStrokePath(GfxState *state);
+  virtual void clearTextPath(GfxState *state);
+  virtual void addTextPathToSavedClipPath(GfxState *state);
+  virtual void clipToSavedClipPath(GfxState *state);
   virtual void endTextObject(GfxState *state);
 
   //----- image drawing
@@ -295,6 +297,8 @@ private:
   PSFontFileInfo *setupExternalType1Font(GfxFont *font, GString *fileName);
   PSFontFileInfo *setupEmbeddedType1CFont(GfxFont *font, Ref *id);
   PSFontFileInfo *setupEmbeddedOpenTypeT1CFont(GfxFont *font, Ref *id);
+  PSFontFileInfo *setupExternalOpenTypeT1CFont(GfxFont *font,
+					       GString *fileName);
   PSFontFileInfo *setupEmbeddedTrueTypeFont(GfxFont *font, Ref *id);
   PSFontFileInfo *setupExternalTrueTypeFont(GfxFont *font, GString *fileName,
 					    int fontNum);
@@ -489,8 +493,11 @@ private:
   PSOutCustomColor		// used custom colors
     *customColors;
 
-  GBool haveTextClip;		// set if text has been drawn with a
-				//   clipping render mode
+  GBool haveSavedTextPath;	// set if text has been drawn with the
+				//   'makePath' argument
+  GBool haveSavedClipPath;	// set if the text path has been added
+				//   to the saved clipping path (with
+				//   addTextPathToSavedClipPath)
 
   GBool inType3Char;		// inside a Type 3 CharProc
   GString *t3String;		// Type 3 content string

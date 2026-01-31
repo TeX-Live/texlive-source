@@ -153,6 +153,10 @@ static ArgDesc argDesc[] = {
 };
 
 int main(int argc, char *argv[]) {
+#if USE_EXCEPTIONS
+  try {
+#endif
+
   PDFDoc *doc;
   char *fileName;
   GString *psFileName;
@@ -184,12 +188,15 @@ int main(int argc, char *argv[]) {
   // parse args
   fixCommandLine(&argc, &argv);
   ok = parseArgs(argDesc, &argc, argv);
-  if (!ok || argc < 2 || argc > 3 || printVersion || printHelp) {
+  if (printVersion) {
+    printf("pdftops version %s [www.xpdfreader.com]\n", xpdfVersion);
+    printf("%s\n", xpdfCopyright);
+    exit(1);
+  }
+  if (!ok || argc < 2 || argc > 3 || printHelp) {
     fprintf(stderr, "pdftops version %s [www.xpdfreader.com]\n", xpdfVersion);
     fprintf(stderr, "%s\n", xpdfCopyright);
-    if (!printVersion) {
-      printUsage("pdftops", "<PDF-file> [<PS-file>]", argDesc);
-    }
+    printUsage("pdftops", "<PDF-file> [<PS-file>]", argDesc);
     exit(1);
   }
   if ((level1 ? 1 : 0) +
@@ -211,6 +218,8 @@ int main(int argc, char *argv[]) {
     level = psLevel1;
   } else if (level1Sep) {
     level = psLevel1Sep;
+  } else if (level2) {
+    level = psLevel2;
   } else if (level2Gray) {
     level = psLevel2Gray;
   } else if (level2Sep) {
@@ -222,7 +231,7 @@ int main(int argc, char *argv[]) {
   } else if (level3Sep) {
     level = psLevel3Sep;
   } else {
-    level = psLevel2;
+    level = psLevel3;
   }
   if (doForm && level < psLevel2) {
     fprintf(stderr, "Error: forms are only available with Level 2 output.\n");
@@ -374,7 +383,7 @@ int main(int argc, char *argv[]) {
     exitCode = 2;
     goto err2;
   }
-  doc->displayPages(psOut, firstPage, lastPage, 72, 72,
+  doc->displayPages(psOut, NULL, firstPage, lastPage, 72, 72,
 		    0, !globalParams->getPSUseCropBoxAsPage(),
 		    globalParams->getPSCrop(), gTrue);
   exitCode = 0;
@@ -396,4 +405,11 @@ int main(int argc, char *argv[]) {
   gMemReport(stderr);
 
   return exitCode;
+
+#if USE_EXCEPTIONS
+  } catch (GMemException e) {
+    fprintf(stderr, "Out of memory\n");
+    return 98;
+  }
+#endif
 }

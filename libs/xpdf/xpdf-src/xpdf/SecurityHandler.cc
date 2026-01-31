@@ -8,10 +8,6 @@
 
 #include <aconf.h>
 
-#ifdef USE_GCC_PRAGMAS
-#pragma implementation
-#endif
-
 #include "gmempp.h"
 #include "GString.h"
 #include "PDFDoc.h"
@@ -125,6 +121,8 @@ StandardSecurityHandler::StandardSecurityHandler(PDFDoc *docA,
   ownerEnc = NULL;
   userEnc = NULL;
   fileKeyLength = 0;
+  encVersion = -1;
+  encRevision = -1;
 
   //--- get the main parameters
   encryptDictA->dictLookup("V", &versionObj);

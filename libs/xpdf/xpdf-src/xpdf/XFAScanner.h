@@ -11,10 +11,6 @@
 
 #include <aconf.h>
 
-#ifdef USE_GCC_PRAGMAS
-#pragma interface
-#endif
-
 class GHash;
 class ZxElement;
 
@@ -36,10 +32,14 @@ class XFAFieldLayoutInfo {
 public:
 
   XFAFieldLayoutInfo(XFAFieldLayoutHAlign hAlignA,
-		     XFAFieldLayoutVAlign vAlignA);
+		     XFAFieldLayoutVAlign vAlignA,
+		     double marginLeftA,
+		     double marginRightA);
 
   XFAFieldLayoutHAlign hAlign;
   XFAFieldLayoutVAlign vAlign;
+  double marginLeft;
+  double marginRight;
 };
 
 //------------------------------------------------------------------------
@@ -128,7 +128,7 @@ public:
 
   virtual ~XFAScanner();
 
-  // Find an XFA field matchined the specified AcroForm field name.
+  // Find an XFA field matching the specified AcroForm field name.
   // Returns NULL if there is no matching field.
   XFAField *findField(GString *acroFormFieldName);
 

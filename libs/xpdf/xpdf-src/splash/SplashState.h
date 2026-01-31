@@ -11,10 +11,6 @@
 
 #include <aconf.h>
 
-#ifdef USE_GCC_PRAGMAS
-#pragma interface
-#endif
-
 #include "SplashTypes.h"
 
 class SplashPattern;
@@ -107,6 +103,7 @@ private:
   int lineDashLength;
   SplashCoord lineDashPhase;
   SplashStrokeAdjustMode strokeAdjust;
+  GBool alphaIsShape;
   SplashClip *clip;
   GBool clipIsShared;
   SplashBitmap *softMask;

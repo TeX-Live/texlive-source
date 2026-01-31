@@ -8,10 +8,6 @@
 
 #include <aconf.h>
 
-#ifdef USE_GCC_PRAGMAS
-#pragma implementation
-#endif
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -20,6 +16,7 @@
 #include "gmempp.h"
 #include "gfile.h"
 #include "GString.h"
+#include "GHash.h"
 #include "Error.h"
 #include "GlobalParams.h"
 #include "PSTokenizer.h"
@@ -49,7 +46,8 @@ static int getCharFromStream(void *data) {
 
 //------------------------------------------------------------------------
 
-CMap *CMap::parse(CMapCache *cache, GString *collectionA, Object *obj) {
+CMap *CMap::parse(CMapCache *cache, GString *collectionA, Object *obj,
+		  GHash *usedCMaps) {
   CMap *cMap;
   GString *cMapNameA;
 
@@ -62,8 +60,16 @@ CMap *CMap::parse(CMapCache *cache, GString *collectionA, Object *obj) {
     }
     delete cMapNameA;
   } else if (obj->isStream()) {
-    if (!(cMap = CMap::parse(NULL, collectionA, obj->getStream()))) {
+    GHash *newUsedCMaps = NULL;
+    if (!usedCMaps) {
+      usedCMaps = newUsedCMaps = new GHash(gTrue);
+    }
+    if (!(cMap = CMap::parse(NULL, collectionA, obj->getStream(),
+			     usedCMaps))) {
       error(errSyntaxError, -1, "Invalid CMap in Type 0 font");
+    }
+    if (newUsedCMaps) {
+      delete newUsedCMaps;
     }
   } else {
     error(errSyntaxError, -1, "Invalid Encoding in Type 0 font");
@@ -73,7 +79,7 @@ CMap *CMap::parse(CMapCache *cache, GString *collectionA, Object *obj) {
 }
 
 CMap *CMap::parse(CMapCache *cache, GString *collectionA,
-		  GString *cMapNameA) {
+		  GString *cMapNameA, GHash *usedCMaps) {
   FILE *f;
   CMap *cMap;
 
@@ -93,32 +99,60 @@ CMap *CMap::parse(CMapCache *cache, GString *collectionA,
     return NULL;
   }
 
+  GHash *newUsedCMaps = NULL;
+  if (!usedCMaps) {
+    usedCMaps = newUsedCMaps = new GHash(gTrue);
+  }
+
   cMap = new CMap(collectionA->copy(), cMapNameA->copy());
-  cMap->parse2(cache, &getCharFromFile, f);
+  cMap->parse2(cache, &getCharFromFile, f, usedCMaps);
+
+  if (newUsedCMaps) {
+    delete newUsedCMaps;
+  }
 
   fclose(f);
 
   return cMap;
 }
 
-CMap *CMap::parse(CMapCache *cache, GString *collectionA, Stream *str) {
+CMap *CMap::parse(CMapCache *cache, GString *collectionA, Stream *str,
+		  GHash *usedCMaps) {
   Object obj1;
   CMap *cMap;
+
+  // check for a loop
+  if (usedCMaps) {
+    GString *name;
+    if (str->getDict()->lookup("CMapName", &obj1)->isName()) {
+      name = new GString(obj1.getName());
+    } else {
+      name = new GString();
+    }
+    obj1.free();
+    if (usedCMaps->lookupInt(name)) {
+      error(errSyntaxError, -1, "Loop in usecmap");
+      delete name;
+      return NULL;
+    }
+    usedCMaps->add(name, 1);
+  }
 
   cMap = new CMap(collectionA->copy(), NULL);
 
   if (!str->getDict()->lookup("UseCMap", &obj1)->isNull()) {
-    cMap->useCMap(cache, &obj1);
+    cMap->useCMap(cache, &obj1, usedCMaps);
   }
   obj1.free();
 
   str->reset();
-  cMap->parse2(cache, &getCharFromStream, str);
+  cMap->parse2(cache, &getCharFromStream, str, usedCMaps);
   str->close();
   return cMap;
 }
 
-void CMap::parse2(CMapCache *cache, int (*getCharFunc)(void *), void *data) {
+void CMap::parse2(CMapCache *cache, int (*getCharFunc)(void *), void *data,
+		  GHash *usedCMaps) {
   PSTokenizer *pst;
   char tok1[256], tok2[256], tok3[256];
   int n1, n2, n3;
@@ -129,7 +163,7 @@ void CMap::parse2(CMapCache *cache, int (*getCharFunc)(void *), void *data) {
   while (pst->getToken(tok2, sizeof(tok2), &n2)) {
     if (!strcmp(tok2, "usecmap")) {
       if (tok1[0] == '/') {
-	useCMap(cache, tok1 + 1);
+	useCMap(cache, tok1 + 1, usedCMaps);
       }
       pst->getToken(tok1, sizeof(tok1), &n1);
     } else if (!strcmp(tok1, "/WMode")) {
@@ -212,17 +246,25 @@ CMap::CMap(GString *collectionA, GString *cMapNameA, int wModeA) {
   refCnt = 1;
 }
 
-void CMap::useCMap(CMapCache *cache, char *useName) {
+void CMap::useCMap(CMapCache *cache, char *useName, GHash *usedCMaps) {
   GString *useNameStr;
   CMap *subCMap;
+
+  // check for a loop
+  if (usedCMaps) {
+    if (usedCMaps->lookupInt(useName)) {
+      error(errSyntaxError, -1, "Loop in usecmap");
+      return;
+    }
+    usedCMaps->add(new GString(useName), 1);
+  }
 
   useNameStr = new GString(useName);
   // if cache is non-NULL, we already have a lock, and we can use
   // CMapCache::getCMap() directly; otherwise, we need to use
-  // GlobalParams::getCMap() in order to acqure the lock need to use
-  // GlobalParams::getCMap
+  // GlobalParams::getCMap() in order to acqure the lock
   if (cache) {
-    subCMap = cache->getCMap(collection, useNameStr);
+    subCMap = cache->getCMap(collection, useNameStr, usedCMaps);
   } else {
     subCMap = globalParams->getCMap(collection, useNameStr);
   }
@@ -237,10 +279,10 @@ void CMap::useCMap(CMapCache *cache, char *useName) {
   subCMap->decRefCnt();
 }
 
-void CMap::useCMap(CMapCache *cache, Object *obj) {
+void CMap::useCMap(CMapCache *cache, Object *obj, GHash *usedCMaps) {
   CMap *subCMap;
 
-  subCMap = CMap::parse(cache, collection, obj);
+  subCMap = CMap::parse(cache, collection, obj, usedCMaps);
   if (!subCMap) {
     return;
   }
@@ -406,7 +448,8 @@ CMapCache::~CMapCache() {
   }
 }
 
-CMap *CMapCache::getCMap(GString *collection, GString *cMapName) {
+CMap *CMapCache::getCMap(GString *collection, GString *cMapName,
+			 GHash *usedCMaps) {
   CMap *cmap;
   int i, j;
 
@@ -425,7 +468,7 @@ CMap *CMapCache::getCMap(GString *collection, GString *cMapName) {
       return cmap;
     }
   }
-  if ((cmap = CMap::parse(this, collection, cMapName))) {
+  if ((cmap = CMap::parse(this, collection, cMapName, usedCMaps))) {
     if (cache[cMapCacheSize - 1]) {
       cache[cMapCacheSize - 1]->decRefCnt();
     }

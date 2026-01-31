@@ -8,10 +8,6 @@
 
 #include <aconf.h>
 
-#ifdef USE_GCC_PRAGMAS
-#pragma implementation
-#endif
-
 #include <stdio.h>
 #include <string.h>
 #include <limits.h>
@@ -843,6 +839,8 @@ static GList *getDfontFontList(FILE *f) {
       resNameListOffset >= resMapLength) {
     goto err2;
   }
+  nFonts = 0;
+  refListOffset = 0;
   for (i = 0; i < nTypes; ++i) {
     offset = resTypeListOffset + 2 + 8 * i;
     if (resMap[offset] == 0x73 &&    // 'sfnt'

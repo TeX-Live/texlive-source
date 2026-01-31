@@ -8,10 +8,6 @@
 
 #include <aconf.h>
 
-#ifdef USE_GCC_PRAGMAS
-#pragma implementation
-#endif
-
 #include <stdlib.h>
 #include <string.h>
 #if HAVE_STD_SORT
@@ -405,7 +401,7 @@ int FoFiTrueType::mapCodeToGID(int i, int c) {
       // to be 0xffff
       return 0;
     }
-    // invariant: seg[a].end < code <= seg[b].end
+    // invariant: seg[a].end < c <= seg[b].end
     while (b - a > 1 && ok) {
       m = (a + b) / 2;
       segEnd = getU16BE(pos + 14 + 2*m, &ok);
@@ -438,6 +434,31 @@ int FoFiTrueType::mapCodeToGID(int i, int c) {
       return 0;
     }
     gid = getU16BE(pos + 10 + 2 * (c - cmapFirst), &ok);
+    break;
+  case 12:
+    segCnt = getU32BE(pos + 12, &ok);
+    a = -1;
+    b = segCnt - 1;
+    segEnd = getU32BE(pos + 16 + 12*b + 4, &ok);
+    if (c > segEnd) {
+      return 0;
+    }
+    // invariant: seg[a].end < c <= seg[b].end
+    while (b - a > 1 && ok) {
+      m = (a + b) / 2;
+      segEnd = getU32BE(pos + 16 + 12*m + 4, &ok);
+      if (segEnd < c) {
+	a = m;
+      } else {
+	b = m;
+      }
+    }
+    segStart = getU32BE(pos + 16 + 12*b, &ok);
+    if (c < segStart) {
+      return 0;
+    }
+    segOffset = getU32BE(pos + 16 + 12*b + 8, &ok);
+    gid = segOffset + (c - segStart);
     break;
   default:
     return 0;
@@ -1065,7 +1086,7 @@ GBool FoFiTrueType::writeTTF(FoFiOutputFunc outputFunc,
     0, 0, 0, 0			// ulCodePageRange2
   };
   GBool missingCmap, missingName, missingPost, missingOS2;
-  GBool unsortedLoca, emptyCmap, badCmapLen, abbrevHMTX;
+  GBool unsortedLoca, bogusLastLoca, emptyCmap, badCmapLen, abbrevHMTX;
   int nZeroLengthTables, nBogusTables;
   int nHMetrics, advWidth, lsb;
   TrueTypeLoca *locaTable;
@@ -1098,6 +1119,7 @@ GBool FoFiTrueType::writeTTF(FoFiOutputFunc outputFunc,
   // read the loca table, check to see if it's sorted
   locaTable = (TrueTypeLoca *)gmallocn(nGlyphs + 1, sizeof(TrueTypeLoca));
   unsortedLoca = gFalse;
+  bogusLastLoca = gFalse;
   i = seekTable("loca");
   pos = tables[i].offset;
   glyfLen = tables[seekTable("glyf")].len;
@@ -1114,7 +1136,11 @@ GBool FoFiTrueType::writeTTF(FoFiOutputFunc outputFunc,
       unsortedLoca = gTrue;
     }
     if (i > 0 && locaTable[i].origOffset < locaTable[i-1].origOffset) {
-      unsortedLoca = gTrue;
+      if (i < nGlyphs) {
+	unsortedLoca = gTrue;
+      } else {
+	bogusLastLoca = gTrue;
+      }
     }
     // glyph descriptions must be at least 12 bytes long (nContours,
     // xMin, yMin, xMax, yMax, instructionLength - two bytes each);
@@ -1130,6 +1156,9 @@ GBool FoFiTrueType::writeTTF(FoFiOutputFunc outputFunc,
       unsortedLoca = gTrue;
     }
     locaTable[i].idx = i;
+  }
+  if (unsortedLoca) {
+    bogusLastLoca = gFalse;
   }
 
   // check for zero-length tables and bogus tags
@@ -1188,7 +1217,8 @@ GBool FoFiTrueType::writeTTF(FoFiOutputFunc outputFunc,
 
   // if nothing is broken, just write the TTF file as is
   if (!missingCmap && !missingName && !missingPost && !missingOS2 &&
-      !unsortedLoca && !emptyCmap && !badCmapLen && !abbrevHMTX &&
+      !unsortedLoca && !bogusLastLoca &&
+      !emptyCmap && !badCmapLen && !abbrevHMTX &&
       nZeroLengthTables == 0 && nBogusTables == 0 &&
       !name && !codeToGID && !replacementCmapTable && !isDfont && !isTTC) {
     (*outputFunc)(outputStream, (char *)file, len);
@@ -1236,9 +1266,21 @@ GBool FoFiTrueType::writeTTF(FoFiOutputFunc outputFunc,
     glyfLen = pos;
   }
 
+  // if only the last loca entry is bogus (less than the one before
+  // it), just replace it with the glyf table size -- the last entry
+  // is just the end of the previous glyph, i.e., not the start of a
+  // valid glyph
+  if (bogusLastLoca) {
+    for (i = 0; i < nGlyphs; ++i) {
+      locaTable[i].newOffset = locaTable[i].origOffset;
+    }
+    i = seekTable("glyf");
+    locaTable[nGlyphs].newOffset = tables[i].len;
+  }
+
   // compute checksums for the loca and glyf tables
   locaChecksum = glyfChecksum = 0;
-  if (unsortedLoca) {
+  if (unsortedLoca || bogusLastLoca) {
     if (locaFmt) {
       for (j = 0; j <= nGlyphs; ++j) {
 	locaChecksum += locaTable[j].newOffset;
@@ -1251,6 +1293,8 @@ GBool FoFiTrueType::writeTTF(FoFiOutputFunc outputFunc,
 	}
       }
     }
+  }
+  if (unsortedLoca) {
     pos = tables[seekTable("glyf")].offset;
     for (j = 0; j < nGlyphs; ++j) {
       n = locaTable[j].len;
@@ -1455,7 +1499,8 @@ GBool FoFiTrueType::writeTTF(FoFiOutputFunc outputFunc,
 	newTables[j].len = sizeof(cmapTab);
       } else if (newTables[j].tag == cmapTag && badCmapLen) {
 	newTables[j].len = cmapLen;
-      } else if (newTables[j].tag == locaTag && unsortedLoca) {
+      } else if (newTables[j].tag == locaTag &&
+		 (unsortedLoca || bogusLastLoca)) {
 	newTables[j].len = (nGlyphs + 1) * (locaFmt ? 4 : 2);
 	newTables[j].checksum = locaChecksum;
       } else if (newTables[j].tag == glyfTag && unsortedLoca) {
@@ -1620,7 +1665,8 @@ GBool FoFiTrueType::writeTTF(FoFiOutputFunc outputFunc,
       (*outputFunc)(outputStream, newHHEATab, newTables[i].len);
     } else if (newTables[i].tag == hmtxTag && abbrevHMTX) {
       (*outputFunc)(outputStream, newHMTXTab, newTables[i].len);
-    } else if (newTables[i].tag == locaTag && unsortedLoca) {
+    } else if (newTables[i].tag == locaTag &&
+	       (unsortedLoca || bogusLastLoca)) {
       for (j = 0; j <= nGlyphs; ++j) {
 	if (locaFmt) {
 	  locaBuf[0] = (char)(locaTable[j].newOffset >> 24);

@@ -15,10 +15,6 @@
 
 #if USE_FIXEDPOINT
 
-#ifdef USE_GCC_PRAGMAS
-#pragma interface
-#endif
-
 #include <stdio.h>
 #include <stdlib.h>
 #include "gtypes.h"

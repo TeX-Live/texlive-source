@@ -11,10 +11,6 @@
 
 #include <aconf.h>
 
-#ifdef USE_GCC_PRAGMAS
-#pragma interface
-#endif
-
 #include "gtypes.h"
 #include "CharTypes.h"
 
@@ -23,6 +19,7 @@
 #endif
 
 class GString;
+class GHash;
 class Object;
 class Stream;
 struct CMapVectorEntry;
@@ -35,16 +32,18 @@ public:
 
   // Parse a CMap from <obj>, which can be a name or a stream.  Sets
   // the initial reference count to 1.  Returns NULL on failure.
-  static CMap *parse(CMapCache *cache, GString *collectionA, Object *obj);
+  static CMap *parse(CMapCache *cache, GString *collectionA, Object *obj,
+		     GHash *usedCMaps = NULL);
 
   // Create the CMap specified by <collection> and <cMapName>.  Sets
   // the initial reference count to 1.  Returns NULL on failure.
   static CMap *parse(CMapCache *cache, GString *collectionA,
-		     GString *cMapNameA);
+		     GString *cMapNameA, GHash *usedCMaps = NULL);
 
   // Parse a CMap from <str>.  Sets the initial reference count to 1.
   // Returns NULL on failure.
-  static CMap *parse(CMapCache *cache, GString *collectionA, Stream *str);
+  static CMap *parse(CMapCache *cache, GString *collectionA, Stream *str,
+		     GHash *usedCMaps = NULL);
 
   ~CMap();
 
@@ -68,11 +67,12 @@ public:
 
 private:
 
-  void parse2(CMapCache *cache, int (*getCharFunc)(void *), void *data);
+  void parse2(CMapCache *cache, int (*getCharFunc)(void *), void *data,
+	      GHash *usedCMaps);
   CMap(GString *collectionA, GString *cMapNameA);
   CMap(GString *collectionA, GString *cMapNameA, int wModeA);
-  void useCMap(CMapCache *cache, char *useName);
-  void useCMap(CMapCache *cache, Object *obj);
+  void useCMap(CMapCache *cache, char *useName, GHash *usedCMaps);
+  void useCMap(CMapCache *cache, Object *obj, GHash *usedCMaps);
   void copyVector(CMapVectorEntry *dest, CMapVectorEntry *src);
   void addCIDs(Guint start, Guint end, Guint nBytes, CID firstCID);
   void freeCMapVector(CMapVectorEntry *vec);
@@ -105,7 +105,8 @@ public:
   // Increments its reference count; there will be one reference for
   // the cache plus one for the caller of this function.  Returns NULL
   // on failure.
-  CMap *getCMap(GString *collection, GString *cMapName);
+  CMap *getCMap(GString *collection, GString *cMapName,
+		GHash *usedCMaps = NULL);
 
 private:
 

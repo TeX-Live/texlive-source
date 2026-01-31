@@ -13,10 +13,6 @@
 
 #include <aconf.h>
 
-#ifdef USE_GCC_PRAGMAS
-#pragma interface
-#endif
-
 #include "gtypes.h"
 
 class Stream;
@@ -108,7 +104,9 @@ private:
   Guint nBytesRead;
   int dataLen;
   GBool limitStream;
-  int readBuf;
+  Guchar readBuf[32];
+  int readBufNext;
+  int readBufLength;
 };
 
 #endif

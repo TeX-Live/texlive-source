@@ -8,10 +8,6 @@
 
 #include <aconf.h>
 
-#ifdef USE_GCC_PRAGMAS
-#pragma implementation
-#endif
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <stddef.h>
@@ -26,6 +22,7 @@
 #include "GlobalParams.h"
 #include "Page.h"
 #include "Catalog.h"
+#include "Annot.h"
 #include "Stream.h"
 #include "XRef.h"
 #include "Link.h"
@@ -64,14 +61,14 @@ PDFDoc::PDFDoc(GString *fileNameA, GString *ownerPassword,
 	       GString *userPassword, PDFCore *coreA) {
   Object obj;
   GString *fileName1, *fileName2;
-#ifdef _WIN32
+#if 0
   int n, i;
 #endif
 
   init(coreA);
 
   fileName = fileNameA;
-#ifdef _WIN32
+#if 0
   n = fileName->getLength();
   fileNameU = (wchar_t *)gmallocn(n + 1, sizeof(wchar_t));
   for (i = 0; i < n; ++i) {
@@ -115,7 +112,6 @@ PDFDoc::PDFDoc(GString *fileNameA, GString *ownerPassword,
 }
 
 #if 0
-#ifdef _WIN32
 PDFDoc::PDFDoc(wchar_t *fileNameA, int fileNameLen, GString *ownerPassword,
 	       GString *userPassword, PDFCore *coreA) {
   OSVERSIONINFO version;
@@ -162,27 +158,22 @@ PDFDoc::PDFDoc(wchar_t *fileNameA, int fileNameLen, GString *ownerPassword,
   ok = setup(ownerPassword, userPassword);
 }
 #endif
-#endif /* 0 */
 
 PDFDoc::PDFDoc(char *fileNameA, GString *ownerPassword,
 	       GString *userPassword, PDFCore *coreA) {
 #if 0
-#ifdef _WIN32
   OSVERSIONINFO version;
 #endif
-#endif /* 0 */
   Object obj;
 #if 0
-#ifdef _WIN32
   Unicode u;
   int i, j;
 #endif
-#endif /* 0 */
+
   init(coreA);
 
   fileName = new GString(fileNameA);
 
-#if defined(_WIN32)
 #if 0
   wchar_t wPath[winMaxLongPath + 1];
   i = 0;
@@ -203,11 +194,8 @@ PDFDoc::PDFDoc(char *fileNameA, GString *ownerPassword,
   if (version.dwPlatformId == VER_PLATFORM_WIN32_NT) {
     file = _wfopen(fileNameU, wfopenReadMode);
   } else {
-#endif /* 0 */
     file = fopen(fileName->getCString(), fopenReadMode);
-#if 0
   }
-#endif /* 0 */
 #elif defined(VMS)
   file = fopen(fileName->getCString(), fopenReadMode, "ctx=stm");
 #else
@@ -229,7 +217,7 @@ PDFDoc::PDFDoc(char *fileNameA, GString *ownerPassword,
 
 PDFDoc::PDFDoc(BaseStream *strA, GString *ownerPassword,
 	       GString *userPassword, PDFCore *coreA) {
-#ifdef _WIN32
+#if 0
   int n, i;
 #endif
 
@@ -237,7 +225,7 @@ PDFDoc::PDFDoc(BaseStream *strA, GString *ownerPassword,
 
   if (strA->getFileName()) {
     fileName = strA->getFileName()->copy();
-#ifdef _WIN32
+#if 0
     n = fileName->getLength();
     fileNameU = (wchar_t *)gmallocn(n + 1, sizeof(wchar_t));
     for (i = 0; i < n; ++i) {
@@ -247,7 +235,7 @@ PDFDoc::PDFDoc(BaseStream *strA, GString *ownerPassword,
 #endif
   } else {
     fileName = NULL;
-#ifdef _WIN32
+#if 0
     fileNameU = NULL;
 #endif
   }
@@ -263,6 +251,7 @@ void PDFDoc::init(PDFCore *coreA) {
   str = NULL;
   xref = NULL;
   catalog = NULL;
+  annots = NULL;
 #ifndef DISABLE_OUTLINE
   outline = NULL;
 #endif
@@ -335,6 +324,9 @@ GBool PDFDoc::setup2(GString *ownerPassword, GString *userPassword,
     return gFalse;
   }
 
+  // initialize the Annots object
+  annots = new Annots(this);
+
   return gTrue;
 }
 
@@ -347,6 +339,9 @@ PDFDoc::~PDFDoc() {
     delete outline;
   }
 #endif
+  if (annots) {
+    delete annots;
+  }
   if (catalog) {
     delete catalog;
   }
@@ -362,7 +357,7 @@ PDFDoc::~PDFDoc() {
   if (fileName) {
     delete fileName;
   }
-#ifdef _WIN32
+#if 0
   if (fileNameU) {
     gfree(fileNameU);
   }
@@ -440,7 +435,7 @@ GBool PDFDoc::checkEncryption(GString *ownerPassword, GString *userPassword) {
   return ret;
 }
 
-void PDFDoc::displayPage(OutputDev *out, int page,
+void PDFDoc::displayPage(OutputDev *out, LocalParams *localParams, int page,
 			 double hDPI, double vDPI, int rotate,
 			 GBool useMediaBox, GBool crop, GBool printing,
 			 GBool (*abortCheckCbk)(void *data),
@@ -448,12 +443,13 @@ void PDFDoc::displayPage(OutputDev *out, int page,
   if (globalParams->getPrintCommands()) {
     printf("***** page %d *****\n", page);
   }
-  catalog->getPage(page)->display(out, hDPI, vDPI,
+  catalog->getPage(page)->display(out, localParams, hDPI, vDPI,
 				  rotate, useMediaBox, crop, printing,
 				  abortCheckCbk, abortCheckCbkData);
 }
 
-void PDFDoc::displayPages(OutputDev *out, int firstPage, int lastPage,
+void PDFDoc::displayPages(OutputDev *out, LocalParams *localParams,
+			  int firstPage, int lastPage,
 			  double hDPI, double vDPI, int rotate,
 			  GBool useMediaBox, GBool crop, GBool printing,
 			  GBool (*abortCheckCbk)(void *data),
@@ -466,24 +462,26 @@ void PDFDoc::displayPages(OutputDev *out, int firstPage, int lastPage,
       printf("[processing page %d]\n", page);
       fflush(stdout);
     }
-    displayPage(out, page, hDPI, vDPI, rotate, useMediaBox, crop, printing,
+    displayPage(out, localParams, page, hDPI, vDPI, rotate,
+		useMediaBox, crop, printing,
 		abortCheckCbk, abortCheckCbkData);
     catalog->doneWithPage(page);
   }
 }
 
-void PDFDoc::displayPageSlice(OutputDev *out, int page,
-			      double hDPI, double vDPI, int rotate,
+void PDFDoc::displayPageSlice(OutputDev *out, LocalParams *localParams,
+			      int page, double hDPI, double vDPI, int rotate,
 			      GBool useMediaBox, GBool crop, GBool printing,
 			      int sliceX, int sliceY, int sliceW, int sliceH,
 			      GBool (*abortCheckCbk)(void *data),
 			      void *abortCheckCbkData) {
-  catalog->getPage(page)->displaySlice(out, hDPI, vDPI,
+  catalog->getPage(page)->displaySlice(out, localParams, hDPI, vDPI,
 				       rotate, useMediaBox, crop,
 				       sliceX, sliceY, sliceW, sliceH,
 				       printing,
 				       abortCheckCbk, abortCheckCbkData);
 }
+
 
 Links *PDFDoc::getLinks(int page) {
   return catalog->getPage(page)->getLinks();
@@ -607,7 +605,7 @@ GBool PDFDoc::saveEmbeddedFileU(int idx, const char *path) {
   return ret;
 }
 
-#ifdef _WIN32
+#if 0
 GBool PDFDoc::saveEmbeddedFile(int idx, const wchar_t *path, int pathLen) {
   FILE *f;
   OSVERSIONINFO version;
@@ -617,7 +615,6 @@ GBool PDFDoc::saveEmbeddedFile(int idx, const wchar_t *path, int pathLen) {
   GBool ret;
 
   // NB: _wfopen is only available in NT
-#if 0
   version.dwOSVersionInfoSize = sizeof(version);
   GetVersionEx(&version);
   if (version.dwPlatformId == VER_PLATFORM_WIN32_NT) {
@@ -627,15 +624,12 @@ GBool PDFDoc::saveEmbeddedFile(int idx, const wchar_t *path, int pathLen) {
     path2w[i] = 0;
     f = _wfopen(path2w, L"wb");
   } else {
-#endif /* 0 */
     for (i = 0; i < pathLen && i < MAX_PATH; ++i) {
       path2c[i] = (char)path[i];
     }
     path2c[i] = 0;
     f = fopen(path2c, "wb");
-#if 0
   }
-#endif /* 0 */
   if (!f) {
     return gFalse;
   }

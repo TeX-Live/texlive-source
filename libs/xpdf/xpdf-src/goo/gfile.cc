@@ -7,9 +7,6 @@
 // Copyright 1996-2003 Glyph & Cog, LLC
 //
 //========================================================================
-//  Modified for TeX Live by Peter Breitenlohner <tex-live@tug.org>
-//  See top-level ChangeLog for a list of all modifications
-//========================================================================
 
 #include <aconf.h>
 
@@ -418,6 +415,18 @@ GBool pathIsFile(const char *path) {
 #endif
 }
 
+GBool pathIsDir(const char *path) {
+#ifdef _WIN32
+  wchar_t wPath[winMaxLongPath + 1];
+  fileNameToUCS2(path, wPath, winMaxLongPath + 1);
+  DWORD attr = GetFileAttributesW(wPath);
+  return attr != INVALID_FILE_ATTRIBUTES && (attr & FILE_ATTRIBUTE_DIRECTORY);
+#else
+  struct stat statBuf;
+  return stat(path, &statBuf) == 0 && S_ISDIR(statBuf.st_mode);
+#endif
+}
+
 time_t getModTime(char *fileName) {
 #ifdef _WIN32
   //~ should implement this, but it's (currently) only used in xpdf
@@ -602,6 +611,17 @@ GString *fileNameToUTF8(wchar_t *path) {
   return s;
 }
 
+GString *fileNameMultiByteToUTF8(char *path) {
+  wchar_t fileNameW[winMaxLongPath + 1];
+  if (MultiByteToWideChar(CP_ACP, 0, path, -1,
+			  fileNameW, sizeof(fileNameW) / sizeof(wchar_t))) {
+    return fileNameToUTF8(fileNameW);
+  } else {
+    // shouldn't happen, but just in case...
+    return new GString(path);
+  }
+}
+
 wchar_t *fileNameToUCS2(const char *path, wchar_t *out, size_t outSize) {
   const char *p;
   size_t i;
@@ -630,9 +650,7 @@ wchar_t *fileNameToUCS2(const char *path, wchar_t *out, size_t outSize) {
 #endif
 
 FILE *openFile(const char *path, const char *mode) {
-#if defined(_WIN32)
-  return fopen(path, mode);
-#if 0
+#if 0 /* we use fsyscp_fopen for fopen on win32 */
   wchar_t wPath[winMaxLongPath + 1];
   wchar_t wMode[8];
   int i;
@@ -644,7 +662,6 @@ FILE *openFile(const char *path, const char *mode) {
   wMode[i] = (wchar_t)0;
   readWindowsShortcut(wPath, winMaxLongPath + 1);
   return _wfopen(wPath, wMode);
-#endif /* 0 */
 #elif defined(VMS)
   return fopen(path, mode, "ctx=stm");
 #else
@@ -653,7 +670,6 @@ FILE *openFile(const char *path, const char *mode) {
 }
 
 #if 0
-#ifdef _WIN32
 void readWindowsShortcut(wchar_t *wPath, size_t wPathSize) {
   size_t n = wcslen(wPath);
   if (n < 4 || wcscmp(wPath + n - 4, L".lnk")) {
@@ -680,7 +696,7 @@ void readWindowsShortcut(wchar_t *wPath, size_t wPathSize) {
   }
   hres = persistFile->Load(wPath, STGM_READ);
   if (FAILED(hres)) {
-    fprintf(stderr, "IPersistFile.Load failed: 0x%08x\n", hres);
+    fprintf(stderr, "IPersistFile.Load failed: 0x%08lx\n", hres);
     exit(1);
   }
   wchar_t target[winMaxLongPath + 1];
@@ -698,14 +714,13 @@ void readWindowsShortcut(wchar_t *wPath, size_t wPathSize) {
   wcscpy(wPath, target);
 }
 #endif
-#endif /* 0 */
 
 int makeDir(const char *path, int mode) {
 #ifdef _WIN32
-  /*
+/*
   wchar_t wPath[winMaxLongPath + 1];
   return _wmkdir(fileNameToUCS2(path, wPath, winMaxLongPath + 1));
-  */
+*/
   return _mkdir(path);
 #else
   return mkdir(path, (mode_t)mode);

@@ -11,10 +11,6 @@
 
 #include <aconf.h>
 
-#ifdef USE_GCC_PRAGMAS
-#pragma interface
-#endif
-
 #include "gtypes.h"
 #include "GString.h"
 #include "Object.h"
@@ -29,6 +25,7 @@ class FoFiTrueType;
 class FoFiType1C;
 struct GfxFontCIDWidths;
 struct Base14FontMapEntry;
+class GfxFontDictEntry;
 class FNVHash;
 
 //------------------------------------------------------------------------
@@ -218,6 +215,11 @@ public:
   // converting text to Unicode.
   virtual GBool problematicForUnicode() = 0;
 
+  // Returns true if this font swaps the left and right parens in its
+  // ToUnicode map. This is likely a kludge used by bad PDF generators
+  // with Arabic fonts.
+  virtual GBool parensAreSwapped(XRef *xref) = 0;
+
 protected:
 
   static GfxFontType getFontType(XRef *xref, Dict *fontDict, Ref *embID);
@@ -298,6 +300,8 @@ public:
 
   virtual GBool problematicForUnicode();
 
+  virtual GBool parensAreSwapped(XRef *xref);
+
 private:
 
   Base14FontMapEntry *base14;	// for Base-14 fonts only; NULL otherwise
@@ -359,6 +363,8 @@ public:
 
   virtual GBool problematicForUnicode();
 
+  virtual GBool parensAreSwapped(XRef *xref);
+
 private:
 
   void readTrueTypeUnicodeMapping(XRef *xref);
@@ -388,7 +394,7 @@ class GfxFontDict {
 public:
 
   // Build the font dictionary, given the PDF font dictionary.
-  GfxFontDict(XRef *xref, Ref *fontDictRef, Dict *fontDict);
+  GfxFontDict(XRef *xrefA, Ref *fontDictRef, Dict *fontDict);
 
   // Destructor.
   ~GfxFontDict();
@@ -405,13 +411,18 @@ private:
 
   friend class GfxFont;
 
+  void loadAll();
+  void load(char *tag, GfxFontDictEntry *entry);
   static int hashFontObject(Object *obj);
   static void hashFontObject1(Object *obj, FNVHash *h);
 
-  GHash *fonts;			// hash table of fonts -- this may
-				//   include duplicates, i.e., when
-				//   two tags map to the same font
+  XRef *xref;
+  GHash *fonts;			// hash table of fonts, mapping from
+				//   tag to GfxFontDictEntry; this may
+				//   contain duplicates, i.e., two
+				//   tags that map to the same font
   GList *uniqueFonts;		// list of all unique font objects (no dups)
+				//   that have been loaded
 };
 
 #endif

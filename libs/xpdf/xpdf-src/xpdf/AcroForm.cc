@@ -8,10 +8,6 @@
 
 #include <aconf.h>
 
-#ifdef USE_GCC_PRAGMAS
-#pragma implementation
-#endif
-
 #include <stdlib.h>
 #include <math.h>
 #include "gmem.h"
@@ -343,7 +339,11 @@ AcroForm *AcroForm::load(PDFDoc *docA, Catalog *catalog, Object *acroFormObjA) {
   AcroForm *acroForm;
   AcroFormField *field;
   Object xfaObj, fieldsObj, annotsObj, annotRef, annotObj, obj1, obj2;
+  char *touchedObjs;
   int pageNum, i, j;
+
+  touchedObjs = (char *)gmalloc(docA->getXRef()->getNumObjects());
+  memset(touchedObjs, 0, docA->getXRef()->getNumObjects());
 
   // this is the normal case: acroFormObj is a dictionary, as expected
   if (acroFormObjA->isDict()) {
@@ -372,11 +372,12 @@ AcroForm *AcroForm::load(PDFDoc *docA, Catalog *catalog, Object *acroFormObjA) {
       }
       obj1.free();
       delete acroForm;
+      gfree(touchedObjs);
       return NULL;
     }
     for (i = 0; i < obj1.arrayGetLength(); ++i) {
       obj1.arrayGetNF(i, &obj2);
-      acroForm->scanField(&obj2);
+      acroForm->scanField(&obj2, touchedObjs);
       obj2.free();
     }
     obj1.free();
@@ -400,7 +401,7 @@ AcroForm *AcroForm::load(PDFDoc *docA, Catalog *catalog, Object *acroFormObjA) {
 	      annotRef.fetch(acroForm->doc->getXRef(), &annotObj);
 	      if (annotObj.isDict()) {
 		if (annotObj.dictLookup("Subtype", &obj1)->isName("Widget")) {
-		  acroForm->scanField(&annotRef);
+		  acroForm->scanField(&annotRef, touchedObjs);
 		}
 		obj1.free();
 	      }
@@ -431,7 +432,7 @@ AcroForm *AcroForm::load(PDFDoc *docA, Catalog *catalog, Object *acroFormObjA) {
 	    annotRef.fetch(acroForm->doc->getXRef(), &annotObj);
 	    if (annotObj.isDict()) {
 	      if (annotObj.dictLookup("Subtype", &obj1)->isName("Widget")) {
-		acroForm->scanField(&annotRef);
+		acroForm->scanField(&annotRef, touchedObjs);
 	      }
 	      obj1.free();
 	    }
@@ -448,6 +449,8 @@ AcroForm *AcroForm::load(PDFDoc *docA, Catalog *catalog, Object *acroFormObjA) {
       acroForm = NULL;
     }
   }
+
+  gfree(touchedObjs);
 
   return acroForm;
 }
@@ -512,11 +515,21 @@ int AcroForm::lookupAnnotPage(Object *annotRef) {
   return 0;
 }
 
-void AcroForm::scanField(Object *fieldRef) {
+void AcroForm::scanField(Object *fieldRef, char *touchedObjs) {
   AcroFormField *field;
-  Object fieldObj, kidsObj, kidRef, kidObj, subtypeObj;
+  Object fieldObj, kidsRef, kidsObj, kidRef, kidObj, subtypeObj;
   GBool isTerminal;
   int i;
+
+  // check for an object loop
+  if (fieldRef->isRef()) {
+    if (fieldRef->getRefNum() < 0 ||
+	fieldRef->getRefNum() >= doc->getXRef()->getNumObjects() ||
+	touchedObjs[fieldRef->getRefNum()]) {
+      return;
+    }
+    touchedObjs[fieldRef->getRefNum()] = 1;
+  }
 
   fieldRef->fetch(doc->getXRef(), &fieldObj);
   if (!fieldObj.isDict()) {
@@ -525,12 +538,28 @@ void AcroForm::scanField(Object *fieldRef) {
     return;
   }
 
+  // look for a Kids entry, and check for an object loop there
+  if (fieldObj.dictLookupNF("Kids", &kidsRef)->isRef()) {
+    if (kidsRef.getRefNum() < 0 ||
+	kidsRef.getRefNum() >= doc->getXRef()->getNumObjects() ||
+	touchedObjs[kidsRef.getRefNum()]) {
+      kidsRef.free();
+      fieldObj.free();
+      return;
+    }
+    touchedObjs[kidsRef.getRefNum()] = 1;
+    kidsRef.fetch(doc->getXRef(), &kidsObj);
+  } else {
+    kidsRef.copy(&kidsObj);
+  }
+  kidsRef.free();
+
   // if this field has a Kids array, and all of the kids have a Parent
   // reference (i.e., they're all form fields, not widget
   // annotations), then this is a non-terminal field, and we need to
   // scan the kids
   isTerminal = gTrue;
-  if (fieldObj.dictLookup("Kids", &kidsObj)->isArray()) {
+  if (kidsObj.isArray()) {
     isTerminal = gFalse;
     for (i = 0; !isTerminal && i < kidsObj.arrayGetLength(); ++i) {
       kidsObj.arrayGet(i, &kidObj);
@@ -545,7 +574,7 @@ void AcroForm::scanField(Object *fieldRef) {
     if (!isTerminal) {
       for (i = 0; !isTerminal && i < kidsObj.arrayGetLength(); ++i) {
 	kidsObj.arrayGetNF(i, &kidRef);
-	scanField(&kidRef);
+	scanField(&kidRef, touchedObjs);
 	kidRef.free();
       }
     }
@@ -860,7 +889,7 @@ Unicode *AcroFormField::getValue(int *length) {
   // if this field has a counterpart in the XFA form, take the value
   // from the XFA field (NB: an XFA field with no value overrides the
   // AcroForm value)
-  if (xfaField) {
+  if (globalParams->getPreferXFAFieldValues() && xfaField) {
     if (xfaField->getValue()) {
       u = utf8ToUnicode(xfaField->getValue(), length);
     }
@@ -2033,21 +2062,18 @@ void AcroFormField::drawText(GString *text, GString *da, GfxFontDict *fontDict,
 
     wMax = dx - 2 * border - 4;
 
-#if 1 //~tmp
     // this is a kludge that appears to match Adobe's behavior
     if (height > 15) {
       topBorder = 5;
     } else {
       topBorder = 2;
     }
-#else
-    topBorder = 5;
-#endif
 
     // compute font autosize
     if (fontSize == 0) {
       for (fontSize = 10; fontSize > 1; --fontSize) {
 	yy = dy - topBorder;
+	w = 0;
 	i = 0;
 	while (i < text2->getLength()) {
 	  getNextLine(text2, i, font, fontSize, wMax, &j, &w, &k);
@@ -2179,6 +2205,18 @@ void AcroFormField::drawText(GString *text, GString *da, GfxFontDict *fontDict,
 
     // comb formatting
     if (comb > 0) {
+
+      // Acrobat apparently reduces the field width by the sum of the
+      // left and right margins (but doesn't shift the text to the
+      // right at all) -- I'm not really sure what's going on here
+      // (maybe a bug in Acrobat?), but rendering SSN fields in tax
+      // forms depends on this.
+      if (xfaField) {
+	XFAFieldLayoutInfo *layoutInfo = xfaField->getLayoutInfo();
+	if (layoutInfo) {
+	  dx -= layoutInfo->marginLeft + layoutInfo->marginRight;
+	}
+      }
 
       // compute comb spacing
       w = dx / comb;
@@ -3183,7 +3221,7 @@ GBool AcroFormField::unicodeStringEqual(Unicode *u, int unicodeLength,
     return gFalse;
   }
   for (int i = 0; i < unicodeLength; ++i) {
-    if ((s->getChar(i) & 0xff) != u[i]) {
+    if ((Unicode)(s->getChar(i) & 0xff) != u[i]) {
       return gFalse;
     }
   }
@@ -3193,7 +3231,7 @@ GBool AcroFormField::unicodeStringEqual(Unicode *u, int unicodeLength,
 GBool AcroFormField::unicodeStringEqual(Unicode *u, int unicodeLength,
 					const char *s) {
   for (int i = 0; i < unicodeLength; ++i) {
-    if (!s[i] || (s[i] & 0xff) != u[i]) {
+    if (!s[i] || (Unicode)(s[i] & 0xff) != u[i]) {
       return gFalse;
     }
   }

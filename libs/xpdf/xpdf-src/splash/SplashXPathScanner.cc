@@ -8,10 +8,6 @@
 
 #include <aconf.h>
 
-#ifdef USE_GCC_PRAGMAS
-#pragma implementation
-#endif
-
 #include <stdlib.h>
 #include <string.h>
 #if HAVE_STD_SORT
@@ -36,23 +32,25 @@
 #define aaVert  4
 #define aaHoriz 4
 
+// 4x4 oversampling tends to generate alpha (coverage) values that are
+// too high, so we reduce them here. (Yes, this is a kludge.)
 static Guchar map16to255[17] = {
   0,
-  16,
-  32,
-  48,
-  64,
-  80,
-  96,
-  112,
-  128,
-  143,
-  159,
-  175,
-  191,
-  207,
-  223,
-  239,
+  16 / 2,
+  32 / 2,
+  48 / 2,
+  64 - 32,
+  80 - 32,
+  96 - 32,
+  112 - 32,
+  128 - 32,
+  143 - 32,
+  159 - 32,
+  175 - 32,
+  191 - 32,
+  207 - 32,
+  223 - 32,
+  239 - 32,
   255
 };
 

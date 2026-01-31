@@ -207,10 +207,10 @@ void *gmallocn(int nObjs, int objSize) GMEM_EXCEP {
   if (nObjs == 0) {
     return NULL;
   }
-  n = nObjs * objSize;
   if (objSize <= 0 || nObjs < 0 || nObjs >= INT_MAX / objSize) {
     gMemError("Bogus memory allocation size");
   }
+  n = nObjs * objSize;
   return gmalloc(n);
 }
 
@@ -281,10 +281,10 @@ void *gmallocn64(int nObjs, size_t objSize) GMEM_EXCEP {
   if (nObjs == 0) {
     return NULL;
   }
-  n = nObjs * objSize;
   if (nObjs < 0 || (size_t)nObjs >= SIZE_MAX / objSize) {
     gMemError("Bogus memory allocation size");
   }
+  n = nObjs * objSize;
   return gmalloc64(n);
 }
 
@@ -297,10 +297,10 @@ void *greallocn(void *p, int nObjs, int objSize) GMEM_EXCEP {
     }
     return NULL;
   }
-  n = nObjs * objSize;
   if (objSize <= 0 || nObjs < 0 || nObjs >= INT_MAX / objSize) {
     gMemError("Bogus memory allocation size");
   }
+  n = nObjs * objSize;
   return grealloc(p, n);
 }
 

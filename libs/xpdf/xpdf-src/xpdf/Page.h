@@ -11,10 +11,6 @@
 
 #include <aconf.h>
 
-#ifdef USE_GCC_PRAGMAS
-#pragma interface
-#endif
-
 #include "Object.h"
 
 class Dict;
@@ -22,6 +18,7 @@ class PDFDoc;
 class XRef;
 class OutputDev;
 class Links;
+class LocalParams;
 
 //------------------------------------------------------------------------
 
@@ -167,14 +164,16 @@ public:
   Object *getThumbnail(Object *obj) { return thumbnail.fetch(xref, obj); }
 
   // Display a page.
-  void display(OutputDev *out, double hDPI, double vDPI,
+  void display(OutputDev *out, LocalParams *localParams,
+	       double hDPI, double vDPI,
 	       int rotate, GBool useMediaBox, GBool crop,
 	       GBool printing,
 	       GBool (*abortCheckCbk)(void *data) = NULL,
 	       void *abortCheckCbkData = NULL);
 
   // Display part of a page.
-  void displaySlice(OutputDev *out, double hDPI, double vDPI,
+  void displaySlice(OutputDev *out, LocalParams *localParams,
+		    double hDPI, double vDPI,
 		    int rotate, GBool useMediaBox, GBool crop,
 		    int sliceX, int sliceY, int sliceW, int sliceH,
 		    GBool printing,
@@ -191,6 +190,7 @@ public:
   // Get the page's default CTM.
   void getDefaultCTM(double *ctm, double hDPI, double vDPI,
 		     int rotate, GBool useMediaBox, GBool upsideDown);
+
 
 private:
 

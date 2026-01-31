@@ -13,16 +13,13 @@
 
 #include <aconf.h>
 
-#ifdef USE_GCC_PRAGMAS
-#pragma interface
-#endif
-
 #include "SplashTypes.h"
 
 class GfxState;
 class GfxShading;
 class SplashBitmap;
 class Splash;
+class SplashBitmapMemCache;
 
 class ShadingImage {
 public:
@@ -35,40 +32,43 @@ public:
 				      SplashColorMode mode,
 				      GBool reverseVideo,
 				      Splash *parentSplash,
-				      SplashBitmap *parentBitmap,
+				      SplashBitmapMemCache *bitmapMemCache,
 				      int *xOut, int *yOut);
 
 
 private:
 
-  static SplashBitmap *generateFunctionBitmap(GfxState *state,
-					      GfxFunctionShading *shading,
-					      SplashColorMode mode,
-					      GBool reverseVideo,
-					      Splash *parentSplash,
-					      SplashBitmap *parentBitmap,
-					      int *xOut, int *yOut);
-  static SplashBitmap *generateAxialBitmap(GfxState *state,
-					   GfxAxialShading *shading,
-					   SplashColorMode mode,
-					   GBool reverseVideo,
-					   Splash *parentSplash,
-					   SplashBitmap *parentBitmap,
-					   int *xOut, int *yOut);
-  static SplashBitmap *generateRadialBitmap(GfxState *state,
-					    GfxRadialShading *shading,
-					    SplashColorMode mode,
-					    GBool reverseVideo,
-					    Splash *parentSplash,
-					    SplashBitmap *parentBitmap,
-					    int *xOut, int *yOut);
+  static SplashBitmap *generateFunctionBitmap(
+			   GfxState *state,
+			   GfxFunctionShading *shading,
+			   SplashColorMode mode,
+			   GBool reverseVideo,
+			   Splash *parentSplash,
+			   SplashBitmapMemCache *bitmapMemCache,
+			   int *xOut, int *yOut);
+  static SplashBitmap *generateAxialBitmap(
+			   GfxState *state,
+			   GfxAxialShading *shading,
+			   SplashColorMode mode,
+			   GBool reverseVideo,
+			   Splash *parentSplash,
+			   SplashBitmapMemCache *bitmapMemCache,
+			   int *xOut, int *yOut);
+  static SplashBitmap *generateRadialBitmap(
+			   GfxState *state,
+			   GfxRadialShading *shading,
+			   SplashColorMode mode,
+			   GBool reverseVideo,
+			   Splash *parentSplash,
+			   SplashBitmapMemCache *bitmapMemCache,
+			   int *xOut, int *yOut);
   static SplashBitmap *generateGouraudTriangleBitmap(
 					GfxState *state,
 					GfxGouraudTriangleShading *shading,
 					SplashColorMode mode,
 					GBool reverseVideo,
 					Splash *parentSplash,
-					SplashBitmap *parentBitmap,
+					SplashBitmapMemCache *bitmapMemCache,
 					int *xOut, int *yOut);
   static void gouraudFillTriangle(GfxState *state, SplashBitmap *bitmap,
 				  SplashColorMode mode,
@@ -78,13 +78,14 @@ private:
 				  double x1, double y1, double *color1,
 				  double x2, double y2, double *color2,
 				  GfxGouraudTriangleShading *shading);
-  static SplashBitmap *generatePatchMeshBitmap(GfxState *state,
-					       GfxPatchMeshShading *shading,
-					       SplashColorMode mode,
-					       GBool reverseVideo,
-					       Splash *parentSplash,
-					       SplashBitmap *parentBitmap,
-					       int *xOut, int *yOut);
+  static SplashBitmap *generatePatchMeshBitmap(
+			   GfxState *state,
+			   GfxPatchMeshShading *shading,
+			   SplashColorMode mode,
+			   GBool reverseVideo,
+			   Splash *parentSplash,
+			   SplashBitmapMemCache *bitmapMemCache,
+			   int *xOut, int *yOut);
   static void fillPatch(GfxState *state, Splash *splash,
 			SplashColorMode mode, GBool reverseVideo,
 			int xMin, int yMin,
