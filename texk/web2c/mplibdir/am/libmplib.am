@@ -23,7 +23,7 @@ nodist_libmplibbackends_a_SOURCES = $(pngout_c_h)  $(svgout_c_h)
 
 
 
-mp_c_h =  mp.c mplib.h mpmp.h
+mp_c_h =  mp.c mplib.h mpmp.h mpconfig.h
 mpmath_c_h = mpmath.h mpmath.c
 mpmathbinary_c_h = mpmathbinary.h mpmathbinary.c
 mpmathdecimal_c_h = mpmathdecimal.h mpmathdecimal.c

@@ -1,6 +1,15 @@
 This file is public domain.
 
 ----------------------------------------------------------------------
+What is new in MetaPost version 3.0a (2026):
+----------------------------------------------------------------------
+* Changed behavior for double, binary, interval, and decimal number systems:
+  mp_number_to_scaled returns a 64-bit signed integer,
+  allowing the range to be extended.
+  Code cleaning, trying to be consistent with C23.
+
+
+----------------------------------------------------------------------
 What is new in MetaPost version 2.11 (2025):
 ----------------------------------------------------------------------
 * Maintenance release, with several bug fixes, including some cases

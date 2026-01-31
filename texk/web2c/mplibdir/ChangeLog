@@ -1,3 +1,18 @@
+2026-01-31  Luigi Scarso <luigi.scarso@gmail.com>
+
+	* MetaPost 3.0a :
+	  Removed the redefinition of INTEGER_TYPE,
+          introduced mpinteger64 of type int64_t (same as integer64)
+
+
+2026-01-24  Luigi Scarso <luigi.scarso@gmail.com>
+
+	* MetaPost 3.0a
+	* mp_number_to_scaled returns a 64bit signed integer instead of int
+          to solve the issue  reported at 
+              [metapost] Limit of arclength when calculating intersectiontimes ?
+	* code cleanup
+
 2025-11-10  Karl Berry  <karl@freefriends.org>
 
 	* mpxout.w: typo.
