@@ -133,7 +133,11 @@
 \font\ninerm=cmr9
 \let\mc=\ninerm % medium caps for names like SAIL
 
+\ifxetex
 \def\XeTeX{X\kern-.125em\lower.5ex\hbox{\mirror{E}}\kern-.1667em\TeX}
+\else
+\def\XeTeX{X\kern-.125em\lower.5ex\hbox{E}\kern-.1667em\TeX}
+\fi
 
 \def\eTeX{$\varepsilon$-\TeX}
 
@@ -185,6 +189,9 @@
 \def\9#1{} % this is used for sort keys in the index via @@:sort key}{entry@@>
 
 \let\@@=\relax % we want to be able to \write a \?
+
+\def\HiTeX{Hi\TeX}
+\def\LuaTeX{Lua\TeX}
 
 \def\title{Hi\TeX}
 \def\LaTeX{L\kern-.36em\raise.3ex\hbox{\sc A}\kern-.15em\TeX}%
@@ -11243,9 +11250,6 @@ static int @!font_ec0[font_max-font_base+1],
 static pointer @!font_glue0[font_max-font_base+1],
   *const @!font_glue = @!font_glue0-font_base;
    /*glue specification for interword space, |null| if not allocated*/
-static bool @!font_used0[font_max-font_base+1],
-  *const @!font_used = @!font_used0-font_base;
-   /*has a character from this font actually appeared in the output?*/
 static int @!hyphen_char0[font_max-font_base+1],
   *const @!hyphen_char = @!hyphen_char0-font_base;
    /*current \.{\\hyphenchar} values*/
@@ -11301,9 +11305,6 @@ static int @!param_base0[font_max-font_base+1],
   *const @!param_base = @!param_base0-font_base;
    /*base addresses for font parameters*/
 
-@ @<Set init...@>=
-for (k=font_base; k<=font_max; k++) font_used[k]=false;
-
 @ \TeX\ always knows at least one font, namely the null font. It has no
 characters, and its seven parameters are all equal to zero.
 
@@ -11357,8 +11358,8 @@ part of \TeX's inner loop, so we want these macros to produce code that is
 as fast as possible under the circumstances.
 @^inner loop@>
 
-@d char_info(A, B) font_info[char_base[A]+B].qqqq
-@d char_width(A, B) (IS_X_FONT(A)? x_char_width(A,B):font_info[width_base[A]+char_info(A,B).b0].sc)
+@d char_info(A, B) (IS_X_FONT(A)?null_character:font_info[char_base[A]+B].qqqq)
+@d char_width(A, B) (IS_X_FONT(A)?x_char_width(A,B):font_info[width_base[A]+char_info(A,B).b0].sc)
 @d char_exists(A,B)  (IS_X_FONT(A)?x_char_exists(A,B): char_info(A,B).b0 > min_quarterword)
 @d char_italic(A, B) (IS_X_FONT(A)? x_char_italic(A,B):font_info[italic_base[A]+(char_info(A,B).b2)/4].sc)
 @d height_depth(A) qo(A.b1)
@@ -11395,15 +11396,14 @@ that do not do local optimization.
 
 @ Font parameters are referred to as |slant(f)|, |space(f)|, etc.
 
-@d param_end(A) param_base[A]].sc
-@d param(A) font_info[A+param_end
-@d slant param(slant_code) /*slant to the right, per unit distance upward*/
-@d space param(space_code) /*normal space between words*/
-@d space_stretch param(space_stretch_code) /*stretch between words*/
-@d space_shrink param(space_shrink_code) /*shrink between words*/
-@d x_height param(x_height_code) /*one ex*/
-@d quad param(quad_code) /*one em*/
-@d extra_space param(extra_space_code) /*additional space at end of sentence*/
+@d param(A,B) font_info[A+param_base[B]].sc
+@d slant(B) param(slant_code,B) /*slant to the right, per unit distance upward*/
+@d space(B) param(space_code,B) /*normal space between words*/
+@d space_stretch(B) param(space_stretch_code,B) /*stretch between words*/
+@d space_shrink(B) param(space_shrink_code,B) /*shrink between words*/
+@d x_height(B) param(x_height_code,B) /*one ex*/
+@d quad(B) param(quad_code,B) /*one em*/
+@d extra_space(B) param(extra_space_code,B) /*additional space at end of sentence*/
 
 @<The em width for |cur_font|@>=quad(cur_font)
 
@@ -11427,7 +11427,7 @@ information is stored; |null_font| is returned in this case.
 
 @d abort goto bad_tfm /*do this when the \.{TFM} data is wrong*/
 
-@p static internal_font_number read_font_info(pointer @!u, str_number @!nom, str_number @!aire,
+@p static internal_font_number read_font_info(str_number t, str_number @!nom, str_number @!aire,
   str_number @!ext,
   scaled @!s) /*input a font file*/
 {@+
@@ -11452,17 +11452,57 @@ done: if (tfm_file.f!=NULL) b_close(&tfm_file);
 return g;
 }
 
-static internal_font_number read_extended_font(pointer @!u, str_number @!nom, str_number @!aire,
-  str_number @!ext,
+static void read_extended_font( internal_font_number g,str_number t,
+  str_number @!nom, str_number @!aire,
   scaled @!s, char * path) /*input a font file*/
-{ 
-  internal_font_number @!g=null_font; /*the number to return*/
-  @<load an extended font@>@;
-  done:
+{ @<load an extended font@>@;
   @<Trace the new extended font@>@;
-  return g;
 }
 
+static void read_predefined_font(internal_font_number g)
+{ char *path;
+  str_number t;
+  pack_file_name(empty_string, font_area[g], empty_string,"");
+  path=(char*)name_of_file+1;
+  t=font_id_text(g);
+  read_extended_font(g,t,font_name[g], font_area[g],font_size[g],path);
+}
+
+@ If an extended font |k| is defined and then dumped into a format file,
+the format file will contain the following information about it:
+|font_size[k]|, |font_dsize[k]|, |font_name[k]|, |font_bc[k]|, |font_ec[k]|,
+and the seven basic font parameters |slant|, |space|, |space_stretch|,
+|space_shrink|, |extra_space|, |quad|, and |x_height|.
+Further, the |font_area[k]| will contain the full name of the font file.
+
+If an extended font |k| is defined in a format file, however,
+it will not be loaded into memory together with the format file,
+and consequently, |x_font[k]| will be |NULL|. The decission not
+to load all fonts specified in a format makes sense because
+formats define a general purpose setting that usually defines
+many more fonts that are used in any specific document.
+For example, the plain \TeX\ format specifies 50 different fonts!
+\HiTeX\ will load a predefined font only if needed.
+
+The test  |x_font[k]!=NULL| is used frequently in \HiTeX\ to test for
+extended fonts. To make this test work for predefined fonts,
+it is necessary to load these fonts before the access to  |x_font[k]|.
+So \HiTeX\ checks for predefined fonts when setting the current font
+or setting a font in one of the seven font families used at the end
+of math mode processing.
+In addition it is necessary to check characters that
+are defined using \.{\\mathcode} or \.{\\mathchardef} because
+these primitives allow the selection of any of the 16 available
+font families.
+
+To tell an extended font from an font with a \.{.tfm} file,
+we store |-256| in |char_base[k]|. The char |char_base| array
+is not used for extended fonts and for other fonts its
+values are usually not negative but definitely bigger than the
+negative value of the smallest character code in the font. 
+
+@d extended_base -256
+@d needs_loading(A) (char_base[A]==extended_base && x_font[A]==NULL)
 
 @ There are programs called \.{TFtoPL} and \.{PLtoTF} that convert
 between the \.{TFM} format and a symbolic property-list format
@@ -11471,7 +11511,7 @@ diagnostic information, so \TeX\ does not have to bother giving
 precise details about why it rejects a particular \.{TFM} file.
 @.TFtoPL@> @.PLtoTF@>
 
-@d start_font_error_message print_err("Font ");sprint_cs(u);
+@d start_font_error_message print_err("Font ");printn_esc(t);
   print_char('=');print_file_name(nom, aire, empty_string);
   if (s >= 0)
     {@+print(" at ");print_scaled(s);print("pt");
@@ -11508,6 +11548,7 @@ error()
 pack_file_name(cur_name, empty_string,empty_string,".tfm"); /* \TeX\ Live */
 path=kpse_find_file((char*)name_of_file+1, kpse_tfm_format, 0);
 if (path!=NULL && b_open_in(&tfm_file,path)) file_opened=true;
+else file_opened=false;
 
 @ Note: A malformed \.{TFM} file might be shorter than it claims to be;
 thus |eof(tfm_file)| might be true when |read_font_info| refers to
@@ -13373,7 +13414,13 @@ after |fetch| has acted, and the field will also have been reset to |empty|.
 if (cur_f==null_font)
   @<Complain about an undefined family and set |cur_i| null@>@;
 else{@+if ((qo(cur_c) >= font_bc[cur_f])&&(qo(cur_c) <= font_ec[cur_f]))
-    cur_i=char_info(cur_f, cur_c);
+  {  if (needs_loading(cur_f))
+     { read_predefined_font(cur_f);
+       cur_i=null_character;
+     }
+     else
+       cur_i=char_info(cur_f, cur_c);
+  }
   else cur_i=null_character;
   if (!(char_exists(cur_f,cur_c)))
     {@+char_warning(cur_f, qo(cur_c));
@@ -18872,7 +18919,7 @@ case hmode+spacer: if (space_factor==1000) goto append_normal_space;
   else app_space();@+break;
 case hmode+ex_space: case mmode+ex_space: goto append_normal_space;
 @t\4@>@<Cases of |main_control| that are not part of the inner loop@>@;
-}  /*of the big |case| statement*/
+}  /*End of the big |case| statement*/
 goto big_switch;
 main_loop: @<Append character |cur_chr| and the following characters (if~any)
 to the current hlist in the current font; |goto reswitch| when a non-character
@@ -18953,8 +19000,10 @@ are inside the individual sections.
 @<Append character |cur_chr|...@>=
 adjust_space_factor;@/
 main_f=cur_font;
-bchar=font_bchar[main_f];false_bchar=font_false_bchar[main_f];
 if (mode > 0) if (language!=clang) fix_language();
+if (IS_X_FONT(main_f))
+ @<Append characters from an extended font; |goto reswitch| when done@>@;
+bchar=font_bchar[main_f];false_bchar=font_false_bchar[main_f];
 fast_get_avail(lig_stack);font(lig_stack)=main_f;cur_l=qi(cur_chr);
 character(lig_stack)=cur_l;@/
 cur_q=tail;
@@ -19170,7 +19219,7 @@ use of \.{\\fontdimen}, the |find_font_dimen| procedure deallocates the
 if (main_p==null)
   {@+main_p=new_spec(zero_glue);main_k=param_base[cur_font]+space_code;
   width(main_p)=font_info[main_k].sc; /*that's |space(cur_font)|*/
-  stretch(main_p)=font_info[main_k+1].sc; /*and |space_cur_font)|*/
+  stretch(main_p)=font_info[main_k+1].sc; /*and |space_stretch(cur_font)|*/
   shrink(main_p)=font_info[main_k+2].sc; /*and |space_shrink(cur_font)|*/
   font_glue[cur_font]=main_p;
   }
@@ -21290,6 +21339,32 @@ else if ((font_params[fam_fnt(3+text_size)] < total_mathex_params)||@|
     "the \\fontdimen values needed in math extension fonts.");
   error();flush_math();danger=true;
   }
+else
+ @<Load predefined fonts if needed in mathmode@>@;
+
+@
+
+@<Load predefined fonts if needed in mathmode@>=
+{ int f;
+  for(f=0; f<7;f++)
+  { if (needs_loading(fam_fnt(f+text_size)))
+      read_predefined_font(fam_fnt(f+text_size));
+    if (needs_loading(fam_fnt(f+script_size)))
+      read_predefined_font(fam_fnt(f+script_size));
+    if (needs_loading(fam_fnt(f+script_script_size)))
+      read_predefined_font(fam_fnt(f+script_script_size));
+  }
+  if (fam_in_range)
+  { f=cur_fam;
+    if (needs_loading(fam_fnt(f+text_size)))
+      read_predefined_font(fam_fnt(f+text_size));
+    if (needs_loading(fam_fnt(f+script_size)))
+      read_predefined_font(fam_fnt(f+script_size));
+    if (needs_loading(fam_fnt(f+script_script_size)))
+      read_predefined_font(fam_fnt(f+script_script_size));
+   }
+}
+
 
 @ The |unsave| is done after everything else here; hence an appearance of
 `\.{\\mathsurround}' inside of `\.{\$...\$}' affects the spacing at these
@@ -21591,10 +21666,16 @@ text(frozen_protection)=s_no("inaccessible");
 @.inaccessible@>
 
 @ Here's an example of the way many of the following routines operate.
-(Unfortunately, they aren't all as simple as this.)
+After some preprocessing---here we check for extended fonts that were
+defined in a format file, but are not yet loaded intp memory---the |define|
+macro will set the a value/type pair at the  given location in the table
+of equivalents.
 
 @<Assignments@>=
-case set_font: define(cur_font_loc, data, cur_chr);@+break;
+case set_font:
+  if (needs_loading(cur_chr))
+    read_predefined_font(cur_chr);
+  define(cur_font_loc, data, cur_chr);@+break;
 
 @ When a |def| command has been scanned,
 |cur_chr| is odd if the definition is supposed to be global, and
@@ -21902,6 +21983,8 @@ else n=255
 @ @<Assignments@>=
 case def_family: {@+p=cur_chr;scan_four_bit_int();p=p+cur_val;
   scan_optional_equals();scan_font_ident();define(p, data, cur_val);
+  if (needs_loading(cur_val))
+    read_predefined_font(cur_val);
   } @+break;
 
 @ Next we consider changes to \TeX's numeric registers.
@@ -22217,8 +22300,9 @@ static void new_font(small_number @!a)
 {@+
 pointer u; /*user's font identifier*/
 scaled @!s; /*stated ``at'' size, or negative of scaled magnification*/
-int @!f; /*runs through existing fonts*/
+int @!f=null_font; /*runs through existing fonts*/
 str_number @!t; /*name for the frozen font identifier*/
+str_number @!nom, @!aire;
 int @!old_setting; /*holds |selector| setting*/
 str_number @!flushable_string; /*string not yet referenced*/
 bool @!file_opened; /*was the file successfully opened?*/
@@ -22236,6 +22320,7 @@ else{@+old_setting=selector;selector=new_string;
   str_room(1);t=make_string();
   }
 define(u, set_font, null_font);scan_optional_equals();scan_font_name();
+nom=cur_name; aire=cur_area;
 @<Scan the font size specification@>;
 @<Trace the font specification@>@;
 @<If this font has already been loaded, set |f| to the internal font number
@@ -22246,12 +22331,20 @@ f=read_font_info(u, cur_name, cur_area, cur_ext, s);
 else
 { @<Open an extended font file for input@>@;
   if (path!=NULL)
-    f=read_extended_font(u, cur_name, cur_area, cur_ext, s, path);
+  { if (font_ptr==font_max|| fmem_ptr+8 > font_mem_size)
+      @<Apologize for not loading the font, |goto done|@>;
+    font_ptr++;
+    f=font_ptr;
+    font_name[f]=nom;
+    read_extended_font(f,t, cur_name, cur_area, s, path);
+    @<Initialize the font tables for the extended font |f|@>@;
+  }
   else
+  { done:
     f=null_font;
+  }
 }
 common_ending:
-
 define(u, set_font, f);eqtb[font_id_base+f]=eqtb[u];font_id_text(f)=t;
 }
 
@@ -22978,7 +23071,10 @@ dump_int(fmem_ptr);
 for (k=0; k<=fmem_ptr-1; k++) dump_wd(font_info[k]);
 dump_int(font_ptr);
 for (k=null_font; k<=font_ptr; k++)
-{ if (IS_X_FONT(k)) fatal_error("I can't dump extended fonts. Sorry!");
+{
+#if 0
+  if (IS_X_FONT(k)) fatal_error("I can't dump extended fonts. Sorry!");
+#endif  
   @<Dump the array info for internal font number |k|@>;
 }
 print_ln();print_int(fmem_ptr-7);print(" words of font info for ");
@@ -23032,8 +23128,8 @@ undump_int(hyphen_char[k]);
 undump_int(skew_char[k]);@/
 undump(0, str_ptr, font_name[k]);
 undump(0, str_ptr, font_area[k]);@/
-undump(0, 255, font_bc[k]);
-undump(0, 255, font_ec[k]);@/
+undump(0, biggest_char, font_bc[k]);
+undump(0, biggest_char, font_ec[k]);@/
 undump_int(char_base[k]);
 undump_int(width_base[k]);
 undump_int(height_base[k]);@/
@@ -23398,6 +23494,8 @@ if ((format_ident==0)||(buffer[loc]=='&'))
   if (!load_fmt_file())
     {@+w_close(&fmt_file);exit(0);
     }
+  else if (needs_loading(cur_font))
+    read_predefined_font(cur_font);
   w_close(&fmt_file);
   while ((loc < limit)&&(buffer[loc]==' ')) incr(loc);
   }
@@ -34487,13 +34585,13 @@ Let us start with the x-height: the size of one ex in the font.
 |x_height(A)| is defined as |font_info[param_base[g]+x_height_code].sc| with |x_height_code==5|.
 
 @<get the extended fonts parameters@>=
-param_base[g]=fmem_ptr;
-fmem_ptr=fmem_ptr+font_params[g]+1;
-font_info[param_base[g]].sc =0;
+param_base[f]=fmem_ptr;
+fmem_ptr=fmem_ptr+font_params[f]+1;
+font_info[param_base[f]].sc =0;
 {  hb_position_t h;
-  hb_ot_metrics_get_position_with_fallback(x_font[g]->f,HB_OT_METRICS_TAG_X_HEIGHT,&h);
+  hb_ot_metrics_get_position_with_fallback(x_font[f]->f,HB_OT_METRICS_TAG_X_HEIGHT,&h);
   /* if this is not working, I could use |x_char_height(f,'x')| */
-  x_height(g)= HB_TO_SCALED(h);
+  x_height(f)= HB_TO_SCALED(h);
 }
 
 
@@ -34502,8 +34600,8 @@ character 1pt high.
 
 @<get the extended fonts parameters@>=
 { double r;
-  r= hb_style_get_value (f, HB_STYLE_TAG_SLANT_RATIO);
-  slant(g)=(ONE*r+0.5);
+  r= hb_style_get_value (x_font[f]->f, HB_STYLE_TAG_SLANT_RATIO);
+  slant(f)=(ONE*r+0.5);
 }
   
 
@@ -34553,8 +34651,7 @@ last |DIR_SEP| character.
 We have |ext_delimiter==0| or equal to the string length up to the
 last |'.'| character.
 We look for brackets and prefixes
-then try to get the right file path using the kpse_find_file
-function. 
+then try to get the right file path using the |kpse_find_file| function. 
 Finaly, we put the area, the name and the extension back into the
 string pool and set |cur_area|, |cur_name|, and |cur_ext| using
 |end_name|. The font index and the font options will go into
@@ -34724,7 +34821,7 @@ if (tracing_fonts>0)
   if (g==null_font) print_nl("Font not found, using \"nullfont\"");
   end_diagnostic(false);
 }
-#ifdef DEBUG
+#if 0
 if (IS_X_FONT(g))
 { int x_scale, y_scale;
   unsigned int x_ppem,y_ppem;
@@ -34735,7 +34832,7 @@ if (IS_X_FONT(g))
   hb_position_t ax;
 
   fprintf(stderr,"\n");
-  fprintf(stderr,"%s\n",path);
+  fprintf(stderr,"%s at %fpt\n",path, font_size[g]/(double)ONE);
   f=x_font[g]->f;
   hb_font_get_scale(f,&x_scale,&y_scale);
   fprintf(stderr,"given scale %d/%d\n",x_scale,y_scale);
@@ -34941,11 +35038,10 @@ primitive will issue an error message if it encounters an extended font.
 @<Glob...@>=
 typedef struct {
   hb_blob_t *blob; /* can be shared for different faces */
-  hb_font_t *f;
   hb_subset_input_t *sub;
   hb_set_t *subset;
+  hb_font_t *f;
   int i; /* index */
-  scaled s; /* size */
 } x_font_info;
 typedef x_font_info *x_font_ptr;
 
@@ -34955,26 +35051,17 @@ static x_font_ptr @!x_font0[font_max-font_base+1]={NULL},
 @ @<load an extended font@>=
 { hb_face_t *face;
   hb_font_t *f;
-  scaled f_dsize;
-  
-  if (font_ptr==font_max|| fmem_ptr+8 > font_mem_size)
-    @<Apologize for not loading the font, |goto done|@>;
-  font_ptr++;
-  g=font_ptr;
   ALLOCATE(x_font[g],1,x_font_info);
-  font_name[g]=nom;
   @<Search for a font with the same |path| or load the |path|@>@;
-  
   face = hb_face_create(x_font[g]->blob, f_index);
   if (face==NULL) fatal_error("Unable to open extended font face!");
   f = hb_font_create(face);
   if (f==NULL)
     fatal_error("Unable to open extended font!");
   x_font[g]->f=f;
-
+  x_font[g]->i=f_index;
   @<determine the design size@>@;
   @<adjust the extended font for the given scale factor@>@; 
-  @<Initialize the font tables for the extended font |g|@>@;
 }
 
 @ It is quite common to create several font faces from the same
@@ -34985,20 +35072,26 @@ file.
 
 @<Search for a font with the same |path| or load the |path|@>=
 { int i;
+  int l;
   x_font[g]->blob=NULL;
   x_font[g]->sub=NULL;
   x_font[g]->subset=NULL;
-  for (i=1; i<g; i++)
-    if (IS_X_FONT(i) && str_eq_buf(font_area[i],path))
+  l=strlen(path);
+  for (i=1; i<=font_ptr; i++)
+    if (i!=g && length(font_area[i])==l && str_eq_buf(font_area[i],path))
     { font_area[g]=font_area[i];
-      x_font[g]->blob=x_font[i]->blob;
-      x_font[g]->subset=x_font[i]->subset;
-      break;
+      if (x_font[i]!=NULL)
+      { x_font[g]->blob=x_font[i]->blob;
+        x_font[g]->subset=x_font[i]->subset;
+        break;
+      }
     }
   if (x_font[g]->blob==NULL)
   { x_font[g]->blob = hb_blob_create_from_file(path);
     if (x_font[g]->blob==NULL) fatal_error("Unable to open extended font file!");
-    font_name[g]=nom;font_area[g]=s_no(path);
+    font_name[g]=nom;
+    if (font_area[g]==0)
+      font_area[g]=s_no(path);
     @<Initialize font |g| for subsetting@>@;
   }
 }
@@ -35007,43 +35100,37 @@ file.
 Hi\TeX\ uses the |font_name| and |font_area|, as well as the |font_size|
 and the |font_dsize|.
 
-@<Initialize the font tables for the extended font |g|@>=
-x_font[g]->i=f_index;
-
-x_font[g]->s=s;
-
-font_size[g]=s;font_dsize[g]=f_dsize;
-hyphen_char[g]='-';skew_char[g]=-1;
-bchar_label[g]=non_address;
-font_bchar[g]=non_char;font_false_bchar[g]=non_char;
-char_base[g]=0;width_base[g]=0;
-height_base[g]=0;depth_base[g]=0;
-italic_base[g]=0;lig_kern_base[g]=0;
-kern_base[g]=0;exten_base[g]=0;
-font_glue[g]=null;
-font_params[g]=7;
-if ((font_ptr==font_max)||(fmem_ptr+font_params[g]+1 > font_mem_size))
+@<Initialize the font tables for the extended font |f|@>=
+hyphen_char[f]='-';skew_char[f]=-1;
+bchar_label[f]=non_address;
+font_bchar[f]=non_char;font_false_bchar[f]=non_char;
+char_base[f]=extended_base;width_base[f]=0;
+height_base[f]=0;depth_base[f]=0;
+italic_base[f]=0;lig_kern_base[f]=0;
+kern_base[f]=0;exten_base[f]=0;
+font_glue[f]=null;
+font_params[f]=7;
+if ((font_ptr==font_max)||(fmem_ptr+font_params[f]+1 > font_mem_size))
   @<Apologize for not loading the font, |goto done|@>;
-font_used[g]=false;
 @<get the extended fonts parameters@>;
 
 @ We start with finding the first and the last character in the font:
 @<get the extended fonts parameters@>=
 { hb_set_t *uset= hb_set_create ();
-  hb_face_t *face=hb_font_get_face(x_font[g]->f); 
+  hb_face_t *face=hb_font_get_face(x_font[f]->f); 
   hb_face_collect_unicodes (face,uset);
-  font_bc[g]=hb_set_get_min (uset);
-  font_ec[g]=hb_set_get_max (uset);
+  font_bc[f]=hb_set_get_min (uset);
+  font_ec[f]=hb_set_get_max (uset);
   hb_set_destroy(uset);
 }
 
 @ Last, we look at the space character.
 @<get the extended fonts parameters@>=
-{ space(g)=x_char_width(g,' ');
-  space_stretch(g)=space(g)/2;
-  space_shrink(g)=space(g)/3;
-  extra_space(g)=space(g)/3;
-  quad(g)=s;
+{ space(f)=x_char_width(f,' ');
+  space_stretch(f)=space(f)/2;
+  space_shrink(f)=space(f)/3;
+  extra_space(f)=space(f)/3;
+  quad(f)=font_size[f];
 }
 
 
@@ -35072,12 +35159,10 @@ by harfbuzz by another 5 bits to obtain \TeX's scaled points.
 
 @<adjust the extended font for the given scale factor@>=
 if (s<0)
-{  if (s==-1000) s=f_dsize;
-  else s= xn_over_d(f_dsize,-s, 1000);
+{  if (s==-1000) s=font_dsize[g];
+  else s= xn_over_d(font_dsize[g],-s, 1000);
 }
-#if 0
-fprintf(stderr,"\thb: scale %d(0x%x)\n",HB_FROM_SCALED(s),HB_FROM_SCALED(s));
-#endif
+font_size[g]=s;
 hb_font_set_scale(f,HB_FROM_SCALED(s), HB_FROM_SCALED(s));
 hb_font_set_ptem(f,(72.0/72.27)*s/(double)ONE);
 
@@ -35087,11 +35172,14 @@ hb_font_set_ptem(f,(72.0/72.27)*s/(double)ONE);
 
 @<determine the design size@>=
 { unsigned int designSize, minSize, maxSize, subFamilyID, nameCode;
+  scaled f_dsize;
   hb_ot_layout_get_size_params(face, &designSize, &subFamilyID,
     &nameCode, &minSize, &maxSize);
   if (designSize==0)
-    designSize=100;  /*use 10pt instead of zero*/
-  f_dsize=(((designSize/72.0)*72.27)/10.0)*ONE+0.5; /* round to a scaled value */
+    f_dsize=10*ONE;  /*use 10pt instead of zero*/
+  else  
+    f_dsize=(((designSize/72.0)*72.27)/10.0)*ONE+0.5; /* round to a scaled value */
+  font_dsize[g]=f_dsize;
 }  
 
 
@@ -35197,6 +35285,77 @@ static scaled x_char_italic(internal_font_number g, int c)
     return 0;
 }
 
+
+@ Harfbuzz is used to insert kerns and liatures in the input stream.
+
+We start easy without any extra processing. The following code
+is called if the main loop has just started.
+It has adjusted the space factor and called |fix_language| if necessary.
+|main_f| is initialized to |cur_font|. If then |main_f| happens to be
+an extended font, the following code comes to life.
+
+@d tail_append_char(A) { pointer p; fast_get_avail(p); font(p)=main_f; character(p)=A; tail_append(p);}
+ 
+@<Append characters from an extended font; |goto reswitch| when done@>=
+{ hb_buffer_t *buf;
+  buf = hb_buffer_create();
+  unsigned int glyph_count;
+  hb_glyph_info_t *glyph_info;
+  hb_glyph_position_t *glyph_pos;
+  int i,len;
+  hb_codepoint_t cp[256];
+  hb_feature_t features[4] =
+  { {HB_TAG('l','i','g','a'), 0, HB_FEATURE_GLOBAL_START, HB_FEATURE_GLOBAL_END},
+    {HB_TAG('c','l','i','g'), 0, HB_FEATURE_GLOBAL_START, HB_FEATURE_GLOBAL_END},
+    {HB_TAG('d','l','i','g'), 0, HB_FEATURE_GLOBAL_START, HB_FEATURE_GLOBAL_END},
+    {HB_TAG('c','a','l','t'), 0, HB_FEATURE_GLOBAL_START, HB_FEATURE_GLOBAL_END}
+   };
+for (len=0;len<256;len++) {
+if (!x_char_exists(main_f,cur_chr))
+  {@+char_warning(cur_font, cur_chr);goto big_switch;
+  }
+  cp[len]=cur_chr;
+  get_next(); /*set only |cur_cmd| and |cur_chr|, for speed*/
+  if (cur_cmd==letter || cur_cmd==other_char || cur_cmd==char_given)
+    continue;
+  x_token(); /*now expand and set |cur_cmd|, |cur_chr|, |cur_tok|*/
+  if (cur_cmd==letter || cur_cmd==other_char || cur_cmd==char_given)
+    continue;
+  else if (cur_cmd==char_num)
+  {@+scan_char_num();cur_chr=cur_val; continue; }
+  else
+  { len++;  break;}
+}
+if (len==256)
+{ print_err("Long word cut to 256 characters");
+  error();
+}
+hb_buffer_add_codepoints(buf,cp,len,0,len);
+hb_buffer_set_direction(buf, HB_DIRECTION_LTR);
+hb_buffer_set_script(buf, HB_SCRIPT_LATIN);
+hb_buffer_set_language(buf, hb_language_from_string("en", -1));
+/* set shaper level probably 2 0r 1, set features */
+
+
+hb_shape(x_font[main_f]->f, buf, features, 4);
+glyph_info    = hb_buffer_get_glyph_infos(buf, &glyph_count);
+glyph_pos = hb_buffer_get_glyph_positions(buf, &glyph_count);
+
+for (i = 0; i < glyph_count; i++) {
+  uint32_t cluster = glyph_info[i].cluster;
+  hb_position_t x_advance = glyph_pos[i].x_advance;
+  scaled w, a, delta;
+  tail_append_char(cp[cluster]);
+  w = x_char_width(main_f,cp[cluster]);
+  a= HB_TO_SCALED(x_advance);
+  delta= a-w;
+  if (delta!=0)
+  tail_append(new_kern(delta));
+}
+hb_buffer_destroy(buf);
+
+goto reswitch;
+}
 
 @* Index.
 Here is where you can find all uses of each identifier in the program,
