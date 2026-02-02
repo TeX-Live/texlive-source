@@ -111,6 +111,7 @@ case "$arch" in
     then
       export CC="gcc -m32"
       export CXX="g++ -m32"
+      crle -l /opt/csw/lib
     else
       export CC="gcc -m64"
       export CXX="g++ -m64"
