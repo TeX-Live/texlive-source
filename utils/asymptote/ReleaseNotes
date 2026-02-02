@@ -1,3 +1,25 @@
+Release Notes for Version 3.06
+
+The Xasy front end was updated to Qt6.
+V3D and gzipped XDR files are now supported up to size 2^64-1.
+Typescript was added to the AsyGL library source.
+Various build issues were addressed.
+The dependence on the boost library was removed.
+Preliminary support for WebGL animations was added
+(see the example teapotAnimation.asy).
+
+Release Notes for Version 3.05
+
+A bug in handling Xasy-generated transforms was fixed.
+The asymptote.ualberta.ca server was updated to use the https protocal.
+Double precision integer XDR reads and writes were fixed under UNIX;
+XDR and binary string reads and writes were implemented.
+These overloaded virtual file fields were exposed again:
+singlereal, singleint, signedint, line, word, csv, and dimension.
+To support MacOS X, the explicit 'gif:' format was removed from the
+animate call; warning messages were addressed.
+Reading V3D files with the native Windows build was fixed.
+
 Release Notes for Version 3.04
 
 To support transparent backgrounds, the png16malpha driver of Ghostscript 10
@@ -5,7 +27,7 @@ is now used as the default pngdriver; use settings.pngdriver="png16m" or
 settings.pngdriver="pngalpha" for older versions of Ghostscript. 
 The projection-dependence of WebGL shaders was removed for correct rendering
 of multiple embedded images.
-A new setting keys generates WebGL comments to identify each generated object.
+A new setting keys outputs WebGL comments to identify each generated object.
 Unlink issues under MSWindows and compilation issues were addressed.
 
 Release Notes for Version 3.03

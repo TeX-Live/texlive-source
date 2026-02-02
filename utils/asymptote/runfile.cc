@@ -132,7 +132,7 @@ void gen_runfile3(stack *Stack)
 #ifdef HAVE_LIBTIRPC
     if(mode == "xdr")
       f=new ixfile(name,check);
-    else if(mode == "xdrgz")
+    else
       f=new igzxfile(name,check);
 #else
     ostringstream buf;
@@ -168,11 +168,15 @@ void gen_runfile4(stack *Stack)
   } else if(mode == "binary") {
     if(update) f=new iobfile(name);
     else f=new obfile(name);
-  } else if(mode == "xdr") {
+  } else if(mode == "xdr" || mode == "xdrgz") {
 #ifdef HAVE_LIBTIRPC
-    if(update)
-      f=new ioxfile(name);
-    else f=new oxfile(name);
+    if(mode == "xdr") {
+      if(update)
+        f=new ioxfile(name);
+      else
+        f=new oxfile(name);
+    } else
+      f=new ogzxfile(name);
 #else
     ostringstream buf;
     buf << name << ": XDR write support not enabled";
@@ -196,152 +200,152 @@ void gen_runfile4(stack *Stack)
   {Stack->push<file*>(f); return;}
 }
 
-#line 114 "./runfile.in"
+#line 118 "./runfile.in"
 // bool eof(file *f);
 void gen_runfile5(stack *Stack)
 {
   file * f=vm::pop<file *>(Stack);
-#line 115 "./runfile.in"
+#line 119 "./runfile.in"
   {Stack->push<bool>(f->eof()); return;}
 }
 
-#line 119 "./runfile.in"
+#line 123 "./runfile.in"
 // bool eol(file *f);
 void gen_runfile6(stack *Stack)
 {
   file * f=vm::pop<file *>(Stack);
-#line 120 "./runfile.in"
+#line 124 "./runfile.in"
   {Stack->push<bool>(f->eol()); return;}
 }
 
-#line 124 "./runfile.in"
+#line 128 "./runfile.in"
 // bool error(file *f);
 void gen_runfile7(stack *Stack)
 {
   file * f=vm::pop<file *>(Stack);
-#line 125 "./runfile.in"
+#line 129 "./runfile.in"
   {Stack->push<bool>(f->error()); return;}
 }
 
-#line 129 "./runfile.in"
+#line 133 "./runfile.in"
 // void clear(file *f);
 void gen_runfile8(stack *Stack)
 {
   file * f=vm::pop<file *>(Stack);
-#line 130 "./runfile.in"
+#line 134 "./runfile.in"
   f->clear();
 }
 
-#line 134 "./runfile.in"
+#line 138 "./runfile.in"
 // void close(file *f);
 void gen_runfile9(stack *Stack)
 {
   file * f=vm::pop<file *>(Stack);
-#line 135 "./runfile.in"
+#line 139 "./runfile.in"
   f->close();
 }
 
-#line 139 "./runfile.in"
+#line 143 "./runfile.in"
 // Int precision(file *f=NULL, Int digits=0);
 void gen_runfile10(stack *Stack)
 {
   Int digits=vm::pop<Int>(Stack,0);
   file * f=vm::pop<file *>(Stack,NULL);
-#line 140 "./runfile.in"
+#line 144 "./runfile.in"
   if(f == 0) f=&camp::Stdout;
   {Stack->push<Int>(f->precision(digits)); return;}
 }
 
-#line 145 "./runfile.in"
+#line 149 "./runfile.in"
 // void flush(file *f);
 void gen_runfile11(stack *Stack)
 {
   file * f=vm::pop<file *>(Stack);
-#line 146 "./runfile.in"
+#line 150 "./runfile.in"
   f->flush();
 }
 
-#line 150 "./runfile.in"
+#line 154 "./runfile.in"
 // string getc(file *f);
 void gen_runfile12(stack *Stack)
 {
   file * f=vm::pop<file *>(Stack);
-#line 151 "./runfile.in"
+#line 155 "./runfile.in"
   char c=0;
   if(f->isOpen()) f->read(c);
   {Stack->push<string>(string(1,c)); return;}
 }
 
-#line 157 "./runfile.in"
+#line 161 "./runfile.in"
 // Int tell(file *f);
 void gen_runfile13(stack *Stack)
 {
   file * f=vm::pop<file *>(Stack);
-#line 158 "./runfile.in"
+#line 162 "./runfile.in"
   {Stack->push<Int>(f->tell()); return;}
 }
 
-#line 162 "./runfile.in"
+#line 166 "./runfile.in"
 // void seek(file *f, Int pos);
 void gen_runfile14(stack *Stack)
 {
   Int pos=vm::pop<Int>(Stack);
   file * f=vm::pop<file *>(Stack);
-#line 163 "./runfile.in"
+#line 167 "./runfile.in"
   f->seek(pos,pos >= 0);
 }
 
-#line 167 "./runfile.in"
+#line 171 "./runfile.in"
 // void seekeof(file *f);
 void gen_runfile15(stack *Stack)
 {
   file * f=vm::pop<file *>(Stack);
-#line 168 "./runfile.in"
+#line 172 "./runfile.in"
   f->seek(0,false);
 }
 
-#line 172 "./runfile.in"
+#line 176 "./runfile.in"
 void namePart(stack *Stack)
 {
   file f=vm::pop<file>(Stack);
-#line 173 "./runfile.in"
+#line 177 "./runfile.in"
   {Stack->push<string>(f.filename()); return;}
 }
 
-#line 177 "./runfile.in"
+#line 181 "./runfile.in"
 void modePart(stack *Stack)
 {
   file f=vm::pop<file>(Stack);
-#line 178 "./runfile.in"
+#line 182 "./runfile.in"
   {Stack->push<string>(f.FileMode()); return;}
 }
 
 // Set file dimensions
-#line 183 "./runfile.in"
+#line 187 "./runfile.in"
 void dimensionSetHelper(stack *Stack)
 {
   file * f=vm::pop<file *>(Stack);
   Int nz=vm::pop<Int>(Stack,-1);
   Int ny=vm::pop<Int>(Stack,-1);
   Int nx=vm::pop<Int>(Stack,-1);
-#line 184 "./runfile.in"
+#line 188 "./runfile.in"
   f->dimension(nx,ny,nz);
   {Stack->push<file*>(f); return;}
 }
 
-#line 189 "./runfile.in"
+#line 193 "./runfile.in"
 void dimensionSet(stack *Stack)
 {
   file * f=vm::pop<file *>(Stack);
-#line 190 "./runfile.in"
+#line 194 "./runfile.in"
   {Stack->push<callable*>(new thunk(new bfunc(dimensionSetHelper),f)); return;}
 }
 
-#line 194 "./runfile.in"
+#line 198 "./runfile.in"
 void dimensionPart(stack *Stack)
 {
   file f=vm::pop<file>(Stack);
-#line 195 "./runfile.in"
+#line 199 "./runfile.in"
   array *a=new array(3);
   (*a)[0]=f.Nx();
   (*a)[1]=f.Ny();
@@ -350,174 +354,174 @@ void dimensionPart(stack *Stack)
 }
 
 // Set file f to read arrays in line-at-a-time mode
-#line 204 "./runfile.in"
+#line 208 "./runfile.in"
 void lineSetHelper(stack *Stack)
 {
   file * f=vm::pop<file *>(Stack);
   bool b=vm::pop<bool>(Stack,true);
-#line 205 "./runfile.in"
+#line 209 "./runfile.in"
   f->LineMode(b);
   {Stack->push<file*>(f); return;}
 }
 
-#line 210 "./runfile.in"
+#line 214 "./runfile.in"
 void lineSet(stack *Stack)
 {
   file * f=vm::pop<file *>(Stack);
-#line 211 "./runfile.in"
+#line 215 "./runfile.in"
   {Stack->push<callable*>(new thunk(new bfunc(lineSetHelper),f)); return;}
 }
 
-#line 215 "./runfile.in"
+#line 219 "./runfile.in"
 void linePart(stack *Stack)
 {
   file f=vm::pop<file>(Stack);
-#line 216 "./runfile.in"
+#line 220 "./runfile.in"
   {Stack->push<bool>(f.LineMode()); return;}
 }
 
 // Set file to read comma-separated values
-#line 221 "./runfile.in"
+#line 225 "./runfile.in"
 void csvSetHelper(stack *Stack)
 {
   file * f=vm::pop<file *>(Stack);
   bool b=vm::pop<bool>(Stack,true);
-#line 222 "./runfile.in"
+#line 226 "./runfile.in"
   f->CSVMode(b);
   {Stack->push<file*>(f); return;}
 }
 
-#line 227 "./runfile.in"
+#line 231 "./runfile.in"
 void csvSet(stack *Stack)
 {
   file * f=vm::pop<file *>(Stack);
-#line 228 "./runfile.in"
+#line 232 "./runfile.in"
   {Stack->push<callable*>(new thunk(new bfunc(csvSetHelper),f)); return;}
 }
 
-#line 232 "./runfile.in"
+#line 236 "./runfile.in"
 void csvPart(stack *Stack)
 {
   file f=vm::pop<file>(Stack);
-#line 233 "./runfile.in"
+#line 237 "./runfile.in"
   {Stack->push<bool>(f.CSVMode()); return;}
 }
 
 // Set file to read whitespace-separated values
-#line 238 "./runfile.in"
+#line 242 "./runfile.in"
 void wordSetHelper(stack *Stack)
 {
   file * f=vm::pop<file *>(Stack);
   bool b=vm::pop<bool>(Stack,true);
-#line 239 "./runfile.in"
+#line 243 "./runfile.in"
   f->WordMode(b);
   {Stack->push<file*>(f); return;}
 }
 
-#line 244 "./runfile.in"
+#line 248 "./runfile.in"
 void wordSet(stack *Stack)
 {
   file * f=vm::pop<file *>(Stack);
-#line 245 "./runfile.in"
+#line 249 "./runfile.in"
   {Stack->push<callable*>(new thunk(new bfunc(wordSetHelper),f)); return;}
 }
 
-#line 249 "./runfile.in"
+#line 253 "./runfile.in"
 void wordPart(stack *Stack)
 {
   file f=vm::pop<file>(Stack);
-#line 250 "./runfile.in"
+#line 254 "./runfile.in"
   {Stack->push<bool>(f.WordMode()); return;}
 }
 
 // Set file to read/write single precision real XDR values.
-#line 255 "./runfile.in"
+#line 259 "./runfile.in"
 void singlerealSetHelper(stack *Stack)
 {
   file * f=vm::pop<file *>(Stack);
   bool b=vm::pop<bool>(Stack,true);
-#line 256 "./runfile.in"
+#line 260 "./runfile.in"
   f->SingleReal(b);
   {Stack->push<file*>(f); return;}
 }
 
-#line 261 "./runfile.in"
+#line 265 "./runfile.in"
 void singlerealSet(stack *Stack)
 {
   file * f=vm::pop<file *>(Stack);
-#line 262 "./runfile.in"
+#line 266 "./runfile.in"
   {Stack->push<callable*>(new thunk(new bfunc(singlerealSetHelper),f)); return;}
 }
 
-#line 266 "./runfile.in"
+#line 270 "./runfile.in"
 void singlerealPart(stack *Stack)
 {
   file f=vm::pop<file>(Stack);
-#line 267 "./runfile.in"
+#line 271 "./runfile.in"
   {Stack->push<bool>(f.SingleReal()); return;}
 }
 
 // Set file to read/write single precision int XDR values.
-#line 272 "./runfile.in"
+#line 276 "./runfile.in"
 void singleintSetHelper(stack *Stack)
 {
   file * f=vm::pop<file *>(Stack);
   bool b=vm::pop<bool>(Stack,true);
-#line 273 "./runfile.in"
+#line 277 "./runfile.in"
   f->SingleInt(b);
   {Stack->push<file*>(f); return;}
 }
 
-#line 278 "./runfile.in"
+#line 282 "./runfile.in"
 void singleintSet(stack *Stack)
 {
   file * f=vm::pop<file *>(Stack);
-#line 279 "./runfile.in"
+#line 283 "./runfile.in"
   {Stack->push<callable*>(new thunk(new bfunc(singleintSetHelper),f)); return;}
 }
 
-#line 283 "./runfile.in"
+#line 287 "./runfile.in"
 void singleintPart(stack *Stack)
 {
   file f=vm::pop<file>(Stack);
-#line 284 "./runfile.in"
+#line 288 "./runfile.in"
   {Stack->push<bool>(f.SingleInt()); return;}
 }
 
 // Set file to read/write signed int XDR values.
-#line 289 "./runfile.in"
+#line 293 "./runfile.in"
 void signedintSetHelper(stack *Stack)
 {
   file * f=vm::pop<file *>(Stack);
   bool b=vm::pop<bool>(Stack,true);
-#line 290 "./runfile.in"
+#line 294 "./runfile.in"
   f->SignedInt(b);
   {Stack->push<file*>(f); return;}
 }
 
-#line 295 "./runfile.in"
+#line 299 "./runfile.in"
 void signedintSet(stack *Stack)
 {
   file * f=vm::pop<file *>(Stack);
-#line 296 "./runfile.in"
+#line 300 "./runfile.in"
   {Stack->push<callable*>(new thunk(new bfunc(signedintSetHelper),f)); return;}
 }
 
-#line 300 "./runfile.in"
+#line 304 "./runfile.in"
 void signedintPart(stack *Stack)
 {
   file f=vm::pop<file>(Stack);
-#line 301 "./runfile.in"
+#line 305 "./runfile.in"
   {Stack->push<bool>(f.SignedInt()); return;}
 }
 
 // Set file to read an arrayi (i int sizes followed by an i-dimensional array)
-#line 306 "./runfile.in"
+#line 310 "./runfile.in"
 void readSetHelper(stack *Stack)
 {
   file * f=vm::pop<file *>(Stack);
   Int i=vm::pop<Int>(Stack);
-#line 307 "./runfile.in"
+#line 311 "./runfile.in"
   switch(i) {
     case 1:
     f->dimension(-2);
@@ -538,21 +542,21 @@ void readSetHelper(stack *Stack)
   {Stack->push<file*>(f); return;}
 }
 
-#line 328 "./runfile.in"
+#line 332 "./runfile.in"
 void readSet(stack *Stack)
 {
   file * f=vm::pop<file *>(Stack);
-#line 329 "./runfile.in"
+#line 333 "./runfile.in"
   {Stack->push<callable*>(new thunk(new bfunc(readSetHelper),f)); return;}
 }
 
 // Delete file named s.
-#line 334 "./runfile.in"
+#line 338 "./runfile.in"
 // Int delete(string s);
 void gen_runfile41(stack *Stack)
 {
   string s=vm::pop<string>(Stack);
-#line 335 "./runfile.in"
+#line 339 "./runfile.in"
   s=outpath(s);
   Int rc=unlink(s.c_str());
   if(rc == 0 && verbose > 0)
@@ -561,13 +565,13 @@ void gen_runfile41(stack *Stack)
 }
 
 // Rename file "from" to file "to".
-#line 344 "./runfile.in"
+#line 348 "./runfile.in"
 // Int rename(string from, string to);
 void gen_runfile42(stack *Stack)
 {
   string to=vm::pop<string>(Stack);
   string from=vm::pop<string>(Stack);
-#line 345 "./runfile.in"
+#line 349 "./runfile.in"
   from=outpath(from);
   to=outpath(to);
   Int rc=renameOverwrite(from.c_str(),to.c_str());
@@ -577,12 +581,12 @@ void gen_runfile42(stack *Stack)
 }
 
 // Create a uniquely named temporary file.
-#line 355 "./runfile.in"
+#line 359 "./runfile.in"
 // string mktemp(string s);
 void gen_runfile43(stack *Stack)
 {
   string s=vm::pop<string>(Stack);
-#line 356 "./runfile.in"
+#line 360 "./runfile.in"
   string baseTemplate=s+"XXXXXX";
   char *S=StrdupMalloc(baseTemplate);
   bool success=true;
@@ -643,83 +647,83 @@ void gen_runfile_venv(venv &ve)
   addFunc(ve, run::gen_runfile3, primFile(), SYM(input), formal(primString(), SYM(name), true, false), formal(primBoolean(), SYM(check), true, false), formal(primString(), SYM(comment), true, false), formal(primString(), SYM(mode), true, false));
 #line 77 "./runfile.in"
   addFunc(ve, run::gen_runfile4, primFile(), SYM(output), formal(primString(), SYM(name), true, false), formal(primBoolean(), SYM(update), true, false), formal(primString(), SYM(comment), true, false), formal(primString(), SYM(mode), true, false));
-#line 114 "./runfile.in"
+#line 118 "./runfile.in"
   addFunc(ve, run::gen_runfile5, primBoolean(), SYM(eof), formal(primFile(), SYM(f), false, false));
-#line 119 "./runfile.in"
+#line 123 "./runfile.in"
   addFunc(ve, run::gen_runfile6, primBoolean(), SYM(eol), formal(primFile(), SYM(f), false, false));
-#line 124 "./runfile.in"
+#line 128 "./runfile.in"
   addFunc(ve, run::gen_runfile7, primBoolean(), SYM(error), formal(primFile(), SYM(f), false, false));
-#line 129 "./runfile.in"
+#line 133 "./runfile.in"
   addFunc(ve, run::gen_runfile8, primVoid(), SYM(clear), formal(primFile(), SYM(f), false, false));
-#line 134 "./runfile.in"
+#line 138 "./runfile.in"
   addFunc(ve, run::gen_runfile9, primVoid(), SYM(close), formal(primFile(), SYM(f), false, false));
-#line 139 "./runfile.in"
+#line 143 "./runfile.in"
   addFunc(ve, run::gen_runfile10, primInt(), SYM(precision), formal(primFile(), SYM(f), true, false), formal(primInt(), SYM(digits), true, false));
-#line 145 "./runfile.in"
+#line 149 "./runfile.in"
   addFunc(ve, run::gen_runfile11, primVoid(), SYM(flush), formal(primFile(), SYM(f), false, false));
-#line 150 "./runfile.in"
+#line 154 "./runfile.in"
   addFunc(ve, run::gen_runfile12, primString(), SYM(getc), formal(primFile(), SYM(f), false, false));
-#line 157 "./runfile.in"
+#line 161 "./runfile.in"
   addFunc(ve, run::gen_runfile13, primInt(), SYM(tell), formal(primFile(), SYM(f), false, false));
-#line 162 "./runfile.in"
+#line 166 "./runfile.in"
   addFunc(ve, run::gen_runfile14, primVoid(), SYM(seek), formal(primFile(), SYM(f), false, false), formal(primInt(), SYM(pos), false, false));
-#line 167 "./runfile.in"
+#line 171 "./runfile.in"
   addFunc(ve, run::gen_runfile15, primVoid(), SYM(seekeof), formal(primFile(), SYM(f), false, false));
-#line 172 "./runfile.in"
+#line 176 "./runfile.in"
   REGISTER_BLTIN(run::namePart,"namePart");
-#line 177 "./runfile.in"
+#line 181 "./runfile.in"
   REGISTER_BLTIN(run::modePart,"modePart");
-#line 182 "./runfile.in"
+#line 186 "./runfile.in"
   REGISTER_BLTIN(run::dimensionSetHelper,"dimensionSetHelper");
-#line 189 "./runfile.in"
+#line 193 "./runfile.in"
   REGISTER_BLTIN(run::dimensionSet,"dimensionSet");
-#line 194 "./runfile.in"
+#line 198 "./runfile.in"
   REGISTER_BLTIN(run::dimensionPart,"dimensionPart");
-#line 203 "./runfile.in"
+#line 207 "./runfile.in"
   REGISTER_BLTIN(run::lineSetHelper,"lineSetHelper");
-#line 210 "./runfile.in"
+#line 214 "./runfile.in"
   REGISTER_BLTIN(run::lineSet,"lineSet");
-#line 215 "./runfile.in"
+#line 219 "./runfile.in"
   REGISTER_BLTIN(run::linePart,"linePart");
-#line 220 "./runfile.in"
+#line 224 "./runfile.in"
   REGISTER_BLTIN(run::csvSetHelper,"csvSetHelper");
-#line 227 "./runfile.in"
+#line 231 "./runfile.in"
   REGISTER_BLTIN(run::csvSet,"csvSet");
-#line 232 "./runfile.in"
+#line 236 "./runfile.in"
   REGISTER_BLTIN(run::csvPart,"csvPart");
-#line 237 "./runfile.in"
+#line 241 "./runfile.in"
   REGISTER_BLTIN(run::wordSetHelper,"wordSetHelper");
-#line 244 "./runfile.in"
+#line 248 "./runfile.in"
   REGISTER_BLTIN(run::wordSet,"wordSet");
-#line 249 "./runfile.in"
+#line 253 "./runfile.in"
   REGISTER_BLTIN(run::wordPart,"wordPart");
-#line 254 "./runfile.in"
+#line 258 "./runfile.in"
   REGISTER_BLTIN(run::singlerealSetHelper,"singlerealSetHelper");
-#line 261 "./runfile.in"
+#line 265 "./runfile.in"
   REGISTER_BLTIN(run::singlerealSet,"singlerealSet");
-#line 266 "./runfile.in"
+#line 270 "./runfile.in"
   REGISTER_BLTIN(run::singlerealPart,"singlerealPart");
-#line 271 "./runfile.in"
+#line 275 "./runfile.in"
   REGISTER_BLTIN(run::singleintSetHelper,"singleintSetHelper");
-#line 278 "./runfile.in"
+#line 282 "./runfile.in"
   REGISTER_BLTIN(run::singleintSet,"singleintSet");
-#line 283 "./runfile.in"
+#line 287 "./runfile.in"
   REGISTER_BLTIN(run::singleintPart,"singleintPart");
-#line 288 "./runfile.in"
+#line 292 "./runfile.in"
   REGISTER_BLTIN(run::signedintSetHelper,"signedintSetHelper");
-#line 295 "./runfile.in"
+#line 299 "./runfile.in"
   REGISTER_BLTIN(run::signedintSet,"signedintSet");
-#line 300 "./runfile.in"
+#line 304 "./runfile.in"
   REGISTER_BLTIN(run::signedintPart,"signedintPart");
-#line 305 "./runfile.in"
+#line 309 "./runfile.in"
   REGISTER_BLTIN(run::readSetHelper,"readSetHelper");
-#line 328 "./runfile.in"
+#line 332 "./runfile.in"
   REGISTER_BLTIN(run::readSet,"readSet");
-#line 333 "./runfile.in"
+#line 337 "./runfile.in"
   addFunc(ve, run::gen_runfile41, primInt(), SYM(delete), formal(primString(), SYM(s), false, false));
-#line 343 "./runfile.in"
+#line 347 "./runfile.in"
   addFunc(ve, run::gen_runfile42, primInt(), SYM(rename), formal(primString(), SYM(from), false, false), formal(primString(), SYM(to), false, false));
-#line 354 "./runfile.in"
+#line 358 "./runfile.in"
   addFunc(ve, run::gen_runfile43, primString(), SYM(mktemp), formal(primString(), SYM(s), false, false));
 }
 

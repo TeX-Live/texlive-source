@@ -1,3 +1,1752 @@
+commit 4f6e29f250b6c5f0c8fbea02f4e532507b7ee0db
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Feb 1 23:04:24 2026 -0800
+
+    Remove unused function.
+
+commit c2ef584fded3fda9db0135caf4f947300d7cb9dd
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Feb 1 22:53:10 2026 -0800
+
+    Avoid modifying unitsphere in example.
+
+commit 5b0b942797d310c6d653465a5a7312ab53f81d8a
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Feb 1 22:43:32 2026 -0800
+
+    Update asymptote.spec.
+
+commit 2fec96823775e8ac5903d99b148d571cdbe1cd31
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Feb 1 22:38:26 2026 -0800
+
+    Update asygl.
+
+commit 7bacc8eddf98e2ac8c7ffdda89e4eef174d151e8
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Feb 1 22:35:34 2026 -0800
+
+    Fix AsyGL bounds.
+
+commit 23ad5096d3e60225b55c950a2d510e8ab4e7cb87
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Feb 1 00:40:09 2026 -0800
+
+    Update URL.
+
+commit 9a64769ef0a38861e9da07719ff666f127e3dca5
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Feb 1 00:37:05 2026 -0800
+
+    Fix typo in Makefile.in.
+
+commit 3591155274cd1ce9704af560237fb3f1bdd2cad1
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Feb 1 00:21:47 2026 -0800
+
+    Update build-asymptote.
+
+commit bed25dbb93b3003b32a01452cda0d18636182615
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Feb 1 00:12:34 2026 -0800
+
+    Fix warning messages.
+
+commit e66960bc644599c4852d19531168e46efb1b744a
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jan 31 23:39:42 2026 -0800
+
+    Increment asygl to version 1.03.
+
+commit f369c70093c53153a2634cac759ce2b429b7753a
+Merge: f07ae5ac5 7b85f3679
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jan 31 23:32:03 2026 -0800
+
+    Merge branch 'asygl'.
+
+commit 7b85f367939b483cc513332487e273a6e3e742f3
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jan 31 23:31:38 2026 -0800
+
+    Rename delta to t.
+
+commit 1526badc6c9bcf92684a1833f22648a3f4773f9c
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jan 31 23:24:25 2026 -0800
+
+    Revert "Isolate autoplay and control animation for each patch."
+    
+    This reverts commit c3dd63d59690856d9bc70521beabf602f36030ec.
+
+commit f07ae5ac543c09fcab899f62b36b70f52f76cda4
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jan 31 22:23:56 2026 -0800
+
+    Update asygl.
+
+commit fb4cfd8d60af0ee5f0af932524710879c41b77a2
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jan 31 22:17:13 2026 -0800
+
+    Fix build-asygl.
+
+commit 30060651f14d4217f2b0fde64d42e46e3c5fd080
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jan 31 22:11:51 2026 -0800
+
+    Update npm versions.
+
+commit 1a4b60e603cad959756c7fe2bb0f80fb50ec842d
+Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
+Date:   Wed Nov 12 22:37:39 2025 -0700
+
+    CMAKE: Use custom fmem branch.
+    
+    The main fmem branch has minimum cmake support to low for newer cmake, causing build to fail.
+    
+    (cherry picked from commit 5851789c05bc236b9501f213a7f66100dea09a37)
+
+commit 54cd06c45e6a11f2a4e32f19a9d8a3cbdb48d32d
+Author: Jamie Rassmaeemasmuang <jamievlin@outlook.com>
+Date:   Thu Jan 1 17:22:06 2026 -0700
+
+    CURSES: Change ncurses to ncursesw.
+    
+    (cherry picked from commit 9731f1d0f010f37b35f8a974e8de45219b375b7b)
+
+commit a5e7867030ab2d0620e9ffdd9c9576a88e994d67
+Merge: 7a1cf162f 1144b0569
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jan 31 21:25:03 2026 -0800
+
+    Merge pull request #582 from vectorgraphics/dependabot/npm_and_yarn/webgl/js-yaml-4.1.1
+    
+    Bump js-yaml from 4.1.0 to 4.1.1 in webgl.
+
+commit 7a1cf162f7df28974f8bf47ad9f77702bae0cdc4
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jan 31 21:19:37 2026 -0800
+
+    Remove unused examples.
+
+commit 7d61a60823c620a116fd51401ae9b15074becb68
+Author: Jamie Rassmaeemasmuang <jamievlin@outlook.com>
+Date:   Sat Jan 31 22:19:07 2026 -0700
+
+    Revert "CURSES: Change ncurses to ncursesw."
+    
+    This reverts commit 9731f1d0f010f37b35f8a974e8de45219b375b7b.
+
+commit 9731f1d0f010f37b35f8a974e8de45219b375b7b
+Author: Jamie Rassmaeemasmuang <jamievlin@outlook.com>
+Date:   Thu Jan 1 17:22:06 2026 -0700
+
+    CURSES: Change ncurses to ncursesw.
+
+commit 7178a93e3a5e898670ee508fe985fa825ecc126f
+Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
+Date:   Sun Nov 2 23:32:00 2025 -0700
+
+    CMAKE: Specify additional LSP build options.
+
+commit 056d566cbe69c2d28b073890cf4a9f65f3cd018f
+Merge: c3dd63d59 9983084e1
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jan 31 21:13:46 2026 -0800
+
+    Merge branch 'master' into asygl.
+
+commit 1144b0569900b8f1da92d8eca6a24f40769df7e4
+Author: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+Date:   Sun Feb 1 05:12:09 2026 +0000
+
+    Bump js-yaml from 4.1.0 to 4.1.1 in /webgl
+    
+    Bumps [js-yaml](https://github.com/nodeca/js-yaml) from 4.1.0 to 4.1.1.
+    - [Changelog](https://github.com/nodeca/js-yaml/blob/master/CHANGELOG.md)
+    - [Commits](https://github.com/nodeca/js-yaml/compare/4.1.0...4.1.1)
+    
+    ---
+    updated-dependencies:
+    - dependency-name: js-yaml
+      dependency-version: 4.1.1
+      dependency-type: indirect
+    ...
+    
+    Signed-off-by: dependabot[bot] <support@github.com>
+
+commit 9983084e15f634b8b48e264a98aa4469d7e870dc
+Merge: 08446a52a 3056a6934
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jan 31 21:10:12 2026 -0800
+
+    Merge branch 'webgl-ts-2'.
+
+commit 08446a52a7f986330409c22841c466ac83fb8624
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jan 31 21:02:18 2026 -0800
+
+    Update copyright year.
+
+commit 4a9c9c07038d0095e358c502ad3eb3b457d2e04e
+Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
+Date:   Sun Nov 2 23:10:51 2025 -0700
+
+    VCPKG: Update dependencies for LspCpp.
+
+commit 37451756fd37611f9b6d6ce1e93d1fc4acfc332a
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jan 31 13:52:49 2026 -0800
+
+    git subrepo pull --force LspCpp
+    
+    subrepo:
+      subdir:   "LspCpp"
+      merged:   "492361a66"
+    upstream:
+      origin:   "git@github.com:vectorgraphics/LspCpp"
+      branch:   "master"
+      commit:   "492361a66"
+    git-subrepo:
+      version:  "0.4.9"
+      origin:   "https://github.com/ingydotnet/git-subrepo"
+      commit:   "b9b059a"
+
+commit 96af06cc192b29c19dc3a4827c444e2c783f6800
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jan 31 13:38:16 2026 -0800
+
+    Remove boost dependency from configure.ac.
+
+commit f63ce1cf9245b02ddc1dd452cca922888ab2d589
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jan 31 09:56:20 2026 -0800
+
+    Re-enable --nomask in MSWindows.
+
+commit 4a93c063c31967a7e5c05cec67fd5fa7a50aef59
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Jan 26 07:12:37 2026 -0800
+
+    git subrepo pull --force LspCpp
+    
+    subrepo:
+      subdir:   "LspCpp"
+      merged:   "1d84d3b4f"
+    upstream:
+      origin:   "git@github.com:vectorgraphics/LspCpp"
+      branch:   "master"
+      commit:   "1d84d3b4f"
+    git-subrepo:
+      version:  "0.4.9"
+      origin:   "https://github.com/ingydotnet/git-subrepo"
+      commit:   "b9b059a"
+
+commit 1c5c8d979d4c55b72c583905c74421ba946321c8
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Jan 26 07:06:11 2026 -0800
+
+    git subrepo pull --force LspCpp
+    
+    subrepo:
+      subdir:   "LspCpp"
+      merged:   "a417fa440"
+    upstream:
+      origin:   "git@github.com:vectorgraphics/LspCpp"
+      branch:   "master"
+      commit:   "a417fa440"
+    git-subrepo:
+      version:  "0.4.9"
+      origin:   "https://github.com/ingydotnet/git-subrepo"
+      commit:   "b9b059a"
+
+commit e8be783caa285f3599e2bf13b87e0f8f69a6f1c2
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Jan 26 06:57:46 2026 -0800
+
+    git subrepo pull --force LspCpp
+    
+    subrepo:
+      subdir:   "LspCpp"
+      merged:   "742d90727"
+    upstream:
+      origin:   "git@github.com:vectorgraphics/LspCpp"
+      branch:   "master"
+      commit:   "742d90727"
+    git-subrepo:
+      version:  "0.4.9"
+      origin:   "https://github.com/ingydotnet/git-subrepo"
+      commit:   "b9b059a"
+
+commit 4b7ea72ee6dabd21671cab22a7d6fa917fd265b9
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Jan 25 22:55:21 2026 -0800
+
+    git subrepo pull --force LspCpp
+    
+    subrepo:
+      subdir:   "LspCpp"
+      merged:   "e0cb646e5"
+    upstream:
+      origin:   "git@github.com:vectorgraphics/LspCpp"
+      branch:   "master"
+      commit:   "e0cb646e5"
+    git-subrepo:
+      version:  "0.4.9"
+      origin:   "https://github.com/ingydotnet/git-subrepo"
+      commit:   "b9b059a"
+
+commit 4dfdd80312cebc1d27a0cf15b1b1cd09d0c314a1
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Jan 25 21:31:14 2026 -0800
+
+    Remove not-so-tiny tinyexr/examples.
+
+commit 613f176805b7b71913d3912cde8e3fc74bd8a833
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Jan 25 21:16:07 2026 -0800
+
+    Ensure revision is nonempty.
+
+commit 44a12f8a600b28b5df46662481be10ac2f3307fb
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jan 24 22:46:00 2026 -0800
+
+    Improve diagnostic if PySide6 is missing.
+
+commit c42c280aa83125124857ab62071dceb38a046816
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Jan 11 13:20:19 2026 -0800
+
+    Add explicit GCLIB dependency.
+
+commit 4476811719cf9a468568f58fcd4d266c9209760f
+Author: Jamie Rassmaeemasmuang <jamievlin@outlook.com>
+Date:   Sun Dec 7 01:48:38 2025 -0700
+
+    VCPKG: Bump vcpkg baseline to commit c49e1c4ed0bbde971759c750e0d5cc915c542db9.
+
+commit 5851789c05bc236b9501f213a7f66100dea09a37
+Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
+Date:   Wed Nov 12 22:37:39 2025 -0700
+
+    CMAKE: Use custom fmem branch.
+    
+    The main fmem branch has minimum cmake support to low for newer cmake, causing build to fail.
+
+commit 205a13c2bfdd5f6d0e61157e09d02f1506ed2cb4
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Sep 15 18:53:41 2025 -0700
+
+    Update URL in comment.
+
+commit c677cd7e07b5f2917c311a8920fdb41579bbe37b
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Sep 15 10:26:46 2025 -0700
+
+    Add missing data file for linearregression example (issue #571).
+
+commit ac5c8857bac28ce617baeb953b3287af90b4e4ff
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Sep 15 10:25:23 2025 -0700
+
+    Update URL in comment to address issue #570.
+
+commit f75c5b63cf03b30abdaa81daca41e70d1125a9c6
+Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
+Date:   Sun Aug 31 11:30:46 2025 -0600
+
+    REPO: Add node_modules and dist to repo ignore list.
+
+commit c3dd63d59690856d9bc70521beabf602f36030ec
+Author: Quan Hoang Nguyen <quanhoang@Quans-MacBook-Pro.local>
+Date:   Sat Aug 30 18:09:02 2025 +0900
+
+    Isolate autoplay and control animation for each patch.
+
+commit a4f8b91ac1b66fc5d643d7bc6f3520f52d7352eb
+Merge: 28df39e1f bdccf9446
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Aug 25 10:53:24 2025 -0700
+
+    Merge pull request #561 from luzpaz/typo
+    
+    Fix various typos.
+
+commit bdccf9446747205fba090bf4d2c593d855906505
+Author: luzpaz <luzpaz@users.noreply.github.com>
+Date:   Mon Aug 25 10:17:47 2025 -0400
+
+    Fix various typos
+    Found via `codespell -q 3 -L alo,atleast,clen,siz,sord,te,uptodate`
+
+commit 450b4db437d70d729ac85dfe51885d710ba12931
+Author: Quan Hoang Nguyen <quanhoang@Quans-MacBook-Pro.local>
+Date:   Sun Aug 24 12:34:28 2025 +0700
+
+    Add 'b' key event: on/off slider bar
+
+commit 9749bce77675fe29531443ceaf4765478d6ce5ec
+Author: Quan Hoang Nguyen <quanhoang@Quans-MacBook-Pro.local>
+Date:   Fri Aug 22 00:17:03 2025 +0700
+
+    Fix animate condition for slider
+
+commit 2a0a33945d961cad8cbc72144fa71a7a9afce63e
+Author: Quan Hoang Nguyen <quanhoang@Quans-MacBook-Pro.local>
+Date:   Thu Aug 21 22:05:18 2025 +0700
+
+    Implement slider
+
+commit 4a03e39f9a9cca5f1dca21e91c20c78b5baf2339
+Merge: c42574902 28df39e1f
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Aug 19 09:47:12 2025 -0700
+
+    Merge branch 'master' into asygl.
+
+commit 28df39e1f5f0f7f6a344986f8e0396d01d935670
+Author: Charles Staats III <charles.staats.iii@gmail.com>
+Date:   Fri May 30 20:24:17 2025 -0700
+
+    Add enable-large-config to GCOPTIONS to fix "too many root sets" error on some(?) macs.
+
+commit c425749029d742e77a321bb7a326f5279d734e93
+Merge: e03385007 dcf8dcf85
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Aug 19 09:38:40 2025 -0700
+
+    Merge branch 'master' into asygl.
+
+commit e0338500754c506ce8d6073b4f0aaa0eaa9b661b
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Aug 15 15:52:33 2025 -0700
+
+    Fix nested color transformations.
+
+commit 594c51ee943937a0a998f530b3a819e3ebbf6203
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Aug 15 13:33:26 2025 -0700
+
+    Use a single startTime.
+
+commit dcf8dcf85b81a7bdd759eaf516b721f722d6e6a7
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Aug 14 01:11:24 2025 -0700
+
+    Suppress dvisvgm warnings in deconstruct test.
+
+commit 42b0892cbf8cc0408a99dbad9a3a3307bb76245a
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Aug 13 21:52:57 2025 -0700
+
+    Reformat file.
+
+commit 6657a147b85fb4b4dd06ee0ae81b79325f7e4aed
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Aug 13 21:47:10 2025 -0700
+
+    Reformat file.
+
+commit 3ab8e8f9e5241a20f54c86aff9efe19c75dea818
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Aug 12 21:51:28 2025 -0700
+
+    git subrepo pull (merge) --force LspCpp
+    
+    subrepo:
+      subdir:   "LspCpp"
+      merged:   "8d172bd36"
+    upstream:
+      origin:   "git@github.com:vectorgraphics/LspCpp"
+      branch:   "master"
+      commit:   "8d172bd36"
+    git-subrepo:
+      version:  "0.4.9"
+      origin:   "???"
+      commit:   "???"
+
+commit 23bb79b5c830af73fe0932e69c44b61ea40a23d2
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Aug 12 10:38:04 2025 -0700
+
+    Cache color.
+
+commit 334cfe59e5b171a7e5b72fa29fc52d18533692a7
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Aug 12 10:11:04 2025 -0700
+
+    Simplify code.
+
+commit deffe243cb086e4197398a78746a8dd90b9d7d94
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Aug 12 09:47:15 2025 -0700
+
+    Rename exactBounds to haveBounds.
+
+commit 3fcec975f109fe7958cf60e4572f717ae5bbb96d
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Aug 11 23:13:22 2025 -0700
+
+    Add permission fields to global function and variable list diagnostic; omit private fields from asy-keywords.el.
+
+commit 429a5960acb76d30cfe17c19798c2a2671e466aa
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Aug 11 16:33:20 2025 -0700
+
+    Improve variable list diagnostic.
+
+commit 87dba9464a034daa4f19e4d4989a28f6234835a5
+Author: Nguyen Hoang Quan <quanhoangnguyen2306@gmail.com>
+Date:   Sun Aug 10 18:25:25 2025 +0700
+
+    Isolate static and autoplay animation. Change now() calling to drawScene().
+
+commit cd62341ac011cbb2c667c082070e0f78b5d0ffcb
+Author: Nguyen Hoang Quan <quanhoangnguyen2306@gmail.com>
+Date:   Sun Aug 10 01:35:52 2025 +0700
+
+    Resolve conflict in gl.ts
+
+commit 030bf047d57c7afb575b328ff837324656a9f674
+Author: Nguyen Hoang Quan <quanhoangnguyen2306@gmail.com>
+Date:   Sun Aug 10 01:24:09 2025 +0700
+
+    Fix arrowkey animation control
+    
+    t
+
+commit 8c5a003e7d25a04e988051b30c96d714a81061dd
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Aug 8 23:32:30 2025 -0700
+
+    Fix nonanimated webgl output.
+
+commit c0464ffb821c22f779e08ce4db5dfa23ca238aeb
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Aug 8 23:16:49 2025 -0700
+
+    Fix user transform.
+
+commit 66db5a36a6a159eade731968e5161cc13af86d36
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Aug 8 22:47:34 2025 -0700
+
+    Revert "Fix asygl transform."
+    
+    This reverts commit 4eb99d2f21f627ff61af8b02859aeaa9ba243cb5.
+
+commit 4eb99d2f21f627ff61af8b02859aeaa9ba243cb5
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Aug 8 22:37:04 2025 -0700
+
+    Fix asygl transform.
+
+commit a4f1d46d7fbc7e1f52efc45c927789dd10863df3
+Author: Nguyen Hoang Quan <quanhoangnguyen2306@gmail.com>
+Date:   Fri Aug 8 23:02:15 2025 +0700
+
+    Implement left/right arrow key animation
+
+commit 070445923dc7803f19648f3c3f01f0439734d8e6
+Author: Nguyen Hoang Quan <quanhoangnguyen2306@gmail.com>
+Date:   Fri Aug 8 15:49:08 2025 +0700
+
+    Fix requestAnimationFrame condition on duration, fix color transform
+
+commit e42c72215db89ec1208645a4f5c0b2e7eb36f1e6
+Author: Nguyen Hoang Quan <quanhoangnguyen2306@gmail.com>
+Date:   Fri Aug 8 13:09:34 2025 +0700
+
+    Implementing abstract type for Transformation
+
+commit 8d170e0756d9d1c62494da3835baf83dd4dc282f
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Aug 7 01:33:18 2025 -0700
+
+    Implement color animations.
+
+commit dcd3949e748231e1c68a1a2497481fa000de422d
+Merge: 752f6b233 3056a6934
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Aug 6 04:30:44 2025 -0700
+
+    Merge branch 'webgl-ts-2' into asygl.
+
+commit 3056a69348128d4380831e90e2ef937d77d0b38a
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Aug 6 04:30:04 2025 -0700
+
+    Fix comments.
+
+commit 752f6b233a93b18ee7fc43dd60676fddae8a8225
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Aug 5 21:11:11 2025 -0700
+
+    Add duration parameter to beginTransform.
+
+commit 0ef3b6d118fe432ce014b4860de0c8a67a4aa65f
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Aug 5 20:53:53 2025 -0700
+
+    Implement dedicated beginTransform/endTransform pair.
+
+commit 333428bc9c60d675212ab32e0b8592187846848b
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Aug 4 23:16:29 2025 -0700
+
+    Specify animation transform in user coordinates.
+
+commit 47aeccd9829797703ae6010b1c5cf988ea36ee34
+Merge: a1e17ab1a 8a8dfaa7b
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Aug 4 11:38:26 2025 -0700
+
+    Merge branch 'master' into asygl.
+
+commit 8a8dfaa7bbaec9c983f429dffb986983c4a0767e
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Aug 4 11:34:38 2025 -0700
+
+    Add optional pen arguments py and pz to axes3().
+
+commit efb09864fd6201a1f88ed9299ae8b4cd540c5e06
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Aug 1 20:10:45 2025 -0700
+
+    Implement zoomThreshold.
+
+commit a1e17ab1a2f65a31f57472c41c84b752295d81a4
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Jul 31 23:09:25 2025 -0700
+
+    Skip null transforms.
+
+commit 2d861bf009f03f7dd6433a5e8eda6f7801f6c0bb
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Jul 31 23:02:13 2025 -0700
+
+    Implement AsyGL begingroup and endgroup functions.
+
+commit 2f5b05e349d7442d9022ee20b7928a69ba35e227
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Jul 30 23:52:35 2025 -0700
+
+    Fix last revision.
+
+commit 176386fe787c223c4c8232288549817055c815e4
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Jul 30 23:50:58 2025 -0700
+
+    Add jsTransform argument to begingroup3.
+
+commit 79f0f1b913199d04b774ee55cf38f3b6520ffe15
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Jul 27 20:05:39 2025 -0700
+
+    Add demoTransform.js example that uses glMatrix functions.
+
+commit 52f11084596005e7e5caaa8c0b35e972032d684d
+Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
+Date:   Sun Jul 27 16:24:03 2025 -0600
+
+    JS: Include glmat.ts to entry files.
+
+commit 1ed991f733d4e93c85fc7d86864fa8c4396d1442
+Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
+Date:   Sun Jul 27 16:23:53 2025 -0600
+
+    ASYGL: Add gl-mat module exports.
+
+commit 32beced9378fbae7cf22658704bfc20da0b58056
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Jul 20 23:34:13 2025 -0700
+
+    Add demonstration of nonlinear transform.
+
+commit bb5282528c514f5c2ea546dc60e7c39f78009ae5
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Jul 20 21:13:53 2025 -0700
+
+    Generalize transformation.
+
+commit 93bcc3236eaed60500da6256961ca8df20881f15
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Jul 20 20:20:00 2025 -0700
+
+    Remove trailing whitespace.
+
+commit 47f49d0f67b4c23d33e689bb517407fa158181ed
+Author: Nguyen Hoang Quan <quanhoangnguyen2306@gmail.com>
+Date:   Sun Jul 20 16:44:19 2025 +0700
+
+    Demo changes for gl.ts
+
+commit 703879dcadfdae4c8ba338128e511c34bebef31e
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Jul 17 12:53:21 2025 -0700
+
+    Move controlpoint dependencies into Geomery class.
+
+commit ed87ae410e23127dab452b4fcfd1816566b63f9e
+Merge: 0d9a311e5 d8338ea9a
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Jul 16 15:18:24 2025 -0700
+
+    Merge pull request #556 from vectorgraphics/cmake-base-files-autoglob
+    
+    CMAKE: Use globbing to get asy and glsl files.
+
+commit d8338ea9a56fd45d10185f929005cc26cc495a0d
+Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
+Date:   Wed Jul 16 01:40:12 2025 -0600
+
+    CMAKE: Use globbing to get asy and glsl files.
+
+commit d04f588365864a98813efac80b14494ca42654d5
+Merge: 3884e1556 fb60b2b4b
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Jul 15 09:36:27 2025 -0700
+
+    Merge branch 'webgl-ts-2' into asygl.
+
+commit 0d9a311e583d5ef442e1959121d7f353c489001a
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Jul 14 10:21:47 2025 -0700
+
+    Improve last revision.
+
+commit 94dd473f65600b2c1f0cc31a06cbeb97291ed795
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Jul 14 08:33:07 2025 -0700
+
+    Fix issue #555: Incomplete error message under MSWindows.
+
+commit e8245f979d05f4f857a77cdf6404fa38536d577d
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Jul 14 08:21:39 2025 -0700
+
+    Treat the jpeg format as a synonym for jpg.
+
+commit fb60b2b4b3a6a74b9e79b9b0c1aec3ffc2e5f05d
+Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
+Date:   Sat Jul 12 19:47:45 2025 -0600
+
+    ASYGL: Quote remaining variables to prvent globbing.
+
+commit 31489f5901aaaa82c410533136c65c35fe5b7795
+Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
+Date:   Sat Jul 12 19:42:54 2025 -0600
+
+    ASYGL: Remove original clang-format check from build-asygl script.
+
+commit 8ebfc95b160920053387147548d0cbfdc3c26828
+Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
+Date:   Fri Jul 11 21:00:56 2025 -0600
+
+    ASYGL: Add debug-source-map option to build-asygl.
+
+commit 3884e155618bfbba7e1372ba5707cca4d0bc05b8
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Jul 11 00:19:52 2025 -0700
+
+    Begin transformation demo.
+
+commit 6366e48fc9b2844f33aa1f5cd8977e03645c4107
+Merge: 3b877b94c a7e006516
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Jul 10 20:28:50 2025 -0700
+
+    Merge branch 'webgl-ts-2' into asygl.
+
+commit 6253fe8c819803541c5f46bb753fec5d85704598
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Jul 9 23:55:07 2025 -0700
+
+    Support v3d and gzipped XDR files up to size 2^64-1.
+    Fix file mode descriptions.
+
+commit a7e006516f91df39f3cdd96e304d6a18d4ad808d
+Merge: 88ee5a805 939a3b563
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Jul 8 23:25:34 2025 -0700
+
+    Merge branch 'master' into webgl-ts-2.
+
+commit 939a3b5637343c90399c4ccd06ddb1a39c3e26f1
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Jul 8 23:12:16 2025 -0700
+
+    Simplify code.
+
+commit a7a040161d0eb5fe3f11348d6b043207dd144b3d
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Jul 8 23:06:41 2025 -0700
+
+    Implement ogzxfile.
+
+commit 1ebfd9b559652b6b589dca4e294198cb056cc1ed
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Jul 7 17:05:14 2025 -0700
+
+    Clean up GUI files.
+
+commit 73d25cb71eda88e9efa300a1868b01ec406b5877
+Merge: b7aa7c0c3 3fa3f8d51
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Jul 7 12:45:54 2025 -0700
+
+    Merge pull request #517 from vectorgraphics/perl2py.
+
+commit 3fa3f8d510bd4c3a136701d9974e5ce14c2bc833
+Merge: 043db4891 b7aa7c0c3
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Jul 6 23:54:24 2025 -0700
+
+    Merge branch 'master' into perl2py.
+
+commit b7aa7c0c324379b8cdee93f710f43c788e0dbb49
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Jul 6 23:32:01 2025 -0700
+
+    Remove unused files.
+
+commit 2636b251dd39374a2b5b0e885fccc6945bbfd78b
+Merge: 21ab31a7b 7228b5221
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Jul 6 22:18:14 2025 -0700
+
+    Merge pull request #550 from vectorgraphics/qt6.
+    
+    Use pyside6 (Qt6) for GUI.
+
+commit 88ee5a805bf15956d85b0d9d2378a55f2be7f7ba
+Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
+Date:   Sun Jul 6 21:00:55 2025 -0600
+
+    ASYGL: Add clang-format file for javascript formatting.
+
+commit a0a5ac23fc10e1bf2cf380cc4041cc63a558d8a9
+Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
+Date:   Sun Jul 6 20:11:16 2025 -0600
+
+    BUILD: Change build-asygl to use webpack building.
+
+commit b895e2ce5ecec72575a94cf75ea528b73e327555
+Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
+Date:   Sun Jul 6 19:43:57 2025 -0600
+
+    WEBPACK: Add no-source-map-debug build option.
+
+commit 789e6371ff7cf0855879c962f0aa9d48456d0dd2
+Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
+Date:   Sun Jul 6 19:40:54 2025 -0600
+
+    WEBPACK: Add no-source-map-debug option.
+
+commit 635f2a3a8e94537f2a6b689fb43192984bf0df57
+Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
+Date:   Sun Jul 6 19:36:59 2025 -0600
+
+    NODE: Update package-lock.json.
+
+commit 4ab09a9c92e5ba45df129675e89571c6b930d0a0
+Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
+Date:   Sat Jul 5 23:38:00 2025 -0600
+
+    CMAKE: Add option to use custom-built asygl.
+
+commit 37b5f9183e269d50de66ed274cfba45c8d4a8d56
+Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
+Date:   Sat Jun 28 22:34:08 2025 -0600
+
+    TS: Remove top-level function wrapper since we are using webpack.
+
+commit 3148174be64581fc2ac530370f914b3174090a60
+Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
+Date:   Sat Jun 28 22:26:10 2025 -0600
+
+    Revert webgl version bump.
+
+commit 883ce3cd5be27cd9cc355dbef6ec560ba7d530d3
+Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
+Date:   Sat Jun 28 16:47:40 2025 -0600
+
+    WEBPACK: Fix asygl-1.03.js.
+
+commit 2c13604968592e861b2ddf01f92f7db753fb346b
+Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
+Date:   Sat Jun 28 16:44:54 2025 -0600
+
+    WEBPACK: Fix common.js.
+
+commit 93c13ed9330ed901309aff194b00d5e86118f468
+Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
+Date:   Sat Jun 28 16:35:54 2025 -0600
+
+    JS: Edit html generation to work with updated asygl.
+
+commit 6a517699cda2b3c92cc1ea89acb27ee15abfa95c
+Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
+Date:   Sat Jun 28 16:34:06 2025 -0600
+
+    GL: Bump asygl to 1.03.
+
+commit 6f8316332ca05e18c19c1c63595df466f87730a9
+Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
+Date:   Sat Jun 28 16:33:13 2025 -0600
+
+    GL: Add asygl 1.03.
+
+commit e38ecde05b2e0048601ea59ccf635973e6d4e308
+Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
+Date:   Sat Jun 28 16:28:03 2025 -0600
+
+    NODE: Fix package.json.
+
+commit 6e89c6287e1649326cdd8beed3027f07522a00ef
+Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
+Date:   Sat Jun 28 16:23:54 2025 -0600
+
+    CI: Remove npm dependencies stage.
+
+commit 90548a3e93506da9cc057f5609319d31889c3f90
+Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
+Date:   Sat Jun 28 15:59:12 2025 -0600
+
+    NODE: Remove code relating to downloading external files.
+
+commit 0fb2e9bda431c8f7bcdb6d5784235fca3d093bd5
+Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
+Date:   Sat Jun 28 15:58:52 2025 -0600
+
+    TS: declare global var Module.
+
+commit a050db5bed84c5c728bb2811403f36fdd4213db7
+Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
+Date:   Sat Jun 28 13:40:17 2025 -0600
+
+    TS: Add global types.
+
+commit e2405e8c8ace12ebfca419e263c3e1b0192082a3
+Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
+Date:   Sat Jun 28 13:40:08 2025 -0600
+
+    TS: Set language level to es2017.
+
+commit 7263d4401d6fe568f4101baf21ba1d1a1f74a919
+Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
+Date:   Wed Jun 25 02:06:01 2025 -0600
+
+    CI: Temporarily allow ESLint pass even if it failed.
+
+commit 7bc80265f3373ad25d379e70f5731540df6e7491
+Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
+Date:   Wed Jun 25 01:57:23 2025 -0600
+
+    ESLINT: Ignore src/ext/* files.
+
+commit 494d7e91fd7923316d10fd753f06b041b76805c9
+Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
+Date:   Wed Jun 25 01:53:31 2025 -0600
+
+    CI: Add asygl-sanity to pull request precheck.
+
+commit 1895382cd836582a4996c64153c806fc0bba619e
+Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
+Date:   Wed Jun 25 01:52:40 2025 -0600
+
+    CI: Add asygl-sanity CI file.
+
+commit 74dfe5f8bc38568f828483eec8e2ef920b4e1f45
+Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
+Date:   Tue Jun 24 12:03:41 2025 -0600
+
+    NPM: Add targets for clean and dependencies.
+
+commit 78b9c43bb0447da593aa51d872c984dcc34509bf
+Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
+Date:   Tue Jun 24 12:03:25 2025 -0600
+
+    NODE: Add script to clean files.
+
+commit 532403537a95b18f33487754f30bfb41831071fe
+Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
+Date:   Tue Jun 24 11:49:37 2025 -0600
+
+    WEBPACK: Copy tinyexr.wasm to dist.
+
+commit 4b02c7d0524e5384375525d0f51d01be3c8607ab
+Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
+Date:   Tue Jun 24 11:49:25 2025 -0600
+
+    NPM: Add webpack copier plugin.
+
+commit fe10bbf5ed91ed9e768d4d4107d5ffc45c77ffd5
+Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
+Date:   Tue Jun 24 11:31:52 2025 -0600
+
+    TS: Set module to ES2020.
+
+commit 85cc773f0eb6a13fe9f3cf6a1fb5c29fc49ddeee
+Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
+Date:   Tue Jun 24 01:44:01 2025 -0600
+
+    NPM: Disable fs/os/path bundling.
+
+commit 7ad5c2adcc20b01fd028ddeca3c8ed385a23c676
+Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
+Date:   Tue Jun 24 01:20:44 2025 -0600
+
+    JS: Add tool script to download tinyexr.
+
+commit 16dd66a6b2b0d08262117c3259c5d3372773706a
+Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
+Date:   Tue Jun 24 01:19:37 2025 -0600
+
+    REPO: Add src/ext to ignore list.
+
+commit 44ffa357412e992d58c60bb5e02ef654fb630e97
+Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
+Date:   Mon Jun 23 23:44:27 2025 -0600
+
+    git subrepo pull (merge) tinyexr
+    
+    subrepo:
+      subdir:   "tinyexr"
+      merged:   "2dc260526"
+    upstream:
+      origin:   "git@github.com:syoyo/tinyexr"
+      branch:   "release"
+      commit:   "5e523cd9c"
+    git-subrepo:
+      version:  "0.4.9"
+      origin:   "???"
+      commit:   "???"
+
+commit 084ef781206b61e8e396d7df0f10ae6800b60286
+Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
+Date:   Sat Jun 21 13:33:46 2025 -0600
+
+    tmp! checkpoint
+
+commit 32ca7b476604ce08108f8f706e46933dcba9f033
+Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
+Date:   Sun Jun 22 16:27:09 2025 -0600
+
+    WEBPACK: Add glsl as a source asset for webpack.
+
+commit 30b31dd87d2bf3c8fdb087c221b91205a36ebd91
+Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
+Date:   Sun Jun 22 15:51:52 2025 -0600
+
+    REPO: Add glsl.d.ts module file to export shaders.
+
+commit ee10b9fc9c7ca2edf5fcd42d15c508242f8080ed
+Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
+Date:   Sun Jun 22 15:51:37 2025 -0600
+
+    REPO: Include *.d.ts files in repo.
+
+commit adf17d355f976a6748820a2e79c41f4f7e11f123
+Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
+Date:   Sun Jun 22 12:21:49 2025 -0600
+
+    NPM: Add build targets for webpack.
+
+commit 35d277cfb328abeae26ea88095b20963984afc61
+Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
+Date:   Sat Jun 21 03:01:32 2025 -0600
+
+    NPM: Add gl-matrix to npm dependencies.
+
+commit bb530793b4d09f88c6eb4eb4ad43c50a50d457d1
+Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
+Date:   Thu Jan 11 22:02:06 2024 -0700
+
+    NODE: Set up basic libraries.
+
+commit 3e228a2b3f723e55d9326272a90eaa8d9b024b07
+Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
+Date:   Thu Jan 11 21:52:13 2024 -0700
+
+    NODE: Init node package.
+
+commit bdbecbb7c8b9f813eef1f6ff493bcdb82bb019c3
+Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
+Date:   Fri Jun 20 23:10:48 2025 -0600
+
+    TS: Move shaders file to src/shaders.
+
+commit 6d9dd78f49e682924ed04f7148bfbca082396133
+Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
+Date:   Fri Jun 20 23:10:36 2025 -0600
+
+    TS: Change gl.js to gl.ts.
+
+commit 7228b5221d48111ef00fa971dc19e9bba456212b
+Merge: d021203a5 21ab31a7b
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Jul 6 14:11:40 2025 -0700
+
+    Merge branch 'master' into qt6.
+
+commit 21ab31a7b796d33fac5f992580eb92224e8fd933
+Merge: b42e6b6e4 d0cb18be2
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Jul 6 09:43:57 2025 -0700
+
+    Merge pull request #543 from vectorgraphics/optionalComma.
+    
+    Allow optional comma before ellipsis in rest argument
+
+commit d0cb18be24df2b188f96408848b099258feb4b8e
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Jul 6 09:39:42 2025 -0700
+
+    Remove obsolete test script.
+
+commit 3b9b11fb63b56e76b1670d7e6d623aa9fccc763d
+Merge: e49ff93bf b42e6b6e4
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Jul 6 00:20:40 2025 -0700
+
+    Merge branch 'master' into optionalComma.
+
+commit b42e6b6e4a8e6ac71bcb5fda0c3fd58e13c81d82
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Jul 6 00:18:46 2025 -0700
+
+    Remove obsolete test code.
+
+commit 3f9a0494dfbe234e6e92f9a6639943a4b44a5c3e
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jul 5 23:12:20 2025 -0700
+
+    Revert "Remove obsolete testing code."
+    
+    This reverts commit 5cbf2354357b7507b17ec4724db0076857b7eae6.
+
+commit 5cbf2354357b7507b17ec4724db0076857b7eae6
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jul 5 22:46:58 2025 -0700
+
+    Remove obsolete testing code.
+
+commit e49ff93bfe24bae67abcc79e85166d1ccbf07882
+Merge: 1db83bbe0 2ae1b191e
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jul 5 20:30:29 2025 -0700
+
+    Merge branch 'master' into optionalComma.
+
+commit 2ae1b191e55400a6b6638a26610e95a5a45aaeb0
+Merge: 6498d3ad3 b3db10c43
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Jul 5 20:16:01 2025 -0700
+
+    Merge pull request #554 from vectorgraphics/make-asy-tests-list-optional.
+    
+    Make asy tests list optional
+
+commit b3db10c43574c78746636e46d144be992a2d0eeb
+Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
+Date:   Thu Jul 3 22:52:41 2025 -0600
+
+    CI: Initialize latex in test stage.
+
+commit 8b7addf182ad96fcfda26132269bb038a173aee9
+Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
+Date:   Thu Jul 3 00:59:51 2025 -0600
+
+    CI: Remove check-no-missing-asy-tests.
+
+commit 4d659e4bad0df48bffaf5aa97ac23fa09ca0d433
+Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
+Date:   Thu Jul 3 00:44:01 2025 -0600
+
+    CMAKE: Change wce test name to bundled.asy.wce.
+
+commit 9e758d5b27d8b60c43e3f705c33415835f3e8efc
+Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
+Date:   Thu Jul 3 00:41:00 2025 -0600
+
+    CMAKE: Modify generated tests to use asy-generated* labels.
+
+commit 065abc084b8642d5472e6982855aea281a10a009
+Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
+Date:   Thu Jul 3 00:31:32 2025 -0600
+
+    REPO: Add tests/xdata to ignore list.
+
+commit 7b6bad26b7d0d7f5dce12f7d992e70a193f892d5
+Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
+Date:   Thu Jul 3 00:31:21 2025 -0600
+
+    CMAKE: Add asy-check-tests test.
+
+commit 7acbbf7425631a137997073c03527c4cccea53ba
+Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
+Date:   Thu Jul 3 00:31:07 2025 -0600
+
+    CMAKE: Remove asy-tests-list generated cmake script.
+
+commit 90521475a6ab389ecdf1ff64a502662497e089d0
+Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
+Date:   Thu Jul 3 00:18:34 2025 -0600
+
+    PY: Add helper script to run asy tests.
+
+commit 6498d3ad37f0ebff77839d98a539397faf64dc23
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Jul 3 14:57:03 2025 -0700
+
+    Begin moving version test from plain.asy to base/checkversion.asy.
+
+commit fbc06837945644fb30eeb94cda4f46486bf2bde7
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Jul 3 14:21:34 2025 -0700
+
+    Increment version to 3.06.
+
+commit d021203a5e614ae67e59064516118aa40d98086d
+Merge: 4b25872e3 3c4afab99
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Jul 3 11:39:00 2025 -0700
+
+    Merge branch 'master' into qt6.
+
+commit 3c4afab991ffcfedaf7e39eab6e4055c98f56457
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Jul 3 11:37:30 2025 -0700
+
+    Add deconstruct test.
+
+commit b9aff3a006a5d235472d2bea754926dce7ef7796
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Jul 3 10:24:57 2025 -0700
+
+    Add xdr character test.
+
+commit c6decbb23857fe7b642dd0bfb3e0da4cd06c7454
+Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
+Date:   Wed Jul 2 22:29:59 2025 -0600
+
+    CMAKE: Make include of asy-tests-list.cmake optional.
+
+commit a195e2a5d18de606c7b2242f72fe815f3bec852f
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Wed Jul 2 11:36:11 2025 -0700
+
+    Fix memixstream.
+
+commit 4b25872e32ef217b30f042c8c497993c72f28e48
+Merge: 749d466df a05e04c71
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Jul 1 20:28:58 2025 -0700
+
+    Merge branch 'master' into qt6.
+
+commit a05e04c7124f3fb3795cf78b9a174e0c431c7473
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Jul 1 20:28:09 2025 -0700
+
+    Simplify make check.
+
+commit 39b89dcd3dc490c6d1538d19bad69891c3746c4c
+Merge: 321f230f5 70f6dec05
+Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
+Date:   Tue Jul 1 17:52:10 2025 -0600
+
+    Merge pull request #553 from vectorgraphics/replace-setup-latex-ci-windows
+    
+    CI: Replace custom action with choco for texlive.
+
+commit 70f6dec05d850a624c211bd26f2b760a986ab511
+Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
+Date:   Tue Jul 1 17:39:37 2025 -0600
+
+    CI: Expand path with texlive in windows CI.
+
+commit dd98db5cc1945c2adcb398e676dacf4a91684025
+Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
+Date:   Tue Jul 1 17:38:39 2025 -0600
+
+    CMAKE: Add additional notice mssages to options.
+
+commit 1548a9fafc777e2fe84abd8fa9866c41b5939408
+Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
+Date:   Tue Jul 1 17:19:39 2025 -0600
+
+    CI: specify pdftex explicitly in CI.
+
+commit e17d4571c8b8e12d486bb29ce939d2c2ed6c9aae
+Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
+Date:   Tue Jul 1 16:43:58 2025 -0600
+
+    CI: Replace custom action with choco for texlive.
+
+commit 749d466df28b0d679dfe192163640b79ec9b0efc
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Jul 1 14:56:01 2025 -0700
+
+    Revert "Update TeXLive action."
+    
+    This reverts commit 80bf09ec4ae25cad69fc21ffba6da19dc4b916a9.
+
+commit 80bf09ec4ae25cad69fc21ffba6da19dc4b916a9
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Jul 1 14:47:49 2025 -0700
+
+    Update TeXLive action.
+
+commit 7b3f0fcd0b19b60fe8b929887c2a8509d0b9d48b
+Merge: d67f14315 321f230f5
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Jul 1 13:26:56 2025 -0700
+
+    Merge branch 'master' into qt6.
+
+commit 321f230f5c888ff91dedccaa48487a693fc79b3d
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Jul 1 13:16:51 2025 -0700
+
+    Update documentation.
+
+commit c5b805600bc92686828612e3ed432511d719e7ff
+Merge: f27a6537e 5dad4478c
+Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
+Date:   Tue Jul 1 11:04:30 2025 -0600
+
+    Merge pull request #552 from vectorgraphics/retry-ghostscript-install-ci
+    
+    CI: Use retry for installing ghoscript.
+
+commit 5dad4478cbf472e77e9c2cc4dae45a83ce14286e
+Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
+Date:   Tue Jul 1 10:36:24 2025 -0600
+
+    CI: Use retry for installing ghoscript.
+
+commit d67f14315690d5b99c916e86e93f1a11e4863d7d
+Merge: 8f106c2d8 f27a6537e
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Jul 1 02:40:10 2025 -0700
+
+    Merge branch 'master' into qt6.
+
+commit f27a6537e1720ac65cb6d1bd2f8ed24bdbf55b93
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Jul 1 02:39:47 2025 -0700
+
+    Regenerate tests.
+
+commit 8f106c2d809a2c3556fe21135ad04261fbea8575
+Merge: bd1ec79f4 c45a21e9e
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Jul 1 02:32:15 2025 -0700
+
+    Merge branch 'master' into qt6.
+
+commit c45a21e9e89df1afedefa8cef235021a2ed4a7d1
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Jul 1 02:19:19 2025 -0700
+
+    Update URL of Asymptote Web Application.
+
+commit 359ab1ad8f5954d1ee973ce1cfd00a0951a2bc59
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Jul 1 02:03:15 2025 -0700
+
+    Add XDR tests.
+
+commit 42eba5f3f46efac71ed612bf053dca3ddf593c77
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Jul 1 01:05:20 2025 -0600
+
+    Suppress MacOS X warnings.
+
+commit fb81149f6c050cfa7af0aa04433a1022becb6f5d
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Jul 1 00:53:47 2025 -0600
+
+    Port xstream updates to MacOS X.
+
+commit 87386472859f053d193ce586c0dbdafb5bf45f39
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Jun 30 23:12:17 2025 -0700
+
+    Fix last revision.
+
+commit 172d021fdcb5805a95f0f93c2359e4cec27bc2ee
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Jun 30 22:15:04 2025 -0700
+
+    Fix last revision.
+
+commit 0e82219b6f45ef0172be48a49e1c6219c8337338
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Jun 30 21:44:32 2025 -0700
+
+    Restrict optimization pragma to GCC.
+
+commit bd1ec79f4b77ae6eb9fa2da8fcca7c7709bff83f
+Merge: b91ce316c 61a4e86e8
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Jun 29 23:42:28 2025 -0700
+
+    Merge branch 'master' into qt6.
+
+commit 61a4e86e898353713a73a51cd5a50d6142566bd6
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Jun 29 23:41:19 2025 -0700
+
+    Improve array read tests.
+
+commit 14e27840238fd1992c505599c0d1686dc3b5c506
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Jun 29 23:31:59 2025 -0700
+
+    Update documentation.
+
+commit 7dbdf992ba26a47f659209c85b33d1bc94d53c63
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Jun 29 22:58:47 2025 -0700
+
+    Reinstate file.singlereal by partially reverting commit
+    2643b3266bcf097515bb3aa3d8c375f6a55171e2, working around GCC optimization bug.
+
+commit b3a2012a707d6c2331967ca55d16fea7b9940df3
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Jun 29 20:47:11 2025 -0700
+
+    Implement XDR and binary string reads.
+
+commit b91ce316c9ed4aded4ad416e82138358c96fb8da
+Merge: 22c715899 842945d23
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Jun 26 17:16:13 2025 -0700
+
+    Merge branch 'master' into qt6.
+
+commit 842945d23266092a194ade0c66735d21a5ed5524
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Jun 26 16:46:28 2025 -0700
+
+    Simplify code.
+
+commit b52f219a915b10b9d98a9587c8ad44c1553d00ee
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Jun 26 13:29:25 2025 -0700
+
+    Simplify code.
+
+commit 034380739eb9583999aa7e0145521b4013f9e9e9
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Jun 26 13:07:59 2025 -0700
+
+    Remove unused code.
+
+commit 2ed539103d8680f0241eb9a51e7e0c42b0ed5239
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Jun 26 13:06:52 2025 -0700
+
+    Fix 64-bit integer XDR reads and writes under UNIX.
+
+commit 6713a8149cb2e2ba740f406ac6294b0106ccc17a
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Jun 26 13:05:51 2025 -0700
+
+    Remove obsolete code.
+
+commit d28c5c516799acb6ce21e2bd83dfe583e3a5da5f
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Jun 24 09:47:55 2025 -0700
+
+    Enforce binary mode for xdr input and output.
+
+commit 3b877b94cf642c5ff93e9160c86e01b6bde72344
+Merge: b33b3ed74 3396b9bc7
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Jun 19 10:38:40 2025 -0700
+
+    Merge branch 'master' into asygl.
+
+commit b33b3ed74e2d54e90b1cd61c426f82ee90fef665
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Jun 19 10:38:29 2025 -0700
+
+    Reformulate 2D animation example.
+
+commit 3396b9bc7291143179b0d5bad9e5da7b6a46a4d4
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Jun 19 10:37:15 2025 -0700
+
+    Remove explicit 'gif:' format from animate call.
+
+commit 1db83bbe0d9057d835709df7c92a7993cc036a80
+Author: Charles <charles.staats.iii@gmail.com>
+Date:   Fri Jun 13 19:53:55 2025 -0700
+
+    Edit documentation.
+
+commit fc50401e3729cf5272fc31c44e158a77ee1bf80e
+Merge: 6e25493e3 2f60e660c
+Author: Charles <charles.staats.iii@gmail.com>
+Date:   Fri Jun 13 19:38:12 2025 -0700
+
+    Merge branch 'master' into optionalComma
+
+commit 043db4891bc3a46cda21da77d3f544408a317d31
+Author: Charles <charles.staats.iii@gmail.com>
+Date:   Fri Jun 13 15:53:51 2025 -0700
+
+    Remove runtime.pl (replaced by runtime.py).
+
+commit dead7e6f65c2ff24521362bfae2a416a122b7e56
+Author: Charles <charles.staats.iii@gmail.com>
+Date:   Fri Jun 13 15:45:53 2025 -0700
+
+    Remove unnecessary logging.
+
+commit 267d75e2a498d0f6f4506f306e0d77ec87fcaec2
+Author: Charles <charles.staats.iii@gmail.com>
+Date:   Wed Jun 11 15:49:44 2025 -0700
+
+    Refactor runtime.py.
+
+commit fcc97da495252c483b85ce1b64d3e473e6321de6
+Author: Charles <charles.staats.iii@gmail.com>
+Date:   Mon Jun 9 17:02:19 2025 -0700
+
+    Restore config.guess and config.sub from master.
+
+commit 8d2d5ab9bab7380b688372b1d5b52a3512e0f539
+Merge: 1ec56cb70 2f60e660c
+Author: Charles <charles.staats.iii@gmail.com>
+Date:   Mon Jun 9 09:28:36 2025 -0700
+
+    Merge branch 'master' into perl2py
+
+commit 1ec56cb70a107a3fb62c4f8422aabeb90b65347d
+Merge: cf8e36023 a9482f571
+Author: Charles <charles.staats.iii@gmail.com>
+Date:   Mon Jun 9 09:10:02 2025 -0700
+
+    Merge branch 'master' into perl2py
+
+commit 22c715899ed84c3acea919c5fa3819105c571fce
+Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
+Date:   Sun Jun 8 12:53:52 2025 -0600
+
+    GUI: Show status bar after save consistently.
+
+commit 6269a38e1e5c1e285b4ebc097d56252f9512ac6c
+Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
+Date:   Sun Jun 8 12:47:28 2025 -0600
+
+    GUI: Remove some unused lines.
+
+commit c760c83928ecc439b628dbeec0e22641947a1866
+Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
+Date:   Sun Jun 8 12:46:46 2025 -0600
+
+    GUI: Replace "print" function with errors in a message box.
+
+commit 77125985ab8da40af616e14d4166176f50dd0622
+Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
+Date:   Sun Jun 8 12:45:42 2025 -0600
+
+    GUI: Add error_msgbox util function.
+
+commit 050388ccf51f3b005b87f31a81f32fb28778167b
+Merge: 94434f555 2f60e660c
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Jun 6 20:29:29 2025 -0700
+
+    Merge branch 'master' into qt6.
+
+commit 2f60e660c525c4345f261a2f1d14a54964eb5d48
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Jun 6 20:28:41 2025 -0700
+
+    Respect xmap transforms again.
+
+commit 94434f5556a5f36918c4e9f431e3e8d5a805eb94
+Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
+Date:   Thu Jun 5 23:10:12 2025 -0600
+
+    GUI: Fix actionSave.
+
+commit 20f733d741ccb2b82a4ccfdd0146928ea1b116bc
+Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
+Date:   Thu Jun 5 22:35:29 2025 -0600
+
+    GUI: Port pyqt5 calls to qt6.
+
+commit a9482f571bd2d672ae5ef085016ca5e875354864
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Jun 2 13:26:44 2025 -0700
+
+    Fix last revision.
+
+commit 9df09017a6052bf96f0882d97dffb55c05867dda
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Jun 2 13:18:17 2025 -0700
+
+    Increase another CI timeout.
+
+commit 513efa6c314c3e81a18341bb39f02da0aff8b0e6
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Jun 2 10:20:33 2025 -0700
+
+    Increase CI timeout.
+
+commit 0ab7509cf429cb1b91203fc418abb3498d107b7c
+Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
+Date:   Mon Jun 2 00:46:36 2025 -0600
+
+    GUI: Add more Qt.Slot decorators.
+
+commit dbb2ead9f1ae39d8689b6556b53d6644afa4a8a4
+Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
+Date:   Mon Jun 2 00:43:16 2025 -0600
+
+    GUI: Fix additional Messagebox signature changes.
+
+commit ff333243a4a52c6b2f48eb6e3a74699134702a9e
+Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
+Date:   Mon Jun 2 00:43:00 2025 -0600
+
+    GUI: Add Slot decoration to button functions for performance improvements.
+
+commit 9529cc307c1d9997883f602727b2b05b15108315
+Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
+Date:   Mon Jun 2 00:17:35 2025 -0600
+
+    GUI: Fix signal disconnection in InplaceAddObj.
+
+commit cf2076cccfd379a8cddc99580fb29222e9bdb898
+Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
+Date:   Sun Jun 1 23:36:37 2025 -0600
+
+    PY: Fix minor unpythonic style.
+
+commit 87d6dfc94d24c39b01b12d117cc072f7e5e3f6e6
+Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
+Date:   Sun Jun 1 23:27:56 2025 -0600
+
+    PY: Remove old testing code from UndoRedoStack.py.
+
+commit 91e750b1427a678c156e042797dfe58b283acbe0
+Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
+Date:   Sun Jun 1 23:27:20 2025 -0600
+
+    GUI: Fix additional pyside6 issues.
+
+commit 20d76ac1c521495ee094d5a6a512e8cb2dcc75e0
+Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
+Date:   Sun Jun 1 13:03:43 2025 -0600
+
+    GUI: Fix png data format.
+
+commit 16a4f6f1ccee6351f5596d63cae69c43d6c70cc0
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Jun 1 11:45:30 2025 -0700
+
+    GUI: Respect physical DPI.
+
+commit 4f5f44b28b7f68fde104c371fc6bec9da295cb83
+Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
+Date:   Sat May 31 10:17:20 2025 -0600
+
+    DOC: Update pyqt5 to PySide6 in docs.
+
+commit 044405f7c8b79febd4df71bdb492c3f1b91a83c2
+Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
+Date:   Sat May 31 10:11:16 2025 -0600
+
+    MAKE: Remove mentions of pyuic5/pyrcc5 since gui build is managed by buildtool.py.
+
+commit b1e5ad5347dab3eb933508a0bf5dec8f221f8ecb
+Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
+Date:   Sat May 31 09:59:27 2025 -0600
+
+    GUI: Add mkdir call when creating a new directory in buildtool.
+
+commit c401f5d5176daff4e6d53e132c7dfba548bf100e
+Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
+Date:   Tue May 27 11:01:42 2025 -0600
+
+    QT: Port parts of qt calls to use Pyside6 functions.
+
+commit 3a5b93ece4dfc22c99981ba96f237da45a3d300c
+Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
+Date:   Mon May 26 23:56:47 2025 -0600
+
+    PY: Fix names of some variables that shadow builtins.
+
+commit fdafd8684d31f1953b4aa58403af3e7c28732590
+Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
+Date:   Mon May 26 23:43:16 2025 -0600
+
+    QT6: Remove high DPI scaling options.
+
+commit 18c191a22ce9fa5176e420b466a94f1458899fec
+Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
+Date:   Mon May 26 23:42:08 2025 -0600
+
+    QT: Change pyqtSlot/pyqtSignal to Slot/Signal.
+
+commit 2656064eff5ed67d5797a64416911905479b4840
+Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
+Date:   Mon May 26 22:58:04 2025 -0600
+
+    GUI: Use pyside6-rcc for building icons.
+
+commit e2dfea76651d37f92cfc0b2403b6991347d6868b
+Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
+Date:   Mon May 26 22:24:32 2025 -0600
+
+    GUI: Use pyside6-uic for building GUI files.
+
+commit 147c4d4edf4c88dc97b4d3cc468ce91efe19b97b
+Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
+Date:   Mon May 26 01:07:18 2025 -0600
+
+    PY: Change PyQt5 to PySide6 import.
+
+commit d9c73613f02af177bf8712fb96beb62babf47233
+Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
+Date:   Sat May 24 10:58:55 2025 -0600
+
+    PY: Bump numpy to 2.0.0.
+
+commit d6b006147122826607a9bd5e34cdba3674d5a6f7
+Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
+Date:   Sat May 24 10:58:22 2025 -0600
+
+    QT: Change PyQt to PySide6.
+
+commit a2354f8cea0677b223fdeec8328a8a6261332164
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun May 25 12:20:34 2025 -0700
+
+    Clean up build-asymptote-CTAN.
+
+commit f3faabf8b067d6daa7016e3438258496759b1857
+Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
+Date:   Mon May 26 00:57:15 2025 -0600
+
+    REPO: Modify gitignore to exclude .idea everywhere.
+
+commit 052983e2eb4801fb6d17ed8d06dac18ae069f384
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun May 25 12:12:12 2025 -0700
+
+    Increment version to 3.05.
+
 commit 1cfeecfc04efb9f6457a6243b46441d911eba7f2
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Sat May 24 13:26:14 2025 -0700
@@ -173,6 +1922,19 @@ Date:   Sat May 10 17:52:28 2025 -0600
 
     W32: Fix implementation of renameOverwrite by parsing the return value correctly.
 
+commit 6e25493e30551ab514afe1c650604074d693cb20
+Author: Charles <charles.staats.iii@gmail.com>
+Date:   Sat May 10 09:27:11 2025 -0700
+
+    Update tests cmake.
+
+commit 849b0dd482a318451e0c7d1ba56d4a3c2e5edbb4
+Merge: b5d0b404c 177125ffc
+Author: Charles <charles.staats.iii@gmail.com>
+Date:   Sat May 10 09:13:13 2025 -0700
+
+    Merge branch 'master' into optionalComma
+
 commit f70c2a83e88d01f6048bf0c031be8263abea240b
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Fri May 9 14:50:39 2025 -0700
@@ -267,6 +2029,24 @@ Author: John Bowman <bowman@ualberta.ca>
 Date:   Fri Apr 11 21:08:33 2025 -0700
 
     Fix 3D pixels.
+
+commit b5d0b404c9b420941a528b2a197a71a4deaccc80
+Author: Charles Staats III <charles.staats.iii@gmail.com>
+Date:   Tue Apr 1 15:42:15 2025 -0700
+
+    Document optional comma for rest arguments.
+
+commit a55037f39fbb110a2013be8347810ef33e0ed863
+Author: Charles Staats III <charles.staats.iii@gmail.com>
+Date:   Tue Apr 1 15:36:42 2025 -0700
+
+    Add comma before rest arguments when printing signatures.
+
+commit 8d5b4bfb4866077d63b0956ac386de059c0cb61a
+Author: Charles Staats III <charles.staats.iii@gmail.com>
+Date:   Tue Apr 1 13:59:48 2025 -0700
+
+    Add optional commas before ellipsis.
 
 commit de51a196d67e785120b155ecc896bfadfab25ced
 Author: John Bowman <bowman@ualberta.ca>
@@ -460,11 +2240,31 @@ Date:   Sun Mar 2 19:40:32 2025 -0800
       origin:   "https://github.com/ingydotnet/git-subrepo"
       commit:   "b9b059a"
 
+commit cf8e360238cf3fe5f73461efa4992a1e1d6d4754
+Merge: 812c17793 68d3bfd4e
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Mar 1 21:32:04 2025 -0800
+
+    Merge branch 'master' into perl2py.
+
 commit 68d3bfd4e65cccb35cc3d193e9bb55dc3daf8f81
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Sat Mar 1 21:29:26 2025 -0800
 
     Remove obsolete code.
+
+commit 812c17793704cda0aefbefaee1efedb4f66bb75f
+Author: Charles Staats III <charles.staats.iii@gmail.com>
+Date:   Fri Feb 28 14:02:06 2025 -0800
+
+    Modify cmake to use runtime.py rather than runtime.pl.
+
+commit 23ca5d4b7625cbda214f6abcb4f350945c1058e0
+Merge: cc24df4a2 92376e301
+Author: Charles Staats III <charles.staats.iii@gmail.com>
+Date:   Fri Feb 28 09:27:42 2025 -0800
+
+    Merge branch 'master' into perl2py
 
 commit 92376e30115a3ba14e42504e744ca3551af8763b
 Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
@@ -568,11 +2368,25 @@ Date:   Sat Feb 15 11:29:57 2025 -0800
 
     Simplify code.
 
+commit cc24df4a2daf58043afe5e93c2f1c9fec3131a81
+Merge: 39140b2e4 fe941345c
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Feb 14 22:59:51 2025 -0800
+
+    Merge branch 'master' into perl2py.
+
 commit fe941345cf1f44a690c16f370d3b4c8db4cdd5c3
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Fri Feb 14 20:25:08 2025 -0800
 
     Search for glm in current directory; don't require tirpc under FreeBSD.
+
+commit 39140b2e4d4b51c753c59326729dab008ed4e136
+Merge: 36fc67701 a399a7dd6
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Feb 14 14:39:56 2025 -0800
+
+    Merge branch 'master' into perl2py.
 
 commit a399a7dd6e9784d5d18696e66fd148c453e17ec6
 Author: John Bowman <bowman@ualberta.ca>
@@ -640,6 +2454,13 @@ Date:   Mon Feb 10 11:33:00 2025 -0800
       origin:   "https://github.com/ingydotnet/git-subrepo"
       commit:   "b9b059a"
 
+commit 36fc677017451dba141f9bb6ad9aea0e39393fff
+Merge: 34d8c458d d31fd43aa
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Feb 10 01:31:26 2025 -0800
+
+    Merge branch 'master' into perl2py.
+
 commit d31fd43aad1be82b57517fb4f9bab41a8e9575f7
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Mon Feb 10 01:26:47 2025 -0800
@@ -669,6 +2490,13 @@ Author: John Bowman <bowman@ualberta.ca>
 Date:   Sat Feb 8 22:13:41 2025 -0800
 
     Increment version to 2.98.
+
+commit 34d8c458d16c115e9c0eab95f3e256b51944ae31
+Merge: 71b27f8b4 ab5e4e770
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Feb 8 21:33:20 2025 -0800
+
+    Merge branch 'master' into perl2py.
 
 commit ab5e4e770bd96978ae5b211b752eab81433874c8
 Author: John Bowman <bowman@ualberta.ca>
@@ -763,6 +2591,13 @@ Author: John Bowman <bowman@ualberta.ca>
 Date:   Thu Feb 6 23:04:45 2025 -0700
 
     Fix last revision.
+
+commit 71b27f8b45cd26c67f4513eaf57cc06bf2b0a2c7
+Merge: 6010f5da7 317e04545
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Feb 6 20:41:12 2025 -0800
+
+    Merge branch 'master' into perl2py.
 
 commit 317e04545e5bbb1cdad3169600e592b40780966d
 Author: John Bowman <bowman@ualberta.ca>
@@ -1616,6 +3451,24 @@ Date:   Thu Jan 2 15:12:31 2025 -0800
 
     Merge branch '508-error-compiling-nested-template-imports' of https://github.com/vectorgraphics/asymptote into 508-error-compiling-nested-template-imports
 
+commit 6010f5da796cde4410f9c7e4251f4718909287b5
+Author: Charles Staats III <charles.staats.iii@gmail.com>
+Date:   Thu Jan 2 15:05:56 2025 -0800
+
+    Minor modifications to runtime.py.
+
+commit 34e8a1486f9cbc02e4b485b3cb61adddbec56ac4
+Author: Charles Staats III <charles.staats.iii@gmail.com>
+Date:   Wed Jan 1 19:54:23 2025 -0800
+
+    Refactoring runtime.py.
+
+commit 15b5f966efa6a86cea670171e05db6bd819c2cea
+Author: Charles Staats III <charles.staats.iii@gmail.com>
+Date:   Wed Jan 1 19:54:04 2025 -0800
+
+    Change Makefile.in to use runtime.py instead of runtime.pl.
+
 commit 65e4720283baab39cc365ec82203b26ecc472014
 Author: Charles Staats III <charles.staats.iii@gmail.com>
 Date:   Wed Jan 1 18:41:19 2025 -0800
@@ -1634,6 +3487,37 @@ Author: John Bowman <bowman@ualberta.ca>
 Date:   Wed Jan 1 15:47:31 2025 -0800
 
     Fix settings type.
+
+commit 5a9fa29eb9b623ff69b168ae21e8b82b1f58bed8
+Author: Charles Staats III <charles.staats.iii@gmail.com>
+Date:   Wed Jan 1 15:10:15 2025 -0800
+
+    WIP: refactor runtime.py.
+
+commit 52ed4ba3e999999ffbdf3b70281069a7d21856a3
+Author: Charles Staats III <charles.staats.iii@gmail.com>
+Date:   Tue Dec 31 21:33:22 2024 -0800
+
+    Refactor runtime.py to make `main` slightly shorter.
+
+commit 26c91e91025dfc68e5c823017c1dd8b8f0f6e5ec
+Author: Charles Staats III <charles.staats.iii@gmail.com>
+Date:   Mon Dec 30 18:49:19 2024 -0800
+
+    Improve runtime.py.
+
+commit 62ac4f2c9b8d7e88c2470c8a8ea949698aa63ced
+Merge: 564527f13 c62a29c8a
+Author: Charles Staats III <charles.staats.iii@gmail.com>
+Date:   Mon Dec 30 16:51:04 2024 -0800
+
+    Merge branch '509-perl-script-has-misspelled-variable-name' into perl2py
+
+commit 564527f137bf07d02cd2b88ed1f0cec390c8d712
+Author: Charles Staats III <charles.staats.iii@gmail.com>
+Date:   Mon Dec 30 14:01:53 2024 -0800
+
+    Draft of runtime.py that seems to work.
 
 commit 65e0876ffc323cb721580c6dcc60f8856a1c5493
 Author: John Bowman <bowman@ualberta.ca>

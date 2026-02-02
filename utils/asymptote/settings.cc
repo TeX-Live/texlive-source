@@ -49,8 +49,8 @@ extern "C" {
 
 #ifdef HAVE_NCURSES_CURSES_H
 #define USE_SETUPTERM
-#include <ncurses/curses.h>
-#include <ncurses/term.h>
+#include <ncursesw/curses.h>
+#include <ncursesw/term.h>
 #elif HAVE_NCURSES_H
 #define USE_SETUPTERM
 #include <ncurses.h>
@@ -441,7 +441,7 @@ struct option : public gc {
 
   // Outputs description of the command for the -help option.
   virtual void describe(char option) {
-    // Don't show the option if it has no desciption.
+    // Don't show the option if it has no description.
     if(!hide() && ((option == 'h') ^ env())) {
       const unsigned WIDTH=22;
       string start=describeStart();
@@ -974,7 +974,7 @@ void addOption(option *o) {
 void version()
 {
   cerr << PACKAGE_NAME << " version " << REVISION
-       << " [(C) 2004 Andy Hammerlindl, John C. Bowman, Tom Prince]"
+       << " [(C) 2004-26 Andy Hammerlindl, John C. Bowman, Tom Prince]"
        << endl;
 }
 
@@ -1534,6 +1534,8 @@ void initSettings() {
 
   addOption(new realSetting("zoomfactor", 0, "factor", "Zoom step factor",
                             1.05));
+  addOption(new realSetting("zoomThreshold", 0, "threshold",
+                            "Zoom remesh threshold", 0.02));
   addOption(new realSetting("zoomPinchFactor", 0, "n",
                             "WebGL zoom pinch sensitivity", 10));
   addOption(new realSetting("zoomPinchCap", 0, "limit",

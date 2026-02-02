@@ -21,8 +21,6 @@ CMAKE ?= cmake
 PERL ?= perl
 PYTHON ?= python3
 BISON ?= bison
-PYRCC ?= pyrcc5
-PYUIC ?= pyuic5
 
 # Libraries needed to make asymptote.so.
 # We have to remove OpenGL, threading, GC, etc from this.
@@ -31,7 +29,6 @@ SHAREDLIBS = $(filter-out -lglut -GL -pthread $(GCLIBS), $(LIBS))
 vpath %.cc prc
 vpath %.cc thirdparty_impl/tinyexr_impl/src
 vpath %.ui GUI/windows
-vpath %.py GUI/pyUIClass
 vpath %.py GUI
 
 CAMP = camperror path drawpath drawlabel picture psfile texfile util settings \
@@ -126,16 +123,18 @@ INSTALL = @INSTALL@
 REVISION = "const char *REVISION="
 last = $(shell head -1 revision.cc | sed -e 's/.*\"\(.*\)\";/\1/')
 usinggit = $(shell if test -d ".git"; then echo yes; fi)
+revision = ""
 ifeq ($(usinggit),yes)
 	revision = $(shell LC_ALL="C" git describe --long | \
 	sed -e 's/git-\([0-9]*\)-g.*/-\1/' | sed -e 's/-0-g.*//')
-else
+endif
+ifeq ($(revision),"")
 	revision = @VERSION@
 endif
 
 export prefix docdir exampledir mandir infodir INSTALL MAKE DESTDIR TEXI2DVI
 
-asy: base/version.asy $(FILES:=.o) $(XNAME) revision.o @LSPLIB@ @GLEW@
+asy: base/version.asy $(FILES:=.o) $(XNAME) revision.o $(GCLIB) @LSPLIB@ @GLEW@
 	$(CXX) $(OPTS) -o $(NAME) $(FILES:=.o) revision.o $(LIBS)
 
 $(XNAME): $(PYFILES)
@@ -196,8 +195,8 @@ man:	asy sty
 faq:	asy sty
 	cd doc && $(MAKE) faq
 
-$(RUNTIME_FILES:=.cc): %.cc: runtime.pl opsymbols.h runtimebase.in %.in
-	$(PERL) ./runtime.pl --prefix $(@:.cc=) --opsym-file opsymbols.h \
+$(RUNTIME_FILES:=.cc): %.cc: runtime.py opsymbols.h runtimebase.in %.in
+	$(PYTHON) ./runtime.py --prefix $(@:.cc=) --opsym-file opsymbols.h \
 		--runtime-base-file runtimebase.in \
 		--src-template-dir . \
 		--header-out-dir . \
@@ -235,9 +234,6 @@ allsymbols.h: $(SYMBOL_FILES:=.raw.i) findsym.py
 
 symbol.o: $(SYMBOLSH)
 
-icons_rc.py: GUI/res/icons.qrc
-	-$(PYRCC) GUI/res/icons.qrc -o GUI/icons_rc.py
-
 GUI/xasyicons: GUI/res/icons.qrc GUI/buildtool.py
 	-cd GUI && $(PYTHON) buildtool.py buildicons
 
@@ -264,7 +260,7 @@ opsymbols.h: camp.l opsymbols.py
 
 envcompleter.d: keywords.h
 
-asy-keywords.el: asy base/v3dtypes.asy base/v3dheadertypes.asy
+asy-keywords.el: asy base/v3dtypes.asy base/v3dheadertypes.asy asy-list.py
 	@echo Creating $@;
 	$(ASY) -l > asy.list
 	for dir in $(KEYWORDS); do \
@@ -272,7 +268,6 @@ asy-keywords.el: asy base/v3dtypes.asy base/v3dheadertypes.asy
 	  grep -v ^plain.asy$ | grep -v ^plain_ | grep -v ^three_ | \
 	  xargs ../$(ASY) -l >> ../asy.list; \
 	done
-	revision=`cat version.txt`
 	$(PYTHON) ./asy-list.py --asy-list-file asy.list --revision $(revision) --output-file $@
 
 install-notexhash: asy-keywords.el install-asy install-man
@@ -345,7 +340,6 @@ uninstall-asy:
 	-rmdir $(GUIdir)/configs
 	-cd $(GUIdir)/res/icons && rm -f *.svg
 	-rmdir $(GUIdir)/res/icons
-	-cd $(GUIdir) && rm -f icons_rc.py
 	-rmdir $(GUIdir)/res
 	-rmdir $(GUIdir)
 	-cd $(shaderdir) && rm -f *.glsl
@@ -378,8 +372,8 @@ gc-clean: FORCE clean
 cleaner: FORCE clean
 	-rm -rf __pycache__
 	-rm -rf GUI/__pycache__
-	-rm -rf GUI/pyUIClass/__pycache__
 	-rm -rf GUI/configs/__pycache__
+	-rm -rf GUI/xasyicons GUI/xasyqtui GUI/xasyversion
 	-$(MAKE) -C $(GC) distclean
 	-$(MAKE) -C libatomic_ops distclean
 	-cd $(GC) && rm -rf libatomic_ops .deps cord/.deps \
@@ -433,9 +427,6 @@ glew.o: glew.c config.h
 	${CC} $(MAKEDEPEND) $(MDOPTS) $< > $@.$$$$ 2>/dev/null && \
 	sed 's,\($*\)\.o[ :]*,\1.o $@ : ,g' < $@.$$$$ > $@; \
 	rm -f $@.$$$$
-%.py: %.ui
-	mkdir -p GUI/pyUIClass
-	-$(PYUIC) -o GUI/pyUIClass/$(notdir $@) $<
 # Compile for the shared library.  OpenGL must be disabled as it causes
 # crashes inside a shared library.
 %.pic.o: %.cc

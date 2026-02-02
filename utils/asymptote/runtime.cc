@@ -224,7 +224,7 @@ void writestring(stack *s)
   bool defaultfile=isdefault(it);
   camp::file *f=defaultfile ? &camp::Stdout : vm::get<camp::file*>(it);
   if(!f->isOpen() || !f->enabled()) return;
-  if(S != "") f->write(S);
+  if(S != "" || f->isBinary() || f->isXDR()) f->write(S);
   if(f->text()) {
     if(suffix) {
       s->push(f);
@@ -1114,10 +1114,10 @@ void gen_runtime84(stack *Stack)
   processDataStruct& P=processData();
   xkey_t& xkey=P.xkey;
   xkey_t::iterator p=xkey.find(P.topPos.LineColumn());
-  if(settings::xasy)
-    {Stack->push<string>(p != xkey.end() ? p->second+" 1" : toplocation()+" 0"); return;}
-  else
+  if(settings::keys)
     {Stack->push<string>(p != xkey.end() ? p->second : toplocation()); return;}
+  else
+    {Stack->push<string>(p != xkey.end() ? p->second+" 1" : toplocation()+" 0"); return;}
 }
 
 #line 763 "./runtime.in"
