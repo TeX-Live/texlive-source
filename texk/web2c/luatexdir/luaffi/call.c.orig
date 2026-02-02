@@ -85,23 +85,13 @@ static void SetLastError(int err)
 #include "call_x86.h"
 #endif
 
-#ifndef _MSC_VER
 struct __attribute__((__packed__)) jit_head {
     size_t size;
     int ref;
     uint8_t padding[4];
     uint8_t jump[JUMP_SIZE];
 };
-#else
-#pragma pack(push,1)
-struct jit_head {
-    size_t size;
-    int ref;
-    uint8_t padding[4];
-    uint8_t jump[JUMP_SIZE];
-};
-#pragma pack(pop)
-#endif
+
 #define LINKTABLE_MAX_SIZE (sizeof(extnames) / sizeof(extnames[0]) * (JUMP_SIZE))
 #define LINKTABLE_MAX_NUM (sizeof(extnames) / sizeof(extnames[0]))
 
@@ -164,7 +154,7 @@ static cfunction compile(struct jit* jit, lua_State* L, cfunction func, int ref)
     size_t codesz;
     int err;
 
-    if ((err = dasm_checkstep(jit, -1)) !=0 ) {
+    if ( 0 != dasm_checkstep(jit, -1)) {
         char buf[32];
         sprintf(buf, "%x", err);
         printf("%s:%d\n", __FILE__, __LINE__);

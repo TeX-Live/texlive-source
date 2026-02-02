@@ -1,0 +1,26 @@
+language: c
+
+sudo: false
+
+compiler:
+  - gcc
+  - clang
+
+os:
+  - linux
+  - osx
+
+env:
+  - LUA_VERSION=LUA51
+  - LUA_VERSION=LUA52
+  - LUA_VERSION=LUA53
+
+before_install:
+  - export PATH="$TRAVIS_BUILD_DIR/install/bin:$PATH"
+  - PLAT="${TRAVIS_OS_NAME/osx/macosx}" TMPSRC="$TRAVIS_BUILD_DIR/.src" PREFIX="$TRAVIS_BUILD_DIR/install" .travis/install_lua.sh
+
+install:
+  - luarocks make
+
+script:
+  - lua test.lua

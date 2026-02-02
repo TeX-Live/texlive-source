@@ -199,7 +199,7 @@ static int64_t check_intptr(lua_State* L, int idx, void* p, struct ctype* ct)
         ct->base_size = 8;
         ct->type = INT64_TYPE;
         ct->is_defined = 1;
-        ret = (int64_t) luaL_checknumber(L, idx);
+        ret = luaL_checknumber(L, idx);
         return ret;
 
     } else if (ct->pointers) {
@@ -1420,7 +1420,10 @@ static int ctype_call(lua_State* L)
 
 static int ctype_index(lua_State* L)
 {
+    void* to;
     struct ctype ct;
+    char* data;
+    ptrdiff_t off;
 
     lua_settop(L, 2);
     check_ctype(L, 1, &ct);
@@ -2949,7 +2952,9 @@ static int cdata_tostring(lua_State* L)
 static int ffi_getptr(lua_State* L)
 {
     struct ctype ct;
+    char buf[64];
     void* p = NULL;
+    int ret;
 
     lua_settop(L, 1);
     p = to_cdata(L, 1, &ct);
@@ -3793,16 +3798,14 @@ static int setup_upvals(lua_State* L)
     lua_pushboolean(L, 1);
     lua_setfield(L, -2, "64bit");
 #else
-# define UNSUPPORTED_ARCH  /*error*/
-# pragma message("luaffi: UNSUPPORTED_ARCH")
+#error
 #endif
 
 #if defined ARCH_X86 || defined ARCH_X64 || defined ARCH_ARM || defined ARCH_PPC64 || defined ARCH_ARM64
     lua_pushboolean(L, 1);
     lua_setfield(L, -2, "le");
 #else
-# define UNSUPPORTED_ARCH  /*error*/
-# pragma message("luaffi: UNSUPPORTED_ARCH")    
+#error
 #endif
 
 #if defined ARCH_X86 || defined ARCH_X64 || defined ARCH_PPC64 || defined ARCH_ARM64
@@ -3812,8 +3815,7 @@ static int setup_upvals(lua_State* L)
     lua_pushboolean(L, 1);
     lua_setfield(L, -2, "softfp");
 #else
-# define UNSUPPORTED_ARCH  /*error*/
-# pragma message("luaffi: UNSUPPORTED_ARCH")    
+#error
 #endif
     lua_pop(L, 1); /* abi tbl */
 
@@ -3857,8 +3859,7 @@ static int setup_upvals(lua_State* L)
 #elif defined ARCH_PPC64
     lua_pushliteral(L, "ppc64");
 #else
-# define UNSUPPORTED_ARCH /* error */
-# pragma message("luaffi: UNSUPPORTED_ARCH")    
+# error
 #endif
     lua_setfield(L, 1, "arch");
 
@@ -3874,7 +3875,6 @@ static void setup_mt(lua_State* L, const luaL_Reg* mt, int upvals)
     luaL_setfuncs(L, mt, upvals);
 }
 
-#if defined FFI_ENABLE_LUATEX_INTERFACE
 int luaopen_ffi(lua_State* L)
 {
     lua_settop(L, 0);
@@ -3956,58 +3956,3 @@ int luaopen_ffi(lua_State* L)
     lua_setfield(L, -2, "type"); /* ffi.type */
     return 1;
 }
-#else
-/* This is  a stub for OS/ARCH that at this moment don't support ffi */
-int luaopen_ffi(lua_State *L)
-{
-  int k ; 
-
-  k = luaL_dostring(L, "local info = [[\n"
-"The ffi module is available for:\n"
-"\n" 
-"    archictures       : ARCH_X86, ARCH_X64 and ARM_64,\n"
-"    operating systems : OS_CE, OS_WIN, OS_LINUX, OS_BSD and OS_POSIX\n"
-"\n"
-"The ARM 32bit processor is currently not supported. There are subtle\n"
-"differences between this module and the one in luajitTeX \n"
-"and we hope to be in sync around TeXLive 2025.\n"
-"Different OS can have different interfaces,\n"
-"for instance OS_WIN has not 'complex.h'. If you want portable\n"
-"code, stick to the most common concepts.\n"
-"]]\n"
-"\n"
-"local function stub()\n"
-"    texio.write_nl(info)\n"
-"end\n"
-"\n"
-"return   {\n"
-"    fill      = stub,\n"
-"    cast      = stub,\n"
-"    offsetof  = stub,\n"
-"    copy      = stub,\n"
-"    string    = stub,\n"
-"    abi       = stub,\n"
-"    cdef      = stub,\n"
-"    typeof    = stub,\n"
-"    sizeof    = stub,\n"
-"    type      = stub,\n"
-"    number    = stub,\n"
-"    gc        = stub,\n"
-"    metatype  = stub,\n"
-"    errno     = stub,\n"
-"    debug     = stub,\n"
-"    os        = ''  ,\n"
-"    arch      = ''  ,\n"
-"    NULL      = nil ,\n"
-"    alignof   = stub,\n"
-"    new       = stub,\n"
-"    u64       = stub,\n"
-"    i64       = stub,\n"
-"    istype    = stub,\n"
-"    load      = stub,\n"
-"    C         = nil ,\n"
-"}");
-
-     return k==0 ? 1 : k;
-}
-#endif

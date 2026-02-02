@@ -51,10 +51,8 @@ extern "C" {
 #include <sys/mman.h>
 #endif
 
-#if !defined(_MSC_VER) && !defined(__MINGW64__)
 #include <complex.h>
 #define HAVE_COMPLEX
-#endif
 #define HAVE_LONG_DOUBLE
 
 #ifndef NDEBUG
@@ -149,21 +147,8 @@ static void (lua_remove)(lua_State *L, int idx) {
 #elif defined __powerpc64__
 # define ARCH_PPC64
 #else
-# define UNSUPPORTED_ARCH /*error*/
-# pragma message("luaffi: UNSUPPORTED_ARCH")
+# error
 #endif
-
-
-/* See ffi.c: replace luaopen_ffi with a stub    */
-/* if FFI_ENABLE_LUATEX_INTERFACE is not defined */
-#if (defined ARCH_X86 || defined ARCH_X64) && (defined OS_CE || defined OS_WIN || defined OS_LINUX || defined OS_BSD || defined OS_POSIX || defined OS_OSX) || ( defined ARCH_ARM64 && (defined OS_LINUX ||defined OS_POSIX || defined OS_OSX))
-#define FFI_ENABLE_LUATEX_INTERFACE
-#endif 
-/* for the moment */
-#if (defined __CYGWIN__)
-#undef FFI_ENABLE_LUATEX_INTERFACE
-#endif 
-
 
 
 #ifdef _WIN32
@@ -408,7 +393,7 @@ static complex_double mk_complex_double(double real, double imag) {
     complex_double ret = { real, imag };
     return ret;
 }
-static complex_float mk_complex_float(float real, float imag) {
+static complex_float mk_complex_float(double real, double imag) {
     complex_float ret = { real, imag };
     return ret;
 }
