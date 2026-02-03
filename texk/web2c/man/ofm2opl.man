@@ -1,36 +1,37 @@
-.TH OFM2OPL 1 "8 March 2022" "Web2C @VERSION@"
-.PP 
+.TH OFM2OPL 1 "9 January 2026" "Web2C @VERSION@"
+.if t .ds TX \fRT\\h'-0.10m'\\v'0.17v'E\\v'-0.17v'\\h'-0.06m'X\fP
+.if n .ds TX TeX
+.\"=====================================================================
 .SH "NAME" 
-ofm2opl \- convert Omega and TeX font-metric files to property-list files
-.PP 
+ofm2opl \- convert Omega and TeX font metric (ofm) files to property list (opl) files
 .SH "SYNOPSIS" 
-.PP 
 .B ofm2opl
 .RI [ options ]
 .IR ofmname [ \fB.ofm\fP ]
 .RI [ oplfile [ \fB.opl\fP ]]
-.PP 
+.\"=====================================================================
 .SH "DESCRIPTION" 
+\fBofm2opl\fP translates a binary Omega font metrics (\fI.ofm\fP) file,
+\fIofmname\fP, into a human-readable property-list format (\fI.opl\fP).
+The program writes to standard output (by default) or to a file
+specified as \fIoplfile\fP.
 .PP 
-\fBofm2opl\fP translates a binary Omega Font Metrics file,
-\fIofmname\fP, into a human-readable property-list form\&.  The
-program writes to standard output (by default) or to a file specified
-as \fIoplfile\fP\&.
-.PP 
-The program also works with TeX TFM files, producing TeX PL files\&.
-.PP 
+The program also works with \*(TX font metric (\fI.tfm\fP) files,
+producing \*(TX property list (\fI.pl\fP) files.
+.\"=====================================================================
 .SH "OPTIONS" 
-.PP 
-(Same as \fBovf2ovp\fP).
+See
+.BR tex (1)
+for details of command-line parsing.
 .IP 
 .IP "\fB-charcode-format=\fP\fItype\fP" 
 output character codes according to \fItype\fP,
-either `hex\&', `octal\&' or `ascii\&'\&.  Default is
-`hex\&'\&; `ascii' says to use
-ASCII for letters and digits, hex for all else\&.
+either `hex', `octal' or `ascii'.  Default is
+`hex'; `ascii' says to use
+ASCII for letters and digits, hex for all else.
 .IP "\fB-char-format=\fP\fIstype\fP"
 output character codes according to \fIstype\fP,
-either `num\&' or `ascii\&'\&. Default is `num'; `ascii' as in
+either `num' or `ascii'. Default is `num'; `ascii' as in
 -charcode-format.  (These two redundant options both exist only for
 historical compatibility.)
 .IP "\fB-num-format=\fP\fIntype\fP"
@@ -40,57 +41,39 @@ either `hex' or `octal'; default is hex.
 output coding scheme and family according to \fIttype\fP,
 either `mixed' or `upper' case; default is mixed.
 .IP "\fB-help\fP" 
-display a brief summary of syntax and options 
+output help message and exit
 .IP "\fB-verbose\fP" 
-display progress reports
+output progress reports
 .IP "\fB-version\fP" 
 output version information and exit
-.IP 
-.PP 
-.SH "FILES" 
-.PP 
-.IP "\fIOFMNAME\fP" 
-an Omega Font Metric file
-.IP "\fIOPLFILE\fP" 
-an Omega Property List file
-.PP 
-.SH "BUGS" 
-.PP 
-Email bug reports to <https://lists.tug.org/tex-k>
-(mailing list); good to check if the same bug is present in
-\fBtftopl\fP(1)\&.
 .PP
-General discussion of Omega (and Aleph) can take place
-on the <https://lists.tug.org/omega> mailing list\&.
-.PP 
+These are the same options as in
+.BR ovf2ovp (1).
+.\"===================================================================== 
 .SH "SEE ALSO" 
-.PP 
-\fBomega\fP(1), \fBaleph\fP(1), \fBopl2ofm\fP(1), \fBpltotf\fP(1),
-\fBtftopl\fP(1)\&.
-.PP 
+\fBomega\fP(1), \fBaleph\fP(1), \fBopl2ofm\fP(1),
+\fBovf2ovp\fP(1), \fBovp2ovf\fP(1),
+\fBpltotf\fP(1), \fBtftopl\fP(1).
+.\"===================================================================== 
 .SH "AUTHOR" 
+The first \fBTFtoPL\fP program was designed by Leo Guibas in the summer
+of 1978. Contributions by Frank Liang, Doug Wyatt, and Lyle Ramshaw also
+had a significant effect on the evolution of the present code.
+Extensions for an enhanced ligature mechanism were added by D.E. Knuth
+in 1989.
 .PP 
-According to the WEB documentation:
-.PP 
-.RS 
-The first \fBTFtoPL\fP program was designed by Leo Guibas in the
-summer of 1978\&.  Contributions by Frank Liang, Doug Wyatt, and Lyle
-Ramshaw also had a significant effect on the evolution of the present
-code\&.
-.PP 
-Extensions for an enhanced ligature mechanism were added by D\&.E\&. Knuth
-in 1989\&.
-.PP 
-Extensions to handle extended font metric files (``OFM\&'\&') were added
-by John Plaice in December 1995 and January 1996, resulting in the new
-program \fBOFM2OPL\fP\&.
-.RE 
+Extensions to handle Omega's extended font metric files (\fI.ofm\fP)
+were added by John Plaice in December 1995 and January 1996, resulting
+in the present program.
 .PP
-\fBofm2opl\fP is based on the WEB source code for \fBtftopl\fP(1),
+\fBofm2opl\fP was based on the WEB source code for \fBtftopl\fP(1),
 although nowadays it is a link to \fBomfonts\fP, implemented entirely in C.
 .PP 
 The primary authors of Omega were John Plaice and Yannis Haralambous.
-Omega (and Aleph) are now maintained as part of TeX Live.
+Omega (and Aleph) are now maintained as part of \*(TX Live.
 .PP 
-This manual page was written by C\&.M\&. Connelly for the Debian
-GNU/Linux system\&. It is also now maintained as part of TeX Live.
+This manual page was written by C.M. Connelly for the Debian GNU/Linux
+system. Both the program and the man page are now maintained as part of
+\*(TX Live.
+.PP
+Bug reports and general discussion: https://lists.tug.org/omega

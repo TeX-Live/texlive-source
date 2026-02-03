@@ -1,8 +1,8 @@
-.TH PTFTOPL 1 "30 August 2022" "Web2C @VERSION@"
+.TH PTFTOPL 1 "30 January 2026" "Web2C @VERSION@"
 .\"=====================================================================
-.if t .ds TX \fRT\\h'-0.1667m'\\v'0.20v'E\\v'-0.20v'\\h'-0.125m'X\fP
+.if t .ds TX \fRT\\h'-0.10m'\\v'0.17v'E\\v'-0.17v'\\h'-0.06m'X\fP
 .if n .ds TX TeX
-.ie t .ds OX \fIT\v'+0.25m'E\v'-0.25m'X\fP\"
+.ie t .ds OX \fIT\h'-0.17m'\v'+0.21m'E\v'-0.21m'\h'-0.04m'X\fP
 .el .ds OX TeX\"
 .\" BX definition must follow TX so BX can use TX
 .if t .ds BX \fRB\s-2IB\s0\fP\*(TX
@@ -15,9 +15,9 @@
 ptftopl, uptftopl \- Convert Japanese p\*(TX font metric (JFM) files to property list
 .SH SYNOPSIS
 .B ptftopl
-.RI [ OPTIONS ]
-.IR tfm_name [ \fB.tfm\fP ]
-.RI [ pl_name [ \fB.pl\fP ]]
+.RI [ options ]
+.IR tfm_file [ \fB.tfm\fP ]
+.RI [ pl_file [ \fB.pl\fP ]]
 .\"=====================================================================
 .SH DESCRIPTION
 The

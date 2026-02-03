@@ -1,3 +1,19 @@
+2026-02-03  Karl Berry  <karl@freefriends.org>
+
+	*.man: overhaul most, with the exception of cweb and tie. Globally:
+	Update for current behavior in TeX Live, specifically.
+	Add web, CTAN, TUGboat, etc., references.
+ 	Replace duplicate text with cross-references, especially to tex(1).
+	Use - instead of \- for options, since options start with hyphens
+	  not en-dashes.
+	Don't routinely use \& for every sentence, since most periods end
+	  sentences.
+	Avoid all-caps for metavariables, as this is not Texinfo.
+	Updated TX and related macros to be closer to the TeX logos.
+	Reduce use of macros; simply "Metafont" and "WEB" are fine,
+	  no need for small caps. Don't use macros in synopsis lines.
+	* Makefile.am (testmans): also pdfconcat all the man pages into one.
+
 2026-01-19  Karl Berry  <karl@freefriends.org>
 
 	* pdfetex.man: remove, will add to pdftex.man.

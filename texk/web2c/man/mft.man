@@ -1,45 +1,31 @@
-.TH MFT 1 "27 May 2018" "Web2C @VERSION@"
+.TH MFT 1 "7 January 2026" "Web2C @VERSION@"
 .\"=====================================================================
 .if n .ds MP MetaPost
 .if t .ds MP MetaPost
 .if n .ds MF Metafont
 .if t .ds MF Metafont
-.if t .ds TX \fRT\\h'-0.1667m'\\v'0.20v'E\\v'-0.20v'\\h'-0.125m'X\fP
+.if t .ds TX \fRT\\h'-0.10m'\\v'0.17v'E\\v'-0.17v'\\h'-0.06m'X\fP
 .if n .ds TX TeX
-.ie t .ds OX \fIT\v'+0.25m'E\v'-0.25m'X\fP
-.el .ds OX TeX
-.\" BX definition must follow TX so BX can use TX
-.if t .ds BX \fRB\s-2IB\s0\fP\*(TX
-.if n .ds BX BibTeX
-.\" LX definition must follow TX so LX can use TX
-.if t .ds LX \fRL\\h'-0.36m'\\v'-0.15v'\s-2A\s0\\h'-0.15m'\\v'0.15v'\fP\*(TX
-.if n .ds LX LaTeX
 .\"=====================================================================
 .SH NAME
-mft \- translate Metafont or MetaPost code to TeX code for prettyprinting
+mft \- translate Metafont or MetaPost code to TeX for prettyprinting
 .SH SYNOPSIS
 .B mft
-.RI [ OPTIONS ]
-.BR \fImf_file_name\fP [ .mf | .mp ]
+.RI [ options ]
+.BR \fIsource_file\fP [ .mf | .mp ]
 .\"=====================================================================
 .SH DESCRIPTION
-This manual page is not meant to be exhaustive.  The complete
-documentation for this version of \*(TX can be found in the info file
-or manual
-.IR "Web2C: A TeX implementation" .
-.PP
 The
 .B mft
 program creates a \*(TX file from a \*(MF or \*(MP program.
 It takes appropriate care of typographic details like page
 layout and the use of indentation, italics, boldface, etc., as illustrated
-in the book
-.IR "Computer Modern Typefaces" .
-Special conventions in \*(MF and \*(MP comments allow you to control things that
-would not otherwise come out right; section 1 of the MFT source program
-in the
-.I \*(MFware
-report explains these rules.
+in the book \fIComputer Modern Typefaces\fP by Donald Knuth.
+.PP
+Special conventions in \*(MF and \*(MP comments allow you to control
+things that would not otherwise come out right; section 1 of the
+\fBmft\fP source program and the mft section in the Web2C manual
+explain these rules.
 .PP
 The
 .B mft
@@ -51,83 +37,96 @@ do)
 and one or several style files (which are prepended to everything).
 If no style file is specified, the style file
 .B plain.mft
-for \*(MF (or
+for \*(MF, or
 .B mplain.mft
-for \*(MP) is automatically used.
+for \*(MP, is used.  These files are specified via the options below.
 .PP
-The
-.IR mf_file_name ,
-optional
-.IR change_file_name ,
-and
-.I style_file_name
-files are searched for using the MFINPUTS (for \*(MF) or MPINPUTS (for
-\*(MP) and MFTINPUTS environment variables if you have set them, or else the
+The \fIsource_file\fP, as well as any change and style files, are
+searched for using the MFINPUTS (for \*(MF) or MPINPUTS (for \*(MP) and
+MFTINPUTS environment variables if you have set them, or else the
 corresponding system defaults.
 .PP
 The output \*(TX file name is formed by using
 .B .tex
 in place of the extension of
-.IR mf_file_name .
+.IR source_file .
 .\"=====================================================================
 .SH OPTIONS
+See
+.BR tex (1)
+for details of command-line parsing.
 .TP
-.BI \-change= change_file_name \fR[\fP.ch\fR]\fP
+.BI -change= change_file \fR[\fP.ch\fR]\fP
 Apply the change file
-.I change_file_name
+.I change_file
 to
-.IR mf_file_name .
+.IR mf_file .
 .PP
 .TP
-.B \-metapost
-Assume
-.I mf_file_name
-is a \*(MP source file (this is the default if
-.I mf_file_name
+.B -metapost
+Consider
+.I source_file
+to be a \*(MP source file; this is the default if
+.I mf_file
 has the extension
-.BR .mp ).
+.BR .mp .
 .PP
 .TP
-.BI \-style= style_file_name \fR[\fP.mft\fR]\fP
+.BI -style= style_file \fR[\fP.mft\fR]\fP
 Use the style file
-.I style_file_name
+.I style_file
 instead of
 .B plain.mft
-(or
-.BR mplain.mft );
+or
+.BR mplain.mft ;
 this option can be given more than once.
+.PP
+The standard
+.B -help
+and
+.B -version
+options are also supported.
 .\"=====================================================================
 .SH FILES
 .TP
-.I mftmac.tex
-\*(TX macros used by
-.B mft
-output.
+.I mftmac.tex\fR,\fP mptmac.tex
+\*(TX macros used by the output from \fBmft\fP for Metafont and
+MetaPost input, respectively.
 .TP
 .IR plain.mft ", " mplain.mft
 Default style files.
 .TP
 .I cmbase.mft
 Style file for Computer Modern.
+.TP
+.I e.mft
+Style file for Knuth's Volume E: Computer Modern Typefaces.
 .\"=====================================================================
 .SH "SEE ALSO"
 .BR mf (1),
+.BR mpost (1),
 .BR weave (1).
 .br
 Donald E. Knuth,
 .I Computer Modern Typefaces
 (Volume E of
-.IR "Computers and Typesetting" ),
-Addison-Wesley, 1986, ISBN 0-201-13446-2.
+.IR "Computers & Typesetting" ).
 .br
 Donald E. Knuth et al.,
 .IR \*(MFware .
+.PP
+Package page on CTAN: https://ctan.org/pkg/mft
+.br
+Section in the Web2c manual:
+https://tug.org/texinfohtml/web2c.html#mft-invocation
+.br
+Typeset source code, including the typesetting controls:
+https://ctan.org/pkg/knuth-pdf
 .\"=====================================================================
 .SH AUTHORS
-Donald E. Knuth wrote the program, and he ported it to Unix with the help of
-Pierre MacKay and the Unix port of
+Donald E. Knuth wrote and still maintains the program. He ported it to
+Unix with the help of Pierre MacKay and the Unix port of
 .B weave
 by Howard Trickey and Pavel Curtis.
-The program is published in the
-.I \*(MFware
-technical report, available from the \*(TX Users Group.
+.PP
+Public discussion list and bug reports: https://lists.tug.org/tex-k

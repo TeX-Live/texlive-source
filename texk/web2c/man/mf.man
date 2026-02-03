@@ -1,99 +1,57 @@
-.TH MF 1 "24 August 2023" "Web2C @VERSION@"
+.TH MF 1 "15 January 2026" "Web2C @VERSION@"
 .\"=====================================================================
 .if n .ds MF Metafont
 .if t .ds MF Metafont
-.if t .ds TX \fRT\\h'-0.1667m'\\v'0.20v'E\\v'-0.20v'\\h'-0.125m'X\fP
+.if t .ds TX \fRT\\h'-0.10m'\\v'0.17v'E\\v'-0.17v'\\h'-0.06m'X\fP
 .if n .ds TX TeX
-.ie t .ds OX \fIT\v'+0.25m'E\v'-0.25m'X\fP
+.ie t .ds OX \fIT\h'-0.17m'\v'+0.21m'E\v'-0.21m'\h'-0.04m'X\fP
 .el .ds OX TeX
-.\" BX definition must follow TX so BX can use TX
-.if t .ds BX \fRB\s-2IB\s0\fP\*(TX
-.if n .ds BX BibTeX
-.\" LX definition must follow TX so LX can use TX
-.if t .ds LX \fRL\\h'-0.36m'\\v'-0.15v'\s-2A\s0\\h'-0.15m'\\v'0.15v'\fP\*(TX
-.if n .ds LX LaTeX
-.if n .ds WB Web
-.if t .ds WB W\s-2EB\s0
 .\"=====================================================================
 .SH NAME
 mf, inimf, mf-nowin \- Metafont, a language for font and logo design
 .SH SYNOPSIS
 .B mf
 .RI [ options ]
-.RI [ commands ]
+.RI [ \fB&\fPbase ]
+\h'.25' [ \fIfile\fP [ \fImore-input\fP ] \h'.5'|\h'.5' [ \fB\e\fP\fImore-input\fP ]
 .\"=====================================================================
 .SH DESCRIPTION
-\*(MF reads the program in the specified files
-and outputs font rasters (in
+\*(MF reads the source program in the specified files
+and outputs font bitmaps in
 .I gf
-format) and font metrics (in
+(generic font) format and font metrics in
 .I tfm
-format).  The \*(MF
+(\*(TX font metric) format.  The \*(MF
 language is described in
-.IR "The \*(MF\^book" .
+.IR "The \*(MFbook" .
+In general, \*(MF programs describe how to draw characters in fonts, or
+other shapes, in an algorithmic way.
 .PP
-Like
-\*(TX, \*(MF
-is normally used with a large body of precompiled macros, and font generation
-in particular requires the support of several macro files.  This
-version of \*(MF looks at its command line to see what name it was
-called under.  Both
-.B inimf
-and
-.B virmf
-are symlinks to the
-.B mf
-executable.  When called as
-.BR inimf
-(or when the
-.B -ini
-option is given) it can be used to precompile macros into a
-.I .base
-file.  When called as
-.B virmf
-it will use the
-.I plain
-base.  When called under any other name, \*(MF will use that name as
-the name of the base to use.  For example, when called as
-.B mf
-the
-.I mf
-base is used, which is identical to the
-.I plain
-base.  Other bases than
-.I plain
-are rarely used.
-.PP
-The
-.I commands
-given on the command line to the \*(MF program are passed to it as the
-first input line.  (But it is often easier to type extended arguments
-as the first input line, since UNIX shells tend to gobble up or
-misinterpret \*(MF's favorite symbols, like semicolons, unless you
-quote them.)  As described in
-.IR "The \*(MF\^book" ,
-that first line should begin with a filename, a
-.RI \e controlsequence ,
-or a
-.IR &basename .
-.PP
-The normal usage is to say
+The normal usage is to run
 .IP
-\fBmf\ \fP '\\\|mode=<printengine>\^;\^ [\^mag=magstep(\fI\^n\fP\^)\^;\^]' input\ \^\fI font \fP
+\fBmf\ \fP '\\\|mode=\fIprintengine\fP; [mag=magstep(\fIn\fP);]' input\ \fI font \fP
 .PP
-to start processing
-.IR font.mf .
-The single quotes are the best way of keeping the Unix
-shell from misinterpreting the semicolons and
-from removing the \\ character, which is needed here to
-keep \*(MF from thinking that you want to produce a font called
-.IR mode .
-(Or you can just say
+to process
+.I font.mf
+with Metafont.
+.PP
+\fBmf\fP's command line processing is essentially the same as \*(TX's,
+except that the conventional assignment to \fImode\fP on the command
+line means that it's usual to invoke \fBmf\fP with several commands, as
+shown, and not just a filename. Without the initial backslash, \*(MF
+would try to read a file name \fImode\fP, just as \*(TX would. On Unix,
+the single quotes are the simplest way of keeping the shell from
+(mis)interpreting the backslash, semicolons, parentheses, etc.
+Alternatively, you can invoke
 .I mf
-and give the other stuff on the next line, without quotes.)  Other
-control sequences, such as
+without arguments and give the commands on the next line, in response to
+\fBmf\fP's "**" prompt, without any quotes.
+.PP
+In either case, other \*(MF commands, such as
 .I batchmode
-(for silent operation) can also appear.
+(for silent operation) can also appear. The default extension, ".mf",
+can be overridden by specifying an extension explicitly.
+.PP
 The name
 .I font
 will be the ``jobname'', and is used in forming
@@ -101,275 +59,188 @@ output file names.
 If \*(MF doesn't get a file name in the first line,
 the jobname is
 .IR mfput .
-The default extension,
-.IR .mf ,
-can be overridden by specifying an extension explicitly.
+A log of error messages goes into the file
+\fIjobname\fP\fB.\fP\fIlog\fP. The output files are
+\fIjobname\fP\fB.\fP\fItfm\fP (for the metrics) and
+\fIjobname\fP\fB.\fP\fI<\fPnumber\fI>gf\fP (for the bitmaps),
+where <number> depends on the resolution and magnification of the
+generated font.
 .PP
-A log of error messages goes into the file \fIjobname\fP\fB\^.\^\fP\fIlog\fP.
-The output files are \fIjobname\fP\fB\^.\^\fP\fItfm\fP and
-\fIjobname\fP\fB\^.\^\fP\fI<\fP\^number\^\fI>gf\fP, where <number> depends on
-the resolution and magnification of the font.  The
+Metafont can also be invoked by \*(TX, via the (for example)
+.BR mktextfm (1)
+script (q.v.), when \*(TX cannot find a font.
+.PP
+.B Metafont's output
+.PP
+Internally, Metafont computes Bezier cubic splines (and straight lines)
+from the Metafont source program. However, as mentioned above, the main
+output from Metafont is a bitmap file, that is, given the desired
+output device (see next section), Metafont does its own rasterization.
+(Why? Because Knuth's goal in creating \*(TX and Metafont was to
+completely control the typesetting of his own books, down to the pixel.)
+.PP
+On the other hand, nowadays it is almost universal to want outline fonts
+in the pdf (or other) output from \*(TX (or other document processors).
+It is possible to extract the splines that Metafont computes from its
+log file, or to have Metafont generate a high-resolution bitmap and
+trace that (with, e.g.,
+.BR autotrace (1)),
+to get back to splines, but both of these are inconvenient, at best. It
+is easier to use MetaPost
+.RB ( mpost (1)),
+which outputs PostScript instead of bitmaps, and outputs the splines
+instead of their rasterizations. Metafont sources cannot generally be
+used without change with MetaPost, but they are close. A detailed
+article on this, in a relatively early project, is by Richard Kinch:
+MetaFog: Converting Metafont shapes to contours, \fITUGboat\fP 16:3,
+https://tug.org/TUGboat/tb16-3/tb48kinc.pdf).
+.PP
+The \fItfm\fP font metrics file that Metafont outputs contains character
+dimension (height, width, depth) information, along with ligatures,
+kerns, and so on; in short, everything needed to do typesetting with the
+font. This does not include the shapes themselves. OpenType and TrueType
+fonts, by contrast, incorporate both metric and shape information, along
+with (potentially) a whole lot more for typesetting in non-Latin
+scripts, which the original \*(TX and Metafont do not attempt to handle,
+in modern generality. (There have been many projects to do typesetting
+with \*(TX in non-Latin scripts, both predating Unicode and working with
+Unicode when it became available. Articles in \fITUGboat\fP can be found
+at
+https://tug.org/TUGboat/Contents/listkeyword.html#CatTAGMultilingualDocumentProcessing.)
+.PP
+The technical specifications of the \fIgf\fP (bitmap) and \fItfm\fP
+(metrics) formats are in the Metafont source program, or any of the
+utility programs working with the respective formats; see list at end.
+.PP
+.B Modes (device definitions)
+.PP
+The Metafont
 .I mode
-in this
-example is shown generically as <printengine>, a symbolic term for which
-the name of an actual device or, most commonly, the name
-.I localfont
-(see below) must
-be substituted.  If the mode is not specified or is not valid for your
-site, \*(MF will default to
+of \fIprintengine\fP in the above invocation needs to be the name of an
+actual device (e.g., \fIljfour\fP) or
+.IR localfont .
+If a mode is not specified, or is not valid, \*(MF will default to
 .I proof
-mode which produces
-large character images for use in font design and refinement.  Proof
-mode can be recognized by the suffix
-.I .2602gf
-after the jobname.  Examples of proof mode output can be found
-in
+mode, which produces large character images for use in font design.
+Proof mode will generate an output file of .2602gf (36 pixels per
+point). A proof mode gf can be further processed into a printable
+document with
+.BR gftodvi (1).
+This proof mode output is described further in \fIThe \*(MFbook\fP,
+Appendix H (Hardcopy Proofs), and examples for the entire
+Computer Modern typeface family are shown in
 .I "Computer Modern Typefaces"
 (Volume E of
-.IR "Computers and Typesetting" ).
+.IR "Computers & Typesetting" ).
+.PP
+Modes are defined with the
+.I mode_def
+macro, which adapts the font output to a particular output device, by
+defining such things as the device resolution. The file \fImodes.mf\fP
+(https://ctan.org/pkg/modes) is distributed with \*(TX Live and is used
+by default; it describes the various parameters, defines more than 150
+modes (more entries are welcome), and defines \fIlocalfont\fP as
+\fIljfour\fP, a 600dpi HP LaserJet printer.
+.PP
+Nowadays, output is often viewed online, where high-resolution bitmaps
+are desirable. Several definitions in \fImodes.mf\fP can be used for
+this: the mode named \fIpdf\fP (or \fIdpdfezzz\fP for older versions)
+generates bitmaps at 8000 dpi (other parameters are canonical). If you
+want a lower resolution, similar canonical modes are \fIsupre\fP at 2400
+and \fIultre\fP at 1200.
+.PP
+\fIThe \*(MFbook\fP gives some more details and examples of modes,
+particularly in chapter 11 (Magnification and Resolution).
+.PP
+.B Magsteps
+.PP
 The system of
 .I magsteps
-is identical to the system used by
-\*(TX,
-with values generally in the range 0.5, 1.0, 2.0, 3.0, 4.0 and 5.0.
-A listing of
-.I gf
-numbers for 118-dpi, 240-dpi and 300-dpi fonts
-is shown below.
-.TS
-tab(:);
-c c c c
-l l l l.
-MAGSTEP:118 dpi:240 dpi:300 dpi
-mag=magstep(0):118:240:300
-mag=magstep(0.5):129:263:329
-mag=magstep(1):142:288:360
-mag=magstep(2):170:346:432
-mag=magstep(3):204:415:518
-mag=magstep(4):245:498:622
-mag=magstep(5):294:597:746
-.TE
+is identical to what is used in \*(TX, with values of \fIn\fP in the
+above invocation generally one of 0.5, 1, 2, 3, 4 or 5, although in
+principle it can be anything. Magnification can also be specified not as
+a call to magstep but as an arbitrary value, such as 1.315, to create
+special character sizes. It can also be entirely omitted, as shown above.
 .PP
-Magnification can also be specified not as a magstep but as an
-arbitrary value, such as 1.315, to create special character sizes.
+.B Base (.base) selection
 .PP
-Before font production can begin, it is necessary to set up the
-appropriate base files.  The minimum set of components for font
-production for a given print-engine is the
-.I plain.mf
-macro file
-and the local
-.I mode_def
-file.  The macros in
-.I plain.mf
-can be
-studied in an appendix to the
-.IR "\*(MF\^book" ;
-they were developed by Donald E. Knuth, and this file should never be
-altered except when it is officially upgraded.
-Each
-.I mode_def
-specification helps adapt fonts to a particular print-engine.
-There is a regular discussion of
-.IR mode_def s
-in
-.IR TUGboat ,
-the journal of the
-\*(TX
-Users Group.
-The local ones in use on this computer should be in
-.IR modes.mf .
+Like \*(TX, \*(MF is normally used with a large body of precompiled
+macros, called a "base"; the \fIplain\fP base is distributed as part of
+\*(MF and is by far the most commonly used.
 .PP
-The
-.I e
-response to \*(MF\|'s error-recovery mode invokes the
-system default
-editor at the erroneous line of the source file.
-There is an environment variable, MFEDIT,
-that overrides the default editor.
-It should contain a string with "%s" indicating where the
-filename goes and "%d" indicating where the decimal linenumber (if any) goes.
-For example, an MFEDIT string for the
-.B vi
-editor can be set with the
-.B csh
-command
-.RS
-\fIsetenv MFEDIT "vi +%d %s"\fP
-.RE
+The \*(MF implementation in \*(TX Live (a.k.a. Web2C) looks at its
+command line to see what name it was called under, just as \*(TX does.
+In short, The names \fBinimf\fP and \fBvirmf\fP read \fIplain.base\fP,
+and any other name reads the base file by that name. See
+.BR tex (1)
+for details.
+The invocation name \fBmf-nowin\fP is a case special to \*(MF that uses
+\fImf.base\fP; see below.
 .PP
-A convenient file in the library is
-.IR null.mf ,
-containing nothing.
-When
-.B mf
-can't find the file it thinks you want to input, it keeps
-asking you for another file name; responding `null' gets you out
-of the loop if you don't want to input anything.
-.\"=====================================================================
-.SH "ONLINE GRAPHICS OUTPUT"
-\*(MF can use most modern displays, so you can see its output
-without printing.  Chapter 23 of
-.I "The \*(MF\^book"
-describes what you can do.  This implementation of \*(MF uses
-environment variables to determine which display device you want to use.
-First it looks for a variable MFTERM, and then for TERM.
-If it can't find either, you get no online output.  Otherwise, the value
-of the variable determines the device to use:
-.BR hp2627 ,
-.B sun
-(for old SunView),
-.BR tek ,
-.B uniterm
-(for an Atari ST Tek 4014 emulator),
-.B xterm
-(for either X10 or X11).
-Some of these devices may not be supported in all \*(MF
-executables; the choice is made at compilation time.
+.B Error handling
 .PP
-On some systems, there are two \*(MF binaries,
+See
+.BR tex (1);
+Metafont's error recovery is entirely analogous. The environment
+variable name for the editor is MFEDIT.
+.PP
+.B Online graphics output
+.PP
+Unlike \*(TX, \*(MF can show the results of its processing online, as it
+runs. \*(MF can use most modern displays. Chapter\~23 of
+.I "The \*(MFbook"
+describes what you can do. \*(MF uses environment variables to determine
+which display device to use.
+.PP
+First it looks for a variable MFTERM; if MFTERM is not set, and DISPLAY
+is set, the Metafont window support for X is used. (DISPLAY must be set
+to a valid X server specification, as usual.) If neither MFTERM nor
+DISPLAY is set, TERM is used to guess the window support to use.
+If it can't find any of these, you get no online output.
+.PP
+The supported values for MFTERM and TERM are listed at
+https://tug.org/texinfohtml/web2c.html#Online-Metafont-graphics. Since
+they are mostly old and rarely used, and not enabled by default in \*(TX
+Live, the list is not repeated here.
+.PP
+The two Kpathsea configuration variables \fIscreen_width\fP and
+\fIscreen_depth\fP define the width and height of the window used by
+Metafont. They can be set in the environment or a Kpathsea configuration
+file (https://tug.org/texinfohtml/kpathsea.html#Path-sources). They
+default to 1664 and 1200, respectively.
+.PP
+By default, \*(TX Live is distributed with two \*(MF binaries,
 .B mf
 and
 .BR mf-nowin .
-On those systems the
+The
 .B mf
 binary supports graphics, while the
 .B mf-nowin
 binary does not.  The
 .B mf-nowin
 binary is used by scripts like
-.B mktexpk
+.BR mktexpk (1),
 where graphics support is a nuisance rather than something helpful.
 .\"=====================================================================
 .SH OPTIONS
-This version of \*(MF understands the following command line options.
-.TP
-.BI -base \ base
-Use
-.I base
-as the name of the base to be used, instead of the name by which
-\*(MF was called or a
-.I %&
-line.
-.TP
-.BI -cnf-line \ string
-Parse
-.I string
-as a
-.I texmf.cnf
-configuration line.  See the Kpathsea manual.
-.TP
-.B -file-line-error
-Print error messages in the form
-.I file:line:error
-which is similar to the way many compilers format them.
-.TP
-.B -no-file-line-error
-Disable printing error messages in the
-.I file:line:error
-style.
-.TP
-.B -file-line-error-style
-This is the old name of the
-.B -file-line-error
-option.
-.TP
-.B -halt-on-error
-Exit with an error code when an error is encountered during processing.
-.TP
-.B -help
-Print help message and exit.
-.TP
-.B -ini
-Be
-.BR inimf ,
-for dumping bases; this is implicitly true if the program is called
-as
-.BR inimf .
-.TP
-.BI -interaction \ mode
-Sets the interaction mode.  The mode can be one of
-.IR batchmode ,
-.IR nonstopmode ,
-.IR scrollmode ,
-and
-.IR errorstopmode .
-The meaning of these modes is the same as that of the corresponding
-commands.
-.TP
-.BI -jobname \ name
-Use
-.I name
-for the job name, instead of deriving it from the name of the input file.
-.TP
-.BI -kpathsea-debug \ bitmask
-Sets path searching debugging flags according to the bitmask.  See the
-.I Kpathsea
-manual for details.
-.TP
-.BI -maketex \ fmt
-Enable
-.RI mktex fmt ,
-where
-.I fmt
-must be
-.IR mf .
-.TP
-.BI -no-maketex \ fmt
-Disable
-.RI mktex fmt ,
-where
-.I fmt
-must be
-.IR mf .
-.TP
-.BI -output-directory \ directory
-Write output files in
-.I directory
-instead of the current directory.  Look up input files in
-.I directory
-first, then along the normal search path.
-.TP
-.B -parse-first-line
-If the first line of the main input file begins with
-.I %&
-parse it to look for a dump name or a
-.B -translate-file
-option.
-.TP
-.B -no-parse-first-line
-Disable parsing of the first line of the main input file.
-.TP
-.BI -progname \ name
-Pretend to be program
-.IR name .
-This affects both the format used and the search paths.
-.TP
-.B -recorder
-Enable the filename recorder.  This leaves a trace of the files opened
-for input and output in a file with extension
-.IR .fls .
-.TP
-.BI -translate-file \ tcxname
-Use the
-.I tcxname
-translation table.
-.TP
-.B -version
-Print version information and exit.
+See
+.BR tex (1)
+for both details of command-line parsing and the options available
+(apart from the \*(TX-specific ones). The only Metafont-specific option
+name is \fB-base\fP, which is entirely analogous to \*(TX's
+\fB-format\fP.
 .\"=====================================================================
 .SH ENVIRONMENT
-See the Kpathsearch library documentation (the `Path specifications'
-node) for the details of how the environment variables are use when
-searching.  The
-.B kpsewhich
-utility can be used to query the values of the variables.
-.PP
-If the environment variable
+See
+.BR tex (1)
+for general information and more details. The terse descriptions here
+are just a hint. There are many more environment variables that can
+affect the path searching behavior.	
+.TP
 .B TEXMFOUTPUT
-is set, \*(MF attempts to put its output
-files in it, if they cannot be put in the current directory.  Again, see
-.BR tex (1).
+If set, \*(MF attempts to put its output files here, if they cannot be
+put in the current directory.
 .TP
 .B MFINPUTS
 Search path for
@@ -380,22 +251,18 @@ files.
 Command template for switching to editor.
 .TP
 .B MFTERM
-Determines the online graphics display.  If MFTERM is not set,
-and DISPLAY is set, the Metafont window support for X is used.
-(DISPLAY must be set to a valid X server specification, as usual.)
-If neither MFTERM nor DISPLAY is set, TERM is used to guess the window
-support to use.
+Determines the online graphics display. See above.
+.TP
+.B screen_width, screen_depth
+Width and height of online graphics window.
 .\"=====================================================================
 .SH "FONT UTILITIES"
-A number of utility programs are available.
-The following is a partial list of available utilities and their purpose.
-Consult your local \*(MF guru for details.
-.br
+Here is a selection of the core utility programs that accompany \*(MF:
 .TP \w'gftodvi'u+2n
 .B gftopk
 Takes a
 .I gf
-file and produces a more tightly packed
+file and produces a smaller
 .I pk
 font file.
 .TP
@@ -418,71 +285,103 @@ Formats a source file as shown in
 .\"=====================================================================
 .SH "FILES"
 .TP
-.I "mf.pool"
-Encoded text of \*(MF's messages.
-.TP
-.I *.base
-Predigested \*(MF base files.
-.TP
 .I $TEXMFMAIN/metafont/base/plain.mf
 The standard base.
 .TP
 .I $TEXMFMAIN/metafont/misc/modes.mf
-The file of
+A file of
 .IR mode_def s
-for your site's various printers
-.\"=====================================================================
-.SH NOTES
-This manual page is not meant to be exhaustive.  The complete
-documentation for this version of \*(MF can be found in the info manual
-.IR "Web2C: A TeX implementation" .
+for many devices. See https://ctan.org/pkg/modes.
+.TP
+.I *.base
+Predigested \*(MF base files.
+.TP
+.I "mf.pool"
+Encoded text of \*(MF's messages.
 .\"=====================================================================
 .SH BUGS
-On January 4, 1986 the ``final'' bug in \*(MF was discovered
-and removed.  If an error still lurks in the code, Donald E. Knuth promises to
-pay a finder's fee which doubles every year to the first person who finds
-it.  Happy hunting.
+Knuth still accepts new bug reports for \*(MF, but only reviews them
+every several years. For a list of submitted reports and other
+information: https://tug.org/texmfbug.
 .\"=====================================================================
-.SH "SUGGESTED READING"
-Donald E. Knuth,
-.I "The \*(MF\^book"
-(Volume C of
-.IR "Computers and Typesetting" ),
-Addison-Wesley, 1986, ISBN 0-201-13445-4.
-.br
-Donald E. Knuth,
-.I "\*(MF:\^ The Program"
-(Volume D of
-.IR "Computers and Typesetting" ),
-Addison-Wesley, 1986, ISBN 0-201-13438-1.
-.br
-Donald E. Knuth,
-.I Computer Modern Typefaces
-(Volume E of
-.IR "Computers and Typesetting" ),
-Addison-Wesley, 1986, ISBN 0-201-13446-2.
-.br
-.I TUGboat
-(the journal of the \*(TX Users Group).
-.\"=====================================================================
-.SH COMMENTS
-Warning: ``Type design can be hazardous to your other interests.
-Once you get hooked, you will develop intense feelings about letterforms;
-the medium will intrude on the messages that you read.
-And you will perpetually be thinking of improvements to the fonts that
-you see everywhere, especially those of your own design.''
+.SH "HEALTH WARNING"
+From \fIThe \*(MFbook\fP: ``Type design can be hazardous to your other
+interests. Once you get hooked, you will develop intense feelings about
+letterforms; the medium will intrude on the messages that you read. And
+you will perpetually be thinking of improvements to the fonts that you
+see everywhere, especially those of your own design.''
 .\"=====================================================================
 .SH "SEE ALSO"
 .BR gftopk (1),
 .BR gftodvi (1),
 .BR gftype (1),
 .BR mft (1),
-.BR mpost (1),
+.BR pktogf (1),
 .BR pltotf (1),
 .BR tftopl (1).
+.br
+.BR mktexmf (1),
+.BR mktexpk (1),
+.BR mktextfm (1).
+.br
+.BR mpost (1),
+.BR tex (1).
+.PP
+Donald E. Knuth,
+.I "The \*(MFbook"
+(Volume C of
+.IR "Computers & Typesetting" ).
+.br
+Donald E. Knuth,
+.I "\*(MF: The Program"
+(Volume D of
+.IR "Computers & Typesetting" ).
+.br
+Donald E. Knuth,
+.I Computer Modern Typefaces
+(Volume E of
+.IR "Computers & Typesetting" ).
+.br
+.PP
+Some online information:
+.br
+Metafont for beginners, by Geoffrey Tobin:
+https://ctan.org/pkg/metafont-beginners
+.br
+Metafont font implementations (nearly all descend from Computer Modern):
+https://ctan.org/topic/font-mf
+.PP
+\*(TX Live web pages:
+https://tug.org/texlive
+.br
+Web2C Texinfo manual and web page:
+https://tug.org/web2c
+.br
+Kpathsea Texinfo manual and web page:
+https://tug.org/kpathsea
+.br
+Sources for the \*(TX-world literate programs, as pdf:
+https://ctan.org/pkg/knuth-pdf
+.PP
+.I TUGboat
+(the journal of the \*(TX Users Group, submissions welcome):
+https://tug.org/TUGboat/
+.br
+Particularly the \fIFonts\fP topic:
+https://tug.org/TUGboat/Contents/listkeyword.html#CatTAGFonts
 .\"=====================================================================
 .SH AUTHORS
-\*(MF was designed by Donald E. Knuth, who implemented it
-using his \*(WB system for Pascal programs.  It was originally
-ported to Unix by Paul Richards at the University of Illinois at
-Urbana-Champaign.  This page was mostly written by Pierre MacKay.
+\*(MF was created by Donald E. Knuth, who implemented it using his WEB
+system for Pascal programs. It was originally ported to Unix by Paul
+Richards at the University of Illinois at Urbana-Champaign. The version
+now included in \*(TX Live, the current Unix \*(TX distribution, is
+generated by the Web2C system originally written by Tomas Rokicki and
+Tim Morgan. This man page was originally written by Pierre MacKay.
+.PP
+Bug reports in \*(MF (exceedingly rare): https://tug.org/texmfbug
+.br
+Public mailing list for implementation questions and reports:
+https://lists.tug.org/tex-k
+.br
+Public discussion list for all things \*(MF (and \*(TX):
+https://lists.tug.org/texhax

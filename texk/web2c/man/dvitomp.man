@@ -1,10 +1,10 @@
-.TH DVITOMP 1 "16 June 2015" "Web2C @VERSION@"
-.\" man page by Jim Van Zandt <jrv@vanzandt.mv.com>
+.TH DVITOMP 1 "30 November 2025" "Web2C @VERSION@"
+.\" man page originally by Jim Van Zandt
 .SH NAME
-dvitomp \- convert a TeX DVI file to a MetaPost MPXFILE
+dvitomp \- convert a TeX DVI file to a MetaPost mpx file
 .SH SYNOPSIS
 .B dvitomp
-.RI [ OPTIONS ]
+.RI [ options ]
 .IR dvifile [ \fB.dvi\fP ]
 .RI [ mpxfile [ \fB.mpx\fP ]]
 .PP
@@ -14,13 +14,32 @@ dvitomp \- convert a TeX DVI file to a MetaPost MPXFILE
 .RI [ mpxfile [ \fB.mpx\fP ]]
 .SH DESCRIPTION
 \fBdvitomp\fP translates the given \fIdvifile\fP to a MetaPost
-MPXFILE.  The default \fImpxfile\fP is the basename of \fIdvifile\fP
+\fImpxfile\fP.  The default \fImpxfile\fP is the basename of \fIdvifile\fP
 extended with
 .BR .mpx .
 .SH OPTIONS
-.IP \fB-help\fP
-write usage summary and exit.
-.IP \fB-version\fP
-output version information and exit.
-.SH BUGS
-Email bug reports to metapost@tug.org.
+See
+.BR tex (1)
+for details of command-line parsing.
+.TP
+.BI \fB-kpathsea-debug\fP \ bitmask
+set path searching debugging flags according to \fIbitmask\fP.
+.TP
+.BI \fB-progname\fP \ string
+set program name to \fIstring\fP.
+.PP
+The standard
+.B -help
+and
+.B -version
+options are also supported.
+.SH SEE ALSO
+.B dvitomp
+is an alias for MetaPost. See
+.BR mpost (1).
+.PP
+Package page on CTAN: https://ctan.org/pkg/dvitomp
+.PP
+For questions and discussion, email metapost@tug.org.
+.br
+For detailed bug reports, email mp-implementors@tug.org.

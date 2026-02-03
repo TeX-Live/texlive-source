@@ -1,62 +1,78 @@
-.TH AMSTEX 1 "16 June 2015" "Web2C @VERSION@"
+.TH AMSTEX 1 "5 November 2025" "Web2C @VERSION@"
 .\"=====================================================================
-.if t .ds TX \fRT\\h'-0.1667m'\\v'0.20v'E\\v'-0.20v'\\h'-0.125m'X\fP
+.if t .ds TX \fRT\\h'-0.10m'\\v'0.17v'E\\v'-0.17v'\\h'-0.06m'X\fP
 .if n .ds TX TeX
-.if t .ds OX \fIT\v'+0.25m'E\v'-0.25m'X\fP\"
-.if n .ds OX TeX\"
+.ie t .ds OX \fIT\h'-0.17m'\v'+0.21m'E\v'-0.21m'\h'-0.04m'X\fP
+.el .ds OX TeX
 .\" BX definition must follow TX so BX can use TX
 .if t .ds BX \fRB\s-2IB\s0\fP\*(TX
 .if n .ds BX BibTeX
 .\" LX definition must follow TX so LX can use TX
 .if t .ds LX \fRL\\h'-0.36m'\\v'-0.15v'\s-2A\s0\\h'-0.15m'\\v'0.15v'\fP\*(TX
 .if n .ds LX LaTeX
-.if t .ds AX \fRA\\h'-0.1667m'\\v'0.20v'M\\v'-0.20v'\\h'-0.125m'S\fP\*(TX
+.if t .ds AX \fRA\\h'-0.05m'\\v'0.15v'M\\v'-0.15v'\\h'-0.05m'S\fP\*(TX
 .if n .ds AX AmSTeX
-.if t .ds AY \fRA\\h'-0.1667m'\\v'0.20v'M\\v'-0.20v'\\h'-0.125m'S\fP\*(LX
+.if t .ds AY \fRA\\h'-0.1667m'\\v'0.15v'M\\v'-0.15v'\\h'-0.10m'S\fP\*(LX
 .if n .ds AY AmSLaTeX
 .\"=====================================================================
 .SH NAME
-amstex \- structured text formatting and typesetting
+amstex \- structured mathematical text formatting and typesetting
 .SH SYNOPSIS
 .B amstex
 .RI [ first-line ]
 .\"=====================================================================
 .SH DESCRIPTION
-This manual page is not meant to be exhaustive.  The complete
-documentation for this version of \*(TX can be found in the info file
-or manual
-.IR "Web2C: A TeX implementation" .
-.PP
 The \*(AX language is described in the book
-.IR "The Joy of \*(OX" .
-\*(AX is a \*(TX macro package, not a modification to the \*(TX source
-program, so all the capabilities described in
+.IR "The Joy of \*(OX" ,
+available from https://ctan.org/pkg/joy-of-tex.
+.PP
+\*(AX is a \*(TX format (macro package), not a modification to the \*(TX
+source program, so all the capabilities described in
 .BR tex (1)
-are present.
+are present; see tex(1) for details of command-line parsing, etc.
 .PP
-The \*(AX macros encourage writers to think about the content of their
-documents, rather than the form.  The ideal, not always realized, is to
-have no formatting commands (like \(lqswitch to italic\(rq or \(lqskip 2
-picas\(rq) in the document at all; instead, everything is done
-by specific markup instructions: \(lqemphasize\(rq, \(lqstart a section\(rq.
+\*(AX was developed by the American Mathematical Society, and used in
+their publishing program for many years. However, it is no longer
+developed or used by them. Instead, authors are encouraged to use \*(LX,
+likely with the \fIamsmath\fR package among others, which provides many
+useful mathematical features. The \*(AX format is still provided for the
+sake of supporting existing documents.
 .PP
-For authors more familiar with \*(LX, an AMS-supported package called
-.I amsmath.sty
-is available, among others.
+In the past, there were also formats named \fIamslatex\fR and
+\fIlamstex\fR which combined \*(AX and \*(LX in various ways. These are
+no longer distributed; standard \*(LX is now what's recommended.
+.PP
+The \*(AX macros have extensive support for math typesetting. In
+general, like \*(LX, they encourage writers to think about the content
+of their documents, rather than the form. The ideal, not always
+realized, is to have no formatting commands (like \(lqswitch to
+italic\(rq or \(lqskip 2 picas\(rq) in the document at all; instead,
+everything is done by generic markup instructions: \(lqemphasize\(rq,
+\(lqstart a section\(rq.
+.SH OPTIONS
+See
+.BR tex (1).
 .\"=====================================================================
-.SH FILES
-.TP
-.I amsguide.tex
-Documentation for \*(AX, typesettable by \*(TX.
-.TP
-.I amfndoc.tex
-Documentation for AMS fonts, typesettable by \*(TX.
+.SH ENVIRONMENT
+See
+.BR tex (1).
+.\"=====================================================================
+.SH BUGS
+See
+.BR tex (1).
 .\"=====================================================================
 .SH "SEE ALSO"
 .BR latex (1),
-.BR tex (1),
-.BR slitex (1).
-.br
+.BR tex (1).
+.PP
 Michael Spivak,
 .IR "The Joy of \*(OX" ,
 2nd edition, American Mathematical Society, 1990, ISBN 0-8218-2997-1.
+.br
+https://ctan.org/pkg/joy-of-tex
+.br
+amsguide: Documentation for \*(AX.
+.br
+amsmath package page on CTAN: https://ctan.org/pkg/amsmath
+.br
+\*(AX package page on CTAN: https://ctan.org/pkg/amstex

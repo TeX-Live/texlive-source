@@ -1,27 +1,17 @@
-.TH TWILL 1 "11 January 2026" "Web2C @VERSION@"
+.TH TWILL 1 "2 February 2026" "Web2C @VERSION@"
 .\"=====================================================================
 .if n .ds MF Metafont
 .if t .ds MF Metafont
 .if n .ds TX TeX
 .if t .ds TX \fRT\\h'-0.1667m'\\v'0.20v'E\\v'-0.20v'\\h'-0.125m'X\fP
-.ie t .ds OX \fIT\v'+0.25m'E\v'-0.25m'X\fP
-.el .ds OX TeX
-.\" BX definition must follow TX so BX can use TX
-.if n .ds BX BibTeX
-.if t .ds BX \fRB\s-2IB\s0\fP\*(TX
-.\" LX definition must follow TX so LX can use TX
-.if n .ds LX LaTeX
-.if t .ds LX \fRL\\h'-0.36m'\\v'-0.15v'\s-2A\s0\\h'-0.15m'\\v'0.15v'\fP\*(TX
-.if n .ds WB Web
-.if t .ds WB W\s-2EB\s0
 .\"=====================================================================
 .SH NAME
-twill, twill-refsort \- translate \*(WB to \*(TX with mini-indexes
+twill, twill-refsort \- translate a literate programming WEB to TeX with mini-indexes
 .SH SYNOPSIS
 .PP
-\f[B]twill\f[R] [\f[B]\-x\f[R]]
+\f[B]twill\f[R] [\f[B]-x\f[R]]
 \f[I]webfile\f[R][\f[B].web\f[R]]
-[{\f[I]changefile\f[R][\f[B].ch\f[R]]|\f[B]\-\f[R]}
+[{\f[I]changefile\f[R][\f[B].ch\f[R]]|\f[B]-\f[R]}
 [\f[I]outfile\f[R][\f[B].tex\f[R]]]]
 .PD 0
 .PP
@@ -33,60 +23,51 @@ twill, twill-refsort \- translate \*(WB to \*(TX with mini-indexes
 .SH DESCRIPTION
 The
 .B twill
-program is used to create a \*(TX file for viewing a \*(WB program.
-It takes appropriate care of typographic details like page
-layout and the use of indentation, italics, boldface, etc., and it supplies
-extensive cross-index information in the form of 'mini-indexes' for each
-spread of pages and a 'master index' at the end that it gathers automatically.
-.PP
-The command line arguments are the same as for
-.B weave
-including the option:
-.B \-x
-says to omit the indexes, module name list, and table of contents pages.
-(A
-.I CONTENTS.tex
-file will still be written when the \*(TX file is processed.
-However, it is ignored unless some macros in
-.I twimac-web.tex
-are redefined.)
-.PP
-The output \*(TX file name is formed by adding
-.B .tex
+program is used to create a \*(TX file for viewing a literate program
+written in WEB.  The output \*(TX file name is formed by adding
+.I .tex
 to the root of the \*(WB file name.
 .PP
-There are several macros that probably should be redefined by
-the programmer at the beginning of the \*(WB file.
-It is a good idea to set
-.I \etitle
-to the name of the program.
+\fBtwill\fP is like
+.BR weave (1),
+but also supplies cross-reference information in the form of
+`mini-indexes' for each spread of pages, for identifiers used on that
+spread, and a `master index' at the end that it gathers automatically.
 .PP
-.B twill
-is exactly like
-.B weave
-except that it produces better documentation, for which you must work harder.
-You should run
+You need to run
 .B twill
 twice, once to prime the pump and once to get decent answers.
 Moreover, you must run the output twice through \*(TX.
 .PP
-After
-.B tex foo
+For a program \fIfoo.web\fP, after a first
+.I tex foo
 you will have output that looks like final pages
-except that the entries of mini-indexes won\[cq]t be alphabetized.
-The first run produces a weird file called
-.B foo.ref.
-Say
-.B twill-refsort < foo.ref > foo.sref
+except that the entries of mini-indexes will not be alphabetized.
+The first run produces an auxiliary file named
+.IR foo.ref .
+.br
+Run
+.I twill-refsort <foo.ref >foo.sref
 and then another
-.B tex foo
+.I tex foo
 will produce alphabetized output.
+.\"=====================================================================
+.SH OPTIONS
+See
+.BR tex (1)
+for details of command-line parsing, and
+.BR weave (1)
+for options accepted.
 .\"=====================================================================
 .SH ENVIRONMENT
 The environment variable WEBINPUTS is used to search for the input files,
-or the system default if WEBINPUTS is not set.  See
-.BR tex (1)
-for the details of the searching.
+If it is not set, it uses the system default. See the
+Kpathsea manual at https://tug.org/kpathsea for the details of the
+searching.
+.\"=====================================================================
+.SH BUGS
+The table of contents file, \fICONTENTS.tex\fP, is generated but ignored
+(unless macros in \fItwimac-web.tex\fP are redefined).
 .\"=====================================================================
 .SH FILES
 .TP \w'@@'u+2n
@@ -97,4 +78,14 @@ output.
 .\"=====================================================================
 .SH "SEE ALSO"
 .BR tangle (1)
-for references, authors, and other information.
+for references, authors, and other information about WEB in general.
+.PP
+Donald E. Knuth, Mini-indexes for literate programs,
+Software\-Concepts and Tools, 15(1):2-11, 1994.
+.br
+https://arxiv.org/abs/cs/9401102
+.PP
+CTWILL source program, section 287:
+https://mirror.ctan.org/info/knuth-pdf/cweb/ctwill.pdf
+.PP
+Public discussion list and bug reports: https://lists.tug.org/tex-k

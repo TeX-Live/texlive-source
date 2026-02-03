@@ -1,30 +1,58 @@
-.TH LATEX-DEV 1 "9 April 2025" "Web2C @VERSION@"
+.TH LATEX-DEV 1 "25 January 2026" "Web2C @VERSION@"
+.\"=====================================================================
+.if t .ds TX \fRT\\h'-0.10m'\\v'0.17v'E\\v'-0.17v'\\h'-0.06m'X\fP
+.if n .ds TX TeX
+.\" OX for oblique/italic TeX logo
+.ie t .ds OX \fIT\h'-0.17m'\v'+0.21m'E\v'-0.21m'\h'-0.04m'X\fP
+.el .ds OX TeX
+.\" LX definition must follow TX so LX can use TX
+.if t .ds LX \fRL\\h'-0.36m'\\v'-0.15v'\s-2A\s0\\h'-0.15m'\\v'0.15v'\fP\*(TX
+.if n .ds LX LaTeX
 .SH NAME
 latex-dev, pdflatex-dev, xelatex-dev, lualatex-dev, dvilualatex-dev, platex-dev, uplatex-dev \- release candidate LaTeX testing
 .SH SYNOPSIS
 .B latex-dev
 .RI [ options ]
-.RI [ first-line ]
+.RI [ \fB&\fPformat ]
+\h'.25' [ \fIfile\fP [ \fImore-input\fP ] \h'.5'|\h'.5' [ \fB\e\fP\fImore-input\fP ]
 .\"=====================================================================
 .SH DESCRIPTION
+These -dev executables are made so that anyone interested can easily
+help test upcoming \*(LX releases. They correspond to new formats which
+have been tested by the \*(LX team for stability and usability. They are
+not arbitrary development snapshots; more like release candidates and
+checkpoints.
 .PP
-These -dev executables can be used to test upcoming LaTeX releases.
-They correspond to new formats which have been tested by the
-LaTeX team for stability and usability. Thus, they are not arbitrary
-development snapshots; more like release candidates.
+Testing by as many users as possible is desired and requested. Simply
+replacing the regular engine (e.g., pdflatex) with the -dev engine name
+(pdflatex-dev) in your invocations is all that should be needed. No
+changes to source documents should be required.
 .PP
-Testing by as many users as possible is desired; indeed, that's the main
-reason for these executables to exist. Simply replacing the regular
-engine (e.g., pdflatex) with the -dev engine name (pdflatex-dev) in your
-invocations is all that should be needed. No changes to source documents
-should be required.
+The lualatex-dev format is built with the luahbtex engine, the Lua\*(TX
+variant with HarfBuzz (https://en.wikipedia.org/wiki/HarfBuzz) supported
+for glyph shaping.
 .PP
-The lualatex-dev format is based on luahbtex, the luatex variant with
-harfbuzz enabled for glyph shaping.
+The latest ltnews document present in latex-dev describes the changes
+present in -dev compared to the previous official release. E.g., if the
+official release has a document ltnews42.pdf, then look for ltnews43.pdf
+in the -dev tree.
+.\"=====================================================================
+.SH OPTIONS
+See
+.BR tex (1)
+for details of command-line parsing.
 .PP
-Please report bugs in these -dev versions, like all LaTeX releases,
-following the procedure at https://www.latex-project.org/bugs.
+See the individual engines (\fBpdflatex\fP(1), \fBlualatex\fP(1), etc.),
+for engine-specific options.
+.\"=====================================================================
 .SH "SEE ALSO"
 .BR latex (1).
 .PP
-The LaTeX home page is https://latex-project.org.
+Package page on CTAN: https://ctan.org/pkg/latex-dev
+.br
+The \*(LX home page: https://latex-project.org
+.PP
+Please report bugs in these -dev versions, like all \*(LX releases,
+following the procedure at https://www.latex-project.org/bugs.
+.PP
+Public discussion list for all things TeX: https://lists.tug.org/texhax

@@ -1,70 +1,68 @@
-.TH OVP2OVF 1 "8 March 2022" "Web2C @VERSION@"
-.PP 
-.SH "NAME" 
-ovp2ovf \- convert a virtual property-list file into a virtual font file and its associated font metric file
-.PP 
-.SH "SYNOPSIS" 
+.TH OVP2OVF 1 "30 January 2026" "Web2C @VERSION@"
+.if t .ds TX \fRT\\h'-0.10m'\\v'0.17v'E\\v'-0.17v'\\h'-0.06m'X\fP
+.if n .ds TX TeX
+.\"=====================================================================
+.SH "NAME"
+ovp2ovf \- convert Omega and TeX virtual property list (ovp) files to virtual font metric (ovf) files
+.SH "SYNOPSIS"
 .B ovp2ovf
-.RI [ OPTIONS ]
-.IR OVPFILE [ \fB.ovp\fP ]
-.RI [ OVFFILE [ \fB.ovf\fP ]
-.RI [ OFMFILE [ \fB.ofm\fP ]]]
-.PP 
-.SH "DESCRIPTION" 
-.PP 
-\fBovp2ovf\fP translates a human-readable virtual property list (OVP)
-file, \fIOVPFILE\fP, into a virtual font (OVF) file, \fIOVFFILE\fP
-and its companion font metric (OFM) file, \fIOFMFILE\fP\&.
-.PP 
-The program also works with TeX VP files, producing VF and TFM files\&.
-(\fBovp2ovf\fP is based on the WEB source code for \fBvptovf\fP(1)\&.)
-.PP 
-.SH "OPTIONS" 
-.PP 
-.IP "\fB-help\fP" 
-display a brief summary of syntax and options 
-.IP "\fB-verbose\fP" 
-display progress reports
-.IP "\fB-version\fP" 
+.RI [ options ]
+.IR ovpfile [ \fB.ovp\fP ]
+.RI [ ovffile [ \fB.ovf\fP ]
+.RI [ ofmfile [ \fB.ofm\fP ]]]
+.\"=====================================================================
+.SH "DESCRIPTION"
+\fBovp2ovf\fP translates a human-readable virtual property list (\fI.ovp\fP)
+file, \fIovpfile\fP, into a virtual font (\fI.ovf\fP) file, \fIovffile\fP
+and its companion font metric (\fI.ofm\fP) file, \fIofmfile\fP.
+.PP
+The program also works with \*(TX virtual property list (\fI.vpl\fP)
+files, producing \*(TX virtual fonts (\fI.vf\fP and \fI.tfm\fP).
+.\"=====================================================================
+.SH "OPTIONS"
+.IP "\fB-help\fP"
+output help message and exit
+.IP "\fB-verbose\fP"
+output progress reports
+.IP "\fB-version\fP"
 output version information and exit
-.IP 
-.PP 
-.SH "FILES" 
-.IP "\fIOFMFILE\fP" 
+.IP
+.\"=====================================================================
+.SH "FILES"
+.IP "\fIOFMFILE\fP"
 Omega Font Metric file
-.IP "\fIOVFFILE\fP" 
+.IP "\fIOVFFILE\fP"
 Omega Virtual Font file
-.IP "\fIOVPFILE\fP" 
+.IP "\fIOVPFILE\fP"
 Omega Virtual Property List file
-.PP 
-.SH "BUGS" 
-.PP 
-Email bug reports to <https://lists.tug.org/tex-k>
+.\"=====================================================================
+.SH "BUGS"
+Email bug reports via https://lists.tug.org/tex-k
 (mailing list); good to check if the same bug is present in
-\fBvptovf\fP(1)\&.
-.PP 
-.SH "SEE ALSO" 
-.PP 
+\fBvptovf\fP(1).
+.\"=====================================================================
+.SH "SEE ALSO"
 \fBomega\fP(1), \fBofm2opl\fP(1), \fBovf2ovp\fP(1),
 \fBpltotf\fP(1), \fBtftopl\fP(1), \fBvftovp\fP(1),
 \fBvptovf\fP(1)
-.PP 
-.SH "AUTHOR" 
-.PP 
+.\"=====================================================================
+.SH "AUTHOR"
 According to the WEB documentation:
-.PP 
-.RS 
+.RS
 \fBVPtoVF\fP is an extended version of the program \fBPLtoTF\fP,
-which is part of the standard TeXware library\&.  \fBOVP2OVF\fP is an
-extended version of \fBVPtoVF\fP that allows much larger fonts\&.  The
-idea of a virtual font was inspired by the work of David R\&. Fuchs who
+which is part of the standard TeXware library.  \fBOVP2OVF\fP is an
+extended version of \fBVPtoVF\fP that allows much larger fonts.  The
+idea of a virtual font was inspired by the work of David R. Fuchs who
 designed a similar set of conventions in 1984 while developing a
-device driver for ArborText, Inc\&.  He wrote a somewhat similar program
-called \fBPLFONT\fP\&.
-.RE 
-.PP 
+device driver for ArborText, Inc.  He wrote a somewhat similar program
+called \fBPLFONT\fP.
+.RE
+.PP
 The primary authors of Omega were John Plaice and Yannis Haralambous.
 Omega (and Aleph) are now maintained as part of TeX Live.
-.PP 
-This manual page was written by C\&.M\&. Connelly for the Debian
-GNU/Linux system\&. It is also now maintained as part of TeX Live.
+.PP
+This manual page was written by C.M. Connelly for the Debian GNU/Linux
+system. Both the program and the man page are now maintained as part of
+\*(TX Live.
+.PP
+Bug reports and general discussion: https://lists.tug.org/omega

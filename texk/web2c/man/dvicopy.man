@@ -1,6 +1,6 @@
-.TH DVICOPY 1 TeX "24 January 1999" "Web2C @VERSION@"
+.TH DVICOPY 1 TeX "30 November 2025" "Web2C @VERSION@"
 .\"=====================================================================
-.if t .ds TX \fRT\\h'-0.1667m'\\v'0.20v'E\\v'-0.20v'\\h'-0.125m'X\fP
+.if t .ds TX \fRT\\h'-0.10m'\\v'0.17v'E\\v'-0.17v'\\h'-0.06m'X\fP
 .if n .ds TX TeX
 .\"=====================================================================
 .SH NAME
@@ -12,11 +12,6 @@ dvicopy, odvicopy \- produce modified copy of DVI file
 .RI [ outfile [ \fB.dvi\fP ]]]
 .\"=====================================================================
 .SH DESCRIPTION
-This manual page is not meant to be exhaustive.  The complete
-documentation for this version of \*(TX can be found in the info file
-or manual
-.IR "Web2C: A TeX implementation" .
-.PP
 .B dvicopy
 reads a DVI file, expands any references to virtual fonts to base
 fonts, and writes the resulting DVI file.  Thus you can use virtual
@@ -24,29 +19,52 @@ fonts even if your DVI processor does not support them, by passing the
 documents through
 .B dvicopy
 first.
+.PP
+The
+.B odvitype
+program does the same job for Omega/Aleph's output, modified to support
+their \fI.ofm\fP font format.
 .\"=====================================================================
 .SH OPTIONS
 .TP
-.BI \-magnification= NUMBER
+.BI -magnification= NUMBER
 Override existing magnification with
 .IR NUMBER .
 .PP
 .TP
-.BI \-max-pages= NUMBER
+.BI -max-pages= NUMBER
 Process
 .I NUMBER
 pages; default one million.
 .PP
 .TP
-.BI \-page-start= PAGE-SPEC
+.BI -page-start= PAGE-SPEC
 Start at
 .IR PAGE-SPEC ,
 for example `2' or `5.*.-2'.
+.PP
+The standard
+.B -help
+and
+.B -version
+options are also supported.
 .\"=====================================================================
 .SH "SEE ALSO"
 .BR dviselect (1),
 .BR dvitype (1).
+.PP
+DVI processor topic on CTAN: https://ctan.org/topic/dvi-proc
+.br
+Package page on CTAN: https://ctan.org/pkg/dvicopy
+.br
+Section in the Web2c manual:
+https://tug.org/texinfohtml/web2c.html#dvicopy-invocation
+.br
+Typeset source code:
+https://ctan.org/pkg/knuth-pdf
 .\"=====================================================================
 .SH AUTHORS
 Peter Breitenlohner wrote the program.  Klaus Guntermann originally ported
-it to Unix.
+it to Unix.  Yannis Haralambous and John Plaice created the Omega version.
+.PP
+Public discussion list and bug reports: https://lists.tug.org/tex-k

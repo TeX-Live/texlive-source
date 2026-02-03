@@ -1,38 +1,36 @@
-.TH BIBTEX 1 "18 March 2024" "bibtex 0.99d" "Web2C @VERSION@"
+.TH BIBTEX 1 "15 January 2026" "bibtex 0.99e" "Web2C @VERSION@"
 .\"=====================================================================
-.if t .ds TX \fRT\\h'-0.1667m'\\v'0.20v'E\\v'-0.20v'\\h'-0.125m'X\fP
+.if t .ds TX \fRT\\h'-0.10m'\\v'0.17v'E\\v'-0.17v'\\h'-0.06m'X\fP
 .if n .ds TX TeX
-.ie t .ds OX \fIT\v'+0.25m'E\v'-0.25m'X\fP
+.ie t .ds OX \fIT\h'-0.17m'\v'+0.21m'E\v'-0.21m'\h'-0.04m'X\fP
 .el .ds OX TeX
 .\" BX definition must follow TX so BX can use TX
-.if t .ds BX \fRB\s-2IB\s+2\fP\*(TX
+.if t .ds BX \fRB\s-2IB\s0\fP\*(TX
 .if n .ds BX BibTeX
 .\" LX definition must follow TX so LX can use TX
-.if t .ds LX \fRL\\h'-0.36m'\\v'-0.15v'\\s-2A\\s+2\\h'-0.15m'\\v'0.15v'\fP\*(TX
+.if t .ds LX \fRL\\h'-0.36m'\\v'-0.15v'\s-2A\s0\\h'-0.15m'\\v'0.15v'\fP\*(TX
 .if n .ds LX LaTeX
+.\" OX for oblique LaTeX
+.if t .ds OL \fIL\\h'-0.19m'\\v'-0.15v'\s-2A\s0\\h'-0.09m'\\v'0.15v'\fP\*(OX
+.if n .ds OL LaTeX
 .\"=====================================================================
 .SH NAME
 bibtex \- make a bibliography for (La)TeX
 .SH SYNOPSIS
 .B bibtex
-.RB [ \-min-crossrefs=\fInumber\fP ]
-.RB [ \-terse ]
+.RB [ -min-crossrefs=\fInumber\fP ]
+.RB [ -terse ]
 .IR auxname [ \fB.aux\fP ]
 .\"=====================================================================
 .SH DESCRIPTION
-This manual page is not meant to be exhaustive.  The complete
-documentation for this version of \*(TX can be found in the info file
-or manual
-.IR "Web2C: A TeX implementation" .
-.PP
 \*(BX reads the top-level auxiliary
 .RB ( .aux )
 file
 .I auxname
-that was output during the running of
+that was output during (typically) the running of
 .BR latex (1)
 or
-.BR tex (1)
+.BR tex (1),
 and creates a bibliography
 .RB ( .bbl )
 file that will be incorporated into the document on subsequent runs of
@@ -56,12 +54,23 @@ explains what a \*(LX source file must contain to work with \*(BX.
 Appendix B of the manual describes the format of the
 .B .bib
 files.
-The `\*(BXing' document describes extensions and details of
-this format, and it gives other useful hints for using \*(BX.
+.PP
+The short `\*(BXing' (``btxdoc'') document describes extensions and
+details of this format, and gives other useful hints for using \*(BX.
+.PP
+\*(BX can also be used with plain TeX, via \\input btxmac; the
+interface is essentially the same as \*(LX.  The support is included in
+.BR eplain (1),
+and the Eplain manual explains the usage, which is essentially the same
+as in \*(LX: https://tug.org/eplain/doc/eplain.html#Citations
 .\"=====================================================================
 .SH OPTIONS
+See
+.BR tex (1)
+for details of command-line parsing.
+.PP
 The
-.B \-min-crossrefs
+.B -min-crossrefs
 option defines the minimum number of
 .B crossref
 required for automatic inclusion of the crossref base entry in the citation
@@ -79,11 +88,15 @@ for the base entry to the
 file, and nothing will remove it.
 .PP
 With the
-.B \-terse
+.B -terse
 option, \*(BX operates silently.  Without it, a banner and progress
-reports are printed on
-.IR stdout .
-.
+reports are printed on stdout.
+.PP
+The standard
+.B -help
+and
+.B -version
+options are also supported.
 .\"=====================================================================
 .SH ENVIRONMENT
 \*(BX searches the directories in the
@@ -108,15 +121,15 @@ No special searching is done for the
 file.
 .\"=====================================================================
 .SH FILES
-.TP
+.TP 10n
 .I *.bst
 Bibliography style files.
 .TP
 .I btxdoc.tex
-``\*(BXing'' \- \*(LXable documentation for general \*(BX users
+``\*(BXing'' \- documentation for \*(BX users
 .TP
 .I btxhak.tex
-``Designing \*(BX Styles'' \- \*(LXable documentation for style designers
+``Designing \*(BX Styles'' \- documentation for .bst writers
 .TP
 .I btxdoc.bib
 database file for those two documents
@@ -126,24 +139,55 @@ database file giving examples of all standard entry types
 .TP
 .I btxbst.doc
 template file and documentation for the standard styles
+.TP
+.I btxmac.tex
+\*(BX for plain TeX
 .PP
-All those files should be available somewhere on your system.
-.PP
-The host math.utah.edu has a vast collection of
-.B .bib
-files available for anonymous ftp, including references for all the
-standard \*(TX books and a complete bibliography for TUGboat.
+All those files should be available somewhere on your system. Running
+.I texdoc btxdoc
+(or \fIbtxhak\fR) may display the above documents.
 .\"=====================================================================
 .SH "SEE ALSO"
 .BR latex (1),
+.BR eplain (1),
 .BR tex (1).
+.PP
+\*(BX home page: https://tug.org/bibtex
 .br
+Bib-related CTAN topics: https://ctan.org/topic/:B
+.br
+\*(BX package page on CTAN: https://ctan.org/pkg/bibtex
+.br
+(which has links to the above documents, among others).
+.PP
 Leslie Lamport,
-.IR "\*(LX \- A Document Preparation System" ,
-Addison-Wesley, 1985, ISBN 0-201-15790-X.
+.IR "\*(OL: A Document Preparation System" ,
+Addison-Wesley.
+.PP
+Bibliography support in plain TeX:
+https://tug.org/eplain/doc/eplain.html#Citations
+.PP
+\*(BX chapter in the Web2c manual:
+https://tug.org/texinfohtml/web2c.html#BibTeX
+.PP
+Typeset source code for \*(BX:
+https://ctan.org/pkg/knuth-pdf
+.PP
+Thanks to Nelson Beebe, the University of Utah has a vast collection of
+.I .bib
+files available, including entries for all the standard \*(TX
+books and a complete bibliography for \fITUGboat\fP.  Nelson also provides
+this information page on \*(BX:
+.br
+https://ftp.math.utah.edu/pub/bibnet/bibtex-info.html
+.br
+and a large collection of \*(BX-related tools:
+.br
+https://www.math.utah.edu/~beebe/software/bibtex-bibliography-tools.html
 .\"=====================================================================
 .SH AUTHOR
-Oren Patashnik, Stanford University.  This man page describes the web2c
-version of \*(BX.  Other ports of \*(BX, such as Donald Knuth's version
-using the Sun Pascal compiler, do not have the same path searching
-implementation, or the command-line options.
+Oren Patashnik, Stanford University. This man page describes the Web2c
+(\*(TX Live) version of \*(BX. Other ports of \*(BX do not have the same
+path searching implementation or the same command-line options.
+.PP
+Public discussion list and bug reports: https://lists.tug.org/biblio

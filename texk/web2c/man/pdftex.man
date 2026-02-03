@@ -1,377 +1,125 @@
-.TH PDFTEX 1 "2 March 2024" "Web2C @VERSION@"
+.TH PDFTEX 1 "26 January 2026" "Web2C @VERSION@"
 .\"=====================================================================
-.if n .ds MF Metafont
-.if t .ds MF Metafont
-.if t .ds TX \fRT\\h'-0.1667m'\\v'0.20v'E\\v'-0.20v'\\h'-0.125m'X\fP
+.if t .ds TX \fRT\\h'-0.10m'\\v'0.17v'E\\v'-0.17v'\\h'-0.06m'X\fP
 .if n .ds TX TeX
-.ie t .ds OX \fIT\v'+0.25m'E\v'-0.25m'X\fP
+.ie t .ds OX \fIT\h'-0.17m'\v'+0.21m'E\v'-0.21m'\h'-0.04m'X\fP
 .el .ds OX TeX
-.\" BX definition must follow TX so BX can use TX
-.if t .ds BX \fRB\s-2IB\s+2\fP\*(TX
-.if n .ds BX BibTeX
 .\" LX definition must follow TX so LX can use TX
 .if t .ds LX \fRL\\h'-0.36m'\\v'-0.15v'\s-2A\s+2\\h'-0.15m'\\v'0.15v'\fP\*(TX
 .if n .ds LX LaTeX
-.if t .ds AX \fRA\\h'-0.1667m'\\v'0.20v'M\\v'-0.20v'\\h'-0.125m'S\fP\*(TX
-.if n .ds AX AmSTeX
-.if t .ds AY \fRA\\h'-0.1667m'\\v'0.20v'M\\v'-0.20v'\\h'-0.125m'S\fP\*(LX
-.if n .ds AY AmSLaTeX
-.if n .ds WB Web
-.if t .ds WB W\s-2EB\s+2
 .\"=====================================================================
 .SH NAME
-pdftex \- PDF output from TeX
+pdftex, pdfetex \- PDF output from TeX
 .SH SYNOPSIS
 .B pdftex
 .RI [ options ]
 .RI [ \fB&\fPformat ]
-.RI [ file | \fB\e\fPcommands ]
+\h'.25' [ \fIfile\fP [ \fImore-input\fP ] \h'.5'|\h'.5' [ \fB\e\fP\fImore-input\fP ]
 .\"=====================================================================
 .SH DESCRIPTION
 Run the pdf\*(TX typesetter on
-.IR file ,
+.IR file [.tex],
 usually creating
 .IR file.pdf .
-If the file argument has no extension, ".tex" will be appended to it.
-Instead of a filename, a set of pdf\*(TX commands can be given, the first
-of which must start with a backslash.
-With a
-.BI & format
-argument pdf\*(TX uses a different set of precompiled commands,
-contained in
-.IR format\fB.fmt\fP ;
-it is usually better to use the
-.B \-fmt
-.I format
-option instead.
+If the file argument has no extension, ".tex" will be appended to it. See
+.BR tex (1)
+for details of command-line parsing.
 .PP
-pdf\*(TX is a version of \*(TX, with the e-\*(TX extensions, that can
-create PDF files as well as DVI files.
+pdf\*(TX is a descendant of \*(TX that can create pdf files directly as
+well as dvi files (determined by the value of the \epdfoutput primitive
+parameter). It includes the
+.BR etex (1)
+extensions, and adds many more extensions of its own. In dvi mode,
+pdf\*(TX can be used as an upward-compatible replacement for the \*(TX
+engine.
 .PP
-In DVI mode, pdf\*(TX can be used as a complete replacement for the
-\*(TX engine.
-.PP
-The typical use of pdf\*(TX is with a pregenerated formats for which
-PDF output has been enabled.  The
+The typical use of pdf\*(TX is with pregenerated \*(TX formats
+(\fI.fmt\fP files), usually with pdf output enabled. For example, the
 .B pdftex
-command uses the equivalent of the plain \*(TX format, and the
-.B pdflatex
-command uses the equivalent of the \*(LX format.
-To generate formats, use the
-.B \-ini
-switch.
+command uses the plain \*(TX format, and the
+.BR pdflatex (1)
+command uses the \*(LX format.  As described in 
+.BR etex (1),
+the e-\*(TX extensions are enabled when building the \fI.fmt\fP file.
 .PP
-The
-.B pdfinitex
-and
-.B pdfvirtex
-commands are pdf\*(TX's analogues to the
-.B initex
-and
-.B virtex
-commands.  In this installation, if the links exist, they are symbolic
-links to the
-.B pdftex
-executable.
+.B Image formats supported
 .PP
-In PDF mode, pdf\*(TX can natively handle the
-.IR PDF ,
-.IR JPG ,
-.IR JBIG2 ,
+In pdf mode, pdf\*(TX can natively handle the
+.IR pdf ,
+.IR jpg ,
+.IR jbig2 ,
 and
-.I PNG
-graphics formats.  pdf\*(TX cannot include PostScript or Encapsulated
-PostScript (EPS) graphics files; first convert them to PDF using
+.I png
+graphics formats. It cannot include PostScript or Encapsulated
+PostScript (eps) graphics files; you can convert them to pdf using, for
+example,
 .BR epstopdf (1).
-pdf\*(TX's handling of its command-line arguments is similar to that
-of the other \*(TX programs in the
-.I web2c
-implementation.
+For the PostScript files output by
+.BR mpost (1)
+specifically,
+.BR mptopdf (1)
+can be used.
 .PP
-Starting with version 1.40, pdf\*(TX incorporates the e-\*(TX
-extensions, and pdfe\*(TX is just a copy of pdf\*(TX.  See 
-.BR etex (1).
+.B Program variants
+.PP
+Starting with version 1.40 (around 2007), pdf\*(TX incorporated the
+e-\*(TX extensions, and the
+.B pdfetex
+and
+.B etex
+executables became symlinks to the
+.B pdftex
+binary. The
+.B etex
+executable generates dvi files by default; \fBpdfetex\fP has the same
+behavior as \fBpdftex\fP.
+.PP
+.B Both engine and driver
+.PP
+When generating pdf output, pdf\*(TX must have all necessary font and
+device information and thus is acting like a device driver with dvi
+output, similar to, say,
+.BR dvips (1).
+Therefore there are various primitives to specify the device
+information, such as the height, width, resolution, and so forth. Also,
+pdf\*(TX reads glyph information for the fonts used, e.g., from Type\~1
+or PK bitmap files.  pdf\*(TX also supports TrueType fonts, but it's
+necessary to define an encoding before using them (see references).
+OpenType fonts are not supported.
 .\"=====================================================================
 .SH OPTIONS
-This version of pdf\*(TX understands the following command line options.
+For the common \*(TX command-line options and handling, see
+.BR tex (1).
+The following pdf\*(TX-specific options are also supported:
+.\" from Master/tlpkg/bin/tloptdiff.
 .TP
-.BI \-cnf-line \ string
-Parse
-.I string
-as a
-.I texmf.cnf
-configuration line.  See the Kpathsea manual.
+.B -draftmode
+Enabled \epdfdraftmode, in which pdf\*(TX doesn't write a pdf and
+doesn't read any included images, thus speeding up execution.
 .TP
-.B \-draftmode
-Sets \epdfdraftmode so pdf\*(TX doesn't write a PDF and doesn't read any
-included images, thus speeding up execution.
-.TP
-.B \-enc
-Enable the enc\*(TX extensions.  This option is only effective in
-combination with
-.BR \-ini .
-For documentation of the enc\*(TX extensions see
-http://www.olsak.net/enctex.html.
-.TP
-.B \-etex
+.B -etex
 Enable the e-\*(TX extensions.  This option is only effective in
 combination with
-.BR \-ini .
-See
+.BR -ini .
+It is typically enabled implicitly, with a leading "*" on the format
+initialization file, as described in
 .BR etex (1).
 .TP
-.B \-file-line-error
-Print error messages in the form
-.I file:line:error
-which is similar to the way many compilers format them.
-.TP
-.B \-no-file-line-error
-Disable printing error messages in the
-.I file:line:error
-style.
-.TP
-.B \-file-line-error-style
-This is the old name of the
-.B \-file-line-error
-option.
-.TP
-.BI \-fmt \ format
-Use
+.BI -output-format \ format
+Set the output format mode;
 .I format
-as the name of the format to be used, instead of the name by which
-pdf\*(TX was called or a
-.I %&
-line.
+must be either ``pdf'' or ``dvi''.
 .TP
-.B \-halt-on-error
-Exit with an error code when an error is encountered during processing.
-.TP
-.B \-help
-Print help message and exit.
-.TP
-.B \-ini
-Start in
-.I INI
-mode, which is used to dump formats.  The
-.I INI
-mode can be used for typesetting, but no format is preloaded, and
-basic initializations like setting catcodes may be required.
-.TP
-.BI \-interaction \ mode
-Sets the interaction mode.  The mode can be either
-.IR batchmode ,
-.IR nonstopmode ,
-.IR scrollmode ,
-and
-.IR errorstopmode .
-The meaning of these modes is the same as that of the corresponding
-\ecommands.
-.TP
-.B \-ipc
-Send DVI or PDF output to a socket as well as the usual output file.
-Whether this option is available is the choice of the installer.
-.TP
-.B \-ipc-start
-As
-.BR \-ipc ,
-and starts the server at the other end as well.  Whether this option
-is available is the choice of the installer.
-.TP
-.BI \-jobname \ name
-Use
-.I name
-for the job name, instead of deriving it from the name of the input file.
-.TP
-.BI \-kpathsea-debug \ bitmask
-Sets path searching debugging flags according to the bitmask.  See the
-.I Kpathsea
-manual for details.
-.TP
-.BI \-mktex \ fmt
-Enable
-.RI mktex fmt ,
-where
-.I fmt
-must be either
-.I tex
-or
-.IR tfm .
-.TP
-.B \-mltex
-Enable ML\*(TX extensions.  Only effective in combination with
-.BR \-ini .
-.TP
-.BI \-no-mktex \ fmt
-Disable
-.RI mktex fmt ,
-where
-.I fmt
-must be either
-.I tex
-or
-.IR tfm .
-.TP
-.BI \-output-comment \ string
-In DVI mode, use
-.I string
-for the DVI file comment instead of the date. This option is ignored in
-PDF mode.
-.TP
-.BI \-output-directory \ directory
-Write output files in
-.I directory
-instead of the current directory.  Look up input files in
-.I directory
-first, then along the normal search path.
-.TP
-.BI \-output-format \ format
-Set the output format mode, where
-.I format
-must be either
-.I pdf
-or
-.IR dvi .
-This also influences the set of graphics formats understood by pdf\*(TX.
-.TP
-.B \-parse-first-line
-If the first line of the main input file begins with
-.I %&
-parse it to look for a dump name or a
-.B \-translate-file
-option.
-.TP
-.B \-no-parse-first-line
-Disable parsing of the first line of the main input file.
-.TP
-.BI \-progname \ name
-Pretend to be program
-.IR name .
-This affects both the format used and the search paths.
-.TP
-.B \-recorder
-Enable the filename recorder.
-This leaves a trace of the files opened for input and output
-in a file with extension
-.IR .fls .
-.TP
-.B \-shell-escape
-Enable the
-.RI \ewrite18{ command }
-construct.  The
-.I command
-can be any shell command.  This construct is normally
-disallowed for security reasons.
-.TP
-.B \-no-shell-escape
-Disable the
-.RI \ewrite18{ command }
-construct, even if it is enabled in the
-.I texmf.cnf
-file.
-.TP
-.B \-shell-restricted
-Enable restricted \ewrite18{}, as explained in the ``Shell escapes''
-section of the Web2c Texinfo manual.
-.TP
-.B \-src-specials
-In DVI mode, insert source specials into the DVI file.
-This option is ignored in PDF mode.
-.TP
-.BI \-src-specials \ where
-In DVI mode, insert source specials in certain places of the DVI file.
-The
-.I where
-argument is a comma-separated value list:
-.IR cr ,
-.IR display ,
-.IR hbox ,
-.IR math ,
-.IR par ,
-.IR parent ,
-or
-.IR vbox .
-This option is ignored in PDF mode.
-.TP
-.BI \-synctex \ NUMBER
-generate SyncTeX data for previewers according to bits of NUMBER.
-See the
-.I synctex
-manual page for details.
-.TP
-.BI \-translate-file \ tcxname
-Use the
-.I tcxname
-translation table to set the mapping of input characters and
-re-mapping of output characters.
-.TP
-.BI \-default-translate-file \ tcxname
-Like
-.B \-translate-file
-except that a
-.I %&
-line can overrule this setting.
-.TP
-.B \-version
-Print version information and exit.
-.TP
-.B \-8bit
-make all characters printable by default.
+.BI -synctex \ number
+generate Sync\*(TX data for previewers according to bits of \fInumber\fP.
+See
+.BR synctex (1).
 .\"=====================================================================
 .SH ENVIRONMENT
-See the Kpathsea library documentation (e.g., the `Path specifications'
-node) for precise details of how the environment variables are used.
-The
-.B kpsewhich
-utility can be used to query the values of the variables.
-.PP
-One caveat: In most pdf\*(TX formats, you cannot use ~ in a filename you
-give directly to pdf\*(TX, because ~ is an active character in \*(TX,
-and hence is expanded, not taken as part of the filename.
-Other programs, such as \*(MF, do not have this problem.
-.TP
-.B TEXMFOUTPUT
-Normally, pdf\*(TX puts its output files in the current directory.  If
-any output file cannot be opened there, it tries to open it in the
-directory specified in the environment variable TEXMFOUTPUT.
-There is no default value for that variable.  For example, if you say
-.I pdftex paper
-and the current directory is not writable and TEXMFOUTPUT has
-the value
-.IR /tmp ,
-pdf\*(TX attempts to create
-.I /tmp/paper.log
-(and
-.IR /tmp/paper.pdf ,
-if any output is produced.)  TEXMFOUTPUT is also checked for input
-files, as \*(TX often generates files that need to be subsequently
-read; for input, no suffixes (such as ``.tex'') are added by default,
-the input name is simply checked as given.
-.TP
-.B TEXINPUTS
-Search path for
-.I \einput
-and
-.I \eopenin
-files.
-This normally starts with ``.'', so
-that user files are found before system files.  An empty path
-component will be replaced with the paths defined in the
-.I texmf.cnf
-file.  For example, set TEXINPUTS to ".:/home/user/tex:" to prepend the
-current directory and ``/home/user/tex'' to the standard search path.
-.TP
-.B TEXFORMATS
-Search path for format files.
-.TP
-.B TEXEDIT
-Command template for switching to editor.  The default, usually
-.BR vi ,
-is set when pdf\*(TX is compiled.
-.TP
-.B TFMFONTS
-Search path for font metric
-.RI ( .tfm )
-files.
+See
+.BR tex (1).
+Also, these environment variables are considered for all engines except
+original \*(TX:
 .TP
 .B SOURCE_DATE_EPOCH
 If set, its value, taken to be in epoch-seconds, will be used for the
@@ -387,78 +135,78 @@ If set to the value "1", the time-related \*(TX primitives
 are also initialized from the value of SOURCE_DATE_EPOCH.  This is not
 recommended if there is any viable alternative.
 .br
-pdf\*(TX also has several primitives to support reproducible builds,
-which are preferable to setting these environment variables; see the
-main manual.
-.PP
-Many, many more environment variables may be consulted related to path
-searching.  See the Kpathsea manual.
+pdf\*(TX also has several primitives to support reproducible builds;
+see the manual.
 .\"=====================================================================
 .SH FILES
-The location of the files mentioned below varies from system to
-system.  Use the
-.B kpsewhich
-utility to find their locations.
+See
+.BR tex (1).
+Also:
 .TP
-.I pdftex.map
-Font name mapping definitions.
+.I $TEXMFMAIN/tex/plain/config/etex.ini
+The driver file that builds the plain format files for pdf\*(TX,
+\fIpdftex.fmt\fP and \fIpdfetex.fmt\fP, in \*(TX Live.
 .TP
-.I *.tfm
-Metric files for pdf\*(TX's fonts.
+.I $TEXMFMAIN/tex/plain/config/pdftexmagfix.tex
+Make \emagnification work as expected under pdf\*(TX. Included in the
+format files.
 .TP
-.I *.fmt
-Predigested pdf\*(TX format (.\|fmt) files.
-.\"=====================================================================
-.SH NOTES
+.I $TEXMFMAIN/tex/generic/tex-ini-files/pdftexconfig.tex
+Define shared pdf settings, such as the default pdf version, the pdf
+height and width, etc.
+.TP
+.I $TEXMF[SYS]CONFIG/tex/generic/tex-ini-files/pdftexconfig.tex
+The installation-specific version of the above (in \*(TX Live), since
+the default paper size is defined by the installation.
+.TP
+.I $TEXMF[SYS]VAR/fonts/map/pdftex/updmap/pdftex.map
+Mapping of tfm files to Type\~1 fonts; generally maintained
+automatically in \*(TX Live.
 .\"=====================================================================
 .SH BUGS
-This version of pdf\*(TX fails to trap arithmetic overflow when
-dimensions are added or subtracted.  Cases where this occurs are rare,
-but when it does the generated
-DVI or PDF file will be invalid.
-.\"=====================================================================
-.SH AVAILABILITY
-pdf\*(TX is available for a large variety of machine architectures
-and operating systems.
-pdf\*(TX is part of all major \*(TX distributions.
-.br
-The pdf\*(TX home page: http://www.pdftex.org.
-.br
-pdf\*(TX on CTAN: https://ctan.org/pkg/pdftex.
-.br
-pdf\*(TX mailing list for all discussion: https://lists.tug.org/pdftex.
+See
+.BR tex (1).
 .\"=====================================================================
 .SH "SEE ALSO"
-This manual page is not meant to be exhaustive.  The complete
-documentation for this version of pdf\*(TX can be found in the
-.I "pdf\*(TX user manual"
-and the Texinfo manuals
-.IR "Kpathsea library" ,
-.IR "Web2C: A TeX implementation" .
-These manuals, and more, can be accessed from the pdfTeX or CTAN web
-pages given above.
-.PP
-Some related programs:
 .BR epstopdf (1),
 .BR etex (1),
-.BR latex (1),
 .BR luatex (1),
 .BR mptopdf (1),
-.BR tex (1),
-.BR mf (1).
+.BR tex (1).
+.PP
+Micro-typographic extensions to the \*(TX typesetting system, by
+H\[`a]n The Th\[`a]nh
+(thesis describing the major new typesetting feature in pdf\*(TX):
+https://tug.org/TUGboat/tb21-4/
+.br
+A closer look at TrueType fonts and pdf\*(TX, by 
+H\[`a]n The Th\[`a]nh (on using TrueType fonts with \*(TX):
+https://tug.org/TUGboat/tb30-1/tb94thanh.pdf
+.br
+pdf\*(TX home page: https://www.pdftex.org
+.br
+Package page on CTAN: https://ctan.org/pkg/pdftex
+.br
+pdf\*(TX manual: https://mirror.ctan.org/systems/doc/pdftex/manual/pdftex-a.pdf
+.br
+Web2c manual: https://tug.org/web2c
+.br
+Kpathsea manual: https://tug.org/kpathsea
+.br
+Sources for the \*(TX-world literate programs, as pdf:
+https://ctan.org/pkg/knuth-pdf
 .\"=====================================================================
 .SH AUTHORS
-The primary author of pdf\*(TX is Han The Thanh, with major
-contributions from Petr Sojka, Jiri Zlatuska, and Peter Breitenlohner
-(e\*(TX).
+\*(TX was created by Donald E. Knuth. The primary author of the
+pdf\*(TX enhancements is H\[`a]n The Th\[`a]nh, with major contributions
+from Petr Sojka, Jiri Zlatuska, and Peter Breitenlohner (e-\*(TX).
+.\" the double accent 0x1EBF in Thanh's name is not easily available.
 .PP
-\*(TX was designed by Donald E.\& Knuth,
-who implemented it using his \*(WB system for Pascal programs.
-It was ported to Unix at Stanford by Howard Trickey, and
-at Cornell by Pavel Curtis.
-The version now offered with the Unix \*(TX distribution is that
-generated by the \*(WB to C system
-.RB ( web2c ),
-originally written by Tomas Rokicki and Tim Morgan.
-The enc\*(TX extensions were written by Petr Olsak.
-.\" vim: syntax=nroff
+Public discussion list for pdf\*(TX-specific issues:
+https://lists.tug.org/pdftex
+.br
+Public discussion list for \*(TX Live:
+https://lists.tug.org/tex-live
+.br
+Public discussion list for all things \*(TX (and \*(LX):
+https://lists.tug.org/texhax

@@ -1,98 +1,94 @@
-.TH PKTOGF 1 "16 June 2015" "Web2C @VERSION@"
+.TH PKTOGF 1 "25 January 2026" "Web2C @VERSION@"
 .\"=====================================================================
 .if n .ds MF Metafont
 .if t .ds MF Metafont
-.if t .ds TX \fRT\\h'-0.1667m'\\v'0.20v'E\\v'-0.20v'\\h'-0.125m'X\fP
+.if t .ds TX \fRT\\h'-0.10m'\\v'0.17v'E\\v'-0.17v'\\h'-0.06m'X\fP
 .if n .ds TX TeX
-.ie t .ds OX \fIT\v'+0.25m'E\v'-0.25m'X\fP
-.el .ds OX TeX
-.\" BX definition must follow TX so BX can use TX
-.if t .ds BX \fRB\s-2IB\s0\fP\*(TX
-.if n .ds BX BibTeX
-.\" LX definition must follow TX so LX can use TX
-.if t .ds LX \fRL\\h'-0.36m'\\v'-0.15v'\s-2A\s0\\h'-0.15m'\\v'0.15v'\fP\*(TX
-.if n .ds LX LaTeX
 .\"=====================================================================
 .SH NAME
-pktogf \- convert packed font files to generic font files
+pktogf \- convert packed font files to generic font files (both bitmaps)
 .SH SYNOPSIS
 .B pktogf
-.RB [ \-v ]
-.I pk_file_name
-.RI [ gf_file_name ]
+.RB [ -v ]
+.I pk_file
+.RI [ gf_file ]
 .\"=====================================================================
 .SH DESCRIPTION
-This manual page is not meant to be exhaustive.  The complete
-documentation for this version of \*(TX can be found in the info file
-or manual
-.IR "Web2C: A TeX implementation" .
-.PP
 The
 .B pktogf
-program converts a packed font file
+program converts a packed font bitmap file
 .RI ( pk )
-to a generic font file
+to a generic font bitmap file
 .RI ( gf ).
 Packed
 font files are much smaller than the corresponding
 .I gf
-files,
-but some DVI readers only understand
-.I gf
-files.
+files, but you may want to convert to \fIgf\fP in order to use
+.BR gftype (1)
+and
+.BR gftodvi (1)
+utility programs.
 .PP
 The
-.I pk_file_name
-on the command line must be complete. Because
-the resolution is part of the extension, it would not make
-sense to append a default extension as is done with \*(TX or
-DVI-reading software. The
-.I gf_file_name
-defaults to the same (stripped) name as
-.IR pk_file_name ,
+.I pk_file
+on the command line must include the resolution, but can omit the suffix
+"pk". The
+.I gf_file
+defaults to the same base name as
+.IR pk_file ,
 and it is placed in the current
 working directory with the
 .B gf
 suffix replacing
 .BR pk .
 For example, the input file
-.I io.300pk
+.I /some/directory/io.300pk
 would become
 .IR io.300gf .
 .\"=====================================================================
 .SH OPTIONS
-Unless the
-.B \-v
-switch is given,
-.B pktogf
-operates silently.  With
-.BR \-v ,
-the version number of the program and statistics about the
-unpacking are output to
-.IR stdout .
-.\"=====================================================================
-.SH ENVIRONMENT
-.B pktogf
-looks for
-.I pk_file_name
-using the
-environment variable PKFONTS.  If that is not set, it uses the variable
-TEXPKS.  If that is not set, it uses TEXFONTS.  If that is not set, it
-uses the system default.
-.PP
 See
 .BR tex (1)
-for the details of the searching.
+for details of command-line parsing.
+By default,
+.B pktogf
+operates silently.  With the \fB-v\fP (a.k.a\&. \fB-verbose\fP) option,
+the version number of the program and statistics about the
+unpacking are output to stdout.
+.PP
+The standard
+.B -help
+and
+.B -version
+options are also supported.
+.\"=====================================================================
+.SH ENVIRONMENT
+The program looks for
+.I pk_file
+using the environment variables PKFONTS, TEXPKS, GLYPHFONTS, and
+TEXFONTS, in that order. If none are set, it uses the system default.
+See the Kpathsea manual at https://tug.org/kpathsea for the details of
+the searching.
 .\"=====================================================================
 .SH "SEE ALSO"
+.BR gftodvi (1),
 .BR gftopk (1),
 .BR gftype (1),
 .BR pktype (1).
 .br
 Donald E. Knuth et al.,
 .IR \*(MFware .
+.PP
+Package page on CTAN: https://ctan.org/pkg/pktogf
+.br
+Section in the Web2c manual:
+https://tug.org/texinfohtml/web2c.html#pktogf-invocation
+.br
+Typeset source code, including file format descriptions:
+https://ctan.org/pkg/knuth-pdf
 .\"=====================================================================
 .SH AUTHORS
 Tomas Rokicki wrote the program.
-Pierre MacKay adapted it for compilation with
-.BR web2c .
+Pierre MacKay adapted it for compilation with web2c.
+.PP
+Public discussion list and bug reports: https://lists.tug.org/tex-k

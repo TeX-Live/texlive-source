@@ -8,9 +8,9 @@
 .if t .ds MP MetaPost
 .if n .ds MF Metafont
 .if t .ds MF Metafont
-.if t .ds TX \fRT\\h'-0.1667m'\\v'0.20v'E\\v'-0.20v'\\h'-0.125m'X\fP
+.if t .ds TX \fRT\\h'-0.10m'\\v'0.17v'E\\v'-0.17v'\\h'-0.06m'X\fP
 .if n .ds TX TeX
-.ie t .ds OX \fIT\v'+0.25m'E\v'-0.25m'X\fP
+.ie t .ds OX \fIT\h'-0.17m'\v'+0.21m'E\v'-0.21m'\h'-0.04m'X\fP
 .el .ds OX TeX
 .\" BX definition must follow TX so BX can use TX
 .if t .ds BX \fRB\s-2IB\s0\fP\*(TX
@@ -18,8 +18,6 @@
 .\" LX definition must follow TX so LX can use TX
 .if t .ds LX \fRL\\h'-0.36m'\\v'-0.15v'\s-2A\s0\\h'-0.15m'\\v'0.15v'\fP\*(TX
 .if n .ds LX LaTeX
-.if n .ds WB Web
-.if t .ds WB W\s-2EB\s0
 .\"=====================================================================
 .SH NAME
 mpost, pmpost, upmpost \- MetaPost, a system for creating graphics
@@ -142,8 +140,7 @@ The \*(MP manual and tutorial source, also including sample figures
 Donald E. Knuth,
 .I "The \*(MF\^book"
 (Volume C of
-.IR "Computers and Typesetting" ),
-Addison-Wesley, 1986, ISBN 0-201-13445-4.
+.IR "Computers & Typesetting" ).
 .br
 .I TUGboat
 (the journal of the \*(TX Users Group).
@@ -159,16 +156,11 @@ Addison-Wesley, 1986, ISBN 0-201-13445-4.
 .\"=====================================================================
 .SH AUTHORS
 \*(MP was created by John D. Hobby, incorporating algorithms from 
-\*(MF by Donald E. Knuth.  It was originally implemented on Unix,
-incorporating system-dependent routines from
-.BR web2c ,
-while not relying on it except for the actual \*(WB-to-C translator.
+the \*(MF program by Donald E. Knuth.
 .PP
-Ulrik Vieth adapted \*(MP to take advantage of the advanced path 
-searching features in more recent versions of
-.B web2c
-and worked towards fully integrating \*(MP into the canonical Unix 
-\*(TX distribution.
+Ulrik Vieth adapted \*(MP to take advantage of the advanced path
+searching features in more recent versions of Web2C and worked towards
+fully integrating \*(MP into the canonical Unix \*(TX distribution.
 .PP
 The primary author of the current \*(MP was Taco Hoekwater, with
 assistance from Hans Hagen and many others.  It is currently maintained

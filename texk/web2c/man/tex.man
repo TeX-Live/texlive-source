@@ -1,28 +1,16 @@
-.TH TEX 1 "30 September 2025" "Web2C @VERSION@"
+.TH TEX 1 "24 January 2026" "Web2C @VERSION@"
 .\"=====================================================================
-.if n .ds MF Metafont
-.if t .ds MF Metafont
 .if t .ds TX \fRT\\h'-0.10m'\\v'0.17v'E\\v'-0.17v'\\h'-0.06m'X\fP
 .if n .ds TX TeX
+.\" OX for oblique/italic TeX logo
 .ie t .ds OX \fIT\h'-0.17m'\v'+0.21m'E\v'-0.21m'\h'-0.04m'X\fP
 .el .ds OX TeX
-.\" BX definition must follow TX so BX can use TX
-.if t .ds BX \fRB\s-2IB\s0\fP\*(TX
-.if n .ds BX BibTeX
 .\" LX definition must follow TX so LX can use TX
 .if t .ds LX \fRL\\h'-0.36m'\\v'-0.15v'\s-2A\s0\\h'-0.15m'\\v'0.15v'\fP\*(TX
 .if n .ds LX LaTeX
-.if n .ds WB Web
-.if t .ds WB W\s-2EB\s0
-.\" EX and EE are used for displays that are pure code
-.de EX
-.nf
-.ft CW
-..
-.de EE
-.ft R
-.fi
-..
+.\" OX for oblique LaTeX
+.if t .ds OL \fIL\\h'-0.19m'\\v'-0.15v'\s-2A\s0\\h'-0.09m'\\v'0.15v'\fP\*(OX
+.if n .ds OL LaTeX
 .\"=====================================================================
 .SH NAME
 tex, initex \- text formatting and typesetting
@@ -39,24 +27,76 @@ usually creating
 .IR file.dvi .
 If the file argument has no extension, ".tex" will be appended to it. 
 .PP
-More precisely, after reading any \fIoption\fR(s) (listed below), if the
-first non-option argument does not begin with an escape character
-(normally a backslash), \*(TX internally prepends \fB\einput\fP to the
-non-option arguments. Whether the \fB\einput\fP was prepended or not,
-\*(TX then processes the text as normal \*(TX input, including
-expansion.
+The normal usage is to run
+.IP
+tex paper
+.PP
+to process \fIpaper.tex\fP with \*(TX.
+The name
+.I paper
+will be the so-called "jobname", and is used in forming
+output filenames.
+If \*(TX doesn't get a filename in the first line, the jobname is
+.IR texput .
+When looking for a file, \*(TX looks for the name with and without the
+default extension
+.RI ( .tex )
+appended, unless the name already contains that extension.  If
+.I paper
+is the jobname,
+a log of error messages, with rather more detail than normally appears
+on the screen, will be written to
+.IR paper.log ,
+and the output file will be
+.IR paper.dvi .
+The \fB--jobname\fP option sets the jobname explicitly.
+.PP
+\*(TX
+formats the interspersed text and commands contained in the input
+and outputs a so-called
+.I DVI
+file, which is short for
+.IR "DeV\h'.02'ice Independent" .
+DVI files are a device-independent binary representation of the pages in
+the output document. They can be displayed online (e.g.,
+.BR xdvi (1)),
+translated to PDF
+.RB ( dvipdfmx (1)),
+PostScript
+.RB ( dvips (1)),
+or otherwise manipulated. Other engines
+.RB ( pdftex (1),
+.BR luatex (1)),
+descendants of original \*(TX, can output PDF directly.
+.PP
+\*(TX's capabilities and language are described in many places (see the
+references), including Donald Knuth's original book,
+.IR "The \*(OXbook" .
+\*(TX is normally used with a large body of precompiled macros, called a
+format. Knuth's original format is named \fIplain\fP. Other formats,
+notably \fBlatex\fP(1), are much larger, but still implemented entirely
+as \*(TX macros.
+.PP
+.B Command line processing
+.PP
+To process the command line, after first reading any \fIoption\fR(s)
+(listed below), if the first non-option argument does not begin with an
+escape character (normally a backslash), \*(TX internally prepends
+\fB\einput\fP to the non-option arguments. Whether the \fB\einput\fP was
+prepended or not, \*(TX then processes the text as normal \*(TX input,
+including macro expansion.
 .PP
 With no non-option arguments, \*(TX gives you a \fB**\fP interactive
 prompt; whatever text you enter is processed in exactly the same way as
-the non-option command line arguments.
+non-option command line arguments.
 .PP
 Examples:
 .TP
 .B tex foo
-executes "\einput tex foo".
+executes "\einput foo".
 .TP
 .B tex foo bar
-executes "\einput tex foo bar", which inputs
+executes "\einput foo bar", which inputs
 \fIfoo.tex\fP and then typesets the string "bar".
 .TP
 .B tex \e\eend
@@ -66,45 +106,25 @@ the backslash for the shell. \*(TX must see only one backslash.
 To reiterate, the text of an input filename, as well as any text
 following a filename, is subject to \*(TX's macro expansion. As a
 result, a ~ character is normally not usable within a filename, since ~
-is defined (in most \*(TX formats) to be an active character that
-expands into several primitive tokens that can't be part of a filename.
-You can usually use \estring~ to get a literal ~ character. More on
-input filenames: https://tug.org/texinfohtml/web2c.html#Input-filenames
+is conventionally defined to be an active character that expands into
+several primitive tokens, which can't be part of a filename. You can
+usually use \estring~ to get a literal ~ character. More on input
+filenames: https://tug.org/texinfohtml/web2c.html#Input-filenames
+.PP
+.B Format (.fmt) selection
 .PP
 With an argument 
 \fB&\fIformat\fR, \*(TX reads the set of precompiled commands
-contained in the file
-.IR format\fB.fmt\fP 
-instead of the default tex.fmt. It can be easier to use the
+contained in the (binary) file
+.IR format .fmt
+instead of the default tex.fmt (searched for using the TEXFORMATS path; see
+environment section below). This is sometimes more convenient than the
 .B -fmt
 .I format
 option, which is equivalent.
 .PP
-\*(TX
-formats the interspersed text and commands contained in the named
-files
-and outputs a typesetter independent file (called
-.IR DVI ,
-which is short for
-.IR "DeV\h'.02'ice Independent" ).
-\*(TX's capabilities and language are described in many places (see the
-references for some starting pointing), including Donald Knuth's
-original book,
-.IR "The \*(OXbook" .
-\*(TX
-is normally used with a large body of precompiled macros,
-and there are several specific formatting systems, such as
-\*(LX,
-based on \*(TX.
-.PP
-This version of \*(TX looks at its command line to see what name it
-was invoked as.  Nowadays, if either or both of the executables
-.B initex
-and
-.B virtex
-exist, they are symbolic links to the
-.B tex
-executable.  When called as
+The \*(TX implementation in \*(TX Live (a.k.a. Web2C) looks at
+its command line to find the name it was invoked as. When called as
 .BR initex
 (or when the
 .B -ini
@@ -115,58 +135,37 @@ file.  When called as
 .B virtex
 it will use the
 .I plain
-format.  When invoked as any other name, \*(TX will use that name as
-the name of the format to use.  For example, when invoked as
+format.  Nowadays, if either or both of the executables
+.B initex
+and
+.B virtex
+exist, they are symbolic links to the
 .B tex
-the
+executable; the
+.B virtex
+symlink is not made by default in \*(TX Live.
+.PP
+When invoked as any other name, \*(TX will use that name as
+the name of the format to use.  Most notably, when invoked as
+.B tex
+the format file
 .I tex.fmt
-format is used, which is identical to the
+is read, which is identical to the
 .I plain
 format.  The commands defined by the
 .I plain
-format are documented in
-.IR "The \*(OXbook" .
-Examples of other formats that are generally available as their own
-commands include
-.I latex
-and
-.I pdflatex
-and
-.IR pdftex .
+format are described in Appendix\~B of
+.IR "The \*(OXbook" ,
+among other places (see references below). The other \*(TX engines
+follow the same convention; for example, the
+.B latex
+command is a symlink to the
+.B pdftex
+binary, and reads \fIlatex.fmt\fP.
 .PP
-As described above, the non-option command line arguments to the \*(TX
-program are passed to it as the first input line. It can be easier to
-type extended arguments as the first input line, since shells typically
-gobble up or misinterpret lots of \*(TX's favorite symbols, like
-backslashes, thus requring shell-level quoting.
-.PP
-The normal usage is to say
-.EX
-tex paper
-.EE
-to process
-.IR paper.tex .
-The name
-.I paper
-will be the ``jobname'', and is used in forming
-output filenames.
-If \*(TX doesn't get a filename in the first line, the jobname is
-.IR texput .
-When looking for a file, \*(TX looks for the name with and without the
-default extension
-.RI ( .tex )
-appended, unless the name already contains that extension.  If
-.I paper
-is the ``jobname'',
-a log of error messages, with rather more detail than normally appears
-on the screen, will appear in
-.IR paper.log ,
-and the output file will be in
-.IR paper.dvi .
-.PP
-This version of \*(TX can look in the first line of the file
+This implementation of \*(TX can look in the first line of the file
 .I paper.tex
-to see if it begins with the magic sequence
+to see if it begins with the magic two-character sequence
 .IR %& .
 If the first line begins with
 .BI %& format
@@ -180,38 +179,75 @@ format selection based on the name by which the program is invoked.
 The
 .B -parse-first-line
 option or the
-.B parse_first_line
-configuration variable controls whether this behavior is enabled.
+.I parse_first_line
+configuration variable controls whether this behavior is enabled.  It is
+disabled for the original \*(TX, and enabled for all other engines.
 .PP
-The
-.I e
-response to \*(TX's error prompt causes the system default editor to
-start up at the current line of the current file.  The environment
-variable TEXEDIT can be used to change the editor used.  It may
-contain a string with "%s" indicating where the filename goes and "%d"
-indicating where the decimal line number (if any) goes.  For example,
-a TEXEDIT string specifying
-.B emacs
-to be run can be set like this (in Bourne shell syntax):
-.EX
-TEXEDIT="emacs +%d %s"; export TEXEDIT
-.EE
+.B Input encodings
+.PP
+\*(TX, predating Unicode as it does, reads input byte by byte, and has
+no native recognition for UTF-8 or any other encoding. This is also the
+case for pdf\*(TX. However, to a large extent, UTF-8 can be parsed at
+the \*(TX macro level, and packages have been developed for this. For
+native recognition of Unicode, the engines
+.BR luatex (1)
+and
+.BR xetex (1)
+are available, with corresponding formats.
+.PP
+.B Error handling
+.PP
+\*(TX's error messages can be rather unfortunately cryptic. As general
+advice, sometimes only the first error matters, so it's worth trying to
+fix that first. Cutting down the input file can be helpful if mysteries
+remain. For more advice, including on a few specific problems:
+https://texfaq.org/index#errors
 .PP
 A convenient file in most distributions is
 .IR null.tex ,
 containing nothing.
 When \*(TX can't find a file it thinks you want to input, it keeps
-asking you for another filename; responding `null' gets you out
+asking you for another filename; responding "null" gets you out
 of the loop if you don't want to input anything.  You can also type your
 EOF character (usually control-D).
 .PP
+When \*(TX reports an error, by default it puts you into an interactive
+dialog with a ? prompt. Responding with another ? shows you
+the available responses, for example, \fIx\fP quits immediately. The
+.I e
+response to \*(TX's error prompt causes the system default editor to
+start up at the current line of the current file. The environment
+variable TEXEDIT can be used to change the editor used. It may contain a
+string with "%s" indicating where the filename goes and "%d" indicating
+where the decimal line number (if any) goes. For example, a TEXEDIT
+string specifying emacs to be run can be set like this (in Bourne shell
+syntax):
+.IP
+TEXEDIT="emacs +%d %s"; export TEXEDIT
+.PP
+To debug problems with finding files, see the \fB--kpathsea-debug\fP
+option below.
 .\"=====================================================================
 .SH OPTIONS
-This version of \*(TX understands the following command line options.
-Options can be started with either - or --; options can be separated
-from their values with either an = character or whitespace. All options
-must come before any non-option arguments. Put filenames or other
-non-options that start with a dash after an option --.
+\*(TX (in \*(TX Live and Web2C) understands the following command line
+options. Most of these options are also supported by the derived
+engines.
+.PP
+Options can be started with either - or --; in this and other
+documentation, we use "-" and "--" interchangeably. Options can be
+separated from their values with either an = character or whitespace.
+Put filenames or other non-options that start with a dash after an
+option --. All the programs in the \*(TX family (and many non-\*(TX
+programs; this command-line parsing comes originally from the GNU
+getopt_long_only(3) library function) follow these conventions.
+.PP
+In \*(TX and the other engines, all options must precede any non-option
+arguments, due to the peculiarities of \*(TX's first-line parsing
+described above. For the \*(TX utilities, options and non-options can be
+given in any order.
+.TP
+.B -help
+Print help message and exit.
 .TP
 .BI -cnf-line \ string
 Parse
@@ -227,15 +263,12 @@ combination with
 For documentation of the enc\*(TX extensions see
 http://www.olsak.net/enctex.html.
 .TP
-.B -file-line-error
+.B -[no-]file-line-error
 Print error messages in the form
 .I file:line:error
-which is similar to the way many compilers format them.
-.TP
-.B -no-file-line-error
-Disable printing error messages in the
-.I file:line:error
-style.
+which is similar to the way many other compilers format them. By
+default, or with \fB-no-\fP, \*(TX's default error format is used,
+usually starting with an ! character.
 .TP
 .B -file-line-error-style
 This is the old name of the
@@ -248,13 +281,10 @@ Use
 as the name of the format to be used, instead of the name by which
 \*(TX was called or a
 .I %&
-line.
+line. (See above and below for more on formats.)
 .TP
 .B -halt-on-error
 Exit with an error code when an error is encountered during processing.
-.TP
-.B -help
-Print help message and exit.
 .TP
 .B -ini
 Start in
@@ -288,35 +318,30 @@ is available is the choice of the installer.
 Use
 .I name
 for the job name, instead of deriving it from the name of the input file.
+(See above.)
 .TP
 .BI -kpathsea-debug \ bitmask
 Sets path searching debugging flags according to the bitmask.  See the
 .I Kpathsea
-manual for details.
+manual for details: https://tug.org/texinfohtml/kpathsea.html#Debugging
 .TP
-.BI -mktex \ fmt
-Enable
+.BI -[no-]mktex \ fmt
+Enable (disable)
 .RI mktex fmt ,
 where
 .I fmt
-must be either
-.I tex
+must be
+.IF fmt ,
+.IR tex ,
 or
 .IR tfm .
+See the Kpathsea manual: https://tug.org/texinfohtml/kpathsea.html#mktex-scripts
 .TP
 .B -mltex
-Enable ML\*(TX extensions.  Only effective in combination with
+Enable ML\*(TX (Multi-lingual \*(TX) extensions.  Only effective in
+combination with
 .BR -ini .
-.TP
-.BI -no-mktex \ fmt
-Disable
-.RI mktex fmt ,
-where
-.I fmt
-must be either
-.I tex
-or
-.IR tfm .
+More info: https://tug.org/texinfohtml/web2c.html#MLTeX
 .TP
 .BI -output-comment \ string
 Use
@@ -330,53 +355,45 @@ Write output files in
 .I directory
 instead of the current directory.  Look up input files in
 .I directory
-first, then along the normal search path.  See also description of the
-TEXMFOUTPUT environment variable.
+first, then along the normal search path. See also the description below
+of the TEXMFOUTPUT environment variable.
 .TP
-.B -parse-first-line
-If the first line of the main input file begins with
+.B -[no-]parse-first-line
+Enable (or disable) checking the first line of the main input file
+for
 .I %&
-parse it to look for a dump name or a
+and, if so, parsing it to look for a format name or a
 .B -translate-file
 option.
 .TP
-.B -no-parse-first-line
-Disable parsing of the first line of the main input file.
-.TP
 .BI -progname \ name
-Pretend to be program
-.IR name .
-This affects both the format used and the search paths.
+Pretend to be program \fIname\fP for purposes of Kpathsea lookups. This
+affects both the format used and the search paths.
 .TP
 .B -recorder
-Enable the filename recorder.  This leaves a trace of the files opened
-for input and output in a file with extension
+Enable the filename recorder. This outputs a machine-readable trace of
+all files opened for input and output in a file with the usual jobname
+and extension
 .IR .fls .
 .TP
-.B -shell-escape
-Allow documents to execute arbitrary shell commands via the
+.B -[no-]shell-escape
+Allow (or disallow) documents to execute arbitrary shell commands via the
 .BI \ewrite18{ command }
 construct. This feature is normally restricted for security reasons to a
 very few known-safe programs. You should use this option, which enables
 execution of any command at all, only for trusted documents. More on
 shell escapes: https://tug.org/texinfohtml/web2c.html#Shell-escapes
 .TP
-.B -no-shell-escape
-Disable
-.BI \ewrite18{ command }\fR,
-even if it is enabled in the
-.I texmf.cnf
-file.
-.TP
 .B -src-specials
-Insert source specials into the
-.I DVI
-file.
+Insert source specials into the dvi file. This is used for
+.BR synctex (1).
+In editors that support Sync\*(TX, you can click in the output window
+and get back to the corresponding location in the source.
 .TP
 .BI -src-specials \ where
 Insert source specials in certain places of the
 .I DVI
-file.
+file;
 .I where
 is a comma-separated value list:
 .IR cr ,
@@ -390,8 +407,9 @@ or
 .TP
 .BI -translate-file \ tcxname
 Use the
+translation table in the file
 .I tcxname
-translation table to set the mapping of input characters and
+to set the mapping of input characters and
 re-mapping of output characters.
 .TP
 .BI -default-translate-file \ tcxname
@@ -399,7 +417,7 @@ Like
 .B -translate-file
 except that a
 .I %&
-line can overrule this setting.
+line can override this setting.
 .TP
 .B -8bit
 Make all characters printable by default.
@@ -409,17 +427,17 @@ Print version information and exit.
 .\"=====================================================================
 .SH ENVIRONMENT
 Numerous environment variables can be used to find files. A few are
-mentioned here, but see the Kpathsea(rch) library documentation (the
-`Path specifications' node) for a more comprehensive list, and how they
-are used. The
-.B kpsewhich
-utility can be used to query the values of the variables.
+mentioned here, but see the Kpathsea(rch) library documentation (e.g.,
+https://tug.org/texinfohtml/kpathsea.html#TeX-support) for a more
+comprehensive list, and how they are used. The
+.BR kpsewhich (1)
+utility can be used to query the values of the variables. In Kpathsea
+specifications, "//" means to search subdirectories recursively.
 .PP
 Every variable setting in \fItexmf.cnf\fR can be overridden by the
 environment variable of the same (or associated) name, as explained
 tersely at the top of \fItexmf.cnf\fR, and more completely in the
 Kpathsea documentation.
-.PP
 .TP
 .B TEXMFOUTPUT
 Normally, \*(TX puts its output files in the current directory.  If
@@ -436,8 +454,14 @@ the value
 .IR /tmp/paper.dvi ,
 if any output is produced.)  TEXMFOUTPUT is also checked for input
 files, as \*(TX often generates files that need to be subsequently
-read; for input, no suffixes (such as ``.tex'') are added;
-the input name is simply checked as given. More on output file location:
+read; for input, no suffixes (such as ".tex") are added;
+the input name is simply checked as given.
+.PP
+If the \fB-output-directory\fP option is given, \*(TX sets TEXMFOUTPUT
+in the environment to its value, so that programs invoked by \*(TX have
+it available.
+.PP
+More on output file location:
 https://tug.org/texinfohtml/web2c.html#Output-file-location
 .TP
 .B TEXINPUTS
@@ -445,34 +469,44 @@ Search path for
 .I \einput
 and
 .I \eopenin
-files.
-This should probably start with ``.'', so
-that user files are found before system files.  An empty path
-component will be replaced with the paths defined in the
+files. By default, this starts with . (a period, meaning the current
+directory as usual), so that user files are found before system files.
+An empty path component will be replaced with the paths defined in the
 .I texmf.cnf
 file.  For example, set TEXINPUTS to ".:/home/user/tex:" to prepend the
-current directory and ``/home/user/tex'' to the standard search path.
+current directory and "/home/user/tex" to the standard search path.
+.TP
+.B TEXMFDOTDIR
+In \*(TX Live's \fItexmf.cnf\fP, TEXINPUTS and other paths don't start
+literally with ".", but rather with $TEXMFDOTDIR, which in turn
+defaults to ".". This indirection makes it easy to, for example, search
+the current directory and all its subdirectories for everything: set
+TEXMFDOTDIR to ".//".
 .TP
 .B TEXFORMATS
-Search path for format files.
+Search path for format files (\fI.fmt\fP). They are typically stored
+under the TEXMFSYSVAR directory. You can find the exact location
+of \fItex.fmt\fP (for example) with this kpsewhich invocation:
+.br
+kpsewhich -engine=/ -all tex.fmt
 .TP
 .B TEXPOOL
-search path for
-.B tex
-internal strings.
-.TP
-.B TEXEDIT
-Command template for switching to editor.  The default, usually
-.BR vi ,
-is set when \*(TX is compiled.
+Search path for \*(TX's internal strings (\fI.pool\fP); this is only
+relevant for original \*(TX; the extended engines all have the strings
+compiled into the binary.
 .TP
 .B TFMFONTS
 Search path for font metric
 .RI ( .tfm )
 files.
+.TP
+.B TEXEDIT
+Command template for switching to editor (see above).  The default, usually
+.BR vi ,
+is set when \*(TX is compiled.
 .\"=====================================================================
 .SH FILES
-The location of the files mentioned below varies from system to
+The locations of the files mentioned below varies from system to
 system.  Use the
 .B kpsewhich
 utility to find their locations.
@@ -480,7 +514,7 @@ utility to find their locations.
 .I texmf.cnf
 Configuration file.  This contains definitions of search paths as well
 as other configuration parameters like
-.BR parse_first_line .
+.IR parse_first_line .
 .TP
 .I tex.pool
 Text file containing \*(TX's internal strings.
@@ -492,49 +526,78 @@ Metric files for \*(TX's fonts.
 Predigested \*(TX format (.\|fmt) files.
 .TP
 .I $TEXMFMAIN/tex/plain/base/plain.tex
-The basic macro package described in the \*(OXbook.
+The basic macro package described in \fIThe \*(OXbook\fP.
+.TP
+.I $TEXMFMAIN/tex/plain/config/tex.ini
+The driver file that builds the plain format file, \fItex.fmt\fP, in
+\*(TX Live.
 .\"=====================================================================
 .SH BUGS
-This version of \*(TX implements a number of optional extensions. Some
-of these extensions conflict to a greater or lesser extent with the
-definition of \*(TX. When such extensions are enabled, the banner
-printed when \*(TX starts is changed to print
-.B TeXk
-instead of
-.BR TeX .
+This version of \*(TX implements a number of extensions, which
+technically conflict with the definition of original \*(TX (although
+almost never make a difference in practice). When such extensions are
+enabled, the banner printed when \*(TX starts is changed to print "TeXk"
+instead of "TeX".
 .PP
-This version of \*(TX fails to trap arithmetic overflow when
-dimensions are added or subtracted.  Cases where this occurs are rare,
-but when it does the generated
-.I DVI
-file will be invalid.
+This version of \*(TX fails to trap arithmetic overflow when dimensions
+are added or subtracted. Cases where this occurs are rare, but when it
+does the program may crash, and/or the generated DVI file will be
+invalid. Patches to catch such overflow cases would be welcome.
 .PP
 Knuth still accepts new bug reports for \*(TX, but only reviews them
-every several years. For a list of submitted reports and other
+every several years. They are vetted in advance by a small group of
+experienced volunteers. For a list of submitted reports and other
 information: https://tug.org/texmfbug.
 .PP
-This manual page is not (remotely) exhaustive.  See the references
-following, among others.
+Naturally, bugs in engines other than original \*(TX should be directed
+to their respective mailing lists and maintainers.
 .\"=====================================================================
 .SH "SEE ALSO"
 .BR mf (1),
 .BR pdftex (1),
 .BR latex (1),
-and many more.
+.BR luatex (1),
+and plenty more.
 .br
 Donald E. Knuth,
 .IR "The \*(OXbook" ,
 Addison-Wesley.
 .br
 Leslie Lamport,
-.IR "\*(LX \- A Document Preparation System" ,
+.IR "\*(OL: A Document Preparation System" ,
 Addison-Wesley.
+.PP
+Some free documentation on the \*(TX language:
+.br
+Petr Olsak, \*(TX in a Nutshell:
+https://ctan.org/pkg/tex-nutshell
+.br
+Plain \*(TX documentation topic on CTAN:
+https://ctan.org/topic/tut-plaintex
+.br
+Victor Eijkhout,
+.IR "\*(OX By Topic" ,
+A \*(TXnician's reference:
+https://www.eijkhout.net/tex/tex-by-topic.html
+.br
+Paul W. Abrahams, Kathryn Hargreaves, Karl Berry,
+.IR "\*(OX for the Impatient" ,
+on \*(TX, plain \*(TX, and
+.BR eplain (1);
+available in French and Chinese translations:
+https://ctan.org/pkg/impatient
 .PP
 Some online information:
 .br
-Getting Started with TeX, LaTeX, and friends
-(web page with selected resources and many links):
+Getting Started with TeX, LaTeX, and friends,
+a short web page with selected resources:
 https://tug.org/begin
+.br
+David Bausum, \*(TX primitive control sequences:
+https://tug.org/utilities/plain/cseq.html
+.br
+Levels of \*(TX, briefly describing the various engines and formats:
+https://tug.org/levels
 .br
 \*(TX Live web pages:
 https://tug.org/texlive
@@ -545,44 +608,38 @@ https://tug.org/web2c
 Kpathsea Texinfo manual and web page:
 https://tug.org/kpathsea
 .br
+Sources for the \*(TX-world literate programs, as pdf:
+https://ctan.org/pkg/knuth-pdf
+.br
 .I TUGboat
-(the journal of the \*(TX Users Group, submissions welcome):
+(the journal of the \*(TX Users Group; submissions welcome):
 https://tug.org/TUGboat
 .PP
-Some free documentation on the \*(TX language:
-.br
-Victor Eijkhout,
-.IR "\*(TX By Topic" ,
-A \*(TXnician's reference:
-https://www.eijkhout.net/tex/tex-by-topic.html
-.br
-Paul W. Abrahams, Kathryn Hargreaves, Karl Berry,
-.IR "\*(TX for the Impatient" ,
-on \*(TX, plain \*(TX, and Eplain. Available in French and Chinese
-translations: https://ctan.org/pkg/impatient
-.br
-Plain \*(TX documentation topic on CTAN.
-https://ctan.org/topic/tut-plaintex
-.PP
 If you find \*(TX useful, please consider joining or supporting the
-\*(TX Users Group or another user group in your area.
+\*(TX Users Group, or another user group in your area:
 .br
 https://tug.org
 .br
 https://tug.org/usergroups.html
 .\"=====================================================================
 .SH TRIVIA
-\*(TX, pronounced properly, rhymes with ``blecchhh.''  The proper
-spelling in typewriter-like fonts is ``TeX'' and not ``TEX'' or ``tex.''
+\*(TX, pronounced properly, rhymes with ``blecchhh''.  The proper
+spelling in typewriter-like fonts is ``TeX'' and not ``TEX'' or ``tex''.
 .\"=====================================================================
 .SH AUTHORS
-\*(TX was created by Donald E. Knuth,
-who implemented it using his \*(WB system for Pascal programs.
-It was ported to Unix at Stanford by Howard Trickey, and
-at Cornell by Pavel Curtis.
-The version now offered with the Unix \*(TX distribution is that
-generated by the \*(WB to C system
-.RI ( web2c ),
-originally written by Tomas Rokicki and Tim Morgan.
+\*(TX was created by Donald E. Knuth, who implemented it using his WEB
+system for Pascal programs. It was ported to Unix at Stanford by Howard
+Trickey, and at Cornell by Pavel Curtis. The version now included in
+\*(TX Live, the current Unix \*(TX distribution, is generated by the
+Web2C system originally written by Tomas Rokicki and Tim Morgan.
 .PP
-The enc\*(TX extensions were written by Petr Olsak.
+Bug reports in original \*(TX (exceedingly rare): https://tug.org/texmfbug
+.br
+Public mailing list for implementation questions and reports:
+https://lists.tug.org/tex-k
+.br
+Public discussion list for \*(TX Live:
+https://lists.tug.org/tex-live
+.br
+Public discussion list for all things \*(TX (and \*(LX):
+https://lists.tug.org/texhax

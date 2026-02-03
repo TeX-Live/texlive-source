@@ -1,47 +1,49 @@
-.TH WEAVE 1 "20 March 2024 "Web2C @VERSION@"
+.TH WEAVE 1 "2 February 2026 "Web2C @VERSION@"
 .\"=====================================================================
-.if n .ds MF Metafont
-.if t .ds MF Metafont
 .if n .ds TX TeX
-.if t .ds TX \fRT\\h'-0.1667m'\\v'0.20v'E\\v'-0.20v'\\h'-0.125m'X\fP
-.ie t .ds OX \fIT\v'+0.25m'E\v'-0.25m'X\fP
-.el .ds OX TeX
-.\" BX definition must follow TX so BX can use TX
-.if n .ds BX BibTeX
-.if t .ds BX \fRB\s-2IB\s0\fP\*(TX
-.\" LX definition must follow TX so LX can use TX
-.if n .ds LX LaTeX
-.if t .ds LX \fRL\\h'-0.36m'\\v'-0.15v'\s-2A\s0\\h'-0.15m'\\v'0.15v'\fP\*(TX
-.if n .ds WB Web
-.if t .ds WB W\s-2EB\s0
+.if t .ds TX \fRT\\h'-0.10m'\\v'0.17v'E\\v'-0.17v'\\h'-0.06m'X\fP
 .\"=====================================================================
 .SH NAME
-weave \- translate WEB to TeX
+weave \- translate a literate programming WEB to TeX
 .SH SYNOPSIS
-.PP
 \f[B]weave\f[R] [\f[B]-p\f[R]] [\f[B]-x\f[R]]
 \f[I]webfile\f[R][\f[B].web\f[R]]
 [{\f[I]changefile\f[R][\f[B].ch\f[R]]|\f[B]-\f[R]}
 [\f[I]outfile\f[R][\f[B].tex\f[R]]]]
 .\"=====================================================================
 .SH DESCRIPTION
-This manual page is not meant to be exhaustive.  The complete
-documentation for this version of \*(TX can be found in the info file
-or manual
-.IR "Web2C: A TeX implementation" .
-.PP
 The
 .B weave
-program is used to create a \*(TX file for viewing a \*(WB program.
-It takes appropriate care of typographic details like page
-layout and the use of indentation, italics, boldface, etc., and it supplies
+program creates a \*(TX file for viewing a literate program written in
+WEB. It takes appropriate care of typographic details like page layout
+and the use of indentation, italics, boldface, etc., and it supplies
 extensive cross-index information that it gathers automatically.
-The command line arguments are the same as for
-.B tangle
-except for the options:
-.B \-p
-says to use alternative macros more suited for PDF output.
-.B \-x
+.PP
+The output \*(TX file name is formed by adding
+.B .tex
+to the root of the WEB file name or from the third argument. In this
+case you can specify '-' as an empty change file. These non-option
+command line arguments are handled in the same way as
+.BR tangle (1).
+.PP
+There are several macros that probably should be redefined by the
+programmer at the beginning of the WEB file. It is a good idea to set
+.I \etitle
+to the name of the program.
+To output only those modules which are changed, one can say
+.IR \elet\emaybe=\eiffalse ,
+usually as the first change in the change file.
+.\"=====================================================================
+.SH OPTIONS
+See
+.BR tex (1)
+for details of command-line parsing.
+.TP
+.B -p
+says to \fI\einput pwebmac.tex\fP, a variant on the default
+\fIwebmac.tex\fP which is more suited for PDF output.
+.TP
+.B -x
 says to omit the index, module name list, and table of contents pages.
 (A
 .I CONTENTS.tex
@@ -50,38 +52,37 @@ however, unless some macros in
 .I webmac.tex
 are redefined.)
 .PP
-The output \*(TX file name is formed by adding
-.B .tex
-to the root of the \*(WB file name or from the third argument.
-In this case you can specify '-' as an empty change file.
-.PP
-There are several macros
-that probably should be redefined by
-the programmer at the beginning of the \*(WB file.
-It is a good idea to set
-.I \etitle
-to the name of the program.
-And, to cause output of only changed modules, one can say
-.I \elet\emaybe=\eiffalse
-(usually as the first change in the change file).
+The standard
+.B -help
+and
+.B -version
+options are also supported.
 .\"=====================================================================
 .SH ENVIRONMENT
-The environment variable WEBINPUTS is used to search for the input files,
-or the system default if WEBINPUTS is not set.  See
-.BR tex (1)
-for the details of the searching.
+The programs look for the input files using the environment variable
+WEBINPUTS. If it is not set, it uses the system default. See the
+Kpathsea manual at https://tug.org/kpathsea for the details of the
+searching.
+.\"=====================================================================
+.SH BUGS
+The table of contents appears at the end of the output.
 .\"=====================================================================
 .SH FILES
-.TP \w'@@'u+2n
+.TP
 .I $TEXMFMAIN/tex/plain/knuth-lib/webmac.tex
 \*(TX macros used by
 .B weave
 output.
-.TP \w'@@'u+2n
+.TP
 .I $TEXMFMAIN/tex/plain/pwebmac/pwebmac.tex
-alternative
+Alternative
 \*(TX macros used for PDF output.
+.TP
+.I CONTENTS.tex
+Temporary file created by \fBweave\fP for the table of contents.
 .\"=====================================================================
 .SH "SEE ALSO"
 .BR tangle (1)
 for references, authors, and other information.
+.PP
+Public discussion list and bug reports: https://lists.tug.org/tex-k

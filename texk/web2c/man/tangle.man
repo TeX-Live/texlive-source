@@ -1,82 +1,74 @@
-.TH TANGLE 1 "02 March 2022" "Web2C @VERSION@"
+.TH TANGLE 1 "25 January 2026" "Web2C @VERSION@"
 .\"=====================================================================
 .if n .ds MF Metafont
 .if t .ds MF Metafont
-.if t .ds TX \fRT\\h'-0.1667m'\\v'0.20v'E\\v'-0.20v'\\h'-0.125m'X\fP
+.if t .ds TX \fRT\\h'-0.10m'\\v'0.17v'E\\v'-0.17v'\\h'-0.06m'X\fP
 .if n .ds TX TeX
-.ie t .ds OX \fIT\v'+0.25m'E\v'-0.25m'X\fP
+.ie t .ds OX \fIT\h'-0.17m'\v'+0.21m'E\v'-0.21m'\h'-0.04m'X\fP
 .el .ds OX TeX
-.\" BX definition must follow TX so BX can use TX
-.if t .ds BX \fRB\s-2IB\s0\fP\*(TX
-.if n .ds BX BibTeX
-.\" LX definition must follow TX so LX can use TX
-.if t .ds LX \fRL\\h'-0.36m'\\v'-0.15v'\s-2A\s0\\h'-0.15m'\\v'0.15v'\fP\*(TX
-.if n .ds LX LaTeX
-.if n .ds WB Web
-.if t .ds WB W\s-2EB\s0
 .\"=====================================================================
 .SH NAME
-tangle \- translate WEB to Pascal
+tangle, otangle \- translate a literate programming WEB to Pascal
 .SH SYNOPSIS
-.PP
 \f[B]tangle\f[R] [\f[I]options\f[R]]
 \f[I]webfile\f[R][\f[B].web\f[R]]
 [{\f[I]changefile\f[R][\f[B].ch\f[R]]|\f[B]-\f[R]}
 [\f[I]outfile\f[R][\f[B].p\f[R]]]]
 .\"=====================================================================
 .SH DESCRIPTION
-This manual page is not meant to be exhaustive.  The complete
-documentation for this version of \*(TX can be found in the info file
-or manual
-.IR "Web2C: A TeX implementation" .
-.PP
 The
 .B tangle
-program converts a \*(WB
-source document into a Pascal program that may be compiled in the usual
-way with the on-line Pascal compiler (e.g.,
-.BR pc (1)).
-The output file is packed into lines of 72 characters or less, with
-the only concession to readability being the termination of lines at
-semicolons when this can be done conveniently.
+program converts a WEB literate programming source document into a
+Pascal program. In addition to being processed with a Pascal compiler,
+nowadays, the Pascal output is often translated to C; this is how the
+\*(TX family of programs are compiled in \*(TX Live.
 .PP
-The \*(WB language allows you to prepare a single document containing all
-the information that is needed both to produce a compilable Pascal
-program and to produce a well-formatted document describing the program
-in as much detail as the writer may desire.  The user of \*(WB must be
-familiar with both \*(TX and Pascal.  \*(WB also provides a relatively
-simple, although adequate, macro facility that permits a Pascal program
-to be written in small easily-understood modules.
+The WEB language allows you to prepare a single document containing all
+the information that is needed to produce both a compilable Pascal
+program and a well-formatted document describing the program in as much
+detail as the writer may desire. The user of WEB must be familiar with
+both \*(TX and Pascal. WEB also provides a relatively simple, although
+adequate, macro facility that permits a Pascal program to be written in
+small modules, written in an arbitrary order.
 .PP
-The command line should have one, two or three names on it.
-The first is taken as the \*(WB file (and
-.B .web
-is added if there is no
-extension).
-If there is second name, it is a change file (and
-.B .ch
-is added if there is
-no extension).  The change file overrides parts of the \*(WB file,
-as described in the \*(WB system documentation.
+The command line should have one, two or three filenames on it. The
+first is taken as the WEB file; ".web" is added if there is no
+extension.
 .PP
-If there is a third name, it is the Pascal output file (and
-.B .p
-is added if there is no extension). In this case you can specify an empty
-change file with '-' as the second argument.
-Otherwise the name of the Pascal file is formed by adding
-.B .p
-to the root of the \*(WB file name.
+If a second filename is given, it is taken as a change file, and ".ch"
+is added if there is no extension. The change file overrides parts of
+the WEB file, as described in the WEB system documentation. If no second
+filename, there is no change file.
 .PP
-An optional second output file is a string pool file,
-whose name is formed by adding
-.B .pool
-to the root of the Pascal file name.
+If a third filename is given, it is taken as the Pascal output file, and
+".p" is added if there is no extension. To specify an output file with
+no change, you can use "-" for the second argument, meaning an empty
+change file (not stdin). If no third filename is given, the name of the
+Pascal file is formed by adding ".p" to the root of the WEB file name.
+.PP
+The output file is packed into lines of 72 characters or
+less, with the only concession to readability being the termination of
+lines at semicolons when this can be done conveniently.
+.PP
+If the WEB program uses the built-in string handling feature
+(double-quoted strings), a second output file is a string pool file,
+whose name is always formed by adding ".pool" to the root of the Pascal
+file name.
+.PP
+The
+.B otangle
+variant supports a larger character range. It was written for the Omega
+project, the first \*(TX supporting Unicode, now provided as the
+.BR aleph (1)
+descendant program.
 .\"=====================================================================
 .SH "OPTIONS"
-This version of
-.B tangle
-understands the following options.  Note that some of these options
-may render the output unsuitable for processing by a Pascal compiler.
+See
+.BR tex (1)
+for details of command-line parsing.
+.PP
+Some of these options may render the output unsuitable for processing by
+a Pascal compiler.
 .TP
 .B --help
 Print help message and exit.
@@ -85,7 +77,7 @@ Print help message and exit.
 Compare only the first
 .I number
 characters of identifiers when checking for collisions.  The default
-is 32, the original
+is 32; the original
 .B tangle
 used 7.
 .TP
@@ -119,61 +111,63 @@ original
 .TP
 .B --version
 Print version information and exit.
+.PP
+.B otangle
+supports only the \fB--help\fP and \fB--version\fP options,
 .\"=====================================================================
 .SH ENVIRONMENT
-The environment variable WEBINPUTS is used to search for the input files,
-or the system default if WEBINPUTS is not set.  See
-.BR tex (1)
-for the details of the searching.
+The programs look for the input files using the environment variable
+WEBINPUTS. If it is not set, it uses the system default. See the
+Kpathsea manual at https://tug.org/kpathsea for the details of the
+searching.
 .\"=====================================================================
 .SH "SEE ALSO"
-.BR pc (1),
-.BR pxp (1)
-(for formatting
-.B tangle
-output when debugging),
-.BR tex (1).
+Donald E. Knuth,
+.IR "The WEB System of Structured Documentation" .
+.br
+https://mirrors.ctan.org/info/knuth-pdf/web/webman.pdf
 .PP
 Donald E. Knuth,
-.IR "The \*(WB System of Structured Documentation" .
-.PP
-Donald E. Knuth,
-.IR "Literate Programming" ,
-Computer Journal
-.BR 27 ,
-97\-111, 1984.
-.PP
-Wayne Sewell,
-.IR "Weaving a Program" ,
-Van Nostrand Reinhold, 1989, ISBN 0-442-31946-0.
+.IR Literate Programming,
+CSLI Lecture Notes, no. 27.
+.br
+https://www-cs-faculty.stanford.edu/~knuth/lp.html
 .PP
 Donald E. Knuth,
 .I "\*(OX: The Program"
 (Volume B of
-.IR "Computers and Typesetting" ),
-Addison-Wesley, 1986, ISBN 0-201-13437-3.
-.PP
+.IR "Computers & Typesetting" ).
+.br
 Donald E. Knuth,
 .I "\*(MF: The Program"
 (Volume D of
-.IR "Computers and Typesetting" ),
-Addison-Wesley, 1986, ISBN 0-201-13438-1.
+.IR "Computers & Typesetting" ).
+.br
+These latter two are by far the largest extant examples of WEB programs.
 .PP
-These last two are by far the largest extant examples of \*(WB
-programs.
-.PP
-There is an active Internet electronic mail discussion list on the
-subject of literate programming; send a subscription request to
-.I litprog-request@shsu.edu
-to join.
+Literate programming topic on CTAN: https://ctan.org/topic/litprog
+.br
+Package page on CTAN: https://ctan.org/pkg/tangle
+.br
+Section in the Web2c manual:
+https://tug.org/texinfohtml/web2c.html#tangle-invocation
+.br
+Typeset source code for all the original Stanford WEB programs:
+https://ctan.org/pkg/knuth-pdf
 .\"=====================================================================
 .SH AUTHORS
-\*(WB was designed by Donald E. Knuth, based on an earlier system
-called DOC (implemented by Ignacio Zabala).
+WEB was designed by Donald E. Knuth, based on an earlier system called
+DOC (implemented by Ignacio Zabala), inspired by considerable earlier
+work, notably Pierre-Arnoul de Marneffe's concept of ``holon
+programming'' (https://github.com/holon-scribe/holon-programming).
+.PP
+The updates for Omega were written by John Plaice and Yannis Haralambous.
+.PP
 The
 .B tangle
 and
 .B weave
-programs are themselves written in \*(WB. The system
-was originally ported to Unix at Stanford by Howard Trickey, and at
-Cornell by Pavel Curtis.
+programs are themselves written in WEB. The system was originally ported
+to Unix at Stanford by Howard Trickey, and at Cornell by Pavel Curtis.
+.PP
+Public discussion list and bug reports: https://lists.tug.org/tex-k

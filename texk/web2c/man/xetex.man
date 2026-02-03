@@ -1,10 +1,7 @@
-.TH XETEX 1 "10 July 2018" "Web2C @VERSION@"
+.TH XETEX 1 "1 February 2026" "Web2C @VERSION@"
 .\"=====================================================================
-.if t .ds TX \fRT\\h'-0.1667m'\\v'0.20v'E\\v'-0.20v'\\h'-0.125m'X\fP
+.if t .ds TX \fRT\\h'-0.10m'\\v'0.17v'E\\v'-0.17v'\\h'-0.06m'X\fP
 .if n .ds TX TeX
-.\" LX definition must follow TX so LX can use TX
-.if t .ds LX \fRL\\h'-0.36m'\\v'-0.15v'\s-2A\s0\\h'-0.15m'\\v'0.15v'\fP\*(TX
-.if n .ds LX LaTeX
 .\"=====================================================================
 .SH NAME
 xetex \- extended TeX with native support for Unicode, OpenType, system fonts
@@ -16,19 +13,18 @@ xetex \- extended TeX with native support for Unicode, OpenType, system fonts
 .\"=====================================================================
 .SH DESCRIPTION
 Xe\*(TX (\fBxetex\fR) is a \*(TX engine with native support for Unicode,
-OpenType, and system-installed fonts, using third-party libraries (such
-as ICU, HarfBuzz, and Freetype). It was developed by Jonathan Kew for SIL.
+OpenType, and system-installed fonts, using third-party libraries such
+as ICU, HarfBuzz, and FreeType. It outputs an extended dvi format (xdv),
+which by default is translated to pdf by
+.BR xdvipdfmx (1).
 .PP
 Xe\*(TX includes the e-\*(TX extensions and many extensions from pdf\*(TX,
-sometimes with different primitive names.
-.PP
-Xe\*(TX is now released as part of \*(TX Live <https://tug.org/texlive>.
+sometimes using different primitive names.
 .\"=====================================================================
 .SH OPTIONS
-Xe\*(TX's handling of its command-line arguments is similar to
-that of the other \*(TX programs in the Web2C implementation.
-Here we list only additions/deletions of command line options which are
-specific to Xe\*(TX; see etex(1) for common options. Additions:
+For the common \*(TX command-line options and handling, see 
+.BR tex (1).
+The following Xe\*(TX-specific options are also supported:
 .TP
 .B -no-pdf
 Generate Xe\*(TX's extended DVI (.xdv) output instead of pdf.
@@ -42,30 +38,68 @@ instead of xdvipdfmx to translate xdv to pdf.
 Set pdf media size to
 .IR string .
 .PP
-Removals:
+Options removed:
 .BR -draftmode ,
 .BR -enc ,
 .BR -ipc ,
 .BR -ipc-start ,
 .BR -translate-file .
 .\"=====================================================================
+.SH ENVIRONMENT
+See
+.BR tex (1)
+and
+.BR pdftex (1).
+.\"=====================================================================
+.SH FILES
+See
+.BR tex (1).
+Also:
+.TP
+.I $TEXMFMAIN/tex/generic/tex-ini-files/xetex.ini
+The driver file that builds the plain format file for Xe\*(TX,
+\fIxetex.fmt\fP, in \*(TX Live.
+.\"=====================================================================
+.SH BUGS
+See
+.BR tex (1).
+.\"=====================================================================
 .SH "SEE ALSO"
 .BR tex (1),
+.BR dvipdfmx (1),
 .BR etex (1),
-.BR latex (1).
+.BR latex (1),
+.BR luatex (1),
+.BR pdftex (1).
+.PP
+\fITUGboat\fP articles by Jonathan Kew:
+https://tug.org/TUGboat/listauthor.html#Kew,Jonathan
 .br
-Home page: <https://tug.org/xetex>
+Home page: https://tug.org/xetex
 .br
-CTAN page: <https://ctan.org/pkg/xetex>
+Xe\*(TX package page on CTAN: https://ctan.org/pkg/xetex
 .br
-Reference manual: <https://ctan.org/pkg/xetexref>
+Xe\*(TX reference manual: https://ctan.org/pkg/xetexref
+.br
+Web2c manual: https://tug.org/web2c
+.br
+Kpathsea manual: https://tug.org/kpathsea
+.br
+Sources for the \*(TX-world literate programs, as pdf, including Xe\*(TX:
+https://ctan.org/pkg/knuth-pdf
 .\"=====================================================================
 .SH AUTHORS
-Xe\*(TX is maintained by Jonathan Kew and others.
-.br
-Public discussion list: <http://lists.tug.org/xetex>
-.br
-Bug reports: <http://sourceforge.net/p/xetex/bugs/>
+Xe\*(TX was created and is maintained by Jonathan Kew and others. It is
+released as part of \*(TX Live. This manual page was written by Karl
+Berry. It is released to the public domain.
 .PP
-This manual page was written by Karl Berry. It is released to the public
-domain.
+Bug reports: https://sourceforge.net/p/xetex/bugs/
+.br
+Public discussion list for pdf\*(TX-specific issues:
+https://lists.tug.org/pdftex
+.br
+Public discussion list for \*(TX Live:
+https://lists.tug.org/tex-live
+.br
+Public discussion list for all things \*(TX:
+https://lists.tug.org/texhax

@@ -1,33 +1,32 @@
-.TH TTF2AFM 1 "8 March 2022" "Web2C @VERSION@"
-.PP 
+.TH TTF2AFM 1 "25 January 2026" "Web2C @VERSION@"
+.\"=====================================================================
+.if t .ds TX \fRT\\h'-0.10m'\\v'0.17v'E\\v'-0.17v'\\h'-0.06m'X\fP
+.if n .ds TX TeX
+.\"=====================================================================
 .SH "NAME" 
-ttf2afm \- utility to generate AFM files for TrueType fonts
-.PP 
+ttf2afm \- generate afm files for TrueType fonts for a given encoding
 .SH "SYNOPSIS" 
 .B ttf2afm
-.RI [ OPTIONS ]
-.I FONTFILE
-.PP 
+.RI [ options ]
+.I ttf-file
+.\"=====================================================================
 .SH "DESCRIPTION" 
-.PP 
 \fBttf2afm\fP is used to generate Adobe Font Metrics (AFM) files for
-TrueType (TTF) fonts to allow them to be used with TeX\&.
+TrueType (TTF) fonts to allow them to be used with \*(TX.
 .PP 
 \fBttf2afm\fP takes the name of a TrueType font file as a required
-argument\&.  It may also take one or more options from the list below
-(\fB-i\fP and \fB-u\fP are mutually exclusive)\&.
-.PP 
+argument.  It may also take one or more options from the list below;
+\fB-i\fP and \fB-u\fP are mutually exclusive.
 .SH "OPTIONS" 
-.PP 
 .IP "\fB-i\fP" 
 force printing glyph names in form
-`index'\fIdecnum\fP\&
+`index'\fIdecnum\fP
 .IP "\fB-u\fP" 
 force printing glyph names in form
-`uni'\fIhexnum\fP\&
+`uni'\fIhexnum\fP
 .IP "\fB-c\fP \fIname\fP" 
 write encoding tables to file
-\fIname\&.eMN\fP, where \fIM\fP is the platform
+\fIname.eMN\fP, where \fIM\fP is the platform
 ID and \fIN\fP is the encoding ID
 .IP "\fB-v\fP" 
 print program version
@@ -55,21 +54,22 @@ Roman (if platform is Macintosh)
 Symbol (if platform is Microsoft)
 .IP "1" 
 Unicode (if platform is Microsoft)
-.PP
+.\"=====================================================================
 .SH "SEE ALSO"
 afm2tfm(1), afm2pl(1).
-FontForge (https://fontforge.org).
+.PP
+FontForge (https://fontforge.org),
+.br
 LCDF TypeTools (https://lcdf.org).
-A closer look at TrueType fonts and pdfTeX, Han The Thanh
-(https://tug.org/TUGboat/tb30-1/tb94thanh.pdf).
-.PP 
-.SH "BUGS" 
-.PP 
-Send bug reports to <pdftex@tug\&.org> (public mailing list)\&.
-.PP 
+.PP
+A closer look at TrueType fonts and pdf\*(TX, H\[`a]n The Th\[`a]nh,
+https://tug.org/TUGboat/tb30-1/tb94thanh.pdf
+.\"=====================================================================
 .SH "AUTHOR" 
+\fBttf2afm\fP is part of pdf\*(TX and was written by H\[`a]n The Th\[`a]nh.
 .PP 
-\fBttf2afm\fP is part of pdfTeX and was written by Han The Thanh\&.
-.PP 
-This manual page was originally written by C\&.M\&. Connelly, for the
+This manual page was originally written by C.M. Connelly, for the
 Debian GNU/Linux system, and updated by Karl Berry and others.
+.PP
+Public discussion list for ttf2afm:
+https://lists.tug.org/pdftex
