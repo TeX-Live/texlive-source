@@ -86,6 +86,12 @@
 #endif
 
 #include <config.h>
+#ifdef KPATHSEA
+#include <kpathsea/config.h>
+#if defined(WIN32)
+#include <kpathsea/variable.h>
+#endif
+#endif
 #ifdef PTEXENC
 #include <ptexenc/ptexenc.h>
 #include <ptexenc/unicode.h>
@@ -109,6 +115,16 @@
 #define WRITE_BINARY "wb"
 #define WRITE_TEXT   "wt"
 #define StrCmp stricmp
+#endif
+#if defined(WIN32) && defined(KPATHSEA)
+#undef fopen
+#undef fprintf
+#undef fputs
+#undef putc
+#define fopen    fsyscp_fopen
+#define fprintf  win32_fprintf
+#define fputs    win32_fputs
+#define putc     win32_putc
 #endif
 
 #define PIXEL      int
@@ -478,6 +494,20 @@ int main(int argc, char **argv)
 
     if(argc <= 1)
         usage(0);
+
+#if defined(WIN32) && defined(KPATHSEA)
+    {
+        int ac;
+        char **av, *enc;
+
+        kpse_set_program_name(argv[0], "dvispc");
+        enc = kpse_var_value("command_line_encoding");
+        if (get_command_line_args_utf8(enc, &ac, &av)) {
+            argc = ac;
+            argv = av;
+        }
+    }
+#endif
 
     for(i = 1; i < argc && argv[i][0] == '-'; i++){
       for(len = 1; argv[i][len]; len++){

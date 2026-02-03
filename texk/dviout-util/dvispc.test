@@ -1,6 +1,6 @@
 #! /bin/sh -vx
 # $Id$
-# Copyright 2018-2021 Japanese TeX Development Community <issue@texjp.org>
+# Copyright 2018-2026 Japanese TeX Development Community <issue@texjp.org>
 # You may freely use, modify and/or distribute this file.
 
 BinDir=${BinDir:-.}
@@ -17,6 +17,9 @@ CMP="cmp"
 # (useful for tests on win32 binaries run on MSYS shell)
 $DIFF --strip-trailing-cr $0 $0 \
   && DIFF="diff --strip-trailing-cr" || echo
+
+TEXMFCNF=$srcdir/../kpathsea
+export TEXMFCNF
 
 ## show banner
 $_dvispc
@@ -180,6 +183,16 @@ $CMP $testdir/jisx0208.dvi jisx0208.da.dvi || exit 1
 $_dvispc -a -Js $testdir/jisx0208.dvi jisx0208-sjp.da.txt || exit 2
 $_dvispc -a -Je $testdir/jisx0208.dvi jisx0208-ejp.da.txt || exit 2
 
+if [ -x ../ptexenc/ptekf ]; then
+  cp $testdir/jisx0208.txt ./jisx0208.txt || exit 40
+  ../ptexenc/ptekf -Us ./jisx0208.txt || exit 41
+  mv jisx0208.txt.out jisx0208-s.txt || exit 42
+  ../ptexenc/ptekf -Ue ./jisx0208.txt || exit 41
+  mv jisx0208.txt.out jisx0208-e.txt || exit 42
+  $DIFF jisx0208-s.txt jisx0208-sjp.da.txt || exit 2
+  $DIFF jisx0208-e.txt jisx0208-ejp.da.txt || exit 2
+fi
+
 ## EXE2TEXT: printing ASCII/Japanese characters
 $_dvispc -a -Ju $testdir/putj.dump.dvi putj.da.txt || exit 2
 $DIFF $testdir/putj.txt putj.da.txt || exit 1
@@ -218,6 +231,43 @@ $DIFF $testdir/fntdef3-dtl.txt xfntdef3-dtl.txt || exit 1
 $_dvispc -x xfntdef3-dtl.txt xfntdef3-dtl.dvi || exit 2
 $CMP $testdir/fntdef3.dvi xfntdef3-dtl.dvi || exit 1
 
+## Unicode filename
+if [ "$COMSPEC" != "" ] || [ "$ExeExt" = ".exe" ]; then
+  echo "*** We guess OS is Windows."
+  MyOS=Windows
+  command_line_encoding=utf8
+  export command_line_encoding
+else
+  echo "*** We guess OS is not Windows."
+  MyOS=nonWindows
+fi
+cp $testdir/put.dump.dvi ./putΔДदダ打다𝕯🎉.dump.dvi || exit 50
+$_dvispc -a -JU ./putΔДदダ打다𝕯🎉.dump.dvi putΔДदダ打다𝕯🎉.da.txt || exit 2
+$DIFF $testdir/put.txt putΔДदダ打다𝕯🎉.da.txt || exit 1
+$_dvispc -x putΔДदダ打다𝕯🎉.da.txt putΔДदダ打다𝕯🎉.da.dvi || exit 2
+$CMP putΔДदダ打다𝕯🎉.dump.dvi putΔДदダ打다𝕯🎉.da.dvi || exit 1
+
+## EXE2SPECIAL, Japanese encoding (EUC-JP, Shift_JIS or UTF-8)
+
+### ptex, ambiguous encoding: EUC-JP or Shift_JIS
+$_dvispc -s $testdir/spc000_es.dvi x0spc000_es.spc && \
+  $DIFF $testdir/spc000_es.spc x0spc000_es.spc && echo || rc=1
+
+$_dvispc -s $testdir/spc000_es.dvi > x1spc000_es.spc && \
+  $DIFF $testdir/spc000_es.spc x1spc000_es.spc && echo || rc=2
+
+# output STDOUT to terminal
+$_dvispc -s $testdir/spc000_es.dvi
+
+### (u)ptex, ambiguous encoding: UTF-8 or EUC-JP
+$_dvispc -s $testdir/spc000_ue.dvi x0spc000_ue.spc && \
+  $DIFF $testdir/spc000_ue.spc x0spc000_ue.spc && echo || rc=1
+
+$_dvispc -s $testdir/spc000_ue.dvi > x1spc000_ue.spc && \
+  $DIFF $testdir/spc000_ue.spc x1spc000_ue.spc && echo || rc=2
+
+# output STDOUT to terminal
+$_dvispc -s $testdir/spc000_ue.dvi
 
 exit 0
 

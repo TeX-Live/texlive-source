@@ -1,3 +1,12 @@
+2026-02-03  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* dvispc.c:
+	Allow Unicode characters in file names and
+	STDOUT/STDERR output to terminal (Windows only).
+	* dvispc.test, tests/spc000_{es,ue}.{tex,dvi,spc},
+	Makefile.am: Add new tests.
+	* COPYING: Copyright year.
+
 2024-04-27  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* dvispc.c: Support upTeX new encoding
