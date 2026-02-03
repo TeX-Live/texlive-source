@@ -1,3 +1,8 @@
+2026-02-03  Andreas Scherer  <https://ascherer.github.io>
+
+	* ctwill.man,
+	* twill.man: Minor amendments re the CTWILL user manual.
+
 2026-02-03  Karl Berry  <karl@freefriends.org>
 
 	*.man: overhaul most, with the exception of cweb and tie. Globally:

@@ -1,4 +1,4 @@
-.TH TWILL 1 "2 February 2026" "Web2C @VERSION@"
+.TH TWILL 1 "3 February 2026" "Web2C @VERSION@"
 .\"=====================================================================
 .if n .ds MF Metafont
 .if t .ds MF Metafont
@@ -85,7 +85,11 @@ Software\-Concepts and Tools, 15(1):2-11, 1994.
 .br
 https://arxiv.org/abs/cs/9401102
 .PP
-CTWILL source program, section 287:
+CTWILL program source, section 287:
+.br
 https://mirror.ctan.org/info/knuth-pdf/cweb/ctwill.pdf
+.br
+(Not all features described there are available in the older
+\fBtwill\fP system, but you will get the gist.)
 .PP
 Public discussion list and bug reports: https://lists.tug.org/tex-k
