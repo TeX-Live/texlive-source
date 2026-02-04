@@ -112,6 +112,7 @@ case "$arch" in
       export CC="gcc -m32"
       export CXX="g++ -m32"
       crle -c /var/ld/ld.config -l /opt/csw/lib:/lib:/usr/lib 
+      ln -s /opt/csw/lib/i386/libstdc++.so.6 /opt/csw/lib/i386/libstdc++.so
     else
       export CC="gcc -m64"
       export CXX="g++ -m64"
