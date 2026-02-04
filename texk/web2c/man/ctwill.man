@@ -251,10 +251,10 @@ code listings of \f[B]common.w\f[R], \f[B]ctangle.w\f[R], and
 \f[B]cweave.w\f[R]).
 .IP \(bu 2
 CTWILL program source, section 287:
-.PD 0
-.P
-.PD
+.RS 2
+.PP
 https://mirror.ctan.org/info/knuth-pdf/cweb/ctwill.pdf
+.RE
 .IP \(bu 2
 Digital Typography: by D.\ E.\ Knuth (\f[I]CSLI\f[R], 1999).
 .IP \(bu 2
