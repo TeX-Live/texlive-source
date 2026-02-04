@@ -1,6 +1,6 @@
 #!/usr/bin/env texlua
 
-local show_pdf_tags_version = "1.3"
+local show_pdf_tags_version = "1.4"
 
 kpse.set_program_name'lualatex'
 
@@ -12,6 +12,7 @@ end
 local out_format = "tree"
 local follow_rolemap = false
 local hide_w3c = false
+local show_xmp = false
 
 local pdfe = pdfe or require'pdfe'
 local process_stream = require'show-pdf-tags_process_stream'
@@ -317,6 +318,7 @@ local function open(filename)
   local catalog = pdfe.getcatalog(document)
   local markinfo = catalog and catalog.MarkInfo
   local tagged = markinfo and markinfo.Marked
+  local xmp = catalog and catalog.Metadata
 
   if not tagged then
    io.stderr:write("Document catalog has no markinfo.Marked entry. It might not be tagged.\n")
@@ -332,6 +334,8 @@ local function open(filename)
   ctx.id_map = id_map
   ctx.ref_entries = {}
 
+  ctx.xmp = xmp
+  
   local structroot = catalog.StructTreeRoot
   if not structroot then
     return {}, ctx
@@ -417,7 +421,7 @@ local function format_subtype_xml(subtype)
     return string.format('<%s xmlns="%s"', subtype.subtype,
                   (hide_w3c and subtype.namespace:gsub('http://www.w3.org', 'http://-www.w3.org')) or subtype.namespace)
   else
-    return "<" .. subtype.subtype
+    return "<" .. subtype.subtype:gsub(":","_x3A_")
   end
 end
 
@@ -679,7 +683,7 @@ local function print_tree_xml(tree, ctx)
         if follow_rolemap and mapped then
 	  print(indent .. "</" .. mapped.subtype ..">")
 	else
-	  print(indent .. "</" .. subtype.subtype ..">")
+	  print(indent .. "</" .. subtype.subtype:gsub(":","_x3A_") ..">")
 	end
         elseif #lines > 0 then
           for i=1, #lines-1 do
@@ -689,7 +693,7 @@ local function print_tree_xml(tree, ctx)
           if follow_rolemap and mapped then
             print(indent .. "</" .. mapped.subtype ..">")
 	  else
-            print(indent .. "</" .. subtype.subtype ..">")
+            print(indent .. "</" .. subtype.subtype:gsub(":","_x3A_") ..">")
 	  end
         end
       end
@@ -697,7 +701,11 @@ local function print_tree_xml(tree, ctx)
   end
   print ("<PDF>\n <StructTreeRoot>")
   recurse(tree, '  ', '', '', ' ')
-  print (" </StructTreeRoot>\n</PDF>")
+  print (" </StructTreeRoot>\n")
+  if show_xmp then
+    print(" <XMP>\n" ..pdfe.readwholestream(ctx.xmp,true):gsub("\n[ \n]*\n","\n") .. "\n </XMP>\n")
+  end
+  print ("</PDF>")
   return
 end
 
@@ -712,6 +720,7 @@ Options
   --xml            show as XML
   --table          show Lua table structure
   --map            Follow role mapping (xml printer)
+  --xmp            include XMP XML (xml printer)
   --w3c-           Add - to w3c namespaces to force browser tree display
 
 ]]
@@ -728,6 +737,8 @@ while argi <= #arg and arg[argi]:match("^%-") do
     follow_rolemap=true
   elseif arg[argi] == "--w3c-" then
     hide_w3c=true
+  elseif arg[argi] == "--xmp" then
+    show_xmp=true
   elseif arg[argi] == "--help" or arg[argi] == "-h" then
     io.stderr:write(string.format(helpstr, arg[0]))
     return
