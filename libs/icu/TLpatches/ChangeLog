@@ -1,3 +1,9 @@
+2026-02-04  Karl Berry  <karl@freefriends.org>
+
+	* patch-13-STATIC_PREFIX: also change source/icudefs.mk.in,
+	attempting to fix report from Ken Brown:
+	https://tug.org/pipermail/tlbuild/2026q1/005905.html
+
 2026-01-21  Karl Berry  <karl@freefriends.org>
 
 	* Update for icu-78.2.
