@@ -1,6 +1,6 @@
 #!/usr/bin/env texlua
 
-local show_pdf_tags_version = "1.4"
+local show_pdf_tags_version = "1.5"
 
 kpse.set_program_name'lualatex'
 
@@ -701,9 +701,9 @@ local function print_tree_xml(tree, ctx)
   end
   print ("<PDF>\n <StructTreeRoot>")
   recurse(tree, '  ', '', '', ' ')
-  print (" </StructTreeRoot>\n")
+  print (" </StructTreeRoot>")
   if show_xmp then
-    print(" <XMP>\n" ..pdfe.readwholestream(ctx.xmp,true):gsub("\n[ \n]*\n","\n") .. "\n </XMP>\n")
+    print(" <XMP>\n" ..pdfe.readwholestream(ctx.xmp,true):gsub("\n[ \n]*\n","\n") .. "\n </XMP>")
   end
   print ("</PDF>")
   return
