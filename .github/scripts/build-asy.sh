@@ -1,4 +1,6 @@
 #!/bin/sh -l
+# $Id$
+# Build script for asymptote on github. Norbert Preining. Public domain.
 
 set -e
 
@@ -75,7 +77,7 @@ touch ./configure ./Makefile.in
 
 cd utils/asymptote
 ./configure --prefix=/tmp/asyinst --enable-static --enable-texlive-build \
-	--disable-gsl --disable-fftw --disable-lsp --disable-curl
+	--disable-gsl --disable-fftw --disable-curl
 	LDFLAGS="-static-libgcc -static-libstdc++"
 $TL_MAKE SIlENT_MAKE= -j2
 
