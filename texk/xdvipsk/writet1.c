@@ -414,12 +414,12 @@ unsigned int *get_glname_tounicode(const char *glyph_name, const char *font_name
     {
         strcat(full_glyph_name, prefix);
         strncat(full_glyph_name, font_name, TEX_NAME_LEN);
-        full_glyph_name[TEX_NAME_LEN + 4] = 0; /* strlen("pfb:") */
+        full_glyph_name[TEX_NAME_LEN + 4] = '\0'; /* strlen("pfb:") */
         strcat(full_glyph_name, "/");
         strlwr(full_glyph_name);
     }
     strncat(full_glyph_name, glyph_name, GLYPH_NAME_LEN);
-    full_glyph_name[FULL_GLYPH_NAME_LEN] = 0;
+    full_glyph_name[FULL_GLYPH_NAME_LEN] = '\0';
 
     lua_getglobal(L, "get_glname_tounicode");
     lua_pushstring(L, full_glyph_name);
@@ -472,12 +472,12 @@ char *get_glname_substitute(const char *glyph_name, const char *font_name, const
     {
         strcat(full_glyph_name, prefix);
         strncat(full_glyph_name, font_name, TEX_NAME_LEN);
-        full_glyph_name[TEX_NAME_LEN + 4] = 0; /* strlen("pfb:") */
+        full_glyph_name[TEX_NAME_LEN + 4] = '\0'; /* strlen("pfb:") */
         strcat(full_glyph_name, "/");
         strlwr(full_glyph_name);
     }
     strncat(full_glyph_name, glyph_name, GLYPH_NAME_LEN);
-    full_glyph_name[FULL_GLYPH_NAME_LEN] = 0;
+    full_glyph_name[FULL_GLYPH_NAME_LEN] = '\0';
 
     lua_getglobal(L, "get_glname_subst");
     lua_pushstring(L, full_glyph_name);
@@ -1492,6 +1492,8 @@ static void t1_scan_keys(boolean encoding_only)
     char *pfb_full_name = NULL;
     int charcode;
     const char *glyph_name = NULL;
+    char glyph_name_buf[GLYPH_NAME_LEN + 1];
+    char *glyph_name_ptr;
     charusetype_ref *cu_ref = NULL;
     charusetype_entry *cu_head = NULL;
     charusetype_entry *cu_entry;
@@ -1507,7 +1509,6 @@ static void t1_scan_keys(boolean encoding_only)
     FT_Error ft_error = FT_Err_Ok;
     FT_Face ft_face = NULL;
     FT_Long gid;
-    char glyph_name_buf[GLYPH_NAME_LEN + 1];
 
     if (t1_line_array && (strstr(t1_line_array, FONTINFO_KEY) == t1_line_array)) // "/FontInfo 9 dict dup begin"
     {
@@ -1588,7 +1589,18 @@ static void t1_scan_keys(boolean encoding_only)
                                 {
                                     glyph_name = enc[charcode];
                                     if (glyph_name && (IS_USED_CHAR(usedchars, charcode)))
+                                    {
+                                        /* Acrobat Distiller needs base glyphs of dot sufficed variants included as well */
+                                        strncpy(glyph_name_buf, glyph_name, GLYPH_NAME_LEN);
+                                        glyph_name_buf[GLYPH_NAME_LEN] = '\0';
+                                        glyph_name_ptr = strchr(glyph_name_buf, '.');
+                                        if (glyph_name_ptr)
+                                        {
+                                            *glyph_name_ptr = '\0';
+                                            append_glyph_to_g2u_map_buf(ps_name, pfb_name, glyph_name_buf, &empty_g2u, &g2u_buf_ptr, &g2u_buf_len);
+                                        }
                                         append_glyph_to_g2u_map_buf(ps_name, pfb_name, glyph_name, &empty_g2u, &g2u_buf_ptr, &g2u_buf_len);
+                                    }
                                 }
                             cu_entry = cu_entry->next;
                         }
