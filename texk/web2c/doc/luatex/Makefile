@@ -15,3 +15,4 @@ install:
 	$(INSTALL_DATA) -r graphics/ $(dest)/
 	$(INSTALL_DATA) $(lua_source_dir)/ChangeLog $(dest)/
 	$(INSTALL_DATA) $(lua_source_dir)/NEWS $(dest)/
+	cd $(dest) && svn status && pwd
