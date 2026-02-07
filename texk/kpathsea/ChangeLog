@@ -1,3 +1,7 @@
+2026-02-07  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+        * texmf.cnf (command_line_encoding): Update comment.
+
 2026-02-06  Karl Berry  <karl@freefriends.org>
 
 	* texmf.cnf (TEXMFVAR, TEXMFCONFIG, doc): 2026.

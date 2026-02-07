@@ -66,9 +66,22 @@
 #endif
 
 #include <config.h>
+#ifdef KPATHSEA
+#include <kpathsea/config.h>
+#if defined(WIN32)
+#include <kpathsea/variable.h>
+#endif
+#endif
 
 #include "dd.h"
 #include "common.h"
+
+#if defined(WIN32) && defined(KPATHSEA)
+#undef fopen
+#undef fprintf
+#define fopen    fsyscp_fopen
+#define fprintf  win32_fprintf
+#endif
 
 #define ID          2
 #define ID_PTEX     3
@@ -289,6 +302,19 @@ int main(int argc, char **argv)
 
     if (argc < 2)
         usage();
+#if defined(WIN32) && defined(KPATHSEA)
+    {
+        int ac;
+        char **av, *enc;
+
+        kpse_set_program_name(argv[0], "chkdvifont");
+        enc = kpse_var_value("command_line_encoding");
+        if (get_command_line_args_utf8(enc, &ac, &av)) {
+            argc = ac;
+            argv = av;
+        }
+    }
+#endif
     for (i = 1; i < argc - 1; i++) {
         if (argv[i][0] != '-')
             usage();
@@ -497,7 +523,11 @@ void show_dvi_data(DVIFILE_INFO *dvi)
     int len, x, y;
     long s_width, s_hight;
 
+#if defined(WIN32) && defined(KPATHSEA)
+    fprintf(stdout, "dvi file name\t\t\t= %s\n", dvi->file_name);
+#else
     printf("dvi file name\t\t\t= %s\n", dvi->file_name);
+#endif
     fseek(dvi->file_ptr, 14L, SEEK_SET),
         len = (uchar)read_byte(dvi->file_ptr);
     printf("comment\t\t\t\t=%s\n", read_str(dvi->file_ptr, len));

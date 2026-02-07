@@ -269,5 +269,15 @@ $_dvispc -s $testdir/spc000_ue.dvi > x1spc000_ue.spc && \
 # output STDOUT to terminal
 $_dvispc -s $testdir/spc000_ue.dvi
 
+### (u)ptex, ambiguous encoding: UTF-8 or Shift_JIS
+$_dvispc -s $testdir/spc000_us.dvi x0spc000_us.spc && \
+  $DIFF $testdir/spc000_us.spc x0spc000_us.spc && echo || rc=1
+
+$_dvispc -s $testdir/spc000_us.dvi > x1spc000_us.spc && \
+  $DIFF $testdir/spc000_us.spc x1spc000_us.spc && echo || rc=2
+
+# output STDOUT to terminal
+$_dvispc -s $testdir/spc000_us.dvi
+
 exit 0
 

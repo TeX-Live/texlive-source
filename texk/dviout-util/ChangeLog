@@ -1,3 +1,11 @@
+2026-02-07  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* chkdvifont.c, dd.h:
+	Allow Unicode characters in file names and
+	STDOUT/STDERR output to terminal (Windows only).
+	* dvispc.test, tests/spc000_{es,ue,es}.{tex,dvi,spc},
+	chkdvifont.test, Makefile.am: Add new tests.
+
 2026-02-03  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* dvispc.c:

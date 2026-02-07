@@ -53,6 +53,7 @@ EXTRA_DIST += tests/oldindep.spc \
 	tests/put.dump.dvi tests/put.txt \
 	tests/spc000_es.tex tests/spc000_es.dvi tests/spc000_es.spc \
 	tests/spc000_ue.tex tests/spc000_ue.dvi tests/spc000_ue.spc \
+	tests/spc000_us.tex tests/spc000_us.dvi tests/spc000_us.spc \
 	tests/fntdef0.tex \
 	tests/fntdef0.dvi tests/fntdef0.txt \
 	tests/fntdef1.dvi tests/fntdef1.txt \
