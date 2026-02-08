@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 77314 2026-01-09 16:20:28Z karl $
+# $Id: tlmgr.pl 77655 2026-02-07 15:38:21Z karl $
 # Copyright 2008-2025 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
@@ -8,8 +8,8 @@
 
 use strict; use warnings;
 
-my $svnrev = '$Revision: 77314 $';
-my $datrev = '$Date: 2026-01-09 17:20:28 +0100 (Fri, 09 Jan 2026) $';
+my $svnrev = '$Revision: 77655 $';
+my $datrev = '$Date: 2026-02-07 16:38:21 +0100 (Sat, 07 Feb 2026) $';
 my $tlmgrrevision;
 my $tlmgrversion;
 my $prg;
@@ -7602,7 +7602,7 @@ do not include the version of the local installation
     #
     # if the release of the installed TL is less than the release
     # of the main remote repository, then
-    # warn that one needs to call update-tlmgr-latest.sh --update
+    # warn that one needs to call update-tlmgr-latest.sh -- --upgrade
     # We do this only if there is no extension like 2100-gpg etc
     if ($is_main && $TeXLive::TLConfig::ReleaseYear < $texlive_release_year) {
       if (length($texlive_release) > 4) {
@@ -7612,7 +7612,7 @@ do not include the version of the local installation
         return (undef, "Local TeX Live ($TeXLive::TLConfig::ReleaseYear)"
                 . " is older than remote repository ($texlive_release_year).\n"
                 . "Cross release updates are only supported with\n"
-                . "  update-tlmgr-latest(.sh/.exe) --update\n"
+                . "  update-tlmgr-latest(.sh/.exe) -- --upgrade\n"
                 . "See https://tug.org/texlive/upgrade.html for details.")
       }
     }
@@ -10636,7 +10636,7 @@ This script and its documentation were written for the TeX Live
 distribution (L<https://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 77314 2026-01-09 16:20:28Z karl $
+$Id: tlmgr.pl 77655 2026-02-07 15:38:21Z karl $
 =cut
 
 # test HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html
