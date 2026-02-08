@@ -1,3 +1,11 @@
+2026-02-08  Karl Berry  <karl@freefriends.org>
+
+	* writepng.c (writepng): if envvar TEXMF_DEBUG_PNG_COPY
+	is set to 1, report why PNG copying did not happen. Report/patch
+	from Norbert. Thread:
+	https://tug.org/pipermail/tex-live/2026-February/052076.html
+	* NEWS: mention this.
+
 2026-01-18  Karl Berry  <karl@freefriends.org>
 
 	* pdftex.web (print_ignored_err): send "ignored error"
