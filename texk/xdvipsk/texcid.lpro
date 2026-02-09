@@ -1,9 +1,14 @@
+% texcid.lpro - public domain.
+% 
+% The following defines procedures assumed and used by program "xdvips"
+% and must be downloaded or sent as a header file for all TeX jobs.
+% Originated by Arunas Povilaitis, VTEX, 2015.
+% 
 % PostScript prolog for using resident CID fonts with Identity cmap.
-
+%
 % The calling sequence defining font foo to be resident CID font Bar is
 %       /foo {specials} atsize /Bar ct_cid
 %where atsize is the desired font size, after magnification, in pixels.
-
 %
 TeXDict	begin 
 %
