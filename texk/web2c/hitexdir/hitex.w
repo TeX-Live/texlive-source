@@ -567,10 +567,9 @@ in production versions of \TeX.
   length of \TeX's own strings, which is currently about 23000*/
 @!save_size=100000, /*space for saving values outside of current group; must be
   at most |max_halfword|*/
-@!trie_size=1000000, /*space for hyphenation patterns; should be larger for
+@!trie_size=1500000, /*space for hyphenation patterns; should be larger for
   \.{INITEX} than it is in production versions of \TeX*/
 @!trie_op_size=35111, /*space for ``opcodes'' in the hyphenation patterns*/
-@!dvi_buf_size=16384, /*size of the output buffer; must be a multiple of 8*/
 @!file_name_size=1024, /*file names shouldn't be longer than this*/
 @!xchg_buffer_size=64, /*must be at least 64*/
    /*size of |eight_bits| buffer for exchange with system routines*/
@@ -615,7 +614,6 @@ or something similar. (We can't do that until |max_halfword| has been defined.)
 bad=0;
 if ((half_error_line < 30)||(half_error_line > error_line-15)) bad=1;
 if (max_print_line < 60) bad=2;
-if (dvi_buf_size%8!=0) bad=3;
 if (mem_bot+1100 > mem_top) bad=4;
 if (hash_prime > hash_size) bad=5;
 if (max_in_open >= 128) bad=6;
@@ -16847,7 +16845,7 @@ the language is used like a character to find the right entry point into
 the compressed table.
 
 @d max_language 255 /*the largest hyphenation language*/
-@d max_pattern_char 0x3000 /*the largest character in a pattern*/
+@d max_pattern_char 0xFFFF /*the largest character in a pattern*/
 @d biggest_char 0x10FFFF /*the largest UTF character*/
 
 @<Set initial values of key variables@>=
@@ -18104,11 +18102,13 @@ pool, even if they are used only by \.{INITEX}.)
 
 @<Enter all of the patterns into a linked trie...@>=
 k=0;hyf[0]=0;digit_sensed=false;
+pattern_warning_given=false;
 loop@+{@+get_x_token();
   switch (cur_cmd) {
   case letter: case other_char: @<Append a new letter or a hyphen level@>@;@+break;
   case spacer: case right_brace: {@+if (k > 0)
       @<Insert a new pattern into the linked trie@>;
+    skip_pattern=false;  
     if (cur_cmd==right_brace) goto done;
     k=0;hyf[0]=0;digit_sensed=false;
     } @+break;
@@ -18120,7 +18120,19 @@ loop@+{@+get_x_token();
   }
 done:
 
+@ Moving from 8-bit characters to UTF codepoints enlarges the range of |cur_chr|.
+The new upper bound of |0x10FFFF| would imply a huge waste of memory in
+the compacted tree representation. Therefor |max_pattern_char| is a
+smaller upper bound. Patterns using codepoints above this bound will
+be ignored. For each call of the \.{\\patterns} primitive only a
+single warning is given.
+
+@<Global...@>=
+static bool pattern_warning_given=false;
+static bool skip_pattern=false;
+
 @ @<Append a new letter or a hyphen level@>=
+if (skip_pattern) break;
 if (digit_sensed||(cur_chr < '0')||(cur_chr > '9'))
   {@+if (cur_chr=='.') cur_chr=0; /*edge-of-word delimiter*/
   else{@+cur_chr=lc_code(cur_chr);
@@ -18131,7 +18143,15 @@ if (digit_sensed||(cur_chr < '0')||(cur_chr > '9'))
       }
     }
   if (cur_chr > max_pattern_char-1)
-    overflow("character code in pattern",max_pattern_char-1);
+  { if (!pattern_warning_given)
+    { print_err("Character code "); print_int(cur_chr);
+      print(" exceeds "); print_int(max_pattern_char-1);
+      pattern_warning_given=true;
+    }
+    skip_pattern=true;
+    k=0;
+    break; 
+  }
   if (cur_chr > max_hyph_char) max_hyph_char=cur_chr;
   if (k < max_hyph_length)
   {@+incr(k);hc[k]=cur_chr;hyf[k]=0;digit_sensed=false;
@@ -23168,6 +23188,8 @@ print_nl("Hyphenation trie of length ");print_int(trie_max);
 print(" has ");print_int(trie_op_ptr);print(" op");
 if (trie_op_ptr!=1) print_char('s');
 print(" out of ");print_int(trie_op_size);
+print_nl("Largest codepoint in hyphenation patterns ");print_int(max_hyph_char);
+print(" is lower than "); print_int(max_pattern_char);
 for (k=max_language; k>=0; k--) if (trie_used[k] > min_quarterword)
   {@+print_nl("  ");print_int(qo(trie_used[k]));
   print(" for language ");print_int(k);
