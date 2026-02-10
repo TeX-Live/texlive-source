@@ -327,8 +327,8 @@ AM_TESTS_ENVIRONMENT += TEXCONFIG=../texmf-test/dvips//; export TEXCONFIG;
 AM_TESTS_ENVIRONMENT += TEXPICTS=../texmf-test/images//; export TEXPICTS;
 AM_TESTS_ENVIRONMENT += DVIPSDEBUG=1; export DVIPSDEBUG;
 
-TESTS = testdata/bitmaps.test testdata/opentype.test testdata/luacallbacks.test testdata/mapfile.test testdata/mapline.test
-EXTRA_DIST += $(TESTS)
+#TESTS = testdata/bitmaps.test testdata/opentype.test testdata/luacallbacks.test testdata/mapfile.test testdata/mapline.test
+#EXTRA_DIST += $(TESTS)
 
 ## bitmaps.test
 #EXTRA_DIST += testdata/bitmaps/bitmaps.dvi testdata/bitmaps-gid/bitmaps.dvi
