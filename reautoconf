@@ -1,4 +1,4 @@
-#! /bin/sh
+#! /bin/sh -x
 # $Id$
 # This "reautoconf" script at the root of the TeX Live source tree 
 # runs autoreconf (from PATH) in all relevant TL directories.
