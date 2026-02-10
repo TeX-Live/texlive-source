@@ -1109,7 +1109,7 @@ the result is |true| if and only if the strings are equal.
 Empirical tests indicate that |str_eq_buf| is used in such a way that
 it tends to return |true| about 80 percent of the time.
 
-@p static bool str_eq_buf(str_number @!s, char *buf)
+@p static bool str_eq_buf(str_number @!s, unsigned char *buf)
    /*test equality of strings*/
 {@+ /*loop exit*/
 pool_pointer j; /*running index*/
@@ -5645,7 +5645,7 @@ int @!k; /*index in |buffer| array*/
 @<Compute the hash code |h|@>;
 p=h+hash_base; /*we start searching here; note that |0 <= h < hash_prime|*/
 loop@+{@+if (text(p) > 0) if (length(text(p))==l)
-    if (str_eq_buf(text(p), (char*)buffer+j)) goto found;
+    if (str_eq_buf(text(p), buffer+j)) goto found;
   if (next(p)==0)
     {@+if (no_new_control_sequence)
       p=undefined_control_sequence;
@@ -35100,7 +35100,7 @@ file.
   x_font[g]->subset=NULL;
   l=strlen(path);
   for (i=1; i<=font_ptr; i++)
-    if (i!=g && length(font_area[i])==l && str_eq_buf(font_area[i],path))
+    if (i!=g && length(font_area[i])==l && str_eq_buf(font_area[i],(unsigned char *)path))
     { font_area[g]=font_area[i];
       if (x_font[i]!=NULL)
       { x_font[g]->blob=x_font[i]->blob;
