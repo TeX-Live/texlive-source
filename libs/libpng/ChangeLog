@@ -1,3 +1,8 @@
+2026-02-10 Akira Kakuto  <kakuto@jcom.zaq.ne.jp>
+
+	Import libpng-1.6.55.
+	* version.ac: Adjust.
+
 2026-01-13 Akira Kakuto  <kakuto@jcom.zaq.ne.jp>
 
 	Import libpng-1.6.54.
