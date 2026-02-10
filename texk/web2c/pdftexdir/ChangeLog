@@ -4,6 +4,7 @@
 	is set to 1, report why PNG copying did not happen. Report/patch
 	from Norbert. Thread:
 	https://tug.org/pipermail/tex-live/2026-February/052076.html
+	#include <stdlib.h> and <string.h> to support this.
 	* NEWS: mention this.
 
 2026-01-18  Karl Berry  <karl@freefriends.org>

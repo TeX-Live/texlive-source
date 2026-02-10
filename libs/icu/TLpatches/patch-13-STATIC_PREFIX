@@ -5,8 +5,6 @@
 @@ -47,5 +47,5 @@
  
  # Static library prefix and file extension
--STATIC_PREFIX = s
-+STATIC_PREFIX =
  LIBSICU = lib$(STATIC_PREFIX)$(ICUPREFIX)
  A = a
 --- source/icudefs.mk.in	(revision 77591)
