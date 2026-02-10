@@ -1,3 +1,16 @@
+2026-02-09  Karl Berry  <karl@freefriends.org>
+
+	* thirdparty/libjpeg/ac: rename to ac.no, else the directory
+	is found by source/reautoconf and reautoconf-ed, which fails.
+	* thirdparty/libtiff/ac: likewise.
+	
+	* squeeze: svn:ignore autom4te.cache.
+
+2026-02-09  Karl Berry  <karl@freefriends.org>
+
+	* ac/withenable.ac (xdvipsk): remove "disable" option,
+	so that the program will be built by default.
+
 2026-01-22  Karl Berry  <karl@freefriends.org>
 
 	* configure.ac: exit if disabled in configure,

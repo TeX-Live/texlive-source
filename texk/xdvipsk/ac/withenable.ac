@@ -1,7 +1,7 @@
 ## texk/xdvipsk/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory texk/xdvipsk/
 dnl
-dnl Copyright (C) 2009 Peter Breitenlohner <tex-live@tug.org>
+dnl Copyright 2026 Karl Berry <tex-live@tug.org>
 dnl You may freely use, modify and/or distribute this file.
 dnl
 ## configure options and TL libraries required for xdvipsk
-KPSE_ENABLE_PROG([xdvipsk], [kpathsea zlib libpng freetype2 lua53], disable)
+KPSE_ENABLE_PROG([xdvipsk], [kpathsea zlib libpng freetype2 lua53])
