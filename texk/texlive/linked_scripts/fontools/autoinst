@@ -4,7 +4,7 @@
 
 ----------------------------------------------------------------------------
 
-    Copyright (C) 2005-2025 Marc Penninga.
+    Copyright (C) 2005-2026 Marc Penninga.
 
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU General Public License
@@ -41,7 +41,7 @@ use Getopt::Long ();
 use Pod::Usage ();
 use POSIX ();
 
-my $VERSION = '20250909';
+my $VERSION = '20260210';
 
 my ($d, $m, $y) = (localtime time)[3 .. 5];
 my $TODAY = sprintf "%04d/%02d/%02d", $y + 1900, $m + 1, $d;
@@ -276,18 +276,6 @@ my @WEIGHT = (
     eb  =>  [ qw( extrabold 800 ) ],
     ub  =>  [ qw( ultrabold black heavy extrablack ultrablack 900 fatface
                   ultraheavy poster super 1000 ) ],
-);
-
-my %WEIGHT_CLASS = (
-     100  =>  'ultralight',
-     200  =>  'extralight',
-     300  =>  'light',
-     400  =>  'regular',
-     500  =>  'medium',
-     600  =>  'semibold',
-     700  =>  'bold',
-     800  =>  'extrabold',
-     900  =>  'black'
 );
 
 my @WIDTH = (
@@ -879,9 +867,9 @@ END_ERR_METADATA_MISSING
             last;
         }
     }
-    # Suggested by Christoph L. Spiel
+
     unless ($self->{weight}) {
-        $self->{weight} = $WEIGHT_CLASS{$self->{weight_class}};
+        $self->{weight} = $DEFAULT_WEIGHT{$self->{weight_class}};
     }
     $self->{weight} //= 'regular';
 
@@ -1378,6 +1366,12 @@ END_STY_MAINFONT
 \\newcommand*{\\$fam\@mathstyle}{TeX}
 \\DeclareOptionX{math-style}{\\renewcommand*{\\$fam\@mathstyle}{#1}}
 
+\\newcommand*{\\$fam\@Sscale}{1.1}
+\\newcommand*{\\$fam\@SSscale}{\\fpeval{\\$fam\@Sscale * \\$fam\@Sscale}}
+\\DeclareOptionX{scriptscale}{%
+    \\renewcommand{\\$fam\@Sscale}{#1}%
+    \\renewcommand{\\$fam\@SSscale}{\\fpeval{#1 * #1}}}
+
 END_STY_MATHOPTION
 
         my ($mathfigurestyle_default, $mathfigurealign_default);
@@ -1421,35 +1415,26 @@ END_STY_MATHCALOPTION
 
 END_STY_PROCESSOPTIONS
 
-    print {$STY} "\\RequirePackage[@{[ join ',', grep { $_ ne 'OT1' } @{$ARGV{encoding}} ]}]{fontenc}\n";
+    my @known_encodings = grep { $_ !~ m/\A U_/xmsi } @{$ARGV{encoding}};
+    my $fontenc = join ',', grep { $_ ne 'OT1' } @known_encodings;
+    if ($fontenc) {
+        print {$STY} "\\RequirePackage[$fontenc]{fontenc}\n";
+    }
     print {$STY} "\\RequirePackage{textcomp}\n" if $seen{TS1};
     print {$STY} "\\RequirePackage{ifthen}\n";
+    print {$STY} "\\RequirePackage{xspace}\n";
     print {$STY} "\n";
 
-    ##  TODO:
-    #   remove `fontaxes` package, rewrite the following bits using
-    #   LaTeX kernel functionality (i.e., \DeclareFontShapeChangeRule)
-    #   and the `figureversions` package.
+    print {$STY} <<'END_STY_FIGUREVERSIONS_START';
+\ExplSyntaxOn
+\IfFileExists{figureversions.sty}{
+    \RequirePackage{figureversions}
 
-    print {$STY} <<'END_STY_FONTAXES_START';
-\IfFileExists{fontaxes.sty}{
-    \RequirePackage{fontaxes}
-END_STY_FONTAXES_START
-
-    if ($seen{nw} or $seen{sw}) {
-        print {$STY} <<'END_STY_FONTAXES_SW';
-    \DeclareRobustCommand\swshape{\not@math@alphabet\swshape\relax
-        \fontprimaryshape\itdefault\fontsecondaryshape\swdefault\selectfont}
-    \fa@naming@exception{shape}{{n}{sw}}{nw}
-    \fa@naming@exception{shape}{{it}{sw}}{sw}
-
-END_STY_FONTAXES_SW
-    }
+END_STY_FIGUREVERSIONS_START
 
     if ($seen{Sup}) {
-        print {$STY} <<'END_STY_FONTAXES_SUP';
-    \fa@naming@exception{figures}{{superior}{proportional}}{Sup}
-    \fa@naming@exception{figures}{{superior}{tabular}}{Sup}
+        print {$STY} <<'END_STY_FIGUREVERSIONS_SUP';
+    \figureversions_new_figurestyle:nnn {superior} {Sup} {Sup}
     \def\supfigures{\@nomath\supfigures
         \fontfigurestyle{superior}\selectfont}
     \let\sufigures\supfigures
@@ -1464,13 +1449,12 @@ END_STY_FONTAXES_SW
         {\let\footnotemarkfont\normalfont}%
         {\let\footnotemarkfont\ftntm@font}
 
-END_STY_FONTAXES_SUP
+END_STY_FIGUREVERSIONS_SUP
     }
 
     if ($seen{Inf}) {
-        print {$STY} <<'END_STY_FONTAXES_INF';
-    \fa@naming@exception{figures}{{inferior}{proportional}}{Inf}
-    \fa@naming@exception{figures}{{inferior}{tabular}}{Inf}
+        print {$STY} <<'END_STY_FIGUREVERSIONS_INF';
+    \figureversions_new_figurestyle:nnn {inferior} {Inf} {Inf}
     \def\inffigures{\@nomath\inffigures
         \fontfigurestyle{inferior}\selectfont}
     \let\infigures\inffigures
@@ -1480,53 +1464,50 @@ END_STY_FONTAXES_SUP
     \let\@oldtextsubscript\textsubscript
     \def\textsubscript{\@ifstar\@oldtextsubscript\textinf}
 
-END_STY_FONTAXES_INF
+END_STY_FIGUREVERSIONS_INF
     }
 
     if ($seen{Titl}) {
-        print {$STY} <<'END_STY_FONTAXES_TITL';
-    \fa@naming@exception{figures}{{titlingshape}{proportional}}{Titl}
-    \fa@naming@exception{figures}{{titlingshape}{tabular}}{Titl}
+        print {$STY} <<'END_STY_FIGUREVERSIONS_TITL';
+    \figureversions_new_figurestyle:nnn {titlingshape} {Titl} {Titl}
     \def\tlshape{\@nomath\tlshape
         \fontfigurestyle{titlingshape}\selectfont}
     \DeclareTextFontCommand{\texttl}{\tlshape}
     \let\texttitling\texttl
 
-END_STY_FONTAXES_TITL
+END_STY_FIGUREVERSIONS_TITL
     }
 
     if ($seen{Orn}) {
-        print {$STY} <<'END_STY_FONTAXES_ORN';
-    \fa@naming@exception{figures}{{ornament}{proportional}}{Orn}
-    \fa@naming@exception{figures}{{ornament}{tabular}}{Orn}
-    \def\ornaments{\@nomath\ornaments
+        print {$STY} <<'END_STY_FIGUREVERSIONS_ORN';
+    \figureversions_new_figurestyle:nnn {ornament} {Orn} {Orn}
+    \def\ornament{\@nomath\ornament
         \fontencoding{U}\fontfigurestyle{ornament}\selectfont}
-    \DeclareTextFontCommand{\textornaments}{\ornaments}
+    \newcommand*{\textornament}[1]{{\ornament\char##1}\xspace}
+    % Backward-compatible alternates
+    \let\ornaments\ornament
+    \let\textornaments\textornament
 
-END_STY_FONTAXES_ORN
+END_STY_FIGUREVERSIONS_ORN
     }
 
     if ($seen{Numr}) {
-        print {$STY} <<'END_STY_FONTAXES_NUMR';
-    \fa@naming@exception{figures}{{numerators}{proportional}}{Numr}
-    \fa@naming@exception{figures}{{numerator}{proportional}}{Numr}
-    \fa@naming@exception{figures}{{numerators}{tabular}}{Numr}
-    \fa@naming@exception{figures}{{numerator}{tabular}}{Numr}
+        print {$STY} <<'END_STY_FIGUREVERSIONS_NUMR';
+    \figureversions_new_figurestyle:nnn {numerators} {Numr} {Numr}
+    \figureversions_new_figurestyle:nnn {numerator}  {Numr} {Numr}
 
-END_STY_FONTAXES_NUMR
+END_STY_FIGUREVERSIONS_NUMR
     }
 
     if ($seen{Dnom}) {
-        print {$STY} <<'END_STY_FONTAXES_DNOM';
-    \fa@naming@exception{figures}{{denominators}{proportional}}{Dnom}
-    \fa@naming@exception{figures}{{denominator}{proportional}}{Dnom}
-    \fa@naming@exception{figures}{{denominators}{tabular}}{Dnom}
-    \fa@naming@exception{figures}{{denominator}{tabular}}{Dnom}
+        print {$STY} <<'END_STY_FIGUREVERSIONS_DNOM';
+    \figureversions_new_figurestyle:nnn {denominators} {Dnom} {Dnom}
+    \figureversions_new_figurestyle:nnn {denominator}  {Dnom} {Dnom}
 
-END_STY_FONTAXES_DNOM
+END_STY_FIGUREVERSIONS_DNOM
     }
 
-    print {$STY} "}{}\n\n";
+    print {$STY} "}{}\n\\ExplSyntaxOff\n\n";
 
     #   For the scale=MatchLowercase option, we need the name for
     #   one of the fonts from the family, to pass to plain TeX's
@@ -1534,7 +1515,7 @@ END_STY_FONTAXES_DNOM
     #   font loading mechanism before we have calculated the correct
     #   scaling parameter).
     my $testfont = eval {
-        my $testenc = $ARGV{encoding}[0];
+        my $testenc = $known_encodings[-1];
         my $testfig = ( grep { exists $data->{$testenc}{$_} }
                              qw(OsF LF TOsF TLF) )[0] or die;
         my $testweight = ( grep { $nfss_mapping->{$_} eq "m" }
@@ -1601,6 +1582,19 @@ END_STYLE_REST
          \\$fam\@mathGREEKuptrue
          \\$fam\@mathgreekuptrue}
         {}
+
+    \\DeclareMathSizes{8}{8}{\\fpeval{\\$fam\@Sscale * 6}}{\\fpeval{\\$fam\@SSscale * 5}}
+    \\DeclareMathSizes{9}{9}{\\fpeval{\\$fam\@Sscale * 6}}{\\fpeval{\\$fam\@SSscale * 5}}
+    \\DeclareMathSizes{\\\@xpt}{\\\@xpt}{\\fpeval{\\$fam\@Sscale * 7}}{\\fpeval{\\$fam\@SSscale * 5}}
+    \\DeclareMathSizes{\\\@xipt}{\\\@xipt}{\\fpeval{\\$fam\@Sscale * 8}}{\\fpeval{\\$fam\@SSscale * 6}}
+    \\DeclareMathSizes{\\\@xiipt}{\\\@xiipt}{\\fpeval{\\$fam\@Sscale * 8}}{\\fpeval{\\$fam\@SSscale * 6}}
+    \\DeclareMathSizes{\\\@xivpt}{\\\@xivpt}{\\fpeval{\\$fam\@Sscale * \\\@xpt}}{\\fpeval{\\$fam\@SSscale * 7}}
+    \\DeclareMathSizes{\\\@xviipt}{\\\@xviipt}{\\fpeval{\\$fam\@Sscale * \\\@xiipt}}{\\fpeval{\\$fam\@SSscale * \\\@xpt}}
+    \\DeclareMathSizes{\\\@xxpt}{\\\@xxpt}{\\fpeval{\\$fam\@Sscale * \\\@xivpt}}{\\fpeval{\\$fam\@SSscale * \\\@xiipt}}
+    \\DeclareMathSizes{\\\@xxvpt}{\\\@xxvpt}{\\fpeval{\\$fam\@Sscale * \\\@xxpt}}{\\fpeval{\\$fam\@SSscale * \\\@xviipt}}
+
+    \\def\\defaultscriptratio{\\fpeval{\\$fam\@Sscale * 0.7}}
+    \\def\\defaultscriptscriptratio{\\fpeval{\\$fam\@SSscale * 0.5}}
 
     \\DeclareSymbolFont{newoperators}  {OT1}{$fam-\\$fam\@mathfigurealign\\$fam\@mathfigurestyle}{\\mdseries\@$ARGV{nfss}}{n}
     \\SetSymbolFont{newoperators}{bold}{OT1}{$fam-\\$fam\@mathfigurealign\\$fam\@mathfigurestyle}{\\bfseries\@$ARGV{nfss}}{n}
@@ -2749,7 +2743,7 @@ my %STYLE = (
     swash => {
         code  => { n => 'nw', it => 'sw' },
         reqd  => [ 'swsh' ],
-        nice  => [ 'dlig' ],
+        nice  => [ 'cswh', 'dlig' ],
         extra => '--include-alternates="*.swash"',
         name  => 'swash',
     },
@@ -2763,7 +2757,7 @@ my %STYLE = (
     math => {
         code  => { n => 'n', it => 'it', sl => 'sl' },
         reqd  => [],
-        nice  => [ 'onum' ],
+        nice  => [ 'onum', 'mgrk' ],
         extra => '--math-spacing=127',
         name  => '',
     },
@@ -3372,7 +3366,7 @@ sub expand_encodings {
     my ($font, $figurestyle, $style)
         = @{$workitem}{qw(font figurestyle style)};
     my @encodings = $style eq 'textcomp'  ? qw(ts1)
-                  : $figurestyle eq 'Orn' ? qw(ly1)
+                  : $figurestyle eq 'Orn' ? qw(ot1)
                   : $style eq 'math'      ? qw(oml)
                   :                         @{$ARGV{encoding}}
                   ;
@@ -3821,9 +3815,9 @@ Select the weight that LaTeX will use as the "bold" weight.
 The default here is not to change LaTeX's default,
 i.e. use the "m" and "b" weights.
 
-The style file will also try to load the F<fontaxes> package
+The style file will also try to load the F<figureversions> package
 (on CTAN), which gives easy access to various font shapes and styles.
-Using the machinery set up by F<fontaxes>, the generated style file
+Using the machinery set up by F<figureversions>, the generated style file
 defines a number of commands (which take the text to be typeset as argument)
 and declarations (which don't take arguments, but affect all text up to
 the end of the current group) to access titling, superior and inferior
@@ -3837,11 +3831,6 @@ characters:
     \inffigures     \textinferior   \textinf, \textin
 
 
-In addition, the existing C<\swshape> and C<\textsw> commands are redefined
-to place swash on F<fontaxes>' secondary shape axis (F<fontaxes> places it
-on the primary shape axis) to make them behave properly when nested, so that
-C<\swshape\upshape> will give upright swash.
-
 Finally, the style file redefines Latex's C<\textsuperscript> and
 C<\textsubscript> commands to use the fonts' superior and inferior figures,
 and modifies Latex's footnote mechanism to use C<\textsuperscript>
@@ -3850,12 +3839,12 @@ The old versions of these commands are still available as
 C<\textsuperscript*> and C<\textsubscript*>.
 
 There are no commands for accessing the numerator and denominator
-fonts; these can be selected using F<fontaxes>' standard commands,
+fonts; these can be selected using F<figureversions>' standard commands,
 e.g., C<\fontfigurestyle{numerator}\selectfont>.
 
 Once again: all these commands are only generated for existing shapes and number styles;
 no commands are generated for shapes and styles that are missing from your fonts.
-Note that all these commands are built on top of F<fontaxes>; if that package
+Note that all these commands are built on top of F<figureversions>; if that package
 cannot be found, you're limited to using lower-level commands from
 standard NFSS (C<\fontfamily>, C<\fontseries>, C<\fontshape> etc.).
 
@@ -3904,6 +3893,17 @@ With C<math-style=ISO>, all latin and greek letters in math are italic;
 with C<math-style=TeX> (the default), uppercase greek is upright;
 with C<math-style=french>, all greek as well as uppercase latin is upright;
 and with C<math-style=upright> all letters are upright.
+
+=item C<<< scriptscale=I<< <scale> >> >>>
+
+By default, Latex loads fonts for the "script" and "scriptscript" styles
+at 70% and 50% of the text font size. For many text fonts, this is too small
+and hurts readability.
+This option scales the "script" style by a factor of I<scale> and
+the "scriptscript" style by the square of that.
+The default value is 1.1, which loads the "script" and "scriptscript" styles
+at a more readable 77% and 60.5%, respectively.
+To use Latex's defaults, use C<scriptscale=1.0>.
 
 =back
 
@@ -3993,24 +3993,33 @@ one can always use the C<\fontseries> command with the full series name
 
 =head2 Ornaments
 
-Ornament fonts are regular LY1-encoded fonts, with a number of
-"regular" characters replaced by ornament glyphs.
-The OpenType specification says that fonts should only put their
-ornaments in place of the lowercase ASCII letters, but some fonts
-put them in other positions (such as those of the digits) as well.
+B<autoinst> provides a best-effort interface to access ornament characters.
+The OpenType specification offers two ways for fonts to implement ornaments:
+one way is to map them to the lowercase ASCII letters, the other is
+to define them as alternates for the "bullet" character.
+Ornaments of the first type can be used from Latex without problem,
+but ornaments implemented in the second way cannot easily be used from Latex
+(at least not generically; it may be done by creating font-specific encoding files).
 
-Ornaments can be accessed like C<{\ornaments a}> and
-C<{\ornaments\char"61}>, or equivalently
-C<\textornaments{a}> and C<\textornaments{\char"61}>.
+Unfortunately, there is no way to tell which of these alternatives a font uses;
+B<autoinst> just assumes that the font maps ornaments to lowercase ASCII
+and creates an OT1-encoded font that hopefully contains the ornaments,
+plus a C<\textornament> command to access them.
+That command takes one argument: the slot number of the ornament.
+E.g., to access the ornament at the position of "a" (hexadecimal 0x61),
+use C<\textornament{"61}>.
+
 To see which ornaments a font contains (and at which positions),
 run LaTeX on the file F<nfssfont.tex> (which is included in any
 standard LaTeX installation), supply the name of the ornament font
-(i.e., C<GaramondLibre-Regular-orn-u>) and give the command C<\table\bye>;
+(i.e., C<Garamontio-Regular-orn-u>) and give the command C<\table\bye>;
 this will create a table of all glyphs in that font.
+If this table shows no ornaments, your font unfortunately handles ornaments
+in a non-Latex-compatible (or at least non-B<autoinst>-compatible) way.
 
-Note that versions of B<autoinst> up to 20200428 handled ornaments
-differently, and fonts and style files generated by those versions
-are not compatible with files generated by newer versions.
+As a final caveat, note that even when your font does handle ornaments in
+a Latex-compatible way, it may very well map them to other characters
+(such as digits or punctuation) instead of lowercase ASCII.
 
 
 =head1 WARNINGS AND CAVEATS
@@ -4045,7 +4054,7 @@ C<Bad metric (TFM) file> error.
 The best way to handle this situation is to use B<autoinst>'s C<-extra> option
 to raise F<otftotfm>'s value for the C<--min-kern> parameter, which causes it
 to ignore small kerning pairs: C<-extra='--min-kern=6.0'>.
-Finding the correct value for the C<--min-kern> parameter may require some
+Finding a working value for the C<--min-kern> parameter may require some
 trial and error.
 
 
@@ -4427,7 +4436,7 @@ don't paraphase.
 
 =head1 COPYRIGHT
 
-Copyright (C) 2005-2025 Marc Penninga.
+Copyright (C) 2005-2026 Marc Penninga.
 
 
 =head1 LICENSE
@@ -4450,7 +4459,7 @@ GNU General Public License for more details.
 
 =head1 VERSION
 
-This document describes B<autoinst> version 20250909.
+This document describes B<autoinst> version 20260210.
 
 
 =head1 RECENT CHANGES
@@ -4458,6 +4467,16 @@ This document describes B<autoinst> version 20250909.
 (See the source for the full story, all the way back to 2005.)
 
 =over 12
+
+=item I<2026-02-10>
+
+Generated style files now use the I<figureversions> package
+to access superior and inferior figures and fractions,
+instead of the (deprecated) I<fontaxes> package.
+Added the I<scriptscale> option to the generated style file.
+When creating math fonts, we use the font's "mgrk" feature,
+if present.
+Fixed a few obscure bugs.
 
 =item I<2025-09-09>
 
@@ -4500,6 +4519,13 @@ for Source Serif 4 was biting Libertinus Serif Display
 so we now test if the family is actually Source Serif 4
 before applying that fix.
 
+=back
+
+
+=begin Really_old_history
+
+=over 12
+
 =item I<2024-01-04>
 
 We take a more generic approach to font metadata parsing;
@@ -4534,13 +4560,6 @@ mechanism to use these figures
 Fixed a few bugs in metadata parsing, style file generation
 and the C<-t1suffix> option, so that the latter also works
 for dvips and dvipdfmx.
-
-=back
-
-
-=begin Really_old_history
-
-=over 12
 
 =item I<2021-11-15>
 
