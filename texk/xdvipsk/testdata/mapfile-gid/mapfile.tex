@@ -1,0 +1,14 @@
+\RequirePackage[otfgidx,chars]{xdvipsk???}
+\documentclass{article}
+
+\def\Hello{Hello World! 0123456789}
+\special{mapfile: myriadtest.map}
+\font\myfont=myriadpro-black %% defined in myriadtest.map
+
+\begin{document} 
+
+\Hello
+
+{\myfont \Hello}
+
+\end{document}

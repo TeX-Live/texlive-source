@@ -1,8 +1,8 @@
 %!PS-Adobe-3.0
-%%Creator: xdvips(k) 2023.1 (TeX Live 2024)  Copyright 2023 Radical Eye Software
-%%+        Based on dvips(k) 2023.1 (TeX Live 2024)  Copyright 2023 Radical Eye Software
-%%Title: opentype-test.dvi
-%%CreationDate: Thu Sep 14 10:12:43 2023
+%%Creator: xdvips(k)+lua+freetype 2026.02.09 (TeX Live 2026)  Copyright 2026 Radical Eye Software
+%%+        Based on dvips(k) 2026.1 (TeX Live 2026)  Copyright 2026 Radical Eye Software
+%%Title: opentype.dvi
+%%CreationDate: Tue Feb 10 20:55:22 2026
 %%Pages: 1
 %%PageOrder: Ascend
 %%BoundingBox: 0 0 596 842
@@ -13,9 +13,9 @@
 %%DocumentPaperSizes: a4
 %%EndComments
 %DVIPSWebPage: (www.vtex.lt)
-%DVIPSCommandLine: xdvipsk opentype-test.dvi
+%DVIPSCommandLine: xdvipsk -Q1 -j0 opentype.dvi
 %DVIPSParameters: dpi=4000
-%DVIPSSource:  LuaTeX output 2023.09.14:1311
+%DVIPSSource:  LuaTeX output 
 %%BeginProlog
 %%IncludeResource: procset CIDInit 1.0 0
 /pdfmark where {pop} {userdict /pdfmark /cleartomark load put} ifelse
@@ -148,8 +148,8 @@ false setglobal
       pdf.dest.y pdf.tmpc mul add
       pdf.dev.x add
     pdf.dest.x pdf.tmpb mul
-     pdf.dest.y pdf.tmpd mul add
-     pdf.dev.y add
+      pdf.dest.y pdf.tmpd mul add
+      pdf.dev.y add
   }
     def
 /pdf.bordertracking false def
@@ -297,83 +297,83 @@ false setglobal
       {
         counttomark /pdf.count exch def
           {
-           pdf.count 0 eq { exit } if
-           counttomark 2 roll
-           1 index /Rect eq
-             {
-               dup 4 array copy
-               dup dup
-                 1 get
-                 pdf.outerbox pdf.rect.ht
-                 pdf.linkmargin 2 mul add sub
-                 3 exch put
-               dup
-                 pdf.outerbox 2 get
-                 pdf.linkmargin add
-                 2 exch put
-               dup dup
-                 3 get
-                 pdf.outerbox pdf.rect.ht
-                 pdf.linkmargin 2 mul add add
-                 1 exch put
-               /pdf.currentrect exch  def
-               pdf.breaklink.write
-                 {
-                   pdf.currentrect
-                   dup
-                     pdf.outerbox 0 get
-                     pdf.linkmargin sub
-                     0 exch put
-                   dup
-                     pdf.outerbox 2 get
-                     pdf.linkmargin add
-                     2 exch put
-                   dup dup
-                     1 get
-                     pdf.baselineskip add
-                     1 exch put
-                   dup dup
-                     3 get
-                     pdf.baselineskip add
-                     3 exch put
-                   /pdf.currentrect exch def
-                   pdf.breaklink.write
+            pdf.count 0 eq { exit } if
+            counttomark 2 roll
+            1 index /Rect eq
+              {
+                dup 4 array copy
+                dup dup
+                  1 get
+                  pdf.outerbox pdf.rect.ht
+                  pdf.linkmargin 2 mul add sub
+                  3 exch put
+                dup
+                  pdf.outerbox 2 get
+                  pdf.linkmargin add
+                  2 exch put
+                dup dup
+                  3 get
+                  pdf.outerbox pdf.rect.ht
+                  pdf.linkmargin 2 mul add add
+                  1 exch put
+                /pdf.currentrect exch def
+                pdf.breaklink.write
+                  {
+                    pdf.currentrect
+                    dup
+                      pdf.outerbox 0 get
+                      pdf.linkmargin sub
+                      0 exch put
+                    dup
+                      pdf.outerbox 2 get
+                      pdf.linkmargin add
+                      2 exch put
+                    dup dup
+                      1 get
+                      pdf.baselineskip add
+                      1 exch put
+                    dup dup
+                      3 get
+                      pdf.baselineskip add
+                      3 exch put
+                    /pdf.currentrect exch def
+                    pdf.breaklink.write
                   }
                 1 index 3 get
                 pdf.linkmargin 2 mul add
                 pdf.outerbox pdf.rect.ht add
                 2 index 1 get sub
                 pdf.baselineskip div round cvi 1 sub
-                exch
-              repeat
-              pdf.currentrect
-              dup
-                pdf.outerbox 0 get
-                pdf.linkmargin sub
-                0 exch put
-              dup dup
-                1 get
-                pdf.baselineskip add
-                1 exch put
-              dup dup
-                3 get
-                pdf.baselineskip add
-                3 exch put
-              dup 2 index 2 get  2 exch put
-              /pdf.currentrect exch def
-              pdf.breaklink.write
-              SDict /pdf.pdfmark.good false put
-              exit
-            }
-            { pdf.count 2 sub /pdf.count exch def }
-          ifelse
-        }
-      loop
-    }
-  if
-  /ANN
-}
-  def
+                  exch
+                repeat
+                pdf.currentrect
+                dup
+                  pdf.outerbox 0 get
+                  pdf.linkmargin sub
+                  0 exch put
+                dup dup
+                  1 get
+                  pdf.baselineskip add
+                  1 exch put
+                dup dup
+                  3 get
+                  pdf.baselineskip add
+                  3 exch put
+                dup 2 index 2 get  2 exch put
+                /pdf.currentrect exch def
+                pdf.breaklink.write
+                SDict /pdf.pdfmark.good false put
+                exit
+              }
+              { pdf.count 2 sub /pdf.count exch def }
+            ifelse
+          }
+        loop
+      }
+    if
+    /ANN
+  }
+    def
 /pdf.breaklink.write
   {
     counttomark 1 sub
@@ -451,46 +451,25 @@ false setglobal
 
 %%EndProcSet
 %%BeginProcSet: texcid.pro 0 0
-TeXDict begin/ct_slant 0.0 def /ct_extend 1.0 def
-/ct_SlantFont{/ct_slant exch def}def/ct_ExtendFont{/ct_extend exch def}def
-/ct_np{/ct_saveX currentpoint/ct_saveY X def}def 
-/ct_st{setlinewidth false charpath stroke ct_saveX ct_saveY moveto}def
-/ct_cid{/ct_basefontname exch def
-/ct_fontsize exch def /ct_special exch def /ct_newfontname dup exch def
-/ct_basefontdict ct_basefontname findfont def
-/ct_numentries ct_basefontdict maxlength def
-/ct_outfontdict ct_numentries dict def
-ct_basefontdict { exch dup /FID ne { exch ct_outfontdict 3 1 roll put }
-{ pop pop } ifelse } forall ct_special exec
-/ct_mtx[{ct_fontsize ct_extend mul}exec 0.0 
-{ct_fontsize ct_slant mul}exec {ct_fontsize neg}exec 0.0 0.0]def
-[/ct_cid_scaled ct_newfontname ct_outfontdict definefont def
-/ct_outfontdict_scaled ct_cid_scaled ct_mtx makefont def
-/ct_slant 0.0 def /ct_extend 1.0 def
-ct_outfontdict_scaled /setfont load] cvx def} def
-end
-
-/CIDInit/ProcSet findresource begin
-	12 dict begin
-		begincmap
-			/CIDSystemInfo 3 dict dup begin
-				 /Registry(Adobe)def
-				 /Ordering(Identity)def
-				 /Supplement 0 def
-			end def
-			/CMapName/TeX_Identity-H def
-			/CMapVersion 1.000 def
-			/CMapType 1 def
-			1 begincodespacerange
-				<0000><FFFF>
-			endcodespacerange
-			1 begincidrange
-				<0000><FFFF>0
-			endcidrange
-		endcmap
-		CMapName currentdict /CMap defineresource pop
-	end
-end
+TeXDict begin/ct_slant 0.0 def/ct_extend 1.0 def/ct_SlantFont{/ct_slant
+exch def}def/ct_ExtendFont{/ct_extend exch def}def/ct_np{/ct_saveX
+currentpoint/ct_saveY X def}def/ct_st{setlinewidth false charpath stroke
+ct_saveX ct_saveY moveto}def/ct_cid{/ct_basefontname exch def
+/ct_fontsize exch def/ct_special exch def/ct_newfontname dup exch def
+/ct_basefontdict ct_basefontname findfont def/ct_numentries
+ct_basefontdict maxlength def/ct_outfontdict ct_numentries dict def
+ct_basefontdict{exch dup/FID ne{exch ct_outfontdict 3 1 roll put}{pop
+pop}ifelse}forall ct_special exec/ct_mtx[{ct_fontsize ct_extend mul}
+exec 0.0{ct_fontsize ct_slant mul}exec{ct_fontsize neg}exec 0.0 0.0]def[
+/ct_cid_scaled ct_newfontname ct_outfontdict definefont def
+/ct_outfontdict_scaled ct_cid_scaled ct_mtx makefont def/ct_slant 0.0
+def/ct_extend 1.0 def ct_outfontdict_scaled/setfont load]cvx def}def end
+/CIDInit/ProcSet findresource begin 12 dict begin begincmap
+/CIDSystemInfo 3 dict dup begin/Registry(Adobe)def/Ordering(Identity)
+def/Supplement 0 def end def/CMapName/TeX_Identity-H def/CMapVersion
+1.000 def/CMapType 1 def 1 begincodespacerange<0000><FFFF>
+endcodespacerange 1 begincidrange<0000><FFFF>0 endcidrange endcmap
+CMapName currentdict/CMap defineresource pop end end
 
 %%EndProcSet
 %%BeginProcSet: special.pro 0 0
@@ -559,7 +538,7 @@ end def
 /FontMatrix [ 1 0 0 1 0 0 ] def
 /PaintType 0 def
 /FontBBox [ -1.2471 -1.4559 3.0708 2.4861 ] readonly def
-/FontInfo 11 dict dup begin
+/FontInfo 12 dict dup begin
   /Version (1.01) readonly def
   /Notice (Copyright 2016 Google Inc. All Rights Reserved.) readonly def
   /FullName (Noto Serif Devanagari) readonly def
@@ -571,6 +550,63 @@ end def
   /UnderlineThickness 0.118329 def
   /ascent 2143 def
   /FSType 8 def
+  /GlyphNames2Unicode <<
+    669 <0028>
+    96 <0902>
+    4 <0905>
+    5 <0906>
+    7 <0908>
+    8 <0909>
+    14 <090F>
+    16 <0913>
+    17 <0914>
+    53 <0915>
+    54 <0916>
+    55 <0917>
+    58 <091A>
+    59 <091B>
+    60 <091C>
+    62 <091E>
+    63 <091F>
+    65 <0921>
+    66 <0922>
+    67 <0923>
+    68 <0924>
+    69 <0925>
+    70 <0926>
+    71 <0927>
+    72 <0928>
+    73 <092A>
+    74 <092B>
+    75 <092C>
+    76 <092D>
+    77 <092E>
+    78 <092F>
+    79 <0930>
+    80 <0932>
+    81 <0935>
+    82 <0936>
+    83 <0937>
+    84 <0938>
+    85 <0939>
+    100 <093C>
+    29 <093E>
+    30 <093F>
+    31 <0940>
+    32 <0941>
+    33 <0942>
+    38 <0947>
+    39 <0948>
+    40 <094B>
+    41 <094C>
+    99 <094D>
+    121 <0964>
+    109 <0966>
+    111 <0968>
+    113 <096A>
+    114 <096B>
+    116 <096D>
+    >> def
 end readonly def
 /sfnts [
  <
@@ -1287,12 +1323,43 @@ end
   /Supplement 0 def
 end def
 /FontBBox [ -422 -280 1394 1127 ] def
-/FontInfo 5 dict dup begin
+/FontInfo 6 dict dup begin
   /Notice (Copyright 2003, 2009 B. Jackowski and J. M. Nowacki \050on behalf of TeX users groups\051. This work is released under the GUST Font License --  see http://tug.org/fonts/licenses/GUST-FONT-LICENSE.txt for details.) readonly def
   /FullName (LMRoman12-Regular) readonly def
   /FamilyName (LMRoman12) readonly def
   /Weight (Normal) readonly def
   /FSType 8 def
+  /GlyphNames2Unicode <<
+    64 <002D>
+    88 <002E>
+    102 <002F>
+    82 <0031>
+    44 <003A>
+    49 <0045>
+    62 <0048>
+    28 <0061>
+    35 <0062>
+    47 <0064>
+    50 <0065>
+    55 <0066>
+    59 <0067>
+    63 <0068>
+    66 <0069>
+    72 <006C>
+    75 <006D>
+    77 <006E>
+    81 <006F>
+    84 <0070>
+    91 <0071>
+    96 <0072>
+    98 <0073>
+    105 <0074>
+    109 <0075>
+    112 <0076>
+    116 <0078>
+    502 <2019>
+    0 <0000>
+    >> def
 end readonly def
 /CIDMapOffset 0 def
 /FDBytes 0 def
@@ -1542,12 +1609,20 @@ F00A465EA7D034336D4755B0A5C9B158D3F2131B55B8FC97F86CB1A9A700>
   /Supplement 0 def
 end def
 /FontBBox [ -460 -297 1761 1134 ] def
-/FontInfo 5 dict dup begin
+/FontInfo 6 dict dup begin
   /Notice (Copyright 2003, 2009 B. Jackowski and J. M. Nowacki \050on behalf of TeX users groups\051. This work is released under the GUST Font License --  see http://tug.org/fonts/licenses/GUST-FONT-LICENSE.txt for details.) readonly def
   /FullName (LMSans10-Bold) readonly def
   /FamilyName (LMSans10) readonly def
   /Weight (Bold) readonly def
   /FSType 8 def
+  /GlyphNames2Unicode <<
+    82 <0031>
+    62 <0048>
+    47 <0064>
+    66 <0069>
+    77 <006E>
+    0 <0000>
+    >> def
 end readonly def
 /CIDMapOffset 0 def
 /FDBytes 0 def
@@ -1638,7 +1713,7 @@ F9229BBB7D26DDA5CBEE6787BD6429A830BDFEA8D2E23B510E48DCA82060939E
 %%EndResource
 /CID+LMSans10-Bold /TeX_Identity-H [/LMSans10-Bold] composefont pop
 %%EndFont 
-TeXDict begin 39158278 55380994 1000 4000 4000 (opentype-test.dvi)
+TeXDict begin 39158278 55380994 1000 4000 4000 (opentype.dvi)
 @start /Fa {} 664.176 /CID+NotoSerifDevanagari ct_cid
 /Fb {} 664.176 /CID+LMRoman12-Regular ct_cid /Fc {} 956.413
 /CID+LMSans10-Bold ct_cid end
@@ -1655,10 +1730,10 @@ ifelse
  end
 %%EndSetup
 %%Page: 1 1
-TeXDict begin 1 0 bop 0 0 a @beginspecial @endspecial
-134 582 a Fc(\000R)478 b(\000>\000B\000M\000/\000B)134
-2043 y Fb(\000>\0002\000`\0002\001\366\000b)216 b(\000b\000Q\000K\0002)
-h(\000>\000B\000M\000/\000B)f
+TeXDict begin 1 0 bop 134 582 a Fc(\000R)478 b
+(\000>\000B\000M\000/\000B)134 2043 y Fb
+(\000>\0002\000`\0002\001\366\000b)216 b(\000b\000Q\000K\0002)h
+(\000>\000B\000M\000/\000B)f
 (\000;\0002\000M\0002\000`\000\034\000i\0002\000/)i
 (\0007\000`\000Q\000K)e(\000?)-18 b
 (\000i\000i\000T\000,\000f\000f\000;\0002\000M\0002\000`\000\034)p
@@ -2045,14 +2120,6 @@ b(\000p)-36 b(\000\034\000B\000H\000\034\000#\000H\0002)217
 b(\000Q\000M)h(\000`\0002\000[\000m\0002\000b\000i\000X)12373
 37880 y(\000R)p eop end
 %%Trailer
-
-[ /_objdef {tounc_array} /type /array /OBJ pdfmark
-[ /_objdef {tounc_opentype-test} /type /dict /OBJ pdfmark
-[ {tounc_opentype-test} <</NotoSerifDevanagari (opentype-test-cid001.tounicode) >> /PUT pdfmark
-[ {tounc_opentype-test} <</LMRoman12-Regular (opentype-test-cid002.tounicode) >> /PUT pdfmark
-[ {tounc_opentype-test} <</LMSans10-Bold (opentype-test-cid003.tounicode) >> /PUT pdfmark
-[ {tounc_array} {tounc_opentype-test} /APPEND pdfmark
-[ {Catalog} << /LuaTexCmaps {tounc_array} >> /PUT pdfmark
 
 userdict /end-hook known{end-hook}if
 %%EOF

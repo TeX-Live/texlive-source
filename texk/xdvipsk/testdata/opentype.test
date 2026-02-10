@@ -1,0 +1,23 @@
+#!/bin/sh -vx
+# $Id$
+# Copyright 2019 Karl Berry <tex-live@tug.org>
+# You may freely use, modify and/or distribute this file.
+
+BinDir=${BinDir:-`pwd`}
+TestDir=$BinDir/testdata
+TestDirSrc=$BinDir/../../../texk/xdvipsk/testdata
+_xdvipsk=$BinDir/xdvipsk${ExeExt:-}
+
+testfile=$TestDir/opentype
+
+cd $TestDirSrc/opentype
+rm -f $testfile.ps.xdvips.log
+$_xdvipsk -Q1 opentype.dvi -o $testfile.ps
+diff --strip-trailing-cr $testfile.ps.xdvips.log ../success.log || exit 1
+
+cd $TestDirSrc/opentype-gid
+rm -f $testfile-gid.ps.xdvips.log
+$_xdvipsk -Q1 opentype.dvi -o $testfile-gid.ps
+diff --strip-trailing-cr $testfile-gid.ps.xdvips.log ../success.log || exit 2
+
+exit 0

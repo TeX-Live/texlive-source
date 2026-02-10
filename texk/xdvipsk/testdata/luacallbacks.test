@@ -1,0 +1,25 @@
+#!/bin/sh -vx
+# $Id$
+# Copyright 2019 Karl Berry <tex-live@tug.org>
+# You may freely use, modify and/or distribute this file.
+
+BinDir=${BinDir:-`pwd`}
+TestDir=$BinDir/testdata
+TestDirSrc=$BinDir/../../../texk/xdvipsk/testdata
+_xdvipsk=$BinDir/xdvipsk${ExeExt:-}
+
+testfile=$TestDir/luacallbacks
+
+cd $TestDirSrc/luacallbacks
+rm -f $testfile.ps.xdvips.log
+$_xdvipsk -Q1 luacallbacks.dvi -o $testfile.ps
+mv luacallbacks.dvi.info $TestDir/
+diff --strip-trailing-cr $testfile.ps.xdvips.log ../success.log || exit 1
+
+cd $TestDirSrc/luacallbacks-gid
+rm -f $testfile-gid.ps.xdvips.log
+$_xdvipsk -Q1 luacallbacks.dvi -o $testfile-gid.ps
+mv luacallbacks.dvi.info $TestDir/
+diff --strip-trailing-cr $testfile-gid.ps.xdvips.log ../success.log || exit 2
+
+exit 0

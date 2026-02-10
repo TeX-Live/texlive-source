@@ -1,0 +1,38 @@
+/CIDInit /ProcSet findresource begin
+12 dict begin
+begincmap
+/CMapName /mapfile-cid002 def
+/CMapType 2 def
+/CIDSystemInfo <<
+  /Registry (TeX)
+  /Ordering (NWLRBBMQ+002)
+  /Supplement 0
+>> def
+1 begincodespacerange
+<0000> <FFFF>
+endcodespacerange
+19 beginbfchar
+<0000> <0000>
+<002F> <0064>
+<0032> <0065>
+<0033> <0038>
+<0035> <0021>
+<0038> <0035>
+<0039> <0034>
+<003E> <0048>
+<0048> <006C>
+<004E> <0039>
+<0051> <006F>
+<0052> <0031>
+<0060> <0072>
+<0064> <0037>
+<0065> <0036>
+<006A> <0033>
+<006B> <0032>
+<0071> <0057>
+<0079> <0030>
+endbfchar
+endcmap
+CMapName currentdict /CMap defineresource pop
+end
+end

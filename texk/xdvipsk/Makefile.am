@@ -317,5 +317,21 @@ squeeze/stamp-squeeze:
 
 EXTRA_DIST = $(dist_prologues) texc.script
 
+## Tests
+#
+AM_TESTS_ENVIRONMENT = TEXMFCNF=../../../kpathsea; export TEXMFCNF;
+AM_TESTS_ENVIRONMENT += DVIPSFONTS=.:../texmf-test/fonts//; export DVIPSFONTS;
+AM_TESTS_ENVIRONMENT += T1FONTS=.:../texmf-test/fonts//; export T1FONTS;
+AM_TESTS_ENVIRONMENT += DVIPSHEADERS=../texmf-test/{dvips,fonts}//; export DVIPSHEADERS;
+AM_TESTS_ENVIRONMENT += TEXCONFIG=../texmf-test/dvips//; export TEXCONFIG;
+AM_TESTS_ENVIRONMENT += TEXPICTS=../texmf-test/images//; export TEXPICTS;
+AM_TESTS_ENVIRONMENT += DVIPSDEBUG=1; export DVIPSDEBUG;
+
+TESTS = testdata/bitmaps.test testdata/opentype.test testdata/luacallbacks.test testdata/mapfile.test testdata/mapline.test
+EXTRA_DIST += $(TESTS)
+
+## bitmaps.test
+#EXTRA_DIST += testdata/bitmaps/bitmaps.dvi testdata/bitmaps-gid/bitmaps.dvi
+
 # Files not to be distributed
 include $(srcdir)/../../am/dist_hook.am
