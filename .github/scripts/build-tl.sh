@@ -3,7 +3,7 @@
 # The build script that is run by ../workflows/main.yml on github.
 # Public domain. Originally written by Norbert Preining.
 
-set -e
+set -ex
 
 if [ "x$2" = "x" ]
 then
@@ -95,7 +95,7 @@ touch ./texk/dvipng/dvipng-src/dvipng.1
 
 # default settings
 TL_MAKE_FLAGS="-j 2"
-BUILDARGS=""
+BUILDARGS=
 
 # special cases
 case "$arch" in
@@ -114,8 +114,19 @@ case "$arch" in
     then
       export CC="gcc -m32"
       export CXX="g++ -m32"
-      crle -c /var/ld/ld.config -l /opt/csw/lib:/lib:/usr/lib 
-      ln -s /opt/csw/lib/i386/libstdc++.so.6 /opt/csw/lib/i386/libstdc++.so
+      # these commands make xdvipsk work:
+      #crle -c /var/ld/ld.config -l /opt/csw/lib:/lib:/usr/lib 
+      #ln -s /opt/csw/lib/i386/libstdc++.so.6 /opt/csw/lib/i386/libstdc++.so
+      # 
+      # But then the teckit test fails:
+      # https://productionresultssa8.blob.core.windows.net/actions-results/82cefd33-f0a7-4894-865c-1bae42b5ac50/workflow-job-run-bbd5b8bc-baf2-598b-9fc7-b95d5d1633d3/logs/job/job-logs.txt?rsct=text%2Fplain&se=2026-02-11T15%3A18%3A24Z&sig=csPwLvJqdKnEHfHtFtcn6mBU5WUgaULhUDZdmlknpuM%3D&ske=2026-02-11T18%3A54%3A36Z&skoid=ca7593d4-ee42-46cd-af88-8b886a2f84eb&sks=b&skt=2026-02-11T14%3A54%3A36Z&sktid=398a6654-997b-47e9-b12b-9515b896b4de&skv=2025-11-05&sp=r&spr=https&sr=b&st=2026-02-11T15%3A08%3A19Z&sv=2025-11-05
+      # 2026-02-11T15:08:00.6384675Z + ./teckit_compile ../../../libs/teckit/tex-text.map -o xtex-text.tec
+      # 2026-02-11T15:08:00.6385253Z ld.so.1: teckit_compile: fatal: libstdc++.so.6: version 'GLIBCXX_3.4.29' not found (required by file teckit_compile)
+      # 2026-02-11T15:08:00.6385876Z ld.so.1: teckit_compile: fatal: teckit_compile: mismatched ELF symbol versioning
+      # 2026-02-11T15:08:00.6386286Z ../../../libs/teckit/teckit.test: line 7: 5876: Killed
+      # 
+      # So instead, let's disable xdvipsk.
+      BUILDARGS=--disable-xdvipsk
     else
       export CC="gcc -m64"
       export CXX="g++ -m64"
