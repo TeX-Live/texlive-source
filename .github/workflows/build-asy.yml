@@ -24,10 +24,11 @@
 # done only when a release is tagged, not from the
 # commit-triggered builds here.
 
-# only build on push to trunk, not branch.
+# only build manually, since asy updates are rare.
 on:
   workflow_dispatch:
 
+# not automatically on push.
 # push:
 #   branches:
 #     - trunk

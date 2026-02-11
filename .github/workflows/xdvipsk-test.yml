@@ -24,11 +24,15 @@
 # done only when a release is tagged, not from the
 # commit-triggered builds here.
 
-# only build on push to trunk, not branch.
+# only build manually, since xdvipsk is now part of the main build.
 on:
-  push:
-    branches:
-      - trunk
+  workflow_dispatch:
+
+# don't trigger on pushes to trunk.
+#on:
+#  push:
+#    branches:
+#      - trunk
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
