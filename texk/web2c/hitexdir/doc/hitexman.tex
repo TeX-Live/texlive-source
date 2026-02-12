@@ -309,15 +309,28 @@ Following the example of \LuaTeX\ and \XeTeX, a number of primitives were
 extended and others were added to cope with the larger range of character codes.
 The syntax and semantics of these primitives are described in the following.
 
-\subsubsection{Scanning character codes}
-\TeX\ allows the use of the  {\tt `} (left quote) character as a prefix to
-any character to specify its numeric value. For example {\tt\ctl{count}1=98}
-is equivalent to {\tt\ctl{count}1=`b}. \HiTeX\ allows this for all unicode characters.
-For example  {\tt\ctl{count}1=8491} is equivalent to  {\tt\ctl{count}1=`}{\utf Å}
-using the Angstr\"om symbol.
+\subsubsection{Working with character codes}
+A character code in \HiTeX\ is no longer 
+an \sym{\hbox{8-bit}\  number} but an \sym{utf\ character\ code}:
+\medskip
+\rule\sym{utf\ character\ code}: 
+a \sym{number} in the range \.{0} to \.{"10FFFF}. \index{utf character code+\sym{utf\ character\ code}}
+\medskip
 
-\HiTeX\ makes it possible to use any unicode character as an active character or
-define a single character control sequence using such a character.
+Some traditional primitives are simply extended to handle these larger
+character codes. To get access to any character whatsoever, you can type
+\ctl{char}\sym{utf\ character\ code}. Similarly, you can write
+\ctl{chardef}\sym{control sequence}\.{=}\sym{utf\ character\ code}.
+
+New are the primitives \ctl{Uchar} and \ctl{Ucharcat} as defined by the
+\XeTeX\ manual. \ctl{Uchar}\sym{utf\ character\ code} expands to a
+character token with the specified \sym{utf\ character\ code} with
+category code 12. While it looks superficially like the \TeX\ primitive
+\ctl{char}, \ctl{Uchar} is an expandable operation.
+\ctl{Ucharcat}\sym{utf\ character\ code} \sym{catcode} expands to a
+character token with the specified \sym{utf\ character\ code}
+and the given \sym{catcode}. The values allowed
+for \sym{catcode} are: 1--4, 6--8 and 10--13.
 
 With a small exception, \ctl{if}, \ctl{ifcat}, and \ctl{ifx}
 work for unicode characters exactly as described in the \TeX\ book:
@@ -327,6 +340,28 @@ and character code 256 which is 1 bigger than \TeX's largest character code;
 \HiTeX\ will consider it to have category code 16 as well, but the
 character code will be \.{"110000} which is 1 bigger than the largest
 unicode character code.
+
+\HiTeX\ makes it possible to use any unicode character as an active character or
+define a single character control sequence using such a character.
+
+\TeX\ keeps multibyte character control sequences in a hash table and
+single byte control sequences in a separate table with 256 entries.
+Since the range of single byte UTF8 codes is only 0 to \.{"7F},
+\HiTeX\ needs only a smaller table with 127 entries for these controll sequences.
+Characters outside this range are coded with multiple bytes and go
+into \TeX's hash table. The same schema is used for active characters.
+It is, however, necessary to use a separate hash table for characters
+that have a multibyte UTF8 coding, because, the control sequence associated
+with an active character is not the same thing as the single character
+control sequence for the same character.
+
+\TeX\ allows the use of the  {\tt `} (left quote) character as a prefix to
+any character to specify its numeric value. For example {\tt\ctl{count}1=98}
+is equivalent to {\tt\ctl{count}1=`b}. \HiTeX\ allows this for all unicode characters.
+For example  {\tt\ctl{count}1=8491} is equivalent to  {\tt\ctl{count}1=`}{\utf Å}
+using the Angstr\"om symbol.
+
+
 
 
 \subsubsection{Setting and retrieving character information}
@@ -368,10 +403,6 @@ Now let's consider the details.
 \subsubsection{\ctl{catcode} and \ctl{sfcode}}
 These primitives work pretty much as usual, except that their argument
 is no longer an \sym{\hbox{8-bit}\  number} but \sym{utf\ character\ code}:
-\medskip
-\rule\sym{utf\ character\ code}: 
-a \sym{number} in the range 0 to \.{"10FFFF}. \index{utf character code+\sym{utf\ character\ code}}
-\medskip
 
 The values---category codes are in the range from 1 to 15 and
 space factor codes are in the range from 0 to 32767---can be retrieved like this:
