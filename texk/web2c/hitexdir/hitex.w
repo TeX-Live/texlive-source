@@ -13087,7 +13087,7 @@ static pointer var_delimiter(pointer @!d, small_number @!s, scaled @!v)
 {@+
 pointer b; /*the box that will be constructed*/
 internal_font_number @!f, @!g; /*best-so-far and tentative font codes*/
-quarterword @!c, @!x, @!y; /*best-so-far and tentative character codes*/
+int @!c, @!x, @!y; /*best-so-far and tentative character codes*/
 int @!m, @!n; /*the number of extensible pieces*/
 scaled @!u; /*height-plus-depth of a tentative character*/
 scaled @!w; /*largest height-plus-depth so far*/
@@ -13153,12 +13153,12 @@ the height or depth of the character is negative; thus, this routine
 may deliver a slightly different result than |hpack| would produce.
 
 @<Declare subprocedures for |var_delimiter|@>=
-static pointer char_box(internal_font_number @!f, quarterword @!c)
+static pointer char_box(internal_font_number @!f, int @!c)
 {@+pointer @!b, @!p; /*the new box and its character node*/
 b=new_null_box();
 if (IS_X_FONT(f))
 { hb_codepoint_t glyph;
-  if (x_glyph(f,character(p),&glyph))
+  if (x_glyph(f,c,&glyph))
   { scaled ph, pd;
     width(b)=x_glyph_width(f,glyph)+x_glyph_italic(f,glyph);
     x_glyph_height_depth(f,glyph,&ph,&pd);
@@ -20655,7 +20655,7 @@ case hmode+math_shift: init_math();@+break;
 @ @<Declare act...@>=
 static void init_math(void)
 {@+
-scaled w; /*new or partial |pre_display_size|*/
+scaled w=0; /*new or partial |pre_display_size|*/
 scaled @!l; /*new |display_width|*/
 scaled @!s; /*new |display_indent|*/
 pointer @!p; /*current node when calculating |pre_display_size|*/
@@ -34681,10 +34681,10 @@ separate global variables.
 
 
 @<Split the font name into its components@>=
-{ f_name= (char *)str_pool+str_start[str_ptr];
-  int l = cur_length;
+{ int l = cur_length;
   int i=0;
   int d;
+  f_name= (char *)str_pool+str_start[str_ptr];
   if (f_name[i]=='[')
   { d=1;
     @<Find a bracketed file name@>@;
@@ -35320,7 +35320,6 @@ an extended font, the following code comes to life.
  
 @<Append characters from an extended font; |goto reswitch| when done@>=
 { hb_buffer_t *buf;
-  buf = hb_buffer_create();
   unsigned int glyph_count;
   hb_glyph_info_t *glyph_info;
   hb_glyph_position_t *glyph_pos;
@@ -35331,7 +35330,8 @@ an extended font, the following code comes to life.
     {HB_TAG('c','l','i','g'), 0, HB_FEATURE_GLOBAL_START, HB_FEATURE_GLOBAL_END},
     {HB_TAG('d','l','i','g'), 0, HB_FEATURE_GLOBAL_START, HB_FEATURE_GLOBAL_END},
     {HB_TAG('c','a','l','t'), 0, HB_FEATURE_GLOBAL_START, HB_FEATURE_GLOBAL_END}
-   };
+  };
+  buf = hb_buffer_create();
 for (len=0;len<256;len++) {
 if (!x_char_exists(main_f,cur_chr))
   {@+char_warning(cur_font, cur_chr);goto big_switch;
