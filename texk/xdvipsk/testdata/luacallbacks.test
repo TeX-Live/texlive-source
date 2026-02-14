@@ -1,25 +1,13 @@
-#!/bin/sh -vx
+#! /bin/sh -vx
 # $Id$
-# Copyright 2019 Karl Berry <tex-live@tug.org>
+# Copyright 2026 Sigitas Tolusis <sigitas@vtex.lt>
 # You may freely use, modify and/or distribute this file.
 
-BinDir=${BinDir:-`pwd`}
-TestDir=$BinDir/testdata
-TestDirSrc=$BinDir/../../../texk/xdvipsk/testdata
-_xdvipsk=$BinDir/xdvipsk${ExeExt:-}
+## test luacallbacks from xdvipsk.lua file
+cp -f ../../../texk/xdvipsk/testdata/luacallbacks/xdvipsk.lua .
+../../../texk/xdvipsk/testdata/run_xdvipsk_test luacallbacks 3 4 
+mv -f ../../../texk/xdvipsk/testdata/luacallbacks/luacallbacks.dvi.info ./testdata/
+mv -f ../../../texk/xdvipsk/testdata/luacallbacks-gid/luacallbacks.dvi.info ./testdata/luacallbacks-gid.dvi.info 
+rm -f ./xdvipsk.lua
 
-testfile=$TestDir/luacallbacks
-
-cd $TestDirSrc/luacallbacks
-rm -f $testfile.ps.xdvips.log
-$_xdvipsk -Q1 luacallbacks.dvi -o $testfile.ps
-mv luacallbacks.dvi.info $TestDir/
-diff --strip-trailing-cr $testfile.ps.xdvips.log ../success.log || exit 1
-
-cd $TestDirSrc/luacallbacks-gid
-rm -f $testfile-gid.ps.xdvips.log
-$_xdvipsk -Q1 luacallbacks.dvi -o $testfile-gid.ps
-mv luacallbacks.dvi.info $TestDir/
-diff --strip-trailing-cr $testfile-gid.ps.xdvips.log ../success.log || exit 2
-
-exit 0
+exit $?

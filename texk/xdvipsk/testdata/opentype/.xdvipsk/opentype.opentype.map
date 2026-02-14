@@ -1,0 +1,6 @@
+[NotoSerifDevanagari-Regular.ttf]:mode=node;		NotoSerifDevanagari	Noto Serif Devanagari	>../../../texk/xdvipsk/testdata/opentype/NotoSerifDevanagari-Regular.ttf
+[NotoSerifDevanagari-Regular.ttf]:mode=node;script=dev2;language=dflt;		NotoSerifDevanagari	Noto Serif Devanagari	>../../../texk/xdvipsk/testdata/opentype/NotoSerifDevanagari-Regular.ttf
+[lmroman12-bold]:+tlig;		LMRoman12-Bold	LMRoman12-Bold	>../../../texk/xdvipsk/testdata/texmf-test/fonts/opentype/public/lm/lmroman12-bold.otf
+[lmroman12-regular]:+tlig;		LMRoman12-Regular	LMRoman12-Regular	>../../../texk/xdvipsk/testdata/texmf-test/fonts/opentype/public/lm/lmroman12-regular.otf
+[lmsans10-bold]:+tlig;		LMSans10-Bold	LMSans10-Bold	>../../../texk/xdvipsk/testdata/texmf-test/fonts/opentype/public/lm/lmsans10-bold.otf
+[lmsans12-regular]:+tlig;		LMSans12-Regular	LMSans12-Regular	>../../../texk/xdvipsk/testdata/texmf-test/fonts/opentype/public/lm/lmsans12-regular.otf

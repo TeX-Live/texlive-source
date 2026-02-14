@@ -1,23 +1,9 @@
-#!/bin/sh -vx
+#! /bin/sh -vx
 # $Id$
-# Copyright 2019 Karl Berry <tex-live@tug.org>
+# Copyright 2026 Sigitas Tolusis <sigitas@vtex.lt>
 # You may freely use, modify and/or distribute this file.
 
-BinDir=${BinDir:-`pwd`}
-TestDir=$BinDir/testdata
-TestDirSrc=$BinDir/../../../texk/xdvipsk/testdata
-_xdvipsk=$BinDir/xdvipsk${ExeExt:-}
+## test for mapfile as tex special: \special{mapfile: myriadtest.map}
+../../../texk/xdvipsk/testdata/run_xdvipsk_test mapfile 5 6 
 
-testfile=$TestDir/mapfile
-
-cd $TestDirSrc/mapfile
-rm -f $testfile.ps.xdvips.log
-$_xdvipsk -Q1 mapfile.dvi -o $testfile.ps
-diff --strip-trailing-cr $testfile.ps.xdvips.log ../success.log || exit 1
-
-cd $TestDirSrc/mapfile-gid
-rm -f $testfile-gid.ps.xdvips.log
-$_xdvipsk -Q1 mapfile.dvi -o $testfile-gid.ps
-diff --strip-trailing-cr $testfile-gid.ps.xdvips.log ../success.log || exit 2
-
-exit 0
+exit $?

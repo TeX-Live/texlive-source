@@ -10,8 +10,6 @@ SUBDIRS = squeeze man
 GRAPHLIB_INCLUDES = -I$(srcdir)/graphlib
 OTFLIB_INCLUDES = -I$(srcdir)/otflib
 
-## liblua53
-##
 LUA_INCLUDES = $(LUA53_INCLUDES) $(LUA53_DEFINES)
 LUA_LIBS = $(LUA53_LIBS)
 LUA_DEPEND = $(LUA53_DEPEND)
@@ -24,7 +22,10 @@ if cross
 endif
 bin_PROGRAMS = xdvipsk
 
-xdvipsk_CPPFLAGS = $(OTFLIB_INCLUDES) $(GRAPHLIB_INCLUDES) $(LUA_INCLUDES) $(ZLIB_INCLUDES) $(LIBPNG_INCLUDES) $(LIBJPEG_INCLUDES) $(LIBTIFF_INCLUDES) $(KPATHSEA_INCLUDES) $(FREETYPE2_INCLUDES) -DUNIX -DKPATHSEA -DSHIFTLOWCHARS -DXDVIPSK
+xdvipsk_CPPFLAGS = $(OTFLIB_INCLUDES) $(GRAPHLIB_INCLUDES) $(LUA_INCLUDES) \
+                   $(ZLIB_INCLUDES) $(LIBPNG_INCLUDES) $(LIBJPEG_INCLUDES) \
+                   $(LIBTIFF_INCLUDES) $(KPATHSEA_INCLUDES) $(FREETYPE2_INCLUDES) \
+                   -DUNIX -DKPATHSEA -DSHIFTLOWCHARS -DXDVIPSK
 
 xdvipsk_SOURCES = \
 	bbox.c \
@@ -232,8 +233,10 @@ LIBTIFF_LIBS = libtiff.a
 
 $(libtiff_a_OBJECTS): config.force
 
-$(xdvipsk_OBJECTS): $(KPATHSEA_DEPEND) $(LUA_DEPEND) $(ZLIB_DEPEND) $(LIBPNG_DEPEND) $(LIBJPEG_DEPEND) $(LIBTIFF_DEPEND) $(FREETYPE2_DEPEND)
-xdvipsk_LDADD = libdvipsgraph.a $(KPATHSEA_LIBS) $(LUA_LIBS) $(LIBTIFF_LIBS) $(LIBPNG_LIBS) $(ZLIB_LIBS) $(LIBJPEG_LIBS) $(FREETYPE2_LIBS) -lstdc++
+$(xdvipsk_OBJECTS): $(KPATHSEA_DEPEND) $(LUA_DEPEND) $(ZLIB_DEPEND) $(LIBPNG_DEPEND) \
+                    $(LIBJPEG_DEPEND) $(LIBTIFF_DEPEND) $(FREETYPE2_DEPEND)
+xdvipsk_LDADD = libdvipsgraph.a $(KPATHSEA_LIBS) $(LUA_LIBS) $(LIBTIFF_LIBS) \
+                $(LIBPNG_LIBS) $(ZLIB_LIBS) $(LIBJPEG_LIBS) $(FREETYPE2_LIBS) -lstdc++
 if cross
    xdvipsk_SOURCES += mingw/include/wingdi.h
    xdvipsk_LDFLAGS = -fno-lto -fno-use-linker-plugin -static -static-libgcc -static-libstdc++ --disable-shared
@@ -276,10 +279,6 @@ AM_CXXFLAGS = @AM_CXXFLAGS@
 
 libdvipsgraph_a_CPPFLAGS = $(ZLIB_INCLUDES) $(LIBPNG_INCLUDES) $(LIBJPEG_INCLUDES) $(LIBTIFF_INCLUDES)
 
-###############################################################################
-# THE LIBRARIES TO BUILD
-###############################################################################
-
 ## Rebuild libkpathsea
 @KPATHSEA_RULE@
 ## Rebuild liblua53
@@ -292,46 +291,27 @@ libdvipsgraph_a_CPPFLAGS = $(ZLIB_INCLUDES) $(LIBPNG_INCLUDES) $(LIBJPEG_INCLUDE
 @FREETYPE2_RULE@
 
 prolog_DATA = $(prologues)
-
-dist_prologues = \
-	texcid.lpro
-
+dist_prologues = texcid.lpro
 prologdir = $(datarootdir)/texmf-dist/dvips/xdvipsk
-
 prologues = $(dist_prologues:.lpro=.pro)
 
 SUFFIXES = .pro .lpro
 
-# The `t[mp]-' business is so that we don't create an empty .pro file,
-# if running squeeze fails for some reason.  A dependency on squeeze
-# fails here, so we include it below.
 .lpro.pro:
 	$(AM_V_GEN)squeeze/squeeze <$< >t-$@ && mv t-$@ $@
 
-# When cross-compiling, EXEEXT for the build and host systems may differ.
-# Thus we depend on the auxiliary file squeeze/stamp-squeeze.
 $(prologues): squeeze/stamp-squeeze
 
 squeeze/stamp-squeeze:
 	cd squeeze && $(MAKE) $(AM_MAKEFLAGS) stamp-squeeze
 
-EXTRA_DIST = $(dist_prologues) texc.script
+EXTRA_DIST = $(dist_prologues)
 
-## Tests
-#
-AM_TESTS_ENVIRONMENT = TEXMFCNF=../../../kpathsea; export TEXMFCNF;
-AM_TESTS_ENVIRONMENT += DVIPSFONTS=.:../texmf-test/fonts//; export DVIPSFONTS;
-AM_TESTS_ENVIRONMENT += T1FONTS=.:../texmf-test/fonts//; export T1FONTS;
-AM_TESTS_ENVIRONMENT += DVIPSHEADERS=../texmf-test/{dvips,fonts}//; export DVIPSHEADERS;
-AM_TESTS_ENVIRONMENT += TEXCONFIG=../texmf-test/dvips//; export TEXCONFIG;
-AM_TESTS_ENVIRONMENT += TEXPICTS=../texmf-test/images//; export TEXPICTS;
-AM_TESTS_ENVIRONMENT += DVIPSDEBUG=1; export DVIPSDEBUG;
+TESTS = testdata/bitmaps.test \
+        testdata/luacallbacks.test \
+        testdata/mapfile.test \
+        testdata/mapline.test \
+        testdata/opentype.test
+EXTRA_DIST += $(TESTS) testdata/run_xdvipsk_test
 
-#TESTS = testdata/bitmaps.test testdata/opentype.test testdata/luacallbacks.test testdata/mapfile.test testdata/mapline.test
-#EXTRA_DIST += $(TESTS)
-
-## bitmaps.test
-#EXTRA_DIST += testdata/bitmaps/bitmaps.dvi testdata/bitmaps-gid/bitmaps.dvi
-
-# Files not to be distributed
 include $(srcdir)/../../am/dist_hook.am

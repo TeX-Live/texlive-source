@@ -1,23 +1,13 @@
-#!/bin/sh -vx
+#! /bin/sh -vx
 # $Id$
-# Copyright 2019 Karl Berry <tex-live@tug.org>
+# Copyright 2026 Sigitas Tolusis <sigitas@vtex.lt>
 # You may freely use, modify and/or distribute this file.
 
-BinDir=${BinDir:-`pwd`}
-TestDir=$BinDir/testdata
-TestDirSrc=$BinDir/../../../texk/xdvipsk/testdata
-_xdvipsk=$BinDir/xdvipsk${ExeExt:-}
+## test for mapline as tex special
+## \special{mapline: utmr8r NimbusRomNo9L-Regu <8r.enc <utmri8a.pfb " TeXBase1Encoding ReEncodeFont "}
+../kpathsea/kpsewhich -show-path=.enc
 
-testfile=$TestDir/mapline
+../kpathsea/kpsewhich -all 8r.enc
+../../../texk/xdvipsk/testdata/run_xdvipsk_test mapline 7 8 
 
-cd $TestDirSrc/mapline
-rm -f $testfile.ps.xdvips.log
-$_xdvipsk -Q1 mapline.dvi -o $testfile.ps
-diff --strip-trailing-cr $testfile.ps.xdvips.log ../success.log || exit 1
-
-cd $TestDirSrc/mapline-gid
-rm -f $testfile-gid.ps.xdvips.log
-$_xdvipsk -Q1 mapline.dvi -o $testfile-gid.ps
-diff --strip-trailing-cr $testfile-gid.ps.xdvips.log ../success.log || exit 2
-
-exit 0
+exit $?

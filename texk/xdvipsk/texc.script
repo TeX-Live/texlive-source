@@ -1,9 +1,0 @@
-#! /bin/sh
-# A shell script to convert tex.lpro to texc.lpro.  Public domain.
-#
-# To use it, say
-#       texc.script tex.lpro texc.lpro
-#
-sed -e '/begin code/,/end code/d' \
-    -e '/alternate code/,/end of code/s/^% //' \
-    $1 >$2

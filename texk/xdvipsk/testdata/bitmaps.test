@@ -1,23 +1,9 @@
-#!/bin/sh -vx
+#! /bin/sh -vx
 # $Id$
-# Copyright 2019 Karl Berry <tex-live@tug.org>
+# Copyright 2026 Sigitas Tolusis <sigitas@vtex.lt>
 # You may freely use, modify and/or distribute this file.
 
-BinDir=${BinDir:-`pwd`}
-TestDir=$BinDir/testdata
-TestDirSrc=$BinDir/../../../texk/xdvipsk/testdata
-_xdvipsk=$BinDir/xdvipsk${ExeExt:-}
+## Test bitmap images: PNG, BMP, JPG, PCX, TIF, EPS.
+../../../texk/xdvipsk/testdata/run_xdvipsk_test bitmaps 1 2 
 
-testfile=$TestDir/bitmaps
-
-cd $TestDirSrc/bitmaps
-rm -f $testfile.ps.xdvips.log
-$_xdvipsk -Q1 bitmaps.dvi -o $testfile.ps
-diff --strip-trailing-cr $testfile.ps.xdvips.log ../success.log || exit 1
-
-cd $TestDirSrc/bitmaps-gid
-rm -f $testfile-gid.ps.xdvips.log
-$_xdvipsk -Q1 bitmaps.dvi -o $testfile-gid.ps
-diff --strip-trailing-cr $testfile-gid.ps.xdvips.log ../success.log || exit 2
-
-exit 0
+exit $?
