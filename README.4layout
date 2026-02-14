@@ -28,11 +28,11 @@ many extra hassles, so don't do that, tempting as it may be.
    Currently the versions we use are:
 
      autoconf (GNU Autoconf) 2.72
-     automake (GNU automake) 1.17
+     automake (GNU automake) 1.18.1
      bison (GNU Bison) 3.8.2
      flex 2.6.0
      ltmain.sh (GNU libtool) 2.5.4
-     m4 (GNU M4) 1.4.19
+     m4 (GNU M4) 1.4.21
      makeinfo (GNU texinfo) 7.2
 
    These versions should be used to update the generated files (e.g.,
@@ -269,7 +269,7 @@ due to the lack of symbolic links.
      scripts" (see Linked scripts).
 
  -- Macro: KPSE_WIN32_CALL
-     Call 'KPSE_COND_WIN32' and check if the file
+     Call 'KPSE_COND_WIN32' and check whether the file
      'texk/texlive/windows_wrapper/callexe.c' exists; if it does, create
      a symlink in the build tree.  Compiling 'callexe.c' with
      '-DEXEPROG='"FOO.exe"'' and installing 'callexe.exe' as 'BAR.exe'
@@ -410,7 +410,7 @@ modifications documented in 'TLpatches/*', and a wrapper 'configure.ac'
 and 'Makefile.am' that descends into 'xindy-src'.
 
    The 'xindy' build requires a 'make' that supports a 'VPATH' build,
-can handle all targets, and does not refer to '${top_srcdir}' or
+can handle all needed targets, and does not refer to '${top_srcdir}' or
 '${top_builddir}'.  The fragment 'xindy/ac/withenable.ac' contains
 
      KPSE_ENABLE_PROG([xindy], , [disable])
@@ -462,12 +462,22 @@ but are included on the TL DVD together with their support files.  See
 This section outlines the basic process for adding new packages to the
 TL build system.
 
-   In any case, a new package directory 'foo' should contain the
-original sources, modified only with changes necessary for TL, in
-'foo/foo-src'.  The changes should be documented in 'foo/TLpatches/*',
-and also be submitted upstream whenever reasonable.  In addition, 'foo/'
-will need the usual Automake build-related files ('configure.ac',
-'Makefile.am', etc.  Please maintain 'foo/ChangeLog' for all TL changes.
+   A new package directory 'foo' should be placed under
+'Build/source/texk/' if it uses Kpathsea (or another TeX-specific
+library), or under 'Build/source/utils' if it does not.
+
+   The new directory should normally have the original sources, modified
+only with changes necessary for TL, in a subdirectory 'foo/foo-src'.
+The changes should be documented in 'foo/TLpatches/*', and also be
+submitted upstream whenever reasonable.  In addition, 'foo/' will need
+the usual Automake build-related files ('configure.ac', 'Makefile.am',
+etc.  Please maintain 'foo/ChangeLog' for all TL changes.
+
+   It is also possible to add a package which is configured with
+Autoconf (or another 'make'-based system) and not Automake.  The package
+must still support the standard 'make' variables and targets, and
+'VPATH' builds (see (automake)VPATH Builds).  For Autoconf-only
+packages, it is probably not sensible to use a 'foo-src' subdirectory.
 
 6.6.1 Adding a new program module
 ---------------------------------
@@ -477,11 +487,11 @@ TeX-specific libraries and is included by adding its name 'PROG' to the
 M4 list 'kpse_texk_pkgs' defined in 'm4/kpse-pkgs.m4'.
 
    A generic program module in a subdirectory 'utils/PROG' must not use
-the TeX-specific libraries and is included by adding its name 'PROG' to
-the M4 list 'kpse_utils_pkgs' in 'm4/kpse-pkgs.m4'.
+the TeX-specific libraries, notably Kpathsea, and is included by adding
+its name 'PROG' to the M4 list 'kpse_utils_pkgs' in 'm4/kpse-pkgs.m4'.
 
    In either case, the subdirectory 'texk/PROG' or 'utils/PROG' must
-provide a fragment 'ac/withenable.ac' that contains the M4 macro
+include a file 'ac/withenable.ac' which contains a call to the M4 macro
 'KPSE_ENABLE_PROG' defined in 'm4/kpse-setup.m4' with 'PROG' as the
 mandatory first argument and three optional arguments:
 

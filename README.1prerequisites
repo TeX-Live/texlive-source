@@ -62,8 +62,9 @@ expect:
      'configure.ac', 'Makefile.am', or their fragments) requires GNU M4,
      GNU Autoconf, GNU Automake, and GNU Libtool to update the generated
      files.  Furthermore, to reliably reproduce the build files, the
-     original GNU releases of these tools must be used, not any distro
-     packaging of them.  See Build system tools, for more discussion.
+     latest original GNU releases of these tools must be used, not any
+     distro packaging of them.  See Build system tools, for more
+     discussion.
 
    If you haven't modified any source files, and infrastructure tools
 such as 'autoconf' or 'makeinfo' are still being run, check your

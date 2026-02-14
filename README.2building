@@ -232,7 +232,7 @@ To run only the tests for a given engine, say 'hitex':
      make -C $ww check SUBDIRS=. TESTS='$(hitex_tests)'
 
 where '$ww' is the web2c build directory, that is,
-'ww=/wherever/Build/source/Work/texk/web2c'.
+'ww=/.../Build/source/Work/texk/web2c'.
 
    It's also possible to run individual tests the same way, using the
 test name exactly as specified in the '.am' file:
@@ -248,8 +248,8 @@ will descend into every directory.
 lines, you can add the (GNU) make option '--no-print-dir'.
 
    You may find it useful to put lengthy incantations like this into a
-trivial shell script with a short name (say, 'hitst').  Then you just
-run 'hitst' and edit the file when necessary to change things around.
+trivial shell script with a short name (say, 'hitch').  Then you just
+run 'hitch' and edit the file when necessary to change the options.
 
 4.6 Cross compilation
 =====================

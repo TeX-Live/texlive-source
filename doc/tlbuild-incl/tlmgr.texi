@@ -259,8 +259,10 @@ the @ref{tlmgr MACHINE-READABLE OUTPUT,, MACHINE-READABLE OUTPUT} section below.
 @anchor{tlmgr @strong{@asis{}-@asis{}-@asis{}no-execute-actions}}
 
 Suppress the execution of the execute actions as defined in the tlpsrc
-files.  Documented only for completeness, as this is only useful in
-debugging.
+files. Unless you are going to do the postprocessing yourself (as, for
+example, @code{install-tl} does), this shouldn't be specified.  Otherwise,
+format files and the filename database will become stale, among other
+problems.
 
 @item @strong{@asis{}-@asis{}-@asis{}package-logfile} @emph{file}
 @anchor{tlmgr @strong{@asis{}-@asis{}-@asis{}package-logfile} @emph{file}}
@@ -1114,6 +1116,10 @@ program.
 With a program given as the first argument and a paper size as the last
 argument (e.g., @code{tlmgr dvips paper a4}), set the default for that
 program to that paper size.
+
+If either @code{pdftex} or @code{context} is one of the arguments, whether
+implicitly or explicitly, existing formats are rebuilt (i.e., @code{fmtutil
+--refresh} is called), unless @code{--no-execute-actions} is specified.
 
 With a program given as the first argument and @code{--list} given as the
 last argument (e.g., @code{tlmgr dvips paper --list}), shows all valid paper
@@ -2717,5 +2723,5 @@ This script and its documentation were written for the TeX Live
 distribution (@url{https://tug.org/texlive}) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 73493 2025-01-17 22:28:29Z karl $
+$Id: tlmgr.pl 77655 2026-02-07 15:38:21Z karl $
 

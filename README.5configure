@@ -225,8 +225,8 @@ Include various types of non-X window support for Metafont (EPSF output,
 
 '--enable-tex-synctex', '--disable-etex-synctex', ...
 Build the TeX engines with or without 'SyncTeX' support; ignored for a
-native TeX Live build.  Defaults are defined in
-'texk/web2c/ac/web2c.ac'.
+native TeX Live build.  Defaults are defined in 'texk/web2c/ac/web2c.ac'
+(see Autoconf macros).
 
 '--disable-synctex'
 Do not build the 'SyncTeX' library and tool.
