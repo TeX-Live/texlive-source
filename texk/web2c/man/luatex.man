@@ -1,4 +1,4 @@
-.TH LUATEX 1 "25 January 2026" "Web2C @VERSION@"
+.TH LUATEX 1 "14 February 2026" "Web2C @VERSION@"
 .\"=====================================================================
 .if t .ds TX \fRT\\h'-0.10m'\\v'0.17v'E\\v'-0.17v'\\h'-0.06m'X\fP
 .if n .ds TX TeX
@@ -44,11 +44,14 @@ to produce either dvi or pdf output.
 .PP
 In pdf mode, Lua\*(TX can natively handle the pdf, jpg, jbig2, and png
 graphics formats, but not PostScript or Encapsulated PostScript (eps)
-graphics files; see
+graphics; see
 .BR pdftex (1).
+As a special case, the PostScript files output by MetaPost can be
+handled directly via the \fIsupp-pdf.tex\fP and \fIsupp-pdf.mkii\fP macros.
 .PP
 The regular \fBluatex\fP programs embed Lua 5.3, developed by PUC-Rio;
-the \fBjit\fP variants embed LuaJIT, developed by Mike Pall.
+the \fBjit\fP variants such as \fBluajittex\fP embed LuaJIT for
+just-in-time compilation, developed by Mike Pall.
 .PP
 The \fBluahbtex\fP variant includes the HarfBuzz engine for glyph
 shaping. HarfBuzz must still be explicitly enabled at the \*(TX level.

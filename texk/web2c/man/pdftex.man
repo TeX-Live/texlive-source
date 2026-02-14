@@ -1,4 +1,4 @@
-.TH PDFTEX 1 "26 January 2026" "Web2C @VERSION@"
+.TH PDFTEX 1 "14 February 2026" "Web2C @VERSION@"
 .\"=====================================================================
 .if t .ds TX \fRT\\h'-0.10m'\\v'0.17v'E\\v'-0.17v'\\h'-0.06m'X\fP
 .if n .ds TX TeX
@@ -54,11 +54,11 @@ graphics formats. It cannot include PostScript or Encapsulated
 PostScript (eps) graphics files; you can convert them to pdf using, for
 example,
 .BR epstopdf (1).
-For the PostScript files output by
-.BR mpost (1)
-specifically,
-.BR mptopdf (1)
-can be used.
+The PostScript files output by
+.BR mpost (1),
+which are highly restricted in their use of PostScript, can be handled
+directly using the \fIsupp-pdf.tex\fP macros, or converted to pdf with
+.BR mptopdf (1).
 .PP
 .B Program variants
 .PP
@@ -118,6 +118,15 @@ See
 .SH ENVIRONMENT
 See
 .BR tex (1).
+Also, this environment variable is specific to pdf\*(TX:
+.TP
+.B TEXMF_DEBUG_PNG_COPY
+If set to "1", pdf\*(TX reports various attributes of each png image,
+including whether the image is copied. This is useful when a document uses
+numerous png images, since reencoding (instead of copying) can take
+considerable time. See the Graphics chapter in the pdf\*(TX manual for
+more information.
+.PP
 Also, these environment variables are considered for all engines except
 original \*(TX:
 .TP
