@@ -1,3 +1,12 @@
+2026-02-15  Karl Berry  <karl@freefriends.org>
+
+	* pdftex.web (pdf_begin_string): initialize must_set_text_pos
+	to fix each character in the output being set individually.
+	Report from Christian Clason,
+	  https://tug.org/pipermail/tex-live/2026-February/052142.html
+	and fix found by Hartmut Henkel,
+	  https://tug.org/pipermail/tex-live/2026-February/052152.html
+
 2026-02-08  Karl Berry  <karl@freefriends.org>
 
 	* writepng.c (writepng): if envvar TEXMF_DEBUG_PNG_COPY
