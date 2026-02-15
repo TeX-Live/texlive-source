@@ -96,14 +96,11 @@ jobs:
         with:
           platforms: ${{ matrix.qemu_arch }}
       - name: build
-        uses: addnab/docker-run-action@v3
         if: ${{ matrix.ci_build || matrix.release_build }}
-        with: 
-          image: ${{ matrix.image }}
-          options: -v ${{ github.workspace }}:/work --platform linux/${{ matrix.platform }}
-          run: |
-            cd /work/repo
-            .github/scripts/build-tl.sh ${{ matrix.tl_name }} ${{ matrix.buildsys }}
+        run: |
+          docker run --rm -v ${{ github.workspace }}:/work --platform linux/${{ matrix.platform }} \
+            ${{ matrix.image }} \
+            sh -c "cd /work/repo && .github/scripts/build-tl.sh ${{ matrix.tl_name }} ${{ matrix.buildsys }}"
       - name: find file step
         if: ${{ matrix.ci_build || matrix.release_build }}
         run: ls -l $GITHUB_WORKSPACE/repo/texlive-bin-${{ matrix.tl_name }}.tar.gz
