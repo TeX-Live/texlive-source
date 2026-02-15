@@ -1,5 +1,7 @@
 #!/bin/sh -l
 # $Id$
+# (-l above for login shell)
+# 
 # The build script that is run by ../workflows/main.yml on github.
 # Public domain. Originally written by Norbert Preining.
 
@@ -12,11 +14,11 @@ then
 fi
 
 arch="$1"
-echo "Building TL for arch = $arch"
+echo "$0: Building TL for arch = $arch"
 shift
 
 buildsys=$1
-echo "Building on $buildsys"
+echo "$0: Building on $buildsys"
 shift
 
 do_prepare=1
@@ -40,12 +42,6 @@ then
        yum install -y gcc-toolset-11 fontconfig-devel libX11-devel libXmu-devel libXaw-devel
        . /opt/rh/gcc-toolset-11/enable
        ;;
-     centos)
-       yum update -y
-       yum install -y centos-release-scl
-       yum install -y devtoolset-9 fontconfig-devel libX11-devel libXmu-devel libXaw-devel
-       . /opt/rh/devtoolset-9/enable
-       ;;
      alpine)
        apk update
        apk add --no-progress bash gcc g++ make perl fontconfig-dev libx11-dev libxmu-dev libxaw-dev
@@ -64,7 +60,7 @@ then
        /opt/csw/bin/pkgutil -y -i autoconf automake gcc5core libtool
        ;;
      *)
-       echo "Unsupported build system: $buildsys" >&2
+       echo "$0: Unsupported build system: $buildsys" >&2
        exit 1
        ;;
   esac
@@ -136,7 +132,7 @@ case "$arch" in
     export TL_MAKE=gmake
     export CC=gcc 
     export CXX=g++
-    export CFLAGS=-D_NETBSD_SOURCE
+    export CFLAGS='-D_NETBSD_SOURCE'
     export CXXFLAGS='-D_NETBSD_SOURCE -std=c++17'
     ;;
   x86_64-linux|i386-linux|x86_64-linuxmusl)
@@ -144,6 +140,21 @@ case "$arch" in
     ;;
 esac
 export TL_MAKE_FLAGS
+
+# If we explicitly set CFLAGS or CXXFLAGS above, it's up to us to enable
+# optimization, since we are overriding what Autoconf does.
+test -n "$CFLAGS" && CFLAGS="$CFLAGS -O2"
+test -n "$CXXFLAGS" && CXXFLAGS="$CXXFLAGS -O2"
+
+echo "$0: variables set:"
+echo "  BUILDARGS=$BUILDARGS"
+echo "  CC=$CC"
+echo "  CXX=$CXX"
+echo "  CFLAGS=$CFLAGS"
+echo "  CXXFLAGS=$CXXFLAGS"
+echo "  TL_MAKE=$TL_MAKE"
+echo "  TL_MAKE_FLAGS=$TL_MAKE_FLAGS"
+echo "$0: (end variables)."
 
 ./Build -C $BUILDARGS
 
