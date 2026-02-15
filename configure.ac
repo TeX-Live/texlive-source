@@ -175,10 +175,26 @@ test -n "$cc_version" && cc_version=" ($cc_version)"
 cxx_version=`$CXX --version 2>/dev/null | sed 1q`
 test -n "$cxx_version" && cxx_version=" ($cxx_version)"
 
+# use quotes for the TL values since behavior of Build script may vary
+# even if they contain only whitespace.
+#
 AC_MSG_RESULT([
+   PATH:                         $PATH
    C compiler (CC):              $CC$cc_version
    C++ compiler (CXX):           $CXX$cxx_version
-   PATH:                         $PATH
+
+   CFLAGS:                       $CFLAGS
+   CXXFLAGS:                     $CXXFLAGS
+
+   TL_MAKE:                      "$TL_MAKE"
+   TL_MAKE_FLAGS:                "$TL_MAKE_FLAGS"
+   TL_TARGET:                    "$TL_TARGET"
+   TL_WORKDIR:                   "$TL_WORKDIR"
+   TL_BUILD_ENV:                 "$TL_BUILD_ENV"
+   TL_COMPILER_GFLAGS:           "$TL_COMPILER_GFLAGS"
+   TL_CFLAGS:                    "$TL_CFLAGS"
+   TL_CXXFLAGS:                  "$TL_CXXFLAGS"
+   TL_CONF_BANNER:               "$TL_CONF_BANNER"
 
    enable_native_texlive_build:  $enable_native_texlive_build
    enable_largefile:             $enable_largefile

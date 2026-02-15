@@ -40,6 +40,7 @@ armhf-linux: github, see below.
 
 x86_64-cygwin: gcc-10.2.0, cygwin-3.1.7
   TL_CONFIGURE_ARGS="--enable-xindy --enable-shared CLISP=/path/to/clisp.exe
+    CXXFLAGS=-Wa,-mbig-obj
     LDFLAGS='-Wl,--no-insert-timestamp -Wl,--stack,0x800000'" \
   ./Build
   

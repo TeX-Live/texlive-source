@@ -85,10 +85,30 @@ fi
 # You can also set TL_{C,CXX,OBJCXX}FLAGS for per-language flags,
 # notably TL_CFLAGS=-Wdeclaration-after-statement to help Akira.
 #
-c="CFLAGS='$TL_COMPILER_GFLAGS $TL_CFLAGS $CFLAGS'"
-cxx="CXXFLAGS='$TL_COMPILER_GFLAGS $TL_CXXFLAGS $CXXFLAGS'"
-objcxx="OBJCXXFLAGS='$TL_COMPILER_GFLAGS $TL_OBJCXXFLAGS $OBJCXXFLAGS'"
-  # objcxx is only used on macs.
+# But if no TL_*FLAGS are set, don't set CFLAGS at all,
+# since then Autoconf's default setting will be overridden,
+# and neither optimization nor debugging will be automatically set.
+# 
+if test -n "$TL_COMPILER_GFLAGS$TL_CFLAGS"; then
+  c="CFLAGS='$TL_COMPILER_GFLAGS $TL_CFLAGS'"
+else
+  c=
+fi
+#
+if test -n "$TL_COMPILER_GFLAGS$TL_CXXFLAGS"; then
+  cxx="CXXFLAGS='$TL_COMPILER_GFLAGS $TL_CXXFLAGS $CXXFLAGS'"
+else
+  cxx=
+fi
+#
+# objcxx is only used on macs.
+if test -n "$TL_COMPILER_GFLAGS$TL_OBJCXXFLAGS"; then
+  objcxx="OBJCXXFLAGS='$TL_COMPILER_GFLAGS $TL_OBJCXXFLAGS $OBJCXXFLAGS'"
+else
+  objcxx=
+fi
+#
+# combine all those.
 TL_BUILD_ENV="$c $cxx $objcxx $TL_BUILD_ENV"
 
 # allow for changing the banner identification, e.g.,

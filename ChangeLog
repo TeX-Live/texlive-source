@@ -1,3 +1,17 @@
+2026-02-15  Karl Berry  <karl@freefriends.org>
+
+	* Build: do not set CFLAGS unless one of the TL_* variables is
+	set; otherwise we lose Autoconf's normal CFLAGS of -g -O2.
+	Report from Petr Olsak:
+	https://tug.org/pipermail/tex-live/2026-February/052146.html
+
+	* configure.ac (summary): report CFLAGS, CXXFLAGS, and some of
+	Build's TL_* variables (in quotes, so whitespace-only values will
+	be visible).
+	
+	* README (cygwin): additional arg reported by Ken.
+	https://tug.org/pipermail/tlbuild/2026q1/005916.html
+
 2025-10-16  Karl Berry  <karl@freefriends.org>
 
 	* Build (status): avoid using egrep.
