@@ -18,14 +18,14 @@
 @z
 
 @x
-#define metapost_version "3.0a"
+#define metapost_version "3.00"
 @y
 #ifdef UPMP
 #define P_UP "up"
-#define metapost_version "3.0a-0.04-u2.02"
+#define metapost_version "3.00-0.04-u2.02"
 #else
 #define P_UP "p"
-#define metapost_version "3.0a-0.04"
+#define metapost_version "3.00-0.04"
 #endif
 #define default_banner "This is " P_UP "MetaPost, Version " metapost_version /* printed when \MP\ starts */
 @z
