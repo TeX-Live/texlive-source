@@ -28,7 +28,7 @@
 #define CHEADERFILE "texc.pro"
 #define PSFONTHEADER "texps.pro"
 #ifdef XDVIPSK
-#define CIDFONTHEADER "texcid.pro"
+#define CIDFONTHEADER "xdvipsk-cid.pro"
 #endif
 #define IFONTHEADER "finclude.pro"
 #define SPECIALHEADER "special.pro"

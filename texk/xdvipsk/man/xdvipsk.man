@@ -35,7 +35,7 @@ fonts used in .dvi files are produced by LaTeX package
 .I luafontmaps.
 .sp
 PostScript header file
-.I texcid.pro
+.I xdvips-cid.pro
 is used for inclusion of
 .B OpenType
 fonts in PostScript files. It is an analogue of

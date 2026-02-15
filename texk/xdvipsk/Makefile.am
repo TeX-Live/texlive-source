@@ -291,7 +291,7 @@ libdvipsgraph_a_CPPFLAGS = $(ZLIB_INCLUDES) $(LIBPNG_INCLUDES) $(LIBJPEG_INCLUDE
 @FREETYPE2_RULE@
 
 prolog_DATA = $(prologues)
-dist_prologues = texcid.lpro
+dist_prologues = xdvipsk-cid.lpro
 prologdir = $(datarootdir)/texmf-dist/dvips/xdvipsk
 prologues = $(dist_prologues:.lpro=.pro)
 
