@@ -3,7 +3,8 @@
 # Copyright 2026 Sigitas Tolusis <sigitas@vtex.lt>
 # You may freely use, modify and/or distribute this file.
 
-## Test bitmap images: PNG, BMP, JPG, PCX, TIF, EPS.
-../../../texk/xdvipsk/testdata/run_xdvipsk_test bitmaps 1 2 
+## Test --version argument.
+
+./xdvipsk --version >testdata/xdvipsk.version.log 2>&1 
 
 exit $?

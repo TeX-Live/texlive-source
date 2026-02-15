@@ -3,7 +3,8 @@
 # Copyright 2026 Sigitas Tolusis <sigitas@vtex.lt>
 # You may freely use, modify and/or distribute this file.
 
-## test for mapfile as tex special: \special{mapfile: myriadtest.map}
-../../../texk/xdvipsk/testdata/run_xdvipsk_test mapfile 5 6 
+## Test --help argument.
+
+./xdvipsk --help >testdata/xdvipsk.help.log 2>&1 
 
 exit $?

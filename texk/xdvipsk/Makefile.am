@@ -307,11 +307,8 @@ squeeze/stamp-squeeze:
 
 EXTRA_DIST = $(dist_prologues)
 
-#TESTS = testdata/bitmaps.test \
-#        testdata/luacallbacks.test \
-#        testdata/mapfile.test \
-#        testdata/mapline.test \
-#        testdata/opentype.test
-#EXTRA_DIST += $(TESTS) testdata/run_xdvipsk_test
+TESTS = testdata/xdvipsk-help.test \
+        testdata/xdvipsk-version.test
+EXTRA_DIST += $(TESTS)
 
 include $(srcdir)/../../am/dist_hook.am
