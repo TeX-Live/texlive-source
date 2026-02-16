@@ -24,11 +24,6 @@
 # done only when a release is tagged, not from the
 # commit-triggered builds here.
 
-# only build manually, since xdvipsk is now part of the main build.
-on:
-  workflow_dispatch:
-
-# Also trigger on pushes to the xdvipsk-dev branch
 on:
   push:
     branches:
