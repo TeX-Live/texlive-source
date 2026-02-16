@@ -15,6 +15,7 @@
 @x
 @d default_banner "This is MetaPost, Version "metapost_version /* printed when \MP\ starts */
 @y
+@d default_banner "This is " P_UP "MetaPost, Version " metapost_version /* printed when \MP\ starts */
 @z
 
 @x
@@ -27,7 +28,6 @@
 #define P_UP "p"
 #define metapost_version "3.00-0.04"
 #endif
-#define default_banner "This is " P_UP "MetaPost, Version " metapost_version /* printed when \MP\ starts */
 @z
 
 @x

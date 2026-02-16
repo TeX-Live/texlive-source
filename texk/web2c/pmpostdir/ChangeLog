@@ -1,6 +1,6 @@
 2026-02-16  Andreas Scherer  <https://ascherer.github.io>
 
-	* pmp.ch: Adapt to upstream mp.w.
+	* pmp.ch: Adapt to upstream mp.w. No need to export default_banner.
 
 2026-01-31  Karl Berry  <karl@tug.org>
 
