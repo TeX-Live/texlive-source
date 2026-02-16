@@ -321,9 +321,9 @@ AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
 am__v_lt_0 = --silent
 am__v_lt_1 = 
-xdvipsk_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
-	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
-	$(xdvipsk_LDFLAGS) $(LDFLAGS) -o $@
+xdvipsk_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CXX $(AM_LIBTOOLFLAGS) \
+	$(LIBTOOLFLAGS) --mode=link $(CXXLD) $(AM_CXXFLAGS) \
+	$(CXXFLAGS) $(xdvipsk_LDFLAGS) $(LDFLAGS) -o $@
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
 am__v_P_0 = false
@@ -431,7 +431,7 @@ am__depfiles_remade =  \
 	./$(DEPDIR)/xdvipsk-dospecial.Po \
 	./$(DEPDIR)/xdvipsk-download.Po \
 	./$(DEPDIR)/xdvipsk-dpicheck.Po ./$(DEPDIR)/xdvipsk-drawPS.Po \
-	./$(DEPDIR)/xdvipsk-dviinput.Po \
+	./$(DEPDIR)/xdvipsk-dummy.Po ./$(DEPDIR)/xdvipsk-dviinput.Po \
 	./$(DEPDIR)/xdvipsk-emspecialex.Po \
 	./$(DEPDIR)/xdvipsk-finclude.Po ./$(DEPDIR)/xdvipsk-fontdef.Po \
 	./$(DEPDIR)/xdvipsk-glyphmap.Po ./$(DEPDIR)/xdvipsk-header.Po \
@@ -525,7 +525,8 @@ am__v_CXXLD_ = $(am__v_CXXLD_@AM_DEFAULT_V@)
 am__v_CXXLD_0 = @echo "  CXXLD   " $@;
 am__v_CXXLD_1 = 
 SOURCES = $(libdvipsgraph_a_SOURCES) $(libjpeg_a_SOURCES) \
-	$(libtiff_a_SOURCES) $(xdvipsk_SOURCES)
+	$(libtiff_a_SOURCES) $(xdvipsk_SOURCES) \
+	$(nodist_EXTRA_xdvipsk_SOURCES)
 DIST_SOURCES = $(libdvipsgraph_a_SOURCES) $(libjpeg_a_SOURCES) \
 	$(libtiff_a_SOURCES) $(am__xdvipsk_SOURCES_DIST)
 RECURSIVE_TARGETS = all-recursive check-recursive cscopelist-recursive \
@@ -1002,6 +1003,9 @@ LUA_DEPEND = $(LUA53_DEPEND)
 AM_CPPFLAGS = $(KPATHSEA_INCLUDES) -DUNIX -DKPATHSEA -DSHIFTLOWCHARS
 AM_CFLAGS = $(WARNING_CFLAGS)
 @cross_TRUE@MINGW_INCLUDES = -I$(abs_top_srcdir)/mingw/include
+
+# Force Automake to use CXXLD for linking
+nodist_EXTRA_xdvipsk_SOURCES = dummy.cxx
 xdvipsk_CPPFLAGS = $(OTFLIB_INCLUDES) $(GRAPHLIB_INCLUDES) $(LUA_INCLUDES) \
                    $(ZLIB_INCLUDES) $(LIBPNG_INCLUDES) $(LIBJPEG_INCLUDES) \
                    $(LIBTIFF_INCLUDES) $(KPATHSEA_INCLUDES) $(FREETYPE2_INCLUDES) \
@@ -1181,7 +1185,7 @@ all: c-auto.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 
 .SUFFIXES:
-.SUFFIXES: .pro .lpro .c .cpp .lo .log .o .obj .test .test$(EXEEXT) .trs
+.SUFFIXES: .pro .lpro .c .cpp .cxx .lo .log .o .obj .test .test$(EXEEXT) .trs
 am--refresh: Makefile
 	@:
 $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am $(srcdir)/../../am/dist_hook.am $(am__configure_deps)
@@ -1653,7 +1657,7 @@ otflib/xdvipsk-unicode.$(OBJEXT): otflib/$(am__dirstamp) \
 
 xdvipsk$(EXEEXT): $(xdvipsk_OBJECTS) $(xdvipsk_DEPENDENCIES) $(EXTRA_xdvipsk_DEPENDENCIES) 
 	@rm -f xdvipsk$(EXEEXT)
-	$(AM_V_CCLD)$(xdvipsk_LINK) $(xdvipsk_OBJECTS) $(xdvipsk_LDADD) $(LIBS)
+	$(AM_V_CXXLD)$(xdvipsk_LINK) $(xdvipsk_OBJECTS) $(xdvipsk_LDADD) $(LIBS)
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -1760,6 +1764,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xdvipsk-download.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xdvipsk-dpicheck.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xdvipsk-drawPS.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xdvipsk-dummy.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xdvipsk-dviinput.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xdvipsk-emspecialex.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xdvipsk-finclude.Po@am__quote@ # am--include-marker
@@ -4150,6 +4155,44 @@ graphlib/libdvipsgraph_a-toFloat.obj: graphlib/toFloat.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libdvipsgraph_a_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o graphlib/libdvipsgraph_a-toFloat.obj `if test -f 'graphlib/toFloat.cpp'; then $(CYGPATH_W) 'graphlib/toFloat.cpp'; else $(CYGPATH_W) '$(srcdir)/graphlib/toFloat.cpp'; fi`
 
+xdvipsk-dummy.o: dummy.cxx
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xdvipsk_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT xdvipsk-dummy.o -MD -MP -MF $(DEPDIR)/xdvipsk-dummy.Tpo -c -o xdvipsk-dummy.o `test -f 'dummy.cxx' || echo '$(srcdir)/'`dummy.cxx
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/xdvipsk-dummy.Tpo $(DEPDIR)/xdvipsk-dummy.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='dummy.cxx' object='xdvipsk-dummy.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xdvipsk_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o xdvipsk-dummy.o `test -f 'dummy.cxx' || echo '$(srcdir)/'`dummy.cxx
+
+xdvipsk-dummy.obj: dummy.cxx
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xdvipsk_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT xdvipsk-dummy.obj -MD -MP -MF $(DEPDIR)/xdvipsk-dummy.Tpo -c -o xdvipsk-dummy.obj `if test -f 'dummy.cxx'; then $(CYGPATH_W) 'dummy.cxx'; else $(CYGPATH_W) '$(srcdir)/dummy.cxx'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/xdvipsk-dummy.Tpo $(DEPDIR)/xdvipsk-dummy.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='dummy.cxx' object='xdvipsk-dummy.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xdvipsk_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o xdvipsk-dummy.obj `if test -f 'dummy.cxx'; then $(CYGPATH_W) 'dummy.cxx'; else $(CYGPATH_W) '$(srcdir)/dummy.cxx'; fi`
+
+.cxx.o:
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\
+@am__fastdepCXX_TRUE@	$(CXXCOMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ $< &&\
+@am__fastdepCXX_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXXCOMPILE) -c -o $@ $<
+
+.cxx.obj:
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.obj$$||'`;\
+@am__fastdepCXX_TRUE@	$(CXXCOMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ `$(CYGPATH_W) '$<'` &&\
+@am__fastdepCXX_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXXCOMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
+
+.cxx.lo:
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.lo$$||'`;\
+@am__fastdepCXX_TRUE@	$(LTCXXCOMPILE) -MT $@ -MD -MP -MF $$depbase.Tpo -c -o $@ $< &&\
+@am__fastdepCXX_TRUE@	$(am__mv) $$depbase.Tpo $$depbase.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(LTCXXCOMPILE) -c -o $@ $<
+
 mostlyclean-libtool:
 	-rm -f *.lo
 
@@ -4825,6 +4868,7 @@ distclean: distclean-recursive
 	-rm -f ./$(DEPDIR)/xdvipsk-download.Po
 	-rm -f ./$(DEPDIR)/xdvipsk-dpicheck.Po
 	-rm -f ./$(DEPDIR)/xdvipsk-drawPS.Po
+	-rm -f ./$(DEPDIR)/xdvipsk-dummy.Po
 	-rm -f ./$(DEPDIR)/xdvipsk-dviinput.Po
 	-rm -f ./$(DEPDIR)/xdvipsk-emspecialex.Po
 	-rm -f ./$(DEPDIR)/xdvipsk-finclude.Po
@@ -5034,6 +5078,7 @@ maintainer-clean: maintainer-clean-recursive
 	-rm -f ./$(DEPDIR)/xdvipsk-download.Po
 	-rm -f ./$(DEPDIR)/xdvipsk-dpicheck.Po
 	-rm -f ./$(DEPDIR)/xdvipsk-drawPS.Po
+	-rm -f ./$(DEPDIR)/xdvipsk-dummy.Po
 	-rm -f ./$(DEPDIR)/xdvipsk-dviinput.Po
 	-rm -f ./$(DEPDIR)/xdvipsk-emspecialex.Po
 	-rm -f ./$(DEPDIR)/xdvipsk-finclude.Po

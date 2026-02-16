@@ -64,7 +64,5 @@ AC_CONFIG_FILES([Makefile  man/Makefile])
 KPSE_NATIVE_SUBDIRS([squeeze])
 
 AC_HEADER_SYS_WAIT
-# Force Automake to use CXXLD for linking
-nodist_EXTRA_xdvipsk_SOURCES = dummy.cxx
 
 AC_OUTPUT

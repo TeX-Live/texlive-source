@@ -22,6 +22,9 @@ if cross
 endif
 bin_PROGRAMS = xdvipsk
 
+# Force Automake to use CXXLD for linking
+nodist_EXTRA_xdvipsk_SOURCES = dummy.cxx
+
 xdvipsk_CPPFLAGS = $(OTFLIB_INCLUDES) $(GRAPHLIB_INCLUDES) $(LUA_INCLUDES) \
                    $(ZLIB_INCLUDES) $(LIBPNG_INCLUDES) $(LIBJPEG_INCLUDES) \
                    $(LIBTIFF_INCLUDES) $(KPATHSEA_INCLUDES) $(FREETYPE2_INCLUDES) \

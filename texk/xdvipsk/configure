@@ -23197,8 +23197,6 @@ printf "%s\n" "#define HAVE_SYS_WAIT_H 1" >>confdefs.h
 
 fi
 
-# Force Automake to use CXXLD for linking
-nodist_EXTRA_xdvipsk_SOURCES = dummy.cxx
 
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure

@@ -1,3 +1,9 @@
+2026-02-15  Karl Berry  <karl@freefriends.org>
+
+	* Makefile.am (nodist_EXTRA_xdvipsk_SOURCES): this is
+	a declaration for Makefile.am, not:
+	* configure.ac: remove from here.
+
 2026-02-09  Karl Berry  <karl@freefriends.org>
 
 	* thirdparty/libjpeg/ac: rename to ac.no, else the directory
