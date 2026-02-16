@@ -1,3 +1,7 @@
+2026-02-16  Andreas Scherer  <https://ascherer.github.io>
+
+	* mp.w: Merge version strings with the preprocessor.
+
 2026-02-15  Luigi Scarso <luigi.scarso@gmail.com>
 	* MetaPost 3.00
 
