@@ -28,11 +28,11 @@
 on:
   workflow_dispatch:
 
-# don't trigger on pushes to trunk.
-#on:
-#  push:
-#    branches:
-#      - trunk
+# Also trigger on pushes to the xdvipsk-dev branch
+on:
+  push:
+    branches:
+      - dev/xdvipsk-dev
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
