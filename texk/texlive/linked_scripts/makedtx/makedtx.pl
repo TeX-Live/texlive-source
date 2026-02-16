@@ -1,10 +1,10 @@
-#!/usr/bin/perl
+#! /usr/bin/env perl
 
 # File          : makedtx
 # Author        : Nicola L. C. Talbot
 # Date          : 29 Oct 2004
-# Last Modified : 2017-04-08
-# Version       : 1.2
+# Last Modified : $Date: 2026-02-15 01:18:48 +0100 (dim., 15 févr. 2026) $
+# Version       : 1.2 $Rev: 106 $
 
 # usage : makedtx [options] -src <expr>=><expr> -doc <filename> <basename>
 #
@@ -14,31 +14,28 @@
 # -prefinale <string> : text to add to dtx file just before \Finale (added to version 0.91b)
 # <basename> : create <basename>.dtx and <basename>.ins
 
+use strict;
+use warnings;
 use Getopt::Long;
 
-$version = "1.2";
+my $version = "1.3";
 
-# process command line options
-
- %optctl = ();
-
-# v1.1 added section switch
-&GetOptions(\%optctl, "h", "help", "v", "src=s@", "doc=s",
-"dir=s", "op=s", "askforoverwrite!", "ins!",
-"preamble=s", "postamble=s", "setambles=s@", "testmode", "macrocode=s@",
-"author=s", "date=s", "stopeventually=s",
-"prefinale=s", "codetitle=s", "comment=s@",
-"version", "license=s", "section=s") or &syntaxerror();
-
-$srcdir          = ".";
-$patternop       = "=";
-$verbose         = 0;
-$noins           = 0;
-$testmode        = 0;
-$askforoverwrite = 0;
-$preamble        = "";
-$postamble       = "";
+my $srcdir          = ".";
+my $patternop       = "=";
+my $verbose         = 0;
+my $ins             = 1;
+my $testmode        = 0;
+my $askforoverwrite = 0;
+my $preamble        = "";
+my $postamble       = "";
 my $author;
+my @comment;
+my @source;
+my @setambles;
+my @macrocode;
+my $docsrc;
+my $drivendoc = 1;
+
 if ($^O =~ m/MSWin/)
 {
     $author          = $ENV{"USERNAME"};
@@ -48,115 +45,52 @@ else
 {
     $author          = (getpwuid($<))[6] || 'Unknown';
 }
-$stopeventually  = "";
-$prefinale       = "";
-$codetitle       = "The Code";
-$section         = "section";
-$license         = "lppl";
+my $stopeventually  = "";
+my $prefinale       = "";
+my $codetitle       = "The Code";
+my $section         = "section";
+my $license         = "lppl";
 
-($sec, $min, $hour, $mday, $mon, $year, $wday, $yday, $isdst) = localtime(time);
+my ($sec, $min, $hour, $mday, $mon, $year, $wday, $yday, $isdst) = localtime(time);
 
 $year = $year + 1900;
-$copyright_date = $year;
-$creation_date = "$year/" . ($mon+1) . "/$mday $hour:" . ($min<10?"0$min" : $min);
+my $copyright_date = $year;
+my $creation_date = "$year/" . ($mon+1) . "/$mday $hour:" . ($min<10?"0$min" : $min);
 
-foreach $setting (keys %optctl)
+my @cmdline_args = capture_cmdline(@ARGV);
+
+# process command line options
+# v1.1 added section switch
+&GetOptions("h|help" => \&help,
+    "v" => \$verbose,
+    "src=s@" => \@source,
+    "doc=s" => \$docsrc,
+    "dir=s" => \$srcdir,
+    "op=s" => \$patternop,
+    "askforoverwrite!" => \$askforoverwrite,
+    "ins!" => \$ins,
+    "preamble=s" => \$preamble,
+    "postamble=s" => \$postamble,
+    "setambles=s@" => \@setambles,
+    "testmode" => \$testmode,
+    "macrocode=s@" => \@macrocode,
+    "author=s" => \$author,
+    "date=s" => \$copyright_date,
+    "stopeventually=s" => \$stopeventually,
+    "prefinale=s" => \$prefinale,
+    "codetitle=s" => \$codetitle,
+    "comment=s@" => \@comment,
+    "drivendoc!" => \$drivendoc,
+    "version" => \&print_version,
+    "license=s" => \$license,
+    "section=s" => \$section
+    ) or &syntaxerror();
+
+if($testmode)
 {
-   if (($setting eq "h") || ($setting eq "help"))
-   {
-      &help();
-   }
-   elsif ($setting eq "version")
-   {
-      print "makedtx version $version\n";
-      exit 0;
-   }
-   elsif ($setting eq "doc")
-   {
-      $docsrc   = $optctl{$setting};
-   }
-   elsif ($setting eq "src")
-   {
-      @source = @{ $optctl{$setting} };
-   }
-   elsif ($setting eq "dir")
-   {
-      $srcdir = $optctl{$setting};
-   }
-   elsif ($setting eq "op")
-   {
-      $patternop = $optctl{$setting};
-   }
-   elsif ($setting eq "v")
-   {
-      $verbose = 1;
-   }
-   elsif ($setting eq "ins")
-   {
-      $noins = 1-$optctl{$setting};
-   }
-   elsif ($setting eq "askforoverwrite")
-   {
-      $askforoverwrite = $optctl{$setting};
-   }
-   elsif ($setting eq "preamble")
-   {
-      $preamble = $optctl{$setting};
-   }
-   elsif ($setting eq "postamble")
-   {
-      $postamble = $optctl{$setting};
-   }
-   elsif ($setting eq "setambles")
-   {
-      @setambles = @{ $optctl{$setting} };
-   }
-   elsif ($setting eq "macrocode")
-   {
-      @macrocode = @{ $optctl{$setting} };
-   }
-   elsif ($setting eq "author")
-   {
-      $author = $optctl{$setting};
-   }
-   elsif ($setting eq "date")
-   {
-      $copyright_date = $optctl{$setting};
-   }
-   elsif ($setting eq "stopeventually")
-   {
-      $stopeventually = $optctl{$setting};
-   }
-   elsif ($setting eq "prefinale")
-   {
-      $prefinale = $optctl{$setting};
-   }
-   elsif ($setting eq "codetitle")
-   {
-      $codetitle = $optctl{$setting};
-   }
-   elsif ($setting eq "section")
-   {
-      $section = $optctl{$setting};
-   }
-   elsif ($setting eq "testmode")
-   {
-      $testmode = $optctl{$setting};
-      if($testmode)
-      {
-         $version = "x.y";
-         $copyright_date = "YYYY";
-         $creation_date = "YYYY/MM/DD hh:mm";
-      }
-   }
-   elsif ($setting eq "comment")
-   {
-      @comment = @{ $optctl{$setting} };
-   }
-   elsif ($setting eq "license")
-   {
-      $license = $optctl{$setting};
-   }
+    $version = "x.y";
+    $copyright_date = "YYYY";
+    $creation_date = "YYYY/MM/DD hh:mm";
 }
 
 if ($#ARGV != 0)
@@ -165,7 +99,7 @@ if ($#ARGV != 0)
    &syntaxerror();
 }
 
-$basename = $ARGV[0];
+my $basename = $ARGV[0];
 
 if ($docsrc eq "")
 {
@@ -188,17 +122,17 @@ if ($verbose)
 
 # work out the derived files
 
- @srcdirfile = glob("$srcdir/*");
+my @srcdirfile = glob("$srcdir/*");
 
- @derivedfiles = ();
+my @derivedfiles = ();
 
- @outputfiles = ();
+my @outputfiles = ();
 
-$numoutput = 0;
+my $numoutput = 0;
 
-foreach $source (@source)
+foreach my $source (@source)
 {
-   ($infile, $outfile, $remainder) = split /=>/, $source;
+   my ($infile, $outfile, $remainder) = split /=>/, $source;
 
    if ($outfile eq "")
    {
@@ -207,28 +141,27 @@ foreach $source (@source)
       &syntaxerror();
    }
 
-   if (not ($remainder eq ""))
+   if (defined $remainder)
    {
       print "-src $source argument invalid (too many => specified)\n";
 
       &syntaxerror();
    }
 
-   foreach $srcdirfile (@srcdirfile)
+   foreach my $srcdirfile (@srcdirfile)
    {
-      $fileexp = $srcdir . "/" . $infile;
+      my $fileexp = $srcdir . "/" . $infile;
 
       $_ = $srcdirfile;
 
-      $expr = "s$patternop$fileexp$patternop$outfile$patternop";
+      my $expr = "s$patternop$fileexp$patternop$outfile$patternop";
 
       if (eval($expr))
       {
-         $thisoutfile = $_;
+         my $thisoutfile = $_;
 
-         $thisinfile  = $srcdirfile;
+         my $thisinfile  = $srcdirfile;
 
-         $file{$thisinfile} = $thisoutfile;
          $derivedfiles[$numoutput]{'in'} = $thisinfile;
          $derivedfiles[$numoutput]{'out'} = $thisoutfile;
          $outputfiles[$numoutput] = $thisoutfile;
@@ -335,107 +268,70 @@ print DTX "\%\\iffalse\n";
 print DTX "\% $basename.dtx generated using makedtx version $version (c) Nicola Talbot\n";
 print DTX "\% Command line args:\n";
 
-@cmdline_args = ();
-foreach $setting (keys %optctl)
-{
-   if ($setting eq "src")
-   {
-      foreach $source (@source)
-      {
- push @cmdline_args ,"-src \"$source\"";
-      }
-   }
-   elsif ($setting eq "setambles")
-   {
-      foreach $setamble (@setambles)
-      {
- push @cmdline_args ,"-setambles \"$setamble\"";
-      }
-   }
-   elsif ($setting eq "macrocode")
-   {
-      foreach $macrocode (@macrocode)
-      {
- push @cmdline_args ,"-macrocode \"$macrocode\"";
-      }
-   }
-   elsif ($setting eq "comment")
-   {
-      foreach $comment (@comment)
-      {
- push @cmdline_args ,"-comment \"$comment\"";
-      }
-   }
-   else
-   {
-      $val = $optctl{$setting};
-      $val=~s/\\/\\\\/g;
-      push @cmdline_args ,("-" . $setting . " \"" .  $val . "\"");
-   }
-}
 if($testmode){
    @cmdline_args = sort @cmdline_args;
 }
-foreach $arg (@cmdline_args){
+foreach my $arg (@cmdline_args){
    print DTX "\%   ", $arg , "\n";
 }
 
-print DTX "\%   $basename\n";
+print DTX <<__EOF_HEADER
+\% Created on $creation_date
+\%\\fi
+\%\\iffalse
+\%<*package>
+\%\% \\CharacterTable
+\%\%  {Upper-case    \\A\\B\\C\\D\\E\\F\\G\\H\\I\\J\\K\\L\\M\\N\\O\\P\\Q\\R\\S\\T\\U\\V\\W\\X\\Y\\Z
+\%\%   Lower-case    \\a\\b\\c\\d\\e\\f\\g\\h\\i\\j\\k\\l\\m\\n\\o\\p\\q\\r\\s\\t\\u\\v\\w\\x\\y\\z
+\%\%   Digits        \\0\\1\\2\\3\\4\\5\\6\\7\\8\\9
+\%\%   Exclamation   \\!     Double quote  \\\"     Hash (number) \\#
+\%\%   Dollar        \\\$     Percent       \\\%     Ampersand     \\&
+\%\%   Acute accent  \\\'     Left paren    \\(     Right paren   \\)
+\%\%   Asterisk      \\*     Plus          \\+     Comma         \\,
+\%\%   Minus         \\-     Point         \\.     Solidus       \\/
+\%\%   Colon         \\:     Semicolon     \\;     Less than     \\<
+\%\%   Equals        \\=     Greater than  \\>     Question mark \\?
+\%\%   Commercial at \\\@     Left bracket  \\[     Backslash     \\\\
+\%\%   Right bracket \\]     Circumflex    \\^     Underscore    \\_
+\%\%   Grave accent  \\\`     Left brace    \\{     Vertical bar  \\|
+\%\%   Right brace   \\}     Tilde         \\~}
+\%</package>
+\%\\fi
+\% \\iffalse
+\% Doc-Source file to use with LaTeX2e
+\% Copyright (C) $copyright_date $author, all rights reserved.
+\% \\fi
+\% \\iffalse
+\%<*driver>
+__EOF_HEADER
+;
 
-print DTX "\% Created on $creation_date\n";
-print DTX "\%\\fi\n";
-print DTX "\%\\iffalse\n";
-print DTX "\%<*package>\n";
-print DTX "\%\% \\CharacterTable\n";
-print DTX "\%\%  {Upper-case    \\A\\B\\C\\D\\E\\F\\G\\H\\I\\J\\K\\L\\M\\N\\O\\P\\Q\\R\\S\\T\\U\\V\\W\\X\\Y\\Z\n";
-print DTX "\%\%   Lower-case    \\a\\b\\c\\d\\e\\f\\g\\h\\i\\j\\k\\l\\m\\n\\o\\p\\q\\r\\s\\t\\u\\v\\w\\x\\y\\z\n";
-print DTX "\%\%   Digits        \\0\\1\\2\\3\\4\\5\\6\\7\\8\\9\n";
-print DTX "\%\%   Exclamation   \\!     Double quote  \\\"     Hash (number) \\#\n";
-print DTX "\%\%   Dollar        \\\$     Percent       \\\%     Ampersand     \\&\n";
-print DTX "\%\%   Acute accent  \\\'     Left paren    \\(     Right paren   \\)\n";
-print DTX "\%\%   Asterisk      \\*     Plus          \\+     Comma         \\,\n";
-print DTX "\%\%   Minus         \\-     Point         \\.     Solidus       \\/\n";
-print DTX "\%\%   Colon         \\:     Semicolon     \\;     Less than     \\<\n";
-print DTX "\%\%   Equals        \\=     Greater than  \\>     Question mark \\?\n";
-print DTX "\%\%   Commercial at \\\@     Left bracket  \\[     Backslash     \\\\\n";
-print DTX "\%\%   Right bracket \\]     Circumflex    \\^     Underscore    \\_\n";
-print DTX "\%\%   Grave accent  \\\`     Left brace    \\{     Vertical bar  \\|\n";
-print DTX "\%\%   Right brace   \\}     Tilde         \\~}\n";
-print DTX "\%</package>\n";
-print DTX "\%\\fi\n";
-
-print DTX "\% \\iffalse\n";
-print DTX "\% Doc-Source file to use with LaTeX2e\n";
-print DTX "\% Copyright (C) $copyright_date $author, all rights reserved.\n";
-print DTX "\% \\fi\n";
-
-# driver
-
-print DTX "\% \\iffalse\n";
-print DTX "\%<*driver>\n";
-
-$indoc=0;
+my $stopfound=0;
+my $indoc=0;
 
 while (<DOC>)
 {
    s/\\usepackage\{creatdtx}//;
 
-   $restofline = $_;
+   my $restofline = $_;
 
-   $beginline = "";
-   $line = $restofline;
+   my $beginline = "";
+   my $line = $restofline;
+   my $group;
 
    while ($restofline =~ /(.*)\\ifmakedtx(.*)/)
    {
       $beginline = $1;
 
+      my $done;
+
       ($group,$restofline,$done) = &getnextgroup($2);
 
-      $startline = $.;
+      my $startline = $.;
 
       while (!$done)
       {
-         if ($nextline = <DOC>)
+         if (my $nextline = <DOC>)
          {
             $line = $line . $nextline;
 
@@ -457,7 +353,7 @@ while (<DOC>)
 
       while (!$done)
       {
-         if ($nextline = <DOC>)
+         if (my $nextline = <DOC>)
          {
             $line = $line . $nextline;
 
@@ -476,13 +372,18 @@ while (<DOC>)
 
    $line = $beginline . $restofline;
 
+   if (!$drivendoc && $indoc && $line=~/\\end *\{document}/) {
+       $indoc = 0;
+       last;
+   }
+
    print DTX $line;
 
    if ($line=~/\\begin\{document}/)
    {
       $indoc = 1;
 
-      last;
+      if ($drivendoc) { last; }
    }
 }
 
@@ -491,99 +392,101 @@ print DTX "\\end{document}\n";
 print DTX "\%</driver>\n";
 print DTX "\%\\fi\n";
 
-$inverb=0;
-$stopfound=0;
+my $inverb=0;
 
-print DTX "\%";
+if ($drivendoc) {
+    print DTX "\%";
 
-while (<DOC>)
+    while (<DOC>)
+    {
+if (/\\begin\{verbatim}/)
 {
-   if (/\\begin\{verbatim}/)
-   {
-      $inverb=1;
-   }
-
-   if (/\\end\{verbatim}/)
-   {
-      $inverb=0;
-   }
-
-   if (/\\StopEventually/ && ($inverb==0))
-   {
-      $stopfound=1;
-   }
-
-   $restofline = $_;
-
-   $beginline = "";
-   $line = $restofline;
-
-   while ($restofline =~ /(.*)\\ifmakedtx(.*)/)
-   {
-      $beginline = $1;
-
-      ($group,$restofline,$done) = &getnextgroup($2);
-
-      $startline = $.;
-
-      while (!$done)
-      {
-         if ($nextline = <DOC>)
-         {
-            $line = $line . $nextline;
-
-            $restofline = $restofline . $nextline;
-
-            ($group,$restofline,$done) = &getnextgroup($restofline);
-         }
-         else
-         {
-            die "EOF found whilst scanning first argument to \\ifmakedtx on line $startline\n";
-         }
-      }
-
-      # print first arg, ignore second
-
-      $beginline = $beginline . $group;
-
-      ($group,$restofline,$done) = &getnextgroup($restofline);
-
-      while (!$done)
-      {
-         if ($nextline = <DOC>)
-         {
-            $line = $line . $nextline;
-
-            $restofline = $restofline . $nextline;
-
-            ($group,$restofline,$done) = &getnextgroup($restofline);
-         }
-         else
-         {
-            die "EOF found whilst scanning second argument to \\ifmakedtx on line $startline\n";
-         }
-      }
-
-      $line = $restofline;
-   }
-
-   $line = $beginline . $restofline;
-
-   if (($line=~/\\end\{document}/) and not $inverb)
-   {
-      $indoc=0;
-
-      $line=~s/\\end\{document}//;
-   }
-
-   $line=~s/\n/\n\%/mg;
-
-   print DTX "$line";
+    $inverb=1;
 }
 
-close DOC;
+if (/\\end\{verbatim}/)
+{
+    $inverb=0;
+}
 
-print DTX "\n";
+if (/\\StopEventually/ && ($inverb==0))
+{
+    $stopfound=1;
+}
+
+my $restofline = $_;
+
+my $beginline = "";
+my $line = $restofline;
+my $group;
+
+while ($restofline =~ /(.*)\\ifmakedtx(.*)/)
+{
+    $beginline = $1;
+
+    my $done;
+
+    ($group,$restofline,$done) = &getnextgroup($2);
+
+    my $startline = $.;
+
+    while (!$done)
+    {
+if (my $nextline = <DOC>)
+{
+    $line = $line . $nextline;
+
+    $restofline = $restofline . $nextline;
+
+    ($group,$restofline,$done) = &getnextgroup($restofline);
+}
+else
+{
+    die "EOF found whilst scanning first argument to \\ifmakedtx on line $startline\n";
+}
+    }
+
+    # print first arg, ignore second
+
+    $beginline = $beginline . $group;
+
+    ($group,$restofline,$done) = &getnextgroup($restofline);
+
+    while (!$done)
+    {
+if (my $nextline = <DOC>)
+{
+    $line = $line . $nextline;
+
+    $restofline = $restofline . $nextline;
+
+    ($group,$restofline,$done) = &getnextgroup($restofline);
+}
+else
+{
+    die "EOF found whilst scanning second argument to \\ifmakedtx on line $startline\n";
+}
+    }
+
+    $line = $restofline;
+}
+
+$line = $beginline . $restofline;
+
+if (($line=~/\\end\{document}/) and not $inverb)
+{
+    $indoc=0;
+
+    $line=~s/\\end\{document}//;
+}
+
+$line=~s/\n/\n\%/mg;
+
+print DTX "$line";
+    }
+    print DTX "\n";
+}
+close DOC;
 
 if ($stopfound==0)
 {
@@ -599,12 +502,12 @@ if ($codetitle)
 
 for (my $idx = 0; $idx <= $#derivedfiles; $idx++)
 {
-   $thisinfile = $derivedfiles[$idx]{'in'};
-   $thisoutfile = $derivedfiles[$idx]{'out'};
+   my $thisinfile = $derivedfiles[$idx]{'in'};
+   my $thisoutfile = $derivedfiles[$idx]{'out'};
 
    if ($verbose)
    {
-         print "$srcdirfile -> $_ \n";
+         print "$thisinfile -> $thisoutfile\n";
    }
 
    open SRC, "<:crlf", $thisinfile or die "Can't open $thisinfile\n";
@@ -615,26 +518,30 @@ for (my $idx = 0; $idx <= $#derivedfiles; $idx++)
    print DTX "\%    \\end{macrocode}\n";
    print DTX "\%\\fi\n";
 
-   $macrocode = 0;
-   $comment   = 0;
+   my $macrocode = 0;
+   my $comment   = 0;
 
-   foreach $expr (@comment)
+   foreach my $expr (@comment)
    {
       if ($thisoutfile =~ m/$expr/)
       {
          print DTX "\%\\iffalse\n";
 
-            $comment = 1;
+ $comment = 1;
+
+ last;
       }
    }
 
-   foreach $expr (@macrocode)
+   foreach my $expr (@macrocode)
    {
       if ($thisoutfile =~ m/$expr/)
       {
          print DTX "\%    \\begin{macrocode}\n";
 
          $macrocode = 1;
+
+ last;
       }
    }
 
@@ -668,7 +575,7 @@ print DTX "\\endinput\n";
 
 close DTX;
 
-if (!$noins)
+if ($ins)
 {
    open INS, ">:unix","$basename.ins" or die "Can't open '$basename.ins'\n";
 
@@ -699,28 +606,28 @@ if (!$noins)
 
    for (my $idx = 0; $idx <= $#derivedfiles; $idx++)
    {
-      $file = $derivedfiles[$idx]{'in'};
-      $outfile = $derivedfiles[$idx]{'out'};
+      my $thisinfile = $derivedfiles[$idx]{'in'};
+      my $thisoutfile = $derivedfiles[$idx]{'out'};
 
-      print INS "\\file{$outfile}{";
+      print INS "\\file{$thisoutfile}{";
 
-      $ambleset = 0;
-      $noamble  = 0;
+      my $ambleset = 0;
+      my $noamble  = 0;
 
-      foreach $setamble (@setambles)
+      foreach my $setamble (@setambles)
       {
-         ($fileexp, $amble, $remainder) = split /=>/, $setamble;
+         my ($fileexp, $amble, $remainder) = split /=>/, $setamble;
 
-         if (not ($remainder eq ""))
+         if (defined $remainder)
          {
             die "-setambles $setamble argument invalid (too many => specified)\n";
          }
 
-         if ($outfile =~ m/$fileexp/)
+         if ($thisoutfile =~ m/$fileexp/)
          {
             if ($verbose)
             {
-               print "$fileexp matches $outfile -> setting \"$amble\"\n";
+               print "$fileexp matches $thisoutfile -> setting \"$amble\"\n";
             }
 
             print INS $amble;
@@ -739,7 +646,7 @@ if (!$noins)
          print INS "\\usepreamble\\defaultpreamble\n\\usepostamble\\defaultpostamble";
       }
 
-      print INS "\\from{$basename.dtx}{$outfile";
+      print INS "\\from{$basename.dtx}{$thisoutfile";
 
       if ($noamble == 0)
       {
@@ -765,83 +672,98 @@ sub syntaxerror
 
 sub help
 {
-   print "makedtx Help\n\n";
+    print <<__EOF_HELP
+makedtx Help
 
-   print "Current Version : $version\n\n";
+Current Version : $version
 
-   print "usage : makedtx [options] -src \"<expr>=><expr>\" -doc <filename> <basename>\n\n";
+usage : makedtx [options] -src "<expr>=><expr>" -doc <filename> <basename>
 
-   print "makedtx can be used to construct a LaTeX2e dtx and ins file from\n";
-   print "the specified source code.  The final command line argument\n";
-   print "<basename> should be used to specify the basename of the dtx\n";
-   print "and ins files.\n\n";
+makedtx can be used to construct a LaTeX2e dtx and ins file from
+the specified source code.  The final command line argument
+<basename> should be used to specify the basename of the dtx
+and ins files.
 
-   print "-src \"<expr1>=><expr2>\"\n";
-   print "The command line switch -src identifies the original source code and the name\n";
-   print "of the file to which it will utimately be extracted on latexing the ins file\n";
-   print "<expr1> can be a Perl expression, such as (foo)src.(sty), and <expr2> can\n";
-   print "a Perl substitution style expression, such as $1.$2\n";
-   print "Note that double quotes must be used to prevent shell expansion\n";
-   print "Multiple invocations of -src are permitted\n";
-   print "See examples below.\n\n";
+-src "<expr1>=><expr2>"
+The command line switch -src identifies the original source code and the name
+of the file to which it will utimately be extracted on latexing the ins file
+<expr1> can be a Perl expression, such as (foo)src.(sty), and <expr2> can
+a Perl substitution style expression, such as \$1.\$2
+Note that double quotes must be used to prevent shell expansion
+Multiple invocations of -src are permitted
+See examples below.
 
-   print "-doc <filename>\n";
-   print "The name of the documentation source code.  This should be a LaTeX2e document\n\n";
+-doc <filename>
+The name of the documentation source code.  This should be a LaTeX2e document
 
-   print "Optional Arguments:\n\n";
+Optional Arguments:
 
-   print "-dir <directory>   : search for source files in <directory>\n";
-   print "-op <character>    : set the pattern matching operator (default '$patternop')\n";
-   print "-askforoverwrite   : set askforoverwrite switch in INS file to true\n";
-   print "-noaskforoverwrite : set askforoverwrite switch in INS file to false (default)\n";
-   print "-preamble <text>   : set the preamble.  Standard one inserted if omitted\n";
-   print "-postamble <text>  : set the postamble.\n";
-   print "-setambles \"<pattern>=><text>\" : set pre- and postambles to <text> if file matches pattern\n";
-   print "-author <text>     : name of author (inserted into standard preamble. User name inserted if omitted)\n";
-   print "-date <text>       : copyright date\n";
-   print "-ins               : create the ins file (default)\n";
-   print "-noins             : don't create the ins file\n";
-   print "-prefinale <text>  : add <text> immediately prior to \\Finale\n";
-   print "-macrocode <expr>  : surround any file which matches <expr> in a macrocode environment\n";
-   print "-comment <expr>    : surround any file which matches <expr> with \\iffalse \\fi pair\n";
-   print "-codetitle <text>  : The title for the documented code section (default: The Code)\n";
-   print "-section <cs>  : The sectioning command to use for the documented code section (default: 'section')\n";
-   print "-license <license> : use the given license for the preamble.\n";
-   print "                     Known licenses: lppl (default), bsd, gpl.\n";
-   print "-h                 : help message\n";
-   print "-v                 : verbose\n\n";
+-dir <directory>   : search for source files in <directory>
+-op <character>    : set the pattern matching operator (default '$patternop')
+-askforoverwrite   : set askforoverwrite switch in INS file to true
+-noaskforoverwrite : set askforoverwrite switch in INS file to false (default)
+-preamble <text>   : set the preamble.  Standard one inserted if omitted
+-postamble <text>  : set the postamble.
+-setambles "<pattern>=><text>" : set pre- and postambles to <text> if file matches
+                     pattern
+-author <text>     : name of author (inserted into standard preamble. User name
+                     inserted if omitted)
+-date <text>       : copyright date
+-ins               : create the ins file (default)
+-noins             : don't create the ins file
+-prefinale <text>  : add <text> immediately prior to \\Finale
+-macrocode <expr>  : surround any file which matches <expr> in a macrocode
+                     environment
+-comment <expr>    : surround any file which matches <expr> with \\iffalse \\fi pair
+-codetitle <text>  : The title for the documented code section (default: The Code)
+-section <cs>      : The sectioning command to use for the documented code section
+                     (default: 'section')
+-license <license> : use the given license for the preamble.
+                     Known licenses: lppl (default), bsd, gpl.
+-h                 : help message
+-nodrivendoc       : documentation body is placed in driver block as is rather than
+                     being make docstrippable (default: not set).
+-v                 : verbose
 
-   print "Examples:\n\n";
+Examples:
 
-   print "Example 1:\n";
-   print "Documenation is in foodoc.tex\n";
-   print "Source code is in foosrc.sty.  The final extracted version should be \n";
-   print "called foo.sty. The dtx file should be called foo.dtx and the ins file\n";
-   print " should be called foo.ins\n\n";
+Example 1:
+Documenation is in foodoc.tex
+Source code is in foosrc.sty.  The final extracted version should be
+called foo.sty. The dtx file should be called foo.dtx and the ins file
+ should be called foo.ins
 
-   print "makedtx -src \"foosrc\\.sty=>foo.sty\" -doc foodoc.tex foo\n\n";
+makedtx -src "foosrc\\.sty=>foo.sty" -doc foodoc.tex foo
 
-   print "Example 2:\n";
-   print "Documenation is in bardoc.tex\n";
-   print "Source code is in barsrc.sty.  The final extracted version should be\n";
-   print "called bar.sty.  Source code is also in barsrc.bst.  The final extracted\n";
-   print "version should be called bar.bst.  The dtx file should be called bar.dtx and\n";
-   print "the ins file should be called bar.ins\n\n";
+Example 2:
+Documenation is in bardoc.tex
+Source code is in barsrc.sty.  The final extracted version should be
+called bar.sty.  Source code is also in barsrc.bst.  The final extracted
+version should be called bar.bst.  The dtx file should be called bar.dtx and
+the ins file should be called bar.ins
 
-   print "makedtx -src \"barsrc\\.sty=>bar.sty\" -src \"barsrc\\.bst=>bar.bst\" -doc bardoc.tex bar\n\n";
+makedtx -src "barsrc\\.sty=>bar.sty" -src "barsrc\\.bst=>bar.bst" -doc bardoc.tex bar
 
-   print "Or\n\n";
+Or
 
-   print "makedtx -src \"barsrc\\.(bst|sty)=>bar.\$1\" -doc bardoc.tex bar\n\n";
+makedtx -src "barsrc\\.(bst|sty)=>bar.\$1" -doc bardoc.tex bar
 
+__EOF_HELP
+ ;
    die;
+}
+
+sub print_version
+{
+    print "makedtx version $version\n";
+    exit 0;
 }
 
 sub eatinitialspaces
 {
    my ($STR) = @_;
 
-   while (substr($STR,0,1) eq "\s")
+   while (substr($STR,0,1) =~ m/\s/)
    {
       $STR = substr($STR,1);
    }
@@ -862,7 +784,7 @@ sub getnextgroup
       return ("","",0);
    }
 
-   if (($group = substr($curline,0,1)) ne "{")
+   if ((my $group = substr($curline,0,1)) ne "{")
    {
        # next group hasn't been delimited with braces
        # return first non-whitespace character
@@ -915,9 +837,9 @@ sub getnextgroup
       {
          # count how many backlashes come before it.
 
-         $i = $posopen-1;
+         my $i = $posopen-1;
 
-         $numbs = 1;
+         my $numbs = 1;
 
          while ((substr($curline, $i-1,1) eq "\\") and ($i > 0))
          {
@@ -945,9 +867,9 @@ sub getnextgroup
       {
          # count how many backlashes come before it.
 
-         $i = $posclose-1;
+         my $i = $posclose-1;
 
-         $numbs = 1;
+         my $numbs = 1;
 
          while ((substr($curline, $i-1,1) eq "\\") and ($i > 0))
          {
@@ -979,7 +901,7 @@ sub getnextgroup
 
          if ($bracelevel==0)
          {
-            $group = substr($curline, $startpos+1, $pos-$startpos-1);
+            my $group = substr($curline, $startpos+1, $pos-$startpos-1);
 
             $curline = substr($curline, $pos+1);
 
@@ -1006,7 +928,7 @@ sub getnextgroup
 
          if ($bracelevel==0)
          {
-            $group = substr($curline, $startpos+1, $pos-$startpos-1);
+            my $group = substr($curline, $startpos+1, $pos-$startpos-1);
 
             $curline = substr($curline, $pos+1);
 
@@ -1019,4 +941,95 @@ sub getnextgroup
 
    return ("", $curline, 0);
 }
-1;
+
+sub make_argset {
+    my @args = @_;
+    my @escaped_args = ();
+
+    while ($#args >= 0) {
+my $arg = shift @args;
+# Quoting is needed when the string $arg contains a special character
+if ($arg =~ m/[`"\\\$ '*]/) {
+    # Precede characters ` " \ and $ by a backslash to quote them
+    $arg =~ s/([`"\\\$])/\\$1/g;
+    # backslash preceded characters w/o a special meaning (ie ` " \ and $) are left unmodified
+    $arg =~ s/\\([^`"\\\$])/$1/g;
+    $arg = "\"$arg\"";
+}
+push @escaped_args, $arg;
+    }
+    return join " ", @escaped_args;
+}
+
+sub capture_cmdline
+{
+    my @args = @_;
+    my @cmdline_args = ();
+    # number of arguments following option switch, 2 means 1 or more
+    my %options = (
+h => 0,
+help => 0,
+v => 0,
+src => 2,
+doc => 1,
+dir => 1,
+op => 1,
+askforoverwrite => 0,
+noaskforoverwrite => 0,
+ins => 0,
+noins => 0,
+preamble => 1,
+postamble => 1,
+setambles => 2,
+testmode => 0,
+macrocode => 2,
+author => 1,
+date => 1,
+stopeventually => 1,
+prefinale => 1,
+codetitle => 1,
+comment => 2,
+drivendoc => 0,
+nodrivendoc => 0,
+version => 0,
+license => 1,
+section => 1
+);
+    while ($#args >= 0) {
+my $arg = shift @args;
+my $switch = $arg =~ s/\A-{1,2}([a-z])/$1/r;
+unless (exists $options{$switch}) {
+    push @args, $arg;
+    $arg = '--';
+}
+if ($arg eq '--') {
+    while ($#args >= 0) {
+my @argset = (shift @args);
+push @cmdline_args, make_argset(@argset);
+    }
+    last;
+}
+my $arg_count = $options{$switch};
+if ($arg_count == 0) {
+    push @cmdline_args, $arg;
+} elsif ($arg_count == 1) {
+    $#args >= 0 or die "Missing argument after $arg";
+    my @argset = ($arg, shift @args);
+    push @cmdline_args, make_argset(@argset);
+} elsif  ($arg_count == 2) {
+    $#args >= 0 or die "Missing argument after $arg";
+    my @argset = ($arg, shift @args);
+    while ($#args >= 0 and do {
+   $arg = $args[0];
+   $switch = $arg =~ s/\A-{1,2}([a-z])/$1/r;
+   !exists($options{$switch});
+   }) {
+push @argset, (shift @args);
+    }
+    push @cmdline_args, make_argset(@argset);
+} else {
+    die "INTERNAL";
+}
+    }
+    return @cmdline_args;
+}
