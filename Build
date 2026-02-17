@@ -86,11 +86,11 @@ fi
 # notably TL_CFLAGS=-Wdeclaration-after-statement to help Akira.
 #
 # But if no TL_*FLAGS are set, don't set CFLAGS at all,
-# since then Autoconf's default setting will be overridden,
-# and neither optimization nor debugging will be automatically set.
+# since then Autoconf's default setting (normally -g -O2) will be
+# overridden, and thus we'll have neither optimization nor debugging.
 # 
 if test -n "$TL_COMPILER_GFLAGS$TL_CFLAGS"; then
-  c="CFLAGS='$TL_COMPILER_GFLAGS $TL_CFLAGS'"
+  c="CFLAGS='$TL_COMPILER_GFLAGS $TL_CFLAGS $CFLAGS'"
 else
   c=
 fi

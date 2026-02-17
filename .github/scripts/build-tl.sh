@@ -1,6 +1,6 @@
 #!/bin/sh -l
 # $Id$
-# (-l above for login shell)
+# (-l above is to make this a login shell.)
 # 
 # The build script that is run by ../workflows/main.yml on github.
 # Public domain. Originally written by Norbert Preining.
@@ -142,9 +142,13 @@ esac
 export TL_MAKE_FLAGS
 
 # If we explicitly set CFLAGS or CXXFLAGS above, it's up to us to enable
-# optimization, since we are overriding what Autoconf does.
-test -n "$CFLAGS" && CFLAGS="$CFLAGS -O2"
-test -n "$CXXFLAGS" && CXXFLAGS="$CXXFLAGS -O2"
+# optimization, since we are overriding what Autoconf does. But don't do
+# this on armhf, since then compilation takes longer than the six hours
+# that github allows.
+if echo "$arch" | grep armhf-linux >/dev/null; then :; else
+  test -n "$CFLAGS" && CFLAGS="$CFLAGS -O2"
+  test -n "$CXXFLAGS" && CXXFLAGS="$CXXFLAGS -O2"
+fi
 
 echo "$0: variables set:"
 echo "  BUILDARGS=$BUILDARGS"
