@@ -1,8 +1,19 @@
+2026-02-17  Sigitas Tolušis <sigitas@vtex.lt>
+
+	* ChangeLog: update info. 
+
 2026-02-15  Karl Berry  <karl@freefriends.org>
 
 	* Makefile.am (nodist_EXTRA_xdvipsk_SOURCES): this is
 	a declaration for Makefile.am, not:
 	* configure.ac: remove from here.
+
+2026-02-15  Sigitas Tolušis <sigitas@vtex.lt>
+
+	* Makefile.am: left only binary run tests;
+	* Makefile.am, paths.h, man/xdvipsk.man: rename texcid.lpro|pro
+    to xdvipsk-cid.lpro|pro
+    * DeveloperNotes.md: remove this file
 
 2026-02-09  Karl Berry  <karl@freefriends.org>
 
@@ -16,6 +27,60 @@
 
 	* ac/withenable.ac (xdvipsk): remove "disable" option,
 	so that the program will be built by default.
+
+2026-02-09  Sigitas Tolušis <sigitas@vtex.lt>
+
+	* squeeze/: readd missed directory for man generation.
+
+2026-02-09  Sigitas Tolušis <sigitas@vtex.lt>
+
+	* man/xdvipsk.man: update xdvipsk(1).
+
+2026-02-09  Sigitas Tolušis <sigitas@vtex.lt>
+
+	* Makefile.am, configure.ac, man/: add man page and texcid.pro 
+    header generation;
+    * xdvipsk.c: update program version (date).
+
+2026-02-06  Sigitas Tolušis <sigitas@vtex.lt>
+
+	* writet1.c: include base glyphs of dot sufficed variants
+    in the g2u dict (by Mindaugas Piešina).
+
+2026-02-02  Sigitas Tolušis <sigitas@vtex.lt>
+
+	Try to fix build on solaris:
+	* thirdparty/libtiff/Makefile.am: add -D_LARGEFILE64_SOURCE;
+	* thirdparty/libtiff/libtiff-src/tif_hash_set.c:
+    add `#include <sys/types.h>`.
+
+2026-01-29  Sigitas Tolušis <sigitas@vtex.lt>
+
+	* configure.ac: add AC_HEADER_SYS_WAIT;
+	* thirdparty/libtiff/configure.ac: add KPSE_LARGEFILE;
+	* xdvips.c: change program version (date); fix comments.
+
+2026-01-27  Sigitas Tolušis <sigitas@vtex.lt>
+
+	* xdvipsk.c: turn on Type1 font partial download, change copyright date.
+	* configure.ac: fix misprint in configure.ac;
+	* writecid.c: fix ACCESSPERMS definition place.
+
+2026-01-26  Sigitas Tolušis <sigitas@vtex.lt>
+
+	* ac/withenable.ac: update copyrightline;
+	* configure.ac: remove configure check for main in stdc++, AS_CASE, ARCH_LIBS_DIR;
+	* otflib/dpxfile.c: add <sys/types.h> and <unistd.h> to fix wait on freebsd;
+	* protos.h: fix __VA_ARGS__ for build on solaris;
+	* writecid.c: normalize fprintf, define ACCESSPERMS (for build on linuxmusl);
+	* xdvipsk.h: normalize PRINTF_PR, update year in banner;
+	* xdvipsk.c: update program version (date);
+	* withenable.ac: remove squeeze folder;
+	* windows/: remove folders.
+
+2026-01-25  kakuto
+
+	* texcid.lpro: missing character % in a comment line.
 
 2026-01-22  Karl Berry  <karl@freefriends.org>
 
