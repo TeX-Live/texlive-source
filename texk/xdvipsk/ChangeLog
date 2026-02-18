@@ -1,3 +1,9 @@
+2026-02-18  Karl Berry  <karl@freefriends.org>
+
+	* makefont.c (getenv, system): remove () declarations of getenv
+	and system, since they break under C23's backward-incompatible rules.
+	<stdlib.h> has already been included, so nothing more is needed.
+
 2026-02-17  Sigitas Tolušis <sigitas@vtex.lt>
 
 	* ChangeLog: update info. 
