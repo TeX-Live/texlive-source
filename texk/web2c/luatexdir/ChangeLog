@@ -1,21 +1,30 @@
 2026-02-18  Luigi Scarso  <luigi.scarso@gmail.com>
 
+	* [luatex] Spacing issue: Partial fix. WORK IN PROGRESS.
+        
+
+2026-02-18  Luigi Scarso  <luigi.scarso@gmail.com>
+
 	* Rewrite node.protect_glyph and node.unprotect_glyph (H.Hagen), thanks to David Chiang.
         
+
 2026-02-02  Luigi Scarso  <luigi.scarso@gmail.com>
 
 	* New luaffi from https://github.com/Tekenlight/luaffifb
         
+
 2026-01-18  Karl Berry  <karl@freefriends.org>
 
 	* luatexdir/tex/errors.c (print_ignored_err): send "ignored error"
 	output only to log file.
+
 
 2026-01-15  Karl Berry  <karl@freefriends.org>
 
 	* luatexdir/tex/errors.c (print_ignored_err): omit word "error" in
 	message to avoid false positives by humans and editors (cross-engine).
 	https://tug.org/pipermail/pdftex/2026-January/009463.html
+
 
 2025-12-06  Luigi Scarso  <luigi.scarso@gmail.com>
 	* set_macro needs to check if the space is the only character
@@ -24,6 +33,7 @@
 	* fixed wrong spacing around display with \matheqdirmode=1. WORK IN PROGRESS (Udi Fogiel)
 	* fixed Errors in "texlua" do not print a traceback (Max Chernoff)
       
+
 2025-09-23  Luigi Scarso  <luigi.scarso@gmail.com>
 	* Fixed scan_keywordcs typo in the manual  (Max Chernoff)
 
