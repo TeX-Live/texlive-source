@@ -1,7 +1,7 @@
 # $Id$
 # Standalone Makefile for hitex/doc. Public domain.
 # This is not run as part of the build, just a convenience used by hand
-# from the Build/source/... directory.
+# from the Build/source/... directory. See tlpkg/doc/releng.txt.
 
 INSTALL_DATA = cp -pfv
 
