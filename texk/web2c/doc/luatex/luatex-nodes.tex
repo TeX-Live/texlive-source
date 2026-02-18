@@ -1871,35 +1871,29 @@ optional. The two returned nodes \type {h} and \type {t} are the head and tail
 (either one of these can be an inserted kern node, because special kernings with
 word boundaries are possible).
 
-\subsection{\type {unprotect_glyph[s]}}
+\subsection{\type {protect_glyph[s]} and \type {unprotect_glyph[s]}}
 
+\libindex {protect_glyphs}
+\libindex {protect_glyph}
 \libindex {unprotect_glyphs}
 \libindex {unprotect_glyph}
 
 \startfunctioncall
+node.protect_glyph(<node> n)
+node.protect_glyphs(<node> n,[<node> m])
 node.unprotect_glyph(<node> n)
 node.unprotect_glyphs(<node> n,[<node> ,m])
 \stopfunctioncall
 
-Subtracts 256 from all glyph node subtypes. This and the next function are
-helpers to convert from \type {characters} to \type {glyphs} during node
-processing. The second argument is optional and indicates the end of a range.
-
-\subsection{\type {protect_glyph[s]}}
-
-\libindex {protect_glyphs}
-\libindex {protect_glyph}
-
-\startfunctioncall
-node.protect_glyph(<node> n)
-node.protect_glyphs(<node> n,[<node> m])
-\stopfunctioncall
-
-Adds 256 to all glyph node subtypes in the node list starting at \type {n},
-except that if the value is 1, it adds only 255. The special handling of 1 means
-that \type {characters} will become \type {glyphs} after subtraction of 256. A
-single character can be marked by the singular call. The second argument is
-optional and indicates the end of a range.
+We assume subtypes to be in the range 0 (unset) upto 255 so in the \type {0x00FF}
+bits of the (quarterword) subtype. Protected glyph have the \type {0xFF00} bits
+set, which means that a subtype is now larger than 255. Unprotecting resets those
+bits. The \type {node.is_char} helper uses the \type {0xFF00} mask to determine
+if we have a processed character or not. In version 1.24 we changed to this
+masking in favor of adding and subtracting where 256 was treated special, for
+instance because we have a somewhat vague zero/one subtype situation and we also
+set protection in math without an explicit subtype. This change is likely
+harmless.
 
 \subsection{\type {last_node}}
 
@@ -2485,7 +2479,7 @@ create synonyms.
 In \type {setfield} and \type {getfield} specials and writes accept \type {data}
 and \type {value} as equivalent keys. In the case of a write whatsit getting the
 \type {value} returns the token list as table, while \type {data} returns the
-expansion as a string (version 1.23.2, 2025).
+expansion as a string (version 1.23.2, 2026).
 
 Some nodes have indirect references. For instance a math character refers to a
 family instead of a font. In that case we provide a virtual font field as
