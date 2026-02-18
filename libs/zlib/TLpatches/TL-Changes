@@ -5,3 +5,8 @@ Removed:
 	Makefile
 	zconf.h
 	doc/rfc*
+
+Patches:
+* zlib-caddr-fix.patch
+	replace caddr_t to char *
+
