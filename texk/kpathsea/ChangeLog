@@ -1,3 +1,8 @@
+2026-02-19  Karl Berry  <karl@freefriends.org>
+
+	* getopt.c (getenv): do not declare with empty parens,
+	to appease C23, as described below.
+
 2026-02-07  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
         * texmf.cnf (command_line_encoding): Update comment.

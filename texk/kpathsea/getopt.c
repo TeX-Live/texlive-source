@@ -206,7 +206,11 @@ static char *posixly_correct;
 /* Avoid depending on library functions or files
    whose names are inconsistent.  */
 
-char *getenv ();
+/* Can no longer have this declaration because of C23 (see c-std.h).
+   <stdlib.h> and <string.h> are almost certainly included already,
+   one way or another, so this whole #else branch of code seems
+   irrelevant nowadays, but we'll go with the minimal change.  */
+/* char *getenv (); */
 
 static char *my_index(const char *str, int chr)
 {
