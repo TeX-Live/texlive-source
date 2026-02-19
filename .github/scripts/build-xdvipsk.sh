@@ -1,4 +1,10 @@
 #!/bin/sh -l
+# $Id$
+# (-l above is to make this a login shell.)
+# Public domain. Originally written by Norbert Preining.
+# 
+# The build script that is run by ../workflows/xdvipsk-test.yml on github.
+# It runs in the xdvipsk dev branch, building just xdvipsk, for testing.
 
 set -e
 
@@ -130,6 +136,21 @@ case "$arch" in
     ;;
 esac
 export TL_MAKE_FLAGS
+
+# If we explicitly set CFLAGS or CXXFLAGS above, it's up to us to enable
+# optimization, since we are overriding what Autoconf does.
+test -n "$CFLAGS" && CFLAGS="$CFLAGS -O2"
+test -n "$CXXFLAGS" && CXXFLAGS="$CXXFLAGS -O2"
+
+echo "$0: variables set:"
+echo "  BUILDARGS=$BUILDARGS"
+echo "  CC=$CC"
+echo "  CXX=$CXX"
+echo "  CFLAGS=$CFLAGS"
+echo "  CXXFLAGS=$CXXFLAGS"
+echo "  TL_MAKE=$TL_MAKE"
+echo "  TL_MAKE_FLAGS=$TL_MAKE_FLAGS"
+echo "$0: (end variables)."
 
 ./Build -C $BUILDARGS --disable-all-pkgs --enable-xdvipsk
 

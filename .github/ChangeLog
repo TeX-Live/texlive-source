@@ -1,5 +1,11 @@
 2026-02-19  Karl Berry  <karl@freefriends.org>
 
+	* scripts/build-xdvipsk.sh: rename from build-tl-xdvipsk,
+	for faster completion.
+	* workflows/xdvipsk-test.yml: and here.
+
+2026-02-19  Karl Berry  <karl@freefriends.org>
+
 	* scripts/build-tl.sh: check that we compiled with optimization.
 	Report from Petr Olsak,
 	https://tug.org/pipermail/tex-live/2026-February/052146.html
