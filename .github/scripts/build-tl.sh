@@ -1,9 +1,9 @@
 #!/bin/sh -l
 # $Id$
 # (-l above is to make this a login shell.)
+# Public domain. Originally written by Norbert Preining.
 # 
 # The build script that is run by ../workflows/main.yml on github.
-# Public domain. Originally written by Norbert Preining.
 
 set -ex
 
@@ -142,13 +142,9 @@ esac
 export TL_MAKE_FLAGS
 
 # If we explicitly set CFLAGS or CXXFLAGS above, it's up to us to enable
-# optimization, since we are overriding what Autoconf does. But don't do
-# this on armhf, since then compilation takes longer than the six hours
-# that github allows.
-if echo "$arch" | grep armhf-linux >/dev/null; then :; else
-  test -n "$CFLAGS" && CFLAGS="$CFLAGS -O2"
-  test -n "$CXXFLAGS" && CXXFLAGS="$CXXFLAGS -O2"
-fi
+# optimization, since we are overriding what Autoconf does.
+test -n "$CFLAGS" && CFLAGS="$CFLAGS -O2"
+test -n "$CXXFLAGS" && CXXFLAGS="$CXXFLAGS -O2"
 
 echo "$0: variables set:"
 echo "  BUILDARGS=$BUILDARGS"
@@ -161,6 +157,16 @@ echo "  TL_MAKE_FLAGS=$TL_MAKE_FLAGS"
 echo "$0: (end variables)."
 
 ./Build -C $BUILDARGS
+
+# Let's make sure that we compiled with optimization. A normal
+# compilation line in the log will look like
+# libtool: compile: gcc ...args... -O2 ...more args...
+#
+build_log=Work/build.log
+if grep 'compile:.* -O' $build_log; then :; else
+  echo "$0: aborting, no optimization (compile:* -O) in $build_log" >&2
+  exit 1
+fi
 
 mv inst/bin/* $arch
 

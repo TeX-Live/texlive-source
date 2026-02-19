@@ -1,0 +1,7 @@
+2026-02-19  Karl Berry  <karl@freefriends.org>
+
+	* scripts/build-tl.sh: check that we compiled with optimization.
+	Report from Petr Olsak,
+	https://tug.org/pipermail/tex-live/2026-February/052146.html
+
+(This ChangeLog public domain.)
