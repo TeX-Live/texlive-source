@@ -949,7 +949,6 @@ static void writecidtype2(sfnt *sfont, struct tt_head_table *head, struct tt_hhe
 
 int writecid(charusetype *p)
 {
-    char *d;
     struct resfont *rf;
     FILE         *fp;
     char         *path;
@@ -974,24 +973,12 @@ int writecid(charusetype *p)
     curfnt = p->fd;
     rf = curfnt->resfont;
     code_to_cid_cmap = NULL;
-#ifdef KPATHSEA
-    d = kpse_var_expand(rf->Fontfile);
-#else
-    d = expandfilename(rf->Fontfile);
-#endif
-    if ( d == NULL )
-        return 0;
 
-    if ((path = dpx_find_dfont_file(d)) != NULL &&
-        (fp = fopen(path, "rb")) != NULL)
-        is_dfont = 1;
-    else if (((path = dpx_find_opentype_file(d)) == NULL
-         && (path = dpx_find_truetype_file(d)) == NULL)
-         || (fp = fopen(path, "rb")) == NULL) {
-        char *msg = concatn("! Cannot proceed without the font: ", d, NULL);
+    if (!(fp = lookup_font_file(rf->Fontfile, &path, &is_dfont)))
+    {
+        char *msg = concatn("! Cannot proceed without the font: ", rf->Fontfile, NULL);
         error(msg);
     }
-    free(d);
     realnameoffile = path;
     strcpy(name, realnameoffile);
     index = rf->index;

@@ -296,6 +296,12 @@ extern int close_file(FILE *f);
 #ifndef KPATHSEA
 extern char *expandfilename(const char *src);
 #endif /* KPATHSEA */
+/* searches for a font file
+   p_real_fpath and p_is_dfont could be NULL
+   returned file object should be fclose'd, if not NULL
+   returned p_real_fpath should be removed after return, if not NULL: if (*p_real_fpath) free(*p_real_fpath); */
+extern FILE *lookup_font_file(const char *fpath, char **p_real_fpath, int *p_is_dfont);
+
 extern int sfntload(fontdesctype *curfnt);
 #endif /* XDVIPSK */
 

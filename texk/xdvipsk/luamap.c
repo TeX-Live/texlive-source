@@ -461,7 +461,9 @@ LuaMap_cache_find (const char *luamap_name)
           rfnt = rfnt_ref->resfont_ptr;
           if (rfnt && rfnt->Fontfile)
           {
-              otf_name = kpse_var_expand(rfnt->Fontfile);
+              fp = lookup_font_file(rfnt->Fontfile, &otf_name, NULL);
+              if (fp)
+                  fclose(fp);
               if (otf_name)
               {
                   ft_error = FT_New_Face(ft_lib, otf_name, rfnt->index, &ft_face);

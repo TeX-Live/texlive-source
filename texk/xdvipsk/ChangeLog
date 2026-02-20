@@ -1,3 +1,9 @@
+2026-02-20  Sigitas Tolušis <sigitas@vtex.lt>
+
+	* README: update and moved to README.md
+	* luamap.c, protos.h, sfntload.c, writecid.c: add a basename kpse
+	search for OpenType fonts with incorrect file path in the map. 
+
 2026-02-18  Karl Berry  <karl@freefriends.org>
 
 	* makefont.c (getenv, system): remove () declarations of getenv

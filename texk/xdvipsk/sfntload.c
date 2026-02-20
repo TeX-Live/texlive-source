@@ -84,6 +84,94 @@ scale(long what, unsigned short unitsPerEm)
           (((what % unitsPerEm) << 20) + 500) / unitsPerEm);
 }
 
+#define MAXFILENAME 2056
+FILE *lookup_font_file(const char *fpath, char **p_real_fpath, int *p_is_dfont)
+{
+    FILE *fp = NULL;
+    char *real_fpath = NULL;
+    char *fpath_exp = NULL;
+    char *fname_ptr;
+
+    if (p_is_dfont)
+        *p_is_dfont = 0;
+
+#ifdef KPATHSEA
+    fpath_exp = kpse_var_expand(fpath);
+#else
+    fpath_exp = expandfilename(fpath);
+#endif
+    if (fpath_exp)
+    {
+        if ((fpath_exp[0] == '.') && (fpath_exp[1] == '/'))
+        {
+            char cwd[MAXFILENAME + 1];
+            if (getcwd(cwd, MAXFILENAME))
+            {
+                strcat(cwd, "/");
+                strncat(cwd, fpath_exp + 2, MAXFILENAME - strlen(cwd));
+                free(fpath_exp);
+                fpath_exp = strdup(cwd);
+            }
+        }
+
+        if ((real_fpath = dpx_find_dfont_file(fpath_exp)) != NULL &&
+            (fp = fopen(real_fpath, "rb")) != NULL)
+        {
+            if (p_is_dfont)
+                *p_is_dfont = 1;
+        }
+        else
+        {
+            if (real_fpath)
+                free(real_fpath);
+            real_fpath = NULL;
+
+            if (((real_fpath = dpx_find_opentype_file(fpath_exp)) == NULL
+                && (real_fpath = dpx_find_truetype_file(fpath_exp)) == NULL)
+                || (fp = fopen(real_fpath, "rb")) == NULL)
+            {
+                if (real_fpath)
+                    free(real_fpath);
+                real_fpath = NULL;
+
+                fname_ptr = fpath_exp + strlen(fpath_exp);
+                while ((fname_ptr > fpath_exp) && !IS_DIR_SEP(*(fname_ptr - 1)))
+                    --fname_ptr;
+                if (fname_ptr > fpath_exp)
+                {
+                    if ((real_fpath = dpx_find_dfont_file(fname_ptr)) != NULL &&
+                        (fp = fopen(real_fpath, "rb")) != NULL)
+                    {
+                        if (p_is_dfont)
+                            *p_is_dfont = 1;
+                    }
+                    else
+                    {
+                        if (real_fpath)
+                            free(real_fpath);
+                        real_fpath = NULL;
+
+                        if (((real_fpath = dpx_find_opentype_file(fname_ptr)) != NULL
+                            || (real_fpath = dpx_find_truetype_file(fname_ptr)) != NULL))
+                            fp = fopen(real_fpath, "rb");
+                    }
+                }
+            }
+        }
+    }
+
+    if (fpath_exp)
+        free(fpath_exp);
+
+    if (p_real_fpath)
+        *p_real_fpath = real_fpath;
+    else
+        if (real_fpath)
+            free(real_fpath);
+
+    return (fp);
+}
+
 int sfntload(fontdesctype *curfnt)
 {
 	FILE         *fp;
@@ -103,6 +191,7 @@ int sfntload(fontdesctype *curfnt)
 	cff_font *cffont = NULL;
 	halfword gid, cid;
 	chardesctype *cd;
+    char *d;
 
     if (curfnt->resfont->Fontfile == NULL)
     {
@@ -111,34 +200,11 @@ int sfntload(fontdesctype *curfnt)
         free(msg);
     }
 
-#ifdef KPATHSEA
-	char *d = kpse_var_expand(curfnt->resfont->Fontfile);
-#else
-	char *d = expandfilename(curfnt->resfont->Fontfile);
-#endif
-	if ( d == NULL )
-		return 0;
-
-	if ((d[0] == '.') && (d[1] == '/')) {
-		char cwd[2056];
-		getcwd(cwd, sizeof(cwd));
-		strcat(cwd, "/");
-		strcat(cwd, d + 2);
-		free(d);
-		d = (char *)malloc(strlen(cwd) + 1);
-		strcpy(d, cwd);
-	}
-
-	if ((path = dpx_find_dfont_file(d)) != NULL &&
-		(fp = fopen(path, "rb")) != NULL)
-		is_dfont = 1;
-	else if (((path = dpx_find_opentype_file(d)) == NULL
-         && (path = dpx_find_truetype_file(d)) == NULL)
-         || (fp = fopen(path, "rb")) == NULL) {
-		char *msg = concatn("! Cannot proceed without the font: ", d, NULL);
+    if (!(fp = lookup_font_file(curfnt->resfont->Fontfile, &path, &is_dfont)))
+    {
+		char *msg = concatn("! Cannot proceed without the font: ", curfnt->resfont->Fontfile, NULL);
 		error(msg);
 	}
-	free(d);
 	if ( path ) free(path);
 	d = curfnt->resfont->specialinstructions;
 	if (is_dfont) {
