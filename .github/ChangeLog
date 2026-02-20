@@ -1,3 +1,7 @@
+2026-02-20  Sigitas Tolušis  <sigitas@vtex.lt>
+
+	* workflows/xdvipsk-test.yml: sync docker build with main.
+
 2026-02-19  Karl Berry  <karl@freefriends.org>
 
 	* scripts/build-xdvipsk.sh: rename from build-tl-xdvipsk,
