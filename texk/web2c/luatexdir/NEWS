@@ -1,4 +1,36 @@
 ==============================================================
+LuaTeX 1.24.0 2026-03-07
+==============================================================
+
+- Some more never used modes made obsolete + staircase kerns adapted (H.Hagen).
+- Experimental extension to ToUnicode for Type1 fonts (HH)
+- Document the table variant of `character.tounicode` (Max Chernoff)
+- Additional 'value' field for write nodes (getfield) for unexpanded token tables (H.Hagen).
+- Merge branch 'master' of https://gitlab.lisn.upsaclay.fr/texlive/luatex
+- Restored \mathflattenmode (M.F. Krüger). 
+- Max size of the destination names table for PDF output raised to 1048576  (Max Chernoff)
+- Fix for legacy handling of truetype fonts (thanks to marcpenninga)
+- Fixed typos im mathcodes.c (thanks to Josef Friedrich)
+- Fixed a paragraph misplacement in luatex-languages.tex (thanks to Josef Friedrich)
+- WORK IN PROGRESS: Various fixes for C23 compatibility. 
+- Fix field names of mplib.stats (thanks to Josef Friedrich). Fixed a wrong date in luatex-nodes.tex.
+- Fixed read_img, it  now checks --output-dir (thanks to reescf@gmail.com). Added the (ENVLUATEXCPPFLAGS) and $(ENVLUAJITEXCPPFLAGS) variables to libluatex.am  to add compiler switches from the environment.
+- luaoutputdir.test (tests): mkdir top-level subdir. Report from Maxim Cournoyer, tex-live 12 Sep 2025 22:42:53 (Karl Berry).
+- Fixed scan_keywordcs typo in the manual  (Max Chernoff)
+- Fixed math "norule" keyword documentation (M.Chernoff)
+- Saves and restores pdf->objcompresslevel along with pdf->compress_level (H.Hagen, M.Chernoff).
+- --no-mktex also pays attention to value "fmt", to stop mktexfmt (fmtutil) from running. (K.Berry)
+- set_macro needs to check if the space is the only character after a backslash before removing a "trailing" space (thanks to Udi Fogiel and H.Hagen)
+- Fixed wrong spacing around display with \matheqdirmode=1. WORK IN PROGRESS (Udi Fogiel)
+- Fixed Errors in "texlua" do not print a traceback (Max Chernoff)
+- harfbuzzsubset: Lua bindings to the Harfbuzz subset API. Thanks to Patrick Gundlach
+- MetaPost 3.0a: start replacing int with int64_t, where possible
+- New luaffi from https://github.com/Tekenlight/luaffifb
+- Rewrite node.protect_glyph and node.unprotect_glyph (H.Hagen), thanks to David Chiang.
+- Spacing issue: Partial fix. WORK IN PROGRESS.
+
+
+==============================================================
 LuaTeX 1.21.0 2025-02-13
 ==============================================================
 
