@@ -1,9 +1,14 @@
+2026-02-20  Luigi Scarso <luigi.scarso@gmail.com>
+
+	*  better mp_flush_below_variable (H. Hagen) 
+
 2026-02-16  Andreas Scherer  <https://ascherer.github.io>
 
 	* mp.w: Merge version strings with the preprocessor.
 
 2026-02-15  Luigi Scarso <luigi.scarso@gmail.com>
-	* MetaPost 3.00
+	
+        * MetaPost 3.00
 
 
 2026-02-08  Luigi Scarso <luigi.scarso@gmail.com>
