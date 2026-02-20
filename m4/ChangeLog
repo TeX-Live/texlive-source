@@ -1,3 +1,12 @@
+2026-02-20  Karl Berry  <karl@freefriends.org>
+
+	* kpse-harfbuzz-flags.m4 (KPSE_HARFBUZZ_SYSTEM_FLAGS):
+	When using --with-system-harfbuzz,
+	ask pkg-config for cflags/libs for harfbuzz-subset,
+	not harfbuzz, since luatex and hitex use subset functions.
+	Report and fix from Dan Ports,
+	https://tug.org/pipermail/tlbuild/2026q1/005946.html
+
 2026-01-25  Karl Berry  <karl@freefriends.org>
 
 	* kpse-common.m4 (KPSE_COMMON): do not check for getwd,

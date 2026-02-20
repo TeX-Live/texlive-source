@@ -69,6 +69,10 @@ windows:
     --host=x86_64-w64-mingw32 --build=x86_64-linux-gnu
   to configure. For a full invocation as of 2025, see:
     https://tug.org/pipermail/tlbuild/2025q3/005847.html
+  For another invocation, and entire workflow (not just for Windows):
+    https://tug.org/pipermail/tlbuild/2025q2/005794.html
+  A shorter message with incantations:
+    https://github.com/vtex-soft/xdvipsk/issues/17
 
 x86_64-darwinlegacy: Built on ConTeXtGarden.
   Mac OS X 10.6, clang 5.0, libc++ required

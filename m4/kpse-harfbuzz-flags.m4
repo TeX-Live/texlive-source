@@ -1,6 +1,6 @@
 # $Id$
 # Public macros for the TeX Live (TL) tree.
-# Copyright 2015-2019 Karl Berry <tex-live@tug.org>
+# Copyright 2015-2026 Karl Berry <tex-live@tug.org>
 # Copyright 2012-2015 Peter Breitenlohner <tex-live@tug.org>
 #
 # This file is free software; the copyright holder
@@ -40,6 +40,13 @@ _KPSE_LIB_OPTIONS([harfbuzz], [$1], [pkg-config])])
 # theory many years ago (private email, 21 October 2009) to switch xetex
 # to using that, and thus eliminate the need for xetex to link with icu,
 # but it never came to fruition. So, since LuaTeX (2019) wants harfbuzz
-# without icu, back to just harfbuzz
+# without icu, back to just harfbuzz. (And other programs use icu anyway.)
+# 
+# In 2026: hitex and luatex are using symbols available only in
+# libharfbuzz-subset, so ask for that instead of bare harfbuzz. The libs
+# still include regular harfbuzz, and hopefully that will remain the case.
+#    $ pkg-config --libs harfbuzz-subset
+#    -lharfbuzz-subset -lharfbuzz 
+# Report and fix: https://tug.org/pipermail/tlbuild/2026q1/005946.html
 AC_DEFUN([KPSE_HARFBUZZ_SYSTEM_FLAGS], [dnl
-_KPSE_PKG_CONFIG_FLAGS([harfbuzz], [harfbuzz])])
+_KPSE_PKG_CONFIG_FLAGS([harfbuzz], [harfbuzz-subset])])
