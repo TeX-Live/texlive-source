@@ -27,7 +27,7 @@ LuaTeX 1.24.0 2026-03-07
 - MetaPost 3.0a: start replacing int with int64_t, where possible
 - New luaffi from https://github.com/Tekenlight/luaffifb
 - Rewrite node.protect_glyph and node.unprotect_glyph (H.Hagen), thanks to David Chiang.
-- Spacing issue: Partial fix. WORK IN PROGRESS.
+- Fixed a spacing issue ( crashing long subscripts together ), see [luatex] Spacing issue ml.
 
 
 ==============================================================
