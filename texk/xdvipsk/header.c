@@ -15,6 +15,7 @@
 #include "dvips.h" /* The copyright notice in that file is included too! */
 #else
 #include "xdvips.h" /* The copyright notice in that file is included too! */
+#include "glyphmap.h"
 #endif /* XDVIPSK */
 struct header_list *header_head;
 /*
@@ -67,6 +68,9 @@ void
 checkhmem(const char *s, char *pre, char *post)
 {
    FILE *f;
+#ifdef XDVIPSK
+   s = get_alias_fname(s);
+#endif /* XDVIPSK */
 
    f = search(headerpath, s, READBIN);
    if (pre || post) {

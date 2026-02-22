@@ -1,5 +1,3 @@
-$Id$
-
 # *XDvipsk*: extended Dvips (TeXLive 2026)
 
 It is extension to Tom Rokicki's `dvips`, a `DVI-to-PostScript` translator.  

@@ -80,6 +80,10 @@ static int JIStoSJIS(int c);
 #ifdef XDVIPSK
 static Boolean textStrokeFlag = 0;
 static char textstrokecmd[LINELENGTH];
+
+/* encoding renaming values */
+char enc_name_from[ENC_BUF_SIZE + 1];
+char enc_name_to[ENC_BUF_SIZE + 1];
 #endif /* XDVIPSK */
 
 static Boolean any_dir = 0; /* did we output any direction commands? */
@@ -238,13 +242,12 @@ static void rename_enc_glname(FILE *enc_file, const char *pfb_name)
     while (TRUE)
     {
         ch = getc(enc_file);
-        if ((strchr("/ \t\n\r", ch)) || (dest_pt >= glyph_name_buf + GLYPH_NAME_LEN))
+        if ((!isalnum(ch)) || (dest_pt >= glyph_name_buf + GLYPH_NAME_LEN))
             break;
         *dest_pt++ = ch;
     }
     *dest_pt++ = '\0';
     ungetc(ch, enc_file);
-
     glyph_subst = glyph_name_cvt(glyph_name_buf, pfb_name, NULL);
     if (glyph_subst)
     {
@@ -252,8 +255,66 @@ static void rename_enc_glname(FILE *enc_file, const char *pfb_name)
         glyph_name_buf[GLYPH_NAME_LEN] = '\0';
         free(glyph_subst);
     }
+    else if (strcmp(glyph_name_buf, enc_name_from) == 0)
+    {
+        strncpy(glyph_name_buf, enc_name_to, GLYPH_NAME_LEN);
+        glyph_name_buf[GLYPH_NAME_LEN] = '\0';
+    }
     glyph_name_ptr = glyph_name_buf;
     glyph_name_len = strlen(glyph_name_buf);
+}
+
+char *get_alias_fname(const char *alias_name)
+{
+    static char fname[ENC_BUF_SIZE + 1];
+    char *fname_ptr;
+    resfont_ref *p_ref;
+    char *specinfo, *enc_name, *enc_ptr;
+
+    enc_name_from[0] = '\0';
+    enc_name_to[0] = '\0';
+
+    strncpy(fname, alias_name, ENC_BUF_SIZE);
+    fname[ENC_BUF_SIZE] = '\0';
+    fname_ptr = strchr(fname, ALIAS_ID_DELIM);
+    if (fname_ptr)
+    {
+        p_ref = lookup_v(alias_name);
+        if (p_ref && p_ref->resfont_ptr && (specinfo = p_ref->resfont_ptr->specialinstructions))
+        {
+            enc_ptr = strstr(specinfo, ENC_REF_SIGNATURE);
+            if (enc_ptr)
+            {
+                while ((enc_ptr > specinfo) && (*(enc_ptr - 1) == ' ')) --enc_ptr;
+                enc_name = enc_ptr;
+                while ((enc_name > specinfo) && isalnum(*(enc_name - 1))) --enc_name;
+                if (enc_ptr - enc_name <= ENC_BUF_SIZE)
+                {
+                    strncpy(enc_name_to, enc_name, ENC_BUF_SIZE);
+                    enc_name_to[enc_ptr - enc_name] = '\0';
+                    strncpy(enc_name_from, enc_name_to, ENC_BUF_SIZE);
+                    enc_name_from[ENC_BUF_SIZE] = '\0';
+                    enc_ptr = enc_name_from + strlen(enc_name_from) - strlen(fname_ptr + 1);
+                    if ((enc_ptr > enc_name_from) && (strcmp(enc_ptr, fname_ptr + 1) == 0))
+                        *enc_ptr = '\0';
+                    else
+                    {
+                        enc_name_from[0] = '\0';
+                        enc_name_to[0] = '\0';
+                    }
+                }
+                else
+                {
+                    snprintf(errbuf, ERR_BUF_LEN, "!Encoding name too long: %.500s", enc_name);
+                    error(errbuf);
+                }
+            }
+        }
+
+        *fname_ptr = '\0';
+    }
+
+    return(fname);
 }
 #endif /* XDVIPSK */
 
@@ -272,6 +333,7 @@ copyfile_general(const char *s, struct header_list *cur_header)
 
 #ifdef XDVIPSK
    char *pfb_name = NULL;
+   s = get_alias_fname(s);
 #endif /* XDVIPSK */
    /* end DOS EPS code */
 #if defined(VMCMS) || defined (MVSXA)
@@ -411,7 +473,7 @@ copyfile_general(const char *s, struct header_list *cur_header)
           if (((p_ref = lookup_ps(infont, inotftype)) != NULL) && p_ref->resfont_ptr && ((font_file = p_ref->resfont_ptr->Fontfile) != NULL) && strstr(font_file, PFB_EXT))
               pfb_name = extract_fname(font_file, &pfb_fname);
           if (pfb_fname)
-              parse_g2u(pfb_fname, FALSE);
+              parse_g2u(pfb_fname);
 #endif /* XDVIPSK */
          infont = 0;
 #ifdef XDVIPSK

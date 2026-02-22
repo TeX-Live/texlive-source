@@ -12,6 +12,7 @@
 #include "dvips.h" /* The copyright notice in that file is included too! */
 #else
 #include "xdvips.h" /* The copyright notice in that file is included too! */
+#include "glyphmap.h"
 #ifndef WIN32
 #define strnicmp strncasecmp
 #endif
@@ -1101,6 +1102,46 @@ default:
   return 1;
 }
 
+#ifdef XDVIPSK
+/* pfb_name -- pfb font name without an extension
+   enc -- full encoding file name
+   returns an alias id, if the encoding should be aliased, zero otherwise */
+static int get_enc_alias(const char *pfb_name, const char *enc)
+{
+    int enc_alias_id = 0;
+    int error;
+    char *pfb_name_lwr;
+    char *enc_lwr;
+
+    if (pfb_name && enc)
+    {
+        pfb_name_lwr = strdup(pfb_name);
+        assert(pfb_name_lwr);
+        strlwr(pfb_name_lwr);
+
+        enc_lwr = strdup(enc);
+        assert(enc_lwr);
+        strlwr(enc_lwr);
+
+        lua_getglobal(L, "get_enc_alias");
+        lua_pushstring(L, pfb_name_lwr);
+        lua_pushstring(L, enc_lwr);
+        error = lua_pcall(L, 2, 1, 0);
+        if (error)
+        {
+            PRINTF_PR("Lua function get_enc_alias() execution error: %d - %s\n", error, lua_tostring(L, -1));
+        }
+        else
+            enc_alias_id = lua_tointeger(L, -1);
+        lua_pop(L, 1);
+
+        free(pfb_name_lwr);
+        free(enc_lwr);
+    }
+
+    return(enc_alias_id);
+}
+#endif /* XDVIPSK */
 /*
 *   If a character pointer is passed in, use that name; else, use the
 *   default (possibly set) name, psfonts.map.
@@ -1114,6 +1155,10 @@ getpsinfo(const char *name)
    char downbuf[500];
    char specbuf[500];
    int slen;
+#ifdef XDVIPSK
+   static char vect_alias[ENC_BUF_SIZE + 1];
+   int enc_alias_id = 0;
+#endif /* XDVIPSK */
 
    if (name == 0)
       name = psmapfile;
@@ -1224,8 +1269,58 @@ getpsinfo(const char *name)
                TeXname = newstring(TeXname);
                PSname = newstring(PSname);
                Fontfile = newstring(Fontfile);
+#ifdef XDVIPSK
+               enc_alias_id = 0;
+               if (Fontfile)
+               {
+                   strncpy(vect_alias, Fontfile, ENC_BUF_SIZE);
+                   vect_alias[ENC_BUF_SIZE] = '\0';
+                   p = strstr(vect_alias, PFB_EXT);
+                   if (p)
+                   {
+                       *p = '\0';
+                       enc_alias_id = get_enc_alias(vect_alias, Vectfile);
+                   }
+               }
+
+               if (enc_alias_id && Vectfile)
+               {
+                   snprintf(vect_alias, ENC_BUF_SIZE, "%s%c%d", Vectfile, ALIAS_ID_DELIM, enc_alias_id);
+                   vect_alias[ENC_BUF_SIZE] = '\0';
+                   Vectfile = vect_alias;
+               }
+#endif /* XDVIPSK */
                Vectfile = newstring(Vectfile);
+#ifdef XDVIPSK
+               if (enc_alias_id)
+               {
+                   strncpy(vect_alias, specbuf, ENC_BUF_SIZE);
+                   vect_alias[ENC_BUF_SIZE] = '\0';
+                   p = strstr(vect_alias, ENC_REF_SIGNATURE);
+                   if (p)
+                   {
+                       while ((p > vect_alias) && (*(p - 1) == ' ')) --p;
+                       snprintf(p, ENC_BUF_SIZE - (p - vect_alias), "%d", enc_alias_id);
+                       vect_alias[ENC_BUF_SIZE] = '\0';
+                       strncat(vect_alias, specbuf + (p - vect_alias), ENC_BUF_SIZE - strlen(vect_alias));
+                       vect_alias[ENC_BUF_SIZE] = '\0';
+                       specinfo = newstring(vect_alias);
+                   }
+                   else
+                       specinfo = newstring(specbuf);
+               }
+               else
+#endif /* XDVIPSK */
                specinfo = newstring(specbuf);
+#ifdef XDVIPSK
+               if (enc_alias_id && downbuf[0])
+               {
+                   snprintf(vect_alias, ENC_BUF_SIZE, "%s%c%d", downbuf, ALIAS_ID_DELIM, enc_alias_id);
+                   vect_alias[ENC_BUF_SIZE] = '\0';
+                   downloadinfo = newstring(vect_alias);
+               }
+               else
+#endif /* XDVIPSK */
                downloadinfo = newstring(downbuf);
                add_entry(TeXname, PSname, Fontfile, Vectfile,
 #ifndef XDVIPSK

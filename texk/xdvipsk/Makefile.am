@@ -47,6 +47,7 @@ xdvipsk_SOURCES = \
 	emspecialex.c \
 	finclude.c \
 	fontdef.c \
+	font_glyph_maps.h \
 	glyphlist_table.h \
 	glyphmap.c \
 	glyphmap.h \

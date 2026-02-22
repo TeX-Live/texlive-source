@@ -31,7 +31,11 @@
  */
 #include "protos_add.h"
 
+#ifdef XDVIPSK
+char errbuf[ERR_BUF_LEN + 1];
+#else
 char errbuf[1500];
+#endif /* XDVIPSK */
 int lastresortsizes[40];
 int bitmapfontseen = 0 ;
 /*

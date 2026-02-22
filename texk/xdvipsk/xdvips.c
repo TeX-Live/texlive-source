@@ -6,7 +6,7 @@
 #else
 #include "xdvips.h" /* The copyright notice in that file is included too! */
 #define VERSION "2026.1"
-#define VTEX_VERSION "2026.02.20"
+#define VTEX_VERSION "2026.02.21"
 #endif /* XDVIPSK */
 #ifdef KPATHSEA
 #include <kpathsea/c-pathch.h>
@@ -88,6 +88,7 @@ FILE *generic_fsyscp_fopen(const char *filename, const char *mode)
 #include "lualib.h"
 lua_State *L = NULL;
 #include "glyphlist_table.h"
+#include "font_glyph_maps.h"
 #include "xdvipsk_tounicode.h"
 Boolean lua_prescan_specials = 0;
 Boolean lua_scan_specials = 0;
@@ -1084,21 +1085,23 @@ load_lua_scripts(const char* luascript)
       int ret;
       printf("Loading Lua script: %s\n", luascriptfile);
       ret = luaL_loadfile(L, luascriptfile);
-      if (ret != 0) {
+      if (ret != LUA_OK) {
           switch (ret) {
                 case LUA_ERRSYNTAX:
-                    fprintf(stderr, "Failed to load Lua script file %s:\n\t%s.\n", luascriptfile, "Lua syntax error");
+                    fprintf(stderr, "Failed to load Lua script file %s:\n\t%s: %s.\n", luascriptfile, "Lua syntax error", lua_tostring(L, -1));
                     break;
                 case LUA_ERRMEM:
-                    fprintf(stderr, "Failed to load Lua script file %s:\n\t%s.\n", luascriptfile, "memory allocation error");
+                    fprintf(stderr, "Failed to load Lua script file %s:\n\t%s: %s.\n", luascriptfile, "memory allocation error", lua_tostring(L, -1));
                     break;
                 case LUA_ERRFILE:
-                    fprintf(stderr, "Failed to load Lua script file %s:\n\t%s.\n", luascriptfile, "cannot open/read the file");
+                    fprintf(stderr, "Failed to load Lua script file %s:\n\t%s: %s.\n", luascriptfile, "cannot open/read the file", lua_tostring(L, -1));
                     break;
           };
+          lua_pop(L, 1);
       } else {
-          if (lua_pcall(L, 0, 0, 0) != 0) {
+          if (lua_pcall(L, 0, 0, 0) != LUA_OK) {
              fprintf(stderr, "Failed to load Lua script file %s: %s", luascriptfile, lua_tostring(L, -1));
+             lua_pop(L, 1);
           } else {
              lua_prescan_specials = lua_callback_defined(L, (const char*) "prescan_specials_callback");
              lua_scan_specials = lua_callback_defined(L, (const char*) "scan_specials_callback");
@@ -1133,6 +1136,7 @@ run_lua_specials(lua_State *L, const char* lua_func, char* p, Boolean lua_availa
       lua_setfield(L, -2,  (const char*) "pagenum");
       if (lua_pcall(L, 2, 1, 0) != LUA_OK) {
          fprintf_str(stderr, "error running function 'special' %s %s: %s", lua_func, p, lua_tostring(L, -1));
+         lua_pop(L, 1);
       } else {
          int t = lua_type(L, -1);
          switch (t) {
@@ -1201,7 +1205,10 @@ run_lua_after_prescan(lua_State *L)
    lua_pushstring(L, (const char*) iname);
    lua_setfield(L, -2,  (const char*) "dvifile");
    if (lua_pcall(L, 1, 0, 0) != LUA_OK)
+   {
       fprintf_str(stderr, "error running function 'after_prescan_callback': %s", lua_tostring(L, -1));
+      lua_pop(L, 1);
+   }
 }
 
 void
@@ -1252,7 +1259,10 @@ run_lua_after_drawchar(lua_State *L, chardesctype *c, int cc, int rhh, int rvv, 
    lua_pushstring(L, (const char*) curfnt->resfont->PSname);
    lua_setfield(L, -2,  (const char*) "psname");
    if (lua_pcall(L, 1, 0, 0) != LUA_OK)
+   {
       fprintf_str(stderr, "error running function 'after_drawchar_callback': %s", lua_tostring(L, -1));
+      lua_pop(L, 1);
+   }
 }
 
 void
@@ -1271,7 +1281,10 @@ run_lua_process_stack(lua_State *L, const char *cmd)
    lua_pushinteger(L, dir);
    lua_setfield(L, -2,  (const char*) "dir");
    if (lua_pcall(L, 1, 0, 0) != LUA_OK)
+   {
       fprintf_str(stderr, "error running function 'process_stack_callback': %s", lua_tostring(L, -1));
+      lua_pop(L, 1);
+   }
 }
 
 void
@@ -1284,7 +1297,10 @@ run_lua_dvips_exit(lua_State *L, int code, int log_record_count)
    lua_pushinteger(L, log_record_count);
    lua_setfield(L, -2,  (const char*) "log_record_count");
    if (lua_pcall(L, 1, 0, 0) != LUA_OK)
+   {
       fprintf_str(stderr, "error running function 'dvips_exit_callback': %s", lua_tostring(L, -1));
+      lua_pop(L, 1);
+   }
 }
 
 void
@@ -1309,15 +1325,32 @@ run_lua_after_drawrule(lua_State *L, integer rw, integer rh)
    lua_pushinteger(L, ftell(dvifile));
    lua_setfield(L, -2,  (const char*) "epos");
    if (lua_pcall(L, 1, 0, 0) != LUA_OK)
+   {
       fprintf_str(stderr, "error running function 'after_drawrule_callback': %s", lua_tostring(L, -1));
+      lua_pop(L, 1);
+   }
 }
 
 void load_touni_tables(void)
 {
     if (luaL_dostring(L, (const char*) glyphlist_table))
-        error("Error: Lua script glyphlist_table execution error.\n");
+    {
+        snprintf(errbuf, ERR_BUF_LEN, "Error: Lua script glyphlist_table execution error: %s.\n", lua_tostring(L, -1));
+        lua_pop(L, 1);
+        error(errbuf);
+    }
+    if (luaL_dostring(L, (const char*) font_glyph_maps))
+    {
+        snprintf(errbuf, ERR_BUF_LEN, "Error: Lua script font_glyph_maps execution error: %s.\n", lua_tostring(L, -1));
+        lua_pop(L, 1);
+        error(errbuf);
+    }
     if (luaL_dostring(L, (const char*) xdvipsk_tounicode))
-        error("Error: Lua script xdvipsk_tounicode execution error.\n");
+    {
+        snprintf(errbuf, ERR_BUF_LEN, "Error: Lua script xdvipsk_tounicode execution error: %s.\n", lua_tostring(L, -1));
+        lua_pop(L, 1);
+        error(errbuf);
+    }
 }
 
 #endif /* XDVIPSK */
@@ -2052,6 +2085,8 @@ default:
       remove(Exe_Log_Name);
       Exe_Log = NULL;
    }
+   load_lua_scripts(luascript);
+   load_touni_tables();
 #endif /* XDVIPSK */
    revpslists();
    getpsinfo((char *)NULL);
@@ -2265,8 +2300,6 @@ default:
    }
    usesPSfonts = 0;
    usesOTFfonts = 0;
-   load_lua_scripts(luascript);
-   load_touni_tables();
 #endif /* XDVIPSK */
 /*
  *   Now we do our main work.

@@ -249,28 +249,28 @@ libtiff_a_OBJECTS = $(am_libtiff_a_OBJECTS)
 am__xdvipsk_SOURCES_DIST = bbox.c bitmapenc.c charcode.c color.c \
 	config.h debug.h dopage.c dosection.c dospecial.c download.c \
 	dpicheck.c drawPS.c dviinput.c emspecialex.c finclude.c \
-	fontdef.c glyphlist_table.h glyphmap.c glyphmap.h header.c \
-	hps.c loadfont.c luamap.c makefont.c output.c papersiz.c \
-	paths.h pprescan.c prescan.c protos.h protos_add.h ptexmac.h \
-	repack.c resident.c scalewidth.c scanpage.c search.c \
-	sfntload.c skippage.c t1part.c t1part.h tfmload.c unpack.c \
-	utarray.h uthash.h virtualfont.c writecid.c writet1.c xdvips.c \
-	xdvips.h xdvipsk_tounicode.h otflib/cff.c otflib/cff.h \
-	otflib/cff_dict.c otflib/cff_dict.h otflib/cff_limits.h \
-	otflib/cff_stdstr.h otflib/cff_types.h otflib/cidsysinfo.c \
-	otflib/cidsysinfo.h otflib/cidtype0.c otflib/cidtype0.h \
-	otflib/cidtype2.c otflib/cidtype2.h otflib/cmap.c \
-	otflib/cmap.h otflib/cmap_p.h otflib/cmap_write.c \
-	otflib/cmap_write.h otflib/cs_type2.c otflib/cs_type2.h \
-	otflib/dpxfile.c otflib/dpxfile.h otflib/dpxutil.c \
-	otflib/dpxutil.h otflib/error.c otflib/error.h otflib/mem.c \
-	otflib/mem.h otflib/mfileio.c otflib/mfileio.h \
-	otflib/numbers.c otflib/numbers.h otflib/sfnt.c otflib/sfnt.h \
-	otflib/system.h otflib/tt_aux.c otflib/tt_aux.h \
-	otflib/tt_cmap.c otflib/tt_cmap.h otflib/tt_glyf.c \
-	otflib/tt_glyf.h otflib/tt_post.c otflib/tt_post.h \
-	otflib/tt_table.c otflib/tt_table.h otflib/unicode.c \
-	otflib/unicode.h mingw/include/wingdi.h
+	fontdef.c font_glyph_maps.h glyphlist_table.h glyphmap.c \
+	glyphmap.h header.c hps.c loadfont.c luamap.c makefont.c \
+	output.c papersiz.c paths.h pprescan.c prescan.c protos.h \
+	protos_add.h ptexmac.h repack.c resident.c scalewidth.c \
+	scanpage.c search.c sfntload.c skippage.c t1part.c t1part.h \
+	tfmload.c unpack.c utarray.h uthash.h virtualfont.c writecid.c \
+	writet1.c xdvips.c xdvips.h xdvipsk_tounicode.h otflib/cff.c \
+	otflib/cff.h otflib/cff_dict.c otflib/cff_dict.h \
+	otflib/cff_limits.h otflib/cff_stdstr.h otflib/cff_types.h \
+	otflib/cidsysinfo.c otflib/cidsysinfo.h otflib/cidtype0.c \
+	otflib/cidtype0.h otflib/cidtype2.c otflib/cidtype2.h \
+	otflib/cmap.c otflib/cmap.h otflib/cmap_p.h \
+	otflib/cmap_write.c otflib/cmap_write.h otflib/cs_type2.c \
+	otflib/cs_type2.h otflib/dpxfile.c otflib/dpxfile.h \
+	otflib/dpxutil.c otflib/dpxutil.h otflib/error.c \
+	otflib/error.h otflib/mem.c otflib/mem.h otflib/mfileio.c \
+	otflib/mfileio.h otflib/numbers.c otflib/numbers.h \
+	otflib/sfnt.c otflib/sfnt.h otflib/system.h otflib/tt_aux.c \
+	otflib/tt_aux.h otflib/tt_cmap.c otflib/tt_cmap.h \
+	otflib/tt_glyf.c otflib/tt_glyf.h otflib/tt_post.c \
+	otflib/tt_post.h otflib/tt_table.c otflib/tt_table.h \
+	otflib/unicode.c otflib/unicode.h mingw/include/wingdi.h
 am__objects_1 =
 am_xdvipsk_OBJECTS = xdvipsk-bbox.$(OBJEXT) \
 	xdvipsk-bitmapenc.$(OBJEXT) xdvipsk-charcode.$(OBJEXT) \
@@ -794,7 +794,7 @@ am__DIST_COMMON = $(srcdir)/../../am/dist_hook.am \
 	../../build-aux/depcomp ../../build-aux/install-sh \
 	../../build-aux/ltmain.sh ../../build-aux/missing \
 	../../build-aux/texinfo.tex ../../build-aux/ylwrap ChangeLog \
-	NEWS README
+	NEWS README.md
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 distdir = $(PACKAGE)-$(VERSION)
 top_distdir = $(distdir)
@@ -1014,13 +1014,13 @@ xdvipsk_CPPFLAGS = $(OTFLIB_INCLUDES) $(GRAPHLIB_INCLUDES) $(LUA_INCLUDES) \
 xdvipsk_SOURCES = bbox.c bitmapenc.c charcode.c color.c config.h \
 	debug.h dopage.c dosection.c dospecial.c download.c dpicheck.c \
 	drawPS.c dviinput.c emspecialex.c finclude.c fontdef.c \
-	glyphlist_table.h glyphmap.c glyphmap.h header.c hps.c \
-	loadfont.c luamap.c makefont.c output.c papersiz.c paths.h \
-	pprescan.c prescan.c protos.h protos_add.h ptexmac.h repack.c \
-	resident.c scalewidth.c scanpage.c search.c sfntload.c \
-	skippage.c t1part.c t1part.h tfmload.c unpack.c utarray.h \
-	uthash.h virtualfont.c writecid.c writet1.c xdvips.c xdvips.h \
-	xdvipsk_tounicode.h otflib/cff.c otflib/cff.h \
+	font_glyph_maps.h glyphlist_table.h glyphmap.c glyphmap.h \
+	header.c hps.c loadfont.c luamap.c makefont.c output.c \
+	papersiz.c paths.h pprescan.c prescan.c protos.h protos_add.h \
+	ptexmac.h repack.c resident.c scalewidth.c scanpage.c search.c \
+	sfntload.c skippage.c t1part.c t1part.h tfmload.c unpack.c \
+	utarray.h uthash.h virtualfont.c writecid.c writet1.c xdvips.c \
+	xdvips.h xdvipsk_tounicode.h otflib/cff.c otflib/cff.h \
 	otflib/cff_dict.c otflib/cff_dict.h otflib/cff_limits.h \
 	otflib/cff_stdstr.h otflib/cff_types.h otflib/cidsysinfo.c \
 	otflib/cidsysinfo.h otflib/cidtype0.c otflib/cidtype0.h \

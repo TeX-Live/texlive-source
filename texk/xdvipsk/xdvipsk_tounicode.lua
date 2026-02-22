@@ -372,11 +372,66 @@ function encode_tfm_2_pfb()
 end
 
 ---------------
-g2u_loaded = {}
+function deploy_font_glyph_map(pfb_name)
+    local map_name = font_aliases[pfb_name]
+    if map_name ~= nil then
+        load_touni(lua_tables[map_name], false, pfb_name)
+    end
+end
 
+-- pfb_name      -- lowercased pfb font name without an extension
+-- enc_file_name -- lowercased full encoding file name
+-- returns an alias id, if the encoding should be aliased, zero otherwise
+enc_alias_id = 0
+-- map of maps, index -- encoding names
+-- values             -- maps of encodings or their alias names, assigned to particular unicode map names
+--      index -- unicode map names of pfb files using the particular encoding
+enc_maps = {
+--  ['lm-mathsy.enc'] = {
+--      ['lmsy']  = 'lm-mathsy.enc',    -- lmsy10, lmsy9, lmsy8, etc.
+--      ['lmbsy'] = 'lm-mathsy.enc123', -- lmbsy10, lmbsy9, etc., lm-mathsy.enc123 -- alias of the lm-mathsy.enc, 123 -- alias id to be returned from get_enc_alias()
+--      },
+    }
+function get_enc_alias(pfb_name, enc_file_name)
+    local alias_id = 0
+    local map_name = font_aliases[pfb_name]
+
+    if map_name ~= nil then
+        local enc_map = enc_maps[enc_file_name]
+        local alias_name
+        if enc_map ~= nil then
+            alias_name = enc_map[map_name]
+            if alias_name ~= nil then
+                local enc_len = string.len(enc_file_name)
+                local alias_len = string.len(alias_name)
+                local alias_id_str = ''
+                if alias_len > enc_len then
+                    alias_id_str = string.sub(alias_name, enc_len + 1, alias_len)
+                    alias_id = tonumber(alias_id_str)
+                end
+            else
+                enc_alias_id = enc_alias_id + 1
+                alias_id = enc_alias_id
+                enc_map[map_name] = enc_file_name .. tostring(alias_id)
+            end
+        else
+            enc_map = {[map_name] = enc_file_name}
+            enc_maps[enc_file_name] = enc_map
+        end
+    end
+
+    return alias_id
+end
+
+---------------
+-- pfb_name -- lowercased pfb font name without an extension
+-- just checks attempts of loading font unicode map table,
+-- true result doesn't mean it actually has been found and loaded
+-- for avoiding multiple loads
+g2u_attempt = {}
 function is_g2u_loaded(pfb_name)
-   local ret_val = (g2u_loaded[pfb_name] ~= nil)
-   g2u_loaded[pfb_name] = true
+   local ret_val = (g2u_attempt[pfb_name] ~= nil)
+   g2u_attempt[pfb_name] = true
    return ret_val
 end
 --file end null char 

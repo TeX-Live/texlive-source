@@ -15,4 +15,13 @@
 extern void init_map_buf(char **p_map_buf, char **p_map_buf_ptr, size_t *p_map_buf_len);
 extern void append_map_buf(char **p_map_buf, char **p_map_buf_ptr, size_t *p_map_buf_len, const char *str);
 
+#define ENC_REF_SIGNATURE " ReEncodeFont"
+#define ALIAS_ID_DELIM '#'
+/*
+ * removes alias id from the end of the aliased (encoding) file name
+ * returns pointer to a static buffer, no need for deletion
+ * not reentrant
+ */
+extern char *get_alias_fname(const char *alias_name);
+
 #endif /* XDVIPSK */

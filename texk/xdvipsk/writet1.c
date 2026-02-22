@@ -404,7 +404,6 @@ unsigned int *get_glname_tounicode(const char *glyph_name, const char *font_name
     int ii;
     char full_glyph_name[FULL_GLYPH_NAME_LEN + 1 + 1]; /* strlen("/") */
     int error;
-    size_t ll;
 
     assert(glyph_name);
     assert(p_ucnt);
@@ -427,7 +426,7 @@ unsigned int *get_glname_tounicode(const char *glyph_name, const char *font_name
     error = lua_pcall(L, 2, 2, 0);
     if (error)
     {
-        PRINTF_PR("Lua error: %d - %s\n", error, lua_tolstring(L, -1, &ll));
+        PRINTF_PR("Lua function get_glname_tounicode() execution error: %d - %s\n", error, lua_tostring(L, -1));
         lua_pop(L, 1);
     }
     else
@@ -463,7 +462,6 @@ char *get_glname_substitute(const char *glyph_name, const char *font_name, const
     const char *glyph_subst = NULL;
     char *ret_str = NULL;
     int error;
-    size_t ll;
 
     assert(glyph_name);
 
@@ -485,7 +483,7 @@ char *get_glname_substitute(const char *glyph_name, const char *font_name, const
     error = lua_pcall(L, 2, 2, 0);
     if (error)
     {
-        PRINTF_PR("Lua error: %d - %s\n", error, lua_tolstring(L, -1, &ll));
+        PRINTF_PR("Lua function get_glname_subst() execution error: %d - %s\n", error, lua_tostring(L, -1));
         glyph_subst = NULL;
         lua_pop(L, 1);
     }
@@ -495,7 +493,7 @@ char *get_glname_substitute(const char *glyph_name, const char *font_name, const
             *p_needs_g2u = lua_toboolean(L, -1);
         lua_pop(L, 1);
 
-        glyph_subst = lua_tolstring(L, -1, &ll);
+        glyph_subst = lua_tostring(L, -1);
         if (glyph_subst && (glyph_subst[0] == '\0'))
             glyph_subst = NULL;
         if (glyph_subst)
@@ -548,7 +546,6 @@ static void redir_glyphtounicode_tfm_2_pfb(void)
     char *tfm_name = NULL;
     char *font_file = NULL;
     int error;
-    size_t ll;
 
     for (cfnt = ffont; cfnt; cfnt = cfnt->next)
         if (cfnt->desc && cfnt->desc->resfont && ((font_file = cfnt->desc->resfont->Fontfile) != NULL) && ((tfm_name = cfnt->desc->resfont->TeXname) != NULL) && strstr(font_file, PFB_EXT))
@@ -567,7 +564,7 @@ static void redir_glyphtounicode_tfm_2_pfb(void)
             error = lua_pcall(L, 2, 0, 0);
             if (error)
             {
-                PRINTF_PR("Lua error: %d - %s\n", error, lua_tolstring(L, -1, &ll));
+                PRINTF_PR("Lua function add_tfm_2_pfb() execution error: %d - %s\n", error, lua_tostring(L, -1));
                 lua_pop(L, 1);
             }
 
@@ -579,16 +576,17 @@ static void redir_glyphtounicode_tfm_2_pfb(void)
     error = lua_pcall(L, 0, 0, 0);
     if (error)
     {
-        PRINTF_PR("Lua error: %d - %s\n", error, lua_tolstring(L, -1, &ll));
+        PRINTF_PR("Lua function encode_tfm_2_pfb() execution error: %d - %s\n", error, lua_tostring(L, -1));
         lua_pop(L, 1);
     }
 }
 
+/* checks, whether there was already an attempt to load glyph unicode map of the font specified
+   pfb_name -- font file name without an extension */
 static boolean is_g2u_loaded(const char *pfb_name)
 {
     boolean ret_val = FALSE;
     int error;
-    size_t ll;
     char *pfb_name_lwr;
 
     assert(pfb_name);
@@ -601,7 +599,7 @@ static boolean is_g2u_loaded(const char *pfb_name)
     error = lua_pcall(L, 1, 1, 0);
     if (error)
     {
-        PRINTF_PR("Lua error: %d - %s\n", error, lua_tolstring(L, -1, &ll));
+        PRINTF_PR("Lua function is_g2u_loaded() execution error: %d - %s\n", error, lua_tostring(L, -1));
     }
     else
         ret_val = lua_toboolean(L, -1);
@@ -710,6 +708,9 @@ char **load_enc_file(char *enc_name)
     char buf[ENC_BUF_SIZE], *p, *r;
     int i, names_count;
     char **glyph_names;
+#ifdef XDVIPSK
+    enc_name = get_alias_fname(enc_name);
+#endif /* XDVIPSK */
     set_cur_file_name(enc_name);
     glyph_names = (char **) mymalloc(256 * sizeof(char *));
     for (i = 0; i < 256; i++)
@@ -1261,7 +1262,7 @@ FILE *search_safe(kpse_file_format_type format, const char *file_name, const cha
     return(ret_file);
 }
 
-void parse_g2u(const char *pfb_fname, boolean encoding_only)
+void parse_g2u(const char *pfb_fname)
 {
     char *map_fname = NULL;
     char *extptr;
@@ -1287,6 +1288,7 @@ void parse_g2u(const char *pfb_fname, boolean encoding_only)
             /* loading .lua table for unicode encoding */
             char *pfb_name = strdup(map_fname);
             assert(pfb_name);
+            assert(strlen(LUA_EXT) <= strlen(PFB_EXT));
             strcpy(extptr, LUA_EXT);
             load_touni_file(map_fname, FALSE, pfb_name, 1);
             free(pfb_name);
@@ -1295,9 +1297,9 @@ void parse_g2u(const char *pfb_fname, boolean encoding_only)
             assert(strlen(G2U_EXT) <= strlen(PFB_EXT));
             strcpy(extptr, G2U_EXT);
             map_file = search_safe(G2U_FORMAT, map_fname, FOPEN_R_MODE, TRUE);
+            *extptr = '\0';
             if (map_file)
             {
-                *extptr = '\0';
                 while (fgets(map_fline, ENC_BUF_SIZE, map_file))
                 {
                     /* doubling the terminating zero for the last token */
@@ -1344,7 +1346,7 @@ void parse_g2u(const char *pfb_fname, boolean encoding_only)
                                                 sprintf(map_line + strlen(map_line), "0x%04lX", ucode);
                                             else
                                             {
-                                                PRINTF_PR("Error: Unrecognized format of the file %s%s: %s\n", map_fname, G2U_EXT, val_ptr);
+                                                PRINTF_PR("Error: Unrecognized format of the file %s: %s\n", map_fname, val_ptr);
                                             }
                                             break;
                                         }
@@ -1356,19 +1358,19 @@ void parse_g2u(const char *pfb_fname, boolean encoding_only)
                                                 sprintf(map_line + strlen(map_line), "0x%04lX, ", ucode);
                                             else
                                             {
-                                                PRINTF_PR("Error: Unrecognized format of the file %s%s: %s\n", map_fname, G2U_EXT, val_ptr);
+                                                PRINTF_PR("Error: Unrecognized format of the file %s: %s\n", map_fname, val_ptr);
                                             }
                                             val_ptr += 4;
                                         }
                                     }
                                     if (strlen(map_line) >= ENC_BUF_SIZE - 20)
                                     {
-                                        PRINTF_PR("Error: Map line buffer overflow, file %s%s: %s\n", map_fname, G2U_EXT, val_ptr);
+                                        PRINTF_PR("Error: Map line buffer overflow, file %s: %s\n", map_fname, val_ptr);
                                     }
                                 }
                                 else
                                 {
-                                    PRINTF_PR("Error: Unrecognized format of the file %s%s: %s\n", map_fname, G2U_EXT, val_ptr);
+                                    PRINTF_PR("Error: Unrecognized format of the file %s: %s\n", map_fname, val_ptr);
                                 }
                             }
                             else
@@ -1377,7 +1379,7 @@ void parse_g2u(const char *pfb_fname, boolean encoding_only)
                                     sprintf(map_line + strlen(map_line), "0x%04lX", ucode);
                                 else
                                 {
-                                    PRINTF_PR("Error: Unrecognized format of the file %s%s: %s\n", map_fname, G2U_EXT, val_ptr);
+                                    PRINTF_PR("Error: Unrecognized format of the file %s: %s\n", map_fname, val_ptr);
                                 }
                             }
                             strcat(map_line, "}}, false, \'\')");
@@ -1397,6 +1399,15 @@ void parse_g2u(const char *pfb_fname, boolean encoding_only)
                     PRINTF_PR("Error: File %s%s read error.\n", map_fname, G2U_EXT);
                 }
                 fclose(map_file);
+            }
+
+            /* loading internal unicode encoding map of particular font */
+            lua_getglobal(L, "deploy_font_glyph_map");
+            lua_pushstring(L, map_fname);
+            if (lua_pcall(L, 1, 0, 0))
+            {
+                PRINTF_PR("Error: Lua function deploy_font_glyph_map(\'%s\') execution error: %s.\n", map_fname, lua_tostring(L, -1));
+                lua_pop(L, 1);
             }
         }
     }
@@ -1517,7 +1528,7 @@ static void t1_scan_keys(boolean encoding_only)
         g2u_buf = NULL;
 
         if (cur_file_name)
-            parse_g2u(cur_file_name, encoding_only);
+            parse_g2u(cur_file_name);
 
         if (!encoding_only)
         {

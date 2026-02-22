@@ -1,3 +1,8 @@
+2026-02-21  Sigitas Tolušis <sigitas@vtex.lt>
+
+	* : add internal glyph table loading on demand
+	and encoding aliases (MP)
+
 2026-02-20  Sigitas Tolušis <sigitas@vtex.lt>
 
 	* README: update and moved to README.md
