@@ -91,9 +91,10 @@ touch ./utils/asymptote/camp.tab.h
 touch ./configure ./Makefile.in
 
 cd utils/asymptote
-./configure --prefix=/tmp/asyinst --enable-static --enable-texlive-build \
-	--disable-gsl --disable-fftw --disable-curl \
-	LDFLAGS="-static-libgcc -static-libstdc++"
+sh -vx ./configure \
+  --prefix=/tmp/asyinst --enable-static --enable-texlive-build \
+  --disable-gsl --disable-fftw --disable-curl \
+  LDFLAGS="-static-libgcc -static-libstdc++"
 $TL_MAKE SILENT_MAKE= -j2
 
 strip asy
