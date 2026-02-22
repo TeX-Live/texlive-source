@@ -94,7 +94,7 @@ cd utils/asymptote
 ./configure --prefix=/tmp/asyinst --enable-static --enable-texlive-build \
 	--disable-gsl --disable-fftw --disable-curl \
 	LDFLAGS="-static-libgcc -static-libstdc++"
-$TL_MAKE SIlENT_MAKE= -j2
+$TL_MAKE SILENT_MAKE= -j2
 
 strip asy
 mv asy ../../asy-$arch
