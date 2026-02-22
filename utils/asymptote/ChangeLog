@@ -1,3 +1,130 @@
+commit 249148ced4c0f7496af20d337bc29fa8dce3e7ce
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Feb 22 02:45:57 2026 -0800
+
+    git subrepo pull --force LspCpp
+    
+    subrepo:
+      subdir:   "LspCpp"
+      merged:   "824417847"
+    upstream:
+      origin:   "git@github.com:vectorgraphics/LspCpp"
+      branch:   "master"
+      commit:   "824417847"
+    git-subrepo:
+      version:  "0.4.9"
+      origin:   "https://github.com/ingydotnet/git-subrepo"
+      commit:   "b9b059a"
+
+commit f952dc217f68fc3c3f438303bad52b9b8a4e5319
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Feb 22 02:13:56 2026 -0800
+
+    Update asygl.
+
+commit 3e41d45b433da995d942cdf721fa4ed854006e5b
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Feb 22 02:02:34 2026 -0800
+
+    Apply WebGL transforms to all objects other than triangle groups.
+
+commit 8b97971531340858d76dc51ef8a7f202b38f7543
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Feb 22 00:24:10 2026 -0800
+
+    Autoplay WebGL animations based on autoplay setting; fix arrow key/slider race conditions.
+
+commit 127d704b477e4baab2a46432a3083648d84f1e74
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Feb 20 23:36:16 2026 -0800
+
+    Fix busy loop in WebGL animations; remove transform-dependent autoplay option.
+
+commit 1d8b25778d59e165f57e1de87debc9d1587851f3
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Feb 21 16:50:53 2026 -0800
+
+    Update fftw++.cc.
+
+commit e6f9e4b0aff3a6d2a3ed35fac60f5c1de32643c0
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Feb 21 14:11:32 2026 -0800
+
+    Restore missing strnlen workaround from e52e18ff2587258149829ebd544f6d4ef085a8e1.
+
+commit bf4807bb08b4ef78883361666c9b78141cc48014
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Feb 14 18:53:28 2026 -0800
+
+    Clean up deconstruct test files.
+
+commit 51d7a7e4bf1b75368f0e638d47a6edecd2088ce7
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sat Feb 14 18:27:23 2026 -0800
+
+    Remove unused files.
+
+commit 9ba620574ba162b83de851151a0fd40967e69e6c
+Merge: c2eb78d02 66aad2268
+Author: Supakorn 'Jamie' Rassameemasmuang <jamievlin@outlook.com>
+Date:   Sat Feb 7 10:07:44 2026 -0700
+
+    Merge pull request #583 from vectorgraphics/dependabot/npm_and_yarn/webgl/webpack-5.105.0
+    
+    Bump webpack from 5.99.9 to 5.105.0 in /webgl
+
+commit 66aad2268e8633d3bf753d0ed28ead74dcbec5ee
+Author: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+Date:   Sat Feb 7 15:11:17 2026 +0000
+
+    Bump webpack from 5.99.9 to 5.105.0 in /webgl
+    
+    Bumps [webpack](https://github.com/webpack/webpack) from 5.99.9 to 5.105.0.
+    - [Release notes](https://github.com/webpack/webpack/releases)
+    - [Changelog](https://github.com/webpack/webpack/blob/main/CHANGELOG.md)
+    - [Commits](https://github.com/webpack/webpack/compare/v5.99.9...v5.105.0)
+    
+    ---
+    updated-dependencies:
+    - dependency-name: webpack
+      dependency-version: 5.105.0
+      dependency-type: direct:development
+    ...
+    
+    Signed-off-by: dependabot[bot] <support@github.com>
+
+commit c2eb78d02ff9673cd1ad4f3630f27edb4f9600b3
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Feb 6 21:03:03 2026 -0800
+
+    Reformat runtime.py.
+
+commit f5a907e67ce23a05f09366f9947d9fe2fe45707f
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Feb 6 20:58:06 2026 -0800
+
+    Reformat runtime.py.
+
+commit 017c8f66011da5c70bf5546ab71c2ab50c1f960a
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Fri Feb 6 14:53:46 2026 -0800
+
+    Revert "CURSES: Change ncurses to ncursesw."
+    
+    This reverts commit 54cd06c45e6a11f2a4e32f19a9d8a3cbdb48d32d.
+
+commit ea6e876b71dccf5c33683aa4a65652a2e80d067a
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Thu Feb 5 17:06:21 2026 -0800
+
+    Backport runtime.py to Python 3.7.4.
+
+commit 5015d46291a76f154cf447157d3fdc2c19a6563a
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Feb 1 23:37:12 2026 -0800
+
+    Increment version to 3.07.
+
 commit 4f6e29f250b6c5f0c8fbea02f4e532507b7ee0db
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Sun Feb 1 23:04:24 2026 -0800

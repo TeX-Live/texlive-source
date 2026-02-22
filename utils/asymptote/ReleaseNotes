@@ -1,3 +1,9 @@
+Release Notes for Version 3.07
+
+A busy loop and race conditions in WebGL animations were addressed.
+WebGL animations are fully reversible and controlled by the autoplay setting.
+Build issues on legacy platforms were addressed; unused files were removed.
+
 Release Notes for Version 3.06
 
 The Xasy front end was updated to Qt6.

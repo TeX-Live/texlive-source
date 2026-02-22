@@ -49,7 +49,6 @@ extern "C" {
 
 #ifdef HAVE_NCURSES_CURSES_H
 #define USE_SETUPTERM
-/* was ncursesw/, reverted per John --karl, 7feb26. */
 #include <ncurses/curses.h>
 #include <ncurses/term.h>
 #elif HAVE_NCURSES_H
@@ -1421,7 +1420,7 @@ void initSettings() {
   addOption(new boolSetting("embed", 0, "Embed rendered preview image", true));
   addOption(new boolSetting("auto3D", 0, "Automatically activate 3D scene",
                             true));
-  addOption(new boolSetting("autoplay", 0, "Autoplay 3D animations", false));
+  addOption(new boolSetting("autoplay", 0, "Autoplay 3D animations", true));
   addOption(new boolSetting("loop", 0, "Loop 3D animations", false));
   addOption(new boolSetting("interrupt", 0, "", false));
   addOption(new boolSetting("animating", 0, "", false));

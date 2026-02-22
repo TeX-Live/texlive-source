@@ -500,16 +500,15 @@ void gen_runpicture23(stack *Stack)
 }
 
 #line 310 "./runpicture.in"
-// void beginTransform(picture *f, string geometry=emptystring,                    string color=emptystring, real duration,bool autoplay=true);
+// void beginTransform(picture *f, string geometry=emptystring,                    string color=emptystring, real duration);
 void gen_runpicture24(stack *Stack)
 {
-  bool autoplay=vm::pop<bool>(Stack,true);
   real duration=vm::pop<real>(Stack);
   string color=vm::pop<string>(Stack,emptystring);
   string geometry=vm::pop<string>(Stack,emptystring);
   picture * f=vm::pop<picture *>(Stack);
 #line 312 "./runpicture.in"
-  f->append(new drawBeginTransform(geometry,color,duration,autoplay));
+  f->append(new drawBeginTransform(geometry,color,duration));
 }
 
 #line 316 "./runpicture.in"
@@ -1321,7 +1320,7 @@ void gen_runpicture_venv(venv &ve)
 #line 305 "./runpicture.in"
   addFunc(ve, run::gen_runpicture23, primVoid(), SYM(endgroup3), formal(primPicture(), SYM(f), false, false));
 #line 310 "./runpicture.in"
-  addFunc(ve, run::gen_runpicture24, primVoid(), SYM(beginTransform), formal(primPicture(), SYM(f), false, false), formal(primString(), SYM(geometry), true, false), formal(primString(), SYM(color), true, false), formal(primReal(), SYM(duration), false, false), formal(primBoolean(), SYM(autoplay), true, false));
+  addFunc(ve, run::gen_runpicture24, primVoid(), SYM(beginTransform), formal(primPicture(), SYM(f), false, false), formal(primString(), SYM(geometry), true, false), formal(primString(), SYM(color), true, false), formal(primReal(), SYM(duration), false, false));
 #line 316 "./runpicture.in"
   addFunc(ve, run::gen_runpicture25, primVoid(), SYM(endTransform), formal(primPicture(), SYM(f), false, false));
 #line 321 "./runpicture.in"
