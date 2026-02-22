@@ -6,7 +6,7 @@
 # The build script that is run by ../workflows/xdvipsk-test.yml on github.
 # It runs in the xdvipsk dev branch, building just xdvipsk, for testing.
 
-set -e
+set -ex
 
 if [ "x$2" = "x" ]
 then

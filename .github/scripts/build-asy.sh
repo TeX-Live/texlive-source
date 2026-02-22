@@ -3,7 +3,7 @@
 # (-l above is to make this a login shell.)
 # Build script for asymptote on github. Norbert Preining. Public domain.
 
-set -e
+set -ex
 
 if [ "x$2" = "x" ]
 then
@@ -92,7 +92,7 @@ touch ./configure ./Makefile.in
 
 cd utils/asymptote
 ./configure --prefix=/tmp/asyinst --enable-static --enable-texlive-build \
-	--disable-gsl --disable-fftw --disable-curl
+	--disable-gsl --disable-fftw --disable-curl \
 	LDFLAGS="-static-libgcc -static-libstdc++"
 $TL_MAKE SIlENT_MAKE= -j2
 

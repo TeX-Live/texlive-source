@@ -1,3 +1,15 @@
+2026-02-22  Karl Berry  <karl@freefriends.org>
+
+	* scripts/build-asy.sh: missed backslash for static-lib*,
+	 failed on amd64-freebsd.
+
+	* scripts/build-asy.sh,
+	* scripts/build-xdvipsk.sh: add -x
+
+2026-02-21  Karl Berry  <karl@freefriends.org>
+
+	* scripts/build-asy.sh (CFLAGS, CXXFLAGS): add -O2 if we set them.
+
 2026-02-20  Sigitas Tolušis  <sigitas@vtex.lt>
 
 	* workflows/xdvipsk-test.yml: sync docker build with main.
