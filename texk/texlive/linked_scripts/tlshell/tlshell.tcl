@@ -450,6 +450,31 @@ proc start_tlmgr {{args ""}} {
   set ::perlpid [pid $::tlshl]
   do_debug "done opening tlmgr"
   set ::err [open $::err_file r]
+
+  if {$::tcl_platform(platform) eq "windows"} {
+    set system_enc [encoding system]
+    if {$system_enc eq "utf-8"} {
+      # When the tclkit.exe manifest specifies 'activeCodePage' as UTF-8,
+      # [encoding system] returns 'utf-8'. However, external processes often
+      # still output in the system's original ANSI code page (e.g., CP932 for
+      # Japanese). We query the registry to get the 'true' system ANSI code
+      # page (ACP) to correctly decode piped output from these external tools.
+      package require registry
+      set regPath "HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Control\\Nls\\CodePage"
+      if {![catch {registry get $regPath "ACP"} acp_num]} {
+        if {$acp_num eq "65001"} {
+          # truly utf-8
+          set system_enc "utf-8"
+        } elseif {"cp$acp_num" in [encoding names]} {
+          set system_enc "cp$acp_num"
+        } else {
+          # ACP not supported by Tcl ...what to do?
+        }
+      }
+    }
+    chan configure $::tlshl -encoding $system_enc -profile replace -translation auto
+  }
+
   chan configure $::tlshl -buffering line -blocking 0
   chan event $::tlshl readable read_line
   vwait ::done_waiting
