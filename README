@@ -32,8 +32,7 @@ that document).
 Build information for some of the platforms.
 See also Master/tlpkg/bin/tl-update-bindir.
 
-aarch64-linux: Built on github, see below;
-  except for asy, by jhielscher on Fedora 41 (glibc 2.40, GCC 14.2.1).
+aarch64-linux: Built on github, see below.
   ./Build --enable-arm-neon=on
 
 armhf-linux: github, see below.

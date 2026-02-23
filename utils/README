@@ -10,11 +10,9 @@ asymptote 3.07 - checked 22feb26
   and tlpkg/bin/tl-update-asy
 
   Special builders for asy:
-    windows - installed from asy dist, including dlls
+    windows - installed from asy dist, including dlls, into tlpkg/asymptote64
     x86_64-cygwin - Ken Brown
     universal-darwin - Dick Koch
-    *solaris, as well as darwinlegacy - was Mojca (no longer done)
-    aarch64-linux - was Johannes Hielscher (now built on github)
 
 autosp 2025-10-26 - checked 28oct25
   https://ctan.org/pkg/autosp
