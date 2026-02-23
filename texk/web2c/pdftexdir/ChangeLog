@@ -1,3 +1,8 @@
+2026-02-23  Thanh Han The  <hanthethanh@gmail.com>
+
+	* writepng.c (write_png): wrong use of | instead of &
+	when looking for PNG_COLOR_MASK_ALPHA.
+
 2026-02-15  Karl Berry  <karl@freefriends.org>
 
 	* pdftex.web (pdf_begin_string): initialize must_set_text_pos
