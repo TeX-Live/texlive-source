@@ -1,8 +1,8 @@
 #!/usr/bin/env texlua
 
--- Copyright 2016-2025 Brian Dunn
+-- Copyright 2016-2026 Brian Dunn
 
-printversion = "v0.920"
+printversion = "v0.921"
 requiredconfversion = "2" -- also at *lwarpmk.conf
 
 function printhelp ()
@@ -89,8 +89,10 @@ end -- do
 io.close(sfile)
 if ( usinglwarp == false ) then
     print ("lwarpmk: ===")
-    print ("lwarpmk: \\usepackage{lwarp} was not detected.")
-    print ("lwarpmk: The HTML output will not be correct.")
+    print ("lwarpmk: \\usepackage{lwarp} was not detected,")
+    print ("lwarpmk: or option warpdisable was used.")
+    print ("lwarpmk: The HTML output will not be correct,")
+    print ("lwarpmk: and references may be undefined.")
     print ("lwarpmk: Ensured that \\usepackage{lwarp} is enabled,")
     print ("lwarpmk: then lwarpmk print and lwarpmk html again.")
     print ("lwarpmk: ===")
