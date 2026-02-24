@@ -1,3 +1,8 @@
+Release Notes for Version 3.08
+
+Include generated GUI/xasy* files in releases.
+Fix and standardize make clean, distclean, and maintainer-clean.
+
 Release Notes for Version 3.07
 
 A busy loop and race conditions in WebGL animations were addressed.

@@ -1,3 +1,45 @@
+commit 8c26bfcd74762123a23b0367a6e900cbe8995ef8
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Feb 23 23:31:59 2026 -0800
+
+    Fix commit cec6d4be168879c02d2923e4d847d13c8e98da7f.
+
+commit 4bc6319aa86decb948425f92bee7cbfa9e156246
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Feb 23 22:49:46 2026 -0800
+
+    git subrepo pull --force LspCpp
+    
+    subrepo:
+      subdir:   "LspCpp"
+      merged:   "a9116e68a"
+    upstream:
+      origin:   "git@github.com:vectorgraphics/LspCpp"
+      branch:   "master"
+      commit:   "a9116e68a"
+    git-subrepo:
+      version:  "0.4.9"
+      origin:   "???"
+      commit:   "???"
+
+commit cec6d4be168879c02d2923e4d847d13c8e98da7f
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Feb 23 22:12:08 2026 -0800
+
+    Fix make clean, cleaner, and cleanest.
+
+commit 96456db1e63eb391832b7123e5f5ab264fe1a191
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Feb 23 16:56:22 2026 -0800
+
+    Preserve generated GUI files in distributed releases.
+
+commit 0e707ac7f1adea719f140b7fd257c37112719734
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Sun Feb 22 03:10:39 2026 -0800
+
+    Increment version to 3.08.
+
 commit 249148ced4c0f7496af20d337bc29fa8dce3e7ce
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Sun Feb 22 02:45:57 2026 -0800
