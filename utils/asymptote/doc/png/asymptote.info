@@ -1,7 +1,7 @@
 This is asymptote.info, produced by makeinfo version 7.2 from
 asymptote.texi.
 
-This file documents ‘Asymptote’, version 3.08.
+This file documents ‘Asymptote’, version 3.09.
 
    <https://asymptote.sourceforge.io>
 
@@ -22,7 +22,7 @@ File: asymptote.info,  Node: Top,  Next: Description,  Up: (dir)
 Asymptote
 *********
 
-This file documents ‘Asymptote’, version 3.08.
+This file documents ‘Asymptote’, version 3.09.
 
    <https://asymptote.sourceforge.io>
 
@@ -8638,7 +8638,7 @@ Options (negate boolean options by replacing - with -no):
 -autobillboard         3D labels always face viewer by default [true]
 -autoimport str        Module to automatically import
 -autoplain             Enable automatic importing of plain [true]
--autoplay              Autoplay 3D animations [true]
+-autoplay              Autoplay 3D WebGL animations [true]
 -autorotate            Enable automatic PDF page rotation [false]
 -axes3                 Show 3D axes in PDF output [true]
 -batchMask             Mask fpu exceptions in batch mode [false]
@@ -11057,22 +11057,22 @@ Node: smoothcontour3351822
 Node: slopefield353589
 Node: ode355134
 Node: Options355403
-Ref: configuration file363975
-Ref: settings363975
-Ref: texengines365323
-Ref: magick365323
-Node: Interactive mode368718
-Ref: history370947
-Node: GUI372318
-Node: GUI installation372888
-Node: GUI usage374039
-Node: Command-Line Interface375106
-Node: Language server protocol376551
-Node: PostScript to Asymptote378032
-Node: Help378861
-Node: Debugger380591
-Node: Credits382439
-Node: Index383697
+Ref: configuration file363981
+Ref: settings363981
+Ref: texengines365329
+Ref: magick365329
+Node: Interactive mode368724
+Ref: history370953
+Node: GUI372324
+Node: GUI installation372894
+Node: GUI usage374045
+Node: Command-Line Interface375112
+Node: Language server protocol376557
+Node: PostScript to Asymptote378038
+Node: Help378867
+Node: Debugger380597
+Node: Credits382445
+Node: Index383703
 
 End Tag Table
 

@@ -1,3 +1,8 @@
+Release Notes for Version 3.09
+
+A 3D rendering bug exposed by the new default setting autoplay=true was fixed.
+The experimental and buggy support for OpenGL animations was removed in favour of WebGL animations.
+
 Release Notes for Version 3.08
 
 Include generated GUI/xasy* files in releases.

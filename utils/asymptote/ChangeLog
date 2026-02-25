@@ -1,3 +1,21 @@
+commit 1e03359ecb3aab5d01ba0ff17463e2b193991b55
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Feb 24 22:40:23 2026 -0800
+
+    Update example.
+
+commit 1f0aa6118400a2447e8b3a0f7759624118f3b946
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Tue Feb 24 22:29:57 2026 -0800
+
+    Remove experimental animate code from glrender.cc.
+
+commit c7179cfd236a5e10140844d58e3a60c6c8726048
+Author: John Bowman <bowman@ualberta.ca>
+Date:   Mon Feb 23 23:49:32 2026 -0800
+
+    Increment version to 3.09.
+
 commit 8c26bfcd74762123a23b0367a6e900cbe8995ef8
 Author: John Bowman <bowman@ualberta.ca>
 Date:   Mon Feb 23 23:31:59 2026 -0800
