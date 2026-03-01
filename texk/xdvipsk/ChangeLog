@@ -1,3 +1,7 @@
+2026-03-02  Karl Berry  <karl@tug.org>
+
+	* TL'26 release.
+
 2026-02-21  Sigitas Tolušis <sigitas@vtex.lt>
 
 	* : add internal glyph table loading on demand

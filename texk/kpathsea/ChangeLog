@@ -1,3 +1,7 @@
+2026-03-02  Karl Berry  <karl@tug.org>
+
+	* TL'26 release.
+
 2026-02-19  Karl Berry  <karl@freefriends.org>
 
 	* getopt.c (getenv): do not declare with empty parens,

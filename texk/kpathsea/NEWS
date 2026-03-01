@@ -1,7 +1,7 @@
 $Id$
 This file records noteworthy changes.  (Public domain.)
 
-6.4.2 (for TeX Live 2026)
+6.4.2 (for TeX Live 2026, 3 March 2026)
 * New configuration value texmf_nlink_for_leaf to specify whether the
   st_nlink=2 (stat member for number of links, only on Unix-ish systems)
   check is made to decide whether we're in a leaf directory; in the

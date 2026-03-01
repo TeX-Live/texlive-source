@@ -1,3 +1,7 @@
+2026-03-02  Karl Berry  <karl@tug.org>
+
+	* TL'26 release.
+
 2026-02-14  Karl Berry  <karl@freefriends.org>
 
 	* pdftex.man: mention supp-pdf{.tex,mkii}, and TEXMF_DEBUG_PNG_COPY.

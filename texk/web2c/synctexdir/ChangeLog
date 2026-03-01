@@ -1,3 +1,7 @@
+2026-03-02  Karl Berry  <karl@tug.org>
+
+	* TL'26 release.
+
 2026-02-23  Norbert Preining  <norbert@preining.info>
 
 	* synctex_parser.c: Fix use after free

@@ -1,3 +1,7 @@
+2025-03-02  Karl Berry  <karl@tug.org>
+
+	* TL'26 release.
+
 2026-02-15  Karl Berry  <karl@freefriends.org>
 
 	* .github/scripts/build-tl.sh (CFLAGS, CXXFLAGS): add -O2 if we
