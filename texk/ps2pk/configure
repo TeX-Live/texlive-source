@@ -15899,7 +15899,7 @@ ac_config_headers="$ac_config_headers c-auto.h:c-auto.in"
 
 
 
-printf "%s\n" "#define TL_VERSION \"TeX Live 2026\"" >>confdefs.h
+printf "%s\n" "#define TL_VERSION \"TeX Live 2027/dev\"" >>confdefs.h
 
 
 for ac_prog in kpsewhich

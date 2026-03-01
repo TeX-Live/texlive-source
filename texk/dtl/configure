@@ -15963,7 +15963,7 @@ ac_config_headers="$ac_config_headers config.h"
 
 
 
-printf "%s\n" "#define TL_VERSION \"TeX Live 2026\"" >>confdefs.h
+printf "%s\n" "#define TL_VERSION \"TeX Live 2027/dev\"" >>confdefs.h
 
 
 kpse_save_CPPFLAGS=$CPPFLAGS
