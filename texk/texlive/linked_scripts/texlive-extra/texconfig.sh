@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: texconfig.sh 76585 2025-10-16 14:46:21Z karl $
+# $Id: texconfig.sh 78162 2026-02-26 20:29:41Z karl $
 # texconfig version 3.0
 # Originally written by Thomas Esser. Public domain.
 # Now maintained as part of TeX Live; correspondence to tex-live@tug.org.
@@ -28,7 +28,7 @@ PATH="$mydir:$PATH"; export PATH
 progname=texconfig
 
 # the version string
-version='$Id: texconfig.sh 76585 2025-10-16 14:46:21Z karl $'
+version='$Id: texconfig.sh 78162 2026-02-26 20:29:41Z karl $'
 
 envVars="
   AFMFONTS BIBINPUTS BSTINPUTS CMAPFONTS CWEBINPUTS ENCFONTS GFFONTS
@@ -1090,15 +1090,54 @@ Valid MODE settings:"
       abort "Use tlmgr paper"
       ;;
 
+    # 
     pdftex)
-      abort "Use tlmgr paper pdftex"
+      help="Usage: $progname pdftex mode MODE
+"
+      case $2 in
+        mode)
+          case $3 in
+            "")
+              echo "Usage: $progname pdftex mode MODE"
+              rc=1
+              ;;
+            *)
+              tcBatchPdftexMode=$3
+              setupTmpDir
+              setupModesMfFile
+              if checkElemInList "$tcBatchPdftexMode" `listMfModes | sed 's@ .*@@'`; then
+                set x `getRes "$tcBatchPdftexMode"`; shift
+                fmgrConfigReplace pdftexconfig.tex 'pdfpkresolution' "\\pdfpkresolution=$1"
+                if $fmgrConfigReplaceChanged; then
+                  fmtutil --refresh
+                fi
+              else
+                echo "$progname: unknown MODE \`$tcBatchPdftexMode' given as argument for \`$progname pdftex mode'" >&2
+                rc=1
+              fi
+              ;;
+          esac
+          ;;
+
+        paper)
+           abort "Use tlmgr paper"
+           ;;
+
+        "")
+          echo "$help" >&2; rc=1;;
+        *)
+          echo "$progname: unknown option \`$2' given as argument for \`$progname pdftex'" >&2
+          echo "$progname: try \`$progname pdftex' for help" >&2
+          rc=1
+          ;;
+      esac
       ;;
 
+    # 
     rehash)
       mktexlsr
       ;;
     
-    # 
     version|--version)
       echo "$progname version $version"
       setupTexmfmain

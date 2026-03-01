@@ -127,7 +127,6 @@ texmf-dist/scripts/ltximg/ltximg.pl ltximg
 texmf-dist/scripts/luafindfont/luafindfont.lua luafindfont
 texmf-dist/scripts/luaotfload/luaotfload-tool.lua luaotfload-tool
 texmf-dist/scripts/lwarp/lwarpmk.lua lwarpmk
-texmf-dist/scripts/m-tx/m-tx.lua m-tx
 texmf-dist/scripts/makedtx/makedtx.pl makedtx
 texmf-dist/scripts/make4ht/make4ht make4ht
 texmf-dist/scripts/markdown/markdown2tex.lua markdown2tex

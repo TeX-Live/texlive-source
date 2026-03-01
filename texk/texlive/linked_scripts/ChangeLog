@@ -1,3 +1,7 @@
+2026-03-01  Karl Berry  <karl@tug.org>
+
+	* Makefile.am (texmf_other_scripts): belatedly remove m-tx.lua.
+
 2024-12-08  Karl Berry  <karl@freefriends.org>
 
 	* Makefile.am (linkfile): new variable, scripts-targets.lst.

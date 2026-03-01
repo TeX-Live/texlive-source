@@ -407,7 +407,6 @@ texmf_other_scripts = \
 	luafindfont/luafindfont.lua \
 	luaotfload/luaotfload-tool.lua \
 	lwarp/lwarpmk.lua \
-	m-tx/m-tx.lua \
 	makedtx/makedtx.pl \
 	make4ht/make4ht \
 	markdown/markdown2tex.lua \
