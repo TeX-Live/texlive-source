@@ -1,3 +1,508 @@
+2026-03-01  Werner Lemberg  <wl@gnu.org>
+
+	* Version 2.14.2 released.
+	==========================
+
+	Tag sources with `VER-2-14-2'.
+
+	* docs/VERSION.TXT: Add entry for version 2.14.2.
+	* docs/CHANGES: Updated.
+	* docs/release, docs/README, builds/macs/README: Updated.
+
+	* README, src/base/ftver.rc, builds/windows/vc2010/index.html,
+	  builds/windows/visualc/index.html, builds/windows/visualce/index.html,
+	  builds/wince/vc2005-ce/index.html, builds/wince/vc2008-ce/index.html,
+	  docs/freetype-config.1: s/2.14.1/2.14.2/, s/2141/2142/.
+
+	* include/freetype/freetype.h (FREETYPE_PATCH): Set to 2.
+
+	* builds/unix/configure.raw (version_info): Set to 26:5:20.
+	* CMakeLists.txt (VERSION_PATCH): Set to 2.
+
+2026-03-01  Werner Lemberg  <wl@gnu.org>
+
+	* subprojects/*.wrap: Updated.
+
+2026-03-01  Werner Lemberg  <wl@gnu.org>
+
+	Very minor doc fixes.
+
+2026-02-23  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	[truetype] Clean up TT_Load_Context.
+
+	* src/truetype/ttinterp.c (TT_Load_Context): Remove return type.
+	* src/truetype/ttinterp.h (TT_Load_Context): Update signature.
+	* src/truetype/ttobjs.c (tt_size_run_{fpgm,prep}): Update callers.
+	* src/truetype/ttgload.c (tt_loader_init): Ditto.
+
+2026-02-21  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	[truetype] Use FT_QALLOC_MULT.
+
+	* src/truetype/ttgxvar.c (tt_var_load_item_variation_store): Here.
+	This call provides builtin overflow protection. See #1382.
+
+2026-02-21  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* src/base/ftbitmap.c (FT_Bitmap_Blend): Use FT_ALLOC_MULT.
+
+	This call is fortified with builtin overflow checks.
+
+2026-02-21  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	[sdf] Substitute allocation macros.
+
+	* src/sdf/ftsdf.c (sdf_generate_bounding_box,
+	sdf_generate_with_overlaps): Use more robust macros.
+
+2026-02-21  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	[base] Clean up bitmap allocations.
+
+	* src/base/src/base/ftobjs.c (ft_glyphslot_alloc_bitmap): Use preset
+	dimensions and call FT_MEM_ALLOC_MULT.
+	* include/freetype/internal/ftobjs.h (ft_glyphslot_alloc_bitmap):
+	Updated signature...
+	* src/*: ... and all callers.
+
+2026-02-20  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* src/sfnt/ttcolr.c (tt_face_colr_blend_layer): Use FT_ALLOC_MULT.
+
+	Fixes #1389. The overflow is detected in ft_mem_qrealloc.
+
+2026-02-08  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* src/base/ftglyph.c (ft_bitmap_glyph_init): Always copy in full.
+
+	Other glyph formats never perform lazy copy.  Fixes #1385.
+
+2026-02-07  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* include/freetype/config/mac-support.h: Check for FT_MACINTOSH.
+
+	Fixes warnings reported in !414.
+
+2026-02-04  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	[pshinter] Merge extrema and inflex analyses.
+
+	Any point on the horizontal or vertical segment, which can either
+	be either extreme or inflection point is now marked.  This makes
+	separate inflection algorithm unnecessary.  This simplifies the
+	algorithm without noticeable rendering differences.
+
+	* src/pshinter/pshalgo.c (psh_glyph_compute_extrema): Rewrite
+	to detect both extrema and inflection points. Determine the
+	their direction instantly.
+
+2026-02-04  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* src/sfnt/ttgpos.c (tt_face_validate_*): Fix check signedness.
+
+	This is an alternative to !398 without signed -1.
+
+2026-01-28  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* src/sfnt/sfwoff2.c (reconstruct_glyf): Revise variables.
+
+	This should fix #1379 while resonstructing the code intent.
+
+2026-01-26  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	[base, smooth] Implement direct LCD filtering.
+
+	Applying an LCD filter to spans rather than the entire image improves
+	the performance of ClearType-like rendering by about 40% at 32 ppem
+	and much more at larger sizes.  Small rounding differences are expected.
+
+	* src/smooth/ftsmooth.c (ft_smooth_raster_lcd, ft_smooth_lcd_spans,
+	ft_smooth_raster_lcdv, ft_smooth_lcdv_spans, TOrigin): Implement it.
+	* include/freetype/internal/ftobjs.h (FT_LibraryRec): lcd_filter_func gone.
+	* src/base/ftlcdfil.c (ft_lcd_filter_fir): Removed.
+	(ft_lcd_padding): Use padding sufficient for any 5-tap filter.
+	(FT_Library_SetLcdFilterWeights, FT_Library_SetLcdFilter): Updated.
+	* docs/CHANGES: Updated.
+
+2026-01-25  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	[base, smooth] Remove LCD filter from face properties.
+
+	This removes the internal face property that sets the filtering weights.
+	The global filtering algorithms and weights are now optimized to work
+	well under all conditions.
+
+	* include/freetype/internal/ftobjs.h (FT_Face_InternalRec): Do it.
+	* include/freetype/freetype.h (FT_Face_Properties): Revised docs.
+	* include/freetype/ftparams.h (FT_PARAM_TAG_LCD_FILTER_WEIGHTS): Ditto.
+	* src/base/ftlcdfil.c (ft_lcd_padding): Updated.
+	* src/base/ftobjs.c (ft_open_face_internal, FT_Face_Properties): Ditto.
+	* src/smooth/ftsmooth.c (ft_smooth_render): Ditto.
+	* docs/CHANGES: Updated.
+
+2026-01-25  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	[base] Remove legacy LCD filter.
+
+	* src/base/ftlcdfil.c (_ft_lcd_filter_legacy): Removed.
+	(FT_Library_SetLcdFilter): Updated.
+	* include/freetype/ftlcdfil.h (FT_LcdFilter): Updated.
+	* doc/CHANGES: Updated.
+
+2026-01-22  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* src/svg/ftsvg.c: Use FT_ALLOC_MULT.
+
+	Fixes #1378.
+
+2026-01-19  Harish Raja Selvan  <harish.rajaselvan@multicorewareinc.com>
+
+	* .gitlab-ci.yml: Add MSBuild for ARM64.
+
+2026-01-18  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	[base, smooth] Fortify direct rendering.
+
+	This is a better fix for #1384, which is rather about signed overflow.
+
+	* include/freetype/ftimage.h (FT_Span): Use unsigned position.
+	* src/smooth/ftgrays.c (gray_sweep_direct): Sync with FT_Span.
+	* src/smooth/ftsmooth.c (ft_smooth_render): Remove redundant shift.
+	* src/base/ftobjs.c (ft_glyphslot_preset_bitmap): Readjust limits.
+
+2026-01-16  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	[base] Maintain overall rendering limits.
+
+	Reject rendering of outlines that stretch beyond 32767 pixels from
+	the origin,  which is further restricted to 10922 horizontal pixels
+	for LCD rendering with ClearType-like algorithms. 16-bit FT_Span is
+	one of the reasons to have this limit imposed, fixes #1384.
+
+	* src/base/ftobjs.c (ft_glyphslot_preset_bitmap): Impose global
+	rendering limits.
+
+2026-01-13  Harry Sintonen  <sintonen@iki.fi>
+
+	* src/autofit/ft-hb-ft.c (ft_hb_ft_reference_table): Use `ft_sfree`.
+
+2026-01-10  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	[base] Set ppem-based rendering limits.
+
+	Many rendering timeouts occur when the outline stretches far beyond
+	the Em size.  Limiting the bounding box to 10 Em should reject such
+	requests.  It is still to possible scribble excessively within the set
+	limits.  At least, the memory usage will be curtained.
+
+	* src/base/ftobjs.c (ft_glyphslot_free_bitmap): Revise limits based
+	on ppem when available.
+
+2026-01-07  Werner Lemberg  <wl@gnu.org>
+
+	[autofit] Prevent signed integer overflow.
+
+	Reported as
+
+	  https://issues.oss-fuzz.com/issues/473887994
+	  https://issues.oss-fuzz.com/issues/473912282
+
+	* src/autofit/afatin.c (af_latin_align_top_tilde,
+	  af_latin_align_bottom_tilde), src/autofit/afloader.c
+	  (af_loader_load_glyph): Use `FT_PIX_ROUND_LONG`, `FT_PIX_CEIL_LONG`, and
+	  `SUB_LONG`.
+
+2026-01-06  Werner Lemberg  <wl@gnu.org>
+
+	[truetype] Prevent signed integer overflow.
+
+	Reported as
+
+	  https://issues.oss-fuzz.com/issues/473582311
+
+	* src/truetype/ttinterp.c (Ins_MDRP): Use `ADD_LONG` and `SUB_LONG`.
+
+2026-01-06  Werner Lemberg  <wl@gnu.org>
+
+	[autofit] Prevent signed integer overflow.
+
+	Reported as
+
+	  https://issues.oss-fuzz.com/issues/473582304
+
+	* src/autofit/afloader.c (af_loader_load_glyph): Use `ADD_LONG`.
+
+2026-01-05  Ben Wagner  <bungeman@chromium.org>
+
+	Fix leak of exec->FDefs in tt_size_init_bytecode
+
+2026-01-04  Werner Lemberg  <wl@gnu.org>
+
+	[autofit] Prevent signed integer overflow.
+
+	Reported as
+
+	  https://issues.oss-fuzz.com/issues/471525116
+
+	* src/autofit/aflatin.c (af_latin_stretch_top_tilde,
+	  af_latin_stretch_bottom_tilde): Use `MUL_LONG`.
+
+2026-01-04  Celeste Liu  <uwu@coelacanthus.name>
+
+	[base] Fix support for format 13 charmaps.
+
+	According to the OpenType specification of the 'cmap' table, the pair (0,6)
+	for platform and encoding IDs is used for format 13 charmap tables.  Commit
+	ba6f3e18 (from 2017-01-17) introduced the `TT_APPLE_ID_FULL_UNICODE` macro
+	(i.e., encoding_id == 6, added to OpenType 1.8); however, the corresponding
+	cmap selection code wasn't updated.
+
+	Unicode's Last Resort font (https://github.com/unicode-org/last-resort-font)
+	can be used to test a format 13 charmap.
+
+	Fixes issue #1383.
+
+	* src/base/ftobjc.s (find_unicode_charmap): Support
+	  `TT_APPLE_ID_FULL_UNICODE`.
+
+2026-01-03  Werner Lemberg  <wl@gnu.org>
+
+	[ttgxvar] Check for overflow in array size computation.
+
+	Problem reported and analyzed by povcfe <povcfe2sec@gmail.com>.
+
+	Fixes issue #1382.
+
+	* src/truetype/ttgxvar.c (tt_var_load_item_variation_store): Do it.
+
+2025-12-11  Ben Wagner  <bungeman@chromium.org>
+
+	Fix leak of exec in tt_size_init_bytecode
+
+	* src/truetype/ttobjs.c (tt_size_init_bytecode): Call `TT_Done_Context`
+	on `exec` if it has not yet been assigned to `size->context`.
+
+	Bug: https://issues.oss-fuzz.com/issues/467782706
+
+2025-12-05  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* src/pcf/pcfdrivr.c (PCF_Face_Init): Handle charmap errors.
+
+	This is a quick fix for #1377, more clean-ups to follow.
+
+2025-12-04  Werner Lemberg  <wl@gnu.org>
+
+	* src/sfnt/ttbdf.c (tt_face_load_bdf_props): Fix size test.
+
+	This prevents a potential overflow on 32bit systems.
+
+	Problem reported by Zhao Zijie <zijie4@illinois.edu>.
+
+2025-12-04  Werner Lemberg  <wl@gnu.org>
+
+	Improve documentation of the 'BDF ' table as used in X11 `.otb` files.
+
+	Also do some minor code formatting.
+
+2025-12-02  Werner Lemberg  <wl@gnu.org>
+
+	* src/otvalid/otvcommn.c (otv_FeatureList_validate): Fix array size check.
+
+	Reported by Marc Schönefeld.
+
+2025-12-02  Werner Lemberg  <wl@gnu.org>
+
+	[otvalid] Minor formatting and comment fixes.
+
+2025-11-30  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	[pshinter] Slightly simplify BlueShift application.
+
+	* src/pshinter/pshglob.c (psh_blues_scale_zones): Just divide.
+
+2025-11-30  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	[pshinter] Slightly simplify BlueScale application.
+
+	* src/pshinter/pshglob.c (psh_globals_new): Update condition and
+	properly rescale BlueScale.
+	(psh_blues_scale_zones): Use it directly.
+
+2025-11-30  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	[pshinter] Fix up degenerate contours.
+
+	* src/pshinter/pshalgo.c (psh_glyph_compute_extrema): Use correct
+	goto label and shortcut degenerate contours.
+
+2025-11-29  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* src/base/ftutil.c (FT_List_Finalize): Delay reading 'data'.
+
+	Fixes #1376.
+
+2025-11-29  Werner Lemberg  <wl@gnu.org>
+
+	* src/autofit/afgsub.c (af_parse_gsub): Always init `gsub_lookup_count`.
+
+	Problem reported by Marc Schönefeld.
+
+2025-11-28  Werner Lemberg  <wl@gnu.org>
+
+	[autofit] Fix handling of invalid GSUB lookup indices.
+
+	Problem reported by Marc Schönefeld.
+
+	HarfBuzz validates everything while processing OpenType tables in fonts.
+	However, the data returned by `hb_ot_layout_collect_lookups` is not
+	validated.  This commit adds proper checks.
+
+	* src/autofit/afglobal.h (AF_FaceGlobals): New field `gsub_lookup_count`.
+	* src/autofit/afgsub.c (af_parse_gsub): Set it.
+
+	* src/autofit/afadjust.c (af_reverse_character_map_new): Test result of
+	  `hb_set_next`.
+
+2025-11-28  Werner Lemberg  <wl@gnu.org>
+
+	[sfnt] Fix GPOS handling.
+
+	Problem reported by Marc Schönefeld.
+
+	* src/sfnt/ttgpos.c (tt_face_validate_lookup_table, tt_face_load_gpos): Fix
+	  counting of fitting subtables by correctly rejecting invalid data.
+
+2025-11-28  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* builds/toplevel.mk (dist): Replace `for` with `find ... -exec`.
+
+2025-11-27  Suzuki, Toshiya (鈴木俊哉)  <mpsuzuki@hiroshima-u.ac.jp>
+
+	* builds/toplevel.mk (dist): `-wholename` -> `-name`.
+
+	POSIX does not request `find` to support '-wholename'.
+	`find ... -wholename '*/.git' -prune -o ...` can be
+	rewritten as `find ... -name '*/.git' -prune -o ...`
+	for POSIX find.  Fixes issue #1370.
+
+2025-11-27  suzuki toshiya  <mpsuzuki@hiroshima-u.ac.jp>
+
+	* .gitlab-ci.yml: update macos image to Tahoe:2025-09-30.
+
+	Fixes issue #1394.
+
+2025-11-17  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* builds/toplevel.mk (dist): Improve compatibility with BSD tar.
+
+2025-11-05  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	[cff] Handle underline position and thickness as integers.
+
+	This is done for consistency with Type 1 fonts.
+
+	* include/freetype/internal/cfftypes.h (CFF_FontRecDic): Change
+	the variable types.
+	* include/cff/cfftoken.h (CFF_FontRecDic): Change the parsing macros.
+	* src/cff/cffobjs.c (cff_face_init), src/cff/cffload.c (cff_subfont_load),
+	src/cff/cffdrivr.c (cff_ps_get_font_info): Update users.
+
+2025-11-05  suzuki toshiya  <mpsuzuki@hiroshima-u.ac.jp>
+
+	* src/tools/apinames.c (names_add): Remove unrequired cast of
+	  `nm->hash` to int, which has been unrequired since eba2781a.
+
+	Fixes issue #1361.
+
+2025-11-05  Suzuki, Toshiya (鈴木俊哉)  <mpsuzuki@hiroshima-u.ac.jp>
+
+	* src/autofit/afgsub.c: Evaluate FT_CONFIG_OPTION_USE_HARFBUZZ
+	  after <freetype/freetype.h> and others.
+
+	Fixes issue #1360.
+
+2025-11-05  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	Minor.
+
+2025-11-05  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	[cff,cid,type1,type42] Fix up `PS_FontInfo`.
+
+	The italic angle is commonly specified in fractional degrees in
+	Type 1 fonts and its derivatives.  This change clarifies and fixes
+	these values.  Note that CFF fonts has always reported them as such,
+	but truncated the underline position and thickness.  Fixes #1367.
+
+	* include/freetype/t1tables.h (PS_FontInfoRec):
+	Use FT_Fixed for italic_angle.
+	* src/cid/cidtoken.h, src/type1/t1tokens.h, src/type42/t42parse.c:
+	Modify the italic_angle token.
+	* src/cff/cffdrivr.c (cff_ps_get_font_info): Fix the underline
+	position and thickness.
+
+	* docs/CHANGES: Note this change.
+
+2025-10-26  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* src/base/ftadvanc.c (ft_face_scale_advances_): Adjust scaling.
+
+	This is safe because advances are short originally.
+
+2025-10-26  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	[base] Refactor obtaining advances.
+
+	* src/base/ftadvanc.c (ft_load_advances): New separate function to
+	handle slow advances.
+	(FT_Get_Advance, FT_Get_Advances): Updated.
+
+2025-10-17  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* src/truetype/ttgload.c (tt_loader_init): Reset compatibility.
+
+	This may fix #1262, credits to Honnesh Ramachandra.
+	    https://lists.nongnu.org/archive/html/freetype-devel/2025-10/msg00004.html
+
+2025-09-28  Werner Lemberg  <wl@gnu.org>
+
+	[autofit] Prevent signed integer overflow.
+
+	* src/autofit/aflatin.c (af_latin_stretch_top_tilde,
+	  af_latin_stretch_bottom_tilde, af_latin_align_top_tilde,
+	  af_latin_align_bottom_tilde,
+	  af_glyph_hints_apply_vertical_separation_adjustments): Use `ADD_LONG` and
+	  `SUB_LONG` for values that involve `FT_LONG_MAX` and `FT_LONG_MIN`.
+
+	Fixes issue #1363.
+
+2025-09-24  Werner Lemberg  <wl@gnu.org>
+
+	* src/bdf/bdfdriver.c (BDF_Glyph_Load): Use `bdf->bdffont->bpp` directly.
+
+	Fixes issue #1362.
+
+2025-09-18  Alan Coopersmith  <alan.coopersmith@oracle.com>
+
+	* tests/README.md: Fix a script name.
+
+2025-09-14  Werner Lemberg  <wl@gnu.org>
+
+	[build] Don't use non-POSIX escapes in sed regexp.
+
+	* builds/unix/configure.raw (ftoption_set, ftoption_unset): Avoid `\>`.
+
+	Fixes issue #1358.
+
+2025-09-14  Werner Lemberg  <wl@gnu.org>
+
+	Typo.
+
+2025-09-12  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* include/freetype/internal/ftobjs.h (ft_default_raster): Relic removed.
+
 2025-09-11  Werner Lemberg  <wl@gnu.org>
 
 	* Version 2.14.1 released.

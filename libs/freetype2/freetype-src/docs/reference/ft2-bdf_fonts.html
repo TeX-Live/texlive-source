@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="API Reference Documentation for FreeType-2.14.1">
+        <meta name="description" content="API Reference Documentation for FreeType-2.14.2">
       
       
         <meta name="author" content="FreeType Contributors">
@@ -26,7 +26,7 @@
     
     
       
-        <title>BDF and PCF Files - FreeType-2.14.1 API Reference</title>
+        <title>BDF and PCF Files - FreeType-2.14.2 API Reference</title>
       
     
     
@@ -94,7 +94,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="index.html" title="FreeType-2.14.1 API Reference" class="md-header__button md-logo" aria-label="FreeType-2.14.1 API Reference" data-md-component="logo">
+    <a href="index.html" title="FreeType-2.14.2 API Reference" class="md-header__button md-logo" aria-label="FreeType-2.14.2 API Reference" data-md-component="logo">
       
   <img src="images/favico.ico" alt="logo">
 
@@ -107,7 +107,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            FreeType-2.14.1 API Reference
+            FreeType-2.14.2 API Reference
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -188,12 +188,12 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="index.html" title="FreeType-2.14.1 API Reference" class="md-nav__button md-logo" aria-label="FreeType-2.14.1 API Reference" data-md-component="logo">
+    <a href="index.html" title="FreeType-2.14.2 API Reference" class="md-nav__button md-logo" aria-label="FreeType-2.14.2 API Reference" data-md-component="logo">
       
   <img src="images/favico.ico" alt="logo">
 
     </a>
-    FreeType-2.14.1 API Reference
+    FreeType-2.14.2 API Reference
   </label>
   
   <ul class="md-nav__list" data-md-scrollfix>
@@ -2122,7 +2122,7 @@
 <hr />
 <h1 id="bdf-and-pcf-files">BDF and PCF Files<a class="headerlink" href="#bdf-and-pcf-files" title="Permanent link">&para;</a></h1>
 <h2 id="synopsis">Synopsis<a class="headerlink" href="#synopsis" title="Permanent link">&para;</a></h2>
-<p>This section contains the declaration of functions specific to BDF and PCF fonts.</p>
+<p>This section contains the declaration of functions specific to BDF and PCF fonts. They also work for SFNT bitmap fonts that contain a &lsquo;BDF&nbsp;&rsquo; table like X11's <code>.otb</code> fonts.</p>
 <h2 id="bdf_propertytype">BDF_PropertyType<a class="headerlink" href="#bdf_propertytype" title="Permanent link">&para;</a></h2>
 <p>Defined in FT_BDF_H (freetype/ftbdf.h).</p>
 <div class = "codehilite"><pre><code>  <span class="keyword">typedef</span> <span class="keyword">enum</span>  BDF_PropertyType_
@@ -2227,7 +2227,7 @@
 <p>FreeType error code. 0&nbsp;means success.</p>
 <h4>note</h4>
 
-<p>This function only works with BDF faces, returning an error otherwise.</p>
+<p>This function only works with BDF faces and SFNT fonts that have a &lsquo;BDF&nbsp;&rsquo; table, returning an error otherwise. For the latter, a bitmap strike size must be selected first.</p>
 <hr>
 
 <h2 id="ft_get_bdf_property">FT_Get_BDF_Property<a class="headerlink" href="#ft_get_bdf_property" title="Permanent link">&para;</a></h2>
@@ -2238,7 +2238,7 @@
                        <a href="ft2-bdf_fonts.html#bdf_propertyrec">BDF_PropertyRec</a>  *aproperty );
 </code></pre></div>
 
-<p>Retrieve a BDF property from a BDF or PCF font file.</p>
+<p>Retrieve a BDF property from a BDF or PCF font.</p>
 <h4>input</h4>
 <table class="fields">
 <tr><td class="val" id="face">face</td><td class="desc">
@@ -2265,6 +2265,7 @@
 <p>A &lsquo;property&rsquo; is a either key-value pair within the STARTPROPERTIES &hellip; ENDPROPERTIES block of a BDF font or a key-value pair from the <code>info-&gt;props</code> array within a <code>FontRec</code> structure of a PCF font.</p>
 <p>Integer properties are always stored as &lsquo;signed&rsquo; within PCF fonts; consequently, <code><a href="ft2-bdf_fonts.html#bdf_propertytype">BDF_PROPERTY_TYPE_CARDINAL</a></code> is a possible return value for BDF fonts only.</p>
 <p>In case of error, <code>aproperty-&gt;type</code> is always set to <code><a href="ft2-bdf_fonts.html#bdf_propertytype">BDF_PROPERTY_TYPE_NONE</a></code>.</p>
+<p>This also works with SFNT fonts that have a &lsquo;BDF&nbsp;&rsquo; table, after a bitmap strike size has been selected.</p>
 <hr>
 
 
@@ -2295,7 +2296,7 @@
       <div class="md-copyright">
   
     <div class="md-copyright__highlight">
-      Copyright 2025 <a href = "https://www.freetype.org/license.html">The FreeType Project</a>.
+      Copyright 2026 <a href = "https://www.freetype.org/license.html">The FreeType Project</a>.
     </div>
   
   

@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="API Reference Documentation for FreeType-2.14.1">
+        <meta name="description" content="API Reference Documentation for FreeType-2.14.2">
       
       
         <meta name="author" content="FreeType Contributors">
@@ -26,7 +26,7 @@
     
     
       
-        <title>Face Creation - FreeType-2.14.1 API Reference</title>
+        <title>Face Creation - FreeType-2.14.2 API Reference</title>
       
     
     
@@ -94,7 +94,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="index.html" title="FreeType-2.14.1 API Reference" class="md-header__button md-logo" aria-label="FreeType-2.14.1 API Reference" data-md-component="logo">
+    <a href="index.html" title="FreeType-2.14.2 API Reference" class="md-header__button md-logo" aria-label="FreeType-2.14.2 API Reference" data-md-component="logo">
       
   <img src="images/favico.ico" alt="logo">
 
@@ -107,7 +107,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            FreeType-2.14.1 API Reference
+            FreeType-2.14.2 API Reference
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -188,12 +188,12 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="index.html" title="FreeType-2.14.1 API Reference" class="md-nav__button md-logo" aria-label="FreeType-2.14.1 API Reference" data-md-component="logo">
+    <a href="index.html" title="FreeType-2.14.2 API Reference" class="md-nav__button md-logo" aria-label="FreeType-2.14.2 API Reference" data-md-component="logo">
       
   <img src="images/favico.ico" alt="logo">
 
     </a>
-    FreeType-2.14.1 API Reference
+    FreeType-2.14.2 API Reference
   </label>
   
   <ul class="md-nav__list" data-md-scrollfix>
@@ -2736,10 +2736,10 @@
 <p><code><a href="ft2-parameter_tags.html#ft_param_tag_stem_darkening">FT_PARAM_TAG_STEM_DARKENING</a></code> (stem darkening, corresponding to the property <code>no-stem-darkening</code> provided by the &lsquo;autofit&rsquo;, &lsquo;cff&rsquo;, &lsquo;type1&rsquo;, and &lsquo;t1cid&rsquo; modules; see <code><a href="ft2-properties.html#no-stem-darkening">no-stem-darkening</a></code>).</p>
 </li>
 <li>
-<p><code><a href="ft2-parameter_tags.html#ft_param_tag_lcd_filter_weights">FT_PARAM_TAG_LCD_FILTER_WEIGHTS</a></code> (LCD filter weights, corresponding to function <code><a href="ft2-lcd_rendering.html#ft_library_setlcdfilterweights">FT_Library_SetLcdFilterWeights</a></code>).</p>
+<p><code><a href="ft2-parameter_tags.html#ft_param_tag_random_seed">FT_PARAM_TAG_RANDOM_SEED</a></code> (seed value for the CFF, Type&nbsp;1, and CID &lsquo;random&rsquo; operator, corresponding to the <code>random-seed</code> property provided by the &lsquo;cff&rsquo;, &lsquo;type1&rsquo;, and &lsquo;t1cid&rsquo; modules; see <code><a href="ft2-properties.html#random-seed">random-seed</a></code>).</p>
 </li>
 <li>
-<p><code><a href="ft2-parameter_tags.html#ft_param_tag_random_seed">FT_PARAM_TAG_RANDOM_SEED</a></code> (seed value for the CFF, Type&nbsp;1, and CID &lsquo;random&rsquo; operator, corresponding to the <code>random-seed</code> property provided by the &lsquo;cff&rsquo;, &lsquo;type1&rsquo;, and &lsquo;t1cid&rsquo; modules; see <code><a href="ft2-properties.html#random-seed">random-seed</a></code>).</p>
+<p><code><a href="ft2-parameter_tags.html#ft_param_tag_lcd_filter_weights">FT_PARAM_TAG_LCD_FILTER_WEIGHTS</a></code> (no longer supported).</p>
 </li>
 </ul>
 <p>Pass <code>NULL</code> as <code>data</code> in <code><a href="ft2-face_creation.html#ft_parameter">FT_Parameter</a></code> for a given tag to reset the option and use the library or module default again.</p>
@@ -2766,25 +2766,17 @@
   FT_Bool              darken_stems = 1;
 
   FT_Parameter         property2;
-  FT_LcdFiveTapFilter  custom_weight =
-                         { 0x11, 0x44, 0x56, 0x44, 0x11 };
-
-  FT_Parameter         property3;
   FT_Int32             random_seed = 314159265;
 
-  FT_Parameter         properties[3] = { property1,
-                                         property2,
-                                         property3 };
+  FT_Parameter         properties[2] = { property1,
+                                         property2 };
 
 
   property1.tag  = FT_PARAM_TAG_STEM_DARKENING;
   property1.data = &amp;darken_stems;
 
-  property2.tag  = FT_PARAM_TAG_LCD_FILTER_WEIGHTS;
-  property2.data = custom_weight;
-
-  property3.tag  = FT_PARAM_TAG_RANDOM_SEED;
-  property3.data = &amp;random_seed;
+  property2.tag  = FT_PARAM_TAG_RANDOM_SEED;
+  property2.data = &amp;random_seed;
 
   FT_Face_Properties( face, 3, properties );
 </code></pre></div></p>
@@ -2792,7 +2784,7 @@
 <div class="highlight"><pre><span></span><code>  FT_Parameter  property;
 
 
-  property.tag  = FT_PARAM_TAG_LCD_FILTER_WEIGHTS;
+  property.tag  = FT_PARAM_TAG_STEM_DARKENING;
   property.data = NULL;
 
   FT_Face_Properties( face, 1, &amp;property );
@@ -3121,7 +3113,7 @@
       <div class="md-copyright">
   
     <div class="md-copyright__highlight">
-      Copyright 2025 <a href = "https://www.freetype.org/license.html">The FreeType Project</a>.
+      Copyright 2026 <a href = "https://www.freetype.org/license.html">The FreeType Project</a>.
     </div>
   
   
