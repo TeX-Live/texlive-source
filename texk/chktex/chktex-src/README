@@ -15,7 +15,8 @@ correct LaTeX code may produce errors in ChkTeX, and vice versa:
 incorrect LaTeX code may pass silently through.  If you have ideas for
 new warnings or ways in which current warnings could be improved,
 please report them on the
-[bug tracker](https://savannah.nongnu.org/bugs/?group=chktex).
+[bug tracker](https://savannah.nongnu.org/bugs/?group=chktex)
+or to Ivan Andrus <darthandrus@gmail.com>.
 
 For complete documentation see [the manual](http://www.nongnu.org/chktex/ChkTeX.pdf).
 

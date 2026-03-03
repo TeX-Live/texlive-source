@@ -599,6 +599,10 @@ WipeArg
     \textipa:{}
     # LuaTeX
     \directlua:{} \luaescapestring:{}
+    # beamer - this doesn't handle environments, and there are
+    # probably tons more commands as well...
+    \item:<> \mode:<> \uncover:<> \only:<> \alert:<> \onslide:*<>
+    \visible:<> \invisible:<> \alt:<> \temporal:<> \label:<>
 }
 ### \end{verbatim}
 ### \end{chktexrclistvar}

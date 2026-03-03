@@ -1,6 +1,6 @@
 diff -ur chktex/FindErrs.c chktex-src/FindErrs.c
---- chktex/FindErrs.c	Sat Apr 27 02:28:46 2024
-+++ chktex-src/FindErrs.c	Wed Jun 12 17:25:32 2024
+--- chktex/FindErrs.c	Fri Feb 27 04:56:34 2026
++++ chktex-src/FindErrs.c	Tue Mar 03 13:30:08 2026
 @@ -351,6 +351,7 @@
  
                  EscapePtr = TmpPtr; /* Save it for later */
@@ -18,7 +18,7 @@ diff -ur chktex/FindErrs.c chktex-src/FindErrs.c
                      if (error > 0)
                      {
                          *(uint64_t *)StkTop(&FileSuppStack) |= errbit;
-@@ -1133,19 +1134,21 @@
+@@ -1140,19 +1141,21 @@
                   * this on the first dash */
                  if (*TmpPtr != '-')
                  {
@@ -42,3 +42,32 @@ diff -ur chktex/FindErrs.c chktex-src/FindErrs.c
                          while (*e && *TmpPtr && *e == *TmpPtr)
                          {
                              /* Skip past characters that are the same */
+diff -ur chktex/OpSys.c chktex-src/OpSys.c
+--- chktex/OpSys.c	Fri Feb 27 04:56:34 2026
++++ chktex-src/OpSys.c	Tue Mar 03 13:36:58 2026
+@@ -484,6 +484,8 @@
+ 
+ void AddDirectoryFromRelativeFile(const char * Filename, struct WordList *TeXInputs)
+ {
++    char buf[BUFFER_SIZE];
++    char * end;
+     if ( ! Filename )
+         return;
+ 
+@@ -492,7 +494,6 @@
+         return;
+ 
+ 
+-    char buf[BUFFER_SIZE];
+     if ( strchr(DIRCHARS,Filename[0]) ) {
+         strcpy(buf,Filename);
+     } else {
+@@ -501,7 +502,7 @@
+     }
+ 
+     /* Keep up to the final SLASH -- that will be the directory. */
+-    char * end = strrchr(buf,SLASH);
++    end = strrchr(buf,SLASH);
+     *end = '\0';
+     InsertWord(buf,TeXInputs);
+ }

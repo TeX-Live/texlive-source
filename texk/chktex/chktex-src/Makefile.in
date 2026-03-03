@@ -110,7 +110,7 @@ $(DISTDIR).tar.gz: $(DISTFILES) $(CONFIG_DIST) $(BUILT_DIST) html
 CLEAN+=$(CSOURCES:.c=.o)
 
 .%.d: %.c
-	$(CC) -M $(CPPFLAGS) $< > $@.tmp
+	$(CC) -M $(CPPFLAGS) $(CFLAGS) $< > $@.tmp
 	sed 's,\($*\)\.o *:,\1.o $@ : Makefile,g' $@.tmp > $@
 	-rm -f $@.tmp 2>/dev/null
 

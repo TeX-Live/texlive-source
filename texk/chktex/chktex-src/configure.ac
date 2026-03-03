@@ -27,7 +27,7 @@ dnl
 
 
 dnl Process this file with autoconf to produce a configure script.
-AC_INIT([ChkTeX],[1.7.9])
+AC_INIT([ChkTeX],[1.7.10])
 AC_SUBST(SCRIPTS)
 AC_SUBST(BUILT_SCRIPTS)
 AC_SUBST(CLEAN)
@@ -123,8 +123,7 @@ AC_PATH_PROG(LYNX, lynx)
 AC_PATH_PROG(LATEX2HTML, latex2html)
 
 dnl Checks for libraries.
-AC_CHECK_LIB(termlib, tgetent)
-AC_CHECK_LIB(termcap, tgetent)
+AC_SEARCH_LIBS(tgetent, [termcap termlib], [], [AC_MSG_ERROR([termcap library not found])])
 
 AC_HEADER_DIRENT
 AC_CHECK_HEADERS(limits.h stat.h strings.h stdarg.h dnl
@@ -152,7 +151,7 @@ if test "$enable_pcre" = "yes"; then
   if test "$WITH_PCRE" = "yes"; then
     AC_DEFINE(HAVE_PCRE, 1, Whether PCRE can be used for user warnings.)
     CFLAGS="${CFLAGS} $(pcre-config --cflags-posix)"
-    LDFLAGS="${LDFLAGS} $(pcre-config --libs-posix)"
+    LIBS="$(pcre-config --libs-posix)"
   else
     AC_DEFINE(HAVE_PCRE, 0)
     AC_MSG_WARN(PCRE library not found.)

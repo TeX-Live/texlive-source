@@ -304,6 +304,14 @@ In section~\ref{sec:4} it is suppressed. % chktex -1
     \pi
 \end{align}
 
+% Beamer wipe arg -- no warning
+\visible<.(1)>{text}
+begin{frame}
+\onslide<1-3>{Same effect as the following command.}
+\uncover<1-3>{Same effect as the previous command.}
+\onslide*<3-4>{Same effect as the following command.}
+\visible<2-3>{Same effect as the previous command.}
+\only<3-5>{Same effect as the previous command.}
 
 % Warning 49
 

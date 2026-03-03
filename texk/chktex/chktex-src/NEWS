@@ -1,6 +1,13 @@
 Development of ChkTeX is now in a maintainance mode.  All versions
 1.6.x are essentially bug fixes.  Version 1.7 added some new features.
 
+1.7.10 (2026-02-26), released by Ivan Andrus <darthandrus@gmail.com>
+
+  * Add ability to wipe between <>
+    * Add some beamer commands to WipeArg
+  * Fix some compilation problems on some systems
+  * Make it easier to my name and contact info as maintainer
+
 1.7.9 (2024-04-26), released by Ivan Andrus <darthandrus@gmail.com>
 
   * Spell check chktexrc.in
