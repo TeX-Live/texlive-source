@@ -65,7 +65,7 @@ pdfcsplain xetex - -etex csplain.ini
 eplain pdftex language.dat -translate-file=cp227.tcx *eplain.ini
 #
 # from hitex:
-hilatex hitex language.dat -etex -ltx hilatex.ini
+# hilatex hitex language.dat -etex -ltx hilatex.ini
 hitex hitex language.def -etex -ltx hitex.ini
 #
 # from jadetex:
