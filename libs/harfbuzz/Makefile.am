@@ -39,6 +39,7 @@ libharfbuzz_a_SOURCES = \
 	@HARFBUZZ_TREE@/src/hb-subset-cff-common.cc \
 	@HARFBUZZ_TREE@/src/hb-subset-cff1.cc \
 	@HARFBUZZ_TREE@/src/hb-subset-cff2.cc \
+	@HARFBUZZ_TREE@/src/hb-subset-cff2-to-cff1.cc \
 	@HARFBUZZ_TREE@/src/hb-subset-input.cc \
 	@HARFBUZZ_TREE@/src/hb-subset-instancer-iup.cc \
 	@HARFBUZZ_TREE@/src/hb-subset-instancer-solver.cc \
@@ -51,6 +52,7 @@ libharfbuzz_a_SOURCES = \
 	@HARFBUZZ_TREE@/src/hb-subset-table-layout.cc \
 	@HARFBUZZ_TREE@/src/hb-subset-table-other.cc \
 	@HARFBUZZ_TREE@/src/hb-subset-table-var.cc \
+	@HARFBUZZ_TREE@/src/hb-vector-svg-subset.cc \
 	@HARFBUZZ_TREE@/src/hb-subset.cc
 
 ## Graphite library

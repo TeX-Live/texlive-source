@@ -1,6 +1,6 @@
 project('harfbuzz', ['c', 'cpp'],
   meson_version: '>= 0.60.0',
-  version: '12.3.2',
+  version: '13.0.0',
   default_options: [
     'cpp_eh=none',          # Just to support msvc, we are passing -fno-exceptions also anyway
     # 'cpp_rtti=false',     # Do NOT enable, wraps inherit it and ICU needs RTTI
@@ -419,7 +419,17 @@ endif
 configure_file(output: 'config.h', configuration: conf)
 
 alias_target('lib', libharfbuzz)
-alias_target('libs', libharfbuzz, libharfbuzz_subset)
+libs = [libharfbuzz]
+if not get_option('subset').disabled()
+  libs += [libharfbuzz_subset]
+endif
+if not get_option('raster').disabled()
+  libs += [libharfbuzz_raster]
+endif
+if not get_option('vector').disabled()
+  libs += [libharfbuzz_vector]
+endif
+alias_target('libs', libs)
 
 # Re glib, see https://github.com/harfbuzz/harfbuzz/issues/4153#issuecomment-2646347531
 add_test_setup('default',
@@ -459,6 +469,11 @@ build_summary = {
      'GDI/Uniscribe': (conf.get('HAVE_GDI', 0) == 1) and (conf.get('HAVE_UNISCRIBE', 0) == 1),
      'HarfRust': conf.get('HAVE_HARFRUST', 0) == 1,
      'kbts': conf.get('HAVE_KBTS', 0) == 1,
+    },
+  'Additional libraries':
+    {'Subset': not get_option('subset').disabled(),
+     'Raster (experimental)': not get_option('raster').disabled(),
+     'Vector (experimental)': not get_option('vector').disabled(),
     },
   'Other features':
     {'Utilities': not get_option('utilities').disabled(),

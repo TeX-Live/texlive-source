@@ -27,6 +27,7 @@ hdr_links = \
 	$(HARFBUZZ_SRC)/hb-map.h \
 	$(HARFBUZZ_SRC)/hb-ot-deprecated.h \
 	$(HARFBUZZ_SRC)/hb-paint.h \
+	$(HARFBUZZ_SRC)/hb-raster.h \
 	$(HARFBUZZ_SRC)/hb-script-list.h \
 	$(HARFBUZZ_SRC)/hb-set.h \
 	$(HARFBUZZ_SRC)/hb-shape.h \
@@ -35,6 +36,7 @@ hdr_links = \
 	$(HARFBUZZ_SRC)/hb-subset.h \
 	$(HARFBUZZ_SRC)/hb-subset-serialize.h \
 	$(HARFBUZZ_SRC)/hb-unicode.h \
+	$(HARFBUZZ_SRC)/hb-vector.h \
 	$(HARFBUZZ_BLD)/hb-version.h
 
 ## native OpenType Layout backend
