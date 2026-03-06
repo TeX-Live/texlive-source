@@ -87,7 +87,7 @@ jobs:
 
     steps:
       - name: checkout-main
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           path: 'repo'
       - name: Setup QEMU
@@ -138,7 +138,7 @@ jobs:
 
     steps:
       - name: checkout-main
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           path: 'repo'
       - name: build freebsd
