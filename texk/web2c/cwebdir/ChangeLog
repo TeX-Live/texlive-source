@@ -1,3 +1,7 @@
+2026-03-07  Andreas Scherer  <https://ascherer.github.io>
+
+	* cwebman-w2c.ch: Remove outdated footnote.
+
 2026-03-03  Andreas Scherer  <https://ascherer.github.io>
 
 	* ctwill-hint.ch: Avoid linebreak in HINT output.
