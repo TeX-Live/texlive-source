@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 77655 2026-02-07 15:38:21Z karl $
+# $Id: tlmgr.pl 78301 2026-03-07 17:41:28Z preining $
 # Copyright 2008-2025 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
@@ -8,8 +8,8 @@
 
 use strict; use warnings;
 
-my $svnrev = '$Revision: 77655 $';
-my $datrev = '$Date: 2026-02-07 16:38:21 +0100 (Sat, 07 Feb 2026) $';
+my $svnrev = '$Revision: 78301 $';
+my $datrev = '$Date: 2026-03-07 18:41:28 +0100 (Sat, 07 Mar 2026) $';
 my $tlmgrrevision;
 my $tlmgrversion;
 my $prg;
@@ -4139,7 +4139,7 @@ sub show_one_package_csv {
       }
     } elsif ($d eq "longdesc") {
       my $str = $tlp->longdesc;
-      if (defined $tlp->shortdesc) {
+      if (defined $tlp->longdesc) {
         $str =~ s/"/\\"/g;
         $str =~ s/\n/\\n/g;
         push @out, "\"$str\"";
@@ -10636,7 +10636,7 @@ This script and its documentation were written for the TeX Live
 distribution (L<https://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 77655 2026-02-07 15:38:21Z karl $
+$Id: tlmgr.pl 78301 2026-03-07 17:41:28Z preining $
 =cut
 
 # test HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html
