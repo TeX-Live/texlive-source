@@ -2,6 +2,25 @@
 use warnings;
 use strict;
 
+# ?? Put in locale section from png2pdf.pl, ETC!!!
+#
+# ?? If $Windows_like, make sure @file_list is populated with correctly
+# fixed directory separators, and that glob is done correctly.  (In UNC
+# names, glob fails with a pattern starting '\\Mac\' but succeeds with
+# '//Mac/'.  See png2pdf.pl also. The code for populating @file_list is too
+# split up!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+# ???!!! Rationalize creation of cusdep rule instance:
+#           Factor into subroutine.
+#           Don't create if rule exists
+#           Don't create if another rule to make the dest file exists.
+#              Or do a special check to deal with this situation.
+#           Why do I use $run_time and $check_time?
+#           When should I use them in rdb_create_rule?
+# !! See demos-tex/png2pdf/latexmkrc!!!
+
+# !!!!!!!!!!!!!SEE sub config_to_mine, and improve error message.
+
 ## Copyright John Collins 1998-2025
 ##           (username jcc8 at node psu.edu)
 ##      (and thanks to David Coppit (username david at node coppit.org) 
@@ -47,8 +66,8 @@ BEGIN {
     # blocks.
     $my_name = 'latexmk';
     $My_name = 'Latexmk';
-    $version_num = '4.87';
-    $version_details = "$My_name, John Collins, 15 June 2025. Version $version_num";
+    $version_num = '4.88';
+    $version_details = "$My_name, John Collins, 9 March 2026. Version $version_num";
 }
 
 # Ensure that when STDERR and STDOUT are both redirected, the results are
@@ -93,6 +112,11 @@ use Cwd "abs_path";
 use Cwd "chdir";    # Ensure $ENV{PWD}  tracks cwd.
 use Digest::MD5;
 
+our $Windows_like = ($^O =~ /^(MSWin32|cygwin|msys)$/);
+    # This indicates a system where certain actions are needed, like changing
+    # the Windows directory separator '\' in pathnames to '/', and dealing
+    # with wild-card-containing file names on the command line.
+
 our %HiRes_non_imports;
 use Time::HiRes;
 BEGIN {
@@ -118,6 +142,8 @@ BEGIN {
         }
     }
 }
+
+
 
 #################################################
 #
@@ -304,6 +330,8 @@ our @file_not_found = (
     '^Package .* [fF]ile `([^\\\']*)\\\' not found',
     '^Package .* No file `([^\\\']*)\\\'',
     'Error: pdflatex \(file ([^\)]*)\): cannot find image file',
+    # From \directlua ... dofile
+    'cannot open\s+([^\:]+): No such file or directory',
     ': File (.*) not found:\s*$',
     '! Unable to load picture or PDF file \\\'([^\\\']+)\\\'.',
     );
@@ -358,11 +386,8 @@ our $normalize_names = 2;  # Strongest kind.
 #     $hash_calc_ignore_pattern{'eps'} = '^%%CreationDate: ';
 #  This makes the hash calculation for an eps file ignore lines starting with
 #  '%%CreationDate: '
-#  ?? Note that a file will be considered changed if 
-#       (a) its size changes
-#    or (b) its hash changes
-#  So it is useful to ignore lines in the hash calculation only if they
-#  are of a fixed size (as with a date/time stamp).
+#  To ignore all lines in a file of extension .xxx do
+#     $hash_calc_ignore_pattern{'xxx'} = '^';
 our %hash_calc_ignore_pattern =();
 
 # Specification of templates for extra rules.
@@ -398,7 +423,9 @@ our @latex_file_hooks = ();
 # Single hash for various stacks of hooks:
 our %hooks = ();
 for ( 'before_xlatex', 'after_xlatex', 'after_xlatex_analysis', 'after_main_pdf',
-      'cleanup', 'cleanup_extra_full' ) {
+      'cleanup', 'cleanup_extra_full',
+      'compile_begin', 'compile_success', 'compile_warning', 'compile_failure', 'compile_end', 
+    ) {
     $hooks{$_} = [];
 }
 $hooks{aux_hooks} = \@aux_hooks;
@@ -408,7 +435,7 @@ $hooks{latex_file_hooks} = \@latex_file_hooks;
 ## Default document processing programs, and related settings,
 ## These are mostly the same on all systems.
 ## Most of these variables represents the external command needed to 
-## perform a certain action.  Some represent switches.
+## perform a certain action.  Some represent switches/options.
 
 
 ## Which TeX distribution is being used
@@ -465,10 +492,20 @@ our $emulate_aux_switched = 0;
 #    used for extensionless files specified in the source file by constructs
 #    like \input{file}  \includegraphics{file}
 our %input_extensions = ();
-set_input_ext( 'latex', 'tex', 'eps' );
-set_input_ext( 'pdflatex', 'tex', 'jpg', 'pdf', 'png' );
+# Defaults, 'tex' plus the graphics extensions reported by *latex for TeXLive 2025.
+set_input_ext( 'latex', 'tex',
+               'eps', 'ps', 'eps.gz', 'ps.gz', 'eps.Z', 'mps' );
+$input_extensions{hilatex} = $input_extensions{latex};
+set_input_ext( 'pdflatex',
+               'tex', 
+               'pdf', 'png', 'jpg', 'mps', 'jpeg', 'jbig2', 'jb2',
+               'PDF', 'PNG', 'JPG', 'JPEG', 'JBIG2', 'JB2', 'eps' );
 $input_extensions{lualatex} = $input_extensions{pdflatex};
-$input_extensions{xelatex} = $input_extensions{pdflatex};
+set_input_ext( 'xelatex',
+               'tex',
+               'pdf', 'PDF', 'ai', 'AI', 'png', 'PNG', 'jpg', 'JPG',
+               'jpeg', 'JPEG', 'jp2', 'JP2', 'jpf', 'JPF', 'bmp', 'BMP',
+               'ps', 'PS', 'eps', 'EPS', 'mps', 'MPS' );
 # Save these values as standards to be used when switching output,
 # i.e., when actual primary rule differs from standard.
 our %standard_input_extensions = %input_extensions;
@@ -732,6 +769,13 @@ our $makeindex_fudge = 1; # Whether or not to cd to aux dir when running makeind
 #   Use option -dALLOWPSTRANSPARENCY so that it works with documents
 #   using pstricks etc:
 our $dvipdf  = 'dvipdf -dALLOWPSTRANSPARENCY %O %S %D';
+if ($^O eq "MSWin32" ) {
+    # Use pipe via dvips and ps2pdf for dvipdf, since although TeX Live
+    # and MiKTeX provide dvips and ps2pdf (and ghostscript), they don't
+    # provide dvipdf. 
+    # (This is unlike typical installations of ghostscript on Linux and macOS.)
+    $dvipdf = 'dvips -P pdf -o - %S | ps2pdf -sDEVICE=pdfwrite -dALLOWPSTRANSPARENCY %O - %D';
+}
 # N.B. Standard dvipdf runs dvips and gs with their silent switch, so for
 #      standard dvipdf $dvipdf_silent_switch is unneeded, but innocuous. 
 #      But dvipdfmx can be used instead, and it has a silent switch (-q).
@@ -742,11 +786,11 @@ our $dvipdf_silent_switch  = '-q';
 our $dvips  = 'dvips %O -o %D %S';
 ## Command to convert dvi file to ps file in landscape format:
 our $dvips_landscape = 'dvips -tlandscape %O -o %D %S';
-# Switch(es) to get dvips to make ps file suitable for conversion to good pdf:
-#    (If this is not used, ps file and hence pdf file contains bitmap fonts
-#       (type 3), which look horrible under acroread.  An appropriate switch
-#       ensures type 1 fonts are generated.  You can put this switch in the 
-#       dvips command if you prefer.)
+# Switch(es) to get dvips to make ps file suitable for conversion to good pdf.
+#    (It used to be that if this is not used, the ps file and hence the pdf
+#     file contained bitmap fonts (type 3), which is undesirable.
+#     But the behavior of dvips has changed.  But the use of -P pdf is
+#     still appropriate.)
 our $dvips_pdf_switch = '-P pdf';
 # Switch(es) to make dvips silent:
 our $dvips_silent_switch  = '-q';
@@ -974,7 +1018,7 @@ our $filetime_offset_report_threshold = 10; # Threshold beyond which filetime of
 
 
 # System-dependent overrides:
-# Currently, the cases I have tests for are: MSWin32, cygwin, linux and 
+# Currently, the cases I have tests for are: MSWin32, cygwin, Linux and 
 #   darwin, msys, with the main complications being for MSWin32 and cygwin.
 # Further special treatment may also be useful for MSYS (for which $^O reports 
 #   "msys").  This is another *nix-emulation/system for MSWindows.  At
@@ -982,7 +1026,17 @@ our $filetime_offset_report_threshold = 10; # Threshold beyond which filetime of
 #   are those of Windows.  (The test for USERNAME as well as USER was
 #   to make latexmk work under MSYS's perl.)
 #
-our  $start_NT = 'NONE';   
+our  $start_NT = 'NONE';
+our  @UNIX_rc_system_files = ();
+foreach ( 'LatexMk', 'latexmkrc' ) {
+    push @UNIX_rc_system_files,
+        ( "/cygdrive/c/latexmk/$_",
+          "/etc/$_",
+          "/opt/local/share/latexmk/$_", 
+          "/usr/local/share/latexmk/$_",
+          "/usr/local/lib/latexmk/$_" );
+}
+
 if ( $^O eq "MSWin32" ) {
     # Pure MSWindows configuration
 
@@ -1001,13 +1055,11 @@ if ( $^O eq "MSWin32" ) {
 
     # For a pdf-file, "start x.pdf" starts the pdf viewer associated with
     #   pdf files, so no program name is needed:
-    $pdf_previewer = 'start %O %S';
-    $ps_previewer  = 'start %O %S';
-    $ps_previewer_landscape  = $ps_previewer;
-    $dvi_previewer  = 'start %O %S';
-    $dvi_previewer_landscape = "$dvi_previewer";
-    $hnt_previewer = 'start %O %S';
-    $pdf_update_method = 3; # acroread locks the pdf file
+    $dvi_previewer = $dvi_previewer_landscape
+        = $hnt_previewer
+        = $pdf_previewer
+        = $ps_previewer = $ps_previewer_landscape
+        = 'start %S';
 }
 elsif ( $^O eq "cygwin" ) {
     # The problem is a mixed MSWin32 and UNIX environment. 
@@ -1071,15 +1123,9 @@ elsif ( $^O eq "cygwin" ) {
     ##   with a cygwin equivalent of the MSWin location
     ## In addition, we need to add the same set of possible locations as with
     ## unix, so that the user use a unix-style setup.
-    @rc_system_files = ();
-    foreach ( 'LatexMk', 'latexmkrc' ) {
-       push @rc_system_files,
-           ( "/cygdrive/c/latexmk/$_",
-             "/etc/$_",
-             "/opt/local/share/latexmk/$_", 
-             "/usr/local/share/latexmk/$_",
-             "/usr/local/lib/latexmk/$_" );
-    }
+    @rc_system_files = ( "/cygwin/c/latexmk/LatexMk",
+                         "/cygwin/c/latexmk/latexmkrc",
+                         @UNIX_rc_system_files);
     $search_path_separator = ';';  # Separator of elements in search_path
     # This is tricky.  The search_path_separator depends on the kind
     # of executable: native NT v. cygwin.  
@@ -1090,13 +1136,15 @@ elsif ( $^O eq "cygwin" ) {
     #  NT-native start command of a cmd.exe is used.
     # For a pdf-file, "start x.pdf" starts the pdf viewer associated with
     #   pdf files, so no program name is needed:
+    # N.B. Since cmd is invoked when the following settings are used to
+    #  invoke a viewer, the cwd cannot be a UNC path, but only one like
+    #  /cygwin/c/.. that corresponds to a directory on a  Windows drive.  
     $start_NT = "cmd /c start \"\"";
-    $pdf_previewer = "$start_NT %O %S";
-    $ps_previewer  = "$start_NT %O %S";
-    $ps_previewer_landscape  = $ps_previewer;
-    $dvi_previewer  = "$start_NT %O %S";
-    $dvi_previewer_landscape = $dvi_previewer;
-    $hnt_previewer  = "$start_NT %O %S";
+    $dvi_previewer = $dvi_previewer_landscape
+        = $hnt_previewer
+        = $pdf_previewer
+        = $ps_previewer = $ps_previewer_landscape
+        = "$start_NT %S";
     # Viewer update methods: 
     #    0 => auto update: viewer watches file (e.g., gv)
     #    1 => manual update: user must do something: e.g., click on window.
@@ -1105,36 +1153,34 @@ elsif ( $^O eq "cygwin" ) {
     #                         $ps_update_signal, $pdf_update_signal
     #    3 => viewer can't update, because it locks the file and the file 
     #         cannot be updated.  (acroread under MSWIN)
-    $pdf_update_method = 3; # acroread locks the pdf file
 }
 elsif ( $^O eq "msys" ) {
+    @rc_system_files = ( "/c/latexmk/LatexMk",
+                         "/c/latexmk/latexmkrc", 
+                         @UNIX_rc_system_files );
     $search_path_separator = ';';  # Separator of elements in search_path
                                    # I think MS-Win value is OK, since
                                    # msys is running under MS-Win
-    $pdf_previewer = q[sh -c 'start %S'];
-    $ps_previewer = q[sh -c 'start %S'];
-    $dvi_previewer = q[sh -c 'start %S'];
-    $hnt_previewer = q[sh -c 'start %S'];
-    $ps_previewer_landscape  = $ps_previewer;
-    $dvi_previewer_landscape = "$dvi_previewer";
+    
+    # N.B. Since cmd is invoked when the following settings are used to
+    #  invoke a viewer, the cwd cannot be a UNC path, but only one like
+    #  /c/.. that corresponds to a directory on a  Windows drive.  
+    $dvi_previewer = $dvi_previewer_landscape
+        = $hnt_previewer
+        = $pdf_previewer
+        = $ps_previewer = $ps_previewer_landscape
+        = q[sh -c 'start %S'];
 }
 else {
     # Assume anything else is UNIX or clone
-    # Do special cases (e.g., linux, darwin (i.e., OS-X)) inside this block.
+    # Do special cases (e.g., Linux, darwin (i.e., macOS)) inside this block.
 
     ## Use first existing case for $tmpdir:
     $tmpdir = $ENV{TMPDIR} || '/tmp';
 
     ## List of possibilities for the system-wide initialization file.  
     ## The first one found (if any) is used.
-    @rc_system_files = ();
-    foreach ( 'LatexMk', 'latexmkrc' ) {
-       push @rc_system_files,
-            ( "/etc/$_",
-              "/opt/local/share/latexmk/$_", 
-              "/usr/local/share/latexmk/$_",
-              "/usr/local/lib/latexmk/$_" );
-    }
+    @rc_system_files = @UNIX_rc_system_files;
     $search_path_separator = ':';  # Separator of elements in search_path
 
     $dvi_update_signal = $signo{USR1} 
@@ -1176,12 +1222,11 @@ else {
     $ps_previewer  = 'start gv %O %S';
     $ps_previewer_landscape  = 'start gv -swap %O %S';
     $pdf_previewer = 'start acroread %O %S';
-    $pdf_update_method = 1;  # acroread under unix needs manual update
+    $pdf_update_method = 1;
     $lpr = 'lpr %O %S';         # Assume lpr command prints postscript files correctly
     $lpr_dvi =
         'NONE $lpr_dvi variable is not configured to allow printing of dvi files';
-    $lpr_pdf =
-        'NONE $lpr_pdf variable is not configured to allow printing of pdf files';
+    $lpr_pdf = $lpr;
     # The $pscmd below holds a command to list running processes.  It
     # is used to find the process ID of the viewer looking at the
     # current output file.  The output of the command must include the
@@ -1193,7 +1238,7 @@ else {
     #   2.  With xdvi in preview_continuous mode, xdvi must be
     #       signalled to make it read a new dvi file.
     #
-    # The following works on Solaris, LINUX, HP-UX, IRIX
+    # The following works on Solaris, Linux, HP-UX, IRIX
     # Use -f to get full listing, including command line arguments.
     # Use -u $ENV{USER} to get all processes started by current user (not just
     #   those associated with current terminal), but none of other users' 
@@ -1215,34 +1260,41 @@ else {
         # Ps on Redhat (at least v. 7.2) appears to truncate its output
         #    at 80 cols, so that a long command string is truncated.
         # Fix this with the --width option.  This option works under 
-        #    other versions of linux even if not necessary (at least 
+        #    other versions of Linux even if not necessary (at least 
         #    for SUSE 7.2). 
         # However the option is not available under other UNIX-type 
         #    systems, e.g., Solaris 8.
         # But (19 Aug 2010), the truncation doesn't happen on RHEL4 and 5,
         #    unless the output is written to a terminal.  So the --width 
         #    option is now unnecessary
-        # $pscmd = "ps --width 200 -f -u $ENV{USER}"; 
+        # $pscmd = "ps --width 200 -f -u $ENV{USER}";
+        
+    $dvi_previewer = $dvi_previewer_landscape
+        = $hnt_previewer
+        = $pdf_previewer
+        = $ps_previewer = $ps_previewer_landscape
+        = 'xdg-open %S';
     }
     elsif ( $^O eq "darwin" ) {
-        # OS-X on Macintosh
+        # macOS
         # open starts command associated with a file.
-        # For pdf, this is set by default to OS-X's preview, which is suitable.
+        # For pdf, this is set by default to macOS's preview, which is suitable.
         #     Manual update is simply by clicking on window etc, which is OK.
         # For ps, this is set also to preview.  This works, but since it
         #     converts the file to pdf and views the pdf file, it doesn't
         #     see updates, and a refresh cannot be done.  This is far from
         #     optimal.
         # For a full installation of MacTeX, which is probably the most common
-        #     on OS-X, an association is created between dvi files and TeXShop.
+        #     on macOS, an association is created between dvi files and TeXShop.
         #     This also converts the file to pdf, so again while it works, it
         #     does not deal with changed dvi files, as far as I can see.
-        $pdf_previewer = 'open %S';
+        $dvi_previewer = $dvi_previewer_landscape
+            = $hnt_previewer
+            = $pdf_previewer
+            = $ps_previewer = $ps_previewer_landscape
+            = 'open %S';
         $pdf_update_method = 1;     # manual
-        $hnt_previewer = 'open %S';
         $hnt_update_method = 1;     # manual
-        $dvi_previewer = $dvi_previewer_landscape = 'NONE';
-        $ps_previewer = $ps_previewer_landscape = 'NONE';
         # Others
         $lpr_pdf  = 'lpr %O %S';
         $pscmd = "ps -ww -u $ENV{USER}"; 
@@ -1409,9 +1461,8 @@ our $view = 'default';      # Default preview is of highest of dvi, ps, pdf
 our $min_sleep_time = 0.01; # Minimum non-zero sleep time
 our $sleep_time = 2;        # time to sleep b/w checks for file changes in -pvc mode
 
-# The following banner variables are no longer used by latexmk itself
-# (since v. 3.21)  .  They are left here for backward compatibility, in
-# case any user configurations use them.
+# The following banner variables apply only to postscript output produced
+# via the dvips route, and to pdf output from the dvips->ps2pdf route.
 our $banner = 0;            # Non-zero if we have a banner to insert
 our $banner_scale = 220;    # Original default scale
 our $banner_intensity = 0.95;  # Darkness of the banner message
@@ -1451,10 +1502,12 @@ our $diagnostics = 0;
 our $dvi_filter = '';   # DVI filter command
 our $ps_filter = '';    # Postscript filter command
 
-our $force_mode = 0;    # =1: to force processing past errors
-our $go_mode = 0;       # =1: to force processing regardless of time-stamps
-                        # =2: full clean-up first
-                        # =3: Just force primary rule(s) to run
+our $force_mode = 0;    # =1: to force processing past errors.
+
+our $go_mode = 0;       # =1: to force processing regardless of time-stamps.
+                        # =2: full clean-up first.
+                        # =3: Just force primary rule(s) to run, then continue
+                        #     as normal.
 our $preview_mode = 0;
 our $preview_continuous_mode  = 0;
 our $printout_mode = 0; # Don't print the file
@@ -1469,9 +1522,10 @@ our $show_time = 0;
 
 # Whether times computed are clock times (HiRes) since Epoch, or are
 # processing times for this process and child processes, as reported by
-# times().  Second is the best, if accurate.  But on MSWin32, times()
-# appears not to include subprocess times, so we use clock time instead.
-our $times_are_clock = ($^O eq "MSWin32" ? 1 : 0);
+# times().  The second is the best, if accurate.  But on MSWin32, times()
+# does not include subprocess times, so we use clock time instead.
+our $times_are_clock = 0;
+if ($^O =~ /^(MSWin32|cygwin|msys)$/) { $times_are_clock = 1; }
 
 
 # Data for 1 run and global (ending in '0'):
@@ -1480,6 +1534,14 @@ our ( $clock1, $processing_time1, $processing_time0, @timings1, @timings0);
 
 
 our $use_make_for_missing_files = 0; # Whether to use make to try to make missing files.
+our @force_make_file = (); # Array of functions that are given a file name and
+                           # return a true value if the file should be made
+                           # with $make (if $use_make_for_missing_files is
+                           # true) even if it already exists. 
+                           # For example, to always run $make on graphics
+                           # files, add this to a .latexmkrc file: 
+                           #
+                           # push @force_make_file, sub { $_[0] =~ m[\.(pdf|jpg|png|eps|tiff?)] };
 
 # Do we make view file in temporary then move to final destination?
 #  (To avoid premature updating by viewer).
@@ -1790,11 +1852,6 @@ our %rule_db = ();  # Database of all rules:
                     #        2: md5
                     #        3: DUMMY.  Not used any more. ?? Lots of code depends
                     #               on array structure, Let's not change things now.
-                    #        4: whether the file is of the kind made by epstopdf.sty 
-                    #           during a primary run.  It will have been read during
-                    #           the run, so that even though the file changes during
-                    #           a primary run, there is no need to trigger another 
-                    #           run because of this.
                     #       Size and md5 correspond to the values at the last run.
                     #       But time may be updated to correspond to the time
                     #       for the file, if the file is otherwise unchanged.
@@ -1845,7 +1902,23 @@ our %rule_db = ();  # Database of all rules:
                     #      another run. 
                     #      The values for the hash are currently unused, only the keys.
                     #      (Some packages that exhibit the
-                    #      rewrite-before-read behavior: pythontex, showexpl.)
+                    #      always-rewrite-before-read behavior: pythontex,
+                    #      showexpl.) 
+                    # NOTE: It is conceivable that there can exist
+                    # situations where a user or another program can change
+                    # a rewrite-before-read file, and the changed file has
+                    # an effect on the document, so the file is no longer
+                    # rewrite-before-read? I think this needs serious
+                    # hacking to achieve.  But packages with true
+                    # always-rewrite-before-read behavior are normal.
+                    #
+                    # HOWEVER, pure rewrite-before-read is not to be
+                    # confused with situations where the use rdb_update1 is
+                    # the appropriate response, to prevent rerun if the user
+                    # doesn't change the file, but to have a recompilation
+                    # be triggered if the user (or another program) changes
+                    # the file. 
+                    #
                     #   4: {Hash source_rule -> last_pass }
                     #      This lists rules that are to be considered source
                     #      rules for the current rule, separately from the 
@@ -1888,6 +1961,14 @@ our %rule_db = ();  # Database of all rules:
                     #      (if found).
                     #      The aim of this item is for flexible
                     #      rule-dependent add-ons.
+                    #   ???? Should I also use this for new items that are
+                    #        for all rules; PRO: good for extensions
+                    #        without change of definition of %rule_db. CON:
+                    #        I've a convention for universal items.  But I
+                    #        can also use this for extras. CON: Syntax of
+                    #        access is messier, and I need a rule variable
+                    #        to point to the new item, to have its use
+                    #        independent of implementation.
 
 our %fdb_current = ();  # Hash of information for all files used.
                     # It maps filename to a reference to an array
@@ -1923,7 +2004,7 @@ our ($rule, $PA_extra_gen, $PAint_cmd, $PArule_data, $Pbase, $Pchanged,
      $PHdest, $PHextra, $PHrewritten_before_read, $PHsource, $PHsource_rules,
      $Plast_message, $Plast_result, $Plast_result_info, 
      $Pno_history, $Pout_of_date, $Pout_of_date_user, $Prun_time, $Psource,
-     $file, $PAfile_data, $Ptime, $Psize, $Pmd5, $DUMMY, $Pcorrect_after_primary
+     $file, $PAfile_data, $Ptime, $Psize, $Pmd5, $DUMMY,
     );
            
 # User's home directory
@@ -2026,7 +2107,7 @@ if ( $auto_rc_use && ($HOME ne "" ) ) {
 }
 if ( $auto_rc_use ) { 
     # Rc file in current directory:
-    read_first_rc_file_in_list( ".latexmkrc", "latexmkrc" );
+    read_first_rc_file_in_list( "./.latexmkrc", "./latexmkrc" );
 }
 
 ## Process command line args.
@@ -2052,6 +2133,12 @@ while (defined(local $_ = $ARGV[0])) {
   elsif (/^-c$/)        { $cleanup_mode = 2; $cleanup_only = 1; }
   elsif (/^-C$/ || /^-CA$/ ) { $cleanup_mode = 1; $cleanup_only = 1; }
   elsif (/^-CF$/)    { $cleanup_fdb = 1; }
+  elsif (/^-cc$/)    { $preview_continuous_mode = 1;
+                       $view = 'none';
+                       $force_mode = 0;    # So that errors do not cause loops
+                       $preview_mode = 0;  # to avoid conflicts
+                       $printout_mode = 0; 
+                     }
   elsif (/^-cd$/)    { $do_cd = 1; }
   elsif (/^-cd-$/)   { $do_cd = 0; }
   elsif (/^-commands$/) { &print_commands; exit; }
@@ -2342,7 +2429,6 @@ while (defined(local $_ = $ARGV[0])) {
      if ( $ARGV[0] eq '' ) {
         &exit_help( "No message specified after -bm switch");
      }
-     warn "$My_name: Option -bm is no longer used by latexmk.\n";
      $banner = 1; $banner_message = $ARGV[0];
      shift; 
   }
@@ -2350,7 +2436,6 @@ while (defined(local $_ = $ARGV[0])) {
      if ( $ARGV[0] eq '' ) {
         &exit_help( "No intensity specified after -bi switch");
      }
-     warn "$My_name: Option -bi is no longer used by latexmk.\n";
      $banner_intensity = $ARGV[0];
      shift; 
   }
@@ -2358,7 +2443,6 @@ while (defined(local $_ = $ARGV[0])) {
      if ( $ARGV[0] eq '' ) {
         &exit_help( "No scale specified after -bs switch");
      }
-     warn "$My_name: Option -bs is no longer used by latexmk.\n";
      $banner_scale = $ARGV[0];
      shift; 
   }
@@ -2397,7 +2481,7 @@ while (defined(local $_ = $ARGV[0])) {
 }
 
 if ( $diagnostics || $rc_report ) {
-    show_array( "Rc files read:", @rc_files_read );
+    show_array( "Rc files read (in order):", @rc_files_read );
 }
 
 if ( $bad_options > 0 ) {
@@ -2451,15 +2535,28 @@ if ( $texfile_search ne "" ) {
 #          (3) UNIX               Don't glob (cmd interpreter does it)
 #                      (Currently, I assume this is everything else)
 our @file_list;
-if ( ($^O eq "MSWin32") || ($^O eq "cygwin") ) {
+if ( $Windows_like ) {
+    # Convert directory separator to '/', which is equally acceptable to
+    # Windows in all normal situations.  It avoids problems when filenames
+    # are passed to *latex, which would treat '\' as introducing a TeX
+    # macro.  It avoids problems with globbing, where Perl's glob appears
+    # not to work with UNC names athat start with '\\', as in
+    # '\\Mac\Home\...', but does work if they start with '//'.
+    # (That statement is true for Perl 5.32.1, but may well be version
+    # dependent.)
+    # Note also that globbing should be done when cygwin or msys are used,
+    # since their perl's may be invoked from a Windows command prompt,
+    # where names containing wild-card patterns are passed to invoked
+    # programs for interpretation.  This is different to the behavior of
+    # Unix command shells.
+    # At this point it would be a good idea to check for '~' in filenames,
+    # since these can arise in SFNs resulting from a glob, and aren't
+    # acceptable for use with *latex.
+    for (@command_line_file_list) { s[\\][/]; }
     # Preserve ordering of files
     @file_list = glob_list1(@command_line_file_list);
-#print "A1:File list:\n";
-#for ($i = 0; $i <= $#file_list; $i++ ) {  print "$i: '$file_list[$i]'\n"; }
 }
-else {
-    @file_list = @command_line_file_list;
-}
+else { @file_list = @command_line_file_list; }
 @file_list = uniq1( @file_list );
 
 
@@ -2575,8 +2672,7 @@ foreach (@extra_xelatex_options)  { add_option( $_, \$xelatex ); }
 
 
 # If landscape mode, change dvips processor, and the previewers:
-if ( $landscape_mode )
-{
+if ( $landscape_mode ) {
   $dvips = $dvips_landscape;
   $dvi_previewer = $dvi_previewer_landscape;
   $ps_previewer = $ps_previewer_landscape;
@@ -2740,6 +2836,10 @@ if ( $printout_mode ) {
         warn "$My_name: You have requested printout, but \$print_type is set to 'none'\n";
     }
 }
+if ($banner) {
+    my $ps_header = make_banner_file( $banner_message, $banner_scale, $banner_intensity );
+    $dvips =~ s/ %O / -h $ps_header %O /;
+}
 if ( $preview_continuous_mode || $preview_mode ) { $one_time{'view'} = 1; }
 
 our $can_switch = $allow_switch;
@@ -2758,10 +2858,16 @@ if ( $dvi_mode || $hnt_mode || $postscript_mode || $xdv_mode
     $can_switch = 0;
 }
 
-
 if ( $pdf_mode == 2 ) {
     # We generate pdf from ps.  Make sure we have the correct kind of ps.
     add_option( "$dvips_pdf_switch", \$dvips );
+}
+
+for ('dvi', 'dviF', 'xdv') {
+    if ( exists( $requested_filetypes{$_} )
+         || ($view eq $_) || ($print_type eq $_)
+       )
+    { push @out2_exts, $_; }
 }
 
 # Note that 100% CPU usage may not be terribly bad with a multi-core CPU,
@@ -2857,7 +2963,6 @@ $Pbase = \$root_filename;
 $Psource = \$texfile_name;
 my $start_time = time();
 $Prun_time = \$start_time;
-
 
 FILE:
 foreach $filename ( @file_list )
@@ -2988,7 +3093,7 @@ foreach $filename ( @file_list )
         if (!$silent) { print "Force *latex to be remade.\n"; }
         rdb_for_some( [keys %possible_primaries], sub{$$Pout_of_date = 'go_mode=3';}  );
     }
-    elsif ($go_mode) {
+    elsif ( ($go_mode == 1) || ($go_mode == 2) ) {
         # Force everything to be remade.
         if (!$silent) { print "Force everything to be remade.\n"; }
         rdb_recurse( [ &rdb_target_array], sub{$$Pout_of_date = 'go_mode';}  );
@@ -3027,7 +3132,7 @@ foreach $filename ( @file_list )
 
     $failure = rdb_make();
     if ( ( $failure <= 0 ) || $force_mode ) {
-      rdb_for_some( [keys %one_time], \&rdb_run1 );
+      rdb_for_some( [keys %one_time], \&rdb_make_onetime );
     }
     if ($#primary_warning_summary > -1) {
         # N.B. $mult_defined, $bad_reference, $bad_character, $bad_citation also available here.
@@ -3228,7 +3333,7 @@ sub test_fix_texnames {
     my $unbalanced_quote = 0;
     my $balanced_quote = 0;
     foreach (@_) {
-        if ( ($^O eq "MSWin32") || ($^O eq "msys") ) {
+        if ( $Windows_like ) {
             # On MS-Win, change directory separator '\' to '/', as needed
             # by the TeX engines, for which '\' introduces a macro name.
             # Remember that '/' is a valid directory separator in MS-Win.
@@ -3373,23 +3478,23 @@ sub normalize_aux_out_ETC {
     # 5. Ensure the aux and out directories exist
 
     # Ensure the output/auxiliary directories exist, if need be, **with error checking**.
-    my $ret1 = 0;
-    my $ret2 = 0;
-    my $ret3 = 0;
-    eval {
-        if ( $out_dir ) {
-            $ret1 = make_path_mod( $out_dir,  'output' );
-        }
-        if ( $out2_dir ) {
-            $ret2 = make_path_mod( $out2_dir,  'final output' );
-        }
-        if ( $aux_dir && ($aux_dir ne $out_dir) ) {
-            $ret3 = make_path_mod( $aux_dir,  'auxiliary' );
-        }
-    };
-    if ($ret1 || $ret2 || $ret3 || $@ ) {
-        if ($@) { print "Error message:\n  $@"; }
-        die "$My_name: Since there was trouble making the output (and aux) dirs, I'll stop\n"
+    my $ret1 = 1;
+    my $ret2 = 1;
+    my $ret3 = 1;
+    if ( $out_dir ) {
+        $ret1 = make_path_mod( $out_dir,  'output' );
+    }
+    if ( $out2_dir ) {
+        $ret2 = make_path_mod( $out2_dir,  'final-output' );
+    }
+    if ( $aux_dir && ($aux_dir ne $out_dir) ) {
+        $ret3 = make_path_mod( $aux_dir,  'auxiliary' );
+    }
+    if ( $ret1 && $ret2 && $ret3 ) {
+        # Success
+    }
+    else {
+        die "$My_name: Since there was trouble making the output/aux (build) dir(s), I'll stop.\n"
     }
 
     if ($normalize_names) {
@@ -4155,7 +4260,7 @@ sub do_cusdep {
         warn "$My_name: Misconfiguration or bug,",
         " in trying to apply custom-dependency rule\n",
         "  to make '$$Pdest' from '$$Psource'\n",
-        "  function name '$func_name' does not exists.\n";
+        "  function name '$func_name' does not exist.\n";
     }
     else {
         my $cusdep_ret = &$func_name( $$Pbase );
@@ -4267,7 +4372,7 @@ sub if_source {
         return &Run_subst();
     }
     else {
-        warn "Needed source file '$$Psource' does not exist.\n";
+        warn "$My_name: In rule '$rule', needed source file '$$Psource' does not exist.\n";
         return -1;
     }
 } #END if_source
@@ -4359,6 +4464,29 @@ sub find_basename {
 
 #************************************************************
 
+sub make_banner_file {
+    # Return its name.
+    # (Require name to be without spaces and other special characters that
+    # would need quoting. So putting the unquoted name on a command line is
+    # not problematic.)
+    my ($message, $scale, $intensity) = @_;
+    say "MAKING BANNER $message, $scale, $intensity";
+
+    my $fh;
+    my $tmpfile = tempfile1( "latexmk_header", ".ps" );
+    if ( ! open($fh, '>', $tmpfile) ) {
+      die "$My_name: Could not open temporary file for banner '$tmpfile'\n";
+    }
+    print
+      $fh "userdict begin /bop-hook{gsave 200 30 translate\n",
+      "65 rotate /Times-Roman findfont $banner_scale scalefont setfont\n",
+      "0 0 moveto $banner_intensity setgray ($banner_message) show grestore}def end\n";
+    close($fh);
+    return $tmpfile;
+}
+
+#************************************************************
+
 sub make_preview_continuous {
 
     local $failure = 0;
@@ -4440,7 +4568,7 @@ CHANGE:
         }
         elsif ( ($view_file ne '') && (-e $view_file) && $updated && $viewer_running ) {
             # A viewer is running.  Explicitly get it to update screen if we have to do it:
-            rdb_one_rule( 'update_view', \&rdb_run1 );
+            rdb_one_rule( 'update_view', \&rdb_make_onetime );
         }
         elsif ( ($view_file ne '') && (-e $view_file) && !$viewer_running ) {
             # Start the viewer
@@ -4457,7 +4585,7 @@ CHANGE:
                }
             }
             my $retcode = 0;
-            rdb_one_rule( 'view', sub { $retcode = &rdb_run1;} );
+            rdb_one_rule( 'view', sub { $retcode = &rdb_make_onetime;} );
             if ( $retcode != 0 ) {
                 if ($force_mode) {
                     warn "$My_name: I could not run previewer\n";
@@ -4510,15 +4638,19 @@ CHANGE:
             foreach (@post_primary) { delete $rules_to_watch{$_}; }
         }
         else {
-            if ( ($#primary_warning_summary > -1) && $warning_cmd ) {
-                Run_subst( $warning_cmd );
+            if ( ($#primary_warning_summary > -1) ) {
+                if ($warning_cmd) {Run_subst( $warning_cmd );}
+                run_hooks( 'compile_warning' );
             }
-            elsif ( ($#primary_warning_summary > -1) && $warnings_as_errors && $failure_cmd ) {
-                Run_subst( $failure_cmd );
+            elsif ( ($#primary_warning_summary > -1) && $warnings_as_errors ) {
+                if ($failure_cmd) { Run_subst( $failure_cmd ); }
+                run_hooks( 'compile_failure' );
             }
-            elsif ($success_cmd) {
-                Run_subst( $success_cmd );
+            else {
+                if ($success_cmd) { Run_subst( $success_cmd ); }
+                run_hooks( 'compile_success' );
             }
+            run_hooks( 'compile_end' );
         }
         rdb_show_rule_errors();
         if ($rules_list) { rdb_list(); }
@@ -4829,25 +4961,27 @@ sub print_help
   "   -aux-directory=dir or -auxdir=dir \n",
   "                 - set name of directory for auxiliary files (aux, log)\n",
   "                 - See also the -emulate-aux-dir option\n",
-  "   -bibtex       - use bibtex when needed (default)\n",
+  "   -bibtex       - use bibtex when needed\n",
   "   -bibtex-      - never use bibtex\n",
   "   -bibtex-cond  - use bibtex when needed, but only if the bib file exists\n",
+  "                     (default)\n",
   "   -bibtex-cond1 - use bibtex when needed, but only if the bib file exists;\n",
   "                   on cleanup delete bbl file only if bib file exists\n",
   "   -bibfudge or -bibtexfudge - change directory to output directory when\n",
   "                   running bibtex\n",
   "   -bibfudge- or -bibtexfudge- - don't change directory when running bibtex\n",
   "   -commands  - list commands used by $my_name for processing files\n",
-  "   -c     - clean up (remove) all nonessential files, except\n",
-  "            dvi, ps and pdf files.\n",
-  "            This and the other clean-ups are instead of a regular make.\n",
-  "   -C     - clean up (remove) all nonessential files\n",
-  "            including aux, dep, dvi, postscript and pdf files\n",
-  "            and file of database of file information\n",
-  "   -CA     - clean up (remove) all nonessential files.\n",
+  "   -c    - clean up (remove) all nonessential files, except\n",
+  "           dvi, ps and pdf files.\n",
+  "           This and the other clean-ups are instead of a regular make.\n",
+  "   -C    - clean up (remove) all nonessential files\n",
+  "           including aux, dep, dvi, postscript and pdf files\n",
+  "           and file of database of file information\n",
+  "   -CA    - clean up (remove) all nonessential files.\n",
   "            Equivalent to -C option.\n",
-  "   -CF     - Remove file of database of file information before doing \n",
-  "            other actions\n",
+  "   -CF    - Remove file of database of file information before doing \n",
+  "           other actions\n",
+  "   -cc    - \"Continuous compile\": equivalent to -pvc -view=none\n",
   "   -cd    - Change to directory of source file when processing it\n",
   "   -cd-   - Do NOT change to directory of source file when processing it\n",
   "   -dependents or -deps - Show list of dependent files after processing\n",
@@ -4957,9 +5091,11 @@ sub print_help
   "   -ps-   - turn off postscript\n",
   "   -pv    - preview document.  (Side effect turn off continuous preview)\n",
   "   -pv-   - turn off preview mode\n",
-  "   -pvc   - preview document and continuously update.  (This also turns\n",
-  "                on force mode, so errors do not cause $my_name to stop.)\n",
-  "            (Side effect: turn off ordinary preview mode.)\n",
+  "   -pvc   - \"preview continuous\", i.e, compile and preview document, then\n",
+  "            regularly test for changed files and recompile as needed.\n",
+  "            (Side effects:  Turns **off** force mode.\n",
+  "                            Turns off ordinary preview mode.)\n",
+  "            To get \"continuous compile\" without preview, use '-pvc -view=none'.\n",
   "   -pvc-  - turn off -pvc\n",
   "   -pvctimeout    - timeout in pvc mode after period of inactivity\n",
   "   -pvctimeout-   - don't timeout in pvc mode after inactivity\n",
@@ -5988,9 +6124,15 @@ sub parse_log {
 #    reference_changed, bad_reference, bad_citation.
 # Assume in the lines array, lines are already wrapped, and converted to my CS.   
 # Return value: 1 if success, 0 if problems.
+#
 # Put results in UPDATES of global variables (which are normally declared
-# local in calling routine, to be suitably scoped):
-#   %dependents: maps definite dependents to code:
+# local in calling routine, to be suitably scoped).
+# N.B. These may have earlier found information in them, so they should NOT
+#      be initialized.
+#
+# The relevant variables are:
+# 
+# A. %dependents: maps definite dependents to code:
 #      0 = from missing-file line or other reason to consider file missing.
 #            May have no extension
 #            May be missing path
@@ -6008,38 +6150,105 @@ sub parse_log {
 #             and for files that exist and are source of conversion
 #                reported by epstopdf et al.
 #      5 = Had a missing file line.  Now the file exists.
-#      6 = File was written during run.  (Overrides 5)
+#      6 = File was written during run, except for cases covered by 7
+#          and 8.  (Overrides 5) 
 #      7 = File was created during run to be read in, as a conversion
 #          from some other file (e.g., by epstopdf package).
 #          (Overrides 5 and 6)
-#      8 = File was rewritten during run to be read in.  (Overrides 5 and 6)
-# Treat the following specially, since they have special rules
-#   @bbl_files gives list of .bbl files.
-#   %idx_files gives information on .idx files to .ind files.
-# %generated_log: keys give set of files written by *latex (e.g., aux, idx)
-#   as determined by \openout = ... lines in log file.
-# @missing_subdirs = list of needed subdirectories of aux_dir
-#   These are needed for writing aux_files when an included file is in
-#   a subdirectory relative to the directory of the main TeX file.
-#   This variable is only set when the needed subdirectories don't exist,
-#   and the aux_dir is non-trivial, which results in an error message in 
-#   the log file
-#  %conversions Internally made conversions from one file to another
+#    !!?? I'm not sure this is used now. There's code for setting the value.
+#      8 = File was rewritten during run to be read in, and the file
+#          existed at the start of the run.  (Overrides 5 and 6)
+#    Notes about files that are seen in .fls file as OUTPUT then INPUT, i.e.,
+#    written and then read:
+#     1. If file didn't exist at start of run, then it **could be** and
+#        and **often actually is the case** that there was a test for
+#        existence, and the file would have been read before the writing.
+#        This is the case for .aux files, where the normal sequence is read
+#        (at start of compile), write (at end), and read again (at
+#        end). Effectively the test for existence is a quasi-read and
+#        entails a dependence on the file such that a change of status
+#        (not-existing to existing, or a change of contents) between before
+#        compilation and after causes a need for a rerun. 
+#        Thus the file is a normal source dependency, without special
+#        treatment. Often, there is a message in the .log file about a
+#        missing file, which is clear evidence of a normal dependency, but
+#        often without complete path information.
+#     2. If the file did exist at the start of compilation, and the sequence
+#        in the .fls file is OUTPUT then INPUT, then normally the file is
+#        unconditionally created and there is no dependence on the 
+#        contents at the start of run. Then 
+#        (a) Change of contents before and after run is not cause for a
+#            rerun.
+#        (b) Change of contents after run (e.g., caused by the user or
+#            another program) is still **not** a cause for a rerun, since
+#            the changed contents won't affect the document.
+#     3. Exception A, about items 1 and 2:  This is when the write-then-read
+#        behavior always holds.  Generally, this is to be detected by
+#        a rerun and finding that item 2 applies. But that may result in
+#        an excess run unless there was another reason for another
+#        compilation pass; the extra run is hard to avoid.
+#     4. Exception B is when there is something like the behavior of
+#        making a font cache by luatex: Read a database, first creating it
+#        if need be, then write a .lua file, read and execute the
+#        .lua file, and finally write a byte-compiled .luc file.  On
+#        subsequent runs, only the database and the .luc file are read.
+#        At the run on which cache file(s) were created, the change of
+#        status of cache files from non-existing to existing is not cause for
+#        a rerun.  (The set of font cache files processed also changes
+#        betwen the compilation that made a file and later compilations.) 
+#        **However**, it is possible for an external program to modify the
+#        .luc cache files (e.g., by changing fonts and rebuilding the
+#        cache). This change is cause for a rerun. So the omission of the
+#        test for change of the .luc file is a one-time thing, within the
+#        context of possible multiple passes of lualatex in single round of
+#        compilation.  Such changes are rare. 
+#        The extra compilations which would result from not diagnosing the
+#        situation are normally only annoying but without bad
+#        consequences.  A situation of this kind can only be diagnosed with
+#        special specific knowledge.  The two cases currently treated by
+#        latexmk (Aug 2025) are: (a) creation of a pdf file from an eps file by
+#        the epstopdf package; (b) the creation of font cache files by
+#        luatex. Both need special diagnosis and treatment, and are of
+#        common occurence so are correct to be treated within latexmk.
+#     5. Exception C, is when there is a situation like item 2, but the
+#        rewrite-read sequence is conditional on metadata (file mtime,
+#        size, md5 signature), which is an effective read operation that
+#        doesn't always shown symptoms in the .fls file.  This is hard to
+#        diagnose reliably, and is almost certain unusual.  For the moment,
+#        this is not diagnosed or handled by latexmk.  
 #
-#  These may have earlier found information in them, so they should NOT
-#  be initialized.
+# B. The following variables concern types of file that are treated
+#    specially, since they have special rules and behavior: 
+#    @bbl_files gives list of .bbl files.
+#    %idx_files gives information on .idx files to .ind files.
 #
-# Also SET
-#   $reference_changed, $bad_reference, $bad_citation
-#   $pwd_latex
+# C. %generated_log: keys give set of files written by *latex (e.g., aux, idx)
+#    as determined by \openout = ... lines in log file.
 #
-# Put in trivial or default values if log file does not exist/cannot be opened
+# D. @missing_subdirs = list of needed subdirectories of aux_dir
+#    These are needed for writing aux_files when an included file is in
+#    a subdirectory relative to the directory of the main TeX file.
+#    This variable is only set when the needed subdirectories don't exist,
+#    and the aux_dir is non-trivial, which results in an error message in 
+#    the log file
+#    For @missing_subdirs, it would be better to use single hash, to map name
+#    to status; no repeats, instead of an array.  But I won't change for now.
 #
-# Input globals: $primary_out, $fls_file_analyzed
+# E. @missing_subdirs_failed = list of needed subdirectories of aux_dir
+#        which could not be or weren't allowed to be written.    
+#
+# F. %conversions Internally made conversions from one file to another
+#
+# G. Also SET
+#      $reference_changed, $bad_reference, $bad_citation
+#      $pwd_latex
+#    Put in trivial or default values if log file does not exist/cannot be opened
+#
+# H. Also: Input globals: $primary_out, $fls_file_analyzed
 #
     my ($log_name, $PAlines, $PHinfo) = @_;
     our ( $primary_out, $fls_file_analyzed, %generated_log, %idx_files,
-          %dependents, @bbl_files, %log_info, @missing_subdirs,
+          %dependents, @bbl_files, %log_info, @missing_subdirs, @missing_subdirs_failed, 
           %conversions );
    
     # $primary_out is actual output file (dvi or pdf)
@@ -6088,11 +6297,13 @@ sub parse_log {
 LINE:
     for (@$PAlines) {
         $line_num++;
+        # I think some warnings are non-redundant.  So do NOT ignore!!!????????????
         if ( /^! pdfTeX warning/ || /^pdfTeX warning/ ) {
             # This kind of warning is produced by some versions of pdftex
             # or produced by my reparse of warnings from other
             # versions.
-            next;
+#            warn "$My_name: === Should I ignore this:\n$_\n";
+#            next;
         }
         if ( $line_num == 1 ){
             if ( /^This is / ) {
@@ -6157,14 +6368,19 @@ LINE:
             # Then process current line
         }
 
+
         # ???!!! Use the extra items. 
         # Check for changed references, bad references and bad citations:
         if (/Rerun to get/) { 
             print "$My_name: References changed.\n" if ! $log_silent;
             $reference_changed = 1;
         } 
-#        if (/^LaTeX Warning: (Reference[^\001]*undefined on input line .*)\./) {
-        if (/^LaTeX Warning: (Reference `([^']+)' on page .+ undefined on input line .*)\./) {
+# V.1       if (/^LaTeX Warning: (Reference[^\001]*undefined on input line .*)\./) {
+# V.2       if (/^LaTeX Warning: (Reference `([^']+)' on page .+ undefined on input line .*)\./) {
+        if ( /^LaTeX Warning: ((?:Hyper reference|Reference) `([^']+)' on page .+ undefined on input line .*)\./
+             || /^pdfTeX warning \(dest\): (name\{([^\}]+)\} has been referenced but does not exist, replaced by a fixed one)/
+             || /^warning  (\(pdf backend\): unreferenced destination with name '([^']+)')/
+        ) {
             push @warning_list, $1;
             push @undefined_references, $2;
             $bad_reference++;
@@ -6181,7 +6397,6 @@ LINE:
         }
         elsif (/^Package biblatex Warning: Please .* Biber /) {
             $log_info{biber} = 1;
-            say "====== biblatex/biber in use";
         }
         elsif (/^Package natbib Warning: (Citation[^\001]*undefined on input line .*)\./) {
             push @warning_list, $1;
@@ -6356,24 +6571,52 @@ LINE:
         if (/^\! LaTeX Error: / ) {
             next LINE;
         }
-        if ( m[^! I can't write on file `(.*)/([^/']*)'.\s*$] ) {
-            my $dir = $1;
-            my $file = $2;
+        if ( m[^(!|.+:\d+:) I can't write on file `([^']+)'.\s*$] ) {
+            # Message that usually indicates missing subdirectory of aux dir.
+            # 1st form at start of line: default message;
+            # 2nd form: when --file-line-error is used. 
+            # Note that MiKTeX automatically creates the needed
+            # subdirectories of the auxiliary directory, when the
+            # subdirectory is a safe one; but TeX Live doesn't, even when
+            # the subdirectory is safe. 
+            my $path = $2;
+            my ($file, $dir) = fileparse($path);
+            my $non_std = 0;
             my $full_dir = $aux_dir1.$dir;
-            if ( ($aux_dir ne '') && (! -e $full_dir)
-                 && ( ($file =~ /\.aux$/) || ($allow_subdir_creation == 2) )
-               ) {
-                warn "$My_name: === There were problems writing to '$file' in '$full_dir'\n",
-                     "    I'll try to make the subdirectory later.\n"
-                  if $diagnostics;
-                push @missing_subdirs, $full_dir;
+            if ( (! is_safe_subdir($dir)) || ($file =~ /^\./) ) {
+                warn "$My_name: There were problems writing to '$file' in directory '$dir'.\n",
+                     "      !! This is not a safe file or directory to write to.\n";
+                push @missing_subdirs_failed, $dir;
+            }
+            elsif ( $aux_dir ne '' ) {
+                # Normal situation causing the message in the .log file is from an \include{subdir/...}
+                # when an aux dir is used, but  subdir is not (yet) a subdirectory of aux dir. 
+                warn "$My_name: There were problems writing to '$file' in directory '$dir'.\n",
+                     "         Presumably '$dir' should be a subdirectory of the aux dir,\n",
+                     "         i.e., the actual target directory is '$full_dir'.\n";
+                if ( -d $full_dir ) {
+                    warn "         This is a strange error since the directory exists.\n";
+                    push @missing_subdirs_failed, $dir;
+                }
+                elsif  ( (-e $full_dir) || (-l $full_dir) ) {
+                    warn "      !! Although '$full_dir' exists, it is not a directory.\n",
+                         "      !! You need to correct this.\n";
+                    push @missing_subdirs_failed, $dir;
+                }
+                elsif (  ($allow_subdir_creation ==2 ) || (($file =~ /\.aux$/) && $allow_subdir_creation)   ) {
+                    warn "    I'll try to make the subdirectory later.\n";
+                    push @missing_subdirs, $full_dir;
+                }
+                else {
+                    warn " !! However, I'm not configured to make it, so you'll have to make it yourself.\n";
+                    push @missing_subdirs_failed, $dir;
+                }
             }
             else {
-                warn "$My_name: ====== There were problems writing to",
-                     "----- '$file' in '$full_dir'.\n",
-                     "----- But this is not the standard situation of file to subdir of output\n",
-                     "----- directory, with non-existent subdir, and either file is aux file or\n",
-                     "----- or \$allow_subdir_creation is set to 2.\n";
+                warn "$My_name: There were problems writing to '$file' in directory '$dir'.\n",
+                     "      !! But this is not the standard situation of an attempt to write an .aux file\n",
+                     "      !! to a non-existent subdir of the aux dir, since your are not using an aux dir.\n";
+                push @missing_subdirs_failed, $dir;
             }
         }
 
@@ -6610,7 +6853,7 @@ CANDIDATE:
             # Candidate is from '(...' construct in log file, for input file
             #    which should include pathname if valid input file.
             # Name does not have pathname-characteristic character (hence
-            #    $code==2.
+            #    $code==2).
             # We get here if candidate file does not exist with given name
             # Almost surely result of a misparsed line in log file.
             delete $dependents{$candidate};
@@ -6620,7 +6863,7 @@ CANDIDATE:
             # Candidate is from '(...' construct in log file, for input file
             #    which should include pathname if valid input file.
             # Name does have pathname-characteristic character (hence
-            #    $code==3.
+            #    $code==3).
             # But we get here only if candidate file does not exist with 
             # given name.  
             # Almost surely result of a misparsed line in log file.
@@ -7160,6 +7403,40 @@ sub hathat_to_binary {
             pos($_) = $before + length($subst);
         }
     }
+}
+
+#==============================================
+
+sub is_safe_file {
+    # Is given name safe to make as file?
+    # Same rules as default of *latex for writing file.
+    my ($path) = @_;
+    my ($file, $dir) = fileparse($path);
+    if ( $file =~ /^\./ ) { return 0; }
+    else { return is_safe_subdir( $dir ); }
+}
+
+#==============================================
+
+sub is_safe_subdir {
+    # Is given name safe to make as subdir?
+    # Same rules as default of *latex. 
+    my ($dir) = @_;
+    $dir =~ s[\\][/]g;
+    if (File::Spec->file_name_is_absolute($dir)) { return 0;}
+    # Second argument to splitpath is 1: no filename component.
+    my ($volume, $dirs ) = File::Spec->splitpath($dir, 1);
+    if ($volume ne '') {
+        # Volume, but otherwise relative path
+        return 0;
+    }
+    my @dirs = split( '/', $dirs );
+    for (@dirs) {
+        # '.' allowed.
+        # Anything else starting with . not, e.g., '..', '.latexmkrc'.
+        if ( /^\..+/ ) { return 0; }
+    }
+    return 1;
 }
 
 #==============================================
@@ -8079,12 +8356,32 @@ sub rdb_write {
 #************************************************************
 
 sub rdb_set_latex_deps {
-    # Call: rdb_set_latex_deps( [inhibit_output_switch] )
+    # Call: rdb_set_latex_deps( [inhibit_output_switch, [inhibit_delete_unused]] )
     # Assume primary rule context.  
     # This is intended to be applied only for a primary (LaTeX-like) rule.
     # Set its dependents etc, using information from log, aux, and fls files.
     # Use fls file only if $recorder is set, and the fls file was generated
     # on this run.
+    # Arguments:
+    #   inhibit_output_switch: When true, the default action is not taken
+    #                          of rearranging the rule network when it is
+    #                          detected that the run of *latex resulted in
+    #                          a different type of main output file than
+    #                          expected.  The main use of this argument is
+    #                          when latexmk's action is a cleanup.
+    #   inhibit_delete_unused: When true, the default action is not taken
+    #                          that the list of source files is pared down
+    #                          to the currently used files. The main use is
+    #                          when the *latex run resulted in an error,
+    #                          since, especially if the run was aborted
+    #                          mid-file, the information on the source
+    #                          files in the .fls and .log files can be
+    #                          seriously incomplete.  Without this
+    #                          inhibition, there can be a loss of memory of
+    #                          the states of cus_deps, such that on a
+    #                          subsequent successful run with corrected
+    #                          .tex file(s), much unnecessary running of
+    #                          cus_deps is done.
     # Return: An array: ( Whether there are missing directories,
     #                     reference to array of missing directories,
     #                     whether there are bad warnings
@@ -8184,12 +8481,13 @@ sub rdb_set_latex_deps {
     #   I have not tried to handle the (currently rare) cases that the
     #   OS is neither UNIX-like nor MSWin-like.
     #
-    #   Assumption: the list of generated files in %PHdest was already initialized earlier.
-    #     In principle, I should do it here, but useful possibilities (e.g.,
-    #     see pythontex-latexmk) for subroutine called to process a .tex to add items to
-    #     %PHdest. So initializing here is too late.
+    #   Assumption: the list of generated files in %PHdest was already
+    #     initialized earlier.  In principle, I should do it here, but
+    #     useful possibilities (e.g., see pythontex-latexmk) for
+    #     subroutine called to process a .tex to add items to %PHdest. So
+    #     initializing here is too late.
 
-    my ($inhibit_output_switch) = @_;
+    my ($inhibit_output_switch, $inhibit_delete_unused) = @_;
     if ( $$Pcmd_type ne 'primary' ) {
         warn "\n$My_name: ==========$My_name: Probable BUG======= \n   ",
              "   rdb_set_latex_deps called to set files ",
@@ -8205,7 +8503,7 @@ sub rdb_set_latex_deps {
     # Results in the following variables:
     our ( %dependents, @bbl_files, %idx_files, %generated_log, %generated_fls,
           %source_fls, %first_read_after_write, %log_info, $pwd_latex, $primary_out,
-          @missing_subdirs, %conversions );
+          @missing_subdirs, @missing_subdirs_failed, %conversions );
     local %dependents = ();    # Maps files to status
     local @bbl_files = ();
     local %idx_files = ();     # Maps idx_file to (ind_file, base)
@@ -8220,6 +8518,7 @@ sub rdb_set_latex_deps {
                      # Maps output file created and read by *latex
                      #    to source file of conversion.
     local @missing_subdirs = ();  # Missing subdirectories in aux_dir
+    local @missing_subdirs_failed = ();  # Missing subdirectories in aux_dir
 
     local $pwd_latex = undef;     # Cwd as reported in fls file by *latex
 
@@ -8287,37 +8586,19 @@ sub rdb_set_latex_deps {
     my $missing_dirs = 'none';      # Status of missing directories
     if (@missing_subdirs) {
         $missing_dirs = 'success';
-        if ($allow_subdir_creation) {
-            foreach my $dir ( uniqs( @missing_subdirs ) ) {
-                if ( -d $dir ) {
-                    $missing_dirs = 'failure';
-                    warn "$My_name: ==== Directory '$dir' is said to be missing\n",
-                         "     But it exists!\n";
-                }
-                elsif ( (-e $dir) && (!-d $dir) ) {
-                    $missing_dirs = 'failure';
-                    warn "$My_name: ==== Directory '$dir' is said to be missing\n",
-                         "     But a non-directory file of this name exists!\n";
-                }
-                else {
-                    if (make_path_mod($dir)) {
-                        print "$My_name: Directory '$dir' created\n";
-                    }
-                    else {
-                        $missing_dirs = 'failure';
-                        warn "$My_name: Couldn't create directory '$dir'.\n",
-                             "    System error: '$!'\n";
-                    }
-                }
+        foreach my $dir ( uniqs( @missing_subdirs ) ) {
+            my $err;
+            if ( make_path_mod($dir, 'extra', \$err)) {
+                print "$My_name: Directory '$dir' created\n";
+            }
+            else {
+                $missing_dirs = 'failure';
+                warn "$My_name: Couldn't create directory '$dir'.\n",
+                     "    : '$err'\n";
             }
         }
-        else {
-            $missing_dirs = 'not allowed';
-            warn_array( "$My_name: There are missing subdirectories, but their creation\n".
-                        "    is not allowed.  The subdirectories are:",
-                        uniqs(@missing_subdirs) );
-       }
     }
+    if (@missing_subdirs_failed) { $missing_dirs = 'failure'; }
     # Use results from fls file.  (N.B. The hashes will be empty if the fls file
     # wasn't used/analyzed, so we don't need a test as to whether the fls file was
     # used.
@@ -8688,7 +8969,6 @@ sub rdb_set_latex_deps {
     }
     else {
         $bib_program = 'bibtex';
-        warn "$My_name: Using bibtex to make bibliography file(s).\n";
 
         # Remove OPPOSITE kind of bbl generation:
         rdb_remove_rule( "biber $aux_dir1$$Pbase" );
@@ -8739,6 +9019,9 @@ sub rdb_set_latex_deps {
                 }
             }
         }
+        if (%good_bbl) {
+            warn "$My_name: Using bibtex to make bibliography file(s).\n";
+        }
         foreach my $bbl_file ( sort keys %good_bbl ) {
             my $bbl_base = $good_bbl{$bbl_file};
             my $aux_file = "$bbl_base.aux";
@@ -8779,6 +9062,36 @@ NEW_SOURCE:
     foreach my $new_source (keys %dependents) {
         print "  ===Source file for rule '$rule': '$new_source'\n"
             if ($diagnostics);
+
+        my $force_uptodate = 0;
+        # $force_uptodate is set when the file is to be treated as
+        #   up-to-date, even if there was a change of state compared with
+        #   the start of the run.  It is typically used for situations (like
+        #   automatic conversions, luatex font cache), where (a) a file was
+        #   read only after being written, **and** (b) the state of the
+        #   file before being written is not relevant to the document
+        #   content, including possible non-existence of the file at the
+        #   start of the run, **and** (c) a recompilation is to be
+        #   triggered on a later occasion if it is found that the file has
+        #   been changed since the end of the previous compilation, e.g.,
+        #   by the user or other software.
+        #   The determination to use $force_uptodate when the file doesn't
+        #   exist at the start of the compilation cannot be done a priori,
+        #   but only with knowledge of the particular situation, e.g.,
+        #   luatex font cache, where we know that the previous state of a
+        #   file, including both its existence and its content, is
+        #   irrelevant to the document content.
+        #   Note that normally if a file doesn't exist at the start of the
+        #   compilation, is written, and then read, then the use of
+        #   $force_uptodate is wrong, e.g., for .aux and .toc files, since
+        #   if these files existed at the start of the run, they would have
+        #   been read before the writing.  For these cases a change in file
+        #   status from not existing to existing is definite cause for a
+        #   rerun. 
+        # We don't use a special code in $dependents{file} for the
+        # force_update situation, since that would supercede other
+        # dependency information in the previous value of the code. 
+
         if ( exists $first_read_after_write{$new_source} ) {
             if ( dep_at_start($new_source) ) {
                 $dependents{$new_source} = 8;
@@ -8786,6 +9099,11 @@ NEW_SOURCE:
             else {
                 $dependents{$new_source} = 6;
             }
+        }
+
+        if ( $new_source =~ /luatex-cache.*\.(lua|luc|luc\.gz)$/ ) {
+            # Luatex font cache file.
+            $force_uptodate = 1;
         }
         if ( ($dependents{$new_source} == 5)
              || ($dependents{$new_source} == 6)
@@ -8804,36 +9122,44 @@ NEW_SOURCE:
         }
         elsif ( $dependents{$new_source} == 7 )  {
             # File was result of conversion by *latex.
-            # start of run.  S
             my $cnv_source = $conversions{$new_source};
             rdb_ensure_file( $rule, $new_source );
-#            if ($cnv_source && ($cnv_source !~ /\"/ ) ) {
              if ($cnv_source ) {
                 # Conversion from $cnv_source to $new_source
                 #   implies that effectively $cnv_source is a source
                 #   of the *latex run.
                 rdb_ensure_file( $rule, $cnv_source );
             }
-            # Flag that changes of the generated file during a run 
-            #    do not require a rerun:
-            rdb_one_file( $new_source, sub{ $$Pcorrect_after_primary = 1; } );
+            # Flag that any change of the generated file during the run 
+            # is not cause a rerun:
+            $force_uptodate = 1;
         }
         elsif ( $dependents{$new_source} == 8 )  {
             # File was read only after being written
-            # and the file existed at the beginning of the run
+            # and the file existed at the beginning of the run. 
             rdb_ensure_file( $rule, $new_source );
             rdb_add_generated( $new_source );
             rdb_add_rewritten_before_read( $new_source );
+            # Since the start-of-run contents of the file were not used,
+            # they presumably did not affect the document, and it was
+            # the contents of the rewritten file that affect the document.
+            $force_uptodate = 1;
         }
         else {
-            # But we don't need special precautions for ordinary user files 
-            #    (or for files that are generated outside of latex/pdflatex). 
+            # Anything else is normal source dependency without special treatment.
             rdb_ensure_file( $rule, $new_source );
         }
         if ( ($dependents{$new_source} == 6) 
              || ($dependents{$new_source} == 7) 
             ) {
             rdb_add_generated($new_source);
+        }
+        if ($force_uptodate) {
+            # Treat file as up-to-date, so that change of file status
+            # between start and end of compilation is not cause for a
+            # rerun.  Implement by updating information about previous
+            # state of file to current state:
+            rdb_one_file( $new_source, \&rdb_update1 );
         }
     }
 
@@ -8871,16 +9197,19 @@ NEW_SOURCE:
             show_array( "The following files were only read after being written:", @first_read_after_write );
         }
     }
-    my @files_not_needed = ();
-    foreach (keys %$PHsource) {
-        if ( ! exists $dependents{$_} ) {
-            print "Removing no-longer-needed dependent '$_' from rule '$rule'\n"
-              if $diagnostics;
-            push @files_not_needed, $_;
-        }
-    }
-    rdb_remove_files( $rule, @files_not_needed );
 
+    unless ($inhibit_delete_unused) {
+        my @files_not_needed = ();
+        foreach (keys %$PHsource) {
+            if ( ! exists $dependents{$_} ) {
+                print "Removing no-longer-needed dependent '$_' from rule '$rule'\n"
+                  if $diagnostics;
+                push @files_not_needed, $_;
+            }
+        }
+        rdb_remove_files( $rule, @files_not_needed );
+    }
+    
     return ($missing_dirs, [@missing_subdirs],
             ( $log_info{bad_warning} ? 1 : 0 ),
            );
@@ -9244,44 +9573,53 @@ DEP:
             }
         } # End of Rule found
     } # End DEP
-    if ( (! -e $file) && $use_make_for_missing_files ) {
-        # Try to make the missing file
-        #Set character to surround filenames in commands:
-        if ( $toext ne '' ) {
-             print "$My_name: '$rule': source file '$file' doesn't exist. I'll try making it...\n";
-             &Run_subst( "$make $quote$file$quote" );
-             if ( -e $file ) {
-                 return;
-             }
+    if ($use_make_for_missing_files) {
+        my $force_make_this_file = 0;
+        for my $func (@force_make_file) {
+            if ($func->($file)) {
+                $force_make_this_file = 1;
+                last;
+            }
         }
-        else {
-             print "$My_name: '$rule': source '$file' doesn't exist.\n",
-                   "   I'll try making it with allowed extensions \n";
-             foreach my $try_ext ( keys %$Pinput_extensions ) {
-                 my $new_dest = "$file.$try_ext";
-                 if (-e $new_dest) {
-                     # A file that exists cannot have been the missing file.
-                     next;
-                 }
-                 &Run_subst( "$make $quote$new_dest$quote" );
-                 if ( -e $new_dest ) {
-                     print "SUCCESS in making '$new_dest'\n",
-                          "I'll ensure '$rule' is rerun.\n";
-                     # Put file in rule, without a from_rule, but
-                     # set its state as non-existent, to correspond
-                     # to file's state before the file was made
-                     # This ensures a rerun of *latex is provoked.
-                     rdb_ensure_file( $rule, $new_dest, undef, 1 );
-                     push @new_sources, $new_dest;
-                     push @deletions, [$rule, $file];
-                     # Flag need for a new run of *latex despite
-                     # the error due to a missing file.
-                     $$Pout_of_date_user = "Missing file '$new_dest' now exists";
+        if ( (! -e $file) || $force_make_this_file ) {
+            # Try to make the missing file
+            # Set character to surround filenames in commands:
+            if ( $toext ne '' ) {
+                 print "$My_name: '$rule': source file '$file' doesn't exist. I'll try making it...\n";
+                 &Run_subst( "$make $quote$file$quote" );
+                 if ( -e $file ) {
                      return;
                  }
-           }
+            }  # End handle non-empty extension
+            else {
+                 print "$My_name: '$rule': source '$file' doesn't exist.\n",
+                       "   I'll try making it with allowed extensions \n";
+                 foreach my $try_ext ( keys %$Pinput_extensions ) {
+                     my $new_dest = "$file.$try_ext";
+                     if (-e $new_dest) {
+                         # A file that exists cannot have been the missing file.
+                         next;
+                     }
+                     &Run_subst( "$make $quote$new_dest$quote" );
+                     if ( -e $new_dest ) {
+                         print "SUCCESS in making '$new_dest'\n",
+                              "I'll ensure '$rule' is rerun.\n";
+                         # Put file in rule, without a from_rule, but
+                         # set its state as non-existent, to correspond
+                         # to file's state before the file was made
+                         # This ensures a rerun of *latex is provoked.
+                         rdb_ensure_file( $rule, $new_dest, undef, 1 );
+                         push @new_sources, $new_dest;
+                         push @deletions, [$rule, $file];
+                         # Flag need for a new run of *latex despite
+                         # the error due to a missing file.
+                         $$Pout_of_date_user = "Missing file '$new_dest' now exists";
+                         return;
+                     }
+                 }
+           } # End handle empty extension
         }
-    }
+    }  # End of code used when $use_make_for_missing_files is on
 } #END rdb_one_dep
 
 #************************************************************
@@ -9650,6 +9988,7 @@ sub rdb_make {
     #        quite special.
 
     if ($compiling_cmd) { Run_subst( $compiling_cmd ); }
+    run_hooks( 'compile_begin' );
     # ???!!! Overkill?  No.  $compiling_cmd might have injected something.
     &rdb_set_rule_net;
 
@@ -9882,7 +10221,7 @@ sub rdb_make {
                     @primary_warning_summary );
     }
     if ( ($#warning_list >= 0) && !$silence_logfile_warnings ) {
-        warn "$My_name: ====Undefined refs and citations with line #s in .tex file:\n";
+        warn "$My_name: ====Problematic refs and citations with line #s in .tex file:\n";
         for (my $i = 0; $i <= $#warning_list; $i++) {
             if ($i >= $max_logfile_warnings ) {
                 warn " And ", $#warning_list + 1 - $i, " more --- see log file '$log_name'\n";
@@ -9958,6 +10297,13 @@ sub rdb_show_rule_errors {
         show_array( "Collected error summary (may duplicate other messages):", @errors );
     }
     return $#errors+1;
+}
+
+#-------------------
+
+sub rdb_make_onetime {
+    warn_running( "Running one-time rule '$rule'" );
+    return &rdb_run1;
 }
 
 #-------------------
@@ -10326,20 +10672,15 @@ sub analyze_latex_run {
     # Where else is $missing_dvi_pdf set?  Was it initialized?
     if (-e $$Pdest) { $missing_dvi_pdf = '';}
     
-    # Find current set of source files:
-    my ($missing_dirs, $PA_missing_subdirs, $bad_warnings) = rdb_set_latex_deps();
+    # Update dependency information on source files etc.
+    # When there was a *latex error, do not do the removal of items in the 
+    # source-file list that correspond to apparently unused files
+    my ($missing_dirs, $PA_missing_subdirs, $bad_warnings)
+        = rdb_set_latex_deps( 0, $return );
     if ($bad_warning_is_error && $bad_warnings) {
         warn "$My_name: Serious warnings in .log configured to be errors\n";
         $return ||= $bad_warnings;
     }
-
-    # For each file of the kind made by epstopdf.sty during a run, 
-    #   if the file has changed during a run, then the new version of
-    #   the file will have been read during the run.  Unlike the usual
-    #   case, we will NOT need to redo the primary run because of the
-    #   change of this file during the run.  Therefore set the file as
-    #   up-to-date:
-    rdb_do_files( sub { if ($$Pcorrect_after_primary) {&rdb_update1;} } );
 
     $updated = 1;    # Flag that some dependent file has been remade
 
@@ -10348,7 +10689,7 @@ sub analyze_latex_run {
         rdb_show();
     }
 
-    if ($return_latex && ($missing_dirs ne 'none') ) {
+    if ($return_latex && ($missing_dirs eq 'success') ) {
        print "Error in *LaTeX, but needed subdirectories in output directory\n",
              "   were missing and successfully created, so try again.\n"
           if (! $silent);
@@ -10673,7 +11014,8 @@ sub rdb_file_change1 {
         ($outside_make_loop ? 0 : max($$Pcheck_time, $$Prun_time) );
 
     
-    # For files that won't be read until after they are written, ignore any changes:
+    # For files that won't be read until after they are written, ignore any
+    # changes:
     if (exists $$PHrewritten_before_read{$file}) {
         return;
     }
@@ -11073,10 +11415,10 @@ sub rdb_one_file {
     #===== Accesses file part of database structure =======
     our $file_act;
     local ($file, $file_act) = @_;
-    if ( (!$file) ||(!exists ${$PHsource}{$file}) ) { return; }
+    if ( (!$file) || (!exists ${$PHsource}{$file}) ) { return; }
     local $PAfile_data = ${$PHsource}{$file};
     our $DUMMY;  # Fudge until fix rule_db
-    local ($Ptime, $Psize, $Pmd5, $DUMMY, $Pcorrect_after_primary ) 
+    local ($Ptime, $Psize, $Pmd5, $DUMMY ) 
           = Parray( $PAfile_data );
     &$file_act() if $file_act;
 } #END rdb_one_file
@@ -11288,7 +11630,7 @@ sub rdb_ensure_files_here {
              next;
         }
         if (! exists ${$PHsource}{$file} ) {
-            ${$PHsource}{$file} = [fdb_get($file, $$Prun_time), '', 0];
+            ${$PHsource}{$file} = [fdb_get($file, $$Prun_time), ''];
         }
     }
 } #END rdb_ensure_files_here
@@ -11543,7 +11885,6 @@ sub cus_dep_require_primary_run {
     rdb_for_actives( 0, 
                  sub { if ($file eq $cus_dep_target) {
                             $$Pout_of_date = "A new file has been made";
-                            $$Pcorrect_after_primary = 1;
                        }
                      }
                );
@@ -11810,9 +12151,15 @@ sub get_checksum_md5 {
         # was successfully opened.
         # Such errors have been known to occur under OneDrive on macOS.
         if ( defined $ignore_pattern ) {
-            while (local $_ = <$input>) {
-                if ( ! /$ignore_pattern/ ){
-                    $md5->add($_);
+            if ($ignore_pattern eq '^' ) {
+                # Standard pattern that matches everything, i.e., all changes
+                # are to be ignored. So don't bother reading the file.
+            }
+            else {
+                while (local $_ = <$input>) {
+                    if ( ! /$ignore_pattern/ ){
+                        $md5->add($_);
+                    }
                 }
             }
         }
@@ -11926,10 +12273,19 @@ sub unlink_or_move {
 #************************************************************
 
 sub make_path_mod {
-    # Ensures directory given in $_[0] exists, with error checking
-    my $dir = $_[0];
-    my $title = $_[1];
-    my $ret = 0;
+    # Ensures directory given in $_[0] exists, with error checking.
+    # Return 1 on success.
+    # Arguments: directory-to-create,
+    #            category of directory (optional) for use in messages,
+    #            ref to variable to receive error message (optional).
+    # On error: If the message storage argument is a reference
+    #              store error message(s) in variable pointed to
+    #           else print the error messages.
+    #           And return 0. 
+    my ($dir, $title, $Perr) = @_;
+    $title ||= '';
+    my $err_msg = '';
+
     if ( -d $dir ) {}
     elsif ( (! -e $dir) && (! -l $dir) ) {
         # N.B. A link pointing to a non-existing target
@@ -11937,26 +12293,31 @@ sub make_path_mod {
         print "$My_name: making $title directory '$dir'\n"
             if ! $silent;
         # Error handling from File::Path documentation:
-        make_path( $dir, {error => \my $err} );
+        my $err = undef;
+        make_path( $dir, {error => \$err} );
         if ($err && @$err) {
-             for my $diag (@$err) {
+            for my $diag (@$err) {
                  my ($file, $message) = %$diag;
                  if ($file eq '') {
-                     print "general error in making dir: $message\n";
+                     $err_msg .= "General error in making dir: $message\n";
                  }
                  else {
-                      print "problem making path $file: $message\n";
-                }
+                     $err_msg .= "Problem making path $file: $message\n";
+                 }
              }
-             $ret = 1;
         }
     }
     else {
-        $ret = 2;
-        warn "$My_name: you requested $title directory '$dir',\n",
+        $err_msg .= "You requested $title directory '$dir',\n".
             "    but a non-directory file/symlink of the same name exists.\n";
     }
-    return $ret;
+    if (ref $Perr) {
+        $$Perr = $err_msg;
+    }
+    elsif ($err_msg) {
+        warn "$My_name: $err_msg";
+    }
+    return ( $err_msg ? 0 : 1 );
 }
 
 #************************************************************
@@ -12012,7 +12373,10 @@ sub kpsewhich {
 
 sub add_cus_dep {
     # Usage: add_cus_dep( from_ext, to_ext, flag, sub_name )
-    # Add cus_dep after removing old versions
+    # Add cus_dep after removing old versions.
+    # Because of the way in which the custom dependency list is stored,
+    # the last argument must be the **name** of a subroutine, not a
+    # reference to a subroutine.
     my ($from_ext, $to_ext, $must, $sub_name) = @_;
     remove_cus_dep( $from_ext, $to_ext );
     push @cus_dep_list, "$from_ext $to_ext $must $sub_name";
@@ -12077,15 +12441,10 @@ sub add_hook {
         warn "In add_hook, request to add hook to non-existent stack '$stack'.\n";
         return 0;
     }
-    print "============== ADDING HOOK to $stack\n";
 
     my $ref;
-    if ( ref $routine ) {
-        $ref = $routine
-    }
-    elsif ( defined &$routine ) {
-        $ref = \&$routine;
-    }
+    if ( (ref($routine) eq 'CODE') && defined &$routine  ) { $ref = $routine }
+    elsif ( (! ref($routine)) && defined &$routine ) { $ref = \&$routine; }
     else {
         warn "In add_hook, no subroutine '$routine' to add to stack '$stack'.\n";
             return 0;
@@ -12117,8 +12476,8 @@ sub run_hooks {
         return 0;
     }
     elsif (! @$Pstack) {
-            # Nothing to do
-            return 0;
+         # Nothing to do
+         return 0;
     }
     else {
 #        print "$My_name: ====Running hooks in stack $name\n";
@@ -12546,7 +12905,7 @@ sub Run {
        # The command is given to system as a single argument, to force shell
        # metacharacters to be interpreted:
        return( 0, system( $cmd_line ) );
-   }
+    }
 }  #END Run
 
 #************************************************************
@@ -12577,9 +12936,11 @@ sub Run_Detached {
     }
 
     if ( "$^O" eq "MSWin32" ){
-        # Win95, WinNT, etc: Use MS's start command:
-        # Need extra double quotes to deal with quoted filenames: 
-        #    MSWin start takes first quoted argument to be a Window title. 
+        # Use the start command of cmd.exe
+        # Need double quoted first argument, otherwise problems arise when
+        # quoted filenames are used on the command line (as is typical),
+        # since  cmd.exe's  start takes first quoted argument to be a
+        # Window title.
         return( 0, system( "start \"\" $cmd_line" ) );
     } else {
         # Assume anything else is UNIX or clone
@@ -12788,8 +13149,8 @@ sub end_wait {
 
 sub catch_break {
 # Capture ctrl/C and ctrl/break.
-# $SIG{INT} corresponds to ctrl/C on LINUX/?UNIX and MSWin
-# $SIG{BREAK} corresponds to ctrl/break on MSWin, doesn't exist on LINUX
+# $SIG{INT} corresponds to ctrl/C on Linux/?UNIX and MSWin
+# $SIG{BREAK} corresponds to ctrl/break on MSWin, doesn't exist on Linux
     $SIG{INT} = \&end_wait;
     if ( exists $SIG{BREAK} ) {
         $SIG{BREAK} = \&end_wait;
@@ -12896,7 +13257,20 @@ sub config_to_mine {
     # how strings are passed on  the command line.
     # So we just need to do a conversion for strings with utf8 flag on:
     foreach ( $out_dir, $out2_dir, $aux_dir, @default_files, @default_excluded_files ) {
-        if (utf8::is_utf8($_)) { $_ = encode( $CS_system, $_ ); }
+#        if (utf8::is_utf8($_)) { $_ = encode( $CS_system, $_ ); }
+        if (utf8::is_utf8($_)) {
+            my $save = encode( $CS_system, $_ );
+            eval {
+                $_ = encode( $CS_system, $_, (Encode::FB_CROAK | Encode::LEAVE_SRC ) );
+            };
+            if ($@) { 
+                 die "$My_name: One of the strings for out_dir, out2_dir, aux_dir,\n",
+                     "  default_files, default_excluded_files contains Unicode\n",
+                     "  characters outside the range that I can use for system\n",
+                     "  calls.  Sanitized version of string: '$save'; error is\n",
+                     " $@\n";
+             }
+        }
     }
 } #END config_to_mine
 
