@@ -83,8 +83,7 @@ svg_clip_append_shape (hb_svg_clip_collect_context_t *ctx,
     clip_shape.has_transform = true;
     clip_shape.transform = transform;
   }
-  ctx->defs->clip_shapes.push (clip_shape);
-  if (likely (!ctx->defs->clip_shapes.in_error ()))
+  if (likely (ctx->defs->clip_shapes.push_or_fail (clip_shape)))
     ctx->clip->shape_count++;
   else if (ctx->had_alloc_failure)
     *ctx->had_alloc_failure = true;
@@ -529,7 +528,7 @@ hb_raster_svg_push_clip_path_ref (hb_raster_paint_t *paint,
       return false;
     float w = object_bbox->xmax - object_bbox->xmin;
     float h = object_bbox->ymax - object_bbox->ymin;
-    if (!(isfinite (w) && isfinite (h)) || w <= 0.f || h <= 0.f)
+    if (!(std::isfinite (w) && std::isfinite (h)) || w <= 0.f || h <= 0.f)
       return false;
     ed.has_bbox_transform = true;
     ed.bbox_transform = hb_transform_t<> (w, 0, 0, h, object_bbox->xmin, object_bbox->ymin);

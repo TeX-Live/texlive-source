@@ -217,7 +217,9 @@ hb_svg_blob_from_buffer (hb_blob_t **recycled_blob,
   else
   {
     hb_svg_blob_meta_set_buffer (meta, data, allocated);
-    blob = hb_blob_create (data, len, HB_MEMORY_MODE_WRITABLE, meta, hb_svg_blob_meta_destroy);
+    blob = hb_blob_create_or_fail (data, len, HB_MEMORY_MODE_WRITABLE, meta, hb_svg_blob_meta_destroy);
+    if (unlikely (!blob))
+      return nullptr;
   }
 
   if (unlikely (blob == hb_blob_get_empty ()))
@@ -598,9 +600,12 @@ hb_vector_draw_reference (hb_vector_draw_t *draw)
 void
 hb_vector_draw_destroy (hb_vector_draw_t *draw)
 {
-  if (!hb_object_destroy (draw)) return;
+  if (!hb_object_should_destroy (draw))
+    return;
+
   hb_blob_destroy (draw->recycled_blob);
   hb_set_destroy (draw->defined_glyphs);
+  hb_object_actually_destroy (draw);
   hb_free (draw);
 }
 
