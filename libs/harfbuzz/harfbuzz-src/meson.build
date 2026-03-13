@@ -1,6 +1,6 @@
 project('harfbuzz', ['c', 'cpp'],
   meson_version: '>= 0.60.0',
-  version: '13.1.0',
+  version: '13.1.1',
   default_options: [
     'cpp_eh=none',          # Just to support msvc, we are passing -fno-exceptions also anyway
     # 'cpp_rtti=false',     # Do NOT enable, wraps inherit it and ICU needs RTTI
@@ -159,7 +159,8 @@ if not get_option('cairo').disabled()
 endif
 
 chafa_dep = dependency('chafa', version: chafa_min_version, required: get_option('chafa'))
-png_dep = dependency('libpng', required: false)
+png_dep = dependency('libpng', required: get_option('png'))
+zlib_dep = dependency('zlib', required: get_option('zlib'))
 
 fontations_dep_found = false
 if get_option('fontations').enabled()
@@ -223,6 +224,10 @@ if png_dep.found()
   conf.set('HAVE_PNG', 1)
 endif
 
+if zlib_dep.found()
+  conf.set('HAVE_ZLIB', 1)
+endif
+
 if fontations_dep_found
   conf.set('HAVE_FONTATIONS', 1)
 endif
@@ -254,6 +259,18 @@ endif
 
 if get_option('experimental_api')
   conf.set('HB_EXPERIMENTAL_API', 1)
+endif
+
+if not get_option('raster').disabled()
+  conf.set('HAVE_RASTER', 1)
+endif
+
+if not get_option('vector').disabled()
+  conf.set('HAVE_VECTOR', 1)
+endif
+
+if not get_option('subset').disabled()
+  conf.set('HAVE_SUBSET', 1)
 endif
 
 if freetype_dep.found()
@@ -479,6 +496,7 @@ build_summary = {
     },
   'Dependencies used by additional libraries':
     {'PNG': conf.get('HAVE_PNG', 0) == 1,
+     'Zlib': conf.get('HAVE_ZLIB', 0) == 1,
     },
   'Other features':
     {'Utilities': not get_option('utilities').disabled(),
