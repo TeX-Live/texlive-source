@@ -22,10 +22,16 @@ $_upmendex $srcdir/tests/sample.idx -o sample.ind1 -t sample.ilg1 \
 	&& diff $srcdir/tests/sample.ind sample.ind1 || rc=51
 
 $_upmendex $srcdir/tests/foo.idx -o foo.ind1 -t foo.ilg1 \
-	&& diff $srcdir/tests/foo.ind foo.ind1 || rc=1
+	&& diff $srcdir/tests/foo.ind foo.ind1 || rc=11
 
 cat $srcdir/tests/foo.idx | $_upmendex >foo.ind2 2>foo.ilg2 \
-	&& diff $srcdir/tests/foo.ind foo.ind2 || rc=2
+	&& diff $srcdir/tests/foo.ind foo.ind2 || rc=12
+
+$_upmendex $srcdir/tests/foo.idx -s $srcdir/tests/head1.ist -o foo.ind3 -t foo.ilg3 \
+	&& diff $srcdir/tests/foo1.ind foo.ind3 || rc=13
+
+$_upmendex $srcdir/tests/foo.idx -s $srcdir/tests/head2.ist -o foo.ind4 -t foo.ilg4 \
+	&& diff $srcdir/tests/foo1.ind foo.ind4 || rc=14
 
 $_upmendex -d $srcdir/tests/uni.dict -s $srcdir/tests/uni.ist \
 	$srcdir/tests/uni.idx -o uni.ind1 -t uni.ilg1 \

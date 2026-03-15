@@ -1,0 +1,3 @@
+headings_flag 1
+heading_prefix "aaa\tbbb\|ccc\\ddd\n\[\{\(\"\'"
+heading_suffix "\'\"\)\}\]\naaa\tbbb\|ccc\\ddd"
