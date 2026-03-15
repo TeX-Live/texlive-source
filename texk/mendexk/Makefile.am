@@ -60,10 +60,10 @@ EXTRA_DIST += $(TESTS)
 
 ## tests/mendex.test
 EXTRA_DIST += tests/sample.idx tests/sample.ind \
-	tests/foo.idx tests/foo.ind \
-	tests/uni.idx tests/uni.dict tests/uni.ist \
+	tests/foo.idx tests/foo.ind tests/foo1.ind \
+	tests/uni.idx tests/uni.dict tests/uni1.dict tests/uni.ist \
 	tests/uni1.ist tests/uni2.ist tests/uni.ind \
-	tests/tort.idx tests/tortW.idx tests/head1.ist \
+	tests/tort.idx tests/tortW.idx tests/head1.ist tests/head2.ist \
 	tests/ok-tort.ind tests/ok-tort2.ind
 DISTCLEANFILES = foo.* uni.* tort*.*
 ## tests/pprec.test

@@ -594,9 +594,10 @@ LDADD = $(PTEXENC_LIBS) $(KPATHSEA_LIBS)
 dist_man1_MANS = mendex.1
 EXTRA_DIST = COPYRIGHT COPYRIGHT.ja ChangeLog.ja indexsty \
 	mendex.ja.txt mendex.1 mendex.1.ja $(TESTS) tests/sample.idx \
-	tests/sample.ind tests/foo.idx tests/foo.ind tests/uni.idx \
-	tests/uni.dict tests/uni.ist tests/uni1.ist tests/uni2.ist \
-	tests/uni.ind tests/tort.idx tests/tortW.idx tests/head1.ist \
+	tests/sample.ind tests/foo.idx tests/foo.ind tests/foo1.ind \
+	tests/uni.idx tests/uni.dict tests/uni1.dict tests/uni.ist \
+	tests/uni1.ist tests/uni2.ist tests/uni.ind tests/tort.idx \
+	tests/tortW.idx tests/head1.ist tests/head2.ist \
 	tests/ok-tort.ind tests/ok-tort2.ind tests/range.idx \
 	tests/range1.ist tests/range2.ist tests/range3.ist \
 	tests/range4.ist tests/range1.ind tests/range2.ind \

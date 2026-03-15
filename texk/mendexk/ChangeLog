@@ -1,3 +1,13 @@
+2026-03-15  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* version.h: Date [15-Mar-2026].
+	* fread.c: Accept input data before EOF without EOL
+	in style, dictionary and index files.
+	* tests/mendex.test, tests/foo1.ind, tests/head2.ist,
+	tests/uni1.dict: Add tests for EOF.
+	* Makefile.am: Adjust.
+	https://github.com/texjporg/tex-jp-build/issues/195
+
 2026-03-02  Karl Berry  <karl@tug.org>
 
 	* TL'26 release.

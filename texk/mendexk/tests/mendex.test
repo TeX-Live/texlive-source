@@ -22,10 +22,16 @@ $_mendex $srcdir/tests/sample.idx -o sample.ind1 -t sample.ilg1 \
 	&& diff $srcdir/tests/sample.ind sample.ind1 || rc=51
 
 $_mendex $srcdir/tests/foo.idx -o foo.ind1 -t foo.ilg1 \
-	&& diff $srcdir/tests/foo.ind foo.ind1 || rc=1
+	&& diff $srcdir/tests/foo.ind foo.ind1 || rc=11
 
 cat $srcdir/tests/foo.idx | $_mendex >foo.ind2 2>foo.ilg2 \
-	&& diff $srcdir/tests/foo.ind foo.ind2 || rc=2
+	&& diff $srcdir/tests/foo.ind foo.ind2 || rc=12
+
+$_mendex $srcdir/tests/foo.idx -s $srcdir/tests/head1.ist -o foo.ind3 -t foo.ilg3 \
+	&& diff $srcdir/tests/foo1.ind foo.ind3 || rc=13
+
+$_mendex $srcdir/tests/foo.idx -s $srcdir/tests/head2.ist -o foo.ind4 -t foo.ilg4 \
+	&& diff $srcdir/tests/foo1.ind foo.ind4 || rc=14
 
 $_mendex -U -d $srcdir/tests/uni.dict -s $srcdir/tests/uni.ist \
 	$srcdir/tests/uni.idx -o uni.ind1 -t uni.ilg1 \
@@ -53,6 +59,10 @@ export INDEXDICTIONARY
 $_mendex -U -d uni.dict -s uni.ist \
 	$srcdir/tests/uni.idx -o uni.ind5 -t uni.ilg5 \
 	&& diff $srcdir/tests/uni.ind uni.ind5 || rc=7
+
+$_mendex -U -d $srcdir/tests/uni1.dict -s uni.ist \
+	$srcdir/tests/uni.idx -o uni.ind6 -t uni.ilg6 \
+	&& diff $srcdir/tests/uni.ind uni.ind6 || rc=8
 
 $_mendex $srcdir/tests/tort.idx -o tort.ind1 -t tort.ilg1 \
 	&& rc=20

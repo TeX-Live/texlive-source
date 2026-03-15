@@ -600,6 +600,5 @@ char *mfgets(char *buf, int size, FILE *fp)
 		if (len+1 < size) strcat(buf+len, "\n");
 		else ungetc(c, fp);
 	}
-	if (c == EOF) return NULL;
 	return buf;
 }
