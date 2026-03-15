@@ -1,3 +1,9 @@
+2026-03-15  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* tests/makeindex.test, tests/foo{,1}.ind, tests/head2.ist,
+	tests/foo.idx: Add tests for EOF.
+	Makefile.am: Adjust.
+
 2026-01-12  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* scanid.c: Check malformed inputs before EOF.
