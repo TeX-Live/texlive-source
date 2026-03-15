@@ -62,6 +62,9 @@ boolean must_exist = false;
 /* The program name, for `.PROG' construct in texmf.cnf.  (-program) */
 string progname = NULL;
 
+/* argv[0], set at the beginning, since we need it to set the program_name */
+string argv0 = NULL;
+
 /* Safe input and output names to check. (-safe-in-name, -safe-out-name) */
 string safe_in_name = NULL;
 string safe_out_name = NULL;
@@ -216,6 +219,9 @@ find_format (kpathsea kpse, string name, boolean is_filename)
 
   } else if (FILESTRCASEEQ (name, "config.ps")) {
     ret = kpse_dvips_config_format;
+  } else if (FILESTRCASEEQ (name, "dvipdfmx.cfg")) {
+    ret = kpse_program_text_format;
+    kpathsea_set_program_name (kpse, argv0, progname ? progname : "dvipdfmx");
   } else if (FILESTRCASEEQ (name, "fmtutil.cnf")) {
     ret = kpse_web2c_format;
   } else if (FILESTRCASEEQ (name, "glyphlist.txt")) {
@@ -547,7 +553,7 @@ help_formats (kpathsea kpse, string *argv)
   int f; /* kpse_file_format_type */
 
   /* Have to set this for init_format to work.  */
-  kpathsea_set_program_name (kpse, argv[0], progname);
+  kpathsea_set_program_name (kpse, argv0, progname);
 
   puts (kpathsea_version_string); 
   puts ("\nRecognized Kpathsea format names and their (abbreviations) and suffixes:");
@@ -856,11 +862,12 @@ main (int argc,  string *argv)
 #endif /* WIN32 */
   unsigned unfound = 0;
   kpathsea kpse = kpathsea_new ();
+  argv0 = argv[0]; /* so we can set_program_name any time */
 
   /* Read options, then dependent initializations.  */
   read_command_line (kpse, argc, argv);
 
-  kpathsea_set_program_name (kpse, argv[0], progname);
+  kpathsea_set_program_name (kpse, argv0, progname);
 #ifdef WIN32
   if(strstr(kpse->program_name,"xetex") || strstr(kpse->program_name,"xelatex")
      || strstr(kpse->program_name,"uptex") || strstr(kpse->program_name,"uplatex")

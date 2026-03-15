@@ -1,4 +1,4 @@
-This is kpathsea.info, produced by makeinfo version 7.2 from
+This is kpathsea.info, produced by makeinfo version 7.3 from
 kpathsea.texi.
 
 This file documents the Kpathsea library for path searching.
@@ -37,7 +37,7 @@ Kpathsea library
 ****************
 
 This manual documents the Kpathsea library for path searching.  It
-corresponds to version 6.4.2/dev, released in January 2026.
+corresponds to version 6.4.2/dev, released in March 2026.
 
 * Menu:
 
@@ -62,7 +62,7 @@ File: kpathsea.info,  Node: Introduction,  Next: unixtex.ftp,  Prev: Top,  Up: T
 **************
 
 This manual corresponds to version 6.4.2/dev of the Kpathsea library,
-released in January 2026.
+released in March 2026.
 
    The library's fundamental purpose is to return a filename from a list
 of directories specified by the user, similar to what shells do when
@@ -1563,6 +1563,9 @@ their corresponding format:
 
 ‘texmf.cnf’
      ‘cnf’
+
+‘updmap.cfg’
+     ‘web2c files’
 
 ‘XDvi’
      ‘other text files’
@@ -4007,7 +4010,7 @@ Index
 * T42FONTS:                              Supported file formats.
                                                               (line 220)
 * tcfmgr.map:                            Specially-recognized files.
-                                                              (line  46)
+                                                              (line  49)
 * TDS:                                   TeX directory structure.
                                                               (line   6)
 * TeX directory structure:               TeX directory structure.
@@ -4141,6 +4144,8 @@ Index
 * unreadable files:                      Searching overview.  (line  63)
 * unrestricted mode, for output files:   Safe filenames.      (line  13)
 * unusable ls-R warning:                 ls-R.                (line  51)
+* updmap.cfg:                            Specially-recognized files.
+                                                              (line  41)
 * usage patterns, finding:               Logging.             (line   6)
 * USE_TEXMFVAR:                          mktex configuration. (line 128)
 * USE_VARTEXFONTS:                       mktex configuration. (line 118)
@@ -4175,7 +4180,7 @@ Index
                                                               (line  21)
 * www.tug.org:                           unixtex.ftp.         (line   6)
 * XDvi:                                  Specially-recognized files.
-                                                              (line  41)
+                                                              (line  44)
 * XDVIFONTS:                             Supported file formats.
                                                               (line 258)
 * XDVIMAKEPK:                            mktex script names.  (line  32)
@@ -4185,66 +4190,66 @@ Index
 
 Tag Table:
 Node: Top1479
-Node: Introduction2265
-Node: History4372
-Node: unixtex.ftp8992
-Node: Security10474
-Node: Global font cache and security13282
-Node: TeX directory structure15263
-Node: Path searching19438
-Node: Searching overview20396
-Node: Path sources24303
-Node: Config files25573
-Node: Path expansion30621
-Node: Default expansion31590
-Node: Variable expansion33712
-Node: Tilde expansion35181
-Node: Brace expansion36229
-Node: KPSE_DOT expansion37224
-Node: Subdirectory expansion37749
-Node: Casefolding search40910
-Node: Casefolding rationale41687
-Node: Casefolding examples43045
-Node: Filename database48267
-Node: ls-R49281
-Node: Filename aliases53153
-Node: Database format54395
-Node: Invoking kpsewhich55444
-Node: kpsewhich examples56835
-Node: Path searching options57723
-Node: Specially-recognized files67986
-Node: Auxiliary tasks69461
-Node: Standard options73605
-Node: TeX support73973
-Node: Supported file formats75331
-Node: File lookup84082
-Node: Glyph lookup85887
-Node: Basic glyph lookup87035
-Node: Fontmap87943
-Node: Fallback font90554
-Node: Suppressing warnings91490
-Node: mktex scripts92653
-Node: mktex configuration93896
-Node: mktex script names99989
-Node: mktex script arguments101672
-Node: Programming102587
-Node: Programming overview103230
-Node: Calling sequence106141
-Node: Safe filenames111478
-Ref: openout_any111637
-Node: Program-specific files115467
-Node: Programming with config files116520
-Node: Reporting bugs118167
-Node: Bug checklist118845
-Node: Mailing lists122402
-Node: Debugging123079
-Node: Logging128336
-Node: Common problems130243
-Node: Unable to find files130720
-Node: Slow path searching133563
-Node: Unable to generate fonts134958
-Node: TeX or Metafont failing137494
-Node: Index138696
+Node: Introduction2263
+Node: History4368
+Node: unixtex.ftp8988
+Node: Security10470
+Node: Global font cache and security13278
+Node: TeX directory structure15259
+Node: Path searching19434
+Node: Searching overview20392
+Node: Path sources24299
+Node: Config files25569
+Node: Path expansion30617
+Node: Default expansion31586
+Node: Variable expansion33708
+Node: Tilde expansion35177
+Node: Brace expansion36225
+Node: KPSE_DOT expansion37220
+Node: Subdirectory expansion37745
+Node: Casefolding search40906
+Node: Casefolding rationale41683
+Node: Casefolding examples43041
+Node: Filename database48263
+Node: ls-R49277
+Node: Filename aliases53149
+Node: Database format54391
+Node: Invoking kpsewhich55440
+Node: kpsewhich examples56831
+Node: Path searching options57719
+Node: Specially-recognized files67982
+Node: Auxiliary tasks69498
+Node: Standard options73642
+Node: TeX support74010
+Node: Supported file formats75368
+Node: File lookup84119
+Node: Glyph lookup85924
+Node: Basic glyph lookup87072
+Node: Fontmap87980
+Node: Fallback font90591
+Node: Suppressing warnings91527
+Node: mktex scripts92690
+Node: mktex configuration93933
+Node: mktex script names100026
+Node: mktex script arguments101709
+Node: Programming102624
+Node: Programming overview103267
+Node: Calling sequence106178
+Node: Safe filenames111515
+Ref: openout_any111674
+Node: Program-specific files115504
+Node: Programming with config files116557
+Node: Reporting bugs118204
+Node: Bug checklist118882
+Node: Mailing lists122439
+Node: Debugging123116
+Node: Logging128373
+Node: Common problems130280
+Node: Unable to find files130757
+Node: Slow path searching133600
+Node: Unable to generate fonts134995
+Node: TeX or Metafont failing137531
+Node: Index138733
 
 End Tag Table
 

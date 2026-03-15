@@ -1,3 +1,14 @@
+2026-03-14  Karl Berry  <karl@freefriends.org>
+
+	* kpsewhich.c (argv0): new global since we need to call
+	kpathsea_set_program_name in a subroutine.
+	(main): set and use argv0.
+	(find_format): special-case dvipdfmx.cfg like the others;
+	set program name to dvipdfmx unless explicitly set.
+	* NEWS: mention this.
+	* doc/kpathsea.texi (Specially-recognized files): add updmap.cfg
+	to the list. (dvipdfmx.cfg was already there, erroneously.)
+
 2026-03-02  Karl Berry  <karl@tug.org>
 
 	* TL'26 release.

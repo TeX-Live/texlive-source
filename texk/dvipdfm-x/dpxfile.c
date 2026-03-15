@@ -478,9 +478,8 @@ dpx_open_file (const char *filename, dpx_res_type type)
   switch (type) {
   case DPX_RES_TYPE_FONTMAP:
     fqpn = dpx_find_fontmap_file(filename);
-    if (dpx_conf.verbose_level > 0) {
-      if (fqpn != NULL)
-        MESG(fqpn);
+    if (fqpn && dpx_conf.verbose_level > 0) {
+      MESG("%s", fqpn);
     }
     break;
   case DPX_RES_TYPE_T1FONT:
@@ -517,6 +516,9 @@ dpx_open_file (const char *filename, dpx_res_type type)
     break;
   case DPX_RES_TYPE_TEXT:
     fqpn = dpx_find__app__xyz(filename, "", 1);
+    if (fqpn && dpx_conf.verbose_level > 0) {
+      MESG("%s", fqpn);
+    }
     break;
   }
   if (fqpn) {
