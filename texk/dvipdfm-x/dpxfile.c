@@ -177,6 +177,7 @@ int fsyscp_stat(const char *path, struct stat *buffer)
 }
 #endif /* _WIN32 */
 
+
 #define CMDBUFSIZ 1024
 static int exec_spawn (char *cmd)
 {
@@ -265,9 +266,12 @@ static int exec_spawn (char *cmd)
     else
 #endif
       *qv = xstrdup (buf);
-/*
-    fprintf(stderr,"\n%s", *qv);
-*/
+
+    /* This is too verbose even for -vvv, but it explicitly shows
+       every element of the argv that will be passed to execvp.
+       This can be useful when debugging quoting, etc.  */
+    /* fprintf(stderr,"arg=%s\n", *qv); */
+
     while (*p == ' ' || *p == '\t')
       p++;
     qv++;
@@ -277,7 +281,7 @@ static int exec_spawn (char *cmd)
 #ifdef WIN32
 #if defined(MIKTEX)
   ret = _spawnvp(_P_WAIT, *cmdv, (const char* const*)cmdv); 
-#else
+#else /* WIN32 && not MIKTEX */
   cmdvw = xcalloc (i + 4, sizeof (wchar_t *));
   if (utf8name_failed == 0) {
     qv = cmdv;
@@ -313,8 +317,8 @@ static int exec_spawn (char *cmd)
     }
     free (cmdvw);
   }
-#endif
-#else
+#endif /* WIN32 && not MIKTEX */
+#else /* not WIN32 */
   i = fork ();
   if (i < 0)
     ret = -1;
@@ -328,7 +332,7 @@ static int exec_spawn (char *cmd)
       ret = -1;
     }
   }
-#endif
+#endif /* not WIN32 */
 done:
   qv = cmdv;
   while (*qv) {
@@ -403,7 +407,7 @@ insistupdate (const char      *filename,
 {
 #if defined(MIKTEX)
   /* users are not fools */
-#else
+#else /* !MIKTEX */
   kpse_format_info_type *fif;
   kpse_format_info_type *fir;
   if (dpx_conf.verbose_level < 1)
@@ -420,7 +424,7 @@ insistupdate (const char      *filename,
   WARN(">> Default search path for this format file is:");
   WARN(">>   %s", fir->default_path);
   WARN(">> Please read \"README\" file.");
-#endif
+#endif /* ! MIKTEX */
 }
 
 static char *
@@ -460,7 +464,7 @@ dpx_foolsearch (const char  *foolname,
 
   return  fqpn;
 }
-#endif /* MIKTEX */
+#endif /* !MIKTEX */
 
 static char *dpx_find_fontmap_file  (const char *filename);
 static char *dpx_find_agl_file      (const char *filename);
@@ -634,9 +638,9 @@ dpx_find_cmap_file (const char *filename)
     }
     memset(_tmpbuf, 0, PATH_MAX+1);
   }
-#else
+#else /* !MIKTEX_NO_KPATHSEA */
   fqpn = kpse_find_file(filename, kpse_cmap_format, 0); 
-#endif
+#endif /* !MIKTEX_NO_KPATHSEA */
 
   /* Files found above are assumed to be CMap,
    * if it's not really CMap it will cause an error.
@@ -711,9 +715,9 @@ dpx_find_enc_file (const char *filename)
     fqpn = NEW(strlen(_tmpbuf) + 1, char);
     strcpy(fqpn, _tmpbuf);
   }
-#else
+#else  /* !MIKTEX_NO_KPATHSEA */
   fqpn = kpse_find_file(q, kpse_enc_format, 0);
-#endif /* MIKTEX */
+#endif /* !MIKTEX_NO_KPATHSEA */
 
   for (i = 0; !fqpn && fools[i]; i++) { 
     fqpn = dpx_foolsearch(fools[i], q, 1);
@@ -738,10 +742,10 @@ is_absolute_path(const char *filename)
     return 1;
   if (filename[0] == '/' && filename[1] == '/')
     return 1;
-#else
+#else /* !WIN32 */
   if (filename[0] == '/')
     return 1;
-#endif
+#endif /* !WIN32 */
   return 0;
 }
 
@@ -794,7 +798,7 @@ dpx_find_opentype_file (const char *filename)
   else
     fqpn = kpse_find_file(q, kpse_opentype_format, 0);
   if (!fqpn) {
-#endif
+#endif /* !MIKTEX_NO_KPATHSEA */
     fqpn = dpx_foolsearch("dvipdfmx", q, 0);
 #ifndef  MIKTEX_NO_KPATHSEA
     if (fqpn)
@@ -892,7 +896,7 @@ dpx_create_temp_file (void)
 	}
       }
     }
-#endif
+#endif /* MIKTEX_WINDOWS */
   }
 #elif defined(HAVE_MKSTEMP)
 #  define TEMPLATE     "/dvipdfmx.XXXXXX"
@@ -915,9 +919,9 @@ dpx_create_temp_file (void)
           *p = '/';
       }
       _close(_fd);
-#  else
+#  else  /* !WIN32 */
       close(_fd);
-#  endif /* WIN32 */
+#  endif /* !WIN32 */
     } else {
       RELEASE(tmp);
       tmp = NULL;
@@ -937,14 +941,14 @@ dpx_create_temp_file (void)
       else if (*p == '\\')
         *p = '/';
     }
-#  else /* WIN32 */
+#  else /* !WIN32 */
     char *_tmpa = NEW(L_tmpnam + 1, char);
     tmp = tmpnam(_tmpa);
     if (!tmp)
       RELEASE(_tmpa);
-#  endif /* WIN32 */
+#  endif /* !WIN32 */
   }
-#endif /* MIKTEX */
+#endif /* !MIKTEX */
 
   return  tmp;
 }
@@ -985,14 +989,14 @@ dpx_create_fix_temp_file (const char *filename)
 #if defined(MIKTEX)
     if (*p == '\\')
       *p = '/';
-#else
+#else /* WIN32 && !MIKTEX */
     if (IS_KANJI (p))
       p++;
     else if (*p == '\\')
       *p = '/';
-#endif
+#endif /* WIN32 && !MIKTEX */
   }
-#endif
+#endif /* WIN32 */
   /* printf("dpx_create_fix_temp_file: %s\n", ret); */
   return ret;
 }
@@ -1061,9 +1065,8 @@ dpx_delete_temp_file (char *tmp, int force)
 
 /* Return nonzero if the filename contains characters that could break
  * out of quoting in exec_spawn()'s command parser and allow argument
- * injection.  exec_spawn() splits on spaces and handles '...' and (at
- * the beginning of words) "..." but has no escape mechanism for
- * embedded quotes.  No shell is involved, we ultimately call execvp.
+ * injection.  exec_spawn() splits on spaces and handles '...' and "..."
+ * but has no escape mechanism for embedded quotes.
  */
 static int
 filename_unsafe_for_command (const char *name)

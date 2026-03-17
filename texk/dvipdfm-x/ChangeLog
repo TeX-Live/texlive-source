@@ -1,5 +1,7 @@
 2026-03-17  Karl Berry  <karl@freefriends.org>
 
+	* dpxfile.c: comment most #else and #endif lines; more debugging info.
+
 	* pdfximage.c: rearrange verbose messages to start on new lines, 
 	and not output the command template.
 	* dpxfile.c (dpx_file_apply_filter): output actual command being run.
