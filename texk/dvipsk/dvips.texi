@@ -3,7 +3,7 @@
 @settitle Dvips: A DVI-to-PostScript translator
 
 @set version 2026.1
-@set month-year January 2026
+@set month-year March 2026
 
 @copying
 This manual documents Dvips version @value{version}
@@ -2309,17 +2309,25 @@ and to turn clipping back off, use
 
 @findex psfile @r{special}
 
-The basic special for file inclusion is as follows:
+The basic special for file inclusion is @code{psfile}, as follows:
 
 @example
-\special@{psfile=@var{filename}.ps @r{[}@var{key}=@var{value}@r{]} @dots{} @}
+\special@{psfile=@r{[}@var{quote}@r{]}@var{filename}.ps@r{[}@var{quote}@r{]} @r{[}@var{key}=@var{value}@r{]} @dots{} @}
 @end example
 
 @noindent
 This downloads the PostScript file @file{@var{filename}.ps} such that
 the current point will be the origin of the PostScript coordinate
 system.  The optional @var{key}@t{=}@var{value} assignments allow you to
-specify transformations on the PostScript.
+specify transformations on the PostScript.  The special can also be
+given with the name @code{PSfile}.
+
+@cindex quote characters in included filenames
+The optional @var{quote} character can be either @code{'} or @code{"}.
+The beginning and ending quote character must match.  There is no
+support for embedded quotes, so a filename can contain one or the
+other type of quote, but not both.  Other programs, notably
+@command{dvipdfmx}, do not allow any embedded quotes.
 
 The possible @var{key}s are:
 
