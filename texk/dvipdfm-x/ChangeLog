@@ -1,3 +1,9 @@
+2026-03-17  Karl Berry  <karl@freefriends.org>
+
+	* pdfximage.c: rearrange verbose messages to start on new lines, 
+	and not output the command template.
+	* dpxfile.c (dpx_file_apply_filter): output actual command being run.
+
 2026-03-17  Karl Berry  <karl@tug.org>
 
 	* data/dvipdfmx.cfg (D): use -- to also protect against dangerous

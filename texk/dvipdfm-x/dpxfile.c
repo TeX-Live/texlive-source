@@ -1164,6 +1164,9 @@ if ((l) + (n) >= (m)) { \
     return -1;
   }
 
+  if (dpx_conf.verbose_level > 1) {
+    MESG(">> exec_spawn(%s)\n", cmd);
+  }
   error = exec_spawn(cmd);
   if (error)
     WARN("Filtering file via command -->%s<-- failed.", cmd);
