@@ -1,3 +1,17 @@
+2026-03-17  Karl Berry  <karl@tug.org>
+
+	* data/dvipdfmx.cfg (D): use -- to also protect against dangerous
+	filenames; suggestion from Max Chernoff. Add some description
+	of how the D string value is parsed.
+
+2026-03-17  Norbert Preining  <norbert@preining.info>
+
+	* dpxfile.c (filename_unsafe_for_command): new fn to check for
+	' or " in filenames.
+	(dpx_file_apply_filter): call it.
+	Report to tlsecurity from Dawid Kulikowski of CERN,
+        9 Mar 2026 15:28:18.
+
 2026-03-14  Karl Berry  <karl@freefriends.org>
 
 	* dpxfile.c (dpx_open_file) <DPX_RES_TYPE_TEXT>: print found file,
