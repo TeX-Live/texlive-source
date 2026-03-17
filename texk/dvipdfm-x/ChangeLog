@@ -1,5 +1,7 @@
 2026-03-17  Karl Berry  <karl@freefriends.org>
 
+	* configure.ac: version 20260318 (17 was branch, so distinguish).
+
 	* dpxfile.c: comment most #else and #endif lines; more debugging info.
 
 	* pdfximage.c: rearrange verbose messages to start on new lines, 
