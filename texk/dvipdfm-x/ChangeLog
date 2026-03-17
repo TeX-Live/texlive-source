@@ -1,3 +1,16 @@
+2026-03-17  Karl Berry  <karl@tug.org>
+
+	* configure.ac: version 20260317. Post-release patch.
+	* data/dvipdfmx.cfg (D): use --; suggestion from Max Chernoff.
+
+2026-03-17  Norbert Preining  <norbert@preining.info>
+
+	* dpxfile.c (filename_unsafe_for_command): new fn to check for
+	' or " in filenames.
+	(dpx_file_apply_filter): call it.
+	Report to tlsecurity from Dawid Kulikowski of CERN,
+        9 Mar 2026 15:28:18.
+
 2026-03-02  Karl Berry  <karl@tug.org>
 
 	* TL'26 release.
