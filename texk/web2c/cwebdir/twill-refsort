@@ -1,5 +1,4 @@
 #!/usr/bin/env perl
-# $Id$
 # Public domain.  Originally written by Andreas Scherer, 2023.
 
 use strict;
@@ -39,7 +38,7 @@ sub help_handler {
 }
 ## version()
 sub version {
-  return $progname.' $Revision$ $Date$'."\n";
+  return "This is $progname (2026).\n";
 }
 
 # Read input lines from the console and look for blocks like
@@ -75,6 +74,8 @@ foreach my $line (<STDIN>)
     next; # print later
   }
 }
+
+die $usage unless $donewithpage; # no input?
 
 print "\\donewithpage$donewithpage\n"; # done with current spread
 

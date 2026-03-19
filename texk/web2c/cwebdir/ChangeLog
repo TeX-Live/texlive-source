@@ -1,3 +1,8 @@
+2026-03-19  Andreas Scherer  <https://ascherer.github.io>
+
+	* ctwill-proofsort,
+	* twill-refsort: React to empty input. Purge SVN keywords. (kb)
+
 2026-03-07  Andreas Scherer  <https://ascherer.github.io>
 
 	* cwebman-w2c.ch: Remove outdated footnote.
