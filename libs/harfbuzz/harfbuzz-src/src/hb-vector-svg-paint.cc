@@ -94,8 +94,10 @@ struct hb_vector_paint_t
   unsigned clip_rect_counter = 0;
   unsigned gradient_counter = 0;
   unsigned color_glyph_counter = 0;
+  unsigned color_glyph_depth = 0;
   hb_set_t *defined_outlines = nullptr;
   hb_set_t *defined_clips = nullptr;
+  hb_set_t *active_color_glyphs = nullptr;
   hb_hashmap_t<hb_svg_color_glyph_cache_key_t, uint64_t> defined_color_glyphs;
   hb_vector_t<hb_color_stop_t> color_stops_scratch;
   hb_vector_t<char> subset_body_scratch;
@@ -176,9 +178,17 @@ hb_svg_get_color_stops (hb_vector_paint_t *paint,
                         hb_vector_t<hb_color_stop_t> *stops)
 {
   unsigned len = hb_color_line_get_color_stops (color_line, 0, nullptr, nullptr);
+  if (unlikely (!len))
+  {
+    stops->length = 0;
+    return false;
+  }
   if (unlikely (!stops->resize (len)))
     return false;
   hb_color_line_get_color_stops (color_line, 0, &len, stops->arrayZ);
+  stops->length = len;
+  if (unlikely (!len))
+    return false;
 
   for (unsigned i = 0; i < len; i++)
     if (stops->arrayZ[i].is_foreground)
@@ -1093,17 +1103,27 @@ hb_vector_paint_color_glyph (hb_paint_funcs_t *,
   auto *paint = (hb_vector_paint_t *) paint_data;
   if (unlikely (!hb_vector_paint_ensure_initialized (paint)))
     return false;
+  if (unlikely (paint->color_glyph_depth >= HB_MAX_NESTING_LEVEL))
+    return false;
+  if (unlikely (hb_set_has (paint->active_color_glyphs, glyph)))
+    return false;
+
+  paint->color_glyph_depth++;
+  hb_set_add (paint->active_color_glyphs, glyph);
+
   hb_codepoint_t old_gid = paint->current_svg_image_glyph;
   hb_face_t *old_face = paint->current_face;
   paint->current_svg_image_glyph = glyph;
   paint->current_face = hb_font_get_face (font);
   hb_font_paint_glyph (font, glyph,
-                       hb_vector_paint_funcs_get (),
-                       paint,
-                       paint->palette,
-                       paint->foreground);
+		       hb_vector_paint_funcs_get (),
+		       paint,
+		       paint->palette,
+		       paint->foreground);
   paint->current_svg_image_glyph = old_gid;
   paint->current_face = old_face;
+  hb_set_del (paint->active_color_glyphs, glyph);
+  paint->color_glyph_depth--;
   return true;
 }
 
@@ -1132,6 +1152,7 @@ hb_vector_paint_create_or_fail (hb_vector_format_t format)
 
   paint->defined_outlines = hb_set_create ();
   paint->defined_clips = hb_set_create ();
+  paint->active_color_glyphs = hb_set_create ();
   paint->defs.alloc (4096);
   paint->path.alloc (2048);
   paint->subset_body_scratch.alloc (2048);
@@ -1174,6 +1195,7 @@ hb_vector_paint_destroy (hb_vector_paint_t *paint)
   hb_blob_destroy (paint->recycled_blob);
   hb_set_destroy (paint->defined_outlines);
   hb_set_destroy (paint->defined_clips);
+  hb_set_destroy (paint->active_color_glyphs);
   hb_object_actually_destroy (paint);
   hb_free (paint);
 }
@@ -1647,13 +1669,12 @@ hb_vector_paint_glyph (hb_vector_paint_t *paint,
     return true;
   }
 
-  auto &body = paint->current_body ();
-  hb_svg_append_str (&body, "<g transform=\"");
-  hb_svg_append_instance_transform (&body, paint->precision,
+  hb_svg_append_str (&paint->current_body (), "<g transform=\"");
+  hb_svg_append_instance_transform (&paint->current_body (), paint->precision,
 				    paint->x_scale_factor,
 				    paint->y_scale_factor,
 				    xx, yx, xy, yy, tx, ty);
-  hb_svg_append_str (&body, "\">\n");
+  hb_svg_append_str (&paint->current_body (), "\">\n");
   hb_codepoint_t old_gid = paint->current_svg_image_glyph;
   hb_face_t *old_face = paint->current_face;
   paint->current_svg_image_glyph = glyph;
@@ -1664,7 +1685,7 @@ hb_vector_paint_glyph (hb_vector_paint_t *paint,
 						paint->foreground);
   paint->current_svg_image_glyph = old_gid;
   paint->current_face = old_face;
-  hb_svg_append_str (&body, "</g>\n");
+  hb_svg_append_str (&paint->current_body (), "</g>\n");
   return ret;
 }
 
@@ -1715,12 +1736,14 @@ hb_vector_paint_clear_render_state (hb_vector_paint_t *paint)
   paint->clip_rect_counter = 0;
   paint->gradient_counter = 0;
   paint->color_glyph_counter = 0;
+  paint->color_glyph_depth = 0;
   paint->current_color_glyph_has_svg_image = false;
   paint->current_svg_image_glyph = HB_CODEPOINT_INVALID;
   paint->current_face = nullptr;
   paint->svg_image_counter = 0;
   hb_set_clear (paint->defined_outlines);
   hb_set_clear (paint->defined_clips);
+  hb_set_clear (paint->active_color_glyphs);
   paint->defined_color_glyphs.clear ();
   paint->color_stops_scratch.clear ();
   paint->subset_body_scratch.clear ();
