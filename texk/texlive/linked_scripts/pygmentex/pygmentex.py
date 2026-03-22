@@ -12,7 +12,7 @@
     :license: BSD, see LICENSE for details
 """
 
-__version__ = '0.12'
+__version__ = '0.12.1'
 __docformat__ = 'restructuredtext'
 
 import sys
@@ -330,18 +330,62 @@ def pyg(outfile, outencoding, n, opts, extra_opts, text, usedstyles, inline_deli
 
 
 def parse_opts(basedic, opts):
+    """
+    Parses a comma-separated string of LaTeX options into a dictionary.
+
+    This function safely splits LaTeX key-value pairs while respecting curly
+    brace nesting. This ensures that commas inside complex LaTeX arguments
+    (like TikZ overlay specifications or nested tcolorbox settings) do not
+    erroneously split the option string.
+
+    Args:
+        basedic (dict): A dictionary of default options to initialize with.
+        opts (str): The raw option string passed from LaTeX
+            (e.g., 'lang=c, autogobble, overlay={\draw[red, line]...}').
+
+    Returns:
+        dict: A dictionary containing the parsed options merged over the
+        defaults. Keys without an explicit '=' (e.g., 'autogobble') are
+        assigned the boolean value True. Extraneous whitespace and
+        trailing commas are safely ignored.
+    """
     dic = basedic.copy()
-    if opts:
-        # Strip the whole string first, then split
-        for opt in re.split(r'\s*,\s*', opts.strip()):
-            if opt:
-                # Split by the first '=' only
-                parts = re.split(r'\s*=\s*', opt, maxsplit=1)
-                key = parts[0].strip()
-                if key:
-                    # Determine value: if there's an '=' and the stripped RHS is non‑empty, use it; otherwise True
-                    value = parts[1].strip() if len(parts) == 2 and parts[1].strip() else True
-                    dic[key] = value
+    if not opts:
+        return dic
+    
+    # 1. Safely split by comma, ignoring commas inside {...}
+    parsed_options = []
+    current_opt = []
+    brace_level = 0
+    
+    for char in opts:
+        if char == '{':
+            brace_level += 1
+            current_opt.append(char)
+        elif char == '}':
+            brace_level -= 1
+            current_opt.append(char)
+        elif char == ',' and brace_level == 0:
+            parsed_options.append(''.join(current_opt))
+            current_opt = []
+        else:
+            current_opt.append(char)
+            
+    if current_opt:
+        parsed_options.append(''.join(current_opt))
+    
+    # 2. Extract key-value pairs
+    for opt in parsed_options:
+        opt = opt.strip()
+        if not opt:
+            continue
+        # Split by the first '=' only
+        parts = opt.split('=', 1)
+        key = parts[0].strip()
+        if key:
+            value = parts[1].strip() if len(parts) == 2 and parts[1].strip() else True
+            dic[key] = value
+            
     return dic
 
 
