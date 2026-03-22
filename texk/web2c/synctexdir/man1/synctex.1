@@ -1,4 +1,4 @@
-.Dd 08/30/2022     \" DATE
+.Dd 03/22/2026     \" DATE
 .Dt synctex 1      \" Program name and manual section number 
 .Sh NAME
 .Nm synctex
@@ -31,7 +31,9 @@ If NUMBER&8, better file compression.
 .Pp
 Use for example `pdftex -synctex=15 foo.tex' to activate all the options.
 .Pp
-Notice that LuaTeX option is `--synctex=NUMBER' with two dashes.
+Notice that LuaTeX management of SyncTeX is a bit different,
+in particular the option is `--synctex=NUMBER' with two dashes.
+See the LuaTeX manual for details.
 .Sh SEE ALSO
 .\" List links in ascending order by section, alphabetically within a section.
 .\" Please do not reference files that do not exist without filing a bug report
@@ -42,8 +44,13 @@ The Synchronize TeXnology is essentially due to Jerome Laurens,
 with useful suggestions by some well known actors of the TeX world.
 .\" .Sh BUGS              \" Document known, unremedied bugs 
 SyncTeX is maintained as part of TeX Live.
+The parser library is synchronbized with
+https://github.com/jlaurens/synctex/
+repository where development occurs and
+issues should be reported.
+The reference use case is TeXworks at https://github.com/TeXworks/texworks.
 .Sh HISTORY           \" Document history if command behaves in a unique manner
-Revised on Sun Apr 23 09:54:20 UTC 2017.
+This documentation has been updated on Sun Mar 22 06:22:32 UTC 2026.
 .\" nroff -man synctex.1 | less
 .\"groff -man -Tascii synctex.1 | less
 .\"To convert a man page to plain pre-formatted text (e.g for spell checking) use:

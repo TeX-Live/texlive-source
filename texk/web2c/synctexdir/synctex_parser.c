@@ -6348,11 +6348,8 @@ synctex_node_p synctex_scanner_input(synctex_scanner_p scanner) {
 }
 synctex_node_p synctex_scanner_input_with_tag(synctex_scanner_p scanner, int tag) {
     synctex_node_p input = scanner?scanner->input:NULL;
-    while (_synctex_data_tag(input)!=tag) {
-        if ((input = __synctex_tree_sibling(input))) {
-            continue;
-        }
-        break;
+    while (input && _synctex_data_tag(input)!=tag) {
+        input = __synctex_tree_sibling(input);
     }
     return input;
 }
