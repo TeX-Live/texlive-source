@@ -2,7 +2,7 @@
 # $Id$
 # tangle-sh: shell script to invoke tangle, ctangle, otangle.
 #
-#   Copyright 2015-2022 Karl Berry <tex-live@tug.org>
+#   Copyright 2015-2026 Karl Berry <tex-live@tug.org>
 #   Copyright 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 #
 #   This file is free software; the copyright holder
@@ -80,9 +80,12 @@ case $target in
       $AM_V_P && echo "$prg: checking for $target ... ok"
       exit 0
     else
-      $AM_V_P && echo "$prg: recovering $target"
+      $AM_V_P && echo "$prg: recovering $target (via $stamp.lock in `pwd`)"
     fi
     #
+    # When we need to "recover" these files is not clear, but looking at
+    # the make output, it does happen routinely. It seems like it would
+    # be better to do it in make, but since this code is already here ...
     trap "rm -rf $stamp $stamp.lock" 1 2 13 15
     if mkdir $stamp.lock 2>/dev/null; then
       # Code executed by the first process.
@@ -92,7 +95,17 @@ case $target in
     else
       # Code executed by the follower processes.
       # Wait until the first process is done.
-      while test -d $stamp.lock; do sleep 1; done
+      lockcount=0
+      while test -d $stamp.lock; do
+        lockcount=`expr $lockcount + 1`
+        if test $lockcount = 180; then
+          # a couple of minutes should suffice, whatever we're building.
+          echo "$0: locked for ${lockcount}s, quitting: $stamp.lock/" >&2
+          echo "$0: with cwd: `pwd`" >&2
+          exit 1
+        fi
+        sleep 1
+      done
       # Succeed if and only if the first process succeeded.
       test -f $stamp; exit $?
     fi

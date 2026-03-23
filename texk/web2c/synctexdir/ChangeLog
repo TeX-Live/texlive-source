@@ -1,13 +1,13 @@
-2026-03-02  Karl Berry  <karl@tug.org>
-
-	* TL'26 release.
-
 2026-03-22  Jerome Laurens <jerome.laurens@ube.fr>
 
-  * synctex_parser.c: Fix NULL pointer dereference.
+	* synctex_parser.c: Fix NULL pointer dereference.
 	It caused a crash when there is no input file	record in the synctex file
 	(reported by luigi scarso, Sun, 15 Mar 2026 15:05:50 +0100 on texworks@tug.org).
 	Minor documentation enhancements.
+
+2026-03-02  Karl Berry  <karl@tug.org>
+
+	* TL'26 release.
 
 2026-02-23  Norbert Preining  <norbert@preining.info>
 

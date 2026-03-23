@@ -1,3 +1,10 @@
+2026-03-22  Karl Berry  <karl@freefriends.org>
+
+	* tangle-sh.in (recovering),
+	* ctangleboot-sh.in (recovering): abort if the $stamp.lock/
+	directory (e.g., common-ctangle.lock) still exists after 180 sec,
+	since if it's gone on that long presumably it's never going to work.
+
 2026-03-02  Karl Berry  <karl@tug.org>
 
 	* TL'26 release.

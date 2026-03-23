@@ -2,9 +2,9 @@
 # $Id$
 # ctangleboot-sh: shell script to invoke ctangleboot and, if required,
 #   update c{tangle,web}boot.[ch]in from c{tangle,web}.[ch].
-# For details see tangle-sh[.in].
+# For background and commentary see tangle-sh[.in].
 #
-#   Copyright 2015-2022 Karl Berry <tex-live@tug.org>
+#   Copyright 2015-2026 Karl Berry <tex-live@tug.org>
 #   Copyright 2009-2012 Peter Breitenlohner <tex-live@tug.org>
 #
 #   This file is free software; the copyright holder
@@ -51,11 +51,13 @@ case $target in
   ;;
   *)
     # Recover from removal of $target if necessary.
+    # (See comments in tangle-sh.in.)
     if test -f $target; then
       $AM_V_P && echo "$prg: checking for $target ... ok"
       exit 0
     else
-      $AM_V_P && echo "$prg: recovering $target"
+      $AM_V_P && echo "$prg: recovering $target (via $stamp.lock in `pwd`)"
+      # e.g., common-ctangle.lock.
     fi
     #
     trap "rm -rf $stamp $stamp.lock" 1 2 13 15
@@ -67,7 +69,16 @@ case $target in
     else
       # Code executed by the follower processes.
       # Wait until the first process is done.
-      while test -d $stamp.lock; do sleep 1; done
+      lockcount=0
+      while test -d $stamp.lock; do
+        lockcount=`expr $lockcount + 1`
+        if test $lockcount = 180; then
+          echo "$0: locked for ${lockcount}s, quitting: $stamp.lock/" >&2
+          echo "$0: with cwd: `pwd`" >&2
+          exit 1
+        fi
+        sleep 1
+      done
       # Succeed if and only if the first process succeeded.
       test -f $stamp; exit $?
     fi
