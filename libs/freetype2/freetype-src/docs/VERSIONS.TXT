@@ -60,6 +60,7 @@ found on _most_ systems, but not all of them:
 
     release     libtool     so
   -------------------------------
+     2.14.3     26.6.20   6.20.6
      2.14.2     26.5.20   6.20.5
      2.14.1     26.4.20   6.20.4
      2.14.0     26.3.20   6.20.3
@@ -128,7 +129,7 @@ other release numbers.
 
 ----------------------------------------------------------------------
 
-Copyright (C) 2002-2025 by
+Copyright (C) 2002-2026 by
 David Turner, Robert Wilhelm, and Werner Lemberg.
 
 This  file is  part of  the FreeType  project, and  may only  be used,

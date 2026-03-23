@@ -1,3 +1,216 @@
+2026-03-22  Werner Lemberg  <wl@gnu.org>
+
+	* Version 2.14.3 released.
+	==========================
+
+	Tag sources with `VER-2-14-3'.
+
+	* docs/VERSION.TXT: Add entry for version 2.14.3.
+	* docs/CHANGES: Updated.
+	* docs/release, docs/README, builds/macs/README: Updated.
+
+	* README, src/base/ftver.rc, builds/windows/vc2010/index.html,
+	  builds/windows/visualc/index.html, builds/windows/visualce/index.html,
+	  builds/wince/vc2005-ce/index.html, builds/wince/vc2008-ce/index.html,
+	  docs/freetype-config.1: s/2.14.2/2.14.3/, s/2142/2143/.
+
+	* include/freetype/freetype.h (FREETYPE_PATCH): Set to 3.
+
+	* builds/unix/configure.raw (version_info): Set to 26:6:20.
+	* CMakeLists.txt (VERSION_PATCH): Set to 3.
+
+2026-03-22  Werner Lemberg  <wl@gnu.org>
+
+	* subprojects/harfbuzz.wrap: Updated.
+
+2026-03-22  David Pokora  <david.pokora@trailofbits.com>
+
+	[psaux] Avoid stack overflow.
+
+	* src/psaux/t1.decode.c (t1_decoder_parse_charstrings) [op_pop]: Check stack
+	  size.
+
+	Fixes issue #1406.
+
+2026-03-22  Werner Lemberg  <wl@gnu.org>
+
+	* src/psaux/t1decide.c (t1_decoder_parse_charstrings): Fix bounds check.
+
+	During charstring processing, the `decoder->len_buildchar` field can be
+	corrupted.  Avoid this by caching this value in a local variable at function
+	entry.
+
+	Based on a patch submitted by David Pokora <david.pokora@trailofbits.com>.
+
+	Fixes issue #1405.
+
+2026-03-20  Werner Lemberg  <wl@gnu.org>
+
+	ttnameid.h: Minor documentation improvement.
+
+2026-03-20  Werner Lemberg  <wl@gnu.org>
+
+	* src/sdf/ftsdf.c (sdf_generate_bounding_box): Fix thinko.
+
+	Bug introduced in commit bda1d87f694dd.
+
+	We would need an `FT_NEW_ARRAY_MULT` array...
+
+	Reported as
+
+	  https://issues.oss-fuzz.com/issues/494362618
+
+2026-03-19  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	[sfnt/COLRv0] Revise sanity checks.
+
+	This re-implements 6d62076a and potentially fixes #1404.
+
+	* src/sfnt/ttcolr.c (tt_face_get_colr_layer): Rely on validated total num_layers.
+
+2026-03-19  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* src/truetype/ttgload.c (TT_Process_Composite_Glyph): Fix allocation.
+
+	Fixes #1403, proposed by Chris Anderson.
+
+2026-03-18  Werner Lemberg  <wl@gnu.org>
+
+	* src/sdf/ftsdf.c (sdf_generate_bounding_box): Fix allocation.
+
+	Reported in
+
+	  https://mail.gnu.org/archive/html/freetype-devel/2026-02/msg00005.html
+
+2026-03-11  Werner Lemberg  <wl@gnu.org>
+
+	Update all copyright notices.
+
+2026-03-10  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	.gitlab-ci.yml: Upgrade Windows pipelines.
+
+2026-03-10  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	[base] Reintroduce overall rendering limits.
+
+	* src/base/ftobjs.c (ft_glyphslot_preset_bitmap): Limit absolute
+	outline coordinnates to prevent integer issues downstream.
+
+2026-03-10  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* src/base/ftglyph.c (FT_Glyph_To_Bitmap): Fix memory leak.
+
+	This leak was introduced in 85c8efe0afa5ad by overlooking the
+	direct `ft_bitmap_glyph_init` call (now gone). Fixes #1399,
+	also reported earlier:
+	  https://issues.oss-fuzz.com/issues/482909897.
+
+2026-03-10  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* src/raster/ftraster.c (Conic_To, Cubic_To): Avoid UB.
+
+	Fixes #1396.
+
+2026-03-10  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	[stroker] Actually validate outlines.
+
+	Fixes #1400.
+
+	* src/base/ftstroke.c (FT_Glyph_Stroke): Check for `GetCount` error.
+	(ft_stroke_border_get_counts): Actually return expected error.
+	(FT_Glyph_Stroke): Minor.
+
+2026-03-09  Miguel Sousa  <@miguelsousa>
+
+	* src/sfnt/ttobjs.c (tt_size_init_bytecode): Be more generous.
+
+	Fixes issue #1137.
+
+2026-03-09  Werner Lemberg  <wl@gnu.org>
+
+	* src/sfnt/ttgpos.c (tt_face_load_gpos): Correctly release `gpos`.
+
+	This is a follow-up to issue #1398.
+
+2026-03-09  Dominik Röttsches  <drott@chromium.org>
+
+	[sfnt] Use array count in sanitization of `BaseGlyphPaintRecord` list.
+
+	* src/sfnt/ttcolr.c (tt_face_load_colr): Compute correct length
+	  of `BaseGlyphPaintRecord` array size.
+
+	Fixes issue #1397.
+
+2026-03-09  Werner Lemberg  <wl@gnu.org>
+
+	* src/sfnt/ttgpos.c (tt_face_validate_pair_pos2): Correct limit check.
+
+	Fixes issue #1398.
+
+2026-03-09  Werner Lemberg  <wl@gnu.org>
+
+	* src/truetype/ttgload.c (load_truetype_glyph): Limit recursion.
+
+	Fixes issue #1395.
+
+2026-03-08  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* src/raster/ftraster.c (Set_High_Precision): Limit size.
+
+	This should avoid integer overflows:
+	   https://issues.oss-fuzz.com/issues/490433932
+	   https://issues.oss-fuzz.com/issues/490464129
+
+2026-03-06  Werner Lemberg  <wl@gnu.org>
+
+	[cid] Add boundary check in incremental interface.
+
+	* src/cid/cidgload.c (cid_load_glyph) [FT_CONFIG_OPTION_INCREMENTAL]:
+	  Validate `fd_select`.
+
+	Fixes issue #1394.
+
+2026-03-06  Werner Lemberg  <wl@gnu.org>
+
+	* src/sfnt/ttgpos.c (tt_face_get_pair_pos1_kerning): Typo.
+
+	This could lead to make FreeType miss some kerning pairs.
+
+	Fixes issue #1393.
+
+2026-03-06  Werner Lemberg  <wl@gnu.org>
+
+	* src/sfnt/ttgpos.c (tt_face_get_class): Fix range check.
+
+	Fixes issue #1392.
+
+2026-03-06  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	[base] Adjust rendering limits.
+
+	* src/base/ftobjs.c (ft_glyphslot_preset_bitmap): Check width and
+	height directly. Fixes #1390.
+
+2026-03-03  Debbie Goldsmith  <goldsmit@apple.com>
+
+	[truetype] Reject fonts without 'glyf' and 'loca' table.
+
+	* src/truetype/ttobjs.c (tt_face_init): Add check.
+
+2026-03-03  Werner Lemberg  <wl@gnu.org>
+
+	Minor whitespace.
+
+2026-03-03  Werner Lemberg  <wl@gnu.org>
+
+	CMakeLists.txt: Formatting.
+
+2026-03-02  Werner Lemberg  <wl@gnu.org>
+
+	* subprojects/*: Fix meson wrap files.
+
 2026-03-01  Werner Lemberg  <wl@gnu.org>
 
 	* Version 2.14.2 released.
