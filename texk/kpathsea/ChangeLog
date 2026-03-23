@@ -1,3 +1,13 @@
+2026-03-22  Karl Berry  <karl@freefriends.org>
+
+	* variable.c (kpathsea_var_value): call FATAL instead of assert
+	when the arguments are found. Found by Luigi with, e.g,
+	luatex --lua=test-startup.lua --fmt=/any.fmt \\end
+	where test-startup.lua contains the one line "texconfig.kpse_init=0".
+
+	* lib.h (FATAL_PERROR, START_FATAL, LIB_START_FATAL): include
+	" (kpathsea) " in the prefix to the message.
+
 2026-03-14  Karl Berry  <karl@freefriends.org>
 
 	* kpsewhich.c (argv0): new global since we need to call

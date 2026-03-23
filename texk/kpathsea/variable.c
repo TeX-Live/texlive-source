@@ -1,6 +1,7 @@
 /* variable.c: variable expansion.
 
-    Copyright 1993, 1994, 1995, 1996, 2008, 2009, 2011, 2012, 2016 Karl Berry.
+    Copyright 1993, 1994, 1995, 1996, 2008, 2009, 2011, 2012,
+    2016, 2026 Karl Berry.
     Copyright 1997, 1999, 2001, 2002, 2005 Olaf Weber.
 
     This library is free software; you can redistribute it and/or
@@ -33,7 +34,11 @@ kpathsea_var_value (kpathsea kpse, const_string var)
   string vtry, ret;
   const_string value;
 
-  assert (kpse->program_name);
+  if (! var || ! var[0]) {
+    FATAL ("kpathsea_var_value called with no variable name");
+  } else if (! kpse->program_name || ! kpse->program_name[0]) {
+    FATAL1 ("kpathsea_var_value(%s) called, but program_name not set", var);
+  }
 
   /* First look for VAR.progname. */
   vtry = concat3 (var, ".", kpse->program_name);

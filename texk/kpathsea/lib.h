@@ -1,7 +1,7 @@
 /* lib.h: declarations for common, low-level routines in kpathsea.
 
    Copyright 1992, 1993, 1994, 1995, 1996, 2008, 2009, 2010, 2011,
-             2012, 2015, 2025 Karl Berry.
+             2012, 2015, 2025, 2026 Karl Berry.
    Copyright 1999, 2000, 2003, 2005 Olaf Weber.
 
    This library is free software; you can redistribute it and/or
@@ -40,7 +40,7 @@ extern "C" {
    whenever it is available.
 */
 #define FATAL_PERROR(str) do { \
-  fprintf (stderr, "%s: ", kpse_def->invocation_name); \
+  fprintf (stderr, "%s: (kpathsea) ", kpse_def->invocation_name); \
   perror (str); exit (EXIT_FAILURE); } while (0)
 #else
 /* If there is no global variable available, just output the error */
@@ -50,10 +50,10 @@ extern "C" {
 
 #if defined (KPSE_COMPAT_API)
 #define START_FATAL() do { \
-  fprintf (stderr, "%s: fatal: ", kpse_def->invocation_name);
+  fprintf (stderr, "%s: fatal: (kpathsea) ", kpse_def->invocation_name);
 #else
 #define START_FATAL() do { \
-  fprintf (stderr, "fatal: ");
+  fprintf (stderr, "fatal: (kpathsea) ");
 #endif
 
 #define END_FATAL() fputs (".\n", stderr); exit (1); } while (0)
@@ -73,7 +73,7 @@ extern "C" {
 #define FATAL6(str, e1, e2, e3, e4, e5, e6)                       \
    START_FATAL (); fprintf (stderr, str, e1, e2, e3, e4, e5, e6); END_FATAL ()
 
-#define START_WARNING() do { fputs ("warning: ", stderr)
+#define START_WARNING() do { fputs ("warning: (kpathsea) ", stderr)
 #define END_WARNING() fputs (".\n", stderr); fflush (stderr); } while (0)
 
 #define WARNING(str)                                                    \
@@ -89,7 +89,7 @@ extern "C" {
 
 /* This requires an identifier `kpse' to be set up correctly.  Sorry.  */
 #define LIB_START_FATAL() do { \
-  fprintf (stderr, "%s: fatal: ", kpse->invocation_name);
+  fprintf (stderr, "%s: fatal: (kpathsea) ", kpse->invocation_name);
 
 #define LIB_FATAL(str)                                                  \
   LIB_START_FATAL (); fputs (str, stderr); END_FATAL ()
