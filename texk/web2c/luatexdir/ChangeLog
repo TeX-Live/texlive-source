@@ -1,3 +1,10 @@
+2026-03-20 Luigi Scarso <luigi.scarso@gmail.com>
+
+	* New callback.listidx(), returns a table of internal indexes associated with the callbacks, useful for debugging. 
+	* In kpse_mode  find_write_file  obeys the kpathsea rules for the validity of names.
+	* LuaTeX 1.25.2
+
+
 2026-03-05 Luigi Scarso <luigi.scarso@gmail.com>
 
         * Fixed wrong local_par node subtype (thanks to Udi Fogiel)
