@@ -1,0 +1,63 @@
+#! /bin/sh -vx
+# $Id$
+# Copyright 2026 Munehiro Yamamoto <munepixyz@gmail.com>
+# You may freely use, modify and/or distribute this file.
+#
+# Regression test for color stack cross-pop fix.
+#
+# The test DVI (color_stack.dvi) triggers a cross-pop between
+# "color push"/"color pop" and "pdf:bcolor"/"pdf:ecolor" using
+# the exact DVI special pattern produced by breakable tcolorbox
+# + listings on TL2022+:
+#   bcolor, bcolor, push, push, pop(1 only), ecolor, ecolor
+#
+# Without the fix, the stale bcolor entry (gray 0.49803) leaks
+# to page 2, which has no color specials. With the fix, page 2
+# is clean.
+#
+# Detection: grep for "0.498 G" in the uncompressed (-z0) PDF.
+#   Page 1 legitimately contains "0.498 G" (inside bcolor scope).
+#   Page 2 must NOT contain it.
+#   grep count = 1 -> PASS (only page 1)
+#   grep count > 1 -> FAIL (leaked to page 2)
+
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_xdvipdfmx=$BinDir/xdvipdfmx$ExeExt
+
+LC_ALL=C; export LC_ALL;  LANGUAGE=C; export LANGUAGE
+TEXMFCNF=$srcdir/../kpathsea
+TFMFONTS="$srcdir/tests;$srcdir/data"
+T1FONTS="$srcdir/tests;$srcdir/data"
+TEXFONTMAPS="$srcdir/tests;$srcdir/data"
+DVIPDFMXINPUTS="$srcdir/tests;$srcdir/data"
+export TEXMFCNF TFMFONTS T1FONTS TEXFONTMAPS DVIPDFMXINPUTS
+
+failed=
+
+rm -f color_stack.pdf
+
+echo "*** dvipdfmx: color stack cross-pop regression test"
+
+# Step 1: Convert DVI to PDF with no compression (-z0)
+$_xdvipdfmx --dvipdfmx -v -z0 -f psfonts.map \
+	-o color_stack.pdf $srcdir/tests/color_stack.dvi \
+	|| failed="$failed color-stack-convert"
+
+# Step 2: Check for corruption marker "0.498 G" (stale bcolor leak).
+# Page 1 legitimately has 1 line with "0.498 G" (bcolor scope).
+# If grep count > 1, the stale entry leaked to page 2 -> BUG.
+if test -z "$failed"; then
+	marker_count=`grep -ac '0.498 G' color_stack.pdf`
+	if test "$marker_count" -gt 1; then
+		echo "FAIL: 0.498 G found $marker_count times (stale bcolor leaked to page 2)"
+		failed="$failed color-stack-leak"
+	else
+		echo "OK: 0.498 G found $marker_count time(s) (only in bcolor scope on page 1)"
+	fi
+fi
+
+test -z "$failed" && exit 0
+echo
+echo "failed tests:$failed"
+exit 1

@@ -1,0 +1,58 @@
+%% tests/color_stack.tex
+%%
+%% Regression test for dvipdfmx color stack cross-pop fix.
+%% Compile: latex color_stack  (needs only cmr10.tfm)
+%%
+%% This simulates the exact cross-pop pattern caused by
+%% breakable tcolorbox + listings on TL2022+:
+%%   bcolor, bcolor, push, push, pop(1 only!), ecolor, ecolor
+%%
+%% The key: 2 "color push" but only 1 "color pop" before "pdf:ecolor".
+%% This causes ecolor to pop a "color push" entry instead of its
+%% matching bcolor (cross-pop), leaving a stale bcolor on the stack.
+%%
+%% The bcolor value 0.49803 is a unique gray value.
+%% If it appears on page 2 (which has no color specials),
+%% the color stack is corrupted.
+%%
+%% Test: dvipdfmx -z0 color_stack && grep -c '0.498 G' color_stack.pdf
+%%   Without patch: >= 3 (leaked to page 2)
+%%   With patch:    2 (only on page 1, inside bcolor scope)
+%%
+\documentclass[dvipdfmx,a5paper]{article}
+\begin{document}
+
+Page 1 -- cross-pop trigger.
+
+%% Simulate tcolorbox enhanced skin: bcolor [0.49803], bcolor [0]
+\special{pdf:bcolor [0.49803]}%   A: outer (unique gray marker)
+\special{pdf:bcolor [0]}%         B: inner (black)
+%% Simulate listings color: 2 pushes (TL2022+ pattern)
+\special{color push gray 0}%     C: listings text color
+\special{color push gray 0}%     D: extra push (TL2022+)
+
+Text inside color scope (bcolor + push).
+
+%% Only 1 pop before ecolor -- this is the TL2022+ pattern.
+%% D is popped, but C remains on the stack.
+\special{color pop}%             pops D only
+
+%% ecolor should pop B, but C (push) is on top -> CROSS-POP!
+\special{pdf:ecolor}%            cross-pops C instead of B
+%% ecolor should pop A, but B is now on top -> displaced
+\special{pdf:ecolor}%            pops B instead of A
+%% Result: A (gray 0.49803) remains on stack!
+
+Text after scope closed (page 1).
+
+\newpage
+
+%% Page 2: No color specials at all.
+%% If 0.498 G appears in this page's PDF stream,
+%% the stale bcolor A leaked here = BUG.
+
+Page 2 -- plain text, no color specials.
+
+If this page shows gray instead of black, the bug is reproduced.
+
+\end{document}
