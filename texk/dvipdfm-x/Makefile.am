@@ -198,7 +198,7 @@ include $(top_srcdir)/../../am/man1_links.am
 ##
 configdatadir = $(datarootdir)/texmf-dist/dvipdfmx
 dist_configdata_DATA = data/dvipdfmx.cfg
- 
+
 glyphlistdatadir = $(datarootdir)/texmf-dist/fonts/map/glyphlist
 dist_glyphlistdata_DATA = data/glyphlist.txt data/pdfglyphlist.txt
 
@@ -249,6 +249,7 @@ TESTS += xdvipdfm-rev.test xdvipdfm-ttc.test
 TESTS += dvipdfmx-upjf.test dvipdfmx-upjf2.test dvipdfmx-upjf3.test dvipdfmx-incl.test
 TESTS += dvipdfmx-lmr0.test dvipdfmx-lmr1.test
 TESTS += dvipdfmx-ttf0.test
+TESTS += dvipdfmx-color.test
 xdvipdfmx.log xdvipdfm-ann.log xdvipdfm-bad.log xdvipdfm-bb.log \
 	xdvipdfm-bkm.log xdvipdfm-pdf.log xdvipdfm-psz.log \
 	xdvipdfm-ptx.log xdvipdfm-res.log \
