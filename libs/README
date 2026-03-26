@@ -37,7 +37,7 @@ icu 78.2 - checked 21jan26
 libpaper 1.1.29 - checked 07jan24
   https://ftp.debian.org/debian/pool/main/libp/libpaper/
 
-libpng 1.6.55 - checked 10feb26
+libpng 1.6.56 - checked 26mar26
   https://sourceforge.net/projects/libpng/files/ - used by many
 
 lua 5.3.6 - checked 04oct20

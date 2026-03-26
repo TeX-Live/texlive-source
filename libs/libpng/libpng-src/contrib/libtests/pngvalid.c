@@ -3928,7 +3928,7 @@ transform_row(png_const_structp pp, png_byte buffer[TRANSFORM_ROWMAX],
 #elif PNG_LIBPNG_VER != 10700
 #  define set_write_interlace_handling(pp,type) (1)
 static void
-check_interlace_type(int const interlace_type)
+check_interlace_type(int interlace_type)
 {
    /* Prior to 1.7.0 libpng does not support the write of an interlaced image
     * unless PNG_WRITE_INTERLACING_SUPPORTED, even with do_interlace so the
@@ -4045,9 +4045,8 @@ choose_random_filter(png_structp pp, int start)
 #endif /* !WRITE_FILTER */
 
 static void
-make_transform_image(png_store* const ps, png_byte const colour_type,
-    png_byte const bit_depth, unsigned int palette_number,
-    int interlace_type, png_const_charp name)
+make_transform_image(png_store* ps, png_byte colour_type, png_byte bit_depth,
+    unsigned int palette_number, int interlace_type, png_const_charp name)
 {
    context(ps, fault);
 
@@ -4264,10 +4263,8 @@ size_row(png_byte buffer[SIZE_ROWMAX], png_uint_32 bit_width, png_uint_32 y)
 }
 
 static void
-make_size_image(png_store* const ps, png_byte const colour_type,
-    png_byte const bit_depth, int const interlace_type,
-    png_uint_32 const w, png_uint_32 const h,
-    int const do_interlace)
+make_size_image(png_store* ps, png_byte colour_type, png_byte bit_depth,
+    int interlace_type, png_uint_32 w, png_uint_32 h, int do_interlace)
 {
    context(ps, fault);
 
@@ -4461,8 +4458,7 @@ make_size_image(png_store* const ps, png_byte const colour_type,
 }
 
 static void
-make_size(png_store* const ps, png_byte const colour_type, int bdlo,
-    int const bdhi)
+make_size(png_store* ps, png_byte colour_type, int bdlo, int bdhi)
 {
    for (; bdlo <= bdhi; ++bdlo)
    {
@@ -4579,8 +4575,8 @@ static const struct
     };
 
 static void
-make_error(png_store* const ps, png_byte const colour_type,
-    png_byte bit_depth, int interlace_type, int test, png_const_charp name)
+make_error(png_store* ps, png_byte colour_type, png_byte bit_depth,
+    int interlace_type, int test, png_const_charp name)
 {
    context(ps, fault);
 
@@ -4718,8 +4714,7 @@ make_error(png_store* const ps, png_byte const colour_type,
 }
 
 static int
-make_errors(png_modifier* const pm, png_byte const colour_type,
-    int bdlo, int const bdhi)
+make_errors(png_modifier* pm, png_byte colour_type, int bdlo, int bdhi)
 {
    for (; bdlo <= bdhi; ++bdlo)
    {
@@ -5665,7 +5660,7 @@ standard_end(png_structp ppIn, png_infop pi)
 
 /* A single test run checking the standard image to ensure it is not damaged. */
 static void
-standard_test(png_store* const psIn, png_uint_32 const id,
+standard_test(png_store* psIn, png_uint_32 id,
    int do_interlace, int use_update_info)
 {
    standard_display d;
@@ -5753,8 +5748,7 @@ standard_test(png_store* const psIn, png_uint_32 const id,
 }
 
 static int
-test_standard(png_modifier* const pm, png_byte const colour_type,
-    int bdlo, int const bdhi)
+test_standard(png_modifier* pm, png_byte colour_type, int bdlo, int bdhi)
 {
    for (; bdlo <= bdhi; ++bdlo)
    {
@@ -5800,8 +5794,7 @@ perform_standard_test(png_modifier *pm)
 
 /********************************** SIZE TESTS ********************************/
 static int
-test_size(png_modifier* const pm, png_byte const colour_type,
-    int bdlo, int const bdhi)
+test_size(png_modifier* pm, png_byte colour_type, int bdlo, int bdhi)
 {
    /* Run the tests on each combination.
     *
@@ -6191,7 +6184,7 @@ image_pixel_add_alpha(image_pixel *this, const standard_display *display,
             this->have_tRNS = 0;
 
             /* Check the input, original, channel value here against the
-             * original tRNS gray chunk valie.
+             * original tRNS gray chunk value.
              */
             if (this->red == display->transparent.red)
                this->alphaf = 0;
@@ -6771,7 +6764,7 @@ transform_image_validate(transform_display *dp, png_const_structp pp,
 
    for (y=0; y<h; ++y)
    {
-      png_const_bytep const pRow = store_image_row(ps, pp, 0, y);
+      png_const_bytep pRow = store_image_row(ps, pp, 0, y);
       png_uint_32 x;
 
       /* The original, standard, row pre-transforms. */
@@ -6878,7 +6871,7 @@ transform_end(png_structp ppIn, png_infop pi)
 /* A single test run. */
 static void
 transform_test(png_modifier *pmIn, png_uint_32 idIn,
-    const image_transform* transform_listIn, const char * const name)
+    const image_transform* transform_listIn, const char *name)
 {
    transform_display d;
    context(&pmIn->this, fault);
@@ -7526,7 +7519,7 @@ static struct
    double green_coefficient;
    double blue_coefficient;
 
-   /* Set if the coeefficients have been overridden. */
+   /* Set if the coefficients have been overridden. */
    int coefficients_overridden;
 } data;
 
@@ -9000,7 +8993,7 @@ image_transform_test_counter(png_uint_32 counter, unsigned int max)
       /* For max 0 or 1 continue until the counter overflows: */
       counter >>= 1;
 
-      /* Continue if any entry hasn't reacked the max. */
+      /* Continue if any entry hasn't reached the max. */
       if (max > 1 && next->local_use < max)
          return 1;
       next = next->list;
@@ -9686,7 +9679,7 @@ gamma_component_validate(const char *name, const validate_info *vi,
        *  od: encoded result from libpng
        */
 
-      /* Now we have the numbers for real errors, both absolute values as as a
+      /* Now we have the numbers for real errors, both absolute values as a
        * percentage of the correct value (output):
        */
       error = fabs(input_sample-output);
@@ -11660,7 +11653,7 @@ main(int argc, char **argv)
 #  endif
 
    /* The following allows results to pass if they correspond to anything in the
-    * transformed range [input-.5,input+.5]; this is is required because of the
+    * transformed range [input-.5,input+.5]; this is required because of the
     * way libpng treats the 16_TO_8 flag when building the gamma tables in
     * releases up to 1.6.0.
     *
