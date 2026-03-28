@@ -59,7 +59,7 @@
 -- those in the standard .ins files.
 --
 local metadata = {
-    version   = "3.13.0-0-gdd212d58",
+    version   = "3.14.1-0-g68371ac4",
     comment   = "A module for the conversion from markdown "
              .. "to plain TeX",
     author    = "John MacFarlane, Hans Hagen, Vít Starý Novotný, "
@@ -82,6 +82,7 @@ defaultOptions.cacheDir = "."
 defaultOptions.contentBlocksLanguageMap = "markdown-languages.json"
 defaultOptions.debugExtensionsFileName = "debug-extensions.json"
 defaultOptions.frozenCacheFileName = "frozenCache.tex"
+defaultOptions.acronyms = {}
 defaultOptions.autoIdentifiers = false
 defaultOptions.blankBeforeBlockquote = false
 defaultOptions.blankBeforeCodeFence = false
