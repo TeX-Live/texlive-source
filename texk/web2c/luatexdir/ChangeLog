@@ -1,3 +1,10 @@
+2026-03-30 Luigi Scarso <luigi.scarso@gmail.com>
+
+	* Fixed #define number_fonts 
+	* New FORMAT_ID (907+61)
+	* LuaTeX 1.25.3
+
+
 2026-03-20 Luigi Scarso <luigi.scarso@gmail.com>
 
 	* New callback.listidx(), returns a table of internal indexes associated with the callbacks, useful for debugging. 
