@@ -1,0 +1,47 @@
+#! /bin/sh -vx
+# $Id$
+# Copyright 2026 Munehiro Yamamoto <munepixyz@gmail.com>
+# You may freely use, modify and/or distribute this file.
+#
+# Regression test for spot_color_name double-free bug.
+#
+# When "color push spot <name> <value>" pushes the same pdf_color
+# for both stroke and fill (shallow memcpy), the shared
+# spot_color_name pointer is freed twice on a non-top pop,
+# causing a double-free crash.
+#
+# The test DVI (spot_doublefree.dvi) triggers the pattern:
+#   color push spot CrashSpot 0.5
+#   pdf:bcolor 0 0 0 1
+#   color pop
+#
+# Without the fix, xdvipdfmx aborts with "double free".
+# With the fix, conversion succeeds normally.
+
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_xdvipdfmx=$BinDir/xdvipdfmx$ExeExt
+
+LC_ALL=C; export LC_ALL;  LANGUAGE=C; export LANGUAGE
+TEXMFCNF=$srcdir/../kpathsea
+TFMFONTS="$srcdir/tests;$srcdir/data"
+T1FONTS="$srcdir/tests;$srcdir/data"
+TEXFONTMAPS="$srcdir/tests;$srcdir/data"
+DVIPDFMXINPUTS="$srcdir/tests;$srcdir/data"
+export TEXMFCNF TFMFONTS T1FONTS TEXFONTMAPS DVIPDFMXINPUTS
+
+failed=
+
+rm -f spot_doublefree.pdf
+
+echo "*** dvipdfmx: spot_color_name double-free regression test"
+
+# Convert DVI to PDF -- should not crash.
+$_xdvipdfmx --dvipdfmx -v -z0 -f psfonts.map \
+	-o spot_doublefree.pdf $srcdir/tests/spot_doublefree.dvi \
+	|| failed="$failed spot-doublefree-crash"
+
+test -z "$failed" && exit 0
+echo
+echo "failed tests:$failed"
+exit 1

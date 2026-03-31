@@ -1,0 +1,23 @@
+%% tests/spot_doublefree.tex
+%%
+%% Regression test for spot_color_name double-free bug.
+%% Compile: tex spot_doublefree  (plain TeX, needs only cmr10.tfm)
+%%
+%% When "color push spot <name> <value>" pushes the same pdf_color
+%% for both stroke and fill, a shallow memcpy shares the
+%% spot_color_name pointer. A non-top color pop then frees
+%% both stroke and fill copies -- double free!
+%%
+%% The fix: pdf_color_copycolor deep-copies spot_color_name.
+%%
+%% Test: xdvipdfmx should NOT crash (abort/segfault).
+%%
+\hsize=4in
+\nopagenumbers
+
+\special{color push spot CrashSpot 0.5}
+\special{pdf:bcolor 0 0 0 1}
+\special{color pop}
+
+This page is only here to force output.
+\bye
