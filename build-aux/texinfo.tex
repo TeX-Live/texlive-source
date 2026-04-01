@@ -3,7 +3,7 @@
 % Load plain if necessary, i.e., if running under initex.
 \expandafter\ifx\csname fmtname\endcsname\relax\input plain\fi
 %
-\def\texinfoversion{2025-12-23.13}
+\def\texinfoversion{2026-03-31.22}
 %
 % Copyright 1985, 1986, 1988, 1990-2025 Free Software Foundation, Inc.
 %
@@ -5321,14 +5321,13 @@ $$%
 \def\indexisfl{fl}
 
 % Definition for writing index entry sort key.
-{
-\catcode`\-=13
-\gdef\indexwritesortas{%
+\def\indexwritesortas{%
   \begingroup
   \indexnonalnumreappear
-  \indexwritesortasxxx}
-\gdef\indexwritesortasxxx#1{%
-  \xdef\indexsortkey{#1}\endgroup}
+  \indexwritesortasxxx
+}
+\def\indexwritesortasxxx#1{%
+  \xdef\indexsortkey{#1}\endgroup
 }
 
 \def\indexwriteseealso#1{
@@ -5359,6 +5358,51 @@ $$%
   \expandafter\doindexsegment#1\subentry\finish\subentry
 }
 
+% \checksortas\segment
+% Call \indexwritesortas if a @sortas command appears in the segment
+\def\checksortas#1{
+  \let\sortas\relax
+  \expandafter\checksortasx#1\relax\sortas{}\sortas
+}
+\def\checksortasx#1\sortas#2#3\sortas{%
+  \def\tmp{#3}%
+  \ifx\tmp\empty\else
+    \indexwritesortas{#2}%
+  \fi
+}
+
+% \checkseealso\segment
+% Call \indexwriteseealso if a @seealso command appears in the segment
+\def\checkseealso#1{
+  \let\seealso\relax
+  \expandafter\checkseealsox#1\relax\seealso{}\seealso
+}
+\def\checkseealsox#1\seealso#2#3\seealso{%
+  \def\tmp{#3}%
+  \ifx\tmp\empty\else
+    \indexwriteseealso{#2}%
+  \fi
+}
+
+% \checkseeentry\segment
+% Call \indexwriteseeentry if a @seeentry command appears in the segment
+\def\checkseeentry#1{
+  \let\seeentry\relax
+  \expandafter\checkseeentryx#1\relax\seeentry{}\seeentry
+}
+\def\checkseeentryx#1\seeentry#2#3\seeentry{%
+  \def\tmp{#3}%
+  \ifx\tmp\empty\else
+    \indexwriteseeentry{#2}%
+  \fi
+}
+
+\def\extractindexcommands#1{%
+  \checksortas#1%
+  \checkseealso#1%
+  \checkseeentry#1%
+}
+
 % append the results from the next segment
 \def\doindexsegment#1\subentry{%
   \def\segment{#1}%
@@ -5378,9 +5422,6 @@ $$%
     % Get the string to sort by.  Process the segment with all
     % font commands turned off.
     \bgroup
-      \let\sortas\indexwritesortas
-      \let\seealso\indexwriteseealso
-      \let\seeentry\indexwriteseeentry
       \indexnofonts
       % The braces around the commands are recognized by texindex.
       \def\lbracechar{{\string\indexlbrace}}%
@@ -5394,9 +5435,7 @@ $$%
       %
       \let\indexsortkey\empty
       \global\let\pagenumbertext\empty
-      % Execute the segment and throw away the typeset output.  This executes
-      % any @sortas or @seealso commands in this segment.
-      \setbox\dummybox = \hbox{\segment}%
+      \extractindexcommands\segment
       \ifx\indexsortkey\empty{%
         \indexnonalnumdisappear
         \xdef\trimmed{\segment}%
@@ -5419,7 +5458,6 @@ $$%
   \fi
 }
 \def\isfinish{\finish}%
-\newbox\dummybox % used above
 
 \let\subentry\relax
 
@@ -7007,6 +7045,7 @@ might help (with 'rm \jobname.?? \jobname.??s')%
 \newdimen\curchapmax
 \newdimen\cursecmax
 \newdimen\curssecmax
+\newbox\dummybox % used above
 
 
 % set #1 to the maximum section width for #2
