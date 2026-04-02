@@ -63,7 +63,7 @@ General expectations:
 - Shaping work: check nearby tests under `test/shape/`.
 - Subsetting work: check `test/subset/`; `src/graph/` is part of the subsetter.
 - Raster/vector/SVG work: prefer extracting helpers and splitting oversized files by responsibility instead of adding more branching to large translation units.
-- Fuzzing/parser-hardening work: inspect `test/fuzzing/` and existing guardrail code first.
+- Fuzzing/parser-hardening work: inspect `test/fuzzing/` and existing guardrail code first. Fuzzers run with failing-malloc enabled, so treat out-of-memory handling as part of the exercised surface.
 - Build-system work: keep Meson options, summaries, installed tools, tests, and dependent targets in sync. If packaging or cross-build behavior is affected, inspect CMake too.
 - Generated data work: update the generator or makefile flow, then regenerate outputs. Do not hand-edit generated tables unless the task explicitly calls for it.
 - Rust integration work: inspect `src/rust/meson.build` and `src/rust/Cargo.toml` before changing build glue.
@@ -94,12 +94,13 @@ For API work:
 
 - Before any commit, run the entire test suite with `meson test -C build`.
 - Exception: simple documentation-only or CI-only changes may be committed without running tests if they do not affect code, build logic, generated outputs, or test inputs.
+- Never push to the remote repository. The user handles pushing.
 - Use descriptive commit messages with consistent bracketed subsystem prefixes such as `[subset]`, `[raster]`, `[util]`, or `[meson]`.
 - Wrap commit message bodies to about 70 columns.
 - For multi-line commit messages, write the message from a file or editor-backed input. Do not pass escaped `\n` sequences via shell `-m` arguments.
 - Explain root cause, fix, and testing in the commit body when testing was actually performed or is relevant.
 - When relevant, link issues or PRs with trailers such as `Fixes:`.
-- Always include an `Assisted-by:` trailer on commits you write through the agent.
+- Always include an `Assisted-by:` or `Co-Authored-By` trailer on commits you write through the agent.
 
 ## Wisdom
 

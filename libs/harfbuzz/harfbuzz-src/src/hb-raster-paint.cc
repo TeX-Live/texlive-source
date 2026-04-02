@@ -711,8 +711,12 @@ hb_raster_paint_image (hb_paint_funcs_t *pfuncs HB_UNUSED,
 
   /* Handle SVG format */
   if (format == HB_PAINT_IMAGE_FORMAT_SVG)
+  {
+    if (unlikely (!c->svg_font))
+      return false;
     return hb_raster_svg_render (c, blob, c->svg_glyph, c->svg_font,
 				 c->svg_palette, c->foreground);
+  }
 
   unsigned src_width = width;
   unsigned src_height = height;
@@ -865,16 +869,6 @@ hb_raster_paint_image (hb_paint_funcs_t *pfuncs HB_UNUSED,
 #define GRADIENT_LUT_SIZE 256
 #define GRADIENT_LUT_MIN_PIXELS (64u * 64u)
 
-static int
-cmp_color_stop (const void *p1, const void *p2)
-{
-  const hb_color_stop_t *c1 = (const hb_color_stop_t *) p1;
-  const hb_color_stop_t *c2 = (const hb_color_stop_t *) p2;
-  if (c1->offset < c2->offset) return -1;
-  if (c1->offset > c2->offset) return 1;
-  return 0;
-}
-
 static bool
 get_color_stops (hb_raster_paint_t *c,
 		 hb_color_line_t *color_line,
@@ -916,7 +910,10 @@ normalize_color_line (hb_color_stop_t *stops,
     return;
   }
 
-  hb_qsort (stops, len, sizeof (hb_color_stop_t), cmp_color_stop);
+  hb_array_t<hb_color_stop_t> (stops, len)
+    .qsort ([] (const hb_color_stop_t &a, const hb_color_stop_t &b) {
+      return a.offset < b.offset;
+    });
 
   float mn = stops[0].offset, mx = stops[0].offset;
   for (unsigned i = 1; i < len; i++)
