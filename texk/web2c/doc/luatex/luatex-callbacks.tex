@@ -62,6 +62,16 @@ The keys in the table are the known callback names, the value is a boolean where
 \type {true} means that the callback is currently set (active).
 
 \startfunctioncall
+<table> info =
+    callback.listidx()
+\stopfunctioncall
+
+
+The table is an array of known callback names. This can be useful for debugging,
+such as when an error message displays the callback index instead of its name.
+
+
+\startfunctioncall
 <function> f = callback.find(callback_name)
 \stopfunctioncall
 
@@ -1144,6 +1154,25 @@ definition can be reused instead of creating a whole new font structure.
 
 Setting this callback to \type {false} is pointless as it will prevent font
 loading completely but will nevertheless generate errors.
+
+\subsection{\cbk {font_definition}}
+
+\topicindex{callbacks+fonts}
+
+\startfunctioncall
+font_definition = function(<number> font_id)
+   return <node> special | nil
+end
+\stopfunctioncall
+
+The \type {font_id} is the internal number assigned to the font.
+
+This callback is used in the \DVI\ backend.
+If the special subtype whatsit node is returned,
+writes it directly before the font definition command to the \DVI\ file.
+It’s used by the \LaTeX\ package xdvipsk--support to provide
+maplines for Open Type fonts,
+similar to those in psfonts map files for Type1 fonts.
 
 \subsection{\cbk {glyph_not_found} and \cbk {glyph_info}}
 

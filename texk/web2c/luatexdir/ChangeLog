@@ -1,5 +1,10 @@
 2026-03-30 Luigi Scarso <luigi.scarso@gmail.com>
 
+	* LuaTeX extensions for xdvipsk support (Sigitas Tolušis)
+
+	
+2026-03-30 Luigi Scarso <luigi.scarso@gmail.com>
+
 	* Fixed #define number_fonts 
 	* New FORMAT_ID (907+61)
 	* LuaTeX 1.25.3

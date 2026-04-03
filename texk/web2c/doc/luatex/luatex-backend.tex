@@ -11,8 +11,9 @@
 \topicindex{backend}
 \topicindex{\PDF}
 
-This library contains variables and functions that are related to the \PDF\
-backend. You can find more details about the expected values to setters in \in
+This library contains variables and functions related to the \PDF\ backend,
+except for the \DVI\ backend’s \type {setdviencoding} function.
+You can find more details about the expected values to setters in \in
 {section} [backendprimitives].
 
 \startsubsection[title={\type {mapfile}, \type {mapline}}]
@@ -551,6 +552,20 @@ instance be used to add a custom \type {ToUnicode} vector to a bitmap file.
 
 \startfunctioncall
 pdf.setfontattributes(<number> font id, <string> pdf code)
+\stopfunctioncall
+
+\stopsubsection
+
+\startsubsection[title={\type {setdviencoding}}]
+
+\topicindex{\DVI+fonts}
+
+\libindex{setdviencoding}
+
+This function with argument 1 activates gid encoding for Open Type fonts in the \DVI\ backend.
+
+\startfunctioncall
+pdf.setdviencoding(0|1)
 \stopfunctioncall
 
 \stopsubsection
