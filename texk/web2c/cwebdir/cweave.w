@@ -4268,7 +4268,8 @@ index entries are not copied and \CEE/ text within \pb\ is translated.
         err_print("! TeX string should be in C text only");
 @.TeX string should be...@>
       if (next_control==verbatim)
-        err_print("! Verbatim string should be in C text only"); break;
+        err_print("! Verbatim string should be in C text only");
+      break;
 @.Verbatim string should be...@>
     case thin_space: case math_break: case ord:
     case line_break: case big_line_break: case no_line_break: case join:

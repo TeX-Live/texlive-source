@@ -1022,18 +1022,18 @@ flush_buffer(out_ptr,false,false);
 @z
 
 @x [12.232] l.4271
-        err_print("! Verbatim string should be in C text only"); break;
+        err_print("! Verbatim string should be in C text only");
 @y
-        err_print(_("! Verbatim string should be in C text only")); break;
+        err_print(_("! Verbatim string should be in C text only"));
 @z
 
-@x [12.232] l.4277
+@x [12.232] l.4278
         err_print("! You can't do that in TeX text"); break;
 @y
         err_print(_("! You can't do that in TeX text")); break;
 @z
 
-@x [12.233] l.4291
+@x [12.233] l.4292
   outer_parse(); finish_C(format_visible); format_visible=true;
   doing_format=false;
 }
@@ -1045,20 +1045,20 @@ flush_buffer(out_ptr,false,false);
 }
 @z
 
-@x [12.236] l.4343
+@x [12.236] l.4344
 @<Start \9{a}a macro...@>= {
 @y
 @<Start \9{a}a macro...@>= {
   is_macro=true;
 @z
 
-@x [12.236] l.4349
+@x [12.236] l.4350
     err_print("! Improper macro definition");
 @y
     err_print(_("! Improper macro definition"));
 @z
 
-@x [12.236] l.4350
+@x [12.236] l.4351
 @.Improper macro definition@>
   else {
     app('$'); app_cur_id(false);
@@ -1070,7 +1070,7 @@ flush_buffer(out_ptr,false,false);
     def_diff=(*loc!='(');
 @z
 
-@x [12.236] l.4362
+@x [12.236] l.4363
         } @=/* otherwise fall through */@>@;
       default: err_print("! Improper macro definition"); break;
 @y
@@ -1078,7 +1078,7 @@ flush_buffer(out_ptr,false,false);
       default: err_print(_("! Improper macro definition")); break;
 @z
 
-@x [12.237] l.4372
+@x [12.237] l.4373
 @ @<Start \9{a}a format...@>= {
   doing_format=true;
 @y
@@ -1087,25 +1087,25 @@ flush_buffer(out_ptr,false,false);
   is_macro=false;
 @z
 
-@x [12.237] l.4389
+@x [12.237] l.4390
   if (scrap_ptr!=scrap_info+2) err_print("! Improper format definition");
 @y
   if (scrap_ptr!=scrap_info+2) err_print(_("! Improper format definition"));
 @z
 
-@x [12.240] l.4424
+@x [12.240] l.4425
   err_print("! You need an = sign after the section name");
 @y
   err_print(_("! You need an = sign after the section name"));
 @z
 
-@x [12.241] l.4446
+@x [12.241] l.4447
   err_print("! You can't do that in C text");
 @y
   err_print(_("! You can't do that in C text"));
 @z
 
-@x [12.246] l.4516
+@x [12.246] l.4517
 out_str("\\fi"); finish_line();
 @.\\fi@>
 @y
@@ -1116,13 +1116,13 @@ out_str("}\\FI"); finish_line();
 @.\\FI@>
 @z
 
-@x [13.247] l.4537
+@x [13.247] l.4538
   if (show_progress) printf("%s","\nWriting the index...");
 @y
   if (show_progress) printf("%s",_("\nWriting the index..."));
 @z
 
-@x [13.247] l.4539
+@x [13.247] l.4540
   if (change_exists) {
     @<Tell about changed sections@>@;
     finish_line(); flush_buffer(out_buf,false,false);
@@ -1131,32 +1131,32 @@ out_str("}\\FI"); finish_line();
 @y
 @z
 
-@x [13.247] l.4548
+@x [13.247] l.4549
     fatal("! Cannot open index file ",idx_file_name);
 @y
     fatal(_("! Cannot open index file "),idx_file_name);
 @z
 
-@x [13.247] l.4560
+@x [13.247] l.4561
     fatal("! Cannot open section file ",scn_file_name);
 @y
     fatal(_("! Cannot open section file "),scn_file_name);
 @z
 
-@x [13.247] l.4572
+@x [13.247] l.4573
 fclose(active_file);
 @y
 fclose(active_file); active_file=tex_file=NULL;
 if (check_for_change) @<Update the result when it has changed@>@;
 @z
 
-@x [13.247] l.4575
+@x [13.247] l.4576
   printf("%s","Done.");
 @y
   printf("%s",_("Done."));
 @z
 
-@x [13.249] l.4583
+@x [13.249] l.4584
 the index section itself.
 
 @<Tell about changed sections@>=
@@ -1175,13 +1175,13 @@ out('.');
 the index section itself---NOT!
 @z
 
-@x [13.257] l.4727
+@x [13.257] l.4728
     if (sort_ptr>=scrap_info_end) overflow("sorting");
 @y
     if (sort_ptr>=scrap_info_end) overflow(_("sorting"));
 @z
 
-@x [13.262] l.4772
+@x [13.262] l.4773
 @ @<Output the name...@>=
 switch (cur_name->ilk) {@+char *p; /* index into |byte_mem| */@+@t}\6{\4@>
 @y
@@ -1192,20 +1192,20 @@ rest of the job.  Compare this code with section |@<Mini-output...@>|.
 switch (cur_name->ilk) {
 @z
 
-@x [13.262] l.4774
+@x [13.262] l.4775
   case normal: case func_template:
 @y
   case normal:
 @z
 
-@x [13.262] l.4776
+@x [13.262] l.4777
     else {@+bool all_caps=true;@+@t}\6{@>
 @y
     else {@+bool all_caps=true;@+char *p;
       /* index into |byte_mem| */ @+@t}\6{@>
 @z
 
-@x [13.262] l.4791
+@x [13.262] l.4792
   case roman: not_an_identifier: out_name(cur_name,false); goto name_done;
   case custom:
     out_str("$\\");
@@ -1220,13 +1220,13 @@ not_an_identifier: out_name(cur_name,false); goto name_done;
 @.\\\$@>
 @z
 
-@x [13.262] l.4801
+@x [13.262] l.4802
 out_name(cur_name,true);
 @y
 out_name(cur_name,proofing);
 @z
 
-@x [13.269] l.4864
+@x [13.269] l.4865
   puts("\nMemory usage statistics:");
 @.Memory usage statistics:@>
   printf("%td names (out of %ld)\n",@^system dependencies@>
@@ -1275,7 +1275,7 @@ out_name(cur_name,proofing);
             (ptrdiff_t)(max_sort_ptr-scrap_info),(long)max_scraps);
 @z
 
-@x [14.270] l.4886
+@x [14.270] l.4887
 @** Index.
 @y
 @q Section 270. @>
