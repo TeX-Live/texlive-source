@@ -64,6 +64,7 @@ General expectations:
 - Subsetting work: check `test/subset/`; `src/graph/` is part of the subsetter.
 - Raster/vector/SVG work: prefer extracting helpers and splitting oversized files by responsibility instead of adding more branching to large translation units.
 - Fuzzing/parser-hardening work: inspect `test/fuzzing/` and existing guardrail code first. Fuzzers run with failing-malloc enabled, so treat out-of-memory handling as part of the exercised surface.
+  For experimental libraries such as raster, vector, and gpu, the minimum bar under failing-malloc is still no crashes, no out-of-bounds access, and no memory corruption. Best-effort early failure is acceptable; do not add complex rollback logic just to preserve partial work after OOM.
 - Build-system work: keep Meson options, summaries, installed tools, tests, and dependent targets in sync. If packaging or cross-build behavior is affected, inspect CMake too.
 - Generated data work: update the generator or makefile flow, then regenerate outputs. Do not hand-edit generated tables unless the task explicitly calls for it.
 - Rust integration work: inspect `src/rust/meson.build` and `src/rust/Cargo.toml` before changing build glue.
@@ -94,6 +95,7 @@ For API work:
 
 - Before any commit, run the entire test suite with `meson test -C build`.
 - Exception: simple documentation-only or CI-only changes may be committed without running tests if they do not affect code, build logic, generated outputs, or test inputs.
+- Keep each commit focused on a single issue or concern. Do not combine unrelated fixes, API renames, refactors, or behavior changes into one commit unless the user explicitly asks for that.
 - Never push to the remote repository. The user handles pushing.
 - Use descriptive commit messages with consistent bracketed subsystem prefixes such as `[subset]`, `[raster]`, `[util]`, or `[meson]`.
 - Wrap commit message bodies to about 70 columns.

@@ -43,6 +43,7 @@ struct hb_gpu_curve_t
   double p1x, p1y;
   double p2x, p2y;
   double p3x, p3y;
+  bool contour_start;
 };
 
 struct hb_gpu_encode_curve_info_t
@@ -104,6 +105,10 @@ struct hb_gpu_draw_t
   double ext_min_y =  HUGE_VAL;
   double ext_max_x = -HUGE_VAL;
   double ext_max_y = -HUGE_VAL;
+
+  /* Font scale (set by hb_gpu_draw_set_scale or hb_gpu_draw_glyph). */
+  int x_scale = 0;
+  int y_scale = 0;
 
   /* Encode scratch (reused across calls) */
   hb_gpu_encode_scratch_t scratch;
