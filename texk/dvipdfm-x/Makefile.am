@@ -321,6 +321,8 @@ DISTCLEANFILES += upjf.vf upjv.vf upjf-*.ofm upjv-*.ofm upjf-*.tfm upjf_*.pdf up
 ## dvipdfmx-upjf2.test
 EXTRA_DIST += tests/upjf2_full.zvp0 tests/upjf2_full.vf
 EXTRA_DIST += tests/upjv2_full.zvp0 tests/upjv2_full.vf
+EXTRA_DIST += tests/upjf5_fb.zvp0 tests/upjf5_fb.vf
+EXTRA_DIST += tests/upjv5_fb.zvp0 tests/upjv5_fb.vf
 EXTRA_DIST += tests/upjf-c.pl tests/upjf-c.tfm
 EXTRA_DIST += tests/upjv-c.pl tests/upjv-c.tfm
 EXTRA_DIST += tests/upjf-hara.map

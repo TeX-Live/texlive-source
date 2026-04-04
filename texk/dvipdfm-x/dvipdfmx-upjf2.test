@@ -1,6 +1,6 @@
 #! /bin/sh -vx
 # $Id$
-# Copyright 2020-2024 Japanese TeX Development Community <issue@texjp.org>
+# Copyright 2020-2026 Japanese TeX Development Community <issue@texjp.org>
 # You may freely use, modify and/or distribute this file.
 
 KpsDir=${KpsDir:-../kpathsea}
@@ -52,6 +52,18 @@ echo "*** dvipdfmx: test for upjf2_full-hara.pdf" && echo \
 	&& mv ./upjf2.pdf ./upjf2_full-hara.pdf \
 	&& echo && echo "dvipdfmx-upjf2-vf_full-hara tests OK" && echo \
 	|| failed="$failed dvipdfmx-upjf2-vf_full-hara"
+
+echo "*** dvipdfmx: test for upjf5_fb-hara.pdf" && echo \
+	&& cp $srcdir/tests/upjf5_fb.vf ./tmp001/upjf.vf \
+	&& cp $srcdir/tests/upjv5_fb.vf ./tmp001/upjv.vf \
+	&& cp $srcdir/tests/upjf2_full.vf ./tmp001/upjf2.vf \
+	&& cp $srcdir/tests/upjv2_full.vf ./tmp001/upjv2.vf \
+	&& cp $srcdir/tests/upjf.tfm ./tmp001/upjf2.tfm \
+	&& cp $srcdir/tests/upjv.tfm ./tmp001/upjv2.tfm \
+	&& $_xdvipdfmx --dvipdfmx -vv --pdfm-str-utf8 -f upjf-hara.map -o upjf5.pdf $srcdir/tests/upjf2.dvi \
+	&& mv ./upjf5.pdf ./upjf5_fb-hara.pdf \
+	&& echo && echo "dvipdfmx-upjf5-vf_fb-hara tests OK" && echo \
+	|| failed="$failed dvipdfmx-upjf5-vf_fb-hara"
 
 
 test -z "$failed" && exit 0

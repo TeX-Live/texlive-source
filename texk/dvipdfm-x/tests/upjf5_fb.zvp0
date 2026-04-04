@@ -1,0 +1,29 @@
+(VTITLE )
+(DESIGNSIZE R 10.0)
+(CHECKSUM O 0)
+(MAPFONT D 0
+   (FONTNAME upjf2)
+   (FONTCHECKSUM O 0)
+   (FONTAT R 1.0)
+   (FONTDSIZE R 10.0)
+   )
+(MAPFONT D 1
+   (FONTNAME upjf-g)
+   (FONTCHECKSUM O 0)
+   (FONTAT R 1.0)
+   (FONTDSIZE R 10.0)
+   )
+(CHARACTER H 2600
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 2600)
+      )
+   )
+(CHARACTER H 2603
+   (CHARWD R 1.0)
+   (MAP
+      (SELECTFONT D 1)
+      (SETCHAR H 2603)
+      )
+   )

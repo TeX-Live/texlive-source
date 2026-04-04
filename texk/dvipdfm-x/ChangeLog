@@ -1,3 +1,14 @@
+2026-04-04  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* vf.c: Enable fallback SVS/IVS characters in virtual fonts
+	for upTeX.
+	* dvipdfmx-upjf2.test, tests/upj{f,v}5_fb.{vf,zvp0},
+	tests/Makefile_upjf, Makefile.am:
+	Add tests for fallback SVS/IVS characters.
+	Thanks to Yukimasa Morimi.
+	https://github.com/texjporg/tex-jp-build/issues/196
+	* configure.ac: version 20260404.
+
 2026-03-17  Karl Berry  <karl@freefriends.org>
 
 	* configure.ac: version 20260318 (17 was branch, so distinguish).

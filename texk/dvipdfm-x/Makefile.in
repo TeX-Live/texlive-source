@@ -831,8 +831,8 @@ DISTCLEANFILES = config.force image*.pdf xbmc*.pdf annot*.pdf pic*.* \
 	bookm*.pdf xdvipdfm-pdf*.pdf paper*.pdf ptex*.pdf resrc*.pdf \
 	reverse.pdf ttc*.pdf upjf.vf upjv.vf upjf-*.ofm upjv-*.ofm \
 	upjf-*.tfm upjf_*.pdf upjf1_*.pdf upjf2_*.pdf upjf3_*.pdf \
-	multi_incl.pdf lmr0-*.pdf cprm*.pdf \
-	color_stack.pdf spot_doublefree.pdf
+	multi_incl.pdf lmr0-*.pdf cprm*.pdf color_stack.pdf \
+	spot_doublefree.pdf
 TESTS = xdvipdfmx.test xdvipdfm-ann.test xdvipdfm-bad.test \
 	xdvipdfm-bb.test xdvipdfm-bkm.test xdvipdfm-pdf.test \
 	xdvipdfm-psz.test xdvipdfm-ptx.test xdvipdfm-res.test \
@@ -868,10 +868,11 @@ EXTRA_DIST = $(TESTS) tests/dvipdfmx.cfg tests/psfonts.map \
 	tests/upjf1-r.tfm tests/upjf1_full.zvp0 tests/upjf1_full.vf \
 	tests/upjf1_omit.zvp0 tests/upjf1_omit.vf \
 	tests/upjf2_full.zvp0 tests/upjf2_full.vf \
-	tests/upjv2_full.zvp0 tests/upjv2_full.vf tests/upjf-c.pl \
-	tests/upjf-c.tfm tests/upjv-c.pl tests/upjv-c.tfm \
-	tests/upjf-hara.map tests/upjf3_full.zvp0 tests/upjf3_full.vf \
-	tests/upjv3_full.zvp0 tests/upjv3_full.vf \
+	tests/upjv2_full.zvp0 tests/upjv2_full.vf tests/upjf5_fb.zvp0 \
+	tests/upjf5_fb.vf tests/upjv5_fb.zvp0 tests/upjv5_fb.vf \
+	tests/upjf-c.pl tests/upjf-c.tfm tests/upjv-c.pl \
+	tests/upjv-c.tfm tests/upjf-hara.map tests/upjf3_full.zvp0 \
+	tests/upjf3_full.vf tests/upjv3_full.zvp0 tests/upjv3_full.vf \
 	tests/upjf4_full.zvp0 tests/upjf4_full.vf \
 	tests/upjv4_full.zvp0 tests/upjv4_full.vf tests/upjf-hu.tfm \
 	tests/upjf-hi.tfm tests/upjv-hu.tfm tests/upjv-hi.tfm \
