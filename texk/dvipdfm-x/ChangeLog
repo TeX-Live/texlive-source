@@ -29,7 +29,8 @@
 
 	* dpxfile.c (filename_unsafe_for_command): new fn to check for
 	' or " in filenames.
-	(dpx_file_apply_filter): call it.
+	(dpx_file_apply_filter): call it. Filenames with embedded " chars,
+	which worked before, will now fail.
 	Report to tlsecurity from Dawid Kulikowski of CERN,
         9 Mar 2026 15:28:18.
 
