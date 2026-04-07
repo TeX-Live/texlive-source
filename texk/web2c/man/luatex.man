@@ -1,4 +1,4 @@
-.TH LUATEX 1 "14 February 2026" "Web2C @VERSION@"
+.TH LUATEX 1 "6 April 2026" "Web2C @VERSION@"
 .\"=====================================================================
 .if t .ds TX \fRT\\h'-0.10m'\\v'0.17v'E\\v'-0.17v'\\h'-0.06m'X\fP
 .if n .ds TX TeX
@@ -100,9 +100,12 @@ does not have the \fB-l\fR switch, and that it accepts and ignores
 the \fB--luaconly\fR switch.
 .TP
 .B --safer
-Disable most file-modifying and program-executing Lua functions.
-This option is disabled by default since it breaks most
-documents.
+Disable most file-modifying and program-executing Lua functions,
+including writing anywhere except the current directory. This option is
+disabled by default since it breaks the normal font-loading code,
+\fIluaotfload\fP (which needs to write to \fB$TEXMFCACHE\fP). All the
+other safety features are already set by default, unless the \fB--lua\fP
+option is used (see above).
 .TP
 .B --luadebug
 Enables the standard Lua \fIdebug\fP module, which is disabled by
