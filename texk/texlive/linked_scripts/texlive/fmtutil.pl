@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: fmtutil.pl 77314 2026-01-09 16:20:28Z karl $
+# $Id: fmtutil.pl 78589 2026-04-04 06:31:27Z preining $
 # fmtutil - utility to maintain format files.
 # (Maintained in TeX Live:Master/texmf-dist/scripts/texlive.)
 # 
@@ -42,11 +42,11 @@ BEGIN {
   TeX::Update->import();
 }
 
-my $svnid = '$Id: fmtutil.pl 77314 2026-01-09 16:20:28Z karl $';
-my $lastchdate = '$Date: 2026-01-09 17:20:28 +0100 (Fri, 09 Jan 2026) $';
+my $svnid = '$Id: fmtutil.pl 78589 2026-04-04 06:31:27Z preining $';
+my $lastchdate = '$Date: 2026-04-04 08:31:27 +0200 (Sat, 04 Apr 2026) $';
 $lastchdate =~ s/^\$Date:\s*//;
 $lastchdate =~ s/ \(.*$//;
-my $svnrev = '$Revision: 77314 $';
+my $svnrev = '$Revision: 78589 $';
 $svnrev =~ s/^\$Revision:\s*//;
 $svnrev =~ s/\s*\$$//;
 my $version = "r$svnrev ($lastchdate)";
@@ -512,7 +512,7 @@ sub callback_build_formats {
         } elsif ($val == $FMT_FAILURE)  {
           log_to_status("FAILURE", $fmt, $eng, $what, $whatarg);
           $err++;
-          push (@err, "$eng/$fmt");
+          push (@err, "$fmt/$eng");
         } elsif ($val == $FMT_SUCCESS)  {
           log_to_status("SUCCESS", $fmt, $eng, $what, $whatarg);
           $suc++;

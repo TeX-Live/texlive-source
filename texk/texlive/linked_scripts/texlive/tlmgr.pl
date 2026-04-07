@@ -1,6 +1,6 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 78301 2026-03-07 17:41:28Z preining $
-# Copyright 2008-2025 Norbert Preining
+# $Id: tlmgr.pl 78616 2026-04-06 13:48:59Z karl $
+# Copyright 2008-2026 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 # 
@@ -8,8 +8,8 @@
 
 use strict; use warnings;
 
-my $svnrev = '$Revision: 78301 $';
-my $datrev = '$Date: 2026-03-07 18:41:28 +0100 (Sat, 07 Mar 2026) $';
+my $svnrev = '$Revision: 78616 $';
+my $datrev = '$Date: 2026-04-06 15:48:59 +0200 (Mon, 06 Apr 2026) $';
 my $tlmgrrevision;
 my $tlmgrversion;
 my $prg;
@@ -6057,6 +6057,8 @@ sub check_executes {
         $pkg = "luajittex";
       } elsif ($engine eq "mfluajit") {
         $pkg = "mflua";
+      } elsif ($engine eq "xetex") {
+        $pkg = "xetex";
       } else {
         die "unknown partial engine $engine, goodbye"; # should not happen
       }
@@ -10636,7 +10638,7 @@ This script and its documentation were written for the TeX Live
 distribution (L<https://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 78301 2026-03-07 17:41:28Z preining $
+$Id: tlmgr.pl 78616 2026-04-06 13:48:59Z karl $
 =cut
 
 # test HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html
