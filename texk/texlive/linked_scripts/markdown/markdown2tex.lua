@@ -59,7 +59,7 @@
 -- those in the standard .ins files.
 --
 local metadata = {
-    version   = "3.14.1-0-g68371ac4",
+    version   = "3.15.0-0-g58d7bf4d",
     comment   = "A module for the conversion from markdown "
              .. "to plain TeX",
     author    = "John MacFarlane, Hans Hagen, Vít Starý Novotný, "
@@ -112,6 +112,7 @@ defaultOptions.gfmAutoIdentifiers = false
 defaultOptions.hashEnumerators = false
 defaultOptions.headerAttributes = false
 defaultOptions.html = true
+defaultOptions.htmlOutput = "basic"
 defaultOptions.htmlOverLinks = false
 experimentalOptions.htmlOverLinks = true
 defaultOptions.hybrid = false
