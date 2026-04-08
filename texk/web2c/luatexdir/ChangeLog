@@ -1,3 +1,13 @@
+2026-04-08 Luigi Scarso <luigi.scarso@gmail.com>
+
+	* Fixed io.tmpdir in --safer mode. LuaTeX 1.25.5
+
+
+2026-04-08 Luigi Scarso <luigi.scarso@gmail.com>
+
+	* Fixed io.open in --safer mode. LuaTeX 1.25.4
+
+
 2026-03-30 Luigi Scarso <luigi.scarso@gmail.com>
 
 	* LuaTeX extensions for xdvipsk support (Sigitas Tolušis)
