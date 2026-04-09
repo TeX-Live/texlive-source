@@ -1,3 +1,8 @@
+2026-04-09 Luigi Scarso <luigi.scarso@gmail.com>
+
+	* Fixed dvigen.c for  xdvipsk (Hans Hagen). LuaTeX 1.25.6
+
+
 2026-04-08 Luigi Scarso <luigi.scarso@gmail.com>
 
 	* Fixed io.tmpdir in --safer mode. LuaTeX 1.25.5

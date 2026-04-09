@@ -1307,9 +1307,18 @@ void dvi_place_glyph(PDF pdf, internal_font_number f, int c, int ex)
             if (font_callback_id != 0) {
                 halfword font_special = null;
                 run_callback(font_callback_id, "d->N", f, &font_special);
-                if (font_special != null) {
-                   dvi_special(pdf, font_special);
-                   flush_node(font_special);
+                /*
+                    We need to check for the 
+                    kind of node returned as |dvi_special| doesn't do any checking.
+                */
+                if (font_special == null) { 
+                    /* ignore */
+                } else if (type(font_special) == whatsit_node && (subtype(font_special) == special_node || subtype(font_special) == late_special_node)) {
+                    dvi_special(pdf, font_special);
+                    flush_node(font_special);
+                } else { 
+                    print_err(" ==> Fatal error occurred: invalid node injection, bad output DVI file produced!");
+                    jump_out();
                 }
             }
             dvi_font_def(f);
