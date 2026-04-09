@@ -1,4 +1,4 @@
-% language=uk
+% language=us engine=luatex runpath=texruns:manuals/luatex
 
 \environment luatex-style
 
@@ -60,16 +60,6 @@ all). Be warned: this may cause all sorts of grief unless you know \notabene
 
 The keys in the table are the known callback names, the value is a boolean where
 \type {true} means that the callback is currently set (active).
-
-\startfunctioncall
-<table> info =
-    callback.listidx()
-\stopfunctioncall
-
-
-The table is an array of known callback names. This can be useful for debugging,
-such as when an error message displays the callback index instead of its name.
-
 
 \startfunctioncall
 <function> f = callback.find(callback_name)
@@ -947,16 +937,21 @@ interaction after the message is not affected.
 
 \topicindex{callbacks+errors}
 
+This is a \PDFTEX\ (?) compatibility features (put in the \ETEX\ extensions
+namespace).
+
+% In the perspective of \LUATEX\ it could have been a bitset because it somehow
+% relates to splitting but the name of this callback and the related primitive has
+% no relation to splitting. So be it.
+
 \startfunctioncall
 function()
 end
 \stopfunctioncall
 
-This callback replaces the code that prints the error message
-when \prm {ignoreprimitiveerror} is enabled.
-As before, the usual
-interaction after the message is not affected.
-
+This callback replaces the code that prints the error message when \prm
+{ignoreprimitiveerror} is enabled. The usual interaction afterwards (one can
+decide not to show a message) is not affected.
 
 \subsection{\cbk {show_lua_error_hook}}
 
@@ -1155,25 +1150,6 @@ definition can be reused instead of creating a whole new font structure.
 Setting this callback to \type {false} is pointless as it will prevent font
 loading completely but will nevertheless generate errors.
 
-\subsection{\cbk {font_definition}}
-
-\topicindex{callbacks+fonts}
-
-\startfunctioncall
-font_definition = function(<number> font_id)
-   return <node> special | nil
-end
-\stopfunctioncall
-
-The \type {font_id} is the internal number assigned to the font.
-
-This callback is used in the \DVI\ backend.
-If the special subtype whatsit node is returned,
-writes it directly before the font definition command to the \DVI\ file.
-It’s used by the \LaTeX\ package xdvipsk--support to provide
-maplines for Open Type fonts,
-similar to those in psfonts map files for Type1 fonts.
-
 \subsection{\cbk {glyph_not_found} and \cbk {glyph_info}}
 
 \topicindex{callbacks+fonts}
@@ -1223,13 +1199,35 @@ function(<number> mode, <number> id, <number> char)
 end
 \stopfunctioncall
 
-To make a user-defined Type~3 font, you need to set \type {encodingbytes = 0}
+To make a user|-|defined Type~3 font, you need to set \type {encodingbytes = 0}
 and \type {psname = "none"} at the top-level when defining the font. From the
 \type {glyph_not_found} callback, you should return the overall font scale
 (conventionally 0.001) in mode~3, and the index of a \PDF\ stream (where the
-first operator is either \type {d0} or \type {d1}) and the width of the glyph
-(in sp's) in mode~2. You can generally ignore mode~1.
+first operator is either \type {d0} or \type {d1}) and the width of the glyph (in
+sp's) in mode~2. You can generally ignore mode~1. No sanity checks are done, so
+whether it all works out well is up to the user.
 
+\stopsection
+
+\subsection{\cbk {dvi_output}}
+
+\topicindex{callbacks+fonts}
+
+The \type {dvi_output} callback can be triggered when the \DVI\ backend writes to
+the \DVI\ file. Currently we only have one such location: when a character is
+written to a file and the font has not been seen before.
+
+\startfunctioncall
+function(<number> where, <number> id)
+    if where == 1 then
+        return "using font id " .. id
+    end
+end
+\stopfunctioncall
+
+Of course, whatever gets written should be acceptable for the \DVI\ post
+processor; no checking is done by \LUATEX. Future variants might pass different
+arguments, depending on additional values of \type {where}.
 
 \stopsection
 

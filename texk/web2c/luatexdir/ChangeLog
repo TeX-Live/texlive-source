@@ -1,5 +1,10 @@
 2026-04-09 Luigi Scarso <luigi.scarso@gmail.com>
 
+	* Better fixes  for  xdvipsk (Hans Hagen).
+	
+
+2026-04-09 Luigi Scarso <luigi.scarso@gmail.com>
+
 	* Fixed dvigen.c for  xdvipsk (Hans Hagen). LuaTeX 1.25.6
 
 
