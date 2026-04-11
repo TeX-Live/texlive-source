@@ -309,53 +309,45 @@ void add_glyph_tounicode(
             lmp->tounicode = uni32_2_utf16(ucode, &ucnt);
             lmp->tu_count = ucnt;
         }
-
-        if (glyph_name[0])
-        {
-            strcpy(map_line, "load_touni({['otf:");
-            strncat(map_line, map->name, ENC_BUF_SIZE - strlen(map_line) - 20);
-            map_line[ENC_BUF_SIZE] = '\0';
-            strlwr(map_line);
-            strcat(map_line, "/");
-            strncat(map_line, glyph_name, ENC_BUF_SIZE - strlen(map_line) - 20);
-            map_line[ENC_BUF_SIZE] = '\0';
-            strcat(map_line, "'] = {");
-            for (ii = 0; ii < ucnt; ii++)
-            {
-                if (strlen(map_line) >= ENC_BUF_SIZE - 20)
-                    break;
-                sprintf(map_line + strlen(map_line), "0x%04X, ", lmp->tounicode[ii]);
-            }
-            strcat(map_line, "}}, false, \'\')");
-            if (luaL_dostring(L, map_line))
-            {
-                PRINTF_PR("Error: Lua script %.500s execution error: %.500s.\n", map_line, lua_tostring(L, -1));
-                lua_pop(L, 1);
-            }
-        }
     }
 }
 
-/* iterates through all unicode values of the font encoding and fills LuaMap */
-static void LuaMap_ftget(struct LuaMap *map, FT_Face ft_face)
+/* iterates through all unicode values of the otf font encoding and fills LuaMap */
+static void LuaMap_ftget(struct LuaMap *map, FT_Face ft_face, const charusetype_entry *cu_head)
 {
     FT_UInt gid;
     FT_ULong ucode;
+    const charusetype_entry *cu_entry;
+    const UsedMapElem *usedchars;
 
-    gid = 0;
-    ucode = FT_Get_First_Char(ft_face, &gid);
-    while (TRUE)
+    assert(cu_head);
+    cu_entry = cu_head;
+    while (cu_entry)
     {
-        add_glyph_tounicode(map, ft_face, gid, ucode, TRUE);
+        usedchars = NULL;
+        if (cu_entry->charused_ptr)
+            usedchars = cu_entry->charused_ptr->bitmap;
+        if (usedchars)
+        {
+            gid = 0;
+            ucode = FT_Get_First_Char(ft_face, &gid);
+            while (TRUE)
+            {
+                if (IS_USED_CHAR(usedchars, gid))
+                    add_glyph_tounicode(map, ft_face, gid, ucode, TRUE);
 
-        if (gid == 0)
-            break;
-        ucode = FT_Get_Next_Char(ft_face, ucode, &gid);
+                if (gid == 0)
+                    break;
+                ucode = FT_Get_Next_Char(ft_face, ucode, &gid);
+            }
+
+            /* adding unicodeless gid's */
+            for (gid = 0; gid < ft_face->num_glyphs; gid++)
+                if (IS_USED_CHAR(usedchars, gid))
+                    add_glyph_tounicode(map, ft_face, gid, 0x100000 + (gid & 0x7FFF), FALSE);
+        }
+        cu_entry = cu_entry->next;
     }
-
-    /* adding unicodeless gid's */
-    for (gid = 0; gid < ft_face->num_glyphs; gid++)
-        add_glyph_tounicode(map, ft_face, gid, 0x100000 + (gid & 0x7FFF), FALSE);
 }
 
 static void LuaMap_release(struct LuaMap *map)
@@ -396,34 +388,119 @@ LuaMap_cache_get (int id)
   return __cache->luamaps[id]->luamap;
 }
 
+static int LuaMap_cache_lookup(const char *luamap_name)
+{
+    int id = -1;
+    int ii;
+    char *name;
+
+    if (!__cache)
+        LuaMap_cache_init();
+    ASSERT(__cache);
+
+    for (ii = 0; ii < __cache->num; ii++)
+    {
+        /* CMapName may be undefined when processing usecmap. */
+        name = __cache->luamaps[ii]->name;
+        if (name && strcmp(luamap_name, name) == 0)
+        {
+            id = ii;
+            break;
+        }
+    }
+
+    return id;
+}
+
+int Luamap_otf_get(const char *luamap_name, const charusetype_entry *cu_head)
+{
+    int id = -1;
+    struct LuaMap *map = NULL;
+    resfont_ref *rfnt_ref = NULL;
+    struct resfont *rfnt = NULL;
+    char *otf_name = NULL;
+    FILE *fp = NULL;
+    FT_Error ft_error = FT_Err_Ok;
+    FT_Face ft_face = NULL;
+
+    rfnt_ref = lookup_v(luamap_name);
+    if (rfnt_ref)
+    {
+        rfnt = rfnt_ref->resfont_ptr;
+        if (rfnt && rfnt->Fontfile)
+        {
+            id = rfnt->luamap_idx;
+            if (id < 0)
+                id = LuaMap_cache_lookup(luamap_name);
+            if (id >= 0)
+                map = __cache->luamaps[id];
+            else
+                id = LuaMap_cache_add(luamap_name, &map);
+            if (id >= 0)
+            {
+                rfnt->luamap_idx = id;
+
+                fp = lookup_font_file(rfnt->Fontfile, &otf_name, NULL);
+                if (fp)
+                    fclose(fp);
+                if (otf_name)
+                {
+                    ft_error = FT_New_Face(ft_lib, otf_name, rfnt->index, &ft_face);
+                    if (!ft_error)
+                    {
+                        ft_error = FT_Select_Charmap(ft_face, FT_ENCODING_UNICODE);
+                        /*
+                        if (ft_error)
+                            ft_error = FT_Select_Charmap(ft_face, FT_ENCODING_MS_UNICODE);
+                        if (ft_error)
+                            ft_error = FT_Select_Charmap(ft_face, FT_ENCODING_APPLE_UNICODE);
+                        */
+                        if (!ft_error)
+                            LuaMap_ftget(map, ft_face, cu_head);
+                        else
+                        {
+                            WARN("%s: Opentype font charmap selection error.", LUAMAP_DEBUG_STR); /* TODO: ft_error evaluation */
+                        }
+
+                        FT_Done_Face(ft_face);
+                    }
+                    else
+                    {
+                        WARN("%s: Unable to open font %s", LUAMAP_DEBUG_STR, otf_name); /* TODO: ft_error evaluation */
+                    }
+                    free(otf_name);
+                    otf_name = NULL;
+                }
+                else
+                {
+                    WARN("%s: Unable to expand font file name %s", LUAMAP_DEBUG_STR, rfnt->Fontfile);
+                }
+            }
+        }
+        else
+        {
+            WARN("%s: Font object error: %s", LUAMAP_DEBUG_STR, luamap_name);
+        }
+    }
+    else
+    {
+        WARN("%s: Font object not found: %s", LUAMAP_DEBUG_STR, luamap_name);
+    }
+
+    return id;
+}
+
 int
 LuaMap_cache_find (const char *luamap_name)
 {
   int   n, id = 0;
   char strbuf[500], *p;
   FILE *fp = NULL;
-  struct LuaMap* map = NULL;
-  resfont_ref* rfnt_ref = NULL;
-  struct resfont *rfnt = NULL;
-  FT_Error ft_error = FT_Err_Ok;
-  FT_Face ft_face = NULL;
-  char *otf_name = NULL;
+  struct LuaMap *map = NULL;
 
-  if (!__cache)
-    LuaMap_cache_init();
-  ASSERT(__cache);
+  id = LuaMap_cache_lookup(luamap_name);
 
-  for (id = 0; id < __cache->num; id++) {
-    char *name = NULL;
-    /* CMapName may be undefined when processing usecmap. */
-    name = __cache->luamaps[id]->name;
-    if (name && strcmp(luamap_name, name) == 0) {
-      return id;
-    }
-  }
-
-  id = -1;
-  if (Otf_Enc_Type == enc_charcode)
+  if ((id < 0) && (Otf_Enc_Type == enc_charcode))
   {
   if ((fulliname == 0) || (strlen(fulliname) == 0))
 	  return -1;
@@ -452,56 +529,6 @@ LuaMap_cache_find (const char *luamap_name)
 
       DPXFCLOSE(fp);
   }
-  }
-  if ((Otf_Enc_Type == enc_gid) || (charcode_otf_g2u && (id >= 0))) /* no new map for charcode encoded .dvi's */
-  {
-      rfnt_ref = lookup_v(luamap_name);
-      if (rfnt_ref)
-      {
-          rfnt = rfnt_ref->resfont_ptr;
-          if (rfnt && rfnt->Fontfile)
-          {
-              fp = lookup_font_file(rfnt->Fontfile, &otf_name, NULL);
-              if (fp)
-                  fclose(fp);
-              if (otf_name)
-              {
-                  ft_error = FT_New_Face(ft_lib, otf_name, rfnt->index, &ft_face);
-                  if (!ft_error)
-                  {
-                      ft_error = FT_Select_Charmap(ft_face, FT_ENCODING_UNICODE);
-                   /*
-                      if (ft_error)
-                          ft_error = FT_Select_Charmap(ft_face, FT_ENCODING_MS_UNICODE);
-                      if (ft_error)
-                          ft_error = FT_Select_Charmap(ft_face, FT_ENCODING_APPLE_UNICODE);
-                    */
-                      if (!ft_error)
-                      {
-                          if (id < 0) /* if (Otf_Enc_Type == enc_charcode) branch skipped, the map is not yet present */
-                              id = LuaMap_cache_add(luamap_name, &map);
-
-                          if (id >= 0)
-                              LuaMap_ftget(map, ft_face);
-                      }
-                      else
-                          WARN("%s: Opentype font charmap selection error.", LUAMAP_DEBUG_STR); /* TODO: ft_error evaluation */
-
-                      FT_Done_Face(ft_face);
-                  }
-                  else
-                      WARN("%s: Unable to open font %s", LUAMAP_DEBUG_STR, otf_name); /* TODO: ft_error evaluation */
-                  free(otf_name);
-                  otf_name = NULL;
-              }
-              else
-                  WARN("%s: Unable to expand font file name %s", LUAMAP_DEBUG_STR, rfnt->Fontfile);
-          }
-          else
-              WARN("%s: Font object error: %s", LUAMAP_DEBUG_STR, luamap_name);
-      }
-      else
-          WARN("%s: Font object not found: %s", LUAMAP_DEBUG_STR, luamap_name);
   }
 
   return id;

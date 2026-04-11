@@ -6,7 +6,7 @@
 #else
 #include "xdvips.h" /* The copyright notice in that file is included too! */
 #define VERSION "2026.1"
-#define VTEX_VERSION "2026.02.21"
+#define VTEX_VERSION "2026.04.10"
 #endif /* XDVIPSK */
 #ifdef KPATHSEA
 #include <kpathsea/c-pathch.h>
@@ -587,6 +587,10 @@ dvips_exit(int code)
       while (pt)
       {
          next = pt->next;
+         if (pt->head)
+             free(pt->head);
+         if (pt->metrics)
+             free(pt->metrics);
          free(pt);
          pt = next;
       }

@@ -77,8 +77,7 @@ char *expandfilename(const char *src)
 }
 #endif
 
-static long
-scale(long what, unsigned short unitsPerEm)
+long sfntscale(long what, unsigned short unitsPerEm)
 {
    return(((what / unitsPerEm) << 20) +
           (((what % unitsPerEm) << 20) + 500) / unitsPerEm);
@@ -264,12 +263,18 @@ int sfntload(fontdesctype *curfnt)
 	}
 	else
 		glyphCount = 1000;
-	head = tt_read_head_table(sfont);
+    head = curfnt->resfont->head;
+    if (head == NULL)
+        head = curfnt->resfont->head = tt_read_head_table(sfont);
 	hhea = tt_read_hhea_table(sfont);
 	sfnt_locate_table(sfont, "hmtx");
-	metrics = tt_read_longMetrics(sfont, glyphCount, hhea->numOfLongHorMetrics,hhea->numOfExSideBearings);
+    metrics = curfnt->resfont->metrics;
+    if (metrics == NULL)
+    {
+        metrics = curfnt->resfont->metrics = tt_read_longMetrics(sfont, glyphCount, hhea->numOfLongHorMetrics, hhea->numOfExSideBearings);
 	if ( metrics == NULL )
 		ERROR("Can't read valid fontname for \"%s\" metric.", curfnt->resfont->Fontfile);
+    }
 	if (curfnt->resfont->otftype == PostScript_font) {
 		offset = sfnt_find_table_pos(sfont, "CFF ");
 		cffont = cff_open(sfont->stream, offset, 0);
@@ -277,6 +282,13 @@ int sfntload(fontdesctype *curfnt)
 			ERROR("Could not open CFF font for font %s", curfnt->resfont->Fontfile);
 		cff_read_charsets(cffont);
 	}
+    curfnt->maxchars = MAX_CODE;
+    curfnt->iswide = 1;
+    curfnt->codewidth = 2;
+    curfnt->dir = 0;
+    curfnt->resfont->luamap_idx = -1;
+    if (Otf_Enc_Type != enc_gid)
+    {
 	curfnt->resfont->luamap_idx = LuaMap_cache_find(curfnt->resfont->Vectfile ? curfnt->resfont->Vectfile : curfnt->resfont->PSname);
 	if (curfnt->resfont->luamap_idx == -1) {
 		ttcmap = tt_cmap_read(sfont, 3, 10); /* Microsoft UCS4 */
@@ -301,9 +313,6 @@ int sfntload(fontdesctype *curfnt)
 		else
 			no_of_chars = MAX_2BYTES_CODE;
 		curfnt->maxchars=no_of_chars;
-		curfnt->iswide = 1;
-		curfnt->codewidth = 2;
-		curfnt->dir = 0;
 		for (n = 1; n < no_of_chars; n++) {
 			gid = tt_cmap_lookup(ttcmap, n);
 			if (cffont && (cffont->flag  & FONTTYPE_CIDFONT) && (gid > 0)) {
@@ -312,7 +321,7 @@ int sfntload(fontdesctype *curfnt)
 			else
 				cid = gid;
 			if (gid > 0) {
-				int li = scalewidth(scale(metrics[gid].advance, head->unitsPerEm), curfnt->scaledsize);
+				int li = scalewidth(sfntscale(metrics[gid].advance, head->unitsPerEm), curfnt->scaledsize);
 				cd = add_chardesc(curfnt, n);
 				cd->TFMwidth = li;
 				cd->pixelwidth = ((integer)(conv*li + 0.5));
@@ -326,10 +335,6 @@ int sfntload(fontdesctype *curfnt)
 	else {
 		luamaptype *map, *current, *tmp;
 		map = LuaMap_cache_get(curfnt->resfont->luamap_idx);
-		curfnt->maxchars = MAX_CODE;
-		curfnt->iswide = 1;
-		curfnt->codewidth = 2;
-		curfnt->dir = 0;
 		HASH_ITER(hh, map, current, tmp) {
 			gid = current->gid;
 //			if (cffont && (cffont->flag  & FONTTYPE_CIDFONT) && (gid > 0)) {
@@ -338,7 +343,7 @@ int sfntload(fontdesctype *curfnt)
 //			else
 				cid = gid;
 			if (gid > 0) {
-				int li = scalewidth(scale(metrics[gid].advance, head->unitsPerEm), curfnt->scaledsize);
+				int li = scalewidth(sfntscale(metrics[gid].advance, head->unitsPerEm), curfnt->scaledsize);
 				cd = add_chardesc(curfnt, current->charcode);
 				cd->TFMwidth = li;
 				cd->pixelwidth = ((integer)(conv*li + 0.5));
@@ -348,10 +353,9 @@ int sfntload(fontdesctype *curfnt)
 			}
 		}
 	}
+    }
 	curfnt->loaded = 1;
-	free(metrics);
 	free(hhea);
-	free(head);
 	if (cffont)
 		cff_close(cffont);
 	sfnt_close(sfont);

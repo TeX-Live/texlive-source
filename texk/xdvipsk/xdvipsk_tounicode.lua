@@ -373,9 +373,11 @@ end
 
 ---------------
 function deploy_font_glyph_map(pfb_name)
-    local map_name = font_aliases[pfb_name]
-    if map_name ~= nil then
-        load_touni(lua_tables[map_name], false, pfb_name)
+    local map_name = font_maps_alias[pfb_name] or pfb_name
+    local map = font_glyphs_maps[map_name]
+
+    if map ~= nil then
+        load_touni(map, false, pfb_name)
     end
 end
 
@@ -394,7 +396,7 @@ enc_maps = {
     }
 function get_enc_alias(pfb_name, enc_file_name)
     local alias_id = 0
-    local map_name = font_aliases[pfb_name]
+    local map_name = font_maps_alias[pfb_name] -- or pfb_name
 
     if map_name ~= nil then
         local enc_map = enc_maps[enc_file_name]

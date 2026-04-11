@@ -1,3 +1,10 @@
+2026-04-10  Sigitas Tolušis <sigitas@vtex.lt>
+
+	* fulfill font maps tables (MP);
+	* add GlyphNames2Unicode implementation for OpenType fonts (MP);
+	* store OpenType fonts encoding only for the used glyphs (MP);
+	* overoll code improvement and optimization (MP).
+
 2026-03-02  Karl Berry  <karl@tug.org>
 
 	* TL'26 release.

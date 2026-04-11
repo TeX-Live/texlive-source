@@ -218,6 +218,8 @@ char *Vectfile, char *specinfo, char *downloadinfo, boolean partial, boolean isO
    p->cmap_fmt = 0;
    p->luamap_idx = -1;
    p->enc = NULL;
+   p->head = NULL;
+   p->metrics = NULL;
 #endif /* XDVIPSK */
    reshash[h] = p;
 #ifdef XDVIPSK
@@ -297,6 +299,8 @@ char *Vectfile, char *specinfo, char *downloadinfo, boolean partial, boolean isO
    p->cmap_fmt = 0;
    p->luamap_idx = -1;
    p->enc = NULL;
+   p->head = NULL;
+   p->metrics = NULL;
    if (!found) {
       h = hash(TeXname);
       p->next = reshash[h];

@@ -173,7 +173,10 @@ extern void loadfont(fontdesctype *curfnt);
 /* prototypes for functions from luamap.c */
 extern void LuaMap_cache_init(void);
 extern luamaptype *LuaMap_cache_get(int id);
+/* loads .xdvipk/*.encodings.map tables; only if the luatable is not yet present -- hence should be called before the Luamap_otf_get() */
 extern int LuaMap_cache_find(const char *luamap_name);
+/* obtains encoding from an .otf file; appends used glyphs for all subsequential tex local fonts, belonging to the particular common luamap */
+extern int Luamap_otf_get(const char *luamap_name, const charusetype_entry *cu_head);
 extern void LuaMap_cache_close(void);
 #endif /* XDVIPSK */
 
@@ -303,6 +306,8 @@ extern char *expandfilename(const char *src);
    returned file object should be fclose'd, if not NULL
    returned p_real_fpath should be removed after return, if not NULL: if (*p_real_fpath) free(*p_real_fpath); */
 extern FILE *lookup_font_file(const char *fpath, char **p_real_fpath, int *p_is_dfont);
+
+extern long sfntscale(long what, unsigned short unitsPerEm);
 
 extern int sfntload(fontdesctype *curfnt);
 #endif /* XDVIPSK */

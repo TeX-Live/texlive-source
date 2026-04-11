@@ -111,19 +111,20 @@ static char *rand_string(char *str, size_t size)
     return str;
 }
 
-static void add_otf_g2u_table(char *ps_name)
+static void add_otf_g2u_table(const char *ps_name)
 {
-    charusetype_ref *cu_ref;
-    charusetype_entry *cu_head = NULL;
+    const charusetype_ref *cu_ref;
+    const charusetype_entry *cu_head = NULL;
     boolean used;
     charusetype_entry *cu_entry;
     int gid;
     const UsedMapElem *usedchars;
     static UsedMapElem processed_gids[USED_CHARS_BUF_SIZE];
     char empty_str[] = "";
+    const struct resfont *cur_resfont;
     char *tex_name;
-    luamaptype *lmap_ptr = NULL, *lmap_iter, *lmap_tmp;
-    struct resfont *cur_resfont = NULL;
+    luamaptype *lmap_ptr, *lmap_iter, *lmap_tmp;
+    int id;
     int ii;
 
     fprintf(bitfile, "  /GlyphNames2Unicode <<\n");
@@ -136,39 +137,42 @@ static void add_otf_g2u_table(char *ps_name)
     }
     else
         ps_name = "";
+
     if (cu_head)
     {
-        memset(processed_gids, 0, sizeof(processed_gids));
-        cu_entry = cu_head;
-        while (cu_entry)
+        lmap_ptr = NULL;
+        id = -1;
+
+        if ((Otf_Enc_Type == enc_gid) || charcode_otf_g2u)
         {
-            lmap_ptr = NULL;
             cur_resfont = NULL;
             tex_name = empty_str;
-            if (cu_entry->charused_ptr && cu_entry->charused_ptr->fd && cu_entry->charused_ptr->fd->resfont)
+
+            if (cu_head->charused_ptr && cu_head->charused_ptr->fd && cu_head->charused_ptr->fd->resfont)
             {
-                if (cu_entry->charused_ptr->fd->resfont->TeXname)
+                if (cu_head->charused_ptr->fd->resfont->TeXname)
                 {
-                    tex_name = cu_entry->charused_ptr->fd->resfont->TeXname;
+                    tex_name = cu_head->charused_ptr->fd->resfont->TeXname;
                     cur_resfont = lookup(tex_name);
                 }
             }
             if (cur_resfont)
             {
-                ii = cur_resfont->luamap_idx;
-                if (ii >= 0)
-                {
-                    lmap_ptr = LuaMap_cache_get(ii);
-                    if (lmap_ptr == NULL)
-                        fprintf(stderr, "\nError: Font %s encoding not found", tex_name);
-                }
-                else
-                    fprintf(stderr, "\nError: No font encoding for %s", tex_name);
+                id = Luamap_otf_get(cur_resfont->Vectfile ? cur_resfont->Vectfile : cur_resfont->PSname, cu_head);
+                if (id >= 0)
+                    lmap_ptr = LuaMap_cache_get(id);
+                if (lmap_ptr == NULL)
+                    fprintf(stderr, "\nError: No font encoding for %s", ps_name);
             }
             else
                 fprintf(stderr, "\nError: Font %s not found", tex_name);
+        }
 
-            if (lmap_ptr)
+        if (lmap_ptr)
+        {
+            memset(processed_gids, 0, sizeof(processed_gids));
+            cu_entry = cu_head;
+            while (cu_entry)
             {
                 HASH_ITER(hh, lmap_ptr, lmap_iter, lmap_tmp)
                 {
@@ -196,9 +200,8 @@ static void add_otf_g2u_table(char *ps_name)
                             fprintf(stderr, "Warning: Unicode value for the glyph %d not found; font: %s.\n", gid, ps_name);
                     }
                 }
+                cu_entry = cu_entry->next;
             }
-
-            cu_entry = cu_entry->next;
         }
     }
     fprintf(bitfile, "    >> def\n");
@@ -769,7 +772,9 @@ static void writecidtype2(sfnt *sfont, struct tt_head_table *head, struct tt_hhe
 
     fprintf(bitfile, "/FontInfo %d dict dup begin\n", 11 + (((Otf_Enc_Type == enc_gid) || charcode_otf_g2u) ? 1 : 0)); /* additional entry for /GlyphNames2Unicode */
     if ( (str = get_sfnt_name(sfont,"Version")) ) {
-        fprintf(bitfile, "  /Version (%s) readonly def\n",str + 8);
+        if (strstr(str, "Version ") == str)
+            str += strlen("Version ");
+        fprintf(bitfile, "  /Version (%s) readonly def\n", str);
     }
     if ( (str = get_sfnt_name(sfont,"Notice")) ) {
         fprintf(bitfile, "  /Notice (");

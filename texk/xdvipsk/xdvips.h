@@ -178,6 +178,8 @@ struct resfont {
    halfword cmap_fmt;
    integer luamap_idx;
    char **enc;
+   struct tt_head_table *head;
+   struct tt_longMetrics *metrics;
 #endif /* XDVIPSK */
 };
 
@@ -296,8 +298,9 @@ typedef struct lua_t {
  */
 #ifdef XDVIPSK
 typedef halfword UsedMapElem;
+#define BITS_PER_CHAR 8
 /* 4096 -- buffer size for a bitmap, enough to keep used glyph flags corresponding to all 0x10000 16-bit char code values */
-#define USED_CHARS_BUF_SIZE (0x10000 / sizeof(UsedMapElem) / 8)
+#define USED_CHARS_BUF_SIZE (0x10000 / sizeof(UsedMapElem) / BITS_PER_CHAR)
 #endif /* XDVIPSK */
 typedef struct {
    fontdesctype *fd;
@@ -448,7 +451,7 @@ struct papsiz {
 #define USE_FCLOSE (802)
 
 #ifdef XDVIPSK
-#define BITS_PER_USED_ELEM (sizeof(UsedMapElem) * 8)
+#define BITS_PER_USED_ELEM (sizeof(UsedMapElem) * BITS_PER_CHAR)
 #define ADD_TO_USED_CHARS(b, c) { \
     int ix = (c) / BITS_PER_USED_ELEM; \
     if (ix >= USED_CHARS_BUF_SIZE) { PRINTF_PR("\nError: %s", "Used chars buffer overflow"); } \

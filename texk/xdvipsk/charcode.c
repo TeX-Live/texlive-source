@@ -5,6 +5,8 @@
  */
 #include "xdvips.h" /* The copyright notice in that file is included too!*/
 
+#include "tt_table.h"
+
 #include "uthash.h"
 /*
  *   The external declarations:
@@ -34,8 +36,32 @@ chardesctype *add_chardesc(fontdesctype *f, int charcode)
 chardesctype *find_chardesc(fontdesctype *f, int charcode)
 {
     chardesctype *s;
+    struct tt_head_table *head;
+    struct tt_longMetrics *metrics;
 
     HASH_FIND_INT( f->chardesc_hh, &charcode, s );  /* s: output pointer */
+
+    if ((s == NULL) && (Otf_Enc_Type == enc_gid))
+    {
+        s = add_chardesc(f, charcode);
+        if (s)
+        {
+            s->cid = charcode;
+            head = f->resfont->head;
+            metrics = f->resfont->metrics;
+            if (head && metrics)
+            {
+                if (charcode > 0) {
+                    int li = scalewidth(sfntscale(metrics[charcode].advance, head->unitsPerEm), curfnt->scaledsize);
+                    s->TFMwidth = li;
+                    s->pixelwidth = ((integer)(conv * li + 0.5));
+                    s->flags = (curfnt->resfont ? EXISTS : 0);
+                    s->flags2 = EXISTS;
+                }
+            }
+        }
+    }
+
     return s;
 }
 
