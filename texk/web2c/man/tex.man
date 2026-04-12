@@ -1,4 +1,4 @@
-.TH TEX 1 "24 January 2026" "Web2C @VERSION@"
+.TH TEX 1 "12 April 2026" "Web2C @VERSION@"
 .\"=====================================================================
 .if t .ds TX \fRT\\h'-0.10m'\\v'0.17v'E\\v'-0.17v'\\h'-0.06m'X\fP
 .if n .ds TX TeX
@@ -8,7 +8,7 @@
 .\" LX definition must follow TX so LX can use TX
 .if t .ds LX \fRL\\h'-0.36m'\\v'-0.15v'\s-2A\s0\\h'-0.15m'\\v'0.15v'\fP\*(TX
 .if n .ds LX LaTeX
-.\" OX for oblique LaTeX
+.\" OL for oblique LaTeX
 .if t .ds OL \fIL\\h'-0.19m'\\v'-0.15v'\s-2A\s0\\h'-0.09m'\\v'0.15v'\fP\*(OX
 .if n .ds OL LaTeX
 .\"=====================================================================

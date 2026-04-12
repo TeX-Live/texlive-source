@@ -1,3 +1,8 @@
+2026-04-12  Karl Berry  <karl@freefriends.org>
+
+	* tex.man,
+	* bibtex.man: OL is the oblique LaTeX logo (comment only).
+
 2026-04-06  Karl Berry  <karl@freefriends.org>
 
 	* luatex.man (--safer): explain that everything possible
