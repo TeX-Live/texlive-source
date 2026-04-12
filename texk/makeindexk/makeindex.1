@@ -1,12 +1,13 @@
-.if t .ds LX L\\h'-0.36m'\\v'-0.15v'\\s-2A\\s+2\\h'-0.15m'\\v'0.15v'T\\h'-0.1667m'\\v'0.20v'E\\v'-0.20v'\\h'-0.125m'X
-.if n .ds LX LaTeX
-.if t .ds TX T\\h'-0.1667m'\\v'0.20v'E\\v'-0.20v'\\h'-0.125m'X
+.if t .ds TX \fRT\\h'-0.10m'\\v'0.17v'E\\v'-0.17v'\\h'-0.06m'X\fP
 .if n .ds TX TeX
+.\" LX definition must follow TX so LX can use TX
+.if t .ds LX \fRL\\h'-0.36m'\\v'-0.15v'\s-2A\s0\\h'-0.15m'\\v'0.15v'\fP\*(TX
+.if n .ds LX LaTeX
 .ds Ts T\s-2RAN\s+2S\s-2CRIPT\s+2
 .if t .ds Uc \fIU\\h'-0.12m'C\\v'0.27m'\\h'-.23m'S\\h'-0.11m'F\\v'-0.27m'\fP
 .if n .ds Uc UCSF
 .ds Et \\f(boE\\h'-0.1667m'\\v'-0.20v'T\\v'0.20v'\\h'-0.125m'T\\fP
-.TH MAKEINDEX 1 "12 November 2014" "TeX Live" "TeX Live"
+.TH MAKEINDEX 1 "12 April 2026" "TeX Live"
 .\"=====================================================================
 .SH NAME
 makeindex \- a general purpose, formatter-independent index processor
@@ -573,7 +574,7 @@ of the main source:
 .LP
 .RS
 .nf
-\fCpreamble
+\f(CWpreamble
 "\\\\documentstyle[12pt]{book}
 \\\\begin{document}
 \\\\begin{theindex}
@@ -593,7 +594,7 @@ the following command line produces output in file
 .IR footmp.ind :
 .LP
 .RS
-\fCmakeindex  \-s book.ist  \-o footmp.ind  \-p odd  foo\fP
+\f(CWmakeindex  \-s book.ist  \-o footmp.ind  \-p odd  foo\fP
 .RE
 .LP
 Here a non-default output file name is used to avoid clobbering the
@@ -608,7 +609,7 @@ resides in the file
 .LP
 .RS
 .nf
-\&\fCkeyword "IX:"
+\&\f(CWkeyword "IX:"
 \&preamble
 \&".\\\\\\" start of index output
 \&\\".\\\\\\" enter two column mode
@@ -665,7 +666,7 @@ a pre-existing macro of the same name):
 .LP
 .RS
 .nf
-\fC\&.\" IX - index words to stderr
+\f(CW\&.\" IX - index words to stderr
 \&.de IX
 \&.ie '\\\\n(.z'' .tm IX: \\\\$1 \\\\$2 \\\\$3 \\\\$4 \\\\$5 \\\\$6 \\\\$7 \\\\$8 \\\\$9 {\\\\n(PN}
 \&.el \\\\!.IX \\\\$1 \\\\$2 \\\\$3 \\\\$4 \\\\$5 \\\\$6 \\\\$7 \\\\$8 \\\\$9 {\\\\n(PN}
@@ -673,7 +674,7 @@ a pre-existing macro of the same name):
 .fi
 .RE
 .LP
-(note that the string {\fC\\\\n(PN\fP} is separated from the rest of the
+(note that the string {\f(CW\\\\n(PN\fP} is separated from the rest of the
 line by a tab.
 If your local macro package does not contain this extension,
 just include those lines at the beginning of your file.
@@ -684,7 +685,7 @@ input file, which we will assume is named
 .LP
 .RS
 .nf
-\fC\&This is a sample file to test the \\fImakeindex\\fP(1L)
+\f(CW\&This is a sample file to test the \\fImakeindex\\fP(1L)
 \&program, and see
 \&.IX {indexing!programs!C language}
 \&.IX {makeindex@\\fImakeindex\\fP(1L)}
@@ -711,7 +712,7 @@ To create an input file for
 environment, do the equivalent at your site of the command:
 .LP
 .nf
-\fCpsroff -ms -Tpsc -t sample.txt > /dev/null 2> sample.tmp\fP
+\f(CWpsroff -ms -Tpsc -t sample.txt > /dev/null 2> sample.tmp\fP
 .fi
 .LP
 Some sites will require
@@ -722,7 +723,7 @@ To filter out any genuine error messages, invoke
 .IR grep (1):
 .LP
 .RS
-\fCgrep '^IX: ' sample.tmp > sample.idx\fP
+\f(CWgrep '^IX: ' sample.tmp > sample.idx\fP
 .RE
 .\"---------------------------------------------------------------------
 .SS "CREATING THE INDEX FILE USING \*(Uc ENHANCED TROFF/\*(Ts"
@@ -733,14 +734,14 @@ option of
 can produce both formatter output and an index file:
 .LP
 .RS
-\fCpsroff -ms -I sample.inp -Tpsc sample.txt\fP
+\f(CWpsroff -ms -I sample.inp -Tpsc sample.txt\fP
 .RE
 .LP
 If it is wished to suppress the formatter output:
 .RS
 .LP
 .nf
-\fCpsroff -ms -I sample.inp -Tpsc -t sample.txt > /dev/null\fP
+\f(CWpsroff -ms -I sample.inp -Tpsc -t sample.txt > /dev/null\fP
 .fi
 .RE
 .\"---------------------------------------------------------------------
@@ -753,7 +754,7 @@ The next step is to invoke
 .IR makeindex :
 .LP
 .RS
-\fCmakeindex -s sample.ist sample.idx\fP
+\f(CWmakeindex -s sample.ist sample.idx\fP
 .RE
 .LP
 This leaves
@@ -805,7 +806,7 @@ Entries such as
 .LP
 .RS
 .nf
-\fC\\indexentry{alpha}{1}
+\f(CW\\indexentry{alpha}{1}
 \\indexentry{alpha!beta}{3}
 \\indexentry{alpha!beta!gamma}{10}\fP
 .fi
@@ -815,7 +816,7 @@ in the input file will be converted to
 .LP
 .RS
 .nf
-\fC\\item alpha, 1
+\f(CW\\item alpha, 1
 \0\0\0\\subitem beta, 3
 \0\0\0\0\0\0\\subsubitem gamma, 10\fP
 .fi
@@ -833,13 +834,13 @@ using the
 (`@') operator.  For instance,
 .LP
 .RS
-\fC\\indexentry{alpha@{\\it alpha\\/}}{1}\fP
+\f(CW\\indexentry{alpha@{\\it alpha\\/}}{1}\fP
 .RE
 .LP
 will become
 .LP
 .RS
-\fC\\item {\\it alpha\\/},  1\fP
+\f(CW\\item {\\it alpha\\/},  1\fP
 .RE
 .LP
 after processing.  The pattern preceding `@' is
@@ -855,7 +856,7 @@ The item, subitem, and subsubitem fields may have individual sort keys:
 .LP
 .RS
 .nf
-\fC\\indexentry{aa@{\\it aa\\/}!bb@{\\it bb\\/}!cc@{\\it cc\\/}}{1}\fP
+\f(CW\\indexentry{aa@{\\it aa\\/}!bb@{\\it bb\\/}!cc@{\\it cc\\/}}{1}\fP
 .fi
 .RE
 .LP
@@ -863,7 +864,7 @@ This will be converted to
 .LP
 .RS
 .nf
-\fC\\item {\\it aa}, 1
+\f(CW\\item {\\it aa}, 1
 \0\0\0\\subitem {\\it bb}, 3
 \0\0\0\0\0\0\\subsubitem {\\it cc}, 10\fP
 .fi
@@ -875,17 +876,17 @@ command using the
 (`|') operator:
 .LP
 .RS
-\fC\\indexentry{alpha|bold}{1}\fP
+\f(CW\\indexentry{alpha|bold}{1}\fP
 .RE
 .LP
 will be converted to
 .LP
 .RS
-\fC\\item alpha, \\bold{1}\fP
+\f(CW\\item alpha, \\bold{1}\fP
 .RE
 .LP
-where, with a suitable definition for \*(TX, \fC\\bold{n}\fP
-will expand to \fC{\\bf n}\fP.
+where, with a suitable definition for \*(TX, \f(CW\\bold{n}\fP
+will expand to \f(CW{\\bf n}\fP.
 In this example, the three output attributes associated with page
 encapsulation
 .BR encap_prefix ,
@@ -904,25 +905,25 @@ operator can also be used to create cross references in
 the index:
 .LP
 .RS
-\fC\\indexentry{alpha|see{beta}}{1}\fP
+\f(CW\\indexentry{alpha|see{beta}}{1}\fP
 .RE
 .LP
 will become
 .LP
 .RS
-\fC\\item alpha, \\see{beta}{1}\fP
+\f(CW\\item alpha, \\see{beta}{1}\fP
 .RE
 .LP
 in the output file, where
 .LP
 .RS
-\fC\\see{beta}{1}\fP
+\f(CW\\see{beta}{1}\fP
 .RE
 .LP
 will expand to
 .LP
 .RS
-\fC{\\it see\\/} beta\fP
+\f(CW{\\it see\\/} beta\fP
 .RE
 .LP
 Note that in a cross reference like this the page number disappears.
@@ -937,7 +938,7 @@ concatenated with
 .LP
 .RS
 .nf
-\fC\\indexentry{alpha|(}{1}
+\f(CW\\indexentry{alpha|(}{1}
 \\indexentry{alpha|)}{5}\fP
 .fi
 .RE
@@ -945,7 +946,7 @@ concatenated with
 will become
 .LP
 .RS
-\fC\\item alpha, 1\(em5\fP
+\f(CW\\item alpha, 1\(em5\fP
 .RE
 .LP
 Intermediate pages indexed by the same key will be merged into the
@@ -958,7 +959,7 @@ font:
 .LP
 .RS
 .nf
-\fC\\indexentry{alpha|(bold}{1}
+\f(CW\\indexentry{alpha|(bold}{1}
 \\indexentry{alpha|)}{5}\fP
 .fi
 .RE
@@ -966,14 +967,14 @@ font:
 will become
 .LP
 .RS
-\fC\\item alpha, \\bold{1--5}\fP
+\f(CW\\item alpha, \\bold{1--5}\fP
 .RE
 .LP
 Several potential problems are worth mentioning.  First, entries like
 .LP
 .RS
 .nf
-\fC\\indexentry{alpha|(}{1}
+\f(CW\\indexentry{alpha|(}{1}
 \\indexentry{alpha|bold}{3}
 \\indexentry{alpha|)}{5}\fP
 .fi
@@ -982,7 +983,7 @@ Several potential problems are worth mentioning.  First, entries like
 will be interpreted as
 .LP
 .RS
-\fC\\item alpha, \\bold{3}, 1--5\fP
+\f(CW\\item alpha, \\bold{3}, 1--5\fP
 .RE
 .LP
 but with a warning message in the transcript about encountering an
@@ -994,7 +995,7 @@ other in Arabic.  For instance,
 .LP
 .RS
 .nf
-\fC\\indexentry{alpha|(}{i}
+\f(CW\\indexentry{alpha|(}{i}
 \\indexentry{alpha}{iv}
 \\indexentry{alpha}{3}
 \\indexentry{alpha|)}{7}\fP
@@ -1004,7 +1005,7 @@ other in Arabic.  For instance,
 will be turned into
 .LP
 .RS
-\fC\\item alpha, i--iv, 3--7\fP
+\f(CW\\item alpha, i--iv, 3--7\fP
 .RE
 .LP
 with a warning message in the transcript file complaining about an
@@ -1016,13 +1017,13 @@ escaped by the
 operator (`"').  Thus
 .LP
 .RS
-\fC\\indexentry{alpha"@beta}{1}\fP
+\f(CW\\indexentry{alpha"@beta}{1}\fP
 .RE
 .LP
 will actually become
 .LP
 .RS
-\fC\\item alpha@beta,  1\fP
+\f(CW\\item alpha@beta,  1\fP
 .RE
 .LP
 as a result of executing
@@ -1035,13 +1036,13 @@ by
 (`\\').  For example,
 .LP
 .RS
-\fC\\indexentry{f\\"ur}{1}\fP
+\f(CW\\indexentry{f\\"ur}{1}\fP
 .RE
 .LP
 becomes
 .LP
 .RS
-\fC\\item f\\"ur, 1\fP
+\f(CW\\item f\\"ur, 1\fP
 .RE
 .LP
 which represents an umlaut-accented `u' to the \*(TX family of
@@ -1084,7 +1085,7 @@ the corresponding ASCII ordinal values.
 .RS
 .nf
 
-\fC\\indexentry{" @"  (space)}{32}
+\f(CW\\indexentry{" @"  (space)}{32}
 \\indexentry{"!@"! (exclamation point)}{33}
 \\indexentry{""@"" (quotation mark)}{34}
 \\indexentry{"#@"\\# (sharp sign)}{35}
@@ -1119,7 +1120,7 @@ for this example looks like this:
 .RS
 .nf
 
-\fC\\begin{theindex}
+\f(CW\\begin{theindex}
 
   \\item ! (exclamation point), 33
   \\item " (quotation mark), 34
@@ -1230,5 +1231,5 @@ source distribution record other contributions.
 .PP
 .I makeindex
 is currently maintained as part of the \*(TX Live
-distribution (http://tug.org/texlive); please send bug reports to
+distribution (https://tug.org/texlive); please send bug reports to
 tex-k@tug.org.
