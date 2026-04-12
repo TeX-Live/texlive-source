@@ -1,3 +1,9 @@
+2026-04-12  Karl Berry  <karl@freefriends.org>
+
+	* dvidvi.1: update section from "L" to "1"; mention tex-k list.
+	Report from Hilmar to tex-live, 12 Apr 2026 14:33:47.
+	https://tug.org/pipermail/tex-live/2026-April/052370.html
+
 2023-08-23  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* dvidvi.test: Tweak.
