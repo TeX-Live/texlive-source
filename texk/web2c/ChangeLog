@@ -1,3 +1,9 @@
+2026-04-12  Karl Berry  <karl@freefriends.org>
+
+	* am/bootstrap.am (ctangleboot_DEPENDENCIES): add
+	cwebdir/ctang-w2c.ch cwebdir/comm-w2c.ch, attempting to alleviate
+	a report from Andreas. The same should be done for cwebboot, somehow.
+
 2026-03-22  Karl Berry  <karl@freefriends.org>
 
 	* tangle-sh.in (recovering),

@@ -3867,7 +3867,11 @@ ctangleboot = AM_V_P=$(AM_V_P) $(SHELL) ./ctangleboot-sh $@
 #
 common_ctangle = ctangleboot$(EXEEXT) cwebdir/comm-w2c.h ctangleboot-sh
 nodist_ctangleboot_SOURCES = ctangleboot.c cwebboot.c
-ctangleboot_DEPENDENCIES = $(default_dependencies)
+
+# cwebboot should depend on this too, but where?
+ctangleboot_DEPENDENCIES = $(default_dependencies) \
+  cwebdir/ctang-w2c.ch cwebdir/comm-w2c.ch
+
 web_programs = bibtex dvicopy dvitype gftodvi gftopk gftype mft \
 	patgen pktogf pktype pltotf pooltype tftopl vftovp vptovf \
 	weave twill
