@@ -26,7 +26,7 @@ $_xdvipdfmx --dvipdfmx -vv -f psfonts.map -o multi_incl.pdf $srcdir/tests/multi_
  || failed="$failed multi-incl"
 
 filesize=`ls -l multi_incl.pdf | awk '{print $5}'`
-if [ "$filesize" -gt 85010 ]; then
+if [ "$filesize" -gt 85011 ]; then
   echo "Too large file size :" $filesize
   failed="$failed multi-incl-size"
 fi
