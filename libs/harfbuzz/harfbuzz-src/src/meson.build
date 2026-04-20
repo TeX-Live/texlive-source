@@ -273,6 +273,7 @@ hb_base_sources = files(
   'hb-unicode.hh',
   'hb-utf.hh',
   'hb-vector.hh',
+  'hb-vector-draw.hh',
   'hb.hh',
 )
 
@@ -709,38 +710,13 @@ if not get_option('subset').disabled()
 endif
 
 hb_raster_sources = files(
-  'hb-zlib.cc',
-  'hb-zlib.hh',
   'hb-raster.cc',
   'hb-raster-image.cc',
   'hb-raster-image.hh',
-  'hb-raster-utils.hh',
+  'hb-raster.hh',
   'hb-raster-draw.cc',
-  'hb-raster-svg-base.cc',
-  'hb-raster-svg-base.hh',
-  'hb-raster-svg-defs.cc',
-  'hb-raster-svg-defs.hh',
-  'hb-raster-svg-defs-scan.cc',
-  'hb-raster-svg-defs-scan.hh',
-  'hb-raster-svg-gradient.cc',
-  'hb-raster-svg-gradient.hh',
-  'hb-raster-svg-clip.cc',
-  'hb-raster-svg-clip.hh',
-  'hb-raster-svg-bbox.cc',
-  'hb-raster-svg-bbox.hh',
-  'hb-raster-svg-fill.cc',
-  'hb-raster-svg-fill.hh',
-  'hb-raster-svg-context.hh',
-  'hb-raster-svg-use.cc',
-  'hb-raster-svg-use.hh',
-  'hb-raster-svg-render.cc',
-  'hb-raster-svg-color.cc',
-  'hb-raster-svg-color.hh',
-  'hb-raster-svg-parse.cc',
-  'hb-raster-svg-parse.hh',
   'hb-raster-paint.cc',
   'hb-raster-paint.hh',
-  'hb-raster-svg.hh',
   'hb-static.cc',
 )
 
@@ -752,14 +728,13 @@ hb_vector_sources = files(
   'hb-zlib.cc',
   'hb-zlib.hh',
   'hb-vector.cc',
-  'hb-vector-svg-draw.cc',
-  'hb-vector-svg-path.cc',
-  'hb-vector-svg-paint.cc',
-  'hb-vector-svg-path.hh',
-  'hb-vector-svg-subset.cc',
-  'hb-vector-svg-subset.hh',
-  'hb-vector-svg-utils.cc',
-  'hb-vector-svg-utils.hh',
+  'hb-vector-draw.cc',
+  'hb-vector-path.cc',
+  'hb-vector-paint.cc',
+  'hb-vector-paint-svg.cc',
+  'hb-vector-paint-pdf.cc',
+  'hb-vector-path.hh',
+  'hb-vector-buf.hh',
   'hb-static.cc',
 )
 
@@ -772,9 +747,6 @@ if not get_option('raster').disabled()
   raster_deps = [m_dep]
   if png_dep.found()
     raster_deps += [png_dep]
-  endif
-  if zlib_dep.found()
-    raster_deps += [zlib_dep]
   endif
 
   libharfbuzz_raster = library('harfbuzz-raster', hb_raster_sources,
@@ -853,14 +825,22 @@ if not get_option('vector').disabled()
 endif
 
 hb_gpu_shader_sources = [
-  [ 'hb-gpu-fragment.glsl', 'hb-gpu-fragment-glsl.hh' ],
-  [ 'hb-gpu-vertex.glsl', 'hb-gpu-vertex-glsl.hh' ],
-  [ 'hb-gpu-fragment.wgsl', 'hb-gpu-fragment-wgsl.hh' ],
-  [ 'hb-gpu-vertex.wgsl', 'hb-gpu-vertex-wgsl.hh' ],
-  [ 'hb-gpu-fragment.msl', 'hb-gpu-fragment-msl.hh' ],
-  [ 'hb-gpu-vertex.msl', 'hb-gpu-vertex-msl.hh' ],
-  [ 'hb-gpu-fragment.hlsl', 'hb-gpu-fragment-hlsl.hh' ],
-  [ 'hb-gpu-vertex.hlsl', 'hb-gpu-vertex-hlsl.hh' ],
+  [ 'hb-gpu-fragment.glsl',      'hb-gpu-fragment-glsl.hh' ],
+  [ 'hb-gpu-vertex.glsl',        'hb-gpu-vertex-glsl.hh' ],
+  [ 'hb-gpu-fragment.wgsl',      'hb-gpu-fragment-wgsl.hh' ],
+  [ 'hb-gpu-vertex.wgsl',        'hb-gpu-vertex-wgsl.hh' ],
+  [ 'hb-gpu-fragment.msl',       'hb-gpu-fragment-msl.hh' ],
+  [ 'hb-gpu-vertex.msl',         'hb-gpu-vertex-msl.hh' ],
+  [ 'hb-gpu-fragment.hlsl',      'hb-gpu-fragment-hlsl.hh' ],
+  [ 'hb-gpu-vertex.hlsl',        'hb-gpu-vertex-hlsl.hh' ],
+  [ 'hb-gpu-draw-fragment.glsl', 'hb-gpu-draw-fragment-glsl.hh' ],
+  [ 'hb-gpu-draw-fragment.wgsl', 'hb-gpu-draw-fragment-wgsl.hh' ],
+  [ 'hb-gpu-draw-fragment.msl',  'hb-gpu-draw-fragment-msl.hh' ],
+  [ 'hb-gpu-draw-fragment.hlsl', 'hb-gpu-draw-fragment-hlsl.hh' ],
+  [ 'hb-gpu-paint-fragment.glsl', 'hb-gpu-paint-fragment-glsl.hh' ],
+  [ 'hb-gpu-paint-fragment.msl',  'hb-gpu-paint-fragment-msl.hh' ],
+  [ 'hb-gpu-paint-fragment.wgsl', 'hb-gpu-paint-fragment-wgsl.hh' ],
+  [ 'hb-gpu-paint-fragment.hlsl', 'hb-gpu-paint-fragment-hlsl.hh' ],
 ]
 
 hb_gpu_shader_helper = find_program('gen-gpu-shader-artifacts.py')
@@ -876,7 +856,7 @@ endforeach
 hb_gpu_sources = files(
   'hb-gpu.cc',
   'hb-gpu-draw.cc',
-  'hb-gpu-shaders.cc',
+  'hb-gpu-paint.cc',
   'hb-static.cc',
 )
 
@@ -1008,6 +988,7 @@ if get_option('tests').enabled()
     'test-classdef-graph': ['graph/test-classdef-graph.cc', 'hb-static.cc', 'graph/gsubgpos-context.cc'],
     'test-decycler': ['test-decycler.cc', 'hb-static.cc'],
     'test-iter': ['test-iter.cc', 'hb-static.cc'],
+    'test-geometry': ['test-geometry.cc', 'hb-static.cc'],
     'test-machinery': ['test-machinery.cc', 'hb-static.cc'],
     'test-map': ['test-map.cc', 'hb-static.cc'],
     'test-multimap': ['test-multimap.cc', 'hb-static.cc'],

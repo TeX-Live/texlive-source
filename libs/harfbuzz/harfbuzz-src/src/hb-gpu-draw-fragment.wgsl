@@ -1,5 +1,5 @@
 /*
- * Copyright © 2026  Behdad Esfahbod
+ * Copyright (C) 2026  Behdad Esfahbod
  *
  *  This is part of HarfBuzz, a text shaping library.
  *
@@ -20,20 +20,17 @@
  * FITNESS FOR A PARTICULAR PURPOSE.  THE SOFTWARE PROVIDED HEREUNDER IS
  * ON AN "AS IS" BASIS, AND THE COPYRIGHT HOLDER HAS NO OBLIGATION TO
  * PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
- *
- * Author(s): Behdad Esfahbod
  */
 
-#ifndef HB_RASTER_SVG_BBOX_HH
-#define HB_RASTER_SVG_BBOX_HH
 
-#include "hb.hh"
+/* Draw-renderer fragment shader entry (WGSL).  Heavy lifting
+ * (Slug coverage, MSAA, ppem, stem darkening) lives in the shared
+ * hb-gpu-fragment.wgsl that must be prepended to this source. */
 
-#include "hb-geometry.hh"
-#include "hb-raster-svg-parse.hh"
 
-HB_INTERNAL bool
-hb_raster_svg_compute_shape_bbox (const hb_svg_shape_emit_data_t &shape,
-                        hb_extents_t<> *bbox);
-
-#endif /* HB_RASTER_SVG_BBOX_HH */
+fn hb_gpu_draw (renderCoord: vec2f, glyphLoc_: u32,
+                  hb_gpu_atlas: ptr<storage, array<vec4<i32>>, read>) -> f32
+{
+  let pixelsPerEm = 1.0 / fwidth (renderCoord);
+  return _hb_gpu_slug (renderCoord, pixelsPerEm, glyphLoc_, hb_gpu_atlas);
+}

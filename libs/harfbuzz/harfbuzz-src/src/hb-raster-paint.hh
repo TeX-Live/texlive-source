@@ -111,12 +111,9 @@ struct hb_raster_paint_t
   hb_raster_extents_t fixed_extents      = {};
   bool                has_extents  = false;
   hb_color_t          foreground         = HB_COLOR (0, 0, 0, 255);
+  hb_color_t          background         = HB_COLOR (0, 0, 0, 0);
+  unsigned            palette            = 0;
   hb_map_t           *custom_palette     = nullptr;
-
-  /* SVG rendering state */
-  hb_codepoint_t      svg_glyph          = 0;
-  hb_font_t          *svg_font           = nullptr;
-  unsigned            svg_palette        = 0;
 
   /* Stacks */
   hb_vector_t<hb_transform_t<>>     transform_stack;
@@ -196,8 +193,10 @@ struct hb_raster_paint_t
     return clip_stack.tail ();
   }
 
-  hb_transform_t<> &current_transform ()
+  hb_transform_t<> current_transform ()
   {
+    if (unlikely (!transform_stack.length))
+      return {1, 0, 0, 1, 0, 0};
     return transform_stack.tail ();
   }
 
@@ -216,6 +215,18 @@ struct hb_raster_paint_t
     hb_transform_t<> t = current_transform ();
     apply_scale_factor (t);
     return t;
+  }
+
+  bool fetch_color_stops (hb_color_line_t *color_line)
+  {
+    unsigned count = hb_color_line_get_color_stops (color_line, 0, nullptr, nullptr);
+    if (unlikely (!count || !scratch_color_stops.resize (count)))
+    {
+      scratch_color_stops.resize (0);
+      return false;
+    }
+    hb_color_line_get_color_stops (color_line, 0, &count, scratch_color_stops.arrayZ);
+    return true;
   }
 };
 

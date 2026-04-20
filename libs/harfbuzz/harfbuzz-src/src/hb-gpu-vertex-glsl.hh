@@ -1,10 +1,6 @@
 static const char *hb_gpu_vertex_glsl =
 "/*\n"
 " * Copyright (C) 2026  Behdad Esfahbod\n"
-" * Copyright (C) 2017  Eric Lengyel\n"
-" *\n"
-" * Based on the Slug algorithm by Eric Lengyel:\n"
-" * https://github.com/EricLengyel/Slug\n"
 " *\n"
 " *  This is part of HarfBuzz, a text shaping library.\n"
 " *\n"

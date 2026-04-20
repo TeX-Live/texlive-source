@@ -1,5 +1,5 @@
 /*
- * Copyright © 2026  Behdad Esfahbod
+ * Copyright (C) 2026  Behdad Esfahbod
  *
  *  This is part of HarfBuzz, a text shaping library.
  *
@@ -20,27 +20,16 @@
  * FITNESS FOR A PARTICULAR PURPOSE.  THE SOFTWARE PROVIDED HEREUNDER IS
  * ON AN "AS IS" BASIS, AND THE COPYRIGHT HOLDER HAS NO OBLIGATION TO
  * PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
- *
- * Author(s): Behdad Esfahbod
  */
 
-#ifndef HB_RASTER_SVG_GRADIENT_HH
-#define HB_RASTER_SVG_GRADIENT_HH
 
-#include "hb.hh"
+/* Draw-renderer fragment shader entry (HLSL).  Heavy lifting
+ * (Slug coverage, MSAA, ppem, stem darkening) lives in the shared
+ * hb-gpu-fragment.hlsl that must be prepended to this source. */
 
-#include "hb-raster-svg-color.hh"
-#include "hb-raster-svg-defs.hh"
 
-HB_INTERNAL void
-hb_raster_svg_process_gradient_def (hb_svg_defs_t *defs,
-                          hb_svg_xml_parser_t &parser,
-                          hb_svg_token_type_t tok,
-                          hb_svg_gradient_type_t type,
-                          hb_paint_funcs_t *pfuncs,
-                          void *paint_data,
-                          hb_color_t foreground,
-                          hb_face_t *face,
-                          unsigned palette);
-
-#endif /* HB_RASTER_SVG_GRADIENT_HH */
+float hb_gpu_draw (float2 renderCoord, uint glyphLoc_)
+{
+  float2 pixelsPerEm = 1.0 / fwidth (renderCoord);
+  return _hb_gpu_slug (renderCoord, pixelsPerEm, glyphLoc_);
+}

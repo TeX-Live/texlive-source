@@ -23,6 +23,8 @@ HarfBuzz shapes the majority of text on modern screens.
 HarfBuzz is optimized for robustness, correctness, and performance
 — in that order. Achieve all.
 
+**[Try it live at harfbuzz-world.cc](https://harfbuzz-world.cc/)** — an interactive playground for shaping, subsetting, rasterization, vector output, and GPU rendering, all running in your browser.
+
 Here is a quick map of its components:
 
 ### Core libraries
@@ -31,6 +33,11 @@ Here is a quick map of its components:
 |---------|-------------|
 | **libharfbuzz** | Text shaping, draw API, paint API. Highly configurable (see [CONFIG.md](CONFIG.md)). Optional integration backends compiled in: hb-ft (FreeType), hb-coretext (macOS), hb-uniscribe (Windows), hb-directwrite (Windows), hb-gdi (Windows), hb-glib, hb-graphite2. |
 | **libharfbuzz-subset** | Font subsetting and variable-font instancing. |
+
+### Auxiliary libraries
+
+| Library | Description |
+|---------|-------------|
 | **libharfbuzz-icu** | ICU Unicode integration. |
 | **libharfbuzz-cairo** | Cairo rendering integration. |
 | **libharfbuzz-gobject** | GObject/GI bindings. |
@@ -50,7 +57,9 @@ Skrifa.
 For simplified builds, amalgamated sources are available:
 `harfbuzz.cc` (just libharfbuzz), `harfbuzz-subset.cc` (just
 libharfbuzz-subset), or `harfbuzz-world.cc` (everything, driven
-by a custom `hb-features.h`).
+by a custom `hb-features.h`).  For a live in-browser playground
+plus a worked example of the world.cc single-file build, see
+[harfbuzz-world.cc][26].
 
 ### Command-line tools
 
@@ -208,3 +217,4 @@ car displays, and many other places.
 [23]: https://docs.google.com/document/d/1hRd5oYQJLrt0JuwWhEJWi7wh_9rbaIJkX6IR9DW7rZQ/preview
 [24]: https://docs.google.com/document/d/1a3K6fHjsiWW36vSzwJwCwEBOgznunKs80PSpBbpfHiA/preview
 [25]: https://docs.google.com/presentation/d/1o9Exz1c-Lr-dJjA8dcBn_Vl_Y37cupmFzmclMjBE_Bc/view
+[26]: https://harfbuzz-world.cc/

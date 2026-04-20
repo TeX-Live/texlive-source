@@ -21,33 +21,39 @@
  * ON AN "AS IS" BASIS, AND THE COPYRIGHT HOLDER HAS NO OBLIGATION TO
  * PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
  *
- * Author(s): Behdad Esfahbod
  */
 
-#ifndef HB_RASTER_SVG_CLIP_HH
-#define HB_RASTER_SVG_CLIP_HH
-
 #include "hb.hh"
+#include "hb-geometry.hh"
 
-#include "OT/Color/svg/svg.hh"
-#include "hb-paint.hh"
-#include "hb-raster-svg-defs.hh"
 
-struct hb_raster_paint_t;
+int
+main (int argc HB_UNUSED, char **argv HB_UNUSED)
+{
+  {
+    hb_extents_t<> extents (-0x1p31f, 0.f, 427.f, 1.f);
+    hb_glyph_extents_t glyph_extents = extents.to_glyph_extents ();
 
-HB_INTERNAL void
-hb_raster_svg_process_clip_path_def (hb_svg_defs_t *defs,
-                           hb_svg_xml_parser_t &parser,
-                           hb_svg_token_type_t tok,
-                           const char *doc_start,
-                           unsigned doc_len,
-                           const OT::SVG::accelerator_t *svg_accel,
-                           const OT::SVG::svg_doc_cache_t *doc_cache);
+    hb_always_assert (glyph_extents.x_bearing == hb_int_min (hb_position_t));
+    hb_always_assert (glyph_extents.y_bearing == 1);
+    hb_always_assert (glyph_extents.width == hb_int_max (hb_position_t));
+    hb_always_assert (glyph_extents.height == -1);
+  }
 
-HB_INTERNAL bool
-hb_raster_svg_push_clip_path_ref (hb_raster_paint_t *paint,
-                        hb_svg_defs_t *defs,
-                        hb_svg_str_t clip_path_str,
-                        const hb_extents_t<> *object_bbox);
+  {
+    hb_glyph_extents_t glyph_extents = {
+      hb_int_max (hb_position_t),
+      7,
+      1,
+      -3
+    };
+    hb_extents_t<double> extents (glyph_extents);
 
-#endif /* HB_RASTER_SVG_CLIP_HH */
+    hb_always_assert (extents.xmin == (double) hb_int_max (hb_position_t));
+    hb_always_assert (extents.xmax == (double) hb_int_max (hb_position_t) + 1);
+    hb_always_assert (extents.ymin == 4);
+    hb_always_assert (extents.ymax == 7);
+  }
+
+  return 0;
+}

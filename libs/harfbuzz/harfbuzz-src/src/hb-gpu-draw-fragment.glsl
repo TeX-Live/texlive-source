@@ -1,5 +1,5 @@
 /*
- * Copyright © 2026  Behdad Esfahbod
+ * Copyright (C) 2026  Behdad Esfahbod
  *
  *  This is part of HarfBuzz, a text shaping library.
  *
@@ -20,25 +20,19 @@
  * FITNESS FOR A PARTICULAR PURPOSE.  THE SOFTWARE PROVIDED HEREUNDER IS
  * ON AN "AS IS" BASIS, AND THE COPYRIGHT HOLDER HAS NO OBLIGATION TO
  * PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
- *
- * Author(s): Behdad Esfahbod
  */
 
-#ifndef HB_VECTOR_SVG_SUBSET_HH
-#define HB_VECTOR_SVG_SUBSET_HH
 
-#include "hb.hh"
-#include "hb-vector.hh"
-#include "hb-blob.hh"
-#include "hb-face.h"
-
-HB_INTERNAL bool
-hb_svg_subset_glyph_image (hb_face_t *face,
-                           hb_blob_t *image,
-                           hb_codepoint_t glyph,
-                           unsigned *image_counter,
-                           hb_vector_t<char> *defs_dst,
-                           hb_vector_t<char> *body_dst);
+/* Draw-renderer fragment shader entry.  The heavy lifting (Slug
+ * coverage, MSAA, ppem, stem darkening) lives in the shared
+ * hb-gpu-fragment.glsl that must be prepended to this source;
+ * this file only adds the thin hb_gpu_draw() wrapper that lifts
+ * pixelsPerEm out of fwidth() at uniform control flow before
+ * calling the shared _hb_gpu_slug(). */
 
 
-#endif /* HB_VECTOR_SVG_SUBSET_HH */
+float hb_gpu_draw (vec2 renderCoord, uint glyphLoc_)
+{
+  vec2 pixelsPerEm = 1.0 / fwidth (renderCoord);
+  return _hb_gpu_slug (renderCoord, pixelsPerEm, glyphLoc_);
+}

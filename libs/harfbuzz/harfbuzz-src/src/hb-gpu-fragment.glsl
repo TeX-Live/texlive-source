@@ -2,8 +2,8 @@
  * Copyright (C) 2026  Behdad Esfahbod
  * Copyright (C) 2017  Eric Lengyel
  *
- * Based on the Slug algorithm by Eric Lengyel:
- * https://github.com/EricLengyel/Slug
+ * The _hb_gpu_slug body below is based on the Slug algorithm by
+ * Eric Lengyel: https://github.com/EricLengyel/Slug
  *
  *  This is part of HarfBuzz, a text shaping library.
  *
@@ -27,12 +27,26 @@
  */
 
 
-/* Requires GLSL 3.30 or GLSL ES 3.00.
+/* Shared fragment-shader helpers for the hb-gpu renderers.
+ *
+ * Requires GLSL 3.30 or GLSL ES 3.00.
  *
  * For GLSL ES 3.00 / WebGL2, define HB_GPU_ATLAS_2D before
  * including this source.  The atlas is then a 2D isampler2D
  * texture of known width (set via hb_gpu_atlas_width uniform)
  * instead of an isamplerBuffer.
+ *
+ * Exports:
+ *   hb_gpu_fetch (offset)                   atlas lookup
+ *   _hb_gpu_slug (rc, pixelsPerEm, glyphLoc) MSAA-aware Slug
+ *                                            coverage (caller supplies
+ *                                            pixelsPerEm so it can be
+ *                                            invoked from non-uniform
+ *                                            control flow)
+ *   hb_gpu_ppem (rc, glyphLoc)              pixels per em at fragment
+ *   _hb_gpu_curve_counts (rc, glyphLoc)     debug: per-pixel curve counts
+ *   hb_gpu_stem_darken (cov, brightness, ppem) thin-stroke contrast
+ *                                            correction
  */
 
 
@@ -149,11 +163,7 @@ _hb_gpu_glyph_info _hb_gpu_decode_glyph (vec2 renderCoord, uint glyphLoc_)
   return gi;
 }
 
-/* Return pixels per em at this fragment.
- *
- * renderCoord:  em-space sample position
- * glyphLoc:     texel offset of glyph blob in atlas
- */
+/* Return pixels per em at this fragment. */
 float hb_gpu_ppem (vec2 renderCoord, uint glyphLoc_)
 {
   _hb_gpu_glyph_info gi = _hb_gpu_decode_glyph (renderCoord, glyphLoc_);
@@ -172,7 +182,7 @@ ivec2 _hb_gpu_curve_counts (vec2 renderCoord, uint glyphLoc_)
 }
 
 /* Single-sample coverage in [0, 1]. */
-float _hb_gpu_render_single (vec2 renderCoord, vec2 pixelsPerEm, uint glyphLoc_)
+float _hb_gpu_slug_single (vec2 renderCoord, vec2 pixelsPerEm, uint glyphLoc_)
 {
 
   _hb_gpu_glyph_info gi = _hb_gpu_decode_glyph (renderCoord, glyphLoc_);
@@ -287,29 +297,26 @@ float _hb_gpu_render_single (vec2 renderCoord, vec2 pixelsPerEm, uint glyphLoc_)
   return _hb_gpu_calc_coverage (xcov, ycov, xwgt, ywgt);
 }
 
-/* Return coverage in [0, 1].
- *
- * renderCoord:  em-space sample position
- * glyphLoc:     texel offset of glyph blob in atlas
- */
-float hb_gpu_render (vec2 renderCoord, uint glyphLoc_)
+/* MSAA-aware Slug coverage.  Caller supplies pixelsPerEm so this
+ * function can be invoked from non-uniform control flow (for
+ * example inside an op-stream branch in hb-gpu-paint-fragment.wgsl,
+ * where WGSL would otherwise reject an fwidth call). */
+float _hb_gpu_slug (vec2 renderCoord, vec2 pixelsPerEm, uint glyphLoc_)
 {
-  vec2 emsPerPixel = fwidth (renderCoord);
-  vec2 pixelsPerEm = 1.0 / emsPerPixel;
-
-  float c = _hb_gpu_render_single (renderCoord, pixelsPerEm, glyphLoc_);
+  float c = _hb_gpu_slug_single (renderCoord, pixelsPerEm, glyphLoc_);
 
 #ifndef HB_GPU_NO_MSAA
   float ppem = hb_gpu_ppem (renderCoord, glyphLoc_);
 
   if (ppem < 16.0)
   {
+    vec2 emsPerPixel = 1.0 / pixelsPerEm;
     vec2 d = emsPerPixel * (1.0 / 3.0);
     float msaa = 0.25 *
-      (_hb_gpu_render_single (renderCoord + vec2 (-d.x, -d.y), pixelsPerEm, glyphLoc_) +
-       _hb_gpu_render_single (renderCoord + vec2 ( d.x, -d.y), pixelsPerEm, glyphLoc_) +
-       _hb_gpu_render_single (renderCoord + vec2 (-d.x,  d.y), pixelsPerEm, glyphLoc_) +
-       _hb_gpu_render_single (renderCoord + vec2 ( d.x,  d.y), pixelsPerEm, glyphLoc_));
+      (_hb_gpu_slug_single (renderCoord + vec2 (-d.x, -d.y), pixelsPerEm, glyphLoc_) +
+       _hb_gpu_slug_single (renderCoord + vec2 ( d.x, -d.y), pixelsPerEm, glyphLoc_) +
+       _hb_gpu_slug_single (renderCoord + vec2 (-d.x,  d.y), pixelsPerEm, glyphLoc_) +
+       _hb_gpu_slug_single (renderCoord + vec2 ( d.x,  d.y), pixelsPerEm, glyphLoc_));
 
     c = mix (c, msaa, smoothstep (16.0, 8.0, ppem));
   }
@@ -320,11 +327,11 @@ float hb_gpu_render (vec2 renderCoord, uint glyphLoc_)
 
 /* Stem darkening for small sizes.
  *
- * coverage:    output of hb_gpu_render
+ * coverage:    output of hb_gpu_draw / _hb_gpu_slug
  * brightness:  foreground brightness in [0, 1]
  * ppem:        pixels per em at this fragment
  */
-float hb_gpu_darken (float coverage, float brightness, float ppem)
+float hb_gpu_stem_darken (float coverage, float brightness, float ppem)
 {
   return pow (coverage,
 	      mix (pow (2.0, brightness - 0.5), 1.0,

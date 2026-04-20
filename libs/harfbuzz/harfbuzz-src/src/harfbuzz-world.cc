@@ -103,7 +103,7 @@
 
 #ifdef HB_HAS_GPU
 #include "hb-gpu-draw.cc"
-#include "hb-gpu-shaders.cc"
+#include "hb-gpu-paint.cc"
 #include "hb-gpu.cc"
 #include "hb-static.cc"
 #endif
@@ -116,20 +116,8 @@
 #include "hb-raster-draw.cc"
 #include "hb-raster-image.cc"
 #include "hb-raster-paint.cc"
-#include "hb-raster-svg-base.cc"
-#include "hb-raster-svg-bbox.cc"
-#include "hb-raster-svg-clip.cc"
-#include "hb-raster-svg-color.cc"
-#include "hb-raster-svg-defs-scan.cc"
-#include "hb-raster-svg-defs.cc"
-#include "hb-raster-svg-fill.cc"
-#include "hb-raster-svg-gradient.cc"
-#include "hb-raster-svg-parse.cc"
-#include "hb-raster-svg-render.cc"
-#include "hb-raster-svg-use.cc"
 #include "hb-raster.cc"
 #include "hb-static.cc"
-#include "hb-zlib.cc"
 #endif
 
 #ifdef HB_HAS_SUBSET
@@ -165,11 +153,11 @@
 
 #ifdef HB_HAS_VECTOR
 #include "hb-static.cc"
-#include "hb-vector-svg-draw.cc"
-#include "hb-vector-svg-paint.cc"
-#include "hb-vector-svg-path.cc"
-#include "hb-vector-svg-subset.cc"
-#include "hb-vector-svg-utils.cc"
+#include "hb-vector-draw.cc"
+#include "hb-vector-paint-pdf.cc"
+#include "hb-vector-paint-svg.cc"
+#include "hb-vector-paint.cc"
+#include "hb-vector-path.cc"
 #include "hb-vector.cc"
 #include "hb-zlib.cc"
 #endif

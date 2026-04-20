@@ -1003,25 +1003,25 @@ _hb_font_funcs_set_middle (hb_font_funcs_t   *ffuncs,
 			   void              *user_data,
 			   hb_destroy_func_t  destroy)
 {
+  auto destroy_guard = hb_make_scope_guard ([&]() {
+    if (destroy) destroy (user_data);
+  });
+
   if (user_data && !ffuncs->user_data)
   {
     ffuncs->user_data = (decltype (ffuncs->user_data)) hb_calloc (1, sizeof (*ffuncs->user_data));
     if (unlikely (!ffuncs->user_data))
-      goto fail;
+      return false;
   }
   if (destroy && !ffuncs->destroy)
   {
     ffuncs->destroy = (decltype (ffuncs->destroy)) hb_calloc (1, sizeof (*ffuncs->destroy));
     if (unlikely (!ffuncs->destroy))
-      goto fail;
+      return false;
   }
 
+  destroy_guard.release ();
   return true;
-
-fail:
-  if (destroy)
-    (destroy) (user_data);
-  return false;
 }
 
 #define HB_FONT_FUNC_IMPLEMENT(get_,name) \
@@ -1627,11 +1627,12 @@ hb_font_draw_glyph_or_fail (hb_font_t *font,
  *
  * Paints a color glyph.
  *
- * This function is similar to, but lower-level than,
- * hb_font_paint_glyph(). It is suitable for clients that
- * need more control.  If there are no color glyphs available,
- * it will return `false`. The client can then fall back to
- * hb_font_draw_glyph_or_fail() for the monochrome outline glyph.
+ * Succeeds if @glyph has color paint layers (COLRv0),
+ * a color paint graph (COLRv1), or a bitmap image that the
+ * font's callbacks render successfully.  Returns `false` if
+ * the font has no color data for @glyph; the client can then
+ * fall back to hb_font_draw_glyph_or_fail() for the monochrome
+ * outline.
  *
  * The painting instructions are returned by way of calls to
  * the callbacks of the @funcs object, with @paint_data passed
