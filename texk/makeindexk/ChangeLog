@@ -1,3 +1,8 @@
+2026-04-20  Karl Berry  <karl@freefriends.org>
+
+	* makeindex.1: use - instead of \-. Options are not typed starting
+	with en-dashes.
+
 2026-04-12  Karl Berry  <karl@freefriends.org>
 
 	* makeindex.1: use \f(CW instead of \fC, which provokes

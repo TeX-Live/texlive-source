@@ -7,28 +7,28 @@
 .if t .ds Uc \fIU\\h'-0.12m'C\\v'0.27m'\\h'-.23m'S\\h'-0.11m'F\\v'-0.27m'\fP
 .if n .ds Uc UCSF
 .ds Et \\f(boE\\h'-0.1667m'\\v'-0.20v'T\\v'0.20v'\\h'-0.125m'T\\fP
-.TH MAKEINDEX 1 "12 April 2026" "TeX Live"
+.TH MAKEINDEX 1 "21 April 2026" "TeX Live"
 .\"=====================================================================
 .SH NAME
 makeindex \- a general purpose, formatter-independent index processor
 .SH SYNOPSIS
 .B makeindex
-.RB [ \-c ]
-.RB [ \-g ]
-.RB [ \-i ]
-.RB [ \-l ]
-.RB [ \-o
+.RB [ -c ]
+.RB [ -g ]
+.RB [ -i ]
+.RB [ -l ]
+.RB [ -o
 .IR ind ]
-.RB [ \-p
+.RB [ -p
 .IR num ]
-.RB [ \-q ]
-.RB [ \-r ]
-.RB [ \-s
+.RB [ -q ]
+.RB [ -r ]
+.RB [ -s
 .IR sfile ]
-.RB [ \-t
+.RB [ -t
 .IR log ]
-.RB [ \-L ]
-.RB [ \-T ]
+.RB [ -L ]
+.RB [ -T ]
 .RI [ idx0
 .I idx1
 .IR idx2 .\|.\|.]
@@ -80,7 +80,7 @@ aborts.
 .LP
 If exactly one input file was given and no explicit style file was
 specified using
-.BR \-s ,
+.BR -s ,
 .I makeindex
 uses a file with the extension
 .I \&.mst
@@ -95,11 +95,11 @@ a paper cited below.
 .\"=====================================================================
 .SH OPTIONS
 .TP 10
-.B \-c
+.B -c
 Compress intermediate blanks (ignoring leading and trailing blanks and
 tabs).  By default, blanks in the index key are retained.
 .TP 10
-.B \-g
+.B -g
 Employ German word ordering in the index, in accord with rules set forth
 in DIN 5007.  By default,
 .I makeindex
@@ -115,19 +115,19 @@ as '+').  If the quote character is not redefined,
 .I makeindex
 will produce an error message and abort.
 .TP 10
-.B \-i
+.B -i
 Take input from
 .IR stdin .
 When this option is specified and
-.B \-o
+.B -o
 is not, output is written to
 .IR stdout .
 .TP 10
-.B \-l
+.B -l
 Letter ordering; by default, word ordering is used (see
 the \s-2ORDERING\s+2 section).
 .TP 10
-.BI \-o " ind"
+.BI -o " ind"
 Employ
 .I ind
 as the output index file.  By default, the file name
@@ -137,7 +137,7 @@ to the base name of
 the first input file
 .RI ( idx0 ).
 .TP 10
-.BI \-p " num"
+.BI -p " num"
 Set the starting page number of the output index file to be
 .I num
 (useful when the index file is to be formatted separately).  The
@@ -169,7 +169,7 @@ name is determined by appending the extension
 to the base name of the first input file
 .RI ( idx0 ).
 .TP 10
-.B \-q
+.B -q
 Quiet mode; send no messages to
 .IR stderr .
 By default, progress
@@ -178,20 +178,20 @@ and error messages are sent to
 as well as to the
 transcript file.
 .TP 10
-.B \-r
+.B -r
 Disable implicit page range formation; page ranges must be created by
 using explicit range operators; see \s-2SPECIAL EFFECTS\s+2 below.  By
 default, three or more successive pages are automatically abbreviated
 as a range (e.g. 1\(em5).
 .TP 10
-.BI \-s " sty"
+.BI -s " sty"
 Employ
 .I sty
 as the style file (no default).  The environment
 variable \s-2INDEXSTYLE\s+2 defines the path where the style file
 should be found.
 .TP 10
-.BI \-t " log"
+.BI -t " log"
 Employ
 .I log
 as the transcript file.  By default, the file name is
@@ -201,10 +201,10 @@ to the base name of the
 first input file
 .RI ( idx0 ).
 .TP 10
-.BR \-L
+.BR -L
 sort based on locale settings. Not available on all systems.
 .TP 10
-.BR \-T
+.BR -T
 special support for Thai documents. Not available on all systems.
 .\"=====================================================================
 .SH "STYLE FILE"
@@ -594,7 +594,7 @@ the following command line produces output in file
 .IR footmp.ind :
 .LP
 .RS
-\f(CWmakeindex  \-s book.ist  \-o footmp.ind  \-p odd  foo\fP
+\f(CWmakeindex  -s book.ist  -o footmp.ind  -p odd  foo\fP
 .RE
 .LP
 Here a non-default output file name is used to avoid clobbering the
@@ -659,7 +659,7 @@ resides in the file
 .LP
 The local macro package may require modification, as in this example
 of an extension to the
-.B \-ms
+.B -ms
 macros (note that at some sites, this macro should
 .I replace
 a pre-existing macro of the same name):
@@ -728,7 +728,7 @@ To filter out any genuine error messages, invoke
 .\"---------------------------------------------------------------------
 .SS "CREATING THE INDEX FILE USING \*(Uc ENHANCED TROFF/\*(Ts"
 With \*(Uc Enhanced troff/\*(Ts, the
-.B \-I
+.B -I
 option of
 .IR psroff (1L)
 can produce both formatter output and an index file:
@@ -768,7 +768,7 @@ By default,
 assumes
 .IR "word ordering" ;
 if the
-.B \-l
+.B -l
 option is in effect,
 .I "letter ordering"
 is used.  In word ordering, a blank precedes any letter in the
@@ -1218,7 +1218,7 @@ Nelson Beebe improved on the portable version, and maintained the
 source distribution for the \*(TX Users Group for many years.
 Andreas Brosig contributed to the German word ordering.
 The modification to the
-.B \-ms
+.B -ms
 macros was derived from a method proposed by Ravi Sethi of AT&T
 Bell Laboratories.
 The
