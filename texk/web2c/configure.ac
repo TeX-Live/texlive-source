@@ -1,7 +1,7 @@
 dnl $Id$
 dnl Process this file with Autoconf to produce a configure script for Web2c.
 dnl
-dnl   Copyright 2015-2025 Karl Berry <tex-live@tug.org>
+dnl   Copyright 2015-2026 Karl Berry <tex-live@tug.org>
 dnl   Copyright 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 dnl
 dnl   This file is free software; the copyright holder
@@ -57,10 +57,10 @@ KPSE_LT_HACK
 KPSE_WEB2C_PREPARE
 m4_include([ac/web2c.ac])
 
-# XeTeX requires C++11 because ICU does :(.
+# XeTeX follows the ICU requirement for C++.
 if test "x$enable_xetex" = xyes; then
-  AC_MSG_NOTICE([checking for C++11, since XeTeX is enabled])
-  AX_CXX_COMPILE_STDCXX([11])
+  AC_MSG_NOTICE([checking for C++17, since XeTeX is enabled])
+  AX_CXX_COMPILE_STDCXX([17])
 fi
 
 AS_IF([test "x$enable_texlive_build" = xyes],

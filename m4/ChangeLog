@@ -1,3 +1,8 @@
+2026-04-20  Karl Berry  <karl@freefriends.org>
+
+	* ax_cxx_compile_stdcxx.m4: update to version 25.
+	https://gnu.org/software/autoconf-archive/ax_cxx_compile_stdcxx.html
+
 2026-02-20  Karl Berry  <karl@freefriends.org>
 
 	* kpse-harfbuzz-flags.m4 (KPSE_HARFBUZZ_SYSTEM_FLAGS):

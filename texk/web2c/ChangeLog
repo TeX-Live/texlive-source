@@ -1,3 +1,9 @@
+2026-04-20  Karl Berry  <karl@freefriends.org>
+
+	* configure.ac [XeTeX]: ICU 76 requires C++17, so XeTeX does too.
+	From Norbert.
+	https://sourceforge.net/p/xetex/bugs/205/
+
 2026-04-12  Karl Berry  <karl@freefriends.org>
 
 	* am/bootstrap.am (ctangleboot_DEPENDENCIES): add

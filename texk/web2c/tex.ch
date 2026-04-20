@@ -1981,16 +1981,18 @@ label done;
 var
   @!save_warning_index: pointer;
 begin
+  name_in_progress := true;
   save_warning_index := warning_index;
   warning_index := cur_cs; {store |cur_cs| here to remember until later}
-  @<Get the next non-blank non-relax non-call...@>; {here the program expands
+  @<Get the next non-blank non-call...@>; {here the program expands
     tokens and removes spaces and \.{\\relax}es from the input. The \.{\\relax}
     removal follows LuaTeX''s implementation, and other cases of
     balanced text scanning.}
   back_input; {return the last token to be read by either code path}
-  if cur_cmd=left_brace then
-    scan_file_name_braced
-  else
+  if cur_cmd=left_brace then begin
+    scan_file_name_braced;
+    name_in_progress := false;
+  end else
 @z
 
 @x [29.526] l.10213 - stop scanning file name if we're at end-of-line.
@@ -4810,7 +4812,7 @@ begin save_scanner_status := scanner_status; {|scan_toks| sets |scanner_status| 
   save_cur_cs := cur_cs; {we set |cur_cs| back a few tokens to use in runaway errors}
     {Scanning a token list}
   cur_cs := warning_index; {for possible runaway error}
-  {mimick |call_func| from pdfTeX}
+  {mimic |call_func| from pdf\TeX}
   if scan_toks(false, true) <> 0 then do_nothing; {actually do the scanning}
   {|s := tokens_to_string(def_ref);|}
   old_setting := selector; selector:=new_string;

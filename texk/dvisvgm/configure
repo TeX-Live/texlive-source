@@ -21605,7 +21605,8 @@ ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
 ac_link='$CXX -o conftest$ac_exeext $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
 ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
   ac_success=no
-  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking whether $CXX supports C++11 features by default" >&5
+
+      { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking whether $CXX supports C++11 features by default" >&5
 printf %s "checking whether $CXX supports C++11 features by default... " >&6; }
 if test ${ax_cv_cxx_compile_cxx11+y}
 then :
@@ -21622,7 +21623,21 @@ else case e in #(
 
 #error "This is not a C++ compiler"
 
-#elif __cplusplus < 201103L
+// MSVC always sets __cplusplus to 199711L in older versions; newer versions
+// only set it correctly if /Zc:__cplusplus is specified as well as a
+// /std:c++NN switch:
+//
+// https://devblogs.microsoft.com/cppblog/msvc-now-correctly-reports-__cplusplus/
+//
+// The value __cplusplus ought to have is available in _MSVC_LANG since
+// Visual Studio 2015 Update 3:
+//
+// https://learn.microsoft.com/en-us/cpp/preprocessor/predefined-macros
+//
+// This was also the first MSVC version to support C++14 so we can't use the
+// value of either __cplusplus or _MSVC_LANG to quickly rule out MSVC having
+// C++11 or C++14 support, but we can check _MSVC_LANG for C++17 and later.
+#elif __cplusplus < 201103L && !defined _MSC_VER
 
 #error "This is not a C++11 compiler"
 
@@ -21647,11 +21662,13 @@ namespace cxx11
 
     struct Base
     {
+      virtual ~Base() {}
       virtual void f() {}
     };
 
     struct Derived : public Base
     {
+      virtual ~Derived() override {}
       virtual void f() override {}
     };
 
@@ -21912,9 +21929,9 @@ esac
 fi
 { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: $ax_cv_cxx_compile_cxx11" >&5
 printf "%s\n" "$ax_cv_cxx_compile_cxx11" >&6; }
-  if test x$ax_cv_cxx_compile_cxx11 = xyes; then
-    ac_success=yes
-  fi
+    if test x$ax_cv_cxx_compile_cxx11 = xyes; then
+      ac_success=yes
+    fi
 
     if test x$ac_success = xno; then
     for alternative in ${ax_cxx_compile_alternatives}; do
@@ -21939,7 +21956,21 @@ else case e in #(
 
 #error "This is not a C++ compiler"
 
-#elif __cplusplus < 201103L
+// MSVC always sets __cplusplus to 199711L in older versions; newer versions
+// only set it correctly if /Zc:__cplusplus is specified as well as a
+// /std:c++NN switch:
+//
+// https://devblogs.microsoft.com/cppblog/msvc-now-correctly-reports-__cplusplus/
+//
+// The value __cplusplus ought to have is available in _MSVC_LANG since
+// Visual Studio 2015 Update 3:
+//
+// https://learn.microsoft.com/en-us/cpp/preprocessor/predefined-macros
+//
+// This was also the first MSVC version to support C++14 so we can't use the
+// value of either __cplusplus or _MSVC_LANG to quickly rule out MSVC having
+// C++11 or C++14 support, but we can check _MSVC_LANG for C++17 and later.
+#elif __cplusplus < 201103L && !defined _MSC_VER
 
 #error "This is not a C++11 compiler"
 
@@ -21964,11 +21995,13 @@ namespace cxx11
 
     struct Base
     {
+      virtual ~Base() {}
       virtual void f() {}
     };
 
     struct Derived : public Base
     {
+      virtual ~Derived() override {}
       virtual void f() override {}
     };
 
@@ -22243,9 +22276,14 @@ printf "%s\n" "$ac_res" >&6; }
   fi
 
     if test x$ac_success = xno; then
-                for alternative in ${ax_cxx_compile_alternatives}; do
-      for switch in -std=c++${alternative} +std=c++${alternative} "-h std=c++${alternative}"; do
-        cachevar=`printf "%s\n" "ax_cv_cxx_compile_cxx11_$switch" | sed "$as_sed_sh"`
+                    for alternative in ${ax_cxx_compile_alternatives}; do
+      for switch in -std=c++${alternative} +std=c++${alternative} "-h std=c++${alternative}" MSVC; do
+        if test x"$switch" = xMSVC; then
+                                        switch=-std:c++${alternative}
+          cachevar=`printf "%s\n" "ax_cv_cxx_compile_cxx11_${switch}_MSVC" | sed "$as_sed_sh"`
+        else
+          cachevar=`printf "%s\n" "ax_cv_cxx_compile_cxx11_$switch" | sed "$as_sed_sh"`
+        fi
         { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking whether $CXX supports C++11 features with $switch" >&5
 printf %s "checking whether $CXX supports C++11 features with $switch... " >&6; }
 if eval test \${$cachevar+y}
@@ -22265,7 +22303,21 @@ else case e in #(
 
 #error "This is not a C++ compiler"
 
-#elif __cplusplus < 201103L
+// MSVC always sets __cplusplus to 199711L in older versions; newer versions
+// only set it correctly if /Zc:__cplusplus is specified as well as a
+// /std:c++NN switch:
+//
+// https://devblogs.microsoft.com/cppblog/msvc-now-correctly-reports-__cplusplus/
+//
+// The value __cplusplus ought to have is available in _MSVC_LANG since
+// Visual Studio 2015 Update 3:
+//
+// https://learn.microsoft.com/en-us/cpp/preprocessor/predefined-macros
+//
+// This was also the first MSVC version to support C++14 so we can't use the
+// value of either __cplusplus or _MSVC_LANG to quickly rule out MSVC having
+// C++11 or C++14 support, but we can check _MSVC_LANG for C++17 and later.
+#elif __cplusplus < 201103L && !defined _MSC_VER
 
 #error "This is not a C++11 compiler"
 
@@ -22290,11 +22342,13 @@ namespace cxx11
 
     struct Base
     {
+      virtual ~Base() {}
       virtual void f() {}
     };
 
     struct Derived : public Base
     {
+      virtual ~Derived() override {}
       virtual void f() override {}
     };
 
@@ -22592,7 +22646,6 @@ printf "%s\n" "$as_me: No compiler with C++11 support was found" >&6;}
 printf "%s\n" "#define HAVE_CXX11 1" >>confdefs.h
 
   fi
-
 
 
 
