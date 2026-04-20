@@ -1,3 +1,9 @@
+2025-04-15  Max Chernoff  <tex@maxchernoff.ca>
+
+	* pdffont.c: avoid bigendian-specific union.
+	* dvipdfmx-incl.test: update.
+	From Werner Fink.
+
 2026-04-04  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* vf.c: Enable fallback SVS/IVS characters in virtual fonts
@@ -8,6 +14,44 @@
 	Thanks to Yukimasa Morimi.
 	https://github.com/texjporg/tex-jp-build/issues/196
 	* configure.ac: version 20260404.
+
+2026-03-31  Munehiro Yamamoto <munepixyz@gmail.com>
+
+	* dvipdfmx: fix spot_color_name double-free by deep-copying in
+	pdf_color_copycolor
+
+        pdf_color_copycolor() used a raw memcpy, so when the same pdf_color
+        was pushed for both stroke and fill (as spc_handler_color_push does),
+        they shared the spot_color_name pointer.  A non-top color pop then
+        freed both copies independently, causing a double-free crash.
+
+        Fix: deep-copy spot_color_name in pdf_color_copycolor() via
+        NEW()+strcpy(), and free the old pointer before overwriting in
+        pdf_color_set() and pdf_color_pop().
+
+        Reported by Norbert Preining.
+
+	* dvipdfmx-spot.test, tests/spot_doublefree.{tex,dvi}:
+	regression test for the double-free fix.
+
+2026-03-25  Munehiro Yamamoto <munepixyz@gmail.com>
+
+        dvipdfmx: fix color stack cross-pop between color push/pop and
+        pdf:bcolor/ecolor
+
+        * pdfcolor.h: add PDF_COLOR_SOURCE_DVIPS, PDF_COLOR_SOURCE_BCOLOR.
+          pdf_color_push(), pdf_color_pop(): add int source parameter.
+        * pdfcolor.c (color_stack): add source[] array.
+          (pdf_color_push): store source tag.
+          (pdf_color_pop): search for matching source; remove by shifting
+          if not at top; NULL out abandoned slot's spot_color_name pointers.
+        * spc_color.c: pass PDF_COLOR_SOURCE_DVIPS for color push/pop.
+        * spc_pdfm.c: pass PDF_COLOR_SOURCE_BCOLOR for pdf:bcolor/ecolor.
+        * dvi.c: pass PDF_COLOR_SOURCE_DVIPS for XeTeX rgba font color.
+
+	* dvipdfmx-color.test, tests/color_stack.{tex,dvi}: regression
+	test for the cross-pop fix.
+	* Makefile.am (TESTS): Add dvipdfmx-color.test.
 
 2026-03-17  Karl Berry  <karl@freefriends.org>
 
