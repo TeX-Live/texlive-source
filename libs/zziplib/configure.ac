@@ -1,7 +1,7 @@
 dnl $Id$
 dnl Process this file with autoconf to produce a configure script.
 dnl
-dnl   Copyright (C) 2016-2024 Karl Berry <tex-live@tug.org>
+dnl   Copyright (C) 2016-2026 Karl Berry <tex-live@tug.org>
 dnl   Copyright (C) 2010-2014 Peter Breitenlohner <tex-live@tug.org>
 dnl
 dnl   based on zziplib-0.13.58:
@@ -32,7 +32,6 @@ AC_PROG_LN_S
 KPSE_COMPILER_VISIBILITY
 
 # Checks for header files.
-AC_HEADER_STDC
 AC_HEADER_DIRENT
 AC_CHECK_HEADERS([stdint.h unistd.h windows.h sys/int_types.h])
 AC_CHECK_HEADERS([winnt.h winbase.h], , , [#include <windows.h>])
@@ -82,7 +81,7 @@ if test "x$enable_build" != xno || test -f config.force; then
 
 KPSE_ADD_FLAGS([zlib])
 AC_CHECK_HEADERS([zlib.h])
-AC_CHECK_FUNC([zlibVersion], , [AC_ERROR([zlib not found])])
+AC_CHECK_FUNC([zlibVersion], , [AC_MSG_ERROR([zlib not found])])
 KPSE_RESTORE_FLAGS
 
 echo timestamp >config.force
@@ -93,8 +92,9 @@ AC_SUBST([ZZIPLIB_TREE], [zziplib-src])
 # -----------------------------------------------------------------------
 AC_MSG_RESULT([creating include/zzip/_msvc.in via zzip/_msvc.sed of config.h.in])
 test -d include || mkdir include
-sed -f $srcdir/$ZZIPLIB_TREE/zzip/_msvc.sed $srcdir/config.h.in >include/_msvc.in
+sed -f "$srcdir"/$ZZIPLIB_TREE/zzip/_msvc.sed "$srcdir"/config.h.in >include/_msvc.in
 AC_CONFIG_HEADERS([config.h])
+AC_MSG_NOTICE([applying ax_prefix_config_h to config.h and include/_msvc.in])
 AX_PREFIX_CONFIG_H([include/zzip/_config.h],[zzip],[config.h])
 AX_PREFIX_CONFIG_H([include/zzip/_msvc.h],[zzip],[include/_msvc.in])
 

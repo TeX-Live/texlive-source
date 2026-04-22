@@ -1,3 +1,15 @@
+2026-04-21  Karl Berry  <karl@freefriends.org>
+
+	* m4/ax_prefix_config_h.m4: update to serial 16; previous version
+	got shell errors with autoconf-2.73.
+	* configure.ac (AC_HEADER_STDC): while we're here, remove this
+	now-unused macro.
+	(AC_MSG_ERROR): and rename AC_ERROR.
+	(AC_MSG_NOTICE): and add this.
+	A warning remains (reported):
+	  AX_PREFIX_CONFIG_H was called before AC_CONFIG_HEADERS
+	due to the second call of AX_PREFIX_CONFIG_H.
+
 2020-04-28 Luigi Scarso <luigi.scarso@gmail.com>
 
 	* configure.ac (KPSE_LARGE_FILE): define _LARGEFILE64_SOURCE
