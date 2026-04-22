@@ -1,4 +1,4 @@
-This is tlbuild.info, produced by makeinfo version 7.2 from
+This is tlbuild.info, produced by makeinfo version 7.3 from
 tlbuild.texi.
 
 This file documents the TeX Live build system and more.
@@ -868,7 +868,7 @@ many extra hassles, so don't do that, tempting as it may be.
 
    Currently the versions we use are:
 
-     autoconf (GNU Autoconf) 2.72
+     autoconf (GNU Autoconf) 2.73
      automake (GNU automake) 1.18.1
      bison (GNU Bison) 3.8.2
      flex 2.6.0
