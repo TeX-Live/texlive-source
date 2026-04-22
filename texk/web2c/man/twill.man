@@ -1,12 +1,10 @@
-.TH TWILL 1 "3 February 2026" "Web2C @VERSION@"
+.TH TWILL 1 "22 March 2026" "Web2C @VERSION@"
 .\"=====================================================================
-.if n .ds MF Metafont
-.if t .ds MF Metafont
 .if n .ds TX TeX
 .if t .ds TX \fRT\\h'-0.1667m'\\v'0.20v'E\\v'-0.20v'\\h'-0.125m'X\fP
 .\"=====================================================================
 .SH NAME
-twill, twill-refsort \- translate a literate programming WEB to TeX with mini-indexes
+twill, twill-refsort \- translate a literate programming WEB to \*(TX with mini-indexes
 .SH SYNOPSIS
 .PP
 \f[B]twill\f[R] [\f[B]-x\f[R]]
@@ -26,7 +24,7 @@ The
 program is used to create a \*(TX file for viewing a literate program
 written in WEB.  The output \*(TX file name is formed by adding
 .I .tex
-to the root of the \*(WB file name.
+to the root of the WEB file name.
 .PP
 \fBtwill\fP is like
 .BR weave (1),
