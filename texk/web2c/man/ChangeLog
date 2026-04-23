@@ -1,6 +1,11 @@
+2026-04-22  Karl Berry  <karl@freefriends.org>
+
+	* tex.man: typo .IF -> .IR for mktex<format>.
+	Report from Hille, https://tug.org/pipermail/tex-k/2026-April/004310.html
+
 2026-04-22  Andreas Scherer  <https://ascherer.github.io>
 
-	* twill.man: \*(WB is not defined.
+	* twill.man: \*(WB is no longer defined.
 
 2026-04-12  Karl Berry  <karl@freefriends.org>
 

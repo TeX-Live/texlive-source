@@ -1,4 +1,4 @@
-.TH TEX 1 "12 April 2026" "Web2C @VERSION@"
+.TH TEX 1 "22 April 2026" "Web2C @VERSION@"
 .\"=====================================================================
 .if t .ds TX \fRT\\h'-0.10m'\\v'0.17v'E\\v'-0.17v'\\h'-0.06m'X\fP
 .if n .ds TX TeX
@@ -325,13 +325,13 @@ Sets path searching debugging flags according to the bitmask.  See the
 .I Kpathsea
 manual for details: https://tug.org/texinfohtml/kpathsea.html#Debugging
 .TP
-.BI -[no-]mktex \ fmt
-Enable (disable)
-.RI mktex fmt ,
-where
-.I fmt
+.BI -[no-]mktex \ format
+Enable (disable) the
+.RI `mktex\\h'-0.14m' format'
+program, where
+.I format
 must be
-.IF fmt ,
+.IR fmt ,
 .IR tex ,
 or
 .IR tfm .
