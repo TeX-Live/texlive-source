@@ -14,7 +14,7 @@
    use the Perl makeglossaries script.
   
    This file is distributed as part of the glossaries LaTeX package.
-   Copyright 2015-2025 Nicola L.C. Talbot
+   Copyright 2015-2026 Nicola L.C. Talbot
    This work may be distributed and/or modified under the
    conditions of the LaTeX Project Public License, either version 1.3
    of this license or any later version.
@@ -36,7 +36,9 @@
    Also makeglossaries and makeglossaries-lite.lua.
   
    History:
-   * 4.48 - 4.7:
+   * 5.1
+     - added check for \@glsmakeindexappname
+   * 4.48 - 5.0:
      - no change.
    * 4.47:
      - Added hybrid instructions if record option detected but not \makeglossaries
@@ -70,7 +72,7 @@
      - changed first line from lua to texlua
 --]]
 
-thisversion = "4.7 (2025-05-14)"
+thisversion = "5.1 (2026-04-21)"
 
 quiet = false
 dryrun = false
@@ -93,7 +95,7 @@ letterorder = false
 makeindex_r = false
 makeindex_p = nil
 makeindex_extra = nil
-makeindex_m = "makeindex"
+makeindex_m = nil
 
 function version()
 
@@ -206,6 +208,11 @@ function doxindy(name, glg, gls, glo, language, codepage)
 end
 
 function domakeindex(name, glg, gls, glo)
+
+  if makeindex_m == nil
+  then
+    makeindex_m = "makeindex";
+  end
 
   cmd = quote_if_spaced(makeindex_m)
 
@@ -429,6 +436,8 @@ i = string.len(styfile)
 if string.sub(styfile, i-3, i) == ".xdy"
 then
   isxindy = true
+elseif makeindex_m == nil then
+  makeindex_m = string.match(aux, "\\@glsmakeindexappname{([^}]*)}")
 end
 
 if not letterorder

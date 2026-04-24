@@ -2,13 +2,13 @@
 
 # File    : makeglossaries
 # Author  : Nicola Talbot
-# Version : 4.7
+# Version : 5.1
 # Description: simple Perl script that calls makeindex or xindy.
 # Intended for use with "glossaries.sty" (saves having to remember
 # all the various switches)
 
 # This file is distributed as part of the glossaries LaTeX package.
-# Copyright 2007-2025 Nicola L.C. Talbot
+# Copyright 2007-2026 Nicola L.C. Talbot
 # This work may be distributed and/or modified under the
 # conditions of the LaTeX Project Public License, either version 1.3
 # of this license or any later version.
@@ -31,9 +31,13 @@
 # glossaries-babel.sty, glossaries-polyglossia.sty, glossaries.l2h.
 # Also makeglossaries and makeglossaries-lite.lua.
 
-my $version="4.7 (2025-05-14)";
+my $version="5.1 (2026-04-21)";
 
 # History:
+# v5.1
+#   * Added check for \@glsmakeindexappname
+# v4.8 - v5.0
+#   * No change. (Version number updated in line with glossaries.sty)
 # v4.7:
 #   * allow dots in base name and allow ".aux" extension to be
 #     specified.
@@ -363,6 +367,14 @@ my $extramkidxopts = '';
 # v4.34 added:
 my $foundbib2glsresource = '';
 
+# v2.08 added $xindyapp and $makeindexapp
+# By default assume they are on the operating system's path
+# v5.1 moved before scan_aux to allow \@glsmakeindexappname to
+# change $makeindexapp
+
+my $xindyapp = ($opt_x ? $opt_x :'xindy');
+my $makeindexapp = ($opt_m ? $opt_m :'makeindex');
+
 # Check aux file for other glossary types,
 # style file name and various other bits of information.
 
@@ -388,11 +400,6 @@ unless ($istfile)
           "Did you remember to use \\makeglossaries?\n";
    }
 }
-
-# v2.08 added $xindyapp and $makeindexapp
-# By default assume they are on the operating system's path
-my $xindyapp = ($opt_x ? $opt_x :'xindy');
-my $makeindexapp = ($opt_m ? $opt_m :'makeindex');
 
 my $fixencapclash = ($opt_e ? 0 : 1);
 
@@ -761,6 +768,15 @@ sub scan_aux{
            unless ($opt_q)
            {
               print "added glossary type '$1' ($2,$3,$4)\n";
+           }
+        }
+        elsif (m/\\\@glsmakeindexappname\s*\{([^}]*)\}/)
+        {
+           # added v5.1
+
+           unless ($opt_m)
+           {
+              $makeindexapp = $1;
            }
         }
         elsif (m/\\\@istfilename\s*\{([^}]*)\}/)
