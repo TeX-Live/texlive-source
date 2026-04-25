@@ -20,7 +20,7 @@ printf 'UNAME\t"%s"\n'    "`uname -a`"
 # We intentionally don't quote $1 in case CC was set to something like
 # "cc --someopt".
 compiler_version () {
-  $1 --version 2>&1 | grep -v '^Configured' | sed 1q
+  eval $1 --version 2>&1 | grep -v '^Configured' | sed 1q
 }
 
 # Similarly for the language version.
@@ -35,7 +35,7 @@ compiler_std () {
     *) echo "$0 (compiler_std): unknown language, goodbye: $lang" >&2
        exit 1;;
   esac
-  $1 -dM -E -x $lang /dev/null | grep "$symbol" | sed 's/^#define //'
+  eval $1 -dM -E -x $lang /dev/null | grep "$symbol" | sed 's/^#define //'
 }
 
 printf 'MAKE\t"%s"\n'     "${MAKE-make}"
@@ -46,14 +46,14 @@ echo
 
 # our configure defaults to using gcc and g++, so we will too.
 printf 'CC\t"%s"\n'       "${CC-gcc}"
-printf 'CC:ver\t"%s"\n'   "`compiler_version ${CC-gcc}`"
-printf 'CC:std\t"%s"\n'   "`compiler_std ${CC-gcc} c`"
+printf 'CC:ver\t"%s"\n'   "`compiler_version \"${CC-gcc}\"`"
+printf 'CC:std\t"%s"\n'   "`compiler_std \"${CC-gcc}\" c`"
 printf 'CFLAGS\t"%s"\n'   "${CFLAGS}"
 echo 
 
 printf 'CXX\t"%s"\n'      "${CXX-g++}"
-printf 'CXX:ver\t"%s"\n'  "`compiler_version ${CXX-g++}`"
-printf 'CXX:std\t"%s"\n'  "`compiler_std ${CXX-g++} c++`"
+printf 'CXX:ver\t"%s"\n'  "`compiler_version \"${CXX-g++}\"`"
+printf 'CXX:std\t"%s"\n'  "`compiler_std \"${CXX-g++}\" c++`"
 printf 'CXXFLAGS\t"%s"\n' "${CXXFLAGS}"
 echo
 
@@ -78,4 +78,4 @@ $do_config_status \
 && test -s config.status \
 && (printf '\nCONFIG_STATUS\n'; ./config.status --version | sed -n '1,/^$/p')
 
-exit 0
+exit 1
