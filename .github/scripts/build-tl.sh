@@ -156,7 +156,15 @@ echo "  TL_MAKE=$TL_MAKE"
 echo "  TL_MAKE_FLAGS=$TL_MAKE_FLAGS"
 echo "$0: (end variables)."
 
-./Build -C $BUILDARGS
+if ./Build -C $BUILDARGS; then
+  echo "$0: succeeded: Build -C $BUILDARGS"
+else
+  echo "$0: failed: Build -C $BUILDARGS" >&2
+  echo "$0: here is Work/build?*.log:" >&2
+  head -n 9999 Work/build?*.log >&2
+  echo "$0: aborting." >&2
+  exit 1
+fi
 
 # Let's make sure that we compiled with optimization. A normal
 # compilation line in the log will look like

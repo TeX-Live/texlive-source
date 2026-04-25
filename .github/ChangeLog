@@ -1,3 +1,7 @@
+2026-04-25  Karl Berry  <karl@freefriends.org>
+
+	* scripts/build-tl.sh: show build?*.log files on failure.
+
 2026-02-22  Karl Berry  <karl@freefriends.org>
 
 	* scripts/build-asy.sh: missed backslash for static-lib*,
