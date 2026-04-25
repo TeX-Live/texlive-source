@@ -1,5 +1,11 @@
 2026-04-25  Karl Berry  <karl@freefriends.org>
 
+	* doc/kpathsea.texi (Casefolding search): describe earlier and
+	more explicitly that casefolding does not apply in system
+	directories. Suggestion from Ulrike.
+
+2026-04-25  Karl Berry  <karl@freefriends.org>
+
 	* getopt.h (getopt): try never declaring the getopt()
 	version with empty parens. Thanks to C23, this now loses.
 	Was failing on BSD.

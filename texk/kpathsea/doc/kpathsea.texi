@@ -3,7 +3,7 @@
 @settitle Kpathsea: A library for path searching
 
 @set version 6.4.2/dev
-@set month-year March 2026
+@set month-year April 2026
 
 @copying
 This file documents the Kpathsea library for path searching.
@@ -1130,6 +1130,12 @@ for each path element in turn, if no match is found by the normal
 search, and the path element allows for checking the filesystem, a
 second check is made for a case-insensitive match.
 
+In practice, this means that in user directories, files will be found
+case-insensitively regardless of the underlying filesystem.  However,
+in @TeX{} system directories, notably @file{texmf-dist} in @TeX{}
+Live, it's still necessary to use the correct case; @file{\input Plain.tex}
+will not work.
+
 @vindex texmf_casefold_search
 This is enabled at compile-time on Unix systems, and enabled at
 runtime by setting the configuration variable
@@ -1212,11 +1218,10 @@ the search path is @samp{.:/somedir}, and the files
 now and previously, searching for @file{foobar.tex} returns
 @file{./foobar.tex}.  However, searching for @file{FooBar.TeX} now
 returns @file{./foobar.tex} instead of @file{/somedir/FooBar.TeX};
-this is the incompatibility mentioned above.  Also (as expected),
-searching for @file{FOOBAR.TEX} (or whatever variation) will now
-return @file{./foobar.tex}, whereas before it would fail.  Searching
-for all (@samp{kpsewhich --all}) @file{foobar.tex} will return both
-matches.
+this is the incompatibility mentioned above.  Also, searching for
+@file{FOOBAR.TEX} (or whatever variation) will now return
+@file{./foobar.tex}, whereas before it would fail.  Searching for all
+(@samp{kpsewhich --all}) @file{foobar.tex} will return both matches.
 
 Example #3: same as example #2, but on a case-insensitive
 (file)system: both now and previously, searching for @file{FooBar.TeX}
@@ -1246,11 +1251,13 @@ is done.  In @TeX{} Live, that is the @samp{texmf-local} and
 @samp{texmf-dist} trees (also @code{$TEXMFSYSCONFIG} and
 @code{$TEXMFSYSVAR}, but those are rarely noticed).  The rationale for
 this is that in practice, case mangling happens with user-created
-files, not with packages distributed as part of the @TeX{} system.
+files, not with packages distributed as part of the @TeX{} system, and
+it would incur a considerable speed penalty to search the system
+directories also.
 
 One more caveat: the purpose of @code{kpsewhich} is to exercise the
-path searching in Kpathsea as it is actually done.  Therefore, as
-shown above, @samp{kpsewhich --all} will not return all matches
+path searching in Kpathsea as it is actually implemented.  Therefore,
+as shown above, @samp{kpsewhich --all} will not return all matches
 regardless of case within a given path element.  If you want to find
 all matches in all directories, @code{find} is the best tool, although
 the setup takes a couple steps:
@@ -1268,7 +1275,7 @@ Sorry that it's annoyingly lengthy, but implementing this inside
 Kpathsea would be a lot of error-prone trouble for something that is
 only useful for debugging.  If your @code{find} does not support
 @code{-iname}, you can get GNU Find from
-@url{https://gnu.org/software/findutils}.
+@url{https://gnu.org/software/findutils}, or otherwise adapt as you wish.
 
 The casefolding search is implemented in the source file
 @file{kpathsea/pathsearch.c}.  Two implementation points:
