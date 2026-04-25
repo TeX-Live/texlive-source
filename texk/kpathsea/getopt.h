@@ -134,7 +134,9 @@ extern KPSEDLL int getopt (int argc, char *const *argv, const char *shortopts);
 /* Also, C23 made empty parentheses in declarations an error, breaking
    compatibility with C since day one. So avoid declaring in C23 too.  */
 #if ! (defined(__STDC_VERSION__) && __STDC_VERSION__ >= 202311L)
-extern KPSEDLL int getopt ();
+/* in fact, nowadays trying to declare with empty parens just seems
+   like trouble. let's try never doing so; <unistd.h> declares it.  */
+/* extern KPSEDLL int getopt (); */
 #endif /* not C23 */
 #endif /* not C++ */
 

@@ -1,3 +1,9 @@
+2026-04-25  Karl Berry  <karl@freefriends.org>
+
+	* getopt.h (getopt): try never declaring the getopt()
+	version with empty parens. Thanks to C23, this now loses.
+	Was failing on BSD.
+
 2026-03-22  Karl Berry  <karl@freefriends.org>
 
 	* variable.c (kpathsea_var_value): call FATAL instead of assert
