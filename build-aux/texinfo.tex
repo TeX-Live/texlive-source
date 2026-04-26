@@ -3,7 +3,7 @@
 % Load plain if necessary, i.e., if running under initex.
 \expandafter\ifx\csname fmtname\endcsname\relax\input plain\fi
 %
-\def\texinfoversion{2026-04-19.19}
+\def\texinfoversion{2026-04-25.23}
 %
 % Copyright 1985, 1986, 1988, 1990-2025 Free Software Foundation, Inc.
 %
@@ -5437,6 +5437,7 @@ $$%
       \extractindexcommands\segment
       \ifx\indexsortkey\empty{%
         \indexnonalnumdisappear
+        \inindexsortkeytrue
         \xdef\trimmed{\segment}%
         \xdef\trimmed{\expandafter\eatspaces\expandafter{\trimmed}}%
         \xdef\indexsortkey{\trimmed}%
@@ -10711,6 +10712,38 @@ directory should work if nowhere else does.}
 \newif\ifutfviiidefinedwarning
 \utfviiidefinedwarningtrue
 
+% Macros to output a string to sort a multibyte UTF-8 sequence by.
+% Check if there is a special definition to be used in the index
+% sort key for a character.
+% Output the sequence as-is, surrounded by curly braces.  The braces are
+% to help texindex find the first character regardless of locale character
+% encoding or version of awk used to run texindex.
+\gdef\UTFviiiSortkeyTwo#1#2{%
+  \expandafter\ifx\csname sort:#1#2\endcsname\relax
+    {\string #1\string #2}%
+  \else
+    \csname sort:#1#2\endcsname
+  \fi
+}
+\gdef\UTFviiiSortkeyThree#1#2#3{%
+  \expandafter\ifx\csname sort:#1#2#3\endcsname\relax
+    {\string #1\string #2\string #3}%
+  \else
+    \csname sort:#1#2#3\endcsname
+  \fi
+}
+\gdef\UTFviiiSortkeyFour#1#2#3#4{%
+  \expandafter\ifx\csname sort:#1#2#3#4\endcsname\relax
+    {\string #1\string #2\string #3\string #4}%
+  \else
+    \csname sort:#1#2#3#4\endcsname
+  \fi
+}
+
+% We use this with the \ifindexsortkey condition to expand and discard
+% an \else block in the containing conditional.
+\def\swapnestedfi#1\fi{\fi\expandafter#1\expandafter}
+
 % Give non-ASCII bytes the active definitions for processing UTF-8 sequences
 \begingroup
   \catcode`\~13
@@ -10729,8 +10762,8 @@ directory should work if nowhere else does.}
       \expandafter\UTFviiiLoop
     \fi}
   %
-  % For bytes other than the first in a UTF-8 sequence.  Not expected to
-  % be expanded except when writing to auxiliary files.
+  % UTF-8 continuation bytes (10XX XXXX) or unused (hex C1, C2).
+  % Not expected to be expanded except when writing to auxiliary files.
   \countUTFx = "80
   \countUTFy = "C2
   \def\UTFviiiTmp{%
@@ -10742,7 +10775,9 @@ directory should work if nowhere else does.}
   \countUTFy = "E0
   \def\UTFviiiTmp{%
     \gdef~{%
-        \ifpassthroughchars $%
+        \ifpassthroughchars
+          \ifinindexsortkey\swapnestedfi\UTFviiiSortkeyTwo\fi
+          $%
         \else\expandafter\UTFviiiTwoOctets\expandafter$\fi}}%
   \UTFviiiLoop
 
@@ -10750,7 +10785,9 @@ directory should work if nowhere else does.}
   \countUTFy = "F0
   \def\UTFviiiTmp{%
     \gdef~{%
-        \ifpassthroughchars $%
+        \ifpassthroughchars
+          \ifinindexsortkey\swapnestedfi\UTFviiiSortkeyThree\fi
+          $%
         \else\expandafter\UTFviiiThreeOctets\expandafter$\fi}}%
   \UTFviiiLoop
 
@@ -10758,7 +10795,9 @@ directory should work if nowhere else does.}
   \countUTFy = "F4
   \def\UTFviiiTmp{%
     \gdef~{%
-        \ifpassthroughchars $%
+        \ifpassthroughchars
+          \ifinindexsortkey\swapnestedfi\UTFviiiSortkeyFour\fi
+          $%
         \else\expandafter\UTFviiiFourOctets\expandafter$\fi
         }}%
   \UTFviiiLoop
@@ -10852,7 +10891,7 @@ directory should work if nowhere else does.}
       \parseXMLCharref
       %
       % Completely expand \UTFviiiTmp, which looks like:
-      % 1.  \UTFviiTwoOctetsName B1 B2
+      % 1.  \UTFviiiTwoOctetsName B1 B2
       % 2.  \csname u8:B1 \string B2 \endcsname
       % 3.  \u8: B1 B2  (a single control sequence token)
       \xdef\UTFviiiTmp{\UTFviiiTmp}%
@@ -10928,6 +10967,39 @@ directory should work if nowhere else does.}
     \uccode `#3\countUTFz
     \uppercase{\gdef\UTFviiiTmp{#2#3#4}}}
 \endgroup
+
+% Used in \DefineSortKey as temporary definitions of \UTFviiiTwoOctetsName etc.
+\def\UTFviiiSortTwoOctetsName#1#2{%
+  \csname sort:#1\string #2\endcsname}%
+\def\UTFviiiSortThreeOctetsName#1#2#3{%
+  \csname sort:#1\string #2\string #3\endcsname}%
+\def\UTFviiiSortFourOctetsName#1#2#3#4{%
+  \csname sort:#1\string #2\string #3\string #4\endcsname}%
+
+% To be used in translation files to provide strings to be output
+% in the index sort key where a character occurs.
+\def\DefineSortKey#1#2{%
+  \countUTFz = "#1\relax
+  \parseXMLCharref
+  \def\tmp{#2}%
+  \expandafter\let\csname usort:#1\endcsname\tmp
+  \bgroup
+    \let\UTFviiiTwoOctetsName\UTFviiiSortTwoOctetsName
+    \let\UTFviiiThreeOctetsName\UTFviiiSortThreeOctetsName
+    \let\UTFviiiFourOctetsName\UTFviiiSortFourOctetsName
+    %
+    % Completely expand \UTFviiiTmp, which looks like:
+    % 1.  \UTFviiiTwoOctetsName B1 B2
+    % 2.  \csname sort:B1 \string B2 \endcsname
+    % 3.  \sort: B1 B2  (a single control sequence token)
+    \xdef\UTFviiiTmp{\UTFviiiTmp}%
+  \egroup
+  \expandafter\def\UTFviiiTmp{#2}%
+}
+
+% this could be used as follows
+%\DefineSortKey{00F1}{nzzz} % n tilde - sort between n and o
+%\DefineSortKey{00D1}{Nzzz} % N tilde - sort between n and o
 
 % For native Unicode handling (XeTeX and LuaTeX),
 % provide a definition macro that sets a catcode to `other' non-globally
@@ -11757,6 +11829,9 @@ directory should work if nowhere else does.}
 \newif\ifpassthroughchars
 \passthroughcharsfalse
 
+\newif\ifinindexsortkey
+\inindexsortkeyfalse
+
 % For native Unicode handling (XeTeX and LuaTeX),
 % provide a definition macro to replace/pass-through a Unicode character
 %
@@ -11768,7 +11843,15 @@ directory should work if nowhere else does.}
         \uccode`\~="##2\relax
         \uppercase{\gdef~}{%
           \ifpassthroughchars
-            ##1%
+            \ifinindexsortkey
+               \expandafter\ifx\csname usort:#1\endcsname\relax
+                 {##1}%
+               \else
+                 \csname usort:#1\endcsname
+               \fi
+            \else
+              ##1%
+            \fi
           \else
             ##3%
           \fi
