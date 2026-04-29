@@ -1,3 +1,20 @@
+2026-04-29  Karl Berry  <karl@freefriends.org>
+
+	* scripts/build-tl.sh: always show build?*.log.
+
+	* workflows/main.yml: switch to freebsd 14.4 (the current 14.x)
+	https://en.wikipedia.org/wiki/FreeBSD_version_history#Version_history
+	since a) 13.5 [the last 13.x] will be unsupported as of tomorrow,
+	and b) we want to use gcc-15, since gcc-14 has only partial
+	support for C23, which is worse than no support at all.
+	(See luatex/ChangeLog and ustring.c.) Suggestion from Bruno:
+	https://tug.org/pipermail/tlbuild/2026q2/005996.html
+	
+	14.4 will also be unsupported by the time we release TL27,
+	but maybe there is nothing better to do. Neither building on
+	unsupported versions nor constantly churning the build os seem
+	good, but it seems there are no other options.
+
 2026-04-25  Karl Berry  <karl@freefriends.org>
 
 	* scripts/build-tl.sh: show build?*.log files on failure.

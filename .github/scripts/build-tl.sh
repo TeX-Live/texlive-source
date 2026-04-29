@@ -7,8 +7,7 @@
 
 set -ex
 
-if [ "x$2" = "x" ]
-then
+if test "x$2" = "x"; then
   echo "Usage: `basename $0` arch buildsys [no-prepare]" >&2
   exit 1
 fi
@@ -18,17 +17,16 @@ echo "$0: Building TL for arch = $arch"
 shift
 
 buildsys=$1
-echo "$0: Building on $buildsys"
 shift
 
 do_prepare=1
-if [ "$1" = "no-prepare" ]
-then
+if test x"$1" = xno-prepare; then
   do_prepare=0
 fi
 
-if [ $do_prepare = 1 ]
-then
+echo "$0: Building on $buildsys (do_prepare=$do_prepare)"
+
+if test $do_prepare = 1; then
   case $buildsys in 
      ubuntu|debian)
        export DEBIAN_FRONTEND=noninteractive
@@ -156,14 +154,21 @@ echo "  TL_MAKE=$TL_MAKE"
 echo "  TL_MAKE_FLAGS=$TL_MAKE_FLAGS"
 echo "$0: (end variables)."
 
-if ./Build -C $BUILDARGS; then
+printf "\n\f $0: build starting: `date` "
+./Build -C $BUILDARGS
+status=$?
+
+printf "\n\f $0: build finished: `date`
+echo "$0: status = $status"
+echo "$0: Here are the Work/build?*.log files:" >&2
+head -n 9999 Work/build?*.log >&2
+
+if test $status = 0; then
   echo "$0: succeeded: Build -C $BUILDARGS"
 else
   echo "$0: failed: Build -C $BUILDARGS" >&2
-  echo "$0: here is Work/build?*.log:" >&2
-  head -n 9999 Work/build?*.log >&2
   echo "$0: aborting." >&2
-  exit 1
+  exit $status
 fi
 
 # Let's make sure that we compiled with optimization. A normal

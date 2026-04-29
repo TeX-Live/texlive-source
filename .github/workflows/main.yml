@@ -145,7 +145,11 @@ jobs:
         uses: vmactions/freebsd-vm@v1
         if: ${{ matrix.os == 'freebsd' && (matrix.ci_build || matrix.release_build) }}
         with: 
-          release: '13.2'
+          release: '14.4'
+# freebsd does not make long-term support releases, according to
+# https://en.wikipedia.org/wiki/FreeBSD_version_history#Version_history
+# We can't (and shouldn't?) keep up with their rapid release schedule,
+# so we'll just have to do the best we can each year.
           usesh: true
           run: |
             cd repo
