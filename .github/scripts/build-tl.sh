@@ -154,11 +154,11 @@ echo "  TL_MAKE=$TL_MAKE"
 echo "  TL_MAKE_FLAGS=$TL_MAKE_FLAGS"
 echo "$0: (end variables)."
 
-printf "\n\f $0: build starting: `date` "
+printf "\n\f $0: build starting: `date`"
 ./Build -C $BUILDARGS
 status=$?
 
-printf "\n\f $0: build finished: `date`
+printf "\n\f $0: build finished: `date`"
 echo "$0: status = $status"
 echo "$0: Here are the Work/build?*.log files:" >&2
 head -n 9999 Work/build?*.log >&2
