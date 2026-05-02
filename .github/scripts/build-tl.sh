@@ -42,7 +42,7 @@ if test $do_prepare = 1; then
        ;;
      alpine)
        apk update
-       apk add --no-progress bash gcc g++ make perl fontconfig-dev libx11-dev libxmu-dev libxaw-dev
+       apk add --no-progress bash gcc15-devel make perl fontconfig-dev libx11-dev libxmu-dev libxaw-dev
        ;;
      freebsd)
        env ASSUME_ALWAYS_YES=YES pkg install -y gmake gcc pkgconf libX11 libXt libXaw fontconfig perl5
@@ -128,8 +128,11 @@ case "$arch" in
     ;;
   *-freebsd)
     export TL_MAKE=gmake
-    export CC=gcc 
-    export CXX=g++
+    # per https://tug.org/pipermail/tlbuild/2026q2/005996.html
+    # gcc14.x has only partial support for C23, despite defining
+    #   options to get it, which autoconf-2.73 finds :(.
+    export CC="gcc15 -Wl,-rpath,/usr/local/lib/gcc15"
+    export CXX=g++15 -Wl,-rpath,/usr/local/lib/gcc15"
     export CFLAGS='-D_NETBSD_SOURCE'
     export CXXFLAGS='-D_NETBSD_SOURCE -std=c++17'
     ;;

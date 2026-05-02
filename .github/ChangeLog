@@ -1,3 +1,8 @@
+2026-05-02  Karl Berry  <karl@freefriends.org>
+
+	* scripts/build-tl.sh: try gcc15 per Bruno:
+	https://tug.org/pipermail/tlbuild/2026q2/005996.html
+
 2026-04-29  Karl Berry  <karl@freefriends.org>
 
 	* scripts/build-tl.sh: always show build?*.log.
