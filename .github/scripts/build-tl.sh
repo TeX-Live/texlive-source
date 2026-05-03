@@ -127,6 +127,7 @@ case "$arch" in
     fi
     ;;
   *-freebsd)
+    export PATH=/usr/local/bin:$PATH # for gcc15
     export TL_MAKE=gmake
     # per https://tug.org/pipermail/tlbuild/2026q2/005996.html
     # gcc14.x has only partial support for C23, despite defining
@@ -158,18 +159,20 @@ echo "  TL_MAKE_FLAGS=$TL_MAKE_FLAGS"
 echo "$0: (end variables)."
 
 printf "\n\f $0: build starting: `date`"
-./Build -C $BUILDARGS
+./Build -C $BUILDARGS || true # defeat sh -e
 status=$?
 
 printf "\n\f $0: build finished: `date`"
 echo "$0: status = $status"
 echo "$0: Here are the Work/build?*.log files:" >&2
-head -n 9999 Work/build?*.log >&2
+head -n 99999 Work/build?*.log >&2
 
 if test $status = 0; then
   echo "$0: succeeded: Build -C $BUILDARGS"
 else
   echo "$0: failed: Build -C $BUILDARGS" >&2
+  echo "$0: here is config.log, too:" >&2
+  head -n 99999 config.log >&2
   echo "$0: aborting." >&2
   exit $status
 fi
