@@ -1,4 +1,9 @@
-2025-04-15  Max Chernoff  <tex@maxchernoff.ca>
+2026-05-03  Akira Kakuto  <kakuto@jcom.zaq.ne.jp>
+
+	* pdfparse.c: Apply a patch for parse_pdf_name() given by
+	Satoki Tsuji.
+
+2026-04-15  Max Chernoff  <tex@maxchernoff.ca>
 
 	* pdffont.c: avoid bigendian-specific union.
 	* dvipdfmx-incl.test: update.
