@@ -40,12 +40,12 @@ if test $do_prepare = 1; then
        yum install -y gcc-toolset-11 fontconfig-devel libX11-devel libXmu-devel libXaw-devel
        . /opt/rh/gcc-toolset-11/enable
        ;;
-     alpine)
+     alpine) # aka musl
        apk update
-       apk add --no-progress bash gcc15-devel make perl fontconfig-dev libx11-dev libxmu-dev libxaw-dev
+       apk add --no-progress bash gcc15 make perl fontconfig-dev libx11-dev libxmu-dev libxaw-dev
        ;;
      freebsd)
-       env ASSUME_ALWAYS_YES=YES pkg install -y gmake gcc pkgconf libX11 libXt libXaw fontconfig perl5
+       env ASSUME_ALWAYS_YES=YES pkg install -y gmake gcc15-devel pkgconf libX11 libXt libXaw fontconfig perl5
        ;;
      netbsd)
        pkg_add gmake gcc pkgconf libX11 libXt libXaw fontconfig perl5
@@ -158,10 +158,18 @@ echo "  TL_MAKE=$TL_MAKE"
 echo "  TL_MAKE_FLAGS=$TL_MAKE_FLAGS"
 echo "$0: (end variables)."
 
-printf "\n\f $0: build starting: `date`"
-./Build -C $BUILDARGS || true # defeat sh -e
-status=$?
+# if we set CC, check that it invokes something reasonable.
+if test -n "$CC"; then
+  echo "$0: checking $CC --version:"
+  $CC --version || true # defeat -e for now
+fi
 
+printf "\n\f $0: build starting: `date`"
+if ./Build -C $BUILDARGS; then # thanks to -e; keep exit status without exiting
+  status=$?
+else
+  status=$?
+fi
 printf "\n\f $0: build finished: `date`"
 echo "$0: status = $status"
 echo "$0: Here are the Work/build?*.log files:" >&2

@@ -1,3 +1,9 @@
+2026-05-03  Karl Berry  <karl@freefriends.org>
+
+	* scripts/build-tl.sh: wrongly added gcc15-devel to alpine (musl)
+	instead of freebsd.
+	Do stupid redundancy to keep ./Build's exit status without exiting.
+
 2026-05-02  Karl Berry  <karl@freefriends.org>
 
 	* scripts/build-tl.sh: try gcc15 per Bruno:
