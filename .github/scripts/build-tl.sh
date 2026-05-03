@@ -24,6 +24,7 @@ if test x"$1" = xno-prepare; then
   do_prepare=0
 fi
 
+# emacs-page
 echo "$0: Building on $buildsys (do_prepare=$do_prepare)"
 
 if test $do_prepare = 1; then
@@ -42,7 +43,7 @@ if test $do_prepare = 1; then
        ;;
      alpine) # aka musl
        apk update
-       apk add --no-progress bash gcc15 make perl fontconfig-dev libx11-dev libxmu-dev libxaw-dev
+       apk add --no-progress bash gcc make perl fontconfig-dev libx11-dev libxmu-dev libxaw-dev
        ;;
      freebsd)
        env ASSUME_ALWAYS_YES=YES pkg install -y gmake gcc15-devel pkgconf libX11 libXt libXaw fontconfig perl5
@@ -87,6 +88,7 @@ touch ./utils/xindy/xindy-src/tex2xindy/tex2xindy.c
 touch ./texk/dvipng/doc/dvipng.1
 touch ./texk/dvipng/dvipng-src/dvipng.1
 
+# emacs-page
 # default settings
 TL_MAKE_FLAGS="-j 2"
 BUILDARGS=
@@ -104,8 +106,7 @@ case "$arch" in
   *-solaris)
     export PATH=/opt/csw/bin:$PATH
     export TL_MAKE=gmake
-    if [ $arch = "i386-solaris" ]
-    then
+    if test $arch = "i386-solaris"; then
       export CC="gcc -m32"
       export CXX="g++ -m32"
       # these commands make xdvipsk work:
@@ -119,7 +120,7 @@ case "$arch" in
       # 2026-02-11T15:08:00.6385876Z ld.so.1: teckit_compile: fatal: teckit_compile: mismatched ELF symbol versioning
       # 2026-02-11T15:08:00.6386286Z ../../../libs/teckit/teckit.test: line 7: 5876: Killed
       # 
-      # So instead, let's disable xdvipsk.
+      # So instead, let's disable xdvipsk on i386-solaris.
       BUILDARGS=--disable-xdvipsk
     else
       export CC="gcc -m64"
@@ -132,6 +133,7 @@ case "$arch" in
     # per https://tug.org/pipermail/tlbuild/2026q2/005996.html
     # gcc14.x has only partial support for C23, despite defining
     #   options to get it, which autoconf-2.73 finds :(.
+    #   So we need gcc15. See more comments in main.yml.
     export CC="gcc15 -Wl,-rpath,/usr/local/lib/gcc15"
     export CXX="g++15 -Wl,-rpath,/usr/local/lib/gcc15"
     export CFLAGS='-D_NETBSD_SOURCE'
@@ -160,10 +162,11 @@ echo "$0: (end variables)."
 
 # if we set CC, check that it invokes something reasonable.
 if test -n "$CC"; then
-  echo "$0: checking $CC --version:"
-  $CC --version || true # defeat -e for now
+  echo "$0: checking \$CC --version:"
+  $CC --version || true # defeat -e for now, configure will fail anyway
 fi
 
+# emacs-page
 printf "\n\f $0: build starting: `date`"
 if ./Build -C $BUILDARGS; then # thanks to -e; keep exit status without exiting
   status=$?
@@ -177,10 +180,12 @@ head -n 99999 Work/build?*.log >&2
 
 if test $status = 0; then
   echo "$0: succeeded: Build -C $BUILDARGS"
+  # continue below.
 else
   echo "$0: failed: Build -C $BUILDARGS" >&2
-  echo "$0: here is config.log, too:" >&2
+  printf "\n\f $0: here is config.log, too:" >&2
   head -n 99999 config.log >&2
+  printf "\n\f $0: (end of config.log)" >&2
   echo "$0: aborting." >&2
   exit $status
 fi
