@@ -1,3 +1,11 @@
+2026-05-03  Karl Berry  <karl@freefriends.org>
+
+	* unilib/ustring.c (strtod, strtol) [__STDC_VERSION__ < 202311L]:
+	revert to previous test, having switched the freebsd build to use
+	gcc15 (on freebsd 14.4). Autoconf developers were not receptive to
+	the problem. If anyone needs to compile on gcc 14.x or other such
+	compilers, they'll need to explicitly override Autoconf's switching.
+
 2026-04-26  Karl Berry  <karl@freefriends.org>
 
 	* unilib/ustring.c (strtod, strtol) [__STDC_VERSION__ < 202000L]:

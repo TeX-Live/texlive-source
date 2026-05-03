@@ -396,10 +396,7 @@ double u_strtod(const unichar_t *str, unichar_t **ptr) {
     char buf[60], *pt, *ret;
     const unichar_t *upt;
     double val;
-/* We'd like to check for 202311L, but FreeBSD 13.2 (gcc 14.2) helpfully
-   defines __STDC_VERSION__ to 202000L with -std=gnu23, and gives the usual
-   C23 error because of the empty parens in the declaration. */
-#if !defined(__STDC_VERSION__) || (__STDC_VERSION__ <202000L) /* before C23  */
+#if !defined(__STDC_VERSION__) || (__STDC_VERSION__ <202311L) /* before C23  */
     extern double strtod();		/* Please don't delete this, not all of us have good ansi headers */
 #endif
     
@@ -420,8 +417,7 @@ long u_strtol(const unichar_t *str, unichar_t **ptr, int base) {
     char buf[60], *pt, *ret;
     const unichar_t *upt;
     long val;
-/* see comments just above */
-#if !defined(__STDC_VERSION__) || (__STDC_VERSION__ <202000L) /* before C23 */
+#if !defined(__STDC_VERSION__) || (__STDC_VERSION__ <202311L) /* before C23 */
     extern long strtol();		/* Please don't delete this, not all of us have good ansi headers */
 #endif
     
