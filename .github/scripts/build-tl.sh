@@ -132,7 +132,7 @@ case "$arch" in
     # gcc14.x has only partial support for C23, despite defining
     #   options to get it, which autoconf-2.73 finds :(.
     export CC="gcc15 -Wl,-rpath,/usr/local/lib/gcc15"
-    export CXX=g++15 -Wl,-rpath,/usr/local/lib/gcc15"
+    export CXX="g++15 -Wl,-rpath,/usr/local/lib/gcc15"
     export CFLAGS='-D_NETBSD_SOURCE'
     export CXXFLAGS='-D_NETBSD_SOURCE -std=c++17'
     ;;
