@@ -88,7 +88,7 @@ jobs:
         run: ls -l $GITHUB_WORKSPACE/repo/asy-${{ matrix.tl_name }}
       - name: save artifact
         if: ${{ matrix.ci_build || matrix.release_build }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: asy-${{ matrix.tl_name }}
           path: ${{ github.workspace }}/repo/asy-${{ matrix.tl_name }}
@@ -144,7 +144,7 @@ jobs:
         run: ls -l $GITHUB_WORKSPACE/repo/asy-${{ matrix.arch }}-${{ matrix.os }}
       - name: save artifact
         if: ${{ matrix.ci_build || matrix.release_build }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: asy-${{ matrix.arch }}-${{ matrix.os }}
           path: ${{ github.workspace }}/repo/asy-${{ matrix.arch }}-${{ matrix.os }}
