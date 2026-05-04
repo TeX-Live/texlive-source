@@ -1,3 +1,8 @@
+2026-05-04  Karl Berry  <karl@freefriends.org>
+
+	* scripts/build-tl.sh (CXXFLAGS): always include -std=c++17,
+	since ICU requires it.
+
 2026-05-03  Karl Berry  <karl@freefriends.org>
 
 	* workflows/main.yml,

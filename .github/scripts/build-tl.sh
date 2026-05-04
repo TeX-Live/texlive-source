@@ -95,13 +95,11 @@ BUILDARGS=
 
 # special cases
 case "$arch" in
-  armhf-linux) # debian:buster
+  armhf-linux)
     TL_MAKE_FLAGS="-j 1"
-    export CXXFLAGS='-std=c++17'
     ;;
-  aarch64-linux) # debian:buster
+  aarch64-linux)
     BUILDARGS="--enable-arm-neon=on"
-    export CXXFLAGS='-std=c++17'
     ;;
   *-solaris)
     export PATH=/opt/csw/bin:$PATH
@@ -137,13 +135,13 @@ case "$arch" in
     export CC="gcc15 -Wl,-rpath,/usr/local/lib/gcc15"
     export CXX="g++15 -Wl,-rpath,/usr/local/lib/gcc15"
     export CFLAGS='-D_NETBSD_SOURCE'
-    export CXXFLAGS='-D_NETBSD_SOURCE -std=c++17'
-    ;;
-  x86_64-linux|i386-linux|x86_64-linuxmusl)
-    export CXXFLAGS='-std=c++17'
+    export CXXFLAGS='-D_NETBSD_SOURCE'
     ;;
 esac
 export TL_MAKE_FLAGS
+
+# ICU requires C++17, so we always need it.
+export CXXFLAGS="$CXXFLAGS -std=c++17"
 
 # If we explicitly set CFLAGS or CXXFLAGS above, it's up to us to enable
 # optimization, since we are overriding what Autoconf does.
