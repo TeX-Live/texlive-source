@@ -10270,6 +10270,15 @@ directory should work if nowhere else does.}
   \global\righthyphenmin = #3\relax
 }
 
+% @documentlanguagevariant - do nothing
+\parseargdef\documentlanguagevariant{}
+
+% @documentscript - do nothing
+% This command would only become relevant if we had translations in
+% multiple "scripts", e.g. Sebian in both Latin and Cyrillic alphabets.
+% However, we do not even support loading Cyrillic fonts.
+\parseargdef\documentscript{}
+
 % XeTeX and LuaTeX can handle Unicode natively.
 % Their default I/O uses UTF-8 sequences instead of a byte-wise operation.
 % Other TeX engines' I/O (pdfTeX, etc.) is byte-wise.
