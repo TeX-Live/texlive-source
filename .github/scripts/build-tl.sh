@@ -43,7 +43,7 @@ if test $do_prepare = 1; then
        ;;
      alpine) # aka musl
        apk update
-       apk add --no-progress bash gcc make perl fontconfig-dev libx11-dev libxmu-dev libxaw-dev
+       apk add --no-progress bash gcc g++ make musl-dev perl fontconfig-dev libx11-dev libxmu-dev libxaw-dev
        ;;
      freebsd)
        env ASSUME_ALWAYS_YES=YES pkg install -y gmake gcc15-devel pkgconf libX11 libXt libXaw fontconfig perl5

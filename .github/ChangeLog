@@ -1,3 +1,12 @@
+2026-05-06  Karl Berry  <karl@freefriends.org>
+
+	* scripts/build-tl.sh (alpine): seems we need musl-dev for
+	Scrt1.o crti.o ssp_nonshared.a; probably a dependency of g++,
+	which I had inadvertently taken out. Add both.
+	By the way, we are using the ancient alpine 3.12; the oldest
+	supported release is 3.21 (eol 1nov26). But since it still
+	works, don't change it, I guess.
+
 2026-05-04  Karl Berry  <karl@freefriends.org>
 
 	* scripts/build-tl.sh (CXXFLAGS): always include -std=c++17,
