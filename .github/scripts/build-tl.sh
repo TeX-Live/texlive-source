@@ -145,8 +145,8 @@ export CXXFLAGS="$CXXFLAGS -std=c++17"
 
 # If we explicitly set CFLAGS or CXXFLAGS above, it's up to us to enable
 # optimization, since we are overriding what Autoconf does.
-test -n "$CFLAGS" && CFLAGS="$CFLAGS -O2"
-test -n "$CXXFLAGS" && CXXFLAGS="$CXXFLAGS -O2"
+test -z "$CFLAGS" || CFLAGS="$CFLAGS -O2"
+test -z "$CXXFLAGS" || CXXFLAGS="$CXXFLAGS -O2"
 
 echo "$0: variables set:"
 echo "  BUILDARGS=$BUILDARGS"
@@ -158,11 +158,9 @@ echo "  TL_MAKE=$TL_MAKE"
 echo "  TL_MAKE_FLAGS=$TL_MAKE_FLAGS"
 echo "$0: (end variables)."
 
-# if we set CC, check that it invokes something reasonable.
-if test -n "$CC"; then
-  echo "$0: checking \$CC --version:"
-  $CC --version || true # defeat -e for now, configure will fail anyway
-fi
+# report the compiler version.
+echo "$0: checking \$CC --version:"
+${CC-gcc} --version || true # defeat -e for now, configure will fail anyway
 
 # emacs-page
 printf "\n\f $0: build starting: `date`"
@@ -182,7 +180,7 @@ if test $status = 0; then
 else
   echo "$0: failed: Build -C $BUILDARGS" >&2
   printf "\n\f $0: here is config.log, too:" >&2
-  head -n 99999 config.log >&2
+  head -n 99999 Work/config.log >&2
   printf "\n\f $0: (end of config.log)" >&2
   echo "$0: aborting." >&2
   exit $status
