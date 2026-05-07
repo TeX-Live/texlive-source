@@ -19,6 +19,9 @@
 
 #include <kpathsea/config.h>
 
+/* We used to check for GETCWD_FORKS in configure, but no longer do;
+   see comments in configure.ac.  But leave it in the code so it can be
+   defined by hand, just in case.  */
 #if defined (HAVE_GETCWD) && !defined (GETCWD_FORKS)
 #include <kpathsea/c-pathmx.h>
 
@@ -43,12 +46,12 @@ xchdir (string dirname)
 string
 xgetcwd (void)
 {
-    /* If the system provides getcwd, and it doesn't fork, use it.
-       This should be the case on just about all systems nowadays.
-       But just in case, if getcwd does fork, provide a fallback
-       implemented from scratch. Don't ever use getwd, since some
-       versions of GNU ld (as of 2025 or so) give an unconditional
-       warning that it's dangerous.  */
+    /* If the system provides getcwd, use it. This should be the case on
+       all systems nowadays.  But just in case, provide a fallback
+       implemented from scratch -- it doesn't work under NFS (see
+       configure.ac), but maybe better than nothing?  Don't ever use
+       getwd, since some versions of GNU ld (as of 2025 or so) give an
+       unconditional warning that it's dangerous.  */
 #if defined (HAVE_GETCWD) && !defined (GETCWD_FORKS)
     char path[PATH_MAX + 1];
 #if defined(WIN32)
@@ -72,7 +75,7 @@ xgetcwd (void)
     return xstrdup (path);
 
 #else /* not HAVE_GETCWD || GETCWD_FORKS */
-    /* Our own implementation, written by Olaf.  */
+    /* Our own implementation, written by Olaf.  Doesn't work under NFS.  */
     struct stat root_stat, cwd_stat;
     string cwd_path = (string)xmalloc(2); /* In case we assign "/" below.  */
 

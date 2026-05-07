@@ -28,11 +28,6 @@
 /* Define to 1 if the 'closedir' function returns void instead of int. */
 #undef CLOSEDIR_VOID
 
-/* Define to 1 if getcwd is implemented using fork or vfork. Email
-   tex-k@tug.org with your system info and config.log if you have to add this
-   by hand because configure failed to detect it. */
-#undef GETCWD_FORKS
-
 /* Define to 1 if you have the <assert.h> header file. */
 #undef HAVE_ASSERT_H
 

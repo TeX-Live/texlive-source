@@ -1,3 +1,10 @@
+2026-05-07  Karl Berry  <karl@freefriends.org>
+
+	* configure.ac (kb_cv_func_getcwd_forks): remove whole test;
+	rely on system getcwd(), unless the system has no getcwd() at all
+	(which should never be the case nowadays).
+	* xgetcwd.c: update comments.
+
 2026-05-06  Karl Berry  <karl@freefriends.org>
 
 	* configure.ac (kb_cv_func_getcwd_forks): don't declare

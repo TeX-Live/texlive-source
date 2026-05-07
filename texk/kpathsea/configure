@@ -16385,56 +16385,6 @@ esac
 fi
 
 
-if test "x$ac_cv_func_getcwd" = xyes; then
-  # We only need to run this if we have getcwd.
-  # Don't declare getcwd(), since C23 doesn't allow empty parens.
-  # Instead, we just have to hope that it's declared where it should be.
-  { printf '%s\n' "$as_me:${as_lineno-$LINENO}: checking whether getcwd uses fork or vfork" >&5
-printf %s "checking whether getcwd uses fork or vfork... " >&6; }
-if test ${kb_cv_func_getcwd_forks+y}
-then :
-  printf %s "(cached) " >&6
-else case e in #(
-  e) if test "$cross_compiling" = yes
-then :
-  kb_cv_func_getcwd_forks=no
-else case e in #(
-  e) cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-#include <unistd.h>
-                                                 int fork()  { exit(1); }
-                                                 int vfork() { exit(1); }
-                                                 char path[100];
-int
-main (void)
-{
-getcwd(path,100);
-  ;
-  return 0;
-}
-_ACEOF
-if ac_fn_c_try_run "$LINENO"
-then :
-  kb_cv_func_getcwd_forks=no
-else case e in #(
-  e) kb_cv_func_getcwd_forks=yes ;;
-esac
-fi
-rm -f core *.core core.conftest.* gmon.out bb.out conftest$ac_exeext \
-  conftest.$ac_objext conftest.beam conftest.$ac_ext ;;
-esac
-fi
- ;;
-esac
-fi
-{ printf '%s\n' "$as_me:${as_lineno-$LINENO}: result: $kb_cv_func_getcwd_forks" >&5
-printf '%s\n' "$kb_cv_func_getcwd_forks" >&6; }
-  if test "x$kb_cv_func_getcwd_forks" = xyes; then
-
-printf '%s\n' "#define GETCWD_FORKS 1" >>confdefs.h
-
-  fi # forks=yes
-fi   # have_getcwd
 
 { printf '%s\n' "$as_me:${as_lineno-$LINENO}: checking for native WIN32 or MINGW32" >&5
 printf %s "checking for native WIN32 or MINGW32... " >&6; }

@@ -41,28 +41,38 @@ dnl Replacement functions that may be required on ancient broken system.
 AC_CHECK_DECLS([putenv])
 AC_REPLACE_FUNCS([putenv])
 
-if test "x$ac_cv_func_getcwd" = xyes; then
-  # We only need to run this if we have getcwd.
-  # Don't declare getcwd(), since C23 doesn't allow empty parens.
-  # Instead, we just have to hope that it's declared where it should be.
-  AC_CACHE_CHECK([whether getcwd uses fork or vfork],
-               [kb_cv_func_getcwd_forks],
-               [AC_RUN_IFELSE([AC_LANG_PROGRAM([[#include <unistd.h>
-                                                 int fork()  { exit(1); }
-                                                 int vfork() { exit(1); }
-                                                 char path[100];]],
-                                               [[getcwd(path,100);]])],
-                              [kb_cv_func_getcwd_forks=no],
-                              [kb_cv_func_getcwd_forks=yes],
-                              [kb_cv_func_getcwd_forks=no])])
-  if test "x$kb_cv_func_getcwd_forks" = xyes; then
-    AC_DEFINE([GETCWD_FORKS], 1,
-            [Define to 1 if getcwd is implemented using fork or vfork.
-             Email tex-k@tug.org with your system info and config.log if
-             you have to add this by hand because configure failed to
-             detect it.])
-  fi # forks=yes
-fi   # have_getcwd
+dnl We used to check if getcwd forked, when TeX was among the biggest
+dnl programs likely to be run (1980s), and forking could easily cause a
+dnl gratuitous out-of-memory error. Nowadays, this is not the case.
+dnl Also, hopefully every getcwd() has become smart enough not to fork.
+dnl Also, the fallback definition of getcwd provided in xgetcwd.c fails
+dnl under NFS. All in all, seems better to just always use the system
+dnl getcwd, for better or worse. Check removed in May 2026.
+dnl 
+dnl if test "x$ac_cv_func_getcwd" = xyes; then
+dnl   # We only need to run this if we have getcwd.
+dnl   # Don't declare getcwd(), since C23 doesn't allow empty parens.
+dnl   # Instead, we just have to hope that it's declared in unistd.h
+dnl   # where it should be; stdlib.h is for exit.
+dnl   AC_CACHE_CHECK([whether getcwd uses fork or vfork],
+dnl                [kb_cv_func_getcwd_forks],
+dnl                [AC_RUN_IFELSE([AC_LANG_PROGRAM([[#include <unistd.h>
+dnl                                                  #include <stdlib.h>
+dnl                                                  int fork()  { exit(1); }
+dnl                                                  int vfork() { exit(1); }
+dnl                                                  char path[100];]],
+dnl                                                [[getcwd(path,100);]])],
+dnl                               [kb_cv_func_getcwd_forks=no],
+dnl                               [kb_cv_func_getcwd_forks=yes],
+dnl                               [kb_cv_func_getcwd_forks=no])])
+dnl   if test "x$kb_cv_func_getcwd_forks" = xyes; then
+dnl     AC_DEFINE([GETCWD_FORKS], 1,
+dnl             [Define to 1 if getcwd is implemented using fork or vfork.
+dnl              Email tex-k@tug.org with your system info and config.log if
+dnl              you have to add this by hand because configure failed to
+dnl              detect it.])
+dnl   fi # forks=yes
+dnl fi   # have_getcwd
 
 KPSE_COND_MINGW32
 
