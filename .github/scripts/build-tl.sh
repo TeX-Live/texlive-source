@@ -148,8 +148,6 @@ export CXXFLAGS="$CXXFLAGS -std=c++17"
 test -z "$CFLAGS" || CFLAGS="$CFLAGS -O2"
 test -z "$CXXFLAGS" || CXXFLAGS="$CXXFLAGS -O2"
 
-export CC=false # testing broken compiler behavior
-
 echo "$0: variables set:"
 echo "  BUILDARGS=$BUILDARGS"
 echo "  CC=$CC"
