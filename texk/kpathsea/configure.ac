@@ -1,7 +1,7 @@
 dnl $Id$
 dnl Process this file with autoconf to produce a configure script.
 dnl
-dnl   Copyright 2015-2021 Karl Berry <tex-live@tug.org>
+dnl   Copyright 2015-2026 Karl Berry <tex-live@tug.org>
 dnl   Copyright 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 dnl
 dnl   This file is free software; the copyright holder
@@ -42,25 +42,27 @@ AC_CHECK_DECLS([putenv])
 AC_REPLACE_FUNCS([putenv])
 
 if test "x$ac_cv_func_getcwd" = xyes; then
-# We only need to run this if we have getcwd.
-AC_CACHE_CHECK([whether getcwd uses fork or vfork],
+  # We only need to run this if we have getcwd.
+  # Don't declare getcwd(), since C23 doesn't allow empty parens.
+  # Instead, we just have to hope that it's declared where it should be.
+  AC_CACHE_CHECK([whether getcwd uses fork or vfork],
                [kb_cv_func_getcwd_forks],
-               [AC_RUN_IFELSE([AC_LANG_PROGRAM([[#include <stdlib.h>
-                                                 int fork() { exit(1); }
+               [AC_RUN_IFELSE([AC_LANG_PROGRAM([[#include <unistd.h>
+                                                 int fork()  { exit(1); }
                                                  int vfork() { exit(1); }
-                                                 extern char *getcwd();
                                                  char path[100];]],
                                                [[getcwd(path,100);]])],
                               [kb_cv_func_getcwd_forks=no],
                               [kb_cv_func_getcwd_forks=yes],
                               [kb_cv_func_getcwd_forks=no])])
-if test "x$kb_cv_func_getcwd_forks" = xyes; then
-  AC_DEFINE([GETCWD_FORKS], 1,
+  if test "x$kb_cv_func_getcwd_forks" = xyes; then
+    AC_DEFINE([GETCWD_FORKS], 1,
             [Define to 1 if getcwd is implemented using fork or vfork.
-             Let me know if you have to add this by hand because configure
-             failed to detect it.])
-fi
-fi
+             Email tex-k@tug.org with your system info and config.log if
+             you have to add this by hand because configure failed to
+             detect it.])
+  fi # forks=yes
+fi   # have_getcwd
 
 KPSE_COND_MINGW32
 

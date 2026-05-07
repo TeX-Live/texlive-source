@@ -16386,8 +16386,10 @@ fi
 
 
 if test "x$ac_cv_func_getcwd" = xyes; then
-# We only need to run this if we have getcwd.
-{ printf '%s\n' "$as_me:${as_lineno-$LINENO}: checking whether getcwd uses fork or vfork" >&5
+  # We only need to run this if we have getcwd.
+  # Don't declare getcwd(), since C23 doesn't allow empty parens.
+  # Instead, we just have to hope that it's declared where it should be.
+  { printf '%s\n' "$as_me:${as_lineno-$LINENO}: checking whether getcwd uses fork or vfork" >&5
 printf %s "checking whether getcwd uses fork or vfork... " >&6; }
 if test ${kb_cv_func_getcwd_forks+y}
 then :
@@ -16399,10 +16401,9 @@ then :
 else case e in #(
   e) cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
-#include <stdlib.h>
-                                                 int fork() { exit(1); }
+#include <unistd.h>
+                                                 int fork()  { exit(1); }
                                                  int vfork() { exit(1); }
-                                                 extern char *getcwd();
                                                  char path[100];
 int
 main (void)
@@ -16428,12 +16429,12 @@ esac
 fi
 { printf '%s\n' "$as_me:${as_lineno-$LINENO}: result: $kb_cv_func_getcwd_forks" >&5
 printf '%s\n' "$kb_cv_func_getcwd_forks" >&6; }
-if test "x$kb_cv_func_getcwd_forks" = xyes; then
+  if test "x$kb_cv_func_getcwd_forks" = xyes; then
 
 printf '%s\n' "#define GETCWD_FORKS 1" >>confdefs.h
 
-fi
-fi
+  fi # forks=yes
+fi   # have_getcwd
 
 { printf '%s\n' "$as_me:${as_lineno-$LINENO}: checking for native WIN32 or MINGW32" >&5
 printf %s "checking for native WIN32 or MINGW32... " >&6; }
