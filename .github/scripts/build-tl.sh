@@ -143,10 +143,15 @@ export TL_MAKE_FLAGS
 # ICU requires C++17, so we always need it.
 export CXXFLAGS="$CXXFLAGS -std=c++17"
 
-# If we explicitly set CFLAGS or CXXFLAGS above, it's up to us to enable
-# optimization, since we are overriding what Autoconf does.
-test -z "$CFLAGS" || CFLAGS="$CFLAGS -O2"
-test -z "$CXXFLAGS" || CXXFLAGS="$CXXFLAGS -O2"
+# Make binaries harder to exploit. This option is only supported on
+# GNU/Linux, but harmless on other targets.
+export CFLAGS="$CFLAGS -fhardened"
+
+# It's up to us to enable optimization, since we are overriding what
+# Autoconf does. Due to the above two assignments, we always set CFLAGS
+# and CXXFLAGS, so can just add to them now.
+CFLAGS="$CFLAGS -O2"
+CXXFLAGS="$CXXFLAGS -O2"
 
 echo "$0: variables set:"
 echo "  BUILDARGS=$BUILDARGS"

@@ -1,3 +1,9 @@
+2026-05-07  Karl Berry  <karl@freefriends.org>
+
+	* scripts/build-tl.sh (CFLAGS): add -fhardened. Try doing so
+	unconditionally, though it only has effect on GNU/Linux targets.
+	tlsecurity 29 Apr 2026 03:20:12 et al.
+
 2026-05-06  Karl Berry  <karl@freefriends.org>
 
 	* scripts/build-tl.sh (alpine): seems we need musl-dev for
