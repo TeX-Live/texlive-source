@@ -146,6 +146,8 @@ export TL_CONF_XDVI_TOOLKIT
 test -d $TL_WORKDIR || mkdir $TL_WORKDIR
 cd $TL_WORKDIR || exit 1
 
+set -vx  # show the configure and make commands in the log.
+
 # configure && make.  Keep the tee outside, so that we can detect
 # failure at either step.
 {
@@ -154,10 +156,8 @@ cd $TL_WORKDIR || exit 1
   printf 'PWD\t"%s"\n'     "`pwd`"
   printf 'UNAME\t"%s"\n'   "`uname -a`"
   env | sort >buildenv.log
-  echo "See also buildenv.log and buildinfo.log in `pwd`"
+  echo "See also buildenv.log and (if make ran) buildinfo.log in `pwd`"
   echo
-  #
-  set -vx  # show the configure and make commands in the log.
 
   eval $TL_BUILD_ENV $TL_CONFIGURE \
         --prefix=$TL_INSTALL_DEST \

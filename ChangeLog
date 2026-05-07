@@ -1,3 +1,7 @@
+2026-05-07  Karl Berry  <karl@tug.org>
+
+	* Build (set -vx): move to outside the subshell.
+
 2025-03-02  Karl Berry  <karl@tug.org>
 
 	* TL'26 release.
