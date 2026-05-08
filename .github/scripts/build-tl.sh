@@ -144,14 +144,16 @@ export TL_MAKE_FLAGS
 export CXXFLAGS="$CXXFLAGS -std=c++17"
 
 # Make binaries harder to exploit. This option is only supported on
-# GNU/Linux, but harmless on other targets.
-export CFLAGS="$CFLAGS -fhardened"
+# GNU/Linux, and only as of GCC 15; although it's only a warning if not
+# supported, it's too annoying to see the warning on every compilation.
+#if echo "$arch" | grep linux >/dev/null; then
+#  export CFLAGS="$CFLAGS -fhardened"
+#fi
 
-# It's up to us to enable optimization, since we are overriding what
-# Autoconf does. Due to the above two assignments, we always set CFLAGS
-# and CXXFLAGS, so can just add to them now.
-CFLAGS="$CFLAGS -O2"
-CXXFLAGS="$CXXFLAGS -O2"
+# It's up to us to enable optimization if we are overriding the
+# compilation flags.
+test -z "$CFLAGS" || CFLAGS="$CFLAGS -O2"
+test -z "$CXXFLAGS" || CXXFLAGS="$CXXFLAGS -O2"
 
 echo "$0: variables set:"
 echo "  BUILDARGS=$BUILDARGS"

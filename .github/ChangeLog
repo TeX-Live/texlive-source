@@ -1,5 +1,11 @@
 2026-05-07  Karl Berry  <karl@freefriends.org>
 
+	* workflows/main.yml (debian): update from bullseye(11) to
+	bookworm (12), since bullseye support ends August 2026.
+	* scripts/build-tl.sh (CFLAGS): omit -fhardened for now;
+	requires gcc15. Warns on FreeBSD, where it is recognized but
+	unsupported.
+
 	* scripts/build-tl.sh (CFLAGS): add -fhardened. Try doing so
 	unconditionally, though it only has effect on GNU/Linux targets.
 	tlsecurity 29 Apr 2026 03:20:12 et al.
