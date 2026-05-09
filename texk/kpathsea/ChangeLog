@@ -1,3 +1,7 @@
+2026-05-09  Andreas Scherer  <https://ascherer.github.io>
+
+	* elt-dirs.c: Fix compiler warnings.
+
 2026-05-07  Karl Berry  <karl@freefriends.org>
 
 	* configure.ac (kb_cv_func_getcwd_forks): remove whole test;

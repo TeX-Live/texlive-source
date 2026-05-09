@@ -303,7 +303,8 @@ do_subdir (kpathsea kpse, str_llist_type *str_list_ptr, string elt,
                 /* All criteria are met; find subdirectories.  */
 #ifdef KPSE_DEBUG
                 if (KPATHSEA_DEBUG_P (KPSE_DEBUG_EXPAND))
-                  DEBUGF1 ("do_subdir: recursing into subdir: %s\n", name);
+                  DEBUGF1 ("do_subdir: recursing into subdir: %s\n",
+                           FN_STRING (name));
 #endif /* KPSE_DEBUG */
                 do_subdir (kpse, str_list_ptr, FN_STRING (name),
                            potential_len, post);
@@ -314,7 +315,8 @@ do_subdir (kpathsea kpse, str_llist_type *str_list_ptr, string elt,
                 dir_list_add (str_list_ptr, FN_STRING (name));
 #ifdef KPSE_DEBUG
                 if (KPATHSEA_DEBUG_P (KPSE_DEBUG_EXPAND))
-                  DEBUGF1 ("do_subdir: done with subdir, adding: %s\n", name);
+                  DEBUGF1 ("do_subdir: done with subdir, adding: %s\n",
+                           FN_STRING (name));
 #endif /* KPSE_DEBUG */
               }
 #endif /* ST_NLINK_TRICK */
