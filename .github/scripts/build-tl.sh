@@ -38,8 +38,8 @@ if test $do_prepare = 1; then
        ;;
      almalinux)
        yum update -y
-       yum install -y gcc-toolset-11 fontconfig-devel libX11-devel libXmu-devel libXaw-devel
-       . /opt/rh/gcc-toolset-11/enable
+       yum install -y gcc-toolset-15 fontconfig-devel libX11-devel libXmu-devel libXaw-devel
+       . /opt/rh/gcc-toolset-15/enable
        ;;
      alpine) # aka musl
        apk update
@@ -148,12 +148,43 @@ export TL_MAKE_FLAGS
 # ICU requires C++17, so we always need it.
 export CXXFLAGS="$CXXFLAGS -std=c++17"
 
-# Make binaries harder to exploit. This option is only supported on
-# GNU/Linux, and only as of GCC 15; although it's only a warning if not
-# supported, it's too annoying to see the warning on every compilation.
-#if echo "$arch" | grep linux >/dev/null; then
-#  export CFLAGS="$CFLAGS -fhardened"
-#fi
+# Report the compiler version.
+echo "$0: checking \$CC --version:"
+${CC-gcc} --version || true # defeat -e in case, configure will fail anyway
+
+showfile() {
+  for f in "$@"; do
+    echo "$0: ==> $f"
+    cat $f
+    echo "$0: end $f <=="
+  done
+}
+
+# Make binaries harder to exploit with -fhardened. This option is only
+# supported on GNU/Linux, and only as of GCC 15. Older versions have
+# some support, but we'd have to specify a bunch of explicit options,
+# which seems a recipe for unnecessary maintenance pain.
+# 
+# Instead of hardwiring version numbers and platforms, try a test
+# compilation.
+# 
+echo "$0: checking whether we can enable -fhardened"
+touch empty.c
+# Get warning about _FORTIFY_SOURCE without optimization.
+if $CC $CFLAGS -fhardened -O2 -c empty.c >empty.out 2>&1; then
+  # Although it's only a warning if not supported, e.g., on freebsd,
+  # it's too annoying to see the warning on every compilation.
+  if test -s empty.out; then
+    echo "$0: empty.c -fhardened compilation got diagnostics, not setting."
+    showfile empty.out
+  else
+    echo "$0: empty.c -fhardened compilation successful, setting."
+    export CFLAGS="$CFLAGS -fhardened"
+  fi
+else
+  echo "$0: empty.c -fhardened compilation failed, not setting."
+  showfile empty.out
+fi
 
 # It's up to us to enable optimization if we are overriding the
 # compilation flags.
@@ -170,10 +201,6 @@ echo "  TL_MAKE=$TL_MAKE"
 echo "  TL_MAKE_FLAGS=$TL_MAKE_FLAGS"
 echo "$0: (end variables)."
 
-# report the compiler version.
-echo "$0: checking \$CC --version:"
-${CC-gcc} --version || true # defeat -e for now, configure will fail anyway
-
 # emacs-page
 printf "\n\f $0: build starting: `date`"
 if ./Build -C $BUILDARGS; then # thanks to -e; keep exit status without exiting
@@ -184,17 +211,15 @@ fi
 printf "\n\f $0: build finished: `date`"
 echo "$0: status = $status"
 echo "$0: Here are the Work/build?*.log files:" >&2
-head -n 99999 Work/build?*.log >&2
+showfile Work/build?*.log >&2
 
 if test $status = 0; then
   echo "$0: succeeded: Build -C $BUILDARGS"
   # continue below.
 else
   echo "$0: failed: Build -C $BUILDARGS" >&2
-  printf "\n\f $0: here is config.log, too:" >&2
-  head -n 99999 Work/config.log >&2
-  printf "\n\f $0: (end of config.log)" >&2
-  echo "$0: aborting." >&2
+  showfile Work/config.log >&2
+  echo "$0: aborting with status $status." >&2
   exit $status
 fi
 
@@ -204,7 +229,7 @@ fi
 #
 build_log=Work/build.log
 if grep 'compile:.* -O' $build_log; then :; else
-  echo "$0: aborting, no optimization (compile:* -O) in $build_log" >&2
+  echo "$0: aborting, no optimization /compile:.* -O/ in $build_log" >&2
   exit 1
 fi
 

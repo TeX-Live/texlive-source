@@ -1,5 +1,12 @@
 2026-05-09  Karl Berry  <karl@freefriends.org>
 
+	* scripts/build-tl.sh (almalinux): try gcc-toolset-15 instead of 11,
+	so we can use -fhardened.
+	(CFLAGS): add -fhardened if it's supported.
+	(showfile): new debug fn.
+
+2026-05-09  Karl Berry  <karl@freefriends.org>
+
 	* workflows/main.yml (x86_64-linuxmusl): update alpine from 3.12
 	to 3.22 (eol=1may2027).
 	* scripts/build-tl.sh (x86_64-linuxmusl): and 3.22 provides only
