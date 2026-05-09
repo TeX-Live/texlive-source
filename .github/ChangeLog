@@ -2,6 +2,9 @@
 
 	* workflows/main.yml (x86_64-linuxmusl): update alpine from 3.12
 	to 3.22 (eol=1may2027).
+	* scripts/build-tl.sh (x86_64-linuxmusl): and 3.22 provides only
+	gcc14(?), which is the broken-wrt-__STDC__VERSION version as
+	explained in comments. Use -std=gnu11 so Autoconf won't use C23.
 
 2026-05-07  Karl Berry  <karl@freefriends.org>
 

@@ -101,6 +101,11 @@ case "$arch" in
   aarch64-linux)
     BUILDARGS="--enable-arm-neon=on"
     ;;
+  x86_64-linuxmusl)
+    # alpine3.22 provides only gcc14, and gcc14 is problematic,
+    # as explained under freebsd below. Force use of older C standard.
+    export CFLAGS="-std=gnu11"
+    ;;
   *-solaris)
     export PATH=/opt/csw/bin:$PATH
     export TL_MAKE=gmake
