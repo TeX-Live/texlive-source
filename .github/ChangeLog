@@ -1,5 +1,9 @@
 2026-05-09  Karl Berry  <karl@freefriends.org>
 
+	* scripts/build-tl.sh (almalinux): also install perl-interpreter
+	for the sake of our few tests in Perl (which we should rewrite).
+	Guess it must have been a dependency of gcc-toolset-11? Weird.
+
 	* scripts/build-tl.sh (almalinux): try gcc-toolset-15 instead of 11,
 	so we can use -fhardened.
 	(CFLAGS): add -fhardened if it's supported.

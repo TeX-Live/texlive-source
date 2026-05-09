@@ -38,7 +38,8 @@ if test $do_prepare = 1; then
        ;;
      almalinux)
        yum update -y
-       yum install -y gcc-toolset-15 fontconfig-devel libX11-devel libXmu-devel libXaw-devel
+       yum install -y gcc-toolset-15 fontconfig-devel perl-interpreter \
+                      libX11-devel libXmu-devel libXaw-devel
        . /opt/rh/gcc-toolset-15/enable
        ;;
      alpine) # aka musl
@@ -171,7 +172,7 @@ showfile() {
 echo "$0: checking whether we can enable -fhardened"
 touch empty.c
 # Get warning about _FORTIFY_SOURCE without optimization.
-if $CC $CFLAGS -fhardened -O2 -c empty.c >empty.out 2>&1; then
+if $CC $CFLAGS -fhardened -c empty.c >empty.out 2>&1; then
   # Although it's only a warning if not supported, e.g., on freebsd,
   # it's too annoying to see the warning on every compilation.
   if test -s empty.out; then
