@@ -1,3 +1,8 @@
+2026-05-09  Karl Berry  <karl@freefriends.org>
+
+	* workflows/main.yml (x86_64-linuxmusl): update alpine from 3.12
+	to 3.22 (eol=1may2027).
+
 2026-05-07  Karl Berry  <karl@freefriends.org>
 
 	* workflows/main.yml (debian): update from bullseye(11) to

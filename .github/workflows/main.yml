@@ -65,7 +65,7 @@ jobs:
             use_qemu: false
             buildsys: almalinux
           - tl_name: x86_64-linuxmusl
-            image: alpine:3.12
+            image: alpine:3.22
             platform: amd64
             ci_build: true
             use_qemu: false
