@@ -1,6 +1,6 @@
 #! /bin/sh -vx
-#
-# Copyright 2022-2025 Japanese TeX Development Community <issue@texjp.org>
+# $Id$
+# Copyright 2022-2026 Japanese TeX Development Community <issue@texjp.org>
 # You may freely use, modify and/or distribute this file.
 
 engine=uptex
@@ -44,11 +44,11 @@ if [ $ret != 0 ]; then
 fi
 
 if [ "$COMSPEC" != "" ] || [ "$ExeExt" = ".exe" ]; then
-  echo "*** We guess OS is Windows."
+  echo "$0: We guess OS is Windows."
   MyOS=Windows
   try_ienc="sjis"
 else
-  echo "*** We guess OS is not Windows."
+  echo "$0: We guess OS is not Windows."
   MyOS=nonWindows
   try_ienc="euc sjis"
 fi
@@ -93,7 +93,7 @@ done
 done
 
 if [ $pret = 239 ]; then
-  echo "*** skip tests for Shift_JIS & EUC-JP."
+  echo "$0: skip tests for Shift_JIS & EUC-JP."
   exit 0
 fi
 

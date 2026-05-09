@@ -233,12 +233,12 @@ $CMP $testdir/fntdef3.dvi xfntdef3-dtl.dvi || exit 1
 
 ## Unicode filename
 if [ "$COMSPEC" != "" ] || [ "$ExeExt" = ".exe" ]; then
-  echo "*** We guess OS is Windows."
+  echo "$0: We guess OS is Windows."
   MyOS=Windows
   command_line_encoding=utf8
   export command_line_encoding
 else
-  echo "*** We guess OS is not Windows."
+  echo "$0: We guess OS is not Windows."
   MyOS=nonWindows
 fi
 cp $testdir/put.dump.dvi ./putΔДदダ打다𝕯🎉.dump.dvi || exit 50

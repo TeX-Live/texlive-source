@@ -1,6 +1,6 @@
 #! /bin/sh -vx
-#
-# Copyright 2022-2023 Japanese TeX Development Community <issue@texjp.org>
+# $Id$
+# Copyright 2022-2026 Japanese TeX Development Community <issue@texjp.org>
 # You may freely use, modify and/or distribute this file.
 
 engine=xetex
@@ -43,7 +43,7 @@ if [ $ret != 0 ]; then
 fi
 
 if [ "$COMSPEC" != "" ] || [ "$ExeExt" = ".exe" ]; then
-  echo "*** We guess OS is Windows."
+  echo "$0: We guess OS is Windows."
   command_line_encoding=utf8
   export command_line_encoding
 fi

@@ -1,6 +1,6 @@
 #! /bin/sh -vx
-#
-# Copyright 2022-2023 Japanese TeX Development Community <issue@texjp.org>
+# $Id$
+# Copyright 2022-2026 Japanese TeX Development Community <issue@texjp.org>
 # You may freely use, modify and/or distribute this file.
 
 engine=euptex
@@ -44,10 +44,10 @@ if [ $ret != 0 ]; then
 fi
 
 if [ "$COMSPEC" != "" ] || [ "$ExeExt" = ".exe" ]; then
-  echo "*** We guess OS is Windows."
+  echo "$0: We guess OS is Windows."
   MyOS=Windows
 else
-  echo "*** We guess OS is not Windows."
+  echo "$0: We guess OS is not Windows."
   MyOS=nonWindows
 fi
 if [ "$ExeExt" = ".exe" ]; then

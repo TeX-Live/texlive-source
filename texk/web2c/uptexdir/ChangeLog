@@ -1,3 +1,9 @@
+2026-05-09  Karl Berry  <karl@freefriends.org>
+
+	* wcfname.test,
+	* wcfname0.test: do not use *** in informational messages,
+	reserve for errors.
+
 2026-03-02  Karl Berry  <karl@tug.org>
 
 	* TL'26 release.

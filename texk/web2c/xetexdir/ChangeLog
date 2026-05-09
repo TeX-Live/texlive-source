@@ -1,3 +1,8 @@
+2026-05-09  Karl Berry  <karl@freefriends.org>
+
+	* wcfname.test: do not use *** in informational messages,
+	reserve for errors.
+
 2026-04-24  Karl Berry  <karl@freefriends.org>
 
 	* XeTeXFontInst.cpp,
