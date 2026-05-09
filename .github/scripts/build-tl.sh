@@ -172,7 +172,7 @@ showfile() {
 echo "$0: checking whether we can enable -fhardened"
 touch empty.c
 # Get warning about _FORTIFY_SOURCE without optimization.
-if $CC $CFLAGS -fhardened -c empty.c >empty.out 2>&1; then
+if ${CC-gcc} $CFLAGS -O2 -fhardened -c empty.c >empty.out 2>&1; then
   # Although it's only a warning if not supported, e.g., on freebsd,
   # it's too annoying to see the warning on every compilation.
   if test -s empty.out; then
