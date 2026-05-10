@@ -55,8 +55,6 @@ i386-netbsd, amd64-netbsd:
     LDFLAGS='-L/usr/X11R7/lib -Wl,-rpath,/usr/X11R7/lib' \
   ./Build --enable-xindy CLISP=/usr/local/bin/clisp
 
-i386-solaris, x86_64-solaris: github, see below.
-
 universal-darwin: See Master/source/mactexdoc.tar.xz.
 
 windows:

@@ -5,26 +5,9 @@
 # Public Domain
 #
 # See https://github.com/TeX-Live/texlive-source/actions for status.
-#
-# This file controls CI testing via Github Actions of the
-# git-svn checkout of the TeX Live source directory
-# which is pushed to Github at:
-#   https://github.com/TeX-Live/texlive-source
-#
-# The cron job that does the git svn up and git push is
-# running on texlive.info; see norbert cron there. Run cmd as norbert:
-#   /home/norbert/git-svn-repos/git-svn-syncer --new texlive-source
-#
-# A build is started with every commit. If a commit happens while a
-# build is running, somtimes the build is cancelled and a new one
-# started, and other times the new build waits until the old one is
-# complete? Seems mysterious.
-# 
-# See tlpkg/bin/tl-update-bindir for retrieving the binaries, which is
-# done only when a release is tagged, not from the
-# commit-triggered builds here.
+# See main.yml for general info, except that
+# for this, we manually trigger all builds, since asy updates are rare.
 
-# only build manually, since asy updates are rare.
 on:
   workflow_dispatch:
 
@@ -130,15 +113,15 @@ jobs:
           run: |
             cd repo
             sh .github/scripts/build-asy.sh ${{ matrix.arch }}-${{ matrix.os }} ${{ matrix.os }}
-      - name: build solaris
-        uses: vmactions/solaris-vm@v1
-        if: ${{ matrix.os == 'solaris' && (matrix.ci_build || matrix.release_build) }}
-        with: 
-          usesh: true
-          release: '11.4-gcc'
-          run: |
-            cd repo
-            sh .github/scripts/build-asy.sh ${{ matrix.arch }}-${{ matrix.os }} ${{ matrix.os }}
+#      - name: build solaris
+#        uses: vmactions/solaris-vm@v1
+#        if: ${{ matrix.os == 'solaris' && (matrix.ci_build || matrix.release_build) }}
+#        with: 
+#          usesh: true
+#          release: '11.4-gcc'
+#          run: |
+#            cd repo
+#            sh .github/scripts/build-asy.sh ${{ matrix.arch }}-${{ matrix.os }} ${{ matrix.os }}
       - name: find file step
         if: ${{ matrix.ci_build || matrix.release_build }}
         run: ls -l $GITHUB_WORKSPACE/repo/asy-${{ matrix.arch }}-${{ matrix.os }}
