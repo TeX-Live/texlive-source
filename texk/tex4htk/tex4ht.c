@@ -1,8 +1,8 @@
 
 #line 231 "./tex4ht-c.tex"
 
-/* tex4ht.c (2023-10-13-15:32), generated from tex4ht-c.tex
-   Copyright 2009-2023 TeX Users Group
+/* tex4ht.c (2026-05-10-15:20), generated from tex4ht-c.tex
+   Copyright 2009-2026 TeX Users Group
    Copyright 1996-2009 Eitan M. Gurari
 
 #line 1 "./tex4ht-c.tex"
@@ -12,14 +12,14 @@
 % conditions of the LaTeX Project Public License, either
 % version 1.3c of this license or (at your option) any
 % later version. The latest version of this license is in
-%   http://www.latex-project.org/lppl.txt
+%   https://www.latex-project.org/lppl.txt
 % and version 1.3c or later is part of all distributions
 % of LaTeX version 2005/12/01 or later.
 %
 % This work has the LPPL maintenance status "maintained".
 %
 % The Current Maintainer of this work
-% is the TeX4ht Project <http://tug.org/tex4ht>.
+% is the TeX4ht Project <https://tug.org/tex4ht>.
 %
 % If you modify this program, changing the
 % version identification would be appreciated.
@@ -7357,15 +7357,15 @@ SetConsoleCtrlHandler((PHANDLER_ROUTINE)sigint_handler, TRUE);
 (IGNORED) printf("----------------------------\n");
 #ifndef KPATHSEA
 #ifdef PLATFORM
-   (IGNORED) printf("tex4ht.c (2023-10-13-15:32 %s)\n",PLATFORM);
+   (IGNORED) printf("tex4ht.c (2026-05-10-15:20 %s)\n",PLATFORM);
 #else
-   (IGNORED) printf("tex4ht.c (2023-10-13-15:32)\n");
+   (IGNORED) printf("tex4ht.c (2026-05-10-15:20)\n");
 #endif
 #else
 #ifdef PLATFORM
-   (IGNORED) printf("tex4ht.c (2023-10-13-15:32 %s kpathsea)\n",PLATFORM);
+   (IGNORED) printf("tex4ht.c (2026-05-10-15:20 %s kpathsea)\n",PLATFORM);
 #else
-   (IGNORED) printf("tex4ht.c (2023-10-13-15:32 kpathsea)\n");
+   (IGNORED) printf("tex4ht.c (2026-05-10-15:20 kpathsea)\n");
 #endif
 #endif
 for(i=0; i<argc; i++){
@@ -10212,7 +10212,7 @@ if( i < 0 ){
 html_font = fonts_n? (struct html_font_rec *) r_alloc((void *) html_font,
                  (size_t) ((fonts_n+1) * sizeof(struct html_font_rec) ))
                    :  m_alloc(struct html_font_rec, 1);
-html_font[fonts_n].name = m_alloc(char, font_name_n + 1);
+html_font[fonts_n].name = m_alloc(char, strlen((char *) new_font_name) + 1);
 (IGNORED) strcpy((char *) html_font[fonts_n].name, (char *) new_font_name);
 html_font[fonts_n].i    = font_tbl_size;
 fonts_n++;
