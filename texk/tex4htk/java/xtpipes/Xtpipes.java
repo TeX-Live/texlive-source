@@ -1,9 +1,26 @@
 package xtpipes;
-/*
-Xtpipes.java (2009-01-27-22:19)
-*/
+/* Xtpipes.java (2026-05-11-10:17), generated from xtpipes.tex
+   Copyright (C) 2009-2010 TeX Users Group
+   Copyright (C) 2002-2009 Eitan M. Gurari
+%
+% This work may be distributed and/or modified under the
+% conditions of the LaTeX Project Public License, either
+% version 1.3c of this license or (at your option) any
+% later version. The latest version of this license is in
+%   https://www.latex-project.org/lppl.txt
+% and version 1.3c or later is part of all distributions
+% of LaTeX version 2005/12/01 or later.
+%
+% This work has the LPPL maintenance status "maintained".
+%
+% The Current Maintainer of this work
+% is the TeX4ht Project <https://tug.org/tex4ht>.
+%
+% If you modify this program, changing the
+% version identification would be appreciated. */
 // import xtpipes.util.InputObject;
 // import xtpipes.util.FileInfo;
+import xtpipes.XtpipesPrintWriter;
 import java.net.URLConnection;
 import java.io.*;
 import java.lang.reflect.*;
@@ -282,7 +299,7 @@ public static Document getDOM(String s, String args[], PrintWriter log)
    private static void mainMethod(String args[]) throws Exception {
   try{
     String xtpipes_call =
-     "   xtpipes (2009-01-27-22:19)"
+     "   xtpipes (2026-05-11-10:17)"
    + "\n   Command line options: "
    + "\n     java xtpipes [-trace] [-help] [-m] [-E] [-s script_file]"
    +                                               " [-S script_map]"
@@ -302,7 +319,7 @@ else if( args[n].charAt(0)!='-' ){ inFile = args[n]; }
 else if( args[n].equals("-m") ){
   messages = true;
   logWriter.println(
-     "xtpipes (2009-01-27-22:19)"
+     "xtpipes (2026-05-11-10:17)"
      + "\n java.version: "    + System.getProperty("java.version")
      + "\n java.class.path: " + System.getProperty("java.class.path")
      + "\n os.name: "         + System.getProperty("os.name")
@@ -517,7 +534,7 @@ if( saxReaderStack.empty() ){
       saxReader.setContentHandler( new DefaultHandler(){
          private Stack <Boolean> condition = new Stack <Boolean> ();
 public void startDocument () {
-   condition.push( new Boolean(true) );
+   condition.push( Boolean.valueOf(true) );
 }
 public void startElement(String ns, String sName,
                         String qName, Attributes atts) {
@@ -616,7 +633,7 @@ if( name.equals("content-type") ){
         condition = null;
         return;
    }  }
-   condition.push( new Boolean(cond) );
+   condition.push( Boolean.valueOf(cond) );
 }
 public void endElement(String ns, String sName, String qName) {
    if( condition == null ){ return; }

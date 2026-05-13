@@ -1,26 +1,23 @@
 package tex4ht;
-/**********************************************************/ 
-/* OoFilterImpl.java                     2009-03-11-03:09 */
-/* Copyright (C) 2006--2009    Eitan M. Gurari            */
-/*                                                        */
-/* This work may be distributed and/or modified under the */
-/* conditions of the LaTeX Project Public License, either */
-/* version 1.3 of this license or (at your option) any    */
-/* later version. The latest version of this license is   */
-/* in                                                     */
-/*   http://www.latex-project.org/lppl.txt                */
-/* and version 1.3 or later is part of all distributions  */
-/* of LaTeX version 2003/12/01 or later.                  */
-/*                                                        */
-/* This work has the LPPL maintenance status "maintained".*/
-/*                                                        */
-/* This Current Maintainer of this work                   */
-/* is Eitan M. Gurari.                                    */
-/*                                                        */
-/*                             gurari@cse.ohio-state.edu  */
-/*                 http://www.cse.ohio-state.edu/~gurari  */
-/**********************************************************/
-
+/* OoFilter.java (2026-05-11-09:55), generated from tex4ht-oo-xtpipes.tex
+   Copyright (C) 2009-2010 TeX Users Group
+   Copyright (C) 2002-2009 Eitan M. Gurari
+%
+% This work may be distributed and/or modified under the
+% conditions of the LaTeX Project Public License, either
+% version 1.3c of this license or (at your option) any
+% later version. The latest version of this license is in
+%   https://www.latex-project.org/lppl.txt
+% and version 1.3c or later is part of all distributions
+% of LaTeX version 2005/12/01 or later.
+%
+% This work has the LPPL maintenance status "maintained".
+%
+% The Current Maintainer of this work
+% is the TeX4ht Project <https://tug.org/tex4ht>.
+%
+% If you modify this program, changing the
+% version identification would be appreciated. */
 import java.util.*;
 import org.xml.sax.helpers.*;
 import org.xml.sax.*;
@@ -40,7 +37,7 @@ public class OoFilter extends XMLFilterImpl {
         String name = attr.getValue("draw:name");
 if( (name != null)
     && (attr.getValue("svg:width") == null)
-    && (attr.getValue("svg:hieght") == null)
+    && (attr.getValue("svg:height") == null)
 ){
   java.awt.Image image = new javax.swing.ImageIcon(name).getImage();
   int width = image.getWidth(null);

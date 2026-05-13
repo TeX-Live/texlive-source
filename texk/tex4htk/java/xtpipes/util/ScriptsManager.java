@@ -1,4 +1,22 @@
-// 2009-01-27-22:19
+/* ScriptsManager.java (2026-05-11-10:17), generated from xtpipes.tex
+   Copyright (C) 2009-2010 TeX Users Group
+   Copyright (C) 2002-2009 Eitan M. Gurari
+%
+% This work may be distributed and/or modified under the
+% conditions of the LaTeX Project Public License, either
+% version 1.3c of this license or (at your option) any
+% later version. The latest version of this license is in
+%   https://www.latex-project.org/lppl.txt
+% and version 1.3c or later is part of all distributions
+% of LaTeX version 2005/12/01 or later.
+%
+% This work has the LPPL maintenance status "maintained".
+%
+% The Current Maintainer of this work
+% is the TeX4ht Project <https://tug.org/tex4ht>.
+%
+% If you modify this program, changing the
+% version identification would be appreciated. */
 package xtpipes.util;
 import org.xml.sax.helpers.DefaultHandler;
 import org.xml.sax.*;
@@ -37,7 +55,7 @@ Stack<Integer> nsStack = new Stack<Integer>();
    public void startElement(String ns, String sName,
                         String qName, Attributes atts) {
    int top = nsName.size();
-nsStack.push( new Integer(top) );
+nsStack.push( Integer.valueOf(top) );
 
    String key = (atts==null)?
                null
@@ -87,11 +105,11 @@ for(int i=top; i>0; ){
  }
    s += ">" ;
    if( flag ){
-   Object [] state = { new Boolean(savemode), code, match };
+   Object [] state = { Boolean.valueOf(savemode), code, match };
    stack.push( state );
    savemode=true; code=""; match= key;
 } else {
-   Object [] state = { new Boolean(savemode), null, null };
+   Object [] state = { Boolean.valueOf(savemode), null, null };
    stack.push( state );
 }
 add( s );

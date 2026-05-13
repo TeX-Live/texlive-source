@@ -1,7 +1,23 @@
 package xtpipes;
-/*
-FileInfo.java (2009-01-27-22:19)
-*/
+/* FileInfo.java (2026-05-11-10:17), generated from xtpipes.tex
+   Copyright (C) 2009-2010 TeX Users Group
+   Copyright (C) 2002-2009 Eitan M. Gurari
+%
+% This work may be distributed and/or modified under the
+% conditions of the LaTeX Project Public License, either
+% version 1.3c of this license or (at your option) any
+% later version. The latest version of this license is in
+%   https://www.latex-project.org/lppl.txt
+% and version 1.3c or later is part of all distributions
+% of LaTeX version 2005/12/01 or later.
+%
+% This work has the LPPL maintenance status "maintained".
+%
+% The Current Maintainer of this work
+% is the TeX4ht Project <https://tug.org/tex4ht>.
+%
+% If you modify this program, changing the
+% version identification would be appreciated. */
 import java.io.File;
 import java.io.PrintWriter;
 
@@ -15,7 +31,7 @@ static String ii_scriptDir;
 static PrintWriter log;
 static boolean trace;
 
-   public FileInfo(PrintWriter log, String iii_scriptDir, boolean trace){
+   public FileInfo(PrintWriter log, String iii_scriptDir, boolean trace) {
       FileInfo.log = log;
       FileInfo.ii_scriptDir = iii_scriptDir;
       FileInfo.trace = trace;
