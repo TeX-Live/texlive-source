@@ -3701,9 +3701,16 @@ png_combine_row(png_const_structrp png_ptr, png_bytep dp, int display)
     */
    memcpy(dp, sp, PNG_ROWBYTES(pixel_depth, row_width));
 
-   /* Restore the overwritten bits from the last byte if necessary. */
+   /* Clear the padding bits in the last byte instead of preserving whatever
+    * was in the destination buffer.  PNG encoders are required to write zero
+    * for these bits, and preserving the destination bits here makes the
+    * decoded row depend on uninitialized caller memory, producing
+    * nondeterministic output for callers that do not pre-zero their row
+    * buffers (e.g. pdfTeX writepng).  (void)end_byte silences unused warnings.
+    */
+   (void)end_byte;
    if (end_ptr != NULL)
-      *end_ptr = (png_byte)((end_byte & end_mask) | (*end_ptr & ~end_mask));
+      *end_ptr = (png_byte)(*end_ptr & ~end_mask);
 }
 
 #ifdef PNG_READ_INTERLACING_SUPPORTED
