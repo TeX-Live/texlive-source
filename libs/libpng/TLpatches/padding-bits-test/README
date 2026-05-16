@@ -1,0 +1,102 @@
+libpng row padding-bit non-determinism
+======================================
+
+Background
+----------
+
+Debian bug #1118385 / tex-k discussion (May 2026) reported that pdfTeX
+produces different PDF output on consecutive runs when including a
+particular PNG image (valuators.png from the fltk1.4 documentation,
+567 x 506, 4-bit colormap, non-interlaced) even with
+SOURCE_DATE_EPOCH/FORCE_SOURCE_DATE set.
+
+Root cause
+----------
+
+For a sub-byte pixel depth (here 4 bpp) and a width that is not a
+multiple of 8/bpp (567 * 4 = 2268 bits = 283.5 bytes), the last byte of
+each decoded scanline holds the last pixel in its high nibble and 4
+padding bits in its low nibble.
+
+In libpng-1.6.58, pngrutil.c:png_combine_row() (non-interlaced path)
+deliberately preserves the destination buffer's existing bits in that
+padding region:
+
+    end_byte = *end_ptr;                            /* dest bits BEFORE memcpy */
+    memcpy(dp, sp, PNG_ROWBYTES(...));              /* whole row from sp       */
+    *end_ptr = (end_byte & end_mask)                /* restore dest pad bits   */
+             | (*end_ptr & ~end_mask);
+
+pdfTeX allocates its row buffer with xtalloc -> xmalloc (uninitialized
+memory). The padding bits in the output PDF therefore reflect whatever
+was on the heap at allocation time, so successive runs produce
+different bytes for those bits and the PDFs differ.
+
+The PNG spec requires encoders to set these padding bits to zero;
+readers should not import uninitialized caller memory into the decoded
+row.
+
+Fix
+---
+
+In libs/libpng/libpng-src/pngrutil.c, png_combine_row() now clears the
+padding bits instead of restoring them from the destination buffer:
+
+    if (end_ptr != NULL)
+       *end_ptr = (png_byte)(*end_ptr & ~end_mask);
+
+Test program
+------------
+
+The file ./pngtest.c (kept outside the libpng tree on purpose; it
+links against libpng and is not part of libpng itself) decodes a PNG
+three times, pre-filling the user-provided row buffer with 0x00, 0xff,
+and 0xaa before each png_read_row(). It prints the last 4 bytes of
+the first decoded row for each fill.
+
+  /* see pngtest.c */
+
+The trigger image is available in ./valuators.png, and can be obtained via
+
+    curl -sL "https://salsa.debian.org/fltk-team/fltk1.4/-/raw/main/documentation/src/valuators.png" \
+        -o ./valuators.png
+
+Demonstrate the bug against the system (unpatched) libpng:
+
+    gcc pngtest.c -lpng -o pngtest
+    ./pngtest valuators.png
+
+Expected (buggy) output -- the low nibble of the last byte mirrors the
+fill, proving the destination buffer's bits leak into the decoded row:
+
+    fill=0x00 row0 last bytes: 00 00 00 00
+    fill=0xff row0 last bytes: 00 00 00 0f
+    fill=0xaa row0 last bytes: 00 00 00 0a
+
+Demonstrate the fix against the patched in-tree libpng (after building
+under Build/source/Work):
+
+    gcc pngtest.c \
+        -I.../Build/source/libs/libpng/libpng-src \
+        -I.../Build/source/Work/libs/libpng \
+        .../Build/source/Work/libs/libpng/libpng.a \
+        -lz -lm -o pngtest_patched
+    ./pngtest_patched valuators.png
+
+Expected (fixed) output -- padding bits are zero regardless of the
+caller's buffer contents:
+
+    fill=0x00 row0 last bytes: 00 00 00 00
+    fill=0xff row0 last bytes: 00 00 00 00
+    fill=0xaa row0 last bytes: 00 00 00 00
+
+Notes
+-----
+
+- A pdfTeX-side workaround (memset(row, 0, rowbytes) before each
+  png_read_row) would also eliminate the symptom, but the same trap
+  exists for every other libpng caller. Fixing libpng once is the
+  right layer.
+- The fix only changes the non-interlaced memcpy tail in
+  png_combine_row(); the interlaced display/sparkle paths are
+  untouched.
