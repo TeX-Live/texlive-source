@@ -7,7 +7,7 @@
 
 ########################################################################
 # bundledoc                                                            #
-# Copyright (C) 2018-2025 Scott Pakin                                  #
+# Copyright (C) 2018-2026 Scott Pakin                                  #
 #                                                                      #
 # This program may be distributed and/or modified under the conditions #
 # of the LaTeX Project Public License, either version 1.3c of this     #
@@ -25,7 +25,7 @@
 ########################################################################
 
 use 5.006;             # Fail gracefully if we're not using Perl v5.6.0+.
-our $VERSION = "3.5";  # Specify the version of bundledoc.
+our $VERSION = "3.6";  # Specify the version of bundledoc.
 use File::Basename;
 use File::Copy;
 use File::Spec::Functions qw(abs2rel catfile devnull rel2abs rootdir updir);
@@ -186,18 +186,20 @@ sub find_dependencies ()
 {
     open (DEPFILE, "<$depfile") || die "${progname}: $! ($depfile)\n";
     my $braced = "\\{([^\\}]*)\\}";   # Regular expression for a braced name
-    my @dependencies;                 # List of fully-qualified filenames
-    @dependencies = qualifyname $texfile;
+    my $numdups = 0;                  # Number of duplicate filenames
+    my %nonlocals = ();               # Nonlocal files that were omitted
+    my %name2fullname = ();           # Map from a filename to its qualification
+    $name2fullname{$texfile} = qualifyname $texfile;
+  PROCESSFILE:
     while (my $oneline=<DEPFILE>) {
         # Parse an input line into its component fields.
         next if !($oneline =~ /^\s*\*$braced\s*$braced\s*$braced\s*$/);
         my $filetype = $1;
-        my $filename = $2;
+        my $filename = "$2";
         my $versioninfo = $3;
 
         # Extract the subdirectory if one exists.
         my $subdir = dirname $filename;
-        my $qname = "";
 
         # Determine what to do based on the file type.
         # NOTE: The PROCESSDEP block currently ignores the following
@@ -209,48 +211,57 @@ sub find_dependencies ()
       PROCESSDEP:
         {
             $filetype eq "package" && do {
-                $qname = qualifyname("$filename.sty");
+                $filename .= ".sty";
                 last PROCESSDEP;
             };
             $filetype eq "class" && do {
-                $qname = qualifyname("$filename.cls");
+                $filename .= ".cls";
                 last PROCESSDEP;
             };
             $filetype eq "file" && do {
-                $qname = qualifyname("$filename");
                 last PROCESSDEP;
             };
+            next PROCESSFILE;
         }
 
-        # If the file is of one of the above types, add the qualified
-        # name to the list of dependencies.  In addition, if it is in
-        # a proper subdirectory, add an entry to the subdirs hash.
-        unless ($qname eq "") {
-            push @dependencies, $qname;
-            $subdirs{$qname} = $subdir unless $subdir eq ".";
+        # Discard duplicates.
+        if (defined $name2fullname{$filename}) {
+            $numdups++;
+            next PROCESSFILE;
         }
+
+        # If the file is of one of the above types, add the qualified name
+        # to the list of dependencies.  In addition, if it is in a proper
+        # subdirectory, add an entry to the subdirs hash.
+	my $fullfilename;
+	if ($localonly) {
+	    # If --localonly was specified, ignore files that don't exist
+	    # in or beneath the current directory.
+	    if (-f $filename) {
+		$fullfilename = rel2abs $filename;
+	    } else {
+		$nonlocals{$filename} = undef;
+		next PROCESSFILE;
+	    }
+	}
+	$fullfilename = qualifyname($filename);
+        $name2fullname{$filename} = $fullfilename;
+        $subdirs{$fullfilename} = $subdir unless $subdir eq ".";
     }
     close DEPFILE;
-    @dependencies = sort @dependencies;
+    my @dependencies = sort values %name2fullname;
 
-    # If --localonly was specified, discard dependencies that are not
-    # in the same directory as the .tex file (or a subdirectory
-    # thereof).
-    if ($localonly) {
-        my @newdeps;
-        my $texdir = dirname qualifyname $texfile;
-        my $lentexdir = length $texdir;
-        my $numdeleted = 0;
-        foreach my $dep (@dependencies) {
-            if (substr($dep, 0, $lentexdir) ne $texdir) {
-                $numdeleted++;
-            }
-            else {
-                push @newdeps, $dep;
-            }
-        }
-        @dependencies = @newdeps;
-        print "OMITTING $numdeleted non-local file(s)\n" if $verbose;
+    # Report the number of duplicates that were removed and the number of
+    # non-local files that were omitted.
+    if ($verbose) {
+	print "REMOVING $numdups duplicate file(s)\n" if $numdups;
+	my $numnonlocals = %nonlocals;
+        print "OMITTING $numnonlocals non-local file(s)\n" if $numnonlocals;
+	if ($verbose > 1) {
+	    foreach my $fname (sort keys %nonlocals) {
+		print "    OMITTING $fname\n";
+	    }
+	}
     }
 
     # If --exclude was specified, discard all dependencies containing
@@ -280,15 +291,6 @@ sub find_dependencies ()
     }
     print "INCLUDING $numextras additional file(s)\n" if $verbose && $numextras;
 
-    # Remove duplicates.
-    my %uniquedeps;
-    foreach my $dep (@dependencies) {
-        $uniquedeps{$dep} = 1;
-    }
-    my $numdups = @dependencies - keys %uniquedeps;
-    print "REMOVING $numdups duplicate file(s)\n" if $verbose && $numdups;
-    @dependencies = sort keys %uniquedeps;
-
     # If --listdeps was specified, output the list of dependencies.
     if (@listdeps) {
         @dependencies = map {abs2rel($_)} @dependencies if grep /^rel$/, @listdeps;
@@ -317,7 +319,7 @@ GetOptions ('texfile=s' => \$texfile,
             'exclude=s' => \@exclude_files,
             'include=s' => \@include_files,
             'config=s' => \$configfile,
-            'v|verbose!' => \$verbose,
+            'v|verbose+' => \$verbose,
             'listdeps=s' => \@listdeps,
             'V|version' => sub { print "bundledoc $VERSION\n"; exit -1 },
             'help' => \$showhelp) || pod2usage (-exitval => 1, -verbose => 0);
@@ -483,10 +485,11 @@ of the remaining options.
 
 Give a brief usage message.  This overrides all of the remaining options.
 
-=item B<-->[B<no>]B<verbose>                    (default: C<noverbose>)
+=item B<--verbose>
 
 B<bundledoc> normally does not output anything except error messages.
-With C<--verbose>, it outputs copious status messages.
+With C<--verbose>, it outputs copious status messages.  Additional
+uses of C<--verbose> increase the verbosity.
 
 =item B<--texfile>=I<main .tex file>            (default: I<somefile>F<.tex>)
 
