@@ -32,9 +32,21 @@ memory). The padding bits in the output PDF therefore reflect whatever
 was on the heap at allocation time, so successive runs produce
 different bytes for those bits and the PDFs differ.
 
-The PNG spec requires encoders to set these padding bits to zero;
-readers should not import uninitialized caller memory into the decoded
-row.
+The PNG specification (W3C PNG, Second Edition, section 7.2
+"Scanlines", https://www.w3.org/TR/png/#7Scanline) addresses these
+bits explicitly:
+
+    "When there are multiple pixels per byte, some low-order bits of
+    the last byte of a scanline may go unused. The contents of these
+    unused bits are not specified."
+
+So the spec neither requires encoders to zero them nor permits readers
+to rely on any particular value -- they are simply undefined. libpng's
+current behaviour of importing them from the caller's destination
+buffer is technically conformant, but it is a poor contract: it makes
+decoded output depend on uninitialized caller memory, leaking heap
+state into downstream consumers and breaking reproducibility for any
+caller that does not pre-zero its row buffer.
 
 Fix
 ---
@@ -89,6 +101,61 @@ caller's buffer contents:
     fill=0x00 row0 last bytes: 00 00 00 00
     fill=0xff row0 last bytes: 00 00 00 00
     fill=0xaa row0 last bytes: 00 00 00 00
+
+Reproducing through pdfTeX
+--------------------------
+
+The pngtest.c harness above exhibits the bug directly because it
+deliberately memset()s the row buffer with 0x00 / 0xff / 0xaa before
+each png_read_row(). In a real pdfTeX run the row buffer is allocated
+with xtalloc -> xmalloc, and on a fresh process glibc commonly returns
+a freshly mmap'd zero page for small allocations -- so the leaked
+padding bits happen to be 0 and successive PDFs are bit-identical even
+though the bug is latent. The original bug reporter only observed the
+non-determinism because more complex documents churn the heap enough
+to leave non-zero remnants in the chunk that ends up backing the row
+buffer.
+
+To surface the bug on demand, use glibc's MALLOC_PERTURB_ knob: when
+set to N (1..255) it fills every freshly-allocated byte with ~N (and
+every freed byte with N). That replaces "whatever happened to be
+there" with deterministic non-zero garbage and immediately reveals any
+code path reading uninitialised memory.
+
+Minimal example using the trigger image in this directory:
+
+    # create a minimal trigger.png
+    python make-trigger.py
+    # create the tex file
+    cat > trigger.tex <<'EOF'
+    \documentclass{article}
+    \usepackage{graphicx}
+    \begin{document}
+    \includegraphics[width=4cm]{trigger.png}
+    \end{document}
+    EOF
+    # make sure usual /ID and other entries are stable
+    export SOURCE_DATE_EPOCH=1700000000 FORCE_SOURCE_DATE=1
+    # run with malloc perturbation
+    for i in 1 2 3; do
+        MALLOC_PERTURB_=$((RANDOM % 254 + 1)) \
+            pdflatex -interaction=batchmode trigger.tex >/dev/null
+        cp trigger.pdf trigger$i.pdf
+    done
+    sha256sum trigger?.pdf
+
+With an unpatched libpng each invocation produces a different PDF
+hash. Fixing MALLOC_PERTURB_ to a constant value also yields a
+different (but deterministic) PDF per value, proving the PDF content
+depends on the contents of the uninitialised row buffer:
+
+    for v in 0 85 170 255; do
+        MALLOC_PERTURB_=$v pdflatex -interaction=batchmode trigger.tex >/dev/null
+        echo "MALLOC_PERTURB_=$v $(sha256sum trigger.pdf | cut -c1-16)"
+    done
+
+Against a pdfTeX linked to the patched libpng in this tree, all four
+hashes are identical regardless of MALLOC_PERTURB_.
 
 Notes
 -----

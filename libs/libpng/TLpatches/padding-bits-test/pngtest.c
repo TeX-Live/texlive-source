@@ -26,7 +26,7 @@ static void try_decode(const char *path, unsigned char fill) {
             printf("\n");
         }
     }
-    printf("fill=0x%02x w=%d h=%d rb=%d xor=%02x\n", fill, w, h, rb, crc);
+    // printf("fill=0x%02x w=%d h=%d rb=%d xor=%02x\n", fill, w, h, rb, crc);
     free(row);
     png_destroy_read_struct(&p, &info, NULL);
     fclose(fp);
