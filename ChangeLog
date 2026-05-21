@@ -1,3 +1,11 @@
+2026-05-21  Karl Berry  <karl@freefriends.org>
+
+	* AGENTS.md,
+	* CODE_OF_AI_CONDUCT.md,
+	* CLAUDE.md,
+	* CODEX.md: new files with information for LLMs and their human
+	users.
+
 2026-05-07  Karl Berry  <karl@tug.org>
 
 	* Build (set -vx): move to outside the subshell.
