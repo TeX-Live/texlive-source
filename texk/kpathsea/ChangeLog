@@ -13,8 +13,8 @@
 
 	* configure.ac (kb_cv_func_getcwd_forks): don't declare
 	getcwd(), since C23 breaks that. Instead, rely on it being
-	declared in <unistd.h> (not <stdlib.h>)
-	The end result of the test failure being to usel
+	declared in <unistd.h> (not <stdlib.h>).
+	The end result of the test failure being to use
 	our fallback getcwd() in xgetcwd.c, which stat(2)s pervasively,
 	and is unusable under NFS :(. Original report and patch
 	from Emmanuel Thome, bugs.debian.org/1135783 and
