@@ -1,3 +1,7 @@
+2026-05-21  Karl Berry  <karl@freefriends.org>
+
+	* scripts/build-tl.sh: generalize check for -fhardened; doc tweaks.
+
 2026-05-09  Karl Berry  <karl@freefriends.org>
 
 	* scripts/build-tl.sh (almalinux): also install perl-interpreter

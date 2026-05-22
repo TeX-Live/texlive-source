@@ -8,16 +8,17 @@
 set -ex
 
 if test "x$2" = "x"; then
-  echo "Usage: `basename $0` arch buildsys [no-prepare]" >&2
+  echo "Usage: `basename $0` TLARCH BUILDSYS [no-prepare]" >&2
+  echo "TLARCH = TeX Live platform name"
+  echo "BUILDSYS = general distro name we will build on"
+  echo "no-prepare = omit BUILDSYS checks, to run locally on another system"
   exit 1
 fi
 
-arch="$1"
-echo "$0: Building TL for arch = $arch"
-shift
+arch=$1; shift
+echo "$0: Building TL for arch $arch"
 
-buildsys=$1
-shift
+buildsys=$1; shift
 
 do_prepare=1
 if test x"$1" = xno-prepare; then
@@ -34,7 +35,9 @@ if test $do_prepare = 1; then
        export LANG=C.UTF-8
        export LC_ALL=C.UTF-8
        apt-get update -q -y
-       apt-get install -y --no-install-recommends bash gcc g++ make perl libfontconfig-dev libx11-dev libxmu-dev libxaw7-dev build-essential
+       apt-get install -y --no-install-recommends bash gcc g++ make perl \
+                            libfontconfig-dev libx11-dev libxmu-dev \
+                            libxaw7-dev build-essential
        ;;
      almalinux)
        yum update -y
@@ -151,7 +154,7 @@ export CXXFLAGS="$CXXFLAGS -std=c++17"
 
 # Report the compiler version.
 echo "$0: checking \$CC --version:"
-${CC-gcc} --version || true # defeat -e in case, configure will fail anyway
+${CC-gcc} --version || true # defeat -e, configure will fail anyway
 
 showfile() {
   for f in "$@"; do
@@ -169,23 +172,28 @@ showfile() {
 # Instead of hardwiring version numbers and platforms, try a test
 # compilation.
 # 
-echo "$0: checking whether we can enable -fhardened"
 touch empty.c
-# Get warning about _FORTIFY_SOURCE without optimization.
-if ${CC-gcc} $CFLAGS -O2 -fhardened -c empty.c >empty.out 2>&1; then
-  # Although it's only a warning if not supported, e.g., on freebsd,
-  # it's too annoying to see the warning on every compilation.
-  if test -s empty.out; then
-    echo "$0: empty.c -fhardened compilation got diagnostics, not setting."
-    showfile empty.out
+# Let's check -fsanitize=undefined again after we update the
+# x86_64-linux build system. On Alma, it seems the necessary libubsan.a
+# is not installed as part of gcc-toolset-15.
+for option in -fhardened; do
+  echo "$0: checking whether we can enable $option"
+  # Optimization is required for these; e.g., warnings about _FORTIFY_SOURCE.
+  if ${CC-gcc} $CFLAGS -O2 $option -c empty.c >empty.out 2>&1; then
+    # Although these are only warnings if not supported, e.g., on freebsd,
+    # it's too annoying to see the warning on every compile line.
+    if test -s empty.out; then
+      echo "$0: empty.c $option compilation got diagnostics, not setting."
+      showfile empty.out
+    else
+      echo "$0: empty.c $option compilation successful, setting."
+      export CFLAGS="$CFLAGS $option"
+    fi
   else
-    echo "$0: empty.c -fhardened compilation successful, setting."
-    export CFLAGS="$CFLAGS -fhardened"
+    echo "$0: empty.c $option compilation failed, not setting."
+    showfile empty.out
   fi
-else
-  echo "$0: empty.c -fhardened compilation failed, not setting."
-  showfile empty.out
-fi
+done
 
 # It's up to us to enable optimization if we are overriding the
 # compilation flags.
