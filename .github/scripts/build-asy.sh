@@ -47,7 +47,7 @@ then
        packages="bison cmake eigen fftw flex fontconfig freeglut gcc
                  glm gmake libGLU libX11 libXaw libXt libosmesa libtool
                  ncurses perl5 pkgconf python python3 readline zlib-ng"
-       env ASSUME_ALWAYS_YES=YES pkg install -y
+       env ASSUME_ALWAYS_YES=YES pkg install -y $packages
        ;;
      *)
        echo "Unsupported build system: $buildsys" >&2
