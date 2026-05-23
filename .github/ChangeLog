@@ -1,3 +1,10 @@
+2026-05-23  Karl Berry  <karl@freefriends.org>
+
+	* scripts/build-asy.sh: enable fftw and install its packages.
+	Document why we can't feasibly statically link libcurl or libgsl.
+
+	* scripts/build-tl.sh: doc tweak.
+
 2026-05-21  Karl Berry  <karl@freefriends.org>
 
 	* scripts/build-tl.sh: generalize check for -fhardened; doc tweaks.

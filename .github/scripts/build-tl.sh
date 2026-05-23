@@ -175,7 +175,8 @@ showfile() {
 touch empty.c
 # Let's check -fsanitize=undefined again after we update the
 # x86_64-linux build system. On Alma, it seems the necessary libubsan.a
-# is not installed as part of gcc-toolset-15.
+# is not installed as part of gcc-toolset-15. Also, we'll need to use
+# a hello,world test program instead of an empty file.
 for option in -fhardened; do
   echo "$0: checking whether we can enable $option"
   # Optimization is required for these; e.g., warnings about _FORTIFY_SOURCE.

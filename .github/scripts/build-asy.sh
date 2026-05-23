@@ -33,11 +33,21 @@ then
        export LANG=C.UTF-8
        export LC_ALL=C.UTF-8
        apt-get update -q -y
-       apt-get install -y --no-install-recommends bash gcc g++ make perl libfontconfig-dev libx11-dev libxmu-dev libxaw7-dev build-essential libtool-bin
-       apt-get install -y --no-install-recommends build-essential pkg-config libeigen3-dev libcurl4-openssl-dev libreadline-dev libboost-filesystem-dev flex libglu1-mesa-dev freeglut3-dev libosmesa6-dev libreadline6-dev zlib1g-dev bison libglm-dev libncurses-dev python3 libtirpc-dev cmake
+       # asymptote uses lots of packages.
+       packages="bash bison build-essential cmake flex freeglut3-dev
+                 g++ gcc libboost-filesystem-dev libeigen3-dev libfftw3-dev
+                 libfontconfig-dev libglm-dev libglu1-mesa-dev
+                 libncurses-dev libosmesa6-dev
+                 libreadline-dev libreadline6-dev libtirpc-dev
+                 libtool-bin libx11-dev libxaw7-dev libxmu-dev make perl
+                 pkg-config python3 zlib1g-dev"
+       apt-get install -y --no-install-recommends $packages
        ;;
      freebsd)
-       env ASSUME_ALWAYS_YES=YES pkg install -y gmake gcc pkgconf libX11 libXt libXaw fontconfig perl5 eigen readline flex libGLU freeglut libosmesa zlib-ng bison glm ncurses python python3 libtool cmake
+       packages="bison cmake eigen fftw flex fontconfig freeglut gcc
+                 glm gmake libGLU libX11 libXaw libXt libosmesa libtool
+                 ncurses perl5 pkgconf python python3 readline zlib-ng"
+       env ASSUME_ALWAYS_YES=YES pkg install -y
        ;;
      *)
        echo "Unsupported build system: $buildsys" >&2
@@ -90,10 +100,15 @@ touch ./utils/asymptote/camp.tab.cc
 touch ./utils/asymptote/camp.tab.h
 touch ./configure ./Makefile.in
 
+# About the disabled features:
+# libcurl -> libpsl -> gss and more, too much.
+# libgsl -> undefined reference to `_dl_x86_cpu_features', apparently
+#   can resolve only by statically linking glibc, which is worse.
+# 
 cd utils/asymptote
 sh -vx ./configure \
   --prefix=/tmp/asyinst --enable-static --enable-texlive-build \
-  --disable-gsl --disable-fftw --disable-curl \
+  --disable-gsl --disable-curl \
   LDFLAGS="-static-libgcc -static-libstdc++"
 $TL_MAKE SILENT_MAKE= -j2
 
