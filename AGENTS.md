@@ -100,6 +100,7 @@ builds must all remain supported.
 are disposable.
 - Do not disable tests without having a valid reason to do so, and
 documenting that reason.
+- Extraneous material in general. Strive to minimize changes.
 
 ## Working mindset
 
@@ -145,11 +146,15 @@ commits written through the agent.
 ## Summary
 
 - State assumptions briefly before large or risky changes.
+
 - For multi-step work, give a short plan, then execute it.
+
 - Keep explanations concise and tied to the modified files.
 
 - Make minimal diffs focused on the requested scope.
+
 - Preserve existing project patterns before introducing new abstractions.
+
 - Run targeted tests for touched areas when feasible.
 
 - Never add new third-party dependencies, on libraries, programs, or any
