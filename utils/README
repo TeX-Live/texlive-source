@@ -34,17 +34,20 @@ pmx 3.0.0 - checked 13feb23
 ps2eps 1.70 - checked 03jul21
   http://tm.uka.de/~bless/ps2eps
 
-t1utils 1.42 - checked 31oct20
+t1utils 1.42 - checked 24may26
   http://www.lcdf.org/type/
 
 texdoctk - reluctantly maintained here in TL
-  If anyone would like to resume development, just let us know.
+  If anyone would like to resume development, email tex-live@tug.org.
 
-tpic2pdftex 1.97 - checked 10may12
+tpic2pdftex 1.97 - checked 24may26
   https://ctan.org/pkg/tpic2pdftex/
 
-vlna 1.5 - checked 10may12
-  ftp://math.feld.cvut.cz/pub/olsak/vlna/
+utf8patgen 0.1 - checked 24may26
+  https://github.com/tondach01/utfpatgen
+
+vlna 1.5 - checked 24may26
+  https://petr.olsak.net/ftp/olsak/vlna/
 
 xindy - see just below
 

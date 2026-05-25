@@ -95,6 +95,7 @@ ps2eps
 t1utils
 texdoctk
 tpic2pdftex
+utfpatgen
 vlna
 xindy
 xml2pmx

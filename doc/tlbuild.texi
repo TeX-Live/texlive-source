@@ -2,7 +2,7 @@
 @setfilename tlbuild.info
 
 @set version 2026
-@set month-year January 2026
+@set month-year May 2026
 
 @set mytitle Building @TeX{} Live (@value{version})
 @settitle @value{mytitle}
@@ -1709,8 +1709,8 @@ TL build system.
 
 A new package directory @file{foo} should be placed under
 @file{Build/source/texk/} if it uses Kpathsea (or another
-@TeX{}-specific library), or under @file{Build/source/utils} if it
-does not.
+@TeX{}-specific library; @pxref{@code{kpathsea} library}), or under
+@file{Build/source/utils} if it does not.
 
 The new directory should normally have the original sources, modified
 only with changes necessary for TL, in a subdirectory
@@ -1726,8 +1726,9 @@ It is also possible to add a package which is configured with Autoconf
 (or another @code{make}-based system) and not Automake.  The package
 must still support the standard @code{make} variables and targets, and
 @code{VPATH} builds (@pxref{VPATH Builds,,, automake, GNU Automake}).
-For Autoconf-only packages, it is probably not sensible to use a
-@code{foo-src} subdirectory.
+For such Autoconf-only packages, it is probably not sensible to use a
+@code{foo-src} subdirectory.  To date, no such Autoconf-only programs
+have been added.
 
 @menu
 * Adding a new program module::
@@ -1743,16 +1744,16 @@ For Autoconf-only packages, it is probably not sensible to use a
 @cindex program module, adding
 
 @vindex kpse_texk_pkgs
-A @TeX{}-specific program module in a subdirectory
-@file{texk/@var{prog}} may use the @TeX{}-specific libraries and is
-included by adding its name @file{@var{prog}} to the M4 list
-@code{kpse_texk_pkgs} defined in @file{m4/kpse-pkgs.m4}.
+To add a new @TeX{}-specific program module in a subdirectory
+@file{texk/@var{prog}}, add @file{@var{prog}} to the M4 list
+@code{kpse_texk_pkgs} defined in @file{m4/kpse-pkgs.m4}. It may use
+the @TeX{}-specific libraries, notably Kpathsea.
 
 @vindex kpse_utils_pkgs
-A generic program module in a subdirectory @file{utils/@var{prog}}
-must not use the @TeX{}-specific libraries, notably Kpathsea, and is
-included by adding its name @file{@var{prog}} to the M4 list
-@code{kpse_utils_pkgs} in @file{m4/kpse-pkgs.m4}.
+To add a generic program module in a subdirectory
+@file{utils/@var{prog}} adding its name @file{@var{prog}} to the M4
+list @code{kpse_utils_pkgs} in @file{m4/kpse-pkgs.m4}.  It must not
+use the @TeX{}-specific libraries, notably Kpathsea.
 
 @pindex withenable.ac@r{, for new modules}
 @findex KPSE_ENABLE_PROG
@@ -1827,6 +1828,7 @@ here so they can be applied next time. Also, send them upstream so
 that we don't have to maintain them forever.
 
 @item ChangeLog
+@itemx TLpatches/ChangeLog
 Record all TL-specific changes, now and in the future.
 
 @end ftable
@@ -1841,7 +1843,7 @@ including the generated @file{Makefile.in aclocal.m4 configure}, and
 so people checking out the TL source tree do not have to run any
 autotools, but can simply run @code{configure}.)
 
-To reiterate: do not fail to commit the generated @file{configure} and
+To emphasize: do not fail to commit the generated @file{configure} and
 other files. The m4 code in @file{kpse-pkgs.m4} uses the existence of
 @file{configure} to determine whether to descend into (and configure)
 a given subdirectory.

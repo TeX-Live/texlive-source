@@ -1,0 +1,185 @@
+TH UTFPATGEN 1 "20 May 2026" "version 0.1"
+.\"=====================================================================
+.if t .ds TX \fRT\\h'-0.10m'\\v'0.17v'E\\v'-0.17v'\\h'-0.06m'X\fP
+.if n .ds TX TeX
+.ie t .ds OX \fIT\h'-0.17m'\v'+0.21m'E\v'-0.21m'\h'-0.04m'X\fP
+.el .ds OX TeX
+.\"=====================================================================
+.SH NAME
+UTFpatgen \- generate patterns for TeX hyphenation
+.SH SYNOPSIS
+.B utfpatgen
+.I dictionary_file pattern_file patout_file translate_file
+.\"=====================================================================
+.SH DESCRIPTION
+The
+.I UTFpatgen
+program reads a
+.I dictionary_file
+containing a list of hyphenated words and a
+.I pattern_file
+containing previously-generated patterns (if any) for a particular
+language (not a complete \*(TX source file; see below), and produces the
+.I patout_file
+with (previously- plus newly-generated) hyphenation patterns for that
+language. The
+.I translate_file
+defines language specific values for the parameters
+.IR left_hyphen_min " and " right_hyphen_min
+used by \*(TX's hyphenation algorithm and the external representation
+of the lower and upper case version(s) of all `letters' of that
+language. Further details of the pattern generation process such as
+hyphenation levels and pattern lengths are requested interactively from
+the user's terminal. Optionally,
+.I UTFpatgen
+creates a new dictionary file
+.BI pattmp. n
+showing the good and bad hyphens found by the generated patterns, where
+.I n
+is the highest hyphenation level.
+.PP
+The
+.I UTFpatgen
+is an extension to
+.BR patgen (1)
+for generating patterns from large input alphabets. 
+.PP
+All filenames must be complete; no adding of default
+extensions or path searching is done.
+.\"=====================================================================
+.SH FILE FORMATS
+.TP \w'@@'u+2n
+.B Letters
+.I UTF patgen
+is able to process any UTF-8 encoded character, or more generally, any
+encoding that is prefix-free (no letter is a prefix of another) and does
+not use the `0xFF' byte (has special meaning in 
+.I UTFpatgen
+).
+.TP \w'@@'u+2n
+.B Levels and weights
+Non-character parts of the text, such as hyphenation levels or weights,
+should be represented as a 2-byte sequence `0xFF <value>'. If a file
+uses the
+.BR patgen (1)
+encoding (ASCII numerals), we recommend using
+.BR sed (1)
+for conversion.
+.TP \w'@@'u+2n
+.B Dictionary file
+A dictionary file contains a weighted list of hyphenated words, one word
+per line, each starting in column 1. A weight in column 1 indicates a
+global word weight (initially =1) applicable to all following words up
+to the next global word weight. A weight at some intercharacter position
+indicates a weight for that position only.
+
+The hyphens in a word are indicated by `-', `*', or `.' (or their
+replacements as defined in the translate file) for hyphens yet to be
+found, `good' hyphens (correctly found by the patterns), and `bad'
+hyphens (erroneously found by the patterns) respectively.
+.TP
+.B Pattern file
+A pattern file contains only patterns in the format above, e.g., from a
+previous run of UTFpatgen.  It may \fInot\fR contain any \*(TX comments or
+control sequences.  For instance, this is not a valid pattern file:
+.nf
+
+% this is an invalid pattern file for TeX.
+\\patterns{%
+ .\|.\|.
+}
+.fi
+Pattern files can only contain the actual patterns, i.e., the `.\|.\|.'.
+.TP
+.B Translate file
+A translate file starts with a line containing the values of
+.I left_hyphen_min
+in columns 1-2,
+.I right_hyphen_min
+in columns 3-4, and either a blank or the replacement for one of the
+``hyphen'' characters `-', `*', and `.' in columns 5, 6, and 7. Input
+lines are extended with blanks as for many \*(TX related programs.
+
+Each following line defines one `letter': an arbitrary delimiter
+character in column 1, followed by one or more external representations
+of that character (first the `lower' case one used for output), each
+one terminated by the delimiter and the whole sequence terminated by
+another delimiter.
+
+If the translate file is empty, the default values are
+.IR left_hyphen_min "=2, " right_hyphen_min "=3,"
+and the 26 lower case letters
+.BR a .\|.\|. z
+with their upper case representations
+.BR A .\|.\|. Z .
+.TP
+.B Terminal input
+After reading the
+.I translate_file
+and any previously-generated patterns from
+.IR pattern_file ,
+.I UTFpatgen
+requests input from the user's terminal.
+
+First the integer values of
+.IR hyph_start " and " hyph_finish ,
+the lowest and highest hyphenation level for which patterns are to be
+generated. The value of
+.I hyph_start
+should be larger than any hyphenation level already present in
+.IR pattern_file .
+
+Then, for each hyphenation level, the integer values of
+.IR pat_start " and " pat_finish ,
+the smallest and largest pattern length to be analyzed, as well as
+.IR "good weight" ", " "bad weight" ", and " threshold ,
+the weights for good and bad hyphens and a weight threshold for useful
+patterns.
+
+Finally the decision (`y' or `Y' vs. anything else) whether or not to
+produce a hyphenated word list.
+.\"=====================================================================
+.SH FILES
+.TP \w'@@'u+2n
+$TEXMFMAIN/tex/generic/hyphen/hyphen.tex
+The original hyphenation patterns for English, by Donald Knuth and Frank
+Liang.
+.TP
+$TEXMFMAIN/tex/generic/hyphen/zerohyph.tex
+A pattern file with no patterns, for languages that don't use
+hyphenation.
+.\"=====================================================================
+.SH "SEE ALSO"
+Frank Liang and Peter Breitenlohner,
+patgen.web.
+.PP
+Frank Liang,
+.IR "Word hy-phen-a-tion by com-puter" ,
+STAN-CS-83-977,
+Stanford University Ph.D. thesis, 1983,
+http://tug.org/docs/liang.
+.PP
+Donald E. Knuth,
+.IR "The \*(OXbook" ,
+Addison-Wesley, Appendix H.
+.TP
+https://ctan.org/pkg/hyphenex
+Hyphenation exceptions for American English, maintained by the
+\fITUGboat\fP editors, and used in \fITUGboat\fP articles by default.
+.TP
+https://ctan.org/pkg/hyph-utf8
+Collected hyphenation patterns for many languages in many formats.
+.TP
+https://ctan.org/pkg/ushyph
+Large set of additional hyphenation patterns for English, extended by
+Gerard Kuiken.
+.TP
+https://ctan.org/tex-archive/language/
+General CTAN directory for patterns and support for many other languages.
+.TP
+https://tug.org/TUGboat/Contents/listkeyword.html#CatTAGMultilingualDocumentProcessing
+\fITUGboat\fP articles on hyphenation and other aspects of
+language-specific document processing.
+.\"=====================================================================
+.SH AUTHORS
+by Ondrej Metelka (ondra.metelka@seznam.cz)

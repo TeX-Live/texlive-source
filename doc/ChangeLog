@@ -1,3 +1,7 @@
+2026-05-25  Karl Berry  <karl@freefriends.org>
+
+	* tlbuild.texi (Adding a new program module): wording.
+
 2026-04-25  Karl Berry  <karl@freefriends.org>
 
 	* buildinfo.sh: show C and C++ language versions being used (I hope).

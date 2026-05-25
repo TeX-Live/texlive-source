@@ -1,0 +1,4567 @@
+\input cwebmac
+\def\title{UTFpatgen}
+\def\utfpatgen{{\tt utfpatgen}}
+\def\patgen{{\tt patgen}}
+\def\lefthyphenminpar{{\tt lefthyphenmin}}
+\def\righthyphenminpar{{\tt righthyphenmin}}
+\def\hyphstartpar{{\tt hyph\_start}}
+\def\hyphfinishpar{{\tt hyph\_finish}}
+\def\patstartpar{{\tt pat\_start}}
+\def\patfinishpar{{\tt pat\_finish}}
+\def\goodwtpar{{\tt good\_wt}}
+\def\badwtpar{{\tt bad\_wt}}
+\def\threshpar{{\tt thresh}}
+
+
+\N{0}{1}Introduction.
+This is \utfpatgen{} -- reimplementation of the classic \patgen{} program for
+pattern generation. With \utfpatgen, we
+intend to overcome several limitations of the original, such as the number of
+hyphenation levels possible, inability to
+use some reserved characters in dictionary, and most importantly, we enable
+native usage of the UTF-8 encoding in
+dictionaries that are no longer limited by the fixed number of lowercase
+characters permitted by \patgen.
+
+We provide \utfpatgen{} open-source and free of charge under MIT license.
+Please note that there is no warranty
+and despite our greatest effort, the program may contain bugs.
+
+\fi
+
+\N{0}{2}Terminology.
+Before diving into the implementation part of the program, it is useful to
+mention several terms occurring frequently
+throughout the text. It may come useful especially to those who are not
+thoroughly familiar with \patgen. The
+definitions here are mostly informal and intended to ease reader's
+understanding of the topic.
+
+{\bf Hyphenation} is a process of splitting words so that they fit better to
+the paragraphs when typeset. It follows
+the linguistic rules set for the language in which the text is written.
+
+{\bf Pattern} is a sequence of characters containing hyphenation information
+tied to some position ({\bf dot
+position}) on the edges of the pattern or in between the characters. Whether
+this information tells that the position
+should or should not be hyphenated, we distinguish between {\bf hyphenating}
+and {\bf inhibiting patterns}.
+
+{\bf Hyphen} (in context of \patgen{} and \utfpatgen) is a mark between two
+characters holding the information whether
+that position should be split during hyphenation and whether this split was
+detected by current patterns. There are
+therefore 4 types of hyphens: {\bf NO\_HYF} (not in the data, not marked), {\bf
+MISS\_HYF} (in the data, not
+marked), {\bf BAD\_HYF} (not in the data, marked), and {\bf GOOD\_HYF} (in the
+data, marked). Strictly speaking,
+there is a hyphen between each pair of neighboring characters in the data, but
+NO\_HYF marking is omitted implicitly.
+
+{\bf Supporting occurences} of a pattern in the data are those that are in
+favor of the hyphenation information it
+holds. For hyphenating patterns, these are the cases where the word has a MISS%
+\_HYF on the dot position pointed by the
+pattern. For inhibiting patterns, dot position with a BAD\_HYF is a supporting
+one. {\bf Contradicting occurences}
+are those that would break a correct hyphen, thus NO\_HYF for hyphenating, and
+GOOD\_HYF for inhibiting patterns. Note
+that a occurence of a pattern can be neither supporting nor contradicting.
+
+{\bf Hyphenation level} marks the strength of a hyphenation. It is represented
+by a non-negative integer and creates
+a hierarchy of patterns. Pattern with higher level always takes precedence over
+any pattern with lower level. At odd
+levels, the patterns are hyphenating, at even levels inhibiting.
+
+{\bf Trie} is a data structure for storing n-ary trees. It can implemented
+using an associated array with highly
+effective insertion, deletion and lookup. Furthermore, we can condense it via {%
+\it packing} to save space.
+
+\fi
+
+\N{0}{3}Algorithm overview.
+In general, we tried to adhere as tightly as possible to the original ideas of %
+\patgen. Therefore, you may find the
+names and functions similar to those in the \patgen{} technical report. We have
+nevertheless decided to rewrite several
+parts of the algorithm in more "modern" way to improve its readability and
+testability. The main points to mention are:
+
+\item{$\bullet$} the algorithm is implemented in CWEB (C being the laguage of
+the program), not WEB (with Pascal),
+\item{$\bullet$} instead of statically defining the sizes of structures (tries,
+buffers, etc.), these are allocated and
+reallocated dynamically, allowing for greater flexibility and possibly space
+savings,
+\item{$\bullet$} global variables are localized as much as possible,
+\item{$\bullet$} {\tt goto} statements are eliminated.
+
+You may also find a few unit tests appended to the code. These are by no means
+exhaustive, but feel free to run them
+and add your own.
+
+We decided to present \utfpatgen{} in top-down fashion -- starting with the
+full overview and moving to details in later
+sections. Same goes for the structures which have their own dedicated sections.
+
+\fi
+
+\N{1}{4}Dependencies.
+All external libraries used in \utfpatgen{} come from the standard C package,
+so we hope it to be widely portable without
+greater trouble. All in all, we use fixed-size types from {\tt <stdint.h>} and
+{\tt <stdbool.h>}, IO support from
+{\tt <stdio.h>}, string manipulation methods from {\tt <string.h>}, and memory
+management provided by
+{\tt <stdlib.h>}.
+
+\Y\B\4\X4:Library includes\X${}\E{}$\6
+\8\#\&{include} \.{"utfpatgen.h"}\6
+\8\#\&{include} \.{<string.h>}\par
+\U5.\fi
+
+\N{1}{5}Main method.
+The general flow of the program is rather simple: initialize structures, get
+the parameters, generate patterns, and
+optionally hyphenate the dictionary. For sure, it gets more complicated the
+deeper we dive.
+
+\Y\B\X4:Library includes\X\6
+\8\#\&{ifndef} \.{TEST}\7
+\1\1\&{int} \\{main}(\&{int} \\{argc}${},\39{}$\&{char} ${}{*}\\{argv}[\,])\2%
+\2{}$\6
+${}\{{}$\1\6
+\&{for} (\&{int} \|i${}\K\T{0};{}$ ${}\|i<\\{argc};{}$ ${}\|i\PP){}$\5
+${}\{{}$\1\6
+\&{if} ${}(\\{strcmp}(\\{argv}[\|i],\39\.{"--help"})\E\T{0}){}$\5
+${}\{{}$\1\6
+\\{print\_help}(\,);\6
+\&{return} \.{EXIT\_SUCCESS};\6
+\4${}\}{}$\2\6
+\&{else} \&{if} ${}(\\{strcmp}(\\{argv}[\|i],\39\.{"--version"})\E\T{0}){}$\5
+${}\{{}$\1\6
+\\{print\_version}(\,);\6
+\&{return} \.{EXIT\_SUCCESS};\6
+\4${}\}{}$\2\6
+\4${}\}{}$\2\6
+\\{print\_version}(\,);\6
+\X6:Initialization sequence\X;\6
+\X7:Level range specification\X;\6
+\X8:Pattern generation\X;\6
+\X11:Final pass\X;\6
+\\{destroy\_params}(\\{params});\6
+\\{destroy\_tr\_table}(\\{tt});\6
+\\{destroy\_pattern\_trie}(\\{pt});\6
+\&{return} \.{EXIT\_SUCCESS};\6
+\4${}\}{}$\2\6
+\8\#\&{endif}\par
+\fi
+
+\N{1}{6}Initialization sequence.
+First, the input parameters provided to the program call are read, validated
+and processed. Unless asking for help
+({\tt --help}) or version printout ({\tt --version}), \utfpatgen{} takes
+exactly 4 inputs, representing 4 files:
+
+\item{$\bullet$} {\bf Dictionary file}: contains set of hyphenated words.
+\item{$\bullet$} {\bf Patterns file}: stores patterns generated in previous
+runs.
+\item{$\bullet$} {\bf Output file}: where the patterns will be stored after the
+run.
+\item{$\bullet$} {\bf Translate file}: contains the mapping of characters from
+the dictionary and dictionary-specific
+parameters.
+
+The required formats of these files are the same as for the \patgen{} program
+and are discussed in dedicated sections.
+
+\Y\B\4\X6:Initialization sequence\X${}\E{}$\6
+\&{struct} \\{params} ${}{*}\\{params}\K\\{init\_params}(\,);{}$\7
+\&{if} ${}(\\{params}\E\NULL){}$\5
+${}\{{}$\1\6
+\&{return} \.{EXIT\_FAILURE};\6
+\4${}\}{}$\2\6
+\&{if} ${}(\R\\{parse\_input}(\\{argv},\39\\{argc},\39\\{params})){}$\5
+${}\{{}$\1\6
+\\{destroy\_params}(\\{params});\6
+\&{return} \.{EXIT\_FAILURE};\6
+\4${}\}{}$\2\7
+\&{struct} \\{translate\_table} ${}{*}\\{tt}\K\\{init\_tr\_table}(\T{256},\39%
+\T{128});{}$\7
+\&{if} ${}(\\{tt}\E\NULL){}$\5
+${}\{{}$\1\6
+\\{destroy\_params}(\\{params});\6
+\&{return} \.{EXIT\_FAILURE};\6
+\4${}\}{}$\2\6
+\&{if} ${}(\R\\{read\_translate}(\\{params},\39\\{tt})){}$\5
+${}\{{}$\1\6
+\\{destroy\_params}(\\{params});\6
+\\{destroy\_tr\_table}(\\{tt});\6
+\&{return} \.{EXIT\_FAILURE};\6
+\4${}\}{}$\2\7
+\&{struct} \\{pattern\_trie} ${}{*}\\{pt}\K\\{init\_pattern\_trie}(\T{256},\39%
+\T{128});{}$\7
+\&{if} ${}(\\{pt}\E\NULL){}$\5
+${}\{{}$\1\6
+\\{destroy\_params}(\\{params});\6
+\\{destroy\_tr\_table}(\\{tt});\6
+\&{return} \.{EXIT\_FAILURE};\6
+\4${}\}{}$\2\7
+\&{struct} \\{pass\_stats} \\{ps};\7
+\&{if} ${}(\R\\{read\_patterns}(\\{params},\39\\{pt},\39\\{tt},\39{\AND}%
+\\{ps})){}$\5
+${}\{{}$\1\6
+\\{destroy\_params}(\\{params});\6
+\\{destroy\_tr\_table}(\\{tt});\6
+\\{destroy\_pattern\_trie}(\\{pt});\6
+\&{return} \.{EXIT\_FAILURE};\6
+\4${}\}{}$\2\par
+\U5.\fi
+
+\N{1}{7}Level range specification.
+Besides the command line parameters, the program prompts for the
+hyperparameters of the algorithm. The \hyphstartpar{}
+and \hyphfinishpar{} specify the range of hyphenation levels covered during the
+run. The program can generate patterns up
+to level 255.
+
+\Y\B\4\X7:Level range specification\X${}\E{}$\6
+\\{printf}(\.{"hyph\_start\ (lowest\ }\)\.{-),\ hyph\_finish\ (hig}\)\.{hest\
+hyphenation\ lev}\)\.{el):\ "});\7
+\&{size\_t} \\{hyph\_start}${},\39\\{hyph\_finish};{}$\6
+\&{int} \\{result};\7
+\&{while} (\\{true})\5
+${}\{{}$\1\6
+${}\\{result}\K\\{scanf}(\.{"\%zu\ \%zu"},\39{\AND}\\{hyph\_start},\39{\AND}%
+\\{hyph\_finish});{}$\6
+\&{if} ${}(\\{result}\E\T{2}\W\\{hyph\_start}\G\T{1}\W\\{hyph\_start}\Z\T{255}%
+\W\\{hyph\_finish}\G\T{1}\W\\{hyph\_finish}\Z\T{254}){}$\5
+${}\{{}$\1\6
+\&{break};\6
+\4${}\}{}$\2\6
+\&{else}\5
+${}\{{}$\1\6
+\\{printf}(\.{"Error:\ Specify\ 1\ <=}\)\.{\ hyph\_start,\ hyph\_fi}\)\.{nish\
+<=\ 255!\ Insert\ }\)\.{again:\ "});\6
+\&{while} ${}(\\{getchar}(\,)\I\.{'\\n'}){}$\1\5
+;\2\6
+\4${}\}{}$\2\6
+\4${}\}{}$\2\6
+${}\\{params}\MG\\{hyph\_start}\K(\\{uint8\_t})\\{hyph\_start};{}$\6
+\&{if} ${}(\\{hyph\_start}>\\{hyph\_finish}){}$\5
+${}\{{}$\1\6
+${}\\{params}\MG\\{hyph\_finish}\K\\{ps}.\\{max\_level};{}$\6
+${}\\{printf}(\.{"Warning:\ hyph\_start}\)\.{\ >\ hyph\_finish,\ usin}\)\.{g\
+hyph\_finish\ =\ \%u\\n}\)\.{"},\39\\{ps}.\\{max\_level});{}$\6
+\4${}\}{}$\2\6
+\&{else}\5
+${}\{{}$\1\6
+${}\\{params}\MG\\{hyph\_finish}\K(\\{uint8\_t})\\{hyph\_finish};{}$\6
+\4${}\}{}$\2\par
+\U5.\fi
+
+\N{1}{8}Pattern generation loop.
+The algorithm runs for each level within the specified range, going from %
+\hyphstartpar{} up. The program prompts for
+level-specific hyperparameters, generates and prunes the patterns.
+
+\Y\B\4\X8:Pattern generation\X${}\E{}$\6
+\&{size\_t} \\{pat\_start}${},\39\\{pat\_finish},\39\\{good\_wt},\39\\{bad%
+\_wt},\39\\{thresh};{}$\7
+\&{for} (\&{size\_t} \|i${}\K\\{params}\MG\\{hyph\_start};{}$ ${}\|i\Z%
+\\{params}\MG\\{hyph\_finish};{}$ ${}\|i\PP){}$\5
+${}\{{}$\1\6
+${}\\{params}\MG\\{hyph\_level}\K\|i;{}$\6
+${}\\{ps}.\\{level\_pattern\_cnt}\K\T{0};{}$\6
+\&{if} ${}(\\{params}\MG\\{hyph\_level}>\\{params}\MG\\{hyph\_start}){}$\5
+${}\{{}$\1\6
+\\{printf}(\.{"\\n"});\6
+\4${}\}{}$\2\6
+\&{if} ${}(\\{params}\MG\\{hyph\_start}\Z\\{ps}.\\{max\_level}){}$\5
+${}\{{}$\1\6
+${}\\{printf}(\.{"Warning:\ Largest\ hy}\)\.{phenation\ value\ \%u\ i}\)\.{n\
+patterns\ should\ be}\)\.{\ less\ than\ hyph\_star}\)\.{t\\n"},\39\\{ps}.\\{max%
+\_level});{}$\6
+\4${}\}{}$\2\6
+\X9:Level hyperparameters input\X;\6
+\X10:Level generation\X;\6
+\&{if} ${}(\R\\{delete\_bad\_patterns}(\\{pt})){}$\5
+${}\{{}$\1\6
+\\{destroy\_params}(\\{params});\6
+\\{destroy\_tr\_table}(\\{tt});\6
+\\{destroy\_pattern\_trie}(\\{pt});\6
+\&{return} \.{EXIT\_FAILURE};\6
+\4${}\}{}$\2\6
+${}\\{printf}(\.{"total\ of\ \%zu\ patter}\)\.{ns\ at\ hyph\_level\ \%u\\}\)%
+\.{n"},\39\\{ps}.\\{level\_pattern\_cnt},\39\\{params}\MG\\{hyph\_level});{}$\6
+\4${}\}{}$\2\par
+\U5.\fi
+
+\N{1}{9}Level hyperparameters input.
+The program again prompts for hyperparameter input. Firstly, it asks for %
+\patstartpar{} and \patfinishpar{} that define the
+length range of patterns for respective level. The maximum length of a pattern
+in \utfpatgen{} is set to 255.
+Subsequently, the user is prompted to insert the three weights \goodwtpar{}, %
+\badwtpar{} and \threshpar{}. These define the
+acceptance criteria for candidate patterns -- in order to accept the pattern
+during the ongoing iteration, its number
+of {\it good} (supporting) and {\it bad} (contradicting) occurences must make
+the following inequality to hold:
+$
+good * good\_wt - bad * bad\_wt \geq thresh
+$
+The maximum value for the weights and threshold in \utfpatgen{} is set to 255.
+
+\Y\B\4\X9:Level hyperparameters input\X${}\E{}$\6
+\\{printf}(\.{"pat\_start\ (shortest}\)\.{\ -),\ pat\_finish\ (lon}\)\.{gest\
+pattern\ explore}\)\.{d):\ "});\6
+\&{while} (\\{true})\5
+${}\{{}$\1\6
+${}\\{result}\K\\{scanf}(\.{"\%zu\ \%zu"},\39{\AND}\\{pat\_start},\39{\AND}%
+\\{pat\_finish});{}$\6
+\&{if} ${}(\\{result}\E\T{2}\W\\{pat\_start}\G\T{1}\W\\{pat\_finish}\G\T{1}\W%
+\\{pat\_start}\Z\\{pat\_finish}\W\\{pat\_start}\Z\T{255}\W\\{pat\_finish}\Z%
+\T{255}){}$\5
+${}\{{}$\1\6
+\&{break};\6
+\4${}\}{}$\2\6
+\&{else}\5
+${}\{{}$\1\6
+\\{printf}(\.{"Error:\ Specify\ 1\ <=}\)\.{\ pat\_start\ <=\ pat\_fi}\)\.{nish\
+<=\ 255!\ Insert\ }\)\.{again:\ "});\6
+\&{while} ${}(\\{getchar}(\,)\I\.{'\\n'}){}$\1\5
+;\2\6
+\4${}\}{}$\2\6
+\4${}\}{}$\2\6
+${}\\{params}\MG\\{pat\_start}\K(\\{uint8\_t})\\{pat\_start};{}$\6
+${}\\{params}\MG\\{pat\_finish}\K(\\{uint8\_t})\\{pat\_finish};{}$\6
+\\{printf}(\.{"good\_wt\ (good\ -),\ b}\)\.{ad\_wt\ (bad\ pattern\ w}\)%
+\.{eight),\ threshold:\ "});\6
+\&{while} (\\{true})\5
+${}\{{}$\1\6
+${}\\{result}\K\\{scanf}(\.{"\%zu\ \%zu\ \%zu"},\39{\AND}\\{good\_wt},\39{\AND}%
+\\{bad\_wt},\39{\AND}\\{thresh});{}$\6
+\&{if} ${}(\\{result}\E\T{3}\W\\{good\_wt}\G\T{1}\W\\{bad\_wt}\G\T{1}\W%
+\\{thresh}\G\T{1}\W\\{good\_wt}\Z\T{255}\W\\{bad\_wt}\Z\T{255}\W\\{thresh}\Z%
+\T{255}){}$\5
+${}\{{}$\1\6
+\&{break};\6
+\4${}\}{}$\2\6
+\&{else}\5
+${}\{{}$\1\6
+\\{printf}(\.{"Error:\ Specify\ 1\ <=}\)\.{\ good\_wt,\ bad\_wt,\ th}\)%
+\.{reshold\ <=\ 255!\ Inse}\)\.{rt\ again:\ "});\6
+\&{while} ${}(\\{getchar}(\,)\I\.{'\\n'}){}$\1\5
+;\2\6
+\4${}\}{}$\2\6
+\4${}\}{}$\2\6
+${}\\{params}\MG\\{good\_wt}\K(\\{uint8\_t})\\{good\_wt};{}$\6
+${}\\{params}\MG\\{bad\_wt}\K(\\{uint8\_t})\\{bad\_wt};{}$\6
+${}\\{params}\MG\\{thresh}\K(\\{uint8\_t})\\{thresh}{}$;\par
+\U8.\fi
+
+\N{1}{10}Level generation.
+The single pass of \utfpatgen{} at given hyphenation level comprises iterating
+through pattern lengths ({\tt pat\_len}
+parameter, in ascending order) and dot positions ({\tt pat\_dot}, from the
+middle toward the edges) and processing
+the dictionary. The algorithm collects supporting and contradicting occurences
+and eventually adds new patterns to the
+set. It can happen that an iteration is skipped if it is known in advance that
+it will not yield any new patterns.
+
+\Y\B\4\X10:Level generation\X${}\E{}$\6
+\\{uint8\_t}\\{aux\_dot};\7
+\&{bool} \\{more\_this\_level}[\T{256}];\7
+\&{for} (\&{size\_t} \|i${}\K\T{0};{}$ ${}\|i<\T{256};{}$ ${}\|i\PP){}$\5
+${}\{{}$\1\6
+${}\\{more\_this\_level}[\|i]\K\\{true};{}$\6
+\4${}\}{}$\2\6
+\&{for} (\&{size\_t} \|j${}\K\\{params}\MG\\{pat\_start};{}$ ${}\|j\Z\\{params}%
+\MG\\{pat\_finish};{}$ ${}\|j\PP){}$\5
+${}\{{}$\1\6
+${}\\{params}\MG\\{pat\_len}\K\|j;{}$\6
+${}\\{params}\MG\\{pat\_dot}\K\\{params}\MG\\{pat\_len}/\T{2};{}$\6
+${}\\{aux\_dot}\K\\{params}\MG\\{pat\_dot}*\T{2};{}$\6
+\&{while} ${}(\\{params}\MG\\{pat\_dot}\I\\{params}\MG\\{pat\_len}){}$\5
+${}\{{}$\1\6
+${}\\{params}\MG\\{pat\_dot}\K\\{aux\_dot}-\\{params}\MG\\{pat\_dot};{}$\6
+${}\\{aux\_dot}\K\\{params}\MG\\{pat\_len}*\T{2}-\\{aux\_dot}-\T{1};{}$\6
+\&{if} ${}(\\{more\_this\_level}[\\{params}\MG\\{pat\_dot}]){}$\5
+${}\{{}$\1\6
+\&{if} ${}(\R\\{process\_dictionary}(\\{params},\39\\{tt},\39\\{pt},\39{\AND}%
+\\{ps})){}$\5
+${}\{{}$\1\6
+\\{destroy\_params}(\\{params});\6
+\\{destroy\_tr\_table}(\\{tt});\6
+\\{destroy\_pattern\_trie}(\\{pt});\6
+\&{return} \.{EXIT\_FAILURE};\6
+\4${}\}{}$\2\6
+${}\\{more\_this\_level}[\\{params}\MG\\{pat\_dot}]\K\\{ps}.\\{more\_to%
+\_come};{}$\6
+\4${}\}{}$\2\6
+\4${}\}{}$\2\6
+\&{for} (\&{size\_t} \|i${}\K\T{255};{}$ ${}\|i>\T{0};{}$ ${}\|i\MM){}$\5
+${}\{{}$\1\6
+\&{if} ${}(\R\\{more\_this\_level}[\|i-\T{1}]){}$\5
+${}\{{}$\1\6
+${}\\{more\_this\_level}[\|i]\K\\{false};{}$\6
+\4${}\}{}$\2\6
+\4${}\}{}$\2\6
+\4${}\}{}$\2\par
+\U8.\fi
+
+\N{1}{11}Final pass.
+If the user wishes, the dictionary is traversed one last time and hyphenated
+according to found patterns. The output is
+stored in file 'pattmp.X'.
+
+\Y\B\4\X11:Final pass\X${}\E{}$\6
+\&{if} ${}(\R\\{output\_patterns}(\\{pt},\39\\{tt},\39\\{params}\MG\\{output%
+\_file})){}$\5
+${}\{{}$\1\6
+\\{destroy\_params}(\\{params});\6
+\\{destroy\_tr\_table}(\\{tt});\6
+\\{destroy\_pattern\_trie}(\\{pt});\6
+\&{return} \.{EXIT\_FAILURE};\6
+\4${}\}{}$\2\7
+\&{char} \|c;\6
+\&{bool} \\{output}${}\K\\{false};{}$\7
+\\{printf}(\.{"hyphenate\ word\ list}\)\.{?\ (y/n):\ "});\6
+\&{if} ${}(\\{scanf}(\.{"\ \%c"},\39{\AND}\|c)<\T{1}){}$\5
+${}\{{}$\1\6
+\\{destroy\_params}(\\{params});\6
+\\{destroy\_tr\_table}(\\{tt});\6
+\\{destroy\_pattern\_trie}(\\{pt});\6
+\&{return} \.{EXIT\_FAILURE};\6
+\4${}\}{}$\2\6
+\&{if} ${}(\|c\E\.{'y'}\V\|c\E\.{'Y'}){}$\5
+${}\{{}$\1\6
+${}\\{output}\K\\{true};{}$\6
+\4${}\}{}$\2\6
+\&{if} ${}(\R\\{hyphenate\_dictionary}(\\{params},\39\\{tt},\39\\{pt},\39%
+\\{output},\39{\AND}\\{ps})){}$\5
+${}\{{}$\1\6
+\\{destroy\_params}(\\{params});\6
+\\{destroy\_tr\_table}(\\{tt});\6
+\\{destroy\_pattern\_trie}(\\{pt});\6
+\&{return} \.{EXIT\_FAILURE};\6
+\4${}\}{}$\2\par
+\U5.\fi
+
+\N{0}{12}Implementation details.
+In this section we focus on the building blocks, each subsection devoted to one
+particular aspect of the algorithm.
+
+\fi
+
+\N{1}{13}IO procedures.
+Methods in this subsection stand on the interface between \utfpatgen{} and the
+user, together with the {\tt main}
+method. {\tt parse\_inputs} attempts to open the 4 files provided as inputs
+into streams and save them for later
+use. {\tt read\_line} is a utility to simplify reading from these streams that
+stores the information read into
+provided buffer. The {\tt print\_help} and {\tt print\_version} methods print
+out the desired information if the
+user does not wish to proceed to pattern generation.
+
+\fi
+
+\M{14}parse\_input.
+Attempts to open the 4 files provided as inputs into streams and save them for
+later use. Returns a boolean indicating
+whether all files have been opened successfully.
+
+\Y\B\1\1\&{bool} \\{parse\_input}(\&{char} ${}{*}\\{argv}[\,],\39{}$\&{int} %
+\\{argc}${},\39{}$\&{struct} \\{params} ${}{*}\\{params})\2\2{}$\6
+${}\{{}$\1\6
+\&{if} ${}(\\{argc}\I\T{5}){}$\5
+${}\{{}$\1\6
+${}\\{fprintf}(\\{stderr},\39\.{"utfpatgen\ need\ exac}\)\.{tly\ 4\ arguments.%
+\\nTr}\)\.{y\ `utfpatgen\ --help`}\)\.{\ for\ more\ informatio}\)\.{n.%
+\\n"});{}$\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\7
+\&{FILE} ${}{*}\\{dictionary\_file}\K\\{fopen}(\\{argv}[\T{1}],\39\.{"rb"});{}$%
+\7
+\&{if} ${}(\\{dictionary\_file}\E\NULL){}$\5
+${}\{{}$\1\6
+${}\\{fprintf}(\\{stderr},\39\.{"Could\ not\ open\ dict}\)\.{ionary\ file\ '%
+\%s'.\\n"},\39\\{argv}[\T{1}]);{}$\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\7
+\&{FILE} ${}{*}\\{pattern\_file}\K\\{fopen}(\\{argv}[\T{2}],\39\.{"rb"});{}$\7
+\&{if} ${}(\\{pattern\_file}\E\NULL){}$\5
+${}\{{}$\1\6
+${}\\{fprintf}(\\{stderr},\39\.{"Could\ not\ open\ patt}\)\.{ern\ file\ '\%s'.%
+\\n"},\39\\{argv}[\T{2}]);{}$\6
+\\{fclose}(\\{dictionary\_file});\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\7
+\&{FILE} ${}{*}\\{output\_file}\K\\{fopen}(\\{argv}[\T{3}],\39\.{"wb"});{}$\7
+\&{if} ${}(\\{output\_file}\E\NULL){}$\5
+${}\{{}$\1\6
+${}\\{fprintf}(\\{stderr},\39\.{"Could\ not\ open\ outp}\)\.{ut\ file\ '\%s'.%
+\\n"},\39\\{argv}[\T{3}]);{}$\6
+\\{fclose}(\\{dictionary\_file});\6
+\\{fclose}(\\{pattern\_file});\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\7
+\&{FILE} ${}{*}\\{translate\_file}\K\\{fopen}(\\{argv}[\T{4}],\39\.{"rb"});{}$\7
+\&{if} ${}(\\{translate\_file}\E\NULL){}$\5
+${}\{{}$\1\6
+${}\\{fprintf}(\\{stderr},\39\.{"Could\ not\ open\ tran}\)\.{slate\ file\ '%
+\%s'.\\n"},\39\\{argv}[\T{4}]);{}$\6
+\\{fclose}(\\{dictionary\_file});\6
+\\{fclose}(\\{pattern\_file});\6
+\\{fclose}(\\{output\_file});\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\6
+${}\\{params}\MG\\{dictionary\_file}\K\\{dictionary\_file};{}$\6
+${}\\{params}\MG\\{pattern\_file}\K\\{pattern\_file};{}$\6
+${}\\{params}\MG\\{output\_file}\K\\{output\_file};{}$\6
+${}\\{params}\MG\\{translate\_file}\K\\{translate\_file};{}$\6
+\&{return} \\{true};\6
+\4${}\}{}$\2\par
+\fi
+
+\M{15}read\_line.
+Reads a line from given stream into a string buffer. If end of file is reached,
+it sets {\tt eof} flag of the buffer.
+Returns a boolean indicating whether the line has been read successfully.
+
+\Y\B\1\1\&{bool} \\{read\_line}(\&{FILE} ${}{*}\\{stream},\39{}$\&{struct} %
+\\{string\_buffer} ${}{*}\\{buf})\2\2{}$\6
+${}\{{}$\1\6
+\\{reset\_buffer}(\\{buf});\7
+\&{char} \|c;\7
+\&{while} ${}((\|c\K\\{fgetc}(\\{stream}))\I\.{EOF}){}$\5
+${}\{{}$\1\6
+\&{if} ${}(\\{buf}\MG\\{size}\G\\{buf}\MG\\{capacity}-\T{1}){}$\5
+${}\{{}$\1\6
+\&{if} ${}(\\{resize\_buffer}(\\{buf},\39\T{2}*\\{buf}\MG\\{capacity})\E%
+\NULL){}$\5
+${}\{{}$\1\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\6
+\4${}\}{}$\2\6
+\&{if} ${}(\|c\E\.{'\\n'}){}$\5
+${}\{{}$\1\6
+\&{if} ${}((\\{buf}\MG\\{size}>\T{0})\W(\\{buf}\MG\\{data}[\\{buf}\MG\\{size}-%
+\T{1}]\E\.{'\\r'})){}$\5
+${}\{{}$\SHC{ Windows /r/n end of line }\1\6
+${}\\{buf}\MG\\{size}\MRL{-{\K}}\T{1};{}$\6
+\4${}\}{}$\2\6
+\&{break};\6
+\4${}\}{}$\2\6
+${}\\{buf}\MG\\{data}[\\{buf}\MG\\{size}]\K\|c;{}$\6
+${}\\{buf}\MG\\{size}\PP;{}$\6
+\4${}\}{}$\2\6
+${}\\{buf}\MG\\{data}[\\{buf}\MG\\{size}]\K\.{'\\0'};{}$\6
+\&{if} ${}(\|c\E\.{EOF}){}$\5
+${}\{{}$\1\6
+${}\\{buf}\MG\\{eof}\K\\{true};{}$\6
+\4${}\}{}$\2\6
+\&{return} \\{true};\6
+\4${}\}{}$\2\par
+\fi
+
+\M{16}print\_help.
+Prints out a help message to the standard output.
+
+\Y\B\1\1\&{void} \\{print\_help}(\,)\2\2\6
+${}\{{}$\1\6
+\\{printf}(\.{"Usage:\ utfpatgen\ [O}\)\.{PTION]...\ DICTIONARY}\)\.{\ PATTERNS%
+\ OUTPUT\ TRA}\)\.{NSLATE\\n"});\6
+\\{printf}(\.{"\\tGenerate\ the\ OUTP}\)\.{UT\ hyphenation\ file\ }\)\.{for\
+use\ with\ TeX\\n"});\6
+\\{printf}(\.{"\\tfrom\ the\ DICTIONA}\)\.{RY,\ PATTERNS,\ and\ TR}\)\.{ANSLATE%
+\ files.\\n"});\6
+\\{printf}(\.{"\\n--help\ \ \ \ \ \ \ \ pri}\)\.{nt\ this\ help\ and\ exi}\)%
+\.{t\\n"});\6
+\\{printf}(\.{"--version\ \ \ \ \ outpu}\)\.{t\ version\ informatio}\)\.{n\ and%
+\ exit\\n"});\6
+\4${}\}{}$\2\par
+\fi
+
+\M{17}print\_version.
+Prints out the version number of \utfpatgen{} to the standard output.
+
+\Y\B\1\1\&{void} \\{print\_version}(\,)\2\2\6
+${}\{{}$\1\6
+${}\\{printf}(\.{"This\ is\ utfpatgen\ v}\)\.{ersion\ \%s\\n"},\39\.{UTFPATGEN%
+\_VERSION});{}$\6
+\4${}\}{}$\2\par
+\fi
+
+\N{1}{18}Translate file processing.
+Once the translate file has been successfully opened and its stream pointer
+stored, it is read line by line into
+translate table. The purpose of the translate file is to list all the
+characters that occur in the dictionary, together
+with their uppercase variants. Later during the pattern generation, all of
+these variants are treated as though they
+were the same character. Besides, the first line of the file may redefine the
+language-specific parameters
+\lefthyphenminpar, \righthyphenminpar, and the symbols used for marking hyphens
+in the dictionary. The format of the
+translate file follows the same pattern as required by \patgen:
+
+\item{$\bullet$} first line (optional): 'LLRR BMG', where 'LL' is the value of %
+\lefthyphenminpar, 'RR' the value of
+\righthyphenminpar, 'B' the symbol for {\tt BAD\_HYF}, 'M' the symbol for {\tt
+MISS\_HYF}, and 'G' the
+symbol for {\tt GOOD\_HYF}. Should any of these parameters stay blank, the
+default is used:
+\lefthyphenminpar$=2$, \righthyphenminpar$=3$, {\tt BAD\_HYF} '.', {\tt MISS%
+\_HYF} '-',
+{\tt GOOD\_HYF} '*'.
+\item{$\bullet$} consequent lines: '$\_X\_Y_1\_...Y_n\_\_$', where '$X$' is a
+lowercase letter, '$Y_k$' an arbitrary
+(even 0) number of upper-case variants of '$X$', and '$\_$' a delimiter,
+usually space.
+
+Note that this format allows two-digit values of \lefthyphenminpar{} and %
+\righthyphenminpar{} at most and one-byte
+characters for hyphen symbols. Practically, this is not a problem.
+
+The translate file must be provided as an input to \utfpatgen, but may be left
+empty. In that case, the default values
+for parameters ASCII character mapping are used.
+
+\fi
+
+\M{19}read\_translate.
+Reads the contents of the translate file and parses its lines into a translate
+table. It includes parsing the optional
+header line and storing the parameters obtained. If the file is empty, the
+method fetches a default ASCII mapping.
+Returns a boolean indicating whether the file has been read successfully.
+
+\Y\B\1\1\&{bool} \\{read\_translate}(\&{struct} \\{params} ${}{*}\\{params},%
+\39{}$\&{struct} \\{translate\_table} ${}{*}\\{tt})\2\2{}$\6
+${}\{{}$\1\6
+${}\\{rewind}(\\{params}\MG\\{translate\_file});{}$\7
+\&{struct} \\{string\_buffer} ${}{*}\\{buf}\K\\{init\_buffer}(\T{64});{}$\7
+\&{if} ${}(\\{buf}\E\NULL){}$\5
+${}\{{}$\1\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\7
+\&{struct} \\{trie} ${}{*}\\{helper\_trie}\K\\{init\_trie}(\T{256});{}$\7
+\&{if} ${}(\\{helper\_trie}\E\NULL){}$\5
+${}\{{}$\1\6
+\\{destroy\_buffer}(\\{buf});\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\6
+\&{if} ${}(\R\\{read\_line}(\\{params}\MG\\{translate\_file},\39\\{buf})){}$\5
+${}\{{}$\1\6
+\\{destroy\_trie}(\\{helper\_trie});\6
+\\{destroy\_buffer}(\\{buf});\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\6
+\&{if} ${}(\\{buf}\MG\\{eof}){}$\5
+${}\{{}$\1\6
+\&{bool} \\{default\_mapping}${}\K\\{default\_ascii\_mapping}(\\{tt},\39%
+\\{helper\_trie});{}$\7
+\\{destroy\_trie}(\\{helper\_trie});\6
+\\{destroy\_buffer}(\\{buf});\6
+\&{return} \\{default\_mapping};\6
+\4${}\}{}$\2\7
+\&{size\_t} \\{out\_index}${},\39\\{letter\_index};{}$\7
+${}\\{letter\_index}\K\\{tt}\MG\\{letter\_count}+\T{1};{}$\6
+\&{if} ${}(\\{letter\_index}\G\\{tt}\MG\\{letter\_capacity}){}$\5
+${}\{{}$\1\6
+\&{size\_t} \\{new\_capacity}${}\K\\{tt}\MG\\{letter\_capacity}*\T{2};{}$\6
+\&{size\_t} ${}{*}\\{new\_array}\K\\{realloc}(\\{tt}\MG\\{index\_to\_alphabet},%
+\39\\{new\_capacity}*\&{sizeof}(\&{size\_t}));{}$\7
+\&{if} ${}(\\{new\_array}\E\NULL){}$\5
+${}\{{}$\1\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\6
+${}\\{tt}\MG\\{index\_to\_alphabet}\K\\{new\_array};{}$\6
+${}\\{tt}\MG\\{letter\_capacity}\K\\{new\_capacity};{}$\6
+\4${}\}{}$\2\6
+${}\\{tt}\MG\\{index\_to\_alphabet}[\\{letter\_index}]\K\\{tt}\MG\\{alphabet}%
+\MG\\{size};{}$\6
+\&{if} ${}(\R\\{insert\_pattern}(\\{tt}\MG\\{mapping},\39{}$(\&{const} %
+\&{char}[\,])\,${}\{\.{EDGE\_OF\_WORD},\39\.{'\\0'}\},\39{\AND}\\{out\_index},%
+\39\\{helper\_trie})\V\R\\{append\_string}(\\{tt}\MG\\{alphabet},\39{}$(%
+\&{const} \&{char}[\,])\,${}\{\.{EDGE\_OF\_WORD},\39\.{'\\0'}\})){}$\5
+${}\{{}$\1\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\6
+${}\\{tt}\MG\\{mapping}\MG\\{aux}[\\{out\_index}]\K\\{letter\_index};{}$\6
+${}\\{tt}\MG\\{letter\_count}\PP;{}$\7
+\&{bool} \\{first\_line}${}\K\\{true};{}$\7
+\&{while} ${}(\R\\{buf}\MG\\{eof}){}$\5
+${}\{{}$\1\6
+\&{if} ${}(\\{first\_line}\W\\{parse\_header}(\\{buf},\39\\{params})){}$\5
+${}\{{}$\SHC{ header parsed successfully }\6
+\,${}\}{}$\6
+\&{else} \&{if} ${}(\R\\{parse\_letters}(\\{buf},\39\\{tt},\39\\{helper%
+\_trie})){}$\5
+${}\{{}$\1\6
+\\{destroy\_trie}(\\{helper\_trie});\6
+\\{destroy\_buffer}(\\{buf});\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\6
+${}\\{first\_line}\K\\{false};{}$\6
+\\{reset\_buffer}(\\{buf});\6
+\&{if} ${}(\R\\{read\_line}(\\{params}\MG\\{translate\_file},\39\\{buf})){}$\5
+${}\{{}$\1\6
+\\{destroy\_trie}(\\{helper\_trie});\6
+\\{destroy\_buffer}(\\{buf});\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\6
+\4${}\}{}$\2\6
+\\{destroy\_trie}(\\{helper\_trie});\6
+\\{destroy\_buffer}(\\{buf});\6
+${}\\{printf}(\.{"left\_hyphen\_min\ =\ \%}\)\.{u,\ right\_hyphen\_min\ }\)\.{=%
+\ \%u,\ \%zu\ letters\\n"},\39\\{params}\MG\\{left\_hyphen\_min},\39\\{params}%
+\MG\\{right\_hyphen\_min},\39\\{tt}\MG\\{letter\_count});{}$\6
+\&{return} \\{true};\6
+\4${}\}{}$\2\par
+\fi
+
+\M{20}is\_integer.
+Returns a boolean indicating whether the given character is an ASCII numeric
+literal.
+
+\Y\B\1\1\&{bool} \\{is\_integer}(\&{char} \|c)\2\2\6
+${}\{{}$\1\6
+\&{return} ${}(\|c\G\.{'0'}\W\|c\Z\.{'9'});{}$\6
+\4${}\}{}$\2\par
+\fi
+
+\M{21}is\_space.
+Returns a boolean indicating whether the given character is an ASCII whitespace
+(0x20).
+
+\Y\B\1\1\&{bool} \\{is\_space}(\&{char} \|c)\2\2\6
+${}\{{}$\1\6
+\&{return} ${}(\|c\E\.{'\ '});{}$\6
+\4${}\}{}$\2\par
+\fi
+
+\M{22}parse\_two\_digit.
+Attempts to parse 2-character sequence from a buffer into 2-digit number.
+Returns a boolean indicating whether the
+sequence is representing a number and parsing was finished successfully.
+
+\Y\B\1\1\&{bool} \\{parse\_two\_digit}(\&{struct} \\{string\_buffer} ${}{*}%
+\\{buf},\39{}$\&{size\_t} \\{pos}${},\39\\{int8\_t}*\\{out})\2\2{}$\6
+${}\{{}$\1\6
+\&{if} ${}(\\{pos}+\T{1}\G\\{buf}\MG\\{size}){}$\5
+${}\{{}$\1\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\7
+\&{char} \\{c1}${}\K\\{buf}\MG\\{data}[\\{pos}];{}$\6
+\&{char} \\{c2}${}\K\\{buf}\MG\\{data}[\\{pos}+\T{1}];{}$\7
+\&{if} ${}(\\{is\_space}(\\{c1})\W\\{is\_space}(\\{c2})){}$\5
+${}\{{}$\1\6
+\&{return} \\{true};\6
+\4${}\}{}$\2\6
+\&{if} (\\{is\_space}(\\{c1}))\5
+${}\{{}$\1\6
+${}\\{c1}\K\.{'0'};{}$\6
+\4${}\}{}$\2\6
+\&{if} (\\{is\_space}(\\{c2}))\5
+${}\{{}$\1\6
+${}\\{c2}\K\.{'0'};{}$\6
+\4${}\}{}$\2\6
+\&{if} ${}(\R\\{is\_integer}(\\{c1})\V\R\\{is\_integer}(\\{c2})){}$\5
+${}\{{}$\1\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\6
+${}{*}\\{out}\K(\\{c1}-\.{'0'})*\T{10}+(\\{c2}-\.{'0'});{}$\6
+\&{return} \\{true};\6
+\4${}\}{}$\2\par
+\fi
+
+\M{23}parse\_header.
+Attempts to parse the text stored in a buffer as though it was the header of a
+translate file. If successful, the
+values of parameters are stored in {\tt params}. Return value indicates whether
+the parsing succeeded.
+
+\Y\B\1\1\&{bool} \\{parse\_header}(\&{struct} \\{string\_buffer} ${}{*}\\{buf},%
+\39{}$\&{struct} \\{params} ${}{*}\\{params})\2\2{}$\6
+${}\{{}$\1\6
+${}\\{int8\_t}\\{val}\K{-}\T{1};{}$\6
+\&{if} ${}(\R\\{parse\_two\_digit}(\\{buf},\39\T{0},\39{\AND}\\{val})){}$\5
+${}\{{}$\1\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\6
+\&{else} \&{if} ${}(\\{val}\I{-}\T{1}){}$\5
+${}\{{}$\1\6
+${}\\{params}\MG\\{left\_hyphen\_min}\K\\{val};{}$\6
+\4${}\}{}$\2\6
+${}\\{val}\K{-}\T{1};{}$\6
+\&{if} ${}(\R\\{parse\_two\_digit}(\\{buf},\39\T{2},\39{\AND}\\{val})){}$\5
+${}\{{}$\1\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\6
+\&{else} \&{if} ${}(\\{val}\I{-}\T{1}){}$\5
+${}\{{}$\1\6
+${}\\{params}\MG\\{right\_hyphen\_min}\K\\{val};{}$\6
+\4${}\}{}$\2\6
+\&{if} ${}(\\{buf}\MG\\{size}\G\T{6}\W\R\\{is\_space}(\\{buf}\MG\\{data}[%
+\T{5}])){}$\5
+${}\{{}$\1\6
+${}\\{params}\MG\\{bad\_hyphen}\K\\{buf}\MG\\{data}[\T{5}];{}$\6
+\4${}\}{}$\2\6
+\&{if} ${}(\\{buf}\MG\\{size}\G\T{7}\W\R\\{is\_space}(\\{buf}\MG\\{data}[%
+\T{6}])){}$\5
+${}\{{}$\1\6
+${}\\{params}\MG\\{missed\_hyphen}\K\\{buf}\MG\\{data}[\T{6}];{}$\6
+\4${}\}{}$\2\6
+\&{if} ${}(\\{buf}\MG\\{size}\G\T{8}\W\R\\{is\_space}(\\{buf}\MG\\{data}[%
+\T{7}])){}$\5
+${}\{{}$\1\6
+${}\\{params}\MG\\{good\_hyphen}\K\\{buf}\MG\\{data}[\T{7}];{}$\6
+\4${}\}{}$\2\6
+\&{return} \\{true};\6
+\4${}\}{}$\2\par
+\fi
+
+\M{24}parse\_letters.
+Attempts to parse the text stored in a buffer as though it was a non-header
+line of a translate file. If successful,
+the respective letter and its uppercase variants are stored in the translation
+table. If any of the letters was already
+in the table, the method fails. Return values indicates the success of parsing.
+
+\Y\B\1\1\&{bool} \\{parse\_letters}(\&{struct} \\{string\_buffer} ${}{*}%
+\\{buf},\39{}$\&{struct} \\{translate\_table} ${}{*}\\{tt},\39{}$\&{struct} %
+\\{trie} ${}{*}\\{helper\_trie})\2\2{}$\6
+${}\{{}$\1\6
+\&{if} ${}(\\{buf}\MG\\{size}\E\T{0}){}$\5
+${}\{{}$\1\6
+${}\\{fprintf}(\\{stderr},\39\.{"Empty\ line\ in\ trans}\)\.{late\ file%
+\\n"});{}$\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\7
+\&{char} \\{separator}${}\K\\{buf}\MG\\{data}[\T{0}];{}$\7
+\&{if} ${}(\\{buf}\MG\\{size}>\T{1}\W\\{buf}\MG\\{data}[\T{1}]\E%
+\\{separator}){}$\5
+${}\{{}$\SHC{ a comment }\1\6
+\&{return} \\{true};\6
+\4${}\}{}$\2\7
+\&{size\_t} \\{letter\_index}${}\K\\{tt}\MG\\{letter\_count}+\T{1};{}$\6
+\&{size\_t} \\{out\_index};\6
+\&{struct} \\{string\_buffer} ${}{*}\\{letter}\K\\{init\_buffer}(\T{4});{}$\7
+\&{if} ${}(\\{letter}\E\NULL){}$\5
+${}\{{}$\1\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\7
+\&{bool} \\{lower}${}\K\\{true};{}$\7
+\&{if} ${}(\R\\{append\_char}(\\{buf},\39\\{separator})){}$\5
+${}\{{}$\1\6
+\\{destroy\_buffer}(\\{letter});\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\6
+\&{for} (\&{size\_t} \|i${}\K\T{1};{}$ ${}\|i<\\{buf}\MG\\{size};{}$ ${}\|i%
+\PP){}$\5
+${}\{{}$\1\6
+\&{char} \|c${}\K\\{buf}\MG\\{data}[\|i];{}$\7
+\&{if} ${}(\|c\E\\{separator}){}$\5
+${}\{{}$\1\6
+\&{if} ${}(\\{letter}\MG\\{size}\E\T{0}){}$\5
+${}\{{}$\1\6
+\&{break};\6
+\4${}\}{}$\2\6
+\&{if} ${}(\R\\{append\_char}(\\{letter},\39\.{'\\0'})\V\R\\{insert\_pattern}(%
+\\{tt}\MG\\{mapping},\39\\{letter}\MG\\{data},\39{\AND}\\{out\_index},\39%
+\\{helper\_trie})){}$\5
+${}\{{}$\1\6
+\\{destroy\_buffer}(\\{letter});\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\6
+${}\\{tt}\MG\\{mapping}\MG\\{aux}[\\{out\_index}]\K\\{letter\_index};{}$\6
+\&{if} (\\{lower})\5
+${}\{{}$\1\6
+\&{if} ${}(\\{letter\_index}\G\\{tt}\MG\\{letter\_capacity}){}$\5
+${}\{{}$\1\6
+\&{size\_t} \\{new\_capacity}${}\K\\{tt}\MG\\{letter\_capacity}*\T{2};{}$\6
+\&{size\_t} ${}{*}\\{new\_array}\K\\{realloc}(\\{tt}\MG\\{index\_to\_alphabet},%
+\39\\{new\_capacity}*\&{sizeof}(\&{size\_t}));{}$\7
+\&{if} ${}(\\{new\_array}\E\NULL){}$\5
+${}\{{}$\1\6
+\\{destroy\_buffer}(\\{letter});\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\6
+${}\\{tt}\MG\\{index\_to\_alphabet}\K\\{new\_array};{}$\6
+${}\\{tt}\MG\\{letter\_capacity}\K\\{new\_capacity};{}$\6
+\4${}\}{}$\2\6
+${}\\{tt}\MG\\{index\_to\_alphabet}[\\{letter\_index}]\K\\{tt}\MG\\{alphabet}%
+\MG\\{size};{}$\6
+\&{if} ${}(\R\\{append\_string}(\\{tt}\MG\\{alphabet},\39\\{letter}\MG%
+\\{data})){}$\5
+${}\{{}$\1\6
+\\{destroy\_buffer}(\\{letter});\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\6
+${}\\{tt}\MG\\{letter\_count}\PP;{}$\6
+${}\\{lower}\K\\{false};{}$\6
+\4${}\}{}$\2\6
+\\{reset\_buffer}(\\{letter});\6
+\4${}\}{}$\2\6
+\&{else}\5
+${}\{{}$\1\6
+\&{if} ${}(\R\\{append\_char}(\\{letter},\39\|c)){}$\5
+${}\{{}$\1\6
+\\{destroy\_buffer}(\\{letter});\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\6
+\4${}\}{}$\2\6
+\4${}\}{}$\2\6
+\\{destroy\_buffer}(\\{letter});\6
+\&{return} \\{true};\6
+\4${}\}{}$\2\par
+\fi
+
+\M{25}default\_ascii\_mapping.
+Fetches default ASCII character mapping into the translate table. Return value
+indicate the success of fetching.
+
+\Y\B\1\1\&{bool} \\{default\_ascii\_mapping}(\&{struct} \\{translate\_table}
+${}{*}\\{tt},\39{}$\&{struct} \\{trie} ${}{*}\\{helper\_trie})\2\2{}$\6
+${}\{{}$\1\6
+\&{size\_t} \\{out\_index};\6
+\&{size\_t} \\{letter\_index};\6
+\&{char} \\{upper};\7
+\&{for} (\&{char} \|c${}\K\.{'a'};{}$ ${}\|c\Z\.{'z'};{}$ ${}\|c\PP){}$\5
+${}\{{}$\1\6
+${}\\{letter\_index}\K\\{tt}\MG\\{letter\_count}+\T{1};{}$\6
+${}\\{upper}\K\|c-(\.{'a'}-\.{'A'});{}$\6
+\&{if} ${}(\\{letter\_index}\G\\{tt}\MG\\{letter\_capacity}){}$\5
+${}\{{}$\1\6
+\&{size\_t} \\{new\_capacity}${}\K\\{tt}\MG\\{letter\_capacity}*\T{2};{}$\6
+\&{size\_t} ${}{*}\\{new\_array}\K\\{realloc}(\\{tt}\MG\\{index\_to\_alphabet},%
+\39\\{new\_capacity}*\&{sizeof}(\&{size\_t}));{}$\7
+\&{if} ${}(\\{new\_array}\E\NULL){}$\5
+${}\{{}$\1\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\6
+${}\\{tt}\MG\\{index\_to\_alphabet}\K\\{new\_array};{}$\6
+${}\\{tt}\MG\\{letter\_capacity}\K\\{new\_capacity};{}$\6
+\4${}\}{}$\2\6
+${}\\{tt}\MG\\{index\_to\_alphabet}[\\{letter\_index}]\K\\{tt}\MG\\{alphabet}%
+\MG\\{size};{}$\6
+\&{if} ${}(\R\\{insert\_pattern}(\\{tt}\MG\\{mapping},\39{}$(\&{const} %
+\&{char}[\,])\,${}\{\|c,\39\.{'\\0'}\},\39{\AND}\\{out\_index},\39\\{helper%
+\_trie})\V\R\\{append\_string}(\\{tt}\MG\\{alphabet},\39{}$(\&{const} \&{char}[%
+\,])\,${}\{\|c,\39\.{'\\0'}\})){}$\5
+${}\{{}$\1\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\6
+${}\\{tt}\MG\\{mapping}\MG\\{aux}[\\{out\_index}]\K\\{letter\_index};{}$\6
+\&{if} ${}(\R\\{insert\_pattern}(\\{tt}\MG\\{mapping},\39{}$(\&{const} %
+\&{char}[\,])\,${}\{\\{upper},\39\.{'\\0'}\},\39{\AND}\\{out\_index},\39%
+\\{helper\_trie})){}$\5
+${}\{{}$\1\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\6
+${}\\{tt}\MG\\{mapping}\MG\\{aux}[\\{out\_index}]\K\\{letter\_index};{}$\6
+${}\\{tt}\MG\\{letter\_count}\PP;{}$\6
+\4${}\}{}$\2\6
+${}\\{letter\_index}\K\\{tt}\MG\\{letter\_count}+\T{1};{}$\6
+\&{if} ${}(\\{letter\_index}\G\\{tt}\MG\\{letter\_capacity}){}$\5
+${}\{{}$\1\6
+\&{size\_t} \\{new\_capacity}${}\K\\{tt}\MG\\{letter\_capacity}*\T{2};{}$\6
+\&{size\_t} ${}{*}\\{new\_array}\K\\{realloc}(\\{tt}\MG\\{index\_to\_alphabet},%
+\39\\{new\_capacity}*\&{sizeof}(\&{size\_t}));{}$\7
+\&{if} ${}(\\{new\_array}\E\NULL){}$\5
+${}\{{}$\1\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\6
+${}\\{tt}\MG\\{index\_to\_alphabet}\K\\{new\_array};{}$\6
+${}\\{tt}\MG\\{letter\_capacity}\K\\{new\_capacity};{}$\6
+\4${}\}{}$\2\6
+${}\\{tt}\MG\\{index\_to\_alphabet}[\\{letter\_index}]\K\\{tt}\MG\\{alphabet}%
+\MG\\{size};{}$\6
+\&{if} ${}(\R\\{insert\_pattern}(\\{tt}\MG\\{mapping},\39{}$(\&{const} %
+\&{char}[\,])\,${}\{\.{EDGE\_OF\_WORD},\39\.{'\\0'}\},\39{\AND}\\{out\_index},%
+\39\\{helper\_trie})\V\R\\{append\_string}(\\{tt}\MG\\{alphabet},\39{}$(%
+\&{const} \&{char}[\,])\,${}\{\.{EDGE\_OF\_WORD},\39\.{'\\0'}\})){}$\5
+${}\{{}$\1\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\6
+${}\\{tt}\MG\\{mapping}\MG\\{aux}[\\{out\_index}]\K\\{letter\_index};{}$\6
+${}\\{tt}\MG\\{letter\_count}\PP;{}$\6
+\&{return} \\{true};\6
+\4${}\}{}$\2\par
+\fi
+
+\N{1}{26}Pattern file processing.
+The user can provide \utfpatgen{} with initial set of patterns to work with.
+Similarly to the translate file, the pattern
+file must be given as input, but may be left empty. Each line of the file
+represents one pattern, with following format
+required:
+{\narrower
+$<hyph. level><character><hyph. level>\dots<hyph. level>$
+\par}
+Zero levels are omitted implicitly. A special character ('.' in \patgen, \tt
+EDGE\_OF\_WORD '0xff' in \utfpatgen)
+denotes edges of the word (it can be only used as the first or last character
+of a pattern). The original \patgen
+program that supports only levels up to 9 represents them simply as ASCII
+numeric literals '0' to '9'. On the other
+hand, \utfpatgen{} expects each byte representing a level preceded with a
+special {\tt HYPHEN\_FLAG} byte of hexadecimal
+value '0xfe', so the range is extended up to 253. The '0xfe' and '0xff' bytes
+are not used by any UTF-8 character by
+design.
+
+\fi
+
+\M{27}read\_patterns.
+Iterates over the pattern file and reads its entries into a pattern trie.
+Return value indicates whether the whole file
+has been read and parsed successfully.
+
+\Y\B\1\1\&{bool} \\{read\_patterns}(\&{struct} \\{params} ${}{*}\\{params},%
+\39{}$\&{struct} \\{pattern\_trie} ${}{*}\\{pt},\39{}$\&{struct} \\{translate%
+\_table} ${}{*}\\{tt},\39{}$\&{struct} \\{pass\_stats} ${}{*}\\{ps})\2\2{}$\6
+${}\{{}$\1\6
+${}\\{ps}\MG\\{level\_pattern\_cnt}\K\T{0};{}$\6
+${}\\{ps}\MG\\{max\_level}\K\T{0};{}$\7
+\&{struct} \\{string\_buffer} ${}{*}\\{buf}\K\\{init\_buffer}(\T{16});{}$\7
+\&{if} ${}(\\{buf}\E\NULL){}$\5
+${}\{{}$\1\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\6
+${}\\{buf}\MG\\{eof}\K\\{false};{}$\7
+\&{struct} \\{pattern} ${}{*}\\{pat}\K\\{init\_pattern}(\T{16});{}$\7
+\&{if} ${}(\\{pat}\E\NULL){}$\5
+${}\{{}$\1\6
+\\{destroy\_buffer}(\\{buf});\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\7
+\&{struct} \\{trie} ${}{*}\\{helper\_trie}\K\\{init\_trie}(\T{256});{}$\7
+\&{if} ${}(\\{helper\_trie}\E\NULL){}$\5
+${}\{{}$\1\6
+\\{destroy\_pattern}(\\{pat});\6
+\\{destroy\_buffer}(\\{buf});\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\6
+\&{while} ${}(\R\\{buf}\MG\\{eof}){}$\5
+${}\{{}$\1\6
+\&{if} ${}(\R\\{read\_line}(\\{params}\MG\\{pattern\_file},\39\\{buf})\V\R%
+\\{parse\_pattern}(\\{buf},\39\\{pat},\39\\{tt})\V\R\\{insert\_new\_pattern}(%
+\\{pat},\39\\{pt},\39\\{ps},\39\\{helper\_trie})){}$\5
+${}\{{}$\1\6
+\\{destroy\_trie}(\\{helper\_trie});\6
+\\{destroy\_pattern}(\\{pat});\6
+\\{destroy\_buffer}(\\{buf});\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\6
+\4${}\}{}$\2\6
+${}\\{printf}(\.{"\%zu\ patterns\ read\ i}\)\.{n\\n"},\39\\{ps}\MG\\{level%
+\_pattern\_cnt});{}$\6
+${}\\{printf}(\.{"pattern\ trie\ has\ \%z}\)\.{u\ nodes,\ trie\_max\ =\ }\)\.{%
+\%zu,\ \%zu\ outputs\\n"},\39\\{pt}\MG\|t\MG\\{occupied},\39\\{pt}\MG\|t\MG%
+\\{node\_max},\39\\{pt}\MG\\{ops}\MG\\{count});{}$\6
+\\{destroy\_trie}(\\{helper\_trie});\6
+\\{destroy\_pattern}(\\{pat});\6
+\\{destroy\_buffer}(\\{buf});\6
+\&{return} \\{true};\6
+\4${}\}{}$\2\par
+\fi
+
+\M{28}parse\_pattern.
+Processes the pattern text from buffer, translates it to lowercase and inserts
+it into a pattern structure. Return
+value indicates the success of translation and parsing.
+
+\Y\B\1\1\&{bool} \\{parse\_pattern}(\&{struct} \\{string\_buffer} ${}{*}%
+\\{buf},\39{}$\&{struct} \\{pattern} ${}{*}\\{out\_pattern},\39{}$\&{struct} %
+\\{translate\_table} ${}{*}\\{tt})\2\2{}$\6
+${}\{{}$\1\6
+\\{reset\_pattern}(\\{out\_pattern});\7
+\&{char} \|c;\6
+\&{bool} \\{next\_hyphen}${}\K\\{false};{}$\6
+\&{struct} \\{string\_buffer} ${}{*}\\{letter}\K\\{init\_buffer}(\T{4});{}$\7
+\&{if} ${}(\\{letter}\E\NULL){}$\5
+${}\{{}$\1\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\6
+\&{for} (\&{size\_t} \|i${}\K\T{0};{}$ ${}\|i<\\{buf}\MG\\{size};{}$ ${}\|i%
+\PP){}$\5
+${}\{{}$\1\6
+${}\|c\K\\{buf}\MG\\{data}[\|i];{}$\6
+\&{if} ${}(\|c\E\.{EDGE\_OF\_WORD}\W\|i\I\T{0}\W\|i\I\\{buf}\MG\\{size}-%
+\T{1}){}$\5
+${}\{{}$\1\6
+${}\\{fprintf}(\\{stderr},\39\.{"Edge\ of\ word\ found\ }\)\.{inside\ a\
+pattern.\\n"});{}$\6
+\\{destroy\_buffer}(\\{letter});\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\6
+\&{if} (\\{next\_hyphen})\5
+${}\{{}$\1\6
+\&{if} ${}(\R\\{set\_hyphen}(\\{out\_pattern},\39\\{out\_pattern}\MG\\{size},%
+\39(\\{uint8\_t})\|c)){}$\5
+${}\{{}$\1\6
+\\{destroy\_buffer}(\\{letter});\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\6
+${}\\{next\_hyphen}\K\\{false};{}$\6
+\&{continue};\6
+\4${}\}{}$\2\6
+\&{if} ${}(\\{is\_utf\_start\_byte}(\|c)\W\\{letter}\MG\\{size}>\T{0}){}$\5
+${}\{{}$\1\6
+\&{if} ${}(\R\\{append\_char}(\\{letter},\39\.{'\\0'})){}$\5
+${}\{{}$\1\6
+\\{destroy\_buffer}(\\{letter});\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\7
+\&{size\_t} \\{letter\_index}${}\K\\{get\_letter\_index}(\\{tt},\39\\{letter}%
+\MG\\{data});{}$\7
+\&{if} ${}(\\{letter\_index}\E\T{0}){}$\5
+${}\{{}$\1\6
+${}\\{fprintf}(\\{stderr},\39\.{"Unknown\ letter\ \%s\ f}\)\.{ound\ in\ a\
+pattern.\\n}\)\.{"},\39\\{letter}\MG\\{data});{}$\6
+\\{destroy\_buffer}(\\{letter});\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\6
+\&{if} ${}(\R\\{convert\_index\_to\_pattern}(\\{letter\_index},\39\\{out%
+\_pattern})){}$\5
+${}\{{}$\1\6
+\\{destroy\_buffer}(\\{letter});\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\6
+\\{reset\_buffer}(\\{letter});\6
+\4${}\}{}$\2\6
+\&{if} ${}(\|c\E\.{HYPHEN\_FLAG}){}$\5
+${}\{{}$\1\6
+${}\\{next\_hyphen}\K\\{true};{}$\6
+\4${}\}{}$\2\6
+\&{else} \&{if} ${}(\R\\{append\_char}(\\{letter},\39\|c)){}$\5
+${}\{{}$\1\6
+\\{destroy\_buffer}(\\{letter});\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\6
+\4${}\}{}$\2\6
+\&{if} (\\{next\_hyphen})\5
+${}\{{}$\1\6
+\&{if} ${}(\R\\{set\_hyphen}(\\{out\_pattern},\39\\{out\_pattern}\MG\\{size},%
+\39(\\{uint8\_t})\|c)){}$\5
+${}\{{}$\1\6
+\\{destroy\_buffer}(\\{letter});\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\6
+\4${}\}{}$\2\6
+\&{else} \&{if} ${}(\\{letter}\MG\\{size}>\T{0}){}$\5
+${}\{{}$\1\6
+\&{if} ${}(\R\\{append\_char}(\\{letter},\39\.{'\\0'})){}$\5
+${}\{{}$\1\6
+\\{destroy\_buffer}(\\{letter});\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\7
+\&{size\_t} \\{letter\_index}${}\K\\{get\_letter\_index}(\\{tt},\39\\{letter}%
+\MG\\{data});{}$\7
+\&{if} ${}(\\{letter\_index}\E\T{0}){}$\5
+${}\{{}$\1\6
+${}\\{fprintf}(\\{stderr},\39\.{"Unknown\ letter\ \%s\ f}\)\.{ound\ in\ a\
+pattern.\\n}\)\.{"},\39\\{letter}\MG\\{data});{}$\6
+\\{destroy\_buffer}(\\{letter});\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\6
+\&{if} ${}(\R\\{convert\_index\_to\_pattern}(\\{letter\_index},\39\\{out%
+\_pattern})){}$\5
+${}\{{}$\1\6
+\\{destroy\_buffer}(\\{letter});\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\6
+\4${}\}{}$\2\6
+\\{destroy\_buffer}(\\{letter});\6
+\&{return} \\{true};\6
+\4${}\}{}$\2\par
+\fi
+
+\M{29}insert\_new\_pattern.
+Inserts the pattern into pattern trie and collects statistics along the way.
+Return value indicates the success of
+insertion.
+
+\Y\B\1\1\&{bool} \\{insert\_new\_pattern}(\&{struct} \\{pattern} ${}{*}\\{pat},%
+\39{}$\&{struct} \\{pattern\_trie} ${}{*}\\{pt},\39{}$\&{struct} \\{pass%
+\_stats} ${}{*}\\{ps},\39{}$\&{struct} \\{trie} ${}{*}\\{helper\_trie})\2\2{}$\6
+${}\{{}$\1\6
+\&{size\_t} \\{hyphenation\_value}${},\39\\{node};{}$\6
+\&{size\_t} \\{current\_len}${}\K\T{0};{}$\7
+\&{if} ${}(\R\\{insert\_pattern}(\\{pt}\MG\|t,\39\\{pat}\MG\\{text},\39{\AND}%
+\\{node},\39\\{helper\_trie})){}$\5
+${}\{{}$\1\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\6
+\&{for} (\&{size\_t} \|i${}\K\T{0};{}$ ${}\|i<\\{pat}\MG\\{size};{}$ ${}\|i%
+\PP){}$\5
+${}\{{}$\1\6
+${}\\{hyphenation\_value}\K\\{get\_hyphen}(\\{pat},\39\|i);{}$\6
+\&{if} ${}(\\{hyphenation\_value}>\T{0}){}$\5
+${}\{{}$\1\6
+${}\\{ps}\MG\\{level\_pattern\_cnt}\PP;{}$\6
+\&{if} ${}(\R\\{set\_output}(\\{pt},\39\\{node},\39\\{hyphenation\_value},\39%
+\\{current\_len})){}$\5
+${}\{{}$\1\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\6
+\&{if} ${}(\\{hyphenation\_value}>\\{ps}\MG\\{max\_level}){}$\5
+${}\{{}$\1\6
+${}\\{ps}\MG\\{max\_level}\K\\{hyphenation\_value};{}$\6
+\4${}\}{}$\2\6
+\4${}\}{}$\2\6
+\&{if} ${}((\\{uint8\_t})\\{pat}\MG\\{text}[\|i]\I\T{\^ff}){}$\5
+${}\{{}$\1\6
+${}\\{current\_len}\PP;{}$\6
+\4${}\}{}$\2\6
+\4${}\}{}$\2\6
+${}\\{hyphenation\_value}\K\\{get\_hyphen}(\\{pat},\39\\{pat}\MG\\{size});{}$\6
+\&{if} ${}(\\{hyphenation\_value}>\T{0}){}$\5
+${}\{{}$\1\6
+${}\\{ps}\MG\\{level\_pattern\_cnt}\PP;{}$\6
+\&{if} ${}(\R\\{set\_output}(\\{pt},\39\\{node},\39\\{hyphenation\_value},\39%
+\\{current\_len})){}$\5
+${}\{{}$\1\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\6
+\4${}\}{}$\2\6
+\&{return} \\{true};\6
+\4${}\}{}$\2\par
+\fi
+
+\N{1}{30}Dictionary file processing.
+The dictionary is the main source of data for pattern generation. The file
+indeed has to be provided as input, and
+though no error is raised when it is empty, such case does not make much sense.
+Each line in the file represents single
+hyphenated word, with hyphens marked using {\tt GOOD\_HYF}, {\tt MISS\_HYF},
+and {\tt BAD\_HYF}. Furthermore,
+both the whole word and separate hyphens can be weighted by preceding the with
+{\tt HYPHEN\_FLAG} and a value.
+Similarly to the pattern file, the possible range of weights is increased to
+253. If the hyphen weight is omitted, word
+weight is used. If the word weight is omitted, \utfpatgen{} uses the default
+value 1. The lines of the dictionary file
+thus look like this:
+
+{\narrower
+$<word weigth><character><hyphen weight><hyphen><character>\dots<character>$
+\par}
+
+Since some patterns may be tied to the edges of the word, special byte symbol {%
+\tt EDGE\_OF\_WORD} was introduced
+that marks the edges. Hexadecimal value of the symbol is '0xff' that is not
+used by the UTF-8 encoding.
+
+\fi
+
+\M{31}process\_dictionary.
+Reads and parses the dictionary, and generates new patterns afterwards.
+Statistics of the pass are printed out at the
+end of the method. Return value indicates the success of reading, parsing, and
+pattern generation.
+
+\Y\B\1\1\&{bool} \\{process\_dictionary}(\&{struct} \\{params} ${}{*}%
+\\{params},\39{}$\&{struct} \\{translate\_table} ${}{*}\\{tt},\39{}$\&{struct} %
+\\{pattern\_trie} ${}{*}\\{pt},\39{}$\&{struct} \\{pass\_stats} ${}{*}\\{ps})\2%
+\2{}$\6
+${}\{{}$\1\6
+${}\\{ps}\MG\\{good\_cnt}\K\T{0};{}$\6
+${}\\{ps}\MG\\{bad\_cnt}\K\T{0};{}$\6
+${}\\{ps}\MG\\{miss\_cnt}\K\T{0};{}$\6
+${}\\{params}\MG\\{word\_weight}\K\T{1};{}$\6
+\&{if} ${}(\\{params}\MG\\{hyph\_level}\MOD\T{2}\E\T{1}){}$\5
+${}\{{}$\1\6
+${}\\{params}\MG\\{good\_dot}\K\.{MISS\_HYF};{}$\6
+${}\\{params}\MG\\{bad\_dot}\K\.{NO\_HYF};{}$\6
+\4${}\}{}$\2\6
+\&{else}\5
+${}\{{}$\1\6
+${}\\{params}\MG\\{good\_dot}\K\.{BAD\_HYF};{}$\6
+${}\\{params}\MG\\{bad\_dot}\K\.{GOOD\_HYF};{}$\6
+\4${}\}{}$\2\7
+\&{struct} \\{count\_trie} ${}{*}\\{ct}\K\\{init\_count\_trie}(\T{256},\39%
+\T{256});{}$\7
+\&{if} ${}(\\{ct}\E\NULL){}$\5
+${}\{{}$\1\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\6
+${}\\{printf}(\.{"processing\ dictiona}\)\.{ry\ with\ pat\_len\ =\ \%u}\)\.{,\
+pat\_dot\ =\ \%u\\n"},\39\\{params}\MG\\{pat\_len},\39\\{params}\MG\\{pat%
+\_dot});{}$\6
+\&{if} ${}(\R\\{process\_all\_words}(\\{params},\39\\{tt},\39\\{pt},\39\\{ps},%
+\39\\{ct})){}$\5
+${}\{{}$\1\6
+\\{destroy\_count\_trie}(\\{ct});\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\6
+${}\\{printf}(\.{"\\n\%zu\ good,\ \%zu\ bad}\)\.{,\ \%zu\ missed\\n"},\39\\{ps}%
+\MG\\{good\_cnt},\39\\{ps}\MG\\{bad\_cnt},\39\\{ps}\MG\\{miss\_cnt});{}$\6
+\&{if} ${}(\\{ps}\MG\\{good\_cnt}+\\{ps}\MG\\{miss\_cnt}>\T{0}){}$\5
+${}\{{}$\1\6
+${}\\{printf}(\.{"\%.2f\ \%\%,\ \%.2f\ \%\%,\ \%}\)\.{.2f\ \%\%\\n"},\39(%
+\T{100}*(\&{float})\,\\{ps}\MG\\{good\_cnt}/(\&{float})(\\{ps}\MG\\{good\_cnt}+%
+\\{ps}\MG\\{miss\_cnt})),\39(\T{100}*(\&{float})\,\\{ps}\MG\\{bad\_cnt}/(%
+\&{float})(\\{ps}\MG\\{good\_cnt}+\\{ps}\MG\\{miss\_cnt})),\39(\T{100}*(%
+\&{float})\,\\{ps}\MG\\{miss\_cnt}/(\&{float})(\\{ps}\MG\\{good\_cnt}+\\{ps}\MG%
+\\{miss\_cnt})));{}$\6
+\4${}\}{}$\2\6
+${}\\{printf}(\.{"\%zu\ patterns,\ \%zu\ n}\)\.{odes\ in\ count\ trie,\ }\)%
+\.{triec\_max\ =\ \%zu\\n"},\39\\{ct}\MG\|t\MG\\{pattern\_count},\39\\{ct}\MG%
+\|t\MG\\{occupied},\39\\{ct}\MG\|t\MG\\{node\_max});{}$\6
+\&{if} ${}(\R\\{collect\_count\_trie}(\\{ct},\39\\{pt},\39\\{params},\39%
+\\{ps})){}$\5
+${}\{{}$\1\6
+\\{destroy\_count\_trie}(\\{ct});\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\6
+\\{destroy\_count\_trie}(\\{ct});\6
+\&{return} \\{true};\6
+\4${}\}{}$\2\par
+\fi
+
+\M{32}process\_all\_words.
+Iterates over the lines of the dictionary files and parses them to the count
+trie. Return value indicates whether the
+whole file has been processed successfully.
+
+\Y\B\1\1\&{bool} \\{process\_all\_words}(\&{struct} \\{params} ${}{*}%
+\\{params},\39{}$\&{struct} \\{translate\_table} ${}{*}\\{tt},\39{}$\&{struct} %
+\\{pattern\_trie} ${}{*}\\{pt},\39{}$\&{struct} \\{pass\_stats} ${}{*}\\{ps},%
+\39{}$\&{struct} \\{count\_trie} ${}{*}\\{ct})\2\2{}$\6
+${}\{{}$\1\6
+${}\\{rewind}(\\{params}\MG\\{dictionary\_file});{}$\6
+${}\\{uint8\_t}\\{dot\_min}\K\\{params}\MG\\{pat\_dot};{}$\6
+${}\\{uint8\_t}\\{dot\_max}\K\\{params}\MG\\{pat\_len}-\\{params}\MG\\{pat%
+\_dot};{}$\6
+\&{if} ${}(\\{dot\_min}<\\{params}\MG\\{left\_hyphen\_min}+\T{1}){}$\5
+${}\{{}$\1\6
+${}\\{dot\_min}\K\\{params}\MG\\{left\_hyphen\_min}+\T{1};{}$\6
+\4${}\}{}$\2\6
+\&{if} ${}(\\{dot\_max}<\\{params}\MG\\{right\_hyphen\_min}+\T{1}){}$\5
+${}\{{}$\1\6
+${}\\{dot\_max}\K\\{params}\MG\\{right\_hyphen\_min}+\T{1};{}$\6
+\4${}\}{}$\2\7
+\&{size\_t} \\{dot\_len}${}\K\\{dot\_min}+\\{dot\_max};{}$\6
+\&{struct} \\{string\_buffer} ${}{*}\\{buf}\K\\{init\_buffer}(\T{64});{}$\7
+\&{if} ${}(\\{buf}\E\NULL){}$\5
+${}\{{}$\1\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\6
+${}\\{buf}\MG\\{eof}\K\\{false};{}$\7
+\&{struct} \\{word} ${}{*}\\{word}\K\\{init\_word}(\T{16});{}$\7
+\&{if} ${}(\\{word}\E\NULL){}$\5
+${}\{{}$\1\6
+\\{destroy\_buffer}(\\{buf});\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\7
+\&{struct} \\{trie} ${}{*}\\{helper\_trie}\K\\{init\_trie}(\T{256});{}$\7
+\&{if} ${}(\\{helper\_trie}\E\NULL){}$\5
+${}\{{}$\1\6
+\\{destroy\_word}(\\{word});\6
+\\{destroy\_buffer}(\\{buf});\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\6
+\&{while} ${}(\R\\{buf}\MG\\{eof}){}$\5
+${}\{{}$\1\6
+\&{if} ${}(\R\\{read\_line}(\\{params}\MG\\{dictionary\_file},\39\\{buf})\V\R%
+\\{parse\_word}(\\{buf},\39\\{tt},\39\\{params},\39\\{word})\V\R\\{hyphenate%
+\_word}(\\{word},\39\\{pt},\39\\{params})){}$\5
+${}\{{}$\1\6
+\\{destroy\_trie}(\\{helper\_trie});\6
+\\{destroy\_buffer}(\\{buf});\6
+\\{destroy\_word}(\\{word});\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\6
+${}\\{count\_dots}(\\{word},\39\\{params},\39\\{ps});{}$\6
+\&{if} ${}(\\{word}\MG\\{length}\G\\{dot\_len}){}$\5
+${}\{{}$\1\6
+\&{if} ${}(\R\\{process\_word}(\\{word},\39\\{ct},\39\\{params},\39\\{helper%
+\_trie})){}$\5
+${}\{{}$\1\6
+\\{destroy\_trie}(\\{helper\_trie});\6
+\\{destroy\_buffer}(\\{buf});\6
+\\{destroy\_word}(\\{word});\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\6
+\4${}\}{}$\2\6
+\4${}\}{}$\2\6
+\\{destroy\_trie}(\\{helper\_trie});\6
+\\{destroy\_buffer}(\\{buf});\6
+\\{destroy\_word}(\\{word});\6
+\&{return} \\{true};\6
+\4${}\}{}$\2\par
+\fi
+
+\M{33}parse\_word.
+Parses the text from buffer to {\tt word} structure. The text is translated to
+lowercase and hyphens are processed.
+Return value indicates successful parsing.
+
+\Y\B\1\1\&{bool} \\{parse\_word}(\&{struct} \\{string\_buffer} ${}{*}\\{buf},%
+\39{}$\&{struct} \\{translate\_table} ${}{*}\\{tt},\39{}$\&{struct} \\{params}
+${}{*}\\{params},\39{}$\&{struct} \\{word} ${}{*}\\{out\_word})\2\2{}$\6
+${}\{{}$\1\6
+\\{reset\_word}(\\{out\_word});\7
+\&{char} \\{edge\_of\_word}[\,]${}\K\{\.{EDGE\_OF\_WORD},\39\.{'\\0'}\};{}$\6
+\&{struct} \\{string\_buffer} ${}{*}\\{letter}\K\\{init\_buffer}(\T{4});{}$\7
+\&{if} ${}(\\{letter}\E\NULL){}$\5
+${}\{{}$\1\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\6
+${}\\{uint8\_t}\\{weight}\K\\{params}\MG\\{word\_weight};{}$\7
+\&{enum} \\{hyphen\_type} \\{hyf}${}\K\.{NO\_HYF};{}$\6
+\&{size\_t} \\{letter\_index}${}\K\\{get\_letter\_index}(\\{tt},\39\\{edge\_of%
+\_word});{}$\7
+\&{if} ${}(\R\\{convert\_index}(\\{letter\_index},\39\\{out\_word})){}$\5
+${}\{{}$\1\6
+\\{destroy\_buffer}(\\{letter});\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\7
+\&{char} \|c;\6
+\&{bool} \\{has\_weight}${}\K\\{false};{}$\7
+\&{for} (\&{size\_t} \|i${}\K\T{0};{}$ ${}\|i<\\{buf}\MG\\{size};{}$ ${}\|i%
+\PP){}$\5
+${}\{{}$\1\6
+${}\|c\K\\{buf}\MG\\{data}[\|i];{}$\6
+\&{if} (\\{has\_weight})\5
+${}\{{}$\1\6
+${}\\{weight}\K(\\{uint8\_t})\|c;{}$\6
+\&{if} ${}(\|i\E\T{1}){}$\5
+${}\{{}$\1\6
+${}\\{params}\MG\\{word\_weight}\K\\{weight};{}$\6
+\4${}\}{}$\2\6
+${}\\{has\_weight}\K\\{false};{}$\6
+\&{continue};\6
+\4${}\}{}$\2\6
+\&{else} \&{if} ${}(\|c\E\.{HYPHEN\_FLAG}){}$\5
+${}\{{}$\1\6
+${}\\{has\_weight}\K\\{true};{}$\6
+\&{continue};\6
+\4${}\}{}$\2\6
+\&{else} \&{if} ${}(\|c\E\\{params}\MG\\{good\_hyphen}){}$\5
+${}\{{}$\1\6
+${}\\{hyf}\K\.{GOOD\_HYF};{}$\6
+\&{continue};\6
+\4${}\}{}$\2\6
+\&{else} \&{if} ${}(\|c\E\\{params}\MG\\{missed\_hyphen}){}$\5
+${}\{{}$\1\6
+${}\\{hyf}\K\.{MISS\_HYF};{}$\6
+\&{continue};\6
+\4${}\}{}$\2\6
+\&{else} \&{if} ${}(\|c\E\\{params}\MG\\{bad\_hyphen}){}$\5
+${}\{{}$\1\6
+${}\\{hyf}\K\.{BAD\_HYF};{}$\6
+\&{continue};\6
+\4${}\}{}$\2\6
+\&{else} \&{if} ${}(\\{is\_utf\_start\_byte}(\|c)\W\\{letter}\MG\\{size}>%
+\T{0}){}$\5
+${}\{{}$\1\6
+\&{if} ${}(\R\\{append\_char}(\\{letter},\39\.{'\\0'})){}$\5
+${}\{{}$\1\6
+\\{destroy\_buffer}(\\{letter});\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\6
+${}\\{letter\_index}\K\\{get\_letter\_index}(\\{tt},\39\\{letter}\MG%
+\\{data});{}$\6
+\&{if} ${}(\\{letter\_index}\E\T{0}){}$\5
+${}\{{}$\1\6
+${}\\{fprintf}(\\{stderr},\39\.{"Character\ '\%s'\ in\ w}\)\.{ord\ '\%s'\ not\
+known\\n}\)\.{"},\39\\{letter}\MG\\{data},\39\\{buf}\MG\\{data});{}$\6
+\\{destroy\_buffer}(\\{letter});\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\6
+\&{if} ${}(\R\\{convert\_index}(\\{letter\_index},\39\\{out\_word})){}$\5
+${}\{{}$\1\6
+\\{destroy\_buffer}(\\{letter});\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\6
+\&{if} ${}(\R\\{set\_true\_hyphen}(\\{out\_word},\39\\{out\_word}\MG\\{size}-%
+\T{1},\39\T{4}*\\{weight}+\\{hyf})){}$\5
+${}\{{}$\1\6
+\\{destroy\_buffer}(\\{letter});\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\6
+${}\\{hyf}\K\.{NO\_HYF};{}$\6
+\\{reset\_buffer}(\\{letter});\6
+\4${}\}{}$\2\6
+${}\\{weight}\K\\{params}\MG\\{word\_weight};{}$\6
+\&{if} ${}(\R\\{append\_char}(\\{letter},\39\|c)){}$\5
+${}\{{}$\1\6
+\\{destroy\_buffer}(\\{letter});\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\6
+\4${}\}{}$\2\6
+\&{if} ${}(\\{letter}\MG\\{size}>\T{0}){}$\5
+${}\{{}$\1\6
+\&{if} ${}(\R\\{append\_char}(\\{letter},\39\.{'\\0'})){}$\5
+${}\{{}$\1\6
+\\{destroy\_buffer}(\\{letter});\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\6
+${}\\{letter\_index}\K\\{get\_letter\_index}(\\{tt},\39\\{letter}\MG%
+\\{data});{}$\6
+\&{if} ${}(\\{letter\_index}\E\T{0}){}$\5
+${}\{{}$\1\6
+${}\\{fprintf}(\\{stderr},\39\.{"Character\ '\%s'\ in\ w}\)\.{ord\ '\%s'\ not\
+known\\n}\)\.{"},\39\\{letter}\MG\\{data},\39\\{buf}\MG\\{data});{}$\6
+\\{destroy\_buffer}(\\{letter});\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\6
+\&{if} ${}(\R\\{convert\_index}(\\{letter\_index},\39\\{out\_word})){}$\5
+${}\{{}$\1\6
+\\{destroy\_buffer}(\\{letter});\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\6
+\4${}\}{}$\2\6
+${}\\{letter\_index}\K\\{get\_letter\_index}(\\{tt},\39\\{edge\_of\_word});{}$\6
+\&{if} ${}(\R\\{convert\_index}(\\{letter\_index},\39\\{out\_word})\V\R\\{set%
+\_true\_hyphen}(\\{out\_word},\39\T{0},\39\T{0})){}$\5
+${}\{{}$\1\6
+\\{destroy\_buffer}(\\{letter});\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\6
+\\{destroy\_buffer}(\\{letter});\6
+\&{return} \\{true};\6
+\4${}\}{}$\2\par
+\fi
+
+\M{34}count\_dots.
+Collects statistics about the hyphens in parsed word.
+
+\Y\B\1\1\&{void} \\{count\_dots}(\&{struct} \\{word} ${}{*}\\{word},\39{}$%
+\&{struct} \\{params} ${}{*}\\{params},\39{}$\&{struct} \\{pass\_stats} ${}{*}%
+\\{ps})\2\2{}$\6
+${}\{{}$\1\6
+\&{if} ${}(\\{word}\MG\\{length}<(\\{uint8\_t})(\\{params}\MG\\{right\_hyphen%
+\_min}+\T{1})){}$\5
+${}\{{}$\1\6
+\&{return};\6
+\4${}\}{}$\2\7
+\&{size\_t} \\{current\_index}${}\K\T{0};{}$\6
+\&{size\_t} \\{current\_pos}${}\K\T{0};{}$\6
+\&{bool} \\{odd\_level};\6
+\&{size\_t} \\{dot\_index}${},\39\\{hyphenation\_value},\39\\{weight};{}$\6
+\&{enum} \\{hyphen\_type} \\{hyf};\7
+\&{for} (\&{size\_t} \\{dot\_pos}${}\K\\{params}\MG\\{left\_hyphen\_min}+%
+\T{1};{}$ ${}\\{dot\_pos}<(\\{uint8\_t})(\\{word}\MG\\{length}-\\{params}\MG%
+\\{right\_hyphen\_min});{}$ ${}\\{dot\_pos}\PP){}$\5
+${}\{{}$\1\6
+\&{while} ${}(\\{current\_pos}<\\{dot\_pos}){}$\5
+${}\{{}$\1\6
+\&{if} ${}((\\{uint8\_t})\\{word}\MG\\{translated}[\\{current\_index}]\I\T{%
+\^ff}){}$\5
+${}\{{}$\1\6
+${}\\{current\_pos}\PP;{}$\6
+\4${}\}{}$\2\6
+${}\\{current\_index}\PP;{}$\6
+\4${}\}{}$\2\6
+${}\\{dot\_index}\K\\{current\_index}-\T{1};{}$\6
+${}\\{odd\_level}\K(\\{get\_found\_hyphen}(\\{word},\39\\{dot\_index})\MOD\T{2}%
+\E\T{1});{}$\6
+${}\\{hyphenation\_value}\K\\{get\_true\_hyphen}(\\{word},\39\\{dot%
+\_index});{}$\6
+${}\\{weight}\K\\{hyphenation\_value}/\T{4};{}$\6
+${}\\{hyf}\K\\{hyphenation\_value}\MOD\T{4};{}$\6
+\&{if} ${}(\\{hyphenation\_value}\E\T{0}){}$\5
+${}\{{}$\1\6
+${}\\{fprintf}(\\{stderr},\39\.{"Code\ I\ hoped\ unreac}\)\.{hable\ was\
+reached\\n"});{}$\6
+\&{continue};\6
+\4${}\}{}$\2\6
+\&{else} \&{if} ${}(\\{hyf}\MOD\T{2}\E\T{0}){}$\5
+${}\{{}$\1\6
+\&{if} (\\{odd\_level})\5
+${}\{{}$\1\6
+${}\\{ps}\MG\\{bad\_cnt}\MRL{+{\K}}\\{weight};{}$\6
+\4${}\}{}$\2\6
+\4${}\}{}$\2\6
+\&{else}\5
+${}\{{}$\1\6
+\&{if} (\\{odd\_level})\5
+${}\{{}$\1\6
+${}\\{ps}\MG\\{good\_cnt}\MRL{+{\K}}\\{weight};{}$\6
+\4${}\}{}$\2\6
+\&{else}\5
+${}\{{}$\1\6
+${}\\{ps}\MG\\{miss\_cnt}\MRL{+{\K}}\\{weight};{}$\6
+\4${}\}{}$\2\6
+\4${}\}{}$\2\6
+\4${}\}{}$\2\6
+\4${}\}{}$\2\par
+\fi
+
+\M{35}process\_word.
+Generates all candidate patterns from the parsed word and inserts them to count
+trie. Return value indicates the success
+of generating and insertion.
+
+\Y\B\1\1\&{bool} \\{process\_word}(\&{struct} \\{word} ${}{*}\\{word},\39{}$%
+\&{struct} \\{count\_trie} ${}{*}\\{ct},\39{}$\&{struct} \\{params} ${}{*}%
+\\{params},\39{}$\&{struct} \\{trie} ${}{*}\\{helper\_trie})\2\2{}$\6
+${}\{{}$\1\6
+${}\\{uint8\_t}\\{dot\_min}\K\\{params}\MG\\{pat\_dot};{}$\6
+${}\\{uint8\_t}\\{dot\_max}\K\\{params}\MG\\{pat\_len}-\\{params}\MG\\{pat%
+\_dot};{}$\6
+\&{if} ${}(\\{dot\_min}<\\{params}\MG\\{left\_hyphen\_min}+\T{1}){}$\5
+${}\{{}$\1\6
+${}\\{dot\_min}\K\\{params}\MG\\{left\_hyphen\_min}+\T{1};{}$\6
+\4${}\}{}$\2\6
+\&{if} ${}(\\{dot\_max}<\\{params}\MG\\{right\_hyphen\_min}+\T{1}){}$\5
+${}\{{}$\1\6
+${}\\{dot\_max}\K\\{params}\MG\\{right\_hyphen\_min}+\T{1};{}$\6
+\4${}\}{}$\2\7
+\&{size\_t} \\{start\_pos}${},\39\\{end\_pos},\39\\{start\_index},\39\\{dot%
+\_index},\39\\{end\_index},\39\\{node},\39\\{weight},\39\\{cnt\_index};{}$\6
+\&{size\_t} \\{current\_pos}${}\K\T{0};{}$\6
+\&{size\_t} \\{current\_index}${}\K\T{0};{}$\6
+\&{bool} \\{good\_pattern};\6
+\&{enum} \\{hyphen\_type} \\{hyf};\7
+\&{for} (\&{size\_t} \\{dot\_pos}${}\K\\{dot\_min};{}$ ${}\\{dot\_pos}+\\{dot%
+\_max}\Z\\{word}\MG\\{length};{}$ ${}\\{dot\_pos}\PP){}$\5
+${}\{{}$\1\6
+\&{while} ${}(\\{current\_pos}<\\{dot\_pos}){}$\5
+${}\{{}$\1\6
+\&{if} ${}((\\{uint8\_t})\\{word}\MG\\{translated}[\\{current\_index}]\I\T{%
+\^ff}){}$\5
+${}\{{}$\1\6
+${}\\{current\_pos}\PP;{}$\6
+\4${}\}{}$\2\6
+${}\\{current\_index}\PP;{}$\6
+\4${}\}{}$\2\6
+${}\\{dot\_index}\K\\{current\_index}-\T{1};{}$\6
+\&{if} ${}(\\{get\_no\_more}(\\{word},\39\\{dot\_index})){}$\5
+${}\{{}$\1\6
+\&{continue};\6
+\4${}\}{}$\2\6
+${}\\{hyf}\K\\{get\_true\_hyphen}(\\{word},\39\\{dot\_index})\MOD\T{4};{}$\6
+\&{if} ${}(\\{get\_found\_hyphen}(\\{word},\39\\{dot\_index})\MOD\T{2}\E%
+\T{1}){}$\5
+${}\{{}$\1\6
+${}\\{hyf}\MRL{+{\K}}\T{2};{}$\6
+\4${}\}{}$\2\6
+\&{if} ${}(\\{hyf}\E\\{params}\MG\\{good\_dot}){}$\5
+${}\{{}$\1\6
+${}\\{good\_pattern}\K\\{true};{}$\6
+\4${}\}{}$\2\6
+\&{else} \&{if} ${}(\\{hyf}\E\\{params}\MG\\{bad\_dot}){}$\5
+${}\{{}$\1\6
+${}\\{good\_pattern}\K\\{false};{}$\6
+\4${}\}{}$\2\6
+\&{else}\5
+${}\{{}$\1\6
+\&{continue};\6
+\4${}\}{}$\2\6
+${}\\{start\_pos}\K\\{dot\_pos};{}$\6
+${}\\{start\_index}\K\\{current\_index};{}$\6
+\&{while} ${}(\\{start\_pos}+\\{params}\MG\\{pat\_dot}\G\\{dot\_pos}){}$\5
+${}\{{}$\1\6
+\&{if} ${}(\\{start\_index}\E\T{0}\V(\\{uint8\_t})\\{word}\MG\\{translated}[%
+\\{start\_index}-\T{1}]\I\T{\^ff}){}$\5
+${}\{{}$\1\6
+${}\\{start\_pos}\MM;{}$\6
+\4${}\}{}$\2\6
+${}\\{start\_index}\MM;{}$\6
+\4${}\}{}$\2\6
+${}\\{start\_pos}\PP;{}$\6
+${}\\{start\_index}\PP;{}$\6
+${}\\{end\_pos}\K\\{dot\_pos};{}$\6
+${}\\{end\_index}\K\\{current\_index};{}$\6
+\&{while} ${}(\\{end\_index}<\\{word}\MG\\{size}\W\\{end\_pos}<\\{start\_pos}+%
+\\{params}\MG\\{pat\_len}){}$\5
+${}\{{}$\1\6
+\&{if} ${}((\\{uint8\_t})\\{word}\MG\\{translated}[\\{end\_index}]\I\T{%
+\^ff}){}$\5
+${}\{{}$\1\6
+${}\\{end\_pos}\PP;{}$\6
+\4${}\}{}$\2\6
+${}\\{end\_index}\PP;{}$\6
+\4${}\}{}$\2\6
+\&{if} ${}(\R\\{insert\_substring}(\\{ct}\MG\|t,\39\\{word}\MG\\{translated},%
+\39\\{end\_index},\39\\{end\_index}-\\{start\_index},\39{\AND}\\{node},\39%
+\\{helper\_trie})){}$\5
+${}\{{}$\1\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\6
+\&{if} ${}(\\{ct}\MG\\{cnts}\MG\\{size}\G\\{ct}\MG\\{cnts}\MG\\{capacity}){}$\5
+${}\{{}$\1\6
+\&{size\_t} \\{new\_capacity}${}\K\T{2}*\\{ct}\MG\\{cnts}\MG\\{capacity};{}$\7
+\&{if} ${}(\\{resize\_pattern\_counts}(\\{ct}\MG\\{cnts},\39\\{new\_capacity})%
+\E\NULL){}$\5
+${}\{{}$\1\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\6
+\4${}\}{}$\2\6
+${}\\{cnt\_index}\K\\{ct}\MG\|t\MG\\{aux}[\\{node}];{}$\6
+\&{if} ${}(\\{cnt\_index}\E\T{0}){}$\5
+${}\{{}$\1\6
+${}\\{cnt\_index}\K\\{ct}\MG\\{cnts}\MG\\{size};{}$\6
+${}\\{ct}\MG\|t\MG\\{aux}[\\{node}]\K\\{cnt\_index};{}$\6
+${}\\{ct}\MG\\{cnts}\MG\\{size}\PP;{}$\6
+\4${}\}{}$\2\6
+${}\\{weight}\K\\{get\_true\_hyphen}(\\{word},\39\\{dot\_index})/\T{4};{}$\6
+\&{if} ${}(\\{weight}\E\T{0}){}$\1\5
+${}\\{weight}\K\\{params}\MG\\{word\_weight};{}$\2\6
+\&{if} (\\{good\_pattern})\5
+${}\{{}$\1\6
+${}\\{ct}\MG\\{cnts}\MG\\{good}[\\{cnt\_index}]\MRL{+{\K}}\\{weight};{}$\6
+\4${}\}{}$\2\6
+\&{else}\5
+${}\{{}$\1\6
+${}\\{ct}\MG\\{cnts}\MG\\{bad}[\\{cnt\_index}]\MRL{+{\K}}\\{weight};{}$\6
+\4${}\}{}$\2\6
+\4${}\}{}$\2\6
+\&{return} \\{true};\6
+\4${}\}{}$\2\par
+\fi
+
+\N{1}{36}Pattern collection.
+After the dictionary has been processed, the count trie contains the number of
+good (supporting) and bad
+(contradicting) occurences of each candidate pattern found. There are 3 types
+of patterns based on these counts and the
+\goodwtpar{}, \badwtpar{}, and \threshpar{} parameters:
+
+\item{$\bullet$} {\bf good patterns} for which inequality
+$
+good * good\_wt - bad * bad\_wt \geq thresh
+$
+holds. Good patterns are inserted into the pattern trie with corresponding
+hyphenation level.
+\item{$\bullet$} {\bf bad patterns}: for which inequality
+$
+good * good\_wt < thresh
+$
+holds. Bad patterns are inserted into the pattern trie with a special {\tt BAD%
+\_OP\_VALUE} level of value
+255. Neither them nor their superstrings can become good patterns and are
+deleted from the pattern trie in the
+end of the hyphenation level iteration.
+\item{$\bullet$} {\bf undecided patterns}: for which none of the inequalities
+above holds. Some of their superstrings may
+become good or bad patterns later, so need for further investigation is raised
+by setting the
+{\tt more\_to\_come} flag.
+
+\fi
+
+\M{37}collect\_count\_trie.
+Generates new patterns from the count trie and prints out statistics. Return
+value indicates whether the generation
+ended successfully.
+
+\Y\B\1\1\&{bool} \\{collect\_count\_trie}(\&{struct} \\{count\_trie} ${}{*}%
+\\{ct},\39{}$\&{struct} \\{pattern\_trie} ${}{*}\\{pt},\39{}$\&{struct} %
+\\{params} ${}{*}\\{params},\39{}$\&{struct} \\{pass\_stats} ${}{*}\\{ps})\2%
+\2{}$\6
+${}\{{}$\1\6
+\&{double} \\{bad\_eff}${}\K(\&{double})\,\\{params}\MG\\{thresh}/(\&{double})%
+\,\\{params}\MG\\{good\_wt};{}$\7
+${}\\{ps}\MG\\{good\_pat\_cnt}\K\T{0};{}$\6
+${}\\{ps}\MG\\{bad\_pat\_cnt}\K\T{0};{}$\6
+${}\\{ps}\MG\\{good\_cnt}\K\T{0};{}$\6
+${}\\{ps}\MG\\{bad\_cnt}\K\T{0};{}$\6
+${}\\{ps}\MG\\{more\_to\_come}\K\\{false};{}$\6
+\&{if} ${}(\R\\{traverse\_count\_trie}(\\{ct},\39\\{pt},\39\\{params},\39%
+\\{ps})){}$\5
+${}\{{}$\1\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\6
+${}\\{printf}(\.{"\%zu\ good\ and\ \%zu\ ba}\)\.{d\ patterns\ added"},\39\\{ps}%
+\MG\\{good\_pat\_cnt},\39\\{ps}\MG\\{bad\_pat\_cnt});{}$\6
+${}\\{ps}\MG\\{level\_pattern\_cnt}\MRL{+{\K}}\\{ps}\MG\\{good\_pat\_cnt};{}$\6
+\&{if} ${}(\\{ps}\MG\\{more\_to\_come}){}$\5
+${}\{{}$\1\6
+\\{printf}(\.{"\ (more\ to\ come)\\n"});\6
+\4${}\}{}$\2\6
+\&{else}\5
+${}\{{}$\1\6
+\\{printf}(\.{"\\n"});\6
+\4${}\}{}$\2\6
+${}\\{printf}(\.{"finding\ \%zu\ good\ an}\)\.{d\ \%zu\ bad\ hyphens"},\39%
+\\{ps}\MG\\{good\_cnt},\39\\{ps}\MG\\{bad\_cnt});{}$\6
+\&{if} ${}(\\{ps}\MG\\{good\_pat\_cnt}>\T{0}){}$\5
+${}\{{}$\1\6
+${}\\{printf}(\.{",\ efficiency\ =\ \%.2l}\)\.{f\\n"},\39(\&{double})\,\\{ps}%
+\MG\\{good\_cnt}/(\\{ps}\MG\\{good\_pat\_cnt}+((\&{double})\,\\{ps}\MG\\{bad%
+\_cnt}/\\{bad\_eff})));{}$\6
+\4${}\}{}$\2\6
+\&{else}\5
+${}\{{}$\1\6
+\\{printf}(\.{"\\n"});\6
+\4${}\}{}$\2\6
+${}\\{printf}(\.{"pattern\ trie\ has\ \%z}\)\.{u\ nodes,\ trie\_max\ =\ }\)\.{%
+\%zu,\ \%zu\ outputs\\n"},\39\\{pt}\MG\|t\MG\\{occupied},\39\\{pt}\MG\|t\MG%
+\\{node\_max},\39\\{pt}\MG\\{ops}\MG\\{count});{}$\6
+\&{return} \\{true};\6
+\4${}\}{}$\2\par
+\fi
+
+\M{38}traverse\_count\_trie.
+Searches through the count trie and inserts accepted patterns to the pattern
+trie. Statistics are collected along the
+way. Return value indicates whether the whole trie was explored.
+
+\Y\B\1\1\&{bool} \\{traverse\_count\_trie}(\&{struct} \\{count\_trie} ${}{*}%
+\\{ct},\39{}$\&{struct} \\{pattern\_trie} ${}{*}\\{pt},\39{}$\&{struct} %
+\\{params} ${}{*}\\{params},\39{}$\&{struct} \\{pass\_stats} ${}{*}\\{ps})\2%
+\2{}$\6
+${}\{{}$\1\6
+\&{size\_t} \\{root}${}\K\T{1};{}$\6
+\&{size\_t} \\{current\_len}${}\K\T{0};{}$\7
+\\{uint8\_t}\|c;\7
+\&{struct} \\{string\_buffer} ${}{*}\\{pattern}\K\\{init\_buffer}(\T{4}*%
+\\{params}\MG\\{pat\_len});{}$\7
+\&{if} ${}(\\{pattern}\E\NULL){}$\5
+${}\{{}$\1\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\7
+\&{struct} \\{stack} ${}{*}\\{s\_base}\K\\{init\_stack}(\T{4}*\\{params}\MG%
+\\{pat\_len});{}$\7
+\&{if} ${}(\\{s\_base}\E\NULL){}$\5
+${}\{{}$\1\6
+\\{destroy\_buffer}(\\{pattern});\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\7
+\&{struct} \\{trie} ${}{*}\\{helper\_trie}\K\\{init\_trie}(\T{256});{}$\7
+\&{if} ${}(\\{helper\_trie}\E\NULL){}$\5
+${}\{{}$\1\6
+\\{destroy\_buffer}(\\{pattern});\6
+\\{destroy\_stack}(\\{s\_base});\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\6
+\&{if} ${}(\R\\{append\_char}(\\{pattern},\39\.{'\\0'})\V\R\\{put\_on\_stack}(%
+\\{s\_base},\39\\{root})){}$\5
+${}\{{}$\1\6
+\\{destroy\_trie}(\\{helper\_trie});\6
+\\{destroy\_buffer}(\\{pattern});\6
+\\{destroy\_stack}(\\{s\_base});\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\7
+\&{size\_t} \\{node}${},\39\\{op\_index},\39\\{good},\39\\{bad},\39\\{cnt%
+\_index};{}$\7
+\&{while} ${}(\\{s\_base}\MG\\{top}>\T{0}){}$\5
+${}\{{}$\1\6
+${}\\{root}\K\\{get\_top\_value}(\\{s\_base});{}$\6
+${}\\{pattern}\MG\\{data}[\\{pattern}\MG\\{size}-\T{1}]\MRL{+{\K}}\T{1};{}$\6
+${}\|c\K(\\{uint8\_t})\\{pattern}\MG\\{data}[\\{pattern}\MG\\{size}-\T{1}];{}$\6
+\&{if} ${}(\|c\E\T{0}){}$\5
+${}\{{}$\SHC{ overflow }\1\6
+${}\\{pattern}\MG\\{size}\MM;{}$\6
+${}\\{s\_base}\MG\\{top}\MM;{}$\6
+\&{if} ${}(\\{pattern}\MG\\{size}<\T{1}\V(\\{uint8\_t})\\{pattern}\MG\\{data}[%
+\\{pattern}\MG\\{size}-\T{1}]\I\T{\^ff}){}$\5
+${}\{{}$\1\6
+${}\\{current\_len}\MM;{}$\6
+\4${}\}{}$\2\6
+\&{continue};\6
+\4${}\}{}$\2\6
+${}\\{node}\K\\{root}+\|c;{}$\6
+\&{if} ${}((\\{uint8\_t})\\{ct}\MG\|t\MG\\{nodes}[\\{node}]\I\|c){}$\5
+${}\{{}$\1\6
+\&{continue};\6
+\4${}\}{}$\2\6
+\&{if} ${}((\\{uint8\_t})\|c\I\T{\^ff}){}$\5
+${}\{{}$\1\6
+${}\\{current\_len}\PP;{}$\6
+\4${}\}{}$\2\6
+\&{if} ${}(\\{current\_len}\E\\{params}\MG\\{pat\_len}){}$\5
+${}\{{}$\1\6
+${}\\{cnt\_index}\K\\{ct}\MG\|t\MG\\{aux}[\\{node}];{}$\6
+${}\\{good}\K\\{ct}\MG\\{cnts}\MG\\{good}[\\{cnt\_index}];{}$\6
+${}\\{bad}\K\\{ct}\MG\\{cnts}\MG\\{bad}[\\{cnt\_index}];{}$\6
+\&{if} ${}(\\{good}>\T{0}\V\\{bad}>\T{0}){}$\5
+${}\{{}$\1\6
+\&{if} ${}(\\{params}\MG\\{good\_wt}*\\{good}<\\{params}\MG\\{thresh}){}$\5
+${}\{{}$\1\6
+\&{if} ${}(\R\\{insert\_substring}(\\{pt}\MG\|t,\39\\{pattern}\MG\\{data},\39%
+\\{pattern}\MG\\{size},\39\\{pattern}\MG\\{size},\39{\AND}\\{op\_index},\39%
+\\{helper\_trie})\V\R\\{set\_output}(\\{pt},\39\\{op\_index},\39\.{BAD\_OP%
+\_VALUE},\39\\{params}\MG\\{pat\_dot})){}$\5
+${}\{{}$\1\6
+\\{destroy\_trie}(\\{helper\_trie});\6
+\\{destroy\_buffer}(\\{pattern});\6
+\\{destroy\_stack}(\\{s\_base});\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\6
+${}\\{ps}\MG\\{bad\_pat\_cnt}\PP;{}$\6
+\4${}\}{}$\2\6
+\&{else} \&{if} ${}(\\{params}\MG\\{good\_wt}*\\{good}\G\\{params}\MG%
+\\{thresh}+\\{params}\MG\\{bad\_wt}*\\{bad}){}$\5
+${}\{{}$\1\6
+\&{if} ${}(\R\\{insert\_substring}(\\{pt}\MG\|t,\39\\{pattern}\MG\\{data},\39%
+\\{pattern}\MG\\{size},\39\\{pattern}\MG\\{size},\39{\AND}\\{op\_index},\39%
+\\{helper\_trie})\V\R\\{set\_output}(\\{pt},\39\\{op\_index},\39\\{params}\MG%
+\\{hyph\_level},\39\\{params}\MG\\{pat\_dot})){}$\5
+${}\{{}$\1\6
+\\{destroy\_trie}(\\{helper\_trie});\6
+\\{destroy\_buffer}(\\{pattern});\6
+\\{destroy\_stack}(\\{s\_base});\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\6
+${}\\{ps}\MG\\{good\_pat\_cnt}\PP;{}$\6
+${}\\{ps}\MG\\{good\_cnt}\MRL{+{\K}}\\{good};{}$\6
+${}\\{ps}\MG\\{bad\_cnt}\MRL{+{\K}}\\{bad};{}$\6
+\4${}\}{}$\2\6
+\&{else}\5
+${}\{{}$\1\6
+${}\\{ps}\MG\\{more\_to\_come}\K\\{true};{}$\6
+\4${}\}{}$\2\6
+\4${}\}{}$\2\6
+\&{if} ${}((\\{uint8\_t})\|c\I\T{\^ff}){}$\5
+${}\{{}$\1\6
+${}\\{current\_len}\MM;{}$\6
+\4${}\}{}$\2\6
+\&{continue};\6
+\4${}\}{}$\2\6
+${}\\{root}\K\\{ct}\MG\|t\MG\\{links}[\\{node}];{}$\6
+\&{if} ${}(\\{root}\E\T{0}){}$\5
+${}\{{}$\1\6
+\&{if} ${}((\\{uint8\_t})\|c\I\T{\^ff}){}$\5
+${}\{{}$\1\6
+${}\\{current\_len}\MM;{}$\6
+\4${}\}{}$\2\6
+\&{continue};\6
+\4${}\}{}$\2\6
+\&{if} ${}(\R\\{append\_char}(\\{pattern},\39\.{'\\0'})\V\R\\{put\_on\_stack}(%
+\\{s\_base},\39\\{root})){}$\5
+${}\{{}$\1\6
+\\{destroy\_trie}(\\{helper\_trie});\6
+\\{destroy\_buffer}(\\{pattern});\6
+\\{destroy\_stack}(\\{s\_base});\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\6
+\4${}\}{}$\2\6
+\\{destroy\_trie}(\\{helper\_trie});\6
+\\{destroy\_buffer}(\\{pattern});\6
+\\{destroy\_stack}(\\{s\_base});\6
+\&{return} \\{true};\6
+\4${}\}{}$\2\par
+\fi
+
+\N{1}{39}Pattern pruning.
+Once all the required pattern lengths and dot positions were explored for given
+hyphenation level, the pattern trie is
+pruned of the patterns that were marked as bad.
+
+\fi
+
+\M{40}delete\_bad\_patterns.
+Removes bad patterns from the pattern trie and prints out statistics. Return
+value indicates success of the operation.
+
+\Y\B\1\1\&{bool} \\{delete\_bad\_patterns}(\&{struct} \\{pattern\_trie} ${}{*}%
+\\{pt})\2\2{}$\6
+${}\{{}$\1\6
+\&{size\_t} \\{old\_op\_cnt}${}\K\\{pt}\MG\\{ops}\MG\\{count};{}$\6
+\&{size\_t} \\{old\_trie\_cnt}${}\K\\{pt}\MG\|t\MG\\{occupied};{}$\7
+\&{if} ${}(\R\\{delete\_patterns}(\\{pt})){}$\5
+${}\{{}$\1\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\6
+\&{for} (\&{size\_t} \|h${}\K\T{1};{}$ ${}\|h\Z\\{pt}\MG\\{ops}\MG%
+\\{capacity};{}$ ${}\|h\PP){}$\5
+${}\{{}$\1\6
+\&{if} ${}(\\{pt}\MG\\{ops}\MG\\{data}[\|h].\\{value}\E\.{BAD\_OP\_VALUE}){}$\5
+${}\{{}$\1\6
+${}\\{pt}\MG\\{ops}\MG\\{data}[\|h].\\{value}\K\.{EMPTY\_OP\_VALUE};{}$\6
+${}\\{pt}\MG\\{ops}\MG\\{count}\MM;{}$\6
+${}\\{pt}\MG\\{ops}\MG\\{data}[\|h].\\{next\_op\_index}\K\\{pt}\MG\\{ops}\MG%
+\\{data}[\T{0}].\\{next\_op\_index};{}$\6
+${}\\{pt}\MG\\{ops}\MG\\{data}[\T{0}].\\{next\_op\_index}\K\|h;{}$\6
+\4${}\}{}$\2\6
+\4${}\}{}$\2\6
+${}\\{printf}(\.{"\%zu\ nodes\ and\ \%zu\ o}\)\.{utputs\ deleted\\n"},\39\\{old%
+\_trie\_cnt}-\\{pt}\MG\|t\MG\\{occupied},\39\\{old\_op\_cnt}-\\{pt}\MG\\{ops}%
+\MG\\{count});{}$\6
+\&{return} \\{true};\6
+\4${}\}{}$\2\par
+\fi
+
+\M{41}delete\_patterns.
+Searches through the pattern trie and removes outputs pointing to the bad
+patterns. Nodes that are not used after the
+deletion are deleted as well. Return value indicates whether the whole trie was
+explored.
+
+\Y\B\1\1\&{bool} \\{delete\_patterns}(\&{struct} \\{pattern\_trie} ${}{*}%
+\\{pt})\2\2{}$\6
+${}\{{}$\1\6
+\&{size\_t} \\{root}${}\K\T{1};{}$\6
+\&{struct} \\{stack} ${}{*}\\{s\_base}\K\\{init\_stack}(\T{16});{}$\7
+\&{if} ${}(\\{s\_base}\E\NULL){}$\5
+${}\{{}$\1\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\7
+\&{struct} \\{stack} ${}{*}\\{s\_offset}\K\\{init\_stack}(\T{16});{}$\7
+\&{if} ${}(\\{s\_offset}\E\NULL){}$\5
+${}\{{}$\1\6
+\\{destroy\_stack}(\\{s\_base});\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\7
+\&{struct} \\{stack} ${}{*}\\{s\_freed}\K\\{init\_stack}(\T{16});{}$\7
+\&{if} ${}(\\{s\_freed}\E\NULL){}$\5
+${}\{{}$\1\6
+\\{destroy\_stack}(\\{s\_base});\6
+\\{destroy\_stack}(\\{s\_offset});\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\6
+\&{if} ${}(\R\\{put\_on\_stack}(\\{s\_base},\39\\{root})\V\R\\{put\_on\_stack}(%
+\\{s\_offset},\39\T{0})\V\R\\{put\_on\_stack}(\\{s\_freed},\39(\&{size\_t})\,%
+\\{true})){}$\5
+${}\{{}$\1\6
+\\{destroy\_stack}(\\{s\_base});\6
+\\{destroy\_stack}(\\{s\_offset});\6
+\\{destroy\_stack}(\\{s\_freed});\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\7
+\&{size\_t} \\{node};\7
+\\{uint8\_t}\|c;\6
+\&{while} ${}(\\{s\_base}\MG\\{top}>\T{0}){}$\5
+${}\{{}$\1\6
+${}\\{root}\K\\{get\_top\_value}(\\{s\_base});{}$\6
+${}\\{set\_top\_value}(\\{s\_offset},\39(\\{uint8\_t})\\{get\_top\_value}(\\{s%
+\_offset})+\T{1});{}$\6
+${}\|c\K(\\{uint8\_t})\\{get\_top\_value}(\\{s\_offset});{}$\6
+\&{if} ${}(\|c\E\T{0}){}$\5
+${}\{{}$\1\6
+\&{bool} \\{child\_freed}${}\K(\\{get\_top\_value}(\\{s\_freed})\E(\&{size\_t})%
+\,\\{true});{}$\7
+\&{if} (\\{child\_freed})\5
+${}\{{}$\1\6
+\&{if} ${}(\R\\{set\_base\_used}(\\{pt}\MG\|t,\39\\{root},\39\\{false})){}$\5
+${}\{{}$\1\6
+\\{destroy\_stack}(\\{s\_base});\6
+\\{destroy\_stack}(\\{s\_offset});\6
+\\{destroy\_stack}(\\{s\_freed});\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\6
+\4${}\}{}$\2\6
+${}\\{s\_offset}\MG\\{top}\MM;{}$\6
+${}\\{s\_base}\MG\\{top}\MM;{}$\6
+${}\\{s\_freed}\MG\\{top}\MM;{}$\6
+\&{if} ${}(\\{s\_base}\MG\\{top}>\T{0}){}$\5
+${}\{{}$\1\6
+\&{size\_t} \\{parent\_root}${}\K\\{get\_top\_value}(\\{s\_base});{}$\7
+${}\\{uint8\_t}\\{parent\_c}\K(\\{uint8\_t})\\{get\_top\_value}(\\{s%
+\_offset});{}$\7
+\&{size\_t} \\{parent\_node}${}\K\\{parent\_root}+\\{parent\_c};{}$\7
+\&{if} (\\{child\_freed})\5
+${}\{{}$\1\6
+${}\\{pt}\MG\|t\MG\\{links}[\\{parent\_node}]\K\T{0};{}$\6
+\&{if} ${}(\\{pt}\MG\|t\MG\\{aux}[\\{parent\_node}]\E\T{0}\W\\{parent\_root}\I%
+\T{1}){}$\5
+${}\{{}$\1\6
+${}\\{deallocate\_node}(\\{pt}\MG\|t,\39\\{parent\_node});{}$\6
+\4${}\}{}$\2\6
+\&{else}\5
+${}\{{}$\1\6
+${}\\{set\_top\_value}(\\{s\_freed},\39(\&{size\_t})\,\\{false});{}$\6
+\4${}\}{}$\2\6
+\4${}\}{}$\2\6
+\&{else}\5
+${}\{{}$\1\6
+${}\\{set\_top\_value}(\\{s\_freed},\39(\&{size\_t})\,\\{false});{}$\6
+\4${}\}{}$\2\6
+\4${}\}{}$\2\6
+\&{continue};\6
+\4${}\}{}$\2\6
+${}\\{node}\K\\{root}+\|c;{}$\6
+\&{if} ${}((\\{uint8\_t})\\{pt}\MG\|t\MG\\{nodes}[\\{node}]\I\|c){}$\5
+${}\{{}$\1\6
+\&{continue};\6
+\4${}\}{}$\2\6
+\&{if} ${}(\R\\{link\_around\_bad\_outputs}(\\{pt},\39\\{node})){}$\5
+${}\{{}$\1\6
+\\{destroy\_stack}(\\{s\_base});\6
+\\{destroy\_stack}(\\{s\_offset});\6
+\\{destroy\_stack}(\\{s\_freed});\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\6
+\&{if} ${}(\\{pt}\MG\|t\MG\\{aux}[\\{node}]>\T{0}\V\\{root}\E\T{1}){}$\5
+${}\{{}$\1\6
+${}\\{set\_top\_value}(\\{s\_freed},\39(\&{size\_t})\,\\{false});{}$\6
+\4${}\}{}$\2\6
+\&{else}\5
+${}\{{}$\1\6
+\&{if} ${}(\\{pt}\MG\|t\MG\\{links}[\\{node}]\E\T{0}){}$\5
+${}\{{}$\1\6
+${}\\{deallocate\_node}(\\{pt}\MG\|t,\39\\{node});{}$\6
+\&{continue};\6
+\4${}\}{}$\2\6
+\4${}\}{}$\2\6
+${}\\{root}\K\\{pt}\MG\|t\MG\\{links}[\\{node}];{}$\6
+\&{if} ${}(\\{root}\E\T{0}){}$\5
+${}\{{}$\1\6
+\&{continue};\6
+\4${}\}{}$\2\6
+\&{if} ${}(\R\\{put\_on\_stack}(\\{s\_base},\39\\{root})\V\R\\{put\_on\_stack}(%
+\\{s\_offset},\39\T{0})\V\R\\{put\_on\_stack}(\\{s\_freed},\39(\&{size\_t})\,%
+\\{true})){}$\5
+${}\{{}$\1\6
+\\{destroy\_stack}(\\{s\_base});\6
+\\{destroy\_stack}(\\{s\_offset});\6
+\\{destroy\_stack}(\\{s\_freed});\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\6
+\4${}\}{}$\2\6
+\\{destroy\_stack}(\\{s\_base});\6
+\\{destroy\_stack}(\\{s\_offset});\6
+\\{destroy\_stack}(\\{s\_freed});\6
+\&{return} \\{true};\6
+\4${}\}{}$\2\par
+\fi
+
+\M{42}deallocate\_node.
+Removes unused node from a trie and links it to the beginning of free space
+chain.
+
+\Y\B\1\1\&{void} \\{deallocate\_node}(\&{struct} \\{trie} ${}{*}\|t,\39{}$%
+\&{size\_t} \\{t\_index})\2\2\6
+${}\{{}$\1\6
+\&{size\_t} \\{old\_head}${}\K\|t\MG\\{links}[\T{0}];{}$\7
+${}\|t\MG\\{nodes}[\\{t\_index}]\K\T{0};{}$\6
+${}\|t\MG\\{links}[\T{0}]\K\\{t\_index};{}$\6
+${}\|t\MG\\{aux}[\\{t\_index}]\K\T{0};{}$\6
+${}\|t\MG\\{links}[\\{t\_index}]\K\\{old\_head};{}$\6
+${}\|t\MG\\{aux}[\\{old\_head}]\K\\{t\_index};{}$\6
+${}\|t\MG\\{occupied}\MM;{}$\6
+\4${}\}{}$\2\par
+\fi
+
+\M{43}link\_around\_bad\_outputs.
+Fixes the output linking to not contain the outputs that will be deleted.
+Returns true upon success.
+
+\Y\B\1\1\&{bool} \\{link\_around\_bad\_outputs}(\&{struct} \\{pattern\_trie}
+${}{*}\\{pt},\39{}$\&{size\_t} \\{t\_index})\2\2\6
+${}\{{}$\1\6
+\&{size\_t} \\{lookup\_index}${}\K\\{pt}\MG\|t\MG\\{aux}[\\{t\_index}];{}$\7
+\&{if} ${}(\\{lookup\_index}\E\T{0}){}$\5
+${}\{{}$\1\6
+\&{return} \\{true};\6
+\4${}\}{}$\2\7
+\&{size\_t} \\{op\_index}${}\K\\{pt}\MG\\{ops}\MG\\{lookup}[\\{lookup%
+\_index}];{}$\6
+\&{size\_t} \\{free\_list\_head}${}\K\\{pt}\MG\\{ops}\MG\\{data}[\T{0}].\\{next%
+\_op\_index};{}$\6
+\&{size\_t} \|h${}\K\T{0};{}$\7
+${}\\{pt}\MG\\{ops}\MG\\{data}[\T{0}].\\{next\_op\_index}\K\\{op\_index};{}$\7
+\&{size\_t} \|n${}\K\\{pt}\MG\\{ops}\MG\\{data}[\T{0}].\\{next\_op\_index};{}$\7
+\&{while} ${}(\|n>\T{0}){}$\5
+${}\{{}$\1\6
+\&{if} ${}(\\{pt}\MG\\{ops}\MG\\{data}[\|n].\\{value}\E\.{BAD\_OP\_VALUE}){}$\5
+${}\{{}$\1\6
+${}\\{pt}\MG\\{ops}\MG\\{data}[\|h].\\{next\_op\_index}\K\\{pt}\MG\\{ops}\MG%
+\\{data}[\|n].\\{next\_op\_index};{}$\6
+\4${}\}{}$\2\6
+\&{else}\5
+${}\{{}$\1\6
+${}\|h\K\|n;{}$\6
+\4${}\}{}$\2\6
+${}\|n\K\\{pt}\MG\\{ops}\MG\\{data}[\|h].\\{next\_op\_index};{}$\6
+\4${}\}{}$\2\6
+\&{if} ${}(\|h\E\T{0}){}$\5
+${}\{{}$\1\6
+\&{if} ${}(\\{pt}\MG\\{ops}\MG\\{lookup}[\\{lookup\_index}]>\T{0}){}$\5
+${}\{{}$\1\6
+${}\\{pt}\MG\\{ops}\MG\\{lookup}[\\{lookup\_index}]\K\T{0};{}$\6
+${}\\{pt}\MG\\{ops}\MG\\{lookup\_cnt}\MM;{}$\6
+\4${}\}{}$\2\6
+${}\\{pt}\MG\|t\MG\\{aux}[\\{t\_index}]\K\T{0};{}$\6
+\4${}\}{}$\2\6
+\&{else}\5
+${}\{{}$\1\6
+${}\\{pt}\MG\\{ops}\MG\\{lookup}[\\{lookup\_index}]\K\\{pt}\MG\\{ops}\MG%
+\\{data}[\T{0}].\\{next\_op\_index};{}$\6
+\4${}\}{}$\2\6
+${}\\{pt}\MG\\{ops}\MG\\{data}[\T{0}].\\{next\_op\_index}\K\\{free\_list%
+\_head};{}$\6
+\&{return} \\{true};\6
+\4${}\}{}$\2\par
+\fi
+
+\N{1}{44}Pattern output.
+At the end of the run, \utfpatgen{} prints out the final set of patterns to the
+output file. The format is the same as
+the required format of the input pattern file -- each value of a hyphenation
+level is preceded by the
+{\tt HYPHEN\_FLAG} symbol, the '.' character marking an edge of word.
+
+\fi
+
+\M{45}output\_patterns.
+Traverses through the pattern trie and writes all the patterns present there to
+the output file. Returns true if the
+whole trie has been explored and patterns successfully written.
+
+\Y\B\1\1\&{bool} \\{output\_patterns}(\&{struct} \\{pattern\_trie} ${}{*}%
+\\{pt},\39{}$\&{struct} \\{translate\_table} ${}{*}\\{tt},\39{}$\&{FILE} ${}{*}%
+\\{output\_file})\2\2{}$\6
+${}\{{}$\1\6
+\&{size\_t} \\{root}${}\K\T{1};{}$\7
+\\{uint8\_t}\|c;\7
+\&{struct} \\{string\_buffer} ${}{*}\\{pattern}\K\\{init\_buffer}(\T{16});{}$\7
+\&{if} ${}(\\{pattern}\E\NULL){}$\5
+${}\{{}$\1\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\7
+\&{struct} \\{stack} ${}{*}\\{s\_base}\K\\{init\_stack}(\T{16});{}$\7
+\&{if} ${}(\\{s\_base}\E\NULL){}$\5
+${}\{{}$\1\6
+\\{destroy\_buffer}(\\{pattern});\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\6
+\&{if} ${}(\R\\{append\_char}(\\{pattern},\39\.{'\\0'})\V\R\\{put\_on\_stack}(%
+\\{s\_base},\39\\{root})){}$\5
+${}\{{}$\1\6
+\\{destroy\_buffer}(\\{pattern});\6
+\\{destroy\_stack}(\\{s\_base});\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\7
+\&{size\_t} \\{node};\7
+\&{while} ${}(\\{s\_base}\MG\\{top}>\T{0}){}$\5
+${}\{{}$\1\6
+${}\\{root}\K\\{get\_top\_value}(\\{s\_base});{}$\6
+${}\\{pattern}\MG\\{data}[\\{pattern}\MG\\{size}-\T{1}]\MRL{+{\K}}\T{1};{}$\6
+${}\|c\K(\\{uint8\_t})\\{pattern}\MG\\{data}[\\{pattern}\MG\\{size}-\T{1}];{}$\6
+\&{if} ${}(\|c\E\T{0}){}$\5
+${}\{{}$\1\6
+${}\\{pattern}\MG\\{data}[\\{pattern}\MG\\{size}-\T{1}]\K\.{'\\0'};{}$\6
+${}\\{pattern}\MG\\{size}\MM;{}$\6
+${}\\{s\_base}\MG\\{top}\MM;{}$\6
+\&{continue};\6
+\4${}\}{}$\2\6
+${}\\{node}\K\\{root}+\|c;{}$\6
+\&{if} ${}((\\{uint8\_t})\\{pt}\MG\|t\MG\\{nodes}[\\{node}]\I\|c){}$\5
+${}\{{}$\1\6
+\&{continue};\6
+\4${}\}{}$\2\6
+\&{if} ${}(\\{pt}\MG\|t\MG\\{aux}[\\{node}]>\T{0}){}$\5
+${}\{{}$\1\6
+${}\\{output\_pattern}(\\{pattern},\39\\{tt},\39\\{pt}\MG\\{ops},\39\\{pt}\MG%
+\|t\MG\\{aux}[\\{node}],\39\\{output\_file});{}$\6
+\4${}\}{}$\2\6
+${}\\{root}\K\\{pt}\MG\|t\MG\\{links}[\\{node}];{}$\6
+\&{if} ${}(\\{root}\E\T{0}){}$\5
+${}\{{}$\1\6
+\&{continue};\6
+\4${}\}{}$\2\6
+\&{if} ${}(\R\\{append\_char}(\\{pattern},\39\.{'\\0'})\V\R\\{put\_on\_stack}(%
+\\{s\_base},\39\\{root})){}$\5
+${}\{{}$\1\6
+\\{destroy\_buffer}(\\{pattern});\6
+\\{destroy\_stack}(\\{s\_base});\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\6
+\4${}\}{}$\2\6
+\\{destroy\_buffer}(\\{pattern});\6
+\\{destroy\_stack}(\\{s\_base});\6
+\&{return} \\{true};\6
+\4${}\}{}$\2\par
+\fi
+
+\M{46}output\_pattern.
+Writes single pattern to the output trie.
+
+\Y\B\1\1\&{void} \\{output\_pattern}(\&{struct} \\{string\_buffer} ${}{*}%
+\\{pattern},\39{}$\&{struct} \\{translate\_table} ${}{*}\\{tt},\39{}$\&{struct}
+\\{outputs} ${}{*}\\{ops},\39{}$\&{size\_t} \\{op\_index}${},\39{}$\&{FILE}
+${}{*}\\{output\_file})$ $\{$ \6
+\&{if} ${}(\\{op\_index}\E\T{0}){}$\5
+${}\{{}$\1\6
+\&{return};\6
+\4${}\}{}$\2\7
+\&{size\_t} \\{pattern\_position}${}\K\T{0};{}$\6
+\&{size\_t} \\{level}${},\39\\{letter\_index};{}$\6
+\&{char} ${}{*}\\{word\_index}\K\\{pattern}\MG\\{data};$ \&{size\_t} \\{edge%
+\_of\_word\_idx} $\K$ \\{get\_letter\_index} $(\\{tt},\39$ \1\1(\&{char}[%
+\T{2}]) $\{\.{EDGE\_OF\_WORD},\39\.{'\\0'}\}$ )  ;\6
+\&{while} ${}(\\{word\_index}<\\{pattern}\MG\\{data}+\\{pattern}\MG\\{size}){}$%
+\5
+${}\{{}$\1\6
+${}\\{level}\K\\{get\_highest\_level}(\\{ops},\39\\{op\_index},\39\\{pattern%
+\_position});{}$\6
+\&{if} ${}(\\{level}>\T{0}){}$\5
+${}\{{}$\1\6
+${}\\{fputc}(\.{'\\xfe'},\39\\{output\_file});{}$\6
+${}\\{fputc}((\\{uint8\_t})\\{level},\39\\{output\_file});{}$\6
+\4${}\}{}$\2\6
+${}\\{letter\_index}\K\\{convert\_byte\_sequence}({\AND}\\{word\_index});{}$\6
+\&{if} ${}(\\{letter\_index}\E\\{edge\_of\_word\_idx}){}$\5
+${}\{{}$\1\6
+${}\\{fputc}(\.{'.'},\39\\{output\_file});{}$\6
+\4${}\}{}$\2\6
+\&{else}\5
+${}\{{}$\1\6
+${}\\{fprintf}(\\{output\_file},\39\.{"\%s"},\39\\{tt}\MG\\{alphabet}\MG%
+\\{data}+\\{tt}\MG\\{index\_to\_alphabet}[\\{letter\_index}]);{}$\6
+\4${}\}{}$\2\6
+${}\\{pattern\_position}\PP;{}$\6
+\4${}\}{}$\2\6
+${}\\{level}\K\\{get\_highest\_level}(\\{ops},\39\\{op\_index},\39\\{pattern%
+\_position});{}$\6
+\&{if} ${}(\\{level}>\T{0}){}$\5
+${}\{{}$\1\6
+${}\\{fputc}(\.{'\\xfe'},\39\\{output\_file});{}$\6
+${}\\{fputc}((\\{uint8\_t})\\{level},\39\\{output\_file});{}$\6
+\4${}\}{}$\2\6
+${}\\{fputc}(\.{'\\n'},\39\\{output\_file});$ $\}{}$\par
+\fi
+
+\M{47}get\_highest\_level.
+Selects the hyphenation level to be used in given dot position. Return the
+level value.
+
+\Y\B\1\1\&{size\_t} \\{get\_highest\_level}(\&{struct} \\{outputs} ${}{*}%
+\\{ops},\39{}$\&{size\_t} \\{start\_index}${},\39{}$\&{size\_t} \\{position})\2%
+\2\6
+${}\{{}$\1\6
+\&{size\_t} \\{highest}${}\K\T{0};{}$\6
+\&{size\_t} \\{op\_index}${}\K\\{ops}\MG\\{lookup}[\\{start\_index}];{}$\6
+\&{struct} \\{output} \\{op};\7
+\&{while} ${}(\\{op\_index}>\T{0}){}$\5
+${}\{{}$\1\6
+${}\\{op}\K\\{ops}\MG\\{data}[\\{op\_index}];{}$\6
+\&{if} ${}(\\{op}.\\{position}\E\\{position}\W\\{op}.\\{value}\I\.{BAD\_OP%
+\_VALUE}\W\\{op}.\\{value}>\\{highest}){}$\5
+${}\{{}$\1\6
+${}\\{highest}\K\\{op}.\\{value};{}$\6
+\4${}\}{}$\2\6
+${}\\{op\_index}\K\\{op}.\\{next\_op\_index};{}$\6
+\4${}\}{}$\2\6
+\&{return} \\{highest};\6
+\4${}\}{}$\2\par
+\fi
+
+\N{1}{48}Hyphenation.
+Hyphenation appears on several places in the algorithm. Already in the
+dictionary processing, the words are hyphenated
+with the current set of patterns. The other case occurs at the absolute end of %
+\utfpatgen{} when the user wishes to see
+the hyphenated dictionary -- the final set of patterns is used to hyphenate the
+dictionary entries into 'pattmp.X'
+file. The 'X' marks the last hyphenation level explored.
+
+\fi
+
+\M{49}hyphenate\_word.
+Hyphenates the given word according to the actual set of patterns from pattern
+trie. Found hyphens are stored in word's
+{\tt found\_hyphens} field. Returns true if hyphenation ended without errors.
+
+\Y\B\1\1\&{bool} \\{hyphenate\_word}(\&{struct} \\{word} ${}{*}\\{word},\39{}$%
+\&{struct} \\{pattern\_trie} ${}{*}\\{pt},\39{}$\&{struct} \\{params} ${}{*}%
+\\{params})\2\2{}$\6
+${}\{{}$\1\6
+\&{size\_t} \\{current\_index}${}\K\T{0};{}$\6
+\&{size\_t} \\{current\_pos}${}\K\T{0};{}$\6
+\&{size\_t} \\{node}${},\39\\{base},\39\\{start\_index},\39\\{dot\_index},\39%
+\\{end\_index},\39\\{op\_index},\39\\{dot\_pos},\39\\{end\_pos};{}$\6
+\&{struct} \\{output} \\{op};\7
+\&{if} ${}(\\{word}\MG\\{length}<(\\{uint8\_t})(\\{params}\MG\\{right\_hyphen%
+\_min}+\T{1})){}$\5
+${}\{{}$\1\6
+\&{return} \\{true};\6
+\4${}\}{}$\2\7
+\&{size\_t} \\{start\_pos}${}\K\T{0};{}$\7
+\&{for} (\&{size\_t} \|i${}\K\T{0};{}$ ${}\|i<\\{word}\MG\\{length}-\\{params}%
+\MG\\{right\_hyphen\_min};{}$ ${}\|i\PP){}$\5
+${}\{{}$\1\6
+\&{while} ${}(\\{current\_pos}<\\{start\_pos}){}$\5
+${}\{{}$\1\6
+\&{if} ${}((\\{uint8\_t})\\{word}\MG\\{translated}[\\{current\_index}]\I\T{%
+\^ff}){}$\5
+${}\{{}$\1\6
+${}\\{current\_pos}\PP;{}$\6
+\4${}\}{}$\2\6
+${}\\{current\_index}\PP;{}$\6
+\4${}\}{}$\2\6
+${}\\{start\_index}\K\\{current\_index};{}$\6
+${}\\{end\_index}\K\\{current\_index};{}$\6
+${}\\{end\_pos}\K\\{current\_pos};{}$\6
+${}\\{node}\K\T{1}+(\\{uint8\_t})\\{word}\MG\\{translated}[\\{start%
+\_index}];{}$\6
+\&{while} ${}(\\{pt}\MG\|t\MG\\{nodes}[\\{node}]\E\\{word}\MG\\{translated}[%
+\\{end\_index}]){}$\5
+${}\{{}$\1\6
+\&{if} ${}((\\{uint8\_t})\\{word}\MG\\{translated}[\\{end\_index}]\I\T{%
+\^ff}){}$\5
+${}\{{}$\1\6
+${}\\{end\_pos}\PP;{}$\6
+\4${}\}{}$\2\6
+${}\\{end\_index}\PP;{}$\6
+${}\\{op\_index}\K\\{pt}\MG\\{ops}\MG\\{lookup}[\\{pt}\MG\|t\MG\\{aux}[%
+\\{node}]];{}$\6
+\&{while} ${}(\\{op\_index}>\T{0}){}$\5
+${}\{{}$\1\6
+${}\\{op}\K\\{pt}\MG\\{ops}\MG\\{data}[\\{op\_index}];{}$\6
+${}\\{dot\_pos}\K\\{start\_pos};{}$\6
+${}\\{dot\_index}\K\\{start\_index};{}$\6
+\&{while} ${}(\\{dot\_pos}<\\{start\_pos}+\\{op}.\\{position}){}$\5
+${}\{{}$\1\6
+\&{if} ${}((\\{uint8\_t})\\{word}\MG\\{translated}[\\{dot\_index}]\I\T{%
+\^ff}){}$\5
+${}\{{}$\1\6
+${}\\{dot\_pos}\PP;{}$\6
+\4${}\}{}$\2\6
+${}\\{dot\_index}\PP;{}$\6
+\4${}\}{}$\2\6
+\&{if} ${}(\\{dot\_index}>\T{0}){}$\5
+${}\{{}$\1\6
+${}\\{dot\_index}\MM;{}$\6
+\&{if} ${}(\\{op}.\\{value}<\.{BAD\_OP\_VALUE}\W\\{get\_found\_hyphen}(%
+\\{word},\39\\{dot\_index})<\\{op}.\\{value}){}$\5
+${}\{{}$\1\6
+\&{if} ${}(\R\\{set\_found\_hyphen}(\\{word},\39\\{dot\_index},\39\\{op}.%
+\\{value})){}$\5
+${}\{{}$\1\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\6
+\4${}\}{}$\2\6
+\&{if} ${}(\\{op}.\\{value}\G\\{params}\MG\\{hyph\_level}){}$\5
+${}\{{}$\1\6
+\&{if} ${}((\\{end\_pos}+\\{params}\MG\\{pat\_dot}\Z\\{dot\_pos}+\\{params}\MG%
+\\{pat\_len})\W(\\{dot\_pos}\Z\\{start\_pos}+\\{params}\MG\\{pat\_dot})){}$\5
+${}\{{}$\1\6
+\&{if} ${}(\R\\{set\_no\_more}(\\{word},\39\\{dot\_index},\39\\{true})){}$\5
+${}\{{}$\1\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\6
+\4${}\}{}$\2\6
+\4${}\}{}$\2\6
+\4${}\}{}$\2\6
+${}\\{op\_index}\K\\{op}.\\{next\_op\_index};{}$\6
+\4${}\}{}$\2\6
+${}\\{base}\K\\{pt}\MG\|t\MG\\{links}[\\{node}];{}$\6
+\&{if} ${}(\\{base}\E\T{0}){}$\5
+${}\{{}$\1\6
+\&{break};\6
+\4${}\}{}$\2\6
+${}\\{node}\K\\{base}+(\\{uint8\_t})\\{word}\MG\\{translated}[\\{end%
+\_index}];{}$\6
+\4${}\}{}$\2\6
+${}\\{start\_pos}\PP;{}$\6
+\4${}\}{}$\2\6
+\&{return} \\{true};\6
+\4${}\}{}$\2\par
+\fi
+
+\M{50}hyphenate\_dicitonary.
+Hyphenates dictionary entries and writes them to newly created {\tt pattmp}
+file if required. Return value indicates
+whether the hyphenation and file printout finished successfully.
+
+\Y\B\1\1\&{bool} \\{hyphenate\_dictionary}(\&{struct} \\{params} ${}{*}%
+\\{params},\39{}$\&{struct} \\{translate\_table} ${}{*}\\{tt},\39{}$\&{struct} %
+\\{pattern\_trie} ${}{*}\\{pt},\39{}$\&{bool} \\{output}${},\39{}$\&{struct} %
+\\{pass\_stats} ${}{*}\\{ps})\2\2{}$\6
+${}\{{}$\1\6
+${}\\{ps}\MG\\{good\_cnt}\K\T{0};{}$\6
+${}\\{ps}\MG\\{bad\_cnt}\K\T{0};{}$\6
+${}\\{ps}\MG\\{miss\_cnt}\K\T{0};{}$\6
+${}\\{params}\MG\\{word\_weight}\K\T{1};{}$\7
+\&{FILE} ${}{*}\\{pattmp}\K\NULL;{}$\7
+\&{if} (\\{output})\5
+${}\{{}$\1\6
+\&{char} ${}{*}\\{filename}\K\\{malloc}(\T{11}*\&{sizeof}(\&{char}));{}$\7
+\&{if} ${}(\\{filename}\E\NULL){}$\5
+${}\{{}$\1\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\6
+${}\\{sprintf}(\\{filename},\39\.{"pattmp.\%u"},\39\\{params}\MG\\{hyph%
+\_level});{}$\6
+${}\\{pattmp}\K\\{fopen}(\\{filename},\39\.{"w"});{}$\6
+\&{if} ${}(\\{pattmp}\E\NULL){}$\5
+${}\{{}$\1\6
+\\{free}(\\{filename});\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\6
+${}\\{printf}(\.{"writing\ \%s\\n"},\39\\{filename});{}$\6
+\\{free}(\\{filename});\6
+\4${}\}{}$\2\6
+\&{if} ${}(\R\\{hyphenate\_all\_words}(\\{params},\39\\{tt},\39\\{pt},\39%
+\\{pattmp},\39\\{ps})){}$\5
+${}\{{}$\1\6
+\&{if} ${}(\\{pattmp}\I\NULL){}$\5
+${}\{{}$\1\6
+\\{fclose}(\\{pattmp});\6
+\4${}\}{}$\2\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\6
+${}\\{printf}(\.{"\\n\%zu\ good,\ \%zu\ bad}\)\.{,\ \%zu\ missed\\n"},\39\\{ps}%
+\MG\\{good\_cnt},\39\\{ps}\MG\\{bad\_cnt},\39\\{ps}\MG\\{miss\_cnt});{}$\6
+\&{if} ${}(\\{ps}\MG\\{good\_cnt}+\\{ps}\MG\\{miss\_cnt}>\T{0}){}$\5
+${}\{{}$\1\6
+${}\\{printf}(\.{"\%.2f\ \%\%,\ \%.2f\ \%\%,\ \%}\)\.{.2f\ \%\%\\n"},\39(%
+\T{100}*(\&{float})\,\\{ps}\MG\\{good\_cnt}/(\&{float})(\\{ps}\MG\\{good\_cnt}+%
+\\{ps}\MG\\{miss\_cnt})),\39(\T{100}*(\&{float})\,\\{ps}\MG\\{bad\_cnt}/(%
+\&{float})(\\{ps}\MG\\{good\_cnt}+\\{ps}\MG\\{miss\_cnt})),\39(\T{100}*(%
+\&{float})\,\\{ps}\MG\\{miss\_cnt}/(\&{float})(\\{ps}\MG\\{good\_cnt}+\\{ps}\MG%
+\\{miss\_cnt})));{}$\6
+\4${}\}{}$\2\6
+\&{if} ${}(\\{pattmp}\I\NULL){}$\5
+${}\{{}$\1\6
+\\{fclose}(\\{pattmp});\6
+\4${}\}{}$\2\6
+\&{return} \\{true};\6
+\4${}\}{}$\2\par
+\fi
+
+\M{51}hyphenate\_all\_words.
+Itearates over the words in the dictionary, parses, hyphenates, and writes them
+to the {\tt pattmp}
+file. Returns true if no error occurs.
+
+\Y\B\1\1\&{bool} \\{hyphenate\_all\_words}(\&{struct} \\{params} ${}{*}%
+\\{params},\39{}$\&{struct} \\{translate\_table} ${}{*}\\{tt},\39{}$\&{struct} %
+\\{pattern\_trie} ${}{*}\\{pt},\39{}$\&{FILE} ${}{*}\\{pattmp},\39{}$\&{struct}
+\\{pass\_stats} ${}{*}\\{ps})\2\2{}$\6
+${}\{{}$\1\6
+${}\\{rewind}(\\{params}\MG\\{dictionary\_file});{}$\7
+\&{struct} \\{string\_buffer} ${}{*}\\{buf}\K\\{init\_buffer}(\T{64});{}$\7
+\&{if} ${}(\\{buf}\E\NULL){}$\5
+${}\{{}$\1\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\7
+\&{struct} \\{word} ${}{*}\\{word}\K\\{init\_word}(\T{16});{}$\7
+\&{if} ${}(\\{word}\E\NULL){}$\5
+${}\{{}$\1\6
+\\{destroy\_buffer}(\\{buf});\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\6
+${}\\{buf}\MG\\{eof}\K\\{false};{}$\6
+\&{while} ${}(\R\\{buf}\MG\\{eof}){}$\5
+${}\{{}$\1\6
+\&{if} ${}(\R\\{read\_line}(\\{params}\MG\\{dictionary\_file},\39\\{buf})\V\R%
+\\{parse\_word}(\\{buf},\39\\{tt},\39\\{params},\39\\{word})\V\R\\{hyphenate%
+\_word}(\\{word},\39\\{pt},\39\\{params})){}$\5
+${}\{{}$\1\6
+\\{destroy\_buffer}(\\{buf});\6
+\\{destroy\_word}(\\{word});\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\6
+${}\\{count\_dots}(\\{word},\39\\{params},\39\\{ps});{}$\6
+\&{if} ${}(\\{pattmp}\I\NULL\W\\{word}\MG\\{length}>\T{2}){}$\5
+${}\{{}$\1\6
+${}\\{output\_hyphenated\_word}(\\{pattmp},\39\\{word},\39\\{tt},\39%
+\\{params});{}$\6
+\4${}\}{}$\2\6
+\4${}\}{}$\2\6
+\\{destroy\_buffer}(\\{buf});\6
+\\{destroy\_word}(\\{word});\6
+\&{return} \\{true};\6
+\4${}\}{}$\2\par
+\fi
+
+\M{52}output\_hyphenated\_word.
+Writes the parsed and hyphenated word to the {\tt pattmp} file.
+
+\Y\B\1\1\&{void} \\{output\_hyphenated\_word}(\&{FILE} ${}{*}\\{pattmp},\39{}$%
+\&{struct} \\{word} ${}{*}\\{word},\39{}$\&{struct} \\{translate\_table} ${}{*}%
+\\{tt},\39{}$\&{struct} \\{params} ${}{*}\\{params})$ $\{$ \6
+\&{if} ${}(\\{params}\MG\\{word\_weight}>\T{1}){}$\5
+${}\{{}$\1\6
+${}\\{fprintf}(\\{pattmp},\39\.{"\%d"},\39\\{params}\MG\\{word\_weight});{}$\6
+\4${}\}{}$\2\7
+\&{size\_t} \\{weight}${},\39\\{letter\_index},\39\\{dot\_pos}\K\T{0};$ \&{size%
+\_t} \\{edge\_of\_word\_idx} $\K$ \\{get\_letter\_index} $(\\{tt},\39$ \1\1(%
+\&{char}[\T{2}]) $\{\.{EDGE\_OF\_WORD},\39\.{'\\0'}\}$ )  ;\7
+\&{char} ${}{*}\\{word\_index}\K\\{word}\MG\\{translated};{}$\6
+\&{bool} \\{has\_hyphen}${},\39\\{found\_hyphen};{}$\7
+\&{while} ${}(\\{word\_index}<\\{word}\MG\\{translated}+\\{word}\MG\\{size}){}$%
+\5
+${}\{{}$\1\6
+${}\\{found\_hyphen}\K(\\{get\_found\_hyphen}(\\{word},\39\\{word\_index}-%
+\\{word}\MG\\{translated})\MOD\T{2}\E\T{1});{}$\6
+${}\\{weight}\K\\{get\_true\_hyphen}(\\{word},\39\\{word\_index}-\\{word}\MG%
+\\{translated});{}$\6
+${}\\{has\_hyphen}\K(\\{weight}\MOD\T{2}\E\T{1});{}$\6
+${}\\{letter\_index}\K\\{convert\_byte\_sequence}({\AND}\\{word\_index});{}$\6
+\&{if} ${}(\\{letter\_index}\E\\{edge\_of\_word\_idx}){}$\5
+${}\{{}$\1\6
+\&{continue};\6
+\4${}\}{}$\2\6
+${}\\{fprintf}(\\{pattmp},\39\.{"\%s"},\39\\{tt}\MG\\{alphabet}\MG\\{data}+%
+\\{tt}\MG\\{index\_to\_alphabet}[\\{letter\_index}]);{}$\6
+${}\\{dot\_pos}\PP;{}$\6
+\&{if} ${}(\\{weight}\E\T{0}\V\\{dot\_pos}<\\{params}\MG\\{left\_hyphen\_min}\V%
+\\{dot\_pos}\G\\{word}\MG\\{length}-\\{params}\MG\\{right\_hyphen\_min}-%
+\T{1}){}$\5
+${}\{{}$\1\6
+\&{continue};\6
+\4${}\}{}$\2\6
+${}\\{weight}\MRL{{/}{\K}}\T{4};{}$\6
+\&{if} ${}(\\{weight}\I\\{params}\MG\\{word\_weight}){}$\5
+${}\{{}$\1\6
+${}\\{fprintf}(\\{pattmp},\39\.{"\%zu"},\39\\{weight});{}$\6
+\4${}\}{}$\2\6
+\&{if} ${}(\\{found\_hyphen}\W\\{has\_hyphen}){}$\5
+${}\{{}$\1\6
+${}\\{fputc}((\&{char})\,\\{params}\MG\\{good\_hyphen},\39\\{pattmp});{}$\6
+\4${}\}{}$\2\6
+\&{else} \&{if} ${}(\\{found\_hyphen}\W\R\\{has\_hyphen}){}$\5
+${}\{{}$\1\6
+${}\\{fputc}((\&{char})\,\\{params}\MG\\{bad\_hyphen},\39\\{pattmp});{}$\6
+\4${}\}{}$\2\6
+\&{else} \&{if} ${}(\R\\{found\_hyphen}\W\\{has\_hyphen}){}$\5
+${}\{{}$\1\6
+${}\\{fputc}((\&{char})\,\\{params}\MG\\{missed\_hyphen},\39\\{pattmp});{}$\6
+\4${}\}{}$\2\6
+\4${}\}{}$\2\6
+${}\\{fputc}(\.{'\\n'},\39\\{pattmp});$ $\}{}$\par
+\fi
+
+\N{1}{53}UTF-8 specifics.
+Following methods greatly simplify dealing with UTF-8 encoding. We took
+advantage of the design that allows to easily
+determine whether a byte is the first one in UTF-8 character -- its two highest
+bits are not '10'. The first byte also
+encodes the number of bytes that form the UTF-8 character. If the highest bit
+is '0', the character comprise the single
+byte and its meaning is the same as it would be in ASCII encoding. If the
+highest bit is '1', the number of '1' bits on
+the highest positions equals the number of bytes of the character (with the
+exception of '10' which is not allowed in
+the leading byte), e.g., the byte of binary value '1110XXXX' is a beginning of
+3-byte UTF-8 character. Although bytes
+'0xfe' and '0xff' are not formally allowed in UTF-8, we treat them as one-byte
+characters with special meaning
+({\tt HYPHEN\_FLAG}, {\tt EDGE\_OF\_WORD} respectively).
+
+\fi
+
+\M{54}is\_utf\_start\_byte.
+Returns true if the given byte is the start byte of a UTF-8 character or a %
+\utfpatgen{} special symbol.
+
+\Y\B\1\1\&{inline} \&{bool} \\{is\_utf\_start\_byte}(\\{uint8\_t}\\{byte})\2\2\6
+${}\{{}$\1\6
+\&{return} \\{byte}${}<\T{\^80}\V\\{byte}>\T{\^bf};{}$\6
+\4${}\}{}$\2\par
+\fi
+
+\N{0}{55}Structures.
+This section focuses on the data structures we used in \utfpatgen{} and their
+components. Here you can find information
+about the basic structures such as tries, buffers, and stacks, as well as
+composite structures like the pattern and
+count trie, translate table, or word.
+
+We tried to name the methods for basic manipulation with the structures
+consistently across the whole implementation.
+Thanks to that, you will find several methods with common prefixes: {\tt init%
+\_XX} performs initial allocation of
+resources for structure {\it XX}, {\tt resize\_XX} reallocates them if the
+capacity threshold is reached,
+{\tt reset\_XX} reverts the structure to initial state, and {\tt destroy\_XX}
+frees all the resources to avoid
+memory leaks. Furthermore, we use {\tt get\_YY} and {\tt set\_YY} methods to
+read and write into the fields of
+given structure instead of direct access. This allows us to perform additional
+checks on the input values.
+
+\fi
+
+\N{1}{56}Trie.
+The packed trie structure forms the backbone of both \patgen{} and \utfpatgen{}
+algorithms. The implementation is very
+similar in both cases, a set of arrays representing a n-ary tree, condensed for
+better space effectiveness. Single node
+of a trie comprises a {\it value}, {\it link} and {\it aux} pointers, and {\it
+base} indicator. Every admissible index
+of the arrays is either occupied by a node, or it is an empty space (its value
+is 0). Index 0 is left empty and serves
+as the head of empty space chain, index 1 is the root node of the trie itself.
+
+If we want to traverse the trie, that means finding the node corresponding to
+given sequence of values $x_1 \dots x_n$
+(if such node exists), we start in the root node $r_0$. Our next destination is
+node $n_1 = r_0 + x_1$. Then we check
+whether $value(n_1) = x_1$ and if the equation holds, we set $r_1 = link(n_1)$
+as the new root. If the equation does
+not hold or $r_1 = 0$, we can end the search and conclude that the sequence is
+not present in the trie. Otherwise, we
+repeat the the steps for $n_2 \dots n_n$ and return the $n_n$ node as desired
+result.
+
+The internal representation of the trie consists a structure with following
+fields:
+
+\item{$\bullet$} {\bf capacity}: maximal node index that can be inserted,
+\item{$\bullet$} {\bf occupied}: number of nodes currently in the trie,
+\item{$\bullet$} {\bf node\_max}: the highest occupied node index,
+\item{$\bullet$} {\bf base\_max}: the highest base index,
+\item{$\bullet$} {\bf pattern\_count}: number of patterns (sequences) in the
+trie,
+\item{$\bullet$} {\bf nodes}: array of values,
+\item{$\bullet$} {\bf links}: array of links, pointing either to the base of
+occupied node's subtree, or to the
+next empty index in case of an empty space,
+\item{$\bullet$} {\bf aux}: array of links, pointing either to occupied node's
+output, or to the previous empty
+index in case of an empty space,
+\item{$\bullet$} {\bf taken}: bit array storing the information about whether
+indices are used as bases.
+
+\Y\B\1\1\&{struct} \\{trie} ${}{*}{}$\\{init\_trie}(\&{size\_t} \\{capacity})\2%
+\2\6
+${}\{{}$\1\6
+\&{struct} \\{trie} ${}{*}\|t\K{}$\\{malloc}(\&{sizeof}(\&{struct} \\{trie}));\7
+\&{if} ${}(\|t\E\NULL){}$\5
+${}\{{}$\1\6
+${}\\{fputs}(\.{"Allocation\ error\\n"},\39\\{stderr});{}$\6
+\&{return} ${}\NULL;{}$\6
+\4${}\}{}$\2\6
+${}\|t\MG\\{capacity}\K\\{capacity};{}$\6
+${}\|t\MG\\{nodes}\K\\{calloc}(\\{capacity},\39\&{sizeof}(\&{char}));{}$\6
+${}\|t\MG\\{links}\K\\{calloc}(\\{capacity},\39\&{sizeof}(\&{size\_t}));{}$\6
+${}\|t\MG\\{aux}\K\\{calloc}(\\{capacity},\39\&{sizeof}(\&{size\_t}));{}$\6
+${}\|t\MG\\{taken}\K\\{calloc}((\\{capacity}/\T{8})+\T{1},\39\&{sizeof}(%
+\&{char})){}$;\SHC{ bit array }\6
+\&{if} ${}(\|t\MG\\{nodes}\E\NULL\V\|t\MG\\{links}\E\NULL\V\|t\MG\\{aux}\E\NULL%
+\V\|t\MG\\{taken}\E\NULL\V\R\\{set\_base\_used}(\|t,\39\T{1},\39\\{true})){}$\5
+${}\{{}$\1\6
+${}\\{fputs}(\.{"Allocation\ error\\n"},\39\\{stderr});{}$\6
+${}\\{free}(\|t\MG\\{nodes});{}$\6
+${}\\{free}(\|t\MG\\{links});{}$\6
+${}\\{free}(\|t\MG\\{aux});{}$\6
+${}\\{free}(\|t\MG\\{taken});{}$\6
+\\{free}(\|t);\6
+\&{return} ${}\NULL;{}$\6
+\4${}\}{}$\2\6
+${}\|t\MG\\{node\_max}\K\T{0};{}$\6
+${}\|t\MG\\{base\_max}\K\T{0};{}$\6
+${}\|t\MG\\{occupied}\K\T{0};{}$\6
+${}\|t\MG\\{pattern\_count}\K\T{0};{}$\6
+\\{relink\_trie}(\|t);\6
+\&{return} \|t;\6
+\4${}\}{}$\2\par
+\fi
+
+\M{57}put\_first\_level.
+Inserts the set of one-byte sequences '0x01' to '0xff' into the trie. It can be
+called during trie initialization,
+since these nodes will never be moved elsewhere. Return value indicates whether
+all the insertions succeeded.
+
+\Y\B\1\1\&{bool} \\{put\_first\_level}(\&{struct} \\{trie} ${}{*}\|t)\2\2{}$\6
+${}\{{}$\1\6
+\&{size\_t} \\{root}${}\K\T{1};{}$\6
+\&{size\_t} \\{n\_bytes}${}\K\T{255};{}$\7
+\&{if} ${}(\|t\MG\\{capacity}<\\{n\_bytes}+\T{2}){}$\5
+${}\{{}$\1\6
+\&{size\_t} \\{new\_capacity}${}\K(((\\{n\_bytes}+\T{2})/\|t\MG\\{capacity})+%
+\T{1})*\|t\MG\\{capacity};{}$\7
+\&{if} ${}(\\{resize\_trie}(\|t,\39\\{new\_capacity})\E\NULL){}$\5
+${}\{{}$\1\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\6
+\4${}\}{}$\2\6
+\&{for} (\&{size\_t} \|i${}\K\T{1};{}$ ${}\|i\Z\\{n\_bytes};{}$ ${}\|i\PP){}$\5
+${}\{{}$\1\6
+${}\|t\MG\\{nodes}[\\{root}+\|i]\K(\\{uint8\_t})\|i;{}$\6
+${}\|t\MG\\{links}[\\{root}+\|i]\K\T{0};{}$\6
+${}\|t\MG\\{aux}[\\{root}+\|i]\K\T{0};{}$\6
+\4${}\}{}$\2\6
+${}\|t\MG\\{node\_max}\K\\{root}+\\{n\_bytes};{}$\6
+${}\|t\MG\\{base\_max}\K\\{root};{}$\6
+${}\|t\MG\\{occupied}\K\\{n\_bytes};{}$\6
+\&{if} ${}(\R\\{set\_base\_used}(\|t,\39\\{root},\39\\{true})){}$\5
+${}\{{}$\1\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\6
+${}\\{set\_links}(\|t,\39\T{0},\39\|t\MG\\{node\_max}+\T{1});{}$\6
+\&{return} \\{true};\6
+\4${}\}{}$\2\7
+\1\1\&{struct} \\{trie} ${}{*}{}$\\{resize\_trie}(\&{struct} \\{trie} ${}{*}%
+\|t,\39{}$\&{size\_t} \\{new\_capacity})\2\2\6
+${}\{{}$\1\6
+\&{void} ${}{*}\\{new\_nodes}\K\\{realloc}(\|t\MG\\{nodes},\39\\{new%
+\_capacity}*\&{sizeof}(\&{char}));{}$\7
+\&{if} ${}(\\{new\_nodes}\E\NULL){}$\5
+${}\{{}$\1\6
+${}\\{fputs}(\.{"Allocation\ error\\n"},\39\\{stderr});{}$\6
+\&{return} ${}\NULL;{}$\6
+\4${}\}{}$\2\6
+${}\|t\MG\\{nodes}\K\\{new\_nodes};{}$\7
+\&{size\_t} ${}{*}\\{new\_links}\K\\{realloc}(\|t\MG\\{links},\39\\{new%
+\_capacity}*\&{sizeof}(\&{size\_t}));{}$\7
+\&{if} ${}(\\{new\_links}\E\NULL){}$\5
+${}\{{}$\1\6
+${}\\{fputs}(\.{"Allocation\ error\\n"},\39\\{stderr});{}$\6
+\&{return} ${}\NULL;{}$\6
+\4${}\}{}$\2\6
+${}\|t\MG\\{links}\K\\{new\_links};{}$\7
+\&{size\_t} ${}{*}\\{new\_aux}\K\\{realloc}(\|t\MG\\{aux},\39\\{new\_capacity}*%
+\&{sizeof}(\&{size\_t}));{}$\7
+\&{if} ${}(\\{new\_aux}\E\NULL){}$\5
+${}\{{}$\1\6
+${}\\{fputs}(\.{"Allocation\ error\\n"},\39\\{stderr});{}$\6
+\&{return} ${}\NULL;{}$\6
+\4${}\}{}$\2\6
+${}\|t\MG\\{aux}\K\\{new\_aux};{}$\7
+\&{size\_t} \\{old\_taken\_bytes}${}\K(\|t\MG\\{capacity}/\T{8})+\T{1};{}$\6
+\&{size\_t} \\{new\_taken\_bytes}${}\K(\\{new\_capacity}/\T{8})+\T{1};{}$\6
+\&{char} ${}{*}\\{new\_taken}\K\\{realloc}(\|t\MG\\{taken},\39\\{new\_taken%
+\_bytes}*\&{sizeof}(\&{char}));{}$\7
+\&{if} ${}(\\{new\_taken}\E\NULL){}$\5
+${}\{{}$\1\6
+${}\\{fputs}(\.{"Allocation\ error\\n"},\39\\{stderr});{}$\6
+\&{return} ${}\NULL;{}$\6
+\4${}\}{}$\2\6
+${}\|t\MG\\{taken}\K\\{new\_taken};{}$\6
+\&{if} ${}(\\{new\_taken\_bytes}>\\{old\_taken\_bytes}){}$\5
+${}\{{}$\1\6
+${}\\{memset}(\|t\MG\\{taken}+\\{old\_taken\_bytes},\39\T{0},\39(\\{new\_taken%
+\_bytes}-\\{old\_taken\_bytes}));{}$\6
+\4${}\}{}$\2\6
+${}\\{memset}(\|t\MG\\{nodes}+\|t\MG\\{capacity},\39\T{0},\39(\\{new%
+\_capacity}-\|t\MG\\{capacity})*\&{sizeof}(\&{char}));{}$\6
+${}\|t\MG\\{capacity}\K\\{new\_capacity};{}$\6
+\\{relink\_trie}(\|t);\6
+\&{return} \|t;\6
+\4${}\}{}$\2\7
+\1\1\&{void} \\{destroy\_trie}(\&{struct} \\{trie} ${}{*}\|t)\2\2{}$\6
+${}\{{}$\1\6
+${}\\{free}(\|t\MG\\{nodes});{}$\6
+${}\\{free}(\|t\MG\\{links});{}$\6
+${}\\{free}(\|t\MG\\{aux});{}$\6
+${}\\{free}(\|t\MG\\{taken});{}$\6
+\\{free}(\|t);\6
+\4${}\}{}$\2\par
+\fi
+
+\M{58}relink\_trie.
+Connects all empty spaces in the trie.
+
+\Y\B\1\1\&{void} \\{relink\_trie}(\&{struct} \\{trie} ${}{*}\|t)\2\2{}$\6
+${}\{{}$\1\6
+\&{size\_t} \\{last\_free}${}\K\T{0};{}$\7
+\&{for} (\&{size\_t} \\{node}${}\K\T{2};{}$ ${}\\{node}<\|t\MG\\{capacity};{}$
+${}\\{node}\PP){}$\5
+${}\{{}$\1\6
+\&{if} ${}(\R\\{is\_node\_occupied}(\|t,\39\\{node})){}$\5
+${}\{{}$\1\6
+${}\\{set\_links}(\|t,\39\\{last\_free},\39\\{node});{}$\6
+${}\\{last\_free}\K\\{node};{}$\6
+\4${}\}{}$\2\6
+\4${}\}{}$\2\6
+${}\\{set\_links}(\|t,\39\\{last\_free},\39\T{0});{}$\6
+\4${}\}{}$\2\par
+\fi
+
+\M{59}copy\_node.
+Replicates a node between two tries. Return value indicates the success of the
+operation.
+
+\Y\B\1\1\&{bool} \\{copy\_node}(\&{struct} \\{trie} ${}{*}\\{from},\39{}$%
+\&{size\_t} \\{from\_index}${},\39{}$\&{struct} \\{trie} ${}{*}\\{to},\39{}$%
+\&{size\_t} \\{to\_index})\2\2\6
+${}\{{}$\1\6
+\&{if} ${}(\\{to\_index}\G\\{to}\MG\\{capacity}){}$\5
+${}\{{}$\1\6
+\&{size\_t} \\{new\_capacity}${}\K((\\{to\_index}/\\{to}\MG\\{capacity})+%
+\T{1})*\\{to}\MG\\{capacity};{}$\7
+\&{if} ${}(\\{resize\_trie}(\\{to},\39\\{new\_capacity})\E\NULL){}$\5
+${}\{{}$\1\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\6
+\4${}\}{}$\2\7
+\&{bool} \\{from\_free}${}\K(\\{from}\MG\\{nodes}[\\{from\_index}]\E\T{0});{}$\6
+\&{bool} \\{to\_free}${}\K(\\{to}\MG\\{nodes}[\\{to\_index}]\E\T{0});{}$\7
+${}\\{to}\MG\\{nodes}[\\{to\_index}]\K\\{from}\MG\\{nodes}[\\{from\_index}];{}$%
+\6
+${}\\{to}\MG\\{links}[\\{to\_index}]\K\\{from}\MG\\{links}[\\{from\_index}];{}$%
+\6
+${}\\{to}\MG\\{aux}[\\{to\_index}]\K\\{from}\MG\\{aux}[\\{from\_index}];{}$\6
+\&{if} ${}(\R\\{from\_free}\W\\{to\_free}){}$\5
+${}\{{}$\1\6
+${}\\{to}\MG\\{occupied}\PP;{}$\6
+\4${}\}{}$\2\6
+\&{else} \&{if} ${}(\\{from\_free}\W\R\\{to\_free}){}$\5
+${}\{{}$\1\6
+${}\\{to}\MG\\{occupied}\MM;{}$\6
+\4${}\}{}$\2\6
+\&{return} \\{true};\6
+\4${}\}{}$\2\7
+\1\1\&{bool} \\{get\_base\_used}(\&{struct} \\{trie} ${}{*}\|t,\39{}$\&{size%
+\_t} \\{index})\2\2\6
+${}\{{}$\1\6
+\&{if} ${}(\\{index}\G\|t\MG\\{capacity}){}$\5
+${}\{{}$\1\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\7
+\&{size\_t} \\{byte\_index}${}\K\\{index}/\T{8};{}$\6
+\&{size\_t} \\{bit\_index}${}\K\\{index}\MOD\T{8};{}$\7
+\&{return} ${}(\|t\MG\\{taken}[\\{byte\_index}]\AND(\T{1}\LL\\{bit\_index}))\I%
+\T{0};{}$\6
+\4${}\}{}$\2\7
+\1\1\&{bool} \\{set\_base\_used}(\&{struct} \\{trie} ${}{*}\|t,\39{}$\&{size%
+\_t} \\{index}${},\39{}$\&{bool} \\{used})\2\2\6
+${}\{{}$\1\6
+\&{if} ${}(\\{index}\G\|t\MG\\{capacity}){}$\5
+${}\{{}$\1\6
+\&{if} ${}(\\{resize\_trie}(\|t,\39\\{index}+\T{1})\E\NULL){}$\5
+${}\{{}$\1\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\6
+\4${}\}{}$\2\7
+\&{size\_t} \\{byte\_index}${}\K\\{index}/\T{8};{}$\6
+\&{size\_t} \\{bit\_index}${}\K\\{index}\MOD\T{8};{}$\7
+\&{if} (\\{used})\5
+${}\{{}$\1\6
+${}\|t\MG\\{taken}[\\{byte\_index}]\MRL{{\OR}{\K}}(\T{1}\LL\\{bit\_index});{}$\6
+\4${}\}{}$\2\6
+\&{else}\5
+${}\{{}$\1\6
+${}\|t\MG\\{taken}[\\{byte\_index}]\MRL{\AND{\K}}\CM(\T{1}\LL\\{bit%
+\_index});{}$\6
+\4${}\}{}$\2\6
+\&{return} \\{true};\6
+\4${}\}{}$\2\par
+\fi
+
+\M{60}set\_links.
+Sets the relevant ({\tt link} and {\tt aux}) pointers to link two empty spaces
+next to each other.
+
+\Y\B\1\1\&{void} \\{set\_links}(\&{struct} \\{trie} ${}{*}\|t,\39{}$\&{size\_t}
+\\{from}${},\39{}$\&{size\_t} \\{to})\2\2\6
+${}\{{}$\1\6
+${}\|t\MG\\{links}[\\{from}]\K\\{to};{}$\6
+${}\|t\MG\\{aux}[\\{to}]\K\\{from};{}$\6
+\4${}\}{}$\2\par
+\fi
+
+\M{61}is\_node\_occupied.
+Returns true if the given trie index is occupied by a node.
+
+\Y\B\1\1\&{bool} \\{is\_node\_occupied}(\&{struct} \\{trie} ${}{*}\|t,\39{}$%
+\&{size\_t} \\{index})\2\2\6
+${}\{{}$\1\6
+\&{return} \|t${}\MG\\{nodes}[\\{index}]\I\T{0};{}$\6
+\4${}\}{}$\2\par
+\fi
+
+\M{62}insert\_pattern.
+Attempts to put the given pattern into the trie, possibly creating nodes along
+the way. If the insertion is successful,
+true is returned and the resulting index is stored in {\tt out\_op\_index}.
+
+\Y\B\1\1\&{bool} \\{insert\_pattern}(\&{struct} \\{trie} ${}{*}\|t,\39{}$%
+\&{const} \&{char} ${}{*}\\{pattern},\39{}$\&{size\_t} ${}{*}\\{out\_op%
+\_index},\39{}$\&{struct} \\{trie} ${}{*}\\{helper\_trie})\2\2{}$\6
+${}\{{}$\1\6
+\&{size\_t} \\{length}${}\K\\{strlen}(\\{pattern});{}$\7
+\&{return} \\{insert\_substring}${}(\|t,\39\\{pattern},\39\\{length},\39%
+\\{length},\39\\{out\_op\_index},\39\\{helper\_trie});{}$\6
+\4${}\}{}$\2\par
+\fi
+
+\M{63}insert\_substring.
+Attempts to put substring $[end-length, end)$ of the given pattern into the
+trie, possibly creating nodes along the
+way. If the insertion is successful, true is returned and the resulting index
+is stored in {\tt out\_op\_index}.
+
+\Y\B\1\1\&{bool} \\{insert\_substring}(\&{struct} \\{trie} ${}{*}\|t,\39{}$%
+\&{const} \&{char} ${}{*}\\{pattern},\39{}$\&{size\_t} \\{end}${},\39{}$\&{size%
+\_t} \\{length}${},\39{}$\&{size\_t} ${}{*}\\{out\_op\_index},\39{}$\&{struct} %
+\\{trie} ${}{*}\\{helper\_trie})\2\2{}$\6
+${}\{{}$\1\6
+\&{size\_t} \\{index}${}\K\\{end}-\\{length};{}$\6
+\&{size\_t} \\{base}${}\K\T{1};{}$\6
+\&{size\_t} \\{node}${}\K\\{base}+(\\{uint8\_t})\\{pattern}[\\{index}];{}$\6
+\&{size\_t} \\{fit};\6
+\&{size\_t} \\{node\_prev}${}\K\T{0};{}$\6
+\&{bool} \\{new\_pattern}${}\K\\{false};{}$\7
+\&{while} ${}(\\{index}<\\{end}\W\\{base}>\T{0}){}$\5
+${}\{{}$\1\6
+${}\\{node}\K\\{base}+(\\{uint8\_t})\\{pattern}[\\{index}];{}$\6
+\&{if} ${}(\\{node}\G\|t\MG\\{capacity}){}$\5
+${}\{{}$\1\6
+\&{size\_t} \\{new\_capacity}${}\K((\\{node}/\|t\MG\\{capacity})+\T{1})*\|t\MG%
+\\{capacity};{}$\7
+\&{if} ${}(\\{resize\_trie}(\|t,\39\\{new\_capacity})\E\NULL){}$\5
+${}\{{}$\1\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\6
+\4${}\}{}$\2\6
+\&{if} ${}(\|t\MG\\{nodes}[\\{node}]\I\\{pattern}[\\{index}]){}$\5
+${}\{{}$\1\6
+${}\\{new\_pattern}\K\\{true};{}$\6
+\&{if} ${}(\|t\MG\\{nodes}[\\{node}]\E\T{0}){}$\5
+${}\{{}$\1\6
+${}\|t\MG\\{nodes}[\\{node}]\K\\{pattern}[\\{index}];{}$\6
+${}\\{set\_links}(\|t,\39\|t\MG\\{aux}[\\{node}],\39\|t\MG\\{links}[%
+\\{node}]);{}$\6
+${}\|t\MG\\{aux}[\\{node}]\K\T{0};{}$\6
+${}\|t\MG\\{links}[\\{node}]\K\T{0};{}$\6
+${}\|t\MG\\{occupied}\PP;{}$\6
+\&{if} ${}(\\{node}>\|t\MG\\{node\_max}){}$\5
+${}\{{}$\1\6
+${}\|t\MG\\{node\_max}\K\\{node};{}$\6
+\4${}\}{}$\2\6
+\4${}\}{}$\2\6
+\&{else}\5
+${}\{{}$\1\6
+\&{if} ${}(\R\\{repack}(\|t,\39\\{helper\_trie},\39{\AND}\\{node\_prev},\39{%
+\AND}\\{node},\39\\{pattern}[\\{index}])){}$\5
+${}\{{}$\1\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\6
+\4${}\}{}$\2\6
+\4${}\}{}$\2\6
+${}\\{index}\PP;{}$\6
+${}\\{node\_prev}\K\\{node};{}$\6
+${}\\{base}\K\|t\MG\\{links}[\\{node}];{}$\6
+\4${}\}{}$\2\6
+${}\\{helper\_trie}\MG\\{links}[\T{1}]\K\T{0};{}$\6
+${}\\{helper\_trie}\MG\\{aux}[\T{1}]\K\T{0};{}$\6
+${}\\{helper\_trie}\MG\\{node\_max}\K\T{1};{}$\6
+\&{while} ${}(\\{index}<\\{end}){}$\5
+${}\{{}$\1\6
+${}\\{helper\_trie}\MG\\{nodes}[\T{1}]\K\\{pattern}[\\{index}];{}$\6
+\&{if} ${}(\R\\{first\_fit}(\|t,\39\\{helper\_trie},\39{\AND}\\{fit})){}$\5
+${}\{{}$\1\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\6
+${}\|t\MG\\{links}[\\{node}]\K\\{fit};{}$\6
+${}\\{base}\K\\{fit};{}$\6
+${}\\{node}\K\\{base}+(\\{uint8\_t})\\{pattern}[\\{index}];{}$\6
+${}\\{index}\PP;{}$\6
+${}\\{new\_pattern}\K\\{true};{}$\6
+\4${}\}{}$\2\6
+${}{*}\\{out\_op\_index}\K\\{node};{}$\6
+\&{if} (\\{new\_pattern})\5
+${}\{{}$\1\6
+${}\|t\MG\\{pattern\_count}\PP;{}$\6
+\4${}\}{}$\2\6
+\&{return} \\{true};\6
+\4${}\}{}$\2\par
+\fi
+
+\M{64}repack.
+Attempts to move a subtree of the trie, so that it fits new node with given
+value. If the repacking finishes
+successfully, the index for new node is stored in {\tt base} and true is
+returned.
+
+\Y\B\1\1\&{bool} \\{repack}(\&{struct} \\{trie} ${}{*}\|t,\39{}$\&{struct} %
+\\{trie} ${}{*}\|q,\39{}$\&{size\_t} ${}{*}\\{node},\39{}$\&{size\_t} ${}{*}%
+\\{base},\39{}$\&{char} \\{value})\2\2\6
+${}\{{}$\1\6
+\&{if} ${}(\R\\{unpack}(\|t,\39{*}\\{base}-(\\{uint8\_t})\\{value},\39\|q)){}$\5
+${}\{{}$\1\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\6
+\&{if} ${}(\|q\MG\\{node\_max}\G\|q\MG\\{capacity}){}$\5
+${}\{{}$\1\6
+\&{size\_t} \\{new\_capacity}${}\K((\|q\MG\\{node\_max}/\|q\MG\\{capacity})+%
+\T{1})*\|q\MG\\{capacity};{}$\7
+\&{if} ${}(\\{resize\_trie}(\|q,\39\\{new\_capacity})\E\NULL){}$\5
+${}\{{}$\1\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\6
+\4${}\}{}$\2\6
+${}\|q\MG\\{nodes}[\|q\MG\\{node\_max}]\K\\{value};{}$\6
+${}\|q\MG\\{links}[\|q\MG\\{node\_max}]\K\T{0};{}$\6
+${}\|q\MG\\{aux}[\|q\MG\\{node\_max}]\K\T{0};{}$\7
+\&{size\_t} \\{fit};\7
+\&{if} ${}(\R\\{first\_fit}(\|t,\39\|q,\39{\AND}\\{fit})){}$\5
+${}\{{}$\1\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\6
+${}{*}\\{base}\K\\{fit};{}$\6
+${}\|t\MG\\{links}[{*}\\{node}]\K{*}\\{base};{}$\6
+${}{*}\\{base}\MRL{+{\K}}(\\{uint8\_t})\\{value};{}$\6
+\&{return} \\{true};\6
+\4${}\}{}$\2\par
+\fi
+
+\M{65}unpack.
+Moves all nodes with the given base to auxiliary trie.
+
+\Y\B\1\1\&{bool} \\{unpack}(\&{struct} \\{trie} ${}{*}\\{from},\39{}$\&{size%
+\_t} \\{base}${},\39{}$\&{struct} \\{trie} ${}{*}\\{to})\2\2{}$\6
+${}\{{}$\1\6
+${}\\{to}\MG\\{node\_max}\K\T{1};{}$\6
+\&{for} (\&{size\_t} \|i${}\K\T{1};{}$ ${}\|i<\T{256};{}$ ${}\|i\PP){}$\5
+${}\{{}$\1\6
+\&{size\_t} \\{from\_index}${}\K\\{base}+\|i;{}$\7
+\&{if} ${}((\\{uint8\_t})\\{from}\MG\\{nodes}[\\{from\_index}]\E\|i){}$\5
+${}\{{}$\1\6
+\&{if} ${}(\R\\{copy\_node}(\\{from},\39\\{from\_index},\39\\{to},\39\\{to}\MG%
+\\{node\_max})){}$\5
+${}\{{}$\1\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\6
+${}\\{deallocate\_node}(\\{from},\39\\{from\_index});{}$\6
+${}\\{to}\MG\\{node\_max}\PP;{}$\6
+\4${}\}{}$\2\6
+\4${}\}{}$\2\6
+\&{if} ${}(\R\\{set\_base\_used}(\\{from},\39\\{base},\39\\{false})){}$\5
+${}\{{}$\1\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\6
+\&{return} \\{true};\6
+\4${}\}{}$\2\par
+\fi
+
+\M{66}first\_fit.
+Finds the base of trie {\tt t} that fits the nodes from auxiliary trie {\tt q}
+and copies them into their new indices.
+Return true if the search and copying finishes successfully.
+
+\Y\B\1\1\&{bool} \\{first\_fit}(\&{struct} \\{trie} ${}{*}\|t,\39{}$\&{struct} %
+\\{trie} ${}{*}\|q,\39{}$\&{size\_t} ${}{*}\\{out\_base})\2\2{}$\6
+${}\{{}$\1\6
+\&{size\_t} \\{base};\7
+\&{if} ${}(\R\\{find\_base\_for\_first\_fit}(\|t,\39\|q,\39{\AND}\\{base})){}$\5
+${}\{{}$\1\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\6
+\&{for} (\&{size\_t} \\{q\_index}${}\K\T{1};{}$ ${}\\{q\_index}\Z\|q\MG\\{node%
+\_max};{}$ ${}\\{q\_index}\PP){}$\5
+${}\{{}$\1\6
+\&{size\_t} \\{t\_index}${}\K\\{base}+(\\{uint8\_t})\|q\MG\\{nodes}[\\{q%
+\_index}];{}$\7
+${}\\{set\_links}(\|t,\39\|t\MG\\{aux}[\\{t\_index}],\39\|t\MG\\{links}[\\{t%
+\_index}]);{}$\6
+\&{if} ${}(\R\\{copy\_node}(\|q,\39\\{q\_index},\39\|t,\39\\{t\_index})){}$\5
+${}\{{}$\1\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\6
+\&{if} ${}(\\{t\_index}>\|t\MG\\{node\_max}){}$\5
+${}\{{}$\1\6
+${}\|t\MG\\{node\_max}\K\\{t\_index};{}$\6
+\4${}\}{}$\2\6
+\4${}\}{}$\2\6
+\&{if} ${}(\R\\{set\_base\_used}(\|t,\39\\{base},\39\\{true})){}$\5
+${}\{{}$\1\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\6
+${}{*}\\{out\_base}\K\\{base};{}$\6
+\&{return} \\{true};\6
+\4${}\}{}$\2\par
+\fi
+
+\M{67}find\_base\_for\_first\_fit.
+Searches through the trie {\tt t} to find base index that fits the nodes from
+the {\tt q} trie. If the search is
+successful, resulting index is stored in {\tt out\_base} and true is returned.
+
+\Y\B\1\1\&{bool} \\{find\_base\_for\_first\_fit}(\&{struct} \\{trie} ${}{*}\|t,%
+\39{}$\&{struct} \\{trie} ${}{*}\|q,\39{}$\&{size\_t} ${}{*}\\{out\_base})\2%
+\2{}$\6
+${}\{{}$\1\6
+\&{size\_t} \\{t\_index};\7
+\\{uint8\_t}\\{offset};\6
+\&{if} ${}(\|q\MG\\{node\_max}>\T{5}\W\|t\MG\\{capacity}>\|t\MG\\{node\_max}+%
+\T{1}){}$\5
+${}\{{}$\1\6
+${}\\{t\_index}\K\|t\MG\\{node\_max}+\T{1};{}$\6
+\4${}\}{}$\2\6
+\&{else}\5
+${}\{{}$\1\6
+${}\\{t\_index}\K\|t\MG\\{links}[\T{0}];{}$\6
+\4${}\}{}$\2\6
+\&{for} (\&{size\_t} \|i${}\K\T{0};{}$ ${}\|i\Z\|t\MG\\{capacity};{}$ ${}\|i%
+\PP){}$\5
+${}\{{}$\1\6
+\&{if} ${}(\\{t\_index}\E\T{0}){}$\5
+${}\{{}$\1\6
+${}\\{t\_index}\K\|t\MG\\{capacity}+\T{1}{}$;\SHC{ free for sure after resize }%
+\7
+\&{size\_t} \\{new\_capacity}${}\K\T{2}*\|t\MG\\{capacity};{}$\7
+\&{if} ${}(\R\\{resize\_trie}(\|t,\39\\{new\_capacity})){}$\5
+${}\{{}$\1\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\6
+\4${}\}{}$\2\6
+${}\\{offset}\K(\\{uint8\_t})\|q\MG\\{nodes}[\T{1}];{}$\6
+\&{if} ${}(\\{t\_index}\Z\\{offset}){}$\5
+${}\{{}$\1\6
+${}\\{t\_index}\K\|t\MG\\{links}[\\{t\_index}];{}$\6
+\&{continue};\6
+\4${}\}{}$\2\6
+${}{*}\\{out\_base}\K\\{t\_index}-\\{offset};{}$\7
+\&{size\_t} \\{max\_target\_index}${}\K{*}(\\{out\_base})+\T{255};{}$\7
+\&{if} ${}(\\{max\_target\_index}\G\|t\MG\\{capacity}){}$\5
+${}\{{}$\1\6
+\&{size\_t} \\{new\_capacity}${}\K((\\{max\_target\_index}/\|t\MG\\{capacity})+%
+\T{1})*\|t\MG\\{capacity};{}$\7
+\&{if} ${}(\\{resize\_trie}(\|t,\39\\{new\_capacity})\E\NULL){}$\5
+${}\{{}$\1\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\6
+\4${}\}{}$\2\6
+\&{if} ${}(\\{get\_base\_used}(\|t,\39{*}\\{out\_base})){}$\5
+${}\{{}$\1\6
+${}\\{t\_index}\K\|t\MG\\{links}[\\{t\_index}];{}$\6
+\&{continue};\6
+\4${}\}{}$\2\7
+\&{bool} \\{conflict}${}\K\\{false};{}$\7
+\&{for} (\&{size\_t} \\{q\_index}${}\K\|q\MG\\{node\_max};{}$ ${}\\{q\_index}\G%
+\T{2};{}$ ${}\\{q\_index}\MM){}$\5
+${}\{{}$\1\6
+\&{if} ${}(\\{is\_node\_occupied}(\|t,\39{*}\\{out\_base}+(\\{uint8\_t})\|q\MG%
+\\{nodes}[\\{q\_index}])){}$\5
+${}\{{}$\1\6
+${}\\{conflict}\K\\{true};{}$\6
+\&{break};\6
+\4${}\}{}$\2\6
+\4${}\}{}$\2\6
+\&{if} ${}(\R\\{conflict}){}$\5
+${}\{{}$\1\6
+\&{return} \\{true};\6
+\4${}\}{}$\2\6
+${}\\{t\_index}\K\|t\MG\\{links}[\\{t\_index}];{}$\6
+\4${}\}{}$\2\6
+\\{printf}(\.{"Loop\ detected!\\n"});\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\par
+\fi
+
+\M{68}traverse\_trie.
+Returns the index of the node corresponding to the given pattern, or 0 if such
+node does not exist.
+
+\Y\B\1\1\&{size\_t} \\{traverse\_trie}(\&{struct} \\{trie} ${}{*}\|t,\39{}$%
+\&{const} \&{char} ${}{*}\\{pattern})\2\2{}$\6
+${}\{{}$\1\6
+\&{size\_t} \\{index}${}\K\T{1};{}$\6
+\&{size\_t} \\{node}${}\K(\\{uint8\_t})\\{pattern}[\T{0}]+\T{1};{}$\6
+\&{size\_t} \\{base}${}\K\|t\MG\\{links}[\\{node}];{}$\7
+\&{while} ${}(\\{index}<\\{strlen}(\\{pattern})\W\\{base}>\T{0}){}$\5
+${}\{{}$\1\6
+${}\\{base}\MRL{+{\K}}(\\{uint8\_t})\\{pattern}[\\{index}];{}$\6
+\&{if} ${}(\|t\MG\\{nodes}[\\{base}]\I\\{pattern}[\\{index}]){}$\5
+${}\{{}$\1\6
+\&{return} \T{0};\6
+\4${}\}{}$\2\6
+${}\\{node}\K\\{base};{}$\6
+${}\\{base}\K\|t\MG\\{links}[\\{node}];{}$\6
+${}\\{index}\PP;{}$\6
+\4${}\}{}$\2\6
+\&{if} ${}(\\{index}<\\{strlen}(\\{pattern})){}$\5
+${}\{{}$\1\6
+\&{return} \T{0};\6
+\4${}\}{}$\2\6
+\&{return} \\{node};\6
+\4${}\}{}$\2\par
+\fi
+
+\N{1}{69}Outputs.
+The hyphenation information associated to a pattern is stored as a triplet in {%
+\tt output} structure:
+
+\item{$\bullet$} {\bf value}: the hyphenation level,
+\item{$\bullet$} {\bf position}: the dot position,
+\item{$\bullet$} {\bf next\_op\_index}: the pointer to next output of the same
+pattern.
+
+For space-saving purposes, several patterns may share a single output. This
+means that, for example, for all patterns
+having single hyphen of level 1 at position 3 we store only one such output to
+which all the patterns point. It is thus
+necessary to access the outputs as effectively as possible. \utfpatgen{} uses a
+"hash table" with indirect addressing --
+simple function $(next\_op\_index + 313*position + 361*value) \% table%
+\_capacity) + 1$ computes the index of an output
+in the {\tt lookup} array that contains pointers to the real outputs. The whole
+structure has these fields:
+
+\item{$\bullet$} {\bf capacity}: the capacity of the array of outputs,
+\item{$\bullet$} {\bf count}: the number of outputs currently in the array,
+\item{$\bullet$} {\bf data}: the array of outputs,
+\item{$\bullet$} {\bf lookup\_cap}: the capacity of the lookup table,
+\item{$\bullet$} {\bf lookup\_cnt}: the number of entries currently in the
+lookup,
+\item{$\bullet$} {\bf lookup}: the array of lookup entries.
+
+The sizes of data and lookup are independent to some extent, so the
+corresponding arrays are resized independently.
+Since we do not want to fill the lookup fully at any time due to efficiency
+reasons, we trigger its resize already at
+75 \% capacity. Lookup index 0 does not point to any output and the program
+interprets it as "no output present".
+
+\Y\B\1\1\&{struct} \\{outputs} ${}{*}{}$\\{init\_outputs}(\&{size\_t} %
+\\{capacity})\2\2\6
+${}\{{}$\1\6
+\&{struct} \\{outputs} ${}{*}\\{ops}\K{}$\\{malloc}(\&{sizeof}(\&{struct} %
+\\{outputs}));\7
+\&{if} ${}(\\{ops}\E\NULL){}$\5
+${}\{{}$\1\6
+${}\\{fputs}(\.{"Allocation\ error\\n"},\39\\{stderr});{}$\6
+\&{return} ${}\NULL;{}$\6
+\4${}\}{}$\2\6
+${}\\{ops}\MG\\{capacity}\K\\{capacity};{}$\6
+${}\\{ops}\MG\\{count}\K\T{0};{}$\6
+${}\\{ops}\MG\\{data}\K\\{calloc}(\\{capacity}+\T{1},\39{}$\&{sizeof}(%
+\&{struct} \\{output}));\6
+\&{if} ${}(\\{ops}\MG\\{data}\E\NULL){}$\5
+${}\{{}$\1\6
+${}\\{fputs}(\.{"Allocation\ error\\n"},\39\\{stderr});{}$\6
+\\{free}(\\{ops});\6
+\&{return} ${}\NULL;{}$\6
+\4${}\}{}$\2\6
+${}\\{ops}\MG\\{data}[\T{0}].\\{next\_op\_index}\K\T{1};{}$\6
+${}\\{ops}\MG\\{lookup\_cap}\K\T{2}*\\{capacity};{}$\6
+${}\\{ops}\MG\\{lookup\_cnt}\K\T{0};{}$\6
+${}\\{ops}\MG\\{lookup}\K\\{calloc}(\T{2}*\\{capacity}+\T{1},\39\&{sizeof}(%
+\&{size\_t}));{}$\6
+\&{if} ${}(\\{ops}\MG\\{lookup}\E\NULL){}$\5
+${}\{{}$\1\6
+${}\\{fputs}(\.{"Allocation\ error\\n"},\39\\{stderr});{}$\6
+${}\\{free}(\\{ops}\MG\\{data});{}$\6
+\\{free}(\\{ops});\6
+\&{return} ${}\NULL;{}$\6
+\4${}\}{}$\2\6
+\&{return} \\{ops};\6
+\4${}\}{}$\2\7
+\1\1\&{struct} \\{outputs} ${}{*}{}$\\{resize\_outputs}(\&{struct} \\{outputs}
+${}{*}\\{ops},\39{}$\&{size\_t} \\{capacity})\2\2\6
+${}\{{}$\1\6
+\&{struct} \\{output} ${}{*}\\{new\_data}\K\\{realloc}(\\{ops}\MG\\{data},\39(%
+\\{capacity}+\T{1})*{}$\&{sizeof}(\&{struct} \\{output}));\7
+\&{if} ${}(\\{new\_data}\E\NULL){}$\5
+${}\{{}$\1\6
+${}\\{fputs}(\.{"Allocation\ error\\n"},\39\\{stderr});{}$\6
+\&{return} ${}\NULL;{}$\6
+\4${}\}{}$\2\6
+${}\\{ops}\MG\\{data}\K\\{new\_data};{}$\7
+\&{size\_t} \\{diff}${}\K\\{capacity}-\\{ops}\MG\\{capacity};{}$\7
+${}\\{memset}(\\{ops}\MG\\{data}+\\{ops}\MG\\{capacity}+\T{1},\39\T{0},\39%
+\\{diff}*{}$\&{sizeof}(\&{struct} \\{output}));\6
+${}\\{ops}\MG\\{capacity}\K\\{capacity};{}$\6
+\&{return} \\{ops};\6
+\4${}\}{}$\2\7
+\1\1\&{void} \\{destroy\_outputs}(\&{struct} \\{outputs} ${}{*}\\{ops})\2\2{}$\6
+${}\{{}$\1\6
+${}\\{free}(\\{ops}\MG\\{data});{}$\6
+${}\\{free}(\\{ops}\MG\\{lookup});{}$\6
+\\{free}(\\{ops});\6
+\4${}\}{}$\2\7
+\1\1\&{bool} \\{resize\_lookup}(\&{struct} \\{outputs} ${}{*}\\{ops},\39{}$%
+\&{size\_t} \\{new\_cap}${},\39{}$\&{struct} \\{trie} ${}{*}\|t)\2\2{}$\6
+${}\{{}$\1\6
+\&{size\_t} ${}{*}\\{new\_lookup}\K\\{calloc}(\\{new\_cap}+\T{1},\39\&{sizeof}(%
+\&{size\_t}));{}$\6
+\&{size\_t} ${}{*}\\{old\_lookup}\K\\{ops}\MG\\{lookup};{}$\7
+\&{if} ${}(\\{new\_lookup}\E\NULL){}$\5
+${}\{{}$\1\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\6
+${}\\{ops}\MG\\{lookup}\K\\{new\_lookup};{}$\6
+${}\\{ops}\MG\\{lookup\_cap}\K\\{new\_cap};{}$\7
+\&{size\_t} \\{old\_hash}${},\39\\{new\_hash},\39\\{op\_index};{}$\6
+\&{struct} \\{output} \\{op};\7
+\&{for} (\&{size\_t} \\{node}${}\K\T{0};{}$ ${}\\{node}<\|t\MG\\{capacity};{}$
+${}\\{node}\PP){}$\5
+${}\{{}$\1\6
+\&{if} ${}(\R\\{is\_node\_occupied}(\|t,\39\\{node})\V\|t\MG\\{aux}[\\{node}]\E%
+\T{0}){}$\5
+${}\{{}$\1\6
+\&{continue};\6
+\4${}\}{}$\2\6
+${}\\{old\_hash}\K\|t\MG\\{aux}[\\{node}];{}$\6
+${}\\{op\_index}\K\\{old\_lookup}[\\{old\_hash}];{}$\6
+${}\\{op}\K\\{ops}\MG\\{data}[\\{op\_index}];{}$\6
+${}\\{new\_hash}\K\\{hash\_trie\_output}(\\{ops},\39\\{op}.\\{value},\39\\{op}.%
+\\{position},\39\\{op}.\\{next\_op\_index});{}$\6
+${}\\{ops}\MG\\{lookup}[\\{new\_hash}]\K\\{op\_index};{}$\6
+${}\|t\MG\\{aux}[\\{node}]\K\\{new\_hash};{}$\6
+\4${}\}{}$\2\6
+\\{free}(\\{old\_lookup});\6
+\&{return} \\{true};\6
+\4${}\}{}$\2\par
+\fi
+
+\M{70}hash\_trie\_output.
+Computes the value of the hash function for given output and finds a free index
+in the lookup that will store it. If
+successful, returns the hash value.
+
+\Y\B\1\1\&{size\_t} \\{hash\_trie\_output}(\&{struct} \\{outputs} ${}{*}%
+\\{ops},\39{}$\&{size\_t} \\{value}${},\39{}$\&{size\_t} \\{position}${},\39{}$%
+\&{size\_t} \\{next\_op\_index})\2\2\6
+${}\{{}$\1\6
+\&{size\_t} \\{hash}${}\K((\\{next\_op\_index}+\T{313}*\\{position}+\T{361}*%
+\\{value})\MOD\\{ops}\MG\\{lookup\_cap})+\T{1};{}$\6
+\&{size\_t} \\{op\_index};\7
+\&{while} (\\{true})\5
+${}\{{}$\1\6
+${}\\{op\_index}\K\\{ops}\MG\\{lookup}[\\{hash}];{}$\6
+\&{if} ${}(\\{op\_index}\E\T{0}){}$\5
+${}\{{}$\1\6
+\&{return} \\{hash};\6
+\4${}\}{}$\2\6
+\&{else} \&{if} ${}(\\{ops}\MG\\{data}[\\{op\_index}].\\{value}\E\\{value}\W%
+\\{ops}\MG\\{data}[\\{op\_index}].\\{position}\E\\{position}\W\\{ops}\MG%
+\\{data}[\\{op\_index}].\\{next\_op\_index}\E\\{next\_op\_index}){}$\5
+${}\{{}$\1\6
+\&{return} \\{hash};\6
+\4${}\}{}$\2\6
+\&{else} \&{if} ${}(\\{hash}>\T{1}){}$\5
+${}\{{}$\1\6
+${}\\{hash}\MRL{-{\K}}\T{1};{}$\6
+\4${}\}{}$\2\6
+\&{else}\5
+${}\{{}$\1\6
+${}\\{hash}\K\\{ops}\MG\\{lookup\_cap};{}$\6
+\4${}\}{}$\2\6
+\4${}\}{}$\2\6
+\&{return} \T{0};\6
+\4${}\}{}$\2\par
+\fi
+
+\N{1}{71}Pattern trie.
+The structure that holds already generated set of patterns. It is simply a
+aggregation of two other structures:
+
+\item{$\bullet$} {\bf t}: a trie storing the patterns,
+\item{$\bullet$} {\bf ops}: outputs array storing the hyphenation information.
+
+Technically speaking, the {\tt aux} pointer of each node that corresponds to a
+pattern contains the lookup index of its
+output.
+
+\Y\B\1\1\&{struct} \\{pattern\_trie} ${}{*}{}$\\{init\_pattern\_trie}(\&{size%
+\_t} \\{trie\_capacity}${},\39{}$\&{size\_t} \\{outputs\_capacity})\2\2\6
+${}\{{}$\1\6
+\&{struct} \\{pattern\_trie} ${}{*}\\{pt}\K{}$\\{malloc}(\&{sizeof}(\&{struct} %
+\\{pattern\_trie}));\7
+\&{if} ${}(\\{pt}\E\NULL){}$\5
+${}\{{}$\1\6
+\&{return} ${}\NULL;{}$\6
+\4${}\}{}$\2\6
+${}\\{pt}\MG\|t\K\\{init\_trie}(\\{trie\_capacity});{}$\6
+\&{if} ${}(\\{pt}\MG\|t\E\NULL){}$\5
+${}\{{}$\1\6
+\\{free}(\\{pt});\6
+\&{return} ${}\NULL;{}$\6
+\4${}\}{}$\2\6
+\&{if} ${}(\R\\{put\_first\_level}(\\{pt}\MG\|t)){}$\5
+${}\{{}$\1\6
+${}\\{free}(\\{pt}\MG\|t);{}$\6
+\\{free}(\\{pt});\6
+\&{return} ${}\NULL;{}$\6
+\4${}\}{}$\2\6
+${}\\{pt}\MG\\{ops}\K\\{init\_outputs}(\\{outputs\_capacity});{}$\6
+\&{if} ${}(\\{pt}\MG\\{ops}\E\NULL){}$\5
+${}\{{}$\1\6
+${}\\{free}(\\{pt}\MG\|t);{}$\6
+\\{free}(\\{pt});\6
+\&{return} ${}\NULL;{}$\6
+\4${}\}{}$\2\6
+\&{return} \\{pt};\6
+\4${}\}{}$\2\7
+\1\1\&{void} \\{destroy\_pattern\_trie}(\&{struct} \\{pattern\_trie} ${}{*}%
+\\{pt})\2\2{}$\6
+${}\{{}$\1\6
+${}\\{destroy\_trie}(\\{pt}\MG\|t);{}$\6
+${}\\{destroy\_outputs}(\\{pt}\MG\\{ops});{}$\6
+\\{free}(\\{pt});\6
+\4${}\}{}$\2\par
+\fi
+
+\M{72}new\_trie\_output.
+Creates an entry for the given output. If successful, returns true and stores
+output's lookup index to {\tt op\_index}.
+
+\Y\B\1\1\&{bool} \\{new\_trie\_output}(\&{struct} \\{pattern\_trie} ${}{*}%
+\\{pt},\39{}$\&{size\_t} \\{value}${},\39{}$\&{size\_t} \\{position}${},\39{}$%
+\&{size\_t} \\{next\_op\_index}${},\39{}$\&{size\_t} ${}{*}\\{op\_index})$ $\{$
+\6
+\&{if} ${}(\\{pt}\MG\\{ops}\MG\\{count}\G\\{pt}\MG\\{ops}\MG\\{capacity}-%
+\T{1}){}$\5
+${}\{{}$\1\6
+\&{if} ${}(\\{resize\_outputs}(\\{pt}\MG\\{ops},\39\\{pt}\MG\\{ops}\MG%
+\\{capacity}*\T{2})\E\NULL){}$\5
+${}\{{}$\1\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\6
+\4${}\}{}$\2\6
+\&{if} ${}(\\{pt}\MG\\{ops}\MG\\{lookup\_cnt}*\T{4}>\\{pt}\MG\\{ops}\MG%
+\\{lookup\_cap}*\T{3}){}$\5
+${}\{{}$\1\6
+\&{if} ${}(\R\\{resize\_lookup}(\\{pt}\MG\\{ops},\39\\{pt}\MG\\{ops}\MG%
+\\{lookup\_cap}*\T{2},\39\\{pt}\MG\|t)){}$\5
+${}\{{}$\1\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\6
+\4${}\}{}$\2\7
+\&{size\_t} \\{hash}${}\K\\{hash\_trie\_output}(\\{pt}\MG\\{ops},\39\\{value},%
+\39\\{position},\39\\{next\_op\_index});$ \&{if} ${}(\\{pt}\MG\\{ops}\MG%
+\\{lookup}[\\{hash}]\E\T{0})$ $\{$ $\\{pt}\MG\\{ops}\MG\\{count}\PP;$ %
+\&{struct} \\{output} \\{new\_op} $\K$ $\{$ $.$ $\\{value}\K\\{value}$ $,$ $.$
+$\\{position}\K\\{position}$ $,$ $.$ $\\{next\_op\_index}\K\\{next\_op\_index}$
+$\}$  ;\7
+\&{size\_t} \\{free\_list\_head}${}\K\\{pt}\MG\\{ops}\MG\\{data}[\T{0}].\\{next%
+\_op\_index};{}$\7
+\&{if} ${}(\\{pt}\MG\\{ops}\MG\\{data}[\\{free\_list\_head}].\\{next\_op%
+\_index}\E\T{0}){}$\5
+${}\{{}$\1\6
+${}\\{pt}\MG\\{ops}\MG\\{data}[\T{0}].\\{next\_op\_index}\K\\{pt}\MG\\{ops}\MG%
+\\{count}+\T{1};{}$\6
+\4${}\}{}$\2\6
+\&{else}\5
+${}\{{}$\1\6
+${}\\{pt}\MG\\{ops}\MG\\{data}[\T{0}].\\{next\_op\_index}\K\\{pt}\MG\\{ops}\MG%
+\\{data}[\\{free\_list\_head}].\\{next\_op\_index};{}$\6
+\4${}\}{}$\2\6
+${}\\{pt}\MG\\{ops}\MG\\{data}[\\{free\_list\_head}]\K\\{new\_op};{}$\6
+${}\\{pt}\MG\\{ops}\MG\\{lookup}[\\{hash}]\K\\{free\_list\_head};{}$\6
+${}\\{pt}\MG\\{ops}\MG\\{lookup\_cnt}\PP;$ $\}$ ${*}\\{op\_index}\K\\{hash};{}$%
+\6
+\&{return} \\{true}; $\}{}$\par
+\fi
+
+\M{73}set\_output.
+Creates a new output and links it to given node in the trie. Returns true if
+the creation and assignment finished
+successfully.
+
+\Y\B\1\1\&{bool} \\{set\_output}(\&{struct} \\{pattern\_trie} ${}{*}\\{pt},%
+\39{}$\&{size\_t} \\{node}${},\39{}$\&{size\_t} \\{value}${},\39{}$\&{size\_t} %
+\\{position})\2\2\6
+${}\{{}$\1\6
+\&{size\_t} \\{op\_index};\7
+\&{if} ${}(\R\\{new\_trie\_output}(\\{pt},\39\\{value},\39\\{position},\39%
+\\{pt}\MG\\{ops}\MG\\{lookup}[\\{pt}\MG\|t\MG\\{aux}[\\{node}]],\39{\AND}\\{op%
+\_index})){}$\5
+${}\{{}$\1\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\6
+${}\\{pt}\MG\|t\MG\\{aux}[\\{node}]\K\\{op\_index};{}$\6
+\&{return} \\{true};\6
+\4${}\}{}$\2\par
+\fi
+
+\N{1}{74}Pattern counts.
+The structure that stores the numbers of supporting and contradicting
+occurences for patterns. It comprises 4 fields:
+
+\item{$\bullet$} {\bf capacity}: the maximum index that can be used,
+\item{$\bullet$} {\bf size}: the highest index currently in use,
+\item{$\bullet$} {\bf good}: array of supporting occurence counts,
+\item{$\bullet$} {\bf bad}: array of contradicting occurence counts.
+
+The counts on given index correspond to the same pattern.
+
+\Y\B\1\1\&{struct} \\{pattern\_counts} ${}{*}{}$\\{init\_pattern\_counts}(%
+\&{size\_t} \\{capacity})\2\2\6
+${}\{{}$\1\6
+\&{struct} \\{pattern\_counts} ${}{*}\\{pc}\K{}$\\{malloc}(\&{sizeof}(%
+\&{struct} \\{pattern\_counts}));\7
+\&{if} ${}(\\{pc}\E\NULL){}$\5
+${}\{{}$\1\6
+${}\\{fprintf}(\\{stderr},\39\.{"Allocation\ error\\n"});{}$\6
+\&{return} ${}\NULL;{}$\6
+\4${}\}{}$\2\6
+${}\\{pc}\MG\\{good}\K\\{calloc}(\\{capacity},\39\&{sizeof}(\&{size\_t}));{}$\6
+${}\\{pc}\MG\\{bad}\K\\{calloc}(\\{capacity},\39\&{sizeof}(\&{size\_t}));{}$\6
+\&{if} ${}(\\{pc}\MG\\{good}\E\NULL\V\\{pc}\MG\\{bad}\E\NULL){}$\5
+${}\{{}$\1\6
+${}\\{fprintf}(\\{stderr},\39\.{"Allocation\ error\\n"});{}$\6
+${}\\{free}(\\{pc}\MG\\{good});{}$\6
+${}\\{free}(\\{pc}\MG\\{bad});{}$\6
+\\{free}(\\{pc});\6
+\&{return} ${}\NULL;{}$\6
+\4${}\}{}$\2\6
+${}\\{pc}\MG\\{capacity}\K\\{capacity};{}$\6
+${}\\{pc}\MG\\{size}\K\T{1};{}$\6
+\&{return} \\{pc};\6
+\4${}\}{}$\2\7
+\1\1\&{struct} \\{pattern\_counts} ${}{*}{}$\\{resize\_pattern\_counts}(%
+\&{struct} \\{pattern\_counts} ${}{*}\\{pc},\39{}$\&{size\_t} \\{new%
+\_capacity})\2\2\6
+${}\{{}$\1\6
+\&{size\_t} ${}{*}\\{new\_good}\K\\{realloc}(\\{pc}\MG\\{good},\39\\{new%
+\_capacity}*\&{sizeof}(\&{size\_t}));{}$\7
+\&{if} ${}(\\{new\_good}\E\NULL){}$\5
+${}\{{}$\1\6
+${}\\{fprintf}(\\{stderr},\39\.{"Allocation\ error\\n"});{}$\6
+\&{return} ${}\NULL;{}$\6
+\4${}\}{}$\2\6
+${}\\{pc}\MG\\{good}\K\\{new\_good};{}$\7
+\&{size\_t} ${}{*}\\{new\_bad}\K\\{realloc}(\\{pc}\MG\\{bad},\39\\{new%
+\_capacity}*\&{sizeof}(\&{size\_t}));{}$\7
+\&{if} ${}(\\{new\_bad}\E\NULL){}$\5
+${}\{{}$\1\6
+${}\\{fprintf}(\\{stderr},\39\.{"Allocation\ error\\n"});{}$\6
+\&{return} ${}\NULL;{}$\6
+\4${}\}{}$\2\6
+${}\\{pc}\MG\\{bad}\K\\{new\_bad};{}$\7
+\&{size\_t} \\{diff}${}\K\\{new\_capacity}-\\{pc}\MG\\{capacity};{}$\7
+${}\\{memset}(\\{pc}\MG\\{good}+\\{pc}\MG\\{capacity},\39\T{0},\39\\{diff}*%
+\&{sizeof}(\&{size\_t}));{}$\6
+${}\\{memset}(\\{pc}\MG\\{bad}+\\{pc}\MG\\{capacity},\39\T{0},\39\\{diff}*%
+\&{sizeof}(\&{size\_t}));{}$\6
+${}\\{pc}\MG\\{capacity}\K\\{new\_capacity};{}$\6
+\&{return} \\{pc};\6
+\4${}\}{}$\2\7
+\1\1\&{void} \\{destroy\_pattern\_counts}(\&{struct} \\{pattern\_counts} ${}{*}%
+\\{pc})\2\2{}$\6
+${}\{{}$\1\6
+${}\\{free}(\\{pc}\MG\\{good});{}$\6
+${}\\{free}(\\{pc}\MG\\{bad});{}$\6
+\\{free}(\\{pc});\6
+\4${}\}{}$\2\par
+\fi
+
+\N{1}{75}Count trie.
+This structure stores candidate patterns and their occurence counts. During
+dictionary file processing, every word
+contributes to count trie with its substrings as candidate patterns. In
+implementation, the count trie is composed from
+2 distinct substructures:
+
+\item{$\bullet$} {\bf t}: a trie storing the patterns,
+\item{$\bullet$} {\bf cnts}: pattern counts with the numbers of occurences.
+
+Note that the count trie does not need any outputs, since the only pattern
+template that the current iteration explores
+is defined by {\tt pat\_len} and {\tt pat\_dot} parameters. This allows us to
+store pointers to pattern counts in the
+{\tt aux} field of occupied trie nodes instead.
+
+\Y\B\1\1\&{struct} \\{count\_trie} ${}{*}{}$\\{init\_count\_trie}(\&{size\_t} %
+\\{trie\_capacity}${},\39{}$\&{size\_t} \\{counts\_capacity})\2\2\6
+${}\{{}$\1\6
+\&{struct} \\{count\_trie} ${}{*}\\{ct}\K{}$\\{malloc}(\&{sizeof}(\&{struct} %
+\\{count\_trie}));\7
+\&{if} ${}(\\{ct}\E\NULL){}$\5
+${}\{{}$\1\6
+\&{return} ${}\NULL;{}$\6
+\4${}\}{}$\2\6
+${}\\{ct}\MG\|t\K\\{init\_trie}(\\{trie\_capacity});{}$\6
+\&{if} ${}(\\{ct}\MG\|t\E\NULL){}$\5
+${}\{{}$\1\6
+\\{free}(\\{ct});\6
+\&{return} ${}\NULL;{}$\6
+\4${}\}{}$\2\6
+\&{if} ${}(\R\\{put\_first\_level}(\\{ct}\MG\|t)){}$\5
+${}\{{}$\1\6
+${}\\{free}(\\{ct}\MG\|t);{}$\6
+\\{free}(\\{ct});\6
+\&{return} ${}\NULL;{}$\6
+\4${}\}{}$\2\6
+${}\\{ct}\MG\\{cnts}\K\\{init\_pattern\_counts}(\\{counts\_capacity});{}$\6
+\&{if} ${}(\\{ct}\MG\\{cnts}\E\NULL){}$\5
+${}\{{}$\1\6
+${}\\{free}(\\{ct}\MG\|t);{}$\6
+\\{free}(\\{ct});\6
+\&{return} ${}\NULL;{}$\6
+\4${}\}{}$\2\6
+\&{return} \\{ct};\6
+\4${}\}{}$\2\7
+\1\1\&{void} \\{destroy\_count\_trie}(\&{struct} \\{count\_trie} ${}{*}\\{ct})%
+\2\2{}$\6
+${}\{{}$\1\6
+${}\\{destroy\_trie}(\\{ct}\MG\|t);{}$\6
+${}\\{destroy\_pattern\_counts}(\\{ct}\MG\\{cnts});{}$\6
+\\{free}(\\{ct});\6
+\4${}\}{}$\2\par
+\fi
+
+\N{1}{76}String buffer.
+We use buffer for storing text, usually lines read from input files. The
+structure contains following fields:
+
+\item{$\bullet$} {\bf capacity}: the maximum length of the string that the
+buffer can hold (including the ending
+'0x00'),
+\item{$\bullet$} {\bf size}: the current length of string stored in the buffer,
+\item{$\bullet$} {\bf data}: the array storing the string,
+\item{$\bullet$} {\bf eof}: if the buffer is used to read lines from a file,
+this flag indicates whether the end of
+file was reached..
+
+\Y\B\1\1\&{struct} \\{string\_buffer} ${}{*}{}$\\{init\_buffer}(\&{size\_t} %
+\\{capacity})\2\2\6
+${}\{{}$\1\6
+\&{struct} \\{string\_buffer} ${}{*}\\{buf}\K{}$\\{malloc}(\&{sizeof}(%
+\&{struct} \\{string\_buffer}));\7
+\&{if} ${}(\\{buf}\E\NULL){}$\5
+${}\{{}$\1\6
+${}\\{fputs}(\.{"Allocation\ error\\n"},\39\\{stderr});{}$\6
+\&{return} ${}\NULL;{}$\6
+\4${}\}{}$\2\6
+${}\\{buf}\MG\\{capacity}\K\\{capacity};{}$\6
+${}\\{buf}\MG\\{size}\K\T{0};{}$\6
+${}\\{buf}\MG\\{data}\K\\{malloc}(\\{capacity}*\&{sizeof}(\&{char}));{}$\6
+${}\\{buf}\MG\\{eof}\K\\{false};{}$\6
+\&{if} ${}(\\{buf}\MG\\{data}\E\NULL){}$\5
+${}\{{}$\1\6
+${}\\{fputs}(\.{"Allocation\ error\\n"},\39\\{stderr});{}$\6
+\\{free}(\\{buf});\6
+\&{return} ${}\NULL;{}$\6
+\4${}\}{}$\2\6
+${}\\{buf}\MG\\{data}[\T{0}]\K\.{'\\0'};{}$\6
+\&{return} \\{buf};\6
+\4${}\}{}$\2\7
+\1\1\&{struct} \\{string\_buffer} ${}{*}{}$\\{resize\_buffer}(\&{struct} %
+\\{string\_buffer} ${}{*}\\{buf},\39{}$\&{size\_t} \\{new\_capacity})\2\2\6
+${}\{{}$\1\6
+\&{char} ${}{*}\\{new\_ptr}\K\\{realloc}(\\{buf}\MG\\{data},\39\\{new%
+\_capacity});{}$\7
+\&{if} ${}(\\{new\_ptr}\E\NULL){}$\5
+${}\{{}$\1\6
+${}\\{fputs}(\.{"Allocation\ error\\n"},\39\\{stderr});{}$\6
+\&{return} ${}\NULL;{}$\6
+\4${}\}{}$\2\6
+${}\\{buf}\MG\\{data}\K\\{new\_ptr};{}$\6
+${}\\{buf}\MG\\{capacity}\K\\{new\_capacity};{}$\6
+\&{return} \\{buf};\6
+\4${}\}{}$\2\7
+\1\1\&{void} \\{reset\_buffer}(\&{struct} \\{string\_buffer} ${}{*}\\{buf})\2%
+\2{}$\6
+${}\{{}$\1\6
+${}\\{buf}\MG\\{eof}\K\\{false};{}$\6
+${}\\{buf}\MG\\{size}\K\T{0};{}$\6
+${}\\{buf}\MG\\{data}[\T{0}]\K\.{'\\0'};{}$\6
+\4${}\}{}$\2\7
+\1\1\&{void} \\{destroy\_buffer}(\&{struct} \\{string\_buffer} ${}{*}\\{buf})\2%
+\2{}$\6
+${}\{{}$\1\6
+${}\\{free}(\\{buf}\MG\\{data});{}$\6
+\\{free}(\\{buf});\6
+\4${}\}{}$\2\par
+\fi
+
+\M{77}append\_char.
+Puts the given character to the current end of buffer. Note that the operation
+may overwrite the ending '0x00', and
+the caller should whether it is not the case. Returns true upon successful
+write.
+
+\Y\B\1\1\&{bool} \\{append\_char}(\&{struct} \\{string\_buffer} ${}{*}\\{buf},%
+\39{}$\&{char} \|c)\2\2\6
+${}\{{}$\1\6
+\&{if} ${}(\\{buf}\MG\\{size}+\T{1}\G\\{buf}\MG\\{capacity}){}$\5
+${}\{{}$\1\6
+\&{if} ${}(\\{resize\_buffer}(\\{buf},\39\T{2}*\\{buf}\MG\\{capacity})\E%
+\NULL){}$\5
+${}\{{}$\1\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\6
+\4${}\}{}$\2\6
+${}\\{buf}\MG\\{data}[\\{buf}\MG\\{size}]\K\|c;{}$\6
+${}\\{buf}\MG\\{size}\PP;{}$\6
+\&{return} \\{true};\6
+\4${}\}{}$\2\par
+\fi
+
+\M{78}append\_string.
+Copies the given string to the current end of buffer. Provided string contains
+the '0x00' at its end by design, and the
+character is copied to the buffer as well. Returns true if the copying finished
+successfully.
+
+\Y\B\1\1\&{bool} \\{append\_string}(\&{struct} \\{string\_buffer} ${}{*}%
+\\{buf},\39{}$\&{const} \&{char} ${}{*}\\{str})\2\2{}$\6
+${}\{{}$\1\6
+\&{size\_t} \\{len}${}\K\\{strlen}(\\{str})+\T{1};{}$\7
+\&{if} ${}(\\{buf}\MG\\{size}+\\{len}\G\\{buf}\MG\\{capacity}){}$\5
+${}\{{}$\1\6
+\&{if} ${}(\\{resize\_buffer}(\\{buf},\39\T{2}*(\\{buf}\MG\\{size}+\\{len}))\E%
+\NULL){}$\5
+${}\{{}$\1\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\6
+\4${}\}{}$\2\6
+${}\\{strcpy}({\AND}\\{buf}\MG\\{data}[\\{buf}\MG\\{size}],\39\\{str});{}$\6
+${}\\{buf}\MG\\{size}\MRL{+{\K}}\\{len};{}$\6
+\&{return} \\{true};\6
+\4${}\}{}$\2\par
+\fi
+
+\N{1}{79}Translate table.
+We use this structure to hold the information about character mapping. The
+translate file documents the relationships
+between "lowercase" letters and their "uppercase" variants, and the translate
+table allows easy conversion. Technically
+the structure is just a combination of 2 substructures:
+
+\item{$\bullet$} {\bf mapping}: a trie that stores all the characters (both
+variants),
+\item{$\bullet$} {\bf alphabet}: a string buffer containing all lowercase
+characters separated by '0x00'.
+
+In the {\tt aux} field of the trie nodes corresponding to a character we store
+index of the beginning of its lowercase
+representation in {\tt alphabet}.
+
+\Y\B\1\1\&{struct} \\{translate\_table} ${}{*}{}$\\{init\_tr\_table}(\&{size%
+\_t} \\{mapping\_capacity}${},\39{}$\&{size\_t} \\{alphabet\_capacity})\2\2\6
+${}\{{}$\1\6
+\&{struct} \\{translate\_table} ${}{*}\\{tt}\K{}$\\{malloc}(\&{sizeof}(%
+\&{struct} \\{translate\_table}));\7
+\&{if} ${}(\\{tt}\E\NULL){}$\5
+${}\{{}$\1\6
+${}\\{fprintf}(\\{stderr},\39\.{"Allocation\ error\\n"});{}$\6
+\&{return} ${}\NULL;{}$\6
+\4${}\}{}$\2\7
+\&{struct} \\{trie} ${}{*}\\{mapping}\K\\{init\_trie}(\\{mapping%
+\_capacity});{}$\7
+\&{if} ${}(\\{mapping}\E\NULL){}$\5
+${}\{{}$\1\6
+\\{free}(\\{tt});\6
+\&{return} ${}\NULL;{}$\6
+\4${}\}{}$\2\6
+\&{if} ${}(\R\\{put\_first\_level}(\\{mapping})){}$\5
+${}\{{}$\1\6
+\\{destroy\_trie}(\\{mapping});\6
+\\{free}(\\{tt});\6
+\&{return} ${}\NULL;{}$\6
+\4${}\}{}$\2\7
+\&{struct} \\{string\_buffer} ${}{*}\\{alphabet}\K\\{init\_buffer}(\\{alphabet%
+\_capacity});{}$\7
+\&{if} ${}(\\{alphabet}\E\NULL){}$\5
+${}\{{}$\1\6
+\\{destroy\_trie}(\\{mapping});\6
+\\{free}(\\{tt});\6
+\&{return} ${}\NULL;{}$\6
+\4${}\}{}$\2\6
+${}\\{tt}\MG\\{mapping}\K\\{mapping};{}$\6
+${}\\{tt}\MG\\{alphabet}\K\\{alphabet};{}$\6
+${}\\{tt}\MG\\{index\_to\_alphabet}\K\\{malloc}(\\{alphabet\_capacity}*%
+\&{sizeof}(\&{size\_t}));{}$\6
+\&{if} ${}(\\{tt}\MG\\{index\_to\_alphabet}\E\NULL){}$\5
+${}\{{}$\1\6
+${}\\{destroy\_trie}(\\{tt}\MG\\{mapping});{}$\6
+${}\\{destroy\_buffer}(\\{tt}\MG\\{alphabet});{}$\6
+\\{free}(\\{tt});\6
+\&{return} ${}\NULL;{}$\6
+\4${}\}{}$\2\6
+${}\\{tt}\MG\\{letter\_count}\K\T{0};{}$\6
+${}\\{tt}\MG\\{letter\_capacity}\K\\{alphabet\_capacity};{}$\6
+\&{if} ${}(\R\\{append\_char}(\\{tt}\MG\\{alphabet},\39\.{'\\0'})){}$\5
+${}\{{}$\1\6
+${}\\{free}(\\{tt}\MG\\{index\_to\_alphabet});{}$\6
+${}\\{destroy\_trie}(\\{tt}\MG\\{mapping});{}$\6
+${}\\{destroy\_buffer}(\\{tt}\MG\\{alphabet});{}$\6
+\\{free}(\\{tt});\6
+\&{return} ${}\NULL;{}$\6
+\4${}\}{}$\2\6
+\&{return} \\{tt};\6
+\4${}\}{}$\2\7
+\1\1\&{void} \\{destroy\_tr\_table}(\&{struct} \\{translate\_table} ${}{*}%
+\\{tt})\2\2{}$\6
+${}\{{}$\1\6
+${}\\{destroy\_trie}(\\{tt}\MG\\{mapping});{}$\6
+${}\\{destroy\_buffer}(\\{tt}\MG\\{alphabet});{}$\6
+${}\\{free}(\\{tt}\MG\\{index\_to\_alphabet});{}$\6
+\\{free}(\\{tt});\6
+\4${}\}{}$\2\par
+\fi
+
+\M{80}get\_lower.
+Returns the lowercase representation of the given letter, or NULL if the letter
+does not exist in the translate table.
+
+\Y\B\1\1\&{char} ${}{*}{}$\\{get\_lower}(\&{struct} \\{translate\_table} ${}{*}%
+\\{tt},\39{}$\&{const} \&{char} ${}{*}\\{letter})\2\2{}$\6
+${}\{{}$\1\6
+\&{size\_t} \\{index}${}\K\\{traverse\_trie}(\\{tt}\MG\\{mapping},\39%
+\\{letter});{}$\7
+\&{if} ${}(\\{index}\E\T{0}\V\\{tt}\MG\\{mapping}\MG\\{aux}[\\{index}]>\\{tt}%
+\MG\\{letter\_count}\V\\{tt}\MG\\{mapping}\MG\\{aux}[\\{index}]\E\T{0}){}$\5
+${}\{{}$\1\6
+\&{return} ${}\NULL;{}$\6
+\4${}\}{}$\2\7
+\&{size\_t} \\{alphabet\_offset}${}\K\\{tt}\MG\\{index\_to\_alphabet}[\\{tt}\MG%
+\\{mapping}\MG\\{aux}[\\{index}]];{}$\7
+\&{if} ${}(\\{alphabet\_offset}\G\\{tt}\MG\\{alphabet}\MG\\{size}){}$\5
+${}\{{}$\1\6
+\&{return} ${}\NULL;{}$\6
+\4${}\}{}$\2\6
+\&{return} \\{tt}${}\MG\\{alphabet}\MG\\{data}+\\{alphabet\_offset};{}$\6
+\4${}\}{}$\2\par
+\fi
+
+\M{81}get\_letter\_index.
+Returns the index of the given letter in the translate table, or 0 if the
+letter
+does not exist.
+
+\Y\B\1\1\&{size\_t} \\{get\_letter\_index}(\&{struct} \\{translate\_table}
+${}{*}\\{tt},\39{}$\&{char} ${}{*}\\{letter})\2\2{}$\6
+${}\{{}$\1\6
+\&{size\_t} \\{index}${}\K\\{traverse\_trie}(\\{tt}\MG\\{mapping},\39%
+\\{letter});{}$\7
+\&{if} ${}(\\{index}\E\T{0}\V\\{tt}\MG\\{mapping}\MG\\{aux}[\\{index}]>\\{tt}%
+\MG\\{letter\_count}\V\\{tt}\MG\\{mapping}\MG\\{aux}[\\{index}]\E\T{0}){}$\5
+${}\{{}$\1\6
+\&{return} \T{0};\6
+\4${}\}{}$\2\6
+\&{return} \\{tt}${}\MG\\{mapping}\MG\\{aux}[\\{index}];{}$\6
+\4${}\}{}$\2\par
+\fi
+
+\M{82}convert\_index.
+Converts a letter index to a byte sequence and appends it to the word.
+While the index is greater than 254, appends 0xFF byte to the word and
+subtracts 254 from the index. Finally appends the byte with the same
+value as the remainder.
+
+\Y\B\1\1\&{bool} \\{convert\_index}(\&{size\_t} \\{index}${},\39{}$\&{struct} %
+\\{word} ${}{*}\\{word})\2\2{}$\6
+${}\{{}$\1\6
+\&{if} ${}(\\{index}\E\T{0}){}$\5
+${}\{{}$\1\6
+\&{return} \\{true};\6
+\4${}\}{}$\2\7
+\&{size\_t} \\{ff\_count}${}\K(\\{index}-\T{1})/\T{254};{}$\6
+\&{size\_t} \\{remainder}${}\K((\\{index}-\T{1})\MOD\T{254})+\T{1};{}$\7
+\&{for} (\&{size\_t} \|i${}\K\T{0};{}$ ${}\|i<\\{ff\_count};{}$ ${}\|i\PP){}$\5
+${}\{{}$\1\6
+\&{if} ${}(\R\\{append\_char\_to\_word}(\\{word},\39(\&{char})\,\T{\^ff})){}$\5
+${}\{{}$\1\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\6
+\4${}\}{}$\2\6
+\&{if} ${}(\R\\{append\_char\_to\_word}(\\{word},\39(\&{char})\,%
+\\{remainder})){}$\5
+${}\{{}$\1\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\6
+\&{return} \\{true};\6
+\4${}\}{}$\2\par
+\fi
+
+\M{83}convert\_byte\_sequence.
+Converts a byte sequence to a translate table index. This is the reverse
+operation
+of convert\_index.
+
+\Y\B\1\1\&{size\_t} \\{convert\_byte\_sequence}(\&{char} ${}{*}{*}\\{sequence})%
+\2\2{}$\6
+${}\{{}$\1\6
+\&{if} ${}(\\{sequence}\E\NULL\V{*}\\{sequence}\E\NULL){}$\5
+${}\{{}$\1\6
+\&{return} \T{0};\6
+\4${}\}{}$\2\7
+\&{size\_t} \\{ff\_count}${}\K\T{0};{}$\7
+\&{while} ${}({*}{*}\\{sequence}\E(\&{char})\,\T{\^ff}){}$\5
+${}\{{}$\1\6
+${}\\{ff\_count}\PP;{}$\6
+${}({*}\\{sequence})\PP;{}$\6
+\4${}\}{}$\2\7
+\&{size\_t} \\{remainder}${}\K(\\{uint8\_t})*{*}\\{sequence};{}$\7
+${}({*}\\{sequence})\PP;{}$\6
+\&{return} \\{ff\_count}${}*\T{254}+\\{remainder};{}$\6
+\4${}\}{}$\2\par
+\fi
+
+\N{1}{84}Params.
+This structure encompasses all the parameters that influence the computation of
+\utfpatgen. We can sort them by their
+scope of into {\bf global} (usually defined once and used throughout the whole
+run), {\bf level-specific} (defined
+specificallly for each hyphenation level), and {\bf pass-specific} (defined
+specifically for each iteration within
+a level):
+
+\item{$\bullet$} {\bf left\_hyphen\_min} (global): the length of prefix of a
+word that should not be hyphenated,
+\item{$\bullet$} {\bf right\_hyphen\_min} (global): the length of suffix of a
+word that should not be hyphenated,
+\item{$\bullet$} {\bf bad\_hyphen} (global): the symbol representing
+incorrectly placed hyphen in the dictionary,
+\item{$\bullet$} {\bf missed\_hyphen} (global): the symbol representing missing
+hyphen in the dictionary,
+\item{$\bullet$} {\bf good\_hyphen} (global): the symbol representing correctly
+placed hyphen in the dictionary,
+\item{$\bullet$} {\bf hyph\_start} (global): the lowest hyphenation level to be
+generated,
+\item{$\bullet$} {\bf hyph\_finish} (global): the highest hyphenation level to
+be generated,
+\item{$\bullet$} {\bf word\_weight} (global): the default weight of a hyphen in
+a word from dictionary,
+\item{$\bullet$} {\bf dictionary\_file} (global): a pointer to opened file with
+dictionary entries,
+\item{$\bullet$} {\bf pattern\_file} (global): a pointer to opened file with
+initial set of patterns,
+\item{$\bullet$} {\bf output\_file} (global): a pointer to opened file where
+the final set of patterns will be
+written,
+\item{$\bullet$} {\bf translate\_file} (global): a pointer to opened file with
+character mapping and
+language-specific parameters,
+\item{$\bullet$} {\bf hyph\_level} (level-specific): the current hyphenation
+level,
+\item{$\bullet$} {\bf pat\_start} (level-specific): the shortest pattern
+length,
+\item{$\bullet$} {\bf pat\_finish} (level-specific): the longest pattern
+length,
+\item{$\bullet$} {\bf good\_wt} (level-specific): the supporting occurence
+weight,
+\item{$\bullet$} {\bf bad\_wt} (level-specific): the contradicting occurence
+weight,
+\item{$\bullet$} {\bf thresh} (level-specific): the pattern acceptance
+threshold,
+\item{$\bullet$} {\bf good\_dot} (level-specific): the hyphen type considered
+as correct,
+\item{$\bullet$} {\bf bad\_dot} (level-specific): the hyphen type considered as
+incorrect,
+\item{$\bullet$} {\bf pat\_len} (pass-specific): the current pattern length,
+\item{$\bullet$} {\bf pat\_dot} (pass-specific): the current dot position.
+
+\Y\B\1\1\&{struct} \\{params} ${}{*}\\{init\_params}(\,)\2\2{}$\6
+${}\{{}$\1\6
+\&{struct} \\{params} ${}{*}\|p\K{}$\\{malloc}(\&{sizeof}(\&{struct} %
+\\{params}));\7
+\&{if} ${}(\|p\E\NULL){}$\5
+${}\{{}$\1\6
+${}\\{fputs}(\.{"Allocation\ error\\n"},\39\\{stderr});{}$\6
+\&{return} ${}\NULL;{}$\6
+\4${}\}{}$\2\6
+${}\|p\MG\\{left\_hyphen\_min}\K\T{2};{}$\6
+${}\|p\MG\\{right\_hyphen\_min}\K\T{3};{}$\6
+${}\|p\MG\\{bad\_hyphen}\K\.{'.'};{}$\6
+${}\|p\MG\\{missed\_hyphen}\K\.{'-'};{}$\6
+${}\|p\MG\\{good\_hyphen}\K\.{'*'};{}$\6
+${}\|p\MG\\{word\_weight}\K\T{1};{}$\6
+${}\|p\MG\\{dictionary\_file}\K\NULL;{}$\6
+${}\|p\MG\\{pattern\_file}\K\NULL;{}$\6
+${}\|p\MG\\{output\_file}\K\NULL;{}$\6
+${}\|p\MG\\{translate\_file}\K\NULL;{}$\6
+\&{return} \|p;\6
+\4${}\}{}$\2\7
+\1\1\&{void} \\{reset\_params}(\&{struct} \\{params} ${}{*}\|p)\2\2{}$\6
+${}\{{}$\1\6
+${}\|p\MG\\{left\_hyphen\_min}\K\T{2};{}$\6
+${}\|p\MG\\{right\_hyphen\_min}\K\T{3};{}$\6
+${}\|p\MG\\{bad\_hyphen}\K\.{'.'};{}$\6
+${}\|p\MG\\{missed\_hyphen}\K\.{'-'};{}$\6
+${}\|p\MG\\{good\_hyphen}\K\.{'*'};{}$\6
+\4${}\}{}$\2\7
+\1\1\&{void} \\{destroy\_params}(\&{struct} \\{params} ${}{*}\|p)\2\2{}$\6
+${}\{{}$\1\6
+\&{if} ${}(\|p\MG\\{dictionary\_file}\I\NULL){}$\5
+${}\{{}$\1\6
+${}\\{fclose}(\|p\MG\\{dictionary\_file});{}$\6
+\4${}\}{}$\2\6
+\&{if} ${}(\|p\MG\\{pattern\_file}\I\NULL){}$\5
+${}\{{}$\1\6
+${}\\{fclose}(\|p\MG\\{pattern\_file});{}$\6
+\4${}\}{}$\2\6
+\&{if} ${}(\|p\MG\\{output\_file}\I\NULL){}$\5
+${}\{{}$\1\6
+${}\\{fclose}(\|p\MG\\{output\_file});{}$\6
+\4${}\}{}$\2\6
+\&{if} ${}(\|p\MG\\{translate\_file}\I\NULL){}$\5
+${}\{{}$\1\6
+${}\\{fclose}(\|p\MG\\{translate\_file});{}$\6
+\4${}\}{}$\2\6
+\\{free}(\|p);\6
+\4${}\}{}$\2\par
+\fi
+
+\N{1}{85}Pass stats.
+This structure groups together variables with mostly statistical meaning. We
+use them to map the progress and quality
+of the pattern generation, and present it on standard output. Following fields
+are monitored:
+
+\item{$\bullet$} {\bf good\_pat\_cnt}: the number of new good patterns from an
+iteration,
+\item{$\bullet$} {\bf bad\_pat\_cnt}: the number of new bad patterns from an
+iteration,
+\item{$\bullet$} {\bf good\_cnt}: the number of hyphens from the dictionary
+correctly identified with current set
+of patterns,
+\item{$\bullet$} {\bf bad\_cnt}: the number of hyphens from the dictionary
+incorrectly identified with current set
+of patterns,
+\item{$\bullet$} {\bf miss\_cnt}: the number of hyphens from the dictionary
+missed with current set of patterns,
+\item{$\bullet$} {\bf level\_pattern\_cnt}: the number of patterns generated on
+current hyphenation level,
+\item{$\bullet$} {\bf max\_level}: the highest hyphenation level found in the
+initial patterns,
+\item{$\bullet$} {\bf more\_to\_come}: a flag indicating that undecided
+patterns were found on current hyphenation
+level.
+
+\fi
+
+\N{1}{86}Stack.
+We decided to implement a stack-like structure to break the recursive functions
+from \patgen. In most cases the stack
+holds data related to previous iterations of a method, for instance, the trie
+bases on the path to current node. There
+are only 3 fields:
+
+\item{$\bullet$} {\bf capacity}: the highest index that can be accessed,
+\item{$\bullet$} {\bf top}: the index where the last value was inserted,
+\item{$\bullet$} {\bf data}: the array of values currently on the stack.
+
+\Y\B\1\1\&{struct} \\{stack} ${}{*}{}$\\{init\_stack}(\&{size\_t} \\{capacity})%
+\2\2\6
+${}\{{}$\1\6
+\&{struct} \\{stack} ${}{*}\|s\K{}$\\{malloc}(\&{sizeof}(\&{struct} %
+\\{stack}));\7
+\&{if} ${}(\|s\E\NULL){}$\5
+${}\{{}$\1\6
+${}\\{fprintf}(\\{stderr},\39\.{"Allocation\ error\\n"});{}$\6
+\&{return} ${}\NULL;{}$\6
+\4${}\}{}$\2\6
+${}\|s\MG\\{data}\K\\{malloc}(\\{capacity}*\&{sizeof}(\&{size\_t}));{}$\6
+\&{if} ${}(\|s\MG\\{data}\E\NULL){}$\5
+${}\{{}$\1\6
+${}\\{fprintf}(\\{stderr},\39\.{"Allocation\ error\\n"});{}$\6
+${}\\{free}(\|s\MG\\{data});{}$\6
+\\{free}(\|s);\6
+\&{return} ${}\NULL;{}$\6
+\4${}\}{}$\2\6
+${}\|s\MG\\{capacity}\K\\{capacity};{}$\6
+${}\|s\MG\\{top}\K\T{0};{}$\6
+\&{return} \|s;\6
+\4${}\}{}$\2\7
+\1\1\&{struct} \\{stack} ${}{*}{}$\\{resize\_stack}(\&{struct} \\{stack} ${}{*}%
+\|s,\39{}$\&{size\_t} \\{new\_capacity})\2\2\6
+${}\{{}$\1\6
+\&{size\_t} ${}{*}\\{new\_stack}\K\\{realloc}(\|s\MG\\{data},\39\\{new%
+\_capacity}*\&{sizeof}(\&{size\_t}));{}$\7
+\&{if} ${}(\\{new\_stack}\E\NULL){}$\5
+${}\{{}$\1\6
+${}\\{fprintf}(\\{stderr},\39\.{"Allocation\ error\\n"});{}$\6
+\\{destroy\_stack}(\|s);\6
+\&{return} ${}\NULL;{}$\6
+\4${}\}{}$\2\6
+${}\|s\MG\\{data}\K\\{new\_stack};{}$\6
+${}\|s\MG\\{capacity}\K\\{new\_capacity};{}$\6
+\&{return} \|s;\6
+\4${}\}{}$\2\7
+\1\1\&{void} \\{destroy\_stack}(\&{struct} \\{stack} ${}{*}\|s)\2\2{}$\6
+${}\{{}$\1\6
+${}\\{free}(\|s\MG\\{data});{}$\6
+\\{free}(\|s);\6
+\4${}\}{}$\2\par
+\fi
+
+\M{87}put\_on\_stack.
+Appends the given value to the top of the stack. Returns true if the insertion
+finishes successfully.
+
+\Y\B\1\1\&{bool} \\{put\_on\_stack}(\&{struct} \\{stack} ${}{*}\|s,\39{}$%
+\&{size\_t} \\{value})\2\2\6
+${}\{{}$\1\6
+\&{if} ${}(\|s\MG\\{top}\G\|s\MG\\{capacity}){}$\5
+${}\{{}$\1\6
+\&{size\_t} \\{new\_capacity}${}\K\T{2}*(\|s\MG\\{top});{}$\7
+\&{if} ${}(\\{resize\_stack}(\|s,\39\\{new\_capacity})\E\NULL){}$\5
+${}\{{}$\1\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\6
+\4${}\}{}$\2\6
+${}\|s\MG\\{data}[\|s\MG\\{top}]\K\\{value};{}$\6
+${}\|s\MG\\{top}\PP;{}$\6
+\&{return} \\{true};\6
+\4${}\}{}$\2\par
+\fi
+
+\M{88}get\_top\_value.
+Returns the value currently at {\tt top} index. Does not change anything on the
+stack.
+
+\Y\B\1\1\&{size\_t} \\{get\_top\_value}(\&{struct} \\{stack} ${}{*}\|s)\2\2{}$\6
+${}\{{}$\1\6
+\&{if} ${}(\|s\MG\\{top}\E\T{0}){}$\5
+${}\{{}$\1\6
+\&{return} \T{0};\6
+\4${}\}{}$\2\6
+\&{return} \|s${}\MG\\{data}[\|s\MG\\{top}-\T{1}];{}$\6
+\4${}\}{}$\2\par
+\fi
+
+\M{89}set\_top\_value.
+Changes the value at {\tt top} index to the given one.
+
+\Y\B\1\1\&{void} \\{set\_top\_value}(\&{struct} \\{stack} ${}{*}\|s,\39{}$%
+\&{size\_t} \\{value})\2\2\6
+${}\{{}$\1\6
+\&{if} ${}(\|s\MG\\{top}\E\T{0}){}$\5
+${}\{{}$\1\6
+\&{return};\6
+\4${}\}{}$\2\6
+${}\|s\MG\\{data}[\|s\MG\\{top}-\T{1}]\K\\{value};{}$\6
+\4${}\}{}$\2\par
+\fi
+
+\N{1}{90}Word.
+The structure that holds information about a word and its hyphens. It consists
+of 7 fields:
+
+\item{$\bullet$} {\bf capacity}: the maximum length of the word in bytes,
+\item{$\bullet$} {\bf size}: current length of the word in bytes,
+\item{$\bullet$} {\bf length}: current length of the word in characters,
+\item{$\bullet$} {\bf lowercase}: the word translated to lowercase characters
+according to the translate table, and
+surrounded by {\tt EDGE\_OF\_WORD} symbols,
+\item{$\bullet$} {\bf true\_hyphens}: array of hyphen types and their weights
+retrieved from the dictionary,
+\item{$\bullet$} {\bf found\_hyphens}: array of hyphenation level identified by
+current set of patterns,
+\item{$\bullet$} {\bf no\_more}: array of flags marking the dot positions that
+can be skipped during processing.
+
+Array index $n$ corresponds to the dot position between characters $n$ and
+$n+1$. The lowest two bits of a
+{\tt true\_hyphens} value describe the hyphen type, the rest represent its
+weight (multiplied by 4).
+
+Note that the {\tt lowercase} array is not strictly a string as we do not
+require the closing '0x00'.
+
+\Y\B\1\1\&{struct} \\{word} ${}{*}{}$\\{init\_word}(\&{size\_t} \\{capacity})\2%
+\2\6
+${}\{{}$\1\6
+\&{struct} \\{word} ${}{*}\\{word}\K{}$\\{malloc}(\&{sizeof}(\&{struct} %
+\\{word}));\7
+\&{if} ${}(\\{word}\E\NULL){}$\5
+${}\{{}$\1\6
+\&{return} ${}\NULL;{}$\6
+\4${}\}{}$\2\6
+${}\\{word}\MG\\{translated}\K\\{calloc}(\\{capacity},\39\&{sizeof}(%
+\&{char}));{}$\6
+\&{if} ${}(\\{word}\MG\\{translated}\E\NULL){}$\5
+${}\{{}$\1\6
+\\{free}(\\{word});\6
+\&{return} ${}\NULL;{}$\6
+\4${}\}{}$\2\6
+${}\\{word}\MG\\{true\_hyphens}\K\\{calloc}(\\{capacity},\39\&{sizeof}(\&{size%
+\_t}));{}$\6
+\&{if} ${}(\\{word}\MG\\{true\_hyphens}\E\NULL){}$\5
+${}\{{}$\1\6
+${}\\{free}(\\{word}\MG\\{translated});{}$\6
+\\{free}(\\{word});\6
+\&{return} ${}\NULL;{}$\6
+\4${}\}{}$\2\6
+${}\\{word}\MG\\{found\_hyphens}\K\\{calloc}(\\{capacity},\39{}$\&{sizeof} (%
+\\{uint8\_t}));\6
+\&{if} ${}(\\{word}\MG\\{found\_hyphens}\E\NULL){}$\5
+${}\{{}$\1\6
+${}\\{free}(\\{word}\MG\\{translated});{}$\6
+${}\\{free}(\\{word}\MG\\{true\_hyphens});{}$\6
+\\{free}(\\{word});\6
+\&{return} ${}\NULL;{}$\6
+\4${}\}{}$\2\6
+${}\\{word}\MG\\{no\_more}\K\\{calloc}(\\{capacity},\39\&{sizeof}(%
+\&{bool}));{}$\6
+\&{if} ${}(\\{word}\MG\\{no\_more}\E\NULL){}$\5
+${}\{{}$\1\6
+${}\\{free}(\\{word}\MG\\{translated});{}$\6
+${}\\{free}(\\{word}\MG\\{true\_hyphens});{}$\6
+${}\\{free}(\\{word}\MG\\{found\_hyphens});{}$\6
+\\{free}(\\{word});\6
+\&{return} ${}\NULL;{}$\6
+\4${}\}{}$\2\6
+${}\\{word}\MG\\{size}\K\T{0};{}$\6
+${}\\{word}\MG\\{length}\K\T{0};{}$\6
+${}\\{word}\MG\\{capacity}\K\\{capacity};{}$\6
+\&{return} \\{word};\6
+\4${}\}{}$\2\7
+\1\1\&{struct} \\{word} ${}{*}{}$\\{resize\_word}(\&{struct} \\{word} ${}{*}%
+\\{word},\39{}$\&{size\_t} \\{new\_capacity})\2\2\6
+${}\{{}$\1\6
+\&{char} ${}{*}\\{new\_translated}\K\\{realloc}(\\{word}\MG\\{translated},\39%
+\\{new\_capacity}*\&{sizeof}(\&{char}));{}$\7
+\&{if} ${}(\\{new\_translated}\E\NULL){}$\5
+${}\{{}$\1\6
+${}\\{fprintf}(\\{stderr},\39\.{"Allocation\ error\\n"});{}$\6
+\&{return} ${}\NULL;{}$\6
+\4${}\}{}$\2\6
+${}\\{word}\MG\\{translated}\K\\{new\_translated};{}$\7
+\&{size\_t} ${}{*}\\{new\_true\_hyphens}\K\\{realloc}(\\{word}\MG\\{true%
+\_hyphens},\39\\{new\_capacity}*\&{sizeof}(\&{size\_t}));{}$\7
+\&{if} ${}(\\{new\_true\_hyphens}\E\NULL){}$\5
+${}\{{}$\1\6
+${}\\{fprintf}(\\{stderr},\39\.{"Allocation\ error\\n"});{}$\6
+\&{return} ${}\NULL;{}$\6
+\4${}\}{}$\2\6
+${}\\{word}\MG\\{true\_hyphens}\K\\{new\_true\_hyphens};{}$\6
+${}\\{uint8\_t}*\\{new\_found\_hyphens}\K\\{realloc}(\\{word}\MG\\{found%
+\_hyphens},\39\\{new\_capacity}*{}$\&{sizeof} (\\{uint8\_t}));\6
+\&{if} ${}(\\{new\_found\_hyphens}\E\NULL){}$\5
+${}\{{}$\1\6
+${}\\{fprintf}(\\{stderr},\39\.{"Allocation\ error\\n"});{}$\6
+\&{return} ${}\NULL;{}$\6
+\4${}\}{}$\2\6
+${}\\{word}\MG\\{found\_hyphens}\K\\{new\_found\_hyphens};{}$\7
+\&{bool} ${}{*}\\{new\_no\_more}\K\\{realloc}(\\{word}\MG\\{no\_more},\39\\{new%
+\_capacity}*\&{sizeof}(\&{bool}));{}$\7
+\&{if} ${}(\\{new\_no\_more}\E\NULL){}$\5
+${}\{{}$\1\6
+${}\\{fprintf}(\\{stderr},\39\.{"Allocation\ error\\n"});{}$\6
+\&{return} ${}\NULL;{}$\6
+\4${}\}{}$\2\6
+${}\\{word}\MG\\{no\_more}\K\\{new\_no\_more};{}$\7
+\&{size\_t} \\{diff}${}\K\\{new\_capacity}-\\{word}\MG\\{capacity};{}$\7
+${}\\{memset}(\\{word}\MG\\{translated}+\\{word}\MG\\{capacity},\39\.{'\\0'},%
+\39\\{diff}*\&{sizeof}(\&{char}));{}$\6
+${}\\{memset}(\\{word}\MG\\{true\_hyphens}+\\{word}\MG\\{capacity},\39\T{0},\39%
+\\{diff}*\&{sizeof}(\&{size\_t}));{}$\6
+${}\\{memset}(\\{word}\MG\\{found\_hyphens}+\\{word}\MG\\{capacity},\39\T{0},%
+\39\\{diff}*{}$\&{sizeof} (\\{uint8\_t}));\6
+${}\\{memset}(\\{word}\MG\\{no\_more}+\\{word}\MG\\{capacity},\39\\{false},\39%
+\\{diff}*\&{sizeof}(\&{bool}));{}$\6
+${}\\{word}\MG\\{capacity}\K\\{new\_capacity};{}$\6
+\&{return} \\{word};\6
+\4${}\}{}$\2\7
+\1\1\&{void} \\{reset\_word}(\&{struct} \\{word} ${}{*}\\{word})\2\2{}$\6
+${}\{{}$\1\6
+${}\\{word}\MG\\{length}\K\T{0};{}$\6
+${}\\{word}\MG\\{size}\K\T{0};{}$\6
+${}\\{memset}(\\{word}\MG\\{translated},\39\T{0},\39\\{word}\MG\\{capacity}*%
+\&{sizeof}(\&{char}));{}$\6
+${}\\{memset}(\\{word}\MG\\{true\_hyphens},\39\T{0},\39\\{word}\MG\\{capacity}*%
+\&{sizeof}(\&{size\_t}));{}$\6
+${}\\{memset}(\\{word}\MG\\{found\_hyphens},\39\T{0},\39\\{word}\MG%
+\\{capacity}*{}$\&{sizeof} (\\{uint8\_t}));\6
+${}\\{memset}(\\{word}\MG\\{no\_more},\39\\{false},\39\\{word}\MG\\{capacity}*%
+\&{sizeof}(\&{bool}));{}$\6
+\4${}\}{}$\2\7
+\1\1\&{void} \\{destroy\_word}(\&{struct} \\{word} ${}{*}\\{word})\2\2{}$\6
+${}\{{}$\1\6
+${}\\{free}(\\{word}\MG\\{translated});{}$\6
+${}\\{free}(\\{word}\MG\\{true\_hyphens});{}$\6
+${}\\{free}(\\{word}\MG\\{found\_hyphens});{}$\6
+${}\\{free}(\\{word}\MG\\{no\_more});{}$\6
+\\{free}(\\{word});\6
+\4${}\}{}$\2\7
+\1\1\&{size\_t} \\{get\_true\_hyphen}(\&{struct} \\{word} ${}{*}\\{word},\39{}$%
+\&{size\_t} \\{index})\2\2\6
+${}\{{}$\1\6
+\&{if} ${}(\\{index}\G\\{word}\MG\\{size}){}$\5
+${}\{{}$\1\6
+\&{return} \T{0};\6
+\4${}\}{}$\2\6
+\&{return} \\{word}${}\MG\\{true\_hyphens}[\\{index}];{}$\6
+\4${}\}{}$\2\7
+\1\1\&{bool} \\{set\_true\_hyphen}(\&{struct} \\{word} ${}{*}\\{word},\39{}$%
+\&{size\_t} \\{index}${},\39{}$\&{size\_t} \\{value})\2\2\6
+${}\{{}$\1\6
+\&{if} ${}(\\{index}\G\\{word}\MG\\{size}){}$\5
+${}\{{}$\1\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\6
+${}\\{word}\MG\\{true\_hyphens}[\\{index}]\K\\{value};{}$\6
+\&{return} \\{true};\6
+\4${}\}{}$\2\7
+\1\1\\{uint8\_t}\\{get\_found\_hyphen}(\&{struct} \\{word} ${}{*}\\{word},%
+\39{}$\&{size\_t} \\{index})\2\2\6
+${}\{{}$\1\6
+\&{if} ${}(\\{index}\G\\{word}\MG\\{size}){}$\5
+${}\{{}$\1\6
+\&{return} \T{0};\6
+\4${}\}{}$\2\6
+\&{return} \\{word}${}\MG\\{found\_hyphens}[\\{index}];{}$\6
+\4${}\}{}$\2\7
+\1\1\&{bool} \\{set\_found\_hyphen}(\&{struct} \\{word} ${}{*}\\{word},\39{}$%
+\&{size\_t} \\{index}${},\39\\{uint8\_t}\\{value})\2\2{}$\6
+${}\{{}$\1\6
+\&{if} ${}(\\{index}\G\\{word}\MG\\{size}){}$\5
+${}\{{}$\1\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\6
+${}\\{word}\MG\\{found\_hyphens}[\\{index}]\K\\{value};{}$\6
+\&{return} \\{true};\6
+\4${}\}{}$\2\7
+\1\1\&{bool} \\{get\_no\_more}(\&{struct} \\{word} ${}{*}\\{word},\39{}$\&{size%
+\_t} \\{index})\2\2\6
+${}\{{}$\1\6
+\&{if} ${}(\\{index}\G\\{word}\MG\\{size}){}$\5
+${}\{{}$\1\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\6
+\&{return} \\{word}${}\MG\\{no\_more}[\\{index}];{}$\6
+\4${}\}{}$\2\7
+\1\1\&{bool} \\{set\_no\_more}(\&{struct} \\{word} ${}{*}\\{word},\39{}$\&{size%
+\_t} \\{index}${},\39{}$\&{bool} \\{value})\2\2\6
+${}\{{}$\1\6
+\&{if} ${}(\\{index}\G\\{word}\MG\\{size}){}$\5
+${}\{{}$\1\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\6
+${}\\{word}\MG\\{no\_more}[\\{index}]\K\\{value};{}$\6
+\&{return} \\{true};\6
+\4${}\}{}$\2\par
+\fi
+
+\M{91}append\_char\_to\_word.
+Puts the given byte to the end of word. Returns true if the insertion was
+successful.
+
+\Y\B\1\1\&{bool} \\{append\_char\_to\_word}(\&{struct} \\{word} ${}{*}\\{word},%
+\39{}$\&{char} \|c)\2\2\6
+${}\{{}$\1\6
+\&{if} ${}(\\{word}\MG\\{size}\G\\{word}\MG\\{capacity}-\T{1}){}$\5
+${}\{{}$\1\6
+\&{if} ${}(\R\\{resize\_word}(\\{word},\39\T{2}*\\{word}\MG\\{capacity})){}$\5
+${}\{{}$\1\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\6
+\4${}\}{}$\2\6
+${}\\{word}\MG\\{translated}[\\{word}\MG\\{size}]\K\|c;{}$\6
+${}\\{word}\MG\\{size}\PP;{}$\6
+\&{if} ${}((\\{uint8\_t})\|c\I\T{\^ff}){}$\5
+${}\{{}$\1\6
+${}\\{word}\MG\\{length}\PP;{}$\6
+\4${}\}{}$\2\6
+\&{return} \\{true};\6
+\4${}\}{}$\2\par
+\fi
+
+\N{1}{92}Pattern.
+This structure's purpose is to hold information about a pattern parsed from the
+pattern file. It has similar fields as
+{\tt word}, but is stripped of the arrays it does not need:
+
+\item{$\bullet$} {\bf capacity}: the maximum length of the pattern in bytes,
+\item{$\bullet$} {\bf size}: current length of the pattern in bytes,
+\item{$\bullet$} {\bf length}: current length of the pattern in characters,
+\item{$\bullet$} {\bf text}: the pattern translated to lowercase characters
+according to the translate table,
+\item{$\bullet$} {\bf hyphens}: array of hyphenation levels of the pattern.
+
+\Y\B\1\1\&{struct} \\{pattern} ${}{*}{}$\\{init\_pattern}(\&{size\_t} %
+\\{capacity})\2\2\6
+${}\{{}$\1\6
+\&{struct} \\{pattern} ${}{*}\\{pat}\K{}$\\{malloc}(\&{sizeof}(\&{struct} %
+\\{pattern}));\7
+\&{if} ${}(\\{pat}\E\NULL){}$\5
+${}\{{}$\1\6
+\&{return} ${}\NULL;{}$\6
+\4${}\}{}$\2\6
+${}\\{pat}\MG\\{text}\K\\{calloc}(\\{capacity},\39\&{sizeof}(\&{char}));{}$\6
+\&{if} ${}(\\{pat}\MG\\{text}\E\NULL){}$\5
+${}\{{}$\1\6
+\\{free}(\\{pat});\6
+\&{return} ${}\NULL;{}$\6
+\4${}\}{}$\2\6
+${}\\{pat}\MG\\{hyphens}\K\\{calloc}(\\{capacity},\39{}$\&{sizeof} (\\{uint8%
+\_t}));\6
+\&{if} ${}(\\{pat}\MG\\{hyphens}\E\NULL){}$\5
+${}\{{}$\1\6
+${}\\{free}(\\{pat}\MG\\{text});{}$\6
+\\{free}(\\{pat});\6
+\&{return} ${}\NULL;{}$\6
+\4${}\}{}$\2\6
+${}\\{pat}\MG\\{length}\K\T{0};{}$\6
+${}\\{pat}\MG\\{size}\K\T{0};{}$\6
+${}\\{pat}\MG\\{capacity}\K\\{capacity};{}$\6
+\&{return} \\{pat};\6
+\4${}\}{}$\2\7
+\1\1\&{struct} \\{pattern} ${}{*}{}$\\{resize\_pattern}(\&{struct} \\{pattern}
+${}{*}\\{pat},\39{}$\&{size\_t} \\{new\_capacity})\2\2\6
+${}\{{}$\1\6
+\&{char} ${}{*}\\{new\_text}\K\\{realloc}(\\{pat}\MG\\{text},\39\\{new%
+\_capacity}*\&{sizeof}(\&{char}));{}$\7
+${}\\{uint8\_t}*\\{new\_hyphens}\K\\{realloc}(\\{pat}\MG\\{hyphens},\39\\{new%
+\_capacity}*{}$\&{sizeof} (\\{uint8\_t}));\6
+\&{if} ${}(\\{new\_text}\E\NULL\V\\{new\_hyphens}\E\NULL){}$\5
+${}\{{}$\1\6
+${}\\{fprintf}(\\{stderr},\39\.{"Allocation\ error\\n"});{}$\6
+\&{return} ${}\NULL;{}$\6
+\4${}\}{}$\2\6
+${}\\{pat}\MG\\{text}\K\\{new\_text};{}$\6
+${}\\{pat}\MG\\{hyphens}\K\\{new\_hyphens};{}$\6
+${}\\{memset}(\\{pat}\MG\\{text}+\\{pat}\MG\\{capacity},\39\.{'\\0'},\39(\\{new%
+\_capacity}-\\{pat}\MG\\{capacity})*\&{sizeof}(\&{char}));{}$\6
+${}\\{memset}(\\{pat}\MG\\{hyphens}+\\{pat}\MG\\{capacity},\39\T{0},\39(\\{new%
+\_capacity}-\\{pat}\MG\\{capacity})*{}$\&{sizeof} (\\{uint8\_t}));\6
+${}\\{pat}\MG\\{capacity}\K\\{new\_capacity};{}$\6
+\&{return} \\{pat};\6
+\4${}\}{}$\2\7
+\1\1\&{void} \\{reset\_pattern}(\&{struct} \\{pattern} ${}{*}\\{pat})\2\2{}$\6
+${}\{{}$\1\6
+${}\\{pat}\MG\\{length}\K\T{0};{}$\6
+${}\\{pat}\MG\\{size}\K\T{0};{}$\6
+${}\\{memset}(\\{pat}\MG\\{text},\39\.{'\\0'},\39\\{pat}\MG\\{capacity}*%
+\&{sizeof}(\&{char}));{}$\6
+${}\\{memset}(\\{pat}\MG\\{hyphens},\39\T{0},\39\\{pat}\MG\\{capacity}*{}$%
+\&{sizeof} (\\{uint8\_t}));\6
+\4${}\}{}$\2\7
+\1\1\&{void} \\{destroy\_pattern}(\&{struct} \\{pattern} ${}{*}\\{pat})\2\2{}$\6
+${}\{{}$\1\6
+${}\\{free}(\\{pat}\MG\\{text});{}$\6
+${}\\{free}(\\{pat}\MG\\{hyphens});{}$\6
+\\{free}(\\{pat});\6
+\4${}\}{}$\2\7
+\1\1\\{uint8\_t}\\{get\_hyphen}(\&{struct} \\{pattern} ${}{*}\\{pat},\39{}$%
+\&{size\_t} \\{index})\2\2\6
+${}\{{}$\1\6
+\&{if} ${}(\\{index}\G\\{pat}\MG\\{capacity}){}$\5
+${}\{{}$\1\6
+\&{return} \T{0};\6
+\4${}\}{}$\2\6
+\&{return} \\{pat}${}\MG\\{hyphens}[\\{index}];{}$\6
+\4${}\}{}$\2\7
+\1\1\&{bool} \\{set\_hyphen}(\&{struct} \\{pattern} ${}{*}\\{pat},\39{}$\&{size%
+\_t} \\{index}${},\39\\{uint8\_t}\\{value})\2\2{}$\6
+${}\{{}$\1\6
+\&{if} ${}(\\{index}\G\\{pat}\MG\\{capacity}){}$\5
+${}\{{}$\1\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\6
+${}\\{pat}\MG\\{hyphens}[\\{index}]\K\\{value};{}$\6
+\&{return} \\{true};\6
+\4${}\}{}$\2\par
+\fi
+
+\M{93}convert\_index\_to\_pattern.
+Converts a letter index to a byte sequence and appends it to the pattern.
+While the index is greater than 254, appends 0xFF byte to the pattern and
+subtracts 254 from the index. Finally appends the byte with the same
+value as the remainder.
+
+\Y\B\1\1\&{bool} \\{convert\_index\_to\_pattern}(\&{size\_t} \\{index}${},%
+\39{}$\&{struct} \\{pattern} ${}{*}\\{pat})\2\2{}$\6
+${}\{{}$\1\6
+\&{if} ${}(\\{index}\E\T{0}){}$\1\5
+\&{return} \\{true};\2\7
+\&{size\_t} \\{ff\_count}${}\K(\\{index}-\T{1})/\T{254};{}$\6
+\&{size\_t} \\{remainder}${}\K((\\{index}-\T{1})\MOD\T{254})+\T{1};{}$\6
+\&{size\_t} \\{total\_bytes}${}\K\\{ff\_count}+\T{1};{}$\7
+\&{if} ${}(\\{pat}\MG\\{size}\G\\{pat}\MG\\{capacity}-\\{total\_bytes}){}$\5
+${}\{{}$\1\6
+\&{if} ${}(\R\\{resize\_pattern}(\\{pat},\39\T{2}*(\\{pat}\MG\\{capacity}+%
+\\{total\_bytes}))){}$\5
+${}\{{}$\1\6
+\&{return} \\{false};\6
+\4${}\}{}$\2\6
+\4${}\}{}$\2\6
+\&{for} (\&{size\_t} \|i${}\K\T{0};{}$ ${}\|i<\\{ff\_count};{}$ ${}\|i\PP){}$\5
+${}\{{}$\1\6
+${}\\{pat}\MG\\{text}[\\{pat}\MG\\{size}]\K(\&{char})\,\T{\^ff};{}$\6
+${}\\{pat}\MG\\{size}\PP;{}$\6
+\4${}\}{}$\2\6
+${}\\{pat}\MG\\{text}[\\{pat}\MG\\{size}]\K(\&{char})\,\\{remainder};{}$\6
+${}\\{pat}\MG\\{size}\PP;{}$\6
+\&{return} \\{true};\6
+\4${}\}{}$\2\par
+\fi
+
+\N{0}{94}Index.
+List of used identifiers
+\fi
+
+\inx
+\fin
+\con

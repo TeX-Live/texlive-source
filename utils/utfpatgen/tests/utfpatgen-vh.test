@@ -1,0 +1,17 @@
+#! /bin/sh -vx
+# $Id$
+# Copyright 2026 Karl Berry <tex-live@tug.org>
+# You may freely use, modify and/or distribute this file.
+
+failed=
+prog=utfpatgen
+
+./$prog --version >/dev/null \
+|| failed="$failed --version"
+
+./$prog --help >/dev/null \
+|| failed="$failed --help"
+
+test -z "$failed" && exit 0
+echo "failed tests:$failed"
+exit 1

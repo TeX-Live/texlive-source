@@ -750,6 +750,7 @@ enable_ps2eps
 enable_t1utils
 enable_texdoctk
 enable_tpic2pdftex
+enable_utfpatgen
 enable_vlna
 enable_xindy
 enable_xindy_rules
@@ -1551,6 +1552,7 @@ Optional Features:
   --disable-t1utils       do not build the t1utils package
   --disable-texdoctk      do not build the texdoctk package
   --disable-tpic2pdftex   do not build the tpic2pdftex package
+  --disable-utfpatgen     do not build the utfpatgen package
   --disable-vlna          do not build the vlna package
   --enable-xindy          build the xindy package
   --enable-xindy-rules      build and install make-rules package
@@ -4828,6 +4830,34 @@ esac
 # setting need_ for each of []:
 
 echo 'tldbg:KPSE_ENABLE_PROG done (prog=tpic2pdftex)' >&5
+
+## utils/utfpatgen/ac/withenable.ac: configure.ac fragment for the
+## TeX Live subdirectory utils/utfpatgen/
+## configure options and TL libraries for utfpatgen
+echo 'tldbg:KPSE_ENABLE_PROG called: prog=utfpatgen, libs=, options=, comment=.' >&5
+echo 'tldbg:KPSE_ENABLE_PROG enabling: utfpatgen -> yes' >&5
+# Check whether --enable-utfpatgen was given.
+if test ${enable_utfpatgen+y}
+then :
+  enableval=$enable_utfpatgen;
+fi
+#
+#
+case $enable_utfpatgen in #(
+  yes|no) :
+     ;; #(
+  *) :
+
+   enable_utfpatgen=$enable_all_pkgs
+     { printf '%s\n' "$as_me:${as_lineno-$LINENO}: Assuming \`--enable-utfpatgen=$enable_utfpatgen'" >&5
+printf '%s\n' "$as_me: Assuming \`--enable-utfpatgen=$enable_utfpatgen'" >&6;}
+     ac_configure_args="$ac_configure_args '--enable-utfpatgen=$enable_utfpatgen'"
+    ;;
+esac
+#
+# setting need_ for each of []:
+
+echo 'tldbg:KPSE_ENABLE_PROG done (prog=utfpatgen)' >&5
 
 ## utils/vlna/ac/withenable.ac: configure.ac fragment for the TeX Live subdirectory utils/vlna/
 ## configure options and TL libraries required for vlna

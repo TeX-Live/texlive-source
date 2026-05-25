@@ -1,0 +1,62 @@
+ 2 2
+%% This is the file german.tr
+%% defining the letters used for generating German hyphenation patterns
+%% with patgen.
+%%
+%% created by Werner Lemberg <wl@gnu.org>
+ a A
+ ä Ä
+ â Â
+ à À
+ á Á
+ ã Ã
+ å Å
+ æ Æ
+ b B
+ c C
+ ç Ç
+ d D
+ e E
+ é É
+ è È
+ ë Ë
+ ê Ê
+ f F
+ g G
+ h H
+ i I
+ í Í
+ ì Ì
+ î Î
+ ï Ï
+ j J
+ k K
+ l L
+ m M
+ n N
+ ñ Ñ
+ o O
+ ó Ó
+ ò Ò
+ ô Ô
+ ö Ö
+ ø Ø
+ œ Œ
+ p P
+ q Q
+ r R
+ s S
+ š Š
+ ß
+ t T
+ u U
+ ú Ú
+ ü Ü
+ û Û
+ v V
+ w W
+ x X
+ y Y
+ ÿ Ÿ
+ z Z
+ ž Ž
