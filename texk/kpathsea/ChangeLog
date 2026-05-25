@@ -1,3 +1,8 @@
+2026-05-25  Karl Berry  <karl@freefriends.org>
+
+	* kpsewhich.c (version): oops, had extra newline at end of
+	--version message.
+
 2026-05-09  Andreas Scherer  <https://ascherer.github.io>
 
 	* elt-dirs.c: Fix compiler warnings.

@@ -780,7 +780,7 @@ read_command_line (kpathsea kpse, int argc, string *argv)
       puts ("Copyright 2026 Karl Berry & Olaf Weber.\n\
 License LGPLv2.1+: GNU Lesser GPL version 2.1 or later <https://gnu.org/licenses/lgpl.html>\n\
 This is free software: you are free to change and redistribute it.\n\
-There is NO WARRANTY, to the extent permitted by law.\n");
+There is NO WARRANTY, to the extent permitted by law.");
       exit (0);
     }
 
