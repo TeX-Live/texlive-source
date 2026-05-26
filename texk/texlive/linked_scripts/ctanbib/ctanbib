@@ -1,7 +1,7 @@
 #!/usr/bin/env texlua
 kpse.set_program_name("luatex")
 -- ctanbib -- export ctan entries to bib format
--- Copyright: Michal Hoftich <michal.h21@gmail.com> (2014-2023)
+-- Copyright: Michal Hoftich <michal.h21@gmail.com> (2014-2026)
 --
 -- This work may be distributed and/or modified under the
 -- conditions of the LaTeX Project Public License, either version 1.3
@@ -45,7 +45,7 @@ if args.help then
   print(msg)
   os.exit(0)
 elseif args.version then
-  print "ctanbib version 0.2d"
+  print "ctanbib version 0.2e"
   os.exit(0)
 elseif args.ctan then
   pkgurl = true
@@ -196,6 +196,10 @@ end
 
 local get_url = function(record,pkgname)
   local home = record:query_selector("home")[1]
+  if home then return home:get_attribute("href") end
+  -- if there is no home field, we will try to find the repository field, because some packages don't have the home field, 
+  -- but they have the repository field, which is usually the same as home
+  home = record:query_selector("contact[type='repository']")[1]
   if home then return home:get_attribute("href") end
   return "https://ctan.org/pkg/"..pkgname
 end
