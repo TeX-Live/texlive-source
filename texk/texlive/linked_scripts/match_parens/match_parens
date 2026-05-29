@@ -2,7 +2,7 @@
 # encoding: utf-8
 
  Myname = File.basename($0)
-Version = '1.45'
+Version = '1.46'
 
 Help=
 <<'DOC'
@@ -121,7 +121,8 @@ require 'optparse'
 require 'ostruct'
 
 def help
-  system("echo \"#{Help}\" | less -P#{Myname}-#{Version.tr('.','·')}")
+  nv="-#{Myname}-#{Version.sub(/\./,'\\.')} press h for help, q to quit"
+  IO.popen("less -P'#{nv}'",'w') do |pipe| pipe.puts Help end
 end
 
 # Option defaults:
@@ -234,7 +235,7 @@ while x = $o.input.gets()
 end
 
 if $o.test
-   if s != '“{”}'
+   if $o.s != '“{”}'
       raise("test failed! (final mismatch should be “{”})")
    else
       puts "test succeeded"
