@@ -4,7 +4,7 @@
 
 ----------------------------------------------------------------------------
 
-    Copyright (C) 2005-2026 Marc Penninga.
+    Copyright 2005-2026 Marc Penninga.
 
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU General Public License
@@ -41,7 +41,7 @@ use Getopt::Long ();
 use Pod::Usage ();
 use POSIX ();
 
-my $VERSION = '20260422';
+my $VERSION = '20260529';
 
 my ($d, $m, $y) = (localtime time)[3 .. 5];
 my $TODAY = sprintf "%04d/%02d/%02d", $y + 1900, $m + 1, $d;
@@ -1069,7 +1069,7 @@ sub _parse_optical_size {
                 if (!$found) {
                     $self->{minsize} = $minsize;
                     $self->{maxsize} = $maxsize;
-                    $found = $pattern;
+                    $found = $pattern || 'default';
 
                     $self->{family} =~ s/$found//xms;
                 }
@@ -4641,7 +4641,7 @@ don't paraphase.
 
 =head1 COPYRIGHT
 
-Copyright (C) 2005-2026 Marc Penninga.
+Copyright 2005-2026 Marc Penninga.
 
 
 =head1 LICENSE
@@ -4664,7 +4664,7 @@ GNU General Public License for more details.
 
 =head1 VERSION
 
-This document describes B<autoinst> version 20260422.
+This document describes B<autoinst> version 20260529.
 
 
 =head1 RECENT CHANGES
@@ -4672,6 +4672,10 @@ This document describes B<autoinst> version 20260422.
 (See the source for the full story, all the way back to 2005.)
 
 =over 12
+
+=item I<2026-05-29>
+
+Small bugfix.
 
 =item I<2026-04-22>
 
