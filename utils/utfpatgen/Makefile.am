@@ -36,3 +36,14 @@ utfpatgen.c: $(UTFPATGEN_TREE)/utfpatgen.w
 	cp utfpatgen.c $(srcdir)/$(UTFPATGEN_TREE)/../utfpatgen.c
 # the leading space here stops Automake from reading it:
  endif #TL_CTANGLE
+
+# Update -src dir from a separate git checkout of the repo.
+# Since upstream is not making separate releases, have to do it this way.
+# After updating, remake our ./utfpatgen.c per the above.
+excludes = --cvs-exclude --exclude=.gitignore --exclude=cweb\*
+upstream_repo = $(HOME)/tex/utfpatgen/ 
+tl_src = $(srcdir)/$(UTFPATGEN_TREE)/
+chicken = #-n
+#
+update-src:
+	rsync --delete -av $(chicken) $(excludes) $(upstream_repo) $(tl_src)

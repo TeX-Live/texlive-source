@@ -100,4 +100,4 @@ build/utfpatgen.c: utfpatgen.w | build
 # Cleaning
 .PHONY: clean
 clean:
-	rm -rf utfpatgen.pdf build pattmp.* profile_visual.png
+	rm -rf utfpatgen.pdf build pattmp.* profile_visual.png build/ gmon.out

@@ -7,7 +7,7 @@ dnl   This file is free software; the copyright holder
 dnl   gives unlimited permission to copy and/or distribute it,
 dnl   with or without modifications, as long as this notice is preserved.
 dnl
-m4_define([utfpatgen_version], [0.1])[]dnl
+m4_define([utfpatgen_version], [1.0])[]dnl
 AC_INIT([utfpatgen (TeX Live)], utfpatgen_version, [tex-live@tug.org])
 AC_PREREQ([2.65])
 AC_CONFIG_SRCDIR([utfpatgen-src/utfpatgen.w])

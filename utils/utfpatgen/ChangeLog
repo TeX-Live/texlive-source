@@ -1,5 +1,10 @@
+2026-05-29  Karl Berry  <karl@freefriends.org>
+
+	* Update to utfpatgen 1.0.
+
 2026-05-24  Karl Berry  <karl@freefriends.org>
 
 	* Initial import of utf8patgen by Ond\v{r}ej Metelka.
+	https://github.com/tondach01/utfpatgen
 
 (This ChangeLog file public domain.)

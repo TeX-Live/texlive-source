@@ -4,7 +4,7 @@
 #include <stdlib.h>
 
 #ifndef UTFPATGEN_VERSION
-#define UTFPATGEN_VERSION "0.1"
+#define UTFPATGEN_VERSION "1.0"
 #endif
 
 struct trie {

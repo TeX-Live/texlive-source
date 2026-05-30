@@ -1,4 +1,4 @@
-TH UTFPATGEN 1 "20 May 2026" "version 0.1"
+.TH UTFPATGEN 1 "20 May 2026" "version 0.1"
 .\"=====================================================================
 .if t .ds TX \fRT\\h'-0.10m'\\v'0.17v'E\\v'-0.17v'\\h'-0.06m'X\fP
 .if n .ds TX TeX
@@ -12,9 +12,13 @@ UTFpatgen \- generate patterns for TeX hyphenation
 .I dictionary_file pattern_file patout_file translate_file
 .\"=====================================================================
 .SH DESCRIPTION
-The
 .I UTFpatgen
-program reads a
+is an extension to
+.BR patgen (1)
+for generating patterns from large input alphabets, with an extended
+hyphenation level range and native dynamic memory management.
+.PP
+The program reads a
 .I dictionary_file
 containing a list of hyphenated words and a
 .I pattern_file
@@ -38,16 +42,10 @@ showing the good and bad hyphens found by the generated patterns, where
 .I n
 is the highest hyphenation level.
 .PP
-The
-.I UTFpatgen
-is an extension to
-.BR patgen (1)
-for generating patterns from large input alphabets. 
-.PP
 All filenames must be complete; no adding of default
 extensions or path searching is done.
 .\"=====================================================================
-.SH FILE FORMATS
+.SH INPUT FORMATS
 .TP \w'@@'u+2n
 .B Letters
 .I UTF patgen
@@ -66,78 +64,12 @@ encoding (ASCII numerals), we recommend using
 .BR sed (1)
 for conversion.
 .TP \w'@@'u+2n
-.B Dictionary file
-A dictionary file contains a weighted list of hyphenated words, one word
-per line, each starting in column 1. A weight in column 1 indicates a
-global word weight (initially =1) applicable to all following words up
-to the next global word weight. A weight at some intercharacter position
-indicates a weight for that position only.
-
-The hyphens in a word are indicated by `-', `*', or `.' (or their
-replacements as defined in the translate file) for hyphens yet to be
-found, `good' hyphens (correctly found by the patterns), and `bad'
-hyphens (erroneously found by the patterns) respectively.
-.TP
-.B Pattern file
-A pattern file contains only patterns in the format above, e.g., from a
-previous run of UTFpatgen.  It may \fInot\fR contain any \*(TX comments or
-control sequences.  For instance, this is not a valid pattern file:
-.nf
-
-% this is an invalid pattern file for TeX.
-\\patterns{%
- .\|.\|.
-}
-.fi
-Pattern files can only contain the actual patterns, i.e., the `.\|.\|.'.
-.TP
-.B Translate file
-A translate file starts with a line containing the values of
-.I left_hyphen_min
-in columns 1-2,
-.I right_hyphen_min
-in columns 3-4, and either a blank or the replacement for one of the
-``hyphen'' characters `-', `*', and `.' in columns 5, 6, and 7. Input
-lines are extended with blanks as for many \*(TX related programs.
-
-Each following line defines one `letter': an arbitrary delimiter
-character in column 1, followed by one or more external representations
-of that character (first the `lower' case one used for output), each
-one terminated by the delimiter and the whole sequence terminated by
-another delimiter.
-
-If the translate file is empty, the default values are
-.IR left_hyphen_min "=2, " right_hyphen_min "=3,"
-and the 26 lower case letters
-.BR a .\|.\|. z
-with their upper case representations
-.BR A .\|.\|. Z .
-.TP
-.B Terminal input
-After reading the
-.I translate_file
-and any previously-generated patterns from
-.IR pattern_file ,
-.I UTFpatgen
-requests input from the user's terminal.
-
-First the integer values of
-.IR hyph_start " and " hyph_finish ,
-the lowest and highest hyphenation level for which patterns are to be
-generated. The value of
-.I hyph_start
-should be larger than any hyphenation level already present in
-.IR pattern_file .
-
-Then, for each hyphenation level, the integer values of
-.IR pat_start " and " pat_finish ,
-the smallest and largest pattern length to be analyzed, as well as
-.IR "good weight" ", " "bad weight" ", and " threshold ,
-the weights for good and bad hyphens and a weight threshold for useful
-patterns.
-
-Finally the decision (`y' or `Y' vs. anything else) whether or not to
-produce a hyphenated word list.
+.B File formats
+The formats and conventions required in the 4 input files (
+.I dictionary_file, pattern_file, patout_file, translate_file
+) are identical to ones in
+.BR patgen (1)
+with the only exception of level and weight encoding described earlier.
 .\"=====================================================================
 .SH FILES
 .TP \w'@@'u+2n
@@ -182,4 +114,4 @@ https://tug.org/TUGboat/Contents/listkeyword.html#CatTAGMultilingualDocumentProc
 language-specific document processing.
 .\"=====================================================================
 .SH AUTHORS
-by Ondrej Metelka (ondra.metelka@seznam.cz)
+© 2026 Ondřej Metelka (https://ctan.org/pkg/utfpatgen)

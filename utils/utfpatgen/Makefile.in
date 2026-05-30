@@ -510,6 +510,14 @@ AM_CFLAGS = $(WARNING_CFLAGS)
 AM_CPPFLAGS = -I$(srcdir)/$(UTFPATGEN_TREE)
 man1_MANS = $(UTFPATGEN_TREE)/utfpatgen.man
 TESTS = tests/utfpatgen-vh.test
+
+# Update -src dir from a separate git checkout of the repo.
+# Since upstream is not making separate releases, have to do it this way.
+# After updating, remake our ./utfpatgen.c per the above.
+excludes = --cvs-exclude --exclude=.gitignore --exclude=cweb\*
+upstream_repo = $(HOME)/tex/utfpatgen/ 
+tl_src = $(srcdir)/$(UTFPATGEN_TREE)/
+chicken = #-n
 all: all-am
 
 .SUFFIXES:
@@ -1237,6 +1245,9 @@ utfpatgen.c: $(UTFPATGEN_TREE)/utfpatgen.w
 	cp utfpatgen.c $(srcdir)/$(UTFPATGEN_TREE)/../utfpatgen.c
 # the leading space here stops Automake from reading it:
  endif #TL_CTANGLE
+#
+update-src:
+	rsync --delete -av $(chicken) $(excludes) $(upstream_repo) $(tl_src)
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

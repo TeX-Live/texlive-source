@@ -1,14 +1,14 @@
 /*5:*/
-#line 85 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
+#line 109 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
 
 /*4:*/
-#line 77 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
+#line 100 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
 
 #include "utfpatgen.h"
 #include <string.h> 
 
 /*:4*/
-#line 86 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
+#line 110 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
 
 
 # ifndef TEST
@@ -24,7 +24,7 @@ return EXIT_SUCCESS;
 }
 print_version();
 /*6:*/
-#line 123 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
+#line 151 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
 
 struct params*params= init_params();
 if(params==NULL){
@@ -59,10 +59,10 @@ return EXIT_FAILURE;
 }
 
 /*:6*/
-#line 100 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
+#line 124 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
 ;
 /*7:*/
-#line 161 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
+#line 190 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
 
 printf("hyph_start (lowest -), hyph_finish (highest hyphenation level): ");
 size_t hyph_start,hyph_finish;
@@ -85,10 +85,10 @@ params->hyph_finish= (uint8_t)hyph_finish;
 }
 
 /*:7*/
-#line 101 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
+#line 125 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
 ;
 /*8:*/
-#line 186 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
+#line 216 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
 
 size_t pat_start,pat_finish,good_wt,bad_wt,thresh;
 for(size_t i= params->hyph_start;i<=params->hyph_finish;i++){
@@ -101,7 +101,7 @@ if(params->hyph_start<=ps.max_level){
 printf("Warning: Largest hyphenation value %u in patterns should be less than hyph_start\n",ps.max_level);
 }
 /*9:*/
-#line 219 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
+#line 253 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
 
 printf("pat_start (shortest -), pat_finish (longest pattern explored): ");
 while(true){
@@ -131,10 +131,10 @@ params->bad_wt= (uint8_t)bad_wt;
 params->thresh= (uint8_t)thresh;
 
 /*:9*/
-#line 197 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
+#line 227 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
 ;
 /*10:*/
-#line 253 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
+#line 289 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
 
 uint8_t aux_dot;
 bool more_this_level[256];
@@ -167,7 +167,7 @@ more_this_level[i]= false;
 
 
 /*:10*/
-#line 198 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
+#line 228 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
 ;
 if(!delete_bad_patterns(pt)){
 destroy_params(params);
@@ -179,10 +179,10 @@ printf("total of %zu patterns at hyph_level %u\n",ps.level_pattern_cnt,params->h
 }
 
 /*:8*/
-#line 102 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
+#line 126 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
 ;
 /*11:*/
-#line 288 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
+#line 324 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
 
 if(!output_patterns(pt,tt,params->output_file)){
 destroy_params(params);
@@ -210,7 +210,7 @@ return EXIT_FAILURE;
 }
 
 /*:11*/
-#line 103 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
+#line 127 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
 ;
 destroy_params(params);
 destroy_tr_table(tt);
@@ -218,10 +218,10 @@ destroy_pattern_trie(pt);
 return EXIT_SUCCESS;
 }
 # endif
-#line 110 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
+#line 134 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
 
 /*:5*//*14:*/
-#line 328 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
+#line 368 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
 
 bool parse_input(char*argv[],int argc,struct params*params){
 if(argc!=5){
@@ -262,7 +262,7 @@ return true;
 }
 
 /*:14*//*15:*/
-#line 371 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
+#line 412 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
 
 bool read_line(FILE*stream,struct string_buffer*buf){
 reset_buffer(buf);
@@ -290,7 +290,7 @@ return true;
 }
 
 /*:15*//*16:*/
-#line 400 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
+#line 441 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
 
 void print_help(){
 printf("Usage: utfpatgen [OPTION]... DICTIONARY PATTERNS OUTPUT TRANSLATE\n");
@@ -298,17 +298,22 @@ printf("\tGenerate the OUTPUT hyphenation file for use with TeX\n");
 printf("\tfrom the DICTIONARY, PATTERNS, and TRANSLATE files.\n");
 printf("\n--help        print this help and exit\n");
 printf("--version     output version information and exit\n");
+printf("\nutfpatgen home page: https://ctan.org/pkg/utfpatgen\n");
 }
 
 /*:16*//*17:*/
-#line 412 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
+#line 454 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
 
 void print_version(){
 printf("This is utfpatgen version %s\n",UTFPATGEN_VERSION);
+printf("\tCopyright 2026 Ondřej Metelka\n");
+printf("\tLicense MIT: https://mit-license.org/\n");
+printf("\nThis is free software: you are free to change and redistribute it.\n");
+printf("\tThere is NO WARRANTY, to the extent permitted by law.\n");
 }
 
 /*:17*//*19:*/
-#line 444 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
+#line 498 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
 
 bool read_translate(struct params*params,struct translate_table*tt){
 rewind(params->translate_file);
@@ -375,21 +380,21 @@ return true;
 }
 
 /*:19*//*20:*/
-#line 512 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
+#line 567 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
 
 bool is_integer(char c){
 return(c>='0'&&c<='9');
 }
 
 /*:20*//*21:*/
-#line 520 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
+#line 576 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
 
 bool is_space(char c){
 return(c==' ');
 }
 
 /*:21*//*22:*/
-#line 529 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
+#line 586 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
 
 bool parse_two_digit(struct string_buffer*buf,size_t pos,int8_t*out){
 if(pos+1>=buf->size){
@@ -415,7 +420,7 @@ return true;
 }
 
 /*:22*//*23:*/
-#line 557 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
+#line 615 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
 
 bool parse_header(struct string_buffer*buf,struct params*params){
 int8_t val= -1;
@@ -443,7 +448,7 @@ return true;
 }
 
 /*:23*//*24:*/
-#line 588 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
+#line 647 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
 
 bool parse_letters(struct string_buffer*buf,struct translate_table*tt,struct trie*helper_trie){
 if(buf->size==0){
@@ -509,7 +514,7 @@ return true;
 }
 
 /*:24*//*25:*/
-#line 655 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
+#line 715 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
 
 bool default_ascii_mapping(struct translate_table*tt,struct trie*helper_trie){
 size_t out_index;
@@ -560,7 +565,7 @@ return true;
 }
 
 /*:25*//*27:*/
-#line 722 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
+#line 787 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
 
 bool read_patterns(struct params*params,struct pattern_trie*pt,struct translate_table*tt,struct pass_stats*ps){
 ps->level_pattern_cnt= 0;
@@ -598,7 +603,7 @@ return true;
 }
 
 /*:27*//*28:*/
-#line 762 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
+#line 828 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
 
 bool parse_pattern(struct string_buffer*buf,struct pattern*out_pattern,struct translate_table*tt){
 reset_pattern(out_pattern);
@@ -673,7 +678,7 @@ return true;
 }
 
 /*:28*//*29:*/
-#line 839 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
+#line 905 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
 
 bool insert_new_pattern(struct pattern*pat,struct pattern_trie*pt,struct pass_stats*ps,struct trie*helper_trie){
 size_t hyphenation_value,node;
@@ -707,7 +712,7 @@ return true;
 }
 
 /*:29*//*31:*/
-#line 891 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
+#line 962 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
 
 bool process_dictionary(struct params*params,struct translate_table*tt,struct pattern_trie*pt,struct pass_stats*ps){
 ps->good_cnt= 0;
@@ -744,7 +749,7 @@ return true;
 }
 
 /*:31*//*32:*/
-#line 930 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
+#line 1002 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
 
 bool process_all_words(struct params*params,struct translate_table*tt,struct pattern_trie*pt,struct pass_stats*ps,struct count_trie*ct){
 rewind(params->dictionary_file);
@@ -797,7 +802,7 @@ return true;
 }
 
 /*:32*//*33:*/
-#line 985 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
+#line 1057 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
 
 bool parse_word(struct string_buffer*buf,struct translate_table*tt,struct params*params,struct word*out_word){
 reset_word(out_word);
@@ -890,7 +895,7 @@ return true;
 }
 
 /*:33*//*34:*/
-#line 1079 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
+#line 1151 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
 
 void count_dots(struct word*word,struct params*params,struct pass_stats*ps){
 if(word->length<(uint8_t)(params->right_hyphen_min+1)){
@@ -931,7 +936,7 @@ ps->miss_cnt+= weight;
 }
 
 /*:34*//*35:*/
-#line 1122 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
+#line 1194 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
 
 bool process_word(struct word*word,struct count_trie*ct,struct params*params,struct trie*helper_trie){
 uint8_t dot_min= params->pat_dot;
@@ -1014,7 +1019,7 @@ return true;
 }
 
 /*:35*//*37:*/
-#line 1228 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
+#line 1304 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
 
 bool collect_count_trie(struct count_trie*ct,struct pattern_trie*pt,struct params*params,struct pass_stats*ps){
 double bad_eff= (double)params->thresh/(double)params->good_wt;
@@ -1044,7 +1049,7 @@ return true;
 }
 
 /*:37*//*38:*/
-#line 1260 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
+#line 1337 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
 
 bool traverse_count_trie(struct count_trie*ct,struct pattern_trie*pt,struct params*params,struct pass_stats*ps){
 size_t root= 1;
@@ -1144,7 +1149,7 @@ return true;
 }
 
 /*:38*//*40:*/
-#line 1365 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
+#line 1444 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
 
 bool delete_bad_patterns(struct pattern_trie*pt){
 size_t old_op_cnt= pt->ops->count;
@@ -1165,7 +1170,7 @@ return true;
 }
 
 /*:40*//*41:*/
-#line 1388 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
+#line 1468 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
 
 bool delete_patterns(struct pattern_trie*pt){
 size_t root= 1;
@@ -1262,7 +1267,7 @@ return true;
 }
 
 /*:41*//*42:*/
-#line 1486 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
+#line 1567 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
 
 void deallocate_node(struct trie*t,size_t t_index){
 size_t old_head= t->links[0];
@@ -1275,7 +1280,7 @@ t->occupied--;
 }
 
 /*:42*//*43:*/
-#line 1500 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
+#line 1582 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
 
 bool link_around_bad_outputs(struct pattern_trie*pt,size_t t_index){
 size_t lookup_index= pt->t->aux[t_index];
@@ -1309,7 +1314,7 @@ return true;
 }
 
 /*:43*//*45:*/
-#line 1541 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
+#line 1625 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
 
 bool output_patterns(struct pattern_trie*pt,struct translate_table*tt,FILE*output_file){
 size_t root= 1;
@@ -1364,7 +1369,7 @@ return true;
 }
 
 /*:45*//*46:*/
-#line 1597 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
+#line 1681 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
 
 void output_pattern(struct string_buffer*pattern,struct translate_table*tt,struct outputs*ops,size_t op_index,FILE*output_file){
 if(op_index==0){
@@ -1397,7 +1402,7 @@ fputc('\n',output_file);
 }
 
 /*:46*//*47:*/
-#line 1631 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
+#line 1716 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
 
 size_t get_highest_level(struct outputs*ops,size_t start_index,size_t position){
 size_t highest= 0;
@@ -1414,7 +1419,7 @@ return highest;
 }
 
 /*:47*//*49:*/
-#line 1656 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
+#line 1744 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
 
 bool hyphenate_word(struct word*word,struct pattern_trie*pt,struct params*params){
 size_t current_index= 0;
@@ -1481,7 +1486,7 @@ return true;
 }
 
 /*:49*//*50:*/
-#line 1725 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
+#line 1814 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
 
 bool hyphenate_dictionary(struct params*params,struct translate_table*tt,struct pattern_trie*pt,bool output,struct pass_stats*ps){
 ps->good_cnt= 0;
@@ -1520,7 +1525,7 @@ return true;
 }
 
 /*:50*//*51:*/
-#line 1766 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
+#line 1855 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
 
 bool hyphenate_all_words(struct params*params,struct translate_table*tt,struct pattern_trie*pt,FILE*pattmp,struct pass_stats*ps){
 rewind(params->dictionary_file);
@@ -1551,7 +1556,7 @@ return true;
 }
 
 /*:51*//*52:*/
-#line 1798 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
+#line 1887 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
 
 void output_hyphenated_word(FILE*pattmp,struct word*word,struct translate_table*tt,struct params*params){
 if(params->word_weight> 1){
@@ -1590,14 +1595,14 @@ fputc('\n',pattmp);
 }
 
 /*:52*//*54:*/
-#line 1848 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
+#line 1942 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
 
 inline bool is_utf_start_byte(uint8_t byte){
 return byte<0x80||byte> 0xbf;
 }
 
 /*:54*//*56:*/
-#line 1892 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
+#line 2001 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
 
 struct trie*init_trie(size_t capacity){
 struct trie*t= malloc(sizeof(struct trie));
@@ -1633,7 +1638,7 @@ return t;
 }
 
 /*:56*//*57:*/
-#line 1930 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
+#line 2040 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
 
 bool put_first_level(struct trie*t){
 size_t root= 1;
@@ -1706,7 +1711,7 @@ free(t);
 }
 
 /*:57*//*58:*/
-#line 2004 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
+#line 2114 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
 
 void relink_trie(struct trie*t){
 size_t last_free= 0;
@@ -1720,7 +1725,7 @@ set_links(t,last_free,0);
 }
 
 /*:58*//*59:*/
-#line 2019 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
+#line 2130 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
 
 bool copy_node(struct trie*from,size_t from_index,struct trie*to,size_t to_index){
 if(to_index>=to->capacity){
@@ -1769,7 +1774,7 @@ return true;
 }
 
 /*:59*//*60:*/
-#line 2069 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
+#line 2181 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
 
 void set_links(struct trie*t,size_t from,size_t to){
 t->links[from]= to;
@@ -1777,14 +1782,14 @@ t->aux[to]= from;
 }
 
 /*:60*//*61:*/
-#line 2078 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
+#line 2190 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
 
 bool is_node_occupied(struct trie*t,size_t index){
 return t->nodes[index]!=0;
 }
 
 /*:61*//*62:*/
-#line 2087 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
+#line 2200 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
 
 bool insert_pattern(struct trie*t,const char*pattern,size_t*out_op_index,struct trie*helper_trie){
 size_t length= strlen(pattern);
@@ -1792,7 +1797,7 @@ return insert_substring(t,pattern,length,length,out_op_index,helper_trie);
 }
 
 /*:62*//*63:*/
-#line 2097 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
+#line 2211 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
 
 bool insert_substring(struct trie*t,const char*pattern,size_t end,size_t length,size_t*out_op_index,struct trie*helper_trie){
 size_t index= end-length;
@@ -1852,7 +1857,7 @@ return true;
 }
 
 /*:63*//*64:*/
-#line 2159 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
+#line 2274 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
 
 bool repack(struct trie*t,struct trie*q,size_t*node,size_t*base,char value){
 if(!unpack(t,*base-(uint8_t)value,q)){
@@ -1878,7 +1883,7 @@ return true;
 }
 
 /*:64*//*65:*/
-#line 2186 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
+#line 2301 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
 
 bool unpack(struct trie*from,size_t base,struct trie*to){
 to->node_max= 1;
@@ -1899,7 +1904,7 @@ return true;
 }
 
 /*:65*//*66:*/
-#line 2209 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
+#line 2325 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
 
 bool first_fit(struct trie*t,struct trie*q,size_t*out_base){
 size_t base;
@@ -1924,7 +1929,7 @@ return true;
 }
 
 /*:66*//*67:*/
-#line 2236 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
+#line 2353 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
 
 bool find_base_for_first_fit(struct trie*t,struct trie*q,size_t*out_base){
 size_t t_index;
@@ -1976,7 +1981,7 @@ return false;
 }
 
 /*:67*//*68:*/
-#line 2289 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
+#line 2407 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
 
 size_t traverse_trie(struct trie*t,const char*pattern){
 size_t index= 1;
@@ -1998,7 +2003,7 @@ return node;
 }
 
 /*:68*//*69:*/
-#line 2333 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
+#line 2459 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
 
 struct outputs*init_outputs(size_t capacity){
 struct outputs*ops= malloc(sizeof(struct outputs));
@@ -2072,7 +2077,7 @@ return true;
 }
 
 /*:69*//*70:*/
-#line 2409 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
+#line 2535 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
 
 size_t hash_trie_output(struct outputs*ops,size_t value,size_t position,size_t next_op_index){
 size_t hash= ((next_op_index+313*position+361*value)%ops->lookup_cap)+1;
@@ -2093,7 +2098,7 @@ return 0;
 }
 
 /*:70*//*71:*/
-#line 2437 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
+#line 2564 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
 
 struct pattern_trie*init_pattern_trie(size_t trie_capacity,size_t outputs_capacity){
 struct pattern_trie*pt= malloc(sizeof(struct pattern_trie));
@@ -2126,7 +2131,7 @@ free(pt);
 }
 
 /*:71*//*72:*/
-#line 2471 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
+#line 2599 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
 
 bool new_trie_output(struct pattern_trie*pt,size_t value,size_t position,size_t next_op_index,size_t*op_index){
 if(pt->ops->count>=pt->ops->capacity-1){
@@ -2158,7 +2163,7 @@ return true;
 }
 
 /*:72*//*73:*/
-#line 2505 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
+#line 2633 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
 
 bool set_output(struct pattern_trie*pt,size_t node,size_t value,size_t position){
 size_t op_index;
@@ -2170,7 +2175,7 @@ return true;
 }
 
 /*:73*//*74:*/
-#line 2525 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
+#line 2655 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
 
 struct pattern_counts*init_pattern_counts(size_t capacity){
 struct pattern_counts*pc= malloc(sizeof(struct pattern_counts));
@@ -2219,7 +2224,7 @@ free(pc);
 }
 
 /*:74*//*75:*/
-#line 2584 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
+#line 2716 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
 
 struct count_trie*init_count_trie(size_t trie_capacity,size_t counts_capacity){
 struct count_trie*ct= malloc(sizeof(struct count_trie));
@@ -2252,7 +2257,7 @@ free(ct);
 }
 
 /*:75*//*76:*/
-#line 2625 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
+#line 2758 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
 
 struct string_buffer*init_buffer(size_t capacity){
 struct string_buffer*buf= malloc(sizeof(struct string_buffer));
@@ -2296,7 +2301,7 @@ free(buf);
 }
 
 /*:76*//*77:*/
-#line 2671 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
+#line 2805 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
 
 bool append_char(struct string_buffer*buf,char c){
 if(buf->size+1>=buf->capacity){
@@ -2310,7 +2315,7 @@ return true;
 }
 
 /*:77*//*78:*/
-#line 2687 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
+#line 2822 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
 
 bool append_string(struct string_buffer*buf,const char*str){
 size_t len= strlen(str)+1;
@@ -2325,7 +2330,7 @@ return true;
 }
 
 /*:78*//*79:*/
-#line 2711 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
+#line 2849 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
 
 struct translate_table*init_tr_table(size_t mapping_capacity,size_t alphabet_capacity){
 struct translate_table*tt= malloc(sizeof(struct translate_table));
@@ -2378,7 +2383,7 @@ free(tt);
 }
 
 /*:79*//*80:*/
-#line 2765 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
+#line 2904 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
 
 char*get_lower(struct translate_table*tt,const char*letter){
 size_t index= traverse_trie(tt->mapping,letter);
@@ -2393,7 +2398,7 @@ return tt->alphabet->data+alphabet_offset;
 }
 
 /*:80*//*81:*/
-#line 2782 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
+#line 2921 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
 
 size_t get_letter_index(struct translate_table*tt,char*letter){
 size_t index= traverse_trie(tt->mapping,letter);
@@ -2404,7 +2409,7 @@ return tt->mapping->aux[index];
 }
 
 /*:81*//*82:*/
-#line 2797 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
+#line 2936 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
 
 bool convert_index(size_t index,struct word*word){
 if(index==0){
@@ -2424,7 +2429,7 @@ return true;
 }
 
 /*:82*//*83:*/
-#line 2819 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
+#line 2958 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
 
 size_t convert_byte_sequence(char**sequence){
 if(sequence==NULL||*sequence==NULL){
@@ -2441,7 +2446,7 @@ return ff_count*254+remainder;
 }
 
 /*:83*//*84:*/
-#line 2865 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
+#line 3019 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
 
 struct params*init_params(){
 struct params*p= malloc(sizeof(struct params));
@@ -2489,7 +2494,7 @@ free(p);
 }
 
 /*:84*//*86:*/
-#line 2936 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
+#line 3097 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
 
 struct stack*init_stack(size_t capacity){
 struct stack*s= malloc(sizeof(struct stack));
@@ -2527,7 +2532,7 @@ free(s);
 }
 
 /*:86*//*87:*/
-#line 2975 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
+#line 3137 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
 
 bool put_on_stack(struct stack*s,size_t value){
 if(s->top>=s->capacity){
@@ -2542,7 +2547,7 @@ return true;
 }
 
 /*:87*//*88:*/
-#line 2991 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
+#line 3154 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
 
 size_t get_top_value(struct stack*s){
 if(s->top==0){
@@ -2552,7 +2557,7 @@ return s->data[s->top-1];
 }
 
 /*:88*//*89:*/
-#line 3002 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
+#line 3165 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
 
 void set_top_value(struct stack*s,size_t value){
 if(s->top==0){
@@ -2562,7 +2567,7 @@ s->data[s->top-1]= value;
 }
 
 /*:89*//*90:*/
-#line 3027 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
+#line 3197 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
 
 struct word*init_word(size_t capacity){
 struct word*word= malloc(sizeof(struct word));
@@ -2690,7 +2695,7 @@ word->no_more[index]= value;
 return true;
 }
 /*:90*//*91:*/
-#line 3156 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
+#line 3327 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
 
 bool append_char_to_word(struct word*word,char c){
 if(word->size>=word->capacity-1){
@@ -2707,7 +2712,7 @@ return true;
 }
 
 /*:91*//*92:*/
-#line 3181 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
+#line 3354 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
 
 struct pattern*init_pattern(size_t capacity){
 struct pattern*pat= malloc(sizeof(struct pattern));
@@ -2780,7 +2785,7 @@ return true;
 }
 
 /*:92*//*93:*/
-#line 3258 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
+#line 3431 "../../../utils/utfpatgen/utfpatgen-src/utfpatgen.w"
 
 bool convert_index_to_pattern(size_t index,struct pattern*pat){
 if(index==0)return true;
