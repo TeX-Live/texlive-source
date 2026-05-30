@@ -1,6 +1,17 @@
+2026-05-30  Karl Berry  <karl@freefriends.org>
+
+	* Makefile.am (update-man): new target, along with variables
+	to process utf-8 encoded man page using the fonts in Master/tlpkg/dev.
+	* utfpatgen-src/utfpatgen.man1.pdf: commit for CTAN.
+	* utfpatgen-src/utfpatgen.man1: wording.
+
 2026-05-29  Karl Berry  <karl@freefriends.org>
 
-	* Update to utfpatgen 1.0.
+	* utfpatgen-src/,
+	* utfpatgen.c,
+	* configure.ac: Update to utfpatgen 1.0.
+	* Makefile.am (update-src): new target to update utfpatgen-src/
+	from an external git checkout.
 
 2026-05-24  Karl Berry  <karl@freefriends.org>
 
