@@ -3,7 +3,7 @@
 % Load plain if necessary, i.e., if running under initex.
 \expandafter\ifx\csname fmtname\endcsname\relax\input plain\fi
 %
-\def\texinfoversion{2026-04-26.12}
+\def\texinfoversion{2026-06-01.16}
 %
 % Copyright 1985, 1986, 1988, 1990-2025 Free Software Foundation, Inc.
 %
@@ -5359,7 +5359,7 @@ $$%
 
 % \checksortas\segment
 % Call \indexwritesortas if a @sortas command appears in the segment
-\def\checksortas#1{
+\def\checksortas#1{%
   \let\sortas\relax
   \expandafter\checksortasx#1\relax\sortas{}\sortas
 }
@@ -5372,7 +5372,7 @@ $$%
 
 % \checkseealso\segment
 % Call \indexwriteseealso if a @seealso command appears in the segment
-\def\checkseealso#1{
+\def\checkseealso#1{%
   \let\seealso\relax
   \expandafter\checkseealsox#1\relax\seealso{}\seealso
 }
@@ -5385,7 +5385,7 @@ $$%
 
 % \checkseeentry\segment
 % Call \indexwriteseeentry if a @seeentry command appears in the segment
-\def\checkseeentry#1{
+\def\checkseeentry#1{%
   \let\seeentry\relax
   \expandafter\checkseeentryx#1\relax\seeentry{}\seeentry
 }
