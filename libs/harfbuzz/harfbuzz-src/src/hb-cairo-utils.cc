@@ -579,7 +579,7 @@ _hb_cairo_paint_sweep_gradient (hb_cairo_context_t *c,
 
   hb_array_t<hb_color_stop_t> (stops, len)
     .qsort ([] (const hb_color_stop_t &a, const hb_color_stop_t &b) {
-      return a.offset < b.offset;
+      return (a.offset > b.offset) - (a.offset < b.offset);
     });
 
   cairo_clip_extents (cr, &x1, &y1, &x2, &y2);

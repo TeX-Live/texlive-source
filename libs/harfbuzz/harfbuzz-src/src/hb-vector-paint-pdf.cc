@@ -892,7 +892,7 @@ hb_pdf_build_gradient_function_from_stops (hb_pdf_resources_t *res,
   /* Sort by offset. */
   paint->color_stops_scratch.as_array ().qsort (
     [] (const hb_color_stop_t &a, const hb_color_stop_t &b)
-    { return a.offset < b.offset; });
+    { return (a.offset > b.offset) - (a.offset < b.offset); });
 
   if (count == 2)
   {
@@ -1342,7 +1342,7 @@ hb_pdf_paint_sweep_gradient (hb_paint_funcs_t *,
   hb_vector_t<hb_color_stop_t> &stops = paint->color_stops_scratch;
   stops.as_array ().qsort (
     [] (const hb_color_stop_t &a, const hb_color_stop_t &b)
-    { return a.offset < b.offset; });
+    { return (a.offset > b.offset) - (a.offset < b.offset); });
 
   hb_paint_extend_t extend = hb_color_line_get_extend (color_line);
 

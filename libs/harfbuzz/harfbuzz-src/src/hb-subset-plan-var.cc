@@ -55,6 +55,7 @@
    }
  }
 
+#ifndef HB_NO_OT_FONT_CFF
  static inline hb_font_t*
  _get_hb_font_with_variations (const hb_subset_plan_t *plan)
  {
@@ -77,6 +78,7 @@
    hb_font_set_variations (font, vars.arrayZ, plan->user_axes_location.get_population ());
    return font;
  }
+#endif
 
  template<typename ItemVarStore>
  void
@@ -285,6 +287,7 @@ normalize_axes_location (hb_face_t *face, hb_subset_plan_t *plan)
   return true;
 }
 
+#ifndef HB_NO_OT_FONT_CFF
 void
 update_instance_metrics_map_from_cff2 (hb_subset_plan_t *plan)
 {
@@ -370,6 +373,7 @@ update_instance_metrics_map_from_cff2 (hb_subset_plan_t *plan)
   if (vvar_store_cache)
     _vmtx.var_table->get_var_store ().destroy_cache (vvar_store_cache);
 }
+#endif
 
 bool
 get_instance_glyphs_contour_points (hb_subset_plan_t *plan)

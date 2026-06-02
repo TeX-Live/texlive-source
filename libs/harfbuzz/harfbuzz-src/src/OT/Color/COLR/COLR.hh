@@ -119,6 +119,12 @@ public:
     hb_font_destroy (font);
   }
 
+  static unsigned
+  color_alpha (hb_color_t color, float alpha)
+  {
+    return roundf (hb_color_get_alpha (color) * alpha);
+  }
+
   hb_color_t get_color (unsigned int color_index, float alpha, hb_bool_t *is_foreground)
   {
     hb_color_t color = foreground;
@@ -136,7 +142,7 @@ public:
     return HB_COLOR (hb_color_get_blue (color),
                      hb_color_get_green (color),
                      hb_color_get_red (color),
-                     hb_color_get_alpha (color) * alpha);
+                     color_alpha (color, alpha));
   }
 
   inline void recurse (const Paint &paint);
@@ -2405,10 +2411,11 @@ struct COLR
 
   const BaseGlyphPaintRecord* get_base_glyph_paintrecord (hb_codepoint_t gid) const
   {
-    const BaseGlyphPaintRecord* record = &(this+baseGlyphList).bsearch ((unsigned) gid);
-    if ((record && (hb_codepoint_t) record->glyphId != gid))
-      record = nullptr;
-    return record;
+    const BaseGlyphList &list = this+baseGlyphList;
+    unsigned int i;
+    if (!list.bfind ((unsigned) gid, &i))
+      return nullptr;
+    return &list[i];
   }
 
   bool downgrade_to_V0 (const hb_set_t &glyphset) const
@@ -2700,19 +2707,10 @@ struct COLR
         // COLRv1 glyph
 
 	bool is_bounded = true;
+	hb_glyph_extents_t extents = {};
 	if (clip)
 	{
-	  hb_glyph_extents_t extents;
-	  if (get_clip (glyph, &extents, instancer))
-	  {
-	    font->scale_glyph_extents (&extents);
-	    c.funcs->push_clip_rectangle (c.data,
-					  extents.x_bearing,
-					  extents.y_bearing + extents.height,
-					  extents.x_bearing + extents.width,
-					  extents.y_bearing);
-	  }
-	  else
+	  if (!get_clip (glyph, &extents, instancer))
 	  {
 	    clip = false;
 	    is_bounded = false;
@@ -2735,13 +2733,20 @@ struct COLR
 
 	c.funcs->push_font_transform (c.data, font);
 
+	if (clip)
+	  c.funcs->push_clip_rectangle (c.data,
+					extents.x_bearing,
+					extents.y_bearing + extents.height,
+					extents.x_bearing + extents.width,
+					extents.y_bearing);
+
 	if (is_bounded)
 	  c.recurse (*paint);
 
-	c.funcs->pop_transform (c.data);
-
 	if (clip)
 	  c.funcs->pop_clip (c.data);
+
+	c.funcs->pop_transform (c.data);
 
         return true;
       }

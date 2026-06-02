@@ -50,6 +50,7 @@ enum {
 #define HB_GPU_PAINT_MAX_OPS         0x7fff /* num_ops is i16 in the blob header */
 #define HB_GPU_PAINT_MAX_GROUP_DEPTH 4      /* matches HB_GPU_PAINT_GROUP_DEPTH in fragment shader */
 #define HB_GPU_PAINT_MAX_CLIP_DEPTH  3      /* shader can intersect up to 3 clip outlines per layer */
+#define HB_GPU_PAINT_MAX_SUB_BLOBS   1024   /* bound clip-glyph rasterizations per paint walk */
 
 /* Layer-op flag bits (LAYER_SOLID texel 0 .g, LAYER_GRADIENT
  * texel 0 .g where bits 0-7 hold the gradient subtype). */
@@ -404,14 +405,20 @@ free_static_gpu_paint_pen_funcs ()
 /* Rasterize @clip's glyph outline into a new sub-blob and
  * accumulate its extents.  Returns the sub_blob index (>= 0) on
  * success, or -1 if the outline is empty / the layer should be
- * skipped.  Sets c->unsupported on hard failure. */
+ * skipped.  Sets c->unsupported on hard failure.  On the first
+ * successful glyph-clip encode, memoizes the sub-blob index and
+ * extents back into @clip; subsequent calls hit the cache fast
+ * path.  This matters for adversarial COLR trees that emit many
+ * paint layers under the same clip stack -- without memoization
+ * each layer re-rasterizes every clip glyph. */
 static int
 emit_clip_sub_blob (hb_gpu_paint_t *c,
-		    const hb_gpu_paint_t::pending_clip_t &clip)
+		    hb_gpu_paint_t::pending_clip_t &clip)
 {
   /* Path clips were already encoded into sub_blobs at
-   * push_clip_path_end time; just accumulate extents and hand
-   * back the pre-baked index. */
+   * push_clip_path_end time; glyph clips are cached here on first
+   * use.  Either way: just accumulate extents and hand back the
+   * recorded index. */
   if (clip.sub_blob_index >= 0)
   {
     c->ext_min_x = hb_min (c->ext_min_x, clip.ext_x0);
@@ -419,6 +426,15 @@ emit_clip_sub_blob (hb_gpu_paint_t *c,
     c->ext_min_y = hb_min (c->ext_min_y, clip.ext_y0);
     c->ext_max_y = hb_max (c->ext_max_y, clip.ext_y1);
     return clip.sub_blob_index;
+  }
+
+  /* Adversarial COLR trees can drive thousands of fresh
+   * push_clip_glyph / paint_color cycles within a single paint
+   * walk, each demanding a fresh sub-blob.  Bound the work. */
+  if (unlikely (c->sub_blobs.length >= HB_GPU_PAINT_MAX_SUB_BLOBS))
+  {
+    c->unsupported = true;
+    return -1;
   }
 
   if (unlikely (!c->scratch_draw))
@@ -484,7 +500,19 @@ emit_clip_sub_blob (hb_gpu_paint_t *c,
   c->ext_min_y = hb_min (c->ext_min_y, hb_min (y0, y1));
   c->ext_max_y = hb_max (c->ext_max_y, hb_max (y0, y1));
 
-  return (int) (c->sub_blobs.length - 1);
+  int idx = (int) (c->sub_blobs.length - 1);
+
+  /* Memoize on the slot.  The (glyph, font, transform) tuple is
+   * fixed between push_clip_glyph and pop_clip, and pop_clip's
+   * subsequent push reinitializes the slot to sub_blob_index = -1,
+   * so a stale cache cannot leak across pushes. */
+  clip.sub_blob_index = idx;
+  clip.ext_x0 = hb_min (x0, x1);
+  clip.ext_y0 = hb_min (y0, y1);
+  clip.ext_x1 = hb_max (x0, x1);
+  clip.ext_y1 = hb_max (y0, y1);
+
+  return idx;
 }
 
 /* Emit a sub-blob for every clip currently on the stack and return
@@ -534,6 +562,8 @@ hb_gpu_paint_emit_solid (hb_gpu_paint_t *c,
 			 hb_bool_t       is_foreground,
 			 hb_color_t      color)
 {
+  if (unlikely (c->unsupported))
+    return;
   if (unlikely (c->clip_depth == 0))
     return;
   if (unlikely (c->num_ops >= HB_GPU_PAINT_MAX_OPS))
@@ -612,6 +642,8 @@ hb_gpu_paint_emit_linear (hb_gpu_paint_t  *c,
 			  float x1, float y1,
 			  float x2, float y2)
 {
+  if (unlikely (c->unsupported))
+    return;
   if (unlikely (c->clip_depth == 0))
     return;
   if (unlikely (c->num_ops >= HB_GPU_PAINT_MAX_OPS))
@@ -697,6 +729,8 @@ hb_gpu_paint_emit_radial (hb_gpu_paint_t  *c,
 			  float x0, float y0, float r0,
 			  float x1, float y1, float r1)
 {
+  if (unlikely (c->unsupported))
+    return;
   if (unlikely (c->clip_depth == 0))
     return;
   if (unlikely (c->num_ops >= HB_GPU_PAINT_MAX_OPS))
@@ -818,6 +852,8 @@ hb_gpu_paint_emit_sweep (hb_gpu_paint_t  *c,
 			 float cx, float cy,
 			 float start_angle, float end_angle)
 {
+  if (unlikely (c->unsupported))
+    return;
   if (unlikely (c->clip_depth == 0))
     return;
   if (unlikely (c->num_ops >= HB_GPU_PAINT_MAX_OPS))
@@ -1580,10 +1616,6 @@ hb_gpu_paint_recycle_blob (hb_gpu_paint_t *paint,
  *             + hb_gpu_draw_shader_source ()
  *             + hb_gpu_paint_shader_source ()
  *             + caller's main ()
- *
- * Only GLSL fragment is implemented today; other languages and
- * the vertex stage return the empty string so callers can
- * concatenate unconditionally.
  *
  * Return value: (transfer none):
  * A shader source string, or `NULL` if @stage or @lang is

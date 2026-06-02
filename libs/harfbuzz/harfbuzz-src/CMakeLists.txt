@@ -24,6 +24,10 @@ Before that, remove the files created by this failed run with"
   rm -rf CMakeCache.txt CMakeFiles")
 endif ()
 
+# Add a .gitignore file to build directory (inspired by Meson)
+if (NOT ("${PROJECT_BINARY_DIR}" STREQUAL "${PROJECT_SOURCE_DIR}") AND NOT (EXISTS "${PROJECT_BINARY_DIR}/.gitignore"))
+  file(WRITE "${PROJECT_BINARY_DIR}/.gitignore" "*")
+endif ()
 
 ## HarfBuzz build configurations
 option(HB_HAVE_CAIRO "Enable cairo interop helpers" OFF)
@@ -273,6 +277,7 @@ set (gpu_project_sources
      ${PROJECT_SOURCE_DIR}/src/hb-gpu.cc
      ${PROJECT_SOURCE_DIR}/src/hb-gpu-draw.cc
      ${PROJECT_SOURCE_DIR}/src/hb-gpu-paint.cc
+     ${PROJECT_SOURCE_DIR}/src/hb-static.cc
 )
 set (gpu_project_headers
      ${PROJECT_SOURCE_DIR}/src/hb-gpu.h
@@ -299,7 +304,7 @@ if (HB_HAVE_FREETYPE AND NOT TARGET freetype)
 endif ()
 
 if (HB_HAVE_FREETYPE)
-  list(APPEND PC_REQUIRES_PRIV "freetype2 >= 12.0.6")
+  list(APPEND PC_REQUIRES_PRIV "freetype2 >= 20.0.14")
 endif ()
 
 if (HB_HAVE_GRAPHITE2)
@@ -352,7 +357,8 @@ if (HB_HAVE_ICU)
 
   list(APPEND project_headers ${PROJECT_SOURCE_DIR}/src/hb-icu.h)
 
-  list(APPEND THIRD_PARTY_LIBS ICU::uc)
+  get_target_property(ICU_UC_LIBRARY ICU::uc IMPORTED_LOCATION)
+  list(APPEND THIRD_PARTY_LIBS ${ICU_UC_LIBRARY})
 endif ()
 
 if (APPLE AND HB_HAVE_CORETEXT)
@@ -1054,6 +1060,15 @@ if (HB_BUILD_UTILS)
         target_link_libraries(hb-gpu
             "-framework Metal" "-framework QuartzCore"
             "-framework Foundation" "-framework AppKit")
+      endif ()
+      if (WIN32)
+        find_library(D3D11_LIBRARY NAMES d3d11)
+        find_library(D3DCOMPILER_LIBRARY NAMES d3dcompiler)
+        target_sources(hb-gpu PRIVATE
+            ${PROJECT_SOURCE_DIR}/util/gpu/demo-renderer-d3d11.cc)
+        target_link_libraries(hb-gpu
+            "${D3D11_LIBRARY}"
+            "${D3DCOMPILER_LIBRARY}")
       endif ()
     endif ()
   endif ()

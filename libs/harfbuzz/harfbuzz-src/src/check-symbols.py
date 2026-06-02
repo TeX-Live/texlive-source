@@ -70,7 +70,7 @@ for soname in CHECK_SYMBOL_LIBS:
         EXPORTED_SYMBOLS = [
             s.split()[2]
             for s in re.findall(
-                r"^.+ [BCDGIRSTu] .+$",
+                r"^.+ [BCDGIRSTWu] .+$",
                 subprocess.check_output(nm.split() + [so]).decode("utf-8"),
                 re.MULTILINE,
             )

@@ -579,11 +579,13 @@ hb_gpu_draw_encode (hb_gpu_draw_t      *draw,
     unsigned count = s.hband_curve_counts.arrayZ[b];
     s.hband_curves.as_array ().sub_array (off, count)
       .qsort ([infos] (const unsigned &a, const unsigned &b) {
-	return infos[a].max_x > infos[b].max_x;
+	auto av = infos[a].max_x, bv = infos[b].max_x;
+	return (av < bv) - (av > bv);
       });
     s.hband_curves_asc.as_array ().sub_array (off, count)
       .qsort ([infos] (const unsigned &a, const unsigned &b) {
-	return infos[a].min_x < infos[b].min_x;
+	auto av = infos[a].min_x, bv = infos[b].min_x;
+	return (av > bv) - (av < bv);
       });
   }
 
@@ -593,11 +595,13 @@ hb_gpu_draw_encode (hb_gpu_draw_t      *draw,
     unsigned count = s.vband_curve_counts.arrayZ[b];
     s.vband_curves.as_array ().sub_array (off, count)
       .qsort ([infos] (const unsigned &a, const unsigned &b) {
-	return infos[a].max_y > infos[b].max_y;
+	auto av = infos[a].max_y, bv = infos[b].max_y;
+	return (av < bv) - (av > bv);
       });
     s.vband_curves_asc.as_array ().sub_array (off, count)
       .qsort ([infos] (const unsigned &a, const unsigned &b) {
-	return infos[a].min_y < infos[b].min_y;
+	auto av = infos[a].min_y, bv = infos[b].min_y;
+	return (av > bv) - (av < bv);
       });
   }
 
