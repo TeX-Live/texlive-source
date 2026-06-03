@@ -1,9 +1,8 @@
 #!/usr/bin/env python
 # (works in both Python 2 and Python 3)
 
-r"""
-Calculate LaTeX paper and margin settings for arbitrary magnification
-(C) Silas S. Brown, 2005-2009, 2016, 2019-20, 2025-26.  Version 1.68.
+r"""Calculate LaTeX paper and margin settings for arbitrary magnification
+(C) Silas S. Brown, 2005-2009, 2016, 2019-20, 2025-26.  Version 1.69.
 
 Licensed under the Apache License, Version 2.0 (the ``License'');
 you may not use this file except in compliance with the License.
@@ -34,9 +33,13 @@ low-vision users because fonts like CMR have different
 versions at different sizes and the small-sized versions
 are often meant to be clearer.
 
-This is a Python script to calculate the necessary
-settings for arbitrary font and page sizes.
-Works in both Python 2 and Python 3.
+latex-papersize calculates the necessary settings for
+arbitrary font and page sizes.  There are two ways to run it:
+a modern `.sty` that works in `pdflatex`, `xelatex` and
+`lualatex`, and a legacy Python script that works with
+`pdflatex` or plain old `latex` / `dvips`.  The legacy Python
+script requires Python (works in both Python 2 and Python 3)
+but the `.sty` file can be used as-is.
 
 # Basic usage
 
@@ -46,11 +49,19 @@ specifies 12pt then `\small`=11 normal=12 `\large`=14
 `\Large`=17 `\LARGE`=20 `\huge`=25), and desired-size is the
 point size that you want to produce.
 
-The command-line parameters depend on whether you are
-using `latex`/`dvips` or `pdflatex`.
+For the modern `.sty` file, simply
+`\usepackage[basesize=12,desiredsize=26]{latex-papersize}`.
+Other parameters are the dimensions `paperwidth` and
+`paperheight` if not A4, `marginleft` and `margintop`, and
+`extrabottom` for how much space to leave for page numbers
+at the bottom of each page (if this is left at 0 by default,
+page style empty will be set).
 
-You'll need to run latex-papersize in Python.  On most systems, this
-just means typing `python latex-papersize.py`.  On some systems you
+If you need to use the legacy Python script instead, its
+command-line parameters depend on whether you are using
+`latex`/`dvips` or `pdflatex`.
+On most systems, you can begin by typing
+`python latex-papersize.py`.  On some systems you
 will need to type `python3` instead of `python`, and/or you may need
 to specify the full path of `latex-papersize.py` depending on your
 distribution.  If you've installed it using `pip`, you can try
@@ -165,6 +176,10 @@ then
 To run `dvips` on the `.dvi` file (not needed for `pdflatex`):
 
 `$(python latex-papersize.py 12 26 file.dvi)`
+
+It is now recommended to use the newer `.sty` file with a PDF
+backend instead of doing all this.
+
 """
 
 # Where to find history:
