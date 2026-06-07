@@ -2,7 +2,7 @@
 # (works in both Python 2 and Python 3)
 
 r"""Calculate LaTeX paper and margin settings for arbitrary magnification
-(C) Silas S. Brown, 2005-2009, 2016, 2019-20, 2025-26.  Version 1.69.
+(C) Silas S. Brown, 2005-2009, 2016, 2019-20, 2025-26.  Version 1.71
 
 Licensed under the Apache License, Version 2.0 (the ``License'');
 you may not use this file except in compliance with the License.
@@ -29,9 +29,9 @@ It's more effective to change the LaTeX paper size and
 margin settings to simulate _small paper_ and then magnify
 the result up to the desired physical paper size.  This
 magnifies everything, and also adds some clarity for
-low-vision users because fonts like CMR have different
-versions at different sizes and the small-sized versions
-are often meant to be clearer.
+low-vision users because fonts like Computer Modern Roman
+have different versions at different sizes and the small-sized
+versions are often meant to be clearer.
 
 latex-papersize calculates the necessary settings for
 arbitrary font and page sizes.  There are two ways to run it:
@@ -41,23 +41,32 @@ a modern `.sty` that works in `pdflatex`, `xelatex` and
 script requires Python (works in both Python 2 and Python 3)
 but the `.sty` file can be used as-is.
 
-# Basic usage
+# Modern usage
 
 In the following instructions, base-size is the point size
-that the TeX file is based on (if the documentclass
-specifies 12pt then `\small`=11 normal=12 `\large`=14
-`\Large`=17 `\LARGE`=20 `\huge`=25), and desired-size is the
+that the TeX file is based on---quick reference: if the `documentclass`
+parameters say `12pt` then (within 1%) `\small`=11 `\normalsize`=12
+`\large`=14 `\Large`=17 `\LARGE`=20 `\huge`=25---and desired-size is the
 point size that you want to produce.
 
-For the modern `.sty` file, simply
-`\usepackage[basesize=12,desiredsize=26]{latex-papersize}`.
-Other parameters are the dimensions `paperwidth` and
-`paperheight` if not A4, `marginleft` and `margintop`, and
-`extrabottom` for how much space to leave for page numbers
-at the bottom of each page (if this is left at 0 by default,
-page style empty will be set).
+For the modern `.sty` file, simply use
 
-If you need to use the legacy Python script instead, its
+`\usepackage [basesize=12, desiredsize=26] {latex-papersize}`
+
+(The default is to enlarge from 10 point to 26 point, but
+you should ideally check with individual readers which point
+size they work with best.)
+
+Other parameters are the dimensions `paperwidth` and
+`paperheight` (defaults to A4), `marginleft` and `margintop`
+(defaults to 10mm), and `extrabottom` for how much space to
+leave for page numbers at the bottom of each page: try
+`extrabottom=15pt` for plain pagestyle.  If it is left at its
+default of 0, `\pagestyle{empty}` will be set automatically.
+
+# Legacy usage
+
+If you need to use the legacy Python script, its
 command-line parameters depend on whether you are using
 `latex`/`dvips` or `pdflatex`.
 On most systems, you can begin by typing
@@ -70,10 +79,13 @@ may also be able to copy `latex-papersize.py` to a directory on your
 PATH such as `/usr/local/bin` and then just type `latex-papersize`.
 
 The instructions below assume you will be typing
-`python latex-papersize.py` but you should change this to suit your
+
+`python latex-papersize.py`
+
+but you should change this to suit your
 system as described in the above paragraph.
 
-# For use with LaTeX and `dvips`
+# Legacy usage with `latex` and `dvips`
 
 To print the geometry settings:
 
@@ -92,9 +104,12 @@ e.g.: `python latex-papersize.py 12 26 myfile.dvi`
 
 which will print the appropriate `dvips` command.
 
-# For use with `pdflatex`
+# Legacy usage with `pdflatex`
 
-With `pdflatex` you need only one command:
+It should no longer be necessary to use the Python script with
+`pdflatex`, since the modern `.sty` file is compatible with `pdflatex`.
+But if for some reason you need to use the Python script instead, you
+need only one command:
 
 `python latex-papersize.py` base-size desired-size `pdftex`
 
@@ -103,7 +118,7 @@ NB if using `hyperref` package, put `hyperref` _after_ these
 settings (and if also using `pinyin` package then put `pinyin`
 package after that again)
 
-# Page numbers
+# Page numbers in legacy usage
 
 When invoking latex-papersize.py with the `tex` or `pdftex`
 options, you can optionally add a fourth parameter to
@@ -113,7 +128,7 @@ this out causes no room to be left for page numbers and
 `\pagestyle{empty}` to be added.  This does not affect the
 `dvips` command.
 
-# Paper sizes and margins
+# Paper sizes and margins in legacy usage
 
 It is assumed that the final physical printout will be on
 A4 portrait with 10mm margins.  You can override this by
@@ -136,8 +151,7 @@ larger size by sticking together smaller pieces of paper.
 Perhaps the best way to do this is to use a separate
 utility that knows about printable areas, cut margins,
 etc, such as Jos van Eijndhoven's `poster` utility at
-https://ctan.org/pkg/poster (last known upstream URL:
-ftp://ftp.es.ele.tue.nl/pub/users/jos/poster/poster.tar.gz )
+https://ctan.org/pkg/poster
 
 In this case you can give latex-papersize.py a `margin_left` and
 `margin_top` of 0 (because `poster` will handle the
@@ -158,36 +172,40 @@ printer paper's height and width by 0.88 (or 0.86 if you
 want a visual margin added to the finished poster besides
 the cutting margins) and try a multiple of that size.
 
-# Example usage in a script
+# Example legacy usage in a script
 
 To typeset a LaTeX file `file.tex` and magnify from
 12-point to 26-point, type a line such as the following
 (after adjusting the documentclass it specifies, and
 removing or commenting out the documentclass in `file.tex`):
 
-`latex "\\documentclass[12pt]{article}$(python latex-papersize.py 12 26 tex)\\input{file.tex}" && mv article.dvi file.dvi`
+`latex "\\documentclass [12pt] {article} $(python latex-papersize.py 12 26 tex) \\input {file.tex}" && mv article.dvi file.dvi`
 
 Or in `pdflatex` (slightly more complex because we need to
 put the settings just before `\begin{document}`):
 `cat file.tex | awk -- "/^ *\\\\begin *\\{document\\}[^#-~]*\$/ { print \"$(python latex-papersize.py 12 26 pdftex | sed -e 's/\\/\\\\/g')\" } { print }" > /tmp/tmp.tex`
 then
-`pdflatex "\documentclass[12pt]{article}\\input{/tmp/tmp.tex}" && mv article.pdf file.pdf`
+`pdflatex "\documentclass [12pt] {article} \\input {/tmp/tmp.tex}" && mv article.pdf file.pdf`
 
 To run `dvips` on the `.dvi` file (not needed for `pdflatex`):
 
 `$(python latex-papersize.py 12 26 file.dvi)`
 
-It is now recommended to use the newer `.sty` file with a PDF
-backend instead of doing all this.
+It is recommended to use the newer `.sty` file with a PDF backend
+instead of doing all this.
 
+# Where to find history
+You shouldn't need this, but old versions of this utility (along
+with some non-LaTeX utilities for handling scans and reflowing
+documents for giant print) may be found
+on GitHub at https://github.com/ssb22/scan-reflow
+and on GitLab at https://gitlab.com/ssb22/scan-reflow
+and on BitBucket https://bitbucket.org/ssb22/scan-reflow
+and at https://gitlab.developers.cam.ac.uk/ssb22/scan-reflow
+and in China: https://gitee.com/ssb22/scan-reflow
+The current version is also on the author's home page
+at https://ssb22.user.srcf.net/notes/#latex
 """
-
-# Where to find history:
-# on GitHub at https://github.com/ssb22/scan-reflow
-# and on GitLab at https://gitlab.com/ssb22/scan-reflow
-# and on BitBucket https://bitbucket.org/ssb22/scan-reflow
-# and at https://gitlab.developers.cam.ac.uk/ssb22/scan-reflow
-# and in China: https://gitee.com/ssb22/scan-reflow
 
 import os, sys, subprocess
 try: from commands import getoutput # Python 2
@@ -200,7 +218,7 @@ if (len(sys.argv)==2 and sys.argv[1]=="--help") or len(sys.argv)==1:
 if len(sys.argv)==2 and sys.argv[1]=="--version":
   print(__doc__[:__doc__.find("\n\n")].strip()); raise SystemExit
 if len(sys.argv)==2 and sys.argv[1]=="--texhelp":
-  import re; print(r"\documentclass[a4paper,12pt]{article}\usepackage{microtype}\begin{document}\title{latex-papersize}\author{"+__doc__.strip().split("\n")[0]+r"}\date{"+__doc__.strip().split("\n")[1].replace("-","--").replace("Version ","Version~")+r"}\maketitle "+re.sub('([_$&#])',r'\\\1',re.sub(r"(?<![a-z])_([^_]*)_(?![a-z])",r"{\\em \1}",re.sub(r"(?<!`)`([^`]+)`",r"\\texttt{\1}",re.sub("\n# (.*)\n",r"\\section*{\1}",__doc__.split("\n\n",1)[1].replace("\\",r"\textbackslash ").replace('{',r'\{').replace('}',r'\}').replace('|',r'\textbar{}').replace('LaTeX',r'\LaTeX{}').replace("^",r"\textasciicircum{}").replace("~",r"\textasciitilde{}")))).replace("...",r"\ldots{}"))+r"\end{document}") ; raise SystemExit
+  import re; print("% This file is automatically generated by\n% python latex-papersize.py --texhelp\n\\documentclass[12pt]{article}\n\\usepackage[extrabottom=15pt]{latex-papersize}\\setlength{\emergencystretch}{3em}\n\\usepackage{microtype}\n\\usepackage[T1]{fontenc}\n\\usepackage[colorlinks,allcolors=blue]{hyperref}\n\\begin{document}\\title{latex-papersize\\\\\\large "+__doc__.strip().split("\n")[0].replace("LaTeX","\\LaTeX{}")+"}\n\\author{Silas S. Brown}\n\\date{"+__doc__.strip().split("\n")[1].split(",",1)[1].strip().replace("-","--").replace("Version ","Version~")+"}\n\\maketitle\n"+re.sub('([_$&#%])',r'\\\1',re.sub(r"(?<![a-z])_([^_]*)_(?![a-z])",r"{\\em \1}",re.sub(r"(?<!`)`([^`]+)`",r"\\texttt{\1}",re.sub("\n# (.*)\n",r"\\section*{\1}",re.sub("(https*://[A-Za-z0-9./#-]*)",r"\\url{\1}",__doc__.split("\n\n",1)[1].replace(' $(','`\n\n`$(').replace("\\",r"\textbackslash ").replace('{',r'\{').replace('}',r'\}').replace('|',r'\textbar{}').replace('LaTeX',r'\LaTeX{}').replace(' TeX',' \TeX{}').replace("^",r"\textasciicircum{}").replace("~",r"\textasciitilde{}"))))).replace("...",r"\ldots{}"))+r"\end{document}") ; raise SystemExit
 
 base_pointsize = float(sys.argv[1])
 desired_pointsize = float(sys.argv[2])
