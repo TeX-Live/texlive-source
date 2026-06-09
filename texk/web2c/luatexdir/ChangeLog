@@ -1,18 +1,29 @@
-2026-05-03  Karl Berry  <karl@freefriends.org>
+2026-06-09 Luigi Scarso <luigi.scarso@gmail.com>
 
-	* unilib/ustring.c (strtod, strtol) [__STDC_VERSION__ < 202311L]:
-	revert to previous test, having switched the freebsd build to use
-	gcc15 (on freebsd 14.4). Autoconf developers were not receptive to
-	the problem. If anyone needs to compile on gcc 14.x or other such
-	compilers, they'll need to explicitly override Autoconf's switching.
+	*  LuaTeX 1.26.0
 
-2026-04-26  Karl Berry  <karl@freefriends.org>
+         
+2026-06-09 Luigi Scarso <luigi.scarso@gmail.com>
 
-	* unilib/ustring.c (strtod, strtol) [__STDC_VERSION__ < 202000L]:
-	FreeBSD 13.2 (gcc 14.2) helpfully defines __STDC_VERSION__ to
-	202000L with -std=gnu23, and gives the usual C23 error because of
-	the empty parens in the declarations. So check for that value
-	instead of the "standard" 202311L.
+	*  On non Windows systems, spawn_command on child calls _exit instead of exit;
+	 see [Dev-luatex] Failed os.spawn() causes part of file to be read twice  
+         (thanks to David Chiang).
+         
+
+2026-04-27 Luigi Scarso <luigi.scarso@gmail.com>
+
+	*  GNU Autoconf 2.73
+
+
+2026-04-11 Luigi Scarso <luigi.scarso@gmail.com>
+
+	* Synced with TeXLive rev. 78806: HarfBUzz 14.2.0, libpng 1.6.58. LuaTeX 1.25.9
+
+
+2026-04-11 Luigi Scarso <luigi.scarso@gmail.com>
+
+	* Fixed math italic (H.Hagen). LuaTeX 1.25.8
+
 
 2026-04-11 Luigi Scarso <luigi.scarso@gmail.com>
 

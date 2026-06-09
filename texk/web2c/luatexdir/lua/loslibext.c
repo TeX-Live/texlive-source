@@ -261,17 +261,17 @@ static int spawn_command(const char *file, char *const *av, char *const *envp)
             /* let's hope no-one uses these values  */
             switch (errno) {
             case E2BIG:
-                exit(INVALID_RET_E2BIG);
+                _exit(INVALID_RET_E2BIG);
             case ETXTBSY:
-                exit(INVALID_RET_ETXTBSY);
+                _exit(INVALID_RET_ETXTBSY);
             case ENOENT:
-                exit(INVALID_RET_ENOENT);
+                _exit(INVALID_RET_ENOENT);
             case ENOEXEC:
-                exit(INVALID_RET_ENOEXEC);
+                _exit(INVALID_RET_ENOEXEC);
             case ENOMEM:
-                exit(INVALID_RET_ENOMEM);
+	       _exit(INVALID_RET_ENOMEM);
             default:
-                exit(INVALID_RET_UNKNOWN);
+                _exit(INVALID_RET_UNKNOWN);
             }
             return -1;
         }

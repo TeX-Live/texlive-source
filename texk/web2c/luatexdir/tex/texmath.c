@@ -187,7 +187,8 @@ int fam_fnt(int fam_id, int size_id)
 void def_fam_fnt(int fam_id, int size_id, int f, int lvl)
 {
     int n = fam_id + (256 * size_id);
-    sa_tree_item sa_value = { 0 };
+    sa_tree_item sa_value; 
+    memset(&sa_value, 0, sizeof(sa_value));
     sa_value.int_value = f;
     set_sa_item(math_fam_head, n, sa_value, lvl);
     fixup_math_parameters(fam_id, size_id, f, lvl);
@@ -263,7 +264,8 @@ static sa_tree math_param_head = NULL;
 void def_math_param(int param_id, int style_id, scaled value, int lvl)
 {
     int n = param_id + (256 * style_id);
-    sa_tree_item sa_value = { 0 };
+    sa_tree_item sa_value;
+    memset(&sa_value, 0, sizeof(sa_value));
     if (lvl <= 1) {
         if (param_id >= math_param_ord_ord_spacing && param_id <= math_param_inner_inner_spacing) {
             sa_tree_item ti = get_sa_item(math_param_head, n);
@@ -371,7 +373,8 @@ void unsave_math_data(int gl)
 
 void dump_math_data(void)
 {
-    sa_tree_item sa_value = { 0 };
+    sa_tree_item sa_value; 
+    memset(&sa_value, 0, sizeof(sa_value));
     if (math_fam_head == NULL) {
         sa_value.int_value = MATHFONTDEFAULT;
         math_fam_head = new_sa_tree(MATHFONTSTACK, 1, sa_value);
@@ -392,7 +395,8 @@ void undump_math_data(void)
 
 void initialize_math(void)
 {
-    sa_tree_item sa_value = { 0 };
+    sa_tree_item sa_value; 
+    memset(&sa_value, 0, sizeof(sa_value));
     if (math_fam_head == NULL) {
         sa_value.int_value = MATHFONTDEFAULT;
         math_fam_head = new_sa_tree(MATHFONTSTACK, 1, sa_value);

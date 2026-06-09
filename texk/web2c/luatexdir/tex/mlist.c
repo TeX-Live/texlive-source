@@ -4293,10 +4293,25 @@ static pointer check_nucleus_complexity(halfword q, scaled * delta, int cur_styl
                 p = new_glyph(cur_f, cur_c);
                 protect_glyph_node(p);
                 reset_attributes(p, node_attr(nucleus(q)));
-             // /*tex no italic correction in mid-word of text font */
-             // if (((type(nucleus(q))) == math_text_char_node) && (space(cur_f) != 0)) {
-             //     *delta = 0;
-             // }
+               /*tex 
+                    We don't apply italic correction in mid-word for a text font and because in these
+                    traditional fonts have no space set in a math font the space check (hack) does the 
+                    trick. For this to work out with opentype fonts, that can have a space, we check 
+                    for a math parameters table (these constants) in which case we assume a new math 
+                    fonts and keep the italic even when officially it is not part of the specification! 
+                    We also trigger on the oldmath flag in a font. That's the best we can do ... in 
+                    the end it is the macro package that has to adapt to old or new fonts. Unfortunately 
+                    lack of testing makes this kind of hackery go on and off. Adding options is possible 
+                    but when we had these they were never used and/or resulted in inconsistent advice on 
+                    forums. I don't expect it to be tested well this time either. (HH)
+                */
+             // printf("%i %i\n",cur_f,space(cur_f));
+                if (assume_new_math(cur_f)) {
+                 // printf("KEEPING\n");
+                } else if (((type(nucleus(q))) == math_text_char_node) && (space(cur_f) != 0)) {
+                 // printf("NILLING\n");
+                    *delta = 0;
+                }
                 /*tex so we only add italic correction when we have no scripts */
                 if ((subscr(q) == null) && (supscr(q) == null) && (*delta != 0)) {
                     pointer x = new_kern(*delta);
