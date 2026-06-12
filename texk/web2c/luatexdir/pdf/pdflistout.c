@@ -698,13 +698,14 @@ void hlist_out(PDF pdf, halfword this_box, int rule_callback_id)
                         localpos.dir = dir_dir(p);
                         cur.h = 0;
                         cur.v = 0;
-                        dir_done = 1;
+                        dir_done++;
                     } else if (dir_done) {
                         refpos->pos.h = dir_refpos_h(p);
                         refpos->pos.v = dir_refpos_v(p);
                         localpos.dir = dir_dir(p);
                         cur.h = dir_cur_h(p);
                         cur.v = dir_cur_v(p);
+                        dir_done--;
                     } else {
                         /*tex maybe issue a warning */
                     }
