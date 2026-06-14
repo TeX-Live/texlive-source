@@ -9,3 +9,6 @@ tcl8.6.18/tools/uniParse.tcl
 
 tclUniData.c file:
 tcl8.6.18/generic/tclUniData.c
+
+Unicode version from the changes file:
+2025-09-15 (new) Unicode version 17 (nijtmans)
