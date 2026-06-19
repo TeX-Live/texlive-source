@@ -1,3 +1,7 @@
+2026-06-19  Karl Berry  <karl@freefriends.org>
+
+	* tie.man: add some references.
+
 2026-04-22  Karl Berry  <karl@freefriends.org>
 
 	* tex.man: typo .IF -> .IR for mktex<format>.

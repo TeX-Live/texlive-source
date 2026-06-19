@@ -1,11 +1,11 @@
-.TH TIE 1 "30 August 2022" "Web2C @VERSION@"
+.TH TIE 1 "19 June 2026" "Web2C @VERSION@"
 .\"=====================================================================
 .SH NAME
 tie \- merge or apply WEB change files
 .\"=====================================================================
 .SH SYNOPSIS
 .B tie
-.BR \-c | \-m
+.BR -c | -m
 .I outputfile masterfile
 .IR changefile .\|.\|.
 .\"=====================================================================
@@ -16,10 +16,10 @@ program is used to process multiple change files used with the WEB
 system for literate programming.  The WEB programs allow one to apply
 patches to a source file (the
 .IR masterfile )
-by means of a number of change files (often only a single change file
-is allowed).
+by means of a so-called change file, typically only one.
 .B Tie
-can be used to either merge up to 32 change files into a single one
+can be used to either merge up to 32 change files into a single one,
+as is done as part of building TeX and Metafont,
 or to apply the changes to the
 .I masterfile
 in order to create a new one.  Output of either the new change file or
@@ -28,11 +28,11 @@ the patched master file goes into
 .\"=====================================================================
 .SH OPTIONS
 .TP
-.B \-c
+.B -c
 Create a single change file from the given
 .IR changefile s.
 .TP
-.B \-m
+.B -m
 Create a new master file by applying the given
 .IR changefile s.
 .\"=====================================================================
@@ -40,17 +40,24 @@ Create a new master file by applying the given
 The environment variable WEBINPUTS is used to search for the input files,
 or the system default if WEBINPUTS is not set.  See
 .BR tex (1)
-for the details of the searching.
-To avoid conflicts with other programs that also use the WEBINPUTS
-environment, you can be more specific and use WEBINPUTS_tie for
+for the details of the searching. To avoid conflicts with other programs
+that also use the WEBINPUTS environment, you can use WEBINPUTS_tie for
 special requirements in TIE.
 .\"=====================================================================
 .SH "SEE ALSO"
-.BR web (1),
 .BR ctie (1),
-.BR cweb (1).
+.BR cweb (1),
+.BR tangle (1).
+.br
+The typeset program, as a pdf:
+https://ctan.org/pkg/knuth-pdf
+.br
+Donald E. Knuth,
+.IR "The WEB System of Structured Documentation" .
+.br
+https://mirrors.ctan.org/info/knuth-pdf/web/webman.pdf
 .\"=====================================================================
 .SH "AUTHOR"
 Klaus Guntermann, TH Darmstadt, Institut f. Theoretische Informatik.  Man page
 by Joachim Schnitter, TH Darmstadt, Phys. Chemie I. Maintained as part
-of TeX Live.
+of TeX Live. Mailing list: https://lists.tug.org/tex-k.

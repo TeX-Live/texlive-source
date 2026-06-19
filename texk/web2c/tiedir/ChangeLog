@@ -1,3 +1,7 @@
+2026-06-19  Karl Berry  <karl@freefriends.org>
+
+	* README: update with something closer to current reality.
+
 2023-09-01  Andreas Scherer  <https://ascherer.github.io>
 
 	* tie-w2c.ch: Fix sorting order of names of sections.

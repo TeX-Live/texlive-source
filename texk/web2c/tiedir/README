@@ -1,9 +1,31 @@
 This is the README file of the `tie' distribution.
  The current version is 2.4.
  This file was created on 18 Dec 92.
- This file was updated on 15 Jul 93.
+ This file was updated on 15 Jul 93, and subsequently.
+$Id$
+
+Below is the original README for tie, written by Klaus Guntermann.
+Klaus' ftp site and email address below no longer function. tie is
+currently maintained as part of TeX Live (web2c), as we have not heard
+from Klaus in many years.
+
+We have kept Klaus's original distribution intact; changes are made in
+tie-w2c.ch. The man page installed is now in ../man/tie.man, not the
+tie.1 here.
+
+The rules to build tie are in ../am/cweb.am (since it's written in
+cweb).  Tie is needed to build TeX and Metafont, merging together the
+many change files involved.
+
+The typeset program is included in the knuth-pdf package:
+https://ctan.org/pkg/knuth-pdf
+
+Please email bug reports or other discussion to tex-k@tug.org.
+
+--TeX Live maintainers
 
 
+--------
 SUBJECT:
 
 `Tie' is a program which was first developed to allow WEB programmers
@@ -54,5 +76,5 @@ If you detect bugs in the implementation of `tie' or have
 suggestions to enhance functionality or improve portability, 
 please send a message to
 
-	Klaus Guntermann <guntermann@iti.informatik.th-darmstadt.de>
-
+	(old) Klaus Guntermann <guntermann@iti.informatik.th-darmstadt.de>
+	(nowadays) tex-k@tug.org
