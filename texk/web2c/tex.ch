@@ -1984,17 +1984,22 @@ begin
   name_in_progress := true;
   save_warning_index := warning_index;
   warning_index := cur_cs; {store |cur_cs| here to remember until later}
-  @<Get the next non-blank non-call...@>; {here the program expands
-    tokens and removes spaces and \.{\\relax}es from the input. The \.{\\relax}
-    removal follows LuaTeX''s implementation, and other cases of
-    balanced text scanning.}
+  {Now we expand tokens and remove spaces from the input. We don't skip
+   \.{\\relax} since we want that to terminate scanning the filename.
+   Otherwise, a recursive \.{\\input} is allowed, contrary to Knuth's
+   specification, and there is no known use for it. See trivial files
+   \.{tests/inputtop.tex} and \.{tests/inputsub.tex} to test the
+   behavior and for more details.}
+  @<Get the next non-blank non-call...@>;
   back_input; {return the last token to be read by either code path}
   if cur_cmd=left_brace then begin
     scan_file_name_braced;
-    name_in_progress := false;
   end else
 @z
-
+%
+% rest of original scan_file_name procedure body follows,
+% now as an else block, until:
+%
 @x [29.526] l.10213 - stop scanning file name if we're at end-of-line.
   if not more_name(cur_chr) then goto done;
 @y
@@ -2004,7 +2009,9 @@ begin
   if (cur_chr=" ") and (state<>token_list) and (loc>limit) then goto done;
   if not more_name(cur_chr) then goto done;
 @z
-
+%
+% and then we have a new end of scan_file_name:
+%
 @x [29.526] l.10216 - scan a bgroup/egroup-delimited file name
 done: end_name; name_in_progress:=false;
 end;
@@ -4787,8 +4794,7 @@ expand_depth_count:integer;
 expand_depth_count:=0;
 
 @ % Related to [29.526] expansion depth check
-When |scan_file_name| starts it looks for a |left_brace|
-(skipping \.{\\relax}es, as other \.{\\toks}-like primitives).
+When |scan_file_name| starts it looks for a |left_brace|.
 If a |left_brace| is found, then the procedure scans a file
 name contained in a balanced token list, expanding tokens as
 it goes. When the scanner finds the balanced token list, it

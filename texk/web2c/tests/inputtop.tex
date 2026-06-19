@@ -1,0 +1,53 @@
+% $Id$
+% Public domain. Originally written by Karl Berry, 2026.
+% Test recursive \input behavior. See scan_file_name in tex.ch.
+% This is not run as part of make check; it's here for reference.
+\input \input inputsub \end % input ourselves
+
+% To run:
+%   tex -ini inputrecurse
+% Desired output is the error (\relax stops filename scanning):
+%   ! I can't find file `'.
+% Undesired output is the error (nothing stops scanning, inputsub.tex is read):
+%   ! I can't find file `randomtext'.
+
+% Background:
+% 2009 - Taco implements \input {...} (group-delimited filenames) for
+% LuaTeX, using @<Get the next non-blank non-relax non-call...@>
+% and thus ignoring \relax tokens between the \input and {, whether or
+% not there is a {.
+% commit f17fd9c40931bda4360d54bf7d4d024e79263542
+% Author: Taco Hoekwater <taco@elvenkind.com>
+% Date:   Tue Nov 3 14:41:38 2009 +0000
+% 
+% 2020 - Phelype ports the LuaTeX implementation to all other engines,
+% via tex.ch.
+% 
+% 2026 - Udo points out that this allows a recursive \input, contrary
+% to Knuth's specification. The outcome is that whatever text begins
+% a subsidiary \input file could be scanned as part of a filename.
+% Ultimately because
+%   @<Initiate or terminate input...@>=
+% does
+%   else if name_in_progress then insert_relax
+% But that inserted \relax is ignored.
+% 
+% This test file \input s itself instead of a second file, so the
+% problematic recursion doesn't stop until TeX's hardwired "input levels"
+% is exceeded. 
+%
+% Taco's original motivation for ignoring \relax was to have the same
+% behavior as \toks assignments, which likewise ignore \relax before the
+% <balanced text> of the assignment. That's plausible, but there are many
+% other instances of TeX syntax where \relax is not ignored before a
+% <balanced text>, so this does not seem an overwhelming argument.
+%
+% While there is no known use for this behavior, a discussion on
+% tex-implementors in May--June 2026 could not come to consensus about
+% whether the ignoring of \relax should be controlled by a configuration
+% variable (just in case) or unconditionally reverted back to the
+% traditional behavior, exactly to avoid the complication of creating and
+% configuring and documenting and users having to think about yet another
+% configuration variable. There are reasonable arguments on both sides.
+% 
+% As the code in tex.ch stands now, there is no configuration variable.
