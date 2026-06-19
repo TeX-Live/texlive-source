@@ -2,9 +2,12 @@
 % tex.ch for C compilation with web2c, derived from various other change files.
 % By Tim Morgan, UC Irvine ICS Department, and many others.
 %
-% Be very careful when making changes to this file, as it is used to
-% generate TeX, e-TeX, and pdfTeX, and most changes require similar
-% changes to be made to the Aleph sources.
+% Be very careful when making changes to this file, and try to build
+% everything before committing anything, as it is used in
+% generating all the engines other than LuaTeX and Aleph.
+% 
+% Thus, when changing this file, also consider submitting changes/suggestions
+% to the LuaTeX maintainers and consider updating Aleph.
 %
 % (05/28/86) ETM Started with TeX 2.0
 % (06/03/87) ETM Brought up to TeX 2.2
