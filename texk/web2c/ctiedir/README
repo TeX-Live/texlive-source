@@ -1,5 +1,26 @@
-This is the README file of the `CTIE' distribution, version 1.1
+$Id$
+
+Below is the original README for ctie, written by Julian Gilbey. ctie is
+currently maintained as part of TeX Live (web2c).
+
+We have kept the original distribution intact; changes are made in
+ctie-k.ch. The installed man page is ../man/ctie.man, not the ctie.1 here.
+
+The rules to build tie are in ../am/cweb.am (since it's written in
+cweb).  Tie is needed to build TeX and Metafont, merging together the
+many change files involved.
+
+The typeset program, tie.pdf, is included in the knuth-pdf package:
+https://ctan.org/pkg/knuth-pdf
+
+Please email bug reports or other discussion to tex-k@tug.org.
+It is not necessary to subscribe in order to post.
+Mailing list archive: https://lists.tug.org/tex-k
+
+--TeX Live maintainers
+
 ---------------------------------------------------------------
+This is the README file of the `CTIE' distribution, version 1.1
 
 CTIE is based on the `TIE' program, a program which was first
 developed to allow WEB programmers to use more than one change file
@@ -72,4 +93,5 @@ BUGS/ENHANCEMENTS:
 
 If you detect bugs in the implementation of CTIE or have suggestions
 to enhance functionality or improve portability, please send a message
-to Julian Gilbey <jdg@debian.org>.
+to (old) Julian Gilbey <jdg@debian.org>
+   (nowadays) tex-k@tug.org

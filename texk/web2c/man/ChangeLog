@@ -1,3 +1,8 @@
+2026-06-20  Karl Berry  <karl@freefriends.org>
+
+	* ctie.man: add analogous references to tie.man, other tweaks.
+	* tie.man: further tweaks.
+
 2026-06-19  Karl Berry  <karl@freefriends.org>
 
 	* tie.man: add some references.

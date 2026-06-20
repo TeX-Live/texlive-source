@@ -1,4 +1,4 @@
-.TH TIE 1 "19 June 2026" "Web2C @VERSION@"
+.TH TIE 1 "20 June 2026" "Web2C @VERSION@"
 .\"=====================================================================
 .SH NAME
 tie \- merge or apply WEB change files
@@ -41,23 +41,26 @@ The environment variable WEBINPUTS is used to search for the input files,
 or the system default if WEBINPUTS is not set.  See
 .BR tex (1)
 for the details of the searching. To avoid conflicts with other programs
-that also use the WEBINPUTS environment, you can use WEBINPUTS_tie for
-special requirements in TIE.
+that also use WEBINPUTS, you can use the WEBINPUTS_tie environment
+variable to define the search path only for
+.BR tie .
 .\"=====================================================================
 .SH "SEE ALSO"
 .BR ctie (1),
 .BR cweb (1),
 .BR tangle (1).
 .br
-The typeset program, as a pdf:
+The typeset program, as the file tie.pdf:
 https://ctan.org/pkg/knuth-pdf
 .br
 Donald E. Knuth,
-.IR "The WEB System of Structured Documentation" .
+.IR "The WEB System of Structured Documentation" :
 .br
 https://mirrors.ctan.org/info/knuth-pdf/web/webman.pdf
 .\"=====================================================================
 .SH "AUTHOR"
 Klaus Guntermann, TH Darmstadt, Institut f. Theoretische Informatik.  Man page
-by Joachim Schnitter, TH Darmstadt, Phys. Chemie I. Maintained as part
-of TeX Live. Mailing list: https://lists.tug.org/tex-k.
+by Joachim Schnitter, TH Darmstadt, Phys. Chemie I.
+.PP
+Now maintained as part of TeX Live. Mailing list:
+https://lists.tug.org/tex-k.
