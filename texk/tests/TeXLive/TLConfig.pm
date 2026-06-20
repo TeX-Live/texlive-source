@@ -1,12 +1,13 @@
+# $Id: TLConfig.pm 78607 2026-04-05 15:10:32Z karl $
 # TeXLive::TLConfig.pm - module exporting configuration values
-# Copyright 2007-2025 Norbert Preining
+# Copyright 2007-2026 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
 use strict; use warnings;
 package TeXLive::TLConfig;
 
-my $svnrev = '$Revision: 73776 $';
+my $svnrev = '$Revision: 78607 $';
 my $_modulerevision = ($svnrev =~ m/: ([0-9]+) /) ? $1 : "unknown";
 sub module_revision { return $_modulerevision; }
 
@@ -61,7 +62,7 @@ BEGIN {
 
 # the year of our release, will be used in the location of the
 # network packages, and in menu names, and other places.
-our $ReleaseYear = 2025;
+our $ReleaseYear = 2026;
 
 # users can upgrade from this year to the current year; might be the
 # same as the release year, or any number of releases earlier.
@@ -255,8 +256,13 @@ our %TLPDBSettings = (
 
 our $WindowsMainMenuName = "TeX Live $ReleaseYear";
 
-# Comma-separated list of engines which do not exist on all platforms.
-our $PartialEngineSupport = "luametatex,luajithbtex,luajittex,mfluajit";
+# Comma-separated list of engines which do not exist in all installations.
+# The lua versions are not buildable everywhere.
+# Although XeTeX can be built everywhere, people can install TL without
+# it, and we don't want that to cause an error from fmtutil.
+# Specifically, context-legacy has a cont-en.fmt and csplain has a
+# pdfcsplain.fmt which are built with XeTeX.
+our $PartialEngineSupport = "luametatex,luajithbtex,luajittex,mfluajit,xetex";
 
 # Flags for error handling across the scripts and modules
 # all fine

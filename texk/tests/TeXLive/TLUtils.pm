@@ -1,5 +1,6 @@
+# $Id: TLUtils.pm 78652 2026-04-10 16:18:13Z karl $
 # TeXLive::TLUtils.pm - the inevitable utilities for TeX Live.
-# Copyright 2007-2025 Norbert Preining, Reinhard Kotucha
+# Copyright 2007-2026 Norbert Preining, Reinhard Kotucha
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
 
@@ -7,7 +8,7 @@ use strict; use warnings;
 
 package TeXLive::TLUtils;
 
-my $svnrev = '$Revision: 74083 $';
+my $svnrev = '$Revision: 78652 $';
 my $_modulerevision = ($svnrev =~ m/: ([0-9]+) /) ? $1 : "unknown";
 sub module_revision { return $_modulerevision; }
 
@@ -461,15 +462,15 @@ sub platform_name {
   
   if ($OS eq "darwin") {
     # We have two versions of Mac binary sets.
-    # 10.x and newer -> universal-darwin [MacTeX]
-    # 10.6/Snow Leopard through 10.x -> x86_64-darwinlegacy, if 64-bit.
+    # 11.x and newer -> universal-darwin [MacTeX]
+    # 10.x -> x86_64-darwinlegacy, if 64-bit.
     # x changes every year. As of TL 2021 (Big Sur) Apple started with 11.x.
     #
     # (BTW, uname -r numbers are larger by 4 than the Mac minor version.
     # We don't use uname numbers here.)
     #
-    # this changes each year, per above:
-    my $mactex_darwin = 14;  # lowest minor rev supported by universal-darwin.
+    # When MacTeX stops supporting the earliest 11.x, reinstate this.
+    #my $mactex_darwin = ;  # lowest minor rev supported by universal-darwin.
     #
     # Most robust approach is apparently to check sw_vers (os version,
     # returns "10.x" values), and sysctl (processor hardware).
@@ -481,10 +482,11 @@ sub platform_name {
       return "unknownmac-unknownmac";
     }
     # have to refine after all 10.x become "legacy".
-    if ($os_major >= 11 || $os_minor >= $mactex_darwin) {
+    if ($os_major >= 11) { # see above: || $os_minor >= $mactex_darwin) {
       $CPU = "universal";
       $OS = "darwin";
-    } elsif ($os_major == 10 && 6 <= $os_minor && $os_minor < $mactex_darwin){
+    } elsif ($os_major == 10 && 6 <= $os_minor) {
+             # see above: && $os_minor < $mactex_darwin){
       # in between, x86 hardware only.  On 10.6 only, must check if 64-bit,
       # since if later than that, always 64-bit.
       my $is64 = $os_minor == 6
@@ -545,7 +547,7 @@ sub platform_desc {
     'powerpc-linux'    => 'GNU/Linux on PowerPC',
     'sparc-linux'      => 'GNU/Linux on Sparc',
     'sparc-solaris'    => 'Solaris on Sparc',
-    'universal-darwin' => 'MacOSX current (10.14-) on ARM/x86_64',
+    'universal-darwin' => 'MacOSX current (11-) on ARM/x86_64',
     'win32'            => 'Windows (32-bit)',
     'windows'          => 'Windows (64-bit)',
     'x86_64-cygwin'    => 'Cygwin on x86_64',
@@ -832,7 +834,9 @@ sub run_cmd_with_log {
     info ("done\n");
   } else {
     info ("failed\n");
-    tlwarn ("$0: $cmd failed (status $ret): $!\n");
+    tlwarn ("$0: $cmd failed: status $ret",
+            $! ? ", error: $!" : "", # usually $! will not be set
+            ")\n");
     $ret = 1;
   }
   &$logfn ($out); # log the output
@@ -2267,7 +2271,9 @@ Run the ConTeXt cache generation commands, using C<$bindir> and
 C<$progext> to check if commands can be run. Use the function reference
 C<$run_postinst_cmd> to actually run the commands. The return status is
 zero if all succeeded, nonzero otherwise. If the main ConTeXt program
-(C<luametatex>) cannot be run at all, the return status is zero.
+(C<luametatex>) cannot be run at all, the return status is zero. 
+
+This is called from both C<install-tl> and C<tlmgr>.
 
 Functions C<info> and C<debug> are called with status reports.
 
@@ -2290,33 +2296,25 @@ sub update_context_cache {
   my $lmtx = "$bindir/luametatex$progext";
   if (TeXLive::TLUtils::system_ok("$lmtx --version")) {
     info("setting up ConTeXt caches: ");
+    # Max advises (19feb26) that mtxrun --generate and context --generate
+    # are the same; mtxrun is preferred.
+    # Max (18mar26): Things are actually more complicated than this; see
+    # https://mailman.ntg.nl/archives/list/ntg-context@ntg.nl/message/HUILWUINUYPUFX5MZBFFIBQZSCFQDOOK/
     $errcount += &$run_postinst_cmd("mtxrun --generate");
     #
     # If mtxrun failed, don't bother trying more.
     if ($errcount == 0) {
-      $errcount += &$run_postinst_cmd("context --luatex --generate");
+      $errcount += &$run_postinst_cmd("context --generate --luatex");
       #
-      # This is for finding fonts by font name (the --generate suffices
-      # for file name). Although ConTeXt does some automatic cache
-      # regeneration, Hans advises that this manual reload can help, and
-      # should be no harm.
-      # https://wiki.contextgarden.net/Use_the_fonts_you_want
-      # https://wiki.contextgarden.net/Mtxrun#base and #fonts
-      $errcount += &$run_postinst_cmd("mtxrun --script fonts --reload");
+      # In the past, we ran
+      #   mtxrun --script fonts --reload
+      # but Max advises that it's better to omit, and let ConTeXt's
+      # automatic regeneration do it.
       #
-      # If context succeeded too, try luajittex. Missing on some platforms.
-      # Although we build luajittex normally, instead of importing the
-      # binary, so testing for file existence should suffice, we may as
-      # well test execution since it's just as easy.
-      # 
-      if ($errcount == 0) {
-        my $luajittex = "$bindir/luajittex$progext";
-        if (TeXLive::TLUtils::system_ok("$luajittex --version")) {
-          $errcount += &$run_postinst_cmd("context --luajittex --generate");
-        } else {
-          debug("skipped luajittex cache setup, can't run $luajittex\n");
-        }
-      }
+      # In the past, we ran
+      #   context --luajittex --generate
+      # but Max advises that it has few if any users, and should be able
+      # to bootstrap its own caches if needed.
     }
   }
   return $errcount;
@@ -2724,6 +2722,18 @@ sub unpack {
 
   if (!defined($what)) {
     return (0, "nothing to unpack");
+  }
+
+  # Shortcut for tar file, which can only be local and are backups when
+  # auto_backup == 0
+  if ($what =~ m/\.tar$/) {
+    if (untar($what, $target, 1)) {
+      my $pkg = $what;
+      $pkg =~ s/\.tar$//;
+      return (1, "$pkg");
+    } else {
+      return (0, "untar failed");
+    }
   }
 
   my $decompressorType;
