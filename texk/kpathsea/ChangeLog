@@ -1,3 +1,9 @@
+2026-06-20  Karl Berry  <karl@freefriends.org>
+
+	* Makefile.am (AM_CFLAGS): add $(KPSE_EXTRA_CFLAGS)
+	which can then be set to (e.g.) "-O0 -fanalyzer" without
+	affecting anything else in the build. Idea from Luigi.
+
 2026-05-25  Karl Berry  <karl@freefriends.org>
 
 	* kpsewhich.c (version): oops, had extra newline at end of

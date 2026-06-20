@@ -1,7 +1,7 @@
 ## $Id$
 ## Makefile.am for the TeX Live subdirectory texk/kpathsea/
 ##
-## Copyright 2015-2024 Karl Berry <tex-live@tug.org>
+## Copyright 2015-2026 Karl Berry <tex-live@tug.org>
 ## Copyright 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 
@@ -10,7 +10,12 @@ SUBDIRS = . doc man
 EXTRA_DIST = COPYING.LESSERv2 PROJECTS
 
 AM_CPPFLAGS = -I$(top_builddir)/.. -I$(top_srcdir)/..
-AM_CFLAGS = $(WARNING_CFLAGS)
+AM_CFLAGS = $(WARNING_CFLAGS) $(KPSE_EXTRA_CFLAGS)
+# so we can set the envvar KPSE_EXTRA_CFLAGS to (e.g.) "-O0 -fanalyzer".
+# Setting CFLAGS also works, but having a specific variable lets us
+# run the analyzer specifically on these files and not the whole
+# build, which would be quite slow. The variable is not otherwise used
+# in the build; it has to be set explicitly to whatever is desired.
 
 lib_LTLIBRARIES = libkpathsea.la
 
