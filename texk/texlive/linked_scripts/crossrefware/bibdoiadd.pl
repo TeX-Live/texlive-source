@@ -8,7 +8,7 @@ bibdoiadd.pl - add DOI numbers to papers in a given bib file
 
 =head1 SYNOPSIS
 
-bibdoiadd [B<-c> I<config_file>] [B<-C> 1|0] [B<-e> 1|0] [B<-f>] [B<-o> I<output>] I<bib_file>
+bibdoiadd [B<-c> I<config_file>] [B<-C> 1|0] [-d] [B<-e> 1|0] [B<-f>] [B<-o> I<output>] I<bib_file>
 
 =head1 OPTIONS
 
@@ -22,6 +22,10 @@ See below for its format.
 =item B<-C> 1|0
 
 Whether to canonicalize names in the output (1) or not (0).  By default, 1.
+
+=item B[-d]
+
+Debug mode on.  
 
 =item B<-e>
 
@@ -94,7 +98,7 @@ Boris Veytsman
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright (C) 2014-2024 Boris Veytsman
+Copyright (C) 2014-2025 Boris Veytsman
 
 This is free software.  You may redistribute copies of it under the
 terms of the GNU General Public License
@@ -122,7 +126,7 @@ $ENV{PERL_LWP_SSL_VERIFY_HOSTNAME}=0;
 
 my $USAGE="USAGE: $0 [-c config] [-C 1|0] [-e 1|0] [-f] [-o output] file\n";
 my $VERSION = <<END;
-bibdoiadd v2.3
+bibdoiadd v2.4
 This is free software.  You may redistribute copies of it under the
 terms of the GNU General Public License
 http://www.gnu.org/licenses/gpl.html.  There is NO WARRANTY, to the
@@ -130,7 +134,7 @@ extent permitted by law.
 $USAGE
 END
 our %opts;
-getopts('fe:c:C:o:hV',\%opts) or die $USAGE;
+getopts('fde:c:C:o:hV',\%opts) or die $USAGE;
 
 if ($opts{h} || $opts{V}){
     print $VERSION;
@@ -149,6 +153,11 @@ $outputfile =~ s/\.([^\.]*)$/_doi.$1/;
 
 if (exists $opts{o}) {
     $outputfile = $opts{o};
+}
+
+my $DEBUG = 0;
+if (exists $opts{d}) {
+    $DEBUG = 1;
 }
 
 my $forceSearch=$opts{f};
@@ -204,6 +213,10 @@ if ($mode eq 'free') {
 	uri_escape($password);
 }
 
+if ($DEBUG) {
+    print STDERR "Using $prefix\n";
+}
+
 # Processing the input
 while (my $entry = $parser->next) {
     if (!$entry->parse_ok()) {
@@ -213,12 +226,22 @@ while (my $entry = $parser->next) {
 	next;
     }
 
+    if ($DEBUG) {
+	print STDERR "Processing entry ", $entry->key(), "\n";
+    }
+    
     if (!($entry->type() eq 'ARTICLE') && !($entry->type() eq 'BOOK')
 	&& !($entry->type() eq 'INCOLLECTION')) {
+	if ($DEBUG) {
+	    print STDERR "  The type is ", $entry->type(), " skipping\n";
+	}
 	print $output $entry->raw_bibtex(), "\n\n";
 	next;
     }
     if ($entry->has('doi') && !$forceSearch) {
+	if ($DEBUG) {
+	    print STDERR "  The entry has DOI, and force search is not selected.  Skipping\n";
+	}
 	print $output $entry->raw_bibtex(), "\n\n";
 	next;
     }
@@ -273,11 +296,26 @@ sub GetDoi {
 	$url .= "&date=".uri_escape_utf8($entry->field('year'));
     }    
 
+    if ($DEBUG) {
+	print STDERR "  Using $url\n";
+    }
+    
     my $result=get($url);
 
+    if ($DEBUG) {
+	print STDERR "  Got answer $result\n";
+    }
+
+    
     if ($result =~ m/<doi [^>]*>(.*)<\/doi>/) {
+	if ($DEBUG) {
+	    print STDERR "  Obtained DOI $1\n";
+	}
 	return $1;
     } else {
+	if ($DEBUG) {
+	    print STDERR "  Did not get DOI\n";
+	}
 	return "";
     }
 }

@@ -1,4 +1,4 @@
-#!/usr/bin/env perl
+#!/usr/bin/env perl -X
 
 =pod
 
@@ -53,7 +53,7 @@ Boris Veytsman
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright (C) 2014-2024 Boris Veytsman
+Copyright (C) 2014-2026 Boris Veytsman
 
 This is free software.  You may redistribute copies of it under the
 terms of the GNU General Public License
@@ -85,14 +85,14 @@ use IO::File;
 use BibTeX::Parser;
 use Getopt::Std;
 use URI::Escape;
-use LWP::UserAgent;
+use LWP::Simple;
 $ENV{PERL_LWP_SSL_VERIFY_HOSTNAME}=0;
 # Sometimes AMS forgets to update certificates
 $ENV{PERL_LWP_SSL_VERIFY_HOSTNAME}=0;
 
 my $USAGE="USAGE: $0  [-d] [-e 1|0] [-f] [-o output] file\n";
 my $VERSION = <<END;
-bibmradd v2.3
+bibmradd v3.0
 This is free software.  You may redistribute copies of it under the
 terms of the GNU General Public License
 http://www.gnu.org/licenses/gpl.html.  There is NO WARRANTY, to the
@@ -141,8 +141,7 @@ my $parser=new BibTeX::Parser($input);
 
 # Creating the HTTP parameters
 my $mirror =
-    "https://mathscinet.ams.org/mathscinet-mref";
-my $userAgent = LWP::UserAgent->new;
+    "https://mathscinet.ams.org/batchmrlookup";
 
 while (my $entry = $parser->next ) {
     if (!$entry->parse_ok()) {
@@ -167,7 +166,7 @@ while (my $entry = $parser->next ) {
 	print STDERR "DEBUG:  Searching for mr number for entry ",
 	$entry->key, "\n";
     }
-     my $mr = GetMr($entry, $userAgent, $mirror);
+     my $mr = GetMr($entry, $mirror);
      if (length($mr) || $forceEmpty) {
  	$entry->field('mrnumber', $mr);
      }
@@ -185,39 +184,95 @@ exit 0;
 
 sub GetMr {
     my $entry=shift;
-    my $userAgent=shift;
     my $mirror=shift;
-    
-    my @query;
 
-    my $string=uri_escape_utf8($entry->to_string());
+    my @data;
+    if ($entry->has('issn')) {
+	push @data, $entry->field('issn');
+    } else {
+	push @data, "";
+    }
+    if ($entry->has('journal')) {
+	push @data, $entry->cleaned_field('journal');
+    } else {
+	push @data, "";
+    }
+    if ($entry->has('author')) {
+	my @authors = $entry->cleaned_author();
+	my @lastnames;
+	foreach my $author (@authors) {
+	    push @lastnames, $author->last();
+	}
+	if (scalar @lastnames) {
+	    push @data, join(";", @lastnames);
+	} else {
+	    push @data, "";
+	}
+    } else {
+	push @data, "";
+    }
+    if ($entry->has('volume')) {
+	push @data, $entry->cleaned_field('volume');
+    } else {
+	push @data, "";
+    }
+    if ($entry->has('number')) {
+	push @data, $entry->cleaned_field('number');
+    } else {
+	push @data, "";
+    }
+    if ($entry->has('pages')) {
+	my $page = $entry->cleaned_field('pages');
+	$page =~ s/-.*//;
+	$page =~ s/\+.*//;
+	push @data, $page;
+    } else {
+	push @data, "";
+    }
+    if ($entry->has('year')) {
+	push @data, $entry->cleaned_field('year');
+    } else {
+	push @data, "";
+    }
+    push @data, $entry->type();
+    push @data, $entry->key();
+    push @data, "";
+    if ($entry->has('title')) {
+	my $title = $entry->cleaned_field('title');
+	$title =~ s/|/ /g;
+	push @data, $entry->cleaned_field('title');
+    } else {
+	push @data, "";
+    }
     
+    
+    my $qrdata = join("|", @data);
+    my $url = "$mirror?api=xref&qdata=".uri_escape_utf8($qrdata);
     if ($debug) {
-	print STDERR "DEBUG:  query: $mirror?ref=$string&dataType=bibtex\n" ;
+	print STDERR "DEBUG: query $url\n";
     }
 
-
-    my $response = $userAgent->get("$mirror?ref=$string&dataType=bibtex");
+    my $response = get($url);
+    chomp $response;
     if ($debug) {
-	print STDERR "DEBUG:  response: ",
-	$response->decoded_content, "\n";
+	print "DEBUG: response $response\n";
     }
     
-    if ($response->decoded_content =~ /MRNUMBER\s*=\s*{(.*)}/m) {
-	my $mr=$1;
-	# Somehow mref deletes leading zeros.  They are needed!
-	while (length($mr)<7) {
-	    $mr = "0$mr";
-	}
+    $response =~ s/\|.*//;
+    if (length($response == 0)) {
 	if ($debug) {
-	    print STDERR "DEBUG:  got MR: $mr\n",
+	    print STDERR "Did not get MR\n";
 	}
-	return $mr;
-     } else {
-	if ($debug) {
-	    print STDERR "DEBUG: Did not get MR\n",
-	}
- 	return ("");
+	return("");
     }
+
+    # Somehow mref deletes leading zeros.  They are needed!
+    while (length($response)<7) {
+	$response = "0$response";
+    }
+    if ($debug) {
+	print STDERR "DEBUG:  got MR: $response\n",
+    }
+    return $response;
 
 }

@@ -297,8 +297,6 @@ BibTeX entry types, and should do a good job in most cases.
 
 =back
 
-
-
 =head1 EXAMPLES
 
   ltx2crossrefxml.pl ../paper1/paper1.tex ../paper2/paper2.tex \
@@ -338,9 +336,12 @@ extent permitted by law.
      # even if $0 is a symlink. All irrelevant when using from an installation.
      my $real0 = Cwd::abs_path($0);
      my $scriptdir = File::Basename::dirname($real0);
-     my $dev_btxperllibs = Cwd::abs_path("$scriptdir/../bibtexperllibs");
+     my $dev_btxperllibs = Cwd::abs_path("$scriptdir/../BibTeXPerlLibs");
+     if (! -d $dev_btxperllibs) {
+       $dev_btxperllibs = Cwd::abs_path("$scriptdir/../bibtexperllibs");
+     }
      # we need the lib/ subdirectories inside ...
-     unshift (@INC, glob ("$dev_btxperllibs/*/lib")) if -d $dev_btxperllibs;
+     unshift (@INC, glob ("$dev_btxperllibs/*/lib"))
  }
 
  use POSIX qw(strftime);
@@ -388,7 +389,7 @@ Releases: https://ctan.org/pkg/crossrefware
 END
 
  my $VERSION = <<END;
-ltx2crossrefxml (crossrefware) 2025-07-09
+ltx2crossrefxml (crossrefware) 2026-04-30
 This is free software: you are free to change and redistribute it, under
 the terms of the GNU General Public License
 http://www.gnu.org/licenses/gpl.html (any version).
@@ -761,8 +762,25 @@ sub AddBibtexBib {
     foreach my $bibfile (keys %bibfiles) {
         $bibfile .= ".bib"
           if $bibfile !~ /\.bib$/; # might end in .bib already
-	my $bibfilename = `kpsewhich $bibfile`; # --debug=-1 
-	chomp $bibfilename;
+	my $bibfilename;
+	# Often, the bib file to be read is in the current directory,
+	# so just find it; this can save a noticeable amount of time
+	# (several seconds) over running kpsewhich when processing a
+	# whole issue. Although in theory the setup could be such that
+	# ./bibfile.bib is not found first, in practice that seems
+	# unlikely to ever happen.
+	if (-r $bibfile) {
+	  $bibfilename = $bibfile;
+	} else {
+	  chomp ($bibfilename = `kpsewhich $bibfile`); # --debug=-1 
+	  # By the way, what ends up taking the most time is parsing the
+	  # .bib files (_parse_next); apparently \G is rather slow.
+	  # But rewriting the whole bib parser does not seem worth it.
+	  # Even more unfortunately, if a bib file is used in several
+	  # papers (e.g., tugboat.bib in a TUGboat issue), it will be
+	  # slowly parsed from scratch each time, but again, there seems
+	  # no easy way to avoid that.
+	}
 	my $fh = IO::File->new($bibfilename);
 	if (! defined $fh) {
 	    warn "$0: could not open bib file: $bibfile\n";
@@ -824,7 +842,8 @@ sub CrEntrytype {
 ##############################################################
 sub ConvertBibentryToCr {
     my $entry = shift;
-    &debug_hash_as_string("Processing citation entry", $entry);
+    #warn &debug_hash_as_string("Processing citation entry", $entry)
+      #if $entry->{author} =~ /Harris/;
     my %result = ();
 
     $result{'entrytype'} = CrEntrytype($entry);
@@ -832,11 +851,15 @@ sub ConvertBibentryToCr {
     
     $result{'citation'} .= ConvertBibFieldToCfield($entry, 'journal', 'journal_title');
 
-    my $issn = $entry->{"issn"};
-    if ($issn && $issn !~ /\d{4}-?\d{3}[\dX]/) {
-        # that's the regexp crossref matches.
+    my $issn = $entry->{'issn'};
+    if ($issn && $issn !~ /^\d{4}-*\d{3}[\dX]$/) {
+        # that's almost the regexp crossref matches; we allow
+        # more than one -, since sometimes people incorrectly want
+        # to use a TeX en-dash (--). Just silently correct it.
         warn "$0: goodbye, invalid issn value: $issn\n";
         die "$0:   ", &debug_hash_as_string("in entry", $entry);
+    } elsif ($issn) {
+      $entry->{'issn'} =~ s/--+/-/g; # switch incorrect TeX en-dash to hyphen
     }
     $result{'citation'} .= ConvertBibFieldToCfield($entry, 'issn');
 
@@ -1049,7 +1072,7 @@ sub TitleCheck {
 
 
 ################################################################
-# Printing one author in arg ORIG_AUTHOR, in sequence SEQ.
+# Printing one author in arg ORIG_AUTHOR, in (DTD value) sequence SEQ.
 ################################################################
 sub PrintAuthor {
     my ($orig_author,$seq) = @_;
@@ -1061,6 +1084,7 @@ sub PrintAuthor {
     my $author = "";
     my @name_parts = split (/\|/, $orig_author);
     foreach my $np (@name_parts) {
+        #warn "considering np=$np\n";
         $np =~ s/^\s*(.*)\s*$/$1/s; # remove leading and trailing whitespace
         if ($np eq "organization") {
             $organization = 1;
@@ -1074,8 +1098,11 @@ sub PrintAuthor {
             # silently ignore empty part, as in ||
         } else {
             if ($author) {
-                die ("$0: already saw author name `$author', should not"
-                     . " have second: $np\n");
+                warn "$0: probably missing \"orcid=\" for authinfo: $np\n"
+                  if $np =~ /^[0-9-]+$/;
+                die ("$0: already saw author name `$author',"
+                     . " should not have second name: $np"
+                     . " (orig_author=$orig_author, seq=$seq)");
             }
             $author = $np;
         }
@@ -1273,6 +1300,11 @@ sub SanitizeTextNoEntities {
 
     $string = LaTeX::ToUnicode::convert($string, @hook, @_);
     
+    # Remove $...$ math-shift pairs; TeX math is sufficiently plain-text
+    # not to do anything more. If we do do something more eventually,
+    # it should be done LaTeX::ToUnicode, not here.
+    $string =~ s/\$(.*?)\$/$1/g;
+
     return $string;
 }
 

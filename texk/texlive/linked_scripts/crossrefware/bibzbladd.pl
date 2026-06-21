@@ -1,4 +1,4 @@
-#!/usr/bin/env perl
+#!/usr/bin/env perl -X
 
 =pod
 
@@ -8,7 +8,7 @@ bibzbladd.pl - add Zbl numbers to papers in a given bib file
 
 =head1 SYNOPSIS
 
-bibzbladd  [-d] [B<-f>] [B<-e> 1|0] [B<-o> I<output>] [B<-p> I<probability>] [B<-v|-q>] I<bib_file>
+bibzbladd  [-d] [B<-f>] [B<-e> 1|0] [B<-o> I<output>]  I<bib_file>
 
 =head1 OPTIONS
 
@@ -33,21 +33,6 @@ Force searching for Zbl numbers even if the entry already has one.
 Output file.  If this option is not used, the name for the 
 output file is formed by adding C<_zbl> to the input file
 
-=item B<-p> I<probability>
-
-Zbmath.org now outputs a probability of match.  We disregard the
-matches with the probability lower than I<probability>.  The default
-is 0.9
-
-=item B<-v>
-
-Verbose mode (the default).  Add to the output the intermediate
-results of zbl search
-
-=item B<-q>
-
-Quiet mode.  Do not add to the output the intermediate results
-of zbl search.
 
 =back
 
@@ -68,7 +53,7 @@ Boris Veytsman
 
 =head1 COPYRIGHT AND LICENSE
 
-Copyright (C) 2014-2025 Boris Veytsman
+Copyright (C) 2014-2026 Boris Veytsman
 
 This is free software.  You may redistribute copies of it under the
 terms of the GNU General Public License
@@ -89,13 +74,13 @@ use IO::File;
 use BibTeX::Parser;
 use Getopt::Std;
 use URI::Escape;
-use LWP::UserAgent;
 use JSON;
+use LWP::Simple;
 $ENV{PERL_LWP_SSL_VERIFY_HOSTNAME}=0;
 
-my $USAGE="USAGE: $0  [-d] [-e 1|0] [-f] [-o output] [-p probability] [-v|-q] file\n";
+my $USAGE="USAGE: $0  [-d] [-e 1|0] [-f] [-o output] file\n";
 my $VERSION = <<END;
-bibzbladd v2.3
+bibzbladd v3.0
 This is free software.  You may redistribute copies of it under the
 terms of the GNU General Public License
 http://www.gnu.org/licenses/gpl.html.  There is NO WARRANTY, to the
@@ -103,7 +88,7 @@ extent permitted by law.
 $USAGE
 END
 my %opts;
-getopts('de:fo:p:hV',\%opts) or die $USAGE;
+getopts('de:fo:hV',\%opts) or die $USAGE;
 
 if ($opts{h} || $opts{V}){
     print $VERSION;
@@ -133,20 +118,6 @@ if (exists $opts{e}) {
 
 my $debug = $opts{d};
 
-my $prob = 0.9;
-if (exists $opts{p}) {
-    $prob = $opts{p};
-}
-
-my $json = JSON->new->allow_nonref;
-
-my $quiet = 0;
-if (exists $opts{q}) {
-    $quiet = 1;
-}
-if (exists $opts{v}) {
-    $quiet = 0;
-}
 
 
 
@@ -161,8 +132,7 @@ my $parser=new BibTeX::Parser($input);
 
 # Creating the HTTP parameters
 my $mirror =
-    "https://zbmath.org/citationmatching/bibtex/match";
-my $userAgent = LWP::UserAgent->new (agent => 'Mozilla/5.0');
+    "https://api.zbmath.org/v1/document/_search";
 
 while (my $entry = $parser->next ) {
     if (!$entry->parse_ok()) {
@@ -187,7 +157,7 @@ while (my $entry = $parser->next ) {
 	print STDERR "DEBUG:  Searching for zbl number for entry ",
 	$entry->key, "\n";
     }
-     my $zbl = GetZbl($entry, $userAgent, $mirror);
+     my $zbl = GetZbl($entry, $mirror);
      if (length($zbl) || $forceEmpty) {
  	$entry->field('zblnumber',$zbl);
      }
@@ -205,60 +175,88 @@ exit 0;
 
 sub GetZbl {
     my $entry=shift;
-    my $userAgent=shift;
     my $mirror=shift;
     
-    my @query;
+    my @data;
 
-    my $string=uri_escape_utf8($entry->to_string());
+    if ($entry->has('arxiv')) {
+	push @data, "arxiv:".$entry->cleaned_field('arxiv');
+    }
+
+    if ($entry->has('author')) {
+	my @authors = $entry->cleaned_author();
+	foreach my $author (@authors) {
+	    push @data, "au:".$author->last();
+	}
+    }
+
+    if ($entry->type() eq 'ARTICLE') {
+	push @data, 'dt:j';	
+    } elsif ($entry->type() eq 'INCOLLECTION' ||
+	     $entry->type() eq 'INBOOK') {
+	push @data, 'dt:a';
+    } elsif ($entry->type() eq 'BOOK') {
+	push @data, 'dt:a';
+    } elsif ($entry->type() eq 'MISC') {
+	push @data, 'dt:p';
+    }
+
+    if ($entry->has('doi')) {
+	my $doi = $entry->field('doi');
+	$doi =~ s/^http.*doi\.org\///;
+	push @data, "doi:$doi";
+    }
+
+    if ($entry->has('editor')) {
+	my @editors = $entry->cleaned_editor();
+	foreach my $editor (@editors) {
+	    push @data, "ed:".$editor->last();
+	}
+    }
+
+    if ($entry->has('journal')) {
+	my $journal = $entry->cleaned_field('journal');
+	$journal =~ s/:/ /g;
+	push @data, "so:".$journal;
+    }
+    if ($entry->has('title')) {
+	my $title =$entry->cleaned_field('title');
+	$title =~ s/:/ /g;
+	push @data, "ti:".$title
+    }
+    if ($entry->has('year')) {
+	push @data, "py:".$entry->cleaned_field('year');
+    }
+
+    
+    my $search_string = join("&", @data);
+
+    my $url = "$mirror?search_string=".uri_escape_utf8($search_string).
+	"&page=0&results_per_page=1";
     
     if ($debug) {
-	print STDERR "DEBUG:  query: $mirror?bibtex=$string\n" ;
+	print STDERR "DEBUG:  query: $url\n" ;
     }
 
-
-    my $response = $userAgent->get("$mirror?bibtex=$string");
+    my $response = get($url);
     if ($debug) {
-	print STDERR "DEBUG:  response: ",
-	$response->decoded_content, "\n";
+	print STDERR "DEBUG:  response: $response \n";
     }
-
-    my $content = $json->decode($response->decoded_content);
-
-    if (!exists $content->{results}) {
-	if ($debug) {
-	    print STDERR "DEBUG: Did not get zbl\n";
-	}
+    if (length($response) == 0) {
 	return("");
     }
-
-    if (!$quiet) {
-	print $output "% ZBL search:\n";
-    }
     
-    my $results = $content->{results};
-    if (!$quiet) {
-	my $string =  $json->pretty->encode( $results );
-	$string =~ s/^(.)/% \1/mg;
-	print $output "$string\n";
-    }
-
-    foreach my $result (@{$results}) {
-	if (!exists $result->{probability} ||
-	    $result->{probability} < $prob ||
-	    !exists $result->{zbl_id}
-	    ) {
-	    next;
+    my $content = decode_json($response);
+    if (!exists $content->{result}->[0]->{identifier}) {
+	if ($debug) {
+	    print STDERR "DEBUG: Did not find zbl\n";
 	}
-	my $zbl = $result->{zbl_id};
- 	if ($debug) {
- 	    print STDERR "DEBUG:  got zbl: $zbl\n",
- 	}
- 	return($zbl);
+	return("");
+    } else {
+	my $zbl = $content->{result}->[0]->{identifier};
+	if ($debug) {
+	    print STDERR "DEBUG: Found zbl  $zbl\n";
+	}
+	return($zbl);
     }
-
-    if ($debug) {
-	print STDERR "DEBUG: Did not get zbl\n",
-    }
-    return ("");
-}
+}	    
