@@ -1,3 +1,7 @@
+2026-01-09  Andreas Scherer  <https://ascherer.github.io>
+
+	* patgen.web: more sorting fixes in the "names of the sections".
+
 2026-06-19  Karl Berry  <karl@freefriends.org>
 
 	* tex.ch (scan_file_name): do not ignore \relax before looking for
@@ -366,7 +370,7 @@
 	* patgen.ch,
 	* patgen.web,
 	* pktogf.ch,
-	* pktogf.web: Fix sorting order in 'other' WEB codees.
+	* pktogf.web: Fix sorting order in 'other' WEB programs.
 
 2024-08-31  Andreas Scherer  <https://ascherer.github.io>
 

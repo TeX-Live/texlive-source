@@ -104,7 +104,7 @@ var @<Globals in the outer block@>@/
 procedure initialize; {this procedure gets things started properly}
   var @<Local variables for initialization@>@/
   begin print_ln(banner);@/
-  @<Set initial values@>@/
+  @<Set \(initial values@>@/
   end;
 
 @ The patterns are generated in a series of sequential passes through the
@@ -325,7 +325,7 @@ prevent range check and array bound violations.
 Here we check that the definitions of |ASCII_code| and
 |packed_ASCII_code| are consistent with those of |si| and |so|.
 
-@<Set init...@>=
+@<Set \(init...@>=
 bad:=0;@/
 if last_ASCII_code<127 then bad:=1;
 if (si(0)<>min_packed)or(so(min_packed)<>0) then bad:=2;@/
@@ -351,7 +351,7 @@ and |chr| functions.
 @ The following code initializes the |xchr| array with some of the
 standard ASCII characters.
 
-@<Set init...@>=
+@<Set \(init...@>=
 for j:=0 to last_ASCII_code do xchr[j]:=' ';
 xchr["."]:='.';@/
 xchr["0"]:='0'; xchr["1"]:='1'; xchr["2"]:='2'; xchr["3"]:='3';
@@ -381,7 +381,7 @@ suitable inverse to the information in |xchr|.
 @^system dependencies@>
 @^character set dependencies@>
 
-@<Set init...@>=
+@<Set \(init...@>=
 for i:=chr(first_text_char) to chr(last_text_char) do
   xord[i]:=invalid_code;
 for j:=0 to last_ASCII_code do xord[xchr[j]]:=j;
@@ -534,7 +534,7 @@ characters.
 @!xhyf: array [err_hyf..found_hyf] of text_char;
   {specifies conversion of output characters}
 
-@ @<Set init...@>=
+@ @<Set \(init...@>=
 for i:=chr(first_text_char) to chr(last_text_char) do
   begin xclass[i]:=invalid_class; xint[i]:=0;
   end;
@@ -749,7 +749,7 @@ patterns are deleted (see |delete_bad_patterns|).
 @<Set \(|s| to the trie base location at which this state should be packed@>=
 if qmax>qmax_thresh then t:=trie_back(trie_max+1) @+else t:=0;
 loop  begin t:=trie_link(t); s:=t-q_char(1); {get next unoccupied cell}
-  @<Ensure |trie| linked up to |s+num_ASCII_codes|@>;
+  @<Ensure \(|trie| linked up to |s+num_ASCII_codes|@>;
   if trie_base_used(s) then goto not_found;
   for q:=qmax downto 2 do {check if state fits here}
   if trie_char(s+q_char(q))<>min_packed then goto not_found;
@@ -761,7 +761,7 @@ found:
 far as necessary.  Here we extend the initialization if necessary, and
 check for overflow.
 
-@<Ensure |trie| linked up to |s+num_ASCII_codes|@>=
+@<Ensure \(|trie| linked up to |s+num_ASCII_codes|@>=
 if s>trie_size-num_ASCII_codes then
   overflow(trie_size:1,' pattern trie nodes');
 while trie_bmax<s do
@@ -917,7 +917,7 @@ end;
 @p function firstc_fit: triec_pointer;
 label found, not_found;
 var a, @!b: triec_pointer; @!q: q_index;
-begin  @<Set \(|b| to the count trie base location at which this state should
+begin  @<Set \(\(|b| to the count trie base location at which this state should
     be packed@>;
   for q:=1 to qmax do {pack it}
   begin  a:=b+q_char(q);@/
@@ -935,7 +935,7 @@ end;
 @ The threshold for attempting a first-fit packing is 3 transitions, which
 is lower than for the pattern trie because speed is more important here.
 
-@<Set \(|b| to the count trie base location...@>=
+@<Set \(\(|b| to the count trie base location...@>=
 if qmax>3 then a:=triec_back(triec_max+1) @+else a:=0;
 loop  begin a:=triec_link(a); b:=a-q_char(1);@/
   @<Ensure |triec| linked up to |b+num_ASCII_codes|@>;
