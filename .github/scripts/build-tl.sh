@@ -50,7 +50,7 @@ if test $do_prepare = 1; then
        apk add --no-progress bash gcc g++ make musl-dev perl fontconfig-dev libx11-dev libxmu-dev libxaw-dev
        ;;
      freebsd)
-       env ASSUME_ALWAYS_YES=YES pkg install -y gmake gcc15-devel pkgconf libX11 libXt libXaw fontconfig perl5
+       env ASSUME_ALWAYS_YES=YES pkg install -y gmake gcc15 pkgconf libX11 libXt libXaw fontconfig perl5
        ;;
      netbsd)
        pkg_add gmake gcc pkgconf libX11 libXt libXaw fontconfig perl5
