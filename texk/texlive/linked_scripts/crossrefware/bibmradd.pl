@@ -258,8 +258,9 @@ sub GetMr {
 	print "DEBUG: response $response\n";
     }
     
-    $response =~ s/\|.*//;
-    if (length($response == 0)) {
+    my @vals = split /\|/, $response;
+    my $mr = $vals[9];
+    if (length($mr) == 0) {
 	if ($debug) {
 	    print STDERR "Did not get MR\n";
 	}
@@ -267,12 +268,12 @@ sub GetMr {
     }
 
     # Somehow mref deletes leading zeros.  They are needed!
-    while (length($response)<7) {
-	$response = "0$response";
+    while (length($mr)<7) {
+	$mr = "0$mr";
     }
     if ($debug) {
-	print STDERR "DEBUG:  got MR: $response\n",
+	print STDERR "DEBUG:  got MR: $mr\n",
     }
-    return $response;
+    return $mr;
 
 }
