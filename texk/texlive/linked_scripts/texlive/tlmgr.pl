@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 78616 2026-04-06 13:48:59Z karl $
+# $Id: tlmgr.pl 79456 2026-06-23 14:54:00Z karl $
 # Copyright 2008-2026 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
@@ -8,8 +8,8 @@
 
 use strict; use warnings;
 
-my $svnrev = '$Revision: 78616 $';
-my $datrev = '$Date: 2026-04-06 15:48:59 +0200 (Mon, 06 Apr 2026) $';
+my $svnrev = '$Revision: 79456 $';
+my $datrev = '$Date: 2026-06-23 16:54:00 +0200 (Tue, 23 Jun 2026) $';
 my $tlmgrrevision;
 my $tlmgrversion;
 my $prg;
@@ -7622,11 +7622,15 @@ do not include the version of the local installation
     # $texlive_minrelease not defined, so only one year is valid
     if ($texlive_release_year != $TeXLive::TLConfig::ReleaseYear) {
       info("fail load $location\n") if ($::machinereadable);
-      return(undef, "The TeX Live versions of the local installation
+      return(undef, <<END_INCOMPAT_VERSIONS);
+The TeX Live versions of the local installation
 and the repository are not compatible:
       local: $TeXLive::TLConfig::ReleaseYear
  repository: $texlive_release_year ($rroot)
-(Perhaps you need to use a different CTAN mirror? Just a guess.)");
+Perhaps that particular CTAN mirror is outdated? Just a guess.
+Or if you want to install an older version of TeX Live, see:
+  https://tug.org/texlive/acquire.html#past
+END_INCOMPAT_VERSIONS
     }
   }
 
@@ -10638,7 +10642,7 @@ This script and its documentation were written for the TeX Live
 distribution (L<https://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 78616 2026-04-06 13:48:59Z karl $
+$Id: tlmgr.pl 79456 2026-06-23 14:54:00Z karl $
 =cut
 
 # test HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html
