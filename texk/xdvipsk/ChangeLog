@@ -1,3 +1,9 @@
+2026-06-25  Tomas Rokicki  <rokicki@gmail.com>
+
+	[Copying fix from ../dvipsk.]
+	* download.c (quarterword): compute yoff(set), not xoff twice.
+	See dvipsk/ChangeLog for details.
+
 2026-04-10  Sigitas Tolušis <sigitas@vtex.lt>
 
 	* fulfill font maps tables (MP);

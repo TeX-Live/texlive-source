@@ -47,8 +47,8 @@ quarterword *unpack_bb(chardesctype *c, integer *cwidth, integer *cheight,
          if (*xoff > 32767)
             *xoff -= 65536 ;
          *yoff = p[6] * 256 + p[7];
-         if (*xoff > 32767)
-            *xoff -= 65536 ;
+         if (*yoff > 32767)
+            *yoff -= 65536 ;
          p += 8;
       }
    } else {

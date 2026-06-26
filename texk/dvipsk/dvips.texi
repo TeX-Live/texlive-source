@@ -3,7 +3,7 @@
 @settitle Dvips: A DVI-to-PostScript translator
 
 @set version 2026.1
-@set month-year March 2026
+@set month-year June 2026
 
 @copying
 This manual documents Dvips version @value{version}
@@ -26,7 +26,7 @@ PostScript.  You may freely use, modify and/or distribute this file.
 @dircategory TeX
 @direntry
 * DVI-to-PostScript: (dvips).        Translating TeX DVI files to PostScript.
-* afm2tfm: (dvips)Invoking afm2tfm.  Making Type 1 fonts available to TeX.
+* afm2tfm: (dvips)Invoking afm2tfm.  Making Type@tie{}1 fonts available to TeX.
 * dvips: (dvips)Invoking Dvips.      DVI-to-PostScript translator.
 @end direntry
 
@@ -205,7 +205,8 @@ and VF metrics for @TeX{} and Dvips to use.  Also add them to
 @file{psfonts.map} (@pxref{psfonts.map}); this file must contain
 everything available in the system.  The @code{updmap} program is
 usually used to maintain @file{psfonts.map}; run @samp{updmap --help}
-for lots of information about how it works.
+or see @url{https://tug.org/texlive/doc/updmap.html} for lots of
+information about how it works.
 
 
 @node Ghostscript installation
@@ -735,7 +736,7 @@ memory.  @xref{Headers and memory usage}, for ways to handle this.
 
 @item -j*
 @opindex -j @r{for partial font downloading}
-Download only needed characters from Type 1 fonts. This is the
+Download only needed characters from Type@tie{}1 fonts. This is the
 default in the current release.  Some debugging flags trace this operation
 (@pxref{Debug options}).  You can also control partial downloading on a
 per-font basis (@pxref{psfonts.map}).
@@ -965,10 +966,22 @@ things that vary from printer to printer in the
 @samp{config.@var{printer}} files; @samp{config.ps} is read before
 @samp{config.@var{printer}}.
 
+@flindex config.pk
 A configuration file for eventual creation of Adobe PDF files is
 provided in @samp{config.pdf} and thus can be loaded with
-@samp{-Ppdf}.  It will try to include Type 1 outline fonts into the
-PostScript file (@pxref{Hypertext caveats}).
+@samp{-Ppdf}.  It will try to include Type@tie{}1 outline fonts into
+the PostScript file (@pxref{Hypertext caveats}), which is normally the
+default.  It also uses an extremely high resolution (8000dpi) for
+creating any needed bitmaps.
+
+@flindex psfonts_pk.map
+@flindex config.pk
+Analogously, a configuration file to force use of PK bitmap fonts (via
+@samp{p psfonts_pk.map}, @pxref{Configuration file commands}) is
+provided in @samp{config.pk} and can be loaded with @samp{-Ppk}. This
+changes the behavior only for fonts with Metafont implementations,
+such as Computer Modern; fonts which are only available in Type@tie{}1
+still use the Type@tie{}1.
 
 If no @samp{-P} or @samp{-o} is given, the environment variable
 @code{PRINTER} is checked.  If that variable exists, and a corresponding
@@ -1245,8 +1258,8 @@ For information about installing these files, including a prototype file
 you can copy, @pxref{config.ps installation}.
 
 @menu
-* Configuration file searching:: Where config.* files are searched for.
-* Configuration file commands::  What can go in a config.* file.
+* Searching: Configuration file searching. Where config.* files are looked for.
+* Commands: Configuration file commands.   What can go in a config.* file.
 @end menu
 
 
@@ -1425,7 +1438,7 @@ details}.
 
 @item j*
 @opindex j @r{config command (partial font downloading)}
-Partially download Type 1 fonts.  Same as @samp{-j}, @pxref{Option details}.
+Partially download Type@tie{}1 fonts.  Same as @samp{-j}, @pxref{Option details}.
 
 @item K*
 @opindex K @r{config command (comment removal)}
@@ -1503,18 +1516,35 @@ program by that name in the current directory or along the @code{PATH}.
 @opindex O @r{config command (page offsets)}
 Origin offset.  Same as @samp{-O}, @pxref{Option details}.
 
-@item p @r{[+]}@var{name}
+@item p @r{[+]}@var{file}
 @opindex p @r{config command (font aliases)}
 @cindex PostScript font alias file
 @cindex resident fonts, different in different printers
 @kindex +@var{psmapfile}
-Examine @var{name} for PostScript font aliases.  Default is
-@file{psfonts.map}.  This option allows you to specify different resident
-fonts that different printers may have.  If @var{name} starts with a
-@samp{+} character, then the rest of the name (after any leading spaces)
-is used as an additional map file; thus, it is possible to have local
-map files pointed to by local configuration files that append to the
-global map file.  This can be used for font families.
+Examine @var{file} for PostScript font aliases.  Default is
+@file{psfonts.map}.  This option allows you to specify different
+resident fonts that different printers may have, or more likely, those
+included in your @TeX{} installation, independent of any printer. 
+
+If @var{file} is preceded with a @samp{+} character, then the rest of
+the name (after any leading spaces) is used as an additional map file;
+thus, it is possible to have local map files pointed to by local
+configuration files that append to the global map file.
+
+@flindex psfonts_t1.map
+@flindex psfonts_pk.map
+In @TeX{} Live, the default @file{psfonts.map} is huge, many thousands
+of lines, since every variant (@file{tfm} file) of every Type@tie{}1
+font in the distribution has to be listed. Furthermore,
+@file{psfonts.map} is a copy of, usually, @file{psfonts_t1.map}, since
+there is also an option to specify whether to use Type@tie{}1 or PK
+fonts by default; usually this is set is Type@tie{}1; the @samp{-Ppk}
+option switches to @file{psfonts_pk.map}.
+
+The @code{updmap} program is usually used to maintain
+@file{psfonts.map} and these options; run @samp{updmap --help} or see
+@url{https://tug.org/texlive/doc/updmap.html} for lots of information
+about how it works.
 
 @item P @var{path}
 @opindex P @r{config command (PK path)}
@@ -2973,12 +3003,12 @@ bitmaps by default.  The Adobe PDF readers are extremely slow when
 dealing with bitmap fonts and the results look terrible on the screen.
 Printouts will probably look fine, but may not take full advantage of a
 high-resolution printer.  Alternatively, you can have your fonts
-embedded as Type 1 scalable outlines.  The resulting PostScript files
+embedded as Type@tie{}1 scalable outlines.  The resulting PostScript files
 may be larger, but can be effectively rasterized at any resolution.
 They can also be converted to PDF files that can be used effectively at
 any screen or printer resolution.
 
-To get the TeX fonts embedded in the PostScript file as Type 1 fonts,
+To get the TeX fonts embedded in the PostScript file as Type@tie{}1 fonts,
 add @samp{-Ppdf} to the dvips command line switches.  The printout
 for a run should look something like this:
 
@@ -2997,7 +3027,7 @@ An entry like "<cmr10.pfb>" indicates success: dvips found the Computer
 Modern Roman 10 point font in a PostScript Font Binary file, translated
 it to an ASCII encoding, and embedded it.  You can confirm this by
 examining the PostScript output file, looking for the section starting
-@code{%%BeginFont: CMR10} followed by an entry @code{/FontType 1 def}.
+@code{%%BeginFont: CMR10} followed by an entry @code{/FontType@tie{}1 def}.
 
 The @samp{-Ppdf} option requires that the relevant outline
 (@file{.pfa} or @file{.pfb}) files be installed (@pxref{Font
@@ -3013,7 +3043,7 @@ distributions.
 You can convert a PostScript file to PDF using @code{distill}, which
 comes with Adobe Acrobat, or @code{ps2pdf}, which comes with
 Ghostscript.  The @code{ps2pdf} that comes with @code{Ghostscript}
-version 6.0 or earlier will not embed Type 1 fonts.  Current
+version 6.0 or earlier will not embed Type@tie{}1 fonts.  Current
 recommendations are GNU Ghostscript 6.51 or Aladdin Ghostscript 7.0.
 You can check the fonts in a PDF file with Acrobat Reader by selecting
 the menu entries @samp{File|Document Info|Fonts}.
@@ -3293,8 +3323,8 @@ appearance of the font at small sizes or low resolutions.
 @flindex .pfa @r{printer font ascii files}
 @flindex .pfb @r{printer font binary files}
 Although various kinds of PostScript outline fonts exist, by far the
-most common, and the only one we will consider, is called @dfn{Type 1}.
-The glyph files for PostScript Type 1 fonts typically have names ending
+most common, and the only one we will consider, is called @dfn{Type@tie{}1}.
+The glyph files for PostScript Type@tie{}1 fonts typically have names ending
 in @samp{.pfa} (``printer font ASCII'') or @samp{.pfb} (``printer font
 binary'').
 
@@ -3557,9 +3587,9 @@ The interpreter retrieves the entry at position 83 of the encoding
 vector. This value is a PostScript name: @code{/S}.
 
 @item
-@findex CharStrings @r{Type 1 dictionary}
+@findex CharStrings @r{Type dictionary}
 @cindex dictionary, @code{CharStrings}
-For Type 1 fonts (we're not going to discuss anything else), the
+For Type@tie{}1 fonts (we're not going to discuss anything else), the
 interpreter now looks up @code{/S} as a key in a dictionary named
 @code{CharStrings}, another mandatory entry in a font dictionary.
 
@@ -3572,7 +3602,7 @@ series of standard PostScript commands like @samp{curveto},
 draw the character. There can also be @dfn{hint information} that helps
 adapt the character to low-resolution rasters.  (@xref{Glyph files}.)
 The commands are actually represented in a more compact way than
-standard PostScript source; see the Type 1 book for details.
+standard PostScript source; see the Type@tie{}1 book for details.
 
 @end enumerate
 
@@ -3717,7 +3747,7 @@ rptmr      Times-Roman                 <ptmr8a.pfa
 @end example
 
 @noindent Of course, @code{Times-Roman} is already built in to most every
-printer, so there's no need to download any Type 1 file for it.  But if
+printer, so there's no need to download any Type@tie{}1 file for it.  But if
 you are actually following these instructions for new fonts, most likely
 they are not built in to the printer.
 
@@ -4305,10 +4335,10 @@ rpstrc StoneInformal <StoneInformal.pfb ".8 ExtendFont"
 complete list of font effects.
 
 @cindex reencoding PostScript fonts
-You can change the encoding of the Type 1 font at the PostScript
+You can change the encoding of the Type@tie{}1 font at the PostScript
 level with a @samp{ReEncodeFont} instruction, plus the name of the
 encoding file.  This allows you access to characters that may be present
-in the Type 1 font file, but not encoded by default---most of the
+in the Type@tie{}1 font file, but not encoded by default---most of the
 preaccented characters, for example.  An example:
 @smallexample
 pstrn8r StoneInformal "TeXBase1Encoding ReEncodeFont" <8r.enc <pstrn8a.pfb
@@ -4318,12 +4348,12 @@ pstrn8r StoneInformal "TeXBase1Encoding ReEncodeFont" <8r.enc <pstrn8a.pfb
 @cindex base encoding, recommended
 The @samp{8r} encoding mentioned here has been designed to serve as a
 base for all downloadable fonts; it allows access to all the characters
-commonly present in a Type 1 font.  For more details, see the
+commonly present in a Type@tie{}1 font.  For more details, see the
 @file{8r.enc} source file that comes with (and is installed with) Dvips.
 
 @kindex <[ @r{encoding vector downloading}
 You may notice that the same syntax is used for downloading encoding
-vectors and Type 1 font files. To make your intentions clear, you can
+vectors and Type@tie{}1 font files. To make your intentions clear, you can
 also use @samp{<[} to explicitly indicate you are downloading an
 encoding vector, as in:
 @smallexample
@@ -4337,7 +4367,7 @@ syntax, or Dvips will not download the font properly.
 
 @flindex .pfa @r{extension required for partial downloading}
 @flindex .pfb @r{extension required for partial downloading}
-Similarly, the name of the Type 1 font file itself must have extension
+Similarly, the name of the Type@tie{}1 font file itself must have extension
 @file{.pfa} or @file{.pfb} for partial downloading to work properly.
 
 @cindex pfb files, automatically unpacked
@@ -4386,7 +4416,7 @@ to be downloaded.  Use this if the name of the encoding file does end in
 
 @item If a word starts with a @samp{<} character, it is
 treated as a header file that needs to be downloaded.  If the name ends
-in @samp{.pfa} or @samp{.pfb}, it is taken as Type 1 font file that will
+in @samp{.pfa} or @samp{.pfb}, it is taken as Type@tie{}1 font file that will
 be partially downloaded if the @samp{j} option is in effect.  There can
 be more than one such header for a given font.  If a @samp{<} is a word
 by itself, the next word is taken as the name of the header file.

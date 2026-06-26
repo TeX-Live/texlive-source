@@ -1,3 +1,14 @@
+2026-06-25  Tomas Rokicki  <rokicki@gmail.com>
+
+	* download.c (quarterword): compute yoff(set), not xoff twice.
+	This only affects documents using PK fonts, causing some unusual
+	characters not to be displayed.
+	Reproduce by running dvips -Ppk -D1200 foo.dvi on the dvi made from
+	tex '\font\a=cmex9 \font\b=cmex9 scaled 2000 \a RZ\b RZ \end'
+	And observe that not all characters (should be four integral
+	signs) are seen in the output.
+	Reported by Knuth.
+
 2026-03-02  Karl Berry  <karl@tug.org>
 
 	* TL'26 release.
