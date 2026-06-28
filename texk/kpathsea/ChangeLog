@@ -1,3 +1,10 @@
+2026-06-28  Karl Berry  <karl@freefriends.org>
+
+	* texmf.cnf (TEXMFHOME, TEXMFVAR, TEXMFCONFIG): mention
+	that these trees are overridden by the portable installer option.
+	Suggested by Ernst Reissner,
+	https://tug.org/pipermail/tex-live/2026-March/052229.html
+
 2026-06-20  Karl Berry  <karl@freefriends.org>
 
 	* Makefile.am (AM_CFLAGS): add $(KPSE_EXTRA_CFLAGS)

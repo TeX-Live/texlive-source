@@ -74,22 +74,26 @@ TEXMFMAIN = $TEXMFDIST
 % Local additions to the distribution trees.
 TEXMFLOCAL = $SELFAUTOGRANDPARENT/texmf-local
 
-% TEXMFSYSVAR, where *-sys store cached runtime data.
+% TEXMFSYSVAR, for system-wide cached runtime data that can be regenerated.
 TEXMFSYSVAR = $TEXMFROOT/texmf-var
 
-% TEXMFSYSCONFIG, where *-sys store configuration data.
+% TEXMFSYSCONFIG, for system-wide configuration data, such as paper size.
 TEXMFSYSCONFIG = $TEXMFROOT/texmf-config
 
-% Per-user texmf tree(s) -- organized per the TDS, as usual.  To define
-% more than one per-user tree, set this to a list of directories in
-% braces, as described above.  (This used to be HOMETEXMF.)  ~ expands
-% to %USERPROFILE% on Windows, $HOME otherwise.
+% Per-user texmf tree(s) -- must be organized per the TDS, as usual.
+% To define more than one per-user tree, set this to a list of
+% directories in braces, as described above. (This used to be HOMETEXMF.)
+% 
+% ~ expands to %USERPROFILE% on Windows, $HOME otherwise.
+% 
+% The portable option in install-tl overwrites these three trees
+% (TEXMFHOME, TEXMFVAR, TEXMFCONFIG) to keep everything in one place.
 TEXMFHOME = ~/texmf
 
-% TEXMFVAR, where texconfig/updmap/fmtutil store cached runtime data.
+% TEXMFVAR, for per-user cached runtime data that can be regenerated.
 TEXMFVAR = ~/.texlive2026/texmf-var
 
-% TEXMFCONFIG, where texconfig/updmap/fmtutil store configuration data.
+% TEXMFCONFIG, for per-user configuration data, such as tlmgr options.
 TEXMFCONFIG = ~/.texlive2026/texmf-config
 
 % This is the value manipulated by tlmgr's auxtrees subcommand in the
