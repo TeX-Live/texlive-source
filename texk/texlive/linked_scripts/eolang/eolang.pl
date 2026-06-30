@@ -1,8 +1,8 @@
 #!/usr/bin/perl
-# SPDX-FileCopyrightText: Copyright (c) 2021-2025 Yegor Bugayenko
+# SPDX-FileCopyrightText: Copyright (c) 2021-2026 Yegor Bugayenko
 # SPDX-License-Identifier: MIT
 
-# 0.23.0 2025/12/24
+# 0.23.1 2026-06-30
 package eolang;
 
 use warnings;
@@ -49,7 +49,7 @@ sub error {
 }
 
 if (@ARGV+0 eq 0 or exists $args{'--help'} or exists $args{'-?'}) {
-  info("This script helps embedding \\phiquation and \\phiq into .tex document\n\n" .
+  info("This script helps embed \\phiquation and \\phiq into a .tex document\n\n" .
     "Usage:\n" .
     "  eolang [<options>] <.tex input file path> <.tex output file path>\n\n" .
     "Options:\n" .
@@ -57,9 +57,9 @@ if (@ARGV+0 eq 0 or exists $args{'--help'} or exists $args{'-?'}) {
     "  -?, --help           Print this help screen\n" .
     "      --verbose        Print all possible debugging information\n" .
     "      --tmpdir=path    Temp directory with .tex files ('_eolang' by default)\n\n" .
-    "If any issues, report to GitHub: https://github.com/yegor256/bibcop");
+    "If any issues, report to GitHub: https://github.com/objectionary/eolang.sty");
 } elsif (exists $args{'--version'} or exists $args{'-v'}) {
-  info('0.23.0 2025/12/24');
+  info('0.23.1 2026-06-30');
 } else {
   my ($src, $target) = grep { not($_ =~ /^-.*$/) } @ARGV;
   if (not $src) {
