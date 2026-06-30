@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 79456 2026-06-23 14:54:00Z karl $
+# $Id: tlmgr.pl 79491 2026-06-27 17:40:15Z karl $
 # Copyright 2008-2026 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
@@ -8,8 +8,8 @@
 
 use strict; use warnings;
 
-my $svnrev = '$Revision: 79456 $';
-my $datrev = '$Date: 2026-06-23 16:54:00 +0200 (Tue, 23 Jun 2026) $';
+my $svnrev = '$Revision: 79491 $';
+my $datrev = '$Date: 2026-06-27 19:40:15 +0200 (Sat, 27 Jun 2026) $';
 my $tlmgrrevision;
 my $tlmgrversion;
 my $prg;
@@ -1707,7 +1707,7 @@ sub action_dumptlpdb {
 #
 sub action_info {
   if ($opts{'only-installed'} && $opts{'only-remote'}) {
-    tlwarn("Are you joking? --only-installed and --only-remote cannot both be specified!\n");
+    tlwarn("$prg info: --only-installed and --only-remote cannot both be specified!\n");
     return($F_ERROR);
   }
   init_local_db();
@@ -1716,7 +1716,7 @@ sub action_info {
   my @datafields;
   my $fmt = "list";
   if ($opts{'data'} && $opts{'json'}) {
-    tlwarn("Preferring JSON output over data output!\n");
+    tlwarn("$prg info: preferring JSON output over data output, both given\n");
     delete($opts{'data'});
   }
   if ($opts{'json'}) {
@@ -1740,14 +1740,14 @@ sub action_info {
     for my $d (@datafields) {
       $load_remote = 1 if ($d eq "remoterev");
       if ($d !~ m/^(name|category|localrev|remoterev|shortdesc|longdesc|size|installed|relocatable|depends|[lr]?cat-version|[lr]?cat-date|[lr]?cat-license|[lr]?cat-contact-.*)$/) {
-        tlwarn("unknown data field: $d\n");
+        tlwarn("$prg info: unknown data field: $d\n");
         return($F_ERROR);
       }
     }
     $fmt = "csv";
     if ($load_remote) {
       if ($opts{"only-installed"}) {
-        tlwarn("requesting only-installed with data field remoterev, loading remote anyway!\n");
+        tlwarn("$prg info: requesting only-installed with data field remoterev, loading remote anyway\n");
         $opts{"only-installed"} = 0;
       }
       # loading of tlpdb is done below
@@ -1817,7 +1817,9 @@ sub action_info {
       $endsec -= 1;
       $endmsec += 1000000;
     }
-    print STDERR "JSON (", $TeXLive::TLUtils::jsonmode, ") generation took ", $endsec - $startsec, ".", substr($endmsec - $startmsec,0,2), " sec\n";
+    print STDERR "JSON (", $TeXLive::TLUtils::jsonmode, ") generation took ",
+                 $endsec - $startsec, ".", substr($endmsec - $startmsec,0,2),
+                 " sec\n";
   }
   return ($ret);
 }
@@ -4381,9 +4383,11 @@ sub show_one_package_detail {
   }
   if ($opts{"only-files"}) {
     print "$pkg\n" if ($total_nr_of_pkgs > 1);
-    return show_one_package_detail3($tlpdb, $pkg, $tlp, $source_found, $installed, 1, @colls);
+    return show_one_package_detail3($tlpdb, $pkg, $tlp, $source_found,
+                                    $installed, 1, @colls);
   } else {
-    return show_one_package_detail2($tlpdb, $pkg, $tlp, $source_found, $installed, 0, @colls);
+    return show_one_package_detail2($tlpdb, $pkg, $tlp, $source_found,
+                                    $installed, 0, @colls);
   }
 }
 
@@ -4437,7 +4441,7 @@ sub show_one_package_detail2 {
         $binsize += $binsz{$a} if defined($binsz{$a});
         my $atlp = $tlpdb->get_package($tlp->name . ".$a");
         if (!$atlp) {
-          tlwarn("$prg: cannot find depending package " . $tlp->name . ".$a\n");
+          tlwarn("$prg: cannot find depending package ", $tlp->name, ".$a\n");
           return($F_WARNING);
         }
         my %abinsz = %{$atlp->binsize};
@@ -4454,6 +4458,13 @@ sub show_one_package_detail2 {
     if (defined($foo->{$pkg})) {
       $sizestr = sprintf("%dk", int($foo->{$pkg} / 1024) + 1);
     }
+    my @removed;
+    for my $p (sort keys %$foo) {
+      if (! defined $foo->{$p}) {
+        push (@removed, $p);
+      }
+    }
+    print "removed:     @removed\n" if @removed;
   }
   print "sizes:       ", $sizestr, "\n";
   print "relocatable: ", ($tlp->relocated ? "Yes" : "No"), "\n";
@@ -4486,7 +4497,8 @@ sub show_one_package_detail2 {
       }
     }
     print "Included files, by type:\n";
-    $ret |= show_one_package_detail3($tlpdb, $pkg, $tlp, $source_found, $installed, 0, @colls);
+    $ret |= show_one_package_detail3($tlpdb, $pkg, $tlp, $source_found,
+                                     $installed, 0, @colls);
   }
   print "\n";
   return($ret);
@@ -10642,7 +10654,7 @@ This script and its documentation were written for the TeX Live
 distribution (L<https://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 79456 2026-06-23 14:54:00Z karl $
+$Id: tlmgr.pl 79491 2026-06-27 17:40:15Z karl $
 =cut
 
 # test HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html
