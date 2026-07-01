@@ -2,7 +2,7 @@
 # SPDX-FileCopyrightText: Copyright (c) 2021-2026 Yegor Bugayenko
 # SPDX-License-Identifier: MIT
 
-# 0.23.1 2026-06-30
+# 0.23.2 2026-07-01
 package eolang;
 
 use warnings;
@@ -59,7 +59,7 @@ if (@ARGV+0 eq 0 or exists $args{'--help'} or exists $args{'-?'}) {
     "      --tmpdir=path    Temp directory with .tex files ('_eolang' by default)\n\n" .
     "If any issues, report to GitHub: https://github.com/objectionary/eolang.sty");
 } elsif (exists $args{'--version'} or exists $args{'-v'}) {
-  info('0.23.1 2026-06-30');
+  info('0.23.2 2026-07-01');
 } else {
   my ($src, $target) = grep { not($_ =~ /^-.*$/) } @ARGV;
   if (not $src) {
