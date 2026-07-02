@@ -69,6 +69,15 @@
   \hyphenpenalty 10000 \parindent0pt
   \readindex}
 
+@s uint16_t int
+@s uint32_t int
+@s integer64 int
+@s mpinteger64 int
+@s eight_bits int
+@s QUARTERWORD int
+@s quarterword int
+@s halfword int
+
 @* Introduction.
 
 This is \MP\ by John Hobby, a graphics-language processor based on D. E. Knuth's \MF.
@@ -151,11 +160,6 @@ the \ps\ backend, that is defined in a separate \.{WEB} file.
 
 The variables from |MP_options| are included inside the |MP_instance|
 wholesale.
-@s integer64 int
-@s mpinteger64 int
-@s QUARTERWORD int
-@s quarterword int
-@s halfword int
 
 @(mpmp.h@>=
 #ifndef MPMP_H
@@ -1002,7 +1006,6 @@ operation type |fmode|, and the type of the file |ftype|.
 The file types that are passed on in |ftype| can be  used to
 differentiate file searches if a library like kpathsea is used,
 the fopen mode is passed along for the same reason.
-@s eight_bits int
 
 @<Types...@>=
 typedef uint8_t eight_bits;       /* unsigned one-byte quantity */
@@ -2132,8 +2135,6 @@ contains entries in positions |0..(help_ptr-1)|. They should be printed
 in reverse order, i.e., with |help_line[0]| appearing last.
 
 @s mp_sym int
-@s uint16_t int
-@s uint32_t int
 
 @c
 void mp_error (MP mp, const char *msg, const char **hlp, boolean deletions_allowed) {
