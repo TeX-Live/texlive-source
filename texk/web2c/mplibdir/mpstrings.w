@@ -9,15 +9,6 @@
 \def\pct!{{\char`\%}} % percent sign in ordinary text
 \def\psqrt#1{\sqrt{\mathstrut#1}}
 
-\def\title{MPSTRINGS}
-
-@s boolean int
-@s integer int
-@s tm int
-@s mp_lstring char
-@s mp_string char
-@s MP int
-
 
 @* String handling.
 
@@ -32,9 +23,9 @@
 #include <stdarg.h>
 #include <assert.h>
 #ifdef HAVE_UNISTD_H
-#  include <unistd.h>           /* for |access| */
+#  include <unistd.h>           /* for access */
 #endif
-#include <time.h>               /* for |struct tm| $\AND$ co */
+#include <time.h>               /* for struct tm \& co */
 #include "mpstrings.h"          /* internal header */
 
 @ Then there is some stuff we need to prepare ourselves.
@@ -42,8 +33,10 @@
 @(mpstrings.h@>=
 #ifndef MPSTRINGS_H
 #define MPSTRINGS_H 1
+#include "mplib.h"
 #include "mplibps.h"            /* external header */
 #include "mplibsvg.h"           /* external header */
+#include "mpmp.h"               /* internal header */
 #include "mppsout.h"            /* internal header */
 #include "mpsvgout.h"           /* internal header */
 #include "mpmath.h"             /* internal header */
@@ -68,16 +61,18 @@ static int comp_strings_entry (void *p, const void *pa, const void *pb) {
   s = a->str;
   t = b->str;
   l = (a->len<=b->len ? a->len : b->len);
-  while ( l-->0 ) {
+  while ( l-->0 ) { 
     if ( *s!=*t)
-       return STRCMP_RESULT(*s-*t);
+       return STRCMP_RESULT(*s-*t); 
     s++; t++;
   }
   return STRCMP_RESULT((int)(a->len-b->len));
 }
 void *copy_strings_entry (const void *p) {
-  const mp_lstring *fp = (const mp_lstring *) p;
-  mp_string ff = malloc (sizeof (mp_lstring));
+  mp_string ff;
+  const mp_lstring *fp;
+  fp = (const mp_lstring *) p;
+  ff = malloc (sizeof (mp_lstring));
   if (ff == NULL)
     return NULL;
   ff->str = malloc (fp->len + 1);
@@ -99,9 +94,10 @@ static void *delete_strings_entry (void *p) {
 @ Actually creating strings is done by |make_string|, but in order to
 do so it needs a way to create a new, empty string structure.
 
-@c
+@ @c
 static mp_string new_strings_entry (MP mp) {
-  mp_string ff = mp_xmalloc (mp, 1, sizeof (mp_lstring));
+  mp_string ff;
+  ff = mp_xmalloc (mp, 1, sizeof (mp_lstring));
   ff->str = NULL;
   ff->len = 0;
   ff->refs = 0;
@@ -244,7 +240,7 @@ in the |cur_string|.
     str_room(1); \
     *(mp->cur_string+mp->cur_length)=(unsigned char)(A); \
     mp->cur_length++; \
-} while (0)@;
+} while (0)
 #define str_room(wsize) do { \
     size_t nsize; \
     if ((mp->cur_length+(size_t)wsize) > mp->cur_string_size) { \
@@ -256,10 +252,10 @@ in the |cur_string|.
         memset (mp->cur_string+mp->cur_length,0,(nsize-mp->cur_length)); \
         mp->cur_string_size = nsize; \
     } \
-} while (0)@;
+} while (0)
 
 
-@ At the very start of the \MP\ run and each time after
+@ At the very start of the metapost run and each time after
 |make_string| has stored a new string in the avl tree, the
 |cur_string| variable has to be prepared so that it will be ready to
 start creating a new string. The initial size is fairly arbitrary, but
@@ -280,7 +276,7 @@ void mp_reset_cur_string (MP mp) {
 
 @ \MP's string expressions are implemented in a brute-force way: Every
 new string or substring that is needed is simply stored into the string pool.
-Space is eventually reclaimed using the aid of a simple system system
+Space is eventually reclaimed using the aid of a simple system system 
 of reference counts.
 @^reference counts@>
 
@@ -302,7 +298,7 @@ put it in this category.
        if ( (A)->refs > 1 ) ((A)->refs)--;  \
        else mp_flush_string(mp, (A)); \
     } \
-  } while (0)@;
+  } while (0)
 
 @ @<Definitions@>=
 void mp_flush_string (MP mp, mp_string s);
@@ -322,7 +318,8 @@ their reference count has to be set such that they can not be flushed.
 
 @c
 mp_string mp_intern (MP mp, const char *s) {
-  mp_string r = mp_rts (mp, s);
+  mp_string r;
+  r = mp_rts (mp, s);
   r->refs = MAX_STR_REF;
   return r;
 }
@@ -393,7 +390,7 @@ mp_string mp_cat (MP mp, mp_string a, mp_string b) {
   needed = a->len + b->len;
   mp->cur_length = 0;
   /*| mp->cur_string = NULL;| */ /* needs malloc, spotted by clang */
-  mp->cur_string = (unsigned char *) mp_xmalloc (mp, needed+1, sizeof (unsigned char));
+  mp->cur_string = (unsigned char *) mp_xmalloc (mp, needed+1, sizeof (unsigned char)); 
   mp->cur_string_size = 0;
   str_room (needed+1);
   (void) memcpy (mp->cur_string, a->str, a->len);
@@ -448,6 +445,4 @@ mp_string mp_chop_string (MP mp, mp_string s, integer a, integer b) {
   }
   return mp_make_string (mp);
 }
-
-@* Index.
 

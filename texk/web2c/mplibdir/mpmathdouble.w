@@ -13,18 +13,9 @@
 
 
 \def\title{Math support functions for IEEE double based math}
+\pdfoutput=1
 
-@s MP int
-@s mp_number int
-@s mp_number_type int
-@s mp_variable_type int
-@s math_data int
-@s integer int
-@s integer64 int
-
-@* Introduction.
-
-@d ROUND(a) floor((a)+0.5)
+@ Introduction.
 
 @c
 #include "mpconfig.h"
@@ -34,6 +25,7 @@
 #include <string.h>
 #include <math.h>
 #include "mpmathdouble.h" /* internal header */
+#define ROUND(a) floor((a)+0.5)
 @h
 
 @ @c
@@ -42,6 +34,7 @@
 @ @(mpmathdouble.h@>=
 #ifndef MPMATHDOUBLE_H
 #define  MPMATHDOUBLE_H 1
+#include "mplib.h"
 #include "mpmp.h" /* internal header */
 @<Internal library declarations@>
 #endif
@@ -50,7 +43,7 @@
 
 First, here are some very important constants.
 
-@d PI 3.1415926535897932384626433832795028841971
+@d PI 3.1415926535897932384626433832795028841971 
 @d fraction_multiplier 4096.0
 @d angle_multiplier 16.0
 
@@ -100,7 +93,7 @@ static void mp_number_double(mp_number *A);
 static void mp_number_add_scaled(mp_number *A, integer64 B); /* also for negative B */
 static void mp_number_multiply_int(mp_number *A, integer64 B);
 static void mp_number_divide_int(mp_number *A, integer64 B);
-static void mp_double_abs(mp_number *A);
+static void mp_double_abs(mp_number *A);   
 static void mp_number_clone(mp_number *A, mp_number B);
 static void mp_number_swap(mp_number *A, mp_number *B);
 static integer64 mp_round_unscaled(mp_number x_orig);
@@ -130,7 +123,7 @@ static void mp_double_set_precision (MP mp);
 @<Internal library declarations@>=
 void * mp_initialize_double_math (MP mp);
 
-@
+@ 
 
 @d coef_bound ((7.0/3.0)*fraction_multiplier) /* |fraction| approximation to 7/3 */
 @d fraction_threshold 0.04096 /* a |fraction| coefficient less than this is zeroed */
@@ -194,10 +187,10 @@ void * mp_initialize_double_math (MP mp) {
   math->one_eighty_deg_t.data.dval = one_eighty_deg;
   /* various approximations */
   mp_new_number (mp, &math->one_k, mp_scaled_type);
-  math->one_k.data.dval = 1.0/64 ;
-  mp_new_number (mp, &math->sqrt_8_e_k, mp_scaled_type);
+  math->one_k.data.dval = 1.0/64 ; 
+  mp_new_number (mp, &math->sqrt_8_e_k, mp_scaled_type); 
   math->sqrt_8_e_k.data.dval = 1.71552776992141359295 ;   /* $2^{16}\sqrt{8/e}\approx 112428.82793$ */
-  mp_new_number (mp, &math->twelve_ln_2_k, mp_fraction_type);
+  mp_new_number (mp, &math->twelve_ln_2_k, mp_fraction_type); 
   math->twelve_ln_2_k.data.dval = 8.31776616671934371292 *256;  /* $2^{24}\cdot12\ln2\approx139548959.6165$ */
   mp_new_number (mp, &math->coef_bound_k, mp_fraction_type);
   math->coef_bound_k.data.dval = coef_bound;
@@ -338,7 +331,9 @@ void mp_new_number (MP mp, mp_number *n, mp_number_type t) {
   n->type = t;
 }
 
-@ @c
+@ 
+
+@c
 void mp_free_number (MP mp, mp_number *n) {
   (void)mp;
   n->type = mp_nan_type;
@@ -346,7 +341,7 @@ void mp_free_number (MP mp, mp_number *n) {
 
 @ Here are the low-level functions on |mp_number| items, setters first.
 
-@c
+@c 
 void mp_set_double_from_int(mp_number *A, integer64 B) {
   A->data.dval = (double)B;
 }
@@ -409,7 +404,7 @@ void mp_number_multiply_int(mp_number *A, integer64 B) {
 void mp_number_divide_int(mp_number *A, integer64 B) {
   A->data.dval = A->data.dval / (double)B;
 }
-void mp_double_abs(mp_number *A) {
+void mp_double_abs(mp_number *A) {   
   A->data.dval = fabs(A->data.dval);
 }
 void mp_number_clone(mp_number *A, mp_number B) {
@@ -485,7 +480,7 @@ positions from the right end of a binary computer word.
 @ One of \MP's most common operations is the calculation of
 $\lfloor{a+b\over2}\rfloor$,
 the midpoint of two given integers |a| and~|b|. The most decent way to do
-this is to write `|(a+b)/2|'; but on many machines it is more efficient
+this is to write `|(a+b)/2|'; but on many machines it is more efficient 
 to calculate `|(a+b)>>1|'.
 
 Therefore the midpoint operation will always be denoted by `|half(a+b)|'
@@ -655,7 +650,8 @@ void mp_double_number_make_scaled (MP mp, mp_number *ret, mp_number p_orig, mp_n
 double mp_double_make_scaled (MP mp, double p, double q);
 
 
-@ @d halfp(A) (integer)((unsigned)(A) >> 1)
+@ 
+@d halfp(A) (integer)((unsigned)(A) >> 1)
 
 @* Scanning numbers in the input.
 
@@ -684,7 +680,7 @@ void mp_wrapup_numeric_token(MP mp, unsigned char *start, unsigned char *stop) {
                "(Set warningcheck:=0 to suppress this message.)",
                NULL };
         mp_snprintf (msg, 256, "Number is too large (%g)", result);
-@.Number is too large@>
+@.Number is too large@>;
         mp_error (mp, msg, hlp, true);
       }
     }
@@ -692,10 +688,10 @@ void mp_wrapup_numeric_token(MP mp, unsigned char *start, unsigned char *stop) {
     const char *hlp[] = {"I could not handle this number specification",
                          "probably because it is out of range. Error:",
                          "",
-                          NULL };
+                          NULL };   
     hlp[2] = strerror(errno);
     mp_error (mp, "Enormous number has been reduced.", hlp, false);
-@.Enormous number...@>
+@.Enormous number...@>;
     set_cur_mod(EL_GORDO);
   }
   set_cur_cmd((mp_variable_type)mp_numeric_token);
@@ -703,16 +699,16 @@ void mp_wrapup_numeric_token(MP mp, unsigned char *start, unsigned char *stop) {
 
 @ @c
 static void find_exponent (MP mp)  {
-  if (mp->buffer[mp->cur_input.loc_field] == 'e' ||
+  if (mp->buffer[mp->cur_input.loc_field] == 'e' || 
       mp->buffer[mp->cur_input.loc_field] == 'E') {
      mp->cur_input.loc_field++;
-     if (!(mp->buffer[mp->cur_input.loc_field] == '+' ||
+     if (!(mp->buffer[mp->cur_input.loc_field] == '+' || 
         mp->buffer[mp->cur_input.loc_field] == '-' ||
 	mp->char_class[mp->buffer[mp->cur_input.loc_field]] == digit_class)) {
        mp->cur_input.loc_field--;
        return;
-     }
-     if (mp->buffer[mp->cur_input.loc_field] == '+' ||
+     }     
+     if (mp->buffer[mp->cur_input.loc_field] == '+' || 
         mp->buffer[mp->cur_input.loc_field] == '-') {
         mp->cur_input.loc_field++;
      }
@@ -745,13 +741,13 @@ void mp_double_scan_numeric_token (MP mp, integer64 n) { /* n: scaled */
   while (mp->char_class[mp->buffer[mp->cur_input.loc_field]] == digit_class) {
      mp->cur_input.loc_field++;
   }
-  if (mp->buffer[mp->cur_input.loc_field] == '.' &&
+  if (mp->buffer[mp->cur_input.loc_field] == '.' && 
       mp->buffer[mp->cur_input.loc_field+1] != '.') {
      mp->cur_input.loc_field++;
      while (mp->char_class[mp->buffer[mp->cur_input.loc_field]] == digit_class) {
        mp->cur_input.loc_field++;
      }
-  }
+  } 
   find_exponent(mp);
   stop = &mp->buffer[mp->cur_input.loc_field-1];
   mp_wrapup_numeric_token (mp, start, stop);
@@ -785,7 +781,7 @@ The trigonometric quantity to be multiplied by $\sqrt2$ is less than $\sqrt2$.
 relations such as $\sin\theta\cos\theta\L{1\over2}$.) Thus the numerator
 is positive; and since the tension $\tau$ is constrained to be at least
 $3\over4$, the numerator is less than $16\over3$. The denominator is
-nonnegative and at most~6.
+nonnegative and at most~6.  
 
 The angles $\theta$ and $\phi$ are given implicitly in terms of |fraction|
 arguments |st|, |ct|, |sf|, and |cf|, representing $\sin\theta$, $\cos\theta$,
@@ -795,12 +791,12 @@ $\sin\phi$, and $\cos\phi$, respectively.
 void mp_double_velocity (MP mp, mp_number *ret, mp_number st, mp_number ct, mp_number sf,
                   mp_number cf, mp_number t) {
   double acc, num, denom;      /* registers for intermediate calculations */
-  acc = mp_double_take_fraction (mp, st.data.dval - (sf.data.dval / 16.0),
+  acc = mp_double_take_fraction (mp, st.data.dval - (sf.data.dval / 16.0), 
                                      sf.data.dval - (st.data.dval / 16.0));
   acc = mp_double_take_fraction (mp, acc, ct.data.dval - cf.data.dval);
   num = fraction_two + mp_double_take_fraction (mp, acc, sqrt(2)*fraction_one);
   denom =
-    fraction_three + mp_double_take_fraction (mp, ct.data.dval, 3*fraction_half*(sqrt(5.0)-1.0))
+    fraction_three + mp_double_take_fraction (mp, ct.data.dval, 3*fraction_half*(sqrt(5.0)-1.0)) 
                    + mp_double_take_fraction (mp, cf.data.dval, 3*fraction_half*(3.0-sqrt(5.0)));
   if (t.data.dval != unity)
     num = mp_double_make_scaled (mp, num, t.data.dval);
@@ -810,7 +806,7 @@ void mp_double_velocity (MP mp, mp_number *ret, mp_number st, mp_number ct, mp_n
     ret->data.dval = mp_double_make_fraction (mp, num, denom);
   }
 #if MPOST_DEBUG
-  fprintf(stdout, "\n%f = velocity(%f,%f,%f,%f,%f)", mp_number_to_double(*ret),
+  fprintf(stdout, "\n%f = velocity(%f,%f,%f,%f,%f)", mp_number_to_double(*ret), 
 mp_number_to_double(st),mp_number_to_double(ct),
 mp_number_to_double(sf),mp_number_to_double(cf),
 mp_number_to_double(t));
@@ -828,14 +824,83 @@ void mp_ab_vs_cd (MP mp, mp_number *ret, mp_number a_orig, mp_number b_orig, mp_
     /*integer q, r; */ /* temporary registers */
   /*integer a, b, c, d;*/
   (void)mp;
-
+  
   mp_double_ab_vs_cd(mp,ret, a_orig, b_orig, c_orig, d_orig);
-  if (1>0)
+  if (1>0) 
     return ;
+ /* TODO: remove this code until the end */
+/*   a = a_orig.data.dval; */
+/*   b = b_orig.data.dval; */
+/*   c = c_orig.data.dval; */
+/*   d = d_orig.data.dval; */
+/*   <Reduce to the case that |a,c>=0|, |b,d>0| >; */
+/*   while (1) \{ */
+/*     q = a / d; */
+/*     r = c / b; */
+/*     if (q != r) \{ */
+/*       ret->data.dval = (q > r ? 1 : -1); */
+/*       goto RETURN; */
+/*     \} */
+/*     q = a % d; */
+/*     r = c % b; */
+/*     if (r == 0) \{ */
+/*       ret->data.dval = (q ? 1 : 0); */
+/*       goto RETURN; */
+/*     \} */
+/*     if (q == 0) \{ */
+/*       ret->data.dval = -1; */
+/*       goto RETURN; */
+/*     \} */
+/*     a = b; */
+/*     b = q; */
+/*     c = d; */
+/*     d = r; */
+/*   \}                             /\* now |a>d>0| and |c>b>0| *\/ */
+/* RETURN: */
+/* \#if MPOST_DEBUG */
+/*   fprintf(stdout, "\n%f = ab_vs_cd(%f,%f,%f,%f)", mp_number_to_double(*ret),  */
+/* mp_number_to_double(a_orig),mp_number_to_double(b_orig), */
+/* mp_number_to_double(c_orig),mp_number_to_double(d_orig)); */
+/* \#endif */
   return;
 }
 
 
+/* <Reduce to the case that \|a...>= */
+/* if (a < 0) \{ */
+/*   a = -a; */
+/*   b = -b; */
+/* \} */
+/* if (c < 0) \{ */
+/*   c = -c; */
+/*   d = -d; */
+/* \} */
+/* if (d <= 0) \{ */
+/*   if (b >= 0) \{ */
+/*     if ((a == 0 || b == 0) && (c == 0 || d == 0))  */
+/*       ret->data.dval = 0; */
+/*     else */
+/*       ret->data.dval = 1; */
+/*     goto RETURN; */
+/*   \} */
+/*   if (d == 0) \{ */
+/*     ret->data.dval = (a == 0 ? 0 : -1); */
+/*     goto RETURN; */
+/*   \} */
+/*   q = a; */
+/*   a = c; */
+/*   c = q; */
+/*   q = -b; */
+/*   b = -d; */
+/*   d = q; */
+/* \} else if (b <= 0) \{ */
+/*   if (b < 0 && a > 0) \{ */
+/*     ret->data.dval  = -1; */
+/*     return; */
+/*   \} */
+/*   ret->data.dval = (c == 0 ? 0 : -1); */
+/*   goto RETURN; */
+/* \} */
 
 @ Now here's a subroutine that's handy for all sorts of path computations:
 Given a quadratic polynomial $B(a,b,c;t)$, the |crossing_point| function
@@ -927,15 +992,15 @@ static void mp_double_crossing_point (MP mp, mp_number *ret, mp_number aa, mp_nu
       }
     }
   } while (d < fraction_one);
-  ret->data.dval = (d - fraction_one);
+  ret->data.dval = (d - fraction_one); 
 RETURN:
 #if MPOST_DEBUG
-  fprintf(stdout, "\n%f = crossing_point(%f,%f,%f)", mp_number_to_double(*ret),
+  fprintf(stdout, "\n%f = crossing_point(%f,%f,%f)", mp_number_to_double(*ret), 
 mp_number_to_double(aa),mp_number_to_double(bb),mp_number_to_double(cc));
 #endif
   return;
 }
-
+ 
 
 @ We conclude this set of elementary routines with some simple rounding
 and truncation operations.
@@ -969,7 +1034,9 @@ void mp_double_fraction_to_round_scaled (mp_number *x_orig) {
 \MP\ computes all of the necessary special functions from scratch, without
 relying on |real| arithmetic or system subroutines for sines, cosines, etc.
 
-@ @c
+@ 
+
+@c
 void mp_double_square_rt (MP mp, mp_number *ret, mp_number x_orig) { /* return, x: scaled */
   double x;
   x = x_orig.data.dval;
@@ -982,7 +1049,7 @@ void mp_double_square_rt (MP mp, mp_number *ret, mp_number x_orig) { /* return, 
 
 
 @ @<Handle square root of zero...@>=
-{
+{  
   if (x < 0) {
     char msg[256];
     const char *hlp[] = {
@@ -992,7 +1059,7 @@ void mp_double_square_rt (MP mp, mp_number *ret, mp_number x_orig) { /* return, 
     char *xstr = mp_double_number_tostring (mp, x_orig);
     mp_snprintf(msg, 256, "Square root of %s has been replaced by 0", xstr);
     free(xstr);
-@.Square root...replaced by 0@>
+@.Square root...replaced by 0@>;
     mp_error (mp, msg, hlp, true);
   }
   ret->data.dval = 0;
@@ -1045,7 +1112,7 @@ void mp_double_pyth_sub (MP mp, mp_number *ret, mp_number a_orig, mp_number b_or
     mp_snprintf (msg, 256, "Pythagorean subtraction %s+-+%s has been replaced by 0", astr, bstr);
     free(astr);
     free(bstr);
-@.Pythagorean...@>
+@.Pythagorean...@>;
     mp_error (mp, msg, hlp, true);
   }
   a = 0;
@@ -1053,7 +1120,7 @@ void mp_double_pyth_sub (MP mp, mp_number *ret, mp_number a_orig, mp_number b_or
 
 
 @ The subroutines for logarithm and exponential involve two tables.
-The first is simple: |two_to_the[k]| equals $2^k$.
+The first is simple: |two_to_the[k]| equals $2^k$. 
 
 @d two_to_the(A) (1<<(unsigned)(A))
 
@@ -1073,25 +1140,25 @@ void mp_double_m_log (MP mp, mp_number *ret, mp_number x_orig) {
 @ @<Handle non-positive logarithm@>=
 {
   char msg[256];
-  const char *hlp[] = {
+  const char *hlp[] = { 
          "Since I don't take logs of non-positive numbers,",
          "I'm zeroing this one. Proceed, with fingers crossed.",
           NULL };
   char *xstr = mp_double_number_tostring (mp, x_orig);
   mp_snprintf (msg, 256, "Logarithm of %s has been replaced by 0", xstr);
   free (xstr);
-@.Logarithm...replaced by 0@>
+@.Logarithm...replaced by 0@>;
   mp_error (mp, msg, hlp, true);
   ret->data.dval = 0;
 }
 
 
 @ Conversely, the exponential routine calculates $\exp(x/2^8)$,
-when |x| is |scaled|.
+when |x| is |scaled|. 
 
 @c
 void mp_double_m_exp (MP mp, mp_number *ret, mp_number x_orig) {
-  errno = 0;
+  errno = 0;  
   ret->data.dval = exp(x_orig.data.dval/256.0);
   if (errno) {
     if (x_orig.data.dval > 0) {
@@ -1119,7 +1186,7 @@ void mp_double_n_arg (MP mp, mp_number *ret, mp_number x_orig, mp_number y_orig)
     if (y_orig.data.dval == -0.0)
       y_orig.data.dval = 0.0;
     ret->data.dval = atan2 (y_orig.data.dval, x_orig.data.dval) * (180.0 / PI)  * angle_multiplier;
-    if (ret->data.dval == -0.0)
+    if (ret->data.dval == -0.0) 
       ret->data.dval = 0.0;
 #if MPOST_DEBUG
     fprintf(stdout, "\nn_arg(%g,%g,%g)", mp_number_to_double(*ret),
@@ -1136,7 +1203,7 @@ void mp_double_n_arg (MP mp, mp_number *ret, mp_number x_orig, mp_number y_orig)
          "I'm zeroing this one. Proceed, with fingers crossed.",
          NULL };
   mp_error (mp, "angle(0,0) is taken as zero", hlp, true);
-@.angle(0,0)...zero@>
+@.angle(0,0)...zero@>;
   ret->data.dval = 0;
 }
 
@@ -1184,20 +1251,20 @@ mp_number_to_double(*n_cos), mp_number_to_double(*n_sin));
 #endif
 }
 
-@ This is the \.{http://www-cs-faculty.stanford.edu/\TILDE/uno/programs/rng.c}
+@ This is the http://www-cs-faculty.stanford.edu/~uno/programs/rng.c
 with  small cosmetic modifications.
 
-@d KK 100                     /* the long lag  */
-@d LL  37                     /* the short lag */
-@d MM (1L<<30)                /* the modulus   */
-@d mod_diff(x,y) (((x)-(y))&(MM-1)) /* subtraction mod MM */
-
 @c
+#define KK 100                     /* the long lag  */
+#define LL  37                     /* the short lag */
+#define MM (1L<<30)                /* the modulus   */
+#define mod_diff(x,y) (((x)-(y))&(MM-1)) /* subtraction mod MM */
+/* */ 
 static long ran_x[KK];                    /* the generator state */
-
-static void ran_array( /* put n new random numbers in aa */
-  long aa[], /* destination */
-  int n)     /* array length (must be at least KK) */
+/* */ 
+static void ran_array(long aa[],int n) /* put n new random numbers in aa */
+  /* long aa[]    destination */
+  /* int n       array length (must be at least KK) */
 {
   register int i,j;
   for (j=0;j<KK;j++) aa[j]=ran_x[j];
@@ -1205,20 +1272,20 @@ static void ran_array( /* put n new random numbers in aa */
   for (i=0;i<LL;i++,j++) ran_x[i]=mod_diff(aa[j-KK],aa[j-LL]);
   for (;i<KK;i++,j++) ran_x[i]=mod_diff(aa[j-KK],ran_x[i-LL]);
 }
-@ The following routines are from exercise 3.6--15
-after calling |ran_start|, get new randoms by, e.g., |x=ran_arr_next()|.
-
-@d QUALITY 1009 /* recommended quality level for high-res use */
-@d TT  70   /* guaranteed separation between streams */
-@d is_odd(x)  ((x)&1)          /* units bit of x */
-
-@c
+/* */ 
+/* the following routines are from exercise 3.6--15 */
+/* after calling |ran_start|, get new randoms by, e.g., |x=ran_arr_next()| */
+/* */ 
+#define QUALITY 1009 /* recommended quality level for high-res use */
 static long ran_arr_buf[QUALITY];
 static long ran_arr_dummy=-1, ran_arr_started=-1;
 static long *ran_arr_ptr=&ran_arr_dummy; /* the next random number, or -1 */
-
-static void ran_start( /* do this before using |ran_array| */
-  long seed) /* selector for different streams */
+/* */ 
+#define TT  70   /* guaranteed separation between streams */
+#define is_odd(x)  ((x)&1)          /* units bit of x */
+/* */ 
+static void ran_start(long seed) /* do this before using |ran_array| */
+  /* long seed             selector for different streams */
 {
   register int t,j;
   long x[KK+KK-1];              /* the preparation buffer */
@@ -1228,7 +1295,7 @@ static void ran_start( /* do this before using |ran_array| */
     ss<<=1; if (ss>=MM) ss-=MM-2; /* cyclic shift 29 bits */
   }
   x[1]++;              /* make x[1] (and only x[1]) odd */
-  for (ss=seed&(MM-1),t=TT-1; t; ) {
+  for (ss=seed&(MM-1),t=TT-1; t; ) {       
     for (j=KK-1;j>0;j--) x[j+j]=x[j], x[j+j-1]=0; /* "square" */
     for (j=KK+KK-2;j>=KK;j--)
       x[j-(KK-LL)]=mod_diff(x[j-(KK-LL)],x[j]),
@@ -1245,8 +1312,8 @@ static void ran_start( /* do this before using |ran_array| */
   for (j=0;j<10;j++) ran_array(x,KK+KK-1); /* warm things up */
   ran_arr_ptr=&ran_arr_started;
 }
-@ @d ran_arr_next() (*ran_arr_ptr>=0? *ran_arr_ptr++: ran_arr_cycle())
-@c
+/* */ 
+#define ran_arr_next() (*ran_arr_ptr>=0? *ran_arr_ptr++: ran_arr_cycle())
 static long ran_arr_cycle(void)
 {
   if (ran_arr_ptr==&ran_arr_dummy)
@@ -1282,7 +1349,7 @@ void mp_init_randoms (MP mp, int seed) {
   mp_new_randoms (mp);
   mp_new_randoms (mp);          /* ``warm up'' the array */
 
-  ran_start((long) seed);
+  ran_start((long) seed);  
 
 
 }
@@ -1305,12 +1372,12 @@ void mp_number_modulo (mp_number *a, mp_number b) {
 
 @ To consume a random  integer for the uniform generator, the program below will say `|next_unif_random|'.
 
-@c
-static void mp_next_unif_random (MP mp, mp_number *ret) {
-  double a;
+@c 
+static void mp_next_unif_random (MP mp, mp_number *ret) { 
+  double a; 
   unsigned long int op;
   (void)mp;
-  op = (unsigned)ran_arr_next();
+  op = (unsigned)ran_arr_next(); 
   a = (double)op/(MM*1.0);
   ret->data.dval = a;
 }
@@ -1319,11 +1386,11 @@ static void mp_next_unif_random (MP mp, mp_number *ret) {
 
 @ To consume a random fraction, the program below will say `|next_random|'.
 
-@c
-static void mp_next_random (MP mp, mp_number *ret) {
-  if ( mp->j_random==0 )
+@c 
+static void mp_next_random (MP mp, mp_number *ret) { 
+  if ( mp->j_random==0 ) 
     mp_new_randoms(mp);
-  else
+  else 
     mp->j_random = mp->j_random-1;
   mp_number_clone (ret, mp->randoms[mp->j_random]);
 }
@@ -1372,7 +1439,7 @@ can readily be obtained with the ratio method (Algorithm 3.4.1R in
 
 @c
 static void mp_double_m_norm_rand (MP mp, mp_number *ret) {
-  mp_number ab_vs_cd;
+  mp_number ab_vs_cd; 
   mp_number abs_x;
   mp_number u;
   mp_number r;
@@ -1383,14 +1450,14 @@ static void mp_double_m_norm_rand (MP mp, mp_number *ret) {
   new_number (abs_x);
   new_number (u);
   new_number (r);
-
+  
   do {
     do {
       mp_number v;
       new_number (v);
       mp_next_random(mp, &v);
-      mp_number_substract (&v, ((math_data *)mp->math)->fraction_half_t);
-      mp_double_number_take_fraction (mp,&xa, ((math_data *)mp->math)->sqrt_8_e_k, v);
+      mp_number_substract (&v, ((math_data *)mp->math)->fraction_half_t); 
+      mp_double_number_take_fraction (mp,&xa, ((math_data *)mp->math)->sqrt_8_e_k, v); 
       free_number (v);
       mp_next_random(mp, &u);
       mp_number_clone (&abs_x, xa);
@@ -1425,11 +1492,10 @@ void mp_double_ab_vs_cd (MP mp, mp_number *ret, mp_number a_orig, mp_number b_or
   ret->data.dval = 0 ;
   ab = a_orig.data.dval*b_orig.data.dval;
   cd = c_orig.data.dval*d_orig.data.dval;
-  if (ab > cd )
+  if (ab > cd ) 
        ret->data.dval = 1 ;
-  else if (ab < cd )
+  else if (ab < cd ) 
        ret->data.dval = -1 ;
-  return;
+  return ;
 }
 
-@* Index.

@@ -13,22 +13,11 @@
 
 
 \def\title{Math support functions for MPFR based math}
+\pdfoutput=1
 
-@s MP int
-@s mp_number int
-@s mp_number_type int
-@s mp_variable_type int
-@s mpfr_t int
-@s mpfr_prec_t int
-@s boolean int
-@s math_data int
-@s mpfr_exp_t int
-@s integer64 int
+@ Introduction.
 
-@* Introduction.
-@d ROUND(a) floor((a)+0.5)
-
-@c
+@c 
 #include "mpconfig.h"
 #include <w2c/config.h>
 #include <stdio.h>
@@ -36,6 +25,7 @@
 #include <string.h>
 #include <math.h>
 #include "mpmathbinary.h" /* internal header */
+#define ROUND(a) floor((a)+0.5)
 @h
 
 @ @c
@@ -44,16 +34,15 @@
 @ @(mpmathbinary.h@>=
 #ifndef MPMATHBINARY_H
 #define  MPMATHBINARY_H 1
+#include "mplib.h"
 #include "mpmp.h" /* internal header */
 #include <gmp.h>
 #include <mpfr.h>
 
 #ifdef HAVE_CONFIG_H
-#define MP_STR_HELPER(x) @[#x@]
-#define MP_STR(x) @[MP_STR_HELPER(x)@]
-const char * const COMPILED_gmp_version  = MP_STR(__GNU_MP_VERSION) "."@|
-  MP_STR( __GNU_MP_VERSION_MINOR) "." @|
-  MP_STR(__GNU_MP_VERSION_PATCHLEVEL);
+#define MP_STR_HELPER(x) #x
+#define MP_STR(x) MP_STR_HELPER(x)
+const char * const COMPILED_gmp_version  = MP_STR(__GNU_MP_VERSION) "." MP_STR( __GNU_MP_VERSION_MINOR) "." MP_STR(__GNU_MP_VERSION_PATCHLEVEL);
 #else
 const char * const COMPILED_gmp_version  = "unknown";
 #endif
@@ -123,7 +112,7 @@ static void mp_number_double(mp_number *A);
 static void mp_number_add_scaled(mp_number *A, integer64 B); /* also for negative B */
 static void mp_number_multiply_int(mp_number *A, integer64 B);
 static void mp_number_divide_int(mp_number *A, integer64 B);
-static void mp_binary_abs(mp_number *A);
+static void mp_binary_abs(mp_number *A);   
 static void mp_number_clone(mp_number *A, mp_number B);
 static void mp_number_swap(mp_number *A, mp_number *B);
 static integer64 mp_round_unscaled(mp_number x_orig);
@@ -163,7 +152,7 @@ static double precision_bits_to_digits (mpfr_prec_t i);
      mpfr_set_zero(dec,1);
    }
 
-@c
+@c 
 int binary_number_check (mpfr_t dec)
 {
    int test = false;
@@ -174,7 +163,7 @@ int binary_number_check (mpfr_t dec)
         if (mpfr_negative_p(dec)) {
           mpfr_neg(dec, dec, ROUNDING);
         }
-      } else { // Nan
+      } else { // Nan 
         mpfr_set_zero(dec,1); /* 1 == positive */
       }
    }
@@ -189,7 +178,7 @@ void mp_check_mpfr_t (MP mp, mpfr_t dec)
 
 
 
-@ Precision IO uses |double| because |MPFR_PREC_MAX| overflows int.
+@ Precision IO uses |double| because |MPFR_PREC_MAX| overflows int. 
 
 @c
 static double precision_bits;
@@ -208,7 +197,7 @@ double precision_bits_to_digits (mpfr_prec_t d)
 @<Internal library declarations@>=
 void * mp_initialize_binary_math (MP mp);
 
-@
+@ 
 
 @d unity 1
 @d two 2
@@ -252,7 +241,7 @@ static boolean initialized = false;
 void init_binary_constants (void) {
   if (!initialized) {
     mpfr_inits2 ((mpfr_prec_t)precision_bits, one, minusone, zero, two_mpfr_t, three_mpfr_t, four_mpfr_t, fraction_multiplier_mpfr_t,
-              fraction_one_mpfr_t, fraction_one_plus_mpfr_t,  angle_multiplier_mpfr_t, PI_mpfr_t,
+              fraction_one_mpfr_t, fraction_one_plus_mpfr_t,  angle_multiplier_mpfr_t, PI_mpfr_t, 
               epsilon_mpfr_t, EL_GORDO_mpfr_t, (mpfr_ptr) 0);
     mpfr_set_si (one, 1, ROUNDING);
     mpfr_set_si (minusone, -1, ROUNDING);
@@ -272,15 +261,13 @@ void init_binary_constants (void) {
 }
 void free_binary_constants (void) {
   /* For sake of speed, we accept this memory leak. */
-#if 0
-  mpfr_clears (one, minusone, zero, two_mpfr_t, three_mpfr_t, four_mpfr_t, fraction_multiplier_mpfr_t,
-              fraction_one_mpfr_t, fraction_one_plus_mpfr_t,  angle_multiplier_mpfr_t, PI_mpfr_t,
-              epsilon_mpfr_t, EL_GORDO_mpfr_t, (mpfr_ptr) 0);
-  mpfr_free_cache ();
-#endif
+  /*mpfr_clears (one, minusone, zero, two_mpfr_t, three_mpfr_t, four_mpfr_t, fraction_multiplier_mpfr_t,*/
+  /*            fraction_one_mpfr_t, fraction_one_plus_mpfr_t,  angle_multiplier_mpfr_t, PI_mpfr_t, */
+  /*            epsilon_mpfr_t, EL_GORDO_mpfr_t, (mpfr_ptr) 0); */
+  /*mpfr_free_cache ();*/
 }
 
-@ |precision_max| is limited to 1000, because the precision of already initialized
+@ |precision_max| is limited to 1000, because the precision of already initialized 
 |mpfr_t| numbers cannot be raised, only lowered. The value of 1000.0 is a tradeoff
 between precision and allocation size / processing speed.
 
@@ -301,7 +288,7 @@ void * mp_initialize_binary_math (MP mp) {
   mpfr_set_d(math->precision_max.data.num, MAX_PRECISION, ROUNDING);
   mp_new_number (mp, &math->precision_min, mp_scaled_type);
   /* really should be |precision_bits_to_digits(MPFR_PREC_MIN)| but that produces a horrible number */
-  mpfr_set_d(math->precision_min.data.num, 2.0 , ROUNDING);
+  mpfr_set_d(math->precision_min.data.num, 2.0 , ROUNDING); 
   /* here are the constants for |scaled| objects */
   mp_new_number (mp, &math->epsilon_t, mp_scaled_type);
   mpfr_set (math->epsilon_t.data.num, epsilon_mpfr_t, ROUNDING);
@@ -345,12 +332,12 @@ void * mp_initialize_binary_math (MP mp) {
   /* various approximations */
   mp_new_number (mp, &math->one_k, mp_scaled_type);
   mpfr_set_d(math->one_k.data.num, 1.0/64, ROUNDING);
-  mp_new_number (mp, &math->sqrt_8_e_k, mp_scaled_type);
+  mp_new_number (mp, &math->sqrt_8_e_k, mp_scaled_type); 
   {
     mpfr_set_d(math->sqrt_8_e_k.data.num, 112428.82793 / 65536.0, ROUNDING);
     /* $2^{16}\sqrt{8/e}\approx 112428.82793$ */
   }
-  mp_new_number (mp, &math->twelve_ln_2_k, mp_fraction_type);
+  mp_new_number (mp, &math->twelve_ln_2_k, mp_fraction_type); 
   {
     mpfr_set_d(math->twelve_ln_2_k.data.num, 139548959.6165 / 65536.0, ROUNDING);
     /* $2^{24}\cdot12\ln2\approx139548959.6165$ */
@@ -460,7 +447,7 @@ void * mp_initialize_binary_math (MP mp) {
   math->scan_numeric = mp_binary_scan_numeric_token;
   math->scan_fractional = mp_binary_scan_fractional_token;
   math->free_math = mp_free_binary_math;
-  math->set_precision = mp_binary_set_precision;
+  math->set_precision = mp_binary_set_precision;  
   return (void *)math;
 }
 
@@ -499,7 +486,7 @@ void mp_free_binary_math (MP mp) {
   free(mp->math);
 }
 
-@ Creating and destroying |mp_number| objects.
+@ Creating an destroying |mp_number| objects
 
 @ @c
 void mp_new_number (MP mp, mp_number *n, mp_number_type t) {
@@ -510,7 +497,9 @@ void mp_new_number (MP mp, mp_number *n, mp_number_type t) {
   n->type = t;
 }
 
-@ @c
+@ 
+
+@c
 void mp_free_number (MP mp, mp_number *n) {
   (void)mp;
   if (n->data.num) {
@@ -522,7 +511,7 @@ void mp_free_number (MP mp, mp_number *n) {
 
 @ Here are the low-level functions on |mp_number| items, setters first.
 
-@c
+@c 
 void mp_set_binary_from_int(mp_number *A, integer64 B) {
   mpfr_set_si(A->data.num,B, ROUNDING);
 }
@@ -593,7 +582,7 @@ void mp_number_multiply_int(mp_number *A, integer64 B) {
 void mp_number_divide_int(mp_number *A, integer64 B) {
   mpfr_div_si(A->data.num,A->data.num, B, ROUNDING);
 }
-void mp_binary_abs(mp_number *A) {
+void mp_binary_abs(mp_number *A) {   
   mpfr_abs(A->data.num, A->data.num, ROUNDING);
 }
 void mp_number_clone(mp_number *A, mp_number B) {
@@ -633,7 +622,9 @@ integer64 mp_number_to_scaled(mp_number A) {
   return (integer64)(v * 65536.0);
 }
 
-@ @d odd(A)   (MPOST_ABS(A)%2==1)
+@ 
+
+@d odd(A)   (MPOST_ABS(A)%2==1)
 
 @c
 integer64 mp_number_to_int(mp_number A) {
@@ -652,7 +643,7 @@ integer64 mp_number_to_boolean(mp_number A) {
 }
 double mp_number_to_double(mp_number A) {
   double res = 0.0;
-  if (mpfr_number_p (A.data.num)) {
+  if (mpfr_number_p (A.data.num)) { 
     res = mpfr_get_d(A.data.num, ROUNDING);
   }
   return res;
@@ -680,7 +671,7 @@ positions from the right end of a binary computer word.
 @ One of \MP's most common operations is the calculation of
 $\lfloor{a+b\over2}\rfloor$,
 the midpoint of two given integers |a| and~|b|. The most decent way to do
-this is to write `|(a+b)/2|'; but on many machines it is more efficient
+this is to write `|(a+b)/2|'; but on many machines it is more efficient 
 to calculate `|(a+b)>>1|'.
 
 Therefore the midpoint operation will always be denoted by `|half(a+b)|'
@@ -708,11 +699,11 @@ char * mp_binnumber_tostring (mpfr_t n) {
     while (strlen(str)>0 && *(str+strlen(str)-1) == '0' ) {
       *(str+strlen(str)-1) = '\0'; /* get rid of trailing zeroes */
     }
-    buffer = malloc(strlen(str)+13+(unsigned)numprecdigits+1);
-    /* the buffer should also fit at least |strlen("E+\%d", exp)| or |(numprecdigits-2)| worth of zeroes,
-     because with |numprecdigits == 33|, the |str| for |"1E32"| will be |"1"|, and needing 32 extra zeroes,
-     and the decimal dot. To avoid miscalculations by myself, it is safer to add these
-     three together.
+    buffer = malloc(strlen(str)+13+(unsigned)numprecdigits+1); 
+    /* the buffer should also fit at least strlen("E+\%d", exp) or (numprecdigits-2) worth of zeroes, 
+     * because with numprecdigits == 33, the str for "1E32" will be "1", and needing 32 extra zeroes,
+     * and the decimal dot. To avoid miscalculations by myself, it is safer to add these
+     * three together.
      */
     if (buffer) {
       int i = 0, j = 0;
@@ -814,7 +805,7 @@ been designed to avoid this sort of error.
 If this subroutine were programmed in assembly language on a typical
 machine, we could simply compute |(@t$2^{28}$@>*p)div q|, since a
 double-precision product can often be input to a fixed-point division
-instruction. But when we are restricted to integer arithmetic it
+instruction. But when we are restricted to int-eger arithmetic it
 is necessary either to resort to multiple-precision maneuvering
 or to use a simple but slow iteration. The multiple-precision technique
 would be about three times faster than the code adopted here, but it
@@ -902,7 +893,8 @@ void mp_binary_number_make_scaled (MP mp, mp_number *ret, mp_number p_orig, mp_n
   mp_check_mpfr_t(mp, ret->data.num);
 }
 
-@ @d halfp(A) (integer)((unsigned)(A) >> 1)
+@ 
+@d halfp(A) (integer)((unsigned)(A) >> 1)
 
 @* Scanning numbers in the input.
 
@@ -914,13 +906,13 @@ The definitions below are temporarily here.
 @<Declarations...@>=
 static void mp_wrapup_numeric_token(MP mp, unsigned char *start, unsigned char *stop);
 
-@ The check of the precision is based on the article "27 Bits are not enough for 8-Digit accuracy"
-by Bennet Goldberg  which roughly says that
-given $p$ digits in base 10 and $q$ digits in base 2,
-conversion from base 10 round-trip through base 2 if and only if $10^p < 2^{q-1}$.
-In our case  $p/\log_{10}2 + 1 < q$, or $q\geq a$
-where $q$ is the current precision in bits and $a=\left\lceil p/\log_{10}2 + 1\right\rceil$.
-Therefore if $a>q$ the required precision could be too high and we emit a warning.
+@ The check of the precision is based on the article "27 Bits are not enough for 8-Digit accuracy" 
+@ by Bennet Goldberg  which roughly says that
+@ given $p$ digits in base 10 and $q$ digits in base 2, 
+@ conversion from base 10 round-trip through base 2 if and only if $10^p < 2^{q-1}$.
+@ In our case  $p/\log_{10}2 + 1 < q$, or $q\geq a$
+@ where $q$ is the current precision in bits and $a=\left\lceil p/\log_{10}2 + 1\right\rceil$. 
+@ Therefore if $a>q$ the required precision could be too high and we emit a warning.
 @d too_precise(a) (a>precision_bits)
 @c
 void mp_wrapup_numeric_token(MP mp, unsigned char *start, unsigned char *stop) {
@@ -929,21 +921,19 @@ void mp_wrapup_numeric_token(MP mp, unsigned char *start, unsigned char *stop) {
   size_t l = (size_t)(stop-start+1);
   unsigned long lp, lpbit;
   char *buf = mp_xmalloc(mp, l+1, 1);
-  char *bufp = buf;
+  char *bufp = buf; 
   buf[l] = '\0';
   mpfr_init2(result, (mpfr_prec_t)precision_bits);
   (void)strncpy(buf,(const char *)start, l);
   invalid = mpfr_set_str(result,buf, 10, ROUNDING);
   /*|fprintf(stdout,"scan of [%s] produced %s, ", buf, mp_binnumber_tostring(result));|*/
   lp = (unsigned long) l;
-  if ( (*bufp=='-') || (*bufp=='+') || (*bufp=='0') || (*bufp=='.') )
-  { /* strip leading |-| or |+| or |0| or |.| */
-    lp--; bufp++;
-  }
+  /* strip leading - or + or 0 or .*/
+  if ( (*bufp=='-') || (*bufp=='+') || (*bufp=='0') || (*bufp=='.') ) { lp--; bufp++;}
   /* strip also . */
   lp = strchr(bufp,'.') ? lp-1: lp;
+  /* strip also trailing 0s */ 
   bufp = buf+l-1;
-  /* strip also trailing 0s */
   while(*bufp == '0') {bufp--; lp=( ((lp==0)||(lp==1))?1:lp-1);}
   /* at least one digit, even if the number is  0 */
   lp = lp>0? lp: 1;
@@ -962,10 +952,8 @@ void mp_wrapup_numeric_token(MP mp, unsigned char *start, unsigned char *stop) {
                "with that value; but it might be dangerous.",
                "(Set warningcheck:=0 to suppress this message.)",
                NULL };
-        mp_snprintf (msg, 256, "Required precision is too high " @|
-          "(%d vs. numberprecision = %f, required precision=%d bits " @|
-          "vs internal precision=%f bits)", (unsigned int)lp,mpfr_get_d(internal_value (mp_number_precision).data.num, ROUNDING),(int)lpbit,precision_bits);
-@.Number is too large@>
+        mp_snprintf (msg, 256, "Required precision is too high (%d vs. numberprecision = %f, required precision=%d bits vs internal precision=%f bits)", (unsigned int)lp,mpfr_get_d(internal_value (mp_number_precision).data.num, ROUNDING),(int)lpbit,precision_bits);
+@.Number is too large@>;
         mp_error (mp, msg, hlp, true);
       }
     }
@@ -973,10 +961,10 @@ void mp_wrapup_numeric_token(MP mp, unsigned char *start, unsigned char *stop) {
     const char *hlp[] = {"I could not handle this number specification",
                          "probably because it is out of range. Error:",
                          "",
-                          NULL };
+                          NULL };   
     hlp[2] = strerror(errno);
     mp_error (mp, "Enormous number has been reduced.", hlp, false);
-@.Enormous number...@>
+@.Enormous number...@>;
     set_cur_mod((mpfr_ptr)(((math_data *)(mp->math))->inf_t.data.num));
   }
   set_cur_cmd((mp_variable_type)mp_numeric_token);
@@ -985,16 +973,16 @@ void mp_wrapup_numeric_token(MP mp, unsigned char *start, unsigned char *stop) {
 
 @ @c
 static void find_exponent (MP mp)  {
-  if (mp->buffer[mp->cur_input.loc_field] == 'e' ||
+  if (mp->buffer[mp->cur_input.loc_field] == 'e' || 
       mp->buffer[mp->cur_input.loc_field] == 'E') {
      mp->cur_input.loc_field++;
-     if (!(mp->buffer[mp->cur_input.loc_field] == '+' ||
+     if (!(mp->buffer[mp->cur_input.loc_field] == '+' || 
         mp->buffer[mp->cur_input.loc_field] == '-' ||
 	mp->char_class[mp->buffer[mp->cur_input.loc_field]] == digit_class)) {
        mp->cur_input.loc_field--;
        return;
-     }
-     if (mp->buffer[mp->cur_input.loc_field] == '+' ||
+     }     
+     if (mp->buffer[mp->cur_input.loc_field] == '+' || 
         mp->buffer[mp->cur_input.loc_field] == '-') {
         mp->cur_input.loc_field++;
      }
@@ -1026,13 +1014,13 @@ void mp_binary_scan_numeric_token (MP mp, integer64 n) { /* n: scaled */
   while (mp->char_class[mp->buffer[mp->cur_input.loc_field]] == digit_class) {
      mp->cur_input.loc_field++;
   }
-  if (mp->buffer[mp->cur_input.loc_field] == '.' &&
+  if (mp->buffer[mp->cur_input.loc_field] == '.' && 
       mp->buffer[mp->cur_input.loc_field+1] != '.') {
      mp->cur_input.loc_field++;
      while (mp->char_class[mp->buffer[mp->cur_input.loc_field]] == digit_class) {
        mp->cur_input.loc_field++;
      }
-  }
+  } 
   find_exponent(mp);
   stop = &mp->buffer[mp->cur_input.loc_field-1];
   mp_wrapup_numeric_token (mp, start, stop);
@@ -1066,7 +1054,7 @@ The trigonometric quantity to be multiplied by $\sqrt2$ is less than $\sqrt2$.
 relations such as $\sin\theta\cos\theta\L{1\over2}$.) Thus the numerator
 is positive; and since the tension $\tau$ is constrained to be at least
 $3\over4$, the numerator is less than $16\over3$. The denominator is
-nonnegative and at most~6.
+nonnegative and at most~6.  
 
 The angles $\theta$ and $\phi$ are given implicitly in terms of |fraction|
 arguments |st|, |ct|, |sf|, and |cf|, representing $\sin\theta$, $\cos\theta$,
@@ -1085,7 +1073,7 @@ void mp_binary_velocity (MP mp, mp_number *ret, mp_number st, mp_number ct, mp_n
   mpfr_set_si(fhalf, fraction_half, ROUNDING);
   mpfr_set_si(ftwo, fraction_two, ROUNDING);
   mpfr_set_si(sqrtfive, 5, ROUNDING);
-  mpfr_sqrt (sqrtfive, sqrtfive, ROUNDING);
+  mpfr_sqrt (sqrtfive, sqrtfive, ROUNDING);          
   mpfr_div (arg1,sf.data.num, i16, ROUNDING); // arg1 = sf / 16
   mpfr_sub (arg1,st.data.num, arg1, ROUNDING); // arg1 = st - arg1
   mpfr_div (arg2,st.data.num, i16, ROUNDING); // arg2 = st / 16
@@ -1100,7 +1088,7 @@ void mp_binary_velocity (MP mp, mp_number *ret, mp_number st, mp_number ct, mp_n
   mpfr_mul(arg1, arg1, fone, ROUNDING);     // arg1 = arg1 * fmul
   mp_binary_take_fraction (mp, r1, acc, arg1);  // r1 = (acc * arg1) / fmul
   mpfr_add(num, ftwo, r1, ROUNDING);             // num = ftwo + r1
-
+  
   mpfr_sub(arg1,sqrtfive, one, ROUNDING);   // arg1 = sqrt(5) - 1
   mpfr_mul(arg1,arg1,fhalf, ROUNDING);      // arg1 = arg1 * fmul/2
   mpfr_mul(arg1,arg1,three_mpfr_t, ROUNDING); // arg1 = arg1 * 3
@@ -1146,7 +1134,7 @@ void mp_ab_vs_cd (MP mp, mp_number *ret, mp_number a_orig, mp_number b_orig, mp_
   mpfr_set(b, (mpfr_ptr )b_orig.data.num, ROUNDING);
   mpfr_set(c, (mpfr_ptr )c_orig.data.num, ROUNDING);
   mpfr_set(d, (mpfr_ptr )d_orig.data.num, ROUNDING);
-
+  
   mpfr_mul(q,a,b,ROUNDING);
   mpfr_mul(r,c,d,ROUNDING);
   cmp = mpfr_cmp(q,r);
@@ -1198,7 +1186,7 @@ void mp_ab_vs_cd (MP mp, mp_number *ret, mp_number a_orig, mp_number b_orig, mp_
   }                             /* now |a>d>0| and |c>b>0| */
 RETURN:
 #if MPOST_DEBUG
-  fprintf(stdout, "\n%f = ab_vs_cd(%f,%f,%f,%f)", mp_number_to_double(*ret),
+  fprintf(stdout, "\n%f = ab_vs_cd(%f,%f,%f,%f)", mp_number_to_double(*ret), 
 mp_number_to_double(a_orig),mp_number_to_double(b_orig),
 mp_number_to_double(c_orig),mp_number_to_double(d_orig));
 #endif
@@ -1219,14 +1207,14 @@ if (mpfr_negative_p(c)) {
 }
 if (!mpfr_positive_p(d)) {
   if (!mpfr_negative_p(b)) {
-    if ((mpfr_zero_p(a) || mpfr_zero_p(b)) && (mpfr_zero_p(c) || mpfr_zero_p(d)))
+    if ((mpfr_zero_p(a) || mpfr_zero_p(b)) && (mpfr_zero_p(c) || mpfr_zero_p(d))) 
          mpfr_set(ret->data.num, zero, ROUNDING);
     else
          mpfr_set(ret->data.num, one, ROUNDING);
     goto RETURN;
   }
   if (mpfr_zero_p(d)) {
-    if (mpfr_zero_p(a))
+    if (mpfr_zero_p(a)) 
          mpfr_set(ret->data.num, zero, ROUNDING);
     else
          mpfr_set(ret->data.num, minusone, ROUNDING);
@@ -1243,7 +1231,7 @@ if (!mpfr_positive_p(d)) {
     mpfr_set(ret->data.num, minusone, ROUNDING);
     goto RETURN;
   }
-  if (mpfr_zero_p(c))
+  if (mpfr_zero_p(c)) 
     mpfr_set(ret->data.num, zero, ROUNDING);
   else
     mpfr_set(ret->data.num, minusone, ROUNDING);
@@ -1349,14 +1337,14 @@ static void mp_binary_crossing_point (MP mp, mp_number *ret, mp_number aa, mp_nu
   mpfr_sub(ret->data.num,scratch, fraction_one_mpfr_t, ROUNDING);
 RETURN:
 #if MPOST_DEBUG
-  fprintf(stdout, "\n%f = crossing_point(%f,%f,%f)", mp_number_to_double(*ret),
+  fprintf(stdout, "\n%f = crossing_point(%f,%f,%f)", mp_number_to_double(*ret), 
 mp_number_to_double(aa),mp_number_to_double(bb),mp_number_to_double(cc));
 #endif
   mpfr_clears (a,b,c, x,xx,x0,x1,x2, scratch, (mpfr_ptr)0);
   mp_check_mpfr_t(mp, ret->data.num);
   return;
 }
-
+ 
 
 @ We conclude this set of elementary routines with some simple rounding
 and truncation operations.
@@ -1390,7 +1378,9 @@ void mp_binary_fraction_to_round_scaled (mp_number *x_orig) {
 \MP\ computes all of the necessary special functions from scratch, without
 relying on |real| arithmetic or system subroutines for sines, cosines, etc.
 
-@ @c
+@ 
+
+@c
 void mp_binary_square_rt (MP mp, mp_number *ret, mp_number x_orig) { /* return, x: scaled */
   if (!mpfr_positive_p((mpfr_ptr)x_orig.data.num)) {
     @<Handle square root of zero or negative argument@>;
@@ -1402,7 +1392,7 @@ void mp_binary_square_rt (MP mp, mp_number *ret, mp_number x_orig) { /* return, 
 
 
 @ @<Handle square root of zero...@>=
-{
+{  
   if (mpfr_negative_p((mpfr_ptr)x_orig.data.num)) {
     char msg[256];
     const char *hlp[] = {
@@ -1425,7 +1415,7 @@ void mp_binary_square_rt (MP mp, mp_number *ret, mp_number x_orig) { /* return, 
 @c
 void mp_binary_pyth_add (MP mp, mp_number *ret, mp_number a_orig, mp_number b_orig) {
   mpfr_t a, b, asq, bsq;
-  mpfr_inits2((mpfr_prec_t)precision_bits, a,b, asq, bsq, (mpfr_ptr)0);
+  mpfr_inits2((mpfr_prec_t)precision_bits, a,b, asq, bsq, (mpfr_ptr)0);  
   mpfr_set(a, (mpfr_ptr)a_orig.data.num, ROUNDING);
   mpfr_set(b, (mpfr_ptr)b_orig.data.num, ROUNDING);
   mpfr_mul(asq, a, a, ROUNDING);
@@ -1433,7 +1423,7 @@ void mp_binary_pyth_add (MP mp, mp_number *ret, mp_number a_orig, mp_number b_or
   mpfr_add(a, asq, bsq, ROUNDING);
   mpfr_sqrt(ret->data.num, a, ROUNDING);
   mp_check_mpfr_t(mp, ret->data.num);
-  mpfr_clears(a,b, asq, bsq, (mpfr_ptr)0);
+  mpfr_clears(a,b, asq, bsq, (mpfr_ptr)0);  
 }
 
 @ Here is a similar algorithm for $\psqrt{a^2-b^2}$. Same quick hack, also.
@@ -1441,7 +1431,7 @@ void mp_binary_pyth_add (MP mp, mp_number *ret, mp_number a_orig, mp_number b_or
 @c
 void mp_binary_pyth_sub (MP mp, mp_number *ret, mp_number a_orig, mp_number b_orig) {
   mpfr_t a, b, asq, bsq;
-  mpfr_inits2((mpfr_prec_t)precision_bits, a,b, asq, bsq, (mpfr_ptr)0);
+  mpfr_inits2((mpfr_prec_t)precision_bits, a,b, asq, bsq, (mpfr_ptr)0);  
   mpfr_set(a, (mpfr_ptr)a_orig.data.num, ROUNDING);
   mpfr_set(b, (mpfr_ptr)b_orig.data.num, ROUNDING);
   if (!mpfr_greater_p(a,b)) {
@@ -1478,7 +1468,7 @@ void mp_binary_pyth_sub (MP mp, mp_number *ret, mp_number a_orig, mp_number b_or
 
 
 @ Here is the routine that calculates $2^8$ times the natural logarithm
-of a |scaled| quantity;
+of a |scaled| quantity; 
 
 @c
 void mp_binary_m_log (MP mp, mp_number *ret, mp_number x_orig) {
@@ -1495,7 +1485,7 @@ void mp_binary_m_log (MP mp, mp_number *ret, mp_number x_orig) {
 @ @<Handle non-positive logarithm@>=
 {
   char msg[256];
-  const char *hlp[] = {
+  const char *hlp[] = { 
          "Since I don't take logs of non-positive numbers,",
          "I'm zeroing this one. Proceed, with fingers crossed.",
           NULL };
@@ -1509,7 +1499,7 @@ void mp_binary_m_log (MP mp, mp_number *ret, mp_number x_orig) {
 
 
 @ Conversely, the exponential routine calculates $\exp(x/2^8)$,
-when |x| is |scaled|.
+when |x| is |scaled|. 
 
 @c
 void mp_binary_m_exp (MP mp, mp_number *ret, mp_number x_orig) {
@@ -1587,18 +1577,20 @@ void mp_binary_sin_cos (MP mp, mp_number z_orig, mp_number *n_cos, mp_number *n_
   mpfr_clear (one_eighty);
 }
 
-@ This is the \.{http://www-cs-faculty.stanford.edu/\TILDE/uno/programs/rng.c}
+@ This is the http://www-cs-faculty.stanford.edu/~uno/programs/rng.c
 with  small cosmetic modifications.
 
-@d KK 100                     /* the long lag  */
-@d LL  37                     /* the short lag */
-@d MM (1L<<30)                /* the modulus   */
-@d mod_diff(x,y) (((x)-(y))&(MM-1)) /* subtraction mod MM */
 @c
+#define KK 100                     /* the long lag  */
+#define LL  37                     /* the short lag */
+#define MM (1L<<30)                /* the modulus   */
+#define mod_diff(x,y) (((x)-(y))&(MM-1)) /* subtraction mod MM */
+/* */ 
 static long ran_x[KK];                    /* the generator state */
-static void ran_array( /* put n new random numbers in aa */
-  long aa[], /* destination */
-  int n)     /* array length (must be at least KK) */
+/* */ 
+static void ran_array(long aa[],int n) /* put n new random numbers in aa */
+  /* long aa[]    destination */
+  /* int n       array length (must be at least KK) */
 {
   register int i,j;
   for (j=0;j<KK;j++) aa[j]=ran_x[j];
@@ -1606,19 +1598,20 @@ static void ran_array( /* put n new random numbers in aa */
   for (i=0;i<LL;i++,j++) ran_x[i]=mod_diff(aa[j-KK],aa[j-LL]);
   for (;i<KK;i++,j++) ran_x[i]=mod_diff(aa[j-KK],ran_x[i-LL]);
 }
-@ The following routines are from exercise 3.6--15
-after calling |ran_start|, get new randoms by, e.g., |x=ran_arr_next()|.
-
-@d QUALITY 1009 /* recommended quality level for high-res use */
-@d TT  70   /* guaranteed separation between streams */
-@d is_odd(x)  ((x)&1)          /* units bit of x */
-
-@c
+/* */ 
+/* the following routines are from exercise 3.6--15 */
+/* after calling |ran_start|, get new randoms by, e.g., |x=ran_arr_next()| */
+/* */ 
+#define QUALITY 1009 /* recommended quality level for high-res use */
 static long ran_arr_buf[QUALITY];
 static long ran_arr_dummy=-1, ran_arr_started=-1;
 static long *ran_arr_ptr=&ran_arr_dummy; /* the next random number, or -1 */
-static void ran_start( /* do this before using |ran_array| */
-  long seed) /* selector for different streams */
+/* */ 
+#define TT  70   /* guaranteed separation between streams */
+#define is_odd(x)  ((x)&1)          /* units bit of x */
+/* */ 
+static void ran_start(long seed) /* do this before using |ran_array| */
+  /* long seed             selector for different streams */
 {
   register int t,j;
   long x[KK+KK-1];              /* the preparation buffer */
@@ -1628,7 +1621,7 @@ static void ran_start( /* do this before using |ran_array| */
     ss<<=1; if (ss>=MM) ss-=MM-2; /* cyclic shift 29 bits */
   }
   x[1]++;              /* make x[1] (and only x[1]) odd */
-  for (ss=seed&(MM-1),t=TT-1; t; ) {
+  for (ss=seed&(MM-1),t=TT-1; t; ) {       
     for (j=KK-1;j>0;j--) x[j+j]=x[j], x[j+j-1]=0; /* "square" */
     for (j=KK+KK-2;j>=KK;j--)
       x[j-(KK-LL)]=mod_diff(x[j-(KK-LL)],x[j]),
@@ -1645,8 +1638,8 @@ static void ran_start( /* do this before using |ran_array| */
   for (j=0;j<10;j++) ran_array(x,KK+KK-1); /* warm things up */
   ran_arr_ptr=&ran_arr_started;
 }
-@ @d ran_arr_next() (*ran_arr_ptr>=0? *ran_arr_ptr++: ran_arr_cycle())
-@c
+/* */ 
+#define ran_arr_next() (*ran_arr_ptr>=0? *ran_arr_ptr++: ran_arr_cycle())
 static long ran_arr_cycle(void)
 {
   if (ran_arr_ptr==&ran_arr_dummy)
@@ -1682,25 +1675,25 @@ void mp_init_randoms (MP mp, int seed) {
   mp_new_randoms (mp);
   mp_new_randoms (mp);
   mp_new_randoms (mp);          /* ``warm up'' the array */
-
-  ran_start ((long)seed);
+  
+  ran_start ((long)seed);  
 
 }
 
 @ @c
 void mp_binary_number_modulo (mp_number *a, mp_number b) {
- /* |mpfr_remainder (a->data.num, a->data.num, b.data.num, ROUNDING);| */
+ /* mpfr_remainder (a->data.num, a->data.num, b.data.num, ROUNDING);*/ 
  /* This is consistent with scaled mode */
- mpfr_fmod (a->data.num, a->data.num, b.data.num, ROUNDING);
+ mpfr_fmod (a->data.num, a->data.num, b.data.num, ROUNDING); 
 }
 
 @ To consume a random  integer for the uniform generator, the program below will say `|next_unif_random|'.
 
-@c
-static void mp_next_unif_random (MP mp, mp_number *ret) {
+@c 
+static void mp_next_unif_random (MP mp, mp_number *ret) { 
   mp_number rop;
   unsigned long int op;
-  float flt_op ;
+  float flt_op ;  
   (void)mp;
   mp_new_number (mp, &rop, mp_scaled_type);
   op = (unsigned)ran_arr_next();
@@ -1714,11 +1707,11 @@ static void mp_next_unif_random (MP mp, mp_number *ret) {
 
 @ To consume a random fraction, the program below will say `|next_random|'.
 
-@c
-static void mp_next_random (MP mp, mp_number *ret) {
-  if ( mp->j_random==0 )
+@c 
+static void mp_next_random (MP mp, mp_number *ret) { 
+  if ( mp->j_random==0 ) 
     mp_new_randoms(mp);
-  else
+  else 
     mp->j_random = mp->j_random-1;
   mp_number_clone (ret, mp->randoms[mp->j_random]);
 }
@@ -1740,7 +1733,7 @@ static void mp_binary_m_unif_rand (MP mp, mp_number *ret, mp_number x_orig) {
   new_number (x);
   new_number (abs_x);
   new_number (u);
-  mp_number_clone (&x, x_orig);
+  mp_number_clone (&x, x_orig);      
   mp_number_clone (&abs_x, x);
   mp_binary_abs (&abs_x);
   mp_next_unif_random(mp, &u);
@@ -1754,11 +1747,11 @@ static void mp_binary_m_unif_rand (MP mp, mp_number *ret, mp_number x_orig) {
     mp_number_clone (ret, y);
     mp_number_negate (ret);
   }
-  r = mpfr_get_str(NULL,    /* |char *str|,         */
+  r = mpfr_get_str(NULL,    /* |char *str|,         */     
                   &e,       /* |mpfr_exp_t *expptr|,*/
                   10,       /* |int b|,             */
                   0,        /* |size_t n|,          */
-                  ret->data.num, /* |mpfr_t op|,    */
+                  ret->data.num, /* |mpfr_t op|,    */      
                   ROUNDING       /* |mpfr_rnd_t rnd|*/
                   );
   mpfr_free_str(r);
@@ -1775,7 +1768,7 @@ can readily be obtained with the ratio method (Algorithm 3.4.1R in
 
 @c
 static void mp_binary_m_norm_rand (MP mp, mp_number *ret) {
-  mp_number ab_vs_cd;
+  mp_number ab_vs_cd; 
   mp_number abs_x;
   mp_number u;
   mp_number r;
@@ -1786,14 +1779,14 @@ static void mp_binary_m_norm_rand (MP mp, mp_number *ret) {
   new_number (abs_x);
   new_number (u);
   new_number (r);
-
+  
   do {
     do {
       mp_number v;
       new_number (v);
       mp_next_random(mp, &v);
-      mp_number_substract (&v, ((math_data *)mp->math)->fraction_half_t);
-      mp_binary_number_take_fraction (mp,&xa, ((math_data *)mp->math)->sqrt_8_e_k, v);
+      mp_number_substract (&v, ((math_data *)mp->math)->fraction_half_t); 
+      mp_binary_number_take_fraction (mp,&xa, ((math_data *)mp->math)->sqrt_8_e_k, v); 
       free_number (v);
       mp_next_random(mp, &u);
       mp_number_clone (&abs_x, xa);
@@ -1835,13 +1828,13 @@ static void mp_binary_ab_vs_cd (MP mp, mp_number *ret, mp_number a_orig, mp_numb
 
   mpfr_mul(ab,a,b, ROUNDING);
   mpfr_mul(cd,c,d, ROUNDING);
-
+ 
   mpfr_set(ret->data.num, zero, ROUNDING);
   cmp = mpfr_cmp(ab,cd);
   if (cmp) {
-   if (cmp>0)
+   if (cmp>0) 
      mpfr_set(ret->data.num, one, ROUNDING);
-   else
+   else 
      mpfr_set(ret->data.num, minusone, ROUNDING);
   }
   mp_check_mpfr_t(mp, ret->data.num);
@@ -1849,4 +1842,4 @@ static void mp_binary_ab_vs_cd (MP mp, mp_number *ret, mp_number a_orig, mp_numb
   return;
 }
 
-@* Index.
+
