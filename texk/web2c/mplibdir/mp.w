@@ -1322,7 +1322,7 @@ numbers that represent the next line of the file are input into
 |buffer[first]|, |buffer[first+1]|, \dots, |buffer[last-1]|; and the
 global variable |last| is set equal to |first| plus the length of the
 line. Trailing blanks are removed from the line; thus, either |last=first|
-(in which case the line was entirely blank) or |buffer[last-1]!=" "|.
+(in which case the line was entirely blank) or |buffer[last-1]<>" "|.
 @^inner loop@>
 
 The variable |max_buf_stack|, which is used to keep track of how large
@@ -12688,7 +12688,7 @@ void mp_x_retrace_error (MP mp) {
 }
 
 
-@ We stash |p| in |dash_info(d)| if |mp_dash_p(p)!=0| so that subsequent processing can
+@ We stash |p| in |dash_info(d)| if |mp_dash_p(p)<>0| so that subsequent processing can
 handle the case where the pen stroke |p| is itself dashed.
 
 @d dash_info(A) ((mp_dash_node)(A))->dash_info_  /* in an edge header this points to the first dash node */
@@ -15205,7 +15205,7 @@ if (mp_left_type (c) == mp_endpoint) {
 
 
 @ In degenerate situations we might have to look at the knot preceding~|q|.
-That knot is |p| but if |p!=c|, its coordinates have already been offset by |w|.
+That knot is |p| but if |p<>c|, its coordinates have already been offset by |w|.
 
 @<Set the incoming and outgoing directions at |q|; in case of...@>=
 {
@@ -18368,7 +18368,7 @@ static mp_node mp_cur_tok (MP mp) {
 @ Sometimes \MP\ has read too far and wants to ``unscan'' what it has
 seen. The |back_input| procedure takes care of this by putting the token
 just scanned back into the input stream, ready to be read again.
-If |cur_sym!=0|, the values of |cur_cmd| and |cur_mod| are irrelevant.
+If |cur_sym<>0|, the values of |cur_cmd| and |cur_mod| are irrelevant.
 
 @<Declarations@>=
 static void mp_back_input (MP mp);
@@ -20522,7 +20522,7 @@ void mp_print_arg (MP mp, mp_node q, integer n, halfword b, quarterword bb) {
 
 
 @ @<Scan the remaining arguments, if any; set |r|...@>=
-set_cur_cmd(mp_comma + 1);        /* anything |!=comma| will do */
+set_cur_cmd(mp_comma + 1);        /* anything |<>comma| will do */
 while (mp_name_type (r) == mp_expr_sym ||
        mp_name_type (r) == mp_suffix_sym || mp_name_type (r) == mp_text_sym) {
   @<Scan the delimited argument represented by |mp_sym_info(r)|@>;
@@ -21861,7 +21861,7 @@ xfree (mp->mem_name);
 @ This part of the program becomes active when a ``virgin'' \MP\ is
 trying to get going, just after the preliminary initialization.
 The buffer contains the first line of input in |buffer[loc..(last-1)]|,
-where |loc<last| and |buffer[loc]!=""|.
+where |loc<last| and |buffer[loc]<>""|.
 
 @<Declarations@>=
 static boolean mp_open_mem_name (MP mp);
@@ -22063,7 +22063,7 @@ if (mp->job_name != NULL) {
 xfree (mp->job_name);
 
 @ Here is a routine that manufactures the output file names, assuming that
-|job_name!=0|. It ignores and changes the current settings of |cur_area|
+|job_name<>0|. It ignores and changes the current settings of |cur_area|
 and |cur_ext|.
 
 @d pack_cur_name mp_pack_file_name(mp, mp->cur_name,mp->cur_area,mp->cur_ext)
@@ -23812,7 +23812,7 @@ RESTART:
       mp_get_x_next (mp);
     }
     if (cur_cmd() >= mp_min_primary_command) {
-      if (cur_cmd() < mp_numeric_token) {  /* in particular, |cur_cmd!=plus_or_minus| */
+      if (cur_cmd() < mp_numeric_token) {  /* in particular, |cur_cmd<>plus_or_minus| */
         mp_node p;      /* for list manipulation */
         mp_number absnum, absdenom;
         new_number (absnum);
@@ -24295,7 +24295,7 @@ static void mp_bad_subscript (MP mp) {
 including possible subscripts and/or attributes; |cur_cmd|, |cur_mod|, and
 |cur_sym| represent the token that follows. If |post_head=NULL|, a
 token list for this variable name starts at |mp_link(pre_head)|, with all
-subscripts evaluated. But if |post_head!=NULL|, the variable turned out
+subscripts evaluated. But if |post_head<>NULL|, the variable turned out
 to be a suffixed macro; |pre_head| is the head of the prefix list, while
 |post_head| is the head of a token list containing both `\.{\AT!}' and
 the suffix.
@@ -32431,7 +32431,7 @@ void mp_do_add_to (MP mp) {
     } else {
       /* Create a graphical object |p| based on |add_type| and the current
          expression */
-      /* In this case |add_type!=also_code| so setting |p=NULL| suppresses future
+      /* In this case |add_type<>also_code| so setting |p=NULL| suppresses future
          attempts to add to the edge structure. */
       e = NULL;
       p = NULL;
