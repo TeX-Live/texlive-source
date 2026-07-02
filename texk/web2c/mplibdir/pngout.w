@@ -38,8 +38,7 @@
 \pdfoutput=1
 \pageno=3
 
-@* Introduction.
-@s math_data int
+@ 
 @d zero_t  ((math_data *)mp->math)->zero_t
 @d number_zero(A)		       (((math_data *)(mp->math))->equal)(A,zero_t)		       
 @d number_greater(A,B)		       (((math_data *)(mp->math))->greater)(A,B)		       
@@ -62,10 +61,13 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
-#include "mppngout.h" /* internal header */
-#include "mppsout.h" /* internal header */
-#include "mpmath.h" /* internal header */
+#include "mplib.h"
+#include "mplibps.h" /* external header */
 #include "mplibpng.h" /* external header */
+#include "mpmp.h" /* internal header */
+#include "mppsout.h" /* internal header */
+#include "mppngout.h" /* internal header */
+#include "mpmath.h" /* internal header */
 @h
 @<Types in the outer block@>
 @<Declarations@>
@@ -83,15 +85,16 @@ const char *COMPILED_CAIRO_VERSION_STRING = CAIRO_VERSION_STRING;
 const char *COMPILED_PIXMAN_VERSION_STRING = PIXMAN_VERSION_STRING;
 #define PNG_SKIP_SETJMP_CHECK 1
 #include "png.h"
+#include "mplib.h"
 #include "mpmp.h"
 #include "mplibps.h"
 typedef struct pngout_data_struct {
   @<Globals@>
 } pngout_data_struct ;
-@<Exported function headers@>@;
+@<Exported function headers@>
 #endif
 
-@ @s MP int @<Exported function headers@>=
+@ @<Exported function headers@>=
 void mp_png_backend_initialize (MP mp) ;
 void mp_png_backend_free (MP mp) ;
 
@@ -105,9 +108,8 @@ void mp_png_backend_free (MP mp) {
   mp->png = NULL;
 }
 
-@* Writing to PNG files.
-@s cairo_surface_t int
-@s cairo_t int
+@ Writing to PNG files
+
 @<Globals@>=
 cairo_surface_t *surface;
 cairo_t *cr;
@@ -119,10 +121,12 @@ offset so that all coordinates are positive.
 integer dx;
 integer dy;
 
-@ @<Declarations@>=
+@ 
+@<Declarations@>=
 static void mp_png_start(MP mp,mp_edge_object *hh, double hppp, double vppp, int colormodel, int antialias);
 
-@ @s mp_edge_object int @c
+@ 
+@c
 void mp_png_start(MP mp,mp_edge_object *hh, double hppp, double vppp, int colormodel, int antialias) {
   double w, h;
   if ( hh->minx>hh->maxx)  { 
@@ -154,10 +158,7 @@ void mp_png_start(MP mp,mp_edge_object *hh, double hppp, double vppp, int colorm
 }
 
 @ Outputting a color specification.
-@s mp_graphic_object int
-@s mp_fill_object int
-@s mp_stroked_object int
-@s mp_text_object int
+
 @d set_color_objects(pq)
   object_color_model = pq->color_model;
   object_color_a = pq->color.a_val;
@@ -213,7 +214,7 @@ typedef struct mp_pen_info {
 
 
 @ (Re)discover the characteristics of an elliptical pen
-@s mp_gr_knot int
+
 @<Declarations@>=
 mp_pen_info *mp_png_pen_info(MP mp, mp_gr_knot pp, mp_gr_knot p);
 
@@ -313,7 +314,7 @@ mp_pen_info *mp_png_pen_info(MP mp, mp_gr_knot pp, mp_gr_knot p) {
 cubics with zero initial and final velocity as created by |make_path| or
 |make_envelope|, and cubics with control points uniformly spaced on a line
 as created by |make_choices|.
-@s boolean int
+
 @<Declarations@>=
 static boolean mp_is_curved(mp_gr_knot p, mp_gr_knot q) ;
 
@@ -425,7 +426,7 @@ int last_fnum;
 @ @<Declarations@>=
 static void mp_png_text_out (MP mp, mp_text_object *p) ;
 
-@ @s mp_ps_font int @c
+@ @c
 void mp_png_text_out (MP mp, mp_text_object *p) {
   double ds; /* design size and scale factor for a text node */
   unsigned char *s = (unsigned char *)gr_text_p(p);
@@ -578,7 +579,7 @@ void mp_png_fill_out (MP mp, mp_gr_knot p, mp_graphic_object *h) {
   cairo_restore(mp->png->cr);
 }
 
-@* The main output function.
+@ The main output function
 
 @d pen_is_elliptical(A) ((A)==gr_next_knot((A)))
 @d gr_has_color(A) (gr_type((A))<mp_start_clip_code)
@@ -607,10 +608,6 @@ typedef struct {
 } mp_png_io;
 
 @ Output a png chunk: the libpng callbacks
-@s png_structp int
-@s png_infop int
-@s png_byte int
-@s png_text int
 @c
 static void mp_write_png_data(png_structp png_ptr, png_bytep data, png_size_t length)
 { 
@@ -773,7 +770,7 @@ int mp_png_save_to_file (MP mp, const bitmap_t * bitmap, const char *path, int c
 }
 
 
-@  @s mp_clip_object int
+@ 
 @d number_to_double(A)		       (((math_data *)(mp->math))->to_double)(A)		       
 
 @c
@@ -913,4 +910,3 @@ int mp_png_ship_out (mp_edge_object *hh, const char *options) {
   return mp_png_gr_ship_out (hh, options, (int)True);
 }
 
-@* Index.
