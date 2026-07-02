@@ -18330,7 +18330,7 @@ token by the |cur_tok| routine.
 @^inner loop@>
 
 @c
-@<Declare the procedure called |make_exp_copy|@>@;
+@<Declare the procedure called |make_exp_copy|@>
 static mp_node mp_cur_tok (MP mp) {
   mp_node p;    /* a new token node */
   if (cur_sym() == NULL && (cur_sym_mod() == 0 || cur_sym_mod() == mp_normal_sym)) {
@@ -22859,8 +22859,8 @@ in full.
 @.linearform@>
 
 @<Declarations@>=
-@<Declare the procedure called |print_dp|@>@;
-@<Declare the stashing/unstashing routines@>@;
+@<Declare the procedure called |print_dp|@>
+@<Declare the stashing/unstashing routines@>
 static void mp_print_exp (MP mp, mp_node p, quarterword verbosity);
 
 @ @c
@@ -24329,7 +24329,7 @@ found. Some cases are harder than others, but complexity arises solely
 because of the multiplicity of possible cases.
 
 @<Declare the procedure called |make_exp_copy|@>=
-@<Declare subroutines needed by |make_exp_copy|@>@;
+@<Declare subroutines needed by |make_exp_copy|@>
 static void mp_make_exp_copy (MP mp, mp_node p) {
   mp_node t;    /* register(s) for list manipulation */
   mp_value_node q;
@@ -25482,7 +25482,7 @@ break;
 @ OK, let's look at the simplest \\{do} procedure first.
 
 @c
-@<Declare nullary action procedure@>@;
+@<Declare nullary action procedure@>
 static void mp_do_nullary (MP mp, quarterword c) {
   check_arith();
   if (number_greater (internal_value (mp_tracing_commands), two_t))
@@ -25587,7 +25587,7 @@ for backward compatibility) .
 
 
 @c
-@<Declare unary action procedures@>@;
+@<Declare unary action procedures@>
 static void mp_do_unary (MP mp, quarterword c) {
   mp_node p;      /* for list manipulation */
   mp_value new_expr;
@@ -29858,7 +29858,7 @@ will be equal to the right-hand side (which will normally be equal
 to the left-hand side).
 
 @<Declarations@>=
-@<Declare the procedure called |make_eq|@>@;
+@<Declare the procedure called |make_eq|@>
 static void mp_do_equation (MP mp);
 
 @ @c
@@ -32503,7 +32503,7 @@ void mp_do_add_to (MP mp) {
 }
 
 @ @<Declare action procedures for use by |do_statement|@>=
-@<Declare the \ps\ output procedures@>@;
+@<Declare the \ps\ output procedures@>
 static void mp_do_ship_out (MP mp);
 
 @ @c
@@ -32594,7 +32594,7 @@ else
 break;
 
 @ @<Declare action procedures for use by |do_statement|@>=
-@<Declare a procedure called |no_string_err|@>@;
+@<Declare a procedure called |no_string_err|@>
 static void mp_do_message (MP mp);
 
 @ @c
