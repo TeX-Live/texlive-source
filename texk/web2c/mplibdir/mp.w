@@ -203,7 +203,7 @@ typedef struct MP_instance {
 @ @c
 #ifdef MPOST_DEBUG_ENVELOPE
 static int MPOST_DEBUG_ENVELOPECOUNTER=0;
-#define dbg_str(A)	  @[printf("\n--[==[%03d MPOST_DEBUG_ENVELOPE ]==] %s",		   MPOST_DEBUG_ENVELOPECOUNTER++, #A)@]
+#define dbg_str(A)	  @[printf("\n--[==[%03d MPOST_DEBUG_ENVELOPE ]==] %s",	@|	   MPOST_DEBUG_ENVELOPECOUNTER++, #A)@]
 #define dbg_n(A) 	  @[printf("\n--[==[%03d MPOST_DEBUG_ENVELOPE ]==] ['%s']=%s, ",	   MPOST_DEBUG_ENVELOPECOUNTER++, #A, number_tostring(A))@]
 #define dbg_in(A) 	  @[printf("\n--[==[%03d MPOST_DEBUG_ENVELOPE ]==] ['%s']=%d, ",	   MPOST_DEBUG_ENVELOPECOUNTER++, #A, (int)(A))@]
 #define dbg_dn(A) 	  @[printf("\n--[==[%03d MPOST_DEBUG_ENVELOPE ]==] ['%s']=%.100f, ",MPOST_DEBUG_ENVELOPECOUNTER++, #A, (double)(A))@]
@@ -212,11 +212,11 @@ static int MPOST_DEBUG_ENVELOPECOUNTER=0;
 #define dbg_key_ival(K,V) @[printf("\n--[==[%03d MPOST_DEBUG_ENVELOPE ]==] ['%s']=%d",	   MPOST_DEBUG_ENVELOPECOUNTER++, #K,(int)(V))@]
 #define dbg_key_dval(K,V) @[printf("\n--[==[%03d MPOST_DEBUG_ENVELOPE ]==] ['%s']=%.100f",  MPOST_DEBUG_ENVELOPECOUNTER++, #K,(double)(V))@]
 #define dbg_comment(A) 	  @[printf("\n--[==[%03d MPOST_DEBUG_ENVELOPE ]==] --[==[%s]==]",   MPOST_DEBUG_ENVELOPECOUNTER++, #A)@]
-#define dbg_sp 		  @[printf("\n--[==[%03d MPOST_DEBUG_ENVELOPE ]==]  ",   	   MPOST_DEBUG_ENVELOPECOUNTER++)@]
-#define dbg_open_t 	  @[printf("\n--[==[%03d MPOST_DEBUG_ENVELOPE ]==] {",   	   MPOST_DEBUG_ENVELOPECOUNTER++)@]
-#define dbg_close_t 	  @[printf("\n--[==[%03d MPOST_DEBUG_ENVELOPE ]==] }",   	   MPOST_DEBUG_ENVELOPECOUNTER++)@]
-#define dbg_comma 	  @[printf("\n--[==[%03d MPOST_DEBUG_ENVELOPE ]==] ,",   	   MPOST_DEBUG_ENVELOPECOUNTER++)@]
-#define dbg_nl 		  @[printf("\n--[==[%03d MPOST_DEBUG_ENVELOPE ]==] \n",   	   MPOST_DEBUG_ENVELOPECOUNTER++)@]
+#define dbg_sp 		  @[printf("\n--[==[%03d MPOST_DEBUG_ENVELOPE ]==]  ", @|  	   MPOST_DEBUG_ENVELOPECOUNTER++)@]
+#define dbg_open_t 	  @[printf("\n--[==[%03d MPOST_DEBUG_ENVELOPE ]==] {", @|  	   MPOST_DEBUG_ENVELOPECOUNTER++)@]
+#define dbg_close_t 	  @[printf("\n--[==[%03d MPOST_DEBUG_ENVELOPE ]==] }", @|  	   MPOST_DEBUG_ENVELOPECOUNTER++)@]
+#define dbg_comma 	  @[printf("\n--[==[%03d MPOST_DEBUG_ENVELOPE ]==] ,", @|  	   MPOST_DEBUG_ENVELOPECOUNTER++)@]
+#define dbg_nl 		  @[printf("\n--[==[%03d MPOST_DEBUG_ENVELOPE ]==] \n", @|  	   MPOST_DEBUG_ENVELOPECOUNTER++)@]
 #define dbg_CUBIC         dbg_n(p->x_coord); dbg_n(p->y_coord); \
 			  dbg_n(p->right_x); dbg_n(p->right_y); \
 			  dbg_n(q->left_x);  dbg_n(q->left_y);  \
