@@ -33,24 +33,8 @@
 \pdfoutput=1
 \pageno=3
 
-@s math_data int
-@s MP int
-@s boolean int
-@s integer int
-@s avl_tree int
-@s font_number int
-@s fm_entry int
-@s ff_entry int
-@s eight_bits int
-@s quarterword int
-@s mp_edge_object int
-@s mp_fill_object int
-@s mp_graphic_object int
-@s mp_gr_knot int
-@s mp_node int
-@s ASCII_code int
-
 @* Introduction.
+@s math_data int
 @d zero_t  ((math_data *)mp->math)->zero_t
 @d number_zero(A)		       (((math_data *)(mp->math))->equal)(A,zero_t)		       
 @d number_greater(A,B)		       (((math_data *)(mp->math))->greater)(A,B)		       
@@ -86,7 +70,7 @@
 to the frontend because I do not know how to set up the includes
 properly. That is the |typedef struct psout_data_struct * psout_data|.
 
-@ @(mppsout.h@>=
+@ @s MP int  @(mppsout.h@>=
 #ifndef MPPSOUT_H
 #define MPPSOUT_H 1
 #include "avl.h"
@@ -99,7 +83,7 @@ typedef struct psout_data_struct {
 @<Exported function headers@>@;
 #endif /* |MPPSOUT_H| */
 
-@ @c
+@ @s boolean int @c
 static boolean mp_isdigit (int a) {
   return (a>='0'&&a<='9');
 }
@@ -146,6 +130,7 @@ void mp_ps_backend_free (MP mp) {
 }
 
 @ Writing to ps files
+@s integer int
 @<Globals@>=
 integer ps_offset;
   /* the number of characters on the current \ps\ file line */
@@ -558,6 +543,7 @@ static void mp_write_enc (MP mp, enc_entry * e) {
 
 
 @ All encoding entries go into AVL tree for fast search by name.
+@s avl_tree int
 @<Glob...@>=
 avl_tree enc_tree;
 
@@ -668,7 +654,7 @@ static void enc_free (MP mp);
       avl_destroy (mp->ps->enc_tree);
 }
 
-@ @<Declarations@>=
+@ @s font_number int @s fm_entry int @<Declarations@>=
 static void mp_reload_encodings (MP mp) ;
 static void mp_font_encodings (MP mp, font_number lastfnum, boolean encodings_only) ;
 
@@ -809,6 +795,7 @@ static const char nontfm[] = "<nontfm>";
 
 @d do_strdup(a) (a==NULL ? NULL : strdup(a))
 
+@s ff_entry int
 @c
 static fm_entry *new_fm_entry (MP mp) {
     fm_entry *fm;
@@ -1688,6 +1675,7 @@ mp_xfree(mp->ps->job_id_string);
 
 @ this is not really a true crc32, but it should be just enough to keep
   subsets prefixes somewhat disjunct
+@s eight_bits int
 @c
 static unsigned long crc32 (unsigned long oldcrc, const Byte *buf, size_t len) {
   unsigned long ret = 0;
@@ -3557,6 +3545,9 @@ void mp_ps_font_free (MP mp, mp_ps_font *f);
 
 
 @ Parsing Charstrings.
+@s mp_edge_object int
+@s mp_graphic_object int
+@s mp_gr_knot int
 @<Variables for the charstring parser@>=
 double flex_hint_data[14]; /* store temp. coordinates of flex hints */ 
 unsigned int  flex_hint_index ;  /* index for |flex_hint_data| */
@@ -3611,7 +3602,8 @@ mp_edge_object *mp_ps_do_font_charstring (MP mp, mp_ps_font *f, char *n);
 @<Declarations@>=
 boolean cs_parse (MP mp, mp_ps_font *f, const char *cs_name, int subr);
 
-@ @c
+@ @s mp_fill_object int
+@c
 static void start_subpath(MP mp, mp_ps_font *f, double dx, double dy)
 {  
   assert(f->pp == NULL);
@@ -4627,7 +4619,7 @@ void mp_unmark_font (MP mp,font_number f) {
 @ @<Declarations@>=
 static void mp_print_improved_prologue (MP mp, mp_edge_object *h, int p1, int procset) ;
 
-@ @c
+@ @s quarterword int @s mp_node int @c
 void mp_print_improved_prologue (MP mp, mp_edge_object *h, int prologues, int procset) {
   quarterword next_size; /* the size index for fonts being listed */
   mp_node *cur_fsize; /* current positions in |font_sizes| */
@@ -4961,7 +4953,7 @@ void mp_ps_print_cmd (MP mp, const char *l, const char *s) {
 @ @<Declarations@>=
 static void mp_ps_print_cmd (MP mp, const char *l, const char *s) ;
 
-@ @c
+@ @s ASCII_code int @c
 void mp_ps_string_out (MP mp, const char *s, size_t l) {
   ASCII_code k; /* bits to be converted to octal */
   mp_ps_print(mp, "(");
