@@ -205,8 +205,6 @@ typedef struct MP_instance {
 #endif
 
 @ @c
-/*|
-#define MPOST_DEBUG_ENVELOPE| */
 #ifdef MPOST_DEBUG_ENVELOPE
 static int MPOST_DEBUG_ENVELOPECOUNTER=0;
 #define dbg_str(A)	  @[printf("\n--[==[%03d MPOST_DEBUG_ENVELOPE ]==] %s",		   MPOST_DEBUG_ENVELOPECOUNTER++, #A)@]
