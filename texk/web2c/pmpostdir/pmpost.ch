@@ -147,42 +147,40 @@ else
 @z
 
 @x
-"Usage: mpost [OPTION] [&MPNAME] [MPNAME[.mp]] [COMMANDS]\n"
-"       mpost --dvitomp DVINAME[.dvi] [MPXNAME[.mpx]]\n"
-"\n"
-"  Run MetaPost on MPNAME, usually creating MPNAME.NNN (and perhaps\n"
-"  MPNAME.tfm), where NNN are the character numbers generated.\n"
-"  Any remaining COMMANDS are processed as MetaPost input,\n"
-"  after MPNAME is read.\n\n"
-"  With a --dvitomp argument, MetaPost acts as DVI-to-MPX converter only.\n"
+"\nUsage: mpost [OPTION] [&MPNAME] [MPNAME[.mp]] [COMMANDS]\n" @|
+"       mpost --dvitomp DVINAME[.dvi] [MPXNAME[.mpx]]\n\n" @|
+"  Run MetaPost on MPNAME, usually creating MPNAME.NNN (and perhaps\n" @|
+"  MPNAME.tfm), where NNN are the character numbers generated.\n" @|
+"  Any remaining COMMANDS are processed as MetaPost input,\n" @|
+"  after MPNAME is read.\n\n" @|
+"  With a --dvitomp argument, MetaPost acts as DVI-to-MPX converter only.\n" @|
 "  Call MetaPost with --dvitomp --help for option explanations.\n\n");
 @y
-"Usage: "@= @>P_UP@= @>"mpost [OPTION] [&MPNAME] [MPNAME[.mp]] [COMMANDS]\n"
-"       "@= @>P_UP@= @>"mpost --dvitomp DVINAME[.dvi] [MPXNAME[.mpx]]\n"
-"\n"
-"  Run "@= @>P_UP@= @>"MetaPost on MPNAME, usually creating MPNAME.NNN (and perhaps\n"
-"  MPNAME.tfm), where NNN are the character numbers generated.\n"
-"  Any remaining COMMANDS are processed as "@= @>P_UP@= @>"MetaPost input,\n"
-"  after MPNAME is read.\n\n"
-"  With a --dvitomp argument, "@= @>P_UP@= @>"MetaPost acts as DVI-to-MPX converter only.\n"
+"\nUsage: "@= @>P_UP@= @>"mpost [OPTION] [&MPNAME] [MPNAME[.mp]] [COMMANDS]\n" @|
+"       "@= @>P_UP@= @>"mpost --dvitomp DVINAME[.dvi] [MPXNAME[.mpx]]\n\n" @|
+"  Run "@= @>P_UP@= @>"MetaPost on MPNAME, usually creating MPNAME.NNN (and perhaps\n" @|
+"  MPNAME.tfm), where NNN are the character numbers generated.\n" @|
+"  Any remaining COMMANDS are processed as "@= @>P_UP@= @>"MetaPost input,\n" @|
+"  after MPNAME is read.\n\n" @|
+"  With a --dvitomp argument, "@= @>P_UP@= @>"MetaPost " @|
+"acts as DVI-to-MPX converter only.\n" @|
 "  Call "@= @>P_UP@= @>"MetaPost with --dvitomp --help for option explanations.\n\n");
 @z
 
 @x
-"  -jobname=STRING           set the job name to STRING\n"
+"  -jobname=STRING           set the job name to STRING\n" @|
 @y
-"  -jobname=STRING           set the job name to STRING\n"
-"  -kanji=STRING             set the Japanese encoding to STRING\n"
+"  -jobname=STRING           set the job name to STRING\n" @|
+"  -kanji=STRING             set the Japanese encoding to STRING\n" @|
 @z
 
 @x
 "  -version                  output version information and exit\n"
 );
 fprintf(stdout,
-"\n"
-"Email bug reports to mp-implementors@@tug.org.\n"
+"\nEmail bug reports to mp-implementors@@tug.org.\n\n");
 @y
-"  -version                  output version information and exit\n"
+"\n  -version                  output version information and exit\n\n");
 @z
 
 @x
@@ -196,22 +194,23 @@ else
 @z
 
 @x
-"Usage: dvitomp DVINAME[.dvi] [MPXNAME[.mpx]]\n"
-"       mpost --dvitomp DVINAME[.dvi] [MPXNAME[.mpx]]\n"
+"\nUsage: dvitomp DVINAME[.dvi] [MPXNAME[.mpx]]\n" @|
+"       mpost --dvitomp DVINAME[.dvi] [MPXNAME[.mpx]]\n\n" @|
 @y
-"Usage: "@= @>P_UP@= @>"dvitomp DVINAME[.dvi] [MPXNAME[.mpx]]\n"
-"       "@= @>P_UP@= @>"mpost --dvitomp DVINAME[.dvi] [MPXNAME[.mpx]]\n"
+"\nUsage: "@= @>P_UP@= @>"dvitomp DVINAME[.dvi] [MPXNAME[.mpx]]\n" @|
+"       "@= @>P_UP@= @>"mpost --dvitomp DVINAME[.dvi] [MPXNAME[.mpx]]\n" @|
 @z
 
 @x
-"  -progname=STRING          set program name to STRING\n"
+"  -progname=STRING          set program name to STRING\n" @|
 @y
-"  -progname=STRING          set program name to STRING\n"
+"  -progname=STRING          set program name to STRING\n" @|
 #ifdef UPMP
-"  -kanji=STRING             set kanji encoding (STRING=euc|jis|sjis|utf8|uptex)\n"
+@t\kern2em@>"  -kanji=STRING             set kanji encoding (STRING=euc|jis|sjis|utf8|uptex)\n" @|
 #else
-"  -kanji=STRING             set kanji encoding (sjis, jis, euc, utf8)\n"
+@t\kern2em@>"  -kanji=STRING             set kanji encoding (sjis, jis, euc, utf8)\n" @|
 #endif
+@t\kern2em@>
 @z
 
 @x
@@ -229,9 +228,9 @@ else
 @y
 "Current maintainer of MetaPost: Luigi Scarso.\n"
 #ifdef UPMP
-"Authors of upMetaPost: Michio Matsuyama, Hideyuki Suzuki, Takuji Tanaka.\n\n"
+@t\kern2em@>"Authors of upMetaPost: Michio Matsuyama, Hideyuki Suzuki, Takuji Tanaka.\n\n"
 #else
-"Authors of pMetaPost: Michio Matsuyama, Hideyuki Suzuki.\n\n"
+@t\kern2em@>"Authors of pMetaPost: Michio Matsuyama, Hideyuki Suzuki.\n\n"
 #endif
 @z
 
@@ -273,7 +272,7 @@ else
 
 @x
   if (dvitomp_only) {
-    @<Read and set \.{dvitomp} command line options@>;
+    @<Read and set \9{d}\.{dvitomp} command line options@>;
   } else {
 @y
   kanjioption[0] = '\0';
@@ -290,7 +289,7 @@ else
 #endif
 
   if (dvitomp_only) {
-    @<Read and set \.{dvitomp} command line options@>;
+    @<Read and set \9{d}\.{dvitomp} command line options@>;
   } else {
 @z
 

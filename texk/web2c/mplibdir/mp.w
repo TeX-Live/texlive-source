@@ -23,8 +23,51 @@
 \def\(#1){} % this is used to make section names sort themselves better
 \def\9#1{} % this is used for sort keys in the index via @@:sort key}{entry@@>
 \def\title{\MP}
-\pdfoutput=1 \sanitizecommand\MP{MetaPost}
-\pageno=3
+\def\topofcontents{\centerline{\titlefont\title}%\vskip.7in
+  \vfill} % this material will start the table of contents page
+\ifpdf
+\sanitizecommand\ps{PostScript}
+\sanitizecommand\MP{MetaPost}
+\sanitizecommand\theta{theta}
+\sanitizecommand\psi{psi}
+\sanitizecommand\alpha{alpha}
+\sanitizecommand\beta{beta}
+\sanitizecommand\preceq{<=}
+\sanitizecommand\prec{<}
+\sanitizecommand\langle{<}
+\sanitizecommand\rangle{>}
+\fi
+\def\contentspagenumber{2}
+\pageno=\contentspagenumber \advance \pageno by 1
+
+\def\inx{\par\vskip6pt plus 1fil % we are beginning the index
+  \def\page{\box255 } \normalbottom
+  \write\cont{} % ensure that the contents file isn't empty
+       \write\cont{\catcode `\noexpand\@@=12\relax} % \makeatother
+  \closeout\cont % the contents information has been fully gathered
+  \output{\ifpagesaved\normaloutput{\box\sbox}\lheader\rheader\fi
+    \global\setbox\sbox=\page \global\pagesavedtrue \mark{\topmark}}
+  \pagesavedfalse \eject % eject the page-so-far and predecessors
+  \setbox\sbox\vbox{\unvbox\sbox} % take it out of its box
+  \vsize=\pageheight \advance\vsize by -\ht\sbox % the remaining height
+  \hsize=.5\pagewidth \advance\hsize by -10pt
+    % column width for the index (20pt between cols)
+  \ifhint\else
+  \parfillskip 0pt plus .6\hsize % try to avoid almost empty lines
+  \fi
+  \def\lr{L} % this tells whether the left or right column is next
+  \output{\if L\lr\global\setbox\lbox=\page \gdef\lr{R}
+    \else\normaloutput{\vbox to\pageheight{\box\sbox\vss
+        \hbox to\pagewidth{\box\lbox\hfil\page}}}\lheader\rheader
+    \global\vsize\pageheight\gdef\lr{L}\global\pagesavedfalse\fi}
+  \message{Index:}
+  \parskip 0pt plus .5pt
+  \outer\def\I##1, ##2.{\par\hangindent2em\noindent##1:\hskip1em %XXX \kern1em
+    \scan##2!.} % index entry
+  \def\[##1]{$\underline{\scan##1!}$\scan} % underlined index item
+  \rm \rightskip0pt plus 2.5em \tolerance 10000
+  \hyphenpenalty 10000 \parindent0pt
+  \readindex}
 
 @* Introduction.
 
@@ -109,6 +152,11 @@ the \ps\ backend, that is defined in a separate \.{WEB} file.
 
 The variables from |MP_options| are included inside the |MP_instance|
 wholesale.
+@s integer64 int
+@s mpinteger64 int
+@s QUARTERWORD int
+@s quarterword int
+@s halfword int
 
 @(mpmp.h@>=
 #ifndef MPMP_H
@@ -129,15 +177,15 @@ typedef int integer;
 #else
 #define MPOST_ABS llabs
 #endif /* |ifndef INTEGER_TYPE| */
-/* integer64 should be alredy defined in source/texk/web2c/w2c/config.h */
-/* but just in case */
-#ifndef integer64 
+/* |integer64| should be already defined in
+\.{source/texk/web2c/w2c/config.h}, but just in case */
+#ifndef integer64
 # if defined(WIN32)
   typedef __int64 integer64;
 # else
   typedef int64_t integer64;
 # endif
-#endif 
+#endif
 typedef int16_t QUARTERWORD; /* Same as quarterword.*/
 
 
@@ -154,7 +202,6 @@ typedef struct MP_instance {
 #endif
 
 @ @c
-/*\#define MPOST_DEBUG_ENVELOPE */
 #ifdef MPOST_DEBUG_ENVELOPE
 static int MPOST_DEBUG_ENVELOPECOUNTER=0;
 #define dbg_str(A)	  @[printf("\n--[==[%03d MPOST_DEBUG_ENVELOPE ]==] %s",		   MPOST_DEBUG_ENVELOPECOUNTER++, #A)@]
@@ -190,35 +237,34 @@ static int MPOST_DEBUG_ENVELOPECOUNTER=0;
 #endif
 #include <time.h>               /* for |struct tm| $\AND$ co */
 #include <zlib.h>               /* for |ZLIB_VERSION|, |zlibVersion()| */
-#include <png.h>                /* for |PNG_LIBPNG_VER_STRING|, |png_libpng_ver| */
+#include <png.h>                /* for |PNG_LIBPNG_VER_STRING|, |png_libpng_ver| */ @t@>
 /*|
-#include <pixman.h>| */             /* for |PIXMAN_VERSION_STRING|, |pixman_version_string()| */
+#include <pixman.h>| */             /* for |PIXMAN_VERSION_STRING|, |pixman_version_string()| */ @t@>
 /*|
-#include <cairo.h>| */              /* for |CAIRO_VERSION_STRING|, |cairo_version_string()| */
+#include <cairo.h>| */              /* for |CAIRO_VERSION_STRING|, |cairo_version_string()| */ @t@>
 /*|
-#include <gmp.h>| */                /* for |gmp_version| */
+#include <gmp.h>| */                /* for |gmp_version| */ @t@>
 /*|
 #include <mpfr.h>| */               /* for |MPFR_VERSION_STRING|, |mpfr_get_version()| */
-#include "mplib.h"
-#include "mplibps.h"            /* external header */
+#include "mplibps.h"            /* external header */ @t@>
 /*|
-#include "mplibsvg.h"| */          /* external header */
+#include "mplibsvg.h"| */          /* external header */ @t@>
 /*|
 #include "mplibpng.h"| */          /* external header */
 #include "mpmp.h"               /* internal header */
-#include "mppsout.h"            /* internal header */
+#include "mppsout.h"            /* internal header */ @t@>
 /*|
-#include "mpsvgout.h"| */           /* internal header */
+#include "mpsvgout.h"| */           /* internal header */ @t@>
 /*|
 #include "mppngout.h"| */           /* internal header */
 #include "mpmath.h"             /* internal header */
 #include "mpmathdouble.h"       /* internal header */
-#include "mpmathdecimal.h"      /* internal header */
+#include "mpmathdecimal.h"      /* internal header */ @t@>
 /*|
-#include "mpmathbinary.h"| */       /* internal header */
+#include "mpmathbinary.h"| */       /* internal header */ @t@>
 /*|
 #include "mpmathinterval.h"| */       /* internal header */
-#include "mpstrings.h"          /* internal header */
+#include "mpstrings.h"          /* internal header */ @t@>
 /* BEGIN PATCH */
 mp_number dx_ap;    /* approximation of dx */
 mp_number dy_ap;    /* approximation of dy */
@@ -256,7 +302,7 @@ extern int mp_svg_ship_out (mp_edge_object  *hh, int prologues);
 extern int mp_svg_gr_ship_out (mp_edge_object  *hh, int prologues, int standalone);
 
 @ @s font_number int @c
-extern font_number mp_read_font_info (MP mp, char *fname);      /* \.{tfmin.w} */
+#include "tfmin.h" /* |mp_read_font_info| */
 @h
 @<Declarations@>@;
 @<Basic printing procedures@>@;
@@ -264,26 +310,18 @@ extern font_number mp_read_font_info (MP mp, char *fname);      /* \.{tfmin.w} *
 
 @ Some debugging support for development. The trick with the variadic macros
 probably only works in gcc, as this preprocessor feature was not formalized
-until the c99 standard (and that is too new for us). Lets' hope that at least
+until the c99 standard (and that is too new for us). Let's hope that at least
 most compilers understand the non-debug version.
 @^system dependencies@>
 
 @<MPlib internal header stuff@>=
-#if MPOST_DEBUG
-/* This function occasionally crashes (if something is written after the */
-/* log file is already closed), but that is not so important while debugging. */
-
-extern void do_debug_printf(MP mp, const char *prefix, const char *fmt, ...);
-
-#endif
-
 #if MPOST_DEBUG
 #define debug_number(A) @[printf("%d: %s=%.32f (%d)\n", __LINE__, #A, number_to_double(A), number_to_scaled(A))@]
 #else
 #define debug_number(A) @[@]
 #endif
 #if MPOST_DEBUG>1
-/*void do_debug_printf(MP mp, const char *prefix, const char *fmt, ...);*/
+static void do_debug_printf(MP mp, const char *prefix, const char *fmt, ...);
 #  define debug_printf(a1,a2,a3) @[do_debug_printf(mp, "", a1,a2,a3)@]
 #  define FUNCTION_TRACE1(a1) @[do_debug_printf(mp, "FTRACE: ", a1)@]
 #  define FUNCTION_TRACE2(a1,a2) @[do_debug_printf(mp, "FTRACE: ", a1,a2)@]
@@ -299,11 +337,11 @@ extern void do_debug_printf(MP mp, const char *prefix, const char *fmt, ...);
 #  define FUNCTION_TRACE4(a1,a2,a3,a4) @[(void)mp@]
 #endif
 
-@ This function occasionally crashes (if something is written after the */
-log file is already closed), but that is not so important while debugging. */
+@ This function occasionally crashes (if something is written after the
+log file is already closed), but that is not so important while debugging.
 
 @c
-#if MPOST_DEBUG
+#if MPOST_DEBUG > 1
 void do_debug_printf(MP mp, const char *prefix, const char *fmt, ...) {
   va_list ap;
   va_start (ap, fmt);
@@ -420,8 +458,8 @@ static void mp_free (MP mp) {
 
 @ @c
 static void mp_do_initialize (MP mp) {
-  @<Local variables for initialization@>;
-  @<Set initial values of key variables@>;
+  @<Local variables for initialization@>;@#
+  @<Set \9{i}initial values of key variables@>;
 }
 
 @ For the retargetable math library, we need to have a pointer, at least.
@@ -686,7 +724,7 @@ MP mp_initialize (MP_options * opt) {
    ((math_data *)mp->math)->m_get_right_endpoint = mp_stub_m_get_right_endpoint;
    ((math_data *)mp->math)->m_interval_set       = mp_stub_m_interval_set ;
   }
-  @<Find and load preload file, if required@>;
+  @<Find \9{a}and load preload file, if required@>;
   @<Allocate or initialize variables@>;
   mp_reallocate_paths (mp, 1000);
   mp_reallocate_fonts (mp, 8);
@@ -917,7 +955,7 @@ more difficult, so they should be introduced cautiously if at all.
 @^character set dependencies@>
 @^system dependencies@>
 
-@<Set initial ...@>=
+@<Set \9{i}initial ...@>=
 for (i = 0; i <= 0377; i++) {
   xchr (i) = (text_char) i;
 }
@@ -929,7 +967,7 @@ where |i<j<0177|, the value of |xord[xchr[i]]| will turn out to be
 |j| or more; hence, standard ASCII code numbers will be used instead of
 codes below 040 in case there is a coincidence.
 
-@<Set initial ...@>=
+@<Set \9{i}initial ...@>=
 for (i = 0; i <= 255; i++) {
   xord (xchr (i)) = 0177;
 }
@@ -972,6 +1010,7 @@ operation type |fmode|, and the type of the file |ftype|.
 The file types that are passed on in |ftype| can be  used to
 differentiate file searches if a library like kpathsea is used,
 the fopen mode is passed along for the same reason.
+@s eight_bits int
 
 @<Types...@>=
 typedef uint8_t eight_bits;       /* unsigned one-byte quantity */
@@ -1279,7 +1318,7 @@ static void mp_reallocate_buffer (MP mp, size_t l) {
 @ The |input_ln| function brings the next line of input from the specified
 field into available positions of the buffer array and returns the value
 |true|, unless the file has already been entirely read, in which case it
-returns |false| and sets |last:=first|.  In general, the |ASCII_code|
+returns |false| and sets |last=first|.  In general, the |ASCII_code|
 numbers that represent the next line of the file are input into
 |buffer[first]|, |buffer[first+1]|, \dots, |buffer[last-1]|; and the
 global variable |last| is set equal to |first| plus the length of the
@@ -2101,12 +2140,14 @@ contains entries in positions |0..(help_ptr-1)|. They should be printed
 in reverse order, i.e., with |help_line[0]| appearing last.
 
 @s mp_sym int
+@s uint16_t int
+@s uint32_t int
 
 @c
 void mp_error (MP mp, const char *msg, const char **hlp, boolean deletions_allowed) {
   ASCII_code c; /* what the user types */
-  //uint32_t s1; 
-  quarterword s1; 
+  //|uint32_t s1;|
+  quarterword s1;
   mpinteger64 s2;       /* used to save global variables when deleting tokens */
   mp_sym s3;    /* likewise */
   int i = 0;
@@ -3312,7 +3353,7 @@ At any rate, here is the list, for future reference.
 @<Enumeration types@>=
 #if defined(__STDC_VERSION__) && (__STDC_VERSION__ >=202311L)
 typedef enum mp_command_code: QUARTERWORD {
-#else 
+#else
 typedef enum  {
 #endif
 mp_start_tex=1, /* begin \TeX\ material (\&{btex}, \&{verbatimtex}) */
@@ -3424,7 +3465,7 @@ and |string_type| in that order.
 @<Enumeration types@>=
 #if defined(__STDC_VERSION__) && (__STDC_VERSION__ >=202311L)
 typedef enum mp_variable_type: QUARTERWORD {
-#else 
+#else
 typedef enum  {
 #endif
   mp_undefined = 0,       /* no type has been declared */
@@ -4257,7 +4298,7 @@ int mp_troff_mode (MP mp) {
 }
 
 
-@ @<Set initial ...@>=
+@ @<Set \9{i}initial ...@>=
 mp->int_ptr = max_given_internal;
 
 @ The symbolic names for internal quantities are put into \MP's hash table
@@ -4379,13 +4420,14 @@ the fact that there has not been any kind of color specification by
 the user so far in the game.
 
 @<MPlib header stuff@>=
-enum mp_color_model {
+enum mp@&_color@&_model @+ { @t\1@>@/
+@!@:mp_color_model}{\bf mp\_color\_model@>
   mp_no_model = 1,
   mp_grey_model = 3,
   mp_rgb_model = 5,
   mp_cmyk_model = 7,
   mp_uninitialized_model = 9
-};
+@t\2@>@/};
 
 
 @ @<Initialize table entries@>=
@@ -4605,7 +4647,7 @@ follow the guidelines in Appendix~C of {\sl The {\logos METAFONT\/}book}.
 @:METAFONTbook}{\sl The {\logos METAFONT\/}book@>
 @^system dependencies@>
 
-@<Set initial ...@>=
+@<Set \9{i}initial ...@>=
 for (k = '0'; k <= '9'; k++)
   mp->char_class[k] = digit_class;
 mp->char_class['.'] = period_class;
@@ -5439,16 +5481,10 @@ static mp_knot do_get_value_knot (MP mp, mp_token_node A) {
   FUNCTION_TRACE3 ("%p = get_value_knot(%p)\n", A->data.p, A);
   return  A->data.p ;
 }
-/* static mp_number do_get_value_number (MP mp, mp_token_node A) \{ */
-/*   assert (A->type != mp_structured); */
-/*   FUNCTION_TRACE3 ("%d = get_value_number(%p)\n", A->data.n.type, A); */
-/*   return  A->data.n ; */
-/* \} */
 #endif
 
 @ @<Declarations@>=
 #if MPOST_DEBUG
-/* static mp_number do_get_value_number (MP mp, mp_token_node A); */
 static mp_sym    do_get_value_sym    (MP mp, mp_token_node A);
 static mp_node   do_get_value_node   (MP mp, mp_token_node A);
 static mp_string do_get_value_str    (MP mp, mp_token_node A) ;
@@ -6202,6 +6238,7 @@ static void mp_init_pair_node (MP mp, mp_node p) {
 
 @ Variables of type \&{transform} are similar, but in this case their
 |value| points to a 12-word node containing six values, identified by
+the entries
 |x_part_sector|, |y_part_sector|, |mp_xx_part_sector|, |mp_xy_part_sector|,
 |mp_yx_part_sector|, and |mp_yy_part_sector|.
 
@@ -6267,7 +6304,8 @@ static void mp_init_transform_node (MP mp, mp_node p) {
 }
 
 
-@ Variables of type \&{color} have 3~values in 6~words identified by |mp_red_part_sector|,
+@ Variables of type \&{color} have 3~values in a 6-word node identified by
+the entries |mp_red_part_sector|,
 |mp_green_part_sector|, and |mp_blue_part_sector|.
 
 @d red_part(A) ((mp_color_node)(A))->red_part_ /* where the \&{redpart} is found in a color node */
@@ -6553,7 +6591,7 @@ static boolean mp_interesting (MP mp, mp_node p) {
 
 @ Now here is a subroutine that converts an unstructured type into an
 equivalent structured type, by inserting a |mp_structured| node that is
-capable of growing. This operation is done only when |mp_name_type(p)=root|,
+capable of growing. This operation is done only when |mp_name_type(p)| |=root|,
 |subscr|, or |attr|.
 
 The procedure returns a pointer to the new node that has taken node~|p|'s
@@ -7025,7 +7063,7 @@ typedef struct mp_save_data {
 @ @<Glob...@>=
 mp_save_data *save_ptr; /* the most recently saved item */
 
-@ @<Set init...@>=
+@ @<Set \9{i}init...@>=
 mp->save_ptr = NULL;
 
 @ Saving a boundary item
@@ -7312,9 +7350,9 @@ like the |split_cubic| function, or |copy_path|. The distinction is
 needed for the cleanup routine that runs after |split_cubic|, because
 it should only delete knots it has previously inserted, and never
 anything that was user-supplied. In order to be able to differentiate
-one knot from another, we will set |originator(p):=mp_metapost_user| when
+one knot from another, we will set |originator(p)=mp_metapost_user| when
 it appeared in the actual metapost program, and
-|originator(p):=mp_program_code| in all other cases.
+|originator(p)=mp_program_code| in all other cases.
 
 @d mp_originator(A)   (A)->originator /* the creator of this knot */
 
@@ -7809,12 +7847,14 @@ some way (i.e., their |mp_left_type| and |mp_right_type| aren't both open).
 void mp_make_choices (MP mp, mp_knot knots) {
   mp_knot h;    /* the first breakpoint */
   mp_knot p, q; /* consecutive breakpoints being processed */
+  @+@t}\6{@>
   @<Other local variables for |make_choices|@>;
+  @#
   FUNCTION_TRACE1 ("make_choices()\n");
   check_arith();                  /* make sure that |arith_error==false| */
   if (number_positive(internal_value (mp_tracing_choices)))
     mp_print_path (mp, knots, ", before choices", true);
-  @<If consecutive knots are equal, join them explicitly@>;
+  @<If \9{c}consecutive knots are equal, join them explicitly@>;
   @<Find the first breakpoint, |h|, on the path;
     insert an artificial breakpoint if the path is an unbroken cycle@>;
   p = h;
@@ -7848,7 +7888,7 @@ void mp_make_choices (MP mp, mp_knot knots);
 by an explicit ``curve'' whose control points are identical with the
 knots.
 
-@<If consecutive knots are equal, join them explicitly@>=
+@<If \9{c}consecutive knots are equal, join them explicitly@>=
 p = knots;
 do {
   q = mp_next_knot (p);
@@ -7907,8 +7947,7 @@ if (mp_right_type (p) >= mp_given) {
 p = q
 
 @ This step makes it possible to transform an explicitly computed path without
-checking the |mp_left_type| and |mp_right_type| fields.
-
+checking the fields |mp_left_type| and |mp_right_type|.
 @<Give reasonable values for the unused control points between |p| and~|q|@>=
 {
   number_clone (p->right_x, p->x_coord);
@@ -8034,7 +8073,7 @@ called |solve_choices|, which has been introduced to keep
 @<Fill in the control information between...@>=
 @<Calculate the turning angles $\psi_k$ and the distances $d_{k,k+1}$;
   set $n$ to the length of the path@>;
-@<Remove |open| types at the breakpoints@>
+@<Remove \9{o}|open| types at the breakpoints@>
 mp_solve_choices (mp, p, q, n)
 
 
@@ -8134,7 +8173,7 @@ converted to a |curl|, since we don't know the incoming direction.
 Similarly, |mp_left_type(q)| is either |given| or |curl| or |open| or
 |mp_end_cycle|. The |open| possibility is reduced either to |given| or to |curl|.
 
-@<Remove |open| types at the breakpoints@>=
+@<Remove \9{o}|open| types at the breakpoints@>=
 {
   mp_number delx, dely;      /* directions where |open| meets |explicit| */
   new_number(delx);
@@ -8795,7 +8834,7 @@ do {
   number_substract (arg, mp->theta[k + 1]);
   n_sin_cos (arg, mp->cf, mp->sf);
   mp_set_controls (mp, s, t, k);
-  incr (k); 
+  incr (k);
   s = t;
 } while (k != n);
 free_number (arg);
@@ -9323,7 +9362,7 @@ int mp_knot_right_type(MP mp, mp_knot p) { (void)mp; return mp_right_type(p);}
 int mp_knot_left_type (MP mp, mp_knot p) { (void)mp; return mp_left_type(p);}
 mp_knot mp_knot_next (MP mp, mp_knot p)  { (void)mp; return p->next; }
 double mp_number_as_double(MP mp, mp_number n) {
-  (void)mp; 
+  (void)mp;
   return number_to_double(n);
 }
 
@@ -9472,8 +9511,8 @@ static void mp_bound_cubic (MP mp, mp_knot p, mp_knot q, quarterword c) {
   new_number(del3);
   new_number(del);
   new_number(dmax);
-  @<Adjust |bbmin[c]| and |bbmax[c]| to accommodate |x|@>;
-  @<Check the control points against the bounding box and set |wavy:=true|
+  @<Adjust \9{b}|bbmin[c]| and |bbmax[c]| to accommodate |x|@>;
+  @<Check the control points against the bounding box and set |wavy=true|
     if any of them lie outside@>;
   if (wavy) {
     if (c == mp_x_code) {
@@ -9507,7 +9546,7 @@ static void mp_bound_cubic (MP mp, mp_knot p, mp_knot q, quarterword c) {
 }
 
 
-@ @<Adjust |bbmin[c]| and |bbmax[c]| to accommodate |x|@>=
+@ @<Adjust \9{b}|bbmin[c]| and |bbmax[c]| to accommodate |x|@>=
 if (number_less(x, mp->bbmin[c]))
   number_clone(mp->bbmin[c], x);
 if (number_greater(x, mp->bbmax[c]))
@@ -9574,7 +9613,7 @@ must cut it to zero to avoid confusion.
 @<Test the extremes of the cubic against the bounding box@>=
 {
   mp_eval_cubic (mp, &x, p, q, c, t);
-  @<Adjust |bbmin[c]| and |bbmax[c]| to accommodate |x|@>;
+  @<Adjust \9{b}|bbmin[c]| and |bbmax[c]| to accommodate |x|@>;
   set_number_from_of_the_way(del2, t, del2, del3);
   /* now |0,del2,del3| represent the derivative on the remaining interval */
   if (number_positive(del2))
@@ -9603,7 +9642,7 @@ must cut it to zero to avoid confusion.
   set_number_from_of_the_way (arg, t, tt, fraction_one_t);
   mp_eval_cubic (mp, &x, p, q, c, arg);
   free_number (arg);
-  @<Adjust |bbmin[c]| and |bbmax[c]| to accommodate |x|@>;
+  @<Adjust \9{b}|bbmin[c]| and |bbmax[c]| to accommodate |x|@>;
 }
 
 
@@ -9772,7 +9811,7 @@ calls, but $1.5$ is an adequate approximation.  It is best to avoid using
   new_number(a_new);
   new_number(a_aux);
   new_number(half_v02);
-  @<Set |a_new| and |a_aux| so their sum is |2*a_goal| and |a_new| is as
+  @<Set \9{a}|a_new| and |a_aux| so their sum is |2*a_goal| and |a_new| is as
     large as possible@>;
   {
     mp_number halfp_tol;
@@ -9825,7 +9864,7 @@ calls, but $1.5$ is an adequate approximation.  It is best to avoid using
 }
 
 
-@ @<Set |a_new| and |a_aux| so their sum is |2*a_goal| and |a_new| is...@>=
+@ @<Set \9{a}|a_new| and |a_aux| so their sum is |2*a_goal| and |a_new| is...@>=
 set_number_to_inf(a_aux);
 number_substract(a_aux, a_goal);
 if (number_greater(a_goal, a_aux)) {
@@ -10436,7 +10475,7 @@ static mp_knot mp_make_pen (MP mp, mp_knot h, boolean need_hull) {
   } while (q != h);
   if (need_hull) {
     h = mp_convex_hull (mp, h);
-    @<Make sure |h| isn't confused with an elliptical pen@>;
+    @<Make sure \9{h}|h| isn't confused with an elliptical pen@>;
   }
   return h;
 }
@@ -10473,7 +10512,7 @@ be interpreted as an elliptical pen.  This is no problem since a degenerate
 polygon can equally well be thought of as a degenerate ellipse.  We need only
 initialize the |left_x|, |left_y|, |right_x|, and |right_y| fields.
 
-@<Make sure |h| isn't confused with an elliptical pen@>=
+@<Make sure \9{h}|h| isn't confused with an elliptical pen@>=
 if (pen_is_elliptical (h)) {
   number_clone(h->left_x, h->x_coord);
   number_clone(h->left_y, h->y_coord);
@@ -10562,7 +10601,9 @@ path.
 static void mp_make_path (MP mp, mp_knot h) {
   mp_knot p;    /* for traversing the knot list */
   quarterword k;        /* a loop counter */
+  @+@t}\6{@>
   @<Other local variables in |make_path|@>;
+  @#
   FUNCTION_TRACE1 ("make_path()\n");
   if (pen_is_elliptical (h)) {
     FUNCTION_TRACE1 ("make_path(elliptical)\n");
@@ -10605,7 +10646,7 @@ number_clone (p->right_y, p->y_coord)@;
   @<Extract the transformation parameters from the elliptical pen~|h|@>;
   p = h;
   for (k = 0; k <= 7; k++) {
-    @<Initialize |p| as the |k|th knot of a circle of unit diameter,
+    @<Initialize \9{p}|p| as the |k|th knot of a circle of unit diameter,
       transforming it appropriately@>;
     if (k == 7)
       mp_next_knot (p) = h;
@@ -10640,7 +10681,7 @@ integer kk;
 find the point $k/8$ of the way around the circle and the direction vector
 to use there.
 
-@<Initialize |p| as the |k|th knot of a circle of unit diameter,...@>=
+@<Initialize \9{p}|p| as the |k|th knot of a circle of unit diameter,...@>=
 kk = (k + 6) % 8;
 {
   mp_number r1, r2;
@@ -10686,7 +10727,7 @@ $$ d = {\sqrt{2-\sqrt2}\over 3+3\cos22.5^\circ}
   \approx 0.132608244919772.
 $$
 
-@<Set init...@>=
+@<Set \9{i}init...@>=
 for (k = 0; k <= 7; k++) {
   new_fraction (mp->half_cos[k]);
   new_fraction (mp->d_cos[k]);
@@ -10736,13 +10777,13 @@ mp_knot mp_convex_hull (MP mp, mp_knot h) {                               /* Mak
   if (pen_is_elliptical (h)) {
     ret = h;
   } else {
-    @<Set |l| to the leftmost knot in polygon~|h|@>;
-    @<Set |r| to the rightmost knot in polygon~|h|@>;
+    @<Set \9{l}|l| to the leftmost knot in polygon~|h|@>;
+    @<Set \9{r}|r| to the rightmost knot in polygon~|h|@>;
     if (l != r) {
       s = mp_next_knot (r);
-      @<Find any knots on the path from |l| to |r| above the |l|-|r| line and
+      @<Find \9{a}any knots on the path from |l| to |r| above the |l|-|r| line and
         move them past~|r|@>;
-      @<Find any knots on the path from |s| to |l| below the |l|-|r| line and
+      @<Find \9{a}any knots on the path from |s| to |l| below the |l|-|r| line and
         move them past~|l|@>;
       @<Sort the path from |l| to |r| by increasing $x$@>;
       @<Sort the path from |r| to |l| by decreasing $x$@>;
@@ -10759,7 +10800,7 @@ mp_knot mp_convex_hull (MP mp, mp_knot h) {                               /* Mak
 
 @ All comparisons are done primarily on $x$ and secondarily on $y$.
 
-@<Set |l| to the leftmost knot in polygon~|h|@>=
+@<Set \9{l}|l| to the leftmost knot in polygon~|h|@>=
 l = h;
 p = mp_next_knot (h);
 while (p != h) {
@@ -10771,7 +10812,7 @@ while (p != h) {
 }
 
 
-@ @<Set |r| to the rightmost knot in polygon~|h|@>=
+@ @<Set \9{r}|r| to the rightmost knot in polygon~|h|@>=
 r = h;
 p = mp_next_knot (h);
 while (p != h) {
@@ -10783,7 +10824,7 @@ while (p != h) {
 }
 
 
-@ @<Find any knots on the path from |l| to |r| above the |l|-|r| line...@>=
+@ @<Find \9{a}any knots on the path from |l| to |r| above the |l|-|r| line...@>=
 {
   mp_number ab_vs_cd;
   mp_number arg1, arg2;
@@ -10826,7 +10867,7 @@ void mp_move_knot (MP mp, mp_knot p, mp_knot q) {
 }
 
 
-@ @<Find any knots on the path from |s| to |l| below the |l|-|r| line...@>=
+@ @<Find \9{a}any knots on the path from |s| to |l| below the |l|-|r| line...@>=
 {
   mp_number ab_vs_cd;
   mp_number arg1, arg2;
@@ -10920,7 +10961,7 @@ where the |then| clause is not executed.
       set_number_from_substraction (arg2, q->x_coord, p->x_coord);
       ab_vs_cd (ab_vs_cd, dx, arg1, dy, arg2);
       if (number_nonpositive(ab_vs_cd))
-        @<Remove knot |p| and back up |p| and |q| but don't go past |l|@>@;
+        @<Remove \9{k}knot |p| and back up |p| and |q| but don't go past |l|@>@;
     }
   }
   free_number (ab_vs_cd);
@@ -10929,7 +10970,7 @@ where the |then| clause is not executed.
 }
 
 
-@ @<Remove knot |p| and back up |p| and |q| but don't go past |l|@>=
+@ @<Remove \9{k}knot |p| and back up |p| and |q| but don't go past |l|@>=
 {
   s = mp_prev_knot (p);
   mp_xfree (p);
@@ -12134,7 +12175,7 @@ mp_edge_header_node mp_copy_objects (MP mp, mp_node p, mp_node q) {
   edge_ref_count (hh) = 0;
   pp = edge_list (hh);
   while (p != q)
-    @<Make |mp_link(pp)| point to a copy of object |p|,
+    @<Make \9{m}|mp_link(pp)| point to a copy of object |p|,
       and update |p| and |pp|@>@;
   obj_tail (hh) = pp;
   mp_link (pp) = NULL;
@@ -12142,7 +12183,7 @@ mp_edge_header_node mp_copy_objects (MP mp, mp_node p, mp_node q) {
 }
 
 
-@ @<Make |mp_link(pp)| point to a copy of object |p|, and update |p| and |pp|@>=
+@ @<Make \9{m}|mp_link(pp)| point to a copy of object |p|, and update |p| and |pp|@>=
 {
   switch (mp_type (p)) {
   case mp_start_clip_node_type:
@@ -12583,7 +12624,9 @@ static mp_edge_header_node mp_make_dashes (MP mp, mp_edge_header_node h) { /* re
   mp_knot pp, qq, rr;   /* pointers into |mp_path_p(p)| */
   mp_dash_node d, dd;        /* pointers used to create the dash list */
   mp_number y0;
+  @+@t}\6{@>
   @<Other local variables in |make_dashes|@>;
+  @#
   if (dash_list (h) != mp->null_dash)
     return h;
   new_number (y0);                       /* the initial $y$ coordinate */
@@ -12599,20 +12642,20 @@ static mp_edge_header_node mp_make_dashes (MP mp, mp_edge_header_node h) { /* re
       p0 = p;
       number_clone(y0, pp->y_coord);
     }
-    @<Make |d| point to a new dash node created from stroke |p| and path |pp|
+    @<Make \9{d}|d| point to a new dash node created from stroke |p| and path |pp|
       or |goto not_found| if there is an error@>;
     @<Insert |d| into the dash list and |goto not_found| if there is an error@>;
     p = mp_link (p);
   }
   if (dash_list (h) == mp->null_dash)
     goto NOT_FOUND;             /* No error message */
-  @<Scan |dash_list(h)| and deal with any dashes that are themselves dashed@>;
-  @<Set |dash_y(h)| and merge the first and last dashes if necessary@>;
+  @<Scan \9{d}|dash_list(h)| and deal with any dashes that are themselves dashed@>;
+  @<Set \9{d}|dash_y(h)| and merge the first and last dashes if necessary@>;
   free_number (y0);
   return h;
 NOT_FOUND:
   free_number (y0);
-  @<Flush the dash list, recycle |h| and return |NULL|@>;
+  @<Flush the \9{d}dash list, recycle |h| and return |NULL|@>;
 }
 
 
@@ -12651,8 +12694,8 @@ handle the case where the pen stroke |p| is itself dashed.
 
 @d dash_info(A) ((mp_dash_node)(A))->dash_info_  /* in an edge header this points to the first dash node */
 
-@<Make |d| point to a new dash node created from stroke |p| and path...@>=
-@<Make sure |p| and |p0| are the same color and |goto not_found| if there is
+@<Make \9{d}|d| point to a new dash node created from stroke |p| and path...@>=
+@<Make sure \9{p}|p| and |p0| are the same color and |goto not_found| if there is
   an error@>;
 rr = pp;
 if (mp_next_knot (pp) != pp) {
@@ -12737,7 +12780,7 @@ monotone in $x$ but is reversed relative to the path from |pp| to |qq|.
   free_number(x3);
 }
 
-@ @<Make sure |p| and |p0| are the same color and |goto not_found|...@>=
+@ @<Make sure \9{p}|p| and |p0| are the same color and |goto not_found|...@>=
 if (!number_equal(((mp_stroked_node)p)->red, ((mp_stroked_node)p0)->red) ||
     !number_equal(((mp_stroked_node)p)->black, ((mp_stroked_node)p0)->black) ||
     !number_equal(((mp_stroked_node)p)->green, ((mp_stroked_node)p0)->green) ||
@@ -12767,7 +12810,7 @@ if (dd != (mp_dash_node)h) {
 mp_link (d) = mp_link (dd);
 mp_link (dd) = (mp_node)d@;
 
-@ @<Set |dash_y(h)| and merge the first and last dashes if necessary@>=
+@ @<Set \9{d}|dash_y(h)| and merge the first and last dashes if necessary@>=
 d = dash_list (h);
 while ((mp_link (d) != (mp_node)mp->null_dash))
   d = (mp_dash_node)mp_link (d);
@@ -12792,7 +12835,7 @@ Recovering from an error involves making |dash_list(h)| empty to indicate
 that |h| is not known to be a valid dash pattern.  We also dereference |h|
 since it is not being used for the return value.
 
-@<Flush the dash list, recycle |h| and return |NULL|@>=
+@<Flush the \9{d}dash list, recycle |h| and return |NULL|@>=
 mp_flush_dash_list (mp, h);
 delete_edge_ref (h);
 return NULL@;
@@ -12801,7 +12844,7 @@ return NULL@;
 corresponding dash nodes, we must be prepared to break up these dashes into
 smaller dashes.
 
-@<Scan |dash_list(h)| and deal with any dashes that are themselves dashed@>=
+@<Scan \9{d}|dash_list(h)| and deal with any dashes that are themselves dashed@>=
 {
 mp_number hsf;     /* the dash pattern from |hh| gets scaled by this */
 new_number (hsf);
@@ -12815,7 +12858,7 @@ while (mp_link (d) != (mp_node)mp->null_dash) {
     number_clone(hsf, ((mp_stroked_node)ds)->dash_scale);
     if (hh == NULL)
       mp_confusion (mp, "dash1");
-@:this can't happen dash0}{\quad dash1@>
+@:this can't happen dash1}{\quad dash1@>
     assert(hh);
     /* clang: dereference null pointer 'hh' */
     if (number_zero(((mp_dash_node)hh)->dash_y )) {
@@ -12823,7 +12866,7 @@ while (mp_link (d) != (mp_node)mp->null_dash) {
     } else {
       if (dash_list (hh) == NULL)
         mp_confusion (mp, "dash1");
-@:this can't happen dash0}{\quad dash1@>
+@:this can't happen dash1}{\quad dash1@>
       @<Replace |mp_link(d)| by a dashed version as determined by edge header
           |hh| and scale factor |ds|@>;
     }
@@ -12862,7 +12905,7 @@ mp_node ds;     /* the stroked node from which |hh| and |hsf| are derived */
   @<Advance |dd| until finding the first dash that overlaps |dln| when
     offset by |xoff|@>;
   while (number_lessequal(dln->start_x, dln->stop_x)) {
-    @<If |dd| has `fallen off the end', back up to the beginning and fix |xoff|@>;
+    @<If \9{d}|dd| has `fallen off the end', back up to the beginning and fix |xoff|@>;
     @<Insert a dash between |d| and |dln| for the overlap with the offset version
       of |dd|@>;
     dd = (mp_dash_node)mp_link (dd);
@@ -12878,7 +12921,7 @@ mp_node ds;     /* the stroked node from which |hh| and |hsf| are derived */
 
 
 @ The name of this module is a bit of a lie because we just find the
-first |dd| where |take_scaled (hsf, stop_x(dd))| is large enough to make an
+first |dd| where the value returned by |take_scaled (hsf, stop_x(dd))| is large enough to make an
 overlap possible.  It could be that the unoffset version of dash |dln| falls
 in the gap between |dd| and its predecessor.
 
@@ -12896,7 +12939,7 @@ in the gap between |dd| and its predecessor.
   free_number (r1);
 }
 
-@ @<If |dd| has `fallen off the end', back up to the beginning and fix...@>=
+@ @<If \9{d}|dd| has `fallen off the end', back up to the beginning and fix...@>=
 if (dd == mp->null_dash) {
   mp_number ret;
   new_number (ret);
@@ -12974,13 +13017,13 @@ static void mp_box_ends (MP mp, mp_knot p, mp_knot pp, mp_edge_header_node h) {
   if (mp_right_type (p) != mp_endpoint) {
     q = mp_next_knot (p);
     while (1) {
-      @<Make |(dx,dy)| the final direction for the path segment from
+      @<Make \9{e}|(dx,dy)| the final direction for the path segment from
         |q| to~|p|; set~|d|@>;
       pyth_add (d, dx, dy);
       if (number_positive(d)) {
         @<Normalize the direction |(dx,dy)| and find the pen offset |(xx,yy)|@>;
         for (i = 1; i <= 2; i++) {
-          @<Use |(dx,dy)| to generate a vertex of the square end cap and
+          @<Use \9{d}|(dx,dy)| to generate a vertex of the square end cap and
              update the bounding box to accommodate it@>;
           number_negate(dx);
           number_negate(dy);
@@ -13002,7 +13045,7 @@ DONE:
 }
 
 
-@ @<Make |(dx,dy)| the final direction for the path segment from...@>=
+@ @<Make \9{e}|(dx,dy)| the final direction for the path segment from...@>=
 if (q == mp_next_knot (p)) {
   set_number_from_substraction(dx, p->x_coord, p->right_x);
   set_number_from_substraction(dy, p->y_coord, p->right_y);
@@ -13040,7 +13083,7 @@ set_number_from_substraction(dy, p->y_coord, q->y_coord);
   number_clone(yy, mp->cur_y);
 }
 
-@ @<Use |(dx,dy)| to generate a vertex of the square end cap and...@>=
+@ @<Use \9{d}|(dx,dy)| to generate a vertex of the square end cap and...@>=
 {
   mp_number r1, r2, arg1;
   new_number (arg1);
@@ -13118,7 +13161,7 @@ void mp_set_bbox (MP mp, mp_edge_header_node h, boolean top_level) {
         return;
 @:this can't happen bbox}{\quad bbox@>
       break;
-      @t\4@>@<Other cases for updating the bounding box based on the type of object |p|@>@;
+  @/  @t\4@>@<Other cases for updating the bounding box based on the type of object |p|@>@;
     default:                   /* there are no other valid cases, but please the compiler */
       break;
     }
@@ -13392,7 +13435,9 @@ static mp_knot mp_offset_prep (MP mp, mp_knot c, mp_knot h) {
   integer turn_amt;     /* change in pen offsets for the current cubic */
   mp_number max_coef;       /* used while scaling */
   mp_number ss;
+  @+@t}\6{@>
   @<Other local variables for |offset_prep|@>;
+  @#
   new_number(max_coef);
   new_number(dxin);
   new_number(dyin);
@@ -13540,7 +13585,7 @@ knot nodes because some nodes are deleted while removing dead cubics.  Thus
 mp_knot spec_p1;
 mp_knot spec_p2;        /* pointers to distinguished knots */
 
-@ @<Set init...@>=
+@ @<Set \9{i}init...@>=
 mp->spec_p1 = NULL;
 mp->spec_p2 = NULL;
 
@@ -14355,7 +14400,7 @@ dbg_n(ww->x_coord);dbg_n(ww->y_coord);
 dbg_close_t; dbg_comma;dbg_nl;
 #endif
 @<Find the first |t| where $d(t)$ crosses $d_{k-1}$ or set
-  |t:=fraction_one+1|@>;
+  |t=fraction_one+1|@>;
 if (number_greater(t, fraction_one_t)) {
 #ifdef MPOST_DEBUG_ENVELOPE
 dbg_key(@=t > fraction_one_t@>);dbg_open_t;dbg_nl;
@@ -14540,7 +14585,7 @@ if (d_sign == 0) {
       d_sign = -1;
   }
 }
-@<Make |ss| negative if and only if the total change in direction is
+@<Make \9{s}|ss| negative if and only if the total change in direction is
   more than $180^\circ$@>;
 #ifdef MPOST_DEBUG_ENVELOPE
 dbg_nl;
@@ -14600,7 +14645,7 @@ then swapped with |(x2,y2)|.  We make use of the identities
 |take_fraction(-a,-b)=take_fraction(a,b)| and
 |t_of_the_way(-a,-b)=-(t_of_the_way(a,b))|.
 
-@<Make |ss| negative if and only if the total change in direction is...@>=
+@<Make \9{s}|ss| negative if and only if the total change in direction is...@>=
 {
   mp_number r1, r2, arg1;
   new_number (arg1);
@@ -14760,11 +14805,11 @@ The endpoints are easily located because |c| is given in undoubled form
 and then doubled in this procedure.  We use |spec_p1| and |spec_p2| to keep
 track of the endpoints and treat them like very sharp corners.
 Butt end caps are treated like beveled joins; round end caps are treated like
-round joins; and square end caps are achieved by setting |join_type:=3|.
+round joins; and square end caps are achieved by setting |join_type=3|.
 
 None of these parameters apply to inside joins where the convolution tracing
 has retrograde lines.  In such cases we use a simple connect-the-endpoints
-approach that is achieved by setting |join_type:=2|.
+approach that is achieved by setting |join_type=2|.
 
 @c
 static mp_knot mp_make_envelope (MP mp, mp_knot c, mp_knot h, quarterword ljoin,
@@ -14775,7 +14820,9 @@ static mp_knot mp_make_envelope (MP mp, mp_knot c, mp_knot h, quarterword ljoin,
   mp_number qx, qy;        /* unshifted coordinates of |q| */
   mp_fraction dxin, dyin, dxout, dyout;      /* directions at |q| when square or mitered */
   int join_type = 0;    /* codes |0..3| for mitered, round, beveled, or square */
+  @+@t}\6{@>
   @<Other local variables for |make_envelope|@>;
+  @#
   new_number (max_ht);
   new_number (tmp);
   new_fraction(dxin);
@@ -14787,7 +14834,7 @@ static mp_knot mp_make_envelope (MP mp, mp_knot c, mp_knot h, quarterword ljoin,
   new_number(qx);
   new_number(qy);
   @<If endpoint, double the path |c|, and set |spec_p1| and |spec_p2|@>;
-  @<Use |offset_prep| to compute the envelope spec then walk |h| around to
+  @<Use \9{o}|offset_prep| to compute the envelope spec then walk |h| around to
     the initial offset@>;
   w = h;
   p = c;
@@ -14800,10 +14847,10 @@ static mp_knot mp_make_envelope (MP mp, mp_knot c, mp_knot h, quarterword ljoin,
     k0 = k;
     w0 = w;
     if (k != zero_off)
-      @<Set |join_type| to indicate how to handle offset changes at~|q|@>@;
+      @<Set \9{j}|join_type| to indicate how to handle offset changes at~|q|@>@;
     @<Add offset |w| to the cubic from |p| to |q|@>;
     while (k != zero_off) {
-      @<Step |w| and move |k| one step closer to |zero_off|@>;
+      @<Step \9{w}|w| and move |k| one step closer to |zero_off|@>;
       if ((join_type == 1) || (k == zero_off)) {
         mp_number xtot, ytot;
         new_number(xtot);
@@ -14816,7 +14863,7 @@ static mp_knot mp_make_envelope (MP mp, mp_knot c, mp_knot h, quarterword ljoin,
       }
     }
     if (q != mp_next_knot (p))
-      @<Set |p=mp_link(p)| and add knots between |p| and |q| as
+      @<Set \9{p}|p=mp_link(p)| and add knots between |p| and |q| as
         required by |join_type|@>@;
     p = q;
   } while (q0 != c);
@@ -14832,7 +14879,7 @@ static mp_knot mp_make_envelope (MP mp, mp_knot c, mp_knot h, quarterword ljoin,
 }
 
 
-@ @<Use |offset_prep| to compute the envelope spec then walk |h| around to...@>=
+@ @<Use \9{o}|offset_prep| to compute the envelope spec then walk |h| around to...@>=
 c = mp_offset_prep (mp, c, h);
 if (number_positive(internal_value (mp_tracing_specs)))
   mp_print_spec (mp, c, h, "");
@@ -14842,10 +14889,10 @@ h = mp_pen_walk (mp, h, mp->spec_offset)
 @ Mitered and squared-off joins depend on path directions that are difficult to
 compute for degenerate cubics.  The envelope spec computed by |offset_prep| can
 have degenerate cubics only if the entire cycle collapses to a single
-degenerate cubic.  Setting |join_type:=2| in this case makes the computed
+degenerate cubic.  Setting |join_type=2| in this case makes the computed
 envelope degenerate as well.
 
-@<Set |join_type| to indicate how to handle offset changes at~|q|@>=
+@<Set \9{j}|join_type| to indicate how to handle offset changes at~|q|@>=
 {
   if (k < zero_off) {
     join_type = 2;
@@ -14858,10 +14905,10 @@ envelope degenerate as well.
       join_type = 2 - lcap;
     if ((join_type == 0) || (join_type == 3)) {
       @<Set the incoming and outgoing directions at |q|; in case of
-        degeneracy set |join_type:=2|@>;
+        degeneracy set |join_type=2|@>;
       if (join_type == 0)
         @<If |miterlim| is less than the secant of half the angle at |q|
-          then set |join_type:=2|@>@;
+          then set |join_type=2|@>@;
     }
   }
 }
@@ -14906,7 +14953,7 @@ number_add (q->y_coord, w->y_coord);
 mp_left_type (q) = mp_explicit;
 mp_right_type (q) = mp_explicit@;
 
-@ @<Step |w| and move |k| one step closer to |zero_off|@>=
+@ @<Step \9{w}|w| and move |k| one step closer to |zero_off|@>=
 if (k > zero_off) {
   w = mp_next_knot (w);
   decr (k);
@@ -14945,16 +14992,16 @@ mp_knot mp_insert_knot (MP mp, mp_knot q, mp_number x, mp_number y) {
 }
 
 
-@ After setting |p:=mp_link(p)|, either |join_type=1| or |q=mp_link(p)|.
+@ After setting |p=mp_link(p)|, either |join_type==1| or |q==mp_link(p)|.
 
-@<Set |p=mp_link(p)| and add knots between |p| and |q| as...@>=
+@<Set \9{p}|p=mp_link(p)| and add knots between |p| and |q| as...@>=
 {
   p = mp_next_knot (p);
   if ((join_type == 0) || (join_type == 3)) {
     if (join_type == 0)
       @<Insert a new knot |r| between |p| and |q| as required for a mitered join@>@;
     else
-      @<Make |r| the last of two knots inserted between |p| and |q| to form a
+      @<Make \9{r}|r| the last of two knots inserted between |p| and |q| to form a
         squared join@>@;
     if (r != NULL) {
       number_clone (r->right_x, r->x_coord);
@@ -14965,7 +15012,7 @@ mp_knot mp_insert_knot (MP mp, mp_knot q, mp_number x, mp_number y) {
 
 
 @ For very small angles, adding a knot is unnecessary and would cause numerical
-problems, so we just set |r:=NULL| in that case.
+problems, so we just set |r=NULL| in that case.
 
 @d near_zero_angle_k ((math_data *)mp->math)->near_zero_angle_t
 
@@ -15015,7 +15062,7 @@ problems, so we just set |r:=NULL| in that case.
 }
 
 
-@ @<Make |r| the last of two knots inserted between |p| and |q| to form a...@>=
+@ @<Make \9{r}|r| the last of two knots inserted between |p| and |q| to form a...@>=
 {
   mp_number ht_x, ht_y;    /* perpendicular to the segment from |p| to |q| */
   mp_number ht_x_abs, ht_y_abs;    /* absolutes */
@@ -15144,10 +15191,10 @@ if (mp_left_type (c) == mp_endpoint) {
     mp_originator (mp->spec_p2) = mp_program_code;
     mp_remove_cubic (mp, mp->spec_p2);
   } else
-    @<Make |c| look like a cycle of length one@>@;
+    @<Make \9{c}|c| look like a cycle of length one@>@;
 }
 
-@ @<Make |c| look like a cycle of length one@>=
+@ @<Make \9{c}|c| look like a cycle of length one@>=
 {
   mp_left_type (c) = mp_explicit;
   mp_right_type (c) = mp_explicit;
@@ -15917,7 +15964,7 @@ static void mp_cubic_intersection (MP mp, mp_knot p, mp_knot pp) {
   set_number_from_double (x_two_t_low_precision,-0.5);
   number_add (x_two_t_low_precision,x_two_t);
 
-  @<Initialize for intersections at level zero@>;
+  @<Initialize \9{f}for intersections at level zero@>;
 CONTINUE:
   while (1) {
     /* When we are in arbitrary precision math, low precisions can */
@@ -16056,7 +16103,7 @@ free_number (mp->appr_tt);
 integer overflow will not occur.
 @^overflow in arithmetic@>
 
-@<Initialize for intersections at level zero@>=
+@<Initialize \9{f}for intersections at level zero@>=
 q = mp_next_knot (p);
 qq = mp_next_knot (pp);
 mp->bisect_ptr = int_packets;
@@ -16467,7 +16514,7 @@ boolean fix_needed;     /* does at least one |independent| variable need scaling
 boolean watch_coefs;    /* should we scale coefficients that exceed |coef_bound|? */
 mp_value_node dep_final;        /* location of the constant term and final link */
 
-@ @<Set init...@>=
+@ @<Set \9{i}init...@>=
 mp->fix_needed = false;
 mp->watch_coefs = true;
 
@@ -17963,7 +18010,9 @@ at most |error_line|. Non-current input levels whose |token_type| is
 @c
 void mp_show_context (MP mp) {                               /* prints where the scanner is */
   unsigned old_setting; /* saved |selector| setting */
+  @+@t}\6{@>
   @<Local variables for formatting calculations@>;
+  @#
   mp->file_ptr = mp->input_ptr;
   mp->input_stack[mp->file_ptr] = mp->cur_input;
   /* store current state */
@@ -18100,9 +18149,9 @@ tables. So `pseudoprinting' is the answer: We enter a mode of printing
 that stores characters into a buffer of length |error_line|, where character
 $k+1$ is placed into \hbox{|trick_buf[k mod error_line]|} if
 |k<trick_count|, otherwise character |k| is dropped. Initially we set
-|tally:=0| and |trick_count:=1000000|; then when we reach the
+|tally=0| and |trick_count=1000000|; then when we reach the
 point where transition from line 1 to line 2 should occur, we
-set |first_count:=tally| and |trick_count:=@tmax@>(error_line,
+set |first_count=tally| and |trick_count=@tmax@>(error_line,
 tally+1+error_line-half_error_line)|. At the end of the
 pseudoprinting, the values of |first_count|, |tally|, and
 |trick_count| give us all the information we need to print the two lines,
@@ -18113,8 +18162,8 @@ on the first line. The length of the context information gathered for that
 line is |k=first_count|, and the length of the context information
 gathered for line~2 is $m=\min(|tally|, |trick_count|)-k$. If |l+k<=h|,
 where |h=half_error_line|, we print |trick_buf[0..k-1]| after the
-descriptive information on line~1, and set |n:=l+k|; here |n| is the
-length of line~1. If $l+k>h$, some cropping is necessary, so we set |n:=h|
+descriptive information on line~1, and set |n=l+k|; here |n| is the
+length of line~1. If $l+k>h$, some cropping is necessary, so we set |n=h|
 and print `\.{...}' followed by
 $$\hbox{|trick_buf[(l+k-h+3)..k-1]|,}$$
 where subscripts of |trick_buf| are circular modulo |error_line|. The
@@ -18944,7 +18993,7 @@ static int move_to_next_line (MP mp) {
         decr (loc);
         if (mpx_reading) {
           /* Complain that the \.{MPX} file ended unexpectedly; then set
-            |cur_sym:=mp->frozen_mpx_break| and |goto common_ending| */
+            |cur_sym=mp->frozen_mpx_break| and |goto common_ending| */
 	  /* We should never actually come to the end of an \.{MPX} file because such
              files should have an \&{mpxbreak} after the translation of the last
              \&{btex}$\,\ldots\,$\&{etex} block. */
@@ -19118,7 +19167,7 @@ else {
           if (token_state || (name <= max_spec_src))
             @<Complain that we are not reading a file@>@;
           else if (mpx_reading)
-            @<Complain that \.{MPX} files cannot contain \TeX\ material@>@;
+            @<Complain that \9{m}\.{MPX} files cannot contain \TeX\ material@>@;
           else if ((cur_mod() != verbatim_code) &&
                      (mp->mpx_name[iindex] != mpx_finished)) {
             if (!mp_begin_mpx_reading (mp))
@@ -19153,7 +19202,7 @@ do {
 mp->scanner_status = old_status;
 mp->warning_line = old_info@;
 
-@ @<Complain that \.{MPX} files cannot contain \TeX\ material@>=
+@ @<Complain that \9{m}\.{MPX} files cannot contain \TeX\ material@>=
 {
   const char *hlp[] = {
          "This file contains picture expressions for btex...etex",
@@ -19313,7 +19362,7 @@ static mp_node mp_scan_toks (MP mp, mp_command_code terminator,
     if (cur_sym() != NULL) {
       @<Substitute for |cur_sym|, if it's on the |subst_list|@>;
       if (cur_cmd() == terminator)
-        @<Adjust the balance; |break| if it's zero@>@;
+        @<Adjust the balance\9{1}; |break| if it's zero@>@;
       else if (cur_cmd() == mp_macro_special) {
         /* Handle quoted symbols, \.{\#\AT!}, \.{\AT!}, or \.{\AT!\#} */
         if (cur_mod() == quote) {
@@ -19376,7 +19425,7 @@ void mp_print_sym  (mp_sym sym) ;
 }
 
 
-@ @<Adjust the balance; |break| if it's zero@>=
+@ @<Adjust the balance\9{1}; |break| if it's zero@>=
 {
   if (cur_mod() > 0) {
     incr (balance);
@@ -19795,7 +19844,7 @@ crashes on most all operating systems, but the value can be
 raised if the runtime system allows a larger C stack.
 @^system dependencies@>
 
-@<Set initial...@>=
+@<Set \9{i}initial...@>=
 mp->expand_depth = 10000;
 
 @ Even better would be if the system allows discovery of the amount of
@@ -20637,9 +20686,9 @@ void mp_scan_text_arg (MP mp, mp_sym l_delim, mp_sym r_delim) {
   while (1) {
     get_t_next (mp);
     if (l_delim == NULL)
-      @<Adjust the balance for an undelimited argument; |break| if done@>@;
+      @<Adjust the balance\9{3} for an undelimited argument; |break| if done@>@;
     else
-      @<Adjust the balance for a delimited argument; |break| if done@>@;
+      @<Adjust the balance\9{2} for a delimited argument; |break| if done@>@;
     mp_link (p) = mp_cur_tok (mp);
     p = mp_link (p);
   }
@@ -20649,7 +20698,7 @@ void mp_scan_text_arg (MP mp, mp_sym l_delim, mp_sym r_delim) {
 }
 
 
-@ @<Adjust the balance for a delimited argument...@>=
+@ @<Adjust the balance\9{2} for a delimited argument...@>=
 {
   if (cur_cmd() == mp_right_delimiter) {
     if (equiv_sym (cur_sym()) == l_delim) {
@@ -20663,7 +20712,7 @@ void mp_scan_text_arg (MP mp, mp_sym l_delim, mp_sym r_delim) {
   }
 }
 
-@ @<Adjust the balance for an undelimited...@>=
+@ @<Adjust the balance\9{3} for an undelimited...@>=
 {
   if (mp_end_of_statement) {         /* |cur_cmd=semicolon|, |end_group|, or |stop| */
     if (balance == 1) {
@@ -20700,10 +20749,10 @@ void mp_scan_text_arg (MP mp, mp_sym l_delim, mp_sym r_delim) {
     mp_scan_expression (mp);
     break;
   case mp_of_macro:
-    @<Scan an expression followed by `\&{of} $\langle$primary$\rangle$'@>;
+    @<Scan \9{a}an expression followed by `\&{of} $\langle$primary$\rangle$'@>;
     break;
   case mp_suffix_macro:
-    @<Scan a suffix with optional delimiters@>;
+    @<Scan \9{a}a suffix with optional delimiters@>;
     break;
   case mp_text_macro:
     mp_scan_text_arg (mp, NULL, NULL);
@@ -20714,7 +20763,7 @@ void mp_scan_text_arg (MP mp, mp_sym l_delim, mp_sym r_delim) {
 }
 
 
-@ @<Scan an expression followed by `\&{of} $\langle$primary$\rangle$'@>=
+@ @<Scan \9{a}an expression followed by `\&{of} $\langle$primary$\rangle$'@>=
 {
   mp_scan_expression (mp);
   p = mp_get_symbolic_node (mp);
@@ -20751,7 +20800,7 @@ void mp_scan_text_arg (MP mp, mp_sym l_delim, mp_sym r_delim) {
 }
 
 
-@ @<Scan a suffix with optional delimiters@>=
+@ @<Scan \9{a}a suffix with optional delimiters@>=
 {
   if (cur_cmd() != mp_left_delimiter) {
     l_delim = NULL;
@@ -20866,7 +20915,7 @@ integer if_limit;       /* upper bound on |fi_or_else| codes */
 quarterword cur_if;     /* type of conditional being worked on */
 mpinteger64 if_line;        /* line where that conditional began */
 
-@ @<Set init...@>=
+@ @<Set \9{i}init...@>=
 mp->cond_ptr = NULL;
 mp->if_limit = normal;
 mp->cur_if = 0;
@@ -20940,7 +20989,7 @@ if ((QUARTERWORD)(cur_cmd()) == (QUARTERWORD)mp_string_token) {
   delete_str_ref (cur_mod_str());
 }
 
-@ When we begin to process a new \&{if}, we set |if_limit:=if_code|; then
+@ When we begin to process a new \&{if}, we set |if_limit=if_code|; then
 if \&{elseif} or \&{else} or \&{fi} occurs before the current \&{if}
 condition has been evaluated, a colon will be inserted.
 A construction like `\.{if fi}' would otherwise get \MP\ confused.
@@ -21161,7 +21210,7 @@ typedef struct mp_loop_data {
 @ @<Glob...@>=
 mp_loop_data *loop_ptr; /* top of the loop-control-node stack */
 
-@ @<Set init...@>=
+@ @<Set \9{i}init...@>=
 mp->loop_ptr = NULL;
 
 @ If the expressions that define an arithmetic progression in a
@@ -21276,7 +21325,7 @@ keeps frozen tokens unchanged. Furthermore the
 |mp->frozen_repeat_loop| is an \&{outer} token, so it won't be lost
 accidentally.)
 
-@ @<Scan the loop text...@>=
+@<Scan the loop text...@>=
 q = mp_get_symbolic_node (mp);
 set_mp_sym_sym (q, mp->frozen_repeat_loop);
 mp->scanner_status = loop_defining;
@@ -21349,7 +21398,7 @@ void mp_resume_iteration (MP mp) {
     mp_begin_token_list (mp, mp->loop_ptr->info, (quarterword) forever_text);
     return;
   } else
-    @<Make |q| a capsule containing the next picture component from
+    @<Make \9{q}|q| a capsule containing the next picture component from
       |loop_list(loop_ptr)| or |goto not_found|@>@;
   mp_begin_token_list (mp, mp->loop_ptr->info, (quarterword) loop_text);
   mp_stack_argument (mp, q);
@@ -21382,7 +21431,7 @@ NOT_FOUND:
 }
 
 
-@ @<Make |q| a capsule containing the next picture component
+@ @<Make \9{q}|q| a capsule containing the next picture component
 from...@>=
 {
   q = mp->loop_ptr->list;
@@ -21612,7 +21661,7 @@ char *cur_ext;  /* file extension just scanned, or \.{""} */
 
 @ It is easier to maintain reference counts if we assign initial values.
 
-@<Set init...@>=
+@<Set \9{i}init...@>=
 mp->cur_name = xstrdup ("");
 mp->cur_area = xstrdup ("");
 mp->cur_ext = xstrdup ("");
@@ -21746,7 +21795,7 @@ allows both lowercase and uppercase letters in the file name.
 
 @d append_to_name(A) { mp->name_of_file[k++]=(char)xchr(xord((ASCII_code)(A))); }
 
-@ @c
+@c
 void mp_pack_file_name (MP mp, const char *n, const char *a, const char *e) {
   integer k;    /* number of positions filled in |name_of_file| */
   const char *j;        /* a character  index */
@@ -21785,7 +21834,7 @@ char *mem_name; /* for commandline */
 
 @ Stripping a |.mem| extension here is for backward compatibility.
 
-@<Find and load preload file, if required@>=
+@<Find \9{a}and load preload file, if required@>=
 if (!opt->ini_version) {
   mp->mem_name = xstrdup (opt->mem_name);
   if (mp->mem_name) {
@@ -22246,7 +22295,7 @@ void mp_start_input (MP mp) {                               /* \MP\ will \.{inpu
   mp_print (mp, fname);
   xfree (fname);
   update_terminal();
-  @<Flush |name| and replace it with |cur_name| if it won't be needed@>;
+  @<Flush \9{n}|name| and replace it with |cur_name| if it won't be needed@>;
   @<Read the first line of the new file@>;
 }
 
@@ -22256,7 +22305,7 @@ than just a copy of its argument and the full file name is needed for opening
 \.{MPX} files or implementing the switch-to-editor option.
 @^system dependencies@>
 
-@<Flush |name| and replace it with |cur_name| if it won't be needed@>=
+@<Flush \9{n}|name| and replace it with |cur_name| if it won't be needed@>=
 mp_flush_string (mp, name);
 name = mp_rts (mp, mp->cur_name);
 xfree (mp->cur_name)@;
@@ -22536,7 +22585,7 @@ recovery.
 @ @<Glob...@>=
 mp_value cur_exp;       /* the value of the expression just found */
 
-@ @<Set init...@>=
+@ @<Set \9{i}init...@>=
 memset (&mp->cur_exp.data, 0, sizeof (mp_value));
 new_number(mp->cur_exp.data.n);
 
@@ -23484,7 +23533,7 @@ mp_value_node max_link[mp_proto_dependent + 1]; /* other occurrences of |p| */
 }
 
 @ A global variable |var_flag| is set to a special command code
-just before \MP\ calls |scan_expression|, if the expression should be
+just before \MP\ calls the procedure |scan_expression|, if the expression should be
 treated as a variable when this command code immediately follows. For
 example, |var_flag| is set to |assignment| at the beginning of a
 statement, because we want to know the {\sl location\/} of a variable at
@@ -23492,7 +23541,7 @@ the left of `\.{:=}', not the {\sl value\/} of that variable.
 
 The |scan_expression| subroutine calls |scan_tertiary|,
 which calls |scan_secondary|, which calls |scan_primary|, which sets
-|var_flag:=0|. In this way each of the scanning routines ``knows''
+|var_flag=0|. In this way each of the scanning routines ``knows''
 when it has been called with a special |var_flag|, but |var_flag| is
 usually zero.
 
@@ -23505,7 +23554,7 @@ that produces boolean expressions.
 @<Glob...@>=
 int var_flag;   /* command that wants a variable */
 
-@ @<Set init...@>=
+@ @<Set \9{i}init...@>=
 mp->var_flag = 0;
 
 @* Parsing primary expressions.
@@ -23535,7 +23584,7 @@ suspense won't be too bad:
 |do_binary(p,c)| applies a primitive operation to the capsule~|p|
 and the current expression.
 
-@<Declare the basic parsing subroutines@>=
+@<Declare the \9{b}basic parsing subroutines@>=
 static void check_for_mediation (MP mp);
 void mp_scan_primary (MP mp) {
   mp_command_code my_var_flag;      /* initial value of |my_var_flag| */
@@ -23901,7 +23950,7 @@ RESTART:
     mp_make_exp_copy (mp, cur_mod_node());
     break;
   case mp_tag_token:
-    @<Scan a variable primary; |goto restart| if it turns out to be a macro@>;
+    @<Scan \9{a}a variable primary; |goto restart| if it turns out to be a macro@>;
     break;
   default:
     mp_bad_exp (mp, "A primary");
@@ -23917,7 +23966,7 @@ DONE:
 `\.{b+a*(c-b)}', without checking the types of \.b~or~\.c,
 provided that \.a is numeric.
 
-@<Declare the basic parsing subroutines@>=
+@<Declare the \9{b}basic parsing subroutines@>=
 static void check_for_mediation (MP mp) {
   mp_node p, q, r;      /* for list manipulation */
   if (cur_cmd() == mp_left_bracket) {
@@ -24054,7 +24103,7 @@ relation |tt=mp_type(q)| will always hold. If |tt=undefined|, the routine
 doesn't bother to update its information about type. And if
 |undefined<tt<mp_unsuffixed_macro|, the precise value of |tt| isn't critical.
 
-@<Scan a variable primary...@>=
+@<Scan \9{a}a variable primary...@>=
 {
   mp_node p, q;      /* for list manipulation */
   mp_node t;      /* a token */
@@ -24444,7 +24493,7 @@ static void mp_install (MP mp, mp_node r, mp_node q) {
 @ Here is a comparatively simple routine that is used to scan the
 \&{suffix} parameters of a macro.
 
-@<Declare the basic parsing subroutines@>=
+@<Declare the \9{b}basic parsing subroutines@>=
 static void mp_scan_suffix (MP mp) {
   mp_node h, t; /* head and tail of the list being built */
   mp_node p;    /* temporary register */
@@ -24452,7 +24501,7 @@ static void mp_scan_suffix (MP mp) {
   t = h;
   while (1) {
     if (cur_cmd() == mp_left_bracket) {
-      /* Scan a bracketed subscript and set |cur_cmd:=numeric_token| */
+      /* Scan a bracketed subscript and set |cur_cmd=numeric_token| */
       mp_get_x_next (mp);
       mp_scan_expression (mp);
       if (mp->cur_exp.type != mp_known)
@@ -24503,7 +24552,7 @@ cautious approach is mandatory. For example, a macro defined by
 been scanned; we solve this by increasing the reference count of its token
 list, so that the macro can be called even after it has been clobbered.
 
-@<Declare the basic parsing subroutines@>=
+@<Declare the \9{b}basic parsing subroutines@>=
 static void mp_scan_secondary (MP mp) {
   mp_node p;    /* for list manipulation */
   halfword c, d;        /* operation codes or modifiers */
@@ -24559,7 +24608,7 @@ static void mp_binary_mac (MP mp, mp_node p, mp_node c, mp_sym n) {
 
 @ The next procedure, |scan_tertiary|, is pretty much the same deal.
 
-@<Declare the basic parsing subroutines@>=
+@<Declare the \9{b}basic parsing subroutines@>=
 static void mp_scan_tertiary (MP mp) {
   mp_node p;    /* for list manipulation */
   halfword c, d;        /* operation codes or modifiers */
@@ -24603,7 +24652,7 @@ CONTINUE:
 This one is much like the others; but it has an extra complication from
 paths, which materialize here.
 
-@<Declare the basic parsing subroutines@>=
+@<Declare the \9{b}basic parsing subroutines@>=
 static int mp_scan_path (MP mp);
 static void mp_scan_expression (MP mp) {
   int my_var_flag;      /* initial value of |var_flag| */
@@ -24669,7 +24718,7 @@ hoping to understand the next part of this code.
 
 @d min_tension three_quarter_unit_t
 
-@<Declare the basic parsing subroutines@>=
+@<Declare the \9{b}basic parsing subroutines@>=
 static void force_valid_tension_setting(MP mp) {
   if ((mp->cur_exp.type != mp_known) || number_less(cur_exp_value_number (), min_tension)) {
     mp_value new_expr;
@@ -25161,7 +25210,7 @@ supposed to be either |true_code| or |false_code|.
   }
 } while (0)@;
 
-@<Declare the basic parsing subroutines@>=
+@<Declare the \9{b}basic parsing subroutines@>=
 static void do_boolean_error (MP mp) {
   mp_value new_expr;
   const char *hlp[] = {
@@ -27275,7 +27324,7 @@ I have to cheat a little here because
 @<Glob...@>=
 mp_string eof_line;
 
-@ @<Set init...@>=
+@ @<Set \9{i}init...@>=
 mp->eof_line = mp_rtsl (mp, "\0", 1);
 mp->eof_line->refs = MAX_STR_REF;
 
@@ -27294,7 +27343,7 @@ recycled after the binary operation has been safely carried out.
 @d binary_return  { mp_finish_binary(mp, old_p, old_exp); return; }
 
 @c
-@<Declare binary action procedures@>
+@<Declare binary action procedures@>@;
 static void mp_finish_binary (MP mp, mp_node old_p, mp_node old_exp) {
   check_arith();
   /* Recycle any sidestepped |independent| capsules */
@@ -27425,7 +27474,7 @@ static void mp_do_binary (MP mp, mp_node p, integer c) {
   case mp_unequal_to:
     check_arith();                    /* at this point |arith_error| should be |false|? */
     if ((mp->cur_exp.type > mp_pair_type) && (mp_type (p) > mp_pair_type)) {
-      mp_add_or_subtract (mp, p, NULL, mp_minus);      /* |cur_exp:=(p)-cur_exp| */
+      mp_add_or_subtract (mp, p, NULL, mp_minus);      /* |cur_exp=(p)-cur_exp| */
     } else if (mp->cur_exp.type != mp_type (p)) {
       mp_bad_binary (mp, p, (quarterword) c);
       goto DONE;
@@ -28014,7 +28063,7 @@ be monkeying around with really big values.
 @^overflow in arithmetic@>
 
 @<Declare binary action...@>=
-@<Declare the procedure called |dep_finish|@>
+@<Declare the procedure called |dep_finish|@>@;
 static void mp_add_or_subtract (MP mp, mp_node p, mp_node q, quarterword c) {
   mp_variable_type s, t;        /* operand types */
   mp_value_node r;      /* dependency list traverser */
@@ -28724,7 +28773,7 @@ static mp_edge_header_node mp_edges_trans (MP mp, mp_edge_header_node h) {
     without scanning the whole structure@>;
   q = mp_link (edge_list (h));
   while (q != NULL) {
-    @<Transform graphical object |q|@>;
+    @<Transform \9{g}graphical object |q|@>;
     q = mp_link (q);
   }
   free_number (sx);
@@ -28855,20 +28904,20 @@ sum is similar.
 @ Now we ready for the main task of transforming the graphical objects in edge
 structure~|h|.
 
-@<Transform graphical object |q|@>=
+@<Transform \9{g}graphical object |q|@>=
 switch (mp_type (q)) {
 case mp_fill_node_type:
   {
     mp_fill_node qq = (mp_fill_node) q;
     mp_do_path_trans (mp, mp_path_p (qq));
-    @<Transform |mp_pen_p(qq)|, making sure polygonal pens stay counter-clockwise@>;
+    @<Transform \9{m}|mp_pen_p(qq)|, making sure polygonal pens stay counter-clockwise@>;
   }
   break;
 case mp_stroked_node_type:
   {
     mp_stroked_node qq = (mp_stroked_node) q;
     mp_do_path_trans (mp, mp_path_p (qq));
-    @<Transform |mp_pen_p(qq)|, making sure polygonal pens stay counter-clockwise@>;
+    @<Transform \9{m}|mp_pen_p(qq)|, making sure polygonal pens stay counter-clockwise@>;
   }
   break;
 case mp_start_clip_node_type:
@@ -28897,7 +28946,7 @@ root of the determinant, |sqdet| is the appropriate factor.
 We pass the mptrap test only if |dash_scale| is not adjusted, nowadays
 (backend is changed?)
 
-@<Transform |mp_pen_p(qq)|, making sure...@>=
+@<Transform \9{m}|mp_pen_p(qq)|, making sure...@>=
 if (mp_pen_p (qq) != NULL) {
   number_clone(sx, mp->tx);
   number_clone(sy, mp->ty);
@@ -28935,14 +28984,14 @@ number_clone(mp->ty, sy)@;
 and when some of their components are unknown.
 
 @<Declare binary action...@>=
-@<Declare subroutines needed by |big_trans|@>
+@<Declare subroutines needed by |big_trans|@>@;
 static void mp_big_trans (MP mp, mp_node p, quarterword c) {
   mp_node q, r, pp, qq; /* list manipulation registers */
   q = value_node (p);
   if (mp_type (q) == mp_pair_node_type) {
     if (mp_type (x_part (q)) != mp_known ||
         mp_type (y_part (q)) != mp_known) {
-      @<Transform an unknown big node and |return|@>;
+      @<Transform \9{a}an unknown big node and |return|@>;
     }
   } else {                      /* |mp_transform_type| */
     if (mp_type (tx_part (q)) != mp_known ||
@@ -28951,14 +29000,14 @@ static void mp_big_trans (MP mp, mp_node p, quarterword c) {
         mp_type (xy_part (q)) != mp_known ||
         mp_type (yx_part (q)) != mp_known ||
         mp_type (yy_part (q)) != mp_known) {
-      @<Transform an unknown big node and |return|@>;
+      @<Transform \9{a}an unknown big node and |return|@>;
     }
   }
-  @<Transform a known big node@>;
+  @<Transform \9{a}a known big node@>;
 }                               /* node |p| will now be recycled by |do_binary| */
 
 
-@ @<Transform an unknown big node and |return|@>=
+@ @<Transform \9{a}an unknown big node and |return|@>=
 {
   mp_set_up_known_trans (mp, c);
   mp_make_exp_copy (mp, p);
@@ -28976,7 +29025,7 @@ static void mp_big_trans (MP mp, mp_node p, quarterword c) {
 
 
 @ Let |p| point to a value field inside a big node of |cur_exp|,
-and let |q| point to a another value field. The |bilin1| procedure
+and let |q| point to another value field. The |bilin1| procedure
 replaces |p| by $p\cdot t+q\cdot u+\delta$.
 
 @<Declare subroutines needed by |big_trans|@>=
@@ -29043,10 +29092,10 @@ static void mp_bilin1 (MP mp, mp_node p, mp_number t, mp_node q,
 }
 
 
-@ @<Transform a known big node@>=
+@ @<Transform \9{a}a known big node@>=
 mp_set_up_trans (mp, c);
 if (mp->cur_exp.type == mp_known)
-  @<Transform known by known@>@;
+  @<Transform \9{k}known by known@>@;
 else {
   pp = mp_stash_cur_exp (mp);
   qq = value_node (pp);
@@ -29131,7 +29180,7 @@ static void mp_bilin2 (MP mp, mp_node p, mp_node t, mp_number v,
 }
 
 
-@ @<Transform known by known@>=
+@ @<Transform \9{k}known by known@>=
 {
   mp_make_exp_copy (mp, p);
   r = value_node (cur_exp_node ());
@@ -32357,8 +32406,8 @@ void mp_do_add_to (MP mp) {
     if (add_type == also_code) {
       /* Make sure the current expression is a suitable picture and set |e| and |p|
          appropriately */
-      /* Setting |p:=NULL| causes the $\langle$with list$\rangle$ to be ignored;
-         setting |e:=NULL| prevents anything from being added to |lhe|. */
+      /* Setting |p=NULL| causes the $\langle$with list$\rangle$ to be ignored;
+         setting |e=NULL| prevents anything from being added to |lhe|. */
       p = NULL;
       e = NULL;
       if (mp->cur_exp.type != mp_picture_type) {
@@ -32383,7 +32432,7 @@ void mp_do_add_to (MP mp) {
     } else {
       /* Create a graphical object |p| based on |add_type| and the current
          expression */
-      /* In this case |add_type<>also_code| so setting |p:=NULL| suppresses future
+      /* In this case |add_type<>also_code| so setting |p=NULL| suppresses future
          attempts to add to the edge structure. */
       e = NULL;
       p = NULL;
@@ -32467,7 +32516,7 @@ void mp_do_ship_out (MP mp) {
   mp_get_x_next (mp);
   mp_scan_expression (mp);
   if (mp->cur_exp.type != mp_picture_type) {
-    @<Complain that it's not a known picture@>;
+    @<Complain that \9{i}it's not a known picture@>;
   } else {
     c = round_unscaled (internal_value (mp_char_code)) % 256;
     if (c < 0)
@@ -32480,7 +32529,7 @@ void mp_do_ship_out (MP mp) {
 }
 
 
-@ @<Complain that it's not a known picture@>=
+@ @<Complain that \9{i}it's not a known picture@>=
 {
   const  char *hlp[] = { "I can only output known pictures.", NULL };
   mp_disp_err(mp, NULL);
@@ -32497,7 +32546,7 @@ void mp_do_ship_out (MP mp) {
 @<Glob...@>=
 mp_sym start_sym;       /* a symbolic token to insert at beginning of job */
 
-@ @<Set init...@>=
+@ @<Set \9{i}init...@>=
 mp->start_sym = NULL;
 
 @ Finally, we have only the ``message'' commands remaining.
@@ -32627,7 +32676,7 @@ give a verbose explanation only once.
 @<Glob...@>=
 boolean long_help_seen; /* has the long \.{\\errmessage} help been used? */
 
-@ @<Set init...@>=
+@ @<Set \9{i}init...@>=
 mp->long_help_seen = false;
 
 @ @<Print string |cur_exp| as an error message@>=
@@ -32697,7 +32746,7 @@ void mp_do_write (MP mp) {
 
 @ @<Write |t| to the file named by |cur_exp|@>=
 {
-  @<Find |n| where |wr_fname[n]=cur_exp| and call |open_write_file| if
+  @<Find \9{n}|n| where |wr_fname[n]==cur_exp| and call |open_write_file| if
     |cur_exp| must be inserted@>;
   if (mp_str_vs_str (mp, t, mp->eof_line) == 0)
     @<Record the end of file on |wr_file[n]|@>@;
@@ -32711,7 +32760,7 @@ void mp_do_write (MP mp) {
 }
 
 
-@ @<Find |n| where |wr_fname[n]=cur_exp| and call |open_write_file| if...@>=
+@ @<Find \9{n}|n| where |wr_fname[n]==cur_exp| and call |open_write_file| if...@>=
 {
   char *fn = mp_str (mp, cur_exp_str ());
   n = mp->write_files;
@@ -33099,7 +33148,7 @@ if (mp->param) {
   xfree (mp->param);
 }
 
-@ @<Set init...@>=
+@ @<Set \9{i}init...@>=
 for (k = 0; k <= 255; k++) {
   mp->tfm_width[k] = 0;
   mp->tfm_height[k] = 0;
@@ -33179,8 +33228,6 @@ mp->tfm_ital_corr[c] = mp_tfm_check (mp, mp_char_ic)@;
 
 @ Now let's consider \MP's special \.{TFM}-oriented commands.
 
-
-@
 @d char_list_code 0
 @d lig_table_code 1
 @d extensible_code 2
@@ -33791,7 +33838,7 @@ static void mp_threshold (MP mp, mp_number *ret, integer m) {
 
 
 @ The |skimp| procedure reduces the current list to at most |m| entries,
-by changing values if necessary. It also sets |indep_value(p):=k| if |value(p)|
+by changing values if necessary. It also sets |indep_value(p)=k| if |value(p)|
 is the |k|th distinct value on the resulting list, and it sets
 |perturbation| to the maximum amount by which a |value| field has
 been changed. The size of the resulting list is returned as the
@@ -33897,7 +33944,7 @@ for (k = mp->bc; k <= mp->ec; k++) {
 mp->nw = (short) (mp_skimp (mp, 255) + 1);
 mp->dimen_head[1] = mp_link (mp->temp_head);
 if (number_greaterequal (mp->perturbation, tfm_warn_threshold_k))
-  mp_tfm_warning (mp, mp_char_wd)
+  mp_tfm_warning (mp, mp_char_wd)@;
 
 
 @ @<Glob...@>=
@@ -34467,7 +34514,7 @@ wasting a lot of space.
 
 @d null_font 0 /* the |font_number| for an empty font */
 
-@<Set initial...@>=
+@<Set \9{i}initial...@>=
 mp->font_dsize[null_font] = 0;
 mp->font_bc[null_font] = 1;
 mp->font_ec[null_font] = 0;
@@ -34612,7 +34659,7 @@ void mp_set_text_box (MP mp, mp_text_node p) {
   kk = mp_text_p (p)->len;
   k = 0;
   while (k < kk)
-    @<Adjust |p|'s bounding box to contain |str_pool[k]|; advance |k|@>@;
+    @<Adjust \9{p}|p|'s bounding box to contain |str_pool[k]|; advance |k|@>@;
   @<Set the height and depth to zero if the bounding box is empty@>;
   free_number (h);
   free_number (d);
@@ -34620,7 +34667,7 @@ void mp_set_text_box (MP mp, mp_text_node p) {
 }
 
 
-@ @<Adjust |p|'s bounding box to contain |str_pool[k]|; advance |k|@>=
+@ @<Adjust \9{p}|p|'s bounding box to contain |str_pool[k]|; advance |k|@>=
 {
   if ((*(mp_text_p (p)->str + k) < bc) || (*(mp_text_p (p)->str + k) > ec)) {
     mp_lost_warning (mp, f, *(mp_text_p (p)->str + k));
@@ -34699,7 +34746,7 @@ accuracy.
 integer ten_pow[10];    /* $10^0..10^9$ */
 integer scaled_out;     /* amount of |scaled| that was taken out in |divide_scaled| */
 
-@ @<Set init...@>=
+@ @<Set \9{i}init...@>=
 mp->ten_pow[0] = 1;
 for (i = 1; i <= 9; i++) {
   mp->ten_pow[i] = 10 * mp->ten_pow[i - 1];
@@ -34752,7 +34799,7 @@ char *mp_set_output_file_name (MP mp, integer c) {
     if (c < 0)
       s = xstrdup (".ps");
     else
-      @<Use |c| to compute the file extension |s|@>@;
+      @<Use \9{c}|c| to compute the file extension |s|@>@;
     mp_pack_job_name (mp, s);
     free (s);
     ss = xstrdup (mp->name_of_file);
@@ -34931,7 +34978,7 @@ void mp_open_output_file (MP mp) {
 extreme cases so it may have to be shortened on some systems.
 @^system dependencies@>
 
-@<Use |c| to compute the file extension |s|@>=
+@<Use \9{c}|c| to compute the file extension |s|@>=
 {
   s = xmalloc (14, 1);
   mp_snprintf (s, 13, ".%i", (int) c);
@@ -34972,7 +35019,7 @@ integer last_output_code;       /* rounded \&{charcode} values */
 @:char_code_}{\&{charcode} primitive@>
 integer total_shipped;  /* total number of |ship_out| operations completed */
 
-@ @<Set init...@>=
+@ @<Set \9{i}init...@>=
 mp->first_file_name = xstrdup ("");
 mp->last_file_name = xstrdup ("");
 mp->first_output_code = 32768;
@@ -35511,8 +35558,8 @@ program yet; and we'd better leave space for a few more routines that may
 have been forgotten.
 
 @c
-@<Declare the basic parsing subroutines@>
-@<Declare miscellaneous procedures that were declared |forward|@>
+@<Declare the \9{b}basic parsing subroutines@>@;
+@<Declare miscellaneous procedures that were declared |forward|@>@;
 
 
 @ Here we do whatever is needed to complete \MP's job gracefully on the
@@ -35523,7 +35570,7 @@ cannot produce error messages. For example, it would be a mistake to call
 might lead to an infinite loop.
 @^system dependencies@>
 
-@ @c
+@c
 void mp_close_files_and_terminate (MP mp) {
   integer k;    /* all-purpose index */
   integer LH;   /* the length of the \.{TFM} header, in words */
