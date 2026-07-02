@@ -39,8 +39,6 @@
 #include <math.h>
 #include "mpmathdecimal.h" /* internal header */
 @h
-
-@ @c
 @<Declarations@>
 
 @ @(mpmathdecimal.h@>=
@@ -186,7 +184,7 @@ void decNumber_from_int64(decNumber *result, integer64 A,decContext *context){
    } else {
     decNumber sc,dec_ms,dec_ls;
     int s = 1;
-    uint32_t ms,ls;;
+    uint32_t ms,ls;
     if (A<0){
       s=-1;
       A=-A;
@@ -656,9 +654,9 @@ void mp_free_decimal_math (MP mp) {
   free(mp->math);
 }
 
-@ Creating an destroying |mp_number| objects
+@ Creating and destroying |mp_number| objects.
 
-@ @c
+@c
 void mp_new_number (MP mp, mp_number *n, mp_number_type t) {
   (void)mp;
   n->data.num = mp_xmalloc(mp,1,sizeof(decNumber));
@@ -666,7 +664,6 @@ void mp_new_number (MP mp, mp_number *n, mp_number_type t) {
   n->type = t;
 }
 
-@ @c
 void mp_free_number (MP mp, mp_number *n) {
   (void)mp;
   free(n->data.num);

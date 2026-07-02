@@ -35,8 +35,6 @@
 #include <math.h>
 #include "mpmath.h" /* internal header */
 @h
-
-@ @c
 @<Declarations@>
 
 @ @(mpmath.h@>=
@@ -48,7 +46,7 @@
 
 @* Math initialization.
 
-@ Here are the functions that are static as they are not used elsewhere
+Here are the functions that are static as they are not used elsewhere.
 
 @<Declarations@>=
 static void mp_scan_fractional_token (MP mp, integer64 n);
@@ -331,17 +329,15 @@ void mp_free_scaled_math (MP mp) {
   free(mp->math);
 }
 
-@ Creating an destroying |mp_number| objects
+@ Creating and destroying |mp_number| objects.
 
-@ @c
+@c
 void mp_new_number (MP mp, mp_number *n, mp_number_type t) {
   (void)mp;
   n->data.val = 0;
   n->type = t;
 }
 
-@
-@c
 void mp_free_number (MP mp, mp_number *n) {
   (void)mp;
   n->type = mp_nan_type;
@@ -1369,7 +1365,7 @@ while (1) {
     assert (astr);
     mp_snprintf (msg, 256, "Pythagorean subtraction %s+-+%s has been replaced by 0", astr, mp_string_scaled (mp, b));
     free(astr);
-@.Pythagorean...@>;
+@.Pythagorean...@>
     mp_error (mp, msg, hlp, true);
   }
   a = 0;

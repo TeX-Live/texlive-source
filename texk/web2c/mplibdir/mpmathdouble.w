@@ -35,8 +35,6 @@
 #include <math.h>
 #include "mpmathdouble.h" /* internal header */
 @h
-
-@ @c
 @<Declarations@>
 
 @ @(mpmathdouble.h@>=
@@ -329,16 +327,15 @@ void mp_free_double_math (MP mp) {
   free(mp->math);
 }
 
-@ Creating an destroying |mp_number| objects
+@ Creating and destroying |mp_number| objects.
 
-@ @c
+@c
 void mp_new_number (MP mp, mp_number *n, mp_number_type t) {
   (void)mp;
   n->data.dval = 0.0;
   n->type = t;
 }
 
-@ @c
 void mp_free_number (MP mp, mp_number *n) {
   (void)mp;
   n->type = mp_nan_type;
