@@ -61,7 +61,7 @@ int COMPILED__GNU_MP_VERSION = __GNU_MP_VERSION ;
 int COMPILED__GNU_MP_VERSION_MINOR = __GNU_MP_VERSION_MINOR ;
 int COMPILED__GNU_MP_VERSION_PATCHLEVEL = __GNU_MP_VERSION_PATCHLEVEL ;
 
-@<Internal library declarations@>@;
+@<Internal library declarations@>
 #endif
 
 @* Math initialization.
