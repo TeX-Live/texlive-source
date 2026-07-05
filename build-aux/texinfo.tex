@@ -3,7 +3,7 @@
 % Load plain if necessary, i.e., if running under initex.
 \expandafter\ifx\csname fmtname\endcsname\relax\input plain\fi
 %
-\def\texinfoversion{2026-06-14.21}
+\def\texinfoversion{2026-07-04.10}
 %
 % Copyright 1985, 1986, 1988, 1990-2026 Free Software Foundation, Inc.
 %
@@ -765,22 +765,24 @@ where each line of input produces a line of output.}
 
 % @include FILE -- \input text of FILE.
 %
-\def\include{\parseargusing\filenamecatcodes\includezzz}
+\def\include{\tracingmacros=1\parseargusing\filenamecatcodes\includezzz}
 \def\includezzz#1{%
   \pushthisfilestack
   \def\thisfile{#1}%
+  \includecheckspace\thisfile
   {%
     \makevalueexpandable  % we want to expand any @value in FILE.
     \turnoffactive        % and allow special characters in the expansion
     \indexnofonts         % Allow `@@' and other weird things in file names.
     \wlog{texinfo.tex: doing @include of #1^^J}%
-    \edef\temp{\noexpand\input #1 }%
+    \edef\temp{\noexpand\input \thisfile }%
     %
     % This trickery is to read FILE outside of a group, in case it makes
     % definitions, etc.
     \expandafter
   }\temp
   \popthisfilestack
+  \def\thisfile{#1}% for @thisfile command
 }
 \def\filenamecatcodes{%
   \catcode`\\=\other
@@ -794,6 +796,21 @@ where each line of input produces a line of output.}
   \catcode`-=\other
   \catcode`\`=\other
   \catcode`\'=\other
+}
+
+% \includecheckspace\FILENAME - if there is a space in the expansion of
+% \FILENAME, wrap the expansion in braces
+\def\includecheckspace#1{%
+  \expandafter\includecheckspacezz\expandafter#1#1 \includecheckspacezz}
+
+\def\includecheckspacezz#1#2 #3\includecheckspacezz{%
+  \def\tmp{#3}%
+  \ifx\tmp\empty
+    % no space in the file name
+  \else
+    % there is a space in the file name
+    \edef#1{{#1}}%
+  \fi
 }
 
 \def\pushthisfilestack{%
