@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 79491 2026-06-27 17:40:15Z karl $
+# $Id: tlmgr.pl 79591 2026-07-05 11:56:20Z preining $
 # Copyright 2008-2026 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
@@ -8,8 +8,8 @@
 
 use strict; use warnings;
 
-my $svnrev = '$Revision: 79491 $';
-my $datrev = '$Date: 2026-06-27 19:40:15 +0200 (Sat, 27 Jun 2026) $';
+my $svnrev = '$Revision: 79591 $';
+my $datrev = '$Date: 2026-07-05 13:56:20 +0200 (Sun, 05 Jul 2026) $';
 my $tlmgrrevision;
 my $tlmgrversion;
 my $prg;
@@ -1765,6 +1765,12 @@ sub action_info {
     init_tlmedia_or_die(1);
     $tlm = $remotetlpdb;
   }
+  # info reports catalogue data (shortdesc, longdesc, cat-* fields), which
+  # is loaded on demand only.
+  $tlm->merge_catalogue_data;
+  # when both local and remote are consulted (default), the local packages
+  # also need their catalogue data merged.
+  $localtlpdb->merge_catalogue_data if !$opts{"only-installed"};
 
   #
   # tlmgr info
@@ -1888,6 +1894,9 @@ sub action_search {
 sub _search_tlpdb {
   my ($tlpdb, $what, $dofile, $dodesc, $inword) = @_;
   my %pkgs;
+  # searching descriptions needs the catalogue data (shortdesc, longdesc,
+  # topics), which is loaded on demand only.
+  $tlpdb->merge_catalogue_data if $dodesc;
   foreach my $pkg ($tlpdb->list_packages) {
     my $tlp = $tlpdb->get_package($pkg);
     
@@ -2854,6 +2863,16 @@ sub action_update {
 
   init_tlmedia_or_die();
   info("$prg update: dry run, no changes will be made\n") if $opts{"dry-run"};
+
+  # The machine-readable update output reports the CTAN version (cat-version)
+  # of the local and remote package in the last two fields. That catalogue
+  # data is loaded on demand only, and only for machine-readable output;
+  # the human-readable update output does not show it, so a plain
+  # "tlmgr update" never pays the cost of loading the catalogue database.
+  if ($::machinereadable) {
+    $localtlpdb->merge_catalogue_data;
+    $remotetlpdb->merge_catalogue_data;
+  }
 
   my @excluded_pkgs = ();
   if ($opts{"exclude"}) {
@@ -10531,7 +10550,28 @@ The run time since start of installations or updates.
 
 The estimated total time.
 
+=item I<tag>
+
+In the case of a virtual database (multiple repositories), the tag of
+the repository providing the package; C<-> otherwise.
+
+=item I<lcatv>
+
+The catalogue (CTAN) version of the installed package, or C<-> if not
+available.
+
+=item I<rcatv>
+
+The catalogue (CTAN) version of the package on the server, or C<-> if not
+available.
+
 =back
+
+The catalogue version fields (I<lcatv> and I<rcatv>) are only populated
+in machine-readable mode, since the catalogue data is loaded on demand;
+a plain C<tlmgr update> does not report them.  The number of fields on
+each line is stable regardless: consumers may rely on there always being
+ten tab-separated fields, with C<-> used for any that are unavailable.
 
 =head2 Machine-readable C<option> output
 
@@ -10654,7 +10694,7 @@ This script and its documentation were written for the TeX Live
 distribution (L<https://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 79491 2026-06-27 17:40:15Z karl $
+$Id: tlmgr.pl 79591 2026-07-05 11:56:20Z preining $
 =cut
 
 # test HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html
