@@ -1,4 +1,3 @@
-# $Id: TLUtils.pm 78652 2026-04-10 16:18:13Z karl $
 # TeXLive::TLUtils.pm - the inevitable utilities for TeX Live.
 # Copyright 2007-2026 Norbert Preining, Reinhard Kotucha
 # This file is licensed under the GNU General Public License version 2
@@ -8,7 +7,7 @@ use strict; use warnings;
 
 package TeXLive::TLUtils;
 
-my $svnrev = '$Revision: 78652 $';
+my $svnrev = '$Revision: 79583 $';
 my $_modulerevision = ($svnrev =~ m/: ([0-9]+) /) ? $1 : "unknown";
 sub module_revision { return $_modulerevision; }
 
@@ -2747,7 +2746,9 @@ sub unpack {
   }
   # make sure that the found uncompressor type is also available
   if (!member($decompressorType, @{$::progs{'working_compressors'}})) {
-    return(0, "unsupported container format $decompressorType");
+    my $plat = platform();
+    return(0, "unsupported container format $decompressorType "
+              . "(platform=$plat)");
   }
 
   # only check the necessary compressor program
@@ -3021,10 +3022,17 @@ sub setup_programs {
       && !TeXLive::TLUtils::member($ENV{'TEXLIVE_DOWNLOADER'},
                                    @{$::progs{'working_downloaders'}})) {
     tlwarn(<<END_DOWNLOADER_BAD);
-Selected download program TEXLIVE_DOWNLOADER=$ENV{'TEXLIVE_DOWNLOADER'}
-is not working!
-Please choose a different downloader or don't set TEXLIVE_DOWNLOADER.
-Detected working downloaders: @{$::progs{'working_downloaders'}}.
+Selected downloader type TEXLIVE_DOWNLOADER=$ENV{'TEXLIVE_DOWNLOADER'}
+  is not working!
+
+Please choose a different downloader type from the list below,
+  or don't set TEXLIVE_DOWNLOADER. It's not possible to
+  set this to an arbitrary executable, but you can use the environment
+  variables TL_DOWNLOAD_PROGRAM and TL_DOWNLOAD_ARGS to specify
+  anything you wish. See:
+    https://tug.org/texlive/doc/tlmgr.html#ENVIRONMENT-VARIABLES
+
+Detected working downloader types: @{$::progs{'working_downloaders'}}.
 END_DOWNLOADER_BAD
     $ok = 0;
   }
@@ -3032,10 +3040,15 @@ END_DOWNLOADER_BAD
       && !TeXLive::TLUtils::member($ENV{'TEXLIVE_COMPRESSOR'},
                                    @{$::progs{'working_compressors'}})) {
     tlwarn(<<END_COMPRESSOR_BAD);
-Selected compression program TEXLIVE_COMPRESSOR=$ENV{'TEXLIVE_COMPRESSOR'}
-is not working!
-Please choose a different compressor or don't set TEXLIVE_COMPRESSOR.
-Detected working compressors: @{$::progs{'working_compressors'}}.
+Selected compressor type TEXLIVE_COMPRESSOR=$ENV{'TEXLIVE_COMPRESSOR'}
+  is not working!
+
+Please choose a different compressor type from the list below,
+  or don't set TEXLIVE_COMPRESSOR. Unfortunately it's not possible to
+  set this to an arbitrary executable. See:
+    https://tug.org/texlive/doc/tlmgr.html#ENVIRONMENT-VARIABLES  
+
+Detected working compressor types: @{$::progs{'working_compressors'}}.
 END_COMPRESSOR_BAD
     $ok = 0;
   }
