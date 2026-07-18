@@ -42,9 +42,9 @@ sub version {
 }
 
 # Read input from the console and look for blocks like
-# \donewithpage\d+
 # \[LOCATION KEY TEXPART
 # \]EXTERN KEY TEXPART
+# \donewithpage\d+
 # and sort them alphabetically by the KEYs.
 #
 # Every KEY contains a single C identifier (variable, type, function, etc.),
@@ -70,7 +70,7 @@ foreach my $line (<STDIN>)
 	    print $line;
 		%mini_index = (); # reset mini-index storage
 	} else { # mini-index entry
-		$line =~ s/\\hbox \{\}\\6\\4\\4\{\}//g; # Fix bug in CTWILL
+		$line =~ s/\\hbox \{\}\\6\\4\\4\{\}//; # Fix bug in CTWILL
 		my (undef,$key) = split / /, $line; # 2nd column is the key
 		$key =~ s/\\//g; # strip internal TeX escape(s)
 		$key =~ m/\w*\{(\w+)\}/; # extract plain key from control seq.
@@ -96,9 +96,8 @@ ctwill-refsort2 - Sort multiple entries in mini-indexes
 
 =head1 SHORT DESCRIPTION
 
-This small Perl script 'ctwill-refsort2' should be applied after 'refsort' if
+This small Perl script 'ctwill-refsort2' should be applied after 'ctwill-refsort' if
 you have multiple variants of an identifier in a single section.
-formatting with the 'proofmac.tex' macros.
 It reads its input from <STDIN> and writes its output to <STDOUT>.
 
 =over
@@ -107,7 +106,7 @@ It reads its input from <STDIN> and writes its output to <STDOUT>.
 
 =item Run TeX on 'input_file'.tex for the first time
 
-=item Invoke "refsort <'input_file'.ref | ctwill-refsort2 >'input_file'.sref"
+=item Invoke "ctwill-refsort <'input_file'.ref | ctwill-refsort2 >'input_file'.sref"
 
 =item Run TeX on 'input_file'.tex for the second time
 
@@ -127,7 +126,7 @@ Example from MMIX (https://github.com/ascherer/mmix, 'local' branch):
 
 =item $ tex mmixal
 
-=item $ refsort < mmixal.ref | ctwill-refsort2 >mmixal.sref
+=item $ ctwill-refsort < mmixal.ref | ctwill-refsort2 >mmixal.sref
 
 =item $ tex mmixal
 
