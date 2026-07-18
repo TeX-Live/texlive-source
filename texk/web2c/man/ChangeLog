@@ -1,3 +1,7 @@
+2026-07-18  Andreas Scherer  <https://ascherer.github.io>
+
+	* ctwill.man: New utility 'ctwill-refsort2' for CTWILL process.
+
 2026-06-20  Karl Berry  <karl@freefriends.org>
 
 	* ctie.man: add analogous references to tie.man, other tweaks.

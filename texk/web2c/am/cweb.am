@@ -6,7 +6,9 @@
 ## You may freely use, modify and/or distribute this file.
 
 bin_PROGRAMS += ctie cweave ctwill ctwill-refsort ctwill-twinx tie
-dist_bin_SCRIPTS = cwebdir/ctwill-proofsort cwebdir/twill-refsort
+dist_bin_SCRIPTS = cwebdir/ctwill-proofsort
+dist_bin_SCRIPTS = cwebdir/ctwill-refsort2
+dist_bin_SCRIPTS = cwebdir/twill-refsort
 EXTRA_DIST += ctiedir tiedir
 NEVER_DIST += ctiedir/ctie.log ctiedir/ctie.trs tiedir/tie.log tiedir/tie.trs
 

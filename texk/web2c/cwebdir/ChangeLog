@@ -1,3 +1,8 @@
+2026-07-18  Andreas Scherer  <https://ascherer.github.io>
+
+	* ctwill-proofsort,
+	* ctwill-refsort2: New ultility for CTWILL process.
+
 2026-04-04  Andreas Scherer  <https://ascherer.github.io>
 
 	* cwebman-w2c.ch: How to make underline '_' searchable.

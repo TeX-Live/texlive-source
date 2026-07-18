@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# Public domain.  Originally written by Andreas Scherer, 2023.
+# Public domain.  Originally written by Andreas Scherer, 2026.
 
 use strict;
 use warnings;
@@ -42,9 +42,9 @@ sub version {
 }
 
 # Read input from the console and look for blocks like
-# \mini
-# [LOCATION KEY TEXPART]*
-# }\FI
+# \donewithpage\d+
+# \[LOCATION KEY TEXPART
+# \]EXTERN KEY TEXPART
 # and sort them alphabetically by the KEYs.
 #
 # Every KEY contains a single C identifier (variable, type, function, etc.),
@@ -53,15 +53,11 @@ sub version {
 # definitions. All internal backslashes are removed from the KEY before it
 # is used in the storage.
 my %mini_index; # storage for index entries of a section
-my $print_index = 0; # do we collect and print a mini-index?
 my $lines_processed = 0;
 
 foreach my $line (<STDIN>)
 {
-	if ("\\mini\n" eq $line) { # start of mini-index
-		$print_index = 1;
-		%mini_index = (); # reset mini-index storage
-	} elsif ("}\\FI\n" eq $line) { # end of mini-index
+	if ($line =~ m/\\donewithpage\d+/) { # end of mini-index
 		foreach my $key ($collator ?  # (I) sort by second column
 			$collator->sort(keys %mini_index) :
 			sort {"\L$a" cmp "\L$b"} keys %mini_index) {
@@ -71,17 +67,18 @@ foreach my $line (<STDIN>)
 				$a_id cmp $b_id || $a_loc cmp $b_loc }
 			@{ $mini_index{$key} };
 		}
-		$print_index = 0;
-	} elsif ($print_index) { # mini-index entry
+	    print $line;
+		%mini_index = (); # reset mini-index storage
+	} else { # mini-index entry
+		$line =~ s/\\hbox \{\}\\6\\4\\4\{\}//g; # Fix bug in CTWILL
 		my (undef,$key) = split / /, $line; # 2nd column is the key
 		$key =~ s/\\//g; # strip internal TeX escape(s)
 		$key =~ m/\w*\{(\w+)\}/; # extract plain key from control seq.
-		$key =~ m/\$(\w+)\$/ unless defined $1; # extract @f TeX key
+		$key =~ m/\$(\w+)/ unless defined $1; # extract @f TeX key
 		push @{ $mini_index{$1} }, $line; # store index entry
 		next; # print later
 	}
 
-	print $line;
 	$lines_processed++;
 }
 
@@ -95,27 +92,28 @@ exit 0;
 
 =head1 NAME
 
-ctwill-proofsort - Sort mini-indexes alphabetically
+ctwill-refsort2 - Sort multiple entries in mini-indexes
 
 =head1 SHORT DESCRIPTION
 
-This small Perl script 'ctwill-proofsort' sorts the mini-indexes for each
-section in the TeX file created by 'ctwill +P', i.e., prior to
-formatting with the 'ctproofmac.tex' macros.
+This small Perl script 'ctwill-refsort2' should be applied after 'refsort' if
+you have multiple variants of an identifier in a single section.
+formatting with the 'proofmac.tex' macros.
 It reads its input from <STDIN> and writes its output to <STDOUT>.
 
 =over
 
 =item Run CTWILL twice on your 'input_file'.w, creating 'input_file'.tex
 
-=item Invoke "( ctwill-proofsort < 'input_file'.tex ) 1<> 'input_file'.tex"
+=item Run TeX on 'input_file'.tex for the first time
 
-=item Run TeX on 'input_file'.tex once
+=item Invoke "refsort <'input_file'.ref | ctwill-refsort2 >'input_file'.sref"
+
+=item Run TeX on 'input_file'.tex for the second time
 
 =back
 
-See also "man ctwill" for more information on how to use the CTWILL system,
-both with or without the '+P' option.
+See also "man ctwill" for more information on how to use the CTWILL system.
 
 =head1 EXAMPLE
 
@@ -123,19 +121,21 @@ Example from MMIX (https://github.com/ascherer/mmix, 'local' branch):
 
 =over
 
-=item $ tie -c mmotype-twill.ch mmotype.{w,ch,tch}
+=item $ tie -c mmixal-twill.ch mmixal.{w,ch,tch}
 
-=item $ ctwill +P -x mmotype mmotype-twill (run this two times)
+=item $ ctwill mmixal mmixal-twill (run this two times)
 
-=item $ ( ctwill-proofsort < mmotype.tex ) 1<> mmotype.tex
+=item $ tex mmixal
 
-=item $ tex mmotype
+=item $ refsort < mmixal.ref | ctwill-refsort2 >mmixal.sref
+
+=item $ tex mmixal
 
 =back
 
 =head1 COPYRIGHT
 
-Public domain.  Originally written by Andreas Scherer, 2023.
+Public domain.  Originally written by Andreas Scherer, 2026.
 
 Contemporary development on https://github.com/ascherer/cwebbin.
 

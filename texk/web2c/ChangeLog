@@ -1,3 +1,7 @@
+2026-07-18  Andreas Scherer  <https://ascherer.github.io>
+
+	* am/cweb.am (dist_bin_SCRIPTS): new script cwebdir/ctwill-refsort2.
+
 2026-01-09  Andreas Scherer  <https://ascherer.github.io>
 
 	* patgen.web: more sorting fixes in the "names of the sections".
