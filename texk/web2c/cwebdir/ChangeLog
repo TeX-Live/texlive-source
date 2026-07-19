@@ -1,6 +1,11 @@
 2026-07-18  Andreas Scherer  <https://ascherer.github.io>
 
 	* ctwill-proofsort,
+	* ctwill-refsort2: Compare internal locations numerically.
+
+2026-07-18  Andreas Scherer  <https://ascherer.github.io>
+
+	* ctwill-proofsort,
 	* ctwill-refsort2: New ultility for CTWILL process.
 
 2026-04-04  Andreas Scherer  <https://ascherer.github.io>

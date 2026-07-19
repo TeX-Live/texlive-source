@@ -41,6 +41,19 @@ sub version {
   return "This is $progname (2026).\n";
 }
 
+## Compare two locations:
+# Internal locations ('\[246') are compared numerically,
+# external locations ('\]{MMIX-ARITH}3') as strings.
+sub compare_location {
+  my ($a_loc,$b_loc) = @_;
+  if ($a_loc =~ m/\\\[/ && $b_loc =~ m/\\\[/) {
+    $a_loc =~ s/\\\[//; $b_loc =~ s/\\\[//;
+    $a_loc <=> $b_loc;
+  } else {
+    $a_loc cmp $b_loc;
+  }
+}
+
 # Read input from the console and look for blocks like
 # \mini
 # [LOCATION KEY TEXPART]*
@@ -68,7 +81,7 @@ foreach my $line (<STDIN>)
 			print sort { # (II) sort by third and first column
 				my ($a_loc,undef,$a_id) = split / /, $a, 3;
 				my ($b_loc,undef,$b_id) = split / /, $b, 3;
-				$a_id cmp $b_id || $a_loc cmp $b_loc }
+				$a_id cmp $b_id || compare_location($a_loc,$b_loc) }
 			@{ $mini_index{$key} };
 		}
 		$print_index = 0;
