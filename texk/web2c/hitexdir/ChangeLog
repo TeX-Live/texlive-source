@@ -1,3 +1,15 @@
+2026-07-21  Martin Ruckert <ruckert@cs.hm.edu>
+
+	* hitex.w Improved handling of UTF8 terminal output and input
+	* hitex.w Improved handling of UTF8/UTF16 file names
+	* hitex.w Shaping of OpenType fonts with harfbuzz
+	* hitex.w Improved handling of accents in OpenType fonts
+	* hitex.w Implementing font features for OpenType fonts;
+	  adding the pseudo features -tlig and -tacc
+	* hitex.w Fixing bugs in OpenType fonts subsets
+	* hitex.w Adding the (experimental) prmitive \ifTeXfont to test
+	  whether a font is a "classic" TeX font instead of an OpenType font 
+
 2026-03-02  Karl Berry  <karl@tug.org>
 
 	* TL'26 release.

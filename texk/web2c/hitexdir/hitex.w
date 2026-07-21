@@ -481,12 +481,13 @@ approaches to the problem of understanding a somewhat complicated system.
 strange behavior that sometimes occurs when \TeX\ is being installed or
 when system wizards are fooling around with \TeX\ without quite knowing
 what they are doing. Such code will not normally be compiled; it is
-delimited by the codewords `$|@t\#\&{ifdef} \.{DEBUG}@>|\ldots|@t\#\&{endif}@>|$', with apologies
-to people who wish to preserve the purity of English.
+delimited by the codewords `$|@t\#\&{ifdef} \.{DEBUG}@>|\ldots|@t\#\&{endif}@>|$',
+with apologies to people who wish to preserve the purity of English.
 
 Similarly, there is some conditional code delimited by
-`$|@t\#\&{ifdef} \.{STAT}@>|\ldots|@t\#\&{endif}@>|$' that is intended for use when statistics are to be
-kept about \TeX's memory usage.  The |@t\#\&{ifdef} \.{STAT}@>| $\ldots$ |@t\#\&{endif}@>| code also
+`$|@t\#\&{ifdef} \.{STAT}@>|\ldots|@t\#\&{endif}@>|$' that is intended
+for use when statistics are to be kept about \TeX's memory usage.
+The |@t\#\&{ifdef} \.{STAT}@>| $\ldots$ |@t\#\&{endif}@>| code also
 implements diagnostic information for \.{\\tracingparagraphs},
 \.{\\tracingpages}, and \.{\\tracingrestores}.
 @^debugging@>
@@ -893,7 +894,7 @@ in \ph. The `\.{/I}' switch suppresses the first |get|.
 @:PASCAL H}{\ph@>
 @^system dependencies@>
 
-@d t_open_in term_in.f=stdin /*open the terminal for text input*/
+@d t_open_in    term_in.f=stdin /*open the terminal for text input*/
 @d t_open_out   term_out.f=stdout /*open the terminal for text output*/
 
 @ Sometimes it is necessary to synchronize the input/output mixture that
@@ -991,7 +992,7 @@ t_open_in;
 if (input_command_line()) return true; /* \TeX\ Live */
 loop@+{@+wake_up_terminal;pascal_write(term_out,"**");update_terminal;
 @.**@>
-  if (!input_ln(&term_in, true))  /*this shouldn't happen*/
+    if (!input_ln_terminal())  /*this shouldn't happen*/
     {@+write_ln(term_out);
     pascal_write(term_out,"! End of file on the terminal... why?");
 @.End of file on the terminal@>
@@ -1218,8 +1219,9 @@ string number.
 
 @p static int s_no(const char *str)
 {@+
-  if (str[0]==0) return empty_string;
-  if (str[1]==0) return str[0];
+  if (str==NULL) return empty_string;
+  else if (str[0]==0) return empty_string;
+  else if (str[1]==0) return str[0];
   str_room(strlen(str));
   while (*str!=0) append_char(*str++);
   return make_string();
@@ -1366,7 +1368,7 @@ case term_only: {@+wterm("%c",s);incr(term_offset);
   } @+break;
 case no_print: do_nothing;@+break;
 case pseudo: if (tally < trick_count) trick_buf[tally%error_line]=s;@+break;
-case new_string: {@+if (pool_ptr < pool_size) append_char(s);
+case new_string: {@+append_utf8(s);
   } @+break; /*we drop characters if the string space is full*/
 default:pascal_write(write_file[selector],"%c", s);
 } @/
@@ -1382,7 +1384,7 @@ assumes that it is always safe to print a visible ASCII character.)
 @^system dependencies@>
 
 @<Basic print...@>=
-static void print(char *s) /* the simple version */
+static void print(const char *s) /* the simple version */
 { @+if (s == NULL) s="???"; /*this can't happen*/
   while (*s!=0) print_char(*s++);@+
 }
@@ -1538,7 +1540,7 @@ print_the_digs(k);
 is now subsumed by |print|. We retain the old name here as a possible aid to
 future software arch\ae ologists.
 
-@d print_ASCII printn
+@d print_ASCII(A) (((A)<0x80)?printn(A):print_utf8(A))
 
 @ Roman numerals are produced by the |print_roman_int| routine.  Readers
 who like puzzles might enjoy trying to figure out how this tricky code
@@ -1591,7 +1593,7 @@ This procedure is never called when |interaction < scroll_mode|.
 @p static void term_input(void) /*gets a line from the terminal*/
 {@+int k; /*index into |buffer|*/
 update_terminal; /*now the user sees the prompt for sure*/
-if (!input_ln(&term_in, true)) fatal_error("End of file on the terminal!");
+if (!input_ln_terminal()) fatal_error("End of file on the terminal!");
 @.End of file on the terminal@>
 term_offset=0; /*the user's line ended with \<\rm return>*/
 decr(selector); /*prepare to echo the input*/
@@ -4307,10 +4309,7 @@ of this line number is the |mode_line| at the level of the
 user's output routine.
 
 A seventh quantity, |eTeX_aux|, is used by the extended features \eTeX.
-In vertical modes it is known as |LR_save| and holds the LR stack when a
-paragraph is interrupted by a displayed formula.  In display math mode
-it is known as |LR_box| and holds a pointer to a prototype box for the
-display.  In math mode it is known as |delim_ptr| and points to the most
+In math mode it is known as |delim_ptr| and points to the most
 recent |left_noad| or |middle_noad| of a |math_left_group|.
 
 In horizontal mode, the |prev_graf| field is used for initial language data.
@@ -5095,7 +5094,7 @@ that will be defined later.
 @d default_skew_char int_par(default_skew_char_code)
 @d end_line_char int_par(end_line_char_code)
 @d new_line_char int_par(new_line_char_code)
-@d language int_par(language_code)
+@d language_no int_par(language_code) /*|language| conflicts with |hb_segment_properties_t|*/
 @d left_hyphen_min int_par(left_hyphen_min_code)
 @d right_hyphen_min int_par(right_hyphen_min_code)
 @d holding_inserts int_par(holding_inserts_code)
@@ -6161,7 +6160,7 @@ the call, since |eq_save| makes the necessary test.
 #ifdef @!STAT
 #define  assign_trace(A, B) if (tracing_assigns > 0) restore_trace(A, B);
 #else
-#define  assign_trace(A, B)
+#define  assign_trace(A, B) ;
 #endif
 
 static void eq_define(pointer @!p, quarterword @!t, halfword @!e)
@@ -6257,7 +6256,7 @@ static void back_input(void);
 static void unsave(void) /*pops the top level off the save stack*/
 {@+
 pointer p; /*position to be restored*/
-quarterword @!l; /*saved level, if in fullword regions of |eqtb|*/
+quarterword @!l=0; /*saved level, if in fullword regions of |eqtb|*/
 halfword @!t; /*saved value of |cur_tok|*/
 bool @!a; /*have we already processed an \.{\\aftergroup} ?*/
 a=false;
@@ -6908,7 +6907,8 @@ if (scanner_status > skipping)
     } @+break;
   case absorbing: {@+print("text");p=def_ref;
     }
-  }  /*there are no other cases*/
+  default: p=null;  /*there are no other cases*/
+  } 
   print_char('?');print_ln();show_token_list(link(p), null, error_line-10);
   }
 }
@@ -8339,15 +8339,15 @@ call is aborted, and the \.{\\par} will be rescanned.
 static void macro_call(void) /*invokes a user-defined control sequence*/
 {@+
 pointer r; /*current node in the macro's token list*/
-pointer @!p; /*current node in parameter token list being built*/
+pointer @!p=null; /*current node in parameter token list being built*/
 pointer @!q; /*new node being put into the token list*/
 pointer @!s; /*backup pointer for parameter matching*/
 pointer @!t; /*cycle pointer for backup recovery*/
 pointer @!u, @!v; /*auxiliary pointers for backup recovery*/
-pointer @!rbrace_ptr; /*one step before the last |right_brace| token*/
+pointer @!rbrace_ptr=null; /*one step before the last |right_brace| token*/
 small_number @!n; /*the number of parameters scanned*/
 halfword @!unbalance; /*unmatched left braces in current parameter*/
-int @!m; /*the number of tokens or groups (usually)*/
+int @!m=0; /*the number of tokens or groups (usually)*/
 pointer @!ref_count; /*start of the token list*/
 small_number @!save_scanner_status; /*|scanner_status| upon entry*/
 pointer @!save_warning_index; /*|warning_index| upon entry*/
@@ -9798,7 +9798,7 @@ int @!c; /*desired type of conversion*/
 small_number cat; /*desired catcode, or 0 for automatic |spacer|/|other_char| selection*/
 small_number @!save_scanner_status; /*|scanner_status| upon entry*/
 pool_pointer @!b; /*base of temporary string*/
-int @!i, @!k, @!l; /*general purpose index*/
+int @!i, @!k=0, @!l=0; /*general purpose index*/
 pool_pointer @!m, @!n; /*general purpose pool pointer*/
 bool @!r; /*general purpose refraction i.e. changing the way*/
 str_number @!s, @!t; /*general purpose; de dicto*/
@@ -10299,7 +10299,7 @@ which is a recursive procedure.
 
 @p static void conditional(void)
 {@+
-bool b; /*is the condition true?*/
+bool b=false; /*is the condition true?*/
 int @!r; /*relation to be evaluated*/
 int @!m, @!n; /*to be tested against the second operand*/
 pointer @!p, @!q; /*for traversing token lists in \.{\\ifx} tests*/
@@ -10606,7 +10606,7 @@ string, instead of assigning an absolute address like |pool_ptr| to them.
 {@+if (c==' ' && !inside_quote) return false;
 else if (c=='"') {@+ if (cur_length==0) quoted_filename=true;
   inside_quote=!inside_quote; return true; }
-else {@+str_room(1);append_char(c); /*contribute |c| to the current string*/
+else {@+append_utf8(c); /*contribute |c| to the current string*/
   if (IS_DIR_SEP(c)) {@+area_delimiter=cur_length;ext_delimiter=0; }
   else if (c=='.') ext_delimiter=cur_length;
   return true;
@@ -10749,10 +10749,10 @@ a general text.
 {@+
 pool_pointer @!j, k; /*index into |str_pool|*/
 int @!old_setting; /*holds |selector| setting*/
-name_in_progress=true;begin_name();
-@<Get the next non-blank non-relax...@>;
+@<Get the next non-blank non-relax non-call...@>;
 if (cur_cmd==left_brace)
   @<Define a general text file name and |goto done|@>@;
+name_in_progress=true;begin_name();  
 loop@+{@+if ((cur_cmd==relax) || (cur_cmd > other_char) || (cur_chr > biggest_char))  /*not a character*/
     {@+back_input();goto done;
     }
@@ -11419,7 +11419,7 @@ as fast as possible under the circumstances.
 @^inner loop@>
 
 @d char_info(A, B) (IS_X_FONT(A)?null_character:font_info[char_base[A]+B].qqqq)
-@d char_width(A, B) (IS_X_FONT(A)?x_char_width(A,B):font_info[width_base[A]+char_info(A,B).b0].sc)
+@d char_width(A, B) (IS_X_FONT(A)?x_char_advance(A,B):font_info[width_base[A]+char_info(A,B).b0].sc)
 @d char_exists(A,B)  (IS_X_FONT(A)?x_char_exists(A,B): char_info(A,B).b0 > min_quarterword)
 @d char_italic(A, B) (IS_X_FONT(A)? x_char_italic(A,B):font_info[italic_base[A]+(char_info(A,B).b2)/4].sc)
 @d height_depth(A) qo(A.b1)
@@ -11516,7 +11516,6 @@ static void read_extended_font( internal_font_number g,str_number t,
   str_number @!nom, str_number @!aire,
   scaled @!s, char * path) /*input a font file*/
 { @<load an extended font@>@;
-  @<Trace the new extended font@>@;
 }
 
 static void read_predefined_font(internal_font_number g)
@@ -11933,7 +11932,7 @@ if (tracing_lost_chars > 0)
   {@+begin_diagnostic();
   print_nl("Missing character: There is no ");
 @.Missing character@>
-  print_utf8(c);print(" in font ");
+  print_ASCII(c);print(" ("); print_hex(c);print(") in font ");
   slow_print(font_name[f]);print_char('!');end_diagnostic(false);
   }
  tracing_online=old_setting;
@@ -11941,7 +11940,7 @@ if (tracing_lost_chars > 0)
 }
 
 @ Here is a function that returns a pointer to a character node for a
-given character in a given font. If that character doesn't exist,
+given character in a given font. If that character does't exist,
 |null| is returned instead.
 
 @p static pointer new_character(internal_font_number @!f, uint32_t @!c)
@@ -11956,259 +11955,32 @@ char_warning(f, c);
 return null;
 }
 
-@* Device-independent file format.
-The most important output produced by a run of \TeX\ is the ``device
-independent'' (\.{DVI}) file that specifies where characters and rules
-are to appear on printed pages. The form of these files was designed by
-David R. Fuchs in 1979. Almost any reasonable typesetting device can be
-@^Fuchs, David Raymond@>
-@:DVI\_files}{\.{DVI} files@>
-driven by a program that takes \.{DVI} files as input, and dozens of such
-\.{DVI}-to-whatever programs have been written. Thus, it is possible to
-print the output of \TeX\ on many different kinds of equipment, using \TeX\
-as a device-independent ``front end.''
-
-A \.{DVI} file is a stream of 8-bit bytes, which may be regarded as a
-series of commands in a machine-like language. The first byte of each command
-is the operation code, and this code is followed by zero or more bytes
-that provide parameters to the command. The parameters themselves may consist
-of several consecutive bytes; for example, the `|set_rule|' command has two
-parameters, each of which is four bytes long. Parameters are usually
-regarded as nonnegative integers; but four-byte-long parameters,
-and shorter parameters that denote distances, can be
-either positive or negative. Such parameters are given in two's complement
-notation. For example, a two-byte-long distance parameter has a value between
-$-2^{15}$ and $2^{15}-1$. As in \.{TFM} files, numbers that occupy
-more than one byte position appear in BigEndian order.
-
-A \.{DVI} file consists of a ``preamble,'' followed by a sequence of one
-or more ``pages,'' followed by a ``postamble.'' The preamble is simply a
-|pre| command, with its parameters that define the dimensions used in the
-file; this must come first.  Each ``page'' consists of a |bop| command,
-followed by any number of other commands that tell where characters are to
-be placed on a physical page, followed by an |eop| command. The pages
-appear in the order that \TeX\ generated them. If we ignore |nop| commands
-and \\{fnt\_def} commands (which are allowed between any two commands in
-the file), each |eop| command is immediately followed by a |bop| command,
-or by a |post| command; in the latter case, there are no more pages in the
-file, and the remaining bytes form the postamble.  Further details about
-the postamble will be explained later.
-
-Some parameters in \.{DVI} commands are ``pointers.'' These are four-byte
-quantities that give the location number of some other byte in the file;
-the first byte is number~0, then comes number~1, and so on. For example,
-one of the parameters of a |bop| command points to the previous |bop|;
-this makes it feasible to read the pages in backwards order, in case the
-results are being directed to a device that stacks its output face up.
-Suppose the preamble of a \.{DVI} file occupies bytes 0 to 99. Now if the
-first page occupies bytes 100 to 999, say, and if the second
-page occupies bytes 1000 to 1999, then the |bop| that starts in byte 1000
-points to 100 and the |bop| that starts in byte 2000 points to 1000. (The
-very first |bop|, i.e., the one starting in byte 100, has a pointer of~$-1$.)
-
-@ The preamble contains basic information about the file as a whole. As
-stated above, there are six parameters:
-$$\hbox{|@!i[1]| |@!num[4]| |@!den[4]| |@!mag[4]| |@!k[1]| |@!x[k]|.}$$
-The |i| byte identifies \.{DVI} format; currently this byte is always set
-to~2. (The value |i==3| is currently used for an extended format that
-allows a mixture of right-to-left and left-to-right typesetting.
-Some day we will set |i==4|, when \.{DVI} format makes another
-incompatible change---perhaps in the year 2048.)
-
-The next two parameters, |num| and |den|, are positive integers that define
-the units of measurement; they are the numerator and denominator of a
-fraction by which all dimensions in the \.{DVI} file could be multiplied
-in order to get lengths in units of $10^{-7}$ meters. Since $\rm 7227{pt} =
-254{cm}$, and since \TeX\ works with scaled points where there are $2^{16}$
-sp in a point, \TeX\ sets
-$|num|/|den|=(254\cdot10^5)/(7227\cdot2^{16})=25400000/473628672$.
-@^sp@>
-
-The |mag| parameter is what \TeX\ calls \.{\\mag}, i.e., 1000 times the
-desired magnification. The actual fraction by which dimensions are
-multiplied is therefore $|mag|\cdot|num|/1000|den|$. Note that if a \TeX\
-source document does not call for any `\.{true}' dimensions, and if you
-change it only by specifying a different \.{\\mag} setting, the \.{DVI}
-file that \TeX\ creates will be completely unchanged except for the value
-of |mag| in the preamble and postamble. (Fancy \.{DVI}-reading programs allow
-users to override the |mag|~setting when a \.{DVI} file is being printed.)
-
-Finally, |k| and |x| allow the \.{DVI} writer to include a comment, which is not
-interpreted further. The length of comment |x| is |k|, where |0 <= k < 256|.
-
-@d id_byte 2 /*identifies the kind of \.{DVI} files described here*/
-
-@ Font definitions for a given font number |k| contain further parameters
-$$\hbox{|c[4]| |s[4]| |d[4]| |a[1]| |l[1]| |n[a+l]|.}$$
-The four-byte value |c| is the check sum that \TeX\ found in the \.{TFM}
-file for this font; |c| should match the check sum of the font found by
-programs that read this \.{DVI} file.
-@^check sum@>
-
-Parameter |s| contains a fixed-point scale factor that is applied to
-the character widths in font |k|; font dimensions in \.{TFM} files and
-other font files are relative to this quantity, which is called the
-``at size'' elsewhere in this documentation. The value of |s| is
-always positive and less than $2^{27}$. It is given in the same units
-as the other \.{DVI} dimensions, i.e., in sp when \TeX82 has made the
-file.  Parameter |d| is similar to |s|; it is the ``design size,'' and
-(like~|s|) it is given in \.{DVI} units. Thus, font |k| is to be used
-at $|mag|\cdot s/1000d$ times its normal size.
-
-The remaining part of a font definition gives the external name of the font,
-which is an ASCII string of length |a+l|. The number |a| is the length
-of the ``area'' or directory, and |l| is the length of the font name itself;
-the standard local system font area is supposed to be used when |a==0|.
-The |n| field contains the area in its first |a| bytes.
-
-Font definitions must appear before the first use of a particular font number.
-Once font |k| is defined, it must not be defined again; however, we
-shall see below that font definitions appear in the postamble as well as
-in the pages, so in this sense each font number is defined exactly twice,
-if at all. Like |nop| commands, font definitions can
-appear before the first |bop|, or between an |eop| and a |bop|.
-
-@ Sometimes it is desirable to make horizontal or vertical rules line up
-precisely with certain features in characters of a font. It is possible to
-guarantee the correct matching between \.{DVI} output and the characters
-generated by \MF\ by adhering to the following principles: (1)~The \MF\
-characters should be positioned so that a bottom edge or left edge that is
-supposed to line up with the bottom or left edge of a rule appears at the
-reference point, i.e., in row~0 and column~0 of the \MF\ raster. This
-ensures that the position of the rule will not be rounded differently when
-the pixel size is not a perfect multiple of the units of measurement in
-the \.{DVI} file. (2)~A typeset rule of height $a>0$ and width $b>0$
-should be equivalent to a \MF-generated character having black pixels in
-precisely those raster positions whose \MF\ coordinates satisfy
-|0 <= x < @t$\alpha$@>b| and |0 <= y < @t$\alpha$@>a|, where $\alpha$ is the number
-of pixels per \.{DVI} unit.
-@:METAFONT}{\MF@>
-@^alignment of rules with characters@>
-@^rules aligning with characters@>
-
-@ The last page in a \.{DVI} file is followed by `|post|'; this command
-introduces the postamble, which summarizes important facts that \TeX\ has
-accumulated about the file, making it possible to print subsets of the data
-with reasonable efficiency. The postamble has the form
-$$\vbox{\halign{\hbox{#\hfil}\cr
-  |post| |p[4]| |num[4]| |den[4]| |mag[4]| |l[4]| |u[4]| |s[2]| |t[2]|\cr
-  $\langle\,$font definitions$\,\rangle$\cr
-  |post_post| |q[4]| |i[1]| 223's$[{\G}4]$\cr}}$$
-Here |p| is a pointer to the final |bop| in the file. The next three
-parameters, |num|, |den|, and |mag|, are duplicates of the quantities that
-appeared in the preamble.
-
-Parameters |l| and |u| give respectively the height-plus-depth of the tallest
-page and the width of the widest page, in the same units as other dimensions
-of the file. These numbers might be used by a \.{DVI}-reading program to
-position individual ``pages'' on large sheets of film or paper; however,
-the standard convention for output on normal size paper is to position each
-page so that the upper left-hand corner is exactly one inch from the left
-and the top. Experience has shown that it is unwise to design \.{DVI}-to-printer
-software that attempts cleverly to center the output; a fixed position of
-the upper left corner is easiest for users to understand and to work with.
-Therefore |l| and~|u| are often ignored.
-
-Parameter |s| is the maximum stack depth (i.e., the largest excess of
-|push| commands over |pop| commands) needed to process this file. Then
-comes |t|, the total number of pages (|bop| commands) present.
-
-The postamble continues with font definitions, which are any number of
-\\{fnt\_def} commands as described above, possibly interspersed with |nop|
-commands. Each font number that is used in the \.{DVI} file must be defined
-exactly twice: Once before it is first selected by a \\{fnt} command, and once
-in the postamble.
-
-@ The last part of the postamble, following the |post_post| byte that
-signifies the end of the font definitions, contains |q|, a pointer to the
-|post| command that started the postamble.  An identification byte, |i|,
-comes next; this currently equals~2, as in the preamble.
-
-The |i| byte is followed by four or more bytes that are all equal to
-the decimal number 223 (i.e., 0337 in octal). \TeX\ puts out four to seven of
-these trailing bytes, until the total length of the file is a multiple of
-four bytes, since this works out best on machines that pack four bytes per
-word; but any number of 223's is allowed, as long as there are at least four
-of them. In effect, 223 is a sort of signature that is added at the very end.
-@^Fuchs, David Raymond@>
-
-This curious way to finish off a \.{DVI} file makes it feasible for
-\.{DVI}-reading programs to find the postamble first, on most computers,
-even though \TeX\ wants to write the postamble last. Most operating
-systems permit random access to individual words or bytes of a file, so
-the \.{DVI} reader can start at the end and skip backwards over the 223's
-until finding the identification byte. Then it can back up four bytes, read
-|q|, and move to byte |q| of the file. This byte should, of course,
-contain the value 248 (|post|); now the postamble can be read, so the
-\.{DVI} reader can discover all the information needed for typesetting the
-pages. Note that it is also possible to skip through the \.{DVI} file at
-reasonably high speed to locate a particular page, if that proves
-desirable. This saves a lot of time, since \.{DVI} files used in production
-jobs tend to be large.
-
-Unfortunately, however, standard \PASCAL\ does not include the ability to
-@^system dependencies@>
-access a random position in a file, or even to determine the length of a file.
-Almost all systems nowadays provide the necessary capabilities, so \.{DVI}
-format has been designed to work most efficiently with modern operating systems.
-But if \.{DVI} files have to be processed under the restrictions of standard
-\PASCAL, one can simply read them from front to back, since the necessary
-header information is present in the preamble and in the font definitions.
-(The |l| and |u| and |s| and |t| parameters, which appear only in the
-postamble, are ``frills'' that are handy but not absolutely necessary.)
 
 @* Shipping pages out.
-After considering \TeX's eyes and stomach, we come now to the bowels.
-@^bowels@>
-
-The |ship_out| procedure is given a pointer to a box; its mission is
-to describe that box in \.{DVI} form, outputting a ``page'' to |dvi_file|.
-The \.{DVI} coordinates $(h,v)=(0,0)$ should correspond to the upper left
-corner of the box being shipped.
+The |ship_out| procedure is given a pointer to a box.
+Instead of producing a page of output, its mission in \HiTeX\ is
+to produce all the side effects that a normal \TeX\ engine
+postpones until the output routine is activated.
 
 Since boxes can be inside of boxes inside of boxes, the main work of
-|ship_out| is done by two mutually recursive routines, |hlist_out|
-and |vlist_out|, which traverse the hlists and vlists inside of horizontal
+|ship_out| is done by a recursive routine, |execute_output|,
+which traverse the hlists and vlists inside of horizontal
 and vertical boxes.
 
-As individual pages are being processed, we need to accumulate
-information about the entire set of pages, since such statistics must be
-reported in the postamble. The global variables |total_pages|, |max_v|,
-|max_h|, |max_push|, and |last_bop| are used to record this information.
-
 The variable |doing_leaders| is |true| while leaders are being output.
-The variable |dead_cycles| contains the number of times an output routine
-has been initiated since the last |ship_out|.
+The variable |dead_cycles| usually contains the number zero.
+It has been retained in \HiTeX\ because the primitives
+to set and retrieve its value are still present in \HiTeX\ to
+enhance \HiTeX's compatibility with other engines.
 
-A few additional global variables are also defined here for use in
-|vlist_out| and |hlist_out|. They could have been local variables, but
-that would waste stack space when boxes are deeply nested, since the
-values of these variables are not needed during recursive calls.
-@^recursion@>
 
 @<Glob...@>=
-static int @!total_pages; /*the number of pages that have been shipped out*/
-static scaled @!max_v; /*maximum height-plus-depth of pages shipped so far*/
-static scaled @!max_h; /*maximum width of pages shipped so far*/
-static int @!max_push; /*deepest nesting of |push| commands encountered so far*/
-static int @!last_bop; /*location of previous |bop| in the \.{DVI} output*/
-static int @!dead_cycles; /*recent outputs that didn't ship anything out*/
-static bool @!doing_leaders; /*are we inside a leader box?*/
+static int @!dead_cycles=0; /*recent outputs that didn't ship anything out*/
+static bool @!doing_leaders=0; /*are we inside a leader box?*/
 
-
-@ @<Set init...@>=
-total_pages=0;max_v=0;max_h=0;max_push=0;last_bop=-1;
-doing_leaders=false;dead_cycles=0;
-
-
-
-@ @p @t\4@>@<Declare procedures needed in |hlist_out|, |vlist_out|@>@t@>@/
-
-
-@ The |hlist_out| and |vlist_out| procedures are now complete, so we are
-ready for the |ship_out| routine that gets them started in the first place.
-
-@p static void ship_out(pointer @!p) /*output the box |p|*/
+@ @p
+@t\4@>@<Declare procedures needed in |ship_out|@>@t@>@/
+static void ship_out(pointer @!p) /*output the box |p|*/
 {@+
 execute_output(p);
 flush_node_list(p);
@@ -12331,10 +12103,28 @@ total_stretch[fill]=0;total_shrink[fill]=0;
 total_stretch[filll]=0;total_shrink[filll]=0
 
 
+@ The following code gets more complicated because ligatures of extended fonts
+contain glyph identifiers insted of character codes.
+
+@<Incorporate a ligature into an hbox@>=
+f=font(lig_char(p));
+if (IS_X_FONT(f))
+{  scaled ph, pd;
+   int gid=character(lig_char(p));
+   x+=x_glyph_advance(f,gid);
+   x_glyph_height_depth(f,gid,&ph,&pd);
+   if (ph>h) h=ph;
+   if (pd>d) d=pd;
+}
+else
+@<Make node |p| look like a |char_node| and |goto reswitch|@>@;
+
+
 @ @<Make node |p| look like a |char_node| and |goto reswitch|@>=
 {@+mem[lig_trick]=mem[lig_char(p)];link(lig_trick)=link(p);
 p=lig_trick;goto reswitch;
 }
+
 
 @ The code here implicitly uses the fact that running dimensions are
 indicated by |null_flag|, which will be ignored in the calculations
@@ -12358,7 +12148,7 @@ if (IS_X_FONT(f))
 { hb_codepoint_t glyph;
   if (x_glyph(f,character(p),&glyph))
   { scaled ph, pd;
-    x+=x_glyph_width(f,glyph);
+    x+=x_glyph_advance(f,glyph);
     x_glyph_height_depth(f,glyph,&ph,&pd);
     if (ph>h) h=ph;
     if (pd>d) d=pd;
@@ -12885,7 +12675,7 @@ static void print_subsidiary_data(pointer @!p, UTF8_code @!c)
 {@+if (cur_length >= depth_threshold)
   {@+if (math_type(p)!=empty) print(" []");
   }
-else{@+append_char(c); /*include |c| in the recursion history*/
+else{@+append_utf8(c); /*include |c| in the recursion history*/
   temp_ptr=p; /*prepare for |show_info| if recursion is needed*/
   switch (math_type(p)) {
   case math_char: {@+print_ln();print_current_string();print_fam_and_char(p);
@@ -13149,7 +12939,7 @@ static pointer var_delimiter(pointer @!d, small_number @!s, scaled @!v)
 {@+
 pointer b; /*the box that will be constructed*/
 internal_font_number @!f, @!g; /*best-so-far and tentative font codes*/
-int @!c, @!x, @!y; /*best-so-far and tentative character codes*/
+int @!c=0, @!x, @!y; /*best-so-far and tentative character codes*/
 int @!m, @!n; /*the number of extensible pieces*/
 scaled @!u; /*height-plus-depth of a tentative character*/
 scaled @!w; /*largest height-plus-depth so far*/
@@ -13222,7 +13012,7 @@ if (IS_X_FONT(f))
 { hb_codepoint_t glyph;
   if (x_glyph(f,c,&glyph))
   { scaled ph, pd;
-    width(b)=x_glyph_width(f,glyph)+x_glyph_italic(f,glyph);
+    width(b)=x_glyph_advance(f,glyph)+x_glyph_italic(f,glyph);
     x_glyph_height_depth(f,glyph,&ph,&pd);
     height(b)=ph;
     depth(b)=pd;
@@ -13541,7 +13331,7 @@ pointer @!q; /*runs through the mlist*/
 pointer @!r; /*the most recent noad preceding |q|*/
 small_number @!r_type; /*the |type| of noad |r|, or |op_noad| if |r==null|*/
 small_number @!t; /*the effective |type| of noad |q| during the second pass*/
-pointer @!p, @!x, @!y, @!z; /*temporary registers for list construction*/
+pointer @!p=null, @!x, @!y, @!z; /*temporary registers for list construction*/
 int @!pen; /*a penalty to be inserted*/
 small_number @!s; /*the size of a noad to be deleted*/
 scaled @!max_h, @!max_d; /*maximum height and depth of the list translated so far*/
@@ -15699,7 +15489,7 @@ end: ;
 }
 
 @ @<Other local variables for |try_break|@>=
-pointer @!prev_prev_r; /*a step behind |prev_r|, if |type(prev_r)==delta_node|*/
+pointer @!prev_prev_r=null; /*a step behind |prev_r|, if |type(prev_r)==delta_node|*/
 pointer @!s; /*runs through nodes ahead of |cur_p|*/
 pointer @!q; /*points to a new node being created*/
 pointer @!v; /*points to a glue specification or a node ahead of |cur_p|*/
@@ -15707,7 +15497,7 @@ int @!t; /*node count, if |cur_p| is a discretionary node*/
 internal_font_number @!f; /*used in character width calculation*/
 halfword @!l; /*line number of current active node*/
 bool @!node_r_stays_active; /*should node |r| remain in the active list?*/
-scaled @!line_width; /*the current line will be justified to this width*/
+scaled @!line_width=0; /*the current line will be justified to this width*/
 int @!fit_class; /*possible fitness class of test line*/
 halfword @!b; /*badness of test line*/
 int @!d; /*demerits of test line*/
@@ -16886,16 +16676,16 @@ nodes $p_{a-1}$ and~$p_b$ in the description above are placed into variables
 |ha| and |hb|; and the font number is placed into |hf|.
 
 @<Glob...@>=
-static int32_t @!hc[max_hyph_length+4]; /*word to be hyphenated*/
+static uint32_t @!hc[max_hyph_length+4]; /*word to be hyphenated*/
 static int @!hn; /*the number of positions occupied in |hc|*/
 static pointer @!ha, @!hb; /*nodes |ha dotdot hb| should be replaced by the hyphenated result*/
 static internal_font_number @!hf; /*font number of the letters in |hc|*/
-static int32_t @!hu[max_hyph_length+2]; /*like |hc|, before conversion to lowercase*/
-static int @!hyf_char; /*hyphen character of the relevant font*/
+static uint32_t @!hu[max_hyph_length+2]; /*like |hc|, before conversion to lowercase*/
+static uint32_t @!hyf_char; /*hyphen character of the relevant font*/
 static int @!cur_lang, @!init_cur_lang; /*current hyphenation table of interest*/
 static int @!l_hyf, @!r_hyf, @!init_l_hyf, @!init_r_hyf; /*limits on fragment sizes*/
-static halfword @!hyf_bchar; /*boundary character after $c_n$*/
-static int @!max_hyph_char; /*largest character occuring in a pattern*/
+static uint32_t @!hyf_bchar; /*boundary character after $c_n$*/
+static uint32_t @!max_hyph_char; /*largest character occuring in a pattern*/
 
 @ We set a limit on the maximum character code that might occur in a pattern.
 This is necessary, since the table compression uses characters as indices
@@ -17214,8 +17004,8 @@ static pointer @!lig_stack; /*unfinished business to the right of the cursor*/
 static bool @!ligature_present; /*should a ligature node be made for |cur_l|?*/
 static bool @!lft_hit, @!rt_hit; /*did we hit a ligature with a boundary character?*/
 
-@ @d append_charnode_to_t(A) {@+link(t)=get_avail();t=link(t);
-    font(t)=hf;character(t)=A;
+@ @d append_charnode_to_t(A,B) {@+link(t)=get_avail();t=link(t);
+    font(t)=A;character(t)=B;
     }
 @d set_cur_r {@+if (j < n) cur_r=qi(hu[j+1]);@+else cur_r=bchar;
     if (odd(hyf[j])) cur_rh=hchar;@+else cur_rh=non_char;
@@ -17227,10 +17017,10 @@ if (j==0)
   {@+ligature_present=init_lig;p=init_list;
   if (ligature_present) lft_hit=init_lft;
   while (p > null)
-    {@+append_charnode_to_t(character(p));p=link(p);
+    {@+append_charnode_to_t(hf,character(p));p=link(p);
     }
   }
-else if (cur_l < non_char) append_charnode_to_t(cur_l);
+else if (cur_l < non_char) append_charnode_to_t(hf,cur_l);
 lig_stack=null;set_cur_r
 
 @ We may want to look at the lig/kern program twice, once for a hyphen
@@ -17326,7 +17116,7 @@ case qi(7): case qi(11): {@+wrap_lig(false); /*\.{\@@=:\@@>}, \.{\@@=:\@@>>}*/
 default:{@+cur_l=rem_byte(q);ligature_present=true; /*\.{=:}*/
   if (lig_stack > null) pop_lig_stack@;
   else if (j==n) goto done;
-  else{@+append_charnode_to_t(cur_r);incr(j);set_cur_r;
+  else{@+append_charnode_to_t(hf,cur_r);incr(j);set_cur_r;
     }
   }
 }
@@ -17346,7 +17136,7 @@ we need a few new local variables:
 @<Local variables for hyph...@>=
 pointer @!major_tail, @!minor_tail; /*the end of lists in the main and
   discretionary branches being reconstructed*/
-uint32_t @!c; /*character temporarily replaced by a hyphen*/
+uint32_t @!c=0; /*character temporarily replaced by a hyphen*/
 int @!c_loc; /*where that character came from*/
 int @!r_count; /*replacement count for discretionary*/
 pointer @!hyf_node; /*the hyphen, if it exists*/
@@ -17354,6 +17144,9 @@ pointer @!hyf_node; /*the hyphen, if it exists*/
 @ When the following code is performed, |hyf[0]| and |hyf[hn]| will be zero.
 
 @<Reconstitute nodes for the hyphenated word...@>=
+if (IS_X_FONT(hf))
+  @<Reconstitute nodes using harfbuzz@>@;  
+else
 @/do@+{l=j;j=reconstitute(j, hn, bchar, qi(hyf_char))+1;
 if (hyphen_passed==0)
   {@+link(s)=link(hold_head);
@@ -17647,9 +17440,9 @@ minds, it's a good time to deal with the routine that adds new entries to it.
 When \TeX\ has scanned `\.{\\hyphenation}', it calls on a procedure named
 |new_hyph_exceptions| to do the right thing.
 
-@d set_cur_lang if (language <= 0) cur_lang=0;
-  else if (language > max_language) cur_lang=0;
-  else cur_lang=language
+@d set_cur_lang if (language_no <= 0) cur_lang=0;
+  else if (language_no > max_language) cur_lang=0;
+  else cur_lang=language_no
 
 @p static void new_hyph_exceptions(void) /*enters new exceptions*/
 {@+
@@ -17725,7 +17518,7 @@ else{@+set_lc_code(cur_chr);
 {@+incr(n);hc[n]=cur_lang;str_room(n);h=0;
 for (j=1; j<=n; j++)
   {@+h=(h+h+hc[j])%hyph_size;
-  append_char(hc[j]);
+  append_utf8(hc[j]);
   }
 s=make_string();
 @<Insert the \(p)pair |(s,p)| into the exception table@>;
@@ -18313,7 +18106,7 @@ for each node in the list.
 @p static pointer prune_page_top(pointer @!p, bool @!s)
    /*adjust top after page break*/
 {@+pointer prev_p; /*lags one step behind |p|*/
-pointer @!q, @!r; /*temporary variables for list manipulation*/
+pointer @!q, @!r=null; /*temporary variables for list manipulation*/
 prev_p=temp_head;link(temp_head)=p;
 while (p!=null)
   switch (type(p)) {
@@ -18368,7 +18161,7 @@ pointer @!q, @!r; /*glue specifications*/
 int @!pi; /*penalty value*/
 int @!b; /*badness at a trial breakpoint*/
 int @!least_cost; /*the smallest badness plus penalties found so far*/
-pointer @!best_place; /*the most recent break that leads to |least_cost|*/
+pointer @!best_place=null; /*the most recent break that leads to |least_cost|*/
 scaled @!prev_dp; /*depth of previous box in the list*/
 small_number @!t; /*|type| of the node following a kern*/
 prev_p=p; /*an initial glue node is not a legal breakpoint*/
@@ -19082,7 +18875,7 @@ are inside the individual sections.
 @<Append character |cur_chr|...@>=
 adjust_space_factor;@/
 main_f=cur_font;
-if (mode > 0) if (language!=clang) fix_language();
+if (mode > 0) if (language_no!=clang) fix_language();
 if (IS_X_FONT(main_f))
  @<Append characters from an extended font; |goto reswitch| when done@>@;
 bchar=font_bchar[main_f];false_bchar=font_false_bchar[main_f];
@@ -20504,29 +20297,44 @@ absent from the font, we will simply use the other, without shifting.
 static void make_accent(void)
 {@+double s, @!t; /*amount of slant*/
 pointer @!p, @!q, @!r; /*character, box, and kern nodes*/
-internal_font_number @!f; /*relevant font*/
-scaled @!a, @!h, @!x, @!w, @!delta; /*heights and widths, as explained above*/
-scan_char_num();f=cur_font;p=new_character(f, cur_val);
+internal_font_number @!af, @!bf; /*relevant fonts*/
+uint32_t bchr, achr;
+scaled @!a, @!aa, @!ah, @!ad, @!h, @!d, @!x, @!w, @!delta; /*heights and widths, as explained above*/
+scan_char_num();af=cur_font; 
+if(IS_X_FONT(af) && (feature_bits[af]&tacc_bit))
+  @<Translate \TeX\ codes of accents to UTF codes@>@;
+achr=cur_val;
+do_assignments();@/
+@<Get the base character@>;
+if (bf!=null_font)
+{ @<Try to create a composite UTF codepoint and return@>@;
+  q=new_character(bf,bchr);
+}
+p=new_character(af, achr);
 if (p!=null)
-  {@+x=x_height(f);s=slant(f)/float_constant(65536);
+  {@+x=x_height(af);s=slant(af)/float_constant(65536);
 @^real division@>
-  a=char_width(f, character(p));@/
-  do_assignments();@/
-  @<Create a character node |q| for the next character, but set |q:=null|
-if problems arise@>;
+  if (IS_X_FONT(af))
+     @<Compute the advance |a| or |aa|, height |ah|, and depth |ad| for the accent@>@;
+  else   
+    a=char_width(af, character(p));
   if (q!=null) @<Append the accent with appropriate kerns, then set |p:=q|@>;
   link(tail)=p;tail=p;space_factor=1000;
   }
 }
 
-@ @<Create a character node |q| for the next...@>=
-q=null;f=cur_font;
+@ @<Get the base character@>=
+bf=cur_font;
 if ((cur_cmd==letter)||(cur_cmd==other_char)||(cur_cmd==char_given))
-  q=new_character(f, cur_chr);
-else if (cur_cmd==char_num)
-  {@+scan_char_num();q=new_character(f, cur_val);
+  { bchr=cur_chr;
   }
-else back_input()
+else if (cur_cmd==char_num)
+  {@+scan_char_num(); bchr=cur_val;
+  }
+else
+  { back_input();
+    bf=null_font;
+  }
 
 @ The kern nodes appended here must be distinguished from other kerns, lest
 they be wiped away by the hyphenation algorithm or by a previous line break.
@@ -20536,24 +20344,26 @@ their sum is machine-independent; the net effect is machine-independent,
 because the user cannot remove these nodes nor access them via \.{\\lastkern}.
 
 @<Append the accent with appropriate kerns...@>=
-{@+t=slant(f)/float_constant(65536);
+{@+t=slant(bf)/float_constant(65536);
 @^real division@>
-if (IS_X_FONT(f))
-{ hb_codepoint_t glyph;
-  if (x_glyph(f,character(q),&glyph))
-  { scaled dummy;
-    w=x_glyph_width(f,glyph);
-    x_glyph_height_depth(f,glyph,&h,&dummy);
-  }
-  else
-    w=h=0;
-}
+if (IS_X_FONT(bf))
+  @<Compute the advance |w|, height |h|, and depth |d| for the base character@>@;
 else
-{  w=char_width(f, character(q));h=char_height(f,  character(q));}
-if (h!=x)  /*the accent must be shifted up or down*/
+{ w=char_width(bf, bchr);h=char_height(bf,  bchr);
+}
+if (IS_X_FONT(af) && a==0)
+@<Shift the accent to the proper height if necessary and compute the
+vertical displacement |delta|@>@;
+else
+{ if (abs(h-x)>x/20)  /*the accent must be shifted up or down*/
   {@+p=hpack(p, natural);shift_amount(p)=x-h;
   }
-delta=round((w-a)/float_constant(2)+h*t-x*s);
+  delta=round((w-a)/float_constant(2)+h*t-x*s);
+}
+#if 0
+fprintf(stderr,"%c: ah=%d ad=%d h=%d x=%d h-x>x/20=%d d=%d w=%d a=%d aa=%d t=%f s=%f delta=%d\n",character(q),ah, ad,
+  h,x,abs(h-x)>x/20,d,w,a, aa,t,s, delta);
+#endif
 @^real multiplication@>
 @^real addition@>
 r=new_kern(delta);subtype(r)=acc_kern;link(tail)=r;link(r)=p;
@@ -22083,10 +21893,10 @@ case internal_register: case advance:
 @<Declare subprocedures for |prefixed_command|@>=
 static void do_register_command(small_number @!a)
 {@+
-pointer l, @!q, @!r, @!s; /*for list manipulation*/
+pointer l=null, @!q, @!r, @!s=null; /*for list manipulation*/
 int @!p; /*type of register involved*/
 bool @!e; /*does |l| refer to a sparse array element?*/
-int @!w; /*integer or dimen value of |l|*/
+int @!w=0; /*integer or dimen value of |l|*/
 q=cur_cmd;
 e=false; /*just in case, will be set |true| for sparse array elements*/
 @<Compute the register location |l| and its type |p|; but |return| if invalid@>;
@@ -22425,12 +22235,18 @@ else
       @<Apologize for not loading the font, |goto done|@>;
     font_ptr++;
     f=font_ptr;
-    font_name[f]=nom;
-    read_extended_font(f,t, cur_name, cur_area, s, path);
     @<Initialize the font tables for the extended font |f|@>@;
+    read_extended_font(f,t, cur_name, cur_area, s, path);
+    @<get the extended fonts parameters@>;
+    @<Trace the new extended font@>@;
   }
   else
   { done:
+    start_font_error_message;
+    print(" not found.");
+    help2("I wasn't able to find the necessary font file.",
+          "You should check if the file exists or the name was misspelled.");
+    error();	  
     f=null_font;
   }
 }
@@ -24706,7 +24522,7 @@ goto not_found
 that actually send out the requested data. Let's do \.{\\special} first
 (it's easier).
 
-@<Declare procedures needed in |hlist_out|, |vlist_out|@>=
+@<Declare procedures needed in |ship_out|@>=
 static void special_out(pointer @!p)
 {@+pointer @!q, @!r; /*temporary variables for list manipulation*/
 int @!old_mode; /*saved |mode|*/
@@ -24731,7 +24547,7 @@ artificially defined to be \.{\\outer}.
 text(end_write)=s_no("endwrite");eq_level(end_write)=level_one;
 eq_type(end_write)=outer_call;equiv(end_write)=null;
 
-@ @<Declare procedures needed in |hlist_out|, |vlist_out|@>=
+@ @<Declare procedures needed in |ship_out|@>=
 static void write_out(pointer @!p)
 {@+int old_setting; /*holds print |selector|*/
 int @!old_mode; /*saved |mode|*/
@@ -24782,7 +24598,7 @@ help2("On this page there's a \\write with fewer real {'s than }'s.",@/
 }@+ while (!(cur_tok==end_write_token));
 }
 
-@ @<Declare procedures needed in |hlist_out|, |vlist_out|@>=
+@ @<Declare procedures needed in |ship_out|@>=
 
 static void out_what(pointer @!p)
 {@+small_number j; /*write stream number*/
@@ -24841,9 +24657,9 @@ a non-|clang| language is being appended to the current paragraph.
 @<Declare action...@>=
 static void fix_language(void)
 {@+int @!l; /*the new current language*/
-if (language <= 0) l=0;
-else if (language > max_language) l=0;
-else l=language;
+if (language_no <= 0) l=0;
+else if (language_no > max_language) l=0;
+else l=language_no;
 if (l!=clang)
   {@+new_whatsit(language_node, small_node_size);
   what_lang(tail)=l;clang=l;@/
@@ -25228,7 +25044,7 @@ group_code @!c; /*saved value of |cur_group|*/
 int @!a; /*to keep track of alignments*/
 int @!i;
 quarterword @!j;
-char *@!s;
+char *@!s=NULL;
 p=nest_ptr;nest[p]=cur_list; /*put the top level into the array*/
 v=save_ptr;l=cur_level;c=cur_group;
 save_ptr=cur_boundary;decr(cur_level);@/
@@ -25463,7 +25279,7 @@ else if (c==2)
     }
   }
 
-@ The |middle| feature of \eTeX\ allows one ore several \.{\\middle}
+@ The |middle| feature of \eTeX\ allows one or several \.{\\middle}
 delimiters to appear between \.{\\left} and \.{\\right}.
 
 @<Generate all \eTeX...@>=
@@ -27917,7 +27733,7 @@ requested before closing the file. Here we deal with bytes
 
 @<Cases of `Print the result of command |c|'@>=
 case file_dump_code:
-  { FILE *f=fopen((char*)name_of_file0,"rb");
+  { FILE *f=utf8_fopen((char*)name_of_file0,"rb");
     if (f!=NULL) {@+
       fseek(f,k,SEEK_SET);
       do@+{i=fgetc(f); if (i==EOF) break;
@@ -30098,7 +29914,7 @@ then move to the next node@>;
         @<Transfer node |p| to the adjustment list@>@;@+break;
       case glue_node: @<Incorporate glue into the horizontal totals@>@;@+break;
       case kern_node: case math_node: x=x+width(p);@+break;
-      case ligature_node: @<Make node |p| look like a |char_node| and |goto reswitch|@>@;
+      case ligature_node: @<Incorporate a ligature into an hbox@>@;@+break;
       case whatsit_node: @<Incorporate the various whatsit nodes into an hbox@>@;@+break;
       default:do_nothing;
       }
@@ -32070,7 +31886,7 @@ it changes for the first time.
 @<insert an initial language node@>=
 { uint32_t pos = hpos-hstart;
   hpos++;
-  hput_tags(pos,hout_language(language));
+  hput_tags(pos,hout_language(language_no));
 }
 @ \TeX\ offers currently no simple way to obtain a standardized
 language identifier for the current language. So if the
@@ -32223,10 +32039,14 @@ programs and neither attempt hyphenation.
    case ligature_node:
      { Lig l;
        pointer q;
-       l.f=hget_font_no(font(lig_char(p)));
+       int f,gid;
+       f=font(lig_char(p));
+       gid=character(lig_char(p));
+       l.f=hget_font_no(f);
        HPUT8(l.f);
        l.l.p=hpos-hstart;
-       hput_utf8(qo(character(lig_char(p))));
+       hput_utf8(qo(gid));
+       @<Register glyph |gid| in the subset of font |f|@>@;
        q=lig_ptr(p);
        while(q> null)
 	 { hput_utf8(qo(character(q)));
@@ -32904,7 +32724,12 @@ static void main_init(int ac, char *av[])
   interaction = error_stop_mode;
   kpse_record_input = recorder_record_input;
   kpse_record_output = recorder_record_output;
-
+#ifdef _WIN32
+  /* make terminal output UTF8 and terminal input UTF16 */
+    SetConsoleOutputCP(CP_UTF8); 
+    setvbuf(stdout, NULL, _IOFBF, 1024);
+    _setmode(_fileno(stdin), _O_U16TEXT);
+#endif
   @<parse options@>@;
   @<set the program and engine name@>@;
   @<activate configuration lines@>@;
@@ -33331,7 +33156,9 @@ recorder_start(void)
     free(recorder_name);
     recorder_name = temp;
   }
-  recorder_file = xfopen(recorder_name, FOPEN_W_MODE);
+  recorder_file = utf8_fopen(recorder_name, FOPEN_W_MODE);
+  if (recorder_file==NULL)
+    fatal_error("Unable to open recorder file");
   cwd = xgetcwd();
   fprintf(recorder_file, "PWD %s\n", cwd);
   free(cwd);
@@ -33369,7 +33196,9 @@ recorder_change_filename (const char *new_name)
    free(recorder_name);
    recorder_name = xstrdup(new_name);
 #if defined(_WIN32)
-   recorder_file = xfopen (recorder_name, FOPEN_A_MODE); /* A closed file must be opened. */
+   recorder_file = utf8_fopen (recorder_name, FOPEN_A_MODE); /* A closed file must be opened. */
+   if (recorder_file==NULL)
+     fatal_error("Unable to rename recorder file");
 #endif /* |_WIN32| */
    if (temp)
      free (temp);
@@ -33805,22 +33634,22 @@ static FILE *open_out(const char *file_name, const char *file_mode)
   char *new_name=NULL;
   int absolute = kpse_absolute_p(file_name, false);
   if (absolute)
-  { f=fopen(file_name,file_mode);
+  { f=utf8_fopen(file_name,file_mode);
     if (f!=NULL) recorder_record_output (file_name);
     return f;
   }
   if (output_directory)
   { new_name = concat3(output_directory, DIR_SEP_STRING, file_name);
-    f = fopen(new_name,file_mode);
+    f = utf8_fopen(new_name,file_mode);
     if (f==NULL) {@+ free(new_name); new_name=NULL;@+}
   }
   if (f==NULL)
-    f = fopen(file_name,file_mode);
+    f = utf8_fopen(file_name,file_mode);
   if (f==NULL)
   { const char *texmfoutput = kpse_var_value("TEXMFOUTPUT");
     if (texmfoutput!=NULL && texmfoutput[0]!=0)
     { new_name = concat3(texmfoutput, DIR_SEP_STRING, file_name);@/
-      f = fopen(new_name,file_mode);
+      f = utf8_fopen(new_name,file_mode);
       if (f==NULL) {@+ free(new_name); new_name=NULL; @+}
     }
   }
@@ -33870,13 +33699,16 @@ different types of files and therefore different functions are needed to
 open these files. The common code is in the function |open_in|.
 
 @<\TeX\ Live auxiliary functions@>=
+
+
+
 static FILE*open_in(char*filename,kpse_file_format_type t,const char*rwb)
 {@+ char *fname=NULL;
   FILE*f= NULL;
   fname= find_file(filename,t,true);
   if(fname!=NULL)
   {@+
-    f= fopen(fname,rwb);
+    f= utf8_fopen(fname,rwb);
     if (f!=NULL) recorder_record_input(fname);
     if (full_name_of_file!=NULL) free(full_name_of_file);
     full_name_of_file=fname;@+
@@ -33892,7 +33724,7 @@ static bool a_open_in(alpha_file *f) /*open a text file for input*/
 
 static bool b_open_in(byte_file *f, char *fname)   /*used only for .tfm files*/
 {@+FILE*tfm= NULL;
-   tfm= fopen(fname,"rb");
+   tfm= utf8_fopen(fname,"rb");
    if (tfm!=NULL) recorder_record_input(fname);
    if (full_name_of_file!=NULL) free(full_name_of_file);
    full_name_of_file=fname;@+
@@ -34155,7 +33987,7 @@ static int get_md5_sum(int s, int file)
     fname= find_input_file();
     if(fname!=NULL)
     { FILE *f;
-      f = fopen(fname, "rb");
+      f = utf8_fopen(fname, "rb");
       if (f != NULL)
       { int r;
         char file_buf[FILE_BUF_SIZE];
@@ -34324,6 +34156,139 @@ static void print_utf8(uint32_t c)
   else
     print("???");
 } 
+
+@ To convert utf8 code sequences int utf16 code sequences, we use the following function.
+This function is used to convert filenames when running under Windows, so we assume that the output string fits into
+a string of size |MAX_PATH| plus a final byte that will stay forever zero. If the input string happens to
+be longer than |MAX_PATH|, The function returns |NULL|.
+A simpler function is used to translate mode strings.
+
+@p
+#ifdef _WIN32
+  static wchar_t *wfilename(const char utf8[]) 
+{ static wchar_t utf16[MAX_PATH+1]={0}; 
+  int i = 0;
+  int j = 0;
+    
+  while (utf8[i] != '\0')
+  { uint8_t b;
+    if (j>=MAX_PATH)
+      return NULL;
+    b= (uint8_t)utf8[i];
+
+    if (b < 0x80)
+    {  utf16[j++] = (uint16_t)b;
+      i += 1;
+    } 
+    else if ((b & 0xE0) == 0xC0)
+    { utf16[j++] = (uint16_t)(((b & 0x1F) << 6) | (utf8[i+1] & 0x3F));
+      i += 2;
+    } 
+    else if ((b & 0xF0) == 0xE0)
+    { uint32_t cp = ((b & 0x0F) << 12) |
+	((utf8[i+1] & 0x3F) << 6) |
+	(utf8[i+2] & 0x3F);
+      utf16[j++] = (uint16_t)cp;
+      i += 3;
+    } 
+    else
+    { uint32_t cp;
+      if (j>=MAX_PATH-1)
+	return NULL;
+      cp= ((b & 0x07) << 18) |
+	((utf8[i+1] & 0x3F) << 12) |
+	((utf8[i+2] & 0x3F) << 6) |
+	(utf8[i+3] & 0x3F);
+      cp -= 0x10000;
+      utf16[j++] = (uint16_t)((cp >> 10) + 0xD800);
+      utf16[j++] = (uint16_t)((cp & 0x3FF) + 0xDC00);
+      i += 4;
+    }
+  }
+  utf16[j] = 0;
+  return utf16;
+}
+
+static wchar_t *wmode(const char utf8[])
+{ static wchar_t utf16[3+1]={0};
+  int i=0;
+  while (i<3 && utf8[i]!='\0')
+  { utf16[i]=utf8[i];
+    i++;
+  }
+  utf16[i]=0;
+  return utf16;
+}
+
+#endif
+
+
+static FILE *utf8_fopen(const char *fname, const char *rwb)
+{
+#ifdef _WIN32
+wchar_t *wfname=wfilename(fname);
+wchar_t *wrwb=wmode(rwb);
+if (wfname==NULL)
+{ print_err("This filename is too long: ");
+  print(fname);
+  error();
+  return NULL;
+}
+if (wrwb==NULL)
+{ print_err("This mode string is not allowed: ");
+  print(rwb);
+  error();
+  return NULL;
+}  
+return _wfopen(wfname,wrwb);
+#else
+return fopen(fname,rwb);
+#endif
+}
+
+@ Windows needs special care when reading from the terminal.
+
+@p
+static bool input_ln_terminal(void)
+{
+#ifdef _WIN32
+  uint32_t cp;
+  wint_t wc1;
+  int last_nonblank;
+
+  last=first;
+  wc1=fgetwc(stdin);
+ 
+  if (wc1==WEOF)
+      return false;
+ 
+  last_nonblank=first;
+  while(true)
+  {  if (wc1 >= 0xD800 && wc1 <= 0xDBFF)
+     { wint_t wc2 = fgetwc(stdin);
+       if (wc2 != WEOF && wc2 >= 0xDC00 && wc2 <= 0xDFFF)
+         cp = 0x10000 + (((wc1 & 0x3FF) << 10) | (wc2 & 0x3FF));
+       else
+         cp=0;
+     }
+     else
+       cp=wc1;
+
+    last=utf8_put_char(buffer,last,buf_size-1,cp);
+    if (buffer[last-1]!=' ') last_nonblank=last; 
+    wc1=fgetwc(stdin);
+    if (wc1==WEOF)
+       break;
+    if (wc1=='\r' || wc1=='\n')
+      break;
+  }
+  last=last_nonblank;
+  return true;
+#else
+  return input_ln(&term_in,true);  
+#endif
+}
+  
 
 
 @ All the information about utf characters comes from a generated file.
@@ -34663,8 +34628,56 @@ while (j>0)
   }
 }    
 
+@ Accents have different codes in UTF coding than in the traditional \TeX\ encoding.
+To improve compatibility with existing \TeX\ documents, here is the code to translate
+the codes.
+
+@<Translate \TeX\ codes of accents to UTF codes@>=
+{ switch (cur_val)
+  { case 0x12: cur_val=0x300;@+break; /*\`o  U+0300 COMBINING GRAVE ACCENT*/
+    case 0x13: cur_val=0x301;@+break; /*\'o  U+0301 COMBINING ACUTE ACCENT*/
+    case 0x14: cur_val=0x30C;@+break; /*\v o U+030C COMBINING CARON or HACEK*/
+    case 0x15: cur_val=0x306;@+break; /*\u o U+0306 COMBINING BREVE*/
+    case 0x16: cur_val=0x304;@+break; /*\= o U+0304 COMBINING MACRON*/
+    case 0x17: cur_val=0x30A;@+break; /*\o o U+030A COMBINING RING ABOVE*/
+    case 0x18: cur_val=0x327;@+break; /*\c o U+0327 COMBINING CEDILLA*/
+    case 0x5E: cur_val=0x302;@+break; /*\^o  U+0302 COMBINING CIRCUMFLEX*/
+    case 0x5F: cur_val=0x307;@+break; /*\.o  U+0307 COMBINING DOT ABOVE*/
+    case 0x7D: cur_val=0x30B;@+break; /*\H o U+030B COMBINING DOUBLE ACUTE ACCENT*/
+    case 0x7E: cur_val=0x303;@+break; /*\~o  U+0303 COMBINING TILDE*/
+    case 0x7F: cur_val=0x308;@+break; /*\"o  U+0308 COMBINING DIAERESIS*/
+                                    /*\t o U+0361 COMBINING DOUBLE INVERTED BREVE*/
+    default:@+break;
+  }
+}
+
+@ In most common cases, there is a precomposed UTF codepoint for the  base character and the accent.
+If such a codepoint can be found and the current font has a glyph for it, it is best to use this
+precomposed character. To find the composite code point, \HiTeX\ uses the ICU library. 
+
+@<Header files and function declarations@>=
+#include <unicode/unorm2.h>
+
+@ @<Try to create a composite UTF codepoint and return@>=
+{ UErrorCode status = U_ZERO_ERROR;
+  UChar32 combined= '?';
+ const UNormalizer2* norm;
+ norm = unorm2_getNFCInstance(&status);
+ if (!U_FAILURE(status)) {
+   combined = unorm2_composePair(norm, bchr, achr);
+   if (combined>=0 && x_char_exists(bf,combined))
+   {  p=get_avail();font(p)=bf;character(p)=combined;
+      link(tail)=p; tail=p;
+      return;
+   }
+ }
+}
+
+
 
 @ @<Forward declarations@>=
+static bool input_ln_terminal(void);
+static FILE *utf8_fopen(const char *fname, const char *rwb);
 static int utf8_get_cur_chr(unsigned char *b, int i, int k);
 static int utf8_put_char(unsigned char *b, int i, int k, uint32_t c);
 static void print_utf8(uint32_t c);
@@ -34686,12 +34699,19 @@ static int utf_lookup(pointer b, int i );
 static void utf_define(pointer p,int c,int e,bool g);
 static pointer utf_adjust_base(pointer p);
 static int utf_b_used, utf_i_used, utf_unsave_list;
-static scaled x_char_width(internal_font_number g, int c);
+static scaled x_char_advance(internal_font_number g, int c);
 static scaled x_char_height(internal_font_number g, int c);
 static scaled x_char_depth(internal_font_number g, int c);
 static scaled x_char_italic(internal_font_number g, int c);
 static pointer active_lookup(uint32_t k);
-
+static hb_buffer_t *x_set_major(int f, uint32_t cp[],int n, int j,int len);
+static hb_buffer_t *x_set_minor(int f, uint32_t cp[],int n, int j,int len);
+static pointer x_append_glyphs(pointer t, int f, uint32_t *codepoints, int len, hb_buffer_t *glyphs);
+static pointer  x_append_cluster(pointer t, int f, uint32_t *cp, int cp_len,
+  hb_glyph_info_t *glyph_info,
+  hb_glyph_position_t *glyph_pos,
+  int glyph_count,
+  int i, int *ncount);
 
 
 @* Fonts revisited.
@@ -34736,10 +34756,13 @@ get unscaled font units in 26.6 pixel format.
 static bool x_char_exists(internal_font_number g, int c);
 static bool x_glyph(internal_font_number g, int c, hb_codepoint_t *glyph);
 static scaled x_char_height(internal_font_number g, int c);
-static scaled x_glyph_width(internal_font_number g, hb_codepoint_t glyph);
+static scaled x_glyph_advance(internal_font_number g, hb_codepoint_t glyph);
 static scaled x_glyph_italic(internal_font_number g, hb_codepoint_t glyph);
 static void x_glyph_height_depth(internal_font_number g, hb_codepoint_t glyph, scaled *h, scaled *d);
 static void x_char_height_depth(internal_font_number g, int c, scaled *h, scaled *d);
+static bool make_tlig1(int f, int cp, pointer q);
+static bool make_tlig2(int f, int cp, pointer q);
+static bool make_tlig3(int f, int cp, pointer q);
 #if 0
 static FT_UInt ft_glyph(FT_Face ft_face, int c);
 static bool ft_exists(FT_Face ft_face, int c);
@@ -34752,6 +34775,7 @@ static void ft_height_depth(FT_Face ft_face, int c,
   scaled *h, scaled *d, scaled s);
 static int ft_last(FT_Face ft_face);
 static int ft_first(FT_Face ft_face);
+
 #endif
 
 @ To move the functions to the program:
@@ -34867,11 +34891,14 @@ separate global variables.
   }
   else
     f_index=0;
+  if (feature_str!=0)
+    feature_str[0]=0;  
   if (i<l && f_name[i]==':')
-  { begin_diagnostic();
-    print_nl("Font features not yet implemented!");
-    end_diagnostic(false);
-  }
+  { int n;
+    n=pool_ptr-str_start[str_ptr]-i;
+    REALLOCATE(feature_str,n+1,char);
+    strncpy(feature_str,f_name+i,n+1);
+  } 
   pool_ptr=str_start[str_ptr]+f_delimiter; /*flush the remaining string*/
 }
 
@@ -34975,6 +35002,7 @@ if (tracing_fonts>0)
   begin_diagnostic();
   print_nl("Requested font \"");
    printn(cur_area);printn(cur_name);printn(cur_ext);
+   if (feature_str!=NULL) print(feature_str);
   print_char('"');
   if (s < 0) {@+
     print(" scaled ");
@@ -34995,15 +35023,80 @@ if (tracing_fonts>0)
    print_nl(" -> ");
    if (path!=NULL)
    {  print(path);
-      if (g==null_font) print_nl("Not loadable: font file not found");
+      if (f==null_font) print_nl("Not loadable: font file not found");
    }
    else
      print("no matching file found.");
-  if (g==null_font) print_nl("Font not found, using \"nullfont\"");
+  if (f==null_font) print_nl("Font not found, using \"nullfont\"");
   end_diagnostic(false);
 }
+#if 0 /* the font's features */
+{ const hb_tag_t scripts[]={HB_SCRIPT_LATIN,HB_TAG('l','a','t','n'), HB_TAG('D','F','L','T'),HB_TAG_NONE};
+  hb_tag_t languages[]={HB_TAG('E','N','G',' '), HB_TAG('D','F','L','T'),  HB_TAG_NONE};
+
+  unsigned int script_index, language_index, feature_count;
+  hb_tag_t chosen_script,chosen_language;
+  hb_tag_t feature_tags[256];
+  hb_face_t *face;
+  char buf[5];
+  int i;
+  face=hb_font_get_face(x_font[f]->f);
+  
+  fprintf(stderr,"Font: %s", path);
+  
+
+  hb_ot_layout_table_select_script(face, HB_OT_TAG_GSUB, 
+   3,scripts,
+   &script_index, &chosen_script);
+  hb_tag_to_string(chosen_script,buf);
+  fprintf(stderr,"\nScript: %s",buf);
+
+   hb_ot_layout_script_select_language2(face, HB_OT_TAG_GSUB, 
+   script_index,
+   2, languages,
+   &language_index,
+   &chosen_language);
+   if (chosen_language==HB_OT_LAYOUT_DEFAULT_LANGUAGE_INDEX  ||
+   chosen_language==HB_TAG_NONE)
+     fprintf(stderr,"\nLanguage: default");
+   else
+   { hb_tag_to_string(chosen_language,buf);
+     fprintf(stderr,"\nLanguage: %s",buf);
+   }
+ 
+  feature_count=256;
+  hb_ot_layout_language_get_feature_tags
+  (face, HB_OT_TAG_GSUB,
+   script_index,
+   language_index,
+   0, /*start offset*/
+   &feature_count,
+    feature_tags);
+   
+   fprintf(stderr,"\nFeatures:");
+   for (i=0;i<feature_count;i++)
+   { hb_tag_to_string(feature_tags[i],buf);
+     fprintf(stderr,"%s,",buf);
+   }
+ 
+  feature_count=256;
+  hb_ot_layout_language_get_feature_tags
+  (face, HB_OT_TAG_GPOS,
+   script_index,
+   language_index,
+   0, /*start offset*/
+   &feature_count,
+    feature_tags);
+   
+   for (i=0;i<feature_count;i++)
+   { hb_tag_to_string(feature_tags[i],buf);
+     fprintf(stderr,"%s,",buf);
+   }
+   fprintf(stderr,"\n");
+}
+#endif
 #if 0
-if (IS_X_FONT(g))
+if (IS_X_FONT(f))
 { int x_scale, y_scale;
   unsigned int x_ppem,y_ppem;
   hb_codepoint_t glyph, cp;
@@ -35013,7 +35106,7 @@ if (IS_X_FONT(g))
   hb_position_t ax;
 
   fprintf(stderr,"\n");
-  fprintf(stderr,"%s at %fpt\n",path, font_size[g]/(double)ONE);
+  fprintf(stderr,"%s at %fpt\n",path, font_size[f]/(double)ONE);
   f=x_font[g]->f;
   hb_font_get_scale(f,&x_scale,&y_scale);
   fprintf(stderr,"given scale %d/%d\n",x_scale,y_scale);
@@ -35052,7 +35145,7 @@ the code has stabilized.
      );
      ax=hb_font_get_glyph_h_advance (f, glyph);   
      fprintf(stderr,"\thb: width=0x%x (%0.2fpt)\n", ax, HB_TO_PT(ax));
-     w=x_char_width (g, cp);   
+     w=x_char_advance (g, cp);   
      fprintf(stderr,"\tft: width=0x%x (%0.2fpt)\n", w, w/(double)ONE);
      ax=e.width;
      fprintf(stderr,"\thb: bbox width=0x%x (%0.2fpt)\n", ax, HB_TO_PT(ax));
@@ -35066,9 +35159,6 @@ the code has stabilized.
      fprintf(stderr,"\tft: italics=0x%x (%0.2fpt)\n",
      ax, ax/(double)ONE);
   }
-
-
-
 
 
 @* Font subsets.
@@ -35090,15 +35180,19 @@ by using the option \.{-no-subset} on the command line setting the
 if (option_subset)
 { x_font[g]->sub=hb_subset_input_create_or_fail ();
   if (x_font[g]->sub!=NULL)
-  { x_font[g]->subset = hb_subset_input_unicode_set (x_font[g]->sub);
-    hb_subset_input_set_flags ( x_font[g]->sub, HB_SUBSET_FLAGS_NO_HINTING);
+  { hb_subset_input_set_flags ( x_font[g]->sub,
+      HB_SUBSET_FLAGS_NO_HINTING|HB_SUBSET_FLAGS_RETAIN_GIDS);
+    x_font[g]->utf_set = hb_subset_input_unicode_set (x_font[g]->sub);
+    x_font[g]->glyph_set = hb_subset_input_glyph_set (x_font[g]->sub);
   }
   else
-    x_font[g]->subset=NULL;
-  if (x_font[g]->subset!=NULL)
-    hb_set_clear(x_font[g]->subset);
+    x_font[g]->utf_set=x_font[g]->glyph_set=NULL;
+  if (x_font[g]->utf_set!=NULL)
+    hb_set_clear(x_font[g]->utf_set);
+  if (x_font[g]->glyph_set!=NULL)
+    hb_set_clear(x_font[g]->glyph_set);
 }
-else x_font[g]->subset=NULL;
+else x_font[g]->utf_set=x_font[g]->glyph_set=NULL;
 
 
 @ Whenever a character node |p| is written to the output, either in the
@@ -35107,8 +35201,16 @@ character in the font subset.
 
 
 @<Register character node |p| in the font subset@>=
-  if (x_font[font(p)]!=NULL && x_font[font(p)]->subset!=NULL)
-    hb_set_add (x_font[font(p)]->subset,  character(p));
+  if (x_font[font(p)]!=NULL && x_font[font(p)]->utf_set!=NULL)
+    hb_set_add (x_font[font(p)]->utf_set,  character(p));
+
+@ For ligatures, Harfbuzz will only provide the glyph ids. So these
+are needed to be registered.
+
+@<Register glyph |gid| in the subset of font |f|@>=
+  if (x_font[f]!=NULL && x_font[f]->glyph_set!=NULL)
+    hb_set_add (x_font[f]->glyph_set,  gid);
+
 
 
 @ After content and definition section are written to the output
@@ -35123,6 +35225,7 @@ the font subsets are computed and the directory is updated appropriately.
       const char *buf=NULL;
       unsigned int size;
       bool is_subset=false;
+      bool is_alias=false;
 
       if (x_font[i]->sub!=NULL)
       { hb_face_t *fin, *fout=NULL;
@@ -35130,34 +35233,46 @@ the font subsets are computed and the directory is updated appropriately.
         if (fin!=NULL)
 	   fout= hb_subset_or_fail (fin, x_font[i]->sub);
         if (fout==NULL)
-        { print_err("Unable to compute subset for font "); printn_esc(font_id_text(i));print_ln();
+        { print_err("Unable to compute subset for font "); printn_esc(font_id_text(i));
+	  print_ln();
           error();
         }
         else
         { blob = hb_face_reference_blob (fout);
 	}
+#if 0
+	fprintf(stderr,"\nSubset size for font %.*s: utf=%d, glyph=%d\n",
+	  length(font_name[i]),str_pool+str_start[font_name[i]],
+	   hb_set_get_population (x_font[i]->utf_set),
+	   hb_set_get_population (x_font[i]->glyph_set));
+#endif
+
         hb_subset_input_destroy(x_font[i]->sub);
 	x_font[i]->sub=NULL;
-        x_font[i]->subset=NULL;	
+        x_font[i]->utf_set=x_font[i]->glyph_set=NULL;	
       }
-      if (blob!=NULL)
-         is_subset=true;
-      else
-	 blob = x_font[i]->blob;
-      if (blob!=NULL)
-        buf = hb_blob_get_data (blob, &size);
-      if (buf!=NULL && size>0 )
-      { int g;
-        g=hmap_font[i];
-        if (g>=0 && hfonts[g]!=NULL && hfonts[g]->y>2) 
-        { int y= hfonts[g]->y;
-	  dir[y].size=size;
-	  dir[y].buffer=(uint8_t*)buf;
-	  if (is_subset)
-	  { DBG(DBGFONT,"Creating subset for font %s (size %d)",dir[y].file_name,size);
-	    @<mark the file name by appending ``.subset''@>@;
+      else if (x_font[i]->utf_set!=NULL||x_font[i]->glyph_set!=NULL )
+        is_alias=true;
+      if (!is_alias)
+      { if (blob!=NULL)
+          is_subset=true;
+        else
+	   blob = x_font[i]->blob;
+        if (blob!=NULL)
+          buf = hb_blob_get_data (blob, &size);
+        if (buf!=NULL && size>0 )
+        { int g;
+          g=hmap_font[i];
+          if (g>=0 && hfonts[g]!=NULL && hfonts[g]->y>2) 
+          { int y= hfonts[g]->y;
+            dir[y].size=size;
+	    dir[y].buffer=(uint8_t*)buf;
+	    if (is_subset)
+	    { DBG(DBGFONT,"Creating subset for font %s (size %d)",dir[y].file_name,size);
+	      @<mark the file name by appending ``.subset''@>@;
+	    }
 	  }
-	}
+        }
       }
     }
 }
@@ -35218,18 +35333,40 @@ primitive will issue an error message if it encounters an extended font.
 
 @<Glob...@>=
 typedef struct {
-  hb_blob_t *blob; /* can be shared for different faces */
-  hb_subset_input_t *sub;
-  hb_set_t *subset;
   hb_font_t *f;
   int i; /* index */
+  hb_shape_plan_t *plan;
+  hb_buffer_t *major, *minor;
+  hb_feature_t *features;
+  unsigned int feature_count;
+  /* can be shared for different fonts of the same face*/
+  hb_blob_t *blob;
+  hb_subset_input_t *sub;
+  hb_set_t *utf_set, *glyph_set;
 } x_font_info;
 typedef x_font_info *x_font_ptr;
 
 static x_font_ptr @!x_font0[font_max-font_base+1]={NULL},
   *const @!x_font = @!x_font0-font_base;
 
-@ @<load an extended font@>=
+
+@ We start implementing a new conditional \.{\\ifTeXfont} to test whether the current font
+is an extended font.
+
+@d if_TeX_font_code (eTeX_last_if_test_cmd_mod+3) /* `\.{\\ifTeXfont}' */
+
+@<Put each of \TeX's primitives into the hash table@>=
+primitive("ifTeXfont", if_test, if_TeX_font_code);
+@!@:if\_TeX_font\_}{\.{\\if} \TeX\ font@>
+
+@ @<Cases of |if_test| for |print_cmd_chr|@>=
+case if_TeX_font_code: print_esc("ifTeXfont");@+break;
+
+@ @<Cases for |conditional|@>=
+case if_TeX_font_code: b=!IS_X_FONT(cur_font);@+break;
+
+@ Now let's see how to load such a font.
+@<load an extended font@>=
 { hb_face_t *face;
   hb_font_t *f;
   ALLOCATE(x_font[g],1,x_font_info);
@@ -35243,12 +35380,13 @@ static x_font_ptr @!x_font0[font_max-font_base+1]={NULL},
   x_font[g]->i=f_index;
   @<determine the design size@>@;
   @<adjust the extended font for the given scale factor@>@; 
+  @<prepare font |g| for shaping@>@;
 }
 
 @ It is quite common to create several font faces from the same
 font file. For example using the font at different sizes.
 In the \HINT\ file, we do not want to include the file multiple times,
-so here is the place to look for an exiting font using the same
+so here is the place to look for an existing font using the same
 file.
 
 @<Search for a font with the same |path| or load the |path|@>=
@@ -35256,14 +35394,16 @@ file.
   int l;
   x_font[g]->blob=NULL;
   x_font[g]->sub=NULL;
-  x_font[g]->subset=NULL;
+  x_font[g]->utf_set=NULL;
+  x_font[g]->glyph_set=NULL;
   l=strlen(path);
   for (i=1; i<=font_ptr; i++)
     if (i!=g && length(font_area[i])==l && str_eq_buf(font_area[i],(unsigned char *)path))
     { font_area[g]=font_area[i];
       if (x_font[i]!=NULL)
-      { x_font[g]->blob=x_font[i]->blob;
-        x_font[g]->subset=x_font[i]->subset;
+      { x_font[g]->blob=hb_blob_reference(x_font[i]->blob);
+        x_font[g]->utf_set=hb_set_reference(x_font[i]->utf_set);
+        x_font[g]->glyph_set=hb_set_reference(x_font[i]->glyph_set);
         break;
       }
     }
@@ -35271,29 +35411,45 @@ file.
   { x_font[g]->blob = hb_blob_create_from_file(path);
     if (x_font[g]->blob==NULL) fatal_error("Unable to open extended font file!");
     font_name[g]=nom;
-    if (font_area[g]==0)
+    if (font_area[g]==empty_string)
       font_area[g]=s_no(path);
     @<Initialize font |g| for subsetting@>@;
   }
 }
 
 @ Most of the info in \TeX's font tables is not needed for extended fonts.
-Hi\TeX\ uses the |font_name| and |font_area|, as well as the |font_size|
-and the |font_dsize|.
+Hi\TeX\ uses the |font_name| and |font_area| (which holds the full pathname),
+as well as the |font_size|, |font_dsize|, |hyphen_char|, |font_bchar|, |font_glue|,
+and |font_params|. Some otherwise unused tables are used for
+special information:
+The |char_base| is set to |extended_base| as a merker that the font
+is an extended font. This maker is used to reload predefined extended fonts.
+The value of |lig_kern_base| is used to store the string number of the
+fonts feature list. |kern_base| is used to store marker bits for the \.{tlig} and \.{tacc}
+features.
+
+@d tlig_bit 1
+@d tacc_bit 2
+@d feature_bits kern_base
+@d feature_string lig_kern_base
 
 @<Initialize the font tables for the extended font |f|@>=
+font_name[f]=nom;
+font_area[f]=empty_string;
 hyphen_char[f]='-';skew_char[f]=-1;
 bchar_label[f]=non_address;
 font_bchar[f]=non_char;font_false_bchar[f]=non_char;
-char_base[f]=extended_base;width_base[f]=0;
-height_base[f]=0;depth_base[f]=0;
-italic_base[f]=0;lig_kern_base[f]=0;
-kern_base[f]=0;exten_base[f]=0;
+char_base[f]=extended_base;
+feature_string[f]=empty_string;
+feature_bits[f]=tlig_bit|tacc_bit;
 font_glue[f]=null;
 font_params[f]=7;
+/*so far not used for extended fonts*/
+width_base[f]=0;height_base[f]=0;depth_base[f]=0;
+italic_base[f]=0;
+exten_base[f]=0;
 if ((font_ptr==font_max)||(fmem_ptr+font_params[f]+1 > font_mem_size))
   @<Apologize for not loading the font, |goto done|@>;
-@<get the extended fonts parameters@>;
 
 @ We start with finding the first and the last character in the font:
 @<get the extended fonts parameters@>=
@@ -35306,12 +35462,56 @@ if ((font_ptr==font_max)||(fmem_ptr+font_params[f]+1 > font_mem_size))
 }
 
 @ Last, we look at the space character.
+We get the normal size of a space by looking up the width of the space character.
+For most fonts, the stretchabilitiy is half of the wisth and the shrinkability is
+one third of the width.
+
+For text italic, the width is 6 units plus 2 letter fit,
+the stretchability is just 3 units and the shrinkability is 2 units.
+The font quad is 18 units plus 4 letter fit.
+The unit is defines as 18.4/36 pt and the letter fit as 9.2/36 pt which is just half a unit.
+So we can obtain the stretchability and the shrinkability from the normal width.
+
+For the roman font the formulas are the same, but
+the unit is 20/36pt and the letter fit is 0pt. The font quad is just 18 units.
+%Which in this case equals 18 units plus 4 letter fit
+
+The bold font has again 20/36pt  as unit and letter fit is zero.
+
+The extra bold font has 23/36pt  as unit and letter fit is zero.
+
+The slanted font has a unit of 20/36pt and a letter fit of zero
+
+
+
 @<get the extended fonts parameters@>=
-{ space(f)=x_char_width(f,' ');
-  space_stretch(f)=space(f)/2;
-  space_shrink(f)=space(f)/3;
-  extra_space(f)=space(f)/3;
-  quad(f)=font_size[f];
+{ double r;
+  scaled w, u, lf;
+  r= hb_style_get_value (x_font[f]->f, HB_STYLE_TAG_ITALIC);
+  w=x_char_advance(f,' ');
+
+  if (r>0.5)
+  { u=w/7;
+    lf=u/2;
+  }
+  else
+  { u=w/6;
+    lf=0;
+  }
+  space(f)=6*u+2*lf;
+  space_stretch(f)=3*u;
+  space_shrink(f)=2*u;
+  extra_space(f)=2*u;
+  quad(f)=18*u+4*lf;
+#if 0
+  /*computation of inter-word space*/
+  fprintf(stderr, "Font: %.*s\n",length(font_name[f]),str_pool+str_start[font_name[f]]);
+  fprintf(stderr, "Space dimensions: ");
+  fprintf(stderr, "width=%.3f, unit=%.3f, letter fit=%.3f\n",w/(double)ONE, u/(double)ONE, lf/(double)ONE);
+  fprintf(stderr, "space= %.3f plus %.3f minus %.3f\n",space(f)/(double)ONE,
+       space_stretch(f)/(double)ONE, space_shrink(f)/(double)ONE);
+#endif  
+
 }
 
 
@@ -35385,14 +35585,14 @@ static bool x_char_exists(internal_font_number g, int c)
 }
 
 
-static scaled x_glyph_width(internal_font_number g, hb_codepoint_t glyph)
+static scaled x_glyph_advance(internal_font_number g, hb_codepoint_t glyph)
 { return  HB_TO_SCALED(hb_font_get_glyph_h_advance (x_font[g]->f, glyph)); 
 }
 
-static scaled x_char_width(internal_font_number g, int c)
+static scaled x_char_advance(internal_font_number g, int c)
 {  hb_codepoint_t glyph;
    if (x_glyph(g,c,&glyph))
-     return x_glyph_width(g, glyph);
+     return x_glyph_advance(g, glyph);
    else
      return 0;
 }
@@ -35413,6 +35613,7 @@ static void x_glyph_height_depth(internal_font_number g, hb_codepoint_t glyph,
 }
 
 
+
 static void x_char_height_depth(internal_font_number g, int c,
        scaled *h, scaled *d)
 {  hb_codepoint_t glyph;
@@ -35420,6 +35621,8 @@ static void x_char_height_depth(internal_font_number g, int c,
      x_glyph_height_depth(g,glyph,h,d);
    else
      *h=*d=0;
+  /* here xetex rounds height and depth to zero or x-height or cap-height
+     if within 4\% of one quad of the current font */
 }
 
 
@@ -35466,77 +35669,871 @@ static scaled x_char_italic(internal_font_number g, int c)
     return 0;
 }
 
+@ The following code is used to derive the proper metrics when positioning
+an accent above a character.
+It computes the advance of a non-spacing accent.
+If an accent is non-spacing, its normal advance |a| is zero
+and we compute a replacement |aa| which is based on its bounding box.
+When Harfbuzz computes the extend of a glyph, it returns the width
+as the distance from the left extremum to the right extremum.
+Further it returns the distance from the left extremum from the origin called
+|x_bearing|. In the case of a non-spacing mark, the distance from the left extremum
+to the origin is negative and includes the width and the distance between the
+right extremum and the origin. To get the full advancement for the mark, we add
+the distance between the right extremum and the origin twice to the width, assuming the
+the mark will need the same amount of space on both sides.
+
+@<Compute the advance |a| or |aa|, height |ah|, and depth |ad| for the accent@>=
+{ hb_codepoint_t glyph; 
+  a=aa=ah=ad=0;
+  if (x_glyph(af,achr,&glyph))
+  { a = x_glyph_advance(af, glyph);
+    if (a==0)
+    { hb_glyph_extents_t e;
+      hb_font_get_glyph_extents (x_font[af]->f,glyph,&e);
+      aa=HB_TO_SCALED(-e.x_bearing-e.width-e.x_bearing);
+      ah= HB_TO_SCALED(e.y_bearing);
+      ad= HB_TO_SCALED(-(e.height+e.y_bearing));
+    }
+  }
+}
+
+@ A simpler version does the computation for the base character.
+
+@<Compute the advance |w|, height |h|, and depth |d| for the base character@>=
+{ hb_codepoint_t glyph; 
+  w=h=d=0;
+  if (x_glyph(bf,bchr,&glyph))
+  { hb_glyph_extents_t e;
+    w = x_glyph_advance(bf, glyph);
+    hb_font_get_glyph_extents (x_font[bf]->f,glyph,&e);
+    h= HB_TO_SCALED(e.y_bearing);
+    d= HB_TO_SCALED(-(e.height+e.y_bearing));
+  }
+}
+
+@ With all this preparation, we can now place the accent.
+We first decide whether the accent goes above or below the base
+charater. An OpenType font will place an accent that goes above the
+base character in the proper height for a base character that is
+roughly as high as the x-height. If the characters height |h| is significantly
+different from the x-height, it needs to be shifted up or down.
+The vertical displacement is the the average of |w| and |h| corrected
+by the (negative) depth of the accent times the slant of the base character.
+
+Accents that go below the base character are placed
+correctly under a base character that touches the baseline.
+If the depth of the base character is significantly different from zero,
+it needs to be shifted up or down.
+The vertical displacement is corrected using the depth plus the height
+of the base character.
+
+@<Shift the accent to the proper height if necessary and compute the
+vertical displacement |delta|@>=
+{ if (ah>x/2) /*above*/
+  { if (abs(x-h)>x/20) 
+    {@+p=hpack(p, natural);shift_amount(p)=x-h;
+#if 0
+fprintf(stderr,"Above: %d\n",x-h);
+#endif
+    }
+    delta=(w+aa)/2-ad*t;
+  }
+  else
+  { if (abs(d)>x/20)  /*the accent must be shifted up or down*/
+    {@+p=hpack(p, natural);shift_amount(p)=d;
+       delta=(w+aa)/2-h*t-d*t;
+#if 0
+fprintf(stderr,"Below: %d\n",d);
+#endif
+    }
+    else
+      delta=(w+aa)/2-(h-x)*t; /*This looks better with |h-x| instead if |h|.*/
+  }
+}
+
+
 
 @ Harfbuzz is used to insert kerns and liatures in the input stream.
+This is called ``shaping'' and it needs a few preparations:
+First, we need a buffer that holds the UTF coded input characters
+and that will hold the glyph ids after shaping.
+The necessary information for the shaping process is attached to
+the buffer as well.
+Second, we need a selection of font features. Some font features
+are activated by default, but the font specification can
+override the selected features.
+Third, we collect all the necessary information to produce
+a shape plan. This is just an optimization, because we
+assume, that we will need the same shape plan very often.
+The |buffer|, the |features| (together with |feature_count| and the |plan| are
+stort as part of the |font_info|.
 
-We start easy without any extra processing. The following code
-is called if the main loop has just started.
+
+@<prepare font |g| for shaping@>=
+{ @<Set up a shape buffers for font |g|@>@;
+  @<Initialize the features of font |g|@>@;
+  @<Create a shape |plan| for font |g|@>@;
+}
+
+@ To set up a |buffer| for font |g|,
+we creata a Harfbuzz butter and attach segment properties specifying,
+the text direction, the script and the language.
+
+@<Set up a shape buffers for font |g|@>=
+{
+  hb_segment_properties_t props={HB_DIRECTION_LTR,HB_SCRIPT_LATIN,NULL};
+  props.language=hb_language_from_string("en", -1);
+
+  x_font[g]->major = hb_buffer_create();
+  x_font[g]->minor = hb_buffer_create();
+
+  hb_buffer_set_segment_properties (x_font[g]->major, &props);
+  hb_buffer_get_segment_properties(x_font[g]->major,&props);
+  hb_buffer_set_segment_properties (x_font[g]->minor, &props);
+}
+
+@ By default, the following features are enabled:
+  Standard Ligatures (\.{liga}), Kerning (\.{kern}),
+  Discretionary Ligatures  (\.{dlig}),
+  \TeX\ Ligatures  (\.{tlig} not an OpenType standard),
+  \TeX\ Accents    (\.{tacc} not an OpenType standard),
+  Glyph Composition/Decomposition (\.{ccmp}), and  Localized Forms (\.{locl})
+
+%  contextual alternates (\.{calt}), contextual ligatures (\.{clig}),
+%  Discretionary Ligatures  (\.{dlig}),
+
+
+@<Glob...@>=
+
+static char *feature_str=NULL;
+
+
+#define NUM_DEFAULT_FEATURES 6
+static hb_tag_t default_feature_tags[NUM_DEFAULT_FEATURES]=
+{HB_TAG('l','i','g','a'),HB_TAG('d','l','i','g'),HB_TAG('k','e','r','n'),
+ HB_TAG('t','l','i','g'),HB_TAG('c','c','m','p'),HB_TAG('l','o','c','l')};
+
+
+
+@ We have a list of default features which we add always to the fonts features.
+In addition, we add the features from the |feature_str|, enabled if they start with a plus
+disabled if they start with a minus. We travers the list and check that we do not have
+duplicates in the list.
+
+All OpenType feature tags have exactly 4 characters. Arguments that may follow after
+a feature tag are ignored.
+
+@<check and count the feature tags@>=
+feature_count=0;
+if (feature_str[0]!=':')
+  print_err("Feature string must start with a colon ':'. I igore it.");
+else
+{ i=1;
+  while (feature_str[i]!=0)
+  { if (feature_str[i]!='+'&& feature_str[i]!='-')
+    { @<Feature error@>@;
+      print_err(" must start with '+' or '-'. I igore it.");
+      while (feature_str[i]!=0 && feature_str[i]!=';')
+        i++;
+      continue;
+    }
+    i++;
+    for (j=0;j<4;j++)
+    { if ((feature_str[i]>='a' && feature_str[i]<='z') ||
+          (feature_str[i]>='A' && feature_str[i]<='Z'))
+	 i++;
+      else	
+      { @<Feature error@>@;
+        print(" must have four alphabetic characters. I pad it with spaces.");
+        break;
+      }
+    }
+    feature_count++;
+    if (feature_str[i]!=0)
+    { if (feature_str[i]==';')
+        i++;
+      else 
+      { @<Feature error@>@;
+        print_err(" must end with a ';'. I truncate the remainder.");
+        do {
+	  i++;
+	  if (feature_str[i]==';')
+          { i++; break;}
+        } while (feature_str[i]!=0);
+      }
+    }
+  }
+}
+
+@ 
+@<Feature error@>=
+print_err("Feature "); print_int(feature_count+1);
+print(": ");
+print(feature_str+i);
+
+@ Before we expalin how t initialize the feature array, we need to wrap
+the initialization of a  |hb_feature_t| into a small function which we
+place before the definitin of TeX's macros because it contains
+a field called |start| which is defined as a \TeX\ macro.
+
+@<Header files and function declarations@>=
+static void x_set_feature( hb_feature_t *f, hb_tag_t t, uint32_t v)
+{ f->tag=t;
+  f->value=v;
+  f->start=HB_FEATURE_GLOBAL_START;
+  f->end=HB_FEATURE_GLOBAL_END;
+}
+
+
+@ Now we can allocate the feature array and repeat the traversal to fill it.
+We check for duplicates and keep the last value. Because |hb_feature_t| features
+a |start| field and |start| is defined as a macro in \TeX\ we include the function
+before defining \TeX's macros.
+as
+
+ @<Initialize the features of font |g|@>=
+{ int i,j,k, feature_count=0;
+  hb_tag_t t;
+  hb_feature_t *features;
+  if (feature_str!=NULL)
+  { @<check and count the feature tags@>@;
+  }
+  ALLOCATE(features,feature_count+NUM_DEFAULT_FEATURES,hb_feature_t);
+  for (k=0;k<NUM_DEFAULT_FEATURES;k++)
+    x_set_feature(features+k, default_feature_tags[k],1);
+  if (feature_count>0)
+  { i=1;
+    while (k<feature_count+NUM_DEFAULT_FEATURES && feature_str[i]!=0)
+    { int val;
+      char tag[4];
+      if (feature_str[i]=='+') val=1;
+      else if (feature_str[i]=='-') val=0;
+      else
+      { while (feature_str[i]!=0 && feature_str[i]!=';')
+          i++;
+	continue;
+      }
+      i++;
+      for (j=0;j<4;j++)
+      { if ((feature_str[i]>='a' && feature_str[i]<='z') ||
+            (feature_str[i]>='A' && feature_str[i]<='Z'))
+	   tag[j]=feature_str[i++];
+        else	
+          tag[j]=' ';
+      }
+      t=HB_TAG(tag[0],tag[1],tag[2],tag[3]);
+      if (t==HB_TAG('t','l','i','g'))
+      { if (val) feature_bits[g]|=tlig_bit; else feature_bits[g]&=~tlig_bit; }
+      if (t==HB_TAG('t','a','c','c'))
+      { if (val) feature_bits[g]|=tacc_bit; else feature_bits[g]&=~tlig_bit; }
+      else	
+      { for (j=0;j<k;j++)
+          if (features[j].tag==t)
+	  { features[j].value=val;
+	    break;
+	  }
+        if (j==k)
+        { x_set_feature(features+k, t,val);
+	  k++;
+        }
+      }
+      while (feature_str[i]!=0 && feature_str[i]!=';')
+        i++;
+      if (feature_str[i]==';')
+        i++;
+}
+  }
+  x_font[g]->feature_count=k;
+  x_font[g]->features=features;
+  feature_string[g]=s_no(feature_str);
+}
+
+@ Creating the shape plan searches the font face (not the font) for information to use
+during the shaping based on the buffer properties, the features, and the selected |shapers|.
+
+@<Create a shape |plan| for font |g|@>=
+{ const char *shapers[]={"ot", "default",NULL};
+  hb_face_t *face;
+  hb_segment_properties_t props;
+  hb_buffer_get_segment_properties(x_font[g]->major,&props);
+  face = hb_font_get_face (x_font[g]->f);
+  x_font[g]->plan=hb_shape_plan_create_cached (face,
+                             &props,
+                             x_font[g]->features,x_font[g]->feature_count,
+			     shapers);
+}
+
+
+
+@ The following code is called if the main loop has just started.
 It has adjusted the space factor and called |fix_language| if necessary.
 |main_f| is initialized to |cur_font|. If then |main_f| happens to be
 an extended font, the following code comes to life.
 
-@d tail_append_char(A) { pointer p; fast_get_avail(p); font(p)=main_f; character(p)=A; tail_append(p);}
  
 @<Append characters from an extended font; |goto reswitch| when done@>=
-{ hb_buffer_t *buf;
-  unsigned int glyph_count;
-  hb_glyph_info_t *glyph_info;
-  hb_glyph_position_t *glyph_pos;
-  int i,len;
-  hb_codepoint_t cp[256];
-  hb_feature_t features[4] =
-  { {HB_TAG('l','i','g','a'), 0, HB_FEATURE_GLOBAL_START, HB_FEATURE_GLOBAL_END},
-    {HB_TAG('c','l','i','g'), 0, HB_FEATURE_GLOBAL_START, HB_FEATURE_GLOBAL_END},
-    {HB_TAG('d','l','i','g'), 0, HB_FEATURE_GLOBAL_START, HB_FEATURE_GLOBAL_END},
-    {HB_TAG('c','a','l','t'), 0, HB_FEATURE_GLOBAL_START, HB_FEATURE_GLOBAL_END}
-  };
-  buf = hb_buffer_create();
-for (len=0;len<256;len++) {
-if (!x_char_exists(main_f,cur_chr))
-  {@+char_warning(cur_font, cur_chr);goto big_switch;
+{ int len;
+  hb_codepoint_t codepoints[256];
+  pointer q;
+  len=0;
+  while (len<256) {
+  if (!x_char_exists(main_f,cur_chr))
+  {@+char_warning(main_f, cur_chr);
   }
-  cp[len]=cur_chr;
+  else
+  { codepoints[len]=cur_chr;
+    len++;
+  }
   get_next(); /*set only |cur_cmd| and |cur_chr|, for speed*/
   if (cur_cmd==letter || cur_cmd==other_char || cur_cmd==char_given)
+  { adjust_space_factor;
     continue;
+  }
   x_token(); /*now expand and set |cur_cmd|, |cur_chr|, |cur_tok|*/
   if (cur_cmd==letter || cur_cmd==other_char || cur_cmd==char_given)
+  { adjust_space_factor;
     continue;
+  }
   else if (cur_cmd==char_num)
-  {@+scan_char_num();cur_chr=cur_val; continue; }
+  {@+scan_char_num();cur_chr=cur_val;
+    adjust_space_factor;
+    continue;
+  }
   else
-  { len++;  break;}
+    break;
 }
+if (len==0)
+  goto reswitch;
 if (len==256)
 { print_err("Long word cut to 256 characters");
   error();
 }
-hb_buffer_add_codepoints(buf,cp,len,0,len);
-hb_buffer_set_direction(buf, HB_DIRECTION_LTR);
-hb_buffer_set_script(buf, HB_SCRIPT_LATIN);
-hb_buffer_set_language(buf, hb_language_from_string("en", -1));
-/* set shaper level probably 2 0r 1, set features */
 
+q=tail;
 
-hb_shape(x_font[main_f]->f, buf, features, 4);
-glyph_info    = hb_buffer_get_glyph_infos(buf, &glyph_count);
-glyph_pos = hb_buffer_get_glyph_positions(buf, &glyph_count);
-
-for (i = 0; i < glyph_count; i++) {
-  uint32_t cluster = glyph_info[i].cluster;
-  hb_position_t x_advance = glyph_pos[i].x_advance;
-  scaled w, a, delta;
-  tail_append_char(cp[cluster]);
-  w = x_char_width(main_f,cp[cluster]);
-  a= HB_TO_SCALED(x_advance);
-  delta= a-w;
-  if (delta!=0)
-  tail_append(new_kern(delta));
-}
-hb_buffer_destroy(buf);
-
+@<Let Harfbuzz shape the |codepoints| and add the result to the current list@>@;
+if (feature_bits[main_f]&tlig_bit)
+{ @<Apply \TeX\ ligatures and replacements@>@; }
 goto reswitch;
 }
+
+@ Using two functions described below, we can now put harfbuzz to work on the current list.
+
+@<Let Harfbuzz shape the |codepoints| and add the result to the current list@>=
+{ hb_buffer_t *buf;
+  buf = x_set_major(main_f,codepoints,len, 0,len);
+  tail=x_append_glyphs(tail,main_f,codepoints,len,buf);
+}
+
+
+@ Now we set up Harfbuzz to shape the |codepoints| gathered.
+We create a Harfbuzz input buffer and add the codepoints to it.
+We set direction, script type, level and other featues of the shaper
+and  call |hb_shape|. After that we can retrieve the shaping and positioning
+information for the glyphs in the buffer that has turned into the output buffer.  
+
+The following function takes a font |f|, an array of copepoints |cp| of size |n|,
+and the address of a glyph count |c|.
+It creates a harfbuzz |buffer|, initializes it, puts the codepoints in the buffer
+and asks harfbuzz to shape |len| codepoints starting at at offset |j|. The return
+value of the function is the |buffer| that now contains glyph ids instead of
+code points.
+After using the |buffer| it should be deallocated using |hb_buffer_destroy(buffer)|.
+
+@p
+#if 0
+static hb_buffer_t *x_set_buffer(int f, uint32_t cp[],int n, int j,int len)
+{
+#if 0
+  hb_buffer_set_length (x_font[f]->buffer,0);
+  hb_buffer_add_codepoints(x_font[f]->buffer,cp,n,j,len);
+#else
+hb_buffer_t *buf =hb_buffer_create_similar (x_font[f]->buffer); seems like creating a buffer here is not so easy
+with matching plans!
+  hb_buffer_add_codepoints(buf,cp,n,j,len);
+#endif
+#if 0
+  hb_buffer_set_direction(buffer, HB_DIRECTION_LTR);
+  hb_buffer_set_script(buffer, HB_SCRIPT_LATIN);
+  hb_buffer_set_language(buffer, hb_language_from_string("en", -1));
+  hb_shape(x_font[f]->f, buffer, features, 4);
+   return buffer;
+#else
+
+  hb_shape_plan_execute (x_font[f]->plan,x_font[f]->f, buf
+      x_font[f]->features, x_font[f]->feature_count);
+       return buf   ;
+#endif  
+}
+#endif
+
+static hb_buffer_t *x_set_major(int f, uint32_t cp[],int n, int j,int len)
+{  hb_buffer_set_length (x_font[f]->major,0);
+  hb_buffer_add_codepoints( x_font[f]->major,cp,n,j,len);
+  hb_shape_plan_execute (x_font[f]->plan,x_font[f]->f, x_font[f]->major,
+      x_font[f]->features, x_font[f]->feature_count);
+  return  x_font[f]->major;
+}
+
+static hb_buffer_t *x_set_minor(int f, uint32_t cp[],int n, int j,int len)
+{ hb_buffer_set_length (x_font[f]->minor,0);
+  hb_buffer_add_codepoints( x_font[f]->minor,cp,n,j,len);
+  hb_shape_plan_execute (x_font[f]->plan,x_font[f]->f, x_font[f]->minor,
+      x_font[f]->features, x_font[f]->feature_count);
+  return  x_font[f]->minor;
+}
+
+@ The function |x_append_glyphs| takes a pointer |t| to the last node in a list,
+a font number |f|, and an harfbuzz |buffer| that contains the result of shaping.
+It extracts information from  the bufffer, constructs nodes and appends the
+new nodes after node |t|. It advances |t| so that at the end |t| again points to the
+last node of the list. Then it returns |t|.
+
+@p static pointer x_append_glyphs(pointer t, int f, uint32_t *codepoints, int len, hb_buffer_t *glyphs)
+{ int i;
+  unsigned int glyph_count;
+  hb_glyph_info_t *glyph_info;
+  hb_glyph_position_t *glyph_pos;
+  glyph_info = hb_buffer_get_glyph_infos(glyphs, &glyph_count);
+  glyph_pos = hb_buffer_get_glyph_positions(glyphs, &glyph_count);
+  @<Analyse the result of shaping and add the result after |t|@>@;
+  return t;
+}
+
+
+@ Now everything is in place to analyse the output of the Harfbuzz shaping
+and add the results to the list starting at |t|.
+
+@<Analyse the result of shaping and add the result after |t|@>=
+for (i = 0; i < glyph_count; i++)
+{ int ncount=0;
+   t=x_append_cluster(t, f, codepoints, len, glyph_info, glyph_pos, glyph_count,i, &ncount);
+}
+
+@ There are two simple operations: adding a unicode codepoint from the input array
+using the macro |append_charnode_to_t|, and adding a kern, if the horizontal advance
+as determined by Harfbuzz does not agree with the standard character width.
+
+Complications arrise if the cluster numbers do not grow in paralell with
+the index in the input buffer.
+
+If the cluster number of the next glyph is greater than the next index into the
+input buffer, we know that the glyph with this cluster number combines multiple
+input codepoints. In this case, a ligature needs to be added to the current list.
+
+If the cluster number of the next glyph is the same as the current cluster number
+it means, that an input codepoint was decomposed into multiple glyphs.
+In this case, a ligature is added to the current list with an empty replacement list.
+
+In general it would be nicer to have a more general ligature node that can hold
+an entire cluster consisting of a possibly empty string of glyphs and a possibly
+empty string of replacement codepoints.
+
+We implement  |x_append_cluster|
+as a wrapper around  |x_append_cluster_node| just to specialize the parameters.
+
+
+@p static pointer x_append_cluster_node(pointer t, int f, uint32_t *cp,
+   uint32_t gid, scaled cw, int n, int *ncount)
+{  if (n==1)  
+    @<Add a single codepoint@>@;
+  else if (n>1)
+    @<Add a ligature@>@;
+  else if (n==0)
+    @<Add an empty ligature@>@;
+  else
+  { print_err("Harfbuzz clusters are not monoton increasing");
+    error();
+  }
+  return t;  
+}
+
+static pointer x_append_cluster(pointer t, int f, uint32_t *cp, int cp_len,
+  hb_glyph_info_t *glyph_info,
+  hb_glyph_position_t *glyph_pos,
+  int glyph_count,
+  int i, int *ncount) /*index into the previous arrays*/
+{  scaled cluster_width;
+   int cluster_size;
+   uint32_t gid;
+   cluster_width=HB_TO_SCALED(glyph_pos[i].x_advance);
+   if (i+1>=glyph_count)
+     cluster_size=cp_len-glyph_info[i].cluster;
+   else
+     cluster_size=glyph_info[i+1].cluster-glyph_info[i].cluster;
+   gid= glyph_info[i].codepoint;
+   cp=cp+glyph_info[i].cluster;
+   return x_append_cluster_node(t,f,cp,gid,cluster_width,cluster_size,ncount);
+}
+ 
+
+@ The simple case:
+
+@d append_kern_to_t(A)   if ((A)!=0) { link(t)= new_kern(A); t=link(t); (*ncount)++; }
+
+@<Add a single codepoint@>=
+{ scaled w;
+ (*ncount)++;
+  append_charnode_to_t(f,cp[0]);
+  w = x_char_advance(f,cp[0]);
+  append_kern_to_t(cw-w);
+}
+
+@ For a ligature, we collect the original characters into a list
+@<Add a ligature@>=
+{ int j;
+  pointer lig, r;
+  scaled w;
+  (*ncount)++;
+  lig= new_ligature(f, gid,null);
+  r=lig_char(lig);
+  for (j=0;j<n; j++) 
+  { pointer q=get_avail();
+    font(q)=f;
+    character(q)=cp[j];
+    link(r)=q;
+    r=q;
+  }
+  link(t)=lig; t=link(t);
+  w=x_glyph_advance(f, gid);
+  append_kern_to_t(cw-w);
+}
+
+
+
+@ A glyph with ``no corresponding'' codepoint is treated here as
+a ligature. This is not quite correct. There is actually a corresponding
+codepoint but it is shared amoung several glyphs, and it is currently not
+possible to express this many to one or many to many association.
+The code is actually quite simple:
+
+@<Add an empty ligature@>=
+{ scaled w;
+ (*ncount)++;
+  link(t)=new_ligature(f, gid,null);
+  t=link(t);
+  w=x_glyph_advance(f, gid);
+  append_kern_to_t(cw-w);
+}
+
+@ After having seen how to shape codepoints using harfbuzz, we can look at
+a more complex shaping problem: shaping a list of codepoints while
+inserting discretionarys.
+
+When we come to this point, we have the codepoints in the |hu| array.
+The word to be hyphenated starts at index |1| and has lenght |hn|.
+The variable |j| indicates where shaping should start.
+At the beginning, usually |j==1|, but if |j==0|,
+one character preceeds the word because it can influence how the word
+starting at index 1 needs to be shaped.
+Similarly there might be codepoints after the word that the shaper may access.
+In most cases the value in the |hu| array befor and after the word are zero.
+The size of the |hu| array is |max_hyph_lenght+2|; so there is space
+for boundary characters.
+
+The variable |hf| contains the font number and all codepoints in |hu|
+belong to this font.
+
+The variable |bchar| contains the left boundary character for
+font |hf|; |hyf_char| contains the hyphen character for font |hf|.
+
+The |hfy| array contains integer values; an odd value at
+index |j| indicates that hyphenation is possible after the codepoint
+at index |j|.
+
+The pointer |s| points to the last node of the current list where
+the nodes of the reconstructed word should be appended.
+At the end of this code, |s| should point at the last node
+that was appended, because this code will be followed
+by |link(s)=q|, appending the continuation of the current list.
+
+We compute a |major| glyph buffer that represents the word's shape without
+hyphenation, and a |minor| glyph array that represents parts of the
+word with an hyphenation at its end.
+Starting with both arrays at the beginning of the word as given by |j|,
+and ending the minor glyph buffer with the first hyphenation point
+greater or equal to |j|.
+We compare both arrays and insert nodes as long as both arrays are identical.
+Then we insert a discretionary hypen using the differences between
+both arrays to compute pre and post lists. Then we advance |j| to the
+position after the hyphenation point and start over.
+We use |i| as an independent index into |hu| that traverses the entire word
+searching for the next hyphenation point.
+To traverse the glyph arrays, we use the indices |k| and |k0|.
+|k| is an index into the minor glyph array which contains the hyphens.
+|k| starts at zero each time a new minor buffer is created.
+|k0| is an offset to |k| such that |k0+k| is the glyph in the major array
+matching the glyph |k| in the minor array.
+
+% user time bible.tex
+% with tenrm= cmr10:
+%   0m1,072s 0m1,074s 0m1,071s 0m1,080s
+% with tenrm=[lmroman10-regular.otf](0)
+%   0m4,308s 0m4,259s 0m4,264s 0m4,262s
+% So the Harfbuzz shaping is 4 times slower than the TeX shaping
+% But hitex is a bit faster than xetex
+%   0m7,209s 0m7,200s 0m7,226s 0m7,228s
+
+Since \HiTeX\ hyphenates allmost all words in a paragraph, it processes most words twice.
+It should be possible to eliminate this double processing by deciding early which words
+go into a paragraph and need hyphenation and postpone shaping until hyphenation.
+
+
+
+ @<Reconstitute nodes using harfbuzz@>=
+ { hb_buffer_t *major,*minor;
+   unsigned int major_count, minor_count;
+   hb_glyph_info_t *major_info, *minor_info;
+   hb_glyph_position_t *major_pos, * minor_pos;
+   int ncount=0;
+   int i; /* index into codepoints */
+   int k, k0; /* index into glyph ids */
+  
+   major =x_set_major(hf,hu,hn+2,j,hn+1-j);
+   major_info = hb_buffer_get_glyph_infos(major, &major_count);
+   major_pos = hb_buffer_get_glyph_positions(major, &major_count);
+   k0=0;
+
+  i=0;
+  while (i<hn)
+  { if (odd(hyf[i]))
+    { uint32_t c1,c2;
+      c1 = hu[i+1];  c2 = hu[i+2];  hu[i+1]=hyf_char; hu[i+2]=bchar;
+      minor = x_set_minor(hf,hu,hn+2,j,i-j+2);
+      minor_info = hb_buffer_get_glyph_infos(minor, &minor_count);
+      minor_pos = hb_buffer_get_glyph_positions(minor, &minor_count);
+      k=0;
+      while (k<minor_count)
+      { if (major_info[k0+k].codepoint==minor_info[k].codepoint &&
+             major_info[k0+k].cluster==minor_info[k].cluster &&
+             major_pos[k0+k].x_advance==minor_pos[k].x_advance)
+        { s=x_append_cluster(s,hf,hu,hn+1,major_info,major_pos,major_count,k0+k,&ncount);
+	}
+	else
+	  break;
+        k++;
+      }
+      @<Insert the discretionary and advance the indices@>@;
+    }
+    else
+      i++;
+  }
+  while (k0<major_count)
+    s=x_append_cluster(s,hf,hu,hn+1,major_info,major_pos,major_count,k0++,&ncount);
+}
+
+@ Now we have reached the point where the |minor| and |major| glyph
+buffers disagree at position |k| and |k0+k| respectively.
+All glyphs before this point are already added to |s|
+We will now insert the discretionary.
+
+@<Insert the discretionary and advance the indices@>=
+{ link(s)=new_disc();
+  s=link(s);
+  k0=k0+k;
+  @<Add the |pre_break| list to |s|@>@;
+  @<Add the |post_break| list to |s| and advance the indices@>@;
+}
+
+@ Whatever remains in the |minor| glyph buffer will go to the |pre_break|
+list of the discretionary. For simplicity, we append the list to |s|
+and the move it to the |pre_break| field.
+
+@<Add the |pre_break| list to |s|@>=
+{ pointer t;
+  t=s;
+  while (k<minor_count)
+  { t=x_append_cluster(t,hf,hu,i+2,minor_info,minor_pos,minor_count,k,&ncount);
+    k++;
+  }
+  pre_break(s)=link(s);
+  link(s)=null;
+  hu[i+1]=c1;  hu[i+2]=c2;
+}
+
+@ To find the |post_break| list, we insert a boundary character into |hu[i]|
+and shape the codepoints from there until the end of the word
+(a shorter list might be sufficient).
+We find the point |k| where the |minor| and the |major| glyphs match again.
+The number of glyphs in the |major| buffer befor |k| is moved to the
+|replace_count|. Note that a cluster might produce kern nodes in addition
+to characters and ligatures. The extra kerns need to be included in the |replace_count|.
+The initial part of the |minor| glyphs up to and not including |k|
+will yield the |post_break| list.
+
+@<Add the |post_break| list to |s| and advance the indices@>=
+{ int ccount;
+  pointer t;
+  c1 = hu[i];  hu[i]=bchar;
+  t=s;
+  minor = x_set_minor(hf,hu,hn+2,i+1,hn-i);
+  minor_info = hb_buffer_get_glyph_infos(minor, &minor_count);
+  minor_pos = hb_buffer_get_glyph_positions(minor, &minor_count);
+  ccount=0; k=0;
+  do {
+    if (major_info[k0+ccount].cluster<minor_info[k].cluster)
+      ccount++;
+    else if (major_info[k0+ccount].cluster>minor_info[k].cluster)
+    { t=x_append_cluster(t,hf,hu,hn+1,minor_info,minor_pos,minor_count,k,&ncount);
+      k++;
+    }
+    else if (major_info[k0+ccount].codepoint==minor_info[k].codepoint &&
+           major_pos[k0+ccount].x_advance==minor_pos[k].x_advance)
+    { 
+      break;
+    }
+    else
+    { ccount++;
+      t=x_append_cluster(t,hf,hu,hn+1,minor_info,minor_pos,minor_count,k,&ncount);
+      k++;
+    }
+  } while (ccount<major_count && k<minor_count);
+
+  post_break(s)=link(s);
+  link(s)=null;
+  hu[i]=c1;
+
+  ncount=0;
+  t=s;
+  while(ccount-->0)
+  { t=x_append_cluster(t,hf,hu,hn+1,major_info,major_pos,major_count,k0++,&ncount);
+  }
+  set_replace_count(s,ncount);
+  set_auto_disc(s);
+  s=t;
+
+  j=major_info[k0].cluster;
+  if (j>i+1)
+    i=j-1;
+  else
+    i++;
+}
+
+
+@ We still need to explain the application of the \.{tlig} feature.
+
+@<Apply \TeX\ ligatures and replacements@>=
+while (true)
+{ pointer r = link(q);
+  if (is_char_node(r))
+  { if (character(r)=='`')
+    { if (is_char_node(link(r)) && character(link(r))=='`' &&
+        make_tlig2(font(r),0x201C,q))  /*Left Double Quotation Mark*/
+      { q=link(q); r=link(q);
+      }
+      else if (make_tlig1(font(r),0x2018,q)) /*Left Single Quotation Mark*/
+      { q=link(q); r=link(q);
+      }
+    }
+    else if (character(r)=='\'')
+    { if (is_char_node(link(r)) && character(link(r))=='\'' &&
+        make_tlig2(font(r),0x201D,q))  /*Right Double Quotation Mark*/
+      { q=link(q); r=link(q);
+      }
+      else if (make_tlig1(font(r),0x2019,q)) /*Right Single Quotation Mark*/
+      { q=link(q); r=link(q);
+      }
+    }
+    else if (character(r)=='"')
+    { if (make_tlig1(font(r),0x201D,q)) /*Right Double Quotation Mark*/
+      { q=link(q); r=link(q);
+      }
+    }
+    else if (character(r)==',')
+    { if (is_char_node(link(r)) && character(link(r))==',' &&
+        make_tlig2(font(r),0x201E,q))  /* Double Low-9 Quotation Mark*/
+      { q=link(q); r=link(q);
+      }
+    }
+    else if (character(r)=='<')
+    { if (is_char_node(link(r)) && character(link(r))=='<' &&
+        make_tlig2(font(r),0x00AB,q))  /* Left-Pointing Double Angle Quotation Mark*/
+      { q=link(q); r=link(q);
+      }
+    }
+    else if (character(r)=='>')
+    { if (is_char_node(link(r)) && character(link(r))=='>' &&
+        make_tlig2(font(r),0x00BB,q))  /* Right-Pointing Double Angle Quotation Mark*/
+      { q=link(q); r=link(q);
+      }
+    }
+    else if (character(r)=='!')
+    { if (is_char_node(link(r)) && character(link(r))=='`' &&
+        make_tlig2(font(r),0x00A1,q))  /* Inverted Exclamation Mark*/
+      { q=link(q); r=link(q);
+      }
+    }
+    else if (character(r)=='?')
+    { if (is_char_node(link(r)) && character(link(r))=='`' &&
+        make_tlig2(font(r),0x00BF,q))  /* Inverted Question Mark*/
+      { q=link(q); r=link(q);
+      }
+    }
+    else if (character(r)=='-')
+    { if (is_char_node(link(r)) && character(link(r))=='-')
+      { if (is_char_node(link(link(r))) && character(link(link(r)))=='-' &&
+          make_tlig3(font(r),0x2014,q))  /* Em Dash*/
+        { q=link(q); r=link(q);
+        }
+	else if (make_tlig2(font(r),0x2013,q))  /* En Dash*/
+        { q=link(q); r=link(q);
+        }
+      }
+    }
+  }
+  if (r==null)
+  { tail=q; break; }
+  q=r;
+} 
+
+@ To make a new ligature we use this auxiliar function. Given the font |f|, the
+codepoint |cp|, the pointer |r|, and the number |n| of characters beeing replaced.
+The return value is |true| if a replacement was possible.
+
+@p
+static bool make_tlig1(int f, int cp, pointer q)
+{ hb_codepoint_t gid;
+  pointer r;
+  r=link(q);
+  if (x_glyph(f,cp,&gid))
+  { pointer s=new_ligature(f,gid,r);
+    link(s)=link(r);
+    link(r)=null;
+    link(q)=s;
+    return true;
+  }
+  return false;
+}
+
+static bool make_tlig2(int f, int cp, pointer q)
+{ hb_codepoint_t gid;
+  pointer r;
+  r=link(q);
+  if (x_glyph(f,cp,&gid))
+  { pointer s=new_ligature(f,gid,r);
+    link(s)=link(link(r));
+    link(link(r))=null;
+    link(q)=s;
+    return true;
+  }
+  return false;
+}
+
+static bool make_tlig3(int f, int cp, pointer q)
+{ hb_codepoint_t gid;
+  pointer r;
+  r=link(q);
+  if (x_glyph(f,cp,&gid))
+  { pointer s=new_ligature(f,gid,r);
+    link(s)=link(link(link(r)));
+    link(link(link(r)))=null;
+    link(q)=s;
+    return true;
+  }
+  return false;
+}
+
 
 @* Index.
 Here is where you can find all uses of each identifier in the program,

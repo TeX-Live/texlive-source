@@ -2865,7 +2865,6 @@ static uint16_t utf_sfcode(uint32_t cp)
 { return UTF_SF(cp);
 }
 
-
 static uint32_t utf_mathcode(uint32_t cp)
 { uint32_t fc= UTF_FC(cp);
   uint32_t slot=UTF_SL(cp);

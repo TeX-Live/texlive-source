@@ -71,8 +71,10 @@
 %\font\largebf=lmroman12-bold.otf scaled\magstep1
 
 
-\font\utf={[/usr/share/fonts/truetype/dejavu/DejaVuSansMono]} at 9pt
-
+%\font\utf={[/usr/share/fonts/truetype/dejavu/DejaVuSerif]} at 9pt
+\font\utf={[/usr/share/fonts/truetype/freefont/FreeSerif.ttf]}
+\font\lmr=[lmroman10-regular.otf]:-dlig
+\font\lmrtlig=[lmroman10-regular.otf]:+tlig;+tacc;
 
 \hbox{}
 \vskip 0pt plus 1fill
@@ -130,7 +132,7 @@ Germany.
 \medskip
 {\tt ruckert\:@cs.hm.edu}
 \medskip
-Last commit: Sun Feb 1 14:57:55 2026
+Last commit: Sat Apr 11 19:16:12 2026
 \par
 }
 \eject
@@ -544,14 +546,14 @@ create digital fonts. These fonts had their own glyph encoding
 and their own file format for glyphs  (\.{.pk} files)
 and for font metrics (\.{.tfm} files).
 Soon after that, the American Mathematical Society commissioned
-a collection of \TeX\ font files in the PostScript Type 1 format, which allowed
+a collection of \TeX\ font files in the PostScript Type~1 format, which allowed
 the creation of PostScript (and much later \PDF) output files with \TeX.
-The PostScript Type 1 fonts largely replaced the original \.{.pk} files.
+The PostScript Type~1 fonts largely replaced the original \.{.pk} files.
 A replacement for the font metric files was not necessary and so the \.{.tfm} files
 are still in use today.
 
 In the meantime, the number of high quality, freely available, digital fonts has
-exploded. And ``high quality'' is no longer equivalent to ``PostScript Type 1''.
+exploded. And ``high quality'' is no longer equivalent to ``PostScript Type~1''.
 Today, the most popular file format for fonts is the OpenType format, an extension
 of the slightly simpler TrueType format. So it seems natural to extend the
 capabilities of \TeX\ to work with these types of font files.
@@ -570,7 +572,6 @@ The syntax is:
 \rule\sym{input\ file}: \.{"}\sym{font\ specifier}\.{"}.
 \rule\sym{input\ file}: \.{\{}\sym{font\ specifier}\.{\}}.
 \rule\sym{input\ file}: \sym{font\ specifier}.
-\rule\sym{font\ specifier}: \sym{pathname}.
 \rule\sym{at\ clause}: \.{at} \sym{dimen} \OR\ \.{scaled} \sym{number}.
 \medskip
 The \sym{at\ clause} to adjust the font size is described in the \TeX\ book
@@ -593,18 +594,23 @@ After \HiTeX\ has done all this preprocessing of the \sym{input\ file},
 the result is a \sym{font\ specifier} 
 Before we look at the more complex forms of a \sym{font\ specifier}
 we look at the simple case of a \sym{pathname}.
-In this case, \HiTeX\  passes it to the \.{kpathsearch} library to find a matching \.{.tfm} file.
+\medskip
+\rule\sym{font\ specifier}: \sym{pathname}.
+\medskip
+A \sym{pathname} specifies not necesarily an absolute path, it can be a relative path or
+just a file name as well.
+\HiTeX\  passes it to the \.{kpathsearch} library to find a matching \.{.tfm} file.
 If the \.{.tfm} file is found, \HiTeX\ will assume that
 the font is one of the traditional \TeX\ fonts, using \TeX's traditional encoding.
 Later, \HiTeX\ will then use again the \.{kpathsearch} library to
-find and open the matching PostScript Type 1 font and if that is not possible
+find and open the matching PostScript Type~1 font and if that is not possible
 a matching \.{.pk} file. Thats all.
 
 If the  \.{kpathsearch} library can not find a suitable \.{.tfm} file,
 \HiTeX\ assumes that an OpenType or TrueType file should be loaded.
-In this case, a \sym{font\ specifier} is not just simply the name of a file,
-but it has a very sophisticated syntax---mostly due to the attempt to be
-compatibel with existing implementations.
+In this case, a \sym{font\ specifier} can be more complex than just a simple  \sym{pathname}.
+Its sophisticated syntax is mostly
+due to the attempt to be compatibel with existing implementations.
 
 \medskip
 \rule\sym{font\ specifier}: \sym{font\ file\ name} \opt{\.{:} \sym{font\ features}}.
@@ -613,15 +619,13 @@ compatibel with existing implementations.
 \rule\sym{font\ selector}: \.{(}\sym{number}\.{)}.
 \rule\sym{font\ specifier}: \.{name:}\sym{font\ name} \opt{\.{:} \sym{font\ features}}.
 \smallskip
-$\bullet$ Note that the use of \sym{font\ features} is currently not yet implemented.
-Any \sym{font\ features} given will be silently ignored.
 
 $\bullet$ Note that font lookup using the \.{name:} prefix to indicate the use
 of ``font names'' as opposed to ``file names'' is currently not yet implemented.
 Currently only file name lookup is implemented.
 
-$\bullet$ Note that a \sym{font\ selector} must be an index number.
-Using the PostScript name to select a font is not yet implemented.
+$\bullet$ Note that a \sym{font\ selector} must be a font index number enclosed in parentheses.
+Using the PostScript name to select a font is not implemented.
 
 $\bullet$ Note that \HiTeX\ in an attempt to maintain compatibility with other engines
 will not give up on a font specifier that neither leads to a matching \.{.tfm} file
@@ -637,28 +641,213 @@ The extended font specifiers used for OpenType fonts
 assign special meaning to the colon ``\.{:}'', the slash ``\.{/}'',
 and the opening parenthesis ``\.{(}''.
 If these characters occur in the \sym{pathname} of a font file, it is possible to use
-a bracketed notation of the \sym{pathname} as a alternative to using the \.{file:} prefix.
+the bracketed notation of the \sym{pathname} as a alternative to using the \.{file:} prefix.
 If the pathname is enclosed in square brackets, it may
 contain any character except the closing square bracket; otherwise it must not contain
 the colon ``\.{:}'', the slash ``\.{/}'', nor the opening parenthesis ``\.{(}''.
 Since the colon can be necessary after a drive letter in Windows and the slash serves as
 a directory separator in Linux, the bracketed verions is quite common. The paraenthesis
-is excluded from the unbracketed version because is start the optional \sym{font\ selector}.
+is excluded from the unbracketed version because it starts the optional \sym{font\ selector}.
 
 Once \HiTeX\ has determined the \sym{pathname}, it uses the \.{kpathsearch} library to
 find a matching OpenType font and if this does not succeed, it tries to find a matching
 TrueType font. Once the file is found, the Harfbuzz library is used to open the font file.
 
-$\bullet$ Note that it is possible to open PostScript Type 1 font files without a \.{.tfm} file
-using Harfbuzz. The use of Type 1 fonts with Harfbuzz, however,
+$\bullet$ Note that it is possible to open PostScript Type~1 font files without a \.{.tfm} file
+using Harfbuzz. The use of Type~1 fonts with Harfbuzz, however,
 requires the use of \.{.afm} files, and this does not work well and is deprecated.
 Therefore \HiTeX\ does not support it.
-For Type 1 fonts, one should use \.{afm2tfm} to convert the \.{.afm} files to \.{tfm} 
+For Type~1 fonts, one should use \.{afm2tfm} to convert the \.{.afm} files to \.{tfm} 
 files and put the new \.{tfm} files in a place where the \.{kpathsearch} library
 can find them. Then run \.{mktexls}.
 
-\subsubsection{Embedding subsets of fonts}
+\subsubsection{Font features}
+As described above, the \sym{font\ specifier} might end with a colon and a list of
+\sym{font features}. Currently only OpenType font features are implemented.
+The basis to understanding font features is the distinction between a character code
+and a glyph. The same character or sequence of characters can be represented by
+different glyphs using different spacing. A common example are ligatures: for example the
+character sequence ``f'' and ``i'' can be fused together in a single glyph ``fi''.
 
+There is a long list of registered OpenType font features. Each font feature has a unique
+``feature tag'' which consists of four letters. For example the feature tag for ligatures
+is ``liga''. On the internet you can find a list of registered features and their description.
+If you need to know the font features of a specific font, you can use the program \.{otfinfo}
+that comes with the \TeX\ Live distribution. For example, if \.{otfinfo} is on your search path
+and the Latin modern roman italic font \.{ lmroman10-regular.otf} is in the current directory,
+running \.{otfinfo -f lmroman10-regular.otf} gives you the following output:
+\medskip
+{\parskip 0pt
+\.{aalt\qquad	Access All Alternates}\par
+\.{cpsp\qquad	Capital Spacing}\par
+\.{dlig\qquad	Discretionary Ligatures}\par
+\.{frac\qquad	Fractions}\par
+\.{kern\qquad	Kerning}\par
+\.{liga\qquad	Standard Ligatures}\par
+\.{lnum\qquad	Lining Figures}\par
+\.{onum\qquad	Oldstyle Figures}\par
+\.{pnum\qquad	Proportional Figures}\par
+\.{size\qquad	Optical Size}\par
+\.{tnum\qquad	Tabular Figures}\par
+\.{zero\qquad	Slashed Zero}\par
+}
+\medskip
+
+To enable or disable a font feature, you can specify the feature tags
+prefixed with a plus sign (enable) or a minus sign (disable) in a semicolon
+separated list. Here are the rules:
+\medskip
+\rule\sym{font\ features}: \sym{feature}.
+\rule\sym{font\ features}: \sym{font\ features} \.{;} \sym{feature}.
+\rule\sym{feature}: \.{+}\sym{feature\ tag} \OR\ \.{-}\sym{feature\ tag}.
+\rule\sym{feature\ tag}: four alphabetic characters.
+\medskip
+
+Features that are not available in the font are silently ignored.
+If a feature tag has less than four characters, it is padded with spaces.
+If it has more than four characters, it is truncated. If it does not start
+with a plus or minus sign, the feature tag specification is ignored.
+
+By default the following features are enabled:
+Standard Ligatures (\.{liga}), Kerning (\.{kern}),
+Discretionary Ligatures  (\.{dlig}),
+Glyph Composition/Decomposition (\.{ccmp}), and  Localized Forms (\.{locl}).
+If you do not want one of the default features, you have to disable them explicitely
+using the respective feature tag with a minus sign.
+
+As an example, if you need the Latin Modern Roman font without the standard ligatures
+but with Oldstyle Figures, you can write
+\medskip
+\.{\\font\\oldrm = [lmroman10-regular.otf]:-liga;+onum}
+\medskip
+
+\subsubsection{\TeX\ standard ligatures and accents}
+Traditional \TeX\ fonts implement a few standard ligatures
+that are often not implemented in modern OpenType fonts. So if font \.{cmr10}
+would simply be replaced by \.{lmroman10-regular.otf},
+typing {\tt \char"12 \char"12 hello\char"0D\char"0D}
+would come out as {\lmr ``hello''} not {\lmrtlig ``hello''}.
+To enable \TeX's standard ligatures listed below, the \sym{feature} \.{+tlig}
+is added as another default font feature. If for some reason, you do not want
+the feature, you can disable it by adding \.{-tlig} to the
+\sym{font\ features} like this: \.{\\font\\rm=[lmroman10-regular.otf]:-tlig}.
+Here is the list of the replacements and ligatures performed if the \.{tlig}
+feature is enabled:
+\medskip
+{\parindent=0pt\parskip=0pt
+\def\showtlig#1#2{\leavevmode\hangindent=6pc
+ \hangafter=1\hbox to 6pc{{\lmr #1}\hss${}\rightarrow{}$\hss{\lmrtlig #1}\quad}#2\par}
+\showtlig{--}{En Dash}
+\showtlig{---}{Em Dash}
+\showtlig{`}{Left Single Quotation Mark}
+\showtlig{'}{Right Single Quotation Mark}
+\showtlig{``}{Left Double Quotation Mark}
+\showtlig{''}{Right Double Quotation Mark}
+\showtlig{,,}{Double Low-9 Quotation Mark}
+\showtlig{<<}{Left-Pointing Double Angle Quotation Mark}
+\showtlig{>>}{Right-Pointing Double Angle Quotation Mark}
+\showtlig{!`}{Inverted Exclamation Mark}
+\showtlig{?`}{Inverted Question Mark}
+}
+\medskip
+
+Similarly, plain \TeX\ uses the \ctl{accent} primitive to define control
+sequences for common accents. So you can write \.{\\'e} to get \'e.
+In file \.{plain.tex} you can find the definition of this control sequence.
+It reads ``\.{\\def\\'\#1\{\{\\accent19 \#1\}\}}''. Here you see that the character
+code 19 for the acute accent is part of the definition. If this definition is
+used for an OpenType font that is UTF encoded, you will most likely get an error message
+telling you that there is no there is no character 19 in the font.
+But an UTF coded font will (most likely) have an acute accent with character
+code 769. You can simply replace the 19 in the above definition by 769 and you are all
+set. But this will not work if you use \.{\\'e} sometimes for UTF fonts and sometimes
+for traditional \TeX\ fonts. This situation can occur for instance if you have a document
+that works fine with \TeX\ fonts and you just want to change one font---for example for
+headlines---to another font that is UTF encoded.
+To enable the replacement of \TeX's standard accent codes by the correct UTF
+accent codes the \sym{feature} \.{+tacc} is added as another default font feature.
+To disable the replacemnt, you can add \.{-tacc} to the \sym{font\ features}.
+Here is the list of the replacements and performed in the \ctl{accent} primitive
+if the \.{tacc} feature is enabled:
+\medskip
+{\parindent=0pt\parskip=0pt
+\def\showtacc#1#2#3#4{\leavevmode\hangindent=6pc
+ \hangafter=1\hbox to 6pc{\.{#1}\hss${}\rightarrow{}$\hss\.{#2}\quad}{\utf#3}\quad#4\par}
+\showtacc{"12}{"300}{\`o}{Grave}
+\showtacc{"13}{"301}{\'o}{Acute}
+\showtacc{"14}{"30C}{\v o}{Caron or Hacek}
+\showtacc{"15}{"306}{\u o}{Breve}
+\showtacc{"16}{"304}{\= o}{Macron}
+\showtacc{"17}{"30A}{\accent"17 o}{Ring}
+\showtacc{"18}{"327}{\accent"18 o}{Cedilla}
+\showtacc{"5E}{"302}{\accent"5Eo}{Circumflex}
+\showtacc{"5F}{"307}{\accent"5Fo}{Dot}
+\showtacc{"7D}{"30B}{\H o}{Double Acute}
+\showtacc{"7E}{"303}{\~o}{Tilde}
+\showtacc{"7F}{"308}{\"o}{Diaresis}
+}
+\medskip
+Note that some of plain \TeX's control sequences for accents (\ctl{c}, \ctl{t}, \ctl{d},
+and \ctl{b}) are not simple calls to \ctl{accent} and therefore will not work correctly
+even if the \.{tacc} feature is enabled.
+
+Note that OpenType fonts often can handle accents without
+using \TeX's \ctl{accent} primitive if the accent is simply placed {\it after}
+the base character. So you can write ``\.{o\\char"301}'' to obtain {\lmr o\char"301}.
+Sometimes, the Harfbuzz library will find the accent and place it above the base character
+somtimes, it finds a single glyph that already combines the accent with the base character.
+
+Note that \.{tlig} and \.{tacc} are not registered feature tags implemented in
+the font file. They are implemented by the \HiTeX\ engine.
+The processing of \TeX's standard ligatures is done after the font's build-in
+ligatures are applied by shaping with the Harfbuzz library.
+So built-in ligatures take precedence over \TeX's standard ligatures.
+The translation of \TeX's standard accents is done inside the \ctl{accent} primitive.
+
+\subsubsection{Testing for OpenType fonts}
+In the previous section, the most common differences between \TeX's standard
+fonts and UTF encoded OpenType fonts were handled by providing pseudo font features.
+But this is not a solution for all situations.
+\HiTeX\ will however not implement an extensive list of primitives to test a font
+for features and encodings. There are good programs, for example \.{otfinfo},
+to examine OpenType fonts. But as long as the traditional \TeX\ fonts are still
+widely used and no perfect replacements in OpenType format are available,
+some runtime testing is occassionaly necessary. So \HiTeX\ provides the conditional
+\ctl{ifTeXfont}.
+The conditional acts like \ctl{iftrue} if the current font is a traditional \TeX\ font;
+else it acts like \ctl{iffalse}.
+
+It would be possible to implement a more complex form of this conditional
+similar to the \ctl{fontname} primitive
+which has the form \ctl{fontname}\sym{font}. Where \sym{font} here
+is either an identifier defined by \ctl{font}; or \ctl{textfont}\sym{number},
+\ctl{scriptfont}\sym{number}, or \ctl{scriptscriptfont}\sym{number}; or \ctl{font}, 
+which denotes the current font. But such a more complicated conditional is not
+necessary. If an action depends on a font other than the current font, it is possible
+to switch to this font, then test, define a macro to perform this action,
+and switch back to the previous font. This can be done once in the preamble of the
+document and the overhead of switching fonts is neglegible. 
+
+
+
+\subsubsection{Embedding subsets of fonts}
+Very often only a small subset of the glyphs contained in a font are actually used in
+document. For example in this document, the acronym ``\HINT'' uses a special font,
+and only those four characters from this font are ever used in the entire document.
+In cases like this, it is possible to reduce the size of the document by embedding
+a subset font that contains only those four characters.
+
+Another reason for embedding
+only a subset of a font can be licensing restrictions. After all, it is possible
+to extract the font from the document. To prevent distributing fonts for free together
+with the documents that use these fonts, licencing terms may not allow the embedding
+of the full font in the document.
+
+Tracking the use of glyphs that occur in the output and embedding only the subset
+of necessary glyphs is the default behaviour of \HiTeX. Using the comandline
+option \.{-no-subset} will cause the embedding of full fonts. Currently it is not
+possible to selectively specify subset embedding for individual fonts. It's simply
+all or nothing.
 
 
 \subsection{Images}
