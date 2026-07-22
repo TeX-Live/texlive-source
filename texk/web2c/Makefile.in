@@ -3897,8 +3897,6 @@ nodist_vftovp_SOURCES = vftovp.c vftovp.h
 nodist_vptovf_SOURCES = vptovf.c vptovf.h
 nodist_weave_SOURCES = weave.c weave.h
 nodist_twill_SOURCES = twill.c twill.h
-dist_bin_SCRIPTS = cwebdir/ctwill-proofsort
-dist_bin_SCRIPTS = cwebdir/ctwill-refsort2
 dist_bin_SCRIPTS = cwebdir/twill-refsort
 nodist_ctie_SOURCES = ctie.c
 nodist_cweave_SOURCES = cweave.c cweb.c
@@ -4613,9 +4611,9 @@ euptex_tests = \
 # See hitex.am for comments about handling man.
 @TEXPROF_TRUE@man1_MANS = texprofdir/man/texprof.man texprofdir/man/texprofile.man 
 hitex_CPPFLAGS = $(AM_CPPFLAGS) $(ZLIB_INCLUDES) $(ICU_INCLUDES) \
-	$(HARFBUZZ_INCLUDES) \
-	-I$(srcdir)/libmd5 -I$(srcdir)/hitexdir -DINIT -DSTAT \
-	-DWEB2CVERSION="\"${WEB2CVERSION}\"" -Wno-unused-result
+	$(HARFBUZZ_INCLUDES) -I$(srcdir)/libmd5 -I$(srcdir)/hitexdir \
+	-DINIT -DSTAT -DWEB2CVERSION="\"${WEB2CVERSION}\"" \
+	-Wno-unused-result
 # -DDEBUG drops into an interactive debugging session.
 hitex_LDADD = $(KPATHSEA_LIBS) $(ZLIB_LIBS) $(HARFBUZZ_LIBS) \
 	$(GRAPHITE2_LIBS) $(ICU_LIBS) libmd5.a
