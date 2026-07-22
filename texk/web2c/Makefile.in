@@ -4612,14 +4612,15 @@ euptex_tests = \
 
 # See hitex.am for comments about handling man.
 @TEXPROF_TRUE@man1_MANS = texprofdir/man/texprof.man texprofdir/man/texprofile.man 
-hitex_CPPFLAGS = $(AM_CPPFLAGS) $(ZLIB_INCLUDES) $(HARFBUZZ_INCLUDES) \
+hitex_CPPFLAGS = $(AM_CPPFLAGS) $(ZLIB_INCLUDES) $(ICU_INCLUDES) \
+	$(HARFBUZZ_INCLUDES) \
 	-I$(srcdir)/libmd5 -I$(srcdir)/hitexdir -DINIT -DSTAT \
 	-DWEB2CVERSION="\"${WEB2CVERSION}\"" -Wno-unused-result
 # -DDEBUG drops into an interactive debugging session.
 hitex_LDADD = $(KPATHSEA_LIBS) $(ZLIB_LIBS) $(HARFBUZZ_LIBS) \
-	$(GRAPHITE2_LIBS) libmd5.a
+	$(GRAPHITE2_LIBS) $(ICU_LIBS) libmd5.a
 hitex_DEPENDENCIES = $(KPATHSEA_DEPEND) $(ZLIB_DEPEND) \
-	$(HARFBUZZ_DEPEND) $(GRAPHITE2_DEPEND) libmd5.a
+	$(HARFBUZZ_DEPEND) $(GRAPHITE2_DEPEND) $(ICU_DEPEND) libmd5.a
 #
 histretch_CPPFLAGS = $(AM_CPPFLAGS) $(ZLIB_INCLUDES) -I$(srcdir)/hitexdir
 histretch_LDADD = $(ZLIB_LIBS)
