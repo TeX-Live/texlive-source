@@ -1,3 +1,8 @@
+2026-07-22  Andreas Scherer  <https://ascherer.github.io>
+
+	* Makefile.in,
+	* am/cweb.am: Actually add the new script to the other two.
+
 2026-07-18  Andreas Scherer  <https://ascherer.github.io>
 
 	* am/cweb.am (dist_bin_SCRIPTS): new script cwebdir/ctwill-refsort2.
