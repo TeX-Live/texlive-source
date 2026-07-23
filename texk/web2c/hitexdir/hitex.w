@@ -1044,6 +1044,7 @@ should be printed for each of the 256 possibilities.
 @<Types...@>=
 typedef int32_t pool_pointer; /*for variables that point into |str_pool|*/
 typedef int32_t str_number; /*for variables that point into |str_start|*/
+typedef uint8_t ASCII_code; /*single byte containg part of an UTF8 character*/
 typedef uint8_t packed_ASCII_code; /*elements of |str_pool| array*/
 
 @ @<Glob...@>=
@@ -1346,7 +1347,7 @@ default:write_ln(write_file[selector]);
 All printing comes through |print_ln| or |print_char|.
 
 @<Basic printing...@>=
-static void print_char(UTF8_code @!s) /*prints a single character byte*/
+static void print_char(ASCII_code @!s) /*prints a single character byte*/
 {@+
 if (@<Character |s| is the current new-line character@>)
  if (selector < pseudo)
@@ -1370,7 +1371,7 @@ case term_only: {@+wterm("%c",s);incr(term_offset);
   } @+break;
 case no_print: do_nothing;@+break;
 case pseudo: if (tally < trick_count) trick_buf[tally%error_line]=s;@+break;
-case new_string: {@+append_utf8(s);
+case new_string: {@+append_char(s);
   } @+break; /*we drop characters if the string space is full*/
 default:pascal_write(write_file[selector],"%c", s);
 } @/
@@ -9857,7 +9858,7 @@ case font_name_code: {@+printn(font_name[cur_val]);
   } @+break;
 case eTeX_revision_code: print(eTeX_revision);@+break;
 case job_name_code: printn(job_name);@+break;
-case Uchar_code: case Ucharcat_code: print_char(cur_val); break;
+case Uchar_code: case Ucharcat_code: print_utf8(cur_val); break;
 @/@<Cases of `Print the result of command |c|'@>@/
 }  /*there are no other cases*/
 
@@ -34065,7 +34066,8 @@ and the lower six bits equal to the lower six bits of |c|.
 @<input a two byte utf8 code@>=
 if ((cur_chr&0xE0)==0xC0)
 { @<input a continuation byte |d|@>@;
-  cur_chr= ((cur_chr&0x1F)<<6)+(d&0x3F);
+  cur_chr= ((cur_chr&0x1F)<<6);
+  cur_chr= cur_chr+(d&0x3F);
   return i;
 }
 
