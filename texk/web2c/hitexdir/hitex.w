@@ -7702,6 +7702,16 @@ if (cur_cmd >= outer_call) check_outer_validity();
 
 @ Notice that a code like \.{\^\^8} becomes \.x if not followed by a hex digit.
 
+Together with the initial |sup_mark|, we might have two, four, or six
+|sup_mark|s followed by the same number of hex-digits. In this case, we convert
+the whole sequence to a single character token.
+
+Otherwise, if we have two |sup_mark|s and one ASCII character to follow it,
+we use the ``clasic'' \TeX\ interpretation.
+
+Otherwise only the single |sup_mark| will become the next token.
+
+
 @d is_hex(A) (((A >= '0')&&(A <= '9'))||((A >= 'a')&&(A <= 'f')))
 @d hex_to_cur_chr
   if (c <= '9') cur_chr=c-'0';@+else cur_chr=c-'a'+10;
@@ -7709,19 +7719,41 @@ if (cur_cmd >= outer_call) check_outer_validity();
   else cur_chr=16*cur_chr+cc-'a'+10
 
 @<If this |sup_mark| starts an expanded character...@>=
-{@+if (cur_chr==buffer[loc]) if (loc < limit)
-  {@+c=buffer[loc+1];@+if (c < 0200)  /*yes we have an expanded char*/
-    {@+loc=loc+2;
-    if (is_hex(c)) if (loc <= limit)
-      {@+cc=buffer[loc];@+if (is_hex(cc))
-        {@+incr(loc);hex_to_cur_chr;goto reswitch;
-        }
-      }
-    if (c < 0100) cur_chr=c+0100;@+else cur_chr=c-0100;
-    goto reswitch;
-    }
+{ int i=0;
+  while (i<5 && cur_chr==buffer[loc+i] && loc+i < limit)
+    i++;
+  i++;
+  @<Scan an expanded character with |i==2|, 4, or 6 hex digits and go to |reswitch|@>@;
+  @<Scan an expanded character with |i==2| and an ASCII character and go to |reswitch|@>@;
+  state=mid_line;
+}
+
+@ If the character following \.{ \^\^} has an internal code between |0x40| and |0x7F|
+\TeX\ subtracts |0x40| from the code; if the code is between 0 and |0x3F|, \TeX\ adds |0x40|. 
+
+@<Scan an expanded character with |i==2| and an ASCII character and go to |reswitch|@>=
+if (i==2)
+{  c=buffer[loc+1];@+
+  if (c < 0x80)  /*yes we have an expanded char*/
+  {@+loc=loc+2;
+     if (c < 0x40) cur_chr=c+0x40;@+else cur_chr=c-0x40;
+     goto reswitch;
   }
-state=mid_line;
+}
+@ @<Scan an expanded character with |i==2|, 4, or 6 hex digits and go to |reswitch|@>=
+if (i==2||i==4||i==6)
+{ int k,c;
+  c=0;
+  for (k=0;k<i;k++)
+    if (loc+i-1+k<limit && is_hex(buffer[loc+i-1+k]))
+    { UTF32_code cc= buffer[loc+i-1+k];  c=(c*16)+((cc<='9')?cc-'0':cc-'a'+10); }
+    else
+      break;
+  if (k==i)
+  { loc=loc+i-1+k;
+    cur_chr=c;
+    goto reswitch;
+  }
 }
 
 @ Active characters $x$ in the range 0 to |0x7F| are represented by single

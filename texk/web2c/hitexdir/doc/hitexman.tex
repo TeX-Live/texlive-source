@@ -132,7 +132,7 @@ Germany.
 \medskip
 {\tt ruckert\:@cs.hm.edu}
 \medskip
-Last commit: Wed Jul 22 15:24:57 2026
+Last commit: Fri Jul 24 18:55:51 2026
 \par
 }
 \eject
@@ -334,6 +334,23 @@ Some traditional primitives are simply extended to handle these larger
 character codes. To get access to any character whatsoever, you can type
 \ctl{char}\sym{utf\ character\ code}. Similarly, you can write
 \ctl{chardef}\sym{control sequence}\.{=}\sym{utf\ character\ code}.
+
+To enter unusual character codes in the input file \TeX\ provides the \.{\^\^} notation:
+you can type \.{\^\^} followed by an ASCII character $c$ in the range $0\le c\le 127$.
+If the character  $c$ following \.{ \^\^} has an internal code between 64 and 127
+\TeX\ subtracts 64 from the code; if the code is between 0 and 63, \TeX\ adds 64.
+
+When \TeX\ was extended (long time ago) to handle 8-bit character input,
+this notation was extended: If \.{ \^\^} is followed by two lowercase hexadecimal digits,
+\TeX\ takes these digits as the intended character code. With this convention, all 256 characters are
+obtainable in a uniform way, from \.{\^\^00} to \.{\^\^ff}.
+
+Now it is only natural to extend this notation further to obtain all characters in the unicode range:
+If the sequence \.{ \^\^\^\^} is followed by four or the  sequence \.{ \^\^\^\^\^\^} by six
+lowercase hexadecimal digits these digits specify the intended character code.
+With this convention, the remaining unicode characters are
+obtainable in a uniform way, from \.{\^\^\^\^0100} to \.{\^\^\^\^\^\^10ffff}.
+
 
 New are the primitives \ctl{Uchar} and \ctl{Ucharcat} as defined by the
 \XeTeX\ manual. \ctl{Uchar}\sym{utf\ character\ code} expands to a
