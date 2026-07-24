@@ -674,11 +674,11 @@ that begin with a reverse apostrophe; and it provides an index to the
 tables.
 
 @ Characters of text that have been converted to \TeX's internal form
-are said to be of type |UTF_code|, which is a subrange of the integers.
+are said to be of type |UTF32_code|, which is a subrange of the integers.
 
 @<Types...@>=
 typedef unsigned char UTF8_code; /*eight-bit numbers*/
-typedef uint32_t UTF_code; /*twenty-one-bit numbers*/
+typedef uint32_t UTF32_code; /*twenty-one-bit numbers*/
 
 @ The original \PASCAL\ compiler was designed in the late 60s, when six-bit
 character sets were common, so it did not make provision for lowercase
@@ -1347,7 +1347,7 @@ default:write_ln(write_file[selector]);
 All printing comes through |print_ln| or |print_char|.
 
 @<Basic printing...@>=
-static void print_char(ASCII_code @!s) /*prints a single character byte*/
+static void print_char(ASCII_code @!s) /*prints a single UTF8 byte*/
 {@+
 if (@<Character |s| is the current new-line character@>)
  if (selector < pseudo)
@@ -7190,7 +7190,7 @@ int @!q; /*temporary index*/
 the desired information.
 
 @d begin_pseudoprint
-  {@+l=tally;tally=0;selector=pseudo;
+  {@+l=tally;selector=pseudo;
   trick_count=1000000;
   }
 @d set_trick_count
@@ -7212,9 +7212,16 @@ if (l+first_count <= half_error_line)
 else{@+print("...");p=l+first_count-half_error_line+3;
   n=half_error_line;
   }
-for (q=p; q<=first_count-1; q++) print_char(trick_buf[q%error_line]);
-print_ln();
-for (q=1; q<=n; q++) print_char(' '); /*print |n| spaces to begin line~2*/
+{ int continuation_bytes=0;
+  for (q=p; q<=first_count-1; q++)
+  { UTF8_code c;
+    c= trick_buf[q%error_line];
+    print_char(c);
+    if ((c&0xC0)==0x80) continuation_bytes++;
+  }
+  print_ln();
+  for (q=1; q<=n-continuation_bytes; q++) print_char(' '); /*print |n| spaces to begin line~2*/
+}
 if (m+n <= error_line) p=first_count+m;else p=first_count+(error_line-n-3);
 for (q=first_count; q<=p-1; q++) print_char(trick_buf[q%error_line]);
 if (m+n > error_line) print("...")
@@ -8145,13 +8152,16 @@ back_error();
 @ @<Look up the characters of list |r| in the hash table...@>=
 j=first;p=link(r);
 while (p!=null)
-  {@+if (j >= max_buf_stack)
+  {@+UTF32_code c;
+    c=info(p)%cmd_factor;
+    j=utf8_put_char(buffer,j,buf_size,c);
+    if (j >= max_buf_stack)
     {@+max_buf_stack=j+1;
-    if (max_buf_stack==buf_size)
+    if (max_buf_stack>=buf_size)
       overflow("buffer size", buf_size);
 @:TeX capacity exceeded buffer size}{\quad buffer size@>
     }
-  buffer[j]=info(p)%cmd_factor;incr(j);p=link(p);
+    p=link(p);
   }
 if (j==first) cur_cs=null_cs; /*the list is empty*/
 else if (j > first+1)
@@ -25517,13 +25527,16 @@ case if_cs_code: {@+n=get_avail();p=n; /*head of the list of characters*/
 @ @<Look up the characters of list |n| in the hash table...@>=
 m=first;p=link(n);
 while (p!=null)
-  {@+if (m >= max_buf_stack)
+  {@+UTF32_code c;
+    c=info(p)%cmd_factor;
+    m=utf8_put_char(buffer,m,buf_size,c);
+    if (m >= max_buf_stack)
     {@+max_buf_stack=m+1;
     if (max_buf_stack==buf_size)
       overflow("buffer size", buf_size);
 @:TeX capacity exceeded buffer size}{\quad buffer size@>
     }
-  buffer[m]=info(p)%cmd_factor;incr(m);p=link(p); /* this is to be checked */
+    p=link(p); /* this is to be checked */
   }
 if (m==first) cur_cs=null_cs; /*the list is empty*/
 else if (m > first+1)
