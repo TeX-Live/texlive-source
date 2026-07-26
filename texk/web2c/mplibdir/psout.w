@@ -34,7 +34,7 @@
 \pageno=3
 
 @* Introduction.
-
+@s math_data int
 @d zero_t  ((math_data *)mp->math)->zero_t
 @d number_zero(A)		       (((math_data *)(mp->math))->equal)(A,zero_t)		       
 @d number_greater(A,B)		       (((math_data *)(mp->math))->greater)(A,B)		       
