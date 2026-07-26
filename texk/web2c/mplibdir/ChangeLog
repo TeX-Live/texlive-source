@@ -1,6 +1,8 @@
 2026-07-26  Andreas Scherer  <https://ascherer.github.io>
 
 	* mp.w: Merge a few sections.
+	* am/libmplib.am: Integrate patches from
+	https://github.com/ascherer/mplibdir
 
 2026-02-20  Luigi Scarso <luigi.scarso@gmail.com>
 
