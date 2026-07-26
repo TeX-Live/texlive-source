@@ -16,6 +16,7 @@
 \ifpdf \sanitizecommand\MP{MetaPost} \fi
 
 @s tm int
+@s integer64 int
 
 @s line normal
 
@@ -72,7 +73,6 @@ static boolean restricted_mode = false;
 @<Declarations@>@;
 
 @ Allocating a bit of memory, with error detection:
-@s integer64 int
 
 @d mpost_xfree(A) do { if (A!=NULL) free(A); A=NULL; } while (0)@;
 

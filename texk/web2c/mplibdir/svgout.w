@@ -38,8 +38,21 @@
 \pdfoutput=1
 \pageno=3
 
-@* Introduction.
 @s math_data int
+@s MP int
+@s boolean int
+@s integer int
+@s mp_clip_object int
+@s mp_edge_object int
+@s mp_fill_object int
+@s mp_graphic_object int
+@s mp_special_object int
+@s mp_stroked_object int
+@s mp_text_object int
+@s mp_gr_knot int
+@s mp_ps_font int
+
+@* Introduction.
 @d zero_t  ((math_data *)mp->math)->zero_t
 @d number_zero(A)		       (((math_data *)(mp->math))->equal)(A,zero_t)		       
 @d number_greater(A,B)		       (((math_data *)(mp->math))->greater)(A,B)		       
@@ -83,7 +96,7 @@ typedef struct svgout_data_struct {
 @<Exported function headers@>
 #endif
 
-@ @s MP int @<Exported function headers@>=
+@ @<Exported function headers@>=
 void mp_svg_backend_initialize (MP mp) ;
 void mp_svg_backend_free (MP mp) ;
 
@@ -220,8 +233,6 @@ static void mp_svg_print_buf (MP mp) {
 a given integer |n| in the buffer, has been written carefully so that
 it works properly if |n=0| or if |(-n)| would cause overflow.
 
-@s integer int
-
 @c
 static void mp_svg_store_int (MP mp, integer n) {
   unsigned char dig[23];  /* digits in a number, for rounding */
@@ -327,8 +338,6 @@ If the |indent| is true, then the end tag will appear on the next line
 of the SVG file, correctly indented for the current XML nesting
 level. If it is false, the end tag will appear immediatelu after the
 preceding output.
-
-@s boolean int
 
 @c
 static void mp_svg_endtag (MP mp, const char *s, boolean indent) { 
@@ -436,7 +445,7 @@ void mp_svg_trans_pair_out (MP mp, mp_pen_info *pen, double x, double y) {
 @ @<Declarations@>=
 static void mp_svg_pair_out (MP mp,double x, double y) ;
 
-@ @s mp_edge_object int @<Declarations@>=
+@ @<Declarations@>=
 static void mp_svg_print_initial_comment(MP mp,mp_edge_object *hh);
 
 @ @c
@@ -510,10 +519,6 @@ void mp_svg_print_initial_comment(MP mp,mp_edge_object *hh) {
   object_color_c = pq->color.c_val;
   object_color_d = pq->color.d_val; 
 
-@s mp_fill_object int
-@s mp_stroked_object int
-@s mp_text_object int
-
 @c
 static void mp_svg_color_out (MP mp, mp_graphic_object *p) {
   int object_color_model;
@@ -571,8 +576,6 @@ typedef struct mp_pen_info {
 
 
 @ (Re)discover the characteristics of an elliptical pen
-
-@s mp_gr_knot int
 
 @<Declarations@>=
 mp_pen_info *mp_svg_pen_info(MP mp, mp_gr_knot pp, mp_gr_knot p);
@@ -815,7 +818,7 @@ static void mp_svg_font_path_out (MP mp, mp_gr_knot h) {
 @<Declarations@>=
 void mp_svg_print_glyph_defs (MP mp, mp_edge_object *h);
 
-@ @s mp_graphic_object int @s mp_ps_font int @c
+@ @c
 void mp_svg_print_glyph_defs (MP mp, mp_edge_object *h) {
   mp_graphic_object *p; /* object index */
   int k; /* general purpose index */
@@ -1167,7 +1170,7 @@ int clipid;
 @ @<Set initial values@>=
 mp->svg->clipid = 0;
 
-@ @s mp_clip_object int @<Declarations@>=
+@ @<Declarations@>=
 static void mp_svg_clip_out (MP mp, mp_clip_object *p);
 
 @ @c
@@ -1213,7 +1216,7 @@ void mp_svg_clip_out (MP mp, mp_clip_object *p) {
 @<Exported function ...@>=
 int mp_svg_gr_ship_out (mp_edge_object *hh, int prologues, int standalone) ;
 
-@ @s mp_special_object int @c
+@ @c
 int mp_svg_gr_ship_out (mp_edge_object *hh, int qprologues, int standalone) {
   mp_graphic_object *p;
   mp_pen_info *pen = NULL;
