@@ -131,7 +131,6 @@ large |MP_instance| structure.
 @(mplib.h@>=
 #ifndef MPLIB_H
 #define MPLIB_H 1
-#include <stdlib.h>
 #ifndef HAVE_BOOLEAN
 typedef int boolean;
 #endif
