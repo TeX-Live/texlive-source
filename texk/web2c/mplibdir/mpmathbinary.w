@@ -37,8 +37,6 @@
 #include <math.h>
 #include "mpmathbinary.h" /* internal header */
 @h
-
-@ @c
 @<Declarations@>
 
 @ @(mpmathbinary.h@>=
@@ -501,7 +499,7 @@ void mp_free_binary_math (MP mp) {
 
 @ Creating and destroying |mp_number| objects.
 
-@ @c
+@c
 void mp_new_number (MP mp, mp_number *n, mp_number_type t) {
   (void)mp;
   n->data.num = mp_xmalloc(mp,1,sizeof(mpfr_t));
@@ -510,7 +508,6 @@ void mp_new_number (MP mp, mp_number *n, mp_number_type t) {
   n->type = t;
 }
 
-@ @c
 void mp_free_number (MP mp, mp_number *n) {
   (void)mp;
   if (n->data.num) {
@@ -690,6 +687,8 @@ as efficient as possible.  Since some systems have shift operators that can
 only be trusted to work on positive numbers, there is also a macro |halfp|
 that is used only when the quantity being halved is known to be positive
 or zero.
+
+@d halfp(A) (integer)((unsigned)(A) >> 1)
 
 @ Here is a procedure analogous to |print_int|.  The current version
 is fairly stupid, and it is not round-trip safe, but this is good
@@ -902,7 +901,6 @@ void mp_binary_number_make_scaled (MP mp, mp_number *ret, mp_number p_orig, mp_n
   mp_check_mpfr_t(mp, ret->data.num);
 }
 
-@ @d halfp(A) (integer)((unsigned)(A) >> 1)
 
 @* Scanning numbers in the input.
 
@@ -1412,7 +1410,7 @@ void mp_binary_square_rt (MP mp, mp_number *ret, mp_number x_orig) { /* return, 
     char *xstr = mp_binary_number_tostring (mp, x_orig);
     mp_snprintf(msg, 256, "Square root of %s has been replaced by 0", xstr);
     free(xstr);
-@.Square root...replaced by 0@>;
+@.Square root...replaced by 0@>
     mp_error (mp, msg, hlp, true);
   }
   mpfr_set_zero(ret->data.num,1); /* 1 == positive */
@@ -1470,7 +1468,7 @@ void mp_binary_pyth_sub (MP mp, mp_number *ret, mp_number a_orig, mp_number b_or
     mp_snprintf (msg, 256, "Pythagorean subtraction %s+-+%s has been replaced by 0", astr, bstr);
     free(astr);
     free(bstr);
-@.Pythagorean...@>;
+@.Pythagorean...@>
     mp_error (mp, msg, hlp, true);
   }
   mpfr_set_zero(a,1); /* 1 == positive */
@@ -1502,7 +1500,7 @@ void mp_binary_m_log (MP mp, mp_number *ret, mp_number x_orig) {
   char *xstr = mp_binary_number_tostring (mp, x_orig);
   mp_snprintf (msg, 256, "Logarithm of %s has been replaced by 0", xstr);
   free (xstr);
-@.Logarithm...replaced by 0@>;
+@.Logarithm...replaced by 0@>
   mp_error (mp, msg, hlp, true);
   mpfr_set_zero(ret->data.num,1); /* 1 == positive */
 }
@@ -1555,7 +1553,7 @@ void mp_binary_n_arg (MP mp, mp_number *ret, mp_number x_orig, mp_number y_orig)
          "I'm zeroing this one. Proceed, with fingers crossed.",
          NULL };
   mp_error (mp, "angle(0,0) is taken as zero", hlp, true);
-@.angle(0,0)...zero@>;
+@.angle(0,0)...zero@>
   mpfr_set_zero(ret->data.num,1); /* 1 == positive */
 }
 

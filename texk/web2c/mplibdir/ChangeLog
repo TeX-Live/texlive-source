@@ -1,3 +1,7 @@
+2026-07-26  Andreas Scherer  <https://ascherer.github.io>
+
+	* mp.w: Merge a few sections.
+
 2026-02-20  Luigi Scarso <luigi.scarso@gmail.com>
 
 	*  better mp_flush_below_variable (H. Hagen) 

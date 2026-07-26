@@ -1492,8 +1492,7 @@ boolean mp_init_terminal (MP mp) {                               /* gets the ter
 static boolean mp_init_terminal (MP mp);
 
 @* Globals for strings.
-
-@ Symbolic token names and diagnostic messages are variable-length strings
+Symbolic token names and diagnostic messages are variable-length strings
 of eight-bit characters. Many strings \MP\ uses are simply literals
 in the compiled source, like the error messages and the names of the
 internal parameters. Other strings are used or defined from the \MP\ input
@@ -19104,7 +19103,7 @@ $\,\ldots\,$\&{etex} blocks, switching to the \.{MPX} file when it sees
 @d btex_code 0
 @d verbatim_code 1
 
-@ @<Put each...@>=
+@<Put each...@>=
 mp_primitive (mp, "btex", mp_start_tex, btex_code);
 @:btex_}{\&{btex} primitive@>
 mp_primitive (mp, "verbatimtex", mp_start_tex, verbatim_code);
