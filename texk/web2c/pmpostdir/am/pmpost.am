@@ -65,12 +65,12 @@ pmp_ctangle = $(ctangle_silent)CWEBINPUTS=.:$(srcdir)/pmpostdir $(ctangle)
 pmp_ctangle_sh = CWEBINPUTS=.:$(srcdir)/pmpostdir AM_V_P=$(AM_V_P) $(SHELL) ./tangle-sh $@ $(CTANGLE)
 
 ## pMetaPost C sources
-nodist_pmpost_SOURCES = $(pmp_c_h) $(pmpmath_c_h) $(pmpmathinterval_c_h) $(pmpmathbinary_c_h) \
-        $(pmpmathdecimal_c_h) \
+nodist_pmpost_SOURCES = $(pmp_c_h) $(pmpmath_c_h) $(pmpmathinterval_c_h) \
+	$(pmpmathbinary_c_h) $(pmpmathdecimal_c_h) \
 	$(pmpmathdouble_c_h) pmpost.c $(pmpstrings_c_h) $(pmpxout_c_h) \
-	$(ppngout_c_h) $(ppsout_c_h) $(psvgout_c_h) ptfmin.c
+	$(ppngout_c_h) $(ppsout_c_h) $(psvgout_c_h) $(ptfmin_c_h)
 #
-pmp_c_h =  pmp.c pmplib.h pmpmp.h
+pmp_c_h = pmp.c pmplib.h pmpmp.h
 pmpmath_c_h = pmpmath.c pmpmath.h
 pmpmathinterval_c_h = pmpmathinterval.c pmpmathinterval.h
 pmpmathbinary_c_h = pmpmathbinary.c pmpmathbinary.h
@@ -81,12 +81,13 @@ pmpxout_c_h = pmpxout.c pmpxout.h
 ppngout_c_h = pmplibpng.h pmppngout.h ppngout.c
 ppsout_c_h = pmppsout.h ppsout.c pmplibps.h
 psvgout_c_h = pmplibsvg.h pmpsvgout.h psvgout.c
+ptfmin_c_h = ptfmin.h ptfmin.c
 
 ## upMetaPost C sources
 nodist_upmpost_SOURCES = $(nodist_pmpost_SOURCES)
 
 # sed script
-pmp_sed_main = 's/mpxout\.h/pmpxout.h/;s/mpmp\.h/pmpmp.h/;s/mplib\.h/pmplib.h/;s/mpstrings\.h/pmpstrings.h/'
+pmp_sed_main = 's/mpxout\.h/pmpxout.h/;s/mpmp\.h/pmpmp.h/;s/mplib\.h/pmplib.h/;s/mpstrings\.h/pmpstrings.h/;s/tfmin\.h/ptfmin.h/;s/TFMIN_H/PTFMIN_H/'
 pmp_sed_math = 's/mpmath\([a-z]*\)\.h/pmpmath\1.h/'
 pmp_sed_ps   = 's/mplibps\.h/pmplibps.h/;s/mppsout\.h/pmppsout.h/'
 pmp_sed_svg  = 's/mplibsvg\.h/pmplibsvg.h/;s/mpsvgout\.h/pmpsvgout.h/'
@@ -139,11 +140,9 @@ ptfmin.w: mplibdir/tfmin.w
 # Creating one file: just one rule
 pmpost.c: ctangle$(EXEEXT) pmpost.w pmpostdir/pmpost.ch
 	$(pmp_ctangle) pmpost pmpost
-ptfmin.c: ctangle$(EXEEXT) ptfmin.w pmpostdir/ptfmin.ch
-	$(pmp_ctangle) ptfmin ptfmin
 
 # Creating several files: need stamp file and two rules with identical recipes
-$(pmp_c_h): pmp-tangle
+$(pmp_c_h): pmp-tangle ptfmin-tangle
 	$(pmp_ctangle_sh) pmp pmp
 pmp-tangle: ctangle$(EXEEXT) pmp.w pmpostdir/pmp.ch tangle-sh
 	$(pmp_ctangle_sh) pmp pmp
@@ -163,8 +162,14 @@ $(psvgout_c_h): psvgout-tangle
 psvgout-tangle: ctangle$(EXEEXT) psvgout.w pmpostdir/psvgout.ch tangle-sh
 	$(pmp_ctangle_sh) psvgout psvgout
 
+$(ptfmin_c_h): ptfmin-tangle
+	$(pmp_ctangle_sh) ptfmin ptfmin
+ptfmin-tangle: ctangle$(EXEEXT) ptfmin.w pmpostdir/ptfmin.ch tangle-sh
+	$(pmp_ctangle_sh) ptfmin ptfmin
+
 ## pMetaPost CWeb sources
-pmpost_web = pmpostdir/pmp.ch pmpostdir/pmpost.ch pmpostdir/pmpxout.ch pmpostdir/ppsout.ch \
+pmpost_web = pmpostdir/pmp.ch pmpostdir/pmpost.ch \
+	pmpostdir/pmpxout.ch pmpostdir/ppsout.ch \
 	pmpostdir/psvgout.ch pmpostdir/ptfmin.ch
 
 $(pmpost_OBJECTS) $(upmpost_OBJECTS): $(nodist_pmpost_SOURCES) $(PTEXENC_DEPEND) \
@@ -174,7 +179,7 @@ EXTRA_DIST += pmpostdir/ChangeLog $(pmpost_web)
 
 DISTCLEANFILES += $(nodist_pmpost_SOURCES) \
 	pmp.w pmpost.w pmpxout.w ppsout.w psvgout.w ptfmin.w \
-	pmp-tangle pmpxout-tangle ppsout-tangle psvgout-tangle
+	pmp-tangle pmpxout-tangle ppsout-tangle psvgout-tangle ptfmin-tangle
 
 ## (u)pMetaPost Tests
 ##

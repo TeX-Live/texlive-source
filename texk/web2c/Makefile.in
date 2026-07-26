@@ -1565,11 +1565,12 @@ am__objects_55 = pmpost-pmpxout.$(OBJEXT)
 am__objects_56 = pmpost-ppngout.$(OBJEXT)
 am__objects_57 = pmpost-ppsout.$(OBJEXT)
 am__objects_58 = pmpost-psvgout.$(OBJEXT)
+am__objects_59 = pmpost-ptfmin.$(OBJEXT)
 nodist_pmpost_OBJECTS = $(am__objects_48) $(am__objects_49) \
 	$(am__objects_50) $(am__objects_51) $(am__objects_52) \
 	$(am__objects_53) pmpost-pmpost.$(OBJEXT) $(am__objects_54) \
 	$(am__objects_55) $(am__objects_56) $(am__objects_57) \
-	$(am__objects_58) pmpost-ptfmin.$(OBJEXT)
+	$(am__objects_58) $(am__objects_59)
 pmpost_OBJECTS = $(nodist_pmpost_OBJECTS)
 pmpost_DEPENDENCIES = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
@@ -1596,10 +1597,10 @@ tangleboot_LDADD = $(LDADD)
 am__dist_tex_SOURCES_DIST = texextra.c synctexdir/synctex.c \
 	synctexdir/synctex.h synctexdir/synctex-common.h \
 	synctexdir/synctex-tex.h
-@TEX_SYNCTEX_TRUE@am__objects_59 = synctexdir/tex-synctex.$(OBJEXT)
-dist_tex_OBJECTS = tex-texextra.$(OBJEXT) $(am__objects_59)
-am__objects_60 = tex-texini.$(OBJEXT) tex-tex0.$(OBJEXT)
-nodist_tex_OBJECTS = $(am__objects_60) tex-tex-pool.$(OBJEXT)
+@TEX_SYNCTEX_TRUE@am__objects_60 = synctexdir/tex-synctex.$(OBJEXT)
+dist_tex_OBJECTS = tex-texextra.$(OBJEXT) $(am__objects_60)
+am__objects_61 = tex-texini.$(OBJEXT) tex-tex0.$(OBJEXT)
+nodist_tex_OBJECTS = $(am__objects_61) tex-tex-pool.$(OBJEXT)
 tex_OBJECTS = $(dist_tex_OBJECTS) $(nodist_tex_OBJECTS)
 @TEX_SYNCTEX_TRUE@am__DEPENDENCIES_12 = $(am__DEPENDENCIES_1)
 tex_DEPENDENCIES = $(am__DEPENDENCIES_2) $(am__DEPENDENCIES_1) \
@@ -1632,23 +1633,24 @@ am_updvitype_OBJECTS =
 nodist_updvitype_OBJECTS = updvitype-updvitype.$(OBJEXT)
 updvitype_OBJECTS = $(am_updvitype_OBJECTS) \
 	$(nodist_updvitype_OBJECTS)
-am__objects_61 = upmpost-pmp.$(OBJEXT)
-am__objects_62 = upmpost-pmpmath.$(OBJEXT)
-am__objects_63 = upmpost-pmpmathinterval.$(OBJEXT)
-am__objects_64 = upmpost-pmpmathbinary.$(OBJEXT)
-am__objects_65 = upmpost-pmpmathdecimal.$(OBJEXT)
-am__objects_66 = upmpost-pmpmathdouble.$(OBJEXT)
-am__objects_67 = upmpost-pmpstrings.$(OBJEXT)
-am__objects_68 = upmpost-pmpxout.$(OBJEXT)
-am__objects_69 = upmpost-ppngout.$(OBJEXT)
-am__objects_70 = upmpost-ppsout.$(OBJEXT)
-am__objects_71 = upmpost-psvgout.$(OBJEXT)
-am__objects_72 = $(am__objects_61) $(am__objects_62) $(am__objects_63) \
-	$(am__objects_64) $(am__objects_65) $(am__objects_66) \
-	upmpost-pmpost.$(OBJEXT) $(am__objects_67) $(am__objects_68) \
-	$(am__objects_69) $(am__objects_70) $(am__objects_71) \
-	upmpost-ptfmin.$(OBJEXT)
-nodist_upmpost_OBJECTS = $(am__objects_72)
+am__objects_62 = upmpost-pmp.$(OBJEXT)
+am__objects_63 = upmpost-pmpmath.$(OBJEXT)
+am__objects_64 = upmpost-pmpmathinterval.$(OBJEXT)
+am__objects_65 = upmpost-pmpmathbinary.$(OBJEXT)
+am__objects_66 = upmpost-pmpmathdecimal.$(OBJEXT)
+am__objects_67 = upmpost-pmpmathdouble.$(OBJEXT)
+am__objects_68 = upmpost-pmpstrings.$(OBJEXT)
+am__objects_69 = upmpost-pmpxout.$(OBJEXT)
+am__objects_70 = upmpost-ppngout.$(OBJEXT)
+am__objects_71 = upmpost-ppsout.$(OBJEXT)
+am__objects_72 = upmpost-psvgout.$(OBJEXT)
+am__objects_73 = upmpost-ptfmin.$(OBJEXT)
+am__objects_74 = $(am__objects_62) $(am__objects_63) $(am__objects_64) \
+	$(am__objects_65) $(am__objects_66) $(am__objects_67) \
+	upmpost-pmpost.$(OBJEXT) $(am__objects_68) $(am__objects_69) \
+	$(am__objects_70) $(am__objects_71) $(am__objects_72) \
+	$(am__objects_73)
+nodist_upmpost_OBJECTS = $(am__objects_74)
 upmpost_OBJECTS = $(nodist_upmpost_OBJECTS)
 am__DEPENDENCIES_14 = $(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
 	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) \
@@ -1660,8 +1662,8 @@ am_uppltotf_OBJECTS =
 nodist_uppltotf_OBJECTS = uppltotf-uppltotf.$(OBJEXT)
 uppltotf_OBJECTS = $(am_uppltotf_OBJECTS) $(nodist_uppltotf_OBJECTS)
 dist_uptex_OBJECTS = uptexdir/uptex-uptexextra.$(OBJEXT)
-am__objects_73 = uptex-uptexini.$(OBJEXT) uptex-uptex0.$(OBJEXT)
-nodist_uptex_OBJECTS = $(am__objects_73) uptex-uptex-pool.$(OBJEXT)
+am__objects_75 = uptex-uptexini.$(OBJEXT) uptex-uptex0.$(OBJEXT)
+nodist_uptex_OBJECTS = $(am__objects_75) uptex-uptex-pool.$(OBJEXT)
 uptex_OBJECTS = $(dist_uptex_OBJECTS) $(nodist_uptex_OBJECTS)
 am_uptftopl_OBJECTS =
 nodist_uptftopl_OBJECTS = uptftopl-uptftopl.$(OBJEXT)
@@ -1699,12 +1701,12 @@ am__dist_xetex_SOURCES_DIST = xetexdir/xetexextra.c \
 	xetexdir/xetex_version.h synctexdir/synctex.c \
 	synctexdir/synctex.h synctexdir/synctex-common.h \
 	synctexdir/synctex-xetex.h
-@XETEX_SYNCTEX_TRUE@am__objects_74 =  \
+@XETEX_SYNCTEX_TRUE@am__objects_76 =  \
 @XETEX_SYNCTEX_TRUE@	synctexdir/xetex-synctex.$(OBJEXT)
 dist_xetex_OBJECTS = xetexdir/xetex-xetexextra.$(OBJEXT) \
-	$(am__objects_74)
-am__objects_75 = xetex-xetexini.$(OBJEXT) xetex-xetex0.$(OBJEXT)
-nodist_xetex_OBJECTS = $(am__objects_75) xetex-xetex-pool.$(OBJEXT)
+	$(am__objects_76)
+am__objects_77 = xetex-xetexini.$(OBJEXT) xetex-xetex0.$(OBJEXT)
+nodist_xetex_OBJECTS = $(am__objects_77) xetex-xetex-pool.$(OBJEXT)
 xetex_OBJECTS = $(dist_xetex_OBJECTS) $(nodist_xetex_OBJECTS)
 @XETEX_MACOSX_FALSE@am__DEPENDENCIES_15 = $(am__DEPENDENCIES_1)
 am__DEPENDENCIES_16 = $(libxetex) $(am__DEPENDENCIES_1) \
@@ -3647,7 +3649,8 @@ DISTCLEANFILES = CXXLD.sh tangle.c tangle.h tangle.p tangle-web2c \
 	tests/xptmr.mpx tests/xstory.mpx $(nodist_pmpost_SOURCES) \
 	pmp.w pmpost.w pmpxout.w ppsout.w psvgout.w ptfmin.w \
 	pmp-tangle pmpxout-tangle ppsout-tangle psvgout-tangle \
-	pmpsamp.* upmpsamp.* $(nodist_libmplibcore_a_SOURCES) \
+	ptfmin-tangle pmpsamp.* upmpsamp.* \
+	$(nodist_libmplibcore_a_SOURCES) \
 	$(nodist_libmplibextramath_a_SOURCES) \
 	$(nodist_libmplibbackends_a_SOURCES) mp-tangle mpmath-tangle \
 	mpmathdecimal-tangle mpmathdouble-tangle mpstrings-tangle \
@@ -4362,10 +4365,10 @@ upmpost_LDADD = $(pmpost_LDADD)
 pmp_ctangle = $(ctangle_silent)CWEBINPUTS=.:$(srcdir)/pmpostdir $(ctangle)
 # Creating several files: need stamp file and two rules with identical recipes
 pmp_ctangle_sh = CWEBINPUTS=.:$(srcdir)/pmpostdir AM_V_P=$(AM_V_P) $(SHELL) ./tangle-sh $@ $(CTANGLE)
-nodist_pmpost_SOURCES = $(pmp_c_h) $(pmpmath_c_h) $(pmpmathinterval_c_h) $(pmpmathbinary_c_h) \
-        $(pmpmathdecimal_c_h) \
+nodist_pmpost_SOURCES = $(pmp_c_h) $(pmpmath_c_h) $(pmpmathinterval_c_h) \
+	$(pmpmathbinary_c_h) $(pmpmathdecimal_c_h) \
 	$(pmpmathdouble_c_h) pmpost.c $(pmpstrings_c_h) $(pmpxout_c_h) \
-	$(ppngout_c_h) $(ppsout_c_h) $(psvgout_c_h) ptfmin.c
+	$(ppngout_c_h) $(ppsout_c_h) $(psvgout_c_h) $(ptfmin_c_h)
 
 #
 pmp_c_h = pmp.c pmplib.h pmpmp.h
@@ -4379,16 +4382,18 @@ pmpxout_c_h = pmpxout.c pmpxout.h
 ppngout_c_h = pmplibpng.h pmppngout.h ppngout.c
 ppsout_c_h = pmppsout.h ppsout.c pmplibps.h
 psvgout_c_h = pmplibsvg.h pmpsvgout.h psvgout.c
+ptfmin_c_h = ptfmin.h ptfmin.c
 nodist_upmpost_SOURCES = $(nodist_pmpost_SOURCES)
 
 # sed script
-pmp_sed_main = 's/mpxout\.h/pmpxout.h/;s/mpmp\.h/pmpmp.h/;s/mplib\.h/pmplib.h/;s/mpstrings\.h/pmpstrings.h/'
+pmp_sed_main = 's/mpxout\.h/pmpxout.h/;s/mpmp\.h/pmpmp.h/;s/mplib\.h/pmplib.h/;s/mpstrings\.h/pmpstrings.h/;s/tfmin\.h/ptfmin.h/;s/TFMIN_H/PTFMIN_H/'
 pmp_sed_math = 's/mpmath\([a-z]*\)\.h/pmpmath\1.h/'
 pmp_sed_ps = 's/mplibps\.h/pmplibps.h/;s/mppsout\.h/pmppsout.h/'
 pmp_sed_svg = 's/mplibsvg\.h/pmplibsvg.h/;s/mpsvgout\.h/pmpsvgout.h/'
 pmp_sed_png = 's/mplibpng\.h/pmplibpng.h/;s/mppngout\.h/pmppngout.h/'
 pmp_sed = sed -e $(pmp_sed_main) -e $(pmp_sed_math) -e $(pmp_sed_ps) -e $(pmp_sed_svg) -e $(pmp_sed_png)
-pmpost_web = pmpostdir/pmp.ch pmpostdir/pmpost.ch pmpostdir/pmpxout.ch pmpostdir/ppsout.ch \
+pmpost_web = pmpostdir/pmp.ch pmpostdir/pmpost.ch \
+	pmpostdir/pmpxout.ch pmpostdir/ppsout.ch \
 	pmpostdir/psvgout.ch pmpostdir/ptfmin.ch
 
 pmpost_tests = pmpostdir/pmpost.test pmpostdir/pmpsamp.test
@@ -21934,11 +21939,9 @@ ptfmin.w: mplibdir/tfmin.w
 # Creating one file: just one rule
 pmpost.c: ctangle$(EXEEXT) pmpost.w pmpostdir/pmpost.ch
 	$(pmp_ctangle) pmpost pmpost
-ptfmin.c: ctangle$(EXEEXT) ptfmin.w pmpostdir/ptfmin.ch
-	$(pmp_ctangle) ptfmin ptfmin
 
 # Creating several files: need stamp file and two rules with identical recipes
-$(pmp_c_h): pmp-tangle
+$(pmp_c_h): pmp-tangle ptfmin-tangle
 	$(pmp_ctangle_sh) pmp pmp
 pmp-tangle: ctangle$(EXEEXT) pmp.w pmpostdir/pmp.ch tangle-sh
 	$(pmp_ctangle_sh) pmp pmp
@@ -21957,6 +21960,11 @@ $(psvgout_c_h): psvgout-tangle
 	$(pmp_ctangle_sh) psvgout psvgout
 psvgout-tangle: ctangle$(EXEEXT) psvgout.w pmpostdir/psvgout.ch tangle-sh
 	$(pmp_ctangle_sh) psvgout psvgout
+
+$(ptfmin_c_h): ptfmin-tangle
+	$(pmp_ctangle_sh) ptfmin ptfmin
+ptfmin-tangle: ctangle$(EXEEXT) ptfmin.w pmpostdir/ptfmin.ch tangle-sh
+	$(pmp_ctangle_sh) ptfmin ptfmin
 
 $(pmpost_OBJECTS) $(upmpost_OBJECTS): $(nodist_pmpost_SOURCES) $(PTEXENC_DEPEND) \
 	$(LIBPNG_DEPEND) $(CAIRO_DEPEND) $(MPFI_DEPEND) $(MPFR_DEPEND)
