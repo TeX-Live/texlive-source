@@ -263,7 +263,8 @@ static int MPOST_DEBUG_ENVELOPECOUNTER=0;
 #include "mpmathbinary.h"| */       /* internal header */ @t@>
 /*|
 #include "mpmathinterval.h"| */       /* internal header */
-#include "mpstrings.h"          /* internal header */ @t@>
+#include "mpstrings.h"          /* internal header */
+#include "tfmin.h"              /* internal header */ @t@>
 /* BEGIN PATCH */
 mp_number dx_ap;    /* approximation of dx */
 mp_number dy_ap;    /* approximation of dy */
@@ -300,9 +301,7 @@ extern void mp_svg_backend_free (MP mp);
 extern int mp_svg_ship_out (mp_edge_object  *hh, int prologues);
 extern int mp_svg_gr_ship_out (mp_edge_object  *hh, int prologues, int standalone);
 
-@ @s font_number int @c
-#include "tfmin.h" /* |mp_read_font_info| */
-@h
+@ @c @h
 @<Declarations@>@;
 @<Basic printing procedures@>@;
 @<Error handling procedures@>@;
@@ -1623,7 +1622,7 @@ The boolean expression defined here should be |true| unless \MP\ internal
 code number~|k| corresponds to a non-troublesome visible symbol in the
 local character set.
 If character |k| cannot be printed, and |k<0200|, then character |k+0100| or
-|k-0100| must be printable; moreover, ASCII codes |[060..071, 0141..0146]|
+|k-0100| must be printable; moreover, ASCII codes $[|060|..|071|, |0141|..|0146|]$
 must be printable.
 @^character set dependencies@>
 @^system dependencies@>
@@ -34412,7 +34411,7 @@ tables.  Since |font_name| entries are permanent, their |str_ref| values are
 set to |MAX_STR_REF|.
 
 @<Types...@>=
-typedef unsigned int font_number;       /* |0..font_max| */
+typedef unsigned int font_number;       /* $0..|font_max|$ */
 
 @ The |font_info| array is indexed via a group directory arrays.
 For example, the |char_info| data for character~|c| in font~|f| will be
