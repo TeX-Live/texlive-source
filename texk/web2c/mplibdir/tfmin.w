@@ -25,9 +25,15 @@
 \def\MP{{\tenlogo META}\-{\tenlogo POST}}
 
 \def\title{Reading TEX metrics files}
-\pdfoutput=1
 
-@ Introduction.
+@s MP int
+@s boolean int
+@s font_data int
+@s font_number int
+@s halfword int
+@s quarterword int
+
+@* Introduction.
 
 @ Needed headers and macros
 
@@ -40,25 +46,27 @@
 @d hlp3(A,B,C) mp->help_line[2]=A; hlp2(B,C)
 @d help3  { mp->help_ptr=3; hlp3 /* use this with three help lines */
 
-@c 
+@c
 #include "mpconfig.h"
 #include <w2c/config.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "mplib.h"
-#include "mpmp.h" /* internal header */
+#include "tfmin.h" /* internal header */
 #include "mpmath.h" /* internal header */
 #include "mpstrings.h" /* internal header */
-@<Declarations@>
 @h
 
 @ The |font_ps_name| for a built-in font should be what PostScript expects.
 A preliminary name is obtained here from the \.{TFM} name as given in the
 |fname| argument.  This gets updated later from an external table if necessary.
 
-@<Declarations@>=
+@(tfmin.h@>=
+#ifndef MP_TFMIN_H
+#define MP_TFMIN_H 1
+#include "mpmp.h" /* internal header */
 font_number mp_read_font_info (MP mp, char *fname);
+#endif /* |MP_TFMIN_H| */
 
 @ @c
 font_number mp_read_font_info (MP mp, char *fname) {
@@ -80,7 +88,7 @@ BAD_TFM:
   @<Complain that the \.{TFM} file is bad@>;
 DONE:
   if ( file_opened ) (mp->close_file)(mp,mp->tfm_infile);
-  if ( n!=null_font ) { 
+  if ( n!=null_font ) {
     mp->font_ps_name[n]=mp_xstrdup(mp,fname);
     mp->font_name[n]=mp_xstrdup(mp,fname);
   }
@@ -108,35 +116,36 @@ and \.{PLtoTF} can be used to debug \.{TFM} files.
 }
 
 @ @<Read data from |tfm_infile|; if there is no room, say so...@>=
-@<Read the \.{TFM} size fields@>
-@<Use the size fields to allocate space in |font_info|@>
-@<Read the \.{TFM} header@>
-@<Read the character data and the width, height, and depth tables and
-  |goto done|@>
+@<Read the \9{t}\.{TFM} size fields@>@;
+@<Use the size fields to allocate space in |font_info|@>@;
+@<Read the \9{t}\.{TFM} header@>@;
+@<Read the \9{c}character data and the width, height, and depth tables and
+  |goto done|@>@;
 
 @ A bad \.{TFM} file can be shorter than it claims to be.  The code given here
 might try to read past the end of the file if this happens.  Changes will be
-needed if it causes a system error to refer to |tfm_infile^| or call
+needed if it causes a system error to refer to |tfm_infile|$\mathchar"222$ or call
 |get_tfm_infile| when |eof(tfm_infile)| is true.  For example, the definition
 @^system dependencies@>
 of |tfget| could be changed to
-``|begin get(tfm_infile); if eof(tfm_infile) then goto bad_tfm; end|.''
+``\&{begin} $\\{get}(\\{tfm\_infile})$; \&{if} $\\{eof}(\\{tfm\_infile})$ %
+\&{then} \&{goto} \\{bad\_tfm}; \&{end}.''
 
-@d tfget do { 
+@d tfget do {
   size_t wanted=1;
   unsigned char abyte=0;
   void *tfbyte_ptr = &abyte;
-  (mp->read_binary_file)(mp,mp->tfm_infile, &tfbyte_ptr,&wanted); 
-  if (wanted==0) goto BAD_TFM; 
+  (mp->read_binary_file)(mp,mp->tfm_infile, &tfbyte_ptr,&wanted);
+  if (wanted==0) goto BAD_TFM;
   tfbyte = (int)abyte;
-} while (0)
+} while (0)@;
 @d read_two(A) { (A)=tfbyte;
   if ( (A)>127 ) goto BAD_TFM;
   tfget; (A)=(A)*0400+tfbyte;
 }
 @d tf_ignore(A) { for (jj=(A);jj>=1;jj--) tfget; }
 
-@<Read the \.{TFM} size fields@>=
+@<Read the \9{t}\.{TFM} size fields@>=
 tfget; read_two(lf);
 tfget; read_two(tfm_lh);
 tfget; read_two(bc);
@@ -156,14 +165,13 @@ values when |bc>0|, it may be necessary to reserve a few unused |font_info|
 elements.
 
 @<Use the size fields to allocate space in |font_info|@>=
-if ( mp->next_fmem<(size_t)bc) 
+if ( mp->next_fmem<(size_t)bc)
   mp->next_fmem=(size_t)bc; /* ensure nonnegative |char_base| */
 if (mp->last_fnum==mp->font_max)
   mp_reallocate_fonts(mp,(mp->font_max+(mp->font_max/4)));
 while (mp->next_fmem+whd_size>=mp->font_mem_size) {
   size_t l = mp->font_mem_size+(mp->font_mem_size/4);
-  font_data *font_info;
-  font_info = mp_xmalloc (mp,(l+1),sizeof(font_data));
+  font_data *font_info = mp_xmalloc (mp,(l+1),sizeof(font_data));
   memset (font_info,0,sizeof(font_data)*(l+1));
   memcpy (font_info,mp->font_info,sizeof(font_data)*(mp->font_mem_size+1));
   mp_xfree(mp->font_info);
@@ -185,7 +193,7 @@ mp->next_fmem=mp->next_fmem+whd_size;
 
 @d integer_as_fraction(A) (int)(A)
 
-@<Read the \.{TFM} header@>=
+@<Read the \9{t}\.{TFM} header@>=
 if ( tfm_lh<2 ) goto BAD_TFM;
 tf_ignore(4);
 tfget; read_two(z);
@@ -195,10 +203,10 @@ mp->font_dsize[n]=mp_take_fraction(mp, z,integer_as_fraction(267432584));
   /* times ${72\over72.27}2^{28}$ to convert from \TeX\ points */
 tf_ignore(4*(tfm_lh-2))
 
-@ @<Read the character data and the width, height, and depth tables...@>=
+@ @<Read the \9{c}character data and the width, height, and depth tables...@>=
 ii=mp->width_base[n];
 i=mp->char_base[n]+bc;
-while ( i<ii ) { 
+while ( i<ii ) {
   tfget; mp->font_info[i].qqqq.b0=qi(tfbyte);
   tfget; h_and_d=tfbyte;
   mp->font_info[i].qqqq.b1=qi(h_and_d / 16);
@@ -219,7 +227,7 @@ divided by sixteen.  This cancels the extra scale factor contained in
 |font_dsize[n|.
 
 @<Read a four byte dimension, scale it by the design size, store it in...@>=
-{ 
+{
 tfget; d=tfbyte;
 if ( d>=0200 ) d=d-0400;
 tfget; d=d*0400+tfbyte;
@@ -236,19 +244,13 @@ a C string already.
 file_opened=False;
 mp_ptr_scan_file(mp, fname);
 if ( strlen(mp->cur_area)==0 ) { mp_xfree(mp->cur_area); mp->cur_area=NULL; }
-if ( strlen(mp->cur_ext)==0 )  { 
-    mp_xfree(mp->cur_ext); 
-    mp->cur_ext=mp_xstrdup(mp,".tfm"); 
+if ( strlen(mp->cur_ext)==0 )  {
+    mp_xfree(mp->cur_ext);
+    mp->cur_ext=mp_xstrdup(mp,".tfm");
 }
 mp_pack_file_name(mp, mp->cur_name,mp->cur_area,mp->cur_ext);
 mp->tfm_infile = (mp->open_file)(mp, mp->name_of_file, "r",mp_filetype_metrics);
 if ( !mp->tfm_infile  ) goto BAD_TFM;
-file_opened=True
+file_opened=True  @;
 
-
-
-
-
-
-
-
+@* Index.

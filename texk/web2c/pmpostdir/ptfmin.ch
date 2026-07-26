@@ -22,12 +22,12 @@
 @z
 
 @x
-@<Read the character data and the width, height, and depth tables and
-  |goto done|@>
+@<Read the \9{c}character data and the width, height, and depth tables and
+  |goto done|@>@;
 @y
-@<Read the character type table@>;
-@<Read the character data and the width, height, and depth tables and
-  |goto done|@>
+@<Read the \9{c}character type table@>;
+@<Read the \9{c}character data and the width, height, and depth tables and
+  |goto done|@>@;
 @z
 
 @x
@@ -46,14 +46,14 @@
 %
 % routine to process JFM file format
 @x
-@<Read the \.{TFM} size fields@>=
+@<Read the \9{t}\.{TFM} size fields@>=
 tfget; read_two(lf);
 @y
 @d yoko_jfm_id   11 /* `yoko-kumi' fonts */
 @d tate_jfm_id   9  /* `tate-kumi' fonts */
 @d font_jfm_p(A) (mp->font_id[(A)]!=0)
 @d incr(A)   (A)=(A)+1 /* increase a variable by unity */
-@<Read the \.{TFM} size fields@>=
+@<Read the \9{t}\.{TFM} size fields@>=
 tfget; read_two(lf);
 if ( (lf==yoko_jfm_id) || (lf==tate_jfm_id) ) {
   id=lf;
@@ -91,7 +91,7 @@ tf_ignore(4*(tfm_lh-2))
 @y
 tf_ignore(4*(tfm_lh-2))
 
-@ @<Read the character type table@>=
+@ @<Read the \9{c}character type table@>=
 ii=mp->ctype_base[n]+nt;
 i=mp->ctype_base[n];
 while ( i<ii ) {

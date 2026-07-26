@@ -12,9 +12,19 @@
 \def\psqrt#1{\sqrt{\mathstrut#1}}
 
 \def\title{Math support functions for 32-bit integer math}
-\pdfoutput=1
 
-@ Introduction.
+@s MP int
+@s mp_number int
+@s mp_number_type int
+@s mp_variable_type int
+@s math_data int
+@s integer int
+@s quarterword int
+@s boolean int
+@s integer64 int
+@s mpinteger64 int
+
+@* Introduction.
 
 @c
 #include "mpconfig.h"
@@ -32,7 +42,6 @@
 @ @(mpmath.h@>=
 #ifndef MPMATH_H
 #define MPMATH_H 1
-#include "mplib.h"
 #include "mpmp.h" /* internal header */
 @<Internal library declarations@>
 #endif
@@ -44,8 +53,8 @@
 @<Declarations@>=
 static void mp_scan_fractional_token (MP mp, integer64 n);
 static void mp_scan_numeric_token (MP mp, integer64 n);
-static void mp_ab_vs_cd (MP mp, mp_number *ret, mp_number a, mp_number b, mp_number c, mp_number d);
-static void mp_crossing_point (MP mp, mp_number *ret, mp_number a, mp_number b, mp_number c);
+static void mp_ab_vs_cd (MP mp, mp_number *ret, @| mp_number a, mp_number b, mp_number c, mp_number d);
+static void mp_crossing_point (MP mp, mp_number *ret, @| mp_number a, mp_number b, mp_number c);
 static void mp_number_modulo (mp_number *a, mp_number b);
 static void mp_print_number (MP mp, mp_number n);
 static char * mp_number_tostring (MP mp, mp_number n);
@@ -63,7 +72,7 @@ static void mp_m_exp (MP mp, mp_number *ret, mp_number x_orig);
 static void mp_m_log (MP mp, mp_number *ret, mp_number x_orig);
 static void mp_pyth_sub (MP mp, mp_number *r, mp_number a, mp_number b);
 static void mp_n_arg (MP mp, mp_number *ret, mp_number x, mp_number y);
-static void mp_velocity (MP mp, mp_number *ret, mp_number st, mp_number ct, mp_number sf,  mp_number cf, mp_number t);
+static void mp_velocity (MP mp, mp_number *ret, @| mp_number st, mp_number ct, mp_number sf,  mp_number cf, mp_number t);
 static void mp_set_number_from_int(mp_number *A, integer64 B);
 static void mp_set_number_from_boolean(mp_number *A, integer64 B);
 static void mp_set_number_from_scaled(mp_number *A, integer64 B);
@@ -74,7 +83,7 @@ static void mp_set_number_from_div(mp_number *A, mp_number B, mp_number C);
 static void mp_set_number_from_mul(mp_number *A, mp_number B, mp_number C);
 static void mp_set_number_from_int_div(mp_number *A, mp_number B, integer64 C);
 static void mp_set_number_from_int_mul(mp_number *A, mp_number B, integer64 C);
-static void mp_set_number_from_of_the_way(MP mp, mp_number *A, mp_number t, mp_number B, mp_number C);
+static void mp_set_number_from_of_the_way(MP mp, @| mp_number *A, mp_number t, mp_number B, mp_number C);
 static void mp_number_negate(mp_number *A);
 static void mp_number_add(mp_number *A, mp_number B);
 static void mp_number_substract(mp_number *A, mp_number B);
@@ -84,7 +93,7 @@ static void mp_number_double(mp_number *A);
 static void mp_number_add_scaled(mp_number *A, integer64 B); /* also for negative B */
 static void mp_number_multiply_int(mp_number *A, integer64 B);
 static void mp_number_divide_int(mp_number *A, integer64 B);
-static void mp_number_abs(mp_number *A);   
+static void mp_number_abs(mp_number *A);
 static void mp_number_clone(mp_number *A, mp_number B);
 static void mp_number_swap(mp_number *A, mp_number *B);
 static integer64 mp_round_unscaled(mp_number x_orig);
@@ -115,7 +124,7 @@ void mp_set_number_from_double(mp_number *A, double B);
 void mp_pyth_add (MP mp, mp_number *r, mp_number a, mp_number b);
 double mp_number_to_double(mp_number A);
 
-@ 
+@
 
 @d coef_bound 04525252525 /* |fraction| approximation to 7/3 */
 @d fraction_threshold 2685 /* a |fraction| coefficient less than this is zeroed */
@@ -179,9 +188,9 @@ void * mp_initialize_scaled_math (MP mp) {
   /* various approximations */
   mp_new_number (mp, &math->one_k, mp_scaled_type);
   math->one_k.data.val = 1024;
-  mp_new_number (mp, &math->sqrt_8_e_k, mp_scaled_type); 
+  mp_new_number (mp, &math->sqrt_8_e_k, mp_scaled_type);
   math->sqrt_8_e_k.data.val = 112429; /* $2^{16}\sqrt{8/e}\approx 112428.82793$ */
-  mp_new_number (mp, &math->twelve_ln_2_k, mp_fraction_type); 
+  mp_new_number (mp, &math->twelve_ln_2_k, mp_fraction_type);
   math->twelve_ln_2_k.data.val = 139548960; /* $2^{24}\cdot12\ln2\approx139548959.6165$ */
   mp_new_number (mp, &math->coef_bound_k, mp_fraction_type);
   math->coef_bound_k.data.val = coef_bound;
@@ -331,7 +340,7 @@ void mp_new_number (MP mp, mp_number *n, mp_number_type t) {
   n->type = t;
 }
 
-@ 
+@
 @c
 void mp_free_number (MP mp, mp_number *n) {
   (void)mp;
@@ -340,7 +349,7 @@ void mp_free_number (MP mp, mp_number *n) {
 
 @ Here are the low-level functions on |mp_number| items, setters first.
 
-@c 
+@c
 void mp_set_number_from_int(mp_number *A, integer64 B) {
   A->data.val = B;
 }
@@ -371,7 +380,7 @@ void mp_set_number_from_int_div(mp_number *A, mp_number B, integer64 C) {
 void mp_set_number_from_int_mul(mp_number *A, mp_number B, integer64 C) {
   A->data.val = B.data.val * C;
 }
-void mp_set_number_from_of_the_way(MP mp, mp_number *A, mp_number t, mp_number B, mp_number C) {
+void mp_set_number_from_of_the_way(MP mp, mp_number *A, mp_number t, @| mp_number B, mp_number C) {
   A->data.val = B.data.val - mp_take_fraction(mp, (B.data.val - C.data.val), t.data.val);
 }
 void mp_number_negate(mp_number *A) {
@@ -401,7 +410,7 @@ void mp_number_multiply_int(mp_number *A, integer64 B) {
 void mp_number_divide_int(mp_number *A, integer64 B) {
   A->data.val = A->data.val / B;
 }
-void mp_number_abs(mp_number *A) {   
+void mp_number_abs(mp_number *A) {
   A->data.val = MPOST_ABS(A->data.val);
 }
 void mp_number_clone(mp_number *A, mp_number B) {
@@ -481,7 +490,7 @@ positions from the right end of a binary computer word.
 @ One of \MP's most common operations is the calculation of
 $\lfloor{a+b\over2}\rfloor$,
 the midpoint of two given integers |a| and~|b|. The most decent way to do
-this is to write `|(a+b)/2|'; but on many machines it is more efficient 
+this is to write `|(a+b)/2|'; but on many machines it is more efficient
 to calculate `|(a+b)>>1|'.
 
 Therefore the midpoint operation will always be denoted by `|half(a+b)|'
@@ -638,7 +647,7 @@ static mpinteger64 mp_make_fraction (MP mp, mpinteger64 p, mpinteger64 q) {
   mpinteger64 i;
   if (q == 0)
     mp_confusion (mp, "/");
-@:this can't happen /}{\quad \./@> 
+@:this can't happen /}{\quad \./@>
   {
     register double d;
     d = TWEXP28 * (double) p / (double) q;
@@ -857,16 +866,16 @@ static void mp_wrapup_numeric_token(MP mp, integer64 n, integer64 f) { /* n,f: s
                "(Set warningcheck:=0 to suppress this message.)",
                NULL };
         mp_snprintf (msg, 256, "Number is too large (%s)", mp_string_scaled(mp,mod));
-@.Number is too large@>;
+@.Number is too large@>
         mp_error (mp, msg, hlp, true);
       }
     }
   } else if (mp->scanner_status != tex_flushing) {
     const char *hlp[] = {"I can\'t handle numbers bigger than 32767.99998;",
-         "so I've changed your constant to that maximum amount.", 
+         "so I've changed your constant to that maximum amount.",
          NULL };
     mp_error (mp, "Enormous number has been reduced", hlp, false);
-@.Enormous number...@>;
+@.Enormous number...@>
     set_cur_mod(EL_GORDO);
   }
   set_cur_cmd((mp_variable_type)mp_numeric_token);
@@ -941,7 +950,7 @@ arguments |st|, |ct|, |sf|, and |cf|, representing $\sin\theta$, $\cos\theta$,
 $\sin\phi$, and $\cos\phi$, respectively.
 
 @c
-void mp_velocity (MP mp, mp_number *ret, mp_number st, mp_number ct, mp_number sf,
+void mp_velocity (MP mp, mp_number *ret, mp_number st, mp_number ct, @| mp_number sf,
                   mp_number cf, mp_number t) {
   mpinteger64 acc, num, denom;      /* registers for intermediate calculations */
   acc = mp_take_fraction (mp, st.data.val - (sf.data.val / 16), sf.data.val - (st.data.val / 16));
@@ -971,7 +980,7 @@ given integers $(a,b,c,d)$. In most cases a quick decision is reached.
 The result is $+1$, 0, or~$-1$ in the three respective cases.
 
 @c
-static void mp_ab_vs_cd (MP mp, mp_number *ret, mp_number a_orig, mp_number b_orig, mp_number c_orig, mp_number d_orig) {
+static void mp_ab_vs_cd (MP mp, mp_number *ret, @| mp_number a_orig, mp_number b_orig, mp_number c_orig, mp_number d_orig) {
   mpinteger64 q, r; /* temporary registers */
   mpinteger64 a, b, c, d;
   (void)mp;
@@ -1016,7 +1025,7 @@ if (c < 0) {
 }
 if (d <= 0) {
   if (b >= 0) {
-    if ((a == 0 || b == 0) && (c == 0 || d == 0)) 
+    if ((a == 0 || b == 0) && (c == 0 || d == 0))
       ret->data.val = 0;
     else
       ret->data.val = 1;
@@ -1075,7 +1084,7 @@ $a<2^{30}$, $\vert a-b\vert<2^{30}$, and $\vert b-c\vert<2^{30}$.
 @d zero_crossing { ret->data.val = 0; return; }
 
 @c
-static void mp_crossing_point (MP mp, mp_number *ret, mp_number aa, mp_number bb, mp_number cc) {
+static void mp_crossing_point (MP mp, mp_number *ret, @| mp_number aa, mp_number bb, mp_number cc) {
   (void)mp;
   mpinteger64 a,b,c;
   mpinteger64 d;    /* recursive counter */
@@ -1130,9 +1139,9 @@ static void mp_crossing_point (MP mp, mp_number *ret, mp_number aa, mp_number bb
       }
     }
   } while (d < fraction_one);
-  ret->data.val = (d - fraction_one); 
+  ret->data.val = (d - fraction_one);
 }
- 
+
 
 @ We conclude this set of elementary routines with some simple rounding
 and truncation operations.
@@ -1187,9 +1196,9 @@ void mp_square_rt (MP mp, mp_number *ret, mp_number x_orig) { /* return, x: scal
   mpinteger64 y;    /* register for intermediate calculations */
   mpinteger64 q;    /* register for intermediate calculations */
   x = x_orig.data.val;
-  if (x <= 0) {
-    @<Handle square root of zero or negative argument@>;
-  } else {
+  if (x <= 0)
+    @<Handle square root of zero or negative argument@>@;
+  else {
     k = 23;
     q = 2;
     while (x < fraction_two) {  /* i.e., |while x<@t$2^{29}$@>|\unskip */
@@ -1202,17 +1211,17 @@ void mp_square_rt (MP mp, mp_number *ret, mp_number x_orig) { /* return, x: scal
       x = x - fraction_four;
       y = 1;
     }
-    do {
+    do
       @<Decrease |k| by 1, maintaining the invariant
-      relations between |x|, |y|, and~|q|@>;
-    } while (k != 0);
+      relations between |x|, |y|, and~|q|@>@;
+    while (k != 0);
     ret->data.val = (int) (halfp (q));
   }
 }
 
 
 @ @<Handle square root of zero...@>=
-{  
+{
   if (x < 0) {
     char msg[256];
     const char *hlp[] = {
@@ -1220,7 +1229,7 @@ void mp_square_rt (MP mp, mp_number *ret, mp_number x_orig) { /* return, x: scal
            "I'm zeroing this one. Proceed, with fingers crossed.",
            NULL };
     mp_snprintf(msg, 256, "Square root of %s has been replaced by 0", mp_string_scaled (mp, x));
-@.Square root...replaced by 0@>;
+@.Square root...replaced by 0@>
     mp_error (mp, msg, hlp, true);
   }
   ret->data.val = 0;
@@ -1228,28 +1237,28 @@ void mp_square_rt (MP mp, mp_number *ret, mp_number x_orig) { /* return, x: scal
 }
 
 
-@ @<Decrease |k| by 1, maintaining...@>=
+@ @<Decrease |k| by 1, maintaining...@>={
 x += x;
 y += y;
 if (x >= fraction_four) {       /* note that |fraction_four=@t$2^{30}$@>| */
   x = x - fraction_four;
   y++;
-};
+}
 x += x;
 y = y + y - q;
 q += q;
 if (x >= fraction_four) {
   x = x - fraction_four;
   y++;
-};
+}
 if (y > (int) q) {
   y -= q;
   q += 2;
 } else if (y <= 0) {
   q -= 2;
   y += q;
-};
-k--
+}
+k--;}
 
 @ Pythagorean addition $\psqrt{a^2+b^2}$ is implemented by an elegant
 iterative scheme due to Cleve Moler and Donald Morrison [{\sl IBM Journal
@@ -1270,7 +1279,7 @@ void mp_pyth_add (MP mp, mp_number *ret, mp_number a_orig, mp_number b_orig) {
     r = b;
     b = a;
     a = r;
-  };                            /* now |0<=b<=a| */
+  } /* now |0<=b<=a| */
   if (b > 0) {
     if (a < fraction_two) {
       big = false;
@@ -1278,7 +1287,7 @@ void mp_pyth_add (MP mp, mp_number *ret, mp_number a_orig, mp_number b_orig) {
       a = a / 4;
       b = b / 4;
       big = true;
-    };                          /* we reduced the precision to avoid arithmetic overflow */
+    } /* we reduced the precision to avoid arithmetic overflow */
     @<Replace |a| by an approximation to $\psqrt{a^2+b^2}$@>;
     if (big) {
       if (a < fraction_two) {
@@ -1286,7 +1295,7 @@ void mp_pyth_add (MP mp, mp_number *ret, mp_number a_orig, mp_number b_orig) {
       } else {
         mp->arith_error = true;
         a = EL_GORDO;
-      };
+      }
     }
   }
   ret->data.val = a;
@@ -1318,9 +1327,9 @@ void mp_pyth_sub (MP mp, mp_number *ret, mp_number a_orig, mp_number b_orig) {
   boolean big;  /* is the result dangerously near $2^{31}$? */
   a = MPOST_ABS (a_orig.data.val);
   b = MPOST_ABS (b_orig.data.val);
-  if (a <= b) {
-    @<Handle erroneous |pyth_sub| and set |a:=0|@>;
-  } else {
+  if (a <= b)
+    @<Handle erroneous |pyth_sub| and set |a:=0|@>@;
+  else {
     if (a < fraction_four) {
       big = false;
     } else {
@@ -1377,11 +1386,11 @@ nearest integer.
 @d two_to_the(A) (1<<(unsigned)(A))
 
 @<Declarations@>=
-static const mpinteger64 spec_log[29] = { 0,        /* special logarithms */
+static const mpinteger64 spec_log[29] = { 0,
   93032640, 38612034, 17922280, 8662214, 4261238, 2113709,
   1052693, 525315, 262400, 131136, 65552, 32772, 16385,
   8192, 4096, 2048, 1024, 512, 256, 128, 64, 32, 16, 8, 4, 2, 1, 1
-};
+}; /* special logarithms */
 
 
 @ Here is the routine that calculates $2^8$ times the natural logarithm
@@ -1404,9 +1413,9 @@ void mp_m_log (MP mp, mp_number *ret, mp_number x_orig) { /* return, x: scaled *
   mpinteger64 y, z; /* auxiliary registers */
   mpinteger64 k;    /* iteration counter */
   x = x_orig.data.val;
-  if (x <= 0) {
-    @<Handle non-positive logarithm@>;
-  } else {
+  if (x <= 0)
+    @<Handle non-positive logarithm@>@;
+  else {
     y = 1302456956 + 4 - 100;   /* $14\times2^{27}\ln2\approx1302456956.421063$ */
     z = 27595 + 6553600;        /* and $2^{16}\times .421063\approx 27595$ */
     while (x < fraction_four) {
@@ -1416,10 +1425,9 @@ void mp_m_log (MP mp, mp_number *ret, mp_number x_orig) { /* return, x: scaled *
     }                           /* $2^{27}\ln2\approx 93032639.74436163$ and $2^{16}\times.74436163\approx 48782$ */
     y = y + (z / unity);
     k = 2;
-    while (x > fraction_four + 4) {
+    while (x > fraction_four + 4)
       @<Increase |k| until |x| can be multiplied by a
-        factor of $2^{-k}$, and adjust $y$ accordingly@>;
-    }
+        factor of $2^{-k}$, and adjust $y$ accordingly@>@;
     ret->data.val = (y / 8);
   }
 }
@@ -1431,7 +1439,7 @@ void mp_m_log (MP mp, mp_number *ret, mp_number x_orig) { /* return, x: scaled *
   while (x < fraction_four + z) {
     z = halfp (z + 1);
     k++;
-  };
+  }
   y += spec_log[k];
   x -= z;
 }
@@ -1440,12 +1448,12 @@ void mp_m_log (MP mp, mp_number *ret, mp_number x_orig) { /* return, x: scaled *
 @ @<Handle non-positive logarithm@>=
 {
   char msg[256];
-  const char *hlp[] = { 
+  const char *hlp[] = {
          "Since I don't take logs of non-positive numbers,",
          "I'm zeroing this one. Proceed, with fingers crossed.",
           NULL };
   mp_snprintf (msg, 256, "Logarithm of %s has been replaced by 0", mp_string_scaled (mp, x));
-@.Logarithm...replaced by 0@>;
+@.Logarithm...replaced by 0@>
   mp_error (mp, msg, hlp, true);
   ret->data.val = 0;
 }
@@ -1510,7 +1518,7 @@ while (z > 0) {
 
 @ The trigonometric subroutines use an auxiliary table such that
 |spec_atan[k]| contains an approximation to the |angle| whose tangent
-is~$1/2^k$. $\arctan2^{-k}$ times $2^{20}\cdot180/\pi$ 
+is~$1/2^k$. $\arctan2^{-k}$ times $2^{20}\cdot180/\pi$
 
 @<Declarations@>=
 static const int spec_atan[27] = { 0, 27855475, 14718068, 7471121, 3750058,
@@ -1567,9 +1575,9 @@ void mp_n_arg (MP mp, mp_number *ret, mp_number x_orig, mp_number y_orig) {
     x = t;
     octant = octant + switch_x_and_y;
   }
-  if (x == 0) {
-    @<Handle undefined arg@>;
-  } else {
+  if (x == 0)
+    @<Handle undefined arg@>@;
+  else {
     ret->type = mp_angle_type;
     @<Set variable |z| to the arg of $(x,y)$@>;
     @<Return an appropriate answer based on |z| and |octant|@>;
@@ -1584,7 +1592,7 @@ void mp_n_arg (MP mp, mp_number *ret, mp_number x_orig, mp_number y_orig) {
          "I'm zeroing this one. Proceed, with fingers crossed.",
          NULL };
   mp_error (mp, "angle(0,0) is taken as zero", hlp, true);
-@.angle(0,0)...zero@>;
+@.angle(0,0)...zero@>
   ret->data.val = 0;
 }
 
@@ -1632,8 +1640,8 @@ if (y > 0) {
   while (x < fraction_one) {
     x += x;
     y += y;
-  };
-  @<Increase |z| to the arg of $(x,y)$@>;
+  }
+  @<Increase |z| to the arg of $(x,y)$@>@;
 }
 
 @ During the calculations of this section, variables |x| and~|y|
@@ -1661,7 +1669,7 @@ do {
     t = x;
     x = x + (y / two_to_the (k + k));
     y = y - t;
-  };
+  }
 } while (k != 15);
 do {
   y += y;
@@ -1669,8 +1677,8 @@ do {
   if (y > x) {
     z = z + spec_atan[k];
     y = y - x;
-  };
-} while (k != 26)
+  }
+} while (k != 26);
 
 @ Conversely, the |n_sin_cos| routine takes an |angle| and produces the sine
 and cosine of that angle. The results of this routine are
@@ -1782,7 +1790,7 @@ while (z > 0) {
 }
 if (y < 0)
   y = 0                         /* this precaution may never be needed */
-    
+
 
 @ To initialize the |randoms| table, we call the following routine.
 
@@ -1831,11 +1839,11 @@ void mp_number_modulo (mp_number *a, mp_number b) {
 
 @ To consume a random fraction, the program below will say `|next_random|'.
 
-@c 
-static void mp_next_random (MP mp, mp_number *ret) { 
-  if ( mp->j_random==0 ) 
+@c
+static void mp_next_random (MP mp, mp_number *ret) {
+  if ( mp->j_random==0 )
     mp_new_randoms(mp);
-  else 
+  else
     mp->j_random = mp->j_random-1;
   mp_number_clone (ret, mp->randoms[mp->j_random]);
 }
@@ -1887,7 +1895,7 @@ can readily be obtained with the ratio method (Algorithm 3.4.1R in
 
 @c
 static void mp_m_norm_rand (MP mp, mp_number *ret) {
-  mp_number ab_vs_cd; 
+  mp_number ab_vs_cd;
   mp_number abs_x;
   mp_number u;
   mp_number r;
@@ -1903,8 +1911,8 @@ static void mp_m_norm_rand (MP mp, mp_number *ret) {
       mp_number v;
       new_number (v);
       mp_next_random(mp, &v);
-      mp_number_substract (&v, ((math_data *)mp->math)->fraction_half_t); 
-      mp_number_take_fraction (mp,&xa, ((math_data *)mp->math)->sqrt_8_e_k, v); 
+      mp_number_substract (&v, ((math_data *)mp->math)->fraction_half_t);
+      mp_number_take_fraction (mp,&xa, ((math_data *)mp->math)->sqrt_8_e_k, v);
       free_number (v);
       mp_next_random(mp, &u);
       mp_number_clone (&abs_x, xa);
@@ -1924,3 +1932,5 @@ static void mp_m_norm_rand (MP mp, mp_number *ret) {
   free_number (xa);
   free_number (u);
 }
+
+@* Index.
