@@ -75,7 +75,7 @@ This is \MP\ by John Hobby, a graphics-language processor based on D. E. Knuth's
 
 Much of the original Pascal version of this program was copied with
 permission from MF.web Version 1.9. It interprets a language very
-similar to D.E. Knuth's \MF, but with changes designed to make it
+similar to D. E. Knuth's \MF, but with changes designed to make it
 more suitable for PostScript output.
 
 The main purpose of the following program is to explain the algorithms of \MP\
@@ -203,7 +203,7 @@ typedef struct MP_instance {
 @ @c
 #ifdef MPOST_DEBUG_ENVELOPE
 static int MPOST_DEBUG_ENVELOPECOUNTER=0;
-#define dbg_str(A)	  @[printf("\n--[==[%03d MPOST_DEBUG_ENVELOPE ]==] %s",	@|	   MPOST_DEBUG_ENVELOPECOUNTER++, #A)@]
+#define dbg_str(A)	  @[printf("\n--[==[%03d MPOST_DEBUG_ENVELOPE ]==] %s",		   MPOST_DEBUG_ENVELOPECOUNTER++, #A)@]
 #define dbg_n(A) 	  @[printf("\n--[==[%03d MPOST_DEBUG_ENVELOPE ]==] ['%s']=%s, ",	   MPOST_DEBUG_ENVELOPECOUNTER++, #A, number_tostring(A))@]
 #define dbg_in(A) 	  @[printf("\n--[==[%03d MPOST_DEBUG_ENVELOPE ]==] ['%s']=%d, ",	   MPOST_DEBUG_ENVELOPECOUNTER++, #A, (int)(A))@]
 #define dbg_dn(A) 	  @[printf("\n--[==[%03d MPOST_DEBUG_ENVELOPE ]==] ['%s']=%.100f, ",MPOST_DEBUG_ENVELOPECOUNTER++, #A, (double)(A))@]
@@ -212,11 +212,11 @@ static int MPOST_DEBUG_ENVELOPECOUNTER=0;
 #define dbg_key_ival(K,V) @[printf("\n--[==[%03d MPOST_DEBUG_ENVELOPE ]==] ['%s']=%d",	   MPOST_DEBUG_ENVELOPECOUNTER++, #K,(int)(V))@]
 #define dbg_key_dval(K,V) @[printf("\n--[==[%03d MPOST_DEBUG_ENVELOPE ]==] ['%s']=%.100f",  MPOST_DEBUG_ENVELOPECOUNTER++, #K,(double)(V))@]
 #define dbg_comment(A) 	  @[printf("\n--[==[%03d MPOST_DEBUG_ENVELOPE ]==] --[==[%s]==]",   MPOST_DEBUG_ENVELOPECOUNTER++, #A)@]
-#define dbg_sp 		  @[printf("\n--[==[%03d MPOST_DEBUG_ENVELOPE ]==]  ", @|  	   MPOST_DEBUG_ENVELOPECOUNTER++)@]
-#define dbg_open_t 	  @[printf("\n--[==[%03d MPOST_DEBUG_ENVELOPE ]==] {", @|  	   MPOST_DEBUG_ENVELOPECOUNTER++)@]
-#define dbg_close_t 	  @[printf("\n--[==[%03d MPOST_DEBUG_ENVELOPE ]==] }", @|  	   MPOST_DEBUG_ENVELOPECOUNTER++)@]
-#define dbg_comma 	  @[printf("\n--[==[%03d MPOST_DEBUG_ENVELOPE ]==] ,", @|  	   MPOST_DEBUG_ENVELOPECOUNTER++)@]
-#define dbg_nl 		  @[printf("\n--[==[%03d MPOST_DEBUG_ENVELOPE ]==] \n", @|  	   MPOST_DEBUG_ENVELOPECOUNTER++)@]
+#define dbg_sp 		  @[printf("\n--[==[%03d MPOST_DEBUG_ENVELOPE ]==]  ",   	   MPOST_DEBUG_ENVELOPECOUNTER++)@]
+#define dbg_open_t 	  @[printf("\n--[==[%03d MPOST_DEBUG_ENVELOPE ]==] {",   	   MPOST_DEBUG_ENVELOPECOUNTER++)@]
+#define dbg_close_t 	  @[printf("\n--[==[%03d MPOST_DEBUG_ENVELOPE ]==] }",   	   MPOST_DEBUG_ENVELOPECOUNTER++)@]
+#define dbg_comma 	  @[printf("\n--[==[%03d MPOST_DEBUG_ENVELOPE ]==] ,",   	   MPOST_DEBUG_ENVELOPECOUNTER++)@]
+#define dbg_nl 		  @[printf("\n--[==[%03d MPOST_DEBUG_ENVELOPE ]==] \n",   	   MPOST_DEBUG_ENVELOPECOUNTER++)@]
 #define dbg_CUBIC         dbg_n(p->x_coord); dbg_n(p->y_coord); \
 			  dbg_n(p->right_x); dbg_n(p->right_y); \
 			  dbg_n(q->left_x);  dbg_n(q->left_y);  \
@@ -251,9 +251,8 @@ static int MPOST_DEBUG_ENVELOPECOUNTER=0;
 /*|
 #include "mplibpng.h"| */          /* external header */
 #include "mpmp.h"               /* internal header */
-#include "mppsout.h"            /* internal header */ @t@>
-/*|
-#include "mpsvgout.h"| */           /* internal header */ @t@>
+#include "mppsout.h"            /* internal header */
+#include "mpsvgout.h"           /* internal header */ @t@>
 /*|
 #include "mppngout.h"| */           /* internal header */
 #include "mpmath.h"             /* internal header */
@@ -296,10 +295,6 @@ extern void mp_png_backend_initialize (MP mp);
 extern void mp_png_backend_free (MP mp);
 extern int mp_png_gr_ship_out (void *hh, const char  *options, int standalone);
 extern int mp_png_ship_out (void *hh, const char *options);
-extern void mp_svg_backend_initialize (MP mp);
-extern void mp_svg_backend_free (MP mp);
-extern int mp_svg_ship_out (mp_edge_object  *hh, int prologues);
-extern int mp_svg_gr_ship_out (mp_edge_object  *hh, int prologues, int standalone);
 
 @ @c @h
 @<Declarations@>@;
