@@ -1,3 +1,10 @@
+2026-07-03 Luigi Scarso luigi.scarso@gmail.com
+	
+	* pplib-src/src/ppload.c: changed
+	#define XREF_STREAM_MAX_FIELD 4
+	to
+	#define XREF_STREAM_MAX_FIELD 8
+	
 2025-01-21  Vincenzo Mantova <vlmantova@gmail.com>
 
 	* ac/withenable.ac (KPSE_WITH_LIB): depend on zlib.

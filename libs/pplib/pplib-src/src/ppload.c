@@ -1648,7 +1648,7 @@ ref->number and ref->version (the later is implicitly 0). ref->offset is set to 
 which is recognized by objects loader.
 */
 
-#define XREF_STREAM_MAX_FIELD 4
+#define XREF_STREAM_MAX_FIELD 8
 
 static ppxref * ppxref_load_stream (iof *I, ppdoc *pdf, size_t xrefoffset)
 {

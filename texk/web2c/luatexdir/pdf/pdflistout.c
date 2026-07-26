@@ -760,7 +760,25 @@ void hlist_out(PDF pdf, halfword this_box, int rule_callback_id)
             }
             if (rleft != 0) {
                 rule.ht -= rleft;
-                pos_down(-rleft);
+                switch (localpos.dir) {
+                    case dir_TLT:
+                        pos_down(-rleft);
+                        break;
+                    case dir_TRT:
+                        pos_down(-rleft);
+                        break;
+                    case dir_LTL:
+                        pos_left(rleft);
+                        break;
+                    case dir_RTT:
+                        pos_left(-rleft);
+                        break;
+                    default:
+                        formatted_warning("pdf backend","forcing bad dir %i to TLT in hlist case rule",localpos.dir);
+                        localpos.dir = dir_TLT;
+                        pos_down(-rleft);
+                        break;
+                }
             }
             if (is_running(rule.dp)) {
                 rule.dp = depth(this_box);
@@ -1140,7 +1158,25 @@ void vlist_out(PDF pdf, halfword this_box, int rule_callback_id)
         }
         if (rleft != 0) {
             rule.wd -= rleft;
-            pos_left(-rleft);
+            switch (localpos.dir) {
+                case dir_TLT:
+                    pos_left(-rleft);
+                    break;
+                case dir_TRT:
+                    pos_left(rleft);
+                    break;
+                case dir_LTL:
+                    pos_down(rleft);
+                    break;
+                case dir_RTT:
+                    pos_down(rleft);
+                    break;
+                default:
+                    formatted_warning("pdf backend","forcing bad dir %i to TLT in vlist case rule",localpos.dir);
+                    localpos.dir = dir_TLT;
+                    pos_left(-rleft);
+                    break;
+            }
         }
         if (rright != 0) {
             rule.wd -= rright;

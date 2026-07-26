@@ -1,3 +1,17 @@
+2026-07-03 Luigi Scarso <luigi.scarso@gmail.com>
+
+        * source/libs/pplib/pplib-src/src/ppload.c: changed
+          #define XREF_STREAM_MAX_FIELD 4
+          to
+          #define XREF_STREAM_MAX_FIELD 8
+        * LuaTeX 1.26.4
+
+2026-06-12 Luigi Scarso <luigi.scarso@gmail.com>
+
+	* Fixed wrong shift of rules with left field (Udi Fogiel)
+	* LuaTeX 1.26.3
+
+	
 2026-06-12 Luigi Scarso <luigi.scarso@gmail.com>
 
 	* slunicode updated from tcl8.6.18/generic/tclUniData.c (Unicode version 17)
