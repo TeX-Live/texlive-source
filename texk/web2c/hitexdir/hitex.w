@@ -4527,8 +4527,8 @@ things.
 paragraphs is to define these names, and to set up the initial values of the
 equivalents.
 
-In the first region we have 256 equivalents for ``active characters'' that
-act as control sequences, followed by 256 equivalents for single-character
+In the first region we have $128+256$ equivalents for ``active characters'' that
+act as control sequences, followed by 128 equivalents for single-character
 control sequences.
 
 Then comes region~2, which corresponds to the hash table that we will
@@ -5847,7 +5847,7 @@ primitive("radical", radical, 0);@/
 @!@:radical\_}{\.{\\radical} primitive@>
 primitive("read", read_to_cs, 0);@/
 @!@:read\_}{\.{\\read} primitive@>
-primitive("relax", relax, 256); /*cf.\ |scan_file_name|*/
+primitive("relax", relax, utf32_impossible_char); /*cf.\ |scan_file_name|*/
 @!@:relax\_}{\.{\\relax} primitive@>
 text(frozen_relax)=text(cur_val);eqtb[frozen_relax]=eqtb[cur_val];@/
 primitive("setbox", set_box, 0);@/
@@ -7469,7 +7469,7 @@ static pointer @!input_loc; /*location of `\.{\\input}' in |eqtb|*/
 static halfword @!input_token; /*token representing `\.{\\input}'*/
 
 @ @<Put each...@>=
-primitive("par", par_end, 256); /*cf.\ |scan_file_name|*/
+primitive("par", par_end, utf32_impossible_char); /*cf.\ |scan_file_name|*/
 @!@:par\_}{\.{\\par} primitive@>
 par_loc=cur_val;par_token=cs_token_flag+par_loc;
 
@@ -7756,7 +7756,7 @@ if (i==2||i==4||i==6)
   }
 }
 
-@ Active characters $x$ in the range 0 to |0x7F| are represented by single
+@ Active characters $x$ in the range 0 to |0x7F| are represented by a single
 byte in UTF8 and the current equivalents are as usual in
 |eqtb[active_base + $x$]|. To extend this table to cover all
 active characters would be a waste of memory. Therefore, we store the equivalents
@@ -7892,7 +7892,6 @@ else{@+ /*we are done with this token list*/
 routine has inserted a special marker into the input. In this special
 case, |info(loc)| is known to be a control sequence token, and |link(loc)==null|.
 
-@d no_expand_flag 257 /*this characterizes a special variant of |relax|*/
 
 @<Get the next token, suppressing expansion@>=
 {@+cur_cs=info(loc)-cs_token_flag;loc=null;@/
@@ -8168,7 +8167,7 @@ decr(incsname_state);
 @<Look up the characters of list |r| in the hash table, and set |cur_cs|@>;
 flush_list(r);
 if (eq_type(cur_cs)==undefined_cs)
-  {@+eq_define(cur_cs, relax, 256); /*N.B.: The |save_stack| might change*/
+  {@+eq_define(cur_cs, relax, utf32_impossible_char); /*N.B.: The |save_stack| might change*/
   }  /*the control sequence will now match `\.{\\relax}'*/
 cur_tok=cur_cs+cs_token_flag;back_input();
 }
@@ -9269,7 +9268,7 @@ else if (cur_tok < cs_token_flag+single_base)
 }
 else if (cur_tok < cs_token_flag+null_cs)
    cur_val=cur_tok-cs_token_flag-single_base;
-else /* a single UTF8 character controll sequence with a value greater than 255 */
+else /* a single UTF8 character controll sequence with a value greater than |0x7F| */
 { pointer p = cur_tok-cs_token_flag;
   int t=text(p);
   int i=str_start[t];
@@ -9278,9 +9277,9 @@ else /* a single UTF8 character controll sequence with a value greater than 255 
   if (k==j)
     cur_val=cur_chr;
   else
-    cur_val=0x110000;
+    cur_val=utf32_impossible_char;
 }
-if (cur_val > 0x10ffff)
+if (cur_val > utf32_max_char)
 {@+print_err("Improper alphabetic constant");
 @.Improper alphabetic constant@>
   help2("A one-character control sequence belongs after a ` mark.",@/
@@ -10449,26 +10448,44 @@ else b=(type(p)==vlist_node);
 \.{\\if\\noexpand} or following \.{\\ifcat\\noexpand}. We use the fact that
 active characters have the smallest tokens, among all control sequences.
 
+@d utf32_max_char 0x10FFFF                  /*the largest UTF character*/
+@d utf32_impossible_char (utf32_max_char+1) /*not a possible utf32 character code*/
+@d no_expand_flag (utf32_impossible_char+1) /*even bigger than the impossible character code*/
+
 @d get_x_token_or_active_char @t@>@;
   {@+get_x_token();
-  if (cur_cmd==relax) if (cur_chr==no_expand_flag)
+  if (cur_cmd==relax && cur_chr==no_expand_flag)
     {@+cur_cmd=active_char;
-       cur_chr=cur_tok-cs_token_flag-active_base;
-       if (cur_chr>=utf8_single_size)
-         cur_chr=active_hash[cur_tok-cs_token_flag];
+       if (cur_tok < cs_token_flag+single_base)
+       { if (cur_tok < cs_token_flag+ active_hash_base)
+           cur_val=cur_tok-cs_token_flag-active_base;
+         else
+           cur_val=active_hash[cur_tok-cs_token_flag];
+       }
     }
   }
 
 @<Test if two characters match@>=
 {@+get_x_token_or_active_char;
-if ((cur_cmd > active_char)||(cur_chr > biggest_char))  /*not a character*/
-  {@+m=relax;n=biggest_char+1;
+if ((cur_cmd > active_char)||(cur_chr > utf32_max_char))  /*not a character*/
+  {@+m=relax;n=utf32_impossible_char;
   }
 else{@+m=cur_cmd;n=cur_chr;
   }
-get_x_token_or_active_char;
-if ((cur_cmd > active_char)||(cur_chr > biggest_char))
-  {@+cur_cmd=relax;cur_chr=biggest_char+1;
+ //get_x_token_or_active_char;
+  {@+get_x_token();
+  if (cur_cmd==relax && cur_chr==no_expand_flag)
+    {@+cur_cmd=active_char;
+       if (cur_tok < cs_token_flag+single_base)
+       { if (cur_tok < cs_token_flag+ active_hash_base)
+           cur_chr=cur_tok-cs_token_flag-active_base;
+         else
+           cur_chr=active_hash[cur_tok-cs_token_flag];
+       }
+    }
+  }
+if ((cur_cmd > active_char)||(cur_chr > utf32_max_char))
+  {@+cur_cmd=relax;cur_chr=utf32_impossible_char;
   }
 if (this_if==if_char_code) b=(n==cur_chr);@+else b=(m==cur_cmd);
 }
@@ -10798,7 +10815,7 @@ int @!old_setting; /*holds |selector| setting*/
 if (cur_cmd==left_brace)
   @<Define a general text file name and |goto done|@>@;
 name_in_progress=true;begin_name();  
-loop@+{@+if ((cur_cmd==relax) || (cur_cmd > other_char) || (cur_chr > biggest_char))  /*not a character*/
+loop@+{@+if ((cur_cmd==relax) || (cur_cmd > other_char) || (cur_chr > utf32_max_char))  /*not a character*/
     {@+back_input();goto done;
     }
 #if 0
@@ -14496,8 +14513,8 @@ is | > outer_call|, so it will not easily disappear in the presence of errors.
 The |get_x_token| routine converts the first into the second, which has |endv|
 as its command code.
 
-@d span_code 256 /*distinct from any character*/
-@d cr_code 257 /*distinct from |span_code| and from any character*/
+@d span_code utf32_impossible_char /*distinct from any character*/
+@d cr_code (span_code+1) /*distinct from |span_code| and from any character*/
 @d cr_cr_code (cr_code+1) /*this distinguishes \.{\\crcr} from \.{\\cr}*/
 @d end_template_token cs_token_flag+frozen_end_template
 
@@ -16743,7 +16760,6 @@ the compressed table.
 
 @d max_language 255 /*the largest hyphenation language*/
 @d max_pattern_char 0xFFFF /*the largest character in a pattern*/
-@d biggest_char 0x10FFFF /*the largest UTF character*/
 
 @<Set initial values of key variables@>=
 max_hyph_char=max_language+1;
@@ -16804,7 +16820,7 @@ resume: prev_s=s;s=link(prev_s);
   }
 done2: hyf_char=hyphen_char[hf];
 if (hyf_char < 0) goto done1;
-if (hyf_char > biggest_char) goto done1;
+if (hyf_char > utf32_max_char) goto done1;
 ha=prev_s
 
 @ The word to be hyphenated is now moved to the |hu| and |hc| arrays.
@@ -21716,7 +21732,7 @@ producing an ``undefined control sequence'' error or expanding the
 previous meaning.  This allows, for instance, `\.{\\chardef\\foo=123\\foo}'.
 
 @<Assignments@>=
-case shorthand_def: {@+n=cur_chr;get_r_token();p=cur_cs;define(p, relax, 256);
+case shorthand_def: {@+n=cur_chr;get_r_token();p=cur_cs;define(p, relax, utf32_impossible_char);
   scan_optional_equals();
   switch (n) {
   case char_def_code: {@+scan_char_num();define(p, char_given, cur_val);
@@ -23083,8 +23099,8 @@ undump_int(hyphen_char[k]);
 undump_int(skew_char[k]);@/
 undump(0, str_ptr, font_name[k]);
 undump(0, str_ptr, font_area[k]);@/
-undump(0, biggest_char, font_bc[k]);
-undump(0, biggest_char, font_ec[k]);@/
+undump(0, utf32_max_char, font_bc[k]);
+undump(0, utf32_max_char, font_ec[k]);@/
 undump_int(char_base[k]);
 undump_int(width_base[k]);
 undump_int(height_base[k]);@/
@@ -34166,7 +34182,7 @@ if ((cur_chr&0xF8)==0xF0)
   if (cur_chr>0x10FFFF && scanner_status!=skipping)
   { print_err("UTF8 code out of range in the input");
     int_error(cur_chr);
-    cur_chr=biggest_char;
+    cur_chr=utf32_max_char;
   }
   return i;
 }
@@ -34179,7 +34195,6 @@ the index |k|. The function advances the index |i| for each byte taken from the
 buffer and returns the updated value.
 
 
-
 @p static int utf8_get_cur_chr(unsigned char *b, int i, int k)
 { uint8_t d;
   @<input a single byte utf8 code@>@;
@@ -34187,7 +34202,7 @@ buffer and returns the updated value.
   @<input a three byte utf8 code@>@;
   @<input a four byte utf8 code@>@;
   print_err("Malformed UTF8 code in the input; character ignored");
-  cur_chr=biggest_char;
+  cur_chr=utf32_max_char;
   return i;
 }
 
@@ -34910,7 +34925,7 @@ static void scan_font_name(void)
   @<Get the next non-blank non-relax...@>;
   if (cur_cmd==left_brace)
     @<Define a general text file name and |goto done|@>@;
-  loop@+{@+if ((cur_cmd > other_char)||(cur_chr > biggest_char))  /*not a character*/
+  loop@+{@+if ((cur_cmd > other_char)||(cur_chr > utf32_max_char))  /*not a character*/
     {@+back_input();goto done;
     }
     if (!more_name(cur_chr)) goto done;
