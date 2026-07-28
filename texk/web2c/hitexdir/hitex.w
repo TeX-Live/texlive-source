@@ -7190,7 +7190,7 @@ int @!q; /*temporary index*/
 the desired information.
 
 @d begin_pseudoprint
-  {@+l=tally;selector=pseudo;
+  {@+l=tally;tally=0;selector=pseudo;
   trick_count=1000000;
   }
 @d set_trick_count
@@ -7220,7 +7220,7 @@ else{@+print("...");p=l+first_count-half_error_line+3;
     if ((c&0xC0)==0x80) continuation_bytes++;
   }
   print_ln();
-  for (q=1; q<=n-continuation_bytes; q++) print_char(' '); /*print |n| spaces to begin line~2*/
+  for (q=1; q<=n-continuation_bytes; q++) print_char(' '); /*print spaces to begin line~2*/
 }
 if (m+n <= error_line) p=first_count+m;else p=first_count+(error_line-n-3);
 for (q=first_count; q<=p-1; q++) print_char(trick_buf[q%error_line]);
@@ -7229,6 +7229,11 @@ if (m+n > error_line) print("...")
 @ But the trick is distracting us from our current goal, which is to
 understand the input state. So let's concentrate on the data structures that
 are being pseudoprinted as we finish up the |show_context| procedure.
+We use |printn| to print character codes below |0x80| to get a visible
+representation of unprintable characters; and we use |print_char| for all other
+character codes assuming that it is better to have a correct rendering of
+multibyte UTF8 character codes than to have a printable but still unreadable
+rendering of UTF8 byte sequences.
 
 @<Pseudoprint the line@>=
 begin_pseudoprint;
@@ -7236,7 +7241,10 @@ if (buffer[limit]==end_line_char) j=limit;
 else j=limit+1; /*determine the effective end of the line*/
 if (j > 0) for (i=start; i<=j-1; i++)
   {@+if (i==loc) set_trick_count;
-  printn(buffer[i]);
+  if (buffer[i]<0x80)
+    printn(buffer[i]);
+  else
+    print_char(buffer[i]);
   }
 
 @ @<Pseudoprint the token list@>=
