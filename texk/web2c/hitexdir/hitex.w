@@ -10458,9 +10458,9 @@ active characters have the smallest tokens, among all control sequences.
     {@+cur_cmd=active_char;
        if (cur_tok < cs_token_flag+single_base)
        { if (cur_tok < cs_token_flag+ active_hash_base)
-           cur_val=cur_tok-cs_token_flag-active_base;
+           cur_chr=cur_tok-cs_token_flag-active_base;
          else
-           cur_val=active_hash[cur_tok-cs_token_flag];
+           cur_chr=active_hash[cur_tok-cs_token_flag];
        }
     }
   }
@@ -10472,18 +10472,7 @@ if ((cur_cmd > active_char)||(cur_chr > utf32_max_char))  /*not a character*/
   }
 else{@+m=cur_cmd;n=cur_chr;
   }
- //get_x_token_or_active_char;
-  {@+get_x_token();
-  if (cur_cmd==relax && cur_chr==no_expand_flag)
-    {@+cur_cmd=active_char;
-       if (cur_tok < cs_token_flag+single_base)
-       { if (cur_tok < cs_token_flag+ active_hash_base)
-           cur_chr=cur_tok-cs_token_flag-active_base;
-         else
-           cur_chr=active_hash[cur_tok-cs_token_flag];
-       }
-    }
-  }
+ get_x_token_or_active_char;
 if ((cur_cmd > active_char)||(cur_chr > utf32_max_char))
   {@+cur_cmd=relax;cur_chr=utf32_impossible_char;
   }
