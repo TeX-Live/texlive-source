@@ -34982,9 +34982,9 @@ separate global variables.
   }
   else
     f_index=0;
-  if (feature_str!=0)
+  if (feature_str!=NULL)
     feature_str[0]=0;  
-  if (i<l && f_name[i]==':')
+  if (i<l)
   { int n;
     n=pool_ptr-str_start[str_ptr]-i;
     REALLOCATE(feature_str,n+1,char);
@@ -35916,16 +35916,21 @@ All OpenType feature tags have exactly 4 characters. Arguments that may follow a
 a feature tag are ignored.
 
 @<check and count the feature tags@>=
-feature_count=0;
 if (feature_str[0]!=':')
-  print_err("Feature string must start with a colon ':'. I igore it.");
+{ print_err("Font "); printn_esc(t);
+  print_err(" Feature string ");print(feature_str);
+  print_err(" must start with a colon ':'. I ignore it.");
+}
 else
 { i=1;
   while (feature_str[i]!=0)
-  { if (feature_str[i]!='+'&& feature_str[i]!='-')
+  { int f_start=i;
+    if (feature_str[i]!='+'&& feature_str[i]!='-')
     { @<Feature error@>@;
-      print_err(" must start with '+' or '-'. I igore it.");
+      print_err(" must start with '+' or '-'. I ignore it.");
       while (feature_str[i]!=0 && feature_str[i]!=';')
+        i++;
+      if (feature_str[i]==';')
         i++;
       continue;
     }
@@ -35946,7 +35951,7 @@ else
         i++;
       else 
       { @<Feature error@>@;
-        print_err(" must end with a ';'. I truncate the remainder.");
+        print_err(" must have four alphabetic characters. I truncate the remainder.");
         do {
 	  i++;
 	  if (feature_str[i]==';')
@@ -35959,9 +35964,16 @@ else
 
 @ 
 @<Feature error@>=
-print_err("Feature "); print_int(feature_count+1);
+print_err("Font "); printn_esc(t);
+print_err(" Feature "); print_int(feature_count+1);
 print(": ");
-print(feature_str+i);
+{ int j=f_start;
+  while (feature_str[j]!=0)
+  { print_char(feature_str[j]);
+    if (feature_str[j]==';') break;
+    j++;
+  }
+}
 
 @ Before we expalin how t initialize the feature array, we need to wrap
 the initialization of a  |hb_feature_t| into a small function which we
@@ -35984,10 +35996,11 @@ before defining \TeX's macros.
 as
 
  @<Initialize the features of font |g|@>=
-{ int i,j,k, feature_count=0;
-  hb_tag_t t;
+{ int i,j,k, feature_count;
+  hb_tag_t tg;
   hb_feature_t *features;
-  if (feature_str!=NULL)
+  feature_count=0;
+  if (feature_str!=NULL && feature_str[0]!=0)
   { @<check and count the feature tags@>@;
   }
   ALLOCATE(features,feature_count+NUM_DEFAULT_FEATURES,hb_feature_t);
@@ -36003,6 +36016,8 @@ as
       else
       { while (feature_str[i]!=0 && feature_str[i]!=';')
           i++;
+        if (feature_str[i]==';')
+          i++;
 	continue;
       }
       i++;
@@ -36013,19 +36028,19 @@ as
         else	
           tag[j]=' ';
       }
-      t=HB_TAG(tag[0],tag[1],tag[2],tag[3]);
-      if (t==HB_TAG('t','l','i','g'))
+      tg=HB_TAG(tag[0],tag[1],tag[2],tag[3]);
+      if (tg==HB_TAG('t','l','i','g'))
       { if (val) feature_bits[g]|=tlig_bit; else feature_bits[g]&=~tlig_bit; }
-      if (t==HB_TAG('t','a','c','c'))
+      if (tg==HB_TAG('t','a','c','c'))
       { if (val) feature_bits[g]|=tacc_bit; else feature_bits[g]&=~tlig_bit; }
       else	
       { for (j=0;j<k;j++)
-          if (features[j].tag==t)
+          if (features[j].tag==tg)
 	  { features[j].value=val;
 	    break;
 	  }
         if (j==k)
-        { x_set_feature(features+k, t,val);
+        { x_set_feature(features+k, tg,val);
 	  k++;
         }
       }
