@@ -10,6 +10,6 @@ man_sources = \
 
 EXTRA_DIST = $(man_sources)
 
-KPATHSEA_PATHS_H = ${top_builddir}/..
+KPATHSEA_PATHS_H = @KPATHSEA_PATHS_H@
 
 include $(top_srcdir)/../../am/man.am
