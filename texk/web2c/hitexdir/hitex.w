@@ -11583,7 +11583,13 @@ static void read_predefined_font(internal_font_number g)
   pack_file_name(empty_string, font_area[g], empty_string,"");
   path=(char*)name_of_file+1;
   t=font_id_text(g);
+  { char *s=(char *)str_pool+str_start[feature_string[g]];
+    int n= length(feature_string[g]);
+    @<Set |feature_str| with length |n| from |s|@>@;
+  }
+  feature_warn=false;
   read_extended_font(g,t,font_name[g], font_area[g],font_size[g],path);
+  feature_warn=true;
 }
 
 @ If an extended font |k| is defined and then dumped into a format file,
@@ -11598,7 +11604,7 @@ it will not be loaded into memory together with the format file,
 and consequently, |x_font[k]| will be |NULL|. The decission not
 to load all fonts specified in a format makes sense because
 formats define a general purpose setting that usually defines
-many more fonts that are used in any specific document.
+many more fonts than those used in any specific document.
 For example, the plain \TeX\ format specifies 50 different fonts!
 \HiTeX\ will load a predefined font only if needed.
 
@@ -11614,7 +11620,7 @@ these primitives allow the selection of any of the 16 available
 font families.
 
 To tell an extended font from an font with a \.{.tfm} file,
-we store |-256| in |char_base[k]|. The char |char_base| array
+we store |extended_base| or -256 in |char_base[k]|. The char |char_base| array
 is not used for extended fonts and for other fonts its
 values are usually not negative but definitely bigger than the
 negative value of the smallest character code in the font. 
@@ -22287,7 +22293,7 @@ and |goto common_ending|@>;
 if (file_opened) 
 f=read_font_info(u, cur_name, cur_area, cur_ext, s);
 else
-{ @<Open an extended font file for input@>@;
+{ @<Find an extended font file for input@>@;
   if (path!=NULL)
   { if (font_ptr==font_max|| fmem_ptr+8 > font_mem_size)
       @<Apologize for not loading the font, |goto done|@>;
@@ -23081,7 +23087,10 @@ dump_int(bchar_label[k]);
 dump_int(font_bchar[k]);
 dump_int(font_false_bchar[k]);@/
 print_nl("\\font");printn_esc(font_id_text(k));print_char('=');
-print_file_name(font_name[k], font_area[k],empty_string);
+if (IS_X_FONT(k))
+  print_file_name(font_name[k], empty_string,empty_string);
+else
+  print_file_name(font_name[k], font_area[k],empty_string);
 if (font_size[k]!=font_dsize[k])
   {@+print(" at ");print_scaled(font_size[k]);print("pt");
   }
@@ -34917,7 +34926,7 @@ static void end_name(void);
 static void scan_font_name(void)
 {@+pool_pointer @!j, k; /*index into |str_pool|*/
   int @!old_setting; /*holds |selector| setting*/
-  char *f_name=NULL;
+  char *fnt_str=NULL;
   name_in_progress=true;begin_name();
   @<Get the next non-blank non-relax...@>;
   if (cur_cmd==left_brace)
@@ -34957,17 +34966,18 @@ separate global variables.
 @<Split the font name into its components@>=
 { int l = cur_length;
   int i=0;
-  int d;
-  f_name= (char *)str_pool+str_start[str_ptr];
-  if (f_name[i]=='[')
+  int d; /*number of characters to be deleted*/
+  
+  fnt_str= (char *)str_pool+str_start[str_ptr];
+  if (fnt_str[i]=='[')
   { d=1;
     @<Find a bracketed file name@>@;
   }
-  else if (strncmp("file:",f_name,5)==0)
+  else if (strncmp("file:",fnt_str,5)==0)
   { d=5;
     @<Find a non-bracketed file name@>@;
   }
-  else if (strncmp("name:",f_name,5)==0)
+  else if (strncmp("name:",fnt_str,5)==0)
   { d=5;
     @<Find a font by name@>@;
   }
@@ -34976,19 +34986,15 @@ separate global variables.
     d=0;
     @<Find a non-bracketed file name@>@;
   }
-  if (i<l && f_name[i]=='(')
+  if (i<l && fnt_str[i]=='(')
   { i++;
     @<Find font selector@>@;
   }
   else
     f_index=0;
-  if (feature_str!=NULL)
-    feature_str[0]=0;  
-  if (i<l)
-  { int n;
-    n=pool_ptr-str_start[str_ptr]-i;
-    REALLOCATE(feature_str,n+1,char);
-    strncpy(feature_str,f_name+i,n+1);
+  { int n=  n=pool_ptr-str_start[str_ptr]-i;
+    char *s=fnt_str+i;
+    @<Set |feature_str| with length |n| from |s|@>@;
   } 
   pool_ptr=str_start[str_ptr]+f_delimiter; /*flush the remaining string*/
 }
@@ -35001,15 +35007,15 @@ the closing bracket might be missing if it was after the extension.
   i+=d;
   f_delimiter=area_delimiter=ext_delimiter=0;
   while (i<l)
-  { f_name[i-d]=f_name[i];
-    if (f_name[i]==']')
+  { fnt_str[i-d]=fnt_str[i];
+    if (fnt_str[i]==']')
     {  f_delimiter=i-d;
        d=2;
       i++;
       break;
     }
-    else if (IS_DIR_SEP(f_name[i])) {@+area_delimiter=i+1-d;ext_delimiter=0; }
-    else if (f_name[i]=='.') ext_delimiter=i+1-d;
+    else if (IS_DIR_SEP(fnt_str[i])) {@+area_delimiter=i+1-d;ext_delimiter=0; }
+    else if (fnt_str[i]=='.') ext_delimiter=i+1-d;
     i++;
   }
   if (d!=2)
@@ -35026,11 +35032,11 @@ or by the end of the string
 { i+=d;
   f_delimiter=area_delimiter=ext_delimiter=0;
   while (i<l)
-  { f_name[i-d]=f_name[i];
-    if (f_name[i]=='(' || f_name[i]==':')
+  { fnt_str[i-d]=fnt_str[i];
+    if (fnt_str[i]=='(' || fnt_str[i]==':')
       break;
-    else if (IS_DIR_SEP(f_name[i])) {@+area_delimiter=i+1-d;ext_delimiter=0; }
-    else if (f_name[i]=='.') ext_delimiter=i+1-d;
+    else if (IS_DIR_SEP(fnt_str[i])) {@+area_delimiter=i+1-d;ext_delimiter=0; }
+    else if (fnt_str[i]=='.') ext_delimiter=i+1-d;
     i++;
   }
   f_delimiter=i-d;
@@ -35044,8 +35050,8 @@ different syntay for font specifications.
 
 @<Find font selector@>=
 { char *end_ptr=NULL;
-  f_index=strtol((char *)f_name+i,&end_ptr,10);
-  i=(end_ptr-f_name);
+  f_index=strtol((char *)fnt_str+i,&end_ptr,10);
+  i=(end_ptr-fnt_str);
   if (*end_ptr==')')
     i++;
   else
@@ -35075,7 +35081,7 @@ The following code ignores a given file extension. So if a font
 is available in both formats, it will find the OpenType font even
 if ``.ttf'' was given as an extension.
 
-@<Open an extended font file for input@>=
+@<Find an extended font file for input@>=
 {  pack_file_name(cur_name, cur_area, empty_string,""); /* \TeX\ Live */
    path=kpse_find_file((char *)name_of_file+1, kpse_opentype_format, 0);
    if (path == NULL)
@@ -35513,7 +35519,7 @@ Hi\TeX\ uses the |font_name| and |font_area| (which holds the full pathname),
 as well as the |font_size|, |font_dsize|, |hyphen_char|, |font_bchar|, |font_glue|,
 and |font_params|. Some otherwise unused tables are used for
 special information:
-The |char_base| is set to |extended_base| as a merker that the font
+The |char_base| is set to |extended_base| as a marker that the font
 is an extended font. This maker is used to reload predefined extended fonts.
 The value of |lig_kern_base| is used to store the string number of the
 fonts feature list. |kern_base| is used to store marker bits for the \.{tlig} and \.{tacc}
@@ -35898,12 +35904,20 @@ the text direction, the script and the language.
 @<Glob...@>=
 
 static char *feature_str=NULL;
-
+static bool feature_warn=true;
 
 #define NUM_DEFAULT_FEATURES 6
 static hb_tag_t default_feature_tags[NUM_DEFAULT_FEATURES]=
 {HB_TAG('l','i','g','a'),HB_TAG('d','l','i','g'),HB_TAG('k','e','r','n'),
  HB_TAG('t','l','i','g'),HB_TAG('c','c','m','p'),HB_TAG('l','o','c','l')};
+
+@ @<Set |feature_str| with length |n| from |s|@>=
+if (feature_str!=NULL)
+    feature_str[0]=0;  
+if (n<=0) n=0;
+REALLOCATE(feature_str,n+1,char);
+strncpy(feature_str,s,n);
+feature_str[n]=0;
 
 
 
@@ -35926,8 +35940,10 @@ else
   while (feature_str[i]!=0)
   { int f_start=i;
     if (feature_str[i]!='+'&& feature_str[i]!='-')
-    { @<Feature error@>@;
-      print_err(" must start with '+' or '-'. I ignore it.");
+    { if(feature_warn) 
+      { @<Feature error@>@;
+        print_err(" must start with '+' or '-'. I ignore it.");
+      }
       while (feature_str[i]!=0 && feature_str[i]!=';')
         i++;
       if (feature_str[i]==';')
@@ -35940,8 +35956,10 @@ else
           (feature_str[i]>='A' && feature_str[i]<='Z'))
 	 i++;
       else	
-      { @<Feature error@>@;
-        print(" must have four alphabetic characters. I pad it with spaces.");
+      { if (feature_warn)
+        { @<Feature error@>@;
+          print(" must have four alphabetic characters. I pad it with spaces.");
+	}
         break;
       }
     }
@@ -35950,8 +35968,10 @@ else
     { if (feature_str[i]==';')
         i++;
       else 
-      { @<Feature error@>@;
-        print_err(" must have four alphabetic characters. I truncate the remainder.");
+      { if (feature_warn)
+        { @<Feature error@>@;
+          print_err(" must have four alphabetic characters. I truncate the remainder.");
+	}
         do {
 	  i++;
 	  if (feature_str[i]==';')
