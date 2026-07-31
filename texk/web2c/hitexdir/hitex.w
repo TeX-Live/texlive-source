@@ -5035,8 +5035,9 @@ that will be defined later.
 @d saving_vdiscards_code (etex_int_base+5) /*save items discarded from vlists*/
 @d saving_hyph_codes_code (etex_int_base+6) /*save hyphenation codes for languages*/
 @d expand_depth_code (etex_int_base+7) /*maximum depth for expansion---\eTeX*/
-@d ignore_primitive_error_code (etex_int_base+8) /*ignore some primitive/engine errors*/
-@d eTeX_state_code (etex_int_base+9) /*\eTeX\ state variables*/
+@d suppress_fontnotfound_error_code (etex_int_base+8) /*suppress errors for missing fonts*/
+@d ignore_primitive_error_code (etex_int_base+9) /*ignore some primitive/engine errors*/
+@d eTeX_state_code (etex_int_base+10) /*\eTeX\ state variables*/
 @d etex_int_pars (eTeX_state_code+eTeX_states) /*total number of \eTeX's integer parameters*/
 @#
 @d int_pars etex_int_pars /*total number of integer parameters*/
@@ -5113,6 +5114,7 @@ that will be defined later.
 @d saving_vdiscards int_par(saving_vdiscards_code)
 @d saving_hyph_codes int_par(saving_hyph_codes_code)
 @d expand_depth int_par(expand_depth_code)
+@d suppress_fontnotfound_error int_par(suppress_fontnotfound_error_code)
 @d ignore_primitive_error int_par(ignore_primitive_error_code)
 @d ignore_infinite_glue_shrinkage_bit 1
 
@@ -11566,7 +11568,9 @@ g=null_font;@/
 @<Read and check the font data; |abort| if the font file is malformed;
 if there's no room for this font, say so and |goto done|; otherwise |incr(font_ptr)|
 and |goto done|@>;
-bad_tfm: @<Report a bad tfm file@>;
+bad_tfm:
+if (!suppress_fontnotfound_error) 
+{ @<Report a bad tfm file@>; }
 done: if (tfm_file.f!=NULL) b_close(&tfm_file);
 return g;
 }
@@ -22306,11 +22310,13 @@ else
   }
   else
   { done:
-    start_font_error_message;
-    print(" not found.");
-    help2("I wasn't able to find the necessary font file.",
-          "You should check if the file exists or the name was misspelled.");
-    error();	  
+    if (!suppress_fontnotfound_error)
+    { start_font_error_message;
+      print(" not found.");
+      help2("I wasn't able to find the necessary font file.",
+            "You should check if the file exists or the name was misspelled.");
+      error();
+   }
     f=null_font;
   }
 }
@@ -24859,6 +24865,9 @@ primitive("savingvdiscards", assign_int, int_base+saving_vdiscards_code);@/
 @!@:saving\_vdiscards\_}{\.{\\savingvdiscards} primitive@>
 primitive("savinghyphcodes", assign_int, int_base+saving_hyph_codes_code);@/
 @!@:saving\_hyph\_codes\_}{\.{\\savinghyphcodes} primitive@>
+primitive("suppressfontnotfounderror", assign_int, int_base+suppress_fontnotfound_error_code);@/
+@!@:suppress\_fontnotfound\_error\_}{\.{\\suppressfontnotfounderror} primitive@>
+
 primitive("ignoreprimitiveerror", assign_int, int_base+ignore_primitive_error_code);@/
 @!@:ignore\_primitive\_error\_}{\.{\\ignoreprimitiveerror} primitive@>
 
@@ -24875,6 +24884,7 @@ case tracing_scan_tokens_code: print_esc("tracingscantokens");@+break;
 case tracing_nesting_code: print_esc("tracingnesting");@+break;
 case saving_vdiscards_code: print_esc("savingvdiscards");@+break;
 case saving_hyph_codes_code: print_esc("savinghyphcodes");@+break;
+case suppress_fontnotfound_error_code:  print_esc("suppressfontnotfounderror");@+break;
 case ignore_primitive_error_code: print_esc("ignoreprimitiveerror");@+break;
 
 @ In order to handle \.{\\everyeof} we need an array |eof_seen| of

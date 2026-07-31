@@ -132,7 +132,7 @@ Germany.
 \medskip
 {\tt ruckert\:@cs.hm.edu}
 \medskip
-Last commit: Fri Jul 24 18:55:51 2026
+Last commit: Fri Jul 31 16:51:26 2026
 \par
 }
 \eject
@@ -860,7 +860,33 @@ to switch to this font, then test, define a macro to perform this action,
 and switch back to the previous font. This can be done once in the preamble of the
 document and the overhead of switching fonts is neglegible. 
 
-
+Another primitive comes in handy when a package (like fontenc) tries to find and
+load fonts without knowing which fonts are available on the current machine
+using a code sequence like:
+\medskip{\parskip=0pt
+\verbatim/
+\font\somefont=somefont
+\ifx\somefont\nullfont
+\font\somefont=replacement
+\fi
+/}
+\medskip
+This code will produce ``font not found'' error messages if ``somefont'' is not available on the
+current machine even if the code tests for this error and supplies a replacement font.
+A few of these error messages are a nuisance; a lot of these messages are a problem
+because more serious error messages might be hidden in the avalance of error messages.
+The integer parameter \ctl{suppressfontnotfounderror} will suppress the ``font not found messages''
+if its value is 1. With its default value of 0, the error messages come out as usual.
+For example, an improved version of the above code can read:
+\medskip{\parskip=0pt
+\verbatim/
+{\suppressfontnotfounderror=1\font\somefont=somefont}
+\ifx\somefont\nullfont
+\font\somefont=replacement
+\fi
+/}
+\medskip
+This code will not produce error messages if either the font or its replacement is found.
 
 \subsubsection{Embedding subsets of fonts}
 Very often only a small subset of the glyphs contained in a font are actually used in
