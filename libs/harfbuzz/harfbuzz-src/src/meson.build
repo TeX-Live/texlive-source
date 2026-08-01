@@ -92,6 +92,7 @@ hb_base_sources = files(
   'hb-ot-face-table-list.hh',
   'hb-ot-face.cc',
   'hb-ot-face.hh',
+  'hb-ot-fetch.cc',
   'hb-ot-font.cc',
   'hb-ot-gasp-table.hh',
   'hb-ot-glyf-table.hh',
@@ -313,6 +314,7 @@ hb_base_headers = files(
   'hb-map.h',
   'hb-ot-color.h',
   'hb-ot-deprecated.h',
+  'hb-ot-fetch.h',
   'hb-ot-font.h',
   'hb-ot-layout.h',
   'hb-ot-math.h',
@@ -396,7 +398,6 @@ hb_subset_sources = files(
   'hb-subset-cff-common.hh',
   'hb-subset-cff1.cc',
   'hb-subset-cff2.cc',
-  'hb-subset-cff2-to-cff1.cc',
   'hb-subset-cff2-to-cff1.hh',
   'hb-subset-input.cc',
   'hb-subset-input.hh',
@@ -426,11 +427,15 @@ hb_subset_sources = files(
   'graph/split-helpers.hh',
   'hb-subset.cc',
   'hb-subset.hh',
+  'hb-depend.cc',
+  'hb-depend.hh',
+  'hb-depend-data.hh',
 )
 
 hb_subset_headers = files(
   'hb-subset.h',
-  'hb-subset-serialize.h'
+  'hb-subset-serialize.h',
+  'hb-subset-depend.h',
 )
 
 hb_gobject_sources = files(
@@ -626,7 +631,6 @@ gen_def_cmd = [gen_def, '@OUTPUT@', '@INPUT@']
 if get_option('experimental_api')
   gen_def_cmd += '--experimental-api'
 endif
-
 # harfbuzz
 harfbuzz_def = custom_target('harfbuzz.def',
     command: gen_def_cmd,
@@ -644,6 +648,10 @@ if cpp_is_microsoft_compiler
   hb_so_version = ''
 else
   hb_so_version = '0'
+endif
+
+if host_machine.system() == 'aix'
+  version = '0'
 endif
 
 if get_option('fuzzer_ldflags') != ''
@@ -710,7 +718,6 @@ if not get_option('subset').disabled()
 endif
 
 hb_raster_sources = files(
-  'hb-raster.cc',
   'hb-raster-image.cc',
   'hb-raster-image.hh',
   'hb-raster.hh',
@@ -1111,6 +1118,16 @@ if fs.is_absolute(cmake_install_libdir)
   endif
 endif
 
+cmake_install_bindir = get_option('bindir')
+
+if fs.is_absolute(cmake_install_bindir)
+  if meson.version().version_compare('>=1.3.0')
+    cmake_install_bindir = fs.relative_to(cmake_install_bindir, get_option('prefix'))
+  else
+    cmake_install_bindir = run_command(relative_to, cmake_install_bindir, get_option('prefix'), check: true).stdout().strip()
+  endif
+endif
+
 cmake_config.set('PACKAGE_INIT', '''
 get_filename_component(PACKAGE_PREFIX_DIR "@0@" ABSOLUTE)
 
@@ -1134,21 +1151,41 @@ endmacro()
 
 cmake_config.set('PACKAGE_CMAKE_INSTALL_INCLUDEDIR', '${PACKAGE_PREFIX_DIR}/@0@'.format(cmake_install_includedir))
 cmake_config.set('PACKAGE_CMAKE_INSTALL_LIBDIR', '${PACKAGE_PREFIX_DIR}/@0@'.format(cmake_install_libdir))
+cmake_config.set('PACKAGE_CMAKE_INSTALL_BINDIR', '${PACKAGE_PREFIX_DIR}/@0@'.format(cmake_install_bindir))
 cmake_config.set('PACKAGE_INCLUDE_INSTALL_DIR', '${PACKAGE_PREFIX_DIR}/@0@/@1@'.format(cmake_install_includedir, meson.project_name()))
 cmake_config.set('HARFBUZZ_VERSION', meson.project_version())
 cmake_config.set('HB_HAVE_GOBJECT', have_gobject ? 'YES' : 'NO')
 cmake_config.set('HB_LIBRARY_TYPE', get_option('default_library') == 'static' ? 'STATIC' : 'SHARED')
+cmake_config.set('HB_HAS_IMPORT_LIBRARY', 'NO')
+cmake_config.set('HB_IMPLIB_PREFIX', '')
+cmake_config.set('HB_IMPLIB_SUFFIX', '')
 
 if get_option('default_library') == 'static'
+  cmake_config.set('HB_LIB_DIR', '${PACKAGE_PREFIX_DIR}/@0@'.format(cmake_install_libdir))
   cmake_config.set('HB_LIB_PREFIX', '${CMAKE_STATIC_LIBRARY_PREFIX}')
   cmake_config.set('HB_LIB_SUFFIX', '${CMAKE_STATIC_LIBRARY_SUFFIX}')
 elif host_machine.system() == 'darwin'
+  cmake_config.set('HB_LIB_DIR', '${PACKAGE_PREFIX_DIR}/@0@'.format(cmake_install_libdir))
   cmake_config.set('HB_LIB_PREFIX', '${CMAKE_SHARED_LIBRARY_PREFIX}')
   cmake_config.set('HB_LIB_SUFFIX', '.@0@${CMAKE_SHARED_LIBRARY_SUFFIX}'.format(hb_so_version))
 elif host_machine.system() == 'windows'
-  cmake_config.set('HB_LIB_PREFIX', '${CMAKE_IMPORT_LIBRARY_PREFIX}')
-  cmake_config.set('HB_LIB_SUFFIX', '${CMAKE_IMPORT_LIBRARY_SUFFIX}')
+  cmake_config.set('HB_HAS_IMPORT_LIBRARY', 'YES')
+  cmake_config.set('HB_LIB_DIR', '${PACKAGE_PREFIX_DIR}/@0@'.format(cmake_install_bindir))
+  cmake_config.set('HB_LIB_PREFIX', '${CMAKE_SHARED_LIBRARY_PREFIX}')
+  if hb_so_version == ''
+    cmake_config.set('HB_LIB_SUFFIX', '${CMAKE_SHARED_LIBRARY_SUFFIX}')
+  else
+    cmake_config.set('HB_LIB_SUFFIX', '-@0@${CMAKE_SHARED_LIBRARY_SUFFIX}'.format(hb_so_version))
+  endif
+  cmake_config.set('HB_IMPLIB_PREFIX', '${CMAKE_IMPORT_LIBRARY_PREFIX}')
+  cmake_config.set('HB_IMPLIB_SUFFIX', '${CMAKE_IMPORT_LIBRARY_SUFFIX}')
+elif host_machine.system() == 'android'
+  # Meson does not version shared libraries on Android.
+  cmake_config.set('HB_LIB_DIR', '${PACKAGE_PREFIX_DIR}/@0@'.format(cmake_install_libdir))
+  cmake_config.set('HB_LIB_PREFIX', '${CMAKE_SHARED_LIBRARY_PREFIX}')
+  cmake_config.set('HB_LIB_SUFFIX', '${CMAKE_SHARED_LIBRARY_SUFFIX}')
 else
+  cmake_config.set('HB_LIB_DIR', '${PACKAGE_PREFIX_DIR}/@0@'.format(cmake_install_libdir))
   cmake_config.set('HB_LIB_PREFIX', '${CMAKE_SHARED_LIBRARY_PREFIX}')
   cmake_config.set('HB_LIB_SUFFIX', '${CMAKE_SHARED_LIBRARY_SUFFIX}.@0@'.format(version))
 endif

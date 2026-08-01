@@ -49,6 +49,7 @@
 #include "hb-ot-cff2-table.cc"
 #include "hb-ot-color.cc"
 #include "hb-ot-face.cc"
+#include "hb-ot-fetch.cc"
 #include "hb-ot-font.cc"
 #include "hb-ot-layout.cc"
 #include "hb-ot-map.cc"
@@ -137,19 +138,18 @@
 #include "hb-raster-draw.cc"
 #include "hb-raster-image.cc"
 #include "hb-raster-paint.cc"
-#include "hb-raster.cc"
 #include "hb-static.cc"
 #endif
 
 #ifdef HB_HAS_SUBSET
 #include "graph/gsubgpos-context.cc"
+#include "hb-depend.cc"
 #include "hb-number.cc"
 #include "hb-ot-cff1-table.cc"
 #include "hb-ot-cff2-table.cc"
 #include "hb-static.cc"
 #include "hb-subset-cff-common.cc"
 #include "hb-subset-cff1.cc"
-#include "hb-subset-cff2-to-cff1.cc"
 #include "hb-subset-cff2.cc"
 #include "hb-subset-input.cc"
 #include "hb-subset-instancer-iup.cc"
