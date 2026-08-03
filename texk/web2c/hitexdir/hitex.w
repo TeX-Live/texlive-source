@@ -24867,7 +24867,6 @@ primitive("savinghyphcodes", assign_int, int_base+saving_hyph_codes_code);@/
 @!@:saving\_hyph\_codes\_}{\.{\\savinghyphcodes} primitive@>
 primitive("suppressfontnotfounderror", assign_int, int_base+suppress_fontnotfound_error_code);@/
 @!@:suppress\_fontnotfound\_error\_}{\.{\\suppressfontnotfounderror} primitive@>
-
 primitive("ignoreprimitiveerror", assign_int, int_base+ignore_primitive_error_code);@/
 @!@:ignore\_primitive\_error\_}{\.{\\ignoreprimitiveerror} primitive@>
 
@@ -36205,7 +36204,7 @@ with matching plans!
 #endif
 
 static hb_buffer_t *x_set_major(int f, uint32_t cp[],int n, int j,int len)
-{  hb_buffer_set_length (x_font[f]->major,0);
+{ hb_buffer_set_length (x_font[f]->major,0);
   hb_buffer_add_codepoints( x_font[f]->major,cp,n,j,len);
   hb_shape_plan_execute (x_font[f]->plan,x_font[f]->f, x_font[f]->major,
       x_font[f]->features, x_font[f]->feature_count);
@@ -36304,15 +36303,35 @@ static pointer x_append_cluster(pointer t, int f, uint32_t *cp, int cp_len,
 }
  
 
-@ The simple case:
+@ The simple case: If a cluster has the size |n==1|, we might just add a simple character node.
+Some font features, for example the ``+smcp'' feature that requests a ``small caps'' font,
+will influence the glyph assignment while shaping. Instead of assigning to the codepoint 'a'
+a glyph for a lower case 'a' a small glyph for an upper case 'A' is assigned. In such a case,
+the nominal glyph for the code point 'a' is different form the actual glyph. \HiTeX\ will
+retain the codepoint which may latter be used for hyphenation and the glyph selected by shaping
+in a ligature node.
 
 @d append_kern_to_t(A)   if ((A)!=0) { link(t)= new_kern(A); t=link(t); (*ncount)++; }
 
 @<Add a single codepoint@>=
 { scaled w;
+  hb_codepoint_t nominal_gid;
  (*ncount)++;
-  append_charnode_to_t(f,cp[0]);
-  w = x_char_advance(f,cp[0]);
+  hb_font_get_nominal_glyph (x_font[f]->f,cp[0], &nominal_gid);
+  if (gid==nominal_gid)
+  { append_charnode_to_t(f,cp[0]);
+  }
+  else
+  {  pointer lig, q, r;
+     lig= new_ligature(f, gid,null);
+     r=lig_char(lig);
+     q=get_avail();
+     font(q)=f;
+     character(q)=cp[0];
+     link(r)=q;
+     link(t)=lig; t=link(t);
+  }
+  w = x_glyph_advance(f, gid);
   append_kern_to_t(cw-w);
 }
 
