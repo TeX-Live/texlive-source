@@ -35962,24 +35962,28 @@ else
     i++;
     for (j=0;j<4;j++)
     { if ((feature_str[i]>='a' && feature_str[i]<='z') ||
-          (feature_str[i]>='A' && feature_str[i]<='Z'))
+          (feature_str[i]>='A' && feature_str[i]<='Z') ||
+	  (feature_str[i]>='0' && feature_str[i]<='9')
+	  )
 	 i++;
-      else	
-      { if (feature_warn)
-        { @<Feature error@>@;
-          print(" must have four alphabetic characters. I pad it with spaces.");
-	}
-        break;
-      }
+      else
+	 break;
     }
-    feature_count++;
+    if (j<1)	
+    { if (feature_warn)
+       { @<Feature error@>@;
+         print(" must have four alphanumeric characters. I ignore it.");
+       }
+    }
+    else
+      feature_count++;
     if (feature_str[i]!=0)
     { if (feature_str[i]==';')
         i++;
       else 
       { if (feature_warn)
         { @<Feature error@>@;
-          print_err(" must have four alphabetic characters. I truncate the remainder.");
+          print_err(" must have four alphanumeric characters. I truncate the remainder.");
 	}
         do {
 	  i++;
@@ -36057,20 +36061,22 @@ as
         else	
           tag[j]=' ';
       }
-      tg=HB_TAG(tag[0],tag[1],tag[2],tag[3]);
-      if (tg==HB_TAG('t','l','i','g'))
-      { if (val) feature_bits[g]|=tlig_bit; else feature_bits[g]&=~tlig_bit; }
-      if (tg==HB_TAG('t','a','c','c'))
-      { if (val) feature_bits[g]|=tacc_bit; else feature_bits[g]&=~tlig_bit; }
-      else	
-      { for (j=0;j<k;j++)
-          if (features[j].tag==tg)
-	  { features[j].value=val;
-	    break;
-	  }
-        if (j==k)
-        { x_set_feature(features+k, tg,val);
-	  k++;
+      if (tag[0]!=' ')
+      { tg=HB_TAG(tag[0],tag[1],tag[2],tag[3]);
+        if (tg==HB_TAG('t','l','i','g'))
+        { if (val) feature_bits[g]|=tlig_bit; else feature_bits[g]&=~tlig_bit; }
+        if (tg==HB_TAG('t','a','c','c'))
+        { if (val) feature_bits[g]|=tacc_bit; else feature_bits[g]&=~tlig_bit; }
+        else	
+        { for (j=0;j<k;j++)
+            if (features[j].tag==tg)
+	    { features[j].value=val;
+	      break;
+	    }
+          if (j==k)
+          { x_set_feature(features+k, tg,val);
+	    k++;
+          }
         }
       }
       while (feature_str[i]!=0 && feature_str[i]!=';')
