@@ -139,7 +139,8 @@ am_libharfbuzz_a_OBJECTS = @HARFBUZZ_TREE@/src/harfbuzz.$(OBJEXT) \
 	@HARFBUZZ_TREE@/src/hb-subset-table-layout.$(OBJEXT) \
 	@HARFBUZZ_TREE@/src/hb-subset-table-other.$(OBJEXT) \
 	@HARFBUZZ_TREE@/src/hb-subset-table-var.$(OBJEXT) \
-	@HARFBUZZ_TREE@/src/hb-subset.$(OBJEXT)
+	@HARFBUZZ_TREE@/src/hb-subset.$(OBJEXT) \
+	@HARFBUZZ_TREE@/src/hb-depend.$(OBJEXT)
 libharfbuzz_a_OBJECTS = $(am_libharfbuzz_a_OBJECTS)
 am_hbtest_OBJECTS = hbtest-hbtest.$(OBJEXT)
 hbtest_OBJECTS = $(am_hbtest_OBJECTS)
@@ -165,6 +166,7 @@ am__maybe_remake_depfiles = depfiles
 am__depfiles_remade = ./$(DEPDIR)/hbtest-dummy.Po \
 	./$(DEPDIR)/hbtest-hbtest.Po \
 	@HARFBUZZ_TREE@/src/$(DEPDIR)/harfbuzz.Po \
+	@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-depend.Po \
 	@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-subset-cff-common.Po \
 	@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-subset-cff1.Po \
 	@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-subset-cff2.Po \
@@ -676,7 +678,8 @@ libharfbuzz_a_SOURCES = \
 	@HARFBUZZ_TREE@/src/hb-subset-table-layout.cc \
 	@HARFBUZZ_TREE@/src/hb-subset-table-other.cc \
 	@HARFBUZZ_TREE@/src/hb-subset-table-var.cc \
-	@HARFBUZZ_TREE@/src/hb-subset.cc
+	@HARFBUZZ_TREE@/src/hb-subset.cc \
+	@HARFBUZZ_TREE@/src/hb-depend.cc
 
 @build_TRUE@dist_check_SCRIPTS = harfbuzz.test
 @build_TRUE@TESTS = harfbuzz.test
@@ -823,6 +826,9 @@ clean-noinstLIBRARIES:
 @HARFBUZZ_TREE@/src/hb-subset.$(OBJEXT):  \
 	@HARFBUZZ_TREE@/src/$(am__dirstamp) \
 	@HARFBUZZ_TREE@/src/$(DEPDIR)/$(am__dirstamp)
+@HARFBUZZ_TREE@/src/hb-depend.$(OBJEXT):  \
+	@HARFBUZZ_TREE@/src/$(am__dirstamp) \
+	@HARFBUZZ_TREE@/src/$(DEPDIR)/$(am__dirstamp)
 
 libharfbuzz.a: $(libharfbuzz_a_OBJECTS) $(libharfbuzz_a_DEPENDENCIES) $(EXTRA_libharfbuzz_a_DEPENDENCIES) 
 	$(AM_V_at)-rm -f libharfbuzz.a
@@ -844,6 +850,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hbtest-dummy.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hbtest-hbtest.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/harfbuzz.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-depend.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-subset-cff-common.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-subset-cff1.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@@HARFBUZZ_TREE@/src/$(DEPDIR)/hb-subset-cff2.Po@am__quote@ # am--include-marker
@@ -1494,6 +1501,7 @@ distclean: distclean-recursive
 	-rm -f ./$(DEPDIR)/hbtest-dummy.Po
 	-rm -f ./$(DEPDIR)/hbtest-hbtest.Po
 	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/harfbuzz.Po
+	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-depend.Po
 	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-subset-cff-common.Po
 	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-subset-cff1.Po
 	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-subset-cff2.Po
@@ -1561,6 +1569,7 @@ maintainer-clean: maintainer-clean-recursive
 	-rm -f ./$(DEPDIR)/hbtest-dummy.Po
 	-rm -f ./$(DEPDIR)/hbtest-hbtest.Po
 	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/harfbuzz.Po
+	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-depend.Po
 	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-subset-cff-common.Po
 	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-subset-cff1.Po
 	-rm -f @HARFBUZZ_TREE@/src/$(DEPDIR)/hb-subset-cff2.Po

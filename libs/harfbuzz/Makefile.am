@@ -51,7 +51,8 @@ libharfbuzz_a_SOURCES = \
 	@HARFBUZZ_TREE@/src/hb-subset-table-layout.cc \
 	@HARFBUZZ_TREE@/src/hb-subset-table-other.cc \
 	@HARFBUZZ_TREE@/src/hb-subset-table-var.cc \
-	@HARFBUZZ_TREE@/src/hb-subset.cc
+	@HARFBUZZ_TREE@/src/hb-subset.cc \
+	@HARFBUZZ_TREE@/src/hb-depend.cc
 
 ## Graphite library
 AM_CPPFLAGS += $(GRAPHITE2_INCLUDES)
