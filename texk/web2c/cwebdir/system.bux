@@ -1,61 +1,62 @@
-@$memcmp "<string.h>" \zip@>
-@$memcpy "<string.h>" \zip@>
-@$strcat "<string.h>" \zip@>
-@$strchr "<string.h>" \zip@>
-@$strcmp "<string.h>" \zip@>
-@$strcpy "<string.h>" \zip@>
-@$strlen "<string.h>" \zip@>
-@$strncmp "<string.h>" \zip@>
-@$strncpy "<string.h>" \zip@>
-@$strrchr "<string.h>" \zip@>
+@$memcmp "<string.h>" \&{int} (\,)@>
+@$memcpy "<string.h>" \6{void} ${}{*}(\,){}$@>
+@$strcat "<string.h>" \&{char} ${}{*}(\,){}$@>
+@$strchr "<string.h>" \&{char} ${}{*}(\,){}$@>
+@$strcmp "<string.h>" \&{int} (\,)@>
+@$strcpy "<string.h>" \&{char} ${}{*}(\,){}$@>
+@$strlen "<string.h>" \&{size\_t} (\,)@>
+@$strncmp "<string.h>" \&{int} (\,)@>
+@$strncpy "<string.h>" \&{char} ${}{*}(\,){}$@>
+@$strrchr "<string.h>" \&{char} ${}{*}(\,){}$@>
 
 @$BUFSIZ "<stdio.h>" \zip@>
 @$EOF "<stdio.h>" \zip@>
-@$fclose "<stdio.h>" \zip@>
-@$feof "<stdio.h>" \zip@>
-@$fflush "<stdio.h>" \zip@>
-@$fopen "<stdio.h>" \zip@>
-@$fprintf "<stdio.h>" \zip@>
-@$fputc "<stdio.h>" \zip@>
-@$fputs "<stdio.h>" \zip@>
-@$fread "<stdio.h>" \zip@>
-@$fwrite "<stdio.h>" \zip@>
-@$getc "<stdio.h>" \zip@>
-@$printf "<stdio.h>" \zip@>
-@$putc "<stdio.h>" \zip@>
-@$putchar "<stdio.h>" \zip@>
-@$puts "<stdio.h>" \zip@>
-@$rename "<stdio.h>" \zip@>
-@$remove "<stdio.h>" \zip@>
-@$snprintf "<stdio.h>" \zip@>
-@$sprintf "<stdio.h>" \zip@>
+@$fclose "<stdio.h>" \&{int} (\,)@>
+@$feof "<stdio.h>" \&{int} (\,)@>
+@$fflush "<stdio.h>" \&{int} (\,)@>
+@$fopen "<stdio.h>" \&{FILE} ${}{*}(\,){}$@>
+@$fprintf "<stdio.h>" \&{int} (\,)@>
+@$fputc "<stdio.h>" \&{int} (\,)@>
+@$fputs "<stdio.h>" \&{int} (\,)@>
+@$fread "<stdio.h>" \&{size\_t} (\,)@>
+@$fwrite "<stdio.h>" \&{size\_t} (\,)@>
+@$getc "<stdio.h>" \&{int} (\,)@>
+@$printf "<stdio.h>" \&{int} (\,)@>
+@$putc "<stdio.h>" \&{int} (\,)@>
+@$putchar "<stdio.h>" \&{int} (\,)@>
+@$puts "<stdio.h>" \&{int} (\,)@>
+@$rename "<stdio.h>" \&{int} (\,)@>
+@$remove "<stdio.h>" \&{int} (\,)@>
+@$snprintf "<stdio.h>" \&{int} (\,)@>
+@$sprintf "<stdio.h>" \&{int} (\,)@>
+@$sscanf "<stdio.h>" \&{int} (\,)@>
 @$sscanf "<stdio.h>" \zip@>
 @$stderr "<stdio.h>" \zip@>
 @$stdin "<stdio.h>" \zip@>
 @$stdout "<stdio.h>" \zip@>
-@$ungetc "<stdio.h>" \zip@>
+@$ungetc "<stdio.h>" \&{int} (\,)@>
 
-@$calloc "<stdlib.h>" \zip@>
-@$exit "<stdlib.h>" \zip@>
-@$free "<stdlib.h>" \zip@>
-@$getenv "<stdlib.h>" \zip@>
+@$calloc "<stdlib.h>" \&{void} ${}{*}(\,){}$@>
+@$exit "<stdlib.h>" \&{void} (\,)@>
+@$free "<stdlib.h>" \&{void} (\,)@>
+@$getenv "<stdlib.h>" \&{char} ${}{*}(\,){}$@>
 
-@$isalpha "<ctype.h>" \zip@>
-@$isdigit "<ctype.h>" \zip@>
-@$islower "<ctype.h>" \zip@>
-@$isspace "<ctype.h>" \zip@>
-@$isupper "<ctype.h>" \zip@>
-@$isxdigit "<ctype.h>" \zip@>
-@$tolower "<ctype.h>" \zip@>
-@$toupper "<ctype.h>" \zip@>
+@$isalpha "<ctype.h>" \&{int} (\,)@>
+@$isdigit "<ctype.h>" \&{int} (\,)@>
+@$islower "<ctype.h>" \&{int} (\,)@>
+@$isspace "<ctype.h>" \&{int} (\,)@>
+@$isupper "<ctype.h>" \&{int} (\,)@>
+@$isxdigit "<ctype.h>" \&{int} (\,)@>
+@$tolower "<ctype.h>" \&{int} (\,)@>
+@$toupper "<ctype.h>" \&{int} (\,)@>
 
-@$gettext "<libintl.h>" \zip@>
-@$textdomain "<libintl.h>" \zip@>
+@$gettext "<libintl.h>" \&{char} ${}{*}(\,){}$@>
+@$textdomain "<libintl.h>" \&{char} ${}{*}(\,){}$@>
 
 @$INT_MAX "<limits.h>" \zip@>
 
-@$bindtextdomain "<locale.h>" \zip@>
-@$setlocale "<locale.h>" \zip@>
+@$bindtextdomain "<locale.h>" \&{char} ${}{*}(\,){}$@>
+@$setlocale "<locale.h>" \&{char} ${}{*}(\,){}$@>
 @$LC_CTYPE "<locale.h>" \zip@>
 @$LC_MESSAGES "<locale.h>" \zip@>
 
@@ -69,5 +70,5 @@
 @$uint8_t "<stdint.h>" \zip@>
 @$uint16_t "<stdint.h>" \zip@>
 
-@$asctime "<time.h>" \zip@>
-@$localtime "<time.h>" \zip@>
+@$asctime "<time.h>" \&{char} ${}{*}(\,){}$@>
+@$localtime "<time.h>" \&{struct} \&{tm} ${}{*}(\,){}$@>

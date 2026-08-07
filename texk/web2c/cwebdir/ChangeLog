@@ -1,3 +1,7 @@
+2026-08-07  Andreas Scherer  <https://ascherer.github.io>
+
+	* system.bux: Amend return types of standard C functions.
+
 2026-07-18  Andreas Scherer  <https://ascherer.github.io>
 
 	* ctwill-proofsort,
