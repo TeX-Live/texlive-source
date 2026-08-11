@@ -132,7 +132,7 @@ Germany.
 \medskip
 {\tt ruckert\:@cs.hm.edu}
 \medskip
-Last commit: Fri Jul 31 16:51:26 2026
+Last commit: Tue Aug 11 18:32:07 2026
 \par
 }
 \eject
@@ -666,16 +666,16 @@ Only if none of this leads to a usable font file, \HiTeX\ succumbs.
 \medskip
 
 The extended font specifiers used for OpenType fonts
-assign special meaning to the colon ``\.{:}'', the slash ``\.{/}'',
-and the opening parenthesis ``\.{(}''.
+assign special meaning to the colon ``\.{:}'' and the opening parenthesis ``\.{(}''.
 If these characters occur in the \sym{pathname} of a font file, it is possible to use
 the bracketed notation of the \sym{pathname} as a alternative to using the \.{file:} prefix.
 If the pathname is enclosed in square brackets, it may
 contain any character except the closing square bracket; otherwise it must not contain
-the colon ``\.{:}'', the slash ``\.{/}'', nor the opening parenthesis ``\.{(}''.
-Since the colon can be necessary after a drive letter in Windows and the slash serves as
-a directory separator in Linux, the bracketed verions is quite common. The paraenthesis
-is excluded from the unbracketed version because it starts the optional \sym{font\ selector}.
+the colon ``\.{:}'' nor the opening parenthesis ``\.{(}''.
+Since the colon can be necessary after a drive letter in Windows,
+the bracketed verions is quite common. The paraenthesis
+is excluded from the unbracketed version because it starts the
+optional \sym{font\ selector}.
 
 Once \HiTeX\ has determined the \sym{pathname}, it uses the \.{kpathsearch} library to
 find a matching OpenType font and if this does not succeed, it tries to find a matching
@@ -697,13 +697,16 @@ and a glyph. The same character or sequence of characters can be represented by
 different glyphs using different spacing. A common example are ligatures: for example the
 character sequence ``f'' and ``i'' can be fused together in a single glyph ``fi''.
 
-There is a long list of registered OpenType font features. Each font feature has a unique
-``feature tag'' which consists of four letters. For example the feature tag for ligatures
-is ``liga''. On the internet you can find a list of registered features and their description.
-If you need to know the font features of a specific font, you can use the program \.{otfinfo}
-that comes with the \TeX\ Live distribution. For example, if \.{otfinfo} is on your search path
-and the Latin modern roman italic font \.{ lmroman10-regular.otf} is in the current directory,
-running \.{otfinfo -f lmroman10-regular.otf} gives you the following output:
+There is a long list of registered OpenType font features. Each font
+feature has a unique ``tag'' which consists of up to four
+alphanumeric characters.  For example the feature tag for ligatures is
+``\.{liga}''. On the internet you can find a list of registered features
+and their description.  If you need to know the font features of a
+specific font, you can use the program \.{otfinfo} that comes with
+the \TeX\ Live distribution. For example, if \.{otfinfo} is on your
+search path and the latin modern roman italic font \.{lmroman10-regular.otf}
+is in the current directory, running \.{otfinfo-f lmroman10-regular.otf}
+gives you the following output:
 \medskip
 {\parskip 0pt
 \.{aalt\qquad	Access All Alternates}\par
@@ -727,14 +730,31 @@ separated list. Here are the rules:
 \medskip
 \rule\sym{font\ features}: \sym{feature}.
 \rule\sym{font\ features}: \sym{font\ features} \.{;} \sym{feature}.
-\rule\sym{feature}: \.{+}\sym{feature\ tag} \OR\ \.{-}\sym{feature\ tag}.
-\rule\sym{feature\ tag}: four alphabetic characters.
+\rule\sym{feature}:\sym{feature\ tag} \OR\ \.{+}\sym{feature\ tag}
+                    \OR\ \.{-}\sym{feature\ tag} \OR\ \sym{feature\ tag}\.{=}\sym{integer}.
+\rule\sym{feature\ tag}: up to four alphabetic characters.
 \medskip
 
 Features that are not available in the font are silently ignored.
 If a feature tag has less than four characters, it is padded with spaces.
-If it has more than four characters, it is truncated. If it does not start
-with a plus or minus sign, the feature tag specification is ignored.
+If it has more than four characters, it is ignored.
+Actualy, \HiTeX\ uses the Harfbuzz function \.{hb\_feature\_from\_string} which accepts
+even more complicated feature specifications specifying a start and end position.
+This information is not used by \HiTeX\ and silently ignored.  The following table
+explains the possibilities:
+
+$$\vbox{\halign{\tt #\hfil\quad & \hfil #\hfil &\hfil #& #\hfil\cr
+{\bf Syntax} & {\bf Value} & {\bf Description} \cr
+\noalign{\smallskip}
+kern   & 1  &  Turn feature on \cr
++kern  & 1 & Turn feature on \cr
+-kern  & 0 & Turn feature off \cr
+kern=0 & 0 & Turn feature off \cr
+kern=1 & 1 & Turn feature on \cr
+aalt=2 & 2 & Choose 2nd alternate \cr
+}}$$
+
+
 
 By default the following features are enabled:
 Standard Ligatures (\.{liga}), Kerning (\.{kern}),
@@ -748,6 +768,79 @@ but with Oldstyle Figures, you can write
 \medskip
 \.{\\font\\oldrm = [lmroman10-regular.otf]:-liga;+onum}
 \medskip
+
+\subsubsection{Scripts and languages}
+The list of features is traditionally also used to specify the script and the language
+that should be used when typesetting the font.
+
+Because it is not possible to tell an OpenType script tag from an OpenType feature tag
+based on its syntax, \HiTeX\ allows a special syntax to specify a script:
+\medskip
+\rule\sym{feature}: \.{script=}\sym{script\ tag}.
+\medskip
+This is the same syntax that is also available in \XeTeX.
+For example you can write ``\.{script=dev2}''.
+But you can also hide the same script specification somewhere
+inside the list of font features writing for example ``\.{+dev2}''. To catch this specification,
+\HiTeX\ retrieves from the OpenType font in question a complete list of all OpenType script
+tags used in the font. If any tag in the list of features matches one of these script tags,
+it is assumed that the tag is meant to be a script tag, and it is treated as such.
+In the example above, if the font uses ``\.{dev2}'' as a sript tag, \HiTeX\ will treat
+``\.{+dev2}'' in the same way as ``\.{script=dev2}''. If it is not found among the
+script tags of the font, it is considered a feature. Don't worry, Harfbuzz will silently
+ignore features that are not supported by the font.
+
+If there are multiple specifications of a script, later tags will overwrite earlier tags.
+
+Next, let' s consider languages. OpenType languages are something like subcategories
+of scripts. For example the font \.{Mukta-Light.ttf} supports four scripts:
+\.{DFLT}, \.{latn}, \.{deva}, and \.{dev2}. The first is the default script, the second is Latin,
+the last two are Devanagari version 1 and version 2. This font is mainly a font for
+typesetting Devanagari, an Indic script, but it contains also a set of characters from the Latin alphabet,
+in case you need to put in some Latin text now and then. The two scripts for Devanagari
+can both be used to typeset text written in the Hindi language or in the Marathi
+language. The shaping is different between the two languages and you can indicate the
+language using the two tags \.{HIN} and \.{MAR}.
+A complete list of OpenType language tags can be found on the internet.
+%https://learn.microsoft.com/en-us/typography/opentype/spec/languagetags.
+
+
+Similar to scripts, there is a special syntax to specify languages.
+\medskip
+\rule\sym{feature}: \.{language=}\sym{language\ tag}.
+\medskip
+As before, a language tag can also be specified without using this special syntax.
+Unlike for scripts, for most (or even all?) languages there is no need to compare the tags against
+the language tags used in the font, because by convention, language tags consist of
+three or four uppercase letters like \.{ENG} for English or \.{DEU} for Deutsch.
+\HiTeX\ will consider all tags that starts with three uppercase letters als
+language tags. But in case a non-standardized language tag sneaks in and you have
+already specified a script, \HiTeX\ will search for any given tag if the font tables
+for the given script contain a matching language tag. If so, it will consider the tag
+a language tag.
+Note that for those ``non-standard'' language tags to be found, you must specify a script.
+
+If there are multiple specifications of a language, later tags will overwrite earlier tags.
+
+A word of warning: Specifying properties like script or language will result in
+\HiTeX\ setting these features for every word before calling Harfbuzz
+to shape it. If the characters in the word are from a different language
+or script the outcome might be less than perfect. If you do not specify
+these properties, then \HiTeX\ will ask harfbuzz to guess the script and the language
+from the buffer content.
+%It uses |hb_buffer_guess_segment_properties| on each buffer befor it passes it to |hb_shape|.
+This gives usualy better results than an obviously
+wrong script or language. So if you have a font like \.{Mukta-Light.ttf} that is
+intended to be used to typeset Devanagari, but also contains characters for the Latin alphabet,
+you might set the script to Devanagari and the language to Marathi (or Hindi)
+if you know that this is the right script and language and you do not care
+too much about the shaping of a few words that are in English using the Latin
+alphabet. If you use English often, and you care, you might define two
+\TeX\ fonts using the same OpenType font file but with different script and language
+and change fonts when you change language. If you are satisfied with
+harfbuzz's ability to guess, you can use the same font for english and devanagari
+and refrain from specifying a script or language.
+
 
 \subsubsection{\TeX\ standard ligatures and accents}
 Traditional \TeX\ fonts implement a few standard ligatures

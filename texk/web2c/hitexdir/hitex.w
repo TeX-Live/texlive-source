@@ -450,14 +450,14 @@ The program starts with inserting header files and occasionally a function
 must be placed before declaring \TeX's macros, because the function
 uses identifiers that \TeX will declare as macros.
 
-@p @<Header files and function declarations@>@;
+@p @<Header files and early function declarations@>@;
 @h
 enum {@<Constants in the outer block@>@;
       @!empty_string=256 /*the empty string follows after 256 characters*/
 };
 @<Types in the outer block@>@;
-@<Forward declarations@>@;
 @<Global variables@>@;
+@<Forward declarations@>@;
 @#
 static void initialize(void) /*this procedure gets things started properly*/
   {@+@<Local variables for initialization@>@;
@@ -465,6 +465,7 @@ static void initialize(void) /*this procedure gets things started properly*/
   } @#
 @<Basic printing procedures@>@;
 @<Error handling procedures@>@;
+@<Auxiliar functions@>@;
 
 @ The overall \TeX\ program begins with the heading just shown, after which
 comes a bunch of procedure declarations and function declarations.
@@ -517,7 +518,7 @@ if (iniversion)  /* \TeX\ Live*/
 contained in a system dependent header file.
 
 
-@<Header files and function declarations@>=
+@<Header files and early function declarations@>=
 #include "hibasetypes.h"
 #include <string.h>
 #include <math.h>
@@ -1045,10 +1046,9 @@ should be printed for each of the 256 possibilities.
 typedef int32_t pool_pointer; /*for variables that point into |str_pool|*/
 typedef int32_t str_number; /*for variables that point into |str_start|*/
 typedef uint8_t ASCII_code; /*single byte containg part of an UTF8 character*/
-typedef uint8_t packed_ASCII_code; /*elements of |str_pool| array*/
 
 @ @<Glob...@>=
-static packed_ASCII_code @!str_pool[pool_size+1]; /*the characters*/
+static ASCII_code @!str_pool[pool_size+1]; /*the characters*/
 static pool_pointer @!str_start[max_strings+1]; /*the starting pointers*/
 static pool_pointer @!pool_ptr; /*first unused position in |str_pool|*/
 static str_number @!str_ptr; /*number of the current string being created*/
@@ -10714,7 +10714,8 @@ allows both lowercase and uppercase letters in the file name.
   if (k <= file_name_size) name_of_file[k]=c;
   }
 
-@p static void pack_file_name(str_number @!n, str_number @!a, str_number @!e,  char *@!f)
+@<Auxiliar functions@>=
+static void pack_file_name(str_number @!n, str_number @!a, str_number @!e,  char *@!f)
 {@+int k; /*number of positions filled in |name_of_file|*/
 UTF8_code @!c; /*character being packed*/
 int @!j; /*index into |str_pool|*/
@@ -11581,16 +11582,12 @@ static void read_extended_font( internal_font_number g,str_number t,
 { @<load an extended font@>@;
 }
 
+
 static void read_predefined_font(internal_font_number g)
 { char *path;
   str_number t;
-  pack_file_name(empty_string, font_area[g], empty_string,"");
-  path=(char*)name_of_file+1;
+  path=x_find_font_file(font_area[g],font_name[g],font_ext[g]);
   t=font_id_text(g);
-  { char *s=(char *)str_pool+str_start[feature_string[g]];
-    int n= length(feature_string[g]);
-    @<Set |feature_str| with length |n| from |s|@>@;
-  }
   feature_warn=false;
   read_extended_font(g,t,font_name[g], font_area[g],font_size[g],path);
   feature_warn=true;
@@ -20369,7 +20366,7 @@ internal_font_number @!af, @!bf; /*relevant fonts*/
 uint32_t bchr, achr;
 scaled @!a, @!aa, @!ah, @!ad, @!h, @!d, @!x, @!w, @!delta; /*heights and widths, as explained above*/
 scan_char_num();af=cur_font; 
-if(IS_X_FONT(af) && (feature_bits[af]&tacc_bit))
+if(IS_X_FONT(af) && (x_font[af]->feature_bits&tacc_bit))
   @<Translate \TeX\ codes of accents to UTF codes@>@;
 achr=cur_val;
 do_assignments();@/
@@ -22297,7 +22294,7 @@ and |goto common_ending|@>;
 if (file_opened) 
 f=read_font_info(u, cur_name, cur_area, cur_ext, s);
 else
-{ @<Find an extended font file for input@>@;
+{ path=x_find_font_file(cur_area,cur_name,cur_ext);
   if (path!=NULL)
   { if (font_ptr==font_max|| fmem_ptr+8 > font_mem_size)
       @<Apologize for not loading the font, |goto done|@>;
@@ -28474,7 +28471,7 @@ case HiTeX_version_code:
 the \HINT\  file format specification; therefore we start with three
 include files containing the necessary declarations.
 
-@<Header files and function declarations@>=
+@<Header files and early function declarations@>=
 #include "hierror.h"
 #include "hiformat.h"
 #include "hiput.h"
@@ -31664,8 +31661,12 @@ static uint8_t hget_font_no(uint8_t f)
   hfonts[g]->h=hget_font_hyphen(f);
   if (IS_X_FONT(f))
   { hfonts[g]->m= -1;
-    pack_file_name(font_area[f], empty_string, empty_string,"");
-    hfonts[g]->y= hnew_file_section((char*)name_of_file+1);
+    if (x_font[f]->duplicate<0)
+      hfonts[g]->y= hnew_file_section(x_font[f]->path);
+    else
+    { int d = hget_font_no(x_font[f]->duplicate);
+      hfonts[g]->y= hfonts[d]->y;
+    }
   }
   else
   { pack_file_name(font_name[f], empty_string,empty_string,".tfm");
@@ -32799,7 +32800,7 @@ it uses include files containing identifiers that are in conflict
 with \TeX's macros or modify these macros. For example
 \TeX's |banner| is modified by adding the \TeX\ Live version.
 
-@<Header files and function declarations@>=
+@<Header files and early function declarations@>=
 #ifdef WEB2CVERSION
 #define TL_VERSION "(TeX Live "WEB2CVERSION")"
 #else
@@ -33074,7 +33075,7 @@ goes just after the \.{kpathsea.h} header file that defines
 the option structure.
 
 
-@<Header files and function declarations@>=
+@<Header files and early function declarations@>=
 #include <kpathsea/kpathsea.h>
 static int argument_is(struct option *opt, char * s)
 {@+ return STREQ(opt->name, s); @+}
@@ -33917,7 +33918,7 @@ as the current time. Looking at the \TeX\ Live code also reveals that
 these primitives use the local time instead of the GMT if this variable is
 not set to~1.
 
-@<Header files and function declarations@>=
+@<Header files and early function declarations@>=
 #include <time.h>
 static time_t start_time = ((time_t)-1);
 static char *source_date_epoch,*force_source_date;
@@ -33953,7 +33954,7 @@ static struct tm *tl_now(void)
 
 @*1 Retrieving File Properties.
 To support \LaTeX, a few more time related functions are needed.
-@<Header files and function declarations@>=
+@<Header files and early function declarations@>=
 #define TIME_STR_SIZE 30
 static char time_str[TIME_STR_SIZE];
 static void get_creation_date(void);
@@ -34762,12 +34763,16 @@ the codes.
 
 @ In most common cases, there is a precomposed UTF codepoint for the  base character and the accent.
 If such a codepoint can be found and the current font has a glyph for it, it is best to use this
-precomposed character. To find the composite code point, \HiTeX\ uses the ICU library. 
+precomposed character. To find the composite code point, \HiTeX\ either the the ICU library
+or the harfbuzz library. Since the Harfbuzz library is needed anyway, it is the default here.
 
-@<Header files and function declarations@>=
+@<Header files and early function declarations@>=
+#if 0
 #include <unicode/unorm2.h>
+#endif
 
 @ @<Try to create a composite UTF codepoint and return@>=
+#if 0
 { UErrorCode status = U_ZERO_ERROR;
   UChar32 combined= '?';
  const UNormalizer2* norm;
@@ -34781,7 +34786,17 @@ precomposed character. To find the composite code point, \HiTeX\ uses the ICU li
    }
  }
 }
-
+#else
+{ hb_unicode_funcs_t *ufuncs= hb_unicode_funcs_get_default ();
+  uint32_t combined= '?';
+  if (hb_unicode_compose (ufuncs, bchr, achr, &combined))
+  if (x_char_exists(bf,combined))
+   {  p=get_avail();font(p)=bf;character(p)=combined;
+      link(tail)=p; tail=p;
+      return;
+   }
+}
+#endif
 
 
 @ @<Forward declarations@>=
@@ -34924,18 +34939,37 @@ character 1pt high.
 such fonts will often have an |x_|\dots\  prefix in their name. 
 
 While Hi\TeX\ wants to be compatible with other \TeX\ engines, its
-implementation of the \.{\\font} primitive still uses a simplified
+implementation of the \.{\\font} primitive uses a slightly simplified
 version of the extended syntax used in \XeTeX. The procedure is
 called |scan_font_name| and is a modified version of |scan_file_name|.
+It will define five values: |cur_area|, |cur_name|, |cur_ext|, |cur_selector|,
+and |cur_features|. The first three are alredy known from |scan_file_name|,
+the latter two are new. The values of these variables must be stored in a format
+file so that fonts defined in a format file can be reconstructed when using the format.
+The value of |cur_ext| is stored in the |exten_base| array,
+the value |cur_features| is stored in the |lig_kern_base| array,
+and the value of |cur_selector| in the |italic_base| array.
+
+@d font_features lig_kern_base
+@d font_selector italic_base
+@d font_ext exten_base
+
+@<Glob...@>=
+static int @!cur_selector; /*index of a font in a font collection*/
+static str_number @!cur_features; /*font features just scanned, or \.{""}*/
+
+@ Scanning a font name is similar to scanning a file name. The first part of a font
+name is indeed the font file name, but some extra syntax is allowed. Then follows
+a font selector in case the font file is a font collection, and after that, a list of
+font features. So we start out pretty much like |scan_file_name| and then split the
+font name into its components instead of calling |end_name|.
 
 @<Declare procedures that scan font-related stuff@>=
 static void begin_name(void);
 static bool more_name(uint32_t @!c);
-static void end_name(void);
 static void scan_font_name(void)
 {@+pool_pointer @!j, k; /*index into |str_pool|*/
   int @!old_setting; /*holds |selector| setting*/
-  char *fnt_str=NULL;
   name_in_progress=true;begin_name();
   @<Get the next non-blank non-relax...@>;
   if (cur_cmd==left_brace)
@@ -34948,45 +34982,47 @@ static void scan_font_name(void)
   }
 done:
   @<Split the font name into its components@>@;
-  end_name();
   name_in_progress=false;
 }
 
-@ @<Glob...@>=
-  int f_index;
-  int f_delimiter;
 
 
-@ When we try to split the font name into its components,
+@ When \HiTeX\ trys to split the font name into its components,
 the users input string is in |str_pool| starting at |str_start[str_ptr]|
 up to |pool_ptr-1| its lenght is |cur_length|.
-We have |area_delimiter==0| or equal to the string length up to the
-last |DIR_SEP| character.
-We have |ext_delimiter==0| or equal to the string length up to the
-last |'.'| character.
-We look for brackets and prefixes
-then try to get the right file path using the |kpse_find_file| function. 
-Finaly, we put the area, the name and the extension back into the
-string pool and set |cur_area|, |cur_name|, and |cur_ext| using
-|end_name|. The font index and the font options will go into
-separate global variables. 
+\HiTeX\ looks for brackets and prefixes and deletes characters that do not belong
+to the file name.
 
+After spliting the input string,
+|area_delimiter| is zero or equal to the string length up to the
+last |DIR_SEP| character;
+|ext_delimiter| is zero or equal to the string length up to the
+last |'.'| character;
+|feature_delimiter| is zero or equal to the string length up to the
+beginning of the feature specification.
+
+@<Glob...@>=
+  int feature_delimiter;
+
+@ Based on this, \HiTeX\ sets |cur_area|, |cur_name|, and |cur_ext|, |cur_features|
+similar to |end_name|. The font selector will go into |cur_selector|.
 
 @<Split the font name into its components@>=
 { int l = cur_length;
-  int i=0;
-  int d; /*number of characters to be deleted*/
-  
-  fnt_str= (char *)str_pool+str_start[str_ptr];
-  if (fnt_str[i]=='[')
+  char *fnt_str=(char *)str_pool+str_start[str_ptr]; /*the font name to be split*/
+  int i=0; /*index into |fnt_str|*/
+  int d=0; /*number of characters to be deleted*/
+
+  feature_delimiter=area_delimiter=ext_delimiter=0;
+  if (i<l && fnt_str[i]=='[')
   { d=1;
     @<Find a bracketed file name@>@;
   }
-  else if (strncmp("file:",fnt_str,5)==0)
+  else if (i+5<l && strncmp("file:",fnt_str,5)==0)
   { d=5;
     @<Find a non-bracketed file name@>@;
   }
-  else if (strncmp("name:",fnt_str,5)==0)
+  else if (i+5<l && strncmp("name:",fnt_str,5)==0)
   { d=5;
     @<Find a font by name@>@;
   }
@@ -34997,15 +35033,47 @@ separate global variables.
   }
   if (i<l && fnt_str[i]=='(')
   { i++;
+    d++;
     @<Find font selector@>@;
   }
   else
-    f_index=0;
-  { int n=  n=pool_ptr-str_start[str_ptr]-i;
-    char *s=fnt_str+i;
-    @<Set |feature_str| with length |n| from |s|@>@;
-  } 
-  pool_ptr=str_start[str_ptr]+f_delimiter; /*flush the remaining string*/
+    cur_selector=0;
+  @<Find feature string@>
+  pool_ptr=str_start[str_ptr]+i-d; /*flush the remaining string*/
+/*what follows is a modified version of |end_name|*/
+if (str_ptr+4 > max_strings)
+  overflow("number of strings", max_strings-init_str_ptr);
+@:TeX capacity exceeded number of strings}{\quad number of strings@>
+if (area_delimiter==0) cur_area=empty_string;
+else{@+cur_area=str_ptr;
+  str_start[str_ptr+1]=str_start[str_ptr]+area_delimiter;incr(str_ptr);
+  }
+if (ext_delimiter==0 && feature_delimiter==0)
+  {@+cur_ext=empty_string;
+     cur_features=empty_string;
+     cur_name=make_string();
+  }
+else if (feature_delimiter==0)  
+{@+cur_features=empty_string;
+  cur_name=str_ptr;
+  str_start[str_ptr+1]=str_start[str_ptr]+ext_delimiter-area_delimiter-1;
+  incr(str_ptr);cur_ext=make_string();
+}
+else if (ext_delimiter==0)
+{ cur_ext=empty_string;
+  cur_name=str_ptr;
+  str_start[str_ptr+1]=str_start[str_ptr]+feature_delimiter-area_delimiter-1;
+  incr(str_ptr);cur_features=make_string();
+}
+else
+{@+cur_name=str_ptr;
+  str_start[str_ptr+1]=str_start[str_ptr]+ext_delimiter-area_delimiter-1;
+  incr(str_ptr);
+  cur_ext=str_ptr;
+  str_start[str_ptr+1]=str_start[str_ptr]+feature_delimiter-ext_delimiter;
+  incr(str_ptr);  
+  cur_features=make_string();
+}
 }
 
 @ A bracketed file name starts and ends with a \.{[}.
@@ -35014,12 +35082,10 @@ the closing bracket might be missing if it was after the extension.
 @<Find a bracketed file name@>=
 {
   i+=d;
-  f_delimiter=area_delimiter=ext_delimiter=0;
   while (i<l)
   { fnt_str[i-d]=fnt_str[i];
     if (fnt_str[i]==']')
-    {  f_delimiter=i-d;
-       d=2;
+    { d=2;
       i++;
       break;
     }
@@ -35039,7 +35105,6 @@ that starts the font selector, or by the colon that starts the font features,
 or by the end of the string
 @<Find a non-bracketed file name@>=
 { i+=d;
-  f_delimiter=area_delimiter=ext_delimiter=0;
   while (i<l)
   { fnt_str[i-d]=fnt_str[i];
     if (fnt_str[i]=='(' || fnt_str[i]==':')
@@ -35048,7 +35113,6 @@ or by the end of the string
     else if (fnt_str[i]=='.') ext_delimiter=i+1-d;
     i++;
   }
-  f_delimiter=i-d;
 }
 
 
@@ -35059,44 +35123,52 @@ different syntay for font specifications.
 
 @<Find font selector@>=
 { char *end_ptr=NULL;
-  f_index=strtol((char *)fnt_str+i,&end_ptr,10);
-  i=(end_ptr-fnt_str);
+  int n_digits;
+  cur_selector=strtol((char *)fnt_str+i,&end_ptr,10);
+  n_digits=(end_ptr-(fnt_str+i));
+  i=i+n_digits;
+  d=d+n_digits;
   if (*end_ptr==')')
-    i++;
+  { i++; d++; }
   else
     {@+begin_diagnostic();
      print_nl("Missing ]): There is no ) to terminate the font selector!");
 @.Missing ]@>
      end_diagnostic(false);
-    }
+    }  
 }
 
+@ The feature string is the last component of the font name.
+  It is either empty or it must start with a colon.
+
+@<Find feature string@>=
+if (i<l)
+{ if (fnt_str[i]==':')
+  { feature_delimiter=i+1-d;
+     d++; i++;
+     while (i<l)
+     { fnt_str[i-d]=fnt_str[i];
+       i++;
+     }
+  }
+  else
+  {@+begin_diagnostic();
+     print_nl("Features must start with ':'!");
+@.Missing :@>
+     end_diagnostic(false);
+   d=d+l-i;
+   feature_delimiter=0;
+  }
+}
+else
+  feature_delimiter=0;
 
 
-@ The name based font lookup needs to be implemented.
+@ The name based font lookup is not (and will not be) implemented.
 @<Find a font by name@>=
 { i+=d;
   fatal_error("Finding fonts by name not yet implemented");
 }
-
-@ If a file name was given, we use the kpathsearch library to find the file.
-The use of type1 fonts with harfbuzz requires the use of \.{.afm} files
-and this does not work well and is deprecated. For type1 fonts,
-one should use \.{afm2tfm} to convert the \.{.afm} files to \.{tfm} 
-files and put the new \.{tfm} files in a place where the \.{kpathsearch} library
-can find them. Then run \.{mktexls}.
-
-The following code ignores a given file extension. So if a font
-is available in both formats, it will find the OpenType font even
-if ``.ttf'' was given as an extension.
-
-@<Find an extended font file for input@>=
-{  pack_file_name(cur_name, cur_area, empty_string,""); /* \TeX\ Live */
-   path=kpse_find_file((char *)name_of_file+1, kpse_opentype_format, 0);
-   if (path == NULL)
-     path = kpse_find_file((char *)name_of_file+1, kpse_truetype_format, 0);
-}
-
 
 @ Since specifying, finding, and loading a font can be quite complex process,
 the primitive \.{\\tracingfonts} is almost a necessity.
@@ -35107,10 +35179,14 @@ if (tracing_fonts>0)
 {@+
   begin_diagnostic();
   print_nl("Requested font \"");
-   printn(cur_area);printn(cur_name);printn(cur_ext);
-   if (feature_str!=NULL) print(feature_str);
+  printn(cur_area);printn(cur_name);printn(cur_ext);
+  if (cur_selector!=0)
+  { print_char('(');print_int(cur_selector);print_char(')');}
+  if (cur_features!=empty_string){ print_char(':'); printn(cur_features); }
   print_char('"');
-  if (s < 0) {@+
+  if (s==-1000)
+    ;
+  else if (s < 0) {@+
     print(" scaled ");
     print_int(-s);
   } else{@+
@@ -35121,20 +35197,76 @@ if (tracing_fonts>0)
   end_diagnostic(false);
 }
 
-@ After a font file was found, we trace it with this code:
+@ If a file name was given, we use the kpathsearch library to find the file.
+The use of Type1 fonts with harfbuzz requires the use of \.{.afm} files
+and this does not work well and is deprecated. For Type1 fonts,
+one should use \.{afm2tfm} to convert the \.{.afm} files to \.{tfm} 
+files and put the new \.{tfm} files in a place where the \.{kpathsearch} library
+can find them. Then run \.{mktexls}.
+
+The following code may ignore a given file extension. So if a font
+is available in both formats, it will find the OpenType font even
+if ``.ttf'' was given as an extension.
+
+@<Auxiliar functions@>=
+static char *x_find_font_file(str_number a, str_number n, str_number e)
+{ char *path=NULL;
+  if (e!=empty_string)
+  {  pack_file_name(n, a, e,NULL);
+     path=kpse_find_file((char *)name_of_file+1, kpse_opentype_format, 0);
+     if (path==NULL)
+      path=kpse_find_file((char *)name_of_file+1, kpse_truetype_format, 0);
+  }
+  if (path==NULL)
+  { pack_file_name(n, a, empty_string,NULL); /* \TeX\ Live */
+    path=kpse_find_file((char *)name_of_file+1, kpse_opentype_format, 0);
+    if (path == NULL)
+      path = kpse_find_file((char *)name_of_file+1, kpse_truetype_format, 0);
+  }
+  return path;
+}
+
+
+
+@ After a font file was found and loaded, we trace it with this code:
+
+@d tlig_bit 1
+@d tacc_bit 2
 
 @<Trace the new extended font@>=
 if (tracing_fonts>0)
 {@+begin_diagnostic();
    print_nl(" -> ");
-   if (path!=NULL)
-   {  print(path);
-      if (f==null_font) print_nl("Not loadable: font file not found");
-   }
+   print(path);
+   if (f==null_font) print_nl("Font not loadable. Using \"nullfont\"");
    else
-     print("no matching file found.");
-  if (f==null_font) print_nl("Font not found, using \"nullfont\"");
-  end_diagnostic(false);
+   { if (font_selector[f]!=0)
+     { print_char('('); print_int(font_selector[f]); print_char(')'); }
+     print_char(':');     
+     if (x_font[f]->script!=HB_SCRIPT_UNKNOWN)
+     { print("script="); print_tag(x_font[f]->script_tag);print_char(';');}
+     if (x_font[f]->language!=HB_LANGUAGE_INVALID)
+     { print("language="); print_tag(x_font[f]->language_tag); print_char(';');}
+     
+     if (x_font[f]->feature_bits!=DEFAULT_FEATURE_BITS)
+     { print_char((x_font[f]->feature_bits&tlig_bit)?'+':'-'); print("tlig;");
+       print_char((x_font[f]->feature_bits&tacc_bit)?'+':'-'); print("tacc;");
+     }
+     if (x_font[f]->feature_count>0)
+     { int i;
+       for(i=0; i<x_font[f]->feature_count;i++)
+       { if (x_font[f]->features[i].value==0)
+         { print_char('-'); print_tag(x_font[f]->features[i].tag); print_char(';'); } 
+         else if (x_font[f]->features[i].value==1)
+         { print_char('+'); print_tag(x_font[f]->features[i].tag); print_char(';'); }
+	 else
+        { print_tag(x_font[f]->features[i].tag); print_char('=');
+	  print_int(x_font[f]->features[i].value); print_char(';'); }
+       }
+      }
+      print_ln();
+   }
+   end_diagnostic(false);
 }
 #if 0 /* the font's features */
 { const hb_tag_t scripts[]={HB_SCRIPT_LATIN,HB_TAG('l','a','t','n'), HB_TAG('D','F','L','T'),HB_TAG_NONE};
@@ -35232,6 +35364,15 @@ if (IS_X_FONT(f))
 fprintf(stderr,"\n");
 }
 #endif
+
+@ We used:
+@<Basic printing procedures@>=
+void print_tag(hb_tag_t t)
+{ char str[5];
+  hb_tag_to_string(t,str);
+  str[4]=0;
+  print(str);
+}
 
 @ For debugging hitex creates some more output. This part will be deleted after
 the code has stabilized.
@@ -35415,7 +35556,7 @@ The function prototypes used are found in these header files.  We use
 |#include "..."| instead of |<...>| because we need to prefer the
 HarfBuzz that is included in \TeX\ Live when doing a ``native'' build there.
 
-@<Header files and function declarations@>=
+@<Header files and early function declarations@>=
 #include "hb.h"
 #include "hb-ot.h"
 #include "hb-subset.h"
@@ -35440,12 +35581,16 @@ primitive will issue an error message if it encounters an extended font.
 @<Glob...@>=
 typedef struct {
   hb_font_t *f;
-  int i; /* index */
-  hb_shape_plan_t *plan;
   hb_buffer_t *major, *minor;
+  hb_script_t script;
+  hb_language_t language;
+  hb_tag_t script_tag, language_tag;
   hb_feature_t *features;
   unsigned int feature_count;
+  uint8_t feature_bits;
+  int duplicate; /*If the remainder is shared the font number, otherwise -1*/
   /* can be shared for different fonts of the same face*/
+  char *path;
   hb_blob_t *blob;
   hb_subset_input_t *sub;
   hb_set_t *utf_set, *glyph_set;
@@ -35477,16 +35622,47 @@ case if_TeX_font_code: b=!IS_X_FONT(cur_font);@+break;
   hb_font_t *f;
   ALLOCATE(x_font[g],1,x_font_info);
   @<Search for a font with the same |path| or load the |path|@>@;
-  face = hb_face_create(x_font[g]->blob, f_index);
+  face = hb_face_create(x_font[g]->blob, cur_selector);
   if (face==NULL) fatal_error("Unable to open extended font face!");
+#if 0
+{ unsigned int f_count=0, l_count=0;
+  hb_tag_t f_tags[100], l_tags[100];
+  char tstr[5]={0};
+  int i,k;
+  fprintf(stderr,"\nFACE %s\n", path);
+  f_count=hb_ot_layout_table_get_script_tags(face, HB_OT_TAG_GSUB,0,&f_count,NULL);
+  fprintf(stderr,"\nTotal GSUB script tags found: %u\n", f_count);
+  hb_ot_layout_table_get_script_tags(face, HB_OT_TAG_GSUB,0,&f_count,f_tags);
+  for (i=0;i<f_count;i++)
+  { hb_tag_to_string(f_tags[i],tstr);
+    fprintf(stderr,"\n%s: ", tstr);
+    l_count=100;
+    hb_ot_layout_script_get_language_tags(face,  HB_OT_TAG_GSUB,1,0, &l_count, l_tags);
+     for (k=0;k<l_count;k++)
+     { hb_tag_to_string(l_tags[k],tstr);
+       fprintf(stderr,"%s,", tstr);
+     }
+  }
+
+  f_count=0;
+  f_count=hb_ot_layout_table_get_script_tags(face, HB_OT_TAG_GPOS,0,&f_count,NULL);
+  fprintf(stderr,"\nTotal GPOS script tags found: %u\n", f_count);
+  hb_ot_layout_table_get_script_tags(face, HB_OT_TAG_GPOS,0,&f_count,f_tags);
+  for (i=0;i<f_count;i++)
+  { hb_tag_to_string(f_tags[i],tstr);
+    fprintf(stderr,"%s,", tstr);
+  }
+
+}
+#endif
   f = hb_font_create(face);
   if (f==NULL)
     fatal_error("Unable to open extended font!");
   x_font[g]->f=f;
-  x_font[g]->i=f_index;
   @<determine the design size@>@;
   @<adjust the extended font for the given scale factor@>@; 
-  @<prepare font |g| for shaping@>@;
+  @<Initialize the features of font |g|@>@;
+  @<Set up shape buffers for font |g|@>@;
 }
 
 @ It is quite common to create several font faces from the same
@@ -35497,65 +35673,56 @@ file.
 
 @<Search for a font with the same |path| or load the |path|@>=
 { int i;
-  int l;
   x_font[g]->blob=NULL;
   x_font[g]->sub=NULL;
   x_font[g]->utf_set=NULL;
   x_font[g]->glyph_set=NULL;
-  l=strlen(path);
   for (i=1; i<=font_ptr; i++)
-    if (i!=g && length(font_area[i])==l && str_eq_buf(font_area[i],(unsigned char *)path))
-    { font_area[g]=font_area[i];
-      if (x_font[i]!=NULL)
+    if (i!=g && x_font[i]!=NULL && x_font[i]->path!=NULL && strcmp(x_font[i]->path,path)==0)
       { x_font[g]->blob=hb_blob_reference(x_font[i]->blob);
         x_font[g]->utf_set=hb_set_reference(x_font[i]->utf_set);
         x_font[g]->glyph_set=hb_set_reference(x_font[i]->glyph_set);
+	x_font[g]->duplicate=i;
         break;
       }
-    }
   if (x_font[g]->blob==NULL)
   { x_font[g]->blob = hb_blob_create_from_file(path);
     if (x_font[g]->blob==NULL) fatal_error("Unable to open extended font file!");
-    font_name[g]=nom;
-    if (font_area[g]==empty_string)
-      font_area[g]=s_no(path);
+    x_font[g]->path=path;
+    x_font[g]->duplicate=-1;
     @<Initialize font |g| for subsetting@>@;
   }
+  else
+  {  free(path); path=NULL; }
 }
 
 @ Most of the info in \TeX's font tables is not needed for extended fonts.
-Hi\TeX\ uses the |font_name| and |font_area| (which holds the full pathname),
+Hi\TeX\ uses the |font_name| and |font_area|,
 as well as the |font_size|, |font_dsize|, |hyphen_char|, |font_bchar|, |font_glue|,
 and |font_params|. Some otherwise unused tables are used for
 special information:
 The |char_base| is set to |extended_base| as a marker that the font
 is an extended font. This maker is used to reload predefined extended fonts.
 The value of |lig_kern_base| is used to store the string number of the
-fonts feature list. |kern_base| is used to store marker bits for the \.{tlig} and \.{tacc}
-features.
+font's feature list.
+|italic_base| is used to store the font selector and |exten_base| is used to store
+the font extension.
 
-@d tlig_bit 1
-@d tacc_bit 2
-@d feature_bits kern_base
-@d feature_string lig_kern_base
 
 @<Initialize the font tables for the extended font |f|@>=
-font_name[f]=nom;
-font_area[f]=empty_string;
+font_name[f]=cur_name;
+font_area[f]=cur_area;
+font_ext[f]=cur_ext;
+font_features[f]=cur_features;
+font_selector[f]=cur_selector;
 hyphen_char[f]='-';skew_char[f]=-1;
 bchar_label[f]=non_address;
 font_bchar[f]=non_char;font_false_bchar[f]=non_char;
 char_base[f]=extended_base;
-feature_string[f]=empty_string;
-feature_bits[f]=tlig_bit|tacc_bit;
 font_glue[f]=null;
 font_params[f]=7;
 /*so far not used for extended fonts*/
 width_base[f]=0;height_base[f]=0;depth_base[f]=0;
-italic_base[f]=0;
-exten_base[f]=0;
-if ((font_ptr==font_max)||(fmem_ptr+font_params[f]+1 > font_mem_size))
-  @<Apologize for not loading the font, |goto done|@>;
 
 @ We start with finding the first and the last character in the font:
 @<get the extended fonts parameters@>=
@@ -35587,8 +35754,6 @@ The bold font has again 20/36pt  as unit and letter fit is zero.
 The extra bold font has 23/36pt  as unit and letter fit is zero.
 
 The slanted font has a unit of 20/36pt and a letter fit of zero
-
-
 
 @<get the extended fonts parameters@>=
 { double r;
@@ -35689,7 +35854,6 @@ static bool x_char_exists(internal_font_number g, int c)
     return x_glyph(g,c, &glyph);
   }
 }
-
 
 static scaled x_glyph_advance(internal_font_number g, hb_codepoint_t glyph)
 { return  HB_TO_SCALED(hb_font_get_glyph_h_advance (x_font[g]->f, glyph)); 
@@ -35866,154 +36030,43 @@ First, we need a buffer that holds the UTF coded input characters
 and that will hold the glyph ids after shaping.
 The necessary information for the shaping process is attached to
 the buffer as well.
-Second, we need a selection of font features. Some font features
-are activated by default, but the font specification can
-override the selected features.
-Third, we collect all the necessary information to produce
-a shape plan. This is just an optimization, because we
-assume, that we will need the same shape plan very often.
-The |buffer|, the |features| (together with |feature_count| and the |plan| are
-stort as part of the |font_info|.
+Second, we need a script, a language, a direction, and a selection of font features.
+Some of that information is given but otherwise Harfbuzz can guess it from the bufffer's
+content that is about to be shaped.
+After creating a new font the available information is stored in the |x_font| array.
+
+% Using shape plans is no longer continues. Harfbuzz caches shape plans anyway and
+% except for multithreaded applications and special datastucturs to find cached plans
+% it's not woth the trouble.
 
 
-@<prepare font |g| for shaping@>=
-{ @<Set up a shape buffers for font |g|@>@;
-  @<Initialize the features of font |g|@>@;
-  @<Create a shape |plan| for font |g|@>@;
-}
+For each font, we set up two buffers with identical properties because we need
+two buffers when shaping a word with a hyphenation point in it.
 
-@ To set up a |buffer| for font |g|,
-we creata a Harfbuzz butter and attach segment properties specifying,
-the text direction, the script and the language.
-
-@<Set up a shape buffers for font |g|@>=
+@<Set up shape buffers for font |g|@>=
 {
-  hb_segment_properties_t props={HB_DIRECTION_LTR,HB_SCRIPT_LATIN,NULL};
-  props.language=hb_language_from_string("en", -1);
+  hb_segment_properties_t props;
+  props.script = x_font[g]->script;
+  props.language=x_font[g]->language;
+  props.direction=HB_DIRECTION_LTR;
 
   x_font[g]->major = hb_buffer_create();
   x_font[g]->minor = hb_buffer_create();
 
   hb_buffer_set_segment_properties (x_font[g]->major, &props);
-  hb_buffer_get_segment_properties(x_font[g]->major,&props);
   hb_buffer_set_segment_properties (x_font[g]->minor, &props);
 }
 
-@ By default, the following features are enabled:
-  Standard Ligatures (\.{liga}), Kerning (\.{kern}),
-  Discretionary Ligatures  (\.{dlig}),
-  \TeX\ Ligatures  (\.{tlig} not an OpenType standard),
-  \TeX\ Accents    (\.{tacc} not an OpenType standard),
-  Glyph Composition/Decomposition (\.{ccmp}), and  Localized Forms (\.{locl})
-
-%  contextual alternates (\.{calt}), contextual ligatures (\.{clig}),
-%  Discretionary Ligatures  (\.{dlig}),
-
-
-@<Glob...@>=
-
-static char *feature_str=NULL;
-static bool feature_warn=true;
-
-#define NUM_DEFAULT_FEATURES 6
-static hb_tag_t default_feature_tags[NUM_DEFAULT_FEATURES]=
-{HB_TAG('l','i','g','a'),HB_TAG('d','l','i','g'),HB_TAG('k','e','r','n'),
- HB_TAG('t','l','i','g'),HB_TAG('c','c','m','p'),HB_TAG('l','o','c','l')};
-
-@ @<Set |feature_str| with length |n| from |s|@>=
-if (feature_str!=NULL)
-    feature_str[0]=0;  
-if (n<=0) n=0;
-REALLOCATE(feature_str,n+1,char);
-strncpy(feature_str,s,n);
-feature_str[n]=0;
-
-
-
-@ We have a list of default features which we add always to the fonts features.
-In addition, we add the features from the |feature_str|, enabled if they start with a plus
-disabled if they start with a minus. We travers the list and check that we do not have
-duplicates in the list.
-
-All OpenType feature tags have exactly 4 characters. Arguments that may follow after
-a feature tag are ignored.
-
-@<check and count the feature tags@>=
-if (feature_str[0]!=':')
-{ print_err("Font "); printn_esc(t);
-  print_err(" Feature string ");print(feature_str);
-  print_err(" must start with a colon ':'. I ignore it.");
-}
-else
-{ i=1;
-  while (feature_str[i]!=0)
-  { int f_start=i;
-    if (feature_str[i]!='+'&& feature_str[i]!='-')
-    { if(feature_warn) 
-      { @<Feature error@>@;
-        print_err(" must start with '+' or '-'. I ignore it.");
-      }
-      while (feature_str[i]!=0 && feature_str[i]!=';')
-        i++;
-      if (feature_str[i]==';')
-        i++;
-      continue;
-    }
-    i++;
-    for (j=0;j<4;j++)
-    { if ((feature_str[i]>='a' && feature_str[i]<='z') ||
-          (feature_str[i]>='A' && feature_str[i]<='Z') ||
-	  (feature_str[i]>='0' && feature_str[i]<='9')
-	  )
-	 i++;
-      else
-	 break;
-    }
-    if (j<1)	
-    { if (feature_warn)
-       { @<Feature error@>@;
-         print(" must have four alphanumeric characters. I ignore it.");
-       }
-    }
-    else
-      feature_count++;
-    if (feature_str[i]!=0)
-    { if (feature_str[i]==';')
-        i++;
-      else 
-      { if (feature_warn)
-        { @<Feature error@>@;
-          print_err(" must have four alphanumeric characters. I truncate the remainder.");
-	}
-        do {
-	  i++;
-	  if (feature_str[i]==';')
-          { i++; break;}
-        } while (feature_str[i]!=0);
-      }
-    }
-  }
-}
-
-@ 
-@<Feature error@>=
-print_err("Font "); printn_esc(t);
-print_err(" Feature "); print_int(feature_count+1);
-print(": ");
-{ int j=f_start;
-  while (feature_str[j]!=0)
-  { print_char(feature_str[j]);
-    if (feature_str[j]==';') break;
-    j++;
-  }
-}
 
 @ Before we expalin how t initialize the feature array, we need to wrap
 the initialization of a  |hb_feature_t| into a small function which we
 place before the definitin of TeX's macros because it contains
 a field called |start| which is defined as a \TeX\ macro.
 
-@<Header files and function declarations@>=
+
+
+
+@<Header files and early function declarations@>=
 static void x_set_feature( hb_feature_t *f, hb_tag_t t, uint32_t v)
 { f->tag=t;
   f->value=v;
@@ -36022,81 +36075,434 @@ static void x_set_feature( hb_feature_t *f, hb_tag_t t, uint32_t v)
 }
 
 
-@ Now we can allocate the feature array and repeat the traversal to fill it.
-We check for duplicates and keep the last value. Because |hb_feature_t| features
-a |start| field and |start| is defined as a macro in \TeX\ we include the function
-before defining \TeX's macros.
-as
 
- @<Initialize the features of font |g|@>=
-{ int i,j,k, feature_count;
-  hb_tag_t tg;
-  hb_feature_t *features;
-  feature_count=0;
-  if (feature_str!=NULL && feature_str[0]!=0)
-  { @<check and count the feature tags@>@;
+@ The syntax of font features for \HiTeX\ should be as simple as possible,
+but also allow flexibility and maximum compatibility with existing \TeX\ code
+that was most likely writen for \XeTeX\ or \LuaTeX. This requires some compromises.
+
+The font feature string is traditinally used not only for the fonts features proper
+but also to specify script and language.
+The specification of these notions are part of the OpenType font specification,
+but there is room for proprietary extensions.
+So the OpenType specification is kind of incomplete. Further there are
+ISO standards to specify languages and scripts, that were created later and differ
+from the OpenType specification. To make the implementation simple, \HiTeX\ uses
+the functions provided by the harfbuzz library which has the additional benefit
+to ensure a good degree of compatibility with other \TeX\ engines.
+
+OpenType languages, scripts, and features
+are all represented by OpenType tags. A tag is a four character string over a
+limited set of ASCII characters. Tags shorter than four characters are padded with spaces.
+In \HiTeX, similar to \XeTeX\ or \LuaTeX\ the string that specifies script, language, and
+features follows at the and of the font specification. It must start with a colon ``\.:''
+and multiple tags are separated by semicolons ``\.;''.
+
+The first information we need to consider is the script.
+OpenType script tags correspond to Unicode scripts defined in ISO 15924.
+By convention, OpenType script tags use four lower case letters. But the
+complete list found on
+https://learn.microsoft.com/en-us/typography/opentype/spec/scripttags.
+contains already a few exceptions to this rule like ``dev2'' or ``yi~~''.
+A more strict system to define scripts is ISO 15924. Those tags
+are exactly four letters long start with an uppercase letter and continue with three
+lowercase letters.
+%Harfbuzz provides the functions |hb_script_from_iso15924_tag| and |hb_script_to_iso15924_tag|.
+But using ISO 15924 tags does not solve the problem, because for example there are
+two OpenType script tags ``dev2'' and ``deva'' both for the ISO 15924 script tag ``Deva''.
+So \HiTeX\ uses the OpenType tags to specify scripts.
+
+Because it is not possible to tell an OpenType script tag from an OpenType feature tag
+based on its syntax, \HiTeX\ allows a special syntax to specify a script:
+You can write \.{script=}\<script tag>. (The same syntax is also available in \XeTeX.)
+for example ``\.{script=dev2}''. But you can also hide the same script specification somewhere
+inside the list of specification writing for example ``\.{+dev2}''. To catch this specification,
+\HiTeX\ retrieves from the OpenType font in question a complete list of all OpenType script
+tags used in the font. If any tag in the specification matches one of these script tags,
+it is assumed that the tag is meant to be a scrit tag, and it is treated as such.
+In the example above, if the font uses ``\.{dev2}'' as a sript tag, \HiTeX\ will treat
+``\.{+dev2}'' in the same way as ``\.{script=dev2}''. If it is not found amound the
+script tags of the font, it is considered a feature. Don't worry, Harfbuzz will silently
+ignore features that are not supported by the font.
+
+If there are multiple specifications of a script, later tags will overwrite earlier tags.
+
+Next, let' s consider languages. OpenType languages are something like subcategories
+of scripts. For example the font \.{Mukta-Light.ttf} supports four scripts:
+\.{DFLT}, \.{latn}, \.{deva}, and \.{deva}. The first is the default script, the second is Latin,
+the last two are Devanagari version 1 and version 2. This font is mainly a font for
+typesetting Devanagari but it contains also a set of basic characters from the Latin alphabet,
+if you need to put in some Latin text now and then. The two scripts for Devanagari
+can both be used to typeset text written in the Hindi language or in the Marathi
+language. The shaping is different between the two languages and you can indicate the
+language using the two tags \.{HIN} and \.{MAR}.
+A complete list od OpenType language tags can be found on
+https://learn.microsoft.com/en-us/typography/opentype/spec/languagetags.
+
+
+Similar to scripts, there is a special syntax to specify languages.
+You can write  \.{language=}\<language tag>.
+As before, a language tag can also be sprecified without using this special syntax.
+For most (or even all) languages there is no need to compare the language tags against
+the language tags used in the font, because by convention, language tags consist of
+three or four uppercase letters like ``ENG'' for english or ``DEU'' for deutsch.
+\HiTeX\ will consider all tags that starts with three uppercase letters als
+language tags. But in case a non-standardized language tag sneaks in and you have
+already specified a script, \HiTeX\ will search for any given tag the font tables
+for the given script and if it finds a matching language tag, it will consider the tag
+a language tag.
+Note that for those non-standard language tags to work, you must specify a script.
+
+If there are multiple specifications of a language, later tags will overwrite earlier tags.
+
+
+%Harfbuzz provides two functions to parse language descriptions:
+%|hb_language_from_string| and |hb_ot_tag_to_language| together with |hb_tag_from_string|
+% It seems the first function will not do any checking and just creates a tag from the given string.
+% The latter produces more sensible results when converting the language back to a string.
+% Unknown languages are printed as x-hbot-00000000 with the zeros representing the hex-tag
+
+
+%Harfbuzz offers |hb_ot_layout_table_get_script_tags| to get a list of OpenType script
+%tags. So it is possible to test if a given tag is a valid script for the font in question.
+%Further, you can get the language tags for a given script with
+%|hb_ot_layout_script_get_language_tags|.
+%With this information, \HiTeX\ can find the script and language tags
+%in the input.
+
+The remaining tags in the font specification are feature tags.
+
+To parse a feature tag, \HiTeX\ uses the Harfbuzz function |hb_feature_from_string|.
+A complete specification is part of the Harfbuzz reference manual at https://harfbuzz.github.io
+and what follows is the relevant subset for \HiTeX.
+Because \HiTeX\ uses the same features for all occurrences of the font in the given document,
+the Start and End values for features are allways zero to infinity.
+Tags must be at least one at most four alphanumeric characters, values must be nonnegative integers.
+
+$$\vbox{\halign{\tt #\hfil\quad & \hfil #\hfil &\hfil #& #\hfil\cr
+{\bf Syntax} & {\bf Value} & {\bf Description} \cr
+\noalign{\smallskip}
+kern   & 1  &  Turn feature on \cr
++kern  & 1 & Turn feature on \cr
+-kern  & 0 & Turn feature off \cr
+kern=0 & 0 & Turn feature off \cr
+kern=1 & 1 & Turn feature on \cr
+aalt=2 & 2 & Choose 2nd alternate \cr
+}}$$
+
+Specifying properties like direction, script or language will result in
+\HiTeX\ setting these features for every buffer before calling harfbuzz
+to shape it. If the characters in the buffer are from a different language
+or script the outcome might be less than perfect. If you do not specify
+these properties, then \HiTeX\ will ask harfbuzz to guess these properties
+from the buffer content.
+%It uses |hb_buffer_guess_segment_properties| on each buffer befor it passes it to |hb_shape|.
+This gives often better results than an obviously
+wrong script or language. So if you have a font like  \.{Mukta-Light.ttf} that is
+intended to be used to typeset Devanagari, but also contains characters for the Latin alphabet,
+you might set the script to Devanagari and the language to Marathi (or Hindi)
+if you know that this is the right script and language and you do not care
+too much about the shaping of a few words that are in english using the Latin
+alphabet. If you use English often, and you care, you might define two
+\TeX\ fonts using the same OpenType font file but with different script and language
+and change fonts when you change language. If you are satisfied with
+harfbuzz's ability to guess, you can use the same font for english and devanagari
+and refrain from specifying a script or language.
+
+
+@d MAX_FEATURES 128
+
+@<Initialize the features of font |g|@>=
+{ int  f_len=length(font_features[g]);
+  char *f_str = (char*)str_pool+str_start[font_features[g]];
+  int i; /* index into |f_str|*/
+  hb_script_t cur_script=HB_SCRIPT_UNKNOWN;
+  hb_language_t cur_language=HB_LANGUAGE_INVALID;
+  hb_tag_t cur_script_tag=HB_TAG_NONE, cur_language_tag=HB_TAG_NONE; /*the OpenType tags*/
+  hb_tag_t font_feature_tag[MAX_FEATURES];
+  hb_tag_t font_feature_value[MAX_FEATURES];
+  uint8_t feature_bits=DEFAULT_FEATURE_BITS;
+  int num_features=0;
+  i=0;
+  while (i<f_len)
+  { int f_end; /*the index of the end of the current feature*/
+    f_end=i;
+    while (f_end<f_len && f_str[f_end]!=';') f_end++;
+    @<check for "script="@>@;
+    @<check for "language="@>@; 
+    @<read the next feature tag and value@>@;
+    i=f_end+1;
   }
-  ALLOCATE(features,feature_count+NUM_DEFAULT_FEATURES,hb_feature_t);
-  for (k=0;k<NUM_DEFAULT_FEATURES;k++)
-    x_set_feature(features+k, default_feature_tags[k],1);
-  if (feature_count>0)
-  { i=1;
-    while (k<feature_count+NUM_DEFAULT_FEATURES && feature_str[i]!=0)
-    { int val;
-      char tag[4];
-      if (feature_str[i]=='+') val=1;
-      else if (feature_str[i]=='-') val=0;
-      else
-      { while (feature_str[i]!=0 && feature_str[i]!=';')
-          i++;
-        if (feature_str[i]==';')
-          i++;
-	continue;
+  @<check the feature tags for script tags@>@;
+  @<check the feature tags for language tags@>@;
+  @<set the font features@>@;
+}
+
+
+@ To allow a simple specification of a script \HiTeX\ supports the 
+\.{script=}\<tag> notation where tag is a script tag.
+The definition of |hb_script_from_string| indicates, that it expects
+an ISO 15924 script tag. But OpenType script tags are a richer set of scripts.
+For example the ISO 15924 script tag for Devanagari is ``Deva'', but OpenType
+knows ``deva'' and ``dev2''.
+
+@<check for "script="@>=
+if (f_len-i>7 && strncmp(f_str+i,"script=",7)==0)
+{ hb_tag_t t= hb_tag_from_string(f_str+7,f_end-i-7);
+  hb_script_t s= hb_ot_tag_to_script(t);
+  if (s!=HB_SCRIPT_INVALID)
+  {cur_script_tag=t; cur_script=s;  }
+  i=f_end+1;
+  continue;
+}
+
+@ \HiTeX\ does almost the same for ``language''.
+The definition of |hb_language_from_string| indicates, that it expects
+a BCP 47 language tag. 
+
+@<check for "language="@>=
+if (f_len-i>9 && strncmp(f_str+i,"language=",9)==0)
+{ hb_tag_t t= hb_tag_from_string(f_str+9,f_end-i-9);
+  hb_language_t l= hb_ot_tag_to_language(t);
+  if (l!=HB_LANGUAGE_INVALID)
+  { cur_language=l; cur_language_tag=t;}
+  i=f_end+1;
+  continue;
+}
+
+@ There is another way to identify OpenType language tags: They start with three
+uppercase letters.
+
+We can test this using some clever macros and the Harfbuzz |HB_UNTAG| macro
+which splits a macro into a list of four |uint8_t| variables. We use the macos in the next section.
+@d TAG0(A,B,C,D) A
+@d TAG1(A,B,C,D) B
+@d TAG2(A,B,C,D) C
+@d APPLY_TAG(X,Y) X Y
+@d UNTAG0(T) APPLY_TAG(TAG0,(HB_UNTAG(T)))
+@d UNTAG1(T) APPLY_TAG(TAG1,(HB_UNTAG(T)))
+@d UNTAG2(T) APPLY_TAG(TAG2,(HB_UNTAG(T)))
+@d UPPERCASETAG0(X) ('A'<= UNTAG0(X) && UNTAG0(X)<='Z')
+@d UPPERCASETAG1(X) ('A'<= UNTAG1(X) && UNTAG1(X)<='Z')
+@d UPPERCASETAG2(X) ('A'<= UNTAG2(X) && UNTAG2(X)<='Z')
+
+
+
+
+@ To read a feature tag, \HiTeX\ uses the Harfbuzz function |hb_feature_from_string|.
+A complete specification is part of the Harfbuzz reference manual at https://harfbuzz.github.io
+and what follows is the relevant subset for \HiTeX. Because \HiTeX\ uses the same features for all occurrences of the font in the given document, the Start and End values for features are allways zero to infinity. Tags must be at least one at most four alphanumeric characters, values must be integers. We test here for the two ``pseudo tags'' ``tlig'' and ``tacc''.
+
+$$\vbox{\halign{\tt #\hfil\quad & \hfil #\hfil &\hfil #& #\hfil\cr
+{\bf Syntax} & {\bf Value} & {\bf Description} \cr
+\noalign{\smallskip}
+kern   & 1  &  Turn feature on \cr
++kern  & 1 & Turn feature on \cr
+-kern  & 0 & Turn feature off \cr
+kern=0 & 0 & Turn feature off \cr
+kern=1 & 1 & Turn feature on \cr
+aalt=2 & 2 & Choose 2nd alternate \cr
+}}$$
+
+@<read the next feature tag and value@>=
+{ hb_feature_t feat;
+  if (hb_feature_from_string(f_str+i,f_end-i,&feat))
+  { if (num_features>=MAX_FEATURES)
+    { if(feature_warn) 
+      { @<Feature error@>@;
+        print_err(" Too many features. I ignore it.");
       }
-      i++;
-      for (j=0;j<4;j++)
-      { if ((feature_str[i]>='a' && feature_str[i]<='z') ||
-            (feature_str[i]>='A' && feature_str[i]<='Z'))
-	   tag[j]=feature_str[i++];
-        else	
-          tag[j]=' ';
+    }
+    else
+    {
+#if 0
+      print("feature tag found: "); print_tag(feat.tag); print_ln();
+#endif
+      if (feat.tag==HB_TAG('t','l','i','g'))
+      { if (feat.value) feature_bits|=tlig_bit; else feature_bits&=~tlig_bit; }
+      else if (feat.tag==HB_TAG('t','a','c','c'))
+      { if (feat.value) feature_bits|=tacc_bit; else feature_bits&=~tlig_bit; }
+      else if (UPPERCASETAG0(feat.tag)&& UPPERCASETAG1(feat.tag)&&UPPERCASETAG2(feat.tag))
+      { cur_language_tag=feat.tag; cur_language=hb_ot_tag_to_language (cur_language_tag); }
+      else	
+      { font_feature_tag[num_features]=feat.tag;
+        font_feature_value[num_features]=feat.value;
+        num_features++;
       }
-      if (tag[0]!=' ')
-      { tg=HB_TAG(tag[0],tag[1],tag[2],tag[3]);
-        if (tg==HB_TAG('t','l','i','g'))
-        { if (val) feature_bits[g]|=tlig_bit; else feature_bits[g]&=~tlig_bit; }
-        if (tg==HB_TAG('t','a','c','c'))
-        { if (val) feature_bits[g]|=tacc_bit; else feature_bits[g]&=~tlig_bit; }
-        else	
-        { for (j=0;j<k;j++)
-            if (features[j].tag==tg)
-	    { features[j].value=val;
-	      break;
-	    }
-          if (j==k)
-          { x_set_feature(features+k, tg,val);
-	    k++;
-          }
+    }
+  }
+  else if(feature_warn) 
+  { @<Feature error@>@;
+    print_err(" invalid. I ignore it.");
+  }
+}
+
+@ The above code uses the following to show errors in the feature string:
+@<Feature error@>=
+print_err("Font "); printn_esc(t);
+print_err(" Feature:"); 
+{ int j;
+  for (j=i; j<f_end;j++)
+    print_char(f_str[j]);
+}
+
+@ Fonts specified an a format file are reloaded by \HiTeX\ when using the format.
+But at that point warnings about format are no longer appropriate. So the following
+variable is used to suppress warnings when reloading predefined fonts.
+@<Glob...@>=
+static bool feature_warn=true;
+
+
+
+@ A script or language tag can also be part of the feature list using the normal
+syntax for features as described above.
+So unless a script is already specified using the \.{script=}\<tag> notation,
+we check the feature tags against the possible script tags in the current font face.
+
+
+@<check the feature tags for script tags@>=
+if (cur_script==HB_SCRIPT_UNKNOWN && f_len>0)
+{ hb_tag_t font_scripts[MAX_FEATURES];
+  int num_scripts=0;
+  unsigned int n, m, n_max;
+  n=MAX_FEATURES;
+  n_max=hb_ot_layout_table_get_script_tags(face, HB_OT_TAG_GSUB,0,&n,font_scripts+0);
+  if (n_max>MAX_FEATURES)
+    print_err("This font has too many script features. I can not test all of them.");
+  num_scripts=n;
+  n=MAX_FEATURES-num_scripts;
+  n_max=hb_ot_layout_table_get_script_tags(face, HB_OT_TAG_GPOS,0,&n,font_scripts+num_scripts);
+  if (n_max+num_scripts>MAX_FEATURES)
+    print_err("This font has too many script features. I can not test all of them.");
+  num_scripts+=n;  
+  /*This has quadratic runtime, but we do not expect both lists not to be too large.*/
+#if 0
+  print_nl("FOUND scripts: ");
+  for(m=0; m< num_scripts; m++)
+  {  print_tag(font_scripts[m]); print_char(','); }
+  print_ln();
+#endif
+  for (n=0; n< num_features; n++)
+    for(m=0; m< num_scripts; m++)
+    {  if(font_feature_tag[n]==font_scripts[m] && font_feature_value[n]>0)
+       { cur_script_tag=font_feature_tag[n];
+         cur_script=hb_ot_tag_to_script (cur_script_tag);
+         font_feature_tag[n]=HB_TAG_NONE;
+	 break; /*Done with inner loop. The outer loop might find a second script tag given later.*/
+       }
+    }
+}
+
+@ Once we have a script tag, we can also check for langauge tags in a similar way.
+
+@<check the feature tags for language tags@>=
+if (cur_language==HB_LANGUAGE_INVALID && num_features>0)
+{ hb_tag_t font_languages[MAX_FEATURES];
+  int num_languages=0;
+  unsigned int script_index, n, m, n_max;
+  hb_tag_t chosen_script;
+  hb_tag_t requested[2];
+  bool OK;
+  requested[0]=cur_script_tag;
+  requested[1]=HB_TAG_NONE;
+  OK=hb_ot_layout_table_select_script (face, HB_OT_TAG_GSUB,1,requested,&script_index,&chosen_script);
+  if (OK)
+  { n=MAX_FEATURES;
+    n_max=hb_ot_layout_script_get_language_tags(face,  HB_OT_TAG_GSUB,script_index,0, &n, font_languages);
+    if (n_max>MAX_FEATURES)
+      print_err("This font has too many language features. I can not test all of them.");
+    num_languages=n;
+    hb_ot_layout_table_select_script (face, HB_OT_TAG_GSUB,1,requested,&script_index,&chosen_script);
+    n=MAX_FEATURES-num_languages;
+    n_max=hb_ot_layout_script_get_language_tags(face,  HB_OT_TAG_GSUB,script_index,0, &n, font_languages+num_languages);
+    if (n_max+num_languages>MAX_FEATURES)
+    print_err("This font has too many language features. I can not test all of them.");
+    num_languages+=n;
+#if 0
+    print_nl("FOUND languages: ");
+    for(m=0; m< num_languages; m++)
+    { print_tag(font_languages[m]); print_char(','); }
+      print_ln();
+#endif
+    /*This has quadratic runtime, but we do not expect both lists not to be too large.*/
+    for (n=0; n< num_features; n++)
+      for(m=0; m< num_languages; m++)
+      { if(font_feature_tag[n]==font_languages[m] && font_feature_value[n]>0)
+        { cur_language_tag=font_feature_tag[n];
+          cur_language=hb_ot_tag_to_language (cur_language_tag);
+          font_feature_tag[n]=HB_TAG_NONE;
+	  break; /*Done with inner loop. The outer loop might find a second script tag given later.*/
         }
       }
-      while (feature_str[i]!=0 && feature_str[i]!=';')
-        i++;
-      if (feature_str[i]==';')
-        i++;
-}
   }
+}
+
+@ The list of features found is augmented by a list of default features:
+  Standard Ligatures (\.{liga}), Kerning (\.{kern}),
+  Discretionary Ligatures  (\.{dlig}),
+  \TeX\ Ligatures  (\.{tlig} not an OpenType standard),
+  \TeX\ Accents    (\.{tacc} not an OpenType standard),
+  Glyph Composition/Decomposition (\.{ccmp}), and  Localized Forms (\.{locl}).
+
+%  contextual alternates (\.{calt}), contextual ligatures (\.{clig}),
+%  Discretionary Ligatures  (\.{dlig}),
+
+
+@<Glob...@>=
+
+
+#define DEFAULT_FEATURE_BITS (tlig_bit|tacc_bit)
+#define NUM_DEFAULT_FEATURES 5
+static hb_tag_t default_feature_tags[NUM_DEFAULT_FEATURES]=
+{HB_TAG('l','i','g','a'),HB_TAG('d','l','i','g'),HB_TAG('k','e','r','n'),
+ HB_TAG('c','c','m','p'),HB_TAG('l','o','c','l')};
+
+
+
+
+@ Finally we travers the feature tags and values and set the font features.
+
+ @<set the font features@>=
+{ hb_feature_t *features;
+  int i,j,k;
+  ALLOCATE(features,num_features+NUM_DEFAULT_FEATURES,hb_feature_t);
+  for (k=0;k<NUM_DEFAULT_FEATURES;k++)
+    x_set_feature(features+k, default_feature_tags[k],1);
+  for (i=0;i<num_features;i++)
+  { if (font_feature_tag[i]==HB_TAG_NONE)
+      continue; /*skipp*/
+    for (j=0;j<k;j++)
+      if (features[j].tag==font_feature_tag[i]) /*duplicate*/
+      { features[j].value = font_feature_value[i]; /*keep last value*/
+        break;
+      }
+    if (j==k) /*new*/
+    { x_set_feature(features+k, font_feature_tag[i],font_feature_value[i]);
+      k++;
+    }
+  }
+  x_font[g]->script=cur_script;
+  x_font[g]->script_tag=cur_script_tag;
+  x_font[g]->language=cur_language;
+  x_font[g]->language_tag=cur_language_tag;
   x_font[g]->feature_count=k;
   x_font[g]->features=features;
-  feature_string[g]=s_no(feature_str);
+  x_font[g]->feature_bits=feature_bits;
+  
 }
 
 @ Creating the shape plan searches the font face (not the font) for information to use
 during the shaping based on the buffer properties, the features, and the selected |shapers|.
+This optimization is not working if the language or the script (or the direction) in the
+buffer (the buffer properties) are changing. So we can have a cached plan for the "normal"
+use, but we have to check the buffer properties before using it and after filling it
+and if there is a change use a different shape plan. May be this optimization is more an
+overhead than an optimization in some cases. I should probably eliminate this!
 
 @<Create a shape |plan| for font |g|@>=
 { const char *shapers[]={"ot", "default",NULL};
   hb_face_t *face;
   hb_segment_properties_t props;
+  //hb_buffer_set_script(x_font[g]->major, HB_SCRIPT_DEVANAGARI);
   hb_buffer_get_segment_properties(x_font[g]->major,&props);
   face = hb_font_get_face (x_font[g]->f);
   x_font[g]->plan=hb_shape_plan_create_cached (face,
@@ -36154,7 +36560,7 @@ if (len==256)
 q=tail;
 
 @<Let Harfbuzz shape the |codepoints| and add the result to the current list@>@;
-if (feature_bits[main_f]&tlig_bit)
+if (x_font[main_f]->feature_bits&tlig_bit)
 { @<Apply \TeX\ ligatures and replacements@>@; }
 goto reswitch;
 }
@@ -36183,45 +36589,32 @@ code points.
 After using the |buffer| it should be deallocated using |hb_buffer_destroy(buffer)|.
 
 @p
-#if 0
-static hb_buffer_t *x_set_buffer(int f, uint32_t cp[],int n, int j,int len)
-{
-#if 0
-  hb_buffer_set_length (x_font[f]->buffer,0);
-  hb_buffer_add_codepoints(x_font[f]->buffer,cp,n,j,len);
-#else
-hb_buffer_t *buf =hb_buffer_create_similar (x_font[f]->buffer); seems like creating a buffer here is not so easy
-with matching plans!
-  hb_buffer_add_codepoints(buf,cp,n,j,len);
-#endif
-#if 0
-  hb_buffer_set_direction(buffer, HB_DIRECTION_LTR);
-  hb_buffer_set_script(buffer, HB_SCRIPT_LATIN);
-  hb_buffer_set_language(buffer, hb_language_from_string("en", -1));
-  hb_shape(x_font[f]->f, buffer, features, 4);
-   return buffer;
-#else
-
-  hb_shape_plan_execute (x_font[f]->plan,x_font[f]->f, buf
-      x_font[f]->features, x_font[f]->feature_count);
-       return buf   ;
-#endif  
-}
-#endif
-
 static hb_buffer_t *x_set_major(int f, uint32_t cp[],int n, int j,int len)
 { hb_buffer_set_length (x_font[f]->major,0);
   hb_buffer_add_codepoints( x_font[f]->major,cp,n,j,len);
-  hb_shape_plan_execute (x_font[f]->plan,x_font[f]->f, x_font[f]->major,
-      x_font[f]->features, x_font[f]->feature_count);
+  if (x_font[f]->script!=HB_SCRIPT_UNKNOWN && x_font[f]->language!=HB_LANGUAGE_INVALID)
+  { hb_buffer_set_script(x_font[f]->major, x_font[f]->script);
+    hb_buffer_set_language(x_font[f]->major,  x_font[f]->language);
+    hb_buffer_set_direction(x_font[f]->major, HB_DIRECTION_LTR); /*the only direction currently supported*/
+  }
+  else
+  { hb_buffer_guess_segment_properties(x_font[f]->major);
+    if (x_font[f]->script!=HB_SCRIPT_UNKNOWN)
+       hb_buffer_set_script(x_font[f]->major, x_font[f]->script);
+    if (x_font[f]->language!=HB_LANGUAGE_INVALID)
+       hb_buffer_set_language(x_font[f]->major,  x_font[f]->language);
+  }
+  hb_shape(x_font[f]->f, x_font[f]->major, x_font[f]->features, x_font[f]->feature_count);
   return  x_font[f]->major;
 }
 
 static hb_buffer_t *x_set_minor(int f, uint32_t cp[],int n, int j,int len)
-{ hb_buffer_set_length (x_font[f]->minor,0);
+{ hb_segment_properties_t props;
+  hb_buffer_set_length (x_font[f]->minor,0);
   hb_buffer_add_codepoints( x_font[f]->minor,cp,n,j,len);
-  hb_shape_plan_execute (x_font[f]->plan,x_font[f]->f, x_font[f]->minor,
-      x_font[f]->features, x_font[f]->feature_count);
+  hb_buffer_get_segment_properties(x_font[f]->major,&props);
+  hb_buffer_set_segment_properties(x_font[f]->minor,&props);
+  hb_shape(x_font[f]->f,  x_font[f]->minor, x_font[f]->features,  x_font[f]->feature_count);
   return  x_font[f]->minor;
 }
 
