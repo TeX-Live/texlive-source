@@ -9,7 +9,7 @@
 -----------------------------------------------------------------------
 
         xindex = xindex or { }
- local version = 1.06
+ local version = 1.07
 xindex.version = version
 --xindex.self = "xindex"
 
@@ -29,6 +29,47 @@ Report bugs to
 --doc]]--
 
 kpse.set_program_name("luatex")
+
+-----------------------------------------------------------------------
+-- Restricted mode.  A caller that does not trust the current directory
+-- (e.g. an automated document-processing pipeline that runs xindex in a
+-- build directory the input document itself has populated) can pass
+-- --restricted.  xindex then resolves *its own* modules and config files
+-- only from the TeX tree, never from the current directory, so a planted
+-- xindex-*.lua / lualibs.lua / lfs.lua cannot shadow a trusted file and
+-- get executed.  Without the flag, behaviour is unchanged.
+--
+-- kpse always searches "." first and no environment variable overrides
+-- that reliably, so we make "." harmless during our own loads: chdir into
+-- a fresh empty directory while require()/kpse.find_file() resolve, then
+-- chdir back.  Both must be wrapped: require() uses a C-level kpse
+-- searcher that does not go through a wrapped Lua kpse.find_file.  This
+-- must run before the first require() below.
+-----------------------------------------------------------------------
+local xindex_restricted = false
+for _, a in ipairs(arg) do
+  if a == "--restricted" then xindex_restricted = true break end
+end
+
+if xindex_restricted then
+  local trusted_dir = os.tmpdir("xindex_restricted_XXXXXX")
+  if not trusted_dir then
+    io.stderr:write("xindex: --restricted: cannot create a trusted work dir\n")
+    os.exit(1)
+  end
+  local orig_require   = require
+  local orig_find_file = kpse.find_file
+  local function in_trusted(fn, ...)
+    local cwd = lfs.currentdir()
+    lfs.chdir(trusted_dir)
+    local r = { pcall(fn, ...) }
+    lfs.chdir(cwd)
+    if not r[1] then error(r[2], 2) end
+    return table.unpack(r, 2)
+  end
+  require = function(name) return in_trusted(orig_require, name) end
+  kpse.find_file = function(...) return in_trusted(orig_find_file, ...) end
+end
 
 local f = kpse.find_file("lualibs.lua")
 --print ("filename "..f)
@@ -57,6 +98,7 @@ local args = require ('xindex-lapp') [[
     -o,--output (default "")
     -p,--prefix (default L)
     -s,--use_stdin
+    -r,--restricted              resolve xindex own files only from the TeX tree, never the current dir
     <files...> (default stdin) .idx file(s)
 ]]
 
