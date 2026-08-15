@@ -13,7 +13,7 @@ scripts-list: Makefile
 	@echo "texmf_scripts='" >$@
 	@for f in $(nobase_dist_texmf_scripts_SCRIPTS); do echo "$$f"; done >>$@
 	@echo "'" >>$@
-	cmp -s $(srcdir)/scripts.lst $@ || cp -f $@ $(srcdir)/scripts.lst
+	cmp -s $(srcdir)/scripts.lst $@ || cp -f $@$(srcdir)/scripts.lst
 
 # Hard to remember the target name different from final file name.
 scripts-lst:
@@ -239,6 +239,7 @@ texmf_other_scripts = \
 	svn-multi/svn-multi.pl \
 	tex4ebook/tex4ebook \
 	texblend/texblend \
+	texchanges/texchanges-merge.py \
 	texcount/texcount.pl \
 	texdef/texdef.pl \
 	texdiff/texdiff \
@@ -345,7 +346,8 @@ else !WIN32
 	  echo 'unable to compute relative path for linked scripts' >&2; \
 	  exit 1; \
 	fi; \
-	cd $(DESTDIR)$(bindir) && \
+	echo "linked_scripts(install-data-hook): updating in $(DESTDIR)$(bindir)"; \
+	cd "$(DESTDIR)$(bindir)" && \
 	  for s in $(nobase_dist_texmf_scripts_SCRIPTS); do \
 	    target=`basename $$s | tr '[A-Z]' '[a-z]'`; \
 ## We can't portably use fgrep or egrep or grep -E or ere patterns,

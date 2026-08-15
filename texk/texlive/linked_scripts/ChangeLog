@@ -1,3 +1,9 @@
+2026-08-15  Karl Berry  <karl@tug.org>
+
+	* Makefile.am (texmf_other_scripts): add
+	texchanges/texchanges-merge.py.
+	(install-data_hook): be a bit more verbose.
+
 2026-03-01  Karl Berry  <karl@tug.org>
 
 	* Makefile.am (texmf_other_scripts): belatedly remove m-tx.lua.

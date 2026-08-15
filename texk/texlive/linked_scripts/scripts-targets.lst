@@ -179,6 +179,7 @@ texmf-dist/scripts/sty2dtx/sty2dtx.pl sty2dtx
 texmf-dist/scripts/svn-multi/svn-multi.pl svn-multi
 texmf-dist/scripts/tex4ebook/tex4ebook tex4ebook
 texmf-dist/scripts/texblend/texblend texblend
+texmf-dist/scripts/texchanges/texchanges-merge.py texchanges-merge
 texmf-dist/scripts/texcount/texcount.pl texcount
 texmf-dist/scripts/texdef/texdef.pl texdef
 texmf-dist/scripts/texdiff/texdiff texdiff
