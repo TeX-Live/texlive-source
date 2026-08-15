@@ -260,8 +260,14 @@ behaviour.
 
 For more complex usage, when C<bbb> is not an identifier, no such
 compatibility definitions exist and may also not been created with
-current B<xindy>. Such a situation is reported to exist for the
-C<memoir> LaTeX class.
+current B<xindy>. In particular, this means that by default the LaTeX
+package C<hyperref> will create raw index files that cannot be
+processed with B<xindy>. This is not a bug, this is the unfortunate
+result of an intented incompatibility. It is currently not possible to
+get both hyperref's index links and use B<xindy>.
+
+A similar situation is reported to exist for the C<memoir> LaTeX
+class.
 
 Programmers who know Common Lisp and Lex and want to work on a remedy
 should please contact the author.
@@ -319,7 +325,7 @@ Joachim Schrod
 
 =head1 LEGALESE
 
-Copyright (c) 2004-2021 by Joachim Schrod.
+Copyright (c) 2004-2014 by Joachim Schrod.
 
 B<xindy> is free software; you can redistribute it and/or modify it
 under the terms of the GNU General Public License as published by the
@@ -340,37 +346,22 @@ GNU General Public License for more details.
 use strict;
 use English qw(-no_match_vars);
 
-our $is_TL = ( '@is_TL@' eq 'yes' );
-
-our $VERSION = sprintf "%d.%02d", q$xRevision: 1.18 $ =~ /: (\d+)\.(\d+)/ ;
-if ($is_TL) {
-    # Until xindy is actively maintained upstream, let's make
-    # changes in TL be reflected in different version numbers.
-    $VERSION .= sprintf ".TL%d", q$Revision$ =~ /: (\d+)/ ; # TL rev
-}
+our $VERSION = sprintf "%d.%02d", q$Revision: 1.18 $ =~ /: (\d+)\.(\d+)/ ;
 
 
 # Used modules.
 
 use Cwd;
 use File::Basename;
-use File::Glob qw(bsd_glob);
 use File::Spec;
 use File::Temp qw(tempfile tmpnam);
 use Getopt::Long qw(:config bundling);
 use POSIX qw(uname);
 
-# Forward declarations for prototypes.
-
-sub call_xindy ($$);
-sub create_raw_index ();
-sub filter_index ($$);
-sub handle_signals ();
-sub parse_options ();
-sub xindy_expression ();
 
 # Determine environment. Where is our library directory, and our modules?
 
+our $is_TL = ( '@is_TL@' eq 'yes' );
 our $is_w32 = ( $OSNAME =~ /^MSWin/i ) ;
 our $path_sep = ( $is_w32 ? ';' : ':' ) ;
 our $is_windows = ( $is_w32 || $OSNAME eq 'cygwin' ) ;
@@ -403,22 +394,16 @@ $TMPDIR = ".";
 # FIXME: In standalone installations, modules are still placed in lib
 # directory. This is not conformant to FHS.
 
-if ( $is_TL ) { # TeX Live, MiKTeX, or W32TeX
+if ( $is_TL ) { # TeX Live and MikTeX
 
     $modules_dir = Cwd::realpath("$cmd_dir/../../xindy/modules");
     die "$cmd: Cannot locate xindy modules directory"  unless -d $modules_dir;
 
     if ( $is_w32 ) {
-       if ( -d "$cmd_dir/../../../bin/windows" ) {	# TeX Live
-	   $cmd_dir = "$cmd_dir/../../../bin/windows";
-       } elsif ( -d "$cmd_dir/../../../bin/win32" ) {	# TeX Live (older)
+       if ( -d "$cmd_dir/../../../bin/win32" ) {	# TeX Live
 	   $cmd_dir = "$cmd_dir/../../../bin/win32";
-       } elsif ( -d "$cmd_dir/../../miktex/bin/x64/internal" ) {	# MiKTeX 64-bit
-	   $cmd_dir = "$cmd_dir/../../miktex/bin/x64/internal";
-       } elsif ( -d "$cmd_dir/../../miktex/bin/internal" ) {	# MiKTeX 32-bit
-	   $cmd_dir = "$cmd_dir/../../miktex/bin/internal";
-       } elsif ( -d "$cmd_dir/../../../../bin" ) {	# W32TeX
-	   $cmd_dir = "$cmd_dir/../../../../bin";
+       } elsif ( -d "$cmd_dir/../../miktex/bin" ) {	# MikTeX
+	   $cmd_dir = "$cmd_dir/../../miktex/bin";
        } else {
 	   die "$cmd: Cannot locate bin directory";
        }
@@ -517,25 +502,20 @@ our ($quiet, $verbose, %debug,
 $input_markup = 'latex';
 $mem_file = "$lib_dir/xindy.mem";
 
+my @orig_argv = @ARGV;
+parse_options();
+
+
 # Support universal binary on Mac OS X.
 
 if ( $OSNAME eq 'darwin'  &&  ! -e $mem_file ) {
     my @uname = POSIX::uname();
     if ( $uname[4] eq 'Power Macintosh' ) {
 	$mem_file = "$lib_dir/xindy-ppc.mem";
-    } elsif ( $uname[4] eq 'x86_64' ) {
-	$mem_file = "$lib_dir/xindy-x86_64.mem";
-    } elsif ( $uname[4] eq 'arm64' ) {
-	$mem_file = "$lib_dir/xindy-arm64.mem";
     } else {
 	$mem_file = "$lib_dir/xindy-i386.mem";
     }
 }
-
-my @orig_argv = @ARGV;
-parse_options();
-
-# might get overridden
 die "$cmd: Cannot locate $mem_file"  unless -e $mem_file;
 
 
@@ -646,11 +626,7 @@ sub parse_options() {
 	    usage(1);
 	}
 	my ($name, $path, $suffix) = fileparse ($ARGV[0], '\.[^\.]+');
-        if ($path eq ".\\") {
-	   $outfile = "$name.ind";
-        } else {
 	$outfile = "$path$name.ind";
-        }
     }
 
     # FIXME: xindy wants a log file. Really?
@@ -730,7 +706,6 @@ sub filter_index ( $$ ) {
     my $output = tmpnam();
     push (@temp_files, $output);
     $output=quotify($output);
-    $filter=quotify($filter);
     print "Running filter: $filter <$input >$output\n"  if $verbose;
     system "$filter <$input >$output";
     print "filtered xindy input file: $output\n"  if $debug{script};
@@ -757,9 +732,6 @@ sub xindy_expression () {
     #
     # FIXME: I didn't see all languages. What's on with gypsy and
     # hausa?
-    if ( !$language ) {
-        $language = "general";
-    }
     if ( $language ) {
 	# If there is no language directory, this might be a variant.
 	# Language names and variants are separated by hyphens. The
@@ -790,7 +762,7 @@ sub xindy_expression () {
 	@codepages = qw(latin cp iso8859 ascii utf8)  unless @codepages;
 	my @styles;
 	foreach my $cp ( @codepages ) {
-	    @styles = bsd_glob("$lang_dir/$variant$cp*-lang.xdy");
+	    @styles = glob("$lang_dir/$variant$cp*-lang.xdy");
 	    last  if @styles;
 	}
 	unless ( @styles ) {
@@ -818,27 +790,7 @@ sub xindy_expression () {
 	push (@temp_files, $style_file);
 	$style_file=quotify($style_file);
 	foreach my $module ( @modules ) {
-	    if (($module =~ /\//) || ($module =~ /\\/)) {
-    # If $module contains directory separators, the module must be a system
-    # module. So we don't call kpsewhich.
-		print $sf "(require \"$module\")\n";
-	    } else {
-    # Here we call kpsewhich to search for a module. Thus modules can be under
-    # (anytexmf)/xindy/modules/
-		my $fnmodule;
-		# use -| form to avoid interpreting metacharacters.
-		if (open(my $kpse, '-|', 'kpsewhich',
-			 '-progname=xindy', '-format=othertext', $module)) {
-		    $fnmodule = <$kpse>;
-		    close($kpse);
-		}
-		if ($fnmodule) {
-		   chomp($fnmodule);
-		   print $sf "(require \"$fnmodule\")\n";
-		} else {
-		   print $sf "(require \"$module\")\n";
-		}
-	    }
+	    print $sf "(require \"$module\")\n";
 	}
 	close ($sf);
     }
@@ -951,8 +903,6 @@ sub quotify ( $ ) {
 
 
 #======================================================================
-# (modified several times for TeX Live; see
-#  Build/source/utils/xindy/ChangeLog)
 #
 # $Log: xindy.pl,v $
 # Revision 1.18  2011/01/18 22:18:29  jschrod

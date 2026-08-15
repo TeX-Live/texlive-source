@@ -1,3 +1,17 @@
+2026-07-03  Karl Berry  <karl@freefriends.org>
+
+	* patch-00-xindy-man: split from 01-xindy-script for simplicity.
+	* patch-01-xindy-script: use -| instead of `...` to avoid shell
+	injection. Report and fix from Claude, forwarded by Paval Sanda
+	<sanda@lyx.org> of lyx.
+	* patch-01-xindy-script: look for bin/windows also. From Akira.
+	
+	Starting from
+	  https://ctan.org/tex-archive/indexing/xindy/base/xindy-2.5.1.tar.gz
+	The patches here do not add up to what we have in the runtime:
+	  Master/texmf-dist/scripts/xindy/xindy.pl
+	But sadly I don't have the energy to fix it up now.
+
 2020-05-28  Karl Berry  <karl@tug.org>
 
 	* patch-06-markup-range-attr,
