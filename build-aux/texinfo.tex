@@ -3,7 +3,7 @@
 % Load plain if necessary, i.e., if running under initex.
 \expandafter\ifx\csname fmtname\endcsname\relax\input plain\fi
 %
-\def\texinfoversion{2026-07-23.18}
+\def\texinfoversion{2026-08-13.21}
 %
 % Copyright 1985, 1986, 1988, 1990-2026 Free Software Foundation, Inc.
 %
@@ -10064,6 +10064,14 @@ might help (with 'rm \jobname.?? \jobname.??s')%
   %
   % We can't be used inside a paragraph.
   \par
+  %
+  % Allow a page break with a ragged page bottom.  This could help to reduce
+  % interparagraph spacing if a large float doesn't fit on the current page.
+  %
+  \penalty 0
+  \vskip 0pt plus 5\baselineskip
+  \penalty 1000
+  \vskip 0pt plus -5\baselineskip
   %
   \vtop\bgroup
     \def\floattype{#1}%
