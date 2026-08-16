@@ -1,3 +1,9 @@
+2026-08-16  Karl Berry  <karl@tug.org>
+
+	* Makefile.am (scripts-lst): run $(MAKE) install-data-hook
+	in oder to update scripts-targets.lst. Also (from Andreas)
+	reinsert spuriously-removed space.
+
 2026-08-15  Karl Berry  <karl@tug.org>
 
 	* Makefile.am (texmf_other_scripts): add

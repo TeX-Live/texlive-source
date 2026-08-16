@@ -1,7 +1,7 @@
 ## $Id$
 ## Makefile.am for the TeX Live subdirectory texk/texlive/linked_scripts/
 ##
-## Copyright 2016-2025 Karl Berry <tex-live@tug.org>
+## Copyright 2016-2026 Karl Berry <tex-live@tug.org>
 ## Copyright 2009-2015 Peter Breitenlohner <tex-live@tug.org>
 ## You may freely use, modify and/or distribute this file.
 ##
@@ -13,7 +13,10 @@ scripts-list: Makefile
 	@echo "texmf_scripts='" >$@
 	@for f in $(nobase_dist_texmf_scripts_SCRIPTS); do echo "$$f"; done >>$@
 	@echo "'" >>$@
-	cmp -s $(srcdir)/scripts.lst $@ || cp -f $@$(srcdir)/scripts.lst
+	cmp -s $(srcdir)/scripts.lst $@ || cp -f $@ $(srcdir)/scripts.lst
+# Also want to update scripts-targets.lst, so, weirdly:
+	$(MAKE) install-data-hook >linked_scripts_install.out
+	cd $(srcdir) && ls -l scripts.lst scripts-targets.lst
 
 # Hard to remember the target name different from final file name.
 scripts-lst:
