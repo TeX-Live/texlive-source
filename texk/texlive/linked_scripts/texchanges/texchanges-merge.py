@@ -11,7 +11,7 @@ import sys
 from dataclasses import dataclass
 from pathlib import Path
 
-VERSION = "0.2.3"
+VERSION = "0.2.4"
 VERBATIM_ENVS = {"verbatim", "verbatim*", "lstlisting", "minted"}
 NATIVE = {
     "txadd": (0, 1),
