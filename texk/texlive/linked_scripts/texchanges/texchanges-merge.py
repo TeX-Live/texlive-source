@@ -11,26 +11,32 @@ import sys
 from dataclasses import dataclass
 from pathlib import Path
 
-VERSION = "0.2.4"
+VERSION = "0.3.0"
 VERBATIM_ENVS = {"verbatim", "verbatim*", "lstlisting", "minted"}
-NATIVE = {
-    "txadd": (0, 1),
-    "txremove": (1, 0),
-    "txreplace": (1, 1),
-    "txhighlight": (0, 1),
-    "txcomment": (0, 0),
-    "add": (0, 1),
-    "remove": (1, 0),
-    "replace": (1, 1),
+# command -> (argument count, index of the old text, index of the new text);
+# None means the empty string. The changes-compatibility replacement commands
+# order their arguments as new, old.
+COMMANDS = {
+    "txadd": (1, None, 0),
+    "add": (1, None, 0),
+    "added": (1, None, 0),
+    "chadded": (1, None, 0),
+    "txremove": (1, 0, None),
+    "remove": (1, 0, None),
+    "deleted": (1, 0, None),
+    "chdeleted": (1, 0, None),
+    "txreplace": (2, 0, 1),
+    "replace": (2, 0, 1),
+    "replaced": (2, 1, 0),
+    "chreplaced": (2, 1, 0),
+    "txhighlight": (1, 0, 0),
+    "highlight": (1, 0, 0),
+    "chhighlight": (1, 0, 0),
+    "txcomment": (1, None, None),
+    "comment": (1, None, None),
+    "chcomment": (1, None, None),
 }
-COMPAT = {
-    "added": (0, 1),
-    "deleted": (1, 0),
-    "replaced": (1, 1),  # arguments are new, old
-    "chadded": (0, 1),
-    "chdeleted": (1, 0),
-    "chreplaced": (1, 1),
-}
+COMPAT = {"added", "deleted", "replaced", "chadded", "chdeleted", "chreplaced", "chhighlight", "chcomment"}
 HIGHLIGHTS = {"txhighlight", "highlight", "chhighlight"}
 COMMENTS = {"txcomment", "comment", "chcomment"}
 
@@ -124,12 +130,12 @@ def _verbatim_ranges(text: str) -> list[tuple[int, int]]:
     ranges: list[tuple[int, int]] = []
     for env in VERBATIM_ENVS:
         pattern = re.compile(r"\\begin\s*\{" + re.escape(env) + r"\}")
-        end_token = rf"\end{{{env}}}"
+        end_token = re.compile(r"\\end\s*\{" + re.escape(env) + r"\}")
         for match in pattern.finditer(text):
-            end = text.find(end_token, match.end())
-            if end < 0:
+            end = end_token.search(text, match.end())
+            if end is None:
                 raise ParseError(f"unclosed {env} environment")
-            ranges.append((match.start(), end + len(end_token)))
+            ranges.append((match.start(), end.end()))
     return sorted(ranges)
 
 
@@ -157,37 +163,28 @@ def parse_changes(text: str) -> list[Change]:
             i += 1
             continue
         command = match.group(1)
-        if command not in NATIVE and command not in COMPAT and command not in HIGHLIGHTS and command not in COMMENTS:
+        spec = COMMANDS.get(command)
+        if spec is None:
             i += len(match.group(0))
             continue
+        arg_count, old_index, new_index = spec
         pos, options = i + len(match.group(0)), None
         pos = _skip_space(text, pos)
         if pos < len(text) and text[pos] == "[":
             options, pos = _group(text, pos, "[", "]")
-        arg_count = 2 if command.endswith("replaced") or command in {"txreplace", "replace"} else 1
         args: list[str] = []
         for _ in range(arg_count):
             arg, pos = _group(text, pos, "{", "}")
             args.append(arg)
         keys = _split_keys(options)
-        compat = command in COMPAT or command in {"chhighlight", "chcomment"}
+        compat = command in COMPAT
         if command in {"highlight", "comment"}:
             compat = "changeid" in keys or ("author" not in keys and "id" in keys)
         author = keys.get("id") if compat else keys.get("author")
         change_id = keys.get("changeid") if compat else keys.get("id")
         status = keys.get("status", "pending")
-        if command in {"txadd", "add", "added", "chadded"}:
-            old, new = "", args[0]
-        elif command in {"txremove", "remove", "deleted", "chdeleted"}:
-            old, new = args[0], ""
-        elif command in {"replaced", "chreplaced"}:
-            old, new = args[1], args[0]
-        elif command in {"txreplace", "replace"}:
-            old, new = args[0], args[1]
-        elif command in HIGHLIGHTS:
-            old = new = args[0]
-        else:
-            old = new = ""
+        old = args[old_index] if old_index is not None else ""
+        new = args[new_index] if new_index is not None else ""
         changes.append(Change(command, i, pos, options, tuple(args), old, new, author, change_id, status))
         i = pos
     return changes
@@ -236,6 +233,14 @@ def transform(
                 continue
             output.append(change.new if chosen == "accept" else change.old)
         else:
+            if change.options is not None and "=" not in change.options:
+                print(
+                    f"texchanges-merge: keeping \\{change.command}[{change.options}] unchanged; "
+                    "legacy label options cannot carry a status, use key=value form",
+                    file=sys.stderr,
+                )
+                output.append(text[change.start : change.end])
+                continue
             status = "accepted" if chosen == "accept" else "rejected"
             command_end = change.start + len(change.command) + 1
             suffix = text[command_end : change.end]
@@ -309,7 +314,8 @@ def main(argv: list[str] | None = None) -> int:
         )
         return 0
     destination = args.input if args.in_place else args.output
-    assert destination is not None
+    if destination is None:
+        raise SystemExit("internal error: no destination file resolved")
     if args.in_place:
         shutil.copy2(args.input, Path(str(args.input) + args.backup_suffix))
     destination.write_text(updated, encoding="utf-8")
