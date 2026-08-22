@@ -1,0 +1,535 @@
+#!/usr/bin/env perl
+
+# Copyright (C) 2014--2026 Karl Wette
+
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+use strict;
+
+use Cwd;
+use File::Basename;
+use File::Copy;
+use File::Spec;
+use File::Temp;
+use FindBin qw($Script);
+use Getopt::Long qw(:config no_ignore_case);
+use Pod::Usage;
+
+=pod
+
+=head1 NAME
+
+B<make-paper-tarball> - Make a submission-ready tarball of an academic paper manuscript.
+
+=head1 SYNOPSIS
+
+B<make-paper-tarball> B<--help>|B<-h>
+
+B<make-paper-tarball> B<--version>|B<-v>
+
+B<make-paper-tarball> [ B<--zip>|B<-z> ] [ B<--nodir>|B<-D> ] [ B<--base>|B<-b> I<tarball-base-name> ] I<main-LaTeX-file-name>
+
+=head1 DESCRIPTION
+
+B<make-paper-tarball> prepares an academic paper manuscript, whose main LaTeX file is I<main-LaTeX-file-name> (with or without the I<.tex> extension), for submission. It performs the following tasks:
+
+=over 4
+
+=item *
+
+Check that the manuscript can be compiled.
+
+=item *
+
+Identify source files (e.g. figures, bibliography) and copy then to a temporary directory.
+
+=item *
+
+Rename graphic files after the number of the figure/table that includes then, e.g. I<figure-1.png>.
+
+Multiple graphic files per figure/table are named e.g. I<figure-1-plot-1.png>, I<figure-1-plot-2.png> etc.
+
+=item *
+
+Check that figures and tables are cited in order.
+
+=item *
+
+Insert LaTeX files included by I<\input> directly into the main LaTeX file.
+
+=item *
+
+Insert code listings included by I<\lstinputlisting> directly into the main LaTeX file.
+
+=item *
+
+Insert BibTex-generated bibliography directly into the main LaTeX file.
+
+=item *
+
+Strip out comments.
+
+Lines between comment lines
+
+    % protect comments ...
+
+and
+
+    % end protect comments ...
+
+are not stripped for comments.
+
+=item *
+
+Copy auxiliary files to the tarball. Use a comment line of the form:
+
+    % add-to-tarball <src-file> <dest-file-within-tarball>
+
+=item *
+
+Create an archive containing only the the main LaTeX file, required source files, and specified auxiliary files.
+
+The archive is copied to the current directory.
+
+=back
+
+=head1 OPTIONS
+
+=over 4
+
+=item B<--zip>|B<-z>
+
+Create a I<.zip> archive instead of a I<.tar.gz> archive (the default).
+
+=item B<--nodir>|B<-D>
+
+Do not put files into a subdirectory within the archive (the default); instead all files will be at the top level of the archive.
+
+=item B<--base>|B<-b> I<tarball-base-name>
+
+Use I<tarball-base-name> as the base name for the archive, instead of I<main-LaTeX-file-name> without the I<.tex> extension (the default).
+
+=back
+
+=head1 AUTHOR
+
+Karl Wette
+
+Project homepage: https://github.com/kwwette/make-paper-tarball
+
+=cut
+
+# use latexmk to compile paper
+sub run_latexmk {
+  my ($dir, $file, $config) = @_;
+  print "$Script: checking that '$file.tex' can be compiled in directory '$dir/'...\n";
+  my $status = system("cd '$dir' && latexmk -norc -silent -Werror -pdf '$file.tex' >/dev/null 2>/dev/null");
+  if ($status != 0) {
+    my $log = "$dir/$file.log";
+    open(my $logfile, "$log") or die "$Script: could not read from '$log': $!";
+    my $printlog = 0;
+    while (my $line = <$logfile>) {
+      chomp($line);
+      print STDERR "$Script: could not compile '$file.tex': $line\n";
+    }
+    close $logfile;
+    exit $status;
+  }
+  print "$Script: checking that '$file.tex' can be compiled in directory '$dir/'... yes\n";
+}
+
+# parse latexmk file database
+sub parse_fdb {
+  my ($fdbfile, $srcfiles) = @_;
+  print "$Script: parsing '$fdbfile'...\n";
+  open (my $fh, $fdbfile) or die "$Script: could not open '$fdbfile': $!";
+  while (<$fh>) {
+    if (/^\s+"(.*?)"/) {
+      my $srcfile = File::Spec->canonpath($1);
+
+      # exclude absolute paths e.g. from system directories
+      if (File::Spec->file_name_is_absolute($srcfile)) {
+        next;
+      }
+
+      # exclude temporary files associated with LaTeX files
+      my ($srcname, $srcdir, $srcext) = fileparse($srcfile, qr/\.[^.]*$/);
+      my $texsrcfile = File::Spec->canonpath(File::Spec->catfile($srcdir, "$srcname.tex"));
+      if (-f $texsrcfile) {
+        $srcfile = $texsrcfile;
+      }
+
+      # store unique list of files
+      $srcfiles->{$srcfile} = $srcfile;
+
+    }
+  }
+  close $fh;
+}
+
+# copy source files
+sub copy_src {
+  my ($srcfiles, $srcbasedir, $destbasedir) = @_;
+  foreach my $srcfile (keys %{$srcfiles}) {
+    my ($srcname, $srcdir) = fileparse($srcfile);
+    my $destdir = File::Spec->canonpath(File::Spec->catdir($destbasedir, $srcdir));
+    if (! -d $destdir) {
+      mkdir $destdir or die "$Script: could not create directory '$destdir/': $!";
+    }
+    my $src = File::Spec->catfile($srcbasedir, $srcfile);
+    my $dest = File::Spec->catfile($destdir, $srcfiles->{$srcfile});
+    copy($src, $dest) or die "$Script: could not copy source file '$src' to '$dest': $!";
+    print "$Script: copied source file '$src' to '$dest'\n";
+  }
+}
+
+# strip out comments from LaTeX file
+sub strip_comments {
+  my ($line, $protect) = @_;
+
+  # parse line
+  $line =~ s/\s+$//;
+  my ($text, $comment);
+  if ($line =~ /^(|.*?[^%\\])%+\s*(.*)$/) {
+    $text = $1;
+    $comment = $2;
+  } else {
+    $text = $line;
+    $comment = "";
+  }
+  $text =~ s/\s+$//;
+  $text = undef if $text eq "";
+
+  # return line if no comment
+  return $line unless $comment ne "";
+
+  # protect comments between lines with special comments, e.g.:
+  #   % protect comments (more text here is fine)
+  #   \begin{lstlisting}
+  #     ... text here is protected ...
+  #   \end{lstlisting}
+  #   % end protect comments (more text here is fine)
+  if ($comment =~ /^(end\s+)?protect\s+comments?/i) {
+    $$protect = $1 eq "" ? 1 : 0;
+    return $text;
+  } elsif ($$protect) {
+    return $line;
+  }
+
+  # return line without comments
+  return $text;
+
+}
+
+# handle help options
+my $version = 0;
+my $help = 0;
+my $zip = 0;
+my $nodir = 0;
+my $tarballbase;
+GetOptions(
+           "version|v" => \$version,
+           "help|h" => \$help,
+           "zip|z" => \$zip,
+           "nodir|D" => \$nodir,
+           "base|b=s" => \$tarballbase,
+          ) or die "$Script: could not parse options";
+if ($version) {
+  print '1.1' . "\n";
+  exit 1;
+}
+if ($help) {
+  pod2usage(-verbose => 2, -exitval => 1)
+}
+die "$Script: wrong number of arguments" if @ARGV != 1;
+
+# get main LaTeX file name
+my $texbase = $ARGV[0];
+$texbase =~ s/\.tex$//;
+my $texbasefile = "$texbase.tex";
+die "$Script: $texbasefile is not a file" unless -f $texbasefile;
+
+# get tarball base name
+$tarballbase = $texbase unless defined($tarballbase);
+
+# check that paper can be compiled
+run_latexmk ".", $texbase;
+
+# get figure/table order from labels
+my %order;
+my $auxord = 0;
+print "$Script: parsing '$texbase.aux'...\n";
+open(my $fh, "$texbase.aux") or die "$Script: could not read from '$texbase.aux': $!";
+while (<$fh>) {
+  if (/^\\newlabel\{(fig|tab):(.*?)\}\{\{([[:digit:]]+[[:lower:]]*)\}/) {
+    my $type = $1;
+    my $label = $2;
+    my $num = $3;
+    if ($num =~ /^\d+$/) {
+      $order{$type}{$label} = ++$auxord;
+    }
+  }
+}
+close $fh;
+
+# make directories
+my $basedir = File::Temp->newdir( CLEANUP => 1 );
+print "$Script: using temporary directory '$basedir'\n";
+my $testdir = "$basedir/${tarballbase}_test";
+mkdir $testdir or die "$Script: could not create directory '$testdir/': $!";
+my $tarballdir = "$basedir/$tarballbase";
+mkdir $tarballdir or die "$Script: could not create directory '$tarballdir/': $!";
+
+# copy source files
+my %srcfiles;
+parse_fdb("$texbase.fdb_latexmk", \%srcfiles);
+copy_src \%srcfiles, ".", $testdir;
+
+# check that paper can be compiled in test directory
+run_latexmk $testdir, $texbase;
+
+# add LaTeX code to manuscript to extract file names and figure numbers of plots
+my $testtexbasefile = File::Spec->catfile($testdir, $texbasefile);
+print "$Script: extracting file names and figure numbers of plots...\n";
+open (my $fh, ">$testtexbasefile") or die "$Script: could not open '$testtexbasefile': $!";
+print $fh <<'EOF';
+\RequirePackage{etoolbox}
+\makeatletter
+\newwrite\makepapertarball@out
+\immediate\openout\makepapertarball@out=\jobname.makepapertarball_out
+\gdef\makepapertarball@prefix{none}
+\newcount\makepapertarball@figure
+\makepapertarball@figure 0\relax
+\AtBeginEnvironment{figure}{%
+\global\advance\makepapertarball@figure 1\relax%
+\gdef\makepapertarball@prefix{figure-\the\makepapertarball@figure}%
+}
+\AtEndEnvironment{figure}{%
+\gdef\makepapertarball@prefix{none}%
+}
+\newcount\makepapertarball@table
+\makepapertarball@table 0\relax
+\AtBeginEnvironment{table}{%
+\global\advance\makepapertarball@table 1\relax%
+\gdef\makepapertarball@prefix{table-\the\makepapertarball@table}%
+}
+\AtEndEnvironment{table}{%
+\gdef\makepapertarball@prefix{none}%
+}
+\AtBeginDocument{%
+\let\makepapertarball@includegraphics\includegraphics%
+\renewcommand{\includegraphics}[2][]{%
+\immediate\write\makepapertarball@out{\makepapertarball@prefix:#2}%
+\makepapertarball@includegraphics[#1]{#2}%
+}%
+}
+\makeatother
+EOF
+open (my $fh2, $texbasefile) or die "$Script: could not open '$texbasefile': $!";
+while (<$fh2>) {
+  print $fh $_;
+}
+close $fh2;
+close $fh;
+
+# compile paper in test directory
+run_latexmk $testdir, $texbase;
+
+# parse output names/numbers of graphics
+my %graphicfiles;
+my $outfile = File::Spec->catfile($testdir, "$texbase.makepapertarball_out");
+open (my $fh, $outfile) or die "$Script: could not open '$outfile': $!";
+while (<$fh>) {
+  chomp;
+  my ($prefix, $graphicfile) = split(":", $_, 2);
+  next if $prefix eq "none";
+  push @{$graphicfiles{$prefix}}, $graphicfile;
+}
+
+# rename graphics files by number of figure/table
+foreach my $prefix (keys %graphicfiles) {
+  my $n = @{$graphicfiles{$prefix}};
+  my $i = 0;
+  foreach my $graphicfile (@{$graphicfiles{$prefix}}) {
+    my ($graphicname, $graphicdir, $graphicext) = fileparse($graphicfile, qr/\.[^.]*$/);
+    die "Unknown graphic file '$graphicfile'" unless defined($srcfiles{$graphicfile});
+    $i += 1;
+    if ($n > 1) {
+      $srcfiles{$graphicfile} = "${prefix}-plot-${i}${graphicext}";
+    } else {
+      $srcfiles{$graphicfile} = "${prefix}${graphicext}";
+    }
+    my $src = File::Spec->catfile($testdir, $graphicfile);
+    my $dest = File::Spec->catfile($testdir, $srcfiles{$graphicfile});
+    move($src, $dest) or die "$Script: could not move' source file '$src' to '$dest': $!";
+    print "$Script: moved source file '$src' to '$dest'\n";
+  }
+}
+
+# generate main LaTeX file
+my %reforder;
+my $texord = 0;
+my $protect = 0;
+my $testtexmainfile = File::Spec->catfile($testdir, "main.tex");
+print "$Script: generating '$testtexmainfile' from '$texbasefile' and included files ...\n";
+open(my $fhin, "$texbasefile") or die "$Script: could not read from '$texbasefile': $!";
+open(my $fhout, ">$testtexmainfile") or die "$Script: could not write to '$testtexmainfile': $!";
+while (my $line = <$fhin>) {
+  chomp($line);
+
+  # get figure/table reference order
+  while ($line =~ /\\(?:[a-z]*)ref\{(.*?):(.*?)\}/g) {
+    my $prefix = $1;
+    my $label = $2;
+    next unless defined($order{$prefix}{$label});
+    next if defined($reforder{$prefix}{$label});
+    $reforder{$prefix}{$label} = ++$texord;
+  }
+
+  # insert files included by \input
+  if ($line =~ /^(.*?)\\input\{(.*?)\}(.*?)$/) {
+    my $pre = $1;
+    my $inputfile = $2;
+    my $post = $3;
+
+    # insert file
+    print $fhout "$pre" if $pre =~ /\S/;
+    open(my $infile, "$inputfile") or die "$Script: could not read from '$inputfile': $!";
+    my $inprotect = 0;
+    while (my $inline = <$infile>) {
+      chomp($inline);
+
+      # strip out comments
+      $inline = strip_comments($inline, \$inprotect);
+      next if !defined($inline);
+
+      # otherwise print to output file
+      print $fhout "$inline\n";
+
+    }
+    close $infile;
+    print $fhout "$post\n" if $post =~ /\S/;
+    next;
+
+  }
+
+  # rename graphics files by number of figure/table
+  if ($line =~ /^(.*?)\\includegraphics(\[(?:[^\[\]]++|(?2))*\])?\{(.*?)\}(.*?)$/) {
+    my $pre = $1;
+    my $graphicopts = $2;
+    my $graphicfile = $3;
+    my $post = $4;
+    $graphicfile = File::Spec->canonpath($graphicfile);
+    die "Unknown graphic file '$graphicfile'" unless defined($srcfiles{$graphicfile});
+    print $fhout "${pre}\\includegraphics${graphicopts}\{$srcfiles{$graphicfile}\}${post}\n";
+    next;
+  }
+
+  # insert files included by \lstinputlisting
+  if ($line =~ /^\s*\\lstinputlisting(\[(?:[^\[\]]++|(?1))*\])?\{(.*?)\}\s*$/) {
+    my $lstopts = $1;
+    my $lstfile = $2;
+
+    # insert file
+    print $fhout "\\begin{lstlisting}$lstopts\n";
+    open(my $infile, "$lstfile") or die "$Script: could not read from '$lstfile': $!";
+    while (my $inline = <$infile>) {
+      chomp($inline);
+      print $fhout "$inline\n";
+    }
+    close $infile;
+    print $fhout "\\end{lstlisting}\n";
+    next;
+
+  }
+
+  # insert BibTeX-generated bibliography
+  next if $line =~ /^\s*\\bibliographystyle\{.*?\}\s*$/;
+  if ($line =~ /^\s*\\bibliography\{.*?\}\s*$/) {
+
+    # insert file
+    open(my $infile, "$texbase.bbl") or die "$Script: could not read from '$texbase.bbl': $!";
+    while (my $inline = <$infile>) {
+      chomp($inline);
+      print $fhout "$inline\n";
+    }
+    close $infile;
+    next;
+
+  }
+
+  # copy over auxiliary files
+  if ($line =~ /^%\s*add-to-tarball\s+(\S+)\s+(\S+)$/) {
+    my $srcfile = $1;
+    my $destfile = File::Spec->catfile($tarballdir, $2);
+    my $destdir = dirname($destfile);
+    mkdir $destdir;
+    copy("$srcfile", "$destfile") or die "$Script: could not copy auxiliary file '$srcfile' to '$destfile': $!";
+    print "$Script: copied auxiliary file '$srcfile' to '$destfile'";
+  }
+
+  # strip out comments
+  $line = strip_comments($line, \$protect);
+  next if !defined($line);
+
+  # otherwise print to output file
+  print $fhout "$line\n";
+
+}
+close $fhin;
+close $fhout;
+
+# check figures/tables are cited in order
+print "$Script: checking figures/tables are cited in order...\n";
+foreach my $prefix (keys(%order)) {
+  my @labels = sort { $order{$prefix}{$a} <=> $order{$prefix}{$b} } keys(%{$order{$prefix}});
+  my @refs = sort { $reforder{$prefix}{$a} <=> $reforder{$prefix}{$b} } keys(%{$reforder{$prefix}});
+  foreach my $label (@labels) {
+    my $ref = shift @refs;
+    if ($ref ne $label) {
+      if ((grep { $_ eq $label } @refs) > 0) {
+        die "$Script: figure '$prefix:$label' is cited out of order";
+      } else {
+        die "$Script: figure '$prefix:$label' is not cited";
+      }
+    }
+  }
+}
+
+# check that main.tex can be compiled
+run_latexmk $testdir, "main";
+
+# copy source files
+my %tarballsrcfiles;
+parse_fdb(File::Spec->catfile($testdir, "main.fdb_latexmk"), \%tarballsrcfiles);
+copy_src \%tarballsrcfiles, $testdir, $tarballdir;
+
+# create tarball
+print "$Script: creating tarball...\n";
+my $tarballfile;
+my $tarballcmd;
+if ($zip) {
+  $tarballfile = "$tarballbase.zip";
+  $tarballcmd = "zip --quiet --recurse-paths";
+} else {
+  $tarballfile = "$tarballbase.tar.gz";
+  $tarballcmd = "tar --create --gzip --sort=name --file";
+}
+if ($nodir) {
+  system("cd '$basedir/$tarballbase' && $tarballcmd '../$tarballfile' *") == 0 or die "$Script: could not create tarball: $!";
+} else {
+  system("cd '$basedir' && $tarballcmd '$tarballfile' '$tarballbase/'") == 0 or die "$Script: could not create tarball: $!";
+}
+copy("$basedir/$tarballfile", ".") or die "$Script: could not copy file '$basedir/$tarballfile' to '.': $!";
+print "$Script: created tarball '$tarballfile' in current directory\n";

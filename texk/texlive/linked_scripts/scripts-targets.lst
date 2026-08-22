@@ -127,8 +127,9 @@ texmf-dist/scripts/ltximg/ltximg.pl ltximg
 texmf-dist/scripts/luafindfont/luafindfont.lua luafindfont
 texmf-dist/scripts/luaotfload/luaotfload-tool.lua luaotfload-tool
 texmf-dist/scripts/lwarp/lwarpmk.lua lwarpmk
-texmf-dist/scripts/makedtx/makedtx.pl makedtx
+texmf-dist/scripts/make-paper-tarball/make-paper-tarball make-paper-tarball
 texmf-dist/scripts/make4ht/make4ht make4ht
+texmf-dist/scripts/makedtx/makedtx.pl makedtx
 texmf-dist/scripts/markdown/markdown2tex.lua markdown2tex
 texmf-dist/scripts/match_parens/match_parens match_parens
 texmf-dist/scripts/mathspic/mathspic.pl mathspic
