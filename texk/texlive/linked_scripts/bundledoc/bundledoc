@@ -25,7 +25,7 @@
 ########################################################################
 
 use 5.006;             # Fail gracefully if we're not using Perl v5.6.0+.
-our $VERSION = "3.6";  # Specify the version of bundledoc.
+our $VERSION = "3.7";  # Specify the version of bundledoc.
 use File::Basename;
 use File::Copy;
 use File::Spec::Functions qw(abs2rel catfile devnull rel2abs rootdir updir);
@@ -33,7 +33,6 @@ use File::Path;
 use File::Temp qw(tempdir);
 use Getopt::Long;
 use Pod::Usage;
-use String::ShellQuote;
 use warnings;
 use strict;
 
@@ -67,9 +66,9 @@ my %subdirs;                              # Map from a qualified name to its sub
 # or abort if we can't.
 sub qualifyname ($)
 {
-    my $filename = shell_quote $_[0];
+    my $filename = $_[0];
     my $command = $uservariable{find};
-    $command =~ s/[\$\%]BDINPUTS\%?/$filename/g;
+    $command =~ s/[\$\%]BDINPUTS\%?/\"$filename\"/g;
     $command =~ s/[\$\%]BDBASE\%?/$ENV{"BDBASE"}/g;
     my $qualified = `$command` ||
         die "${progname}: \"$uservariable{find}\" (BDINPUTS=\"$_[0]\") failed to find $_[0]\n";
