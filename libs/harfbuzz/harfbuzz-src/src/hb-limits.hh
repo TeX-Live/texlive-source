@@ -93,7 +93,7 @@
 #endif
 
 #ifndef HB_MAX_GRAPH_EDGE_COUNT
-#define HB_MAX_GRAPH_EDGE_COUNT 2048
+#define HB_MAX_GRAPH_EDGE_COUNT 16384
 #endif
 
 #ifndef HB_VAR_COMPOSITE_MAX_AXES
@@ -118,6 +118,15 @@
 
 #ifndef HB_GPU_DRAW_MAX_CURVES
 #define HB_GPU_DRAW_MAX_CURVES 65536
+#endif
+
+/* Tiles emitted by one hb_paint_sweep_gradient_tiles() call.  Also
+ * sets the angular resolution (2π over this) below which a repeating
+ * color line is filled with its average color instead of tiled;
+ * a repeat/reflect color line whose stops span a tiny angle could
+ * otherwise emit millions of patches while covering 0..2π. */
+#ifndef HB_PAINT_MAX_SWEEP_TILES
+#define HB_PAINT_MAX_SWEEP_TILES 4096
 #endif
 
 #ifndef HB_SVG_MAX_DOCUMENT_SIZE
@@ -167,8 +176,14 @@
 #define HB_GPU_PAINT_MAX_WORK ((int64_t) 1 << 20)
 #endif
 
-/* One vector (SVG/PDF) paint session, in bytes of generated outline
+/* One vector (SVG/PDF) draw session, in bytes of generated outline
  * path data. */
+#ifndef HB_VECTOR_MAX_DRAW_WORK
+#define HB_VECTOR_MAX_DRAW_WORK ((int64_t) 16 << 20)
+#endif
+
+/* One vector (SVG/PDF) paint session, in bytes of generated outline
+ * path and sweep-gradient patch data. */
 #ifndef HB_VECTOR_MAX_PAINT_WORK
 #define HB_VECTOR_MAX_PAINT_WORK ((int64_t) 16 << 20)
 #endif
@@ -185,6 +200,19 @@
 
 #ifndef HB_RASTER_MAX_PAINT_WORK_PASSES
 #define HB_RASTER_MAX_PAINT_WORK_PASSES 4
+#endif
+
+/* One raster draw session (everything drawn between two render/clear
+ * calls) through the standalone hb-raster-draw API, in Bézier
+ * subdivision steps.  When driven by raster-paint, the paint session
+ * budget above is charged instead. */
+#ifndef HB_RASTER_MAX_DRAW_WORK
+#define HB_RASTER_MAX_DRAW_WORK ((int64_t) 1 << 24)
+#endif
+
+/* One raster draw session, in accumulated non-horizontal edges. */
+#ifndef HB_RASTER_MAX_DRAW_EDGES
+#define HB_RASTER_MAX_DRAW_EDGES ((int64_t) 1 << 20)
 #endif
 
 

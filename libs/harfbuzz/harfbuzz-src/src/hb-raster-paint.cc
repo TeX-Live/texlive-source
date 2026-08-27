@@ -107,6 +107,21 @@ ensure_initialized (hb_raster_paint_t *c)
 {
   if (c->surface_stack.length) return;
 
+  /* A failed stack push (OOM) leaves the vector in a sticky error
+   * state, so initialization can never succeed; bail out cheaply
+   * instead of re-paying the surface acquire-and-clear below on
+   * every subsequent paint callback. */
+  if (unlikely (c->surface_stack.in_error () || c->clip_stack.in_error ()))
+    return;
+
+  /* acquire_surface() clears a full surface; charge its area, so
+   * repeated failed initialization attempts cannot re-pay it
+   * indefinitely.  Successful initialization re-arms the session
+   * budget below, making the charge a no-op for normal sessions. */
+  if (unlikely (!c->charge_work ((int64_t) c->fixed_extents.width *
+				 c->fixed_extents.height)))
+    return;
+
   /* Root surface */
   hb_raster_image_t *root = c->acquire_surface ();
   if (unlikely (!root)) return;
@@ -145,7 +160,6 @@ ensure_initialized (hb_raster_paint_t *c)
   clip.init_full (c->fixed_extents.width, c->fixed_extents.height);
   if (unlikely (!c->clip_stack.push_or_fail (std::move (clip))))
   {
-    c->transform_stack.pop ();
     c->release_surface (c->surface_stack.pop ());
     return;
   }
@@ -189,6 +203,23 @@ hb_raster_paint_color_glyph (hb_paint_funcs_t *pfuncs HB_UNUSED,
 }
 
 typedef void (*hb_raster_paint_clip_mask_emit_t) (hb_raster_draw_t *rdr, void *user_data);
+
+/* Attach the surface box and the session work budget to @rdr before
+ * outlines are drawn into it: curves outside the surface collapse to
+ * their chord, and flattening work is charged as it happens instead
+ * of only after the whole outline has been emitted. */
+static void
+hb_raster_paint_attach_clip_rdr (hb_raster_paint_t *c,
+				 hb_raster_draw_t *rdr,
+				 const hb_raster_image_t *surf)
+{
+  hb_raster_draw_set_clip_box (rdr,
+			       (float) surf->extents.x_origin,
+			       (float) surf->extents.y_origin,
+			       (float) surf->extents.x_origin + (float) surf->extents.width,
+			       (float) surf->extents.y_origin + (float) surf->extents.height);
+  hb_raster_draw_set_external_work (rdr, &c->work_left);
+}
 
 static void
 hb_raster_paint_push_empty_clip (hb_raster_paint_t *c, unsigned w, unsigned h)
@@ -394,6 +425,7 @@ hb_raster_paint_push_clip_from_emitter (hb_raster_paint_t *c,
   hb_raster_draw_t *rdr = c->clip_rdr;
   hb_transform_t<> t = c->current_effective_transform ();
   hb_raster_draw_set_transform (rdr, t.xx, t.yx, t.xy, t.yy, t.x0, t.y0);
+  hb_raster_paint_attach_clip_rdr (c, rdr, surf);
   emit (rdr, emit_data);
 
   hb_raster_paint_finalize_path_clip (c, rdr, surf, w, h);
@@ -691,6 +723,9 @@ hb_raster_paint_push_clip_path_start (hb_paint_funcs_t *pfuncs HB_UNUSED,
   hb_raster_draw_t *rdr = c->clip_rdr;
   hb_transform_t<> t = c->current_effective_transform ();
   hb_raster_draw_set_transform (rdr, t.xx, t.yx, t.xy, t.yy, t.x0, t.y0);
+  hb_raster_image_t *surf = c->current_surface ();
+  if (likely (surf))
+    hb_raster_paint_attach_clip_rdr (c, rdr, surf);
 
   *draw_data = rdr;
   return hb_raster_draw_get_funcs (rdr);
@@ -897,6 +932,7 @@ hb_raster_paint_fill_glyph (hb_paint_funcs_t *pfuncs HB_UNUSED,
   hb_raster_draw_t *rdr = c->clip_rdr;
   hb_transform_t<> t = c->current_effective_transform ();
   hb_raster_draw_set_transform (rdr, t.xx, t.yx, t.xy, t.yy, t.x0, t.y0);
+  hb_raster_paint_attach_clip_rdr (c, rdr, surf);
 
   hb_raster_paint_glyph_clip_data_t data = {glyph, font};
   hb_raster_paint_emit_clip_glyph_mask (rdr, &data);
