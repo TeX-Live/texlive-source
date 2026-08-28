@@ -1,3 +1,7 @@
+2026-08-28  Karl Berry  <karl@freefriends.org>
+
+	* build-tools.txt: libtool 2.6.2.
+
 2026-05-25  Karl Berry  <karl@freefriends.org>
 
 	* tlbuild.texi (Adding a new program module): wording.
