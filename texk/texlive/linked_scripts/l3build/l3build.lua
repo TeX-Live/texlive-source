@@ -25,7 +25,7 @@ for those people who are interested.
 --]]
 
 -- Version information
-release_date = "2026-08-02"
+release_date = "2026-09-01"
 
 -- File operations are aided by the LuaFileSystem module
 local lfs = require("lfs")
@@ -67,6 +67,11 @@ build_require("tagging")
 build_require("upload")
 build_require("stdmain")
 
+-- Look for some configuration details
+if fileexists("build.lua") then
+  dofile("build.lua")
+end
+
 -- This has to come after stdmain(),
 -- and that has to come after the functions are defined
 if options["target"] == "help" then
@@ -77,10 +82,13 @@ elseif options["target"] == "version" then
   exit(0)
 end
 
+if options["help"] and options["target"] then
+  help(options["target"])
+  exit(0)
+end
+
 -- Look for some configuration details
-if fileexists("build.lua") then
-  dofile("build.lua")
-else
+if not fileexists("build.lua") then
   print("Error: Cannot find configuration build.lua")
   exit(1)
 end
