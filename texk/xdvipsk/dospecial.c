@@ -465,7 +465,11 @@ predospecial(integer numbytes, Boolean scanning, boolean parse_maps)
 predospecial(integer numbytes, Boolean scanning)
 #endif /* XDVIPSK */
 {
+#ifdef XDVIPSK
+   char *p = nextstring;
+#else
    register char *p = nextstring;
+#endif /* XDVIPSK */
    register int i = 0;
    int j;
    static int omega_specials = 0;
@@ -519,7 +523,7 @@ predospecial(integer numbytes, Boolean scanning)
 #ifdef XDVIPSK
    if (!parse_maps)
    {
-      ll = run_lua_specials(L, "prescan_specials_callback", p, lua_prescan_specials);
+      ll = run_lua_specials(L, "prescan_specials_callback", &p, lua_prescan_specials);
       if (ll == 0) return;
    }
 #endif /* XDVIPSK */
@@ -1071,7 +1075,11 @@ static char psfile[PSFILESIZ];
 void
 dospecial(integer numbytes)
 {
+#ifdef XDVIPSK
+   char *p = nextstring;
+#else
    register char *p = nextstring;
+#endif /* XDVIPSK */
    register int i = 0;
    int j, systemtype = 0;
    register const char *q;
@@ -1116,7 +1124,7 @@ if (HPS_FLAG && NEED_NEW_BOX) {
       fprintf_str(stderr, "Processing special: %s\n", p);
 #endif
 #ifdef XDVIPSK
-   l = run_lua_specials(L, "scan_specials_callback", p, lua_scan_specials);
+   l = run_lua_specials(L, "scan_specials_callback", &p, lua_scan_specials);
    if (l == 0) return;
 
    if (VTEX_SPEC_MODE) {

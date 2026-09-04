@@ -615,7 +615,7 @@ extern Boolean lua_process_stack;
 extern Boolean lua_dvips_exit;
 extern Boolean lua_callback_defined(lua_State *L, const char* lua_callback);
 extern void load_lua_scripts(const char* luascript);
-extern int run_lua_specials(lua_State *L, const char* lua_func, char* p, Boolean lua_available);
+extern int run_lua_specials(lua_State *L, const char* lua_func, char **pp, Boolean lua_available);
 extern void run_lua_after_prescan(lua_State *L);
 extern void run_lua_after_drawchar(lua_State *L, chardesctype *c, int cc, int rhh, int rvv, integer dir, int lastfont, int tu_count, unsigned int *tounicode);
 extern void run_lua_after_drawrule(lua_State *L, integer rw, integer rh);

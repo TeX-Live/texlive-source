@@ -1124,13 +1124,13 @@ load_lua_scripts(const char* luascript)
 }
 
 int
-run_lua_specials(lua_State *L, const char* lua_func, char* p, Boolean lua_available)
+run_lua_specials(lua_State *L, const char* lua_func, char **pp, Boolean lua_available)
 {
    size_t l = 1;
    const char* luares;
    if (lua_available) {
       lua_getglobal(L, lua_func);
-      lua_pushstring(L, (const char *) p);
+      lua_pushstring(L, (const char *) *pp);
       lua_newtable(L);
       lua_pushinteger(L, hh);
       lua_setfield(L, -2,  (const char*) "hh");
@@ -1139,7 +1139,7 @@ run_lua_specials(lua_State *L, const char* lua_func, char* p, Boolean lua_availa
       lua_pushinteger(L, pagenum);
       lua_setfield(L, -2,  (const char*) "pagenum");
       if (lua_pcall(L, 2, 1, 0) != LUA_OK) {
-         fprintf_str(stderr, "error running function 'special' %s %s: %s", lua_func, p, lua_tostring(L, -1));
+         fprintf_str(stderr, "error running function 'special' %s %s: %s", lua_func, *pp, lua_tostring(L, -1));
          lua_pop(L, 1);
       } else {
          int t = lua_type(L, -1);
@@ -1148,16 +1148,16 @@ run_lua_specials(lua_State *L, const char* lua_func, char* p, Boolean lua_availa
                luares = lua_tostring(L, -1);
                l = lua_rawlen(L, -1);
                if (luares != 0 && l > 0) {
-                  while (strcmp(p,luares) != 0) {
+                  if (strcmp(*pp, luares) != 0) {
                      if (nextstring + l >= maxstring)
                         morestrings();
                      if (nextstring + l >= maxstring)
                         error("! out of string space");
                      strcpy(nextstring, luares);
-                     p = nextstring;
+                     *pp = nextstring;
 #ifdef DEBUG
                      if (dd(D_SPECIAL))
-                        fprintf_str(stderr, "Preprocessing special with Lua: %s len=%zu\n", p, l);
+                        fprintf_str(stderr, "Preprocessing special with Lua: %s len=%zu\n", *pp, l);
 #endif
                   }
                } else {
