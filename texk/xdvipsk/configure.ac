@@ -31,6 +31,7 @@ KPSE_COMMON([xdvipsk])
 KPSE_CANONICAL_HOST
 AC_CANONICAL_HOST
 AM_CONDITIONAL([cross], [test "x$cross_compiling" = xyes])
+KPSE_COND_WIN32
 
 KPSE_LUA53_DEFINES
 
@@ -49,6 +50,48 @@ KPSE_LUA53_FLAGS
 KPSE_ZLIB_FLAGS
 KPSE_LIBPNG_FLAGS
 KPSE_FREETYPE2_FLAGS
+
+AC_DEFUN([KPSE_LIBJPEG_OPTIONS], [_KPSE_LIB_OPTIONS([libjpeg], [$1], [pkg-config])])
+AC_DEFUN([KPSE_LIBJPEG_SYSTEM_FLAGS], [dnl
+AC_REQUIRE([_KPSE_CHECK_PKG_CONFIG])dnl
+if $PKG_CONFIG libjpeg; then
+  LIBJPEG_INCLUDES=`$PKG_CONFIG libjpeg --cflags`
+  LIBJPEG_LIBS=`$PKG_CONFIG libjpeg --libs`
+else
+  LIBJPEG_INCLUDES=
+  LIBJPEG_LIBS=-ljpeg
+fi])
+
+AC_DEFUN([KPSE_LIBTIFF_OPTIONS], [_KPSE_LIB_OPTIONS([libtiff], [$1], [pkg-config])])
+AC_DEFUN([KPSE_LIBTIFF_SYSTEM_FLAGS], [dnl
+AC_REQUIRE([_KPSE_CHECK_PKG_CONFIG])dnl
+if $PKG_CONFIG libtiff-4; then
+  LIBTIFF_INCLUDES=`$PKG_CONFIG libtiff-4 --cflags`
+  LIBTIFF_LIBS=`$PKG_CONFIG libtiff-4 --libs`
+else
+  LIBTIFF_INCLUDES=
+  LIBTIFF_LIBS=-ltiff
+fi])
+
+dnl libjpeg: use system library or build and link bundled copy (default).
+KPSE_LIBJPEG_OPTIONS([with-system])
+AS_IF([test "x$with_system_libjpeg" = xyes],
+  [KPSE_LIBJPEG_SYSTEM_FLAGS],
+  [LIBJPEG_LIBS=libjpeg.a
+   LIBJPEG_INCLUDES='-I$(abs_top_srcdir)/thirdparty/libjpeg/libjpeg-src'])
+AC_SUBST([LIBJPEG_LIBS])
+AC_SUBST([LIBJPEG_INCLUDES])
+AM_CONDITIONAL([BUNDLED_LIBJPEG], [test "x$with_system_libjpeg" != xyes])
+
+dnl libtiff: use system library or build and link bundled copy (default).
+KPSE_LIBTIFF_OPTIONS([with-system])
+AS_IF([test "x$with_system_libtiff" = xyes],
+  [KPSE_LIBTIFF_SYSTEM_FLAGS],
+  [LIBTIFF_LIBS=libtiff.a
+   LIBTIFF_INCLUDES='-I$(abs_top_srcdir)/thirdparty/libtiff/libtiff-src'])
+AC_SUBST([LIBTIFF_LIBS])
+AC_SUBST([LIBTIFF_INCLUDES])
+AM_CONDITIONAL([BUNDLED_LIBTIFF], [test "x$with_system_libtiff" != xyes])
 
 echo timestamp >config.force
 

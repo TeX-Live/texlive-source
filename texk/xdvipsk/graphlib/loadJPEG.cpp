@@ -31,18 +31,19 @@
 #pragma warning (disable : 4786) // identifier was truncated to 'number' characters
 #endif
 
+#include <stddef.h>
+#include <stdio.h>
+#include <setjmp.h>
+
 extern "C" {
 #define XMD_H
 #undef FAR
-#include <setjmp.h>
-
-#include "jinclude.h"
 #ifndef HAVE_BOOLEAN
 #define HAVE_BOOLEAN
 typedef int boolean;
 #endif
-#include "jpeglib.h"
-#include "jerror.h"
+#include <jpeglib.h>
+#include <jerror.h>
 }
 
 #include "bitmap.h"
@@ -373,7 +374,8 @@ marker_is_icc(jpeg_saved_marker_ptr marker) {
   NOTE: if the file contains invalid ICC APP2 markers, we just silently
   return FALSE.  You might want to issue an error message instead.
 */
-static BOOL 
+#ifndef LIBJPEG_TURBO_VERSION_NUMBER
+static BOOL
 jpeg_read_icc_profile(j_decompress_ptr cinfo, JOCTET **icc_data_ptr, unsigned *icc_data_len) {
 	jpeg_saved_marker_ptr marker;
 	int num_markers = 0;
@@ -461,9 +463,10 @@ jpeg_read_icc_profile(j_decompress_ptr cinfo, JOCTET **icc_data_ptr, unsigned *i
 	
 	*icc_data_ptr = icc_data;
 	*icc_data_len = total_length;
-	
+
 	return TRUE;
 }
+#endif /* !LIBJPEG_TURBO_VERSION_NUMBER */
 
 /**
 	Read JPEG_APPD marker (IPTC or Adobe Photoshop profile)

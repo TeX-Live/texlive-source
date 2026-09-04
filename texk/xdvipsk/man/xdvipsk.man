@@ -1,4 +1,4 @@
-.TH XDVIPSK 1 "06 February 2026"
+.TH XDVIPSK 1 "04 September 2026"
 .SH NAME
 xdvipsk \- convert a TeX DVI file to PostScript (dvips extexsion)
 .SH SYNOPSIS
@@ -32,7 +32,7 @@ adds
 font support. Map files with information about
 .I OpenType
 fonts used in .dvi files are produced by LaTeX package
-.I luafontmaps.
+.I xdvipsk-support.
 .sp
 PostScript header file
 .I xdvips-cid.pro
@@ -745,7 +745,7 @@ recommended unless you must drive this printer.
 .TP
 .B -v
 Print the
-.B dvips
+.B xdvips
 version number and exit.
 .TP
 .B -V

@@ -5,7 +5,12 @@
 	* glyphlist_table.lua, glyphlist_table.h: extend glyph-to-Unicode
 	table with ~360 entries from the newtx/newpx (ntx) and luaotf glyph
 	sets: blackboard-bold letters, math arrows and brackets, accent
-	combiners, and miscellaneous symbols.
+	combiners, and miscellaneous symbols;
+	* configure.ac, configure, Makefile.am, Makefile.in: add
+	--with-system-libjpeg and --with-system-libtiff options using KPSE
+	macro infrastructure; when a system library is chosen, the
+	corresponding bundled thirdparty/ sources are skipped entirely;
+	* loadJPEG.c, loadTIFF.c: improve loading graphlib.
 
 2026-06-25  Tomas Rokicki  <rokicki@gmail.com>
 
