@@ -184,6 +184,9 @@ extern void LuaMap_cache_close(void);
 extern void makefont(char *name, int dpi, int bdpi);
 
 /* prototypes for functions from output.c */
+#ifdef XDVIPSK
+extern boolean is_ps_name_char(unsigned char ch);
+#endif /* XDVIPSK */
 extern void copyfile(const char *s);
 extern void copyfile_general(const char *s, struct header_list *h);
 extern void figcopyfile(char *s, int systemtype);

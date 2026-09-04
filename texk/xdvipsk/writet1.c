@@ -1075,7 +1075,7 @@ static void t1_putline(void)
             t1_wrk_ptr++;
             from_pt = t1_wrk_ptr;
             to_pt = glyph_name;
-            while (*from_pt && (*from_pt != ' ') && (to_pt < glyph_name + FULL_GLYPH_NAME_LEN))
+            while (*from_pt && is_ps_name_char(*from_pt) && (to_pt < glyph_name + FULL_GLYPH_NAME_LEN))
                 *to_pt++ = *from_pt++;
             *to_pt = '\0';
             glyph_subst = glyph_name_cvt(glyph_name, pfb_name, NULL);
@@ -1083,7 +1083,7 @@ static void t1_putline(void)
             {
                 if (strncmp(t1_line_array, "dup ", 4) == 0) /* strlen("dup ") */
                 {
-                    /*  Encodings are renamed directly to the file, for example, in the file t1xttsc.pfb (t1xttsc.pfa)
+                    /*  Internal encodings are renamed directly to the file, for example, in the file t1xttsc.pfb (t1xttsc.pfa)
                             dup 102 /f put
                         renamed to
                             dup 102 /uA730 put */

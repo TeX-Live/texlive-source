@@ -1,6 +1,7 @@
 2026-09-04    Sigitas Tolušis <sigitas@vtex.lt>
 
-	* dospecial.c, protos.h, xdvipsk.c: fix run_lua_specials()
+	* dospecial.c, protos.h, xdvipsk.c: fix run_lua_specials();
+	* output.c, protos.h, writet1.c: implement is_ps_name_char().
 
 2026-06-25  Tomas Rokicki  <rokicki@gmail.com>
 
