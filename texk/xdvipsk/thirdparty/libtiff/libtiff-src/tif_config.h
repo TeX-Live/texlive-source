@@ -1,4 +1,6 @@
-/* libtiff/tif_config.h.  Copied from tif_config.h.in manually.  */
+/* libtiff/tif_config.h.  Copied from tif_config.h.in manually.
+   Hand-maintained for xdvipsk: Windows values as in libtiff's tif_config.vc.h,
+   Unix values derived from predefined compiler macros (no configure run).  */
 /* clang-format off */
 /* clang-format disabled because CMake scripts are very sensitive to the
  * formatting of this file. configure_file variables of type "@VAR@" are
@@ -36,7 +38,9 @@
 #define HAVE_FCNTL_H 1
 
 /* Define to 1 if fseeko (and presumably ftello) exists and is declared. */
-#undef HAVE_FSEEKO
+#ifndef _WIN32
+#define HAVE_FSEEKO 1
+#endif
 
 /* Define to 1 if you have the `getopt' function. */
 #undef HAVE_GETOPT
@@ -60,7 +64,9 @@
 #undef HAVE_JBG_NEWLEN
 
 /* Define to 1 if you have the `mmap' function. */
-#undef HAVE_MMAP
+#ifndef _WIN32
+#define HAVE_MMAP 1
+#endif
 
 /* Define to 1 if you have the <OpenGL/glu.h> header file. */
 #undef HAVE_OPENGL_GLU_H
@@ -72,16 +78,26 @@
 #undef HAVE_SETMODE
 
 /* Define to 1 if you have the `snprintf' function. */
-#undef HAVE_SNPRINTF
+#ifndef _WIN32
+#define HAVE_SNPRINTF 1
+#endif
 
 /* Define to 1 if you have the <strings.h> header file. */
-#undef HAVE_STRINGS_H
+#ifndef _WIN32
+#define HAVE_STRINGS_H 1
+#endif
 
 /* Define to 1 if you have the <sys/types.h> header file. */
-#undef HAVE_SYS_TYPES_H
+#ifndef _WIN32
+#define HAVE_SYS_TYPES_H 1
+#endif
 
-/* Define to 1 if you have the <unistd.h> header file. */
-#undef HAVE_UNISTD_H
+/* Define to 1 if you have the <unistd.h> header file.  tif_unix.c needs it
+   for read(), write() and close(); without it modern gcc/clang (e.g. on the
+   BSDs) reject the implicit declarations. */
+#ifndef _WIN32
+#define HAVE_UNISTD_H 1
+#endif
 
 /* 8/12 bit libjpeg dual mode enabled */
 /* #undef JPEG_DUAL_MODE_8_12 */
@@ -112,7 +128,9 @@
 
 /* The size of `size_t', as computed by sizeof. */
 #undef SIZEOF_SIZE_T
-#ifdef _WIN64
+#if defined(__SIZEOF_SIZE_T__)
+#define SIZEOF_SIZE_T __SIZEOF_SIZE_T__
+#elif defined(_WIN64)
 #define SIZEOF_SIZE_T 8
 #else
 #define SIZEOF_SIZE_T 4
