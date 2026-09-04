@@ -17,6 +17,11 @@ LUA_DEPEND = $(LUA53_DEPEND)
 AM_CPPFLAGS = $(KPATHSEA_INCLUDES) -DUNIX -DKPATHSEA -DSHIFTLOWCHARS
 AM_CFLAGS = $(WARNING_CFLAGS)
 
+LIBJPEG_LIBS = @LIBJPEG_LIBS@
+LIBJPEG_INCLUDES = @LIBJPEG_INCLUDES@
+LIBTIFF_LIBS = @LIBTIFF_LIBS@
+LIBTIFF_INCLUDES = @LIBTIFF_INCLUDES@
+
 if cross
   MINGW_INCLUDES = -I$(abs_top_srcdir)/mingw/include
 endif
@@ -132,8 +137,7 @@ xdvipsk_SOURCES = \
 	otflib/unicode.h
 
 LIBJPEG_TREE = thirdparty/libjpeg/libjpeg-src
-LIBJPEG_INCLUDES = -I$(abs_top_srcdir)/$(LIBJPEG_TREE)
-libjpeg_a_CPPFLAGS = $(LIBJPEG_INCLUDES)
+libjpeg_a_CPPFLAGS = -I$(abs_top_srcdir)/$(LIBJPEG_TREE)
 MEMORYMGR = jmemnobs
 
 libjpeg_a_SOURCES = \
@@ -184,13 +188,10 @@ libjpeg_a_SOURCES = \
 	$(LIBJPEG_TREE)/jmemmgr.c \
 	$(LIBJPEG_TREE)/$(MEMORYMGR).c
 
-LIBJPEG_LIBS = libjpeg.a
-
 $(libjpeg_a_OBJECTS): config.force
 
 LIBTIFF_TREE = thirdparty/libtiff/libtiff-src
-LIBTIFF_INCLUDES = -I$(abs_top_srcdir)/$(LIBTIFF_TREE)
-libtiff_a_CPPFLAGS = $(LIBJPEG_INCLUDES) $(LIBTIFF_INCLUDES) $(ZLIB_INCLUDES)
+libtiff_a_CPPFLAGS = -I$(abs_top_srcdir)/$(LIBJPEG_TREE) -I$(abs_top_srcdir)/$(LIBTIFF_TREE) $(ZLIB_INCLUDES)
 
 libtiff_a_SOURCES = \
 	$(LIBTIFF_TREE)/tif_aux.c \
@@ -232,24 +233,43 @@ libtiff_a_SOURCES = \
 	$(LIBTIFF_TREE)/tif_write.c \
 	$(LIBTIFF_TREE)/tif_zip.c \
 	$(LIBTIFF_TREE)/tif_hash_set.c
-
-LIBTIFF_LIBS = libtiff.a
+if WIN32
+  libtiff_a_SOURCES += $(LIBTIFF_TREE)/tif_win32.c
+else
+  libtiff_a_SOURCES += $(LIBTIFF_TREE)/tif_unix.c
+endif
 
 $(libtiff_a_OBJECTS): config.force
 
 $(xdvipsk_OBJECTS): $(KPATHSEA_DEPEND) $(LUA_DEPEND) $(ZLIB_DEPEND) $(LIBPNG_DEPEND) \
-                    $(LIBJPEG_DEPEND) $(LIBTIFF_DEPEND) $(FREETYPE2_DEPEND)
-xdvipsk_LDADD = libdvipsgraph.a $(KPATHSEA_LIBS) $(LUA_LIBS) $(LIBTIFF_LIBS) \
-                $(LIBPNG_LIBS) $(ZLIB_LIBS) $(LIBJPEG_LIBS) $(FREETYPE2_LIBS) -lstdc++
+                    $(FREETYPE2_DEPEND)
+xdvipsk_LDADD = libdvipsgraph.a $(KPATHSEA_LIBS) $(LUA_LIBS) \
+                $(LIBPNG_LIBS) $(ZLIB_LIBS) $(FREETYPE2_LIBS) -lstdc++
+if BUNDLED_LIBJPEG
+xdvipsk_LDADD += libjpeg.a
+else
+xdvipsk_LDADD += $(LIBJPEG_LIBS)
+endif
+if BUNDLED_LIBTIFF
+xdvipsk_LDADD += libtiff.a
+else
+xdvipsk_LDADD += $(LIBTIFF_LIBS)
+endif
 if cross
    xdvipsk_SOURCES += mingw/include/wingdi.h
    xdvipsk_LDFLAGS = -fno-lto -fno-use-linker-plugin -static -static-libgcc -static-libstdc++ --disable-shared
    xdvipsk_LDADD += -lgdi32
 endif
 
-noinst_LIBRARIES = libdvipsgraph.a $(LIBTIFF_LIBS) $(LIBJPEG_LIBS)
+noinst_LIBRARIES = libdvipsgraph.a
+if BUNDLED_LIBJPEG
+noinst_LIBRARIES += libjpeg.a
+endif
+if BUNDLED_LIBTIFF
+noinst_LIBRARIES += libtiff.a
+endif
 
-libdvipsgraph_a_dependencies = $(ZLIB_DEPEND) $(LIBPNG_DEPEND) $(LIBJPEG_DEPEND) $(LIBTIFF_DEPEND)
+libdvipsgraph_a_dependencies = $(ZLIB_DEPEND) $(LIBPNG_DEPEND)
 libdvipsgraph_a_SOURCES = \
     graphlib/bitmap.cpp \
     graphlib/bitmap.h \

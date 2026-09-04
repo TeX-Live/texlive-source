@@ -39,8 +39,7 @@
 
 #include "bitmap.h"
 #include "utilities.h"
-#include "tiffiop.h"
-
+#include <tiffio.h>
 #include "bitmapIO.h"
 
 
@@ -141,98 +140,6 @@ _tiffMapProc(thandle_t, void** base, toff_t* size) {
 static void
 _tiffUnmapProc(thandle_t, void* base, toff_t size) {
 }
-
-/**
-Open a TIFF file descriptor for reading or writing
-@param handle File handle
-@param name Name of the file handle
-@param mode Specifies if the file is to be opened for reading ("r") or writing ("w")
-*/
-TIFF *
-TIFFFdOpen(thandle_t handle, const char *name, const char *mode) {
-	TIFF *tif;
-	
-	// Open the file; the callback will set everything up
-	tif = TIFFClientOpen(name, mode, handle,
-	    _tiffReadProc, _tiffWriteProc, _tiffSeekProc, _tiffCloseProc,
-	    _tiffSizeProc, _tiffMapProc, _tiffUnmapProc);
-
-	return tif;
-}
-
-/**
-Open a TIFF file for reading or writing
-@param name
-@param mode
-*/
-TIFF*
-TIFFOpen(const char* name, const char* mode) {
-	return 0;
-}
-
-// ----------------------------------------------------------
-//   TIFF library Bitmap-specific routines.
-// ----------------------------------------------------------
-
-void*
-_TIFFmalloc(tmsize_t s) {
-	return malloc(s);
-}
-
-void*
-_TIFFcalloc(tmsize_t nmemb, tmsize_t siz) {
-	return calloc(nmemb, siz);
-}
-
-void
-_TIFFfree(void *p) {
-	free(p);
-}
-
-void*
-_TIFFrealloc(void* p, tmsize_t s) {
-	return realloc(p, s);
-}
-
-void
-_TIFFmemset(void* p, int v, tmsize_t c) {
-	memset(p, v, (size_t) c);
-}
-
-void
-_TIFFmemcpy(void* d, const void* s, tmsize_t c) {
-	memcpy(d, s, (size_t) c);
-}
-
-int
-_TIFFmemcmp(const void* p1, const void* p2, tmsize_t c) {
-	return (memcmp(p1, p2, (size_t) c));
-}
-
-// ----------------------------------------------------------
-//   in Bitmap warnings and errors are disabled
-// ----------------------------------------------------------
-
-static void
-msdosWarningHandler(const char* module, const char* fmt, va_list ap) {
-}
-
-TIFFErrorHandler _TIFFwarningHandler = msdosWarningHandler;
-
-static void
-msdosErrorHandler(const char* module, const char* fmt, va_list ap) {
-	
-	// use this for diagnostic only (do not use otherwise, even in DEBUG mode)
-	/*
-	if (module != NULL) {
-		char msg[1024];
-		vsprintf(msg, fmt, ap);
-		Bitmap_OutputMessageProc(FIF_TIFF, "%s: %s", module, msg);
-	}
-	*/
-}
-
-TIFFErrorHandler _TIFFerrorHandler = msdosErrorHandler;
 
 // ----------------------------------------------------------
 
@@ -594,13 +501,16 @@ Open(BitmapIO *io, fi_handle handle, BOOL read) {
 	fio->io = io;
 	fio->handle = handle;
 
-	if (read) {
-		fio->tif = TIFFFdOpen((thandle_t)fio, "", "r");
-	} else {
-		// mode = "w"	: write Classic TIFF
-		// mode = "w8"	: write Big TIFF
-		fio->tif = TIFFFdOpen((thandle_t)fio, "", "w");
-	}
+	TIFFSetWarningHandler(NULL);
+	TIFFSetErrorHandler(NULL);
+
+	// mode = "w"	: write Classic TIFF
+	// mode = "w8"	: write Big TIFF
+	const char *mode = read ? "r" : "w";
+	fio->tif = TIFFClientOpen("", mode, (thandle_t)fio,
+	    _tiffReadProc, _tiffWriteProc, _tiffSeekProc, _tiffCloseProc,
+	    _tiffSizeProc, _tiffMapProc, _tiffUnmapProc);
+
 	if(fio->tif == NULL) {
 		free(fio);
 		Bitmap_OutputMessageProc(FIF_TIFF, "Error while opening TIFF: data is invalid");

@@ -93,8 +93,16 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 bin_PROGRAMS = xdvipsk$(EXEEXT)
-@cross_TRUE@am__append_1 = mingw/include/wingdi.h
-@cross_TRUE@am__append_2 = -lgdi32
+@WIN32_TRUE@am__append_1 = $(LIBTIFF_TREE)/tif_win32.c
+@WIN32_FALSE@am__append_2 = $(LIBTIFF_TREE)/tif_unix.c
+@BUNDLED_LIBJPEG_TRUE@am__append_3 = libjpeg.a
+@BUNDLED_LIBJPEG_FALSE@am__append_4 = $(LIBJPEG_LIBS)
+@BUNDLED_LIBTIFF_TRUE@am__append_5 = libtiff.a
+@BUNDLED_LIBTIFF_FALSE@am__append_6 = $(LIBTIFF_LIBS)
+@cross_TRUE@am__append_7 = mingw/include/wingdi.h
+@cross_TRUE@am__append_8 = -lgdi32
+@BUNDLED_LIBJPEG_TRUE@am__append_9 = libjpeg.a
+@BUNDLED_LIBTIFF_TRUE@am__append_10 = libtiff.a
 subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/../../m4/kpse-common.m4 \
@@ -206,6 +214,31 @@ libjpeg_a_OBJECTS = $(am_libjpeg_a_OBJECTS)
 libtiff_a_AR = $(AR) $(ARFLAGS)
 libtiff_a_RANLIB = $(RANLIB)
 libtiff_a_LIBADD =
+am__libtiff_a_SOURCES_DIST = $(LIBTIFF_TREE)/tif_aux.c \
+	$(LIBTIFF_TREE)/tif_close.c $(LIBTIFF_TREE)/tif_codec.c \
+	$(LIBTIFF_TREE)/tif_color.c $(LIBTIFF_TREE)/tif_compress.c \
+	$(LIBTIFF_TREE)/tif_dir.c $(LIBTIFF_TREE)/tif_dirinfo.c \
+	$(LIBTIFF_TREE)/tif_dirread.c $(LIBTIFF_TREE)/tif_dirwrite.c \
+	$(LIBTIFF_TREE)/tif_dumpmode.c $(LIBTIFF_TREE)/tif_error.c \
+	$(LIBTIFF_TREE)/tif_extension.c $(LIBTIFF_TREE)/tif_fax3.c \
+	$(LIBTIFF_TREE)/tif_fax3sm.c $(LIBTIFF_TREE)/tif_flush.c \
+	$(LIBTIFF_TREE)/tif_getimage.c $(LIBTIFF_TREE)/tif_jbig.c \
+	$(LIBTIFF_TREE)/tif_jpeg.c $(LIBTIFF_TREE)/tif_jpeg_12.c \
+	$(LIBTIFF_TREE)/tif_luv.c $(LIBTIFF_TREE)/tif_lzma.c \
+	$(LIBTIFF_TREE)/tif_lzw.c $(LIBTIFF_TREE)/tif_next.c \
+	$(LIBTIFF_TREE)/tif_ojpeg.c $(LIBTIFF_TREE)/tif_open.c \
+	$(LIBTIFF_TREE)/tif_packbits.c $(LIBTIFF_TREE)/tif_pixarlog.c \
+	$(LIBTIFF_TREE)/tif_predict.c $(LIBTIFF_TREE)/tif_print.c \
+	$(LIBTIFF_TREE)/tif_read.c $(LIBTIFF_TREE)/tif_strip.c \
+	$(LIBTIFF_TREE)/tif_swab.c $(LIBTIFF_TREE)/tif_thunder.c \
+	$(LIBTIFF_TREE)/tif_tile.c $(LIBTIFF_TREE)/tif_version.c \
+	$(LIBTIFF_TREE)/tif_warning.c $(LIBTIFF_TREE)/tif_write.c \
+	$(LIBTIFF_TREE)/tif_zip.c $(LIBTIFF_TREE)/tif_hash_set.c \
+	$(LIBTIFF_TREE)/tif_win32.c $(LIBTIFF_TREE)/tif_unix.c
+@WIN32_TRUE@am__objects_1 =  \
+@WIN32_TRUE@	$(LIBTIFF_TREE)/libtiff_a-tif_win32.$(OBJEXT)
+@WIN32_FALSE@am__objects_2 =  \
+@WIN32_FALSE@	$(LIBTIFF_TREE)/libtiff_a-tif_unix.$(OBJEXT)
 am_libtiff_a_OBJECTS = $(LIBTIFF_TREE)/libtiff_a-tif_aux.$(OBJEXT) \
 	$(LIBTIFF_TREE)/libtiff_a-tif_close.$(OBJEXT) \
 	$(LIBTIFF_TREE)/libtiff_a-tif_codec.$(OBJEXT) \
@@ -244,7 +277,8 @@ am_libtiff_a_OBJECTS = $(LIBTIFF_TREE)/libtiff_a-tif_aux.$(OBJEXT) \
 	$(LIBTIFF_TREE)/libtiff_a-tif_warning.$(OBJEXT) \
 	$(LIBTIFF_TREE)/libtiff_a-tif_write.$(OBJEXT) \
 	$(LIBTIFF_TREE)/libtiff_a-tif_zip.$(OBJEXT) \
-	$(LIBTIFF_TREE)/libtiff_a-tif_hash_set.$(OBJEXT)
+	$(LIBTIFF_TREE)/libtiff_a-tif_hash_set.$(OBJEXT) \
+	$(am__objects_1) $(am__objects_2)
 libtiff_a_OBJECTS = $(am_libtiff_a_OBJECTS)
 am__xdvipsk_SOURCES_DIST = bbox.c bitmapenc.c charcode.c color.c \
 	config.h debug.h dopage.c dosection.c dospecial.c download.c \
@@ -271,7 +305,7 @@ am__xdvipsk_SOURCES_DIST = bbox.c bitmapenc.c charcode.c color.c \
 	otflib/tt_glyf.c otflib/tt_glyf.h otflib/tt_post.c \
 	otflib/tt_post.h otflib/tt_table.c otflib/tt_table.h \
 	otflib/unicode.c otflib/unicode.h mingw/include/wingdi.h
-am__objects_1 =
+am__objects_3 =
 am_xdvipsk_OBJECTS = xdvipsk-bbox.$(OBJEXT) \
 	xdvipsk-bitmapenc.$(OBJEXT) xdvipsk-charcode.$(OBJEXT) \
 	xdvipsk-color.$(OBJEXT) xdvipsk-dopage.$(OBJEXT) \
@@ -309,13 +343,16 @@ am_xdvipsk_OBJECTS = xdvipsk-bbox.$(OBJEXT) \
 	otflib/xdvipsk-tt_glyf.$(OBJEXT) \
 	otflib/xdvipsk-tt_post.$(OBJEXT) \
 	otflib/xdvipsk-tt_table.$(OBJEXT) \
-	otflib/xdvipsk-unicode.$(OBJEXT) $(am__objects_1)
+	otflib/xdvipsk-unicode.$(OBJEXT) $(am__objects_3)
 xdvipsk_OBJECTS = $(am_xdvipsk_OBJECTS)
 am__DEPENDENCIES_1 =
 am__DEPENDENCIES_2 = $(am__DEPENDENCIES_1)
+@BUNDLED_LIBJPEG_FALSE@am__DEPENDENCIES_3 = $(am__DEPENDENCIES_1)
+@BUNDLED_LIBTIFF_FALSE@am__DEPENDENCIES_4 = $(am__DEPENDENCIES_1)
 xdvipsk_DEPENDENCIES = libdvipsgraph.a $(am__DEPENDENCIES_1) \
-	$(am__DEPENDENCIES_2) $(LIBTIFF_LIBS) $(am__DEPENDENCIES_1) \
-	$(am__DEPENDENCIES_1) $(LIBJPEG_LIBS) $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_2) $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1) $(am__DEPENDENCIES_1) $(am__append_3) \
+	$(am__DEPENDENCIES_3) $(am__append_5) $(am__DEPENDENCIES_4) \
 	$(am__DEPENDENCIES_1)
 AM_V_lt = $(am__v_lt_@AM_V@)
 am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
@@ -421,8 +458,10 @@ am__depfiles_remade =  \
 	$(LIBTIFF_TREE)/$(DEPDIR)/libtiff_a-tif_swab.Po \
 	$(LIBTIFF_TREE)/$(DEPDIR)/libtiff_a-tif_thunder.Po \
 	$(LIBTIFF_TREE)/$(DEPDIR)/libtiff_a-tif_tile.Po \
+	$(LIBTIFF_TREE)/$(DEPDIR)/libtiff_a-tif_unix.Po \
 	$(LIBTIFF_TREE)/$(DEPDIR)/libtiff_a-tif_version.Po \
 	$(LIBTIFF_TREE)/$(DEPDIR)/libtiff_a-tif_warning.Po \
+	$(LIBTIFF_TREE)/$(DEPDIR)/libtiff_a-tif_win32.Po \
 	$(LIBTIFF_TREE)/$(DEPDIR)/libtiff_a-tif_write.Po \
 	$(LIBTIFF_TREE)/$(DEPDIR)/libtiff_a-tif_zip.Po \
 	./$(DEPDIR)/xdvipsk-bbox.Po ./$(DEPDIR)/xdvipsk-bitmapenc.Po \
@@ -528,7 +567,7 @@ SOURCES = $(libdvipsgraph_a_SOURCES) $(libjpeg_a_SOURCES) \
 	$(libtiff_a_SOURCES) $(xdvipsk_SOURCES) \
 	$(nodist_EXTRA_xdvipsk_SOURCES)
 DIST_SOURCES = $(libdvipsgraph_a_SOURCES) $(libjpeg_a_SOURCES) \
-	$(libtiff_a_SOURCES) $(am__xdvipsk_SOURCES_DIST)
+	$(am__libtiff_a_SOURCES_DIST) $(am__xdvipsk_SOURCES_DIST)
 RECURSIVE_TARGETS = all-recursive check-recursive cscopelist-recursive \
 	ctags-recursive dvi-recursive html-recursive info-recursive \
 	install-data-recursive install-dvi-recursive \
@@ -891,11 +930,15 @@ KPATHSEA_INCLUDES = @KPATHSEA_INCLUDES@
 KPATHSEA_LIBS = @KPATHSEA_LIBS@
 LD = @LD@
 LDFLAGS = @LDFLAGS@
+LIBJPEG_INCLUDES = @LIBJPEG_INCLUDES@
+LIBJPEG_LIBS = @LIBJPEG_LIBS@
 LIBOBJS = @LIBOBJS@
 LIBPNG_DEPEND = @LIBPNG_DEPEND@
 LIBPNG_INCLUDES = @LIBPNG_INCLUDES@
 LIBPNG_LIBS = @LIBPNG_LIBS@
 LIBS = @LIBS@
+LIBTIFF_INCLUDES = @LIBTIFF_INCLUDES@
+LIBTIFF_LIBS = @LIBTIFF_LIBS@
 LIBTOOL = @LIBTOOL@
 LIPO = @LIPO@
 LN_S = @LN_S@
@@ -1035,10 +1078,9 @@ xdvipsk_SOURCES = bbox.c bitmapenc.c charcode.c color.c config.h \
 	otflib/tt_cmap.c otflib/tt_cmap.h otflib/tt_glyf.c \
 	otflib/tt_glyf.h otflib/tt_post.c otflib/tt_post.h \
 	otflib/tt_table.c otflib/tt_table.h otflib/unicode.c \
-	otflib/unicode.h $(am__append_1)
+	otflib/unicode.h $(am__append_7)
 LIBJPEG_TREE = thirdparty/libjpeg/libjpeg-src
-LIBJPEG_INCLUDES = -I$(abs_top_srcdir)/$(LIBJPEG_TREE)
-libjpeg_a_CPPFLAGS = $(LIBJPEG_INCLUDES)
+libjpeg_a_CPPFLAGS = -I$(abs_top_srcdir)/$(LIBJPEG_TREE)
 MEMORYMGR = jmemnobs
 libjpeg_a_SOURCES = \
 	$(LIBJPEG_TREE)/jaricom.c \
@@ -1088,58 +1130,36 @@ libjpeg_a_SOURCES = \
 	$(LIBJPEG_TREE)/jmemmgr.c \
 	$(LIBJPEG_TREE)/$(MEMORYMGR).c
 
-LIBJPEG_LIBS = libjpeg.a
 LIBTIFF_TREE = thirdparty/libtiff/libtiff-src
-LIBTIFF_INCLUDES = -I$(abs_top_srcdir)/$(LIBTIFF_TREE)
-libtiff_a_CPPFLAGS = $(LIBJPEG_INCLUDES) $(LIBTIFF_INCLUDES) $(ZLIB_INCLUDES)
-libtiff_a_SOURCES = \
-	$(LIBTIFF_TREE)/tif_aux.c \
-	$(LIBTIFF_TREE)/tif_close.c \
-	$(LIBTIFF_TREE)/tif_codec.c \
-	$(LIBTIFF_TREE)/tif_color.c \
-	$(LIBTIFF_TREE)/tif_compress.c \
-	$(LIBTIFF_TREE)/tif_dir.c \
-	$(LIBTIFF_TREE)/tif_dirinfo.c \
-	$(LIBTIFF_TREE)/tif_dirread.c \
-	$(LIBTIFF_TREE)/tif_dirwrite.c \
-	$(LIBTIFF_TREE)/tif_dumpmode.c \
-	$(LIBTIFF_TREE)/tif_error.c \
-	$(LIBTIFF_TREE)/tif_extension.c \
-	$(LIBTIFF_TREE)/tif_fax3.c \
-	$(LIBTIFF_TREE)/tif_fax3sm.c \
-	$(LIBTIFF_TREE)/tif_flush.c \
-	$(LIBTIFF_TREE)/tif_getimage.c \
-	$(LIBTIFF_TREE)/tif_jbig.c \
-	$(LIBTIFF_TREE)/tif_jpeg.c \
-	$(LIBTIFF_TREE)/tif_jpeg_12.c \
-	$(LIBTIFF_TREE)/tif_luv.c \
-	$(LIBTIFF_TREE)/tif_lzma.c \
-	$(LIBTIFF_TREE)/tif_lzw.c \
-	$(LIBTIFF_TREE)/tif_next.c \
-	$(LIBTIFF_TREE)/tif_ojpeg.c \
-	$(LIBTIFF_TREE)/tif_open.c \
-	$(LIBTIFF_TREE)/tif_packbits.c \
-	$(LIBTIFF_TREE)/tif_pixarlog.c \
-	$(LIBTIFF_TREE)/tif_predict.c \
-	$(LIBTIFF_TREE)/tif_print.c \
-	$(LIBTIFF_TREE)/tif_read.c \
-	$(LIBTIFF_TREE)/tif_strip.c \
-	$(LIBTIFF_TREE)/tif_swab.c \
-	$(LIBTIFF_TREE)/tif_thunder.c \
-	$(LIBTIFF_TREE)/tif_tile.c \
-	$(LIBTIFF_TREE)/tif_version.c \
-	$(LIBTIFF_TREE)/tif_warning.c \
-	$(LIBTIFF_TREE)/tif_write.c \
-	$(LIBTIFF_TREE)/tif_zip.c \
-	$(LIBTIFF_TREE)/tif_hash_set.c
-
-LIBTIFF_LIBS = libtiff.a
+libtiff_a_CPPFLAGS = -I$(abs_top_srcdir)/$(LIBJPEG_TREE) -I$(abs_top_srcdir)/$(LIBTIFF_TREE) $(ZLIB_INCLUDES)
+libtiff_a_SOURCES = $(LIBTIFF_TREE)/tif_aux.c \
+	$(LIBTIFF_TREE)/tif_close.c $(LIBTIFF_TREE)/tif_codec.c \
+	$(LIBTIFF_TREE)/tif_color.c $(LIBTIFF_TREE)/tif_compress.c \
+	$(LIBTIFF_TREE)/tif_dir.c $(LIBTIFF_TREE)/tif_dirinfo.c \
+	$(LIBTIFF_TREE)/tif_dirread.c $(LIBTIFF_TREE)/tif_dirwrite.c \
+	$(LIBTIFF_TREE)/tif_dumpmode.c $(LIBTIFF_TREE)/tif_error.c \
+	$(LIBTIFF_TREE)/tif_extension.c $(LIBTIFF_TREE)/tif_fax3.c \
+	$(LIBTIFF_TREE)/tif_fax3sm.c $(LIBTIFF_TREE)/tif_flush.c \
+	$(LIBTIFF_TREE)/tif_getimage.c $(LIBTIFF_TREE)/tif_jbig.c \
+	$(LIBTIFF_TREE)/tif_jpeg.c $(LIBTIFF_TREE)/tif_jpeg_12.c \
+	$(LIBTIFF_TREE)/tif_luv.c $(LIBTIFF_TREE)/tif_lzma.c \
+	$(LIBTIFF_TREE)/tif_lzw.c $(LIBTIFF_TREE)/tif_next.c \
+	$(LIBTIFF_TREE)/tif_ojpeg.c $(LIBTIFF_TREE)/tif_open.c \
+	$(LIBTIFF_TREE)/tif_packbits.c $(LIBTIFF_TREE)/tif_pixarlog.c \
+	$(LIBTIFF_TREE)/tif_predict.c $(LIBTIFF_TREE)/tif_print.c \
+	$(LIBTIFF_TREE)/tif_read.c $(LIBTIFF_TREE)/tif_strip.c \
+	$(LIBTIFF_TREE)/tif_swab.c $(LIBTIFF_TREE)/tif_thunder.c \
+	$(LIBTIFF_TREE)/tif_tile.c $(LIBTIFF_TREE)/tif_version.c \
+	$(LIBTIFF_TREE)/tif_warning.c $(LIBTIFF_TREE)/tif_write.c \
+	$(LIBTIFF_TREE)/tif_zip.c $(LIBTIFF_TREE)/tif_hash_set.c \
+	$(am__append_1) $(am__append_2)
 xdvipsk_LDADD = libdvipsgraph.a $(KPATHSEA_LIBS) $(LUA_LIBS) \
-	$(LIBTIFF_LIBS) $(LIBPNG_LIBS) $(ZLIB_LIBS) $(LIBJPEG_LIBS) \
-	$(FREETYPE2_LIBS) -lstdc++ $(am__append_2)
+	$(LIBPNG_LIBS) $(ZLIB_LIBS) $(FREETYPE2_LIBS) -lstdc++ \
+	$(am__append_3) $(am__append_4) $(am__append_5) \
+	$(am__append_6) $(am__append_8)
 @cross_TRUE@xdvipsk_LDFLAGS = -fno-lto -fno-use-linker-plugin -static -static-libgcc -static-libstdc++ --disable-shared
-noinst_LIBRARIES = libdvipsgraph.a $(LIBTIFF_LIBS) $(LIBJPEG_LIBS)
-libdvipsgraph_a_dependencies = $(ZLIB_DEPEND) $(LIBPNG_DEPEND) $(LIBJPEG_DEPEND) $(LIBTIFF_DEPEND)
+noinst_LIBRARIES = libdvipsgraph.a $(am__append_9) $(am__append_10)
+libdvipsgraph_a_dependencies = $(ZLIB_DEPEND) $(LIBPNG_DEPEND)
 libdvipsgraph_a_SOURCES = \
     graphlib/bitmap.cpp \
     graphlib/bitmap.h \
@@ -1601,6 +1621,12 @@ $(LIBTIFF_TREE)/libtiff_a-tif_zip.$(OBJEXT):  \
 $(LIBTIFF_TREE)/libtiff_a-tif_hash_set.$(OBJEXT):  \
 	$(LIBTIFF_TREE)/$(am__dirstamp) \
 	$(LIBTIFF_TREE)/$(DEPDIR)/$(am__dirstamp)
+$(LIBTIFF_TREE)/libtiff_a-tif_win32.$(OBJEXT):  \
+	$(LIBTIFF_TREE)/$(am__dirstamp) \
+	$(LIBTIFF_TREE)/$(DEPDIR)/$(am__dirstamp)
+$(LIBTIFF_TREE)/libtiff_a-tif_unix.$(OBJEXT):  \
+	$(LIBTIFF_TREE)/$(am__dirstamp) \
+	$(LIBTIFF_TREE)/$(DEPDIR)/$(am__dirstamp)
 
 libtiff.a: $(libtiff_a_OBJECTS) $(libtiff_a_DEPENDENCIES) $(EXTRA_libtiff_a_DEPENDENCIES) 
 	$(AM_V_at)-rm -f libtiff.a
@@ -1750,8 +1776,10 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@$(LIBTIFF_TREE)/$(DEPDIR)/libtiff_a-tif_swab.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@$(LIBTIFF_TREE)/$(DEPDIR)/libtiff_a-tif_thunder.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@$(LIBTIFF_TREE)/$(DEPDIR)/libtiff_a-tif_tile.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@$(LIBTIFF_TREE)/$(DEPDIR)/libtiff_a-tif_unix.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@$(LIBTIFF_TREE)/$(DEPDIR)/libtiff_a-tif_version.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@$(LIBTIFF_TREE)/$(DEPDIR)/libtiff_a-tif_warning.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@$(LIBTIFF_TREE)/$(DEPDIR)/libtiff_a-tif_win32.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@$(LIBTIFF_TREE)/$(DEPDIR)/libtiff_a-tif_write.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@$(LIBTIFF_TREE)/$(DEPDIR)/libtiff_a-tif_zip.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/xdvipsk-bbox.Po@am__quote@ # am--include-marker
@@ -3052,6 +3080,34 @@ $(LIBTIFF_TREE)/libtiff_a-tif_hash_set.obj: $(LIBTIFF_TREE)/tif_hash_set.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(LIBTIFF_TREE)/tif_hash_set.c' object='$(LIBTIFF_TREE)/libtiff_a-tif_hash_set.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libtiff_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o $(LIBTIFF_TREE)/libtiff_a-tif_hash_set.obj `if test -f '$(LIBTIFF_TREE)/tif_hash_set.c'; then $(CYGPATH_W) '$(LIBTIFF_TREE)/tif_hash_set.c'; else $(CYGPATH_W) '$(srcdir)/$(LIBTIFF_TREE)/tif_hash_set.c'; fi`
+
+$(LIBTIFF_TREE)/libtiff_a-tif_win32.o: $(LIBTIFF_TREE)/tif_win32.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libtiff_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT $(LIBTIFF_TREE)/libtiff_a-tif_win32.o -MD -MP -MF $(LIBTIFF_TREE)/$(DEPDIR)/libtiff_a-tif_win32.Tpo -c -o $(LIBTIFF_TREE)/libtiff_a-tif_win32.o `test -f '$(LIBTIFF_TREE)/tif_win32.c' || echo '$(srcdir)/'`$(LIBTIFF_TREE)/tif_win32.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(LIBTIFF_TREE)/$(DEPDIR)/libtiff_a-tif_win32.Tpo $(LIBTIFF_TREE)/$(DEPDIR)/libtiff_a-tif_win32.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(LIBTIFF_TREE)/tif_win32.c' object='$(LIBTIFF_TREE)/libtiff_a-tif_win32.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libtiff_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o $(LIBTIFF_TREE)/libtiff_a-tif_win32.o `test -f '$(LIBTIFF_TREE)/tif_win32.c' || echo '$(srcdir)/'`$(LIBTIFF_TREE)/tif_win32.c
+
+$(LIBTIFF_TREE)/libtiff_a-tif_win32.obj: $(LIBTIFF_TREE)/tif_win32.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libtiff_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT $(LIBTIFF_TREE)/libtiff_a-tif_win32.obj -MD -MP -MF $(LIBTIFF_TREE)/$(DEPDIR)/libtiff_a-tif_win32.Tpo -c -o $(LIBTIFF_TREE)/libtiff_a-tif_win32.obj `if test -f '$(LIBTIFF_TREE)/tif_win32.c'; then $(CYGPATH_W) '$(LIBTIFF_TREE)/tif_win32.c'; else $(CYGPATH_W) '$(srcdir)/$(LIBTIFF_TREE)/tif_win32.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(LIBTIFF_TREE)/$(DEPDIR)/libtiff_a-tif_win32.Tpo $(LIBTIFF_TREE)/$(DEPDIR)/libtiff_a-tif_win32.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(LIBTIFF_TREE)/tif_win32.c' object='$(LIBTIFF_TREE)/libtiff_a-tif_win32.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libtiff_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o $(LIBTIFF_TREE)/libtiff_a-tif_win32.obj `if test -f '$(LIBTIFF_TREE)/tif_win32.c'; then $(CYGPATH_W) '$(LIBTIFF_TREE)/tif_win32.c'; else $(CYGPATH_W) '$(srcdir)/$(LIBTIFF_TREE)/tif_win32.c'; fi`
+
+$(LIBTIFF_TREE)/libtiff_a-tif_unix.o: $(LIBTIFF_TREE)/tif_unix.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libtiff_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT $(LIBTIFF_TREE)/libtiff_a-tif_unix.o -MD -MP -MF $(LIBTIFF_TREE)/$(DEPDIR)/libtiff_a-tif_unix.Tpo -c -o $(LIBTIFF_TREE)/libtiff_a-tif_unix.o `test -f '$(LIBTIFF_TREE)/tif_unix.c' || echo '$(srcdir)/'`$(LIBTIFF_TREE)/tif_unix.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(LIBTIFF_TREE)/$(DEPDIR)/libtiff_a-tif_unix.Tpo $(LIBTIFF_TREE)/$(DEPDIR)/libtiff_a-tif_unix.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(LIBTIFF_TREE)/tif_unix.c' object='$(LIBTIFF_TREE)/libtiff_a-tif_unix.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libtiff_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o $(LIBTIFF_TREE)/libtiff_a-tif_unix.o `test -f '$(LIBTIFF_TREE)/tif_unix.c' || echo '$(srcdir)/'`$(LIBTIFF_TREE)/tif_unix.c
+
+$(LIBTIFF_TREE)/libtiff_a-tif_unix.obj: $(LIBTIFF_TREE)/tif_unix.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libtiff_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT $(LIBTIFF_TREE)/libtiff_a-tif_unix.obj -MD -MP -MF $(LIBTIFF_TREE)/$(DEPDIR)/libtiff_a-tif_unix.Tpo -c -o $(LIBTIFF_TREE)/libtiff_a-tif_unix.obj `if test -f '$(LIBTIFF_TREE)/tif_unix.c'; then $(CYGPATH_W) '$(LIBTIFF_TREE)/tif_unix.c'; else $(CYGPATH_W) '$(srcdir)/$(LIBTIFF_TREE)/tif_unix.c'; fi`
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(LIBTIFF_TREE)/$(DEPDIR)/libtiff_a-tif_unix.Tpo $(LIBTIFF_TREE)/$(DEPDIR)/libtiff_a-tif_unix.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$(LIBTIFF_TREE)/tif_unix.c' object='$(LIBTIFF_TREE)/libtiff_a-tif_unix.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(libtiff_a_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o $(LIBTIFF_TREE)/libtiff_a-tif_unix.obj `if test -f '$(LIBTIFF_TREE)/tif_unix.c'; then $(CYGPATH_W) '$(LIBTIFF_TREE)/tif_unix.c'; else $(CYGPATH_W) '$(srcdir)/$(LIBTIFF_TREE)/tif_unix.c'; fi`
 
 xdvipsk-bbox.o: bbox.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(xdvipsk_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT xdvipsk-bbox.o -MD -MP -MF $(DEPDIR)/xdvipsk-bbox.Tpo -c -o xdvipsk-bbox.o `test -f 'bbox.c' || echo '$(srcdir)/'`bbox.c
@@ -4854,8 +4910,10 @@ distclean: distclean-recursive
 	-rm -f $(LIBTIFF_TREE)/$(DEPDIR)/libtiff_a-tif_swab.Po
 	-rm -f $(LIBTIFF_TREE)/$(DEPDIR)/libtiff_a-tif_thunder.Po
 	-rm -f $(LIBTIFF_TREE)/$(DEPDIR)/libtiff_a-tif_tile.Po
+	-rm -f $(LIBTIFF_TREE)/$(DEPDIR)/libtiff_a-tif_unix.Po
 	-rm -f $(LIBTIFF_TREE)/$(DEPDIR)/libtiff_a-tif_version.Po
 	-rm -f $(LIBTIFF_TREE)/$(DEPDIR)/libtiff_a-tif_warning.Po
+	-rm -f $(LIBTIFF_TREE)/$(DEPDIR)/libtiff_a-tif_win32.Po
 	-rm -f $(LIBTIFF_TREE)/$(DEPDIR)/libtiff_a-tif_write.Po
 	-rm -f $(LIBTIFF_TREE)/$(DEPDIR)/libtiff_a-tif_zip.Po
 	-rm -f ./$(DEPDIR)/xdvipsk-bbox.Po
@@ -5064,8 +5122,10 @@ maintainer-clean: maintainer-clean-recursive
 	-rm -f $(LIBTIFF_TREE)/$(DEPDIR)/libtiff_a-tif_swab.Po
 	-rm -f $(LIBTIFF_TREE)/$(DEPDIR)/libtiff_a-tif_thunder.Po
 	-rm -f $(LIBTIFF_TREE)/$(DEPDIR)/libtiff_a-tif_tile.Po
+	-rm -f $(LIBTIFF_TREE)/$(DEPDIR)/libtiff_a-tif_unix.Po
 	-rm -f $(LIBTIFF_TREE)/$(DEPDIR)/libtiff_a-tif_version.Po
 	-rm -f $(LIBTIFF_TREE)/$(DEPDIR)/libtiff_a-tif_warning.Po
+	-rm -f $(LIBTIFF_TREE)/$(DEPDIR)/libtiff_a-tif_win32.Po
 	-rm -f $(LIBTIFF_TREE)/$(DEPDIR)/libtiff_a-tif_write.Po
 	-rm -f $(LIBTIFF_TREE)/$(DEPDIR)/libtiff_a-tif_zip.Po
 	-rm -f ./$(DEPDIR)/xdvipsk-bbox.Po
@@ -5194,7 +5254,7 @@ $(libjpeg_a_OBJECTS): config.force
 $(libtiff_a_OBJECTS): config.force
 
 $(xdvipsk_OBJECTS): $(KPATHSEA_DEPEND) $(LUA_DEPEND) $(ZLIB_DEPEND) $(LIBPNG_DEPEND) \
-                    $(LIBJPEG_DEPEND) $(LIBTIFF_DEPEND) $(FREETYPE2_DEPEND)
+                    $(FREETYPE2_DEPEND)
 
 $(libdvipsgraph_a_OBJECTS): config.force
 

@@ -184,6 +184,9 @@ extern void LuaMap_cache_close(void);
 extern void makefont(char *name, int dpi, int bdpi);
 
 /* prototypes for functions from output.c */
+#ifdef XDVIPSK
+extern boolean is_ps_name_char(unsigned char ch);
+#endif /* XDVIPSK */
 extern void copyfile(const char *s);
 extern void copyfile_general(const char *s, struct header_list *h);
 extern void figcopyfile(char *s, int systemtype);
@@ -615,7 +618,7 @@ extern Boolean lua_process_stack;
 extern Boolean lua_dvips_exit;
 extern Boolean lua_callback_defined(lua_State *L, const char* lua_callback);
 extern void load_lua_scripts(const char* luascript);
-extern int run_lua_specials(lua_State *L, const char* lua_func, char* p, Boolean lua_available);
+extern int run_lua_specials(lua_State *L, const char* lua_func, char **pp, Boolean lua_available);
 extern void run_lua_after_prescan(lua_State *L);
 extern void run_lua_after_drawchar(lua_State *L, chardesctype *c, int cc, int rhh, int rvv, integer dir, int lastfont, int tu_count, unsigned int *tounicode);
 extern void run_lua_after_drawrule(lua_State *L, integer rw, integer rh);
