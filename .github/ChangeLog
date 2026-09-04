@@ -1,3 +1,8 @@
+2026-09-04  Sigitas Tolušis <sigitas@vtex.lt>
+
+	* workflows/xdvipsk-test.yml (debian): update from bullseye to
+	bookworm, since bullseye support ended August 2026
+
 2026-05-23  Karl Berry  <karl@freefriends.org>
 
 	* scripts/build-asy.sh: enable fftw and install its packages.
