@@ -46,6 +46,28 @@ AC_DEFINE([TL_VERSION], ["TeX Live tex_live_version()"],
           [Define to the current TeX Live version string.])
 
 KPSE_KPATHSEA_FLAGS
+
+if test "x$with_system_kpathsea" = xyes; then
+  # We want to support building xdvipsk
+  # using installed (system) kpathsea headers and library.
+  # In that case we need the location of <kpathsea/paths.h>.
+  list="/usr/include /usr/local/include `echo $KPATHSEA_INCLUDES | sed 's/-I//g'`"
+  found=no
+  for KPATHSEA_PATHS_H in $list; do
+    if test -r "$KPATHSEA_PATHS_H/kpathsea/paths.h"; then
+      found=yes
+      break
+    fi
+  done
+  if test "x$found" = xno; then
+    AC_MSG_NOTICE([You requested to build `xdvipsk' using an installed `kpathsea' version,])
+    AC_MSG_NOTICE([    which requires to locate the <kpathsea/paths.h> header file.])
+    AC_MSG_ERROR([Sorry, not found under any of: $list *****])
+  fi
+else
+  KPATHSEA_PATHS_H='${top_builddir}/..'
+fi
+AC_SUBST([KPATHSEA_PATHS_H])
 KPSE_LUA53_FLAGS
 KPSE_ZLIB_FLAGS
 KPSE_LIBPNG_FLAGS
