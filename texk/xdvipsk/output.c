@@ -2203,14 +2203,21 @@ drawchar(chardesctype *c, int cc)
       }
       else hvpos();
       if (lastfont != curfnt->psname) {
-		 if (curfnt->resfont->embolden) {
-		   double fontscale;
-		   textStrokeFlag = 1;
-		   fontscale = curfnt->scaledsize * conv;
-		   sprintf(textstrokecmd, "%g ct_st", (fontscale * curfnt->resfont->embolden) / 100.0);
-		 }
-		 else
-		   textStrokeFlag = 0;
+         boolean new_textStrokeFlag;
+         if (curfnt->resfont->embolden) {
+            double fontscale;
+            new_textStrokeFlag = 1;
+            fontscale = curfnt->scaledsize * conv;
+            sprintf(textstrokecmd, "%g ct_st", (fontscale * curfnt->resfont->embolden) / 100.0);
+         }
+         else
+            new_textStrokeFlag = 0;
+         if (instring && (textStrokeFlag != new_textStrokeFlag))
+         {
+            stringend();
+            chrcmd('p');
+         }
+         textStrokeFlag = new_textStrokeFlag;
          fontout(curfnt->psname);
 	  }
       scout2Octal(c->cid);
