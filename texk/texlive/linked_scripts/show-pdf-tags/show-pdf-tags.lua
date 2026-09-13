@@ -1,6 +1,6 @@
 #!/usr/bin/env texlua
 
-local show_pdf_tags_version = "1.5"
+local show_pdf_tags_version = "1.6"
 
 kpse.set_program_name'lualatex'
 
@@ -416,12 +416,19 @@ local function format_subtype(subtype)
   end
 end
 
+local function format_xml_name(s)
+-- %p would include _
+   return s:gsub("([:+(),@%s#])",
+                 function (c) return string.format("_x%02X_",c:byte()) end
+                 )
+ end
+
 local function format_subtype_xml(subtype)
   if subtype.namespace then
-    return string.format('<%s xmlns="%s"', subtype.subtype,
+    return string.format('<%s xmlns="%s"', format_xml_name(subtype.subtype),
                   (hide_w3c and subtype.namespace:gsub('http://www.w3.org', 'http://-www.w3.org')) or subtype.namespace)
   else
-    return "<" .. subtype.subtype:gsub(":","_x3A_")
+    return "<" .. format_xml_name(subtype.subtype)
   end
 end
 
@@ -563,14 +570,14 @@ local function print_tree_xml(tree, ctx)
         print(string.format('%s<?ReferencedObject%s%s ?>', indent, t, page))
       else
         local subtype = obj.subtype
-	local mapped = subtype.mapped
+        local mapped = subtype.mapped
 --        mapped = mapped and mapped.subtype or ''
 --        mapped = mapped and ' / ' .. format_subtype(mapped) or ''
         if follow_rolemap and mapped then
           print(string.format('%s%s', indent, format_subtype_xml(mapped)))
-	else
+        else
           print(string.format('%s%s', indent, format_subtype_xml(subtype)))
-	end
+        end
         local lines = {}
         if obj.id then
           lines[#lines + 1] = ' id="' .. obj.id:gsub('&','&amp;'):gsub('<','&lt;'):gsub('"','&quot;'):gsub('\0','[NULL]') .. '"'
@@ -597,75 +604,78 @@ local function print_tree_xml(tree, ctx)
           lines[#lines + 1] = ' phonetic-alphabet="' .. obj.phonetic_alphabet:gsub('&','&amp;'):gsub('<','&lt;'):gsub('"','&quot;'):gsub('\0','[NULL]'):gsub('[\1-\8\11\12\14-\31]','[CTRL]') .. '"'
         end
         if obj.associated_files then
-	  local f = {}
-	  local warnings = {}
-	  for i, file in ipairs(obj.associated_files) do
+          local f = {}
+          local warnings = {}
+          for i, file in ipairs(obj.associated_files) do
             if file.EF.F then
-	      f[#f+1] = get_string(file, "UF", warnings) 
+              f[#f+1] = get_string(file, "UF", warnings) 
             end
-	  end
-	  for _, warning in ipairs(warnings) do
+          end
+          for _, warning in ipairs(warnings) do
             io.stderr:write('Warning while processing associated files: ' .. warning .. '\n')
-	  end
+          end
           lines[#lines + 1] = ' af="' .. table.concat(f, ' ') .. '"'
         end
         if obj.attributes then
-	  for k,v in ordered_pairs(obj.attributes) do
+          for k,v in ordered_pairs(obj.attributes) do
             local attrns=""
-	    if k~=subtype.namespace then
-	      attrns = k:gsub('.*/','')
-	    end
+            if k~=subtype.namespace then
+              attrns = k:gsub('.*/','')
+            end
             if type(v) == "table" then
-	      if attrns ~= "" then
+              if attrns ~= "" then
                 lines[#lines +1] = ' xmlns:' .. attrns .. '="' .. k .. '"'
-		attrns = attrns ..':'
+                attrns = attrns ..':'
               end
               for kk,vv in ordered_pairs(v) do
-	        if type(vv) == "table" then
-	          vv = require'show-pdf-tags-inspect'(vv):gsub('\n[ ]*',' ')
-	        end
-                lines[#lines+1] = ' ' ..attrns .. kk .. '="' .. tostring(vv):gsub('&','&amp;'):gsub('<','&lt;'):gsub('"','&quot;'):gsub('\0','[NULL]') .. '"'
+                if type(vv) == "table" then
+                  vv = require'show-pdf-tags-inspect'(vv):gsub('\n[ ]*',' ')
+                end
+                lines[#lines+1] = ' ' ..attrns .. format_xml_name(kk) .. '="' .. tostring(vv):gsub('&','&amp;'):gsub('<','&lt;'):gsub('"','&quot;'):gsub('\0','[NULL]') .. '"'
               end
             else
               io.stderr:write("Unexpected attributes object\n")
             end
           end
         end
-	if mapped and mapped.subtype then
+        if mapped and mapped.subtype then
           if follow_rolemap then
-	    if subtype.namespace then
+            if subtype.namespace then
               lines[#lines+1] = ' xmlns:orig-ns="' .. subtype.namespace .. '"'
               lines[#lines+1] = ' rolemapped-from="orig-ns:' .. subtype.subtype .. '"'
-	    else
+            else
               lines[#lines+1] = ' rolemapped-from="' .. subtype.subtype .. '"'
-	    end
-	  else
+            end
+          else
             lines[#lines+1] = ' rolemaps-to="' .. mapped.subtype .. '"'
-	  end
-	end
+          end
+        end
         -- attributes = convert_attributes(elem.A),
         -- attribute_classes = convert_attribute_classes(elem.C),
         if referenced[obj] then
           lines[#lines + 1] = ' referenced-as="' .. referenced[obj] .. '"'
         end
-	lines[#lines+1] = ">"
+        lines[#lines+1] = ">"
 --
         if obj.associated_files then
-	  local f = {}
+          local f = {}
           local af_output = ''
-	  local warnings = {}
-	  for i, file in ipairs(obj.associated_files) do
+          local warnings = {}
+          for i, file in ipairs(obj.associated_files) do
             if file.EF.F then
-	      af_output = pdfe.readwholestream(file.EF.F, true)
-              lines[#lines + 1] = '<AssociatedFile name="' .. get_string(file, "UF", warnings) .. '" xmlns="">'
-	      if file.EF.F.Subtype == 'application/mathml+xml' then
+              af_output = pdfe.readwholestream(file.EF.F, true)
+              lines[#lines + 1] = '<AssociatedFile name="' .. get_string(file, "UF", warnings) .. '"' ..
+                                   (file.AFRelationship and (' relationship="' .. file.AFRelationship ..'"') or '') ..
+                                   (file.EF.F.Subtype and (' media-type="' .. file.EF.F.Subtype ..'"') or '') ..
+                                   ' xmlns="">'
+              if file.EF.F.Subtype == 'application/mathml+xml' then
                 lines[#lines + 1] = af_output
-	      else
+              else
                 lines[#lines + 1] = af_output:gsub('&','&amp;'):gsub('<','&lt;'):gsub('"','&quot;'):gsub('\0','[NULL]'):gsub('[\1-\8\11\12\14-\31]','[CTRL]')
-              end	  
+              end         
               lines[#lines + 1] = '</AssociatedFile>'
             end
-	  end
+          end
         end
 --
         if obj.ref then
@@ -681,20 +691,20 @@ local function print_tree_xml(tree, ctx)
           end
           recurse(obj.kids, indent .. ' ')
         if follow_rolemap and mapped then
-	  print(indent .. "</" .. mapped.subtype ..">")
-	else
-	  print(indent .. "</" .. subtype.subtype:gsub(":","_x3A_") ..">")
-	end
+          print(indent .. "</" .. format_xml_name(mapped.subtype) ..">")
+        else
+          print(indent .. "</" .. format_xml_name(subtype.subtype) ..">")
+        end
         elseif #lines > 0 then
           for i=1, #lines-1 do
             print(indent .. '  ' .. lines[i]:gsub('\n', '\n' .. indent .. '  '))
           end
           print(indent .. '  ' .. lines[#lines]:gsub('\n', '\n' .. indent .. '   '))
           if follow_rolemap and mapped then
-            print(indent .. "</" .. mapped.subtype ..">")
-	  else
-            print(indent .. "</" .. subtype.subtype:gsub(":","_x3A_") ..">")
-	  end
+            print(indent .. "</" .. format_xml_name(mapped.subtype) ..">")
+          else
+            print(indent .. "</" .. format_xml_name(subtype.subtype) ..">")
+          end
         end
       end
     end
