@@ -309,29 +309,10 @@ KPSE_ADD_FLAGS([kpathsea])
 AC_CHECK_SIZEOF([off_t], , AC_INCLUDES_DEFAULT
 [#include <kpathsea/config.h>])
 
-if test "x$with_system_kpathsea" = xyes; then
-  # We want to support building Web2C (TeX & co.)
-  # using installed (system) kpathsea headers and library.
-  # In that case we need the location of <kpathsea/paths.h>.
-  list="/usr/include /usr/local/include `echo $KPATHSEA_INCLUDES | sed 's/-I//g'`"
-  found=no
-  for KPATHSEA_PATHS_H in $list; do
-    if test -r "$KPATHSEA_PATHS_H/kpathsea/paths.h"; then
-      found=yes
-      break
-    fi
-  done
-  if test "x$found" = xno; then
-    AC_MSG_NOTICE([You requested to build `web2c' using an installed `kpathsea' version,])
-    AC_MSG_NOTICE([    which requires to locate the <kpathsea/paths.h> header file.])
-    AC_MSG_ERROR([Sorry, not found under any of: $list *****])
-  fi
-else
-  KPATHSEA_PATHS_H='${top_builddir}/..'
-fi
-AC_SUBST([KPATHSEA_PATHS_H])
+# Look for kpathsea/paths.h, taking --with-system-kpathsea into account.
+KPSE_KPATHSEA_PATHS_H
 
-dnl Check for Object::initCmd(const char *) etc
+# Check for Object::initCmd(const char *) etc.
 AC_LANG_PUSH([C++])
 AC_MSG_CHECKING([for Object::[initCmd(const char*)] etc])
 AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[#include <Object.h>]],

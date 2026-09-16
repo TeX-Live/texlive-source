@@ -1,3 +1,10 @@
+2026-09-16  Karl Berry  <karl@freefriends.org>
+
+	* kpse-common.m4 (KPSE_KPATHSEA_PATHS_H): new macro, taken from
+	texk/web2c/configure.ac and used also in texk/xdvipsk/configure.ac.
+	Suggestion from Florian Schmaus,
+	https://github.com/TeX-Live/texlive-source/pull/85
+
 2026-05-25  Karl Berry  <karl@freefriends.org>
 
 	* kpse-pkgs.m4 (KPSE_UTILS_PKGS): add utfpatgen.

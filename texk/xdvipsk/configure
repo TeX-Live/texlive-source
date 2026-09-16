@@ -653,6 +653,7 @@ BUNDLED_LIBJPEG_FALSE
 BUNDLED_LIBJPEG_TRUE
 LIBJPEG_INCLUDES
 LIBJPEG_LIBS
+KPATHSEA_PATHS_H
 FREETYPE2_RULE
 FREETYPE2_DEPEND
 FREETYPE2_LIBS
@@ -23024,6 +23025,36 @@ $(FREETYPE2_DEPEND): ${top_builddir}/../../libs/freetype2/freetype2/ft2build.h
 ${top_builddir}/../../libs/freetype2/freetype2/ft2build.h:
 	cd ${top_builddir}/../../libs/freetype2 && $(MAKE) $(AM_MAKEFLAGS) rebuild'
 fi
+
+
+# Look for kpathsea/paths.h, taking --with-system-kpathsea into account.
+echo 'tldbg:KPSE_KPATHSEA_PATHS_H called' >&5
+if test "x$with_system_kpathsea" = xyes; then
+  echo 'tldbg:KPSE_KPATHSEA_PATHS_H  with_system_kpathsea set' >&5
+  # We need to support building using a system-installed kpathsea
+  #  headers and library for some distros.
+  # In that case we need the location of <kpathsea/paths.h>.
+  list="/usr/include /usr/local/include `echo $KPATHSEA_INCLUDES | sed 's/-I//g'`"
+  found=no
+  for KPATHSEA_PATHS_H in $list; do
+    echo 'tldbg:KPSE_KPATHSEA_PATHS_H   checking $KPATHSEA_PATHS_H' >&5
+    if test -r "$KPATHSEA_PATHS_H/kpathsea/paths.h"; then
+      found=yes
+      break
+    fi
+  done
+  if test "x$found" = xno; then
+    { printf '%s\n' "$as_me:${as_lineno-$LINENO}: You requested building using the system-installed kpathsea," >&5
+printf '%s\n' "$as_me: You requested building using the system-installed kpathsea," >&6;}
+    { printf '%s\n' "$as_me:${as_lineno-$LINENO}:   which requires locating the <kpathsea/paths.h> header." >&5
+printf '%s\n' "$as_me:   which requires locating the <kpathsea/paths.h> header." >&6;}
+    as_fn_error $? "Sorry, kpathsea/paths.h not found under any of: $list" "$LINENO" 5
+  fi
+else
+  echo 'tldbg:KPSE_KPATHSEA_PATHS_H  not with_system_kpathsea, hardwiring KPATHSEA_PATHS_H' >&5
+  KPATHSEA_PATHS_H='${top_builddir}/..'
+fi
+
 
 
 

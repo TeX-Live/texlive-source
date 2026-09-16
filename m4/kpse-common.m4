@@ -356,3 +356,42 @@ ac_configure_args="$ac_configure_args --host='$kpse_build_alias' \
 CC='$BUILDCC' CFLAGS='$BUILDCFLAGS' \
 CPPFLAGS='$BUILDCPPFLAGS' LDFLAGS='$BUILDLDFLAGS'"])])
 ]) # KPSE_NATIVE_SUBDIRS
+
+
+# KPSE_KPATHSEA_PATHS_H
+# ---------------------
+# If system kpathsea is requested, look for kpathsea/paths.h in
+#   /usr/include /usr/local/include $KPATHSEA_INCLUDES
+#   and set the ac variable KPATHSEA_PATHS_H to the first one found;
+#   give error if none found.
+# If not system kpathsea, set it to '${top_builddir}/..'.
+# Then, in either caseAC_SUBST the variable.
+# 
+AC_DEFUN([KPSE_KPATHSEA_PATHS_H], [dnl
+AC_REQUIRE([KPSE_KPATHSEA_FLAGS])[]dnl provides --with-system-kpathsea option
+echo 'tldbg:[$0] called' >&AS_MESSAGE_LOG_FD
+if test "x$with_system_kpathsea" = xyes; then
+  echo 'tldbg:[$0]  with_system_kpathsea set' >&AS_MESSAGE_LOG_FD
+  # We need to support building using a system-installed kpathsea
+  #  headers and library for some distros.
+  # In that case we need the location of <kpathsea/paths.h>.
+  list="/usr/include /usr/local/include `echo $KPATHSEA_INCLUDES | sed 's/-I//g'`"
+  found=no
+  for KPATHSEA_PATHS_H in $list; do
+    echo 'tldbg:[$0]   checking $KPATHSEA_PATHS_H' >&AS_MESSAGE_LOG_FD
+    if test -r "$KPATHSEA_PATHS_H/kpathsea/paths.h"; then
+      found=yes
+      break
+    fi
+  done
+  if test "x$found" = xno; then
+    AC_MSG_NOTICE([You requested building using the system-installed kpathsea,])
+    AC_MSG_NOTICE([  which requires locating the <kpathsea/paths.h> header.])
+    AC_MSG_ERROR([Sorry, kpathsea/paths.h not found under any of: $list])
+  fi
+else
+  echo 'tldbg:[$0]  not with_system_kpathsea, hardwiring KPATHSEA_PATHS_H' >&AS_MESSAGE_LOG_FD
+  KPATHSEA_PATHS_H='${top_builddir}/..'
+fi
+AC_SUBST([KPATHSEA_PATHS_H])
+])dnl

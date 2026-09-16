@@ -31534,30 +31534,37 @@ printf '%s\n' "#define SIZEOF_OFF_T $ac_cv_sizeof_off_t" >>confdefs.h
 
 
 
+# Look for kpathsea/paths.h, taking --with-system-kpathsea into account.
+echo 'tldbg:KPSE_KPATHSEA_PATHS_H called' >&5
 if test "x$with_system_kpathsea" = xyes; then
-  # We want to support building Web2C (TeX & co.)
-  # using installed (system) kpathsea headers and library.
+  echo 'tldbg:KPSE_KPATHSEA_PATHS_H  with_system_kpathsea set' >&5
+  # We need to support building using a system-installed kpathsea
+  #  headers and library for some distros.
   # In that case we need the location of <kpathsea/paths.h>.
   list="/usr/include /usr/local/include `echo $KPATHSEA_INCLUDES | sed 's/-I//g'`"
   found=no
   for KPATHSEA_PATHS_H in $list; do
+    echo 'tldbg:KPSE_KPATHSEA_PATHS_H   checking $KPATHSEA_PATHS_H' >&5
     if test -r "$KPATHSEA_PATHS_H/kpathsea/paths.h"; then
       found=yes
       break
     fi
   done
   if test "x$found" = xno; then
-    { printf '%s\n' "$as_me:${as_lineno-$LINENO}: You requested to build \`web2c' using an installed \`kpathsea' version," >&5
-printf '%s\n' "$as_me: You requested to build \`web2c' using an installed \`kpathsea' version," >&6;}
-    { printf '%s\n' "$as_me:${as_lineno-$LINENO}:     which requires to locate the <kpathsea/paths.h> header file." >&5
-printf '%s\n' "$as_me:     which requires to locate the <kpathsea/paths.h> header file." >&6;}
-    as_fn_error $? "Sorry, not found under any of: $list *****" "$LINENO" 5
+    { printf '%s\n' "$as_me:${as_lineno-$LINENO}: You requested building using the system-installed kpathsea," >&5
+printf '%s\n' "$as_me: You requested building using the system-installed kpathsea," >&6;}
+    { printf '%s\n' "$as_me:${as_lineno-$LINENO}:   which requires locating the <kpathsea/paths.h> header." >&5
+printf '%s\n' "$as_me:   which requires locating the <kpathsea/paths.h> header." >&6;}
+    as_fn_error $? "Sorry, kpathsea/paths.h not found under any of: $list" "$LINENO" 5
   fi
 else
+  echo 'tldbg:KPSE_KPATHSEA_PATHS_H  not with_system_kpathsea, hardwiring KPATHSEA_PATHS_H' >&5
   KPATHSEA_PATHS_H='${top_builddir}/..'
 fi
 
 
+
+# Check for Object::initCmd(const char *) etc.
 ac_ext=cpp
 ac_cpp='$CXXCPP $CPPFLAGS'
 ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'

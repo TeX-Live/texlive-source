@@ -51,6 +51,9 @@ KPSE_ZLIB_FLAGS
 KPSE_LIBPNG_FLAGS
 KPSE_FREETYPE2_FLAGS
 
+# Look for kpathsea/paths.h, taking --with-system-kpathsea into account.
+KPSE_KPATHSEA_PATHS_H
+
 AC_DEFUN([KPSE_LIBJPEG_OPTIONS], [_KPSE_LIB_OPTIONS([libjpeg], [$1], [pkg-config])])
 AC_DEFUN([KPSE_LIBJPEG_SYSTEM_FLAGS], [dnl
 AC_REQUIRE([_KPSE_CHECK_PKG_CONFIG])dnl
