@@ -2,8 +2,8 @@
 #
 # cjk-gs-integrate - setup Ghostscript for CID/TTF CJK fonts
 #
-# Copyright 2015-2021 by Norbert Preining
-# Copyright 2016-2021 by Japanese TeX Development Community
+# Copyright 2015-2026 by Norbert Preining
+# Copyright 2016-2026 by Japanese TeX Development Community
 #
 # This work is based on research and work by (in alphabetical order)
 #   Masamichi Hosoda
@@ -53,7 +53,7 @@ binmode (STDERR, ':encoding(console_out)');
 @ARGV = map{ decode('locale', $_) }@ARGV;
 
 (my $prg = basename(decode('locale', $0))) =~ s/\.pl$//;
-my $version = '20210625.0';
+my $version = '20260926.0';
 
 if (win32()) {
   # some perl functions (symlink, -l test) does not work
@@ -262,6 +262,23 @@ my %encode_list = (
     UniKS-UTF32-V
     UniKS-UTF8-H
     UniKS-UTF8-V
+    / ],
+  KR => [ qw/
+    Adobe-KR-0
+    Adobe-KR-1
+    Adobe-KR-2
+    Adobe-KR-3
+    Adobe-KR-4
+    Adobe-KR-5
+    Adobe-KR-6
+    Adobe-KR-7
+    Adobe-KR-8
+    Adobe-KR-9
+    Identity-H
+    Identity-V
+    UniAKR-UTF16-H
+    UniAKR-UTF32-H
+    UniAKR-UTF8-H
     / ] );
 
 #
@@ -725,7 +742,7 @@ sub do_aliases {
   #
   $outp .= "\n\n% Aliases\n";
   #
-  my (@jal, @kal, @tal, @sal, @ai0al);
+  my (@jal, @kal, @kral, @tal, @sal, @ai0al);
   #
   for my $al (sort keys %aliases) {
     my $target;
@@ -760,6 +777,8 @@ sub do_aliases {
       push @jal, "/$al /$target ;";
     } elsif ($class eq 'Korea') {
       push @kal, "/$al /$target ;";
+    } elsif ($class eq 'KR') {
+      push @kral, "/$al /$target ;";
     } elsif ($class eq 'GB') {
       push @sal, "/$al /$target ;";
     } elsif ($class eq 'CNS') {
@@ -778,7 +797,8 @@ sub do_aliases {
       if (! -r encode('locale_fs', "$ciddest/HeiseiKakuGo-W5"));
   #
   $outp .= "\n% Japanese fonts\n" . join("\n", @jal) . "\n" if @jal;
-  $outp .= "\n% Korean fonts\n" . join("\n", @kal) . "\n" if @kal;
+  $outp .= "\n% Korean (AK1) fonts\n" . join("\n", @kal) . "\n" if @kal;
+  $outp .= "\n% Korean (AKR) fonts\n" . join("\n", @kral) . "\n" if @kral;
   $outp .= "\n% Traditional Chinese fonts\n" . join("\n", @tal) . "\n" if @tal;
   $outp .= "\n% Simplified Chinese fonts\n" . join("\n", @sal) . "\n" if @sal;
   $outp .= "\n% Adobe-Identity-0 fonts\n" . join("\n", @ai0al) . "\n" if @ai0al;
@@ -877,11 +897,14 @@ sub update_master_cidfmap {
   # what we have to do is:
   #   in add mode:
   #     * add an entry for the given argument
-  #     * for tlgs.win32 pre-shipped cidfmap, prepend '%' to override
-  #       the default of "(cidfmap.TeXLive) .runlibfile",
+  #     * for TL2022 or earlier in which tlgs.win32 pre-shipped lib/cidfmap,
+  #       prepend '%' to override the default of "(cidfmap.TeXLive) .runlibfile"
+  #     * for TL2023 or later, create a new lib/cidfmap to override the default of Resource/Init/cidfmap
   #   in remove mode:
   #     * remove an entry for the given argument
-  #     * for tlgs.win32 pre-shipped cidfmap, remove '%' to restore the default
+  #     * for TL2022 or earlier in which tlgs.win32 pre-shipped lib/cidfmap,
+  #       remove '%' to restore the default of "(cidfmap.TeXLive) .runlibfile"
+  #     * for TL2023 or later, remove empty lib/cidfmap to restore the default of Resource/Init/cidfmap
   my $add = shift;
   my $cidfmap_master = "$opt_output/$cidfmap_pathpart";
   print_info(sprintf("%s $add %s cidfmap file ...\n",
@@ -931,6 +954,10 @@ sub update_master_cidfmap {
         print FOO $newmaster;
         close FOO;
       }
+      # if $newmaster is empty, remove file itself in cleanup mode
+      if ($newmaster =~ /^\s*$/) {
+        unlink encode('locale_fs', $cidfmap_master) if $opt_cleanup;
+      }
     } else {
       if ($found && !$found_tl) {
         print_info("$add already loaded in $cidfmap_master, no changes\n");
@@ -960,7 +987,7 @@ sub generate_cidfmap_entry {
   # as determined by minimal priority number
   # extract subfont
   my $s = "/$n << /FileType /TrueType 
-  /Path pssystemparams /GenericResourceDir get 
+  /Path currentsystemparams /GenericResourceDir get 
   (CIDFSubst/$f) concatstrings\n";
   if ($sf >= 0) { # in this script, $sf < 0 represents TTF
     $s .= "  /SubfontID $sf\n";
@@ -974,6 +1001,8 @@ sub generate_cidfmap_entry {
     $s .= "1) 5]";
   } elsif ($c eq "Korea") {
     $s .= "1) 2]";
+  } elsif ($c eq "KR") {
+    $s .= ") 9]";
   } elsif ($c eq "AI0") {
     print_warning("cannot use class AI0 for non-OTF $n, skipping.\n");
     return '';
@@ -1365,7 +1394,7 @@ sub info_found_fonts {
 # dump aliases
 sub info_list_aliases {
   print "List of ", ($opt_listallaliases ? "all" : "available"), " aliases and their options (in decreasing priority):\n" unless $opt_machine;
-  my (@jal, @kal, @tal, @sal, @ai0al);
+  my (@jal, @kal, @kral, @tal, @sal, @ai0al);
   for my $al (sort keys %aliases) {
     my $cl;
     my @ks = sort { $a <=> $b} keys(%{$aliases{$al}});
@@ -1389,6 +1418,8 @@ sub info_list_aliases {
       push @jal, $foo;
     } elsif ($cl eq 'Korea') {
       push @kal, $foo;
+    } elsif ($cl eq 'KR') {
+      push @kral, $foo;
     } elsif ($cl eq 'GB') {
       push @sal, $foo;
     } elsif ($cl eq 'CNS') {
@@ -1402,12 +1433,14 @@ sub info_list_aliases {
   if ($opt_machine) {
     print @jal if @jal;
     print @kal if @kal;
+    print @kral if @kral;
     print @sal if @sal;
     print @tal if @tal;
     print @ai0al if @ai0al;
   } else {
     print "Aliases for Japanese fonts:\n", @jal, "\n" if @jal;
-    print "Aliases for Korean fonts:\n", @kal, "\n" if @kal;
+    print "Aliases for Korean (AK1) fonts:\n", @kal, "\n" if @kal;
+    print "Aliases for Korean (AKR) fonts:\n", @kral, "\n" if @kral;
     print "Aliases for Simplified Chinese fonts:\n", @sal, "\n" if @sal;
     print "Aliases for Traditional Chinese fonts:\n", @tal, "\n" if @tal;
     print "Aliases for Adobe-Identity-0 fonts:\n", @ai0al, "\n" if @ai0al;
@@ -1995,7 +2028,7 @@ sub find_gs_resource {
   my $foundres = '';
   if (win32()) {
     # determine tlgs or native gs
-    my $foo = `kpsewhich -var-value=SELFAUTOPARENT`;
+    my $foo = `kpsewhich -var-value=TEXMFROOT`;
     # We assume that the output of kpsewhich is
     # the same as perl's locale (or active code page).
     decode('locale', $foo);
@@ -2012,10 +2045,33 @@ sub find_gs_resource {
         print_error("we cannot support such gs, sorry.\n");
         $foundres = '';
       }
-      # change output location
-      $cidfmap_pathpart = "../lib/cidfmap";
-      $cidfmap_local_pathpart = "../lib/cidfmap.local";
-      $cidfmap_aliases_pathpart = "../lib/cidfmap.aliases";
+      # [see: https://github.com/texjporg/cjk-gs-support/issues/25 (comments on 2026-09-26)]
+      # It appears that tlgs has changed the default location of cidfmap:
+      #   * As of TL2022 r65457 (gs-9.56.1): lib/cidfmap, lib/cidfmap.TeXLive
+      #                                       (cidfmap is simply a wrapper for cidfmap.TeXLive)
+      #   * As of TL2023 r66672 (gs-10.01.0): Resource/Init/cidfmap
+      #                                       (same content as the previous cidfmap.TeXLive)
+      # GS loads cidfmap regardless of whether it is located in lib/ or Resource/Init/,
+      # and the cidfmap in lib/ takes precedence over the one in Resource/Init/.
+      # Therefore, we (cjk-gs-integrate) always write under lib/ instead of Resource/Init
+      # to override the default cidfmap(.TeXLive) without overwriting itself.
+      #   * For TL2022 or earlier, edit existing lib/cidfmap both in "generate" and "remove" modes.
+      #   * For TL2023 or later, create a new lib/cidfmap in "generate" mode.
+      #     In "remove" mode, we must ensure that an empty lib/cidfmap (created by us) is not left behind,
+      #     so that GS can fall back to the Resource/Init/cidfmap (originally shipped with TL).
+      #     (It could be possible that we edit existing Resource/Init/cidfmap, but currently untouched).
+      #chomp(my $gsver = `rungs --version 2>$nul`);
+      #if ($?) {
+      #  print_error("Cannot run rungs --version ...\n");
+      #} else {
+      #  print_debug("Found tlgs $gsver.\n");
+      #  $gsver =~ s!^(\d+)\..*$!$1!;
+      #  if ($gsver < 10) {
+          $cidfmap_pathpart = "../lib/cidfmap";
+          $cidfmap_local_pathpart = "../lib/cidfmap.local";
+          $cidfmap_aliases_pathpart = "../lib/cidfmap.aliases";
+      #  }
+      #}
     } else {
       # we assume gswin32c is in the path
       # TODO: what should we do for gswin64c?
@@ -2503,6 +2559,9 @@ INCLUDE cjkgs-sazanami.dat
 # Harano Aji Fonts (free) -- Provides J70, J71
 INCLUDE cjkgs-haranoaji.dat
 
+# IBM Plex (free)
+INCLUDE cjkgs-ibm-plex.dat
+
 # Osaka (Apple)
 
 Name: Osaka
@@ -2584,7 +2643,7 @@ Class: CNS
 TTFname: cwfs.ttf
 
 #
-# KOREAN FONTS
+# KOREAN (AK1) FONTS
 #
 
 # Adobe -- Provides K30/80
@@ -2666,6 +2725,16 @@ TTFname: BM-HANNA.ttf
 
 # Hancom HCR (free)
 INCLUDE cjkgs-hancom.dat
+
+#
+# KOREAN (AKR) FONTS
+#
+
+# HaranoAji
+# (already included in JAPANESE section)
+
+# IBM Plex
+# (already included in JAPANESE section)
 
 
 #
