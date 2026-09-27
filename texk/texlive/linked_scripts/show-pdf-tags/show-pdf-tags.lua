@@ -1,6 +1,6 @@
 #!/usr/bin/env texlua
 
-local show_pdf_tags_version = "1.6"
+local show_pdf_tags_version = "1.7"
 
 kpse.set_program_name'lualatex'
 
@@ -319,7 +319,10 @@ local function open(filename)
   local markinfo = catalog and catalog.MarkInfo
   local tagged = markinfo and markinfo.Marked
   local xmp = catalog and catalog.Metadata
+  local majorv,minorv = pdfe.getversion(document)
+ 
 
+  
   if not tagged then
    io.stderr:write("Document catalog has no markinfo.Marked entry. It might not be tagged.\n")
   end
@@ -335,6 +338,7 @@ local function open(filename)
   ctx.ref_entries = {}
 
   ctx.xmp = xmp
+  ctx.version=majorv .. "." .. minorv
   
   local structroot = catalog.StructTreeRoot
   if not structroot then
@@ -709,7 +713,7 @@ local function print_tree_xml(tree, ctx)
       end
     end
   end
-  print ("<PDF>\n <StructTreeRoot>")
+  print ("<PDF version=\"" .. ctx.version .."\">\n <StructTreeRoot>")
   recurse(tree, '  ', '', '', ' ')
   print (" </StructTreeRoot>")
   if show_xmp then
