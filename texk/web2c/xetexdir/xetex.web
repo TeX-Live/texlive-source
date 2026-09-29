@@ -11114,7 +11114,7 @@ var old_setting:0..max_selector; {holds |selector| setting}
 @!b:pool_pointer; {base of temporary string}
 @!fnt,@!arg1,@!arg2:integer; {args for \XeTeX\ extensions}
 @!font_name_str:str_number; {local vars for \.{\\fontname} quoting extension}
-@!i:small_number;
+@!i:integer;
 @!quote_char:UTF16_code;
 @!cat:small_number; {desired catcode, or 0 for automatic |spacer|/|other_char| selection}
 @!saved_chr:UnicodeScalar;

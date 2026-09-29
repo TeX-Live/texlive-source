@@ -1,5 +1,20 @@
 %ª
 \catcode`\{=1
 \catcode`\}=2
+\nonstopmode
 \message{\filedump length 20{\jobname.tex}}
+\message{%
+  0:\filedump length 1{filedump-data},%
+  32767:\filedump offset 32767 length 1{filedump-data},%
+  32768:\filedump offset 32768 length 1{filedump-data},%
+  65535:\filedump offset 65535 length 1{filedump-data},%
+  65536:\filedump offset 65536 length 1{filedump-data},%
+  70000:\filedump offset 70000 length 1{filedump-data}}
+\message{%
+  at-eof:\filedump offset 70000 length 1{filedump-data},%
+  past-eof:\filedump offset 70000 length 2{filedump-data},%
+  after-eof:\filedump offset 70001 length 1{filedump-data},%
+  zero-length:\filedump length 0{filedump-data}}
+\message{negative-offset:\filedump offset -1 length 1{filedump-data}}
+\message{negative-length:\filedump length -1{filedump-data}}
 \end
