@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 79639 2026-07-10 16:45:34Z karl $
+# $Id: tlmgr.pl 80398 2026-09-27 15:23:08Z munepi $
 # Copyright 2008-2026 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
@@ -8,8 +8,8 @@
 
 use strict; use warnings;
 
-my $svnrev = '$Revision: 79639 $';
-my $datrev = '$Date: 2026-07-10 18:45:34 +0200 (Fri, 10 Jul 2026) $';
+my $svnrev = '$Revision: 80398 $';
+my $datrev = '$Date: 2026-09-27 17:23:08 +0200 (Sun, 27 Sep 2026) $';
 my $tlmgrrevision;
 my $tlmgrversion;
 my $prg;
@@ -2033,7 +2033,7 @@ sub restore_one_package {
   # this way we get rid of useless files
   my $restore_file;
   for my $ext (map {$Compressors{$_}{'extension'}} 
-                 sort {$Compressors{$a}{'priority'} <=> $Compressors{$a}{'priority'}} 
+                 sort {$Compressors{$a}{'priority'} <=> $Compressors{$b}{'priority'}} 
                    keys %Compressors) {
     if (-r "$bd/${pkg}.r${rev}.tar.$ext") {
       $restore_file = "$bd/${pkg}.r${rev}.tar.$ext";
@@ -10704,7 +10704,7 @@ This script and its documentation were written for the TeX Live
 distribution (L<https://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 79639 2026-07-10 16:45:34Z karl $
+$Id: tlmgr.pl 80398 2026-09-27 15:23:08Z munepi $
 =cut
 
 # test HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html
