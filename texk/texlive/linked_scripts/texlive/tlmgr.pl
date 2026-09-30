@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 80398 2026-09-27 15:23:08Z munepi $
+# $Id: tlmgr.pl 80438 2026-09-29 10:47:39Z preining $
 # Copyright 2008-2026 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
@@ -8,8 +8,8 @@
 
 use strict; use warnings;
 
-my $svnrev = '$Revision: 80398 $';
-my $datrev = '$Date: 2026-09-27 17:23:08 +0200 (Sun, 27 Sep 2026) $';
+my $svnrev = '$Revision: 80438 $';
+my $datrev = '$Date: 2026-09-29 12:47:39 +0200 (Tue, 29 Sep 2026) $';
 my $tlmgrrevision;
 my $tlmgrversion;
 my $prg;
@@ -363,6 +363,7 @@ my %globaloptions = (
   "persistent-downloads" => "!",
   "pause" => 1,
   "pin-file" => "=s",
+  "prefetch" => "=s",
   "print-platform|print-arch" => 1,
   "print-platform-info" => 1,
   "usermode|user-mode" => 1,
@@ -405,9 +406,15 @@ sub main {
   # save command line options for later restart, if necessary
   @::SAVEDARGV = @ARGV;
 
+  # rename TL_ to TEXLIVE_ envvars
+  TeXLive::TLUtils::tl_env_renames();
+
   TeXLive::TLUtils::process_logging_options();
 
   GetOptions(\%opts, keys(%optarg)) or pod2usage(2);
+
+  # read where it is used, in TLUtils::prefetch_start
+  $ENV{'TEXLIVE_PREFETCH'} = $opts{'prefetch'} if defined($opts{'prefetch'});
 
   # load the config file and set the config options
   # load it BEFORE starting downloads as we set persistent-downloads there!
@@ -3345,8 +3352,26 @@ sub action_update {
   # OTOH, the control flow in the "new package" part is much simpler
   # and following it after the change would make it much harder
   #
-  foreach my $pkg (@inst_packs, @new_packs, @inst_colls, @new_colls, @inst_schemes, @new_schemes) {
-    
+  # fetch the containers in the background while we install; a no-op unless
+  # TEXLIVE_PREFETCH is set.  The list has to be the one the loop below
+  # walks, in that order, because the prefetch follows the loop through it;
+  # packages that are not going to be installed are skipped by name.
+  my @toprefetch = (@inst_packs, @new_packs, @inst_colls, @new_colls,
+                    @inst_schemes, @new_schemes);
+  my %noprefetch;
+  if ($opts{"no-auto-install"}) {
+    $noprefetch{$_} = 1 for (@new_packs, @new_colls, @new_schemes);
+  }
+  my $prefetch;
+  if (!$opts{"list"} && !$opts{"dry-run"}) {
+    $prefetch = TeXLive::TLUtils::prefetch_start($remotetlpdb, \@toprefetch,
+      $localtlpdb->option("install_srcfiles"),
+      $localtlpdb->option("install_docfiles"), \%noprefetch);
+  }
+  my $prefetch_idx = 0;
+  foreach my $pkg (@toprefetch) {
+    TeXLive::TLUtils::prefetch_pump($prefetch, $prefetch_idx++);
+
     if (!$is_new{$pkg}) {
       # skip this loop if infra update on w32
       next if ($pkg =~ m/^00texlive/);
@@ -3652,6 +3677,8 @@ sub action_update {
       }
     }
   }
+
+  TeXLive::TLUtils::prefetch_stop($prefetch);
 
   #
   # special check for depending format updates:
@@ -4009,7 +4036,19 @@ sub action_install {
   print "total-bytes\t$sizes{'__TOTAL__'}\n" if $::machinereadable;
   print "end-of-header\n" if $::machinereadable;
 
+  # fetch the containers in the background while we install; a no-op unless
+  # TEXLIVE_PREFETCH is set.  %packs holds packages asked for from one
+  # particular repository; the prefetch leaves those alone, since it
+  # resolves pkg@tag differently than get_package does.
+  my $prefetch;
+  $prefetch = TeXLive::TLUtils::prefetch_start($remotetlpdb, \@todo,
+    $localtlpdb->option("install_srcfiles"),
+    $localtlpdb->option("install_docfiles"), \%packs)
+    if !$opts{"dry-run"};
+
+  my $prefetch_idx = 0;
   foreach my $pkg (@todo) {
+    TeXLive::TLUtils::prefetch_pump($prefetch, $prefetch_idx++);
     my $flag = $FLAG_INSTALL;
     my $re = "";
     my $tlp = $remotetlpdb->get_package($pkg);
@@ -4066,6 +4105,7 @@ sub action_install {
     $donesize += $sizes{$pkg};
     $currnr++;
   }
+  TeXLive::TLUtils::prefetch_stop($prefetch);
   print "end-of-updates\n" if $::machinereadable;
 
 
@@ -8446,6 +8486,10 @@ Change the pinning file location from C<TEXMFLOCAL/tlpkg/pinning.txt>
 (see L</Pinning> below).  Documented only for completeness, as this is
 only useful in debugging.
 
+=item B<--prefetch> I<jobs>[B<:>I<mb>]
+
+Same as setting C<TEXLIVE_PREFETCH> to I<jobs>[B<:>I<mb>], which see below.
+
 =item B<--usermode>
 
 Activates user mode for this run of C<tlmgr>; see L<USER MODE> below.
@@ -10000,12 +10044,12 @@ Additional trusted keys can be added using the C<key> action.
 =head2 Configuration of GnuPG invocation
 
 The executable used for GnuPG is searched as follows: If the environment
-variable C<TL_GNUPG> is set, it is tested and used; otherwise C<gpg> is
+variable C<TEXLIVE_GNUPG> is set, it is tested and used; otherwise C<gpg> is
 checked; finally C<gpg2> is checked.
 
 Further adaptation of the C<gpg> invocation can be made using the two
-environment variables C<TL_GNUPGHOME>, which is passed to C<gpg> as the
-value for C<--homedir>, and C<TL_GNUPGARGS>, which replaces the default
+environment variables C<TEXLIVE_GNUPGHOME>, which is passed to C<gpg> as the
+value for C<--homedir>, and C<TEXLIVE_GNUPGARGS>, which replaces the default
 options C<--no-secmem-warning --no-permission-warning>.
 
 =head1 USER MODE
@@ -10638,9 +10682,9 @@ unaffected, to minimize download sizes.
 
 =item C<TEXLIVE_DOWNLOADER>
 
-=item C<TL_DOWNLOAD_PROGRAM>
+=item C<TEXLIVE_DOWNLOAD_PROGRAM>
 
-=item C<TL_DOWNLOAD_ARGS>
+=item C<TEXLIVE_DOWNLOAD_ARGS>
 
 These options allow selecting different download programs then the ones
 automatically selected by the installer. The order of selection is:
@@ -10651,13 +10695,13 @@ automatically selected by the installer. The order of selection is:
 
 If the environment variable C<TEXLIVE_DOWNLOADER> is defined, use it;
 abort if the specified program doesn't work. Possible values: C<lwp>,
-C<curl>, C<wget>. The necessary options are added internally.
+C<aria2c>, C<curl>, C<wget>. The necessary options are added internally.
 
 =item 2.
 
-If the environment variable C<TL_DOWNLOAD_PROGRAM> is
+If the environment variable C<TEXLIVE_DOWNLOAD_PROGRAM> is
 defined (can be any value), use it together with
-C<TL_DOWNLOAD_ARGS>; abort if it doesn't work.
+C<TEXLIVE_DOWNLOAD_ARGS>; abort if it doesn't work.
 
 =item 3.
 
@@ -10666,16 +10710,51 @@ efficient method, as it supports persistent downloads).
 
 =item 4.
 
-If curl is available (from the system) and working, use that.
+If aria2c is available (from the system) and working, use that.
 
 =item 5.
+
+If curl is available (from the system) and working, use that.
+
+=item 6.
 
 If wget is available (either from the system or TL) and working, use that.
 
 =back
 
-TL provides C<wget> binaries for platforms where necessary, so some
-download method should always be available.
+No aria2c binaries are shipped with TeX Live, so it is used only when the
+system provides it. TL provides C<wget> binaries for platforms where
+necessary, so some download method should always be available.
+
+=item C<TEXLIVE_PREFETCH>
+
+When installing or updating over the network, C<tlmgr> downloads one
+container at a time, so most of the time is spent waiting for the server.
+C<TEXLIVE_PREFETCH> (or the C<--prefetch> option, which overrides it) instead
+fetches containers in the background while the installation proceeds.
+Its value is I<jobs>[B<:>I<mb>], where I<jobs> is
+
+  unset or 0   one container at a time, as before (the default)
+  1            one background worker
+  N            N background workers
+  auto         as many as there are processors, at most 8
+
+and I<mb> is explained below; for example, C<auto:200>.
+
+Even one worker helps, since it downloads while the installation unpacks;
+more workers additionally overlap the downloads with each other.  The
+downloader is the one that would be used anyway (see C<TEXLIVE_DOWNLOADER>
+above), except that C<lwp> cannot be used for this: the containers are
+fetched by running a downloader, and C<lwp> runs inside C<tlmgr> itself.
+If it is the only one available, nothing is prefetched, with a warning.
+This has no effect when installing from a local repository.
+
+Containers are removed again as they are installed.  To bound what the
+background download may pile up in the meantime, it pauses while more than
+I<mb> megabytes (default 64; C<0> for no limit) are
+waiting to be installed.  The workers check before starting on the next
+containers rather than during, so the cache in fact reaches a few (around
+2-3) times this setting.
 
 =item C<TEXLIVE_PREFER_OWN>
 
@@ -10704,7 +10783,7 @@ This script and its documentation were written for the TeX Live
 distribution (L<https://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 80398 2026-09-27 15:23:08Z munepi $
+$Id: tlmgr.pl 80438 2026-09-29 10:47:39Z preining $
 =cut
 
 # test HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html
