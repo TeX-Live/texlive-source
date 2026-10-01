@@ -1,8 +1,7 @@
-diff --git a/Build/source/libs/libpng/libpng-src/pngrutil.c b/Build/source/libs/libpng/libpng-src/pngrutil.c
-index 3a35fe9de2d..0ae8360a56e 100644
---- a/libpng-src/pngrutil.c
-+++ b/libpng-src/pngrutil.c
-@@ -3701,9 +3701,16 @@ png_combine_row(png_const_structrp png_ptr, png_bytep dp, int display)
+diff -ur libpng-1.6.59/pngrutil.c libpng-src/pngrutil.c
+--- libpng-1.6.59/pngrutil.c	Tue Sep 29 05:58:10 2026
++++ libpng-src/pngrutil.c	Thu Oct 01 12:16:59 2026
+@@ -3710,9 +3710,16 @@
      */
     memcpy(dp, sp, PNG_ROWBYTES(pixel_depth, row_width));
  
