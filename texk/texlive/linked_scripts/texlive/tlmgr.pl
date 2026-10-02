@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 80438 2026-09-29 10:47:39Z preining $
+# $Id: tlmgr.pl 80476 2026-10-01 22:10:37Z karl $
 # Copyright 2008-2026 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
@@ -8,8 +8,8 @@
 
 use strict; use warnings;
 
-my $svnrev = '$Revision: 80438 $';
-my $datrev = '$Date: 2026-09-29 12:47:39 +0200 (Tue, 29 Sep 2026) $';
+my $svnrev = '$Revision: 80476 $';
+my $datrev = '$Date: 2026-10-02 00:10:37 +0200 (Fri, 02 Oct 2026) $';
 my $tlmgrrevision;
 my $tlmgrversion;
 my $prg;
@@ -10705,8 +10705,9 @@ C<TEXLIVE_DOWNLOAD_ARGS>; abort if it doesn't work.
 
 =item 3.
 
-If LWP is available and working, use that (by far the most
-efficient method, as it supports persistent downloads).
+If LWP is available and working, use that; unless prefetching is enabled
+(see below), this is by far the most efficient method, as it supports
+persistent downloads.
 
 =item 4.
 
@@ -10726,54 +10727,55 @@ No aria2c binaries are shipped with TeX Live, so it is used only when the
 system provides it. TL provides C<wget> binaries for platforms where
 necessary, so some download method should always be available.
 
-=item C<TEXLIVE_PREFETCH>
-
-When installing or updating over the network, C<tlmgr> downloads one
-container at a time, so most of the time is spent waiting for the server.
-C<TEXLIVE_PREFETCH> (or the C<--prefetch> option, which overrides it) instead
-fetches containers in the background while the installation proceeds.
-Its value is I<jobs>[B<:>I<mb>], where I<jobs> is
-
-  unset or 0   one container at a time, as before (the default)
-  1            one background worker
-  N            N background workers
-  auto         as many as there are processors, at most 8
-
-and I<mb> is explained below; for example, C<auto:200>.
-
-Even one worker helps, since it downloads while the installation unpacks;
-more workers additionally overlap the downloads with each other.  The
-downloader is the one that would be used anyway (see C<TEXLIVE_DOWNLOADER>
-above), except that C<lwp> cannot be used for this: the containers are
-fetched by running a downloader, and C<lwp> runs inside C<tlmgr> itself.
-If it is the only one available, nothing is prefetched, with a warning.
-This has no effect when installing from a local repository.
-
-Containers are removed again as they are installed.  To bound what the
-background download may pile up in the meantime, it pauses while more than
-I<mb> megabytes (default 64; C<0> for no limit) are
-waiting to be installed.  The workers check before starting on the next
-containers rather than during, so the cache in fact reaches a few (around
-2-3) times this setting.
-
 =item C<TEXLIVE_PREFER_OWN>
 
-By default, compression and download programs provided by the system,
-i.e., found along C<PATH> are preferred over those shipped with TeX
-Live.
+By default, the compression and download programs provided by the
+system, i.e., found along C<PATH>, are preferred over those shipped with
+TeX Live.
 
-This can create problems with systems that are too old, and so can be
-overridden by setting the environment variable C<TEXLIVE_PREFER_OWN> to
-1. In this case, executables shipped with TL will be preferred.
+This can be problematic with systems that are too old, and so the
+opposite can be achieved by setting the environment variable
+C<TEXLIVE_PREFER_OWN> to 1. In this case, executables shipped with TL
+will be preferred.
 
 Extra compression/download programs not provided by TL, such as gzip,
 lwp, and curl, are still checked for on the system and used if
 available, per the above. C<TEXLIVE_PREFER_OWN> only applies when the
-program being checked for is shipped with TL, namely the lz4 and
-xz compressors and wget downloader.
+program being checked for is shipped with TL, namely the lz4 and xz
+compressors and wget downloader.
 
 Exception: on Windows, the C<tar.exe> shipped with TL is always used,
 regardless of any setting.
+
+=item C<TEXLIVE_PREFETCH>
+
+When installing or updating over the network, C<tlmgr> downloads one
+container at a time, so most of the time is spent waiting for the
+server. C<TEXLIVE_PREFETCH> (or the C<--prefetch> option, which
+overrides it) instead fetches containers in the background while the
+installation proceeds. Its value is I<jobs>[B<:>I<mb>], where I<jobs> is
+
+  unset or 0   one container at a time, as before (the default)
+  1            one background worker
+  N            N background workers
+  auto         as many as there are processors, but at most 8
+
+and I<mb> is explained below; the default is C<auto:200>.
+
+Even one worker helps, since it downloads while the installation unpacks;
+more workers additionally overlap the downloads with each other.  The
+downloader is the one that would be used anyway (see C<TEXLIVE_DOWNLOADER>
+above), except that C<lwp> is not used for this operation, so the first
+non-lwp downloader is used.
+
+Containers are removed again as they are installed. To bound how much
+the background download may pile up in the meantime, it pauses while
+more than I<mb> megabytes (default 200; C<0> for no limit) are waiting
+to be installed. The workers check before starting on the next
+containers rather than during, so the cache in fact usually reaches a
+few (around 2-3) times this setting.
+
+Prefetch has no effect at all when installing from a local repository.
 
 =back
 
@@ -10783,7 +10785,7 @@ This script and its documentation were written for the TeX Live
 distribution (L<https://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 80438 2026-09-29 10:47:39Z preining $
+$Id: tlmgr.pl 80476 2026-10-01 22:10:37Z karl $
 =cut
 
 # test HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html

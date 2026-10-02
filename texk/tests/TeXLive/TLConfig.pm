@@ -6,7 +6,7 @@
 use strict; use warnings;
 package TeXLive::TLConfig;
 
-my $svnrev = '$Revision: 79591 $';
+my $svnrev = '$Revision: 80434 $';
 my $_modulerevision = ($svnrev =~ m/: ([0-9]+) /) ? $1 : "unknown";
 sub module_revision { return $_modulerevision; }
 
@@ -25,6 +25,7 @@ BEGIN {
     @AcceptedFallbackDownloaders
     %FallbackDownloaderProgram
     %FallbackDownloaderArgs
+    %BatchDownloaderArgs
     $DefaultCompressorFormat
     $CompressorExtRegexp
     %Compressors
@@ -142,8 +143,14 @@ if ($^O =~ /^MSWin/i) {
 }
 
 #
-our @AcceptedFallbackDownloaders = qw/curl wget/;
-our %FallbackDownloaderProgram = ( 'wget' => 'wget', 'curl' => 'curl');
+# in order of preference; download_file tries lwp first, then these
+our @AcceptedFallbackDownloaders = qw/aria2c curl wget/;
+our %FallbackDownloaderProgram = ( 'wget' => 'wget', 'curl' => 'curl',
+                                   'aria2c' => 'aria2c');
+# The curl and wget lists end with the option taking the output file name,
+# which _download_file_program appends. aria2c is different: its --out is
+# relative to --dir, so both are appended there and its list has no
+# trailing output option.
 our %FallbackDownloaderArgs = (
   'curl' => ['--user-agent', 'texlive/curl',
              '--retry', '4', '--retry-delay', '4',
@@ -151,6 +158,48 @@ our %FallbackDownloaderArgs = (
              '--fail', '--location', '--silent', '--output'],
   'wget' => ['--user-agent=texlive/wget', '--tries=4',
              "--timeout=$NetworkTimeout", '-q', '-O'],
+  # -x1 -s1: a single connection per file, as curl and wget do
+  'aria2c' => ['--user-agent=texlive/aria2c', '--max-tries=4',
+               "--connect-timeout=$NetworkTimeout",
+               "--timeout=$NetworkTimeout",
+               '--auto-file-renaming=false', '--allow-overwrite=true',
+               '--quiet=true', '-x', '1', '-s', '1'],
+);
+# Fetching many files with one invocation, so that the connection is reused
+# instead of being set up again for every container.  Downloaders without an
+# entry here are simply called once per file.
+#   listfmt  the line(s) written to the list file for each file, with
+#            %u the url, %f the full destination path, %b its base name
+#   args     the invocation, with %d the destination directory; the name of
+#            the list file is appended by TLUtils::_download_files_batch
+our %BatchDownloaderArgs = (
+  'curl' => { 'listfmt' => "url = \"%u\"\noutput = \"%f\"\n",
+              'args' => ['--user-agent', 'texlive/curl',
+                         '--retry', '4', '--retry-delay', '4',
+                         '--connect-timeout', "$NetworkTimeout",
+                         '--fail', '--location', '--silent', '--config'] },
+  # wget names the files after the url, which is what we want here, and
+  # -nc keeps it from appending .1 to a name that is already taken
+  'wget' => { 'listfmt' => "%u\n",
+              'args' => ['--user-agent=texlive/wget', '--tries=4',
+                         "--timeout=$NetworkTimeout", '-q', '-nc',
+                         '--directory-prefix=%d', '--input-file'] },
+  'aria2c' => { 'listfmt' => "%u\n  out=%b\n",
+                'args' => ['--user-agent=texlive/aria2c', '--max-tries=4',
+                           "--connect-timeout=$NetworkTimeout",
+                           "--timeout=$NetworkTimeout",
+                           '--auto-file-renaming=false',
+                           '--allow-overwrite=true', '--quiet=true',
+                           # it would otherwise create the file at its full
+                           # size at once, and _prefetch_await takes the
+                           # size to mean the file is complete
+                           '--file-allocation=none',
+                           # -j1 -x1 -s1: one connection, since the caller
+                           # already runs as many of these as it wants in
+                           # parallel; aria2c would otherwise default to 5
+                           # downloads of its own per invocation
+                           '-j', '1', '-x', '1', '-s', '1',
+                           '--dir=%d', '--input-file'] },
 );
 # the way we package things on the web
 our $DefaultCompressorFormat = "xz";
@@ -174,6 +223,15 @@ our %Compressors = (
     "compress_args"   => ["-zf"],
     "extension"       => "xz",
     "priority"        => 30,
+  },
+  # zstd: fast decompression at near-xz ratios; not shipped with TL, so
+  # only available where the system provides it.  Priority between lz4 and
+  # gzip: lz4 (shipped everywhere) stays the default for backups.
+  "zstd" => {
+    "decompress_args" => ["-dcf"],
+    "compress_args"   => ["-zqf"],
+    "extension"       => "zst",
+    "priority"        => 15,
   },
 );
 our $CompressorExtRegexp = "("

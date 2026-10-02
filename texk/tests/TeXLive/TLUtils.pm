@@ -7,7 +7,7 @@ use strict; use warnings;
 
 package TeXLive::TLUtils;
 
-my $svnrev = '$Revision: 79583 $';
+my $svnrev = '$Revision: 80456 $';
 my $_modulerevision = ($svnrev =~ m/: ([0-9]+) /) ? $1 : "unknown";
 sub module_revision { return $_modulerevision; }
 
@@ -45,6 +45,7 @@ C<TeXLive::TLUtils> - TeX Live infrastructure miscellany
   TeXLive::TLUtils::diskfree($path);
   TeXLive::TLUtils::get_user_home();
   TeXLive::TLUtils::expand_tilde($str);
+  TeXLive::TLUtils::tl_env_renames();
 
 =head2 File utilities
 
@@ -79,6 +80,9 @@ C<TeXLive::TLUtils> - TeX Live infrastructure miscellany
   TeXLive::TLUtils::create_language_lua($tlpdb,$dest,$localconf);
   TeXLive::TLUtils::time_estimate($totalsize, $donesize, $starttime)
   TeXLive::TLUtils::install_packages($from_tlpdb,$media,$to_tlpdb,$what,$opt_src, $opt_doc, $retry, $continue);
+  TeXLive::TLUtils::prefetch_start($from_tlpdb,$packages,$opt_src,$opt_doc,$tags);
+  TeXLive::TLUtils::prefetch_pump($handle,$index);
+  TeXLive::TLUtils::prefetch_stop($handle);
   TeXLive::TLUtils::do_postaction($how, $tlpobj, $do_fileassocs, $do_menu, $do_desktop, $do_script);
   TeXLive::TLUtils::update_context_cache($plat_bindir);
   TeXLive::TLUtils::announce_execute_actions($how, @executes, $what);
@@ -220,6 +224,9 @@ BEGIN {
     &removed_dirs
     &install_package
     &install_packages
+    &prefetch_start
+    &prefetch_pump
+    &prefetch_stop
     &make_var_skeleton
     &make_local_skeleton
     &create_fmtutil
@@ -254,6 +261,7 @@ BEGIN {
     &diskfree
     &get_user_home
     &expand_tilde
+    &tl_env_renames
     &announce_execute_actions
     &add_symlinks
     &remove_symlinks
@@ -283,8 +291,10 @@ BEGIN {
                wndws xchdir xsystem run_cmd system_pipe sort_archs);
 }
 
-use Cwd;
+use Cwd; # cwd() spawns `pwd`; always use getcwd().
 use Getopt::Long;
+use Fcntl qw(:flock);
+use POSIX ();
 use File::Temp;
 
 use TeXLive::TLConfig;
@@ -766,7 +776,7 @@ sub xsystem {
   my $retval = system(@args);
   if ($retval != 0) {
     $retval /= 256 if $retval > 0;
-    my $pwd = cwd ();
+    my $pwd = Cwd::getcwd ();
     die "$0: system(@args) failed in $pwd, status $retval";
   }
   return $retval;
@@ -991,6 +1001,40 @@ sub expand_tilde {
   my $h = get_user_home();
   $str =~ s/^~/$h/;
   return $str;
+}
+
+=item C<tl_env_renames()>
+
+Prefer env vars named C<TEXLIVE_*> over C<TL_*>, but recognize
+C<TL_*> for compatibility.
+
+=cut
+
+sub tl_env_renames {
+  for my $env (qw(DOWNLOAD_PROGRAM DOWNLOADS_ARGS GNUPG JSONMODE)) {
+    my $texlive_env = "TEXLIVE_" . $env;
+    my $tl_env = "TL_" . $env;
+
+    if (exists $ENV{$tl_env}) {
+      if (exists $ENV{$texlive_env}) {
+        if ($ENV{$tl_env} ne $ENV{$texlive_env}) {
+          tlwarn (<<END_WARNING);
+TLUtils::tl_env_renames: $texlive_env ne $tl_env, using $texlive_env
+TLUtils::tl_env_renames: $texlive_env=$ENV{$texlive_env}
+TLUtils::tl_env_renames: $tl_env=$ENV{$tl_env}
+END_WARNING
+        } else {
+          ; # have both TL_ and TEXLIVE_, but they are equal, do nothing
+        }
+      } else {
+        # have TL_ but not TEXLIVE_, set the latter to the former
+        debug("Renaming env var $tl_env to $texlive_env\n");
+        $ENV{$texlive_env} = $ENV{$tl_env};
+      }
+    } else {
+      ; # don't have TL_*, do nothing
+    }
+  } # envvar loop
 }
 
 =back
@@ -1878,9 +1922,15 @@ sub install_packages {
     }
     $totalsize += $tlpsizes{$p};
   }
+  # fetch the containers in the background while we install; a no-op unless
+  # TEXLIVE_PREFETCH is set
+  my $prefetch;
+  $prefetch = prefetch_start($fromtlpdb, \@packs, $opt_src, $opt_doc)
+    if ($media eq 'NET');
   my $starttime = time();
   my @packs_again; # packages that we failed to download and should retry later
   foreach my $package (@packs) {
+    prefetch_pump($prefetch, $n);
     my $tlpobj = $tlpobjs{$package};
     my $reloc = $tlpobj->relocated;
     $n++;
@@ -1924,6 +1974,7 @@ sub install_packages {
     }
     $donesize += $tlpsizes{$package};
   }
+  prefetch_stop($prefetch);
   my $totaltime = time() - $starttime;
   my $tothour = int ($totaltime/3600);
   my $totmin = (int ($totaltime/60)) % 60;
@@ -1934,6 +1985,423 @@ sub install_packages {
   $totlpdb->save;
   return 1;
 }
+
+=item C<prefetch_start($from_tlpdb, $packages, $opt_src, $opt_doc, $tags)>
+
+=item C<prefetch_pump($handle, $index)>
+
+=item C<prefetch_stop($handle)>
+
+Fetch the containers for C<@$packages> alongside the installation, in
+installation order, and stop again.  C<prefetch_start> returns a handle to
+pass to the other two, or C<undef> if nothing was started.  C<@$packages>
+must be the list the installation loop itself walks, in that order, and the
+loop must call C<prefetch_pump> with the index it has reached.
+
+C<prefetch_pump> is where all the work is arranged: it collects the
+downloads that have finished, verifies them and moves them into the cache,
+throws away what the installation has gone past, and starts more.  The only
+thing it waits for is the package about to be installed, and only when its
+containers are being downloaded at that moment; fetching them a second time
+would just compete with the download that is already under way.  The
+downloads themselves run as separate processes, so they carry on while the
+installation unpacks; this only has to be called often enough to keep them
+supplied, which once per package is.
+
+Running the downloader rather than downloading here is what lets this work
+everywhere.  Nothing is forked but a process that immediately becomes the
+downloader, so there is no Perl state to inherit, and on Windows not even
+that: C<system(1, ...)> starts the command directly.  The cost is that
+C<lwp> cannot be used for this, since it lives inside this process and
+there is nothing to start; whatever else C<download_file> would have
+chosen is used, and if that is the only choice there is, nothing is
+prefetched.
+
+Apart from that, the installation never waits: C<unpack> takes a
+container from the cache directory if it is there and downloads it itself
+if it is not, exactly as it does without any of this.  Nothing here is a
+precondition for anything, and the checksums recorded in the tlpdb are
+verified both when a container is prefetched and again in C<unpack>.
+
+How far ahead this runs is bounded by how much is in the cache that the
+installation has not consumed yet: nothing new is started while that
+exceeds the C<MB> part of C<TEXLIVE_PREFETCH> (default 200, C<0> for no limit).
+The check is made before starting on the next containers, and at least one
+is always taken however large it is, so in practice the cache reaches a few
+(around 2-3) times the setting.
+
+This is why C<prefetch_pump> is given the index.  The installation can
+overtake the downloads -- it fetches a container itself whenever the cache
+does not have it yet -- and anything fetched behind it is then never
+consumed.  Left in the cache it would hold the cache over the budget for
+good and nothing would ever start again.  Knowing where the installation
+is, this skips past it and throws away what it has already gone by.
+
+Prefetching is off unless C<TEXLIVE_PREFETCH> (C<JOBS[:MB]>) is set, with
+C<JOBS> other than C<0>: a number is how many downloads run at a time,
+C<auto> is as many as there are processors, capped at 8 so as not to hammer
+the mirrors.  Even one helps, since it downloads while the installation
+unpacks.  Each gets several urls at a time so that one connection serves
+them all (see C<%BatchDownloaderArgs>).
+
+C<$tags>, if given, is a hash whose keys are packages that were requested
+from one particular repository; those are left to the sequential path, since
+the container to fetch is then not the one this would pick.
+
+Does nothing for non-NET packages, or when nothing is asked for.
+
+=cut
+
+sub _prefetch_settings {
+  # TEXLIVE_PREFETCH=[JOBS][:][MB].  JOBS unset or 0: off; a number: that many
+  # downloads at a time; auto: as many as there are processors, except
+  # limited to 8, to be nice to the mirrors.  MB is the cache
+  # budget in megabytes (default 64, 0 for no limit).  Returns the number of
+  # jobs and the budget in bytes.
+  my $v = $ENV{'TEXLIVE_PREFETCH'};
+  return (0, 0) if (!defined($v) || $v eq '');
+  my ($jobs,$wmb) = split (/:/, $v, 2);
+
+  if ($jobs eq '') {
+    tlwarn("TLUtils.pm::_prefetch_settings: TEXLIVE_PREFETCH jobs not specified "
+           . "ignoring: $v\n");
+    return (0, 0);
+  } elsif ($jobs eq 'auto') {
+    if (!defined($::tl_prefetch_nproc)) {
+      chomp(my $n = `getconf _NPROCESSORS_ONLN 2>/dev/null`);
+      $n = 4 if (!$n || $n !~ m/^[0-9]+$/ || $n < 1); # getconf not usable
+      $::tl_prefetch_nproc = ($n > 8 ? 8 : $n);
+    }
+    $jobs = $::tl_prefetch_nproc;
+  } elsif ($jobs !~ /^[0-9]+$/) {
+    tlwarn("TLUtils.pm::_prefetch_settings: TEXLIVE_PREFETCH jobs not numeric "
+           . "or auto, ignoring: $jobs (from $v)\n");
+    return (0, 0);
+  }
+  #
+  if (!defined($wmb) || $wmb eq '') {
+    $wmb = 200;
+  } elsif ($wmb !~ /^[0-9]+$/) {
+    tlwarn("TLUtils.pm::_prefetch_settings: TEXLIVE_PREFETCH cache-MB not numeric "
+           . "ignoring: $wmb (from $v)\n");
+    return (0, 0);
+  }
+
+  ddebug ("TLUtils::_prefetch_settings: jobs=$jobs wmb=$wmb (from $v)\n");
+  return ($jobs, $wmb * 1048576);
+}
+
+sub _prefetch_verify {
+  # A quiet check_file_and_remove: drop the file if it does not match.  We
+  # deliberately do not use check_file_and_remove itself, which saves a copy
+  # of the offending file in a directory that is never cleaned up and prints
+  # a backtrace -- right when a download has really failed, but here a bad
+  # container just means unpack fetches it again.
+  # With $keep the file is left alone.
+  my ($file, $checksum, $size, $keep) = @_;
+  return 0 if (! -r $file);
+  if ($checksum && $checksum ne "-1" && $::checksum_method) {
+    return 1 if (TeXLive::TLCrypto::tlchecksum($file) eq $checksum);
+    debug("TLUtils::_prefetch_verify: checksum mismatch for $file\n");
+    unlink($file) if !$keep;
+    return 0;
+  }
+  if ($size && $size ne "-1" && (stat $file)[7] != $size) {
+    debug("TLUtils::_prefetch_verify: wrong size for $file\n");
+    unlink($file) if !$keep;
+    return 0;
+  }
+  return 1;
+}
+
+sub _prefetch_tlp {
+  # the tlpdb and tlpobj that install_package would use for this package
+  my ($fromtlpdb, $pkg) = @_;
+  if ($fromtlpdb->is_virtual) {
+    my (undef, undef, $tlp, $db) = $fromtlpdb->virtual_candidate($pkg);
+    return ($db, $tlp);
+  }
+  return ($fromtlpdb, $fromtlpdb->get_package($pkg));
+}
+
+sub _prefetch_worklist {
+  my ($fromtlpdb, $what, $opt_src, $opt_doc, $tags) = @_;
+  my $ext = $Compressors{$DefaultCompressorFormat}{'extension'};
+  my @work;
+  my $pkgidx = -1;
+  for my $pkg (@$what) {
+    $pkgidx++;
+    next if ($pkg =~ m/^00texlive/);
+    next if ($tags && $tags->{$pkg});
+    my ($tlpdb, $tlpobj) = _prefetch_tlp($fromtlpdb, $pkg);
+    next if (!defined($tlpdb) || !defined($tlpobj));
+    next if ($tlpdb->media ne 'NET');
+    (my $root = $tlpdb->root) =~ s!/$!!;
+    next if ($root !~ m,^(https?|ftp)://,);
+    for my $c (['', $tlpobj->containersize, $tlpobj->containerchecksum, 1],
+               ['.source', $tlpobj->srccontainersize,
+                $tlpobj->srccontainerchecksum,
+                $tlpdb->config_src_container && $opt_src && $tlpobj->srcfiles],
+               ['.doc', $tlpobj->doccontainersize,
+                $tlpobj->doccontainerchecksum,
+                $tlpdb->config_doc_container && $opt_doc && $tlpobj->docfiles]) {
+      next if !$c->[3];
+      # basename as in unpack, which looks the container up under that name
+      my $name = basename("$pkg$c->[0].tar.$ext");
+      push @work, [ "$root/$Archive/$name", $name, $c->[1], $c->[2], $pkgidx ];
+    }
+  }
+  return @work;
+}
+
+sub _prefetch_prune {
+  # Drop containers for packages the installation has already gone past.
+  # It downloaded those itself when it found them missing, so nothing will
+  # ever take them out of the cache, and left there they would hold it over
+  # the budget for good and nothing would ever start again.
+  my ($h) = @_;
+  my $w = $h->{'work'};
+  while ($h->{'pruned'} <= $#$w && $w->[$h->{'pruned'}][4] < $h->{'pos'}) {
+    unlink("$h->{'dir'}/$w->[$h->{'pruned'}][1]");
+    $h->{'pruned'}++;
+  }
+}
+
+sub _prefetch_cache_bytes {
+  # what has been put in the cache that the installation has not taken away
+  # yet.  Names starting with a dot (the staging directories) are the
+  # machinery and do not count.
+  my ($dir) = @_;
+  my $n = 0;
+  opendir(my $dh, $dir) || return 0;
+  while (defined(my $f = readdir($dh))) {
+    next if ($f =~ m/^\./);
+    my $s = (stat("$dir/$f"))[7];
+    $n += $s if defined($s);
+  }
+  closedir($dh);
+  return $n;
+}
+
+sub _prefetch_spawn {
+  # Start a command and return its process id without waiting for it.  This
+  # is the only part that differs between platforms, and it is deliberately
+  # the whole of the difference: everything else here runs in the one
+  # process that is doing the installation.
+  my (@cmd) = @_;
+  if (wndws()) {
+    # system(1, ...) starts the command and hands back its pid
+    my $pid = system(1, @cmd);
+    return (defined($pid) && $pid > 0) ? $pid : undef;
+  }
+  my $pid = fork();
+  return undef if !defined($pid);
+  return $pid if $pid;
+  # Child: exec straight away, so no Perl state, no END blocks and no
+  # inherited connection ever belong to it -- it simply becomes the
+  # downloader.
+  open(STDIN, "<", nulldev());
+  open(STDOUT, ">", nulldev());
+  exec { $cmd[0] } @cmd
+    or POSIX::_exit(127);
+}
+
+sub _prefetch_launch {
+  # Fill the free slots, as long as there is work and room in the cache.
+  my ($h) = @_;
+  my $w = $h->{'work'};
+  for my $slot (@{$h->{'slots'}}) {
+    next if defined($slot->{'pid'});
+    last if ($h->{'budget'}
+             && _prefetch_cache_bytes($h->{'dir'}) > $h->{'budget'});
+    # skip whatever the installation has already installed: fetching it now
+    # would only produce a container that nobody is going to ask for
+    $h->{'next'}++
+      while ($h->{'next'} <= $#$w && $w->[$h->{'next'}][4] < $h->{'pos'});
+    last if ($h->{'next'} > $#$w);
+    my ($n, $bytes) = (0, 0);
+    while ($n < $h->{'chunk'} && $h->{'next'} + $n <= $#$w) {
+      my $sz = $w->[$h->{'next'} + $n][2] || 0;
+      last if ($n > 0 && $h->{'cap'} && $bytes + $sz > $h->{'cap'});
+      $bytes += $sz;
+      $n++;
+    }
+    last if !$n;
+    my @items = @{$w}[$h->{'next'} .. $h->{'next'} + $n - 1];
+    $h->{'next'} += $n;
+    mkdirhier($slot->{'stage'});
+    my @cmd = _download_files_command([map { [$_->[0], $_->[1]] } @items],
+                                      $slot->{'stage'}, $h->{'type'});
+    my $pid = @cmd ? _prefetch_spawn(@cmd) : undef;
+    if (!defined($pid)) {
+      debug("TLUtils::_prefetch_launch: cannot start a downloader\n");
+      $h->{'next'} -= $n;             # give the work back
+      last;
+    }
+    $slot->{'pid'} = $pid;
+    $slot->{'items'} = \@items;
+  }
+}
+
+sub _prefetch_reap {
+  # Collect the slots that have finished and publish what they fetched.
+  # With $wait the call blocks until they are all done, which is what
+  # prefetch_stop wants.
+  my ($h, $wait) = @_;
+  for my $slot (@{$h->{'slots'}}) {
+    next if !defined($slot->{'pid'});
+    my $r = waitpid($slot->{'pid'}, $wait ? 0 : POSIX::WNOHANG());
+    next if (!$wait && $r == 0);      # still running
+    $slot->{'pid'} = undef;
+    # publish atomically: the installation reads the cache directory while
+    # this writes to it, and must never see a half-written container
+    for my $i (@{$slot->{'items'}}) {
+      my $f = "$slot->{'stage'}/$i->[1]";
+      next if (! -r $f);
+      # it may have gone past this one while it was downloading, in which
+      # case publishing it would just leave litter in the cache
+      if ($i->[4] >= $h->{'pos'} && _prefetch_verify($f, $i->[3], $i->[2])) {
+        rename($f, "$h->{'dir'}/$i->[1]") || unlink($f);
+      }
+    }
+    unlink(glob("$slot->{'stage'}/*"));   # whatever did not make it
+    $slot->{'items'} = [];
+  }
+}
+
+sub _prefetch_await {
+  # The installation is about to unpack the package at $h->{'pos'}.  If a
+  # slot is downloading its containers right now, wait for them instead of
+  # letting unpack fetch them a second time.  The downloaders write each
+  # file under its final name as they go, so one is complete when it has
+  # the size recorded in the tlpdb (for aria2c only because its batch
+  # arguments turn off preallocation); the other files of the batch are
+  # not waited for.  If a file of the right size does not verify, stop
+  # waiting and leave the package to unpack, rather than wait for the
+  # whole batch.
+  # ponytail: no timeout of our own, the downloader's retries and timeouts
+  # bound the wait, as they would for unpack's own download.
+  my ($h) = @_;
+  for my $slot (@{$h->{'slots'}}) {
+    next if !defined($slot->{'pid'});
+    my @mine = grep { $_->[4] == $h->{'pos'} } @{$slot->{'items'}};
+    next if !@mine;
+    debug("TLUtils::_prefetch_await: waiting for "
+          . join(" ", map { $_->[1] } @mine) . "\n");
+    my $exited = 0;
+    while (@mine) {
+      if (waitpid($slot->{'pid'}, POSIX::WNOHANG()) != 0) {
+        $exited = 1;
+        last;
+      }
+      my $i = $mine[0];
+      my $f = "$slot->{'stage'}/$i->[1]";
+      my $s = (stat($f))[7];
+      # with the size unknown, this simply waits for the slot to finish
+      if ($i->[2] && $i->[2] ne "-1" && defined($s) && $s == $i->[2]) {
+        if (!_prefetch_verify($f, $i->[3], $i->[2], 1)) {
+          debug("TLUtils::_prefetch_await: $i->[1] does not verify, "
+                . "not waiting for it\n");
+          last;
+        }
+        # rename fails on Windows while the downloader still has the file
+        # open, so that is simply tried again
+        if (rename($f, "$h->{'dir'}/$i->[1]")) {
+          shift @mine;
+          $slot->{'items'} = [ grep { $_ != $i } @{$slot->{'items'}} ];
+          next;
+        }
+      }
+      select(undef, undef, undef, 0.1);
+    }
+    # if that was the last of the batch, the downloader is only exiting, and
+    # waiting for that lets the slot start on the next batch before the
+    # installation gets there; a slot that has exited is published by
+    # _prefetch_reap as usual
+    waitpid($slot->{'pid'}, 0) if (!$exited && !@{$slot->{'items'}});
+    _prefetch_reap($h, 0) if ($exited || !@{$slot->{'items'}});
+  }
+}
+
+sub prefetch_start {
+  my ($fromtlpdb, $what, $opt_src, $opt_doc, $tags) = @_;
+  my ($jobs, $budget) = _prefetch_settings();
+  return undef if ($jobs < 1);
+  my @work = _prefetch_worklist($fromtlpdb, $what, $opt_src, $opt_doc, $tags);
+  return undef if !@work;
+  # Everything is fetched by running a downloader, so there has to be one
+  # that can be run: lwp lives inside this process and there is nothing to
+  # start.  Whatever download_file would have chosen is used here too.
+  my $type = _batch_downloader();
+  if (!defined($type)) {
+    if (!$::tl_prefetch_warned) {
+      tlwarn("TEXLIVE_PREFETCH is set, but there is no downloader that can be "
+             . "run separately (lwp cannot), not prefetching\n");
+      $::tl_prefetch_warned = 1;
+    }
+    return undef;
+  }
+
+  $::tl_prefetch_dir = tl_tmpdir() if !defined($::tl_prefetch_dir);
+  my $dir = $::tl_prefetch_dir;
+  # skip what is already there from an earlier operation
+  @work = grep { ! -r "$dir/$_->[1]" } @work;
+  return undef if !@work;
+  $jobs = scalar(@work) if ($jobs > @work);
+
+  # Several containers per invocation, so that one connection serves them
+  # all -- but only a few: container sizes span three orders of magnitude,
+  # and past about eight what is lost when a slot draws a big one outweighs
+  # the connections that were saved.
+  my $chunk = 8;
+  my $percpu = int((@work + $jobs - 1) / $jobs);
+  $chunk = $percpu if ($chunk > $percpu && $percpu > 0);
+
+  my $h = {
+    'work' => \@work, 'dir' => $dir, 'type' => $type,
+    'next' => 0, 'pos' => 0, 'pruned' => 0,
+    'jobs' => $jobs, 'chunk' => $chunk, 'budget' => $budget,
+    # so that all the slots together cannot hold much more than the budget
+    'cap' => ($budget ? int($budget / $jobs) : 0),
+    'slots' => [ map { { 'pid' => undef, 'items' => [],
+                         'stage' => "$dir/.stage$_" } } (1 .. $jobs) ],
+  };
+  logit(\*STDERR, 0, "Prefetching " . scalar(@work)
+        . " containers using $jobs parallel downloads ($type)\n");
+  _prefetch_launch($h);
+  $::tl_prefetch_handle = $h;
+  return $h;
+}
+
+sub prefetch_pump {
+  # Called by the installation for every package, with the index it has
+  # reached.  Collects whatever has finished, throws away what the
+  # installation has gone past, and starts more.  Waits only for the
+  # containers of the package at $idx, if they are being downloaded.
+  my ($h, $idx) = @_;
+  return if !defined($h);
+  $h->{'pos'} = $idx if defined($idx);
+  _prefetch_reap($h, 0);
+  _prefetch_prune($h);
+  _prefetch_launch($h);
+  _prefetch_await($h);
+}
+
+sub prefetch_stop {
+  my ($h) = @_;
+  return if !defined($h);
+  for my $slot (@{$h->{'slots'}}) {
+    kill('TERM', $slot->{'pid'}) if defined($slot->{'pid'});
+  }
+  # nothing will be installed any more, so what the killed downloads left
+  # behind is neither checked nor published, just cleaned up
+  $h->{'pos'} = ~0;
+  _prefetch_reap($h, 1);
+  rmtree($_->{'stage'}) for grep { -d $_->{'stage'} } @{$h->{'slots'}};
+  $::tl_prefetch_handle = undef;
+}
+
+END { prefetch_stop($::tl_prefetch_handle) if $::tl_prefetch_handle; }
 
 =item C<do_postaction($how, $tlpobj, $do_fileassocs, $do_menu, $do_desktop, $do_script)>
 
@@ -2135,7 +2603,7 @@ sub _do_postaction_script {
   my $ret = system (@syscmd);
   if ($ret != 0) {
     $ret /= 256 if $ret > 0;
-    my $pwd = cwd ();
+    my $pwd = Cwd::getcwd ();
     warn "$0: calling post action script $file did not succeed in $pwd, status $ret";
     return 0;
   }
@@ -2294,7 +2762,7 @@ sub update_context_cache {
   # can be done about it.
   my $lmtx = "$bindir/luametatex$progext";
   if (TeXLive::TLUtils::system_ok("$lmtx --version")) {
-    info("setting up ConTeXt caches: ");
+    info("setting up ConTeXt caches:\n");
     # Max advises (19feb26) that mtxrun --generate and context --generate
     # are the same; mtxrun is preferred.
     # Max (18mar26): Things are actually more complicated than this; see
@@ -2739,7 +3207,8 @@ sub unpack {
   my $compressorextension;
   if ($what =~ m/\.tar\.$CompressorExtRegexp$/) {
     $compressorextension = $1;
-    $decompressorType = $1 eq "gz" ? "gzip" : $1;
+    # the compressor whose extension this is (gz -> gzip, zst -> zstd, ...)
+    ($decompressorType) = grep { $Compressors{$_}{'extension'} eq $compressorextension } keys %Compressors;
   }
   if (!$decompressorType) {
     return(0, "don't know how to unpack");
@@ -2764,6 +3233,12 @@ sub unpack {
   $tarfile =~ s/\.$compressorextension$//;
   if ($what =~ m,^(https?|ftp)://, || $what =~ m!$SshURIRegex!) {
     # we are installing from the NET
+    # if a prefetch worker has already fetched this one, take it; it is
+    # checked below like any other container
+    if (defined($::tl_prefetch_dir) && ! -r $containerfile
+        && -r "$::tl_prefetch_dir/$fn") {
+      rename("$::tl_prefetch_dir/$fn", $containerfile);
+    }
     # check for the presence of $what in $tempdir
     if (-r $containerfile) {
       check_file_and_remove($containerfile, $checksum, $size);
@@ -2831,7 +3306,7 @@ sub untar {
   # so fall back on chdir in Perl.
   #
   debug("TLUtils::untar: unpacking $tarfile in $targetdir\n");
-  my $cwd = cwd();
+  my $cwd = Cwd::getcwd();
   chdir($targetdir) || die "chdir($targetdir) failed: $!";
 
   # on w32 don't extract file modified time, because AV soft can open
@@ -2998,6 +3473,11 @@ sub setup_programs {
     }
   }
   $::progs{'working_downloaders'} = [ @working_downloaders ];
+  debug("TLUtils::setup_programs: downloaders, after lwp, in order of "
+        . "preference: @working_downloaders"
+        . ($ENV{'TEXLIVE_DOWNLOADER'}
+           ? " (but TEXLIVE_DOWNLOADER=$ENV{'TEXLIVE_DOWNLOADER'})" : "")
+        . "\n");
   my @working_compressors;
   for my $defprog (sort 
               { $Compressors{$a}{'priority'} <=> $Compressors{$b}{'priority'} }
@@ -3028,7 +3508,7 @@ Selected downloader type TEXLIVE_DOWNLOADER=$ENV{'TEXLIVE_DOWNLOADER'}
 Please choose a different downloader type from the list below,
   or don't set TEXLIVE_DOWNLOADER. It's not possible to
   set this to an arbitrary executable, but you can use the environment
-  variables TL_DOWNLOAD_PROGRAM and TL_DOWNLOAD_ARGS to specify
+  variables TEXLIVE_DOWNLOAD_PROGRAM and TEXLIVE_DOWNLOAD_ARGS to specify
   anything you wish. See:
     https://tug.org/texlive/doc/tlmgr.html#ENVIRONMENT-VARIABLES
 
@@ -3206,12 +3686,12 @@ a filename of simply C<|>. In the latter case a file handle is returned.
 
 Downloading first checks for the environment variable C<TEXLIVE_DOWNLOADER>,
 which takes various built-in values. If not set, the next check is for
-C<TL_DOWNLOAD_PROGRAM> and C<TL_DOWNLOAD_ARGS>. The former overrides the
+C<TEXLIVE_DOWNLOAD_PROGRAM> and C<TEXLIVE_DOWNLOAD_ARGS>. The former overrides the
 above specification devolving to C<wget>, and the latter overrides the
 default wget arguments.
 
-C<TL_DOWNLOAD_ARGS> must be defined so that the file the output goes to
-is the first argument after the C<TL_DOWNLOAD_ARGS>.  Thus, for wget it
+C<TEXLIVE_DOWNLOAD_ARGS> must be defined so that the file the output goes to
+is the first argument after the C<TEXLIVE_DOWNLOAD_ARGS>.  Thus, for wget it
 would end in C<-O>.  Use with care.
 
 =cut
@@ -3255,7 +3735,7 @@ sub download_file {
     my $retval = system("scp", "-q", $relpath, $downdest);
     if ($retval != 0) {
       $retval /= 256 if $retval > 0;
-      my $pwd = cwd ();
+      my $pwd = Cwd::getcwd ();
       tlwarn("$0: system(scp -q $relpath $downdest) failed in $pwd, status $retval");
       return 0;
     }
@@ -3278,10 +3758,18 @@ sub download_file {
   my @downloader_trials;
   if ($ENV{'TEXLIVE_DOWNLOADER'}) {
     push @downloader_trials, $ENV{'TEXLIVE_DOWNLOADER'};
-  } elsif ($ENV{"TL_DOWNLOAD_PROGRAM"}) {
-    push @downloader_trials, 'custom';
+  } elsif ($ENV{"TEXLIVE_DOWNLOAD_PROGRAM"}) {
+    if (defined $ENV{"TEXLIVE_DOWNLOAD_ARGS"}) {
+      # we use defined, since one might reasonably use a script without any
+      # additional arguments, but they must then set TEXLIVE_DOWNLOAD_ARGS=''
+      # defined checks for the existence of the key
+      push @downloader_trials, 'custom';
+    } else {
+      tlwarn("TEXLIVE_DOWNLOAD_PROGRAM set without TEXLIVE_DOWNLOAD_ARGS, dropping back to default!\n");
+      @downloader_trials = ('lwp', @AcceptedFallbackDownloaders);
+    }
   } else {
-    @downloader_trials = qw/lwp curl wget/;
+    @downloader_trials = ('lwp', @AcceptedFallbackDownloaders);
   }
 
   my $success = 0;
@@ -3312,9 +3800,21 @@ sub download_file {
 sub _download_file_lwp {
   my ($url, $dest) = @_;
   if (!defined($::tldownload_server)) {
-    ddebug("::tldownload_server not defined\n");
-    return(0);
+    # install-tl loads the remote tlpdb before it calls
+    # setup_persistent_downloads, and with TEXLIVE_DOWNLOADER=lwp there is
+    # no other downloader to fall back on, so that first download fails.
+    # Set the connection up here when lwp was asked for by name; when it
+    # was not, leave it alone, so that --no-persistent-downloads still
+    # means what it says and we just move on to curl or wget.
+    setup_persistent_downloads()
+      if (($ENV{'TEXLIVE_DOWNLOADER'} || '') eq 'lwp');
+    if (!defined($::tldownload_server)) {
+      ddebug("::tldownload_server not defined\n");
+      return(0);
+    }
   }
+  # a connection that never worked is not set up again, see TLDownload
+  return(0) if $::tldownload_server->unusable;
   if (!$::tldownload_server->enabled) {
     # try to reinitialize a disabled connection
     # disabling happens after 6 failed download trials
@@ -3329,7 +3829,7 @@ sub _download_file_lwp {
     # which, if it succeeds, automatically set enabled to 1
   }
   # we are still here, so try to download
-  debug("persistent connection set up, trying to get $url (for $dest)\n");
+  debug("trying to get $url via lwp persistent connection (for $dest)\n");
   my $ret = $::tldownload_server->get_file($url, $dest);
   if ($ret) {
     ddebug("downloading file via persistent connection succeeded\n");
@@ -3346,6 +3846,12 @@ sub _download_file_lwp {
 
 sub _download_file_program {
   my ($url, $dest, $type) = @_;
+  # aria2c takes --out relative to --dir, so split $dest; before the
+  # separator conversion below.
+  my ($destdir, $destfile);
+  if ($type eq 'aria2c' && $dest ne "|") {
+    ($destdir, $destfile) = (dirname($dest), basename($dest));
+  }
   if (wndws()) {
     $dest =~ s!/!\\!g;
   }
@@ -3355,26 +3861,40 @@ sub _download_file_program {
   my $downloaderargs;
   my @downloaderargs;
   if ($type eq 'custom') {
-    $downloader = $ENV{"TL_DOWNLOAD_PROGRAM"};
-    if ($ENV{"TL_DOWNLOAD_ARGS"}) {
-      $downloaderargs = $ENV{"TL_DOWNLOAD_ARGS"};
+    $downloader = $ENV{"TEXLIVE_DOWNLOAD_PROGRAM"};
+    if ($ENV{"TEXLIVE_DOWNLOAD_ARGS"}) {
+      $downloaderargs = $ENV{"TEXLIVE_DOWNLOAD_ARGS"};
       @downloaderargs = split(' ', $downloaderargs);
+    } else {
+      $downloaderargs = "";
+      @downloaderargs = [];
     }
   } else {
     $downloader = $::progs{$FallbackDownloaderProgram{$type}};
     @downloaderargs = @{$FallbackDownloaderArgs{$type}};
+    push (@downloaderargs, "--dir=$destdir", "--out=$destfile")
+      if defined($destdir);
     $downloaderargs = join(' ',@downloaderargs);
   }
 
   debug("downloading $url using $downloader $downloaderargs\n");
   my $ret;
   if ($dest eq "|") {
+    if ($type eq 'aria2c') {
+      # aria2c cannot write to stdout; fall through to another downloader
+      # rather than silently create a file named "-".
+      debug("TLUtils::_download_file_program: aria2c cannot write to a pipe\n");
+      return 0;
+    }
     open(RETFH, "$downloader $downloaderargs - $url|")
     || die "open($url) via $downloader $downloaderargs failed: $!";
     # opening to a pipe always succeeds, so we return immediately
     return \*RETFH;
   } else {
-    $ret = system ($downloader, @downloaderargs, $dest, $url);
+    # for aria2c the destination is already in @downloaderargs (--dir/--out)
+    $ret = defined($destdir)
+           ? system ($downloader, @downloaderargs, $url)
+           : system ($downloader, @downloaderargs, $dest, $url);
     # we have to reverse the meaning of ret because system has 0=success.
     $ret = ($ret ? 0 : 1);
   }
@@ -3386,6 +3906,42 @@ sub _download_file_program {
   } else {
     return 1;
   }
+}
+
+sub _batch_downloader {
+  # Which downloader can fetch a whole list of urls in one invocation?
+  # Follows the same preference as download_file, and gives up on a custom
+  # TEXLIVE_DOWNLOAD_PROGRAM, whose command line we know nothing about.
+  return undef if ($ENV{'TEXLIVE_DOWNLOAD_PROGRAM'} && !$ENV{'TEXLIVE_DOWNLOADER'});
+  my @working = @{$::progs{'working_downloaders'} || []};
+  my @try = $ENV{'TEXLIVE_DOWNLOADER'}
+            ? ($ENV{'TEXLIVE_DOWNLOADER'}) : @working;
+  for my $t (@try) {
+    return $t if ($BatchDownloaderArgs{$t} && member($t, @working));
+  }
+  return undef;
+}
+
+sub _download_files_command {
+  # The command that fetches these files into $dir in one invocation, with
+  # the list of urls written where the downloader expects to find it.
+  my ($work, $dir, $type) = @_;
+  my $spec = $BatchDownloaderArgs{$type};
+  return () if !defined($spec);
+  my $prog = $::progs{$FallbackDownloaderProgram{$type}};
+  return () if !defined($prog);
+  my $listfile = "$dir/.list";
+  open(my $fh, ">", $listfile) || return ();
+  for my $w (@$work) {
+    my %val = ('u' => $w->[0], 'f' => "$dir/$w->[1]", 'b' => $w->[1]);
+    (my $line = $spec->{'listfmt'}) =~ s/%([ufb])/$val{$1}/g;
+    print $fh $line;
+  }
+  close($fh);
+  my @args = map { (my $a = $_) =~ s/%d/$dir/g; $a } @{$spec->{'args'}};
+  debug("TLUtils::_download_files_command: $prog @args $listfile ("
+        . scalar(@$work) . " files)\n");
+  return ($prog, @args, $listfile);
 }
 
 =item C<nulldev ()>
@@ -5302,7 +5858,7 @@ This tries to load the C<JSON> Perl module, and uses it if available,
 otherwise falls back to module internal conversion.
 
 The used backend can be selected by setting the environment variable
-C<TL_JSONMODE> to either C<json> or C<texlive> (all other values are
+C<TEXLIVE_JSONMODE> to either C<json> or C<texlive> (all other values are
 ignored). If C<json> is requested and the C<JSON> module cannot be loaded
 the program terminates.
 
@@ -5348,18 +5904,18 @@ sub False {
 sub ensure_json_available {
   return if ($jsonmode);
   # check the environment for mode to use:
-  # $ENV{'TL_JSONMODE'} = texlive | json
+  # $ENV{'TEXLIVE_JSONMODE'} = texlive | json
   my $envdefined = 0;
-  if ($ENV{'TL_JSONMODE'}) {
+  if ($ENV{'TEXLIVE_JSONMODE'}) {
     $envdefined = 1;
-    if ($ENV{'TL_JSONMODE'} eq "texlive") {
+    if ($ENV{'TEXLIVE_JSONMODE'} eq "texlive") {
       $jsonmode = "texlive";
       debug("texlive json module used!\n");
       return;
-    } elsif ($ENV{'TL_JSONMODE'} eq "json") {
+    } elsif ($ENV{'TEXLIVE_JSONMODE'} eq "json") {
       # nothing to do
     } else {
-      tlwarn("Unsupported mode \'$ENV{TL_JSONMODE}\' set in TL_JSONMODE, ignoring it!");
+      tlwarn("Unsupported mode \'$ENV{TEXLIVE_JSONMODE}\' set in TEXLIVE_JSONMODE, ignoring it!");
       $envdefined = 0;
     }
   }
@@ -5369,7 +5925,7 @@ sub ensure_json_available {
     # that didn't work out, use home-grown json
     if ($envdefined) {
       # environment asks for JSON but cannot be loaded, die!
-      tldie("envvar TL_JSONMODE request JSON module but cannot be loaded!\n");
+      tldie("envvar TEXLIVE_JSONMODE request JSON module but cannot be loaded!\n");
     }
     $jsonmode = "texlive";
     debug("texlive json module used!\n");

@@ -2,13 +2,14 @@ Changes applied to the icu tree as obtained from:
   github.com/unicode-org/icu/releases/download/release-78.2/icu4c-78.2-sources.tgz
 
 cd $Build/source/libs/icu       # for whatever $Build directory
-# update version.ac
-tar xf /tmp/icu4c-*-sources.tgz # first check that it unpacks into icu/*
+# update ./version.ac
+tar tf /tmp/icu4c-*-sources.tgz | sed 4q # check that it unpacks into icu/*
+tar xf /tmp/icu4c-*-sources.tgz
 mv icu-src icu-prev
 mv icu icu-src
 cd icu-src
 rm -r as_is packaging		# don't bother including these in our tree
-#
+
 # files to add:
 svn status | sed -n 's/^\?//p'
 svn add `!!`                    # if looks reasonable
@@ -18,6 +19,8 @@ svn status | sed -n 's/^\?//p'  # rerun, should be empty now
 svn status | sed -n 's/^\!//p'
 svn rm `!!`                     # if looks reasonable
 svn status | sed -n 's/^\!//p'  # rerun, should be empty now
+#
+svn status # should have no ? or !
 
 # update generic files (still in icu-src):
 aux=$Build/source/build-aux
