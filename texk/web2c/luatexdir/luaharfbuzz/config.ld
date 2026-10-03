@@ -7,3 +7,4 @@ title = 'luaharfbuzz Documentation'
 file = {'src/harfbuzz.luadoc', 'src/harfbuzz-subset.luadoc'}
 examples = 'examples'
 format = 'markdown'
+style = '!fixed'

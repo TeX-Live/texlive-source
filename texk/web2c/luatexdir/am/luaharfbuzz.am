@@ -22,9 +22,9 @@ libluaharfbuzz_a_CFLAGS = # $(WARNING_CFLAGS)
 libluajitharfbuzz_a_CFLAGS = # $(WARNING_CFLAGS)
 
 libluaharfbuzz_a_SOURCES = \
+	luatexdir/luaharfbuzz/src/class_utils.c \
 	luatexdir/luaharfbuzz/src/luaharfbuzz/blob.c \
 	luatexdir/luaharfbuzz/src/luaharfbuzz/buffer.c \
-	luatexdir/luaharfbuzz/src/luaharfbuzz/class_utils.c \
 	luatexdir/luaharfbuzz/src/luaharfbuzz/direction.c \
 	luatexdir/luaharfbuzz/src/luaharfbuzz/face.c \
 	luatexdir/luaharfbuzz/src/luaharfbuzz/feature.c \

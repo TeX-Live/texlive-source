@@ -1,7 +1,9 @@
 DOCS_DIR := docs
+# Default compiler flags (override with: make CFLAGS="...").
+CFLAGS ?= -Wall -Wextra -Wsign-compare -Werror
 
 build:
-	luarocks --local make
+	CFLAGS="$(CFLAGS)" luarocks --local make
 
 spec: test
 

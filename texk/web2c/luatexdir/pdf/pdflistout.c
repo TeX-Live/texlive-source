@@ -910,12 +910,13 @@ void vlist_out(PDF pdf, halfword this_box, int rule_callback_id)
     /*tex Use local structure for recursion. */
     pdf->posstruct = &localpos;
     localpos.dir = box_dir(this_box);
-    synch_pos_with_cur(pdf->posstruct, refpos, cur);
     cur_s++;
     backend_out_control_list[BACKEND_INDEX(backend_control_push_list)](pdf,&saved_pos,&saved_loc);
     if (synctex) {
+        localpos.pos = refpos->pos;
         synctexvlist(this_box);
     }
+    synch_pos_with_cur(pdf->posstruct, refpos, cur);
     /*tex Create thread for the current vbox if needed. */
     check_running_thread(pdf, this_box, cur);
     while (p != null) {

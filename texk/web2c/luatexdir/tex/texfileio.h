@@ -107,7 +107,8 @@ extern char *TEX_format_default;
 
 extern char *open_fmt_file(void);
 
-extern boolean name_in_progress;        /* is a file name being scanned? */
+extern int input_recursion_depth;      /* To ensure that \input is not recursive */        
+extern boolean name_in_progress;       /* is a file name being scanned? */
 extern str_number job_name;     /* principal file name */
 extern boolean log_opened_global;      /* has the transcript file been opened? */
 

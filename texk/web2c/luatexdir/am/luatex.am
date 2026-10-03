@@ -88,11 +88,11 @@ luajithbtex_CPPFLAGS += -DLuajitTeX
 luahbtex_CXXFLAGS = $(WARNING_CXXFLAGS)
 luajithbtex_CXXFLAGS = $(WARNING_CXXFLAGS)
 
-luatex_LDFLAGS = -export-dynamic
-luajittex_LDFLAGS = -export-dynamic $(LUAJIT_LDEXTRA)
+luatex_LDFLAGS = -export-dynamic $(ENVLUATEXLDFLAGS)
+luajittex_LDFLAGS = -export-dynamic $(LUAJIT_LDEXTRA) $(ENVLUAJITTEXLDFLAGS)
 
-luahbtex_LDFLAGS = -export-dynamic
-luajithbtex_LDFLAGS = -export-dynamic $(LUAJIT_LDEXTRA)
+luahbtex_LDFLAGS = -export-dynamic $(ENVLUATEXLDFLAGS)
+luajithbtex_LDFLAGS = -export-dynamic $(LUAJIT_LDEXTRA) $(ENVLUAJITTEXLDFLAGS)
 
 luatex_postldadd = libmplibcore.a
 luatex_postldadd += $(ZZIPLIB_LIBS) $(LIBPNG_LIBS) $(PPLIB_LIBS) $(ZLIB_LIBS)

@@ -1,3 +1,42 @@
+2026-10-02 Luigi Scarso <luigi.scarso@gmail.com>
+
+	* Luatex 1.27.5
+
+2026-10-02 Luigi Scarso <luigi.scarso@gmail.com>
+
+	* Recursive use of \input is no longer allowed.
+
+
+2026-09-27 Luigi Scarso <luigi.scarso@gmail.com>
+
+	* Some fixes for synctex  (Ronnie Chen)
+	* Luatex 1.27.4
+
+
+2026-09-27 Luigi Scarso <luigi.scarso@gmail.com>
+
+	* Sync with upstream luaharfbuzz commit  (Udi Fogiel)
+	* Luatex 1.27.3
+
+
+2026-09-21 Luigi Scarso <luigi.scarso@gmail.com>
+
+	* Patch for LuaTeX's \variablefam (M.F. Krüger)
+	* Luatex 1.27.2
+
+2026-09-02 Luigi Scarso <luigi.scarso@gmail.com>
+
+	* New primitive for italic correction: 
+          setting \mathlargeoperatormode to a positive value enforces 
+          the traditional TeX path (with zero being the default) (HH).
+        * LuaTeX 1.27.1
+
+2026-08-15 Luigi Scarso <luigi.scarso@gmail.com>
+
+	* Several code refactoring operations based on the results of the GCC 16.1 analyzer
+        * LuaTeX 1.27.0
+
+
 2026-07-03 Luigi Scarso <luigi.scarso@gmail.com>
 
         * source/libs/pplib/pplib-src/src/ppload.c: changed

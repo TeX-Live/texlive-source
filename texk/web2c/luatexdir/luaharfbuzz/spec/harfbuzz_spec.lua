@@ -11,6 +11,14 @@ describe("harfbuzz module", function()
     assert.is_not.True(#shapers == 0)
   end)
 
+  it("no __tostring in in class tables", function()
+    local luaharfbuzz = require("luaharfbuzz")
+    for k,v in pairs(luaharfbuzz) do
+      assert(tostring(k))
+      assert(tostring(v))
+    end
+  end)
+
   describe("harfbuzz.Blob", function()
     it("can be initialized with a string", function()
       local s = "test string"

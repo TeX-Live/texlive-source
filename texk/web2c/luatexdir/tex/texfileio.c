@@ -857,6 +857,11 @@ char *open_fmt_file(void)
 
 */
 
+/*tex To ensure that input is not recursive */        
+
+int input_recursion_depth = 0;
+
+
 /*tex is a file name being scanned? */
 
 boolean name_in_progress;
@@ -996,9 +1001,10 @@ void start_input(void)
 {
     str_number temp_str;
     char *fn;
+    input_recursion_depth++; 
     do {
         get_x_token();
-    } while ((cur_cmd == spacer_cmd) || (cur_cmd == relax_cmd));
+    } while (cur_cmd == spacer_cmd);
 
     back_input();
     if (cur_cmd != left_brace_cmd) {
@@ -1096,6 +1102,7 @@ void start_input(void)
         buffer[ilimit] = (packed_ASCII_code) end_line_char_par;
     first = ilimit + 1;
     iloc = istart;
+    input_recursion_depth--;
 }
 
 /*tex
