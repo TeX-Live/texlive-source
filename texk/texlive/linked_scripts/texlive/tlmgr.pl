@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 80476 2026-10-01 22:10:37Z karl $
+# $Id: tlmgr.pl 80485 2026-10-02 21:23:48Z karl $
 # Copyright 2008-2026 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
@@ -8,8 +8,8 @@
 
 use strict; use warnings;
 
-my $svnrev = '$Revision: 80476 $';
-my $datrev = '$Date: 2026-10-02 00:10:37 +0200 (Fri, 02 Oct 2026) $';
+my $svnrev = '$Revision: 80485 $';
+my $datrev = '$Date: 2026-10-02 23:23:48 +0200 (Fri, 02 Oct 2026) $';
 my $tlmgrrevision;
 my $tlmgrversion;
 my $prg;
@@ -8995,6 +8995,11 @@ additional information. For details see C<tlpkg/doc/json-formats.txt>,
 format definition: C<TLPOBJINFO>. If both C<--json> and C<--data> are
 given, C<--json> takes precedence.
 
+The JSON output is generated internally by default; to use the standard
+Perl C<JSON> module, set the environment variable C<TEXLIVE_JSONMODE>
+(or C<TL_JSONMODE> if not set, for compatibility) to C<json>. The only
+other valid value is C<texlive> for the default.
+
 =back
 
 =back
@@ -10044,8 +10049,9 @@ Additional trusted keys can be added using the C<key> action.
 =head2 Configuration of GnuPG invocation
 
 The executable used for GnuPG is searched as follows: If the environment
-variable C<TEXLIVE_GNUPG> is set, it is tested and used; otherwise C<gpg> is
-checked; finally C<gpg2> is checked.
+variable C<TEXLIVE_GNUPG> is set, it is tested and used; next (for
+compatibility), C<TL_GNUPG> is checked; next C<gpg> is checked; finally
+C<gpg2> is checked.
 
 Further adaptation of the C<gpg> invocation can be made using the two
 environment variables C<TEXLIVE_GNUPGHOME>, which is passed to C<gpg> as the
@@ -10727,6 +10733,10 @@ No aria2c binaries are shipped with TeX Live, so it is used only when the
 system provides it. TL provides C<wget> binaries for platforms where
 necessary, so some download method should always be available.
 
+For historical compatibility, C<TL_DOWNLOAD_PROGRAM> and
+C<TL_DOWNLOAD_ARGS> are recognized if the corresponding C<TEXLIVE_*>
+environment variables are not set.
+
 =item C<TEXLIVE_PREFER_OWN>
 
 By default, the compression and download programs provided by the
@@ -10785,7 +10795,7 @@ This script and its documentation were written for the TeX Live
 distribution (L<https://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 80476 2026-10-01 22:10:37Z karl $
+$Id: tlmgr.pl 80485 2026-10-02 21:23:48Z karl $
 =cut
 
 # test HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html
