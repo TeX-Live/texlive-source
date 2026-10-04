@@ -1,13 +1,17 @@
-# TeXLive::TLUtils.pm - the inevitable utilities for TeX Live.
+# TeXLive::TLUtils.pm - common functions for TeX Live.
 # Copyright 2007-2026 Norbert Preining, Reinhard Kotucha
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
+# 
+# Much of what is here is shared between install-tl and tlmgr,
+# and is more important functionality than "Utils" would suggest.
+# But it's not worth the trouble to rename things now.
 
 use strict; use warnings;
 
 package TeXLive::TLUtils;
 
-my $svnrev = '$Revision: 80456 $';
+my $svnrev = '$Revision: 80479 $';
 my $_modulerevision = ($svnrev =~ m/: ([0-9]+) /) ? $1 : "unknown";
 sub module_revision { return $_modulerevision; }
 
@@ -15,7 +19,7 @@ sub module_revision { return $_modulerevision; }
 
 =head1 NAME
 
-C<TeXLive::TLUtils> - TeX Live infrastructure miscellany
+C<TeXLive::TLUtils> - TeX Live infrastructure common functionality
 
 =head1 SYNOPSIS
 
@@ -1011,7 +1015,7 @@ C<TL_*> for compatibility.
 =cut
 
 sub tl_env_renames {
-  for my $env (qw(DOWNLOAD_PROGRAM DOWNLOADS_ARGS GNUPG JSONMODE)) {
+  for my $env (qw(DOWNLOAD_PROGRAM DOWNLOAD_ARGS GNUPG JSONMODE)) {
     my $texlive_env = "TEXLIVE_" . $env;
     my $tl_env = "TL_" . $env;
 
