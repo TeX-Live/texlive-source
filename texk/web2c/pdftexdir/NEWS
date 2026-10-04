@@ -1,3 +1,12 @@
+(TeX Live 2027)
+
+- bugfixes:
+  - when computing checkSumAdjustment in ttf output fonts, do not
+    depend on char signedness; output where char is signed by default,
+    e.g., arm64 and x86_64 will have a different head.checkSumAdjustment
+    value. Where char is unsigned (aarch64), no change.
+
+-----------------------------------------------------------------------------
 pdfTeX 3.141592653-2.6-1.40.29 (TeX Live 2026) (3 March 2026)
 - changes:
   - don't complain about minor version <=2 unless major version == 1.

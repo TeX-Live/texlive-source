@@ -1,3 +1,10 @@
+2026-10-04  Karl Berry  <karl@freefriends.org>
+
+	* writettf.c (ttf_write_dirtab): when computing checkSumAdjustment,
+	cast *p to (unsigned char) to avoid depending on char signedness.
+	Report from Dax Kelson,
+	https://tug.org/pipermail/pdftex/2026-October/009472.html.
+
 2026-05-09  Karl Berry  <karl@freefriends.org>
 
 	* wcfname.test: do not use *** in informational messages,
