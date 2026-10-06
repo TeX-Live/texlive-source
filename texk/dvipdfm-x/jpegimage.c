@@ -792,9 +792,10 @@ read_APP1_Exif (struct JPEG_info *j_info, FILE *fp, size_t length)
     double yyy2 = floor(j_info->ydpi+0.5);
 
     if (xxx1 != xxx2 || yyy1 != yyy2) {
-      WARN("%s: Inconsistent resolution may have " \
-           "specified in Exif and JFIF: %gx%g - %gx%g", JPEG_DEBUG_STR,
-           xxx1, yyy1, xxx2, yyy2);
+      WARN("%s: Image contains both JFIF and Exif segments, but " \
+           "their resolutions do not match. I will use the JFIF " \
+	   "value (%gx%g DPI) and ignore the Exif one (%gx%g DPI).",
+	   JPEG_DEBUG_STR, xxx1, yyy1, xxx2, yyy2);
     }
   }
 
