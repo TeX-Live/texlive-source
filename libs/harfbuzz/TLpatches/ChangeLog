@@ -1,3 +1,13 @@
+2026-10-06  Akira Kakuto  <kakuto@jcom.zaq.ne.jp>
+
+	Imported harfbuzz-14.6.0 source tree from:
+	https://github.com/harfbuzz/harfbuzz/releases/tag/14.6.0/
+
+2026-10-01  Akira Kakuto  <kakuto@jcom.zaq.ne.jp>
+
+	Imported harfbuzz-14.5.1 source tree from:
+	https://github.com/harfbuzz/harfbuzz/releases/tag/14.5.1/
+
 2026-09-22  Akira Kakuto  <kakuto@jcom.zaq.ne.jp>
 
 	Imported harfbuzz-14.5.0 source tree from:
