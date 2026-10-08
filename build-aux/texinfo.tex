@@ -3,7 +3,7 @@
 % Load plain if necessary, i.e., if running under initex.
 \expandafter\ifx\csname fmtname\endcsname\relax\input plain\fi
 %
-\def\texinfoversion{2026-09-26.20}
+\def\texinfoversion{2026-10-07.17}
 %
 % Copyright 1985, 1986, 1988, 1990-2026 Free Software Foundation, Inc.
 %
@@ -9594,6 +9594,20 @@ might help (with 'rm \jobname.?? \jobname.??s')%
   \indexnofonts
   \turnoffactive
   \def\value##1{##1}%
+  \mathchardefdummies
+}
+
+% Add some dummy definitions for commands defined with \mathchardef in
+% plain.tex.
+% A manual file for Blitz++, blitz.texi, used these commands in section
+% titles.  This means they can make their way into target names, and so
+% they need fully expandable definitions.
+% Hopefully the number of such definitions we will need to make will remain
+% quite low.
+\def\mathchardefdummies{%
+  \definedummyword\nabla
+  \definedummyword\times
+  \definedummyword\cdot
 }
 
 % Set #2 to xref string #1
