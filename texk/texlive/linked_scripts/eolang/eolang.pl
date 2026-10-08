@@ -2,7 +2,7 @@
 # SPDX-FileCopyrightText: Copyright (c) 2021-2026 Yegor Bugayenko
 # SPDX-License-Identifier: MIT
 
-# 0.26.2 2026-10-06
+# 0.26.3 2026-10-08
 package eolang;
 
 use warnings;
@@ -59,7 +59,7 @@ if (@ARGV+0 eq 0 or exists $args{'--help'} or exists $args{'-?'}) {
     "      --tmpdir=path    Temp directory with .tex files ('_eolang' by default)\n\n" .
     "If any issues, report to GitHub: https://github.com/objectionary/eolang.sty");
 } elsif (exists $args{'--version'} or exists $args{'-v'}) {
-  info('0.26.2 2026-10-06');
+  info('0.26.3 2026-10-08');
 } else {
   my ($src, $target) = grep { not($_ =~ /^-.*$/) } @ARGV;
   if (not $src) {
@@ -71,7 +71,9 @@ if (@ARGV+0 eq 0 or exists $args{'--help'} or exists $args{'-?'}) {
   $job =~ s/\.[^.]+$//;
   debug('Job name: ' . $job);
   my $tex = readfile($src);
-  my $tmpdir = dirname($src) . '/_eolang/' . $job;
+  my ($tmpdir_arg) = map { /^--tmpdir=(.*)$/ ? $1 : () } @ARGV;
+  my $tmpdir_root = defined($tmpdir_arg) ? $tmpdir_arg : dirname($src) . '/_eolang';
+  my $tmpdir = $tmpdir_root . '/' . $job;
   debug('EO tmpdir: ' . $tmpdir);
   foreach my $f (glob($tmpdir . '/*-phiq.tex')) {
     my $id = basename($f);
