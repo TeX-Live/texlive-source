@@ -251,6 +251,7 @@ TESTS += dvipdfmx-lmr0.test dvipdfmx-lmr1.test
 TESTS += dvipdfmx-ttf0.test
 TESTS += dvipdfmx-color.test
 TESTS += dvipdfmx-spot.test
+TESTS += dvipdfmx-mpclip.test
 xdvipdfmx.log xdvipdfm-ann.log xdvipdfm-bad.log xdvipdfm-bb.log \
 	xdvipdfm-bkm.log xdvipdfm-pdf.log xdvipdfm-psz.log \
 	xdvipdfm-ptx.log xdvipdfm-res.log \
@@ -259,7 +260,8 @@ xdvipdfmx.log xdvipdfm-ann.log xdvipdfm-bad.log xdvipdfm-bb.log \
 	dvipdfmx-lmr0.log dvipdfmx-lmr1.log \
 	dvipdfmx-ttf0.log \
 	dvipdfmx-color.log \
-	dvipdfmx-spot.log: \
+	dvipdfmx-spot.log \
+	dvipdfmx-mpclip.log: \
 	xdvipdfmx$(EXEEXT)
 EXTRA_DIST = $(TESTS)
 ## xdvipdfmx.test
@@ -353,3 +355,6 @@ DISTCLEANFILES += color_stack.pdf
 ## dvipdfmx-spot.test
 EXTRA_DIST += tests/spot_doublefree.dvi tests/spot_doublefree.tex
 DISTCLEANFILES += spot_doublefree.pdf
+## dvipdfmx-mpclip.test
+EXTRA_DIST += tests/mpclip.dvi tests/mpclip.tex tests/mpclip.mp tests/mpclip.mps
+DISTCLEANFILES += mpclip.pdf

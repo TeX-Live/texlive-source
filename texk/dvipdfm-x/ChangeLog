@@ -8,6 +8,8 @@
 	current path is kept, as in PostScript.
 	Reported by Thomas (Chingatome),
 	https://tug.org/pipermail/dvipdfmx/2026-September/.
+	* dvipdfmx-mpclip.test, tests/mpclip.{mp,mps,tex,dvi},
+	Makefile.am: regression test.
 
 2026-06-05  Karl Berry  <karl@freefriends.org>
 

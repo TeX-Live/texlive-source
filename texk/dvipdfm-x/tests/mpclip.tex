@@ -1,0 +1,16 @@
+%% tests/mpclip.tex
+%%
+%% Regression test for missing "n" after the clipping operator "W".
+%% Compile: tex mpclip  (plain TeX; needs mpclip.mps from mpclip.mp)
+%%
+%% PDF requires W/W* to be followed by a path-painting operator,
+%% but PostScript clip/eoclip is often followed by other operators.
+%% MetaPost figure with clip (-> W), then inline PostScript
+%% with eoclip (-> W*).
+%%
+\nopagenumbers
+\special{PSfile="mpclip.mps" llx=0 lly=0 urx=100 ury=100}
+\special{ps: gsave newpath 0 0 moveto 50 0 lineto 25 50 lineto
+  closepath eoclip 0 0 1 setrgbcolor
+  newpath 0 0 moveto 50 50 lineto stroke grestore}
+\bye

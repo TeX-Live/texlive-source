@@ -1,0 +1,54 @@
+#! /bin/sh -vx
+# $Id$
+# Copyright 2026 Munehiro Yamamoto <munepixyz@gmail.com>
+# You may freely use, modify and/or distribute this file.
+#
+# Regression test for missing "n" after the clipping operator "W".
+#
+# PostScript clip/eoclip keeps the current path, and MetaPost
+# output may continue with setrgbcolor, fshow, etc. after clip.
+# PDF, however, requires W/W* to be followed by a path-painting
+# operator.  Without the fix, the PDF contains e.g.
+#   h W 1 0 0 RG ...   and   h W* 0 0 1 RG ...
+# which some printers render incorrectly.
+#
+# The test DVI (mpclip.dvi) includes a MetaPost figure with clip
+# (mpclip.mps) and inline PostScript with eoclip.
+#
+# Detection: in the uncompressed (-z0) PDF, every W/W* must be
+# followed by n.
+
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_xdvipdfmx=$BinDir/xdvipdfmx$ExeExt
+
+LC_ALL=C; export LC_ALL;  LANGUAGE=C; export LANGUAGE
+TEXMFCNF=$srcdir/../kpathsea
+TEXFONTMAPS="$srcdir/tests;$srcdir/data"
+DVIPDFMXINPUTS="$srcdir/tests;$srcdir/data"
+TEXPICTS=$srcdir/tests
+export TEXMFCNF TEXFONTMAPS DVIPDFMXINPUTS TEXPICTS
+
+failed=
+
+rm -f mpclip.pdf
+
+echo "*** dvipdfmx: missing n after W regression test"
+
+$_xdvipdfmx --dvipdfmx -v -z0 \
+	-o mpclip.pdf $srcdir/tests/mpclip.dvi \
+	|| failed="$failed mpclip-convert"
+
+if test -z "$failed"; then
+	grep -a ' W n' mpclip.pdf \
+		|| failed="$failed mpclip-clip"
+	grep -a ' W\* n' mpclip.pdf \
+		|| failed="$failed mpclip-eoclip"
+	grep -a ' W\*\{0,1\} [^n]' mpclip.pdf \
+		&& failed="$failed mpclip-no-n"
+fi
+
+test -z "$failed" && exit 0
+echo
+echo "failed tests:$failed"
+exit 1
