@@ -1,3 +1,14 @@
+2026-09-27  Munehiro Yamamoto <munepixyz@gmail.com>
+
+	* pdfdraw.c (pdf_dev_clip, pdf_dev_eoclip): emit "n" after W/W*.
+	PostScript clip/eoclip keeps the current path, and MetaPost
+	output may continue with setrgbcolor, fshow, etc. after clip,
+	which produced invalid sequences such as "h W BT".  PDF requires
+	W to be followed by a path-painting operator.  The internal
+	current path is kept, as in PostScript.
+	Reported by Thomas (Chingatome),
+	https://tug.org/pipermail/dvipdfmx/2026-September/.
+
 2026-06-05  Karl Berry  <karl@freefriends.org>
 
 	* man/dvipdfmx.1: some font updates and others, per Bjarni Ingi
