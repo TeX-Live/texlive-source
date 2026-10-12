@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 80485 2026-10-02 21:23:48Z karl $
+# $Id: tlmgr.pl 80600 2026-10-11 22:17:25Z karl $
 # Copyright 2008-2026 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
@@ -8,8 +8,8 @@
 
 use strict; use warnings;
 
-my $svnrev = '$Revision: 80485 $';
-my $datrev = '$Date: 2026-10-02 23:23:48 +0200 (Fri, 02 Oct 2026) $';
+my $svnrev = '$Revision: 80600 $';
+my $datrev = '$Date: 2026-10-12 00:17:25 +0200 (Mon, 12 Oct 2026) $';
 my $tlmgrrevision;
 my $tlmgrversion;
 my $prg;
@@ -363,7 +363,8 @@ my %globaloptions = (
   "persistent-downloads" => "!",
   "pause" => 1,
   "pin-file" => "=s",
-  "prefetch" => "=s",
+  "prefetch" => ":s",
+  "no-prefetch" => 1,
   "print-platform|print-arch" => 1,
   "print-platform-info" => 1,
   "usermode|user-mode" => 1,
@@ -413,8 +414,11 @@ sub main {
 
   GetOptions(\%opts, keys(%optarg)) or pod2usage(2);
 
-  # read where it is used, in TLUtils::prefetch_start
-  $ENV{'TEXLIVE_PREFETCH'} = $opts{'prefetch'} if defined($opts{'prefetch'});
+  # set up the TEXLIVE_PREFETCH env var according to the options
+  TeXLive::TLUtils::setup_prefetch_parallel_env_var(
+    'TEXLIVE_PREFETCH', 'prefetch', 'no-prefetch', \%opts,
+    $TeXLive::TLConfig::DefaultPrefetchPolicy
+  );
 
   # load the config file and set the config options
   # load it BEFORE starting downloads as we set persistent-downloads there!
@@ -8488,7 +8492,8 @@ only useful in debugging.
 
 =item B<--prefetch> I<jobs>[B<:>I<mb>]
 
-Same as setting C<TEXLIVE_PREFETCH> to I<jobs>[B<:>I<mb>], which see below.
+Same as setting C<TEXLIVE_PREFETCH> to I<jobs>[B<:>I<mb>]; see below.
+This is enabled by default.
 
 =item B<--usermode>
 
@@ -10759,11 +10764,12 @@ regardless of any setting.
 
 =item C<TEXLIVE_PREFETCH>
 
-When installing or updating over the network, C<tlmgr> downloads one
-container at a time, so most of the time is spent waiting for the
-server. C<TEXLIVE_PREFETCH> (or the C<--prefetch> option, which
-overrides it) instead fetches containers in the background while the
-installation proceeds. Its value is I<jobs>[B<:>I<mb>], where I<jobs> is
+C<TEXLIVE_PREFETCH> (or the C<--prefetch> option, which overrides it)
+fetches containers in the background while the installation proceeds.
+It is enabled by default.
+
+The value for both the environment variable and the option is
+I<jobs>[B<:>I<mb>], where I<jobs> is
 
   unset or 0   one container at a time, as before (the default)
   1            one background worker
@@ -10783,7 +10789,7 @@ the background download may pile up in the meantime, it pauses while
 more than I<mb> megabytes (default 200; C<0> for no limit) are waiting
 to be installed. The workers check before starting on the next
 containers rather than during, so the cache in fact usually reaches a
-few (around 2-3) times this setting.
+few (around 2-3) multiples of this setting.
 
 Prefetch has no effect at all when installing from a local repository.
 
@@ -10795,7 +10801,7 @@ This script and its documentation were written for the TeX Live
 distribution (L<https://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 80485 2026-10-02 21:23:48Z karl $
+$Id: tlmgr.pl 80600 2026-10-11 22:17:25Z karl $
 =cut
 
 # test HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html
@@ -10805,4 +10811,4 @@ $Id: tlmgr.pl 80485 2026-10-02 21:23:48Z karl $
 ### tab-width: 2
 ### indent-tabs-mode: nil
 ### End:
-# vim:set tabstop=2 shiftwidth=2 expandtab: #
+# vim:set tabstop=2 shiftwidth=2 softtabstop=-1 expandtab: #
