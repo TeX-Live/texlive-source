@@ -1,3 +1,12 @@
+2026-10-13  Norbert Preining  <norbert@preining.info>
+
+	* pplib-src/src/ppcrypt.c (ppdoc_crypt_init): reject a file key
+	length above PPCRYPT_MAX_KEY. /Length (or the crypt filter
+	/Length) was used unchecked, overflowing rc4key2[32] and filekey.
+	Report by Stephan Lipp (Ada Logics) and Anthropic, ANT-2026-301QWZS5.
+	* pplib.test, pplib-src/test/cryptlen.pdf, pplib-src/test/out4:
+	regression test.
+
 2026-07-03 Luigi Scarso luigi.scarso@gmail.com
 	
 	* pplib-src/src/ppload.c: changed

@@ -30,3 +30,8 @@ $DIFF $srcdir/$PPLIB_TREE/test/out2 test/out2 || exit 6
 diff $srcdir/$PPLIB_TREE/test/luaimage.pdf.out test/luaimage.pdf.out || exit 7
 $DIFF $srcdir/$PPLIB_TREE/test/out3 test/out3 || exit 8
 
+# oversized /Encrypt /Length must be rejected, not overflow the key buffers
+cp $srcdir/$PPLIB_TREE/test/cryptlen.pdf test
+(cd test && ../pptest1 cryptlen.pdf | sed -e 's/memused.*$//;s/memwaste.*$//;' >out4) || exit 9
+diff $srcdir/$PPLIB_TREE/test/out4 test/out4 || exit 10
+
