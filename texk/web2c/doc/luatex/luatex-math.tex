@@ -743,7 +743,7 @@ pointer to the corresponding internal parameter is saved, not the actual \prm
 {muskip} value. This means that any later changes to one of these three
 parameters will be taken into account.
 
-Note 2: Careful readers will realise that there are also primitives for the items
+Note 2: Careful readers will realize that there are also primitives for the items
 marked \type {*} in the \TEX book. These will not actually be used as those
 combinations of atoms cannot actually happen, but it seemed better not to break
 orthogonality. They are initialized to zero.
@@ -761,7 +761,7 @@ to fully control spacing. Therefore \LUATEX\ comes with a new directive: \lpr
 \starttabulate[|c|l|]
 \DB value  \BC meaning \NC \NR
 \TB
-\NC 0 \NC normal \TEX\ behaviour \NC \NR
+\NC 0 \NC normal \TEX\ behavior \NC \NR
 \NC 1 \NC always (same as 0) \NC \NR
 \NC 2 \NC only when not zero \NC \NR
 \NC 3 \NC never, not even when not zero \NC \NR
@@ -975,6 +975,17 @@ value direction will be taken into account.
 %     \MathSample{}      {lucidaot}{\mb}
 %     \LL
 % \stoptabulate
+
+\subsection{Large operators}
+
+There are fundamental differences in how traditional \TEX\ uses italic correction
+and how \OPENTYPE\ sees it. Unfortunately after decades of \LUATEX\ we are in a
+situation where many math fonts (at least those originating from the \TEX\ world)
+use the old model. For that reason we eventually decided to let that one dominate
+even if it gives bad results. Large operators are troublemakers so we have a
+parameter to control them: setting \type {\mathlargeoperatormode} to a positive
+value enforces the traditional path (with zero being the default). Of course
+macro packages can (and likely have to) deal with these matters differently.
 
 \subsection{Fixed scripts}
 
@@ -1317,10 +1328,10 @@ works.
 
 \topicindex {math+fractions}
 
-The \prm {abovewithdelims} command accepts keywords \type {exact} and \type
-{norule}. When issued the extra space relative to the rule thickness is not
-added. One can of course use the \type {\Umathfraction..gap} commands to
-influence the spacing. Also the rule is still positioned around the math axis.
+The \prm {abovewithdelims} command accepts a keyword \type {exact}. When issued
+the extra space relative to the rule thickness is not added. One can of course
+use the \type {\Umathfraction..gap} commands to influence the spacing. Also the
+rule is still positioned around the math axis.
 
 \starttyping
 $$ { {a} \abovewithdelims() exact 4pt {b} }$$
@@ -1376,6 +1387,9 @@ For Latin Modern the result looks as follows:
         \NR
     \stoptabulate
 \stop
+
+The keyword \type {norule} will hide the rule with the \type {\above} variants
+while keeping the rule related spacing.
 
 \subsection {Delimiters: \type{\Uleft}, \prm {Umiddle} and \prm {Uright}}
 
@@ -1573,11 +1587,13 @@ Per TL 2026 the following primitives are \quote {ignored}. They were not used in
 two decades unless by \CONTEXT\ for exploring variants but we can do that
 differently now. Obsolete commands that trigger a warning: \typ {\mathoption},
 \typ {\mathitalicssmode}, \typ {\mathnolimitsmode}, \typ {\mathscriptboxmode},
-\typ {\mathscriptcharmode}, %\typ {\mathflattenmode},
-\typ {\mathdefaultsmode},
+\typ {\mathscriptcharmode}, \typ {\mathdefaultsmode},
 \typ {\mathrulethicknessmode}, \typ {\mathdelimitersmode}. Also no longer used
 are the parameters \typ {\Umathnolimitsupfactor} and \typ
 {\Umathnolimitsubfactor}.
+
+% The \typ {\mathflattenmode} primitive is also considered obsolete (HH) but
+% has been reactivated because \LATEX\ depends on it.
 
 \subsection {Flattening: \lpr {mathflattenmode}}
 
