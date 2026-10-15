@@ -6,7 +6,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="API Reference Documentation for FreeType-2.14.3">
+        <meta name="description" content="API Reference Documentation for FreeType-2.15.0">
       
       
         <meta name="author" content="FreeType Contributors">
@@ -21,19 +21,22 @@
         <link rel="next" href="ft2-sizing_and_scaling.html">
       
       
+        
+      
+      
       <link rel="icon" href="images/favico.ico">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.9">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
     
     
       
-        <title>Font Testing Macros - FreeType-2.14.3 API Reference</title>
+        <title>Font Testing Macros - FreeType-2.15.0 API Reference</title>
       
     
     
-      <link rel="stylesheet" href="assets/stylesheets/main.4af4bdda.min.css">
+      <link rel="stylesheet" href="assets/stylesheets/main.484c7ddc.min.css">
       
         
-        <link rel="stylesheet" href="assets/stylesheets/palette.06af60db.min.css">
+        <link rel="stylesheet" href="assets/stylesheets/palette.ab4e12ef.min.css">
       
       
 
@@ -58,7 +61,6 @@
     
       
 
-    
     
     
   </head>
@@ -94,7 +96,7 @@
 
 <header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="index.html" title="FreeType-2.14.3 API Reference" class="md-header__button md-logo" aria-label="FreeType-2.14.3 API Reference" data-md-component="logo">
+    <a href="index.html" title="FreeType-2.15.0 API Reference" class="md-header__button md-logo" aria-label="FreeType-2.15.0 API Reference" data-md-component="logo">
       
   <img src="images/favico.ico" alt="logo">
 
@@ -107,7 +109,7 @@
       <div class="md-header__ellipsis">
         <div class="md-header__topic">
           <span class="md-ellipsis">
-            FreeType-2.14.3 API Reference
+            FreeType-2.15.0 API Reference
           </span>
         </div>
         <div class="md-header__topic" data-md-component="header-topic">
@@ -125,11 +127,13 @@
     
     
     
-      <label class="md-header__button md-icon" for="__search">
-        
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
-      </label>
-      <div class="md-search" data-md-component="search" role="dialog">
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
   <label class="md-search__overlay" for="__search"></label>
   <div class="md-search__inner" role="search">
     <form class="md-search__form" name="search">
@@ -161,6 +165,7 @@
     </div>
   </div>
 </div>
+      
     
     
   </nav>
@@ -188,12 +193,12 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="index.html" title="FreeType-2.14.3 API Reference" class="md-nav__button md-logo" aria-label="FreeType-2.14.3 API Reference" data-md-component="logo">
+    <a href="index.html" title="FreeType-2.15.0 API Reference" class="md-nav__button md-logo" aria-label="FreeType-2.15.0 API Reference" data-md-component="logo">
       
   <img src="images/favico.ico" alt="logo">
 
     </a>
-    FreeType-2.14.3 API Reference
+    FreeType-2.15.0 API Reference
   </label>
   
   <ul class="md-nav__list" data-md-scrollfix>
@@ -208,10 +213,16 @@
       <a href="index.html" class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
+    
+  
     TOC
+  
+
     
   </span>
+  
   
 
       </a>
@@ -229,10 +240,16 @@
       <a href="ft2-index.html" class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
+    
+  
     Index
+  
+
     
   </span>
+  
   
 
       </a>
@@ -250,6 +267,7 @@
     
     
     
+    
     <li class="md-nav__item md-nav__item--nested">
       
         
@@ -260,10 +278,16 @@
           <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
             
   
+  
   <span class="md-ellipsis">
+    
+  
     General Remarks
+  
+
     
   </span>
+  
   
 
             <span class="md-nav__icon md-icon"></span>
@@ -272,7 +296,11 @@
         <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_3">
             <span class="md-nav__icon md-icon"></span>
-            General Remarks
+            
+  
+    General Remarks
+  
+
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
@@ -286,10 +314,16 @@
       <a href="ft2-preamble.html" class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
+    
+  
     Preamble
+  
+
     
   </span>
+  
   
 
       </a>
@@ -308,10 +342,16 @@
       <a href="ft2-header_inclusion.html" class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
+    
+  
     FreeType's header inclusion scheme
+  
+
     
   </span>
+  
   
 
       </a>
@@ -330,10 +370,16 @@
       <a href="ft2-user_allocation.html" class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
+    
+  
     User allocation
+  
+
     
   </span>
+  
   
 
       </a>
@@ -361,6 +407,7 @@
     
     
     
+    
     <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
         
@@ -371,10 +418,16 @@
           <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
             
   
+  
   <span class="md-ellipsis">
+    
+  
     Core API
+  
+
     
   </span>
+  
   
 
             <span class="md-nav__icon md-icon"></span>
@@ -383,7 +436,11 @@
         <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_4">
             <span class="md-nav__icon md-icon"></span>
-            Core API
+            
+  
+    Core API
+  
+
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
@@ -397,10 +454,16 @@
       <a href="ft2-basic_types.html" class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
+    
+  
     Basic Data Types
+  
+
     
   </span>
+  
   
 
       </a>
@@ -419,10 +482,16 @@
       <a href="ft2-library_setup.html" class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
+    
+  
     Library Setup
+  
+
     
   </span>
+  
   
 
       </a>
@@ -441,10 +510,16 @@
       <a href="ft2-face_creation.html" class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
+    
+  
     Face Creation
+  
+
     
   </span>
+  
   
 
       </a>
@@ -472,10 +547,16 @@
         <label class="md-nav__link md-nav__link--active" for="__toc">
           
   
+  
   <span class="md-ellipsis">
+    
+  
     Font Testing Macros
+  
+
     
   </span>
+  
   
 
           <span class="md-nav__icon md-icon"></span>
@@ -484,10 +565,16 @@
       <a href="ft2-font_testing_macros.html" class="md-nav__link md-nav__link--active">
         
   
+  
   <span class="md-ellipsis">
+    
+  
     Font Testing Macros
+  
+
     
   </span>
+  
   
 
       </a>
@@ -510,7 +597,9 @@
         <li class="md-nav__item">
   <a href="#synopsis" class="md-nav__link">
     <span class="md-ellipsis">
-      Synopsis
+      
+        Synopsis
+      
     </span>
   </a>
   
@@ -519,7 +608,9 @@
         <li class="md-nav__item">
   <a href="#ft_has_horizontal" class="md-nav__link">
     <span class="md-ellipsis">
-      FT_HAS_HORIZONTAL
+      
+        FT_HAS_HORIZONTAL
+      
     </span>
   </a>
   
@@ -528,7 +619,9 @@
         <li class="md-nav__item">
   <a href="#ft_has_vertical" class="md-nav__link">
     <span class="md-ellipsis">
-      FT_HAS_VERTICAL
+      
+        FT_HAS_VERTICAL
+      
     </span>
   </a>
   
@@ -537,7 +630,9 @@
         <li class="md-nav__item">
   <a href="#ft_has_kerning" class="md-nav__link">
     <span class="md-ellipsis">
-      FT_HAS_KERNING
+      
+        FT_HAS_KERNING
+      
     </span>
   </a>
   
@@ -546,7 +641,9 @@
         <li class="md-nav__item">
   <a href="#ft_has_fixed_sizes" class="md-nav__link">
     <span class="md-ellipsis">
-      FT_HAS_FIXED_SIZES
+      
+        FT_HAS_FIXED_SIZES
+      
     </span>
   </a>
   
@@ -555,7 +652,9 @@
         <li class="md-nav__item">
   <a href="#ft_has_glyph_names" class="md-nav__link">
     <span class="md-ellipsis">
-      FT_HAS_GLYPH_NAMES
+      
+        FT_HAS_GLYPH_NAMES
+      
     </span>
   </a>
   
@@ -564,7 +663,9 @@
         <li class="md-nav__item">
   <a href="#ft_has_color" class="md-nav__link">
     <span class="md-ellipsis">
-      FT_HAS_COLOR
+      
+        FT_HAS_COLOR
+      
     </span>
   </a>
   
@@ -573,7 +674,9 @@
         <li class="md-nav__item">
   <a href="#ft_has_multiple_masters" class="md-nav__link">
     <span class="md-ellipsis">
-      FT_HAS_MULTIPLE_MASTERS
+      
+        FT_HAS_MULTIPLE_MASTERS
+      
     </span>
   </a>
   
@@ -582,7 +685,9 @@
         <li class="md-nav__item">
   <a href="#ft_has_svg" class="md-nav__link">
     <span class="md-ellipsis">
-      FT_HAS_SVG
+      
+        FT_HAS_SVG
+      
     </span>
   </a>
   
@@ -591,7 +696,9 @@
         <li class="md-nav__item">
   <a href="#ft_has_sbix" class="md-nav__link">
     <span class="md-ellipsis">
-      FT_HAS_SBIX
+      
+        FT_HAS_SBIX
+      
     </span>
   </a>
   
@@ -600,7 +707,9 @@
         <li class="md-nav__item">
   <a href="#ft_has_sbix_overlay" class="md-nav__link">
     <span class="md-ellipsis">
-      FT_HAS_SBIX_OVERLAY
+      
+        FT_HAS_SBIX_OVERLAY
+      
     </span>
   </a>
   
@@ -609,7 +718,9 @@
         <li class="md-nav__item">
   <a href="#ft_is_sfnt" class="md-nav__link">
     <span class="md-ellipsis">
-      FT_IS_SFNT
+      
+        FT_IS_SFNT
+      
     </span>
   </a>
   
@@ -618,7 +729,9 @@
         <li class="md-nav__item">
   <a href="#ft_is_scalable" class="md-nav__link">
     <span class="md-ellipsis">
-      FT_IS_SCALABLE
+      
+        FT_IS_SCALABLE
+      
     </span>
   </a>
   
@@ -627,7 +740,9 @@
         <li class="md-nav__item">
   <a href="#ft_is_fixed_width" class="md-nav__link">
     <span class="md-ellipsis">
-      FT_IS_FIXED_WIDTH
+      
+        FT_IS_FIXED_WIDTH
+      
     </span>
   </a>
   
@@ -636,7 +751,9 @@
         <li class="md-nav__item">
   <a href="#ft_is_cid_keyed" class="md-nav__link">
     <span class="md-ellipsis">
-      FT_IS_CID_KEYED
+      
+        FT_IS_CID_KEYED
+      
     </span>
   </a>
   
@@ -645,7 +762,9 @@
         <li class="md-nav__item">
   <a href="#ft_is_tricky" class="md-nav__link">
     <span class="md-ellipsis">
-      FT_IS_TRICKY
+      
+        FT_IS_TRICKY
+      
     </span>
   </a>
   
@@ -654,7 +773,9 @@
         <li class="md-nav__item">
   <a href="#ft_is_named_instance" class="md-nav__link">
     <span class="md-ellipsis">
-      FT_IS_NAMED_INSTANCE
+      
+        FT_IS_NAMED_INSTANCE
+      
     </span>
   </a>
   
@@ -663,7 +784,9 @@
         <li class="md-nav__item">
   <a href="#ft_is_variation" class="md-nav__link">
     <span class="md-ellipsis">
-      FT_IS_VARIATION
+      
+        FT_IS_VARIATION
+      
     </span>
   </a>
   
@@ -688,10 +811,16 @@
       <a href="ft2-sizing_and_scaling.html" class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
+    
+  
     Sizing and Scaling
+  
+
     
   </span>
+  
   
 
       </a>
@@ -710,10 +839,16 @@
       <a href="ft2-glyph_retrieval.html" class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
+    
+  
     Glyph Retrieval
+  
+
     
   </span>
+  
   
 
       </a>
@@ -732,10 +867,16 @@
       <a href="ft2-character_mapping.html" class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
+    
+  
     Character Mapping
+  
+
     
   </span>
+  
   
 
       </a>
@@ -754,10 +895,16 @@
       <a href="ft2-information_retrieval.html" class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
+    
+  
     Information Retrieval
+  
+
     
   </span>
+  
   
 
       </a>
@@ -776,10 +923,16 @@
       <a href="ft2-other_api_data.html" class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
+    
+  
     Other API Data
+  
+
     
   </span>
+  
   
 
       </a>
@@ -805,6 +958,7 @@
     
     
     
+    
     <li class="md-nav__item md-nav__item--nested">
       
         
@@ -815,10 +969,16 @@
           <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
             
   
+  
   <span class="md-ellipsis">
+    
+  
     Extended API
+  
+
     
   </span>
+  
   
 
             <span class="md-nav__icon md-icon"></span>
@@ -827,7 +987,11 @@
         <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_5">
             <span class="md-nav__icon md-icon"></span>
-            Extended API
+            
+  
+    Extended API
+  
+
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
@@ -841,10 +1005,16 @@
       <a href="ft2-glyph_variants.html" class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
+    
+  
     Unicode Variation Sequences
+  
+
     
   </span>
+  
   
 
       </a>
@@ -863,10 +1033,16 @@
       <a href="ft2-color_management.html" class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
+    
+  
     Glyph Color Management
+  
+
     
   </span>
+  
   
 
       </a>
@@ -885,10 +1061,16 @@
       <a href="ft2-layer_management.html" class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
+    
+  
     Glyph Layer Management
+  
+
     
   </span>
+  
   
 
       </a>
@@ -907,10 +1089,16 @@
       <a href="ft2-glyph_management.html" class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
+    
+  
     Glyph Management
+  
+
     
   </span>
+  
   
 
       </a>
@@ -929,10 +1117,16 @@
       <a href="ft2-mac_specific.html" class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
+    
+  
     Mac Specific Interface
+  
+
     
   </span>
+  
   
 
       </a>
@@ -951,10 +1145,16 @@
       <a href="ft2-sizes_management.html" class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
+    
+  
     Size Management
+  
+
     
   </span>
+  
   
 
       </a>
@@ -973,10 +1173,16 @@
       <a href="ft2-header_file_macros.html" class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
+    
+  
     Header File Macros
+  
+
     
   </span>
+  
   
 
       </a>
@@ -1002,6 +1208,7 @@
     
     
     
+    
     <li class="md-nav__item md-nav__item--nested">
       
         
@@ -1012,10 +1219,16 @@
           <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
             
   
+  
   <span class="md-ellipsis">
+    
+  
     Format-Specific API
+  
+
     
   </span>
+  
   
 
             <span class="md-nav__icon md-icon"></span>
@@ -1024,7 +1237,11 @@
         <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_6">
             <span class="md-nav__icon md-icon"></span>
-            Format-Specific API
+            
+  
+    Format-Specific API
+  
+
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
@@ -1038,10 +1255,16 @@
       <a href="ft2-multiple_masters.html" class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
+    
+  
     OpenType Font Variations, TrueType GX, and Adobe MM Fonts
+  
+
     
   </span>
+  
   
 
       </a>
@@ -1060,10 +1283,16 @@
       <a href="ft2-truetype_tables.html" class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
+    
+  
     TrueType Tables
+  
+
     
   </span>
+  
   
 
       </a>
@@ -1082,10 +1311,16 @@
       <a href="ft2-type1_tables.html" class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
+    
+  
     Type 1 Tables
+  
+
     
   </span>
+  
   
 
       </a>
@@ -1104,10 +1339,16 @@
       <a href="ft2-sfnt_names.html" class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
+    
+  
     SFNT Names
+  
+
     
   </span>
+  
   
 
       </a>
@@ -1126,10 +1367,16 @@
       <a href="ft2-bdf_fonts.html" class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
+    
+  
     BDF and PCF Files
+  
+
     
   </span>
+  
   
 
       </a>
@@ -1148,10 +1395,16 @@
       <a href="ft2-cid_fonts.html" class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
+    
+  
     CID Fonts
+  
+
     
   </span>
+  
   
 
       </a>
@@ -1170,10 +1423,16 @@
       <a href="ft2-pfr_fonts.html" class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
+    
+  
     PFR Fonts
+  
+
     
   </span>
+  
   
 
       </a>
@@ -1192,10 +1451,16 @@
       <a href="ft2-winfnt_fonts.html" class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
+    
+  
     Window FNT Files
+  
+
     
   </span>
+  
   
 
       </a>
@@ -1214,10 +1479,16 @@
       <a href="ft2-svg_fonts.html" class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
+    
+  
     OpenType SVG Fonts
+  
+
     
   </span>
+  
   
 
       </a>
@@ -1236,10 +1507,16 @@
       <a href="ft2-font_formats.html" class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
+    
+  
     Font Formats
+  
+
     
   </span>
+  
   
 
       </a>
@@ -1258,10 +1535,16 @@
       <a href="ft2-gasp_table.html" class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
+    
+  
     Gasp Table
+  
+
     
   </span>
+  
   
 
       </a>
@@ -1287,6 +1570,7 @@
     
     
     
+    
     <li class="md-nav__item md-nav__item--nested">
       
         
@@ -1297,10 +1581,16 @@
           <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
             
   
+  
   <span class="md-ellipsis">
+    
+  
     Controlling FreeType Modules
+  
+
     
   </span>
+  
   
 
             <span class="md-nav__icon md-icon"></span>
@@ -1309,7 +1599,11 @@
         <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_7">
             <span class="md-nav__icon md-icon"></span>
-            Controlling FreeType Modules
+            
+  
+    Controlling FreeType Modules
+  
+
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
@@ -1323,10 +1617,16 @@
       <a href="ft2-auto_hinter.html" class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
+    
+  
     The auto-hinter
+  
+
     
   </span>
+  
   
 
       </a>
@@ -1345,10 +1645,16 @@
       <a href="ft2-cff_driver.html" class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
+    
+  
     The CFF driver
+  
+
     
   </span>
+  
   
 
       </a>
@@ -1367,10 +1673,16 @@
       <a href="ft2-t1_cid_driver.html" class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
+    
+  
     The Type 1 and CID drivers
+  
+
     
   </span>
+  
   
 
       </a>
@@ -1389,10 +1701,16 @@
       <a href="ft2-tt_driver.html" class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
+    
+  
     The TrueType driver
+  
+
     
   </span>
+  
   
 
       </a>
@@ -1411,10 +1729,16 @@
       <a href="ft2-pcf_driver.html" class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
+    
+  
     The PCF driver
+  
+
     
   </span>
+  
   
 
       </a>
@@ -1433,10 +1757,16 @@
       <a href="ft2-ot_svg_driver.html" class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
+    
+  
     The SVG driver
+  
+
     
   </span>
+  
   
 
       </a>
@@ -1455,10 +1785,16 @@
       <a href="ft2-properties.html" class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
+    
+  
     Driver properties
+  
+
     
   </span>
+  
   
 
       </a>
@@ -1477,10 +1813,16 @@
       <a href="ft2-parameter_tags.html" class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
+    
+  
     Parameter Tags
+  
+
     
   </span>
+  
   
 
       </a>
@@ -1499,10 +1841,16 @@
       <a href="ft2-lcd_rendering.html" class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
+    
+  
     Subpixel Rendering
+  
+
     
   </span>
+  
   
 
       </a>
@@ -1524,6 +1872,7 @@
   
   
   
+    
     
     
     
@@ -1538,10 +1887,16 @@
           <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
             
   
+  
   <span class="md-ellipsis">
+    
+  
     Cache Sub-System
+  
+
     
   </span>
+  
   
 
             <span class="md-nav__icon md-icon"></span>
@@ -1550,7 +1905,11 @@
         <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_8">
             <span class="md-nav__icon md-icon"></span>
-            Cache Sub-System
+            
+  
+    Cache Sub-System
+  
+
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
@@ -1564,10 +1923,16 @@
       <a href="ft2-cache_subsystem.html" class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
+    
+  
     Cache Sub-System
+  
+
     
   </span>
+  
   
 
       </a>
@@ -1593,6 +1958,7 @@
     
     
     
+    
     <li class="md-nav__item md-nav__item--nested">
       
         
@@ -1603,10 +1969,16 @@
           <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="0">
             
   
+  
   <span class="md-ellipsis">
+    
+  
     Support API
+  
+
     
   </span>
+  
   
 
             <span class="md-nav__icon md-icon"></span>
@@ -1615,7 +1987,11 @@
         <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_9">
             <span class="md-nav__icon md-icon"></span>
-            Support API
+            
+  
+    Support API
+  
+
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
@@ -1629,10 +2005,16 @@
       <a href="ft2-computations.html" class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
+    
+  
     Computations
+  
+
     
   </span>
+  
   
 
       </a>
@@ -1651,10 +2033,16 @@
       <a href="ft2-list_processing.html" class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
+    
+  
     List Processing
+  
+
     
   </span>
+  
   
 
       </a>
@@ -1673,10 +2061,16 @@
       <a href="ft2-outline_processing.html" class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
+    
+  
     Outline Processing
+  
+
     
   </span>
+  
   
 
       </a>
@@ -1695,10 +2089,16 @@
       <a href="ft2-quick_advance.html" class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
+    
+  
     Quick retrieval of advance values
+  
+
     
   </span>
+  
   
 
       </a>
@@ -1717,10 +2117,16 @@
       <a href="ft2-bitmap_handling.html" class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
+    
+  
     Bitmap Handling
+  
+
     
   </span>
+  
   
 
       </a>
@@ -1739,10 +2145,16 @@
       <a href="ft2-raster.html" class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
+    
+  
     Scanline Converter
+  
+
     
   </span>
+  
   
 
       </a>
@@ -1761,10 +2173,16 @@
       <a href="ft2-glyph_stroker.html" class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
+    
+  
     Glyph Stroker
+  
+
     
   </span>
+  
   
 
       </a>
@@ -1783,10 +2201,16 @@
       <a href="ft2-system_interface.html" class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
+    
+  
     System Interface
+  
+
     
   </span>
+  
   
 
       </a>
@@ -1805,10 +2229,16 @@
       <a href="ft2-module_management.html" class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
+    
+  
     Module Management
+  
+
     
   </span>
+  
   
 
       </a>
@@ -1827,10 +2257,16 @@
       <a href="ft2-gzip.html" class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
+    
+  
     GZIP Streams
+  
+
     
   </span>
+  
   
 
       </a>
@@ -1849,10 +2285,16 @@
       <a href="ft2-lzw.html" class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
+    
+  
     LZW Streams
+  
+
     
   </span>
+  
   
 
       </a>
@@ -1871,10 +2313,16 @@
       <a href="ft2-bzip2.html" class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
+    
+  
     BZIP2 Streams
+  
+
     
   </span>
+  
   
 
       </a>
@@ -1893,10 +2341,16 @@
       <a href="ft2-debugging_apis.html" class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
+    
+  
     External Debugging APIs
+  
+
     
   </span>
+  
   
 
       </a>
@@ -1922,6 +2376,7 @@
     
     
     
+    
     <li class="md-nav__item md-nav__item--nested">
       
         
@@ -1932,10 +2387,16 @@
           <label class="md-nav__link" for="__nav_10" id="__nav_10_label" tabindex="0">
             
   
+  
   <span class="md-ellipsis">
+    
+  
     Error Codes
+  
+
     
   </span>
+  
   
 
             <span class="md-nav__icon md-icon"></span>
@@ -1944,7 +2405,11 @@
         <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_10">
             <span class="md-nav__icon md-icon"></span>
-            Error Codes
+            
+  
+    Error Codes
+  
+
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
@@ -1958,10 +2423,16 @@
       <a href="ft2-error_enumerations.html" class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
+    
+  
     Error Enumerations
+  
+
     
   </span>
+  
   
 
       </a>
@@ -1980,10 +2451,16 @@
       <a href="ft2-error_code_values.html" class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
+    
+  
     Error Code Values
+  
+
     
   </span>
+  
   
 
       </a>
@@ -2009,6 +2486,7 @@
     
     
     
+    
     <li class="md-nav__item md-nav__item--nested">
       
         
@@ -2019,10 +2497,16 @@
           <label class="md-nav__link" for="__nav_11" id="__nav_11_label" tabindex="0">
             
   
+  
   <span class="md-ellipsis">
+    
+  
     Miscellaneous
+  
+
     
   </span>
+  
   
 
             <span class="md-nav__icon md-icon"></span>
@@ -2031,7 +2515,11 @@
         <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_11_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_11">
             <span class="md-nav__icon md-icon"></span>
-            Miscellaneous
+            
+  
+    Miscellaneous
+  
+
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
@@ -2045,10 +2533,16 @@
       <a href="ft2-gx_validation.html" class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
+    
+  
     TrueTypeGX/AAT Validation
+  
+
     
   </span>
+  
   
 
       </a>
@@ -2067,10 +2561,16 @@
       <a href="ft2-incremental.html" class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
+    
+  
     Incremental Loading
+  
+
     
   </span>
+  
   
 
       </a>
@@ -2089,10 +2589,16 @@
       <a href="ft2-truetype_engine.html" class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
+    
+  
     The TrueType Engine
+  
+
     
   </span>
+  
   
 
       </a>
@@ -2111,10 +2617,16 @@
       <a href="ft2-ot_validation.html" class="md-nav__link">
         
   
+  
   <span class="md-ellipsis">
+    
+  
     OpenType Validation
+  
+
     
   </span>
+  
   
 
       </a>
@@ -2159,7 +2671,9 @@
         <li class="md-nav__item">
   <a href="#synopsis" class="md-nav__link">
     <span class="md-ellipsis">
-      Synopsis
+      
+        Synopsis
+      
     </span>
   </a>
   
@@ -2168,7 +2682,9 @@
         <li class="md-nav__item">
   <a href="#ft_has_horizontal" class="md-nav__link">
     <span class="md-ellipsis">
-      FT_HAS_HORIZONTAL
+      
+        FT_HAS_HORIZONTAL
+      
     </span>
   </a>
   
@@ -2177,7 +2693,9 @@
         <li class="md-nav__item">
   <a href="#ft_has_vertical" class="md-nav__link">
     <span class="md-ellipsis">
-      FT_HAS_VERTICAL
+      
+        FT_HAS_VERTICAL
+      
     </span>
   </a>
   
@@ -2186,7 +2704,9 @@
         <li class="md-nav__item">
   <a href="#ft_has_kerning" class="md-nav__link">
     <span class="md-ellipsis">
-      FT_HAS_KERNING
+      
+        FT_HAS_KERNING
+      
     </span>
   </a>
   
@@ -2195,7 +2715,9 @@
         <li class="md-nav__item">
   <a href="#ft_has_fixed_sizes" class="md-nav__link">
     <span class="md-ellipsis">
-      FT_HAS_FIXED_SIZES
+      
+        FT_HAS_FIXED_SIZES
+      
     </span>
   </a>
   
@@ -2204,7 +2726,9 @@
         <li class="md-nav__item">
   <a href="#ft_has_glyph_names" class="md-nav__link">
     <span class="md-ellipsis">
-      FT_HAS_GLYPH_NAMES
+      
+        FT_HAS_GLYPH_NAMES
+      
     </span>
   </a>
   
@@ -2213,7 +2737,9 @@
         <li class="md-nav__item">
   <a href="#ft_has_color" class="md-nav__link">
     <span class="md-ellipsis">
-      FT_HAS_COLOR
+      
+        FT_HAS_COLOR
+      
     </span>
   </a>
   
@@ -2222,7 +2748,9 @@
         <li class="md-nav__item">
   <a href="#ft_has_multiple_masters" class="md-nav__link">
     <span class="md-ellipsis">
-      FT_HAS_MULTIPLE_MASTERS
+      
+        FT_HAS_MULTIPLE_MASTERS
+      
     </span>
   </a>
   
@@ -2231,7 +2759,9 @@
         <li class="md-nav__item">
   <a href="#ft_has_svg" class="md-nav__link">
     <span class="md-ellipsis">
-      FT_HAS_SVG
+      
+        FT_HAS_SVG
+      
     </span>
   </a>
   
@@ -2240,7 +2770,9 @@
         <li class="md-nav__item">
   <a href="#ft_has_sbix" class="md-nav__link">
     <span class="md-ellipsis">
-      FT_HAS_SBIX
+      
+        FT_HAS_SBIX
+      
     </span>
   </a>
   
@@ -2249,7 +2781,9 @@
         <li class="md-nav__item">
   <a href="#ft_has_sbix_overlay" class="md-nav__link">
     <span class="md-ellipsis">
-      FT_HAS_SBIX_OVERLAY
+      
+        FT_HAS_SBIX_OVERLAY
+      
     </span>
   </a>
   
@@ -2258,7 +2792,9 @@
         <li class="md-nav__item">
   <a href="#ft_is_sfnt" class="md-nav__link">
     <span class="md-ellipsis">
-      FT_IS_SFNT
+      
+        FT_IS_SFNT
+      
     </span>
   </a>
   
@@ -2267,7 +2803,9 @@
         <li class="md-nav__item">
   <a href="#ft_is_scalable" class="md-nav__link">
     <span class="md-ellipsis">
-      FT_IS_SCALABLE
+      
+        FT_IS_SCALABLE
+      
     </span>
   </a>
   
@@ -2276,7 +2814,9 @@
         <li class="md-nav__item">
   <a href="#ft_is_fixed_width" class="md-nav__link">
     <span class="md-ellipsis">
-      FT_IS_FIXED_WIDTH
+      
+        FT_IS_FIXED_WIDTH
+      
     </span>
   </a>
   
@@ -2285,7 +2825,9 @@
         <li class="md-nav__item">
   <a href="#ft_is_cid_keyed" class="md-nav__link">
     <span class="md-ellipsis">
-      FT_IS_CID_KEYED
+      
+        FT_IS_CID_KEYED
+      
     </span>
   </a>
   
@@ -2294,7 +2836,9 @@
         <li class="md-nav__item">
   <a href="#ft_is_tricky" class="md-nav__link">
     <span class="md-ellipsis">
-      FT_IS_TRICKY
+      
+        FT_IS_TRICKY
+      
     </span>
   </a>
   
@@ -2303,7 +2847,9 @@
         <li class="md-nav__item">
   <a href="#ft_is_named_instance" class="md-nav__link">
     <span class="md-ellipsis">
-      FT_IS_NAMED_INSTANCE
+      
+        FT_IS_NAMED_INSTANCE
+      
     </span>
   </a>
   
@@ -2312,7 +2858,9 @@
         <li class="md-nav__item">
   <a href="#ft_is_variation" class="md-nav__link">
     <span class="md-ellipsis">
-      FT_IS_VARIATION
+      
+        FT_IS_VARIATION
+      
     </span>
   </a>
   
@@ -2328,6 +2876,7 @@
           
           
             <div class="md-content" data-md-component="content">
+              
               <article class="md-content__inner md-typeset">
                 
                   
@@ -2617,10 +3166,13 @@
     </div>
     
     
-    <script id="__config" type="application/json">{"base": ".", "features": [], "search": "assets/javascripts/workers/search.f8cc74c7.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": ".", "features": [], "search": "assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="assets/javascripts/bundle.c8b220af.min.js"></script>
+      <script src="assets/javascripts/bundle.79ae519e.min.js"></script>
       
         <script src="javascripts/extra.js"></script>
       

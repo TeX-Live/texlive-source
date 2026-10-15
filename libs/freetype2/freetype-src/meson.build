@@ -24,7 +24,7 @@
 #
 
 project('freetype2', 'c',
-  meson_version: '>= 0.55.0',
+  meson_version: '>= 0.60.0',
   version: run_command('builds/meson/extract_freetype_version.py',
                        'include/freetype/freetype.h',
                        check: true).stdout().strip(),
@@ -236,6 +236,7 @@ endif
 # might make these platform-specific files much smaller, and could be moved
 # into `ftsystem.c` as well.
 
+ft2_sources += 'src/dlg/dlgwrap.c'
 if host_machine.system() == 'windows'
   winmod = import('windows')
   ft2_sources += [
@@ -339,7 +340,7 @@ if bzip2_dep.found()
 endif
 
 # PNG support.
-libpng_dep = dependency('libpng',
+libpng_dep = dependency('libpng', 'PNG',
   required: get_option('png'),
   fallback: 'libpng')
 
@@ -399,6 +400,35 @@ brotli_dep = dependency('libbrotlidec',
 if brotli_dep.found()
   ftoption_command += ['--enable=FT_CONFIG_OPTION_USE_BROTLI']
   ft2_deps += [brotli_dep]
+endif
+
+# HVF support (Apple platforms only).
+hvf_dep = disabler()
+hvf_found = false
+
+if not get_option('hvf').disabled()
+  if host_machine.system() == 'darwin'
+    # Check for HVF header availability.
+    if cc.has_header('hvf/Scaler.h')
+      # Find the HVF library.
+      hvf_dep = cc.find_library('hvf', required: get_option('hvf'))
+
+      if hvf_dep.found()
+        hvf_found = true
+        ftoption_command += ['--enable=FT_CONFIG_OPTION_HVF']
+        ft2_deps += [hvf_dep]
+
+        # Check for Clang compiler for runtime availability support.
+        if cc.get_id() == 'clang'
+          ft2_defines += ['-DHVF_RUNTIME_AVAILABLE=1']
+        endif
+      endif
+    elif get_option('hvf').enabled()
+      error('HVF support was enabled but hvf/Scaler.h header was not found')
+    endif
+  elif get_option('hvf').enabled()
+    error('HVF support is only available on Apple platforms (macOS/iOS)')
+  endif
 endif
 
 if get_option('error_strings')
@@ -524,6 +554,7 @@ summary({'Zlib': zlib_option,
          'Png': libpng_dep.found(),
          'HarfBuzz': harfbuzz_opt,
          'Brotli': brotli_dep.found(),
+         'HVF': hvf_found,
         }, bool_yn: true, section: 'Used Libraries')
 
 # EOF

@@ -1,3 +1,1849 @@
+2026-10-11  Werner Lemberg  <wl@gnu.org>
+
+	* Version 2.15.0 released.
+	==========================
+
+	Tag sources with `VER-2-15-0'.
+
+	* docs/VERSION.TXT: Add entry for version 2.15.0.
+	* docs/CHANGES: Updated.
+	* docs/release, docs/README, builds/macs/README: Updated.
+
+	* README, src/base/ftver.rc, builds/windows/vc2010/index.html,
+	  builds/windows/visualc/index.html, builds/windows/visualce/index.html,
+	  builds/wince/vc2005-ce/index.html, builds/wince/vc2008-ce/index.html,
+	  docs/freetype-config.1: s/2.14.3/2.15.0/, s/2143/2150/.
+
+	* include/freetype/freetype.h (FREETYPE_MINOR): Set to 15.
+	(FREETYPE_PATCH): Set to 0.
+
+	* builds/unix/configure.raw (version_info): Set to 26:7:20.
+	* CMakeLists.txt (VERSION_MINOR): Set to 15.
+	(VERSION_PATCH): Set to 0.
+
+2026-10-11  Werner Lemberg  <wl@gnu.org>
+
+	Whitespace.
+
+2026-10-09  Behdad Esfahbod  <behdad@behdad.org>
+
+	[truetype] Avoid overflow in VARC axis values.
+
+	Reported as
+
+	  https://issues.oss-fuzz.com/issues/570754474
+
+	* src/truetype/ttvarc.c (tt_varc_parse_component): Use `MUL_INT32` for
+	  converting 32-bit packed axis values from `F2DOT14` to `F16DOT16`.
+
+	  (tt_face_load_varc_glyph): Use `NEG_LONG` when rounding negative axis
+	  values, since the conversion can wrap to `INT32_MIN` and negating that
+	  value overflows on platforms with 32-bit longs.
+
+	Assisted-by: OpenAI Codex
+
+2026-10-08  Kalt2212  <adrimg3196@gmail.com>
+
+	* src/psaux/psintrp.c (cf2_doBlend before multiplying): Avoid overflow.
+
+	`numBlends` comes from the charstring and is attacker-controlled.  Check for
+	overflow before multiplying: a wrapped `numOperands` would bypass the stack
+	underflow check below and the loop that follows would then run up to 2^32
+	iterations (CPU exhaustion).
+
+2026-10-08  Behdad Esfahbod (بهداد اسفهبد)  <behdad@behdad.org>
+
+	[autofit] Limit default GSUB coverage to reachable glyphs.
+
+	A lookup can be registered under several scripts while substituting inputs
+	from only one of them.  Collecting every output assigns those glyphs to the
+	first processed script, regardless of the inputs' styles.  In Google Sans
+	this assigns the Latin rvrn alternates to Cyrillic; missing Cyrillic blue
+	zones then disable their hinting and darkening.
+
+	* src/autofit/afshaper.c (af_shaper_get_coverage_hb): Seed default coverage
+	  with glyphs already assigned to the style and compute their substitution
+	  closure through the collected lookups.
+	  Keep the special feature coverages and their style precedence intact.
+
+	* src/autofit/ft-hb-decls.h: Add `hb_ot_layout_lookups_substitute_closure`.
+
+	* tests/issue-1441/*: New files, adding synthetic regression fonts covering
+	  shared lookups, both feature variation records, chained substitutions,
+	  ligatures, DFLT-only features, unreachable outputs, and preservation of
+	  the small-cap style.
+
+	The full Meson test suite passes with linked, dynamic, and disabled
+	HarfBuzz.  The regression fails before the fix.  Google Sans alternates
+	retain Latin styles and stem darkening after the fix.
+
+	Assisted-by: OpenAI Codex
+
+	Fixes issue #1441.
+
+2026-10-06  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	[truetype] Make tiny exception from v40 rules.
+
+	* src/truetype/ttinterp.c (Direct_Move): Make v40 exception for
+	horizontal projection to fix glitches in Comic Sans MS.
+
+2026-10-04  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* src/type1/t1parse.c (T1_Get_Private_Dict): Fix a leak.
+
+2026-10-04  Jonathan Kew  <jfkthame@googlemail.com>
+
+	* src/sfnt/ttcolr.c (tt_face_colr_blend_layer): Refactor it.
+
+2026-10-04  Jonathan Kew  <jfkthame@gmail.com>
+
+	[colr] Correctly handle B/W bitmaps in 'COLR' while blending.
+
+	* src/sfnt/ttcolr.c (tt_face_colr_blend_layer): Implement it.
+
+2026-10-04  Behdad Esfahbod  <behdad@behdad.org>
+
+	[sfnt] Fix standalone compilation of `ttcmap.c`.
+
+	* src/sfnt/ttcmap.c: Include `freetype/ttnameid.h` for the TrueType
+	platform and encoding IDs used by `tt_face_find_unicode_dmap`.
+
+	The single-object build inherited this include from `sfdriver.c`
+	and `sfobjs.c`, masking the missing direct dependency.
+
+	Assisted-by: OpenAI Codex <noreply@openai.com>
+
+2026-10-04  Tomer Fichman  <@tomer>
+
+	Provide tests for issue #1469.
+
+	* tests/issue-1469: New directory, containing a test and a script to
+	  generate fonts used by the test, together with a README file.
+
+	* tests/meson.build: Updated.
+
+2026-10-04  Behdad Esfahbod (بهداد اسفهبد)  <behdad@behdad.org>
+
+	[truetype] Update the VARC variation-store binary format.
+
+	Spec: https://github.com/harfbuzz/boring-expansion-spec/pull/175
+	Offset-base erratum: https://github.com/harfbuzz/boring-expansion-spec/issues/177
+
+	* src/truetype/ttvarc.c (tt_varc_evaluate_region, tt_varc_get_item_deltas):
+	  Read the sparse-region count as uint32, resolve each sparse axis through a
+	  region-relative Offset32, and follow the Offset32 to the delta-set INDEX.
+	  Bound the new offset fields and count arrays before dereferencing them.
+
+	* tests/varc/main.c (test_variation_store): New function to check
+	  translated outlines at default, midpoint, and peak coordinates.
+	  (main): Updated.
+
+	* tests/data/varc-null-condition.ttf, tests/data/varc-value-conditions.ttf:
+	  Updated to migrate the existing affected fixture without changing its
+	  logical contents or non-VARC tables.
+	* tests/data/varc-variation-store.ttf: New test file.
+
+	Tests: full Meson regression suite (3 passed).
+
+	Assisted-by: OpenAI Codex
+
+2026-10-03  Behdad Esfahbod  <behdad@behdad.org>
+
+	[truetype] Compare VARC condition values before rounding.
+
+	Condition format 2 tests whether default plus interpolated delta is
+	positive.  Rounding the delta to an integer first loses small positive
+	fractions and incorrectly hides components.
+
+	* src/truetype/ttvarc.c (tt_varc_get_item_deltas): Add argument
+	  `condition_defaults`.
+
+	  (tt_varc_get_item_deltas, tt_varc_eval_condition):  Allow the
+	  MultiItemVariationStore evaluator to initialize condition accumulators
+	  from their defaults and return the unrounded sign.  Compare in the
+	  existing 64-bit representation, including the emulated path, so large
+	  int32 deltas need not fit in a signed 16.16 `FT_Long`.
+
+	  Use ULABS for unsigned magnitudes in emulated multiplication, avoiding
+	  MSVC's warning about unsigned unary negation (see
+	  https://gitlab.freedesktop.org/freetype/freetype/-/merge_requests/458#note_3692404).
+
+	  Cast to `FT_UInt32` after obtaining the magnitude; no additional
+	  absolute-value helper is needed.
+
+	  (tt_varc_apply_axis_deltas, tt_varc_apply_transform_deltas): Updated.
+
+	* tests/data/varc-value-conditions.ttf: New test font.
+
+	* tests/varc/main.c (test_value_conditions): New function, adding a small
+	  fixture and 80 direct/negated condition checks covering positive, zero,
+	  negative, and fractional values.
+	  (main): Updated.
+
+	All three Meson targets and the forced-emulated VARC tests pass.  All 40
+	cross-library diagnostic cases and 115 native/emulated arithmetic
+	comparisons agree.  MSVC itself was not available locally.
+
+	Assisted-by: OpenAI Codex <codex@openai.com>
+
+2026-10-03  Behdad Esfahbod  <behdad@behdad.org>
+
+	[truetype] Repair VARC arithmetic without native 64-bit integers.
+
+	* src/truetype/ttvarc.c (tt_varc_get_item_deltas, tt_face_load_varc_glyph):
+	  The emulated `FT_Int64` is a struct: `FT_INT64_ZERO` cannot be assigned as
+	  an expression, and unguarded transform products do not compile.  Use
+	  `FT_ARRAY_ZERO` and portable `FT_MulDiv` function for these fallback
+	  operations.
+
+	  Restrict the fast signed product to its safe range, preserve carries when
+	  adding negative products, and combine both accumulator words when
+	  converting fractional deltas.  Explicitly sign-extend the result.
+
+	The full Meson suite passes.  An isolated build forcing the emulated VARC
+	path compiles without an initializer bypass; 115 native/emulated condition
+	and scaled/unscaled transform comparisons agree, including large signed
+	deltas, cancellation, and carries.
+
+	Assisted-by: OpenAI Codex <codex@openai.com>
+
+2026-10-02  Behdad Esfahbod (بهداد اسفهبد)  <behdad@behdad.org>
+
+	[truetype] Treat null VARC conditions as true.
+
+	The OpenType condition rules define an offset of zero as the true
+	condition.  Recognize that value both in the top-level ConditionList and
+	in nested AND, OR, and NOT conditions.
+
+	Add a VARC regression font covering all four cases.
+
+	* src/truetype/ttvarc.c (tt_varc_eval_condition): Handle zero offsets.
+	* tests/data/varc-null-condition.ttf: New test font.
+	* tests/varc/main.c: Test it.
+
+	Assisted-by: OpenAI Codex <codex@openai.com>
+
+2026-10-02  Werner Lemberg  <wl@gnu.org>
+
+	docs/CHANGES: Updated.
+
+2026-10-02  Behdad Esfahbod  <behdad@behdad.org>
+
+	[cff] Load VARC-only glyphs beyond the CharStrings INDEX.
+
+	OFF permits trailing glyphs to be provided entirely by VARC.  Preserve the
+	SFNT glyph count for CFF2 fonts with VARC, and dispatch those glyphs to VARC
+	before checking the CFF2 fallback CharString range.
+
+	Add a short-CharStrings fixture and verify its glyph count and outline.  All
+	three Meson tests pass.
+
+	Assisted-by: OpenAI Codex <noreply@openai.com>
+
+	* src/cff/cffgload.c (cff_slot_load): Check agains correct `num_glyphs`
+	  values.
+	* src/cff/cffobjs.c (cff_face_init) [TT_CONFIG_OPTION_VARC]: Conditionalize
+	  update of `cffface->num_glyphs`.
+
+	* tests/varc/main.c (TestFont): New field `glyph_count`.
+	  (test_font): Check number of glyphs.
+	  (main): Updated.
+
+	* tests/data/var/short-cff2.otf: New test font.
+
+2026-10-02  Behdad Esfahbod  <behdad@behdad.org>
+
+	[truetype] Apply VARC axis resets without explicit axis values.
+
+	* src/truetype/ttvarc.c (tt_face_load_varc_glyph): `RESET_UNSPECIFIED_AXES`
+	  also applies to components with no `HAVE_AXES` payload.  Previously these
+	  components inherited the parent coordinates because the reset path
+	  required at least one axis value.
+
+	* tests/varc/main.c (test_reset_without_axes): Enter the coordinate override
+	  path for reset-only components, restoring the font's current instance
+	  before loading their leaves.
+	  Add a nested VARC regression at default and non-default font coordinates.
+	  (main): Updated.
+
+	* tests/data/varc-reset-only.ttf: New test font.
+
+	Tests: all three Meson targets pass. Generated reset, explicit-axis, and
+	inheritance comparisons agree with HarfBuzz and FontTools.
+
+	Assisted-by: OpenAI Codex <noreply@openai.com>
+
+2026-10-02  Behdad Esfahbod  <behdad@behdad.org>
+
+	[base] Preserve off-curve cubic pairs when reversing outlines.
+
+	* src/base/ftoutln.c (FT_Outline_Reverse): Keeping the first point fixed
+	  changes cubic control-point pairing when that point is off-curve.  Reverse
+	  the entire contour in that case, while preserving the existing order for
+	  on-curve and conic starts.
+
+	* tests/outline-reverse/main.c: New regression test to cover off-curve
+	  starts, all-off contours, implied endpoints, and the cubic flag on
+	  on-curve points.  Check reversed segments, bounding boxes, and a second
+	  reversal.  All three Meson tests pass.
+
+	* tests/meson.build: Updated.
+
+	Assisted-by: OpenAI Codex <noreply@openai.com>
+
+2026-10-02  Behdad Esfahbod (بهداد اسفهبد)  <behdad@behdad.org>
+
+	[truetype] Support cubic outlines in 'GLYF' table.
+
+	Preserve the cubic flag while loading extended simple glyphs, including
+	on-curve points whose state can be changed by TrueType instructions.
+
+	Teach outline decomposition, stroking, and rasterization to handle cubic
+	contours with implied on-curve points, including contours with no explicit
+	on-curve points.  Continue to ignore the reserved flag in the classic 'glyf'
+	table.
+
+	Tested with a synthetic font with a 'GLYF' table covering all-off contours,
+	implied cubic endpoints, gray and monochrome rendering, and stroking.  The
+	full Meson test suite also passes.
+
+	Assisted-by: OpenAI Codex <noreply@openai.com>
+
+	* include/freetype/ftimage.h (FT_CURVE_TAG): Extended for use with 'GLYF'
+	  table data.
+
+	* src/base/ftoutln.c (FT_Outline_Decompose), src/base/ftstroke.c
+	  (FT_Stroker_ParseOutline), src/raster/ftraster.c (Decompose_Curve),
+	  src/smooth/ftgrays.c (FT_Outline_Decompose) [STANDALONE_]: Extend parsing
+	  code to handle 'GLYF' cubic data.
+
+	* src/truetype/ttgload.c (CUBIC_FLAG): New flag macro.
+	  (TT_Load_Simple_Glyph): Check new flag.
+
+2026-10-02  Behdad Esfahbod (بهداد اسفهبد)  <behdad@behdad.org>
+
+	[sfnt] Support the 'DMAP' table.
+
+	Parse the optional, cmap-shaped delta map and apply its mappings before the
+	corresponding 'cmap' mappings.  Preserve sparse fallback for nominal
+	characters and variation sequences, including the variant-list APIs.
+
+	Also keep variation-only subtables from becoming the active Unicode
+	charmap when DMAP supplies the only nominal Unicode mapping.
+
+	Tested with the Meson test suite and synthetic fonts covering nominal
+	and UVS precedence, fallback, iteration, DMAP-only subtables, and
+	extended glyph IDs.
+
+	Assisted-by: OpenAI Codex <noreply@openai.com>
+
+	* include/freetype/internal/tttypes.h (TT_Face): New fields `dmap_table`,
+	  `dmap_size`, `dmap_charmaps`, `num_dmap_charmaps`, `dmap_results`,
+	  `dmap_max_results`.
+	* include/freetype/tttags.h (TTAG_DMAP): New macro.
+
+	* src/sfnt/sfobjs.c (sfnt_init_face, sfnt_done_face): Handle 'DMAP' table.
+
+	* src/sfnt/ttcmap.h (TT_CMap): Add fields `cmap_class` and `dmap`.
+	  Update function declarations.
+
+	* src/sfnt/ttcmap.c (tt_cmap14_is_extended, tt_cmap14_get_info): Updated.
+
+	  (tt_cmap_free, tt_cmap_new, tt_face_add_dmap, tt_cmap_is_variation,
+	  tt_face_find_unicode_dmap, tt_face_find_dmap, tt_cmap_dmap_done,
+	  tt_cmap_dmap_char_index, tt_cmap_dmap_char_next,
+	  tt_cmap_dmap_char_var_index, tt_cmap_dmap_char_var_isdefault,
+	  tt_cmap_dmap_merge, tt_cmap_dmap_variants, tt_cmap_dmap_char_variants,
+	  tt_cmap_dmap_variant_chars, tt_cmap_dmap_get_info): New functions for
+	  'DMAP' support.
+
+	  (tt_cmap_dmap_class_rec): New cmap class.
+
+	  (tt_face_build_cmaps): Rename to...
+	  (tt_face_build_cmaps_from_table): ...  this and handle both cmap and dmap
+	  data.
+
+	  (tt_face_build_cmaps, tt_face_expose_dmap, tt_face_build_dmaps,
+	  tt_face_done_dmaps): New functions.
+
+	* src/sfnt/ttload.c (tt_face_load_cmap): Also handle 'DMAP' table.
+
+2026-10-02  Behdad Esfahbod (بهداد اسفهبد)  <behdad@behdad.org>
+
+	[base] Reject 'cmap' format 15 as an active charmap.
+
+	Like format 14, cmap format 15 is a supplemental Unicode variation-sequence
+	subtable and cannot be selected as the face's ordinary character map.
+
+	Assisted-by: OpenAI Codex <noreply@openai.com>
+
+	* src/base/ftobjs.c (FT_Set_Charmap, find_unicode_charmap): Implement it.
+
+2026-10-02  Behdad Esfahbod (بهداد اسفهبد)  <behdad@behdad.org>
+
+	[sfnt] Support 'cmap' format 15.
+
+	Share the format 14 variation-sequence implementation while reading the
+	format 15 non-default glyph IDs as 24-bit values.  Expose format 15 through
+	the existing Unicode variation-sequence APIs.
+
+	Assisted-by: OpenAI Codex <noreply@openai.com>
+
+	* include/freetype/config/ftoption.h, devel/ftoption.h
+	  (TT_CONFIG_CMAP_FORMAT_15): New macro.
+
+	* src/base/ftobjs.c (find_variant_selector_charmap): Updated.
+	* src/sfnt/ttcmap.c: Use `TT_CONFIG_CMAP_FORMAT_15`.
+	  (tt_cmap14_is_extended): New function.
+	  (tt_cmap14_validate): Rename to...
+	  (tt_cmap14_validate_internal): ...this, add argument `is_extended`.
+	  Handle format 15.
+
+	  (tt_cmap14_validate) [TT_CONFIG_CMAP_FORMAT_14]: New function.
+	  (tt_cmap15_validate) [TT_CONFIG_CMAP_FORMAT_15]: New function.
+
+	  (tt_cmap14_get_info, tt_cmap14_char_map_nondef_binary,
+	  tt_cmap14_char_var_index, tt_cmap14_char_var_isdefault,
+	  tt_cmap14_char_variants, tt_cmap14_get_nondef_chars,
+	  tt_cmap14_variant_chars): Updated.
+
+	  (tt_cmap15_class_rec) [TT_CONFIG_CMAP_FORMAT_15]: New structure.
+
+	* src/sfnt/ttcmapc.h: Register `tt_cmap15_class_rec`.
+
+2026-10-02  Behdad Esfahbod (بهداد اسفهبد)  <behdad@behdad.org>
+
+	[truetype] Support the 'GVAR' table.
+
+	Read the 24-bit glyph count in the uppercase header and the 24-bit data
+	offset in each glyph variation record.  Prefer 'GVAR' for 'GLYF' outlines
+	while preserving 'gvar' behavior.
+
+	Assisted-by: OpenAI Codex <noreply@openai.com>
+
+	* include/freetype/tttags.h (TTAG_GVAR): New macro.
+
+	* src/truetype/ttgxvar.h (GX_BlendRec): New field `gvar_is_extended`.
+	* src/truetype/ttgxvar.c (GX_GVar_Head): Use `FT_UInt32` for `glyphCount`.
+	  (ft_var_load_gvar): Handle 'GVAR' table.
+	  (TT_Vary_Apply_Glyph_Deltas): Updated.
+	  Also check `dataSize`.
+
+2026-10-02  Behdad Esfahbod (بهداد اسفهبد)  <behdad@behdad.org>
+
+	[truetype] Read 24-bit composite glyph IDs.
+
+	Honor the 'GLYF' table's `GID_IS_24_BIT` component flag without changing the
+	interpretation of the reserved bit in the 'glyf' table.
+
+	Assisted-by: OpenAI Codex <noreply@openai.com>
+
+	* src/truetype/ttgload.c (GID_IS_24_BIT): New macro.
+	  (TT_Load_Composite_Glyph): Handle it.
+
+2026-10-02  Behdad Esfahbod (بهداد اسفهبد)  <behdad@behdad.org>
+
+	[sfnt] Support 'HHEA', 'VHEA', 'HMTX', and 'VMTX' metrics tables.
+
+	Read the 32-bit metric counts in 'HHEA' and 'VHEA', and use their 'HMTX'
+	and 'VMTX' companions.  Keep the wide counts internally while saturating
+	the legacy public header fields.
+
+	Assisted-by: OpenAI Codex <noreply@openai.com>
+
+	* include/freetype/internal/tttypes.h (TT_Face): New fields
+	  `horz_metrics_count`, `horz_metrics_is_extended`, `vert_metrics_count`,
+	  `vert_metrics_is_extended`.
+	* include/freetype/tttags.h (TTAG_HHEA, TTAG_HMTX, TTAG_VHEA, TTAG_VMTX):
+	  New macros.
+
+	* src/sfnt/sfobjc.c (sfnt_load_face): Updated.
+	* src/sfnt/ttload.c (check_table_dir, tt_face_load_font_dir): Updated.
+	* src/sfnt/ttmtx.c (tt_face_load_hmtx): Updated.
+	  (tt_face_load_hhea): Handle 'HHEA' and 'VHEA' tables.
+	  (tt_face_get_metrics): Updated.
+
+2026-10-02  Behdad Esfahbod (بهداد اسفهبد)  <behdad@behdad.org>
+
+	[truetype] Support 'GLYF' and 'LOCA' tables.
+
+	Prefer 'GLYF' and its 'LOCA' companion over the 'glyf' and 'local' tables.
+	Allow the extended location table to describe more than 65535 glyphs.
+
+	Assisted-by: OpenAI Codex <noreply@openai.com>
+
+	* include/freetype/internal/tttypes.h (TT_Face): New field `is_extend_glyf`.
+	* include/freeetype/tttags.h (TTAG_GLYF, TTAG_LOCA): New macros.
+
+	* src/sfnt/sfobjs.c (sfnt_init_face): Prefer 'GLYF' over 'glyf' table.
+	  (sfnt_load_face): Updated.
+
+	* src/truetype/ttpload.c (tt_face_load_loca): Allow 'GLYF' table.
+
+2026-10-02  Behdad Esfahbod (بهداد اسفهبد)  <behdad@behdad.org>
+
+	[sfnt] Support the 'MAXP' table.
+
+	Prefer 'MAXP' over 'maxp' and read its 24-bit glyph count.  Keep the wide
+	count internally while saturating the legacy public `TT_MaxProfile` field.
+
+	Assisted-by: OpenAI Codex <noreply@openai.com>
+
+	* include/freetype/internal/tttypes.h (TT_Face): New field
+	  `maxp_num_glyphs`.
+	* include/freetype/tttags.h (TTAG_MAXP): New macro.
+
+	* src/sfnt/sfobjs.c (sfnt_load_face): Updated.
+	* src/sfnt/ttcmap.c (tt_face_build_cmaps): Updated.
+	* src/sfnt/ttload.c (tt_face_load_maxp): Handle 'MAXP' table.
+	* src/sfnt/ttpost.c (load_post_names, tt_face_get_ps_name): Updated.
+
+2026-10-02  Behdad Esfahbod (بهداد اسفهبد)  <behdad@behdad.org>
+
+	[sfnt] Support TTC versions 1.1 and 2.1.
+
+	Read and prefer the extended table-directory offset list in TTC version 1.1
+	and 2.1 headers.  Account for the version 2 DSIG fields before reading the
+	extended list, and permit an empty legacy compatibility list.
+
+	Assisted-by: OpenAI Codex <noreply@openai.com>
+
+	* src/sfnt/sfobjs.c (sfnt_open_font): Implement it.
+
+2026-10-02  Behdad Esfahbod  <behdad@behdad.org>
+
+	[truetype] Support extended VARC coverage.
+
+	Handle Coverage formats 3 and 4 when looking up VARC base glyphs.  These
+	formats use 24-bit counts, glyph IDs, and coverage indices.
+
+	Assisted-by: OpenAI Codex <noreply@openai.com>
+
+	* src/truetype/ttvarc.c (tt_varc_get_coverage): Support formats 3 and 4.
+
+2026-10-02  Behdad Esfahbod  <behdad@behdad.org>
+
+	[sfnt] Support COLR PaintGlyph2.
+
+	Decode PaintGlyph2's 24-bit glyph ID and expose it through the existing
+	FT_PaintGlyph API.  Normalize the result to the existing public PaintGlyph
+	format, as is already done for the other equivalent COLR paint variants.
+
+	Assisted-by: OpenAI Codex <noreply@openai.com>
+
+	* src/sfnt/ttcolr.c (FT_PaintFormat_Internal): New value.
+	  `FT_COLR_PAINTFORMAT_INTERNAL_GLYPH2`.
+	  (read_paint): Handle new paint format.
+
+2026-10-01  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* isrc/type1/t1parse.c (T1_Get_Private_Dict): Check the size.
+
+	Fixes https://issues.oss-fuzz.com/issues/568035737, also in #1470.
+
+2026-09-30  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* src/base/ftcalc.c (FT_Matrix_Check): Fix 32-bit breakage.
+
+2026-09-29  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* src/type1/t1parse.c (T1_Get_Private_Dict): Fix the segment merging.
+
+2026-09-28  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* src/type1/t1parse.c (T1_Get_Private_Dict): Merge segment reading.
+
+	Fixes #1470 by avoiding the second re-scanning.
+
+2026-09-22  Werner Lemberg  <wl@gnu.org>
+
+	* src/autofit/afranges.c: Updated to Unicode 18.0.
+
+	But no support for new scripts (volunteers welcomed).
+
+2026-09-22  Behdad Esfahbod  <behdad@behdad.org>
+
+	* src/autofit/hb-script-list.h: Update file to HarfBuzz version 14.5.0.
+
+	Carries Unicode 18 scripts.
+
+2026-09-21  Mrmaxmeier  <Mrmaxmeier@gmail.com>
+
+	[truetype] Fix dangling `blend` pointer after failed 'gvar' setup.
+
+	Since commit a69e39ad9, `ft_var_load_gvar` creates a private blend for
+	fonts with 'gvar' but no 'fvar' (VARC static component axes) and calls
+	`tt_done_blend` if loading fails afterwards.  That function freed the
+	blend but left `face->blend` pointing to it while the face stays alive,
+	causing a heap use-after-free on the next access.
+
+	Reported as
+
+	  https://issues.oss-fuzz.com/issues/564162766
+
+	* src/truetype/ttgxvar.c (tt_done_blend): Reset `face->blend`.
+
+	* src/truetype/ttobjs.c (tt_face_done): Remove now-redundant reset.
+
+	Assisted-By: Claude Fable 5.1 <noreply@anthropic.com>
+
+2026-09-21  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* src/base/ftbbox.c (cubic_peak): Make 64-bit friendly and use ULABS.
+
+2026-09-21  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	[base] More overflow protections.
+
+	FT_ABS() can overflow for INT_MIN and LONG_MIN, reported as
+	  https://issues.chromium.org/issues/563962723
+
+	We introduce and use ULABS() nd UABS() to avoid that.
+
+	* include/freetype/internal/ftcalc.h: Add ULABS and UABS.
+	* src/base/ftcalc.c (FT_Matrix_Check, ft_corner_orientation): Updated.
+
+2026-09-18  Behdad Esfahbod  <behdad@behdad.org>
+
+	[varc] Support static component axes.
+
+	The VARC draft permits static fonts without a 'fvar' table to retain 'gvar'
+	or 'CFF2' variation data for component-internal coordinates.  Initialize a
+	private blend from the relevant variation store without exposing those axes
+	through the public MM API.
+
+	Also add TrueType and CFF2 regression fonts.
+
+	* src/truetype/ttvarc.c (tt_face_init_varc_axes): New function.
+	  (tt_face_load_varc_glyph): Handle static VARC fonts.
+	* src/tyuetype/ttvarc.h: Updated.
+
+	* src/cff/cffdrivr.c (cff_varc_init_axes): New function.
+	  (cff_varc_load_glyph): Use it.
+	  (cff_service_varc): Updated.
+
+	* src/truetype/ttgxvar.c (ft_var_load_gvar, TT_Get_MM_Var): Handle static
+	  VARC fonts.
+	  (tt_var_init_gvar, tt_var_init_blend): New functions.
+	  (tt_done_blend): Updated.
+	* src/truetype/ttgxvar.h: Updated.
+	* src/truetype/ttdriver.c (tt_service_varc): Updated.
+
+	* include/freetype/internal/services/svvarc.h (FT_VARC_Init_Axes_Func): New
+	  typedef.
+	  (FT_ServiceVARC): Updated.
+
+	* tests/data/varc-static-gvar.ttf, tests/data/varc-static-cff2.otf: New test
+	  fonts.
+	* tests/varc/main.c: Updated.
+
+2026-09-18  Behdad Esfahbod  <behdad@behdad.org>
+
+	[tests] Add VARC test framework.
+
+	* src/test/VARC/main.c: New file.
+	* meson.build: Updated.
+
+2026-09-18  Werner Lemberg  <wl@gnu.org>
+
+	[gzip] Apply security fix for CVE-2026-27171.
+
+	This is probably completely unnecessary, but it doesn't hurt.
+
+	Taken from
+
+	  https://github.com/madler/zlib/commit/ba829a458576d1ff0f26fc7230c6de816d1f6a77
+
+	Fixes issue #1468.
+
+2026-09-18  Werner Lemberg  <wl@gnu.org>
+
+	src/gzip/README.freetype: Updated.
+
+2026-09-17  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* src/base/ftobjs.c (FT_Set_Matrix): Validate matrix.
+
+	This should fix #1465.
+
+2026-09-15  Werner Lemberg  <wl@gnu.org>
+
+	* src/truetype/ttvarc.c (tt_face_load_varc): Fix boundary check.
+
+	Fixes issue #1467.
+
+2026-09-14  Werner Lemberg  <wl@gnu.org>
+
+	* src/cff/cffload.c (cff_index_get_name): Avoid non-null `memcpy` argument.
+
+	Fixes issue #1466.
+
+2026-09-08  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* src/base/ftstroke.c (FT_Stroker_EndSubPath): Handle an empty subpath.
+	(FT_Stroker_ParseOutline): Updated.
+
+	The relocates the check for an empty subpath. Fixes #1459.
+
+2026-09-07  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* src/cid/cidload.c (cid_read_subrs): Limit overlaps.
+
+	Overlaps between subroutine dictionaries can be useful but prone to
+	abuses. The arbitrary limit can be adjusted in the future. Fixes #1457.
+
+2026-09-07  Werner Lemberg  <wl@gnu.org>
+
+	docs/CHANGES: Updated.
+
+2026-09-07  Infinality  <infinality@infinality.net>
+
+	[truetype] Adjust composite X rounding for native ClearType.
+
+	For composite glyphs using `ROUND_XY_TO_GRID`, v40 currently rounds the
+	component X offset to the full pixel grid when backward compatibility is
+	disabled.
+
+	Native ClearType instead uses a 1/16-pixel grid in the ClearType direction.
+	As with native ClearType instruction rounding in v40, explicitly
+	implementing this finer grid is unnecessary here: leaving component
+	X offsets unrounded gives visually equivalent results in the tested fonts
+	while keeping the implementation simpler.
+
+	Retain existing behavior for backward-compatible ClearType, monochrome
+	rendering, tricky fonts, and other interpreter versions.
+
+	This corrects composite diacritic placement in fonts such as 'Corbel', where
+	full-pixel X rounding can visibly misplace accents at several ppem sizes.
+
+	* src/truetype/ttgload.c (TT_Process_Composite_Component)
+	  [TT_SUPPORT_SUBPIXEL_HINTING_MINIMAL]: Adjust conditions for rounding `x`.
+
+2026-09-07  Werner Lemberg  <wl@gnu.org>
+
+	[autofit] Avoid pointer wrap-around on 32-bit platforms.
+
+	* src/autofit/afgsub.c (af_validate_lookup_table): Check size of extension
+	  offset for lookup type 7 before adding it to the `subtable` pointer.
+
+	Fixes issue #1463.
+
+2026-09-07  Werner Lemberg  <wl@gnu.org>
+
+	[winfonts] Avoid endless loop.
+
+	* src/winfonts/winfnt.c (fnt_face_get_dll_font): Ensure that the sum of
+	  `number_of_id_entries` and `number_of_named_entries` doesn't overflow.
+
+	Fixes issue #1462.
+
+2026-09-07  Werner Lemberg  <wl@gnu.org>
+
+	[pfr] Avoid heap over-read.
+
+	* src/pfr/pfrobjc.s (pfr_face_get_kerning): While preparing the binary
+	  search for kerning pairs, adjust `base` to current kerning item, not to
+	  the next one.
+
+	Fixes issue #1461.
+
+2026-09-07  Werner Lemberg  <wl@gnu.org>
+
+	* src/otvalid/otvmath.c (otv_MathKern_validate): Fix limit check.
+
+	Fixes issue #1460.
+
+2026-09-06  Infinality  <infinality@infinality.net>
+
+	[truetype] Adjust `ROUND` bytecode instruction for native ClearType.
+
+	Microsoft ClearType applies `ROUND[]` to the 1/16-pixel virtual grid in the
+	ClearType direction.  As with the rounded point-positioning instructions,
+	approximate this in v40 by leaving the result unrounded during native
+	ClearType horizontal execution.
+
+	This fixes horizontal positioning like those performed by 'Malgun Gothic's
+	composite glyph programs.  In particular, it corrects diacritic placement in
+	glyphs such as 'Ÿ' and 'ü' and produces small improvements in several other
+	accented glyphs.
+
+	Other rendering modes and directions retain the existing `ROUND[]` behavior.
+
+	* src/truetype/ttinterp.c (Ins_ROUND) [TT_SUPPORT_SUBPIXEL_HINTING_MINIMAL]:
+	  Handle it.
+
+2026-09-06  Behdad Esfahbod  <behdad@behdad.org>
+
+	[ttvarc] Fix leak on malformed variation indices.
+
+	Reported as
+
+	  https://issues.oss-fuzz.com/issues/554721572
+
+	* src/truetype/ttvarc.c (tt_varc_parse_component): Route variation-index
+	  parse failures through the common cleanup path so heap-allocated component
+	  axis values are released.
+
+2026-09-06  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* src/truetype/ttinterp.c (Compute_Funcs): Loosen orthogonality.
+
+	Near-orthogonal freedom and projection vectors can produce huge
+	movements, which FreeType soppresses. What is near-orthogonal is
+	not defined in teh specifications.  The empirical limit is tuned
+	to avoid the rendering artifacts in Palatino. Fixes #999.
+
+	Thanks to Werner and Infinality for the analysis of the problem.
+
+2026-09-05  Infinality  <infinality@infinality.net>
+
+	[truetype] Improve native ClearType horizontal point hinting.
+
+	FreeType's v40 interpreter normally approximates ClearType's increased
+	horizontal resolution by suppressing X-axis instruction effects in
+	backward-compatible mode.  Fonts can disable those compatibility
+	restrictions with INSTCTRL selector 3 and request native ClearType
+	execution.
+
+	In native mode, however, rounded point-positioning instructions currently
+	use the normal pixel grid.  Microsoft ClearType instead uses a virtual grid
+	with 16 positions per pixel in the ClearType direction.  Explicitly
+	implementing this finer grid is unnecessary for v40: leaving the affected
+	native horizontal distances unrounded gives visually equivalent results in
+	the tested fonts while keeping the implementation considerably simpler.
+
+	Preserve native horizontal point movements, but suppress rounding for the
+	rounded forms of MDAP, MIAP, MDRP, and MIRP when both the projection and
+	freedom vectors are horizontal.
+
+	Apply the related native ClearType graphics-state adjustments documented by
+	Microsoft: reduce CVT cut-in to 1/16 and minimum distance to 1/2 in the
+	ClearType direction.
+
+	These changes correct distorted horizontal geometry in the fonts 'Corbel'
+	and 'Malgun Gothic', and 'Constantia' while retaining the X movements
+	required by 'SimSun'.  The minimum-distance adjustment also corrects overly
+	heavy diagonal strokes in 'Malgun Gothic M' and 'N' around 16–17 ppem.  The
+	CVT cut-in adjustment produces smaller but visible differences, for example
+	in 'Malgun Gothic V'.
+
+	Monochrome rendering, tricky fonts, vertical execution, and pre-program
+	rounding retain their existing behavior.
+
+	Fixes issue #1454.
+
+	* src/truetype/ttinterp.c (Update_Native_ClearType_X_State)
+	  [TT_SUPPORT_SUBPIXEL_HINTING_MINIMAL]: New function.
+	  (Compute_Funcs, Ins_INSTCTRL) [TT_SUPPORT_SUBPIXEL_HINTING_MINIMAL]: Use
+	  it.
+	  (Ins_MDAP, Ins_MIAP, Ins_MDRP, Ins_MIRP)
+	  [TT_SUPPORT_SUBPIXEL_HINTING_MINIMAL]: Updated.
+
+	* src/truetype/ttinterp.h (TT_ExecContextRec)
+	  [TT_SUPPORT_SUBPIXEL_HINTING_MINIMAL]: New field `native_cleartype_x`.
+
+2026-09-01  Infinality  <infinality@infinality.net>
+
+	[truetype] Honor ClearType 'gasp' smoothing and grid-fit policy.
+
+	FreeType currently reports symmetric smoothing through GETINFO bit 18
+	without distinguishing ClearType symmetric smoothing from symmetric grid
+	fitting.
+
+	Resolve these two properties independently.  For version-1 'gasp' tables,
+	use `FT_GASP_SYMMETRIC_SMOOTHING` and `FT_GASP_SYMMETRIC_GRIDFIT` for their
+	respective purposes.
+
+	For hinted fonts without an applicable version-1 ClearType policy, use the
+	DirectWrite-style fallback of asymmetric NATURAL smoothing through 20 ppem
+	and NATURAL_SYMMETRIC above 20 ppem.  Fonts without TrueType instructions
+	remain symmetric.
+
+	Use the resolved smoothing state for GETINFO bit 18 and the resolved
+	grid-fit state when deciding whether native v40 LCD hinting is enabled.
+	Legacy DO_GRIDFIT and DO_GRAY flags are not treated as ClearType
+	symmetric-smoothing controls.
+
+2026-08-27  Behdad Esfahbod  <behdad@behdad.org>
+
+	* src/truetype/ttvarc.c (tt_varc_get_axis_indices): Fix zeros decoding.
+
+	A TupleValues "zeros" run decodes to zero values, matching HarfBuzz
+	(`TupleValues::decompile`, which memsets the run to 0) and fontTools; the
+	code instead wrote the running index (`indices[i] = i`), so a zeros run of
+	length two or more overrode the wrong axes.  No test font exercises it (they
+	use runs of length one, where 0 == i).
+
+	Also bound the run reads by the entry's own `tuple_limit` rather than the
+	whole-table `table_limit`, so a run straddling the entry end no longer
+	decodes bytes from adjacent entries (matches the counting pass in
+	`tt_varc_parse_component`).
+
+	Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>
+
+2026-08-27  Behdad Esfahbod  <behdad@behdad.org>
+
+	[ttvarc] Factor out common code.
+
+	The 'VARC' table has four CFF2-style INDEX structures that were each parsed
+	by a separate hand-rolled copy; the missing offset-value validation that
+	caused the recent crashes had to be fixed in each copy independently.
+	Factor the parsing and bounds checking into a helper function and route all
+	four call sites through it.
+
+	* src/truetype/ttvarc.c (tt_varc_read_cff2_index_entry): New function.
+	  (tt_varc_get_glyph_record, tt_varc_parse_component,
+	  tt_varc_get_axis_indices): Use it.
+	  (tt_varc_read_index2_data): Remove, superseded by the helper function.
+
+	Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>
+
+2026-08-27  Behdad Esfahbod  <behdad@behdad.org>
+
+	[ttvarc] Validate 32-bit offsets before pointer arithmetic.
+
+	Several unchecked u32 offsets from the table were added to base
+	pointers before the result was range-checked, which is undefined
+	pointer arithmetic on a wild offset.  Validate the offset values
+	against the table extent first.
+
+	* src/truetype/ttvarc.c (tt_varc_get_item_deltas): Bound `data_set_offset`
+	  and the region offset.
+	  (tt_varc_get_condition): Bound the condition offset and the
+	  `cond_index * 4` array index.
+
+	Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>
+
+2026-08-27  Behdad Esfahbod  <behdad@behdad.org>
+
+	* src/truetype/ttvarc.c (tt_varc_get_item_deltas): Fix integer overflow.
+
+	`total_deltas = region_count * num_deltas` is computed in 32 bits from two
+	attacker-controlled values.  A wrapped product under-sizes the `all_deltas`
+	allocation while the accumulation loop still indexes it with the full
+	`region_idx * num_deltas + k`, giving an out-of-bounds read.  Reject the
+	overflow.  Also free `accumulators` on the allocation-failure path that
+	previously leaked it.
+
+	Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>
+
+2026-08-27  Behdad Esfahbod  <behdad@behdad.org>
+
+	* src/truetype/ttvarc.c (tt_varc_parse_component): Fix success on failure.
+
+	The axis-value reading loop jumps to the `Fail` label on truncated data
+	without setting `error`, which still holds `FT_Err_Ok` from the last
+	successful read.  `Fail` then frees `axis_values` and returns success, so
+	the caller runs `tt_varc_apply_axis_deltas` on a component whose
+	`num_axis_values` is non-zero but `axis_values` is NULL, causing a NULL
+	dereference.  Force a non-zero error at the label.
+
+	Found by fuzzing the VARC code.
+
+	Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>
+
+2026-08-27  Behdad Esfahbod  <behdad@behdad.org>
+
+	[ttvarc] Improve CFF2Index/TupleList offset validation.
+
+	The offset pairs read from the index structures were turned into data
+	pointers without checking the values against the end of the 'VARC'
+	table (or requiring the 1-based offsets to be >= 1), allowing reads
+	far past the table.  Make the offset-array bounds checks overflow-safe
+	with division instead of multiplication.
+
+	* src/truetype/ttvarc.c (tt_varc_parse_component, tt_varc_read_index2_data,
+	  tt_varc_get_axis_indices): Validate offset values before computing data
+	  pointers; avoid overflow in offset-array bounds checks.
+	  (tt_varc_get_glyph_record): Reject zero (1-based) offsets.
+
+	Reported as
+
+	  https://issues.oss-fuzz.com/issues/552370108
+
+	Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>
+
+2026-08-25  Werner Lemberg  <wl@gnu.org>
+
+	ttvarc.c: Avoid undefined left-shifts.
+
+	Reported as
+
+	  https://issues.oss-fuzz.com/issues/552117135
+
+2026-08-24  Behdad Esfahbod  <behdad@behdad.org>
+
+	* src/truetype/ttvarc.c (tt_varc_get_glyph_record): Fix bounds check.
+
+	Reported as
+
+	  https://issues.oss-fuzz.com/issues/551265180
+
+2026-08-24  Werner Lemberg  <wl@gnu.org>
+
+	ttvarc.c: Minor formatting.
+
+2026-08-19  Werner Lemberg  <wl@gnu.org>
+
+	[sfnt] Correctly handle HVAR/VVAR advance values for named instances.
+
+	This bug was introduced with commit 5987a9f51d.
+
+	Fixes issue #1452, which comes with a detailed analysis and a patch provided
+	by an LLM.
+
+	* src/sfnt/ttmtx.c (tt_face_get_metrics) [TT_CONFIG_OPTION_GX_VAR_SUPPORT]:
+	  Also check `FT_IS_NAMED_INSTANCE`.
+
+2026-08-19  Behdad Esfahbod (بهداد اسفهبد)  <behdad@behdad.org>
+
+	[cff, truetype] Add VARC (Variable Composites) table support.
+
+	The Variable Composites ('VARC' table) technology allows font glyphs to
+	reuse variants of other glyph shapes as their components.  This is similar
+	to a feature that some font design tools already provide to designers, for
+	example, Glyphs calls this 'Smart Components'.  The 'VARC' table allows us
+	carrying that design all the into the font binary file.
+
+	This enables significant file size saving in CJK fonts, for example, up
+	to 90% savings for simple Hangul shapes.
+
+	The 'VARC' table is part of the ISO Open Font Format version 5, and is
+	implemented and enabled by default in HarfBuzz since 12.0.0 (Sep 2025) and
+	FontTools.
+
+	For test fonts, see
+
+	  https://github.com/notofonts/noto-cjk-varco/releases
+
+	* include/freetype/config/ftoption.h, devel/ftoption.h
+	  (TT_CONFIG_OPTION_VARC): New macro.
+	* include/freetype/tttags.h (TTAG_VARC): New macro.
+	* include/freetype/internal/ftserv.h (FT_DEFINE_SERVICEDESCREC11): New macro.
+	* include/freetype/internal/fttrace.h (ttvarc): New macro.
+
+	* include/freetype/internal/tttypes.h (TT_FaceRec) [TT_CONFIG_OPTION_VARC]:
+	  New fields `tt_varc`, `face_varc`, `varc`, `varc_context`, and
+	  `varc_loading_components`.
+
+	* src/base/ftobjs.c [TT_CONFIG_OPTION_VARC]: Include `svvarc.h`.
+	  (FT_Load_Glyph) [TT_CONFIG_OPTION_VARC]: Don't use auto-hinting for VARC
+	  glyphs.
+
+	* include/freetype/internal/services/svvarc.h, src/truetype/ttvarc.c,
+	  src/truetype/ttvarc.h: New files.
+
+	* src/truetype/rules.mk (TT_DRV_SRC): Add `ttvarc.c`.
+
+	* src/truetype/truetype.c: Include `ttvarc.c`.
+	* src/truetype/ttdriver.c [TT_CONFIG_OPTION_VARC]: Include `svvarc.h` and
+	  `ttvarc.h`.
+	  (tt_service_varc, tt_services) [TT_CONFIG_OPTION_VARC]: New structures.
+	* src/truetype/ttgload.c [TT_CONFIG_OPTION_VARC]: Include `ttvarc.h`.
+	  (TT_Load_Glyph) [TT_CONFIG_OPTION_VARC]: Handle VARC glyphs.
+
+	* src/cff/cffdrivr.c [TT_CONFIG_OPTION_VAR]: Include `svvarc.h`.
+	  (cff_varc_load, cff_varc_done, cff_varc_has_glyph, cff_varc_load_glyph,
+	  cff_service_varc) [TT_CONFIG_OPTION_VAR]: New wrapper functions and
+	  structure to provide the VARC service.
+	  (cff_services): Updated.
+	* src/cff/cffgload.c [TT_CONFIG_OPTION_VARC]: Include `svvarc.h`.
+	  (cff_slot_load) [TT_CONFIG_OPTION_VARC]: Handle VARC glyphs.
+
+	* src/sfnt/sfobjs.c [TT_CONFIG_OPTION_VARC]: Include `svvarc.h`.
+	  (sfnt_init_face) [TT_CONFIG_OPTION_VARC]: Load the VARC service.
+	  (sfnt_load_face) [TT_CONFIG_OPTION_VARC]: Try to load the 'VARC' table.
+	  (sfnt_done_face) [TT_CONFIG_OPTION_VARC}: Clean up VARC handling.
+
+2026-08-07  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* tests/issue-1063/main.c: Clean up exit.
+
+	Fixes #1450.
+
+2026-08-01  Elliott Sales de Andrade  <quantum.analyst@gmail.com>
+
+	* include/freetype/internal/ftdebug.h: Fix logging if `NDEBUG` is set.
+
+	In Meson, the default for `b_ndebug` is `is-release`, which will enable it
+	when in release mode.  Additionally, in `dlg`, the default log level is
+	`warn` if `NDEBUG` is set or `trace` otherwise.  Because `FT_LOG` uses the
+	`trace` level always, all debug logging will be disabled if `b_ndebug` is
+	set (or in release mode).
+
+	Using `NDEBUG` is not documented anywhere to toggle debug logging.  We thus
+	define `DLG_LOG_LEVEL` so that `trace` level is always output by `dlg`.
+	FreeType's other (runtime or otherwise) configuration remains as it is to
+	toggle logging per-component.
+
+2026-08-01  Elliott Sales de Andrade  <quantum.analyst@gmail.com>
+
+	* meson.build: Add missing 'dlg' logging library.
+
+	Without this source file, the final library fails to link if you set
+	`FT_DEBUG_LOGGING` for the build.
+
+2026-07-30  Werner Lemberg  <wl@gnu.org>
+
+	CMakeLists.txt: Minor documentation improvement.
+
+2026-07-30  Yuriy Levchenko  <1262716-irov@users.noreply.gitlab.freedesktop.org>
+
+	[cmake] Add an option to disable stream support.
+
+	* CMakeLists.txt (FT_DISABLE_STREAM_SUPPORT): Add an option to define
+	FT_CONFIG_OPTION_DISABLE_STREAM_SUPPORT and use the generic system
+	implementation.
+
+	Fixes issue #1448.
+
+2026-07-30  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* (gray_raster_render): Fix a coding typo.
+
+	Fixes #1449.
+
+2026-07-21  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* src/sfnt/sfwoff.c (woff_open_font): Reject unrealistic sizes.
+
+	Fixes #1447.
+
+2026-07-20  Drage  <@timyychan>
+
+	* src/sfnt/ttbdf.c (tt_face_find_bdf_prop): Fix OOB read.
+
+	Fixes #1446.
+
+2026-07-20  Alexei Podtelezhnikov  <apodtele@gmail.com>
+	    Hyunwoo Kim  <hw@hwhw.kr>
+
+	[sdf] Fix use-after-free in `sdf_generate_with_overlaps`.
+
+	When a glyph is rendered with `FT_RENDER_MODE_SDF` while the `sdf`
+	module's `overlaps` property is enabled, `sdf_generate_with_overlaps`
+	processes each contour on its own bitmap.  For every contour it calls
+	`sdf_generate_subdivision`, which in turn calls `split_sdf_shape`; the
+	latter frees the original contour (`sdf_contour_done` -> `FT_FREE`).
+	After the call returned, the loop still wrote through the freed pointer
+	with `contour->next = temp_contour` and then read it back via
+	`contour = contour->next` to advance -- a heap use-after-free (an
+	8-byte out-of-bounds write, CWE-416) reachable from a crafted font.
+
+	The value read back is already held in the `temp_contour` local, so the
+	restore write serves no purpose and is unsafe.  Drop it and advance the
+	loop with `temp_contour` directly, so the freed `contour` is never
+	dereferenced after the subdivision call.
+
+	* src/sdf/ftsdf.c (sdf_generate_with_overlaps): Do not write to or read
+	from `contour` after `sdf_generate_subdivision` has freed it; use the
+	saved `temp_contour` to continue the iteration.
+
+	Fixes #1445.
+
+
+	(cherry picked from commit efc07621de9c4b8dc2f11032e52ad86eddbbdbdf)
+
+2026-07-14  Behdad Esfahbod  <behdad@behdad.org>
+
+	[base] Prevent signed overflow.
+
+	Reported as
+
+	  https://issues.oss-fuzz.com/issues/530322169
+
+	* src/base/ftoutln.c (FT_Outline_Get_Orientation): Use `ADD_*`.
+
+2026-07-01  Behdad Esfahbod  <behdad@behdad.org>
+
+	Revert "[autofit] Derive fill orientation without a separate outline pass."
+
+	This reverts commit 1f3ab3cdcef3433ec8d8a13446a45b8102929402.
+
+	That commit inlined a shoelace accumulator into the `af_glyph_hints_reload`
+	point-setup loop on the theory that the speedup came from sharing the
+	traversal with that loop ("loop fusion").  An A/B/C benchmark with the
+	intermediate variant -- inlining reverted but
+	`FT_Outline_Get_Orientation` itself rewritten as a single-pass 64-bit
+	shoelace -- shows the inline version and the standalone version are
+	statistically indistinguishable (both 2.854 us/op vs the original
+	2.914 us/op on `ftbench -b a -f 20`, Google Sans Flex).  The entire
+	win is algorithmic (dropping the bbox pre-pass and the per-iteration
+	shifts), not from sharing the loop.
+
+	With the previous commit moving that win into `FT_Outline_Get_Orientation`
+	itself, the inline copy in autofit is redundant and worth removing:
+	the standalone call is the same speed, the public API benefits every
+	caller, and `af_glyph_hints_reload` keeps its single-purpose loop.
+
+	* src/autofit/afhints.c (af_glyph_hints_reload): Restore the
+	`FT_Outline_Get_Orientation` call; drop the inlined shoelace
+	accumulator.
+
+	Co-Authored-By: Claude Opus 4.7 (1M context) <noreply@anthropic.com>
+
+2026-07-01  Behdad Esfahbod  <behdad@behdad.org>
+
+	[base] Drop the bbox pre-pass from `FT_Outline_Get_Orientation`.
+
+	The function walked the outline twice: once via `FT_Outline_Get_CBox`
+	to pick coordinate shifts that keep the signed-area accumulator inside
+	32 bits, then again to actually accumulate the shoelace.  On platforms
+	with native 64-bit arithmetic the bbox pass and the per-iteration
+	shifts are unnecessary -- a 64-bit accumulator absorbs the area of any
+	sane glyph in a single pass without overflow.
+
+	Add an `#ifdef FT_INT64` fast path that does exactly that, and keep
+	the existing two-pass shifted variant verbatim as the 32-bit
+	fallback.  Measured ~2% faster on the autohint load benchmark
+	(`ftbench -b a -f 20`, Google Sans Flex: 2.914 -> 2.854 us/op);
+	benefits any caller, not just autofit.
+
+	The fast path drops the explicit `xMin==xMax`/`yMin==yMax` collapse
+	check -- the shoelace returns area 0 for such degenerate contours
+	anyway, so the final sign test reports `FT_ORIENTATION_NONE` without
+	help.
+
+	* src/base/ftoutln.c (FT_Outline_Get_Orientation): Add an
+	`#ifdef FT_INT64` single-pass shoelace using a 64-bit accumulator;
+	keep the 32-bit two-pass variant as the `#else` fallback.
+
+	Co-Authored-By: Claude Opus 4.7 (1M context) <noreply@anthropic.com>
+
+2026-06-28  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	[truetype] Fix GS leaks when prep is missing.
+
+	* src/truetype/ttobjs.c (tt_size_run_fpgm, tt_size_run_prep): Modify
+	GS only when programs have actually been executed.
+
+	Otherwise, GS leaks from the last glyf program. Fixes #1443.
+
+2026-06-28  Derek B. Noonburg  <derekn@glyphandcog.com>
+
+	* src/base/ftobjs.c (ft_glyphslot_preset_bitmap): Bump rendering limits.
+
+	Some OCR fonts attempt to jam handwritten signatures into a glyph.
+
+2026-06-28  Behdad Esfahbod  <behdad@behdad.org>
+
+	[autofit] Derive fill orientation without a separate outline pass.
+
+	`af_glyph_hints_reload` called `FT_Outline_Get_Orientation` once per
+	glyph solely to choose the major-direction sign.  That function walks
+	all points twice -- a bounding-box pass to pick overflow shifts, then a
+	signed-area pass -- even though the very next loop in `reload` already
+	visits every point and computes each edge vector.
+
+	Accumulate the contour signed area (shoelace) in that existing loop and
+	set the direction from its sign afterwards, dropping the separate call.
+	A 64-bit accumulator replaces the bounding-box-based coordinate shift
+	that `FT_Outline_Get_Orientation` used to keep the area from
+	overflowing.
+
+	Output is bit-identical: force-autohinted outlines of all glyphs match
+	across several sizes and weights.  ~3.5% faster on the autohint load
+	benchmark (`ftbench -b a -f 20`, Google Sans Flex: 8.46 -> 8.17 us/op).
+
+	* src/autofit/afhints.c (af_glyph_hints_reload): Accumulate the signed
+	contour area in the point-setup loop and derive the fill direction from
+	its sign, instead of calling `FT_Outline_Get_Orientation`.
+
+	Co-Authored-By: Claude Opus 4.8 (1M context) <noreply@anthropic.com>
+
+2026-06-27  Behdad Esfahbod  <behdad@behdad.org>
+
+	[truetype] Hoist the gvar tuple-header bounds check out of the loop. (5/5)
+
+	The per-tuple `4 > stream->limit - p` check in the tuple-variation loop
+	of `TT_Vary_Apply_Glyph_Deltas` ran once for every tuple, even though
+	the headers are walked linearly through a cursor whose extent is known
+	up front.
+
+	Check the four-byte minimum of all tuple headers once, before the loop,
+	so the common path no longer tests bounds per tuple.  This stays safe:
+	`p` only ever advances over the headers (active tuples read their data
+	through a separate cursor) and `stream->limit` is constant within the
+	frame, which maintains the invariant that at least `4 * (tupleCount - i)`
+	bytes remain at the start of tuple `i`.  The embedded and intermediate
+	branches consume more than that four-byte minimum, so they re-check the
+	surplus against the remaining tuples' reserve, preserving the invariant.
+	Output is bit-identical; ~6% faster (1.39 -> 1.30 ms) on the
+	draw-all-glyphs benchmark (Google Sans Flex, wght=500).
+
+	* src/truetype/ttgxvar.c (TT_Vary_Apply_Glyph_Deltas): Replace the
+	per-tuple four-byte bounds check with a single check before the loop;
+	make the embedded and intermediate coordinate reads also account for the
+	four-byte minimum of the remaining tuples.
+
+	Co-Authored-By: Claude Opus 4.8 (1M context) <noreply@anthropic.com>
+
+2026-06-27  Behdad Esfahbod  <behdad@behdad.org>
+
+	[truetype] Add a fast path to the gvar tuple loop. (4/5)
+
+	Now that the per-glyph scratch buffers are pooled, the time
+	`TT_Vary_Apply_Glyph_Deltas` spends iterating tuple-variation headers
+	stands out.  Most of a glyph's tuples are inactive for the current
+	instance, yet every header was dispatched on its flags before the
+	cached shared-tuple scalar was consulted.
+
+	Reorder the loop so the cache is consulted with a single range test
+	right after the tuple index is read: a cached scalar of zero continues
+	to the next tuple immediately, and a cached non-zero scalar is applied
+	without recomputing the factor.  The scalars stay valid while glyphs
+	are loaded, so almost every shared tuple hits the cache.  Output is
+	bit-identical; ~8% faster (1.51 -> 1.39 ms) on the draw-all-glyphs
+	benchmark (Google Sans Flex, wght=500).
+
+	The test
+
+	  ( tupleIndex & ~GX_TI_PRIVATE_POINT_NUMBERS ) < blend->tuplecount
+
+	depends on the embedded (0x8000), intermediate (0x4000), and reserved
+	(0x1000) tuple flags all pushing the masked value to at least 0x1000,
+	which holds only while `blend->tuplecount` stays within the 12-bit
+	tuple-index range; clamp it at load time.  Out-of-range indices
+	therefore no longer reach the shared-tuple branch, so also restore the
+	bounds check guarding `blend->tuplecoords`.
+
+	* src/truetype/ttgxvar.c (ft_var_load_gvar): Clamp `blend->tuplecount`
+	to `GX_TI_TUPLE_INDEX_MASK + 1`; shared tuples beyond the addressable
+	index range can never be referenced.
+	(TT_Vary_Apply_Glyph_Deltas): Consult the cached shared-tuple scalar
+	before the per-flag header dispatch; restore the invalid tuple-index
+	error path.
+
+	Co-Authored-By: Claude Opus 4.8 (1M context) <noreply@anthropic.com>
+
+2026-06-27  Behdad Esfahbod  <behdad@behdad.org>
+
+	[truetype] Cache item-variation-store region scalars. (3/5)
+
+	`tt_var_get_item_delta` (used, e.g., for 'HVAR' advance adjustment, called
+	once per glyph during glyph loading) recomputed `tt_calculate_scalar`
+	for every region on every call, although the result depends only on the
+	normalized coordinates -- which stay constant while glyphs are loaded.
+
+	Cache the per-region scalars in the item variation store and recompute
+	them only when the coordinates change, detected by comparing against a
+	stored snapshot.  The snapshot check also transparently handles the
+	temporary coordinate swap performed during 'avar2' processing.  Output
+	(outlines and advances) is bit-identical; ~4% faster (1.58 -> 1.51 ms).
+
+	* include/freetype/internal/ftmmtypes.h (GX_ItemVarStoreRec): New fields
+	`regionScalars` and `cachedCoords`.
+
+	* src/truetype/ttgxvar.c (tt_var_get_item_delta): (Re)compute and cache
+	all region scalars when the coordinates differ from the cached snapshot,
+	then index the cache instead of recomputing per region; fall back to
+	direct computation if the cache cannot be allocated.
+	(tt_var_done_item_variation_store): Free the new fields.
+
+	Co-Authored-By: Claude Opus 4.8 (1M context) <noreply@anthropic.com>
+
+2026-06-27  Behdad Esfahbod  <behdad@behdad.org>
+
+	[truetype] Reuse scratch buffers for gvar point-number lists too. (2/5)
+
+	Follow-up to the previous commit: the packed point-number lists read by
+	`ft_var_readpackedpoints' were still heap-allocated -- the shared list
+	once per glyph and each private list per tuple.  Carve them from the
+	same per-face scratch pool instead.
+
+	This requires moving the pool setup ahead of the shared-point-number
+	read (the pool now provides that buffer), so the working pool is laid
+	out before any point list is parsed.  As with the delta arrays, a list
+	larger than the glyph's point count falls back to a heap allocation.
+
+	Beyond saving the allocations themselves, reusing fixed buffer
+	addresses across glyphs keeps the working set warm in cache, which is
+	where most of the gain comes from.  Output is bit-identical; a further
+	~10% on the draw-all-glyphs benchmark (1.74 -> 1.56 ms), ~17% versus
+	the original.
+
+	* src/truetype/ttgxvar.c (ft_var_readpackedpoints): New `scratch' and
+	`scratch_cap' arguments, mirroring `ft_var_readpackeddeltas'.
+	(TT_Vary_Apply_Glyph_Deltas): Add `shared_points_buf'/`local_points_buf'
+	to the pool; set the pool up before reading the shared point numbers;
+	free only heap fallbacks.
+
+	Co-Authored-By: Claude Opus 4.8 (1M context) <noreply@anthropic.com>
+
+2026-06-27  Behdad Esfahbod  <behdad@behdad.org>
+
+	[truetype] Reuse scratch buffers in gvar glyph delta application. (1/5)
+
+	This change starts a series of commits that, if combined, speed up loading
+	of unhinted outlines at wght=500 from the 'GoogleSansFlex' monster-font by
+	30%.
+
+	Drawing glyphs from a variable font spends a large fraction of its time
+	in the allocator: `TT_Vary_Apply_Glyph_Deltas` allocated a working pool
+	once per glyph, and `ft_var_readpackeddeltas` allocated two delta arrays
+	per active tuple.  On a draw-all-glyphs benchmark (Google Sans Flex,
+	wght=500) these accounted for ~9% of total time.
+
+	Re-use buffers instead: keep the working pool on the face (grown on
+	demand) and carve the per-tuple delta arrays out of it, falling back to
+	a heap allocation only when a tuple needs more entries than the glyph
+	has points.  Output is bit-identical; ~7% faster (1.89 -> 1.76 ms).
+
+	* src/truetype/ttgxvar.h (GX_BlendRec): New fields `glyph_delta_pool`
+	and `glyph_delta_pool_size`.
+
+	* src/truetype/ttgxvar.c (ft_var_readpackeddeltas): New `scratch` and
+	`scratch_cap` arguments; use the caller-provided buffer when it is large
+	enough, else allocate as before.
+	(TT_Vary_Apply_Glyph_Deltas): Reuse a per-face scratch pool grown on
+	demand instead of allocating it per glyph; carve `deltas_x`/`deltas_y`
+	out of the pool and free only heap fallbacks.
+	(tt_done_blend): Free `glyph_delta_pool`.
+
+	Co-Authored-By: Claude Opus 4.8 (1M context) <noreply@anthropic.com>
+
+2026-06-27  TheLastRar  <TheLastRar@users.noreply.github.com>
+
+	* meson.build: Include CMake name of libpng in dependency search.
+
+	Meson supports searching both `pkg-config` and `CMake` for dependencies,
+	however, 'libpng' uses a different name between the two ('libpng' and 'PNG',
+	respectively).
+
+	Specify both package names for 'libpng'.
+
+2026-06-27  TheLastRar  <TheLastRar@users.noreply.github.com>
+
+	* meson.build, .gitlab-ci.yml: Require Meson 0.60.0 or newer.
+
+	Version 0.60.0 was released in October 2021; we need this for the next
+	commit.
+
+2026-06-04  Hennadii Stepanov  <hebasto@gmail.com>
+
+	[CMake] Fix shared library versioning on OpenBSD and NetBSD.
+
+	Fixes #1440.
+
+	* CMakeLists.txt: Implement it.
+
+2026-05-31  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* src/autofit/afgsub.c (af_validate_coverage): Use unsigned variables.
+
+2026-05-31  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* src/autofit/afgsub.c (af_validate_coverage): Reject overlaps.
+
+2026-05-29  Werner Lemberg  <wl@gnu.org>
+
+	* src/autofit/afgsub.c (af_validate_coverage): Check last element.
+
+	Fixes issue #1439.
+
+2026-05-17  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	Revert to signed span positioning.
+
+	In the context of FT_Outline_Render, the outline can be placed
+	arbitrarily and the resulting spans should be signed. This partially
+	reverts ef04e4eb2056 and fixes #1410.  However, for internal use,
+	when outlines are placed in the first quadrant, we still can interpret
+	positions as unsigned.
+
+	* include/freetype/ftimage.h (FT_Span): Use signed position again.
+	* src/smooth/ftgrays.c (gray_sweep_direct): Sync with FT_Span.
+	* src/smooth/ftsmooth.c (ft_smooth_lcd_spans, ft_smooth_lcdv_spans,
+	ft_smooth_overlap_spans): Prevent sign extension.
+
+2026-05-15  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* src/smooth/ftgrays.c (gray_TWorker): Remove redundancies.
+	(gray_raster_render, gray_convert_glyph, gray_set_cell): Updated.
+
+2026-05-15  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* src/raster/ftraster.c (Render_Single_Pass): Simplify bisections.
+
+2026-05-15  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* src/smooth/ftgrays.c (gray_convert_glyph): Simplify bisections.
+
+2026-05-14  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* src/truetype/ttgxvar.c (TT_Get_Var_Design): Zero extras.
+
+	Fixes #1436.
+
+2026-05-14  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* src/type1/t1load.c (T1_Get_Var_Design): Updated.
+
+2026-05-13  Deborah Goldsmith  <goldsmith@apple.com>
+
+	[hvf] Fix macro usage and metrics calculations.
+
+	* src/hvf/hvfload.c (hvf_render_callback): Fix glyph loader macro calls
+	and metrics calculations.
+	* src/hvf/hvfobjs.c (hvf_refresh_axis_coordinates,
+	hvf_init_axis_coordinates): Tweak macro usage.
+	* src/hvf/hvfobjs.h (HVF_RenderContext): Remove `face`.
+
+	* include/freetype/ftmoderr.h: Add HVF error base.
+
+2026-05-13  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	[smooth, raster] Fix signedness warning.
+
+	* src/smooth/ftgrays.c (gray_convert_glyph): Use unsigned estimate.
+	* src/raster/ftraster.c (ft_black_render): Ditto and expand.
+
+2026-05-09  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	[raster] Dynamic pool allocation.
+
+	Use pool allocation strategy similar to that of the smooth rasterizer.
+	This is beneficial at sizes larger than 100 ppem.
+
+	* src/raster/ftraster.c (Render_Single_Pass): Move pool allocation...
+	(ft_black_render): ... here. Allocate larger pools dynamically.
+
+	* include/freetype/config/ftoption.h: Update comment.
+	* devel/ftoption.h: Ditto.
+
+2026-05-09  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* src/base/ftbitmap.c (FT_Bitmap_Blend): Fix undefined shift.
+
+	Reported in
+	  https://issues.oss-fuzz.com/issues/510113351
+
+2026-05-09  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* src/base/ftbitmap.c (FT_Bitmap_Blend): Refactor to avoid warnings.
+
+2026-05-09  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	.gitlab-ci.yml: Update Windows pipeline.
+
+2026-05-09  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* src/smooth/ftgrays.c: Comments expanded.
+
+2026-05-09  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* docs/CHANGES: Draft recent changes.
+
+2026-05-09  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	[smooth] Dynamic pool allocation.
+
+	The fixed pool allocation on stack is very fast and works very well
+	for rendering glyphs smaller than 40 pixels. Larger glyphs have to be
+	split and rendered piecewise, which is slower.  This commit introduces
+	dynamic pool allocation for larger glyphs.  Complex large glyphs are
+	now rendered about 2x faster.
+
+	* src/smooth/ftgrays.c (gray_convert_glyph): Use simpler banding schema
+	in case of rendering emergency.
+	(gray_raster_render): Allocate larger pools dynamically.
+
+	* include/freetype/config/ftoption.h: Explain the render pool size.
+	* devel/ftoption.h: Ditto.
+
+2026-05-08  Werner Lemberg  <wl@gnu.org>
+
+	* builds/windows/vc2010/index.html: Update file descriptions.
+
+	Fixes issue #1434.
+
+2026-05-07  Mateusz Jurczyk  <mjurczyk@google.com>
+
+	* src/truetype/ttinterp.c (TT_RunIns): Remove dead code.
+
+	Fixes #1433.
+
+2026-05-07  Mateusz Jurczyk  <mjurczyk@google.com>
+
+	* src/psaux/psintrp.c (cf2_interpT2CharString): Fix off-by-one in the subroutine nesting depth check.
+
+	Fixes #1432.
+
+2026-05-07  Mateusz Jurczyk  <mjurczyk@google.com>
+
+	* src/psaux/psstack.c (cf2_stack_roll): Process top stack elements instead of bottom ones.
+
+	Fixes #1431.
+
+2026-05-07  Mateusz Jurczyk  <mjurczyk@google.com>
+
+	* src/truetype/ttinterp.c (Ins_WCVTF): Add missing CVT copy-on-write protection.
+
+	Fixes #1430.
+
+2026-05-07  Mateusz Jurczyk  <mjurczyk@google.com>
+
+	* src/psaux/psintrp.c (cf2_doBlend): Implement proper bounds check accounting for all operands.
+
+	Fixes #1429.
+
+2026-05-07  Mateusz Jurczyk  <mjurczyk@google.com>
+
+	* src/psaux/psstack.c (cf2_stack_setReal): Fix off-by-one in index check.
+
+	Fixes #1428.
+
+2026-05-03  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* src/base/ftbitmap.c (FT_Bitmap_Blend): Check final dimensions.
+
+	Fixes #1413.
+
+2026-05-03  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* src/base/ftbitmap.c (FT_Bitmap_Blend): Refactor.
+
+2026-05-02  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* src/base/ftobjs.c (FT_Render_Glyph_Internal): Protect FT_LOAD_COLOR.
+
+	Now only *scalable* COLRv0 layers can be rendered with FT_LOAD_COLOR,
+	in accordance with Chromium. Fixes #1425, also see !424.
+
+2026-05-02  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* src/base/ftobjs.c (FT_Render_Glyph_Internal): Formatting.
+
+2026-04-29  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* src/truetype/ttgxvar.c (tt_delta_shift): Use unsigned references.
+
+2026-04-28  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	[truetype/GX] Fix signed overflow.
+
+	Fixes #1423.
+
+	* src/truetype/ttgxvar.c (tt_interpolate_deltas, tt_delta_interpolate):
+	Use unsigned counters.
+
+2026-04-26  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	[truetype] Reduce zone copying.
+
+	* src/truetype/ttinterp.c (Compute_Point_Displacement): Reduce
+	zone copying and return reference on demand only.
+	(Ins_SHP, Ins_SHC, Ins_SHZ): Updated accordingly.
+
+2026-04-26  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	[truetype] Simplify shift conditions.
+
+	* src/truetype/ttinterp.c (Compute_Point_Displacement,
+	Ins_SHP, Ins_SHPIX): Use 'FT_UInt" as point references.
+	(Ins_SHC, Ins_SHZ): Ditto and simplify repeated condition.
+
+2026-04-26  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* src/truetype/ttinterp.c (Move_Zp2_Point): Remove 'touch'.
+
+	Update all callers.
+
+2026-04-26  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	[truetype] Fix SHZ according to specifications.
+
+	SHZ must shift the zone specified by its arguments. Previously,
+	it was shifting zp2 instead.
+
+	* src/truetype/ttinterp.c (Ins_SHZ): Rewrite to specifications.
+
+2026-04-24  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* src/truetype/ttinterp.c (Ins_SHZ): Fix the range limit (cont'd).
+
+	Fixes
+	    https://issues.oss-fuzz.com/issues/505900175
+
+2026-04-23  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* src/truetype/ttinterp.c (Ins_SHZ): Fix the range limit.
+
+	Fixes #1419 and #1420, as well as
+	    https://issues.oss-fuzz.com/issues/499455833
+
+2026-04-22  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* src/truetype/ttinterp.c (Ins_IUP): Use unsigned counter.
+
+	Fixes #1421.
+
+2026-04-22  Yaroslav Kolomiiets  <yarikos@gmail.com>
+
+	[build] Add a Plan 9 port.
+
+	* mkfile: Build instructions.
+	* build/plan9/p9lib.h: Standard lib replacement.
+	* build/plan9/README: Docs.
+
+2026-04-22  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* include/freetype/fttypes.h: Do not include stddef.h.
+
+2026-04-21  Werner Lemberg  <wl@gnu.org>
+
+	* src/sfnt/ttsbit.c (tt_face_load_sbix_image): Use `FT_MulDiv`.
+
+	Problem reported as
+
+	  https://issues.oss-fuzz.com/issues/505058300
+
+2026-04-21  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* src/truetype/ttgload.c (TT_Load_Simple_Glyph): Use unsigned counts.
+
+	This helps Plan 9 compilation.
+
+2026-04-13  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* src/truetype/ttdriver.cv (tt_glyph_load): Remover redundancies.
+
+	Fixes #1417, found by `cppcheck`.
+
+2026-04-13  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* src/sdf/ftsdf.c (sdf_*_to): Remover redundant checks.
+
+	Fixes #1417, found by `cppcheck`.
+
+2026-04-12  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	[pcf] Limit bitmap allocation and loading.
+
+	Loading huge bitmaps now requires selecting huge size, fixes #1411.
+
+	* src/pcf/pcfread.c (pcf_get_metrics): Remove/delay sanity checks.
+	* src/pcf/pcfdrivr.c (PCF_Glyph_Load): Sanitize bitmap dimensions.
+
+2026-04-11  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* src/smooth/ftsmooth.c (ft_smooth_raster_lcd): Fix clip_box.
+
+	The bug is discussed in #1412, without security repercussions.
+
+2026-04-11  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* src/type1/t1parse.c (T1_Get_Private_Dict): Minor.
+
+	Fixes #1416.
+
+2026-04-03  Werner Lemberg  <wl@gnu.org>
+
+	[autofit] Prevent signed integer overflow.
+
+	Reported as
+
+	    https://issues.oss-fuzz.com/issues/499135336
+
+	* src/autofit/aflatin.c (af_move_contour_vertically): Use `ADD_LONG`.
+
+2026-04-03  Werner Lemberg  <wl@gnu.org>
+
+	[hvf] Correctly initialize driver if no HVF library is available.
+
+	Since this font driver is by default enabled in `modules.cfg` and its
+	availability controlled by `FT_CONFIG_OPTION_HVF`, we need to provide some
+	stubs so that HVF fonts can be correctly rejected if there is no HVF library
+	available.
+
+	Fixes issue #1409.
+
+	* src/hvf/hvfdrv.c (hvf_driver_class): Provide `hvf_face_init` and
+	  `hvf_slot_load_glyph` unconditionally.
+
+	* src/hvf/hvfload.c, src/hvf/hvfload.h (hvf_slot_load_glyph)
+	  [!FT_CONFIG_OPTION_HVF]: Define stub.
+	* src/hvf/hvfobjs.c, src/hvf/hvfobjs.h (hvf_face_init)
+	  [!FT_CONFIG_OPTION_HVF]: Define stub.
+
+2026-04-02  Werner Lemberg  <wl@gnu.org>
+
+	[autofit] Prevent signed integer overflow.
+
+	Reported as
+
+	  https://issues.oss-fuzz.com/issues/496105489
+
+	* src/autofit/aflatin.c
+	  (af_glyph_hints_apply_vertical_separation_adjustments): Use `ADD_LONG` and
+	  `SUB_LONG`.
+
+2026-03-23  Suzuki, Toshiya (鈴木俊哉)  <mpsuzuki@hiroshima-u.ac.jp>
+
+	Update some VisualStudio project files to include HVF module.
+
+	* builds/windows/vc2010/freetype.vcxproj: Add hvf.c before ftlzw.c.
+	* builds/windows/visualc/freetype.vcproj: Add hvf.c before pcf.c.
+	* builds/windows/visualce/freetype.vcproj: Add hvf.c before pcf.c.
+
+2026-03-23  Debbie Goldsmith  <goldsmit@apple.com>
+
+	* builds/unix/configure.raw: Handle new HVF driver.
+
+2026-03-23  Debbie Goldsmith  <goldsmit@apple.com>
+
+	* meson.build, meson_option.txt: Handle new HVF driver.
+
+	(hvf): New option.
+
+2026-03-23  Debbie Goldsmith  <goldsmit@apple.com>
+
+	* CMakeLists.txt: Handle new HVF driver.
+
+	(FT_DISABLE_HVF): New option.
+
+2026-03-23  Debbie Goldsmith  <goldsmit@apple.com>
+
+	Support Hierarchical Variable Fonts (HVF) using Apple's 'libhvf' library.
+
+	The new 'hvf' module is a thin wrapper around 'libhvf' with the necessary
+	boilerplate stuff to integrate it into FreeType.  Note that this currently
+	works on macOS >= 15.4 and iOS >= 18.4 only.
+
+	* include/freetype/tttags.h (TTAG_hvgl, TTAG_hvpm): New macros.
+	* include/freetype/config/ftmodule.h: Add `hvf_driver_class`.
+	* include/freetype/internal/fttrace.h: Add tracing tags `hvfdrv`, `hvfobjs`,
+	  and `hvfload`
+	* include/freetype/internal/services/svfntfmt.h (FT_FONT_FORMAT_HVF): New
+	  macro.
+
+	* modules.cfg (FONT_MODULES): Add `hvf` module.
+
+	* src/sfnt/sfobjc.s (sfnt_init_face): Handle 'hvgl' table.
+
+	* src/hvf/*: New files.
+
+2026-03-23  Debbie Goldsmith  <goldsmit@apple.com>
+
+	Add flag `FT_CONFIG_OPTION_HVF`.
+
+	This flag is going to be used to conditionally compile support for Apple's
+	Hierarchical Variable Font (HVF) format.
+
+	* devel/ftoption.h, include/freetype/config/ftoption.h
+	  (FT_CONFIG_OPTION_HVF): New flag.
+
+2026-03-23  Alexei Podtelezhnikov  <apodtele@gmail.com>
+
+	* src/truetype/ttinterp.c (TT_MulFix14_i386):  Typo.
+
+	Fixes #1408.
+
+2026-03-23  Rudi Heitbaum  <rudi@heitbaum.com>
+
+	* src/base/ftstroke.c (ft_stroke_border_get_counts): Remove variable.
+
 2026-03-22  Werner Lemberg  <wl@gnu.org>
 
 	* Version 2.14.3 released.

@@ -61,7 +61,7 @@
 #
 # Some notes.
 #
-# - Say `cmake -LAH` to see all configuration options.
+# - Say `cmake -B build -LAH` to see all configuration options.
 #
 # - `cmake' creates configuration files in
 #
@@ -101,7 +101,8 @@
 #                    -D FT_DISABLE_BZIP2=TRUE \
 #                    -D FT_DISABLE_PNG=TRUE \
 #                    -D FT_DISABLE_HARFBUZZ=TRUE \
-#                    -D FT_DISABLE_BROTLI=TRUE [...]
+#                    -D FT_DISABLE_BROTLI=TRUE \
+#                    -D FT_DISABLE_HVF=TRUE [...]
 #
 # - NOTE: If a package is set as DISABLED, it cannot be set as
 #   REQUIRED without unsetting the DISABLED value first.  For example,
@@ -163,8 +164,8 @@ endif ()
 project(freetype C)
 
 set(VERSION_MAJOR "2")
-set(VERSION_MINOR "14")
-set(VERSION_PATCH "3")
+set(VERSION_MINOR "15")
+set(VERSION_PATCH "0")
 
 # Generate LIBRARY_VERSION and LIBRARY_SOVERSION.
 set(LIBTOOL_REGEX "version_info='([0-9]+):([0-9]+):([0-9]+)'")
@@ -221,8 +222,14 @@ cmake_dependent_option(FT_REQUIRE_BROTLI
   "Require support of compressed WOFF2 fonts." OFF
   "NOT FT_DISABLE_BROTLI" OFF)
 
+option(FT_DISABLE_HVF
+  "Disable support of HVF vector fonts." OFF)
+
 option(FT_ENABLE_ERROR_STRINGS
   "Enable support for meaningful error descriptions." OFF)
+
+option(FT_DISABLE_STREAM_SUPPORT
+  "Disable file stream support and require memory-loaded fonts." OFF)
 
 # Disallow in-source builds.
 if ("${CMAKE_BINARY_DIR}" STREQUAL "${CMAKE_SOURCE_DIR}")
@@ -328,6 +335,37 @@ if (NOT FT_DISABLE_BROTLI)
   endif ()
 endif ()
 
+if (NOT FT_DISABLE_HVF)
+  if (APPLE)
+    # Check for HVF header.
+    check_include_file("hvf/Scaler.h" HAVE_HVF_HEADER)
+
+    if (HAVE_HVF_HEADER)
+      # Find the HVF library.
+      find_library(HVF_LIBRARY NAMES hvf)
+      if (HVF_LIBRARY)
+        set(HVF_FOUND TRUE)
+
+        # Apple platforms: Enable runtime availability checking.
+        if (CMAKE_C_COMPILER_ID MATCHES "Clang")
+          set(HVF_RUNTIME_AVAILABLE TRUE)
+          message(STATUS "Found HVF: Apple platform with clang and HVF SDK")
+        else()
+          message(STATUS "Found HVF: Apple platform (clang recommended for"
+	                 " __builtin_available syntax)")
+        endif()
+      else()
+        set(HVF_FOUND FALSE)
+      endif()
+    else()
+      set(HVF_FOUND FALSE)
+    endif()
+  else()
+    # HVF is not supported.
+    set(HVF_FOUND FALSE)
+  endif()
+endif()
+
 # Create the configuration file.
 if (UNIX AND NOT WIN32)
   check_include_file("unistd.h" HAVE_UNISTD_H)
@@ -364,6 +402,11 @@ endif ()
 # Create the options file.
 file(READ "${PROJECT_SOURCE_DIR}/include/freetype/config/ftoption.h"
   FTOPTION_H)
+if (FT_DISABLE_STREAM_SUPPORT)
+  string(REGEX REPLACE
+    "/\\* +(#define +FT_CONFIG_OPTION_DISABLE_STREAM_SUPPORT) +\\*/" "\\1"
+    FTOPTION_H "${FTOPTION_H}")
+endif ()
 if (ZLIB_FOUND)
   string(REGEX REPLACE
     "/\\* +(#define +FT_CONFIG_OPTION_SYSTEM_ZLIB) +\\*/" "\\1"
@@ -392,6 +435,11 @@ endif ()
 if (BROTLIDEC_FOUND)
   string(REGEX REPLACE
     "/\\* +(#define +FT_CONFIG_OPTION_USE_BROTLI) +\\*/" "\\1"
+    FTOPTION_H "${FTOPTION_H}")
+endif ()
+if (HVF_FOUND)
+  string(REGEX REPLACE
+    "/\\* +(#define +FT_CONFIG_OPTION_HVF) +\\*/" "\\1"
     FTOPTION_H "${FTOPTION_H}")
 endif ()
 
@@ -443,6 +491,7 @@ set(BASE_SRCS
   src/cff/cff.c
   src/cid/type1cid.c
   src/gzip/ftgzip.c
+  src/hvf/hvf.c
   src/lzw/ftlzw.c
   src/pcf/pcf.c
   src/pfr/pfr.c
@@ -460,7 +509,9 @@ set(BASE_SRCS
   src/winfonts/winfnt.c
 )
 
-if (WIN32)
+if (FT_DISABLE_STREAM_SUPPORT)
+  list(APPEND BASE_SRCS "src/base/ftsystem.c")
+elseif (WIN32)
   list(APPEND BASE_SRCS "builds/windows/ftsystem.c")
 elseif (UNIX)
   list(APPEND BASE_SRCS "builds/unix/ftsystem.c")
@@ -511,10 +562,28 @@ else ()
     C_VISIBILITY_PRESET hidden)
 endif ()
 
+if (HVF_RUNTIME_AVAILABLE)
+  target_compile_definitions(
+    freetype PRIVATE HVF_RUNTIME_AVAILABLE=1)
+endif ()
+
 if (BUILD_SHARED_LIBS)
-  set_target_properties(freetype PROPERTIES
-    VERSION ${LIBRARY_VERSION}
-    SOVERSION ${LIBRARY_SOVERSION})
+  if (CMAKE_SYSTEM_NAME STREQUAL "OpenBSD")
+    # For OpenBSD, libtool follows `sunos` version type.
+    set_target_properties(freetype PROPERTIES
+      # libtool does not define its internal `soname_spec` variable
+      # for OpenBSD. So skipping the SOVERSION option.
+      VERSION ${LIBTOOL_CURRENT}.${LIBTOOL_REVISION})
+  elseif (CMAKE_SYSTEM_NAME STREQUAL "NetBSD")
+    # For NetBSD, libtool follows `sunos` version type.
+    set_target_properties(freetype PROPERTIES
+      VERSION ${LIBTOOL_CURRENT}.${LIBTOOL_REVISION}
+      SOVERSION ${LIBTOOL_CURRENT})
+  else ()
+    set_target_properties(freetype PROPERTIES
+      VERSION ${LIBRARY_VERSION}
+      SOVERSION ${LIBRARY_SOVERSION})
+  endif ()
 endif ()
 
 # Pick up ftconfig.h and ftoption.h generated above, first.
@@ -588,6 +657,9 @@ if (BROTLIDEC_FOUND)
   target_compile_definitions(freetype PRIVATE ${BROTLIDEC_DEFINITIONS})
   target_include_directories(freetype PRIVATE ${BROTLIDEC_INCLUDE_DIRS})
   list(APPEND PKGCONFIG_REQUIRES_PRIVATE "libbrotlidec")
+endif ()
+if (HVF_FOUND)
+  target_link_libraries(freetype PRIVATE ${HVF_LIBRARY})
 endif ()
 
 
