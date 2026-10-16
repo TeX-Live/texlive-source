@@ -2,7 +2,7 @@
 # SPDX-FileCopyrightText: Copyright (c) 2022-2026 Yegor Bugayenko
 # SPDX-License-Identifier: MIT
 
-# 2026-09-13 0.0.36
+# 2026-10-16 0.0.37
 package bibcop;
 
 use warnings;
@@ -201,13 +201,13 @@ sub check_shortenings {
   }
 }
 
-# Check the right format of the 'title' and 'booktitle.'
+# Check the right format of the 'title', 'booktitle', and 'journal.'
 sub check_wrapping {
   if (exists $args{'--no:wraps'}) {
     return;
   }
   my (%entry) = @_;
-  my @tags = qw/title booktitle/;
+  my @tags = qw/title booktitle journal/;
   foreach my $tag (@tags) {
     if (not exists($entry{$tag})) {
       next;
@@ -273,9 +273,6 @@ sub check_org_in_booktitle {
       if ($title =~ /^.*\Q$o\E.*$/) {
         return "The '$o' organization must not be mentioned in the booktitle, use 'publisher' tag instead"
       }
-    }
-    if ($title =~ /^.*(ACM|IEEE).*$/) {
-      return "Don't mention the organization in the booktitle, use 'publisher' tag instead"
     }
   }
 }
@@ -393,7 +390,7 @@ sub check_ascii {
       if ($ord == 9 || $ord == 10 || $ord == 13) {
         next;
       }
-      if ($ord < 20) {
+      if ($ord < 0x20) {
         return "In the '$tag', don't use control symbol '0x" . (sprintf '%04x', $ord) . "'"
       }
     }
@@ -461,7 +458,7 @@ sub check_howpublished {
     }
     my $url = substr($how, 5, -1);
     if (not $url =~ /^https?:\/\/.+$/) {
-      return "The format of the URL in 'howpublished' is wrong, doesn't start with https://: '$url'"
+      return "The format of the URL in 'howpublished' is wrong, doesn't start with http:// or https://: '$url'"
     }
     my $max = 64;
     my $len = length($url);
@@ -493,7 +490,7 @@ sub check_month {
   my (%entry) = @_;
   if (exists $entry{'month'}) {
     my $month = $entry{'month'};
-    if (not $month =~ /^[1-9]|10|11|12$/) {
+    if (not $month =~ /^([1-9]|1[0-2])$/) {
       return "The format of the 'month' is wrong"
     }
   }
@@ -606,7 +603,7 @@ sub entry_fix {
       next;
     }
     my $value = clean_tex($entry{$tag});
-    if ($tag eq 'url') {
+    if ($tag eq 'url' and exists $allowed{'howpublished?'} and exists $allowed{'note?'}) {
       my $today = strftime('%d-%m-%Y', localtime(time));
       push(@lines, "  howpublished = {\\url{$value}},");
       push(@lines, "  note = {[Online; accessed $today]},");
@@ -883,9 +880,8 @@ sub entries {
   my $acc = '';
   my $tag = '';
   my $interrupted = ''; # where the comment interrupted the proceeding (state name)
-  my $lineno = 0;
+  my $lineno = 1;
   my $nest = 0;
-  my $escape = 0;
   for my $pos (0..length($bib)-1) {
     my $char = substr($bib, $pos, 1);
     if ($char eq ' ') {
@@ -903,6 +899,17 @@ sub entries {
       }
     } elsif ($s eq 'comment') {
       # ignore the comment
+    } elsif ($s eq 'skip') {
+      if (substr($bib, $pos - 1, 1) eq '\\') {
+        # the escaped symbol
+      } elsif ($char eq '{') {
+        $nest = $nest + 1;
+      } elsif ($char eq '}') {
+        $nest = $nest - 1;
+        if ($nest == 0) {
+          $s = 'top';
+        }
+      }
     } elsif ($s eq 'top') {
       if ($char eq '@') {
         %entry = ();
@@ -917,7 +924,12 @@ sub entries {
     } elsif ($char eq '{' and $s eq 'start') {
       $entry{':type'} = substr($acc, 1);
       $acc = '';
-      $s = 'body';
+      if (lc($entry{':type'}) =~ /^(string|preamble|comment)$/) {
+        $nest = 1;
+        $s = 'skip';
+      } else {
+        $s = 'body';
+      }
     } elsif ($char =~ /[a-zA-Z0-9]/ and $s eq 'body') {
       $acc = '';
       $s = 'tag';
@@ -971,18 +983,17 @@ sub entries {
       $s = 'brackets';
       $acc = '';
     } elsif ($s eq 'brackets') {
-      if ($char eq '\\') {
-        $escape = 1;
-      } elsif ($char eq '{' and $escape != 1) {
+      if (substr($bib, $pos - 1, 1) eq '\\') {
+        # the escaped symbol
+      } elsif ($char eq '{') {
         $nest = $nest + 1;
-      } elsif ($char eq '}' and $escape != 1) {
+      } elsif ($char eq '}') {
         $nest = $nest - 1;
         if ($nest == 0) {
           $entry{$tag} = substr($acc, 1);
           $s = 'value';
         }
       }
-      $escape = 0;
     } else {
       warning("It is impossible to parse the .bib file, because I do not know what to do with '$char' at line no.$lineno (s=$s)");
       last;
@@ -1249,14 +1260,14 @@ if (@ARGV+0 eq 0 or exists $args{'--help'} or exists $args{'-?'}) {
     "      --no:XXX    Disable one of the following checks (e.g. --no:wraps):\n" .
     "                    tags    Only some tags are allowed, while some of them are mandatory\n" .
     "                    caps    All major words in titles and booktitles must be capitalized\n" .
-    "                    wraps   Double curly braces are required around titles and booktitles\n" .
+    "                    wraps   Double curly braces are required around titles, booktitles, and journals\n" .
     "                    doi     The presence of the 'doi' tag is mandatory in all entries\n" .
     "                    inproc  The booktitle of \@inproceedings must start with 'Proceedings of the'\n" .
     "                    org     The booktitle may not mention ACM or IEEE\n" .
     "      --latex     Report errors in LaTeX format using the \\PackageWarningNoLine command\n\n" .
     "If any issues, please, report to GitHub: https://github.com/yegor256/bibcop");
 } elsif (exists $args{'--version'} or exists $args{'-v'}) {
-  info('0.0.36 2026-09-13');
+  info('0.0.37 2026-10-16');
 } else {
   my ($file) = grep { not($_ =~ /^-.*$/) } @ARGV;
   if (not $file) {
@@ -1277,7 +1288,7 @@ if (@ARGV+0 eq 0 or exists $args{'--help'} or exists $args{'-?'}) {
       $fixed = $fixed . entry_fix(%entry);
       $seen{$name} = 1;
     }
-    my ($head) = $bib =~ /^((?:%.*\n)+\n*)/;
+    my $head = $bib =~ /^((?:%.*\n)+\n*)/ ? $1 : '';
     $fixed = $head . $fixed;
     if (exists $args{'-i'} or exists $args{'--in-place'}) {
       open(my $out, '>', $file) or error('Cannot open file for writing: ' . $file);
