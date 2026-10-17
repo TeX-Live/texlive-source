@@ -17,7 +17,7 @@ export TEXMFCNF DVIPDFMXINPUTS TEXPICTS
 failed=
 
 for f in badbmp-hdr badbmp-rle4delta badbmp-rle8delta \
-	badbmp-rle4bits badbmp-rle8bits; do
+	badbmp-rle4bits badbmp-rle8bits badbmp-size; do
 	echo "*** xdvipdfmx badbmp ($f.bmp)" && echo
 	cp $srcdir/tests/$f.bmp badbmp.bmp
 	$_xdvipdfmx -o badbmp.pdf $srcdir/tests/badbmp >badbmp.log 2>&1

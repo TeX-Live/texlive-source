@@ -163,7 +163,9 @@ bmp_include_image (pdf_ximage *ximage, FILE *fp)
     return -1;
   }
 
-  if (info.width == 0 || info.height == 0 || num_palette < 1) {
+  if (info.width <= 0 || info.height <= 0 || num_palette < 1 ||
+      info.width > (INT_MAX - 7) / 24 ||
+      (info.width * hdr.bit_count + 7) / 8 > (INT_MAX - 3) / info.height) {
     WARN("Invalid BMP file: width=%ld, height=%ld, #palette=%d",
    info.width, info.height, num_palette);
     return -1;

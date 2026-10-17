@@ -365,4 +365,5 @@ EXTRA_DIST += tests/badbmp.dvi tests/badbmp.tex
 EXTRA_DIST += tests/badbmp-hdr.bmp tests/badbmp-rle4delta.bmp
 EXTRA_DIST += tests/badbmp-rle8delta.bmp tests/badbmp-rle4bits.bmp
 EXTRA_DIST += tests/badbmp-rle8bits.bmp tests/badbmp-rle4odd.bmp
+EXTRA_DIST += tests/badbmp-size.bmp
 DISTCLEANFILES += badbmp.bmp badbmp.log badbmp.pdf

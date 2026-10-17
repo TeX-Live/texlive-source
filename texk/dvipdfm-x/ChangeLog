@@ -1,5 +1,10 @@
 2026-10-13  Norbert Preining  <norbert@preining.info>
 
+	* bmpimage.c (bmp_include_image): reject non-positive sizes and
+	sizes whose raster size overflows int; the buffer was allocated
+	too small and the rows read past it.
+	* dvipdfmx-bmp.test, tests/badbmp-size.bmp, Makefile.am: test.
+
 	* bmpimage.c (bmp_include_image): accept RLE8 only with 8 and RLE4
 	only with 4 bits per pixel; the decoders assume that row size.
 	(read_raster_rle8, read_raster_rle4): reject a delta that moves
