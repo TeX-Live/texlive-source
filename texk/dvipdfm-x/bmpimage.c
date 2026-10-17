@@ -315,6 +315,10 @@ read_header (FILE *fp, struct hdr_info *hdr)
 
   /* info header */
   hdr->hsize  = ULONG_LE(p); p += 4;
+  if (hdr->hsize < DIB_CORE_HEADER_SIZE || hdr->hsize > DIB_INFO_HEADER_SIZE5) {
+    WARN("Unknown BMP header type.");
+    return -1;
+  }
   if (fread(p, sizeof(char), hdr->hsize - 4, fp) != hdr->hsize - 4) {
     WARN("Could not read BMP file header...");
     return -1;

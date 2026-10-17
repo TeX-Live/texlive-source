@@ -841,14 +841,16 @@ DISTCLEANFILES = config.force image*.pdf xbmc*.pdf annot*.pdf pic*.* \
 	reverse.pdf ttc*.pdf upjf.vf upjv.vf upjf-*.ofm upjv-*.ofm \
 	upjf-*.tfm upjf_*.pdf upjf1_*.pdf upjf2_*.pdf upjf3_*.pdf \
 	multi_incl.pdf lmr0-*.pdf cprm*.pdf color_stack.pdf \
-	spot_doublefree.pdf mpclip.pdf
+	spot_doublefree.pdf mpclip.pdf badbmp.bmp badbmp.log \
+	badbmp.pdf
 TESTS = xdvipdfmx.test xdvipdfm-ann.test xdvipdfm-bad.test \
 	xdvipdfm-bb.test xdvipdfm-bkm.test xdvipdfm-pdf.test \
 	xdvipdfm-psz.test xdvipdfm-ptx.test xdvipdfm-res.test \
 	xdvipdfm-rev.test xdvipdfm-ttc.test dvipdfmx-upjf.test \
 	dvipdfmx-upjf2.test dvipdfmx-upjf3.test dvipdfmx-incl.test \
 	dvipdfmx-lmr0.test dvipdfmx-lmr1.test dvipdfmx-ttf0.test \
-	dvipdfmx-color.test dvipdfmx-spot.test dvipdfmx-mpclip.test
+	dvipdfmx-color.test dvipdfmx-spot.test dvipdfmx-mpclip.test \
+	dvipdfmx-bmp.test
 EXTRA_DIST = $(TESTS) tests/dvipdfmx.cfg tests/psfonts.map \
 	tests/cmr10.pfb tests/cmr10.tfm tests/image.dvi \
 	tests/image.tex tests/xbmc.dvi tests/xbmc.tex \
@@ -892,7 +894,8 @@ EXTRA_DIST = $(TESTS) tests/dvipdfmx.cfg tests/psfonts.map \
 	tests/color_stack.dvi tests/color_stack.tex \
 	tests/spot_doublefree.dvi tests/spot_doublefree.tex \
 	tests/mpclip.dvi tests/mpclip.tex tests/mpclip.mp \
-	tests/mpclip.mps
+	tests/mpclip.mps tests/badbmp.dvi tests/badbmp.tex \
+	tests/badbmp-hdr.bmp
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-am
 
@@ -2135,7 +2138,8 @@ xdvipdfmx.log xdvipdfm-ann.log xdvipdfm-bad.log xdvipdfm-bb.log \
 	dvipdfmx-ttf0.log \
 	dvipdfmx-color.log \
 	dvipdfmx-spot.log \
-	dvipdfmx-mpclip.log: \
+	dvipdfmx-mpclip.log \
+	dvipdfmx-bmp.log: \
 	xdvipdfmx$(EXEEXT)
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.

@@ -1,0 +1,32 @@
+#! /bin/sh -vx
+# $Id$
+# Copyright 2026 Norbert Preining <tex-live@tug.org>
+# You may freely use, modify and/or distribute this file.
+
+# Malformed BMP files must be rejected with a fatal error, not crash.
+
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_xdvipdfmx=$BinDir/xdvipdfmx$ExeExt
+
+TEXMFCNF=$srcdir/../kpathsea
+DVIPDFMXINPUTS=$srcdir/tests
+TEXPICTS=.
+export TEXMFCNF DVIPDFMXINPUTS TEXPICTS
+
+failed=
+
+for f in badbmp-hdr; do
+	echo "*** xdvipdfmx badbmp ($f.bmp)" && echo
+	cp $srcdir/tests/$f.bmp badbmp.bmp
+	$_xdvipdfmx -o badbmp.pdf $srcdir/tests/badbmp >badbmp.log 2>&1
+	cat badbmp.log
+	grep 'Image inclusion failed' badbmp.log >/dev/null \
+		&& echo && echo "xdvipdfmx-$f tests OK" && echo \
+		|| failed="$failed xdvipdfmx-$f"
+done
+
+test -z "$failed" && exit 0
+echo
+echo "failed tests:$failed"
+exit 1

@@ -1,3 +1,11 @@
+2026-10-13  Norbert Preining  <norbert@preining.info>
+
+	* bmpimage.c (read_header): check the info header size before
+	reading it into the fixed-size stack buffer.
+	Report by Stephan Lipp (Ada Logics) and Anthropic, ANT-2026-8R159DVS.
+	* dvipdfmx-bmp.test, tests/badbmp.{tex,dvi}, tests/badbmp-hdr.bmp,
+	Makefile.am: regression test.
+
 2026-09-27  Munehiro Yamamoto <munepixyz@gmail.com>
 
 	* pdfdraw.c (pdf_dev_clip, pdf_dev_eoclip): emit "n" after W/W*.
