@@ -208,9 +208,11 @@ xetex_tests = \
 	xetexdir/xetex-bug73.test \
 	xetexdir/xetex-ctrlsym.test \
 	xetexdir/xetex.test \
+	xetexdir/xetex-badbmp.test \
 	xetexdir/wcfname.test
 xetexdir/xetex-filedump.log xetexdir/xetex-bug73.log \
   xetexdir/xetex-ctrlsym.log xetexdir/xetex.log \
+  xetexdir/xetex-badbmp.log \
   xetexdir/wcfname.log: xetex$(EXEEXT)
 
 EXTRA_DIST += $(xetex_tests)
@@ -230,6 +232,10 @@ DISTCLEANFILES += filedump.log filedump.out filedump.tex
 ## xetex-ctrlsym.test
 EXTRA_DIST += xetexdir/tests/ctrlsym.log xetexdir/tests/ctrlsym.tex
 DISTCLEANFILES += xe-ctrlsym.fmt xe-ctrlsym.log xe-ctrlsym.out xe-ctrlsym.tex
+
+## xetex-badbmp.test
+EXTRA_DIST += xetexdir/tests/badbmp.bmp xetexdir/tests/badbmp.tex
+DISTCLEANFILES += xe-badbmp.log
 
 ## wcfname.test
 DISTCLEANFILES += xetests/fn*.*

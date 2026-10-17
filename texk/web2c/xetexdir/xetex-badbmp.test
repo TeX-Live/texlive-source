@@ -1,0 +1,18 @@
+#! /bin/sh -vx
+# Copyright 2026 Norbert Preining <tex-live@tug.org>
+# You may freely use, modify and/or distribute this file.
+
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_xetex=$BinDir/xetex$ExeExt
+
+LC_ALL=C; export LC_ALL;  LANGUAGE=C; export LANGUAGE
+
+TEXMFCNF=$srcdir/../kpathsea;export TEXMFCNF
+TEXINPUTS=$srcdir/xetexdir/tests; export TEXINPUTS
+TEXPICTS=$srcdir/xetexdir/tests; export TEXPICTS
+
+rm -f xe-badbmp.log
+$_xetex -ini -etex -no-pdf -interaction=batchmode -jobname=xe-badbmp badbmp
+
+grep "Unable to load picture or PDF file 'badbmp.bmp'" xe-badbmp.log || exit 1

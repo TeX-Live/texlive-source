@@ -1,3 +1,10 @@
+2026-10-13  Norbert Preining  <norbert@preining.info>
+
+	* image/bmpimage.c (bmp_scan_file): check the info header size
+	before reading it into the fixed-size stack buffer; same bug as
+	dvipdfm-x ANT-2026-8R159DVS (Stephan Lipp, Ada Logics, Anthropic).
+	* xetex-badbmp.test, tests/badbmp.{tex,bmp}, am/xetex.am: test.
+
 2026-05-09  Karl Berry  <karl@freefriends.org>
 
 	* wcfname.test: do not use *** in informational messages,
