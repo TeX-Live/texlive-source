@@ -1,0 +1,17 @@
+StartFontMetrics 2.0
+Comment afm2pl.test: overlong glyph name in a kern comment, code above 255
+FontName BadAFM
+EncodingScheme FontSpecific
+FontBBox 0 0 500 700
+ItalicAngle 0
+StartCharMetrics 3
+C 65 ; WX 500 ; N A ; B 0 0 500 700 ;
+C 33 ; WX 500 ; N Gxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx ; B 0 0 500 700 ;
+C 256 ; WX 500 ; N B ; B 0 0 500 700 ;
+EndCharMetrics
+StartKernData
+StartKernPairs 1
+KPX A Gxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -50
+EndKernPairs
+EndKernData
+EndFontMetrics

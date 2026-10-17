@@ -723,7 +723,7 @@ handlechar(void)
   expect (";");
   expect ("N");
   ai->adobename = paramnewstring ();
-  if ((ai->adobenum) >= 0)
+  if ((ai->adobenum) >= 0 && (ai->adobenum) < 256)
     afmencoding->vec[ai->adobenum] = newstring (ai->adobename);
   expect (";");
   expect ("B");
@@ -1772,7 +1772,7 @@ plname(int c)
   if (!forceoctal && ISALNUM (c)) {
     plnamebuf[0] = 0;
   } else if (c >= 0 && c < 256) {
-    sprintf (plnamebuf, " (comment %s)", tfmptrs[c]->adobename);
+    sprintf (plnamebuf, " (comment %.88s)", tfmptrs[c]->adobename);
   }
   return (char *) plnamebuf;
 }

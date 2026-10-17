@@ -1,3 +1,11 @@
+2026-10-13  Norbert Preining  <norbert@preining.info>
+
+	* afm2pl.c (handlechar): ignore character codes above 255 for the
+	encoding vector instead of writing past it.
+	(plname): bound the glyph name copied into plnamebuf.
+	Report by Stephan Lipp (Ada Logics) and Anthropic, ANT-2026-Y3K4ECAB.
+	* afm2pl.test, tests/badafm.{afm,lig,pl}, Makefile.am: test.
+
 2023-08-23  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
 
 	* afm2pl.c: Open files with binary mode (Windows only).

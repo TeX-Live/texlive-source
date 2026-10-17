@@ -15,3 +15,9 @@ TEXMFCNF=$srcdir/../kpathsea \
 	&& diff $srcdir/tests/logo10.map logo10.map \
 	|| exit 1
 
+# overlong glyph name in a kern comment, character code above 255
+rm -f badafm.*
+TEXMFCNF=$srcdir/../kpathsea \
+	$_afm2pl -l $srcdir/tests/badafm.lig $srcdir/tests/badafm ./badafm.pl \
+	&& diff $srcdir/tests/badafm.pl badafm.pl \
+	|| exit 2
