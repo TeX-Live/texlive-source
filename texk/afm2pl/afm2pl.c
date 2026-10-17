@@ -1,5 +1,5 @@
 /* afm2pl
- * Copyright (C) 2002, 2005, 2009 Siep Kroonenberg
+ * Copyright (C) 2002, 2005, 2009, 2026 Siep Kroonenberg
  * ntg-afm2pl@ntg.nl
  * based on afm2tfm.
  */

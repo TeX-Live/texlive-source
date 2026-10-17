@@ -1,6 +1,6 @@
 /****************************************************************************\
  Part of the XeTeX typesetting system
- Copyright (c) 1994-2006 by SIL International
+ Copyright (c) 1994-2026 by SIL International
 
  SIL Author(s): Jonathan Kew
 

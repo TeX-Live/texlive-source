@@ -1,4 +1,5 @@
 #! /bin/sh -vx
+# $Id$
 # Copyright 2026 Norbert Preining <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
