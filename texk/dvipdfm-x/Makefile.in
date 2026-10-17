@@ -895,7 +895,9 @@ EXTRA_DIST = $(TESTS) tests/dvipdfmx.cfg tests/psfonts.map \
 	tests/spot_doublefree.dvi tests/spot_doublefree.tex \
 	tests/mpclip.dvi tests/mpclip.tex tests/mpclip.mp \
 	tests/mpclip.mps tests/badbmp.dvi tests/badbmp.tex \
-	tests/badbmp-hdr.bmp
+	tests/badbmp-hdr.bmp tests/badbmp-rle4delta.bmp \
+	tests/badbmp-rle8delta.bmp tests/badbmp-rle4bits.bmp \
+	tests/badbmp-rle8bits.bmp tests/badbmp-rle4odd.bmp
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-am
 

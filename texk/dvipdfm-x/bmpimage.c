@@ -227,7 +227,7 @@ bmp_include_image (pdf_ximage *ximage, FILE *fp)
           return -1;
         }
       }
-    } else if (hdr.compression == DIB_COMPRESS_RLE8) {
+    } else if (hdr.compression == DIB_COMPRESS_RLE8 && hdr.bit_count == 8) {
       stream_data_ptr = NEW(rowbytes*info.height, unsigned char);
       if (read_raster_rle8(stream_data_ptr, info.width, info.height, fp) < 0) {
         WARN("Reading BMP raster data failed...");
@@ -235,7 +235,7 @@ bmp_include_image (pdf_ximage *ximage, FILE *fp)
         RELEASE(stream_data_ptr);
         return -1;
       }
-    } else if (hdr.compression == DIB_COMPRESS_RLE4) {
+    } else if (hdr.compression == DIB_COMPRESS_RLE4 && hdr.bit_count == 4) {
       stream_data_ptr = NEW(rowbytes*info.height, unsigned char);
       if (read_raster_rle4(stream_data_ptr, info.width, info.height, fp) < 0) {
         WARN("Reading BMP raster data failed...");
@@ -397,6 +397,10 @@ read_raster_rle8 (unsigned char *data_ptr,
 	  h += get_unsigned_byte(fp);
 	  v += get_unsigned_byte(fp);
 	  count += 2;
+	  if (v >= height) {
+	    WARN("RLE decode failed...");
+	    return -1;
+	  }
 	  break;
 	default:
 	  h += b1;
@@ -476,6 +480,10 @@ read_raster_rle4 (unsigned char *data_ptr,
 	  h += get_unsigned_byte(fp);
 	  v += get_unsigned_byte(fp);
 	  count += 2;
+	  if (v >= height) {
+	    WARN("RLE decode failed...");
+	    return -1;
+	  }
 	  break;
 	default:
 	  if (h + b1 > width) {
@@ -487,7 +495,8 @@ read_raster_rle4 (unsigned char *data_ptr,
 	    for (i = 0; i < nbytes; i++) {
 	      b = get_unsigned_byte(fp);
 	      *p++ |= (b >> 4) & 0x0f;
-	      *p    = (b << 4) & 0xf0;
+	      if (2 * i + 1 < b1)
+	        *p  = (b << 4) & 0xf0;
 	    }
 	  } else {
 	    if (fread(p, 1, nbytes, fp) != nbytes) {

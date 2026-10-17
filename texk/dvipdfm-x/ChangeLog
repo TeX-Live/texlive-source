@@ -1,5 +1,14 @@
 2026-10-13  Norbert Preining  <norbert@preining.info>
 
+	* bmpimage.c (bmp_include_image): accept RLE8 only with 8 and RLE4
+	only with 4 bits per pixel; the decoders assume that row size.
+	(read_raster_rle8, read_raster_rle4): reject a delta that moves
+	past the last row.
+	(read_raster_rle4): do not write past the last nibble of an
+	absolute run starting at an odd pixel.
+	Report by Stephan Lipp (Ada Logics) and Anthropic, ANT-2026-QT5FYZWT.
+	* dvipdfmx-bmp.test, tests/badbmp-rle*.bmp, Makefile.am: test.
+
 	* bmpimage.c (read_header): check the info header size before
 	reading it into the fixed-size stack buffer.
 	Report by Stephan Lipp (Ada Logics) and Anthropic, ANT-2026-8R159DVS.

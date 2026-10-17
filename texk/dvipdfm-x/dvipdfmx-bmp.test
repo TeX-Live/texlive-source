@@ -16,7 +16,8 @@ export TEXMFCNF DVIPDFMXINPUTS TEXPICTS
 
 failed=
 
-for f in badbmp-hdr; do
+for f in badbmp-hdr badbmp-rle4delta badbmp-rle8delta \
+	badbmp-rle4bits badbmp-rle8bits; do
 	echo "*** xdvipdfmx badbmp ($f.bmp)" && echo
 	cp $srcdir/tests/$f.bmp badbmp.bmp
 	$_xdvipdfmx -o badbmp.pdf $srcdir/tests/badbmp >badbmp.log 2>&1
@@ -25,6 +26,13 @@ for f in badbmp-hdr; do
 		&& echo && echo "xdvipdfmx-$f tests OK" && echo \
 		|| failed="$failed xdvipdfmx-$f"
 done
+
+# valid RLE4 with an absolute run starting at an odd pixel
+echo "*** xdvipdfmx badbmp (badbmp-rle4odd.bmp)" && echo \
+	&& cp $srcdir/tests/badbmp-rle4odd.bmp badbmp.bmp \
+	&& $_xdvipdfmx -o badbmp.pdf $srcdir/tests/badbmp \
+	&& echo && echo "xdvipdfmx-badbmp-rle4odd tests OK" && echo \
+	|| failed="$failed xdvipdfmx-badbmp-rle4odd"
 
 test -z "$failed" && exit 0
 echo
