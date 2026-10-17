@@ -959,7 +959,7 @@ changeadobe(void)
  * reading encodings
  */
 
-char smbuffer[100];             /* for tokens */
+char smbuffer[buflen];          /* for tokens, at most one input line */
 
 /*   Here we get a token from the encoding file.  We parse just as
  *   much PostScript as we expect to find in an encoding file.  We

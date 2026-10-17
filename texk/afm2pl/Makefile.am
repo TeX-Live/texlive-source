@@ -40,5 +40,6 @@ EXTRA_DIST += $(TESTS)
 EXTRA_DIST += tests/logo10.afm tests/logo10.map tests/logo10.pl
 DISTCLEANFILES += logo10.*
 EXTRA_DIST += tests/badafm.afm tests/badafm.lig tests/badafm.pl
+EXTRA_DIST += tests/badafm.enc
 DISTCLEANFILES += badafm.*
 

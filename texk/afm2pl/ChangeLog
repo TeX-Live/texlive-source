@@ -1,5 +1,9 @@
 2026-10-13  Norbert Preining  <norbert@preining.info>
 
+	* afm2pl.c (smbuffer): make it as large as an input line, since
+	gettoken() copies a whole token from the encoding file into it.
+	* afm2pl.test, tests/badafm.enc, Makefile.am: test.
+
 	* afm2pl.c (handlechar): ignore character codes above 255 for the
 	encoding vector instead of writing past it.
 	(plname): bound the glyph name copied into plnamebuf.

@@ -21,3 +21,10 @@ TEXMFCNF=$srcdir/../kpathsea \
 	$_afm2pl -l $srcdir/tests/badafm.lig $srcdir/tests/badafm ./badafm.pl \
 	&& diff $srcdir/tests/badafm.pl badafm.pl \
 	|| exit 2
+
+# overlong glyph name in an encoding file
+rm -f badafm.*
+TEXMFCNF=$srcdir/../kpathsea \
+	$_afm2pl -p $srcdir/tests/badafm.enc -l $srcdir/tests/badafm.lig \
+	$srcdir/tests/badafm ./badafm.pl \
+	|| exit 3
