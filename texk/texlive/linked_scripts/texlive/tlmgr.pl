@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 80600 2026-10-11 22:17:25Z karl $
+# $Id: tlmgr.pl 80658 2026-10-16 10:08:14Z preining $
 # Copyright 2008-2026 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
@@ -8,8 +8,8 @@
 
 use strict; use warnings;
 
-my $svnrev = '$Revision: 80600 $';
-my $datrev = '$Date: 2026-10-12 00:17:25 +0200 (Mon, 12 Oct 2026) $';
+my $svnrev = '$Revision: 80658 $';
+my $datrev = '$Date: 2026-10-16 12:08:14 +0200 (Fri, 16 Oct 2026) $';
 my $tlmgrrevision;
 my $tlmgrversion;
 my $prg;
@@ -858,8 +858,10 @@ sub execute_action {
 # log output with logcommand (tlmgr-commands.log).
 # return F_OK or F_ERROR.
 # 
+# With $online, the output is read as it comes, and $online is called
+# after each line; fmtutil uses that to report formats as they are done.
 sub do_cmd_and_check {
-  my $cmd = shift;
+  my ($cmd, $online) = @_;
   # we output the pre-running notice on a separate line so that
   # tlmgr front ends (MacOSX's TeX Live Utility) can read it
   # and show it to the user before the possibly long delay.
@@ -877,6 +879,21 @@ sub do_cmd_and_check {
     tlwarn("Cannot run wrapper due to missing luatex.dll\n");
     $ret = $F_OK;
     $out = "";
+  } elsif ($online) {
+    $out = "";
+    if (open(my $fh, "$cmd 2>&1 |")) {
+      while (my $l = <$fh>) {
+        $out .= $l;
+        &$online();
+      }
+      close($fh);
+      # as in TLUtils::run_cmd
+      $ret = $?;
+      $ret /= 256 if ($ret > 0);
+    } else {
+      $out = "cannot run $cmd: $!";
+      $ret = 1;
+    }
   } else {
     ($out, $ret) = TeXLive::TLUtils::run_cmd("$cmd 2>&1");
   }
@@ -979,7 +996,6 @@ sub handle_execute_actions {
     # format-regenerate is used when the paper size changes.
     # In that case we simply want to generate all formats
     #
-    my %done_formats;
     my %updated_engines;
     my %format_to_engine;
     my %do_enable;
@@ -1006,46 +1022,44 @@ sub handle_execute_actions {
       TeXLive::TLUtils::create_fmtutil($localtlpdb,
                                        "$TEXMFDIST/web2c/fmtutil.cnf");
     }
+    # All the formats to rebuild are selected in one fmtutil run, so that
+    # its --parallel can build them at the same time, and a format that is
+    # selected more than once (say, by its engine and by its hyphenation
+    # patterns) is still built only once.
     if (!$::regenerate_all_formats) {
-      # first regenerate all formats --byengine 
-      for my $e (keys %updated_engines) {
+      my @select;
+      # all formats built with an updated engine
+      for my $e (sort keys %updated_engines) {
         debug ("updating formats based on $e\n");
-        $errors += do_cmd_and_check
-          ("$fmtutil_cmd --byengine $e --no-error-if-no-format $fmtutil_args");
-        read_and_report_fmtutil_status_file($status_file);
-        unlink($status_file);
+        push (@select, "--byengine $e");
       }
-      # now rebuild all other formats
-      for my $f (keys %do_enable) {
+      # all other formats
+      for my $f (sort keys %do_enable) {
         next if defined($updated_engines{$format_to_engine{$f}});
         # ignore disabled formats
         next if !$::execute_actions{'enable'}{'formats'}{$f}{'mode'};
         debug ("(re)creating format dump $f\n");
-        $errors += do_cmd_and_check ("$fmtutil_cmd --byfmt $f $fmtutil_args");
-        read_and_report_fmtutil_status_file($status_file);
-        unlink($status_file);
-        $done_formats{$f} = 1;
+        push (@select, "--byfmt $f");
       }
-    }
-
-    # now go back to the hyphenation patterns and regenerate formats
-    # based on the various language files
-    # this will in some cases duplicate fmtutil calls,
-    # but it is much easier than actually checking which formats
-    # don't need to be updated
-    #
-    if ($regenerate_language) {
-      for my $ext ("dat", "def", "dat.lua") {
-        my $lang = "language.$ext";
-        if (! TeXLive::TLUtils::wndws()) {
-          # Use full path for external command, except on Windows.
-          $lang = "$TEXMFSYSVAR/tex/generic/config/$lang";
+      # formats based on the various language files
+      if ($regenerate_language) {
+        for my $ext ("dat", "def", "dat.lua") {
+          my $lang = "language.$ext";
+          if (! TeXLive::TLUtils::wndws()) {
+            # Use full path for external command, except on Windows.
+            $lang = "$TEXMFSYSVAR/tex/generic/config/$lang";
+          }
+          push (@select, "--byhyphen \"$lang\"");
         }
-        if (!$::regenerate_all_formats) {
-          $errors += do_cmd_and_check ("$fmtutil_cmd --byhyphen \"$lang\" $fmtutil_args");
-          read_and_report_fmtutil_status_file($status_file);
-          unlink($status_file);
-        }
+      }
+      if (@select) {
+        my $pos = 0;
+        my $report = sub { read_and_report_fmtutil_status_file($status_file,
+                                                               \$pos); };
+        $errors += do_cmd_and_check("$fmtutil_cmd @select $fmtutil_args",
+                                    $report);
+        &$report();
+        unlink($status_file);
       }
     }
 
@@ -1055,8 +1069,12 @@ sub handle_execute_actions {
       info("Regenerating existing formats, this may take some time ...");
       # --refresh might already be in $fmtutil_args, but that's ok.
       my $args = "--refresh --all";
-      $errors += do_cmd_and_check("$fmtutil_cmd $args $fmtutil_args");
-      read_and_report_fmtutil_status_file($status_file);
+      my $pos = 0;
+      my $report = sub { read_and_report_fmtutil_status_file($status_file,
+                                                             \$pos); };
+      $errors += do_cmd_and_check("$fmtutil_cmd $args $fmtutil_args",
+                                  $report);
+      &$report();
       unlink($status_file);
       info("done\n");
       $::regenerate_all_formats = 0;
@@ -1127,14 +1145,30 @@ sub run_postinst_logcommand {
   return $ret;
 }
 
+# With $posref, report only what was added since the last call, which
+# left off at $$posref; fmtutil may still be writing the file then, so a
+# last line without its newline is left for the next call.
 sub read_and_report_fmtutil_status_file {
-  my $status_file = shift;
+  my ($status_file, $posref) = @_;
+  # called for every line of output, so be cheap when nothing was added
+  return if ($posref && (-s $status_file || 0) <= $$posref);
   my $fh;
   if (!open($fh, '<', $status_file)) {
     printf STDERR "Cannot read status file $status_file, strange!\n";
     return;
   }
-  chomp(my @lines = <$fh>);
+  my @lines;
+  if ($posref) {
+    seek($fh, $$posref, 0);
+    while (my $l = <$fh>) {
+      last if ($l !~ m/\n$/);
+      push(@lines, $l);
+      $$posref = tell($fh);
+    }
+    chomp(@lines);
+  } else {
+    chomp(@lines = <$fh>);
+  }
   close $fh;
   my @failed;
   my @success;
@@ -10791,6 +10825,10 @@ to be installed. The workers check before starting on the next
 containers rather than during, so the cache in fact usually reaches a
 few (around 2-3) multiples of this setting.
 
+A container whose prefetch fails is downloaded normally instead; the
+first such failure is reported.  After five failures, prefetching is
+turned off for the rest of the run.
+
 Prefetch has no effect at all when installing from a local repository.
 
 =back
@@ -10801,7 +10839,7 @@ This script and its documentation were written for the TeX Live
 distribution (L<https://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 80600 2026-10-11 22:17:25Z karl $
+$Id: tlmgr.pl 80658 2026-10-16 10:08:14Z preining $
 =cut
 
 # test HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html

@@ -11,7 +11,7 @@ use strict; use warnings;
 
 package TeXLive::TLUtils;
 
-my $svnrev = '$Revision: 80479 $';
+my $svnrev = '$Revision: 80656 $';
 my $_modulerevision = ($svnrev =~ m/: ([0-9]+) /) ? $1 : "unknown";
 sub module_revision { return $_modulerevision; }
 
@@ -50,6 +50,7 @@ C<TeXLive::TLUtils> - TeX Live infrastructure common functionality
   TeXLive::TLUtils::get_user_home();
   TeXLive::TLUtils::expand_tilde($str);
   TeXLive::TLUtils::tl_env_renames();
+  TeXLive::TLUtils::setup_prefetch_parallel_env_var($env_name, $pos_name, $neg_name, $opts, $default);
 
 =head2 File utilities
 
@@ -266,6 +267,7 @@ BEGIN {
     &get_user_home
     &expand_tilde
     &tl_env_renames
+    &setup_prefetch_parallel_env_var
     &announce_execute_actions
     &add_symlinks
     &remove_symlinks
@@ -1039,6 +1041,56 @@ END_WARNING
       ; # don't have TL_*, do nothing
     }
   } # envvar loop
+}
+
+=item C<setup_prefetch_parallel_env_var($env_name, $pos_name, $neg_name, $opts, $default)>
+
+Set up the environment variable C<$env_name> depending on the values
+of C<$opts->{$pos_name}> and C<$opts->{$neg_name}>.
+
+C<$opts> is a reference to an hash of options.
+
+If C<--$pos_name[=X]> or C<--$neg_name> is given, set C<$env_name> to
+the respective value. Otherwise, if the env var is already set, keep it as is.
+Otherwise (no command line argument nor env var set), use the default setting
+in C<$default>.
+
+This deals with setting up C<--prefetch>/C<--no-prefetch>/C<TEXLIVE_PREFETCH>
+for C<install-tl> and C<tlmgr>, and C<--parallel>/C<--no-parallel>/C<FMTUTIL_PARALLEL>
+for C<fmtutil>.
+
+=cut
+
+sub setup_prefetch_parallel_env_var {
+  my ($env_name, $pos_name, $neg_name, $opts, $default) = @_;
+  #
+  # if TEXLIVE_PREFETCH is already defined, simply overwrite it with
+  # possible options of --prefetch/--no-prefetch
+  if (defined($opts->{$pos_name}) && defined($opts->{$neg_name})) {
+    # allow for --prefetch=0 --no-prefetch ... not that it matters
+    if ($opts->{$pos_name} ne "0") {
+      # we cannot have --prefetch=SOMETHING and --no-prefetch, bail out
+      tldie("TeXLive::TLUtils::setup_prefetch_parallel_env_var: --${pos_name}=" . $opts->{$pos_name} . " and --${neg_name} are incompatible.\n");
+    }
+  }
+  # read where it is used, in TLUtils::prefetch_start
+  if (defined($opts->{$neg_name})) {
+    $ENV{$env_name} = 0;
+  } elsif (defined($opts->{$pos_name})) {
+    # a bare --prefetch is the same as --prefetch=auto
+    if ($opts->{$pos_name} eq "") {
+      $ENV{$env_name} = "auto";
+    } else {
+      $ENV{$env_name} = $opts->{$pos_name};
+    }
+  } else {
+    # neither --no-prefetch nor --prefetch is given
+    # if TEXLIVE_PREFETCH env is defined, leave it untouched, otherwise
+    # set it to the default prefetch
+    if (!defined($ENV{$env_name})) {
+      $ENV{$env_name} = $default;
+    }
+  }
 }
 
 =back
@@ -2072,7 +2124,9 @@ sub _prefetch_settings {
     return (0, 0);
   } elsif ($jobs eq 'auto') {
     if (!defined($::tl_prefetch_nproc)) {
-      chomp(my $n = `getconf _NPROCESSORS_ONLN 2>/dev/null`);
+      my $n = wndws() ? $ENV{'NUMBER_OF_PROCESSORS'}
+                      : `getconf _NPROCESSORS_ONLN 2>/dev/null`;
+      chomp($n) if defined($n);
       $n = 4 if (!$n || $n !~ m/^[0-9]+$/ || $n < 1); # getconf not usable
       $::tl_prefetch_nproc = ($n > 8 ? 8 : $n);
     }
@@ -2116,6 +2170,27 @@ sub _prefetch_verify {
     return 0;
   }
   return 1;
+}
+
+sub _prefetch_failed {
+  # unpack downloads whatever failed itself, as without prefetching.  Only
+  # the first failure is reported, the others go to the debug output, and
+  # after five prefetching is turned off for the rest of the run: by then
+  # it is broken rather than unlucky, and every failure means fetching
+  # the container twice.
+  my ($why) = @_;
+  return if $::tl_prefetch_off;
+  my $msg = "$::prg: prefetching failed ($why), downloading normally\n";
+  if ($::tl_prefetch_failures++) {
+    debug($msg);
+  } else {
+    info($msg);
+  }
+  if ($::tl_prefetch_failures >= 5) {
+    info("$::prg: prefetching failed $::tl_prefetch_failures times, "
+         . "turning it off\n");
+    $::tl_prefetch_off = 1;
+  }
 }
 
 sub _prefetch_tlp {
@@ -2238,7 +2313,8 @@ sub _prefetch_launch {
                                       $slot->{'stage'}, $h->{'type'});
     my $pid = @cmd ? _prefetch_spawn(@cmd) : undef;
     if (!defined($pid)) {
-      debug("TLUtils::_prefetch_launch: cannot start a downloader\n");
+      # tried again at the next package, until it has failed too often
+      _prefetch_failed("cannot start $h->{'type'}");
       $h->{'next'} -= $n;             # give the work back
       last;
     }
@@ -2260,12 +2336,17 @@ sub _prefetch_reap {
     # publish atomically: the installation reads the cache directory while
     # this writes to it, and must never see a half-written container
     for my $i (@{$slot->{'items'}}) {
-      my $f = "$slot->{'stage'}/$i->[1]";
-      next if (! -r $f);
       # it may have gone past this one while it was downloading, in which
-      # case publishing it would just leave litter in the cache
-      if ($i->[4] >= $h->{'pos'} && _prefetch_verify($f, $i->[3], $i->[2])) {
+      # case publishing it would just leave litter in the cache; this also
+      # covers prefetch_stop, which has killed the downloads
+      next if ($i->[4] < $h->{'pos'});
+      my $f = "$slot->{'stage'}/$i->[1]";
+      if (! -r $f) {
+        _prefetch_failed("$i->[1] not downloaded");
+      } elsif (_prefetch_verify($f, $i->[3], $i->[2])) {
         rename($f, "$h->{'dir'}/$i->[1]") || unlink($f);
+      } else {
+        _prefetch_failed("$i->[1] does not verify");
       }
     }
     unlink(glob("$slot->{'stage'}/*"));   # whatever did not make it
@@ -2287,6 +2368,7 @@ sub _prefetch_await {
   # bound the wait, as they would for unpack's own download.
   my ($h) = @_;
   for my $slot (@{$h->{'slots'}}) {
+    last if $::tl_prefetch_off;
     next if !defined($slot->{'pid'});
     my @mine = grep { $_->[4] == $h->{'pos'} } @{$slot->{'items'}};
     next if !@mine;
@@ -2304,8 +2386,7 @@ sub _prefetch_await {
       # with the size unknown, this simply waits for the slot to finish
       if ($i->[2] && $i->[2] ne "-1" && defined($s) && $s == $i->[2]) {
         if (!_prefetch_verify($f, $i->[3], $i->[2], 1)) {
-          debug("TLUtils::_prefetch_await: $i->[1] does not verify, "
-                . "not waiting for it\n");
+          _prefetch_failed("$i->[1] does not verify");
           last;
         }
         # rename fails on Windows while the downloader still has the file
@@ -2329,6 +2410,7 @@ sub _prefetch_await {
 
 sub prefetch_start {
   my ($fromtlpdb, $what, $opt_src, $opt_doc, $tags) = @_;
+  return undef if $::tl_prefetch_off;   # failed too often, see above
   my ($jobs, $budget) = _prefetch_settings();
   return undef if ($jobs < 1);
   my @work = _prefetch_worklist($fromtlpdb, $what, $opt_src, $opt_doc, $tags);
@@ -2370,8 +2452,8 @@ sub prefetch_start {
     'slots' => [ map { { 'pid' => undef, 'items' => [],
                          'stage' => "$dir/.stage$_" } } (1 .. $jobs) ],
   };
-  logit(\*STDERR, 0, "Prefetching " . scalar(@work)
-        . " containers using $jobs parallel downloads ($type)\n");
+  info("$::prg: prefetching " . scalar(@work)
+       . " containers using $jobs parallel downloads ($type)\n");
   _prefetch_launch($h);
   $::tl_prefetch_handle = $h;
   return $h;
@@ -2383,12 +2465,15 @@ sub prefetch_pump {
   # installation has gone past, and starts more.  Waits only for the
   # containers of the package at $idx, if they are being downloaded.
   my ($h, $idx) = @_;
-  return if !defined($h);
+  return if (!defined($h) || $::tl_prefetch_off);
   $h->{'pos'} = $idx if defined($idx);
   _prefetch_reap($h, 0);
   _prefetch_prune($h);
-  _prefetch_launch($h);
-  _prefetch_await($h);
+  _prefetch_launch($h) if !$::tl_prefetch_off;
+  _prefetch_await($h) if !$::tl_prefetch_off;
+  # turned off by a failure: stop the downloads still running.  What is
+  # already in the cache has been verified and is still used.
+  prefetch_stop($h) if $::tl_prefetch_off;
 }
 
 sub prefetch_stop {
@@ -3936,8 +4021,13 @@ sub _download_files_command {
   return () if !defined($prog);
   my $listfile = "$dir/.list";
   open(my $fh, ">", $listfile) || return ();
+  # curl reads its config file with backslash escapes inside double
+  # quotes (\t, \n, ..., and "a backslash preceding any other letter is
+  # ignored"), so a Windows directory like C:\Users\...\Temp\xyz would
+  # lose its separators.  Forward slashes work on Windows too.
+  (my $fdir = $dir) =~ s!\\!/!g;
   for my $w (@$work) {
-    my %val = ('u' => $w->[0], 'f' => "$dir/$w->[1]", 'b' => $w->[1]);
+    my %val = ('u' => $w->[0], 'f' => "$fdir/$w->[1]", 'b' => $w->[1]);
     (my $line = $spec->{'listfmt'}) =~ s/%([ufb])/$val{$1}/g;
     print $fh $line;
   }
@@ -6057,4 +6147,4 @@ GNU General Public License Version 2 or later.
 ### tab-width: 2
 ### indent-tabs-mode: nil
 ### End:
-# vim:set tabstop=2 shiftwidth=2 expandtab: #
+# vim:set tabstop=2 shiftwidth=2 softtabstop=-1 expandtab: #
