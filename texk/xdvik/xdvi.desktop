@@ -2,6 +2,7 @@
 Name=XDvi
 GenericName=DVI Viewer
 Exec=xdvi %f
+Icon=accessories-text-editor
 Type=Application
 Terminal=false
 Categories=Graphics;Viewer;
