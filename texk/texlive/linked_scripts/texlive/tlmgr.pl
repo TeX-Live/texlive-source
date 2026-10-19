@@ -1,5 +1,5 @@
 #!/usr/bin/env perl
-# $Id: tlmgr.pl 80658 2026-10-16 10:08:14Z preining $
+# $Id: tlmgr.pl 80687 2026-10-18 11:24:31Z mseven $
 # Copyright 2008-2026 Norbert Preining
 # This file is licensed under the GNU General Public License version 2
 # or any later version.
@@ -8,8 +8,8 @@
 
 use strict; use warnings;
 
-my $svnrev = '$Revision: 80658 $';
-my $datrev = '$Date: 2026-10-16 12:08:14 +0200 (Fri, 16 Oct 2026) $';
+my $svnrev = '$Revision: 80687 $';
+my $datrev = '$Date: 2026-10-18 13:24:31 +0200 (Sun, 18 Oct 2026) $';
 my $tlmgrrevision;
 my $tlmgrversion;
 my $prg;
@@ -10805,10 +10805,10 @@ It is enabled by default.
 The value for both the environment variable and the option is
 I<jobs>[B<:>I<mb>], where I<jobs> is
 
-  unset or 0   one container at a time, as before (the default)
+  unset or 0   one container at a time, as before
   1            one background worker
   N            N background workers
-  auto         as many as there are processors, but at most 8
+  auto         as many as there are processors, but at most 8 (the default)
 
 and I<mb> is explained below; the default is C<auto:200>.
 
@@ -10839,7 +10839,7 @@ This script and its documentation were written for the TeX Live
 distribution (L<https://tug.org/texlive>) and both are licensed under the
 GNU General Public License Version 2 or later.
 
-$Id: tlmgr.pl 80658 2026-10-16 10:08:14Z preining $
+$Id: tlmgr.pl 80687 2026-10-18 11:24:31Z mseven $
 =cut
 
 # test HTML version: pod2html --cachedir=/tmp tlmgr.pl >/tmp/tlmgr.html
