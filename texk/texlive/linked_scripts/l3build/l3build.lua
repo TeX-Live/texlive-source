@@ -25,7 +25,7 @@ for those people who are interested.
 --]]
 
 -- Version information
-release_date = "2026-09-09"
+release_date = "2026-10-19"
 
 -- File operations are aided by the LuaFileSystem module
 local lfs = require("lfs")
@@ -46,7 +46,7 @@ local open             = io.open
 kpse.set_program_name("kpsewhich")
 build_kpse_path = match(lookup("l3build.lua"),"(.*[/])")
 local function build_require(s)
-  require(lookup("l3build-"..s..".lua", { path = build_kpse_path } ) )
+  return require(lookup("l3build-"..s..".lua", { path = build_kpse_path } ) )
 end
 
 -- Minimal code to do basic checks
