@@ -172,6 +172,7 @@ texmf-dist/scripts/rubik/rubikrotation.pl rubikrotation
 texmf-dist/scripts/runtexfile/runtexfile.lua runtexfile
 texmf-dist/scripts/runtexshebang/runtexshebang.lua runtexshebang
 texmf-dist/scripts/show-pdf-tags/show-pdf-tags.lua show-pdf-tags
+texmf-dist/scripts/spanish-mathml-intent/spmmli-tool.lua spmmli-tool
 texmf-dist/scripts/spix/spix.py spix
 texmf-dist/scripts/splitindex/splitindex.pl splitindex
 texmf-dist/scripts/sqltex/sqltex sqltex

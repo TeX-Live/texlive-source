@@ -1,3 +1,8 @@
+2026-10-22  Karl Berry  <karl@tug.org>
+
+	* Makefile.am (texmf_other_scripts): add
+	spanish-mathml-intent/spmmli-tool.lua.
+
 2026-08-16  Karl Berry  <karl@tug.org>
 
 	* Makefile.am (scripts-lst): run $(MAKE) install-data-hook
