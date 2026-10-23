@@ -1,6 +1,6 @@
 project('harfbuzz', ['c', 'cpp'],
   meson_version: '>= 0.60.0',
-  version: '14.6.0',
+  version: '15.0.0',
   default_options: [
     'cpp_eh=none',          # Just to support msvc, we are passing -fno-exceptions also anyway
     # 'cpp_rtti=false',     # Do NOT enable, wraps inherit it and ICU needs RTTI
@@ -66,12 +66,16 @@ add_project_link_arguments(cpp.get_supported_link_arguments([
   '-Bsymbolic-functions'
 ]), language: 'c')
 
+visibility_inlines_hidden_argument = ['-fvisibility-inlines-hidden']
+# XCOFF rejects hidden visibility on references to imported inline symbols.
+if host_machine.system() in ['os400', 'aix']
+  visibility_inlines_hidden_argument = []
+endif
 add_project_arguments(cpp.get_supported_arguments([
   '-fno-exceptions',
   '-fno-rtti',
   '-fno-threadsafe-statics',
-  '-fvisibility-inlines-hidden',
-]), language: 'cpp')
+] + visibility_inlines_hidden_argument), language: 'cpp')
 
 if host_machine.cpu_family() == 'arm' and cpp.alignment('struct { char c; }') != 1
   if cpp.has_argument('-mstructure-size-boundary=8')
@@ -491,9 +495,9 @@ build_summary = {
     },
   'Additional libraries':
     {'Subset': not get_option('subset').disabled(),
-     'Raster (experimental)': not get_option('raster').disabled(),
-     'Vector (experimental)': not get_option('vector').disabled(),
-     'GPU (experimental)': not get_option('gpu').disabled(),
+     'Raster': not get_option('raster').disabled(),
+     'Vector': not get_option('vector').disabled(),
+     'GPU': not get_option('gpu').disabled(),
     },
   'Dependencies used by additional libraries':
     {'PNG': conf.get('HAVE_PNG', 0) == 1,
