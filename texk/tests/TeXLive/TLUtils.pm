@@ -11,7 +11,7 @@ use strict; use warnings;
 
 package TeXLive::TLUtils;
 
-my $svnrev = '$Revision: 80656 $';
+my $svnrev = '$Revision: 80706 $';
 my $_modulerevision = ($svnrev =~ m/: ([0-9]+) /) ? $1 : "unknown";
 sub module_revision { return $_modulerevision; }
 
@@ -3318,8 +3318,6 @@ sub unpack {
   $pkg =~ s/\.tar\.$compressorextension$//;
   my $remove_containerfile = $remove;
   my $containerfile = "$tempdir/$fn";
-  my $tarfile = "$tempdir/$fn"; 
-  $tarfile =~ s/\.$compressorextension$//;
   if ($what =~ m,^(https?|ftp)://, || $what =~ m!$SshURIRegex!) {
     # we are installing from the NET
     # if a prefetch worker has already fetched this one, take it; it is
@@ -3356,14 +3354,8 @@ sub unpack {
     # we can remove it afterwards
     $remove_containerfile = 1;
   }
-  if (!system_pipe($decompressor, $containerfile, $tarfile,
-                   $remove_containerfile, @decompressorArgs)
-      ||
-      ! -f $tarfile) {
-    unlink($tarfile, $containerfile);
-    return(0, "Decompressing $containerfile failed");
-  }
-  if (untar($tarfile, $target, 1)) {
+  if (untar($containerfile, $target, $remove_containerfile,
+            $decompressor, @decompressorArgs)) {
     return (1, "$pkg");
   } else {
     return (0, "untar failed");
@@ -3372,11 +3364,15 @@ sub unpack {
 
 =pod
 
-=item C<untar($tarfile, $targetdir, $remove_tarfile)>
+=item C<untar($tarfile, $targetdir, $remove_tarfile, $decompressor, @args)>
 
 Unpacks C<$tarfile> in C<$targetdir> (changing directories to
 C<$targetdir> and then back to the original directory).  If
 C<$remove_tarfile> is true, unlink C<$tarfile> after unpacking.
+
+If C<$decompressor> is given, C<$tarfile> is compressed: the output of
+C<$decompressor @args> is piped into tar, without an intermediate
+tar file.
 
 Assumes the global C<$::progs{"tar"}> has been set up.
 
@@ -3384,10 +3380,26 @@ Assumes the global C<$::progs{"tar"}> has been set up.
 
 # return 1 if success, 0 if failure.
 sub untar {
-  my ($tarfile, $targetdir, $remove_tarfile) = @_;
+  my ($tarfile, $targetdir, $remove_tarfile, $decompressor, @args) = @_;
   my $ret;
 
   my $tar = $::progs{'tar'};  # assume it's been set up
+
+  # start the decompressor before the chdir below, $tarfile may be relative
+  my $zfh;
+  if ($decompressor) {
+    my $infile = $tarfile;
+    $infile =~ s!/!\\!g if wndws();
+    my $zcmd = quotify_path_with_spaces($decompressor)
+               . " @args < \"$infile\"";
+    debug("TLUtils::untar: reading from $zcmd\n");
+    if (!open($zfh, "$zcmd |")) {
+      tlwarn("TLUtils::untar: cannot run $zcmd: $!\n");
+      unlink($tarfile) if $remove_tarfile;
+      return 0;
+    }
+    binmode($zfh);
+  }
 
   # don't use the -C option to tar since Solaris tar et al. don't support it.
   # don't use system("cd ... && $tar ...") since that opens us up to
@@ -3401,15 +3413,49 @@ sub untar {
   # on w32 don't extract file modified time, because AV soft can open
   # files in the mean time causing time stamp modification to fail
   my $taropt = wndws() ? "xmf" : "xf";
-  if (system($tar, $taropt, $tarfile) != 0) {
+  my $ok;
+  if ($zfh) {
+    # copy in Perl instead of "zcmd | tar" in the shell, which would lose
+    # the decompressor's exit status: bsdtar, e.g., succeeds on empty input.
+    local $SIG{PIPE} = 'IGNORE';
+    if (open(my $tfh, "| $tar $taropt -")) {
+      binmode($tfh);
+      # Unbuffered writes: tar may exit as soon as it has read the
+      # end-of-archive blocks, before the padding that follows them
+      # (bsdtar, e.g. on macOS, does; GNU tar reads on to the end).  The
+      # write then fails with EPIPE, which is not an error: the verdict is
+      # tar's exit status.  With print, the failure would surface at the
+      # flush in close and make it return false for a tar that succeeded.
+      my ($buf, $n, $early);
+      while (($n = read($zfh, $buf, 65536))) {
+        my $off = 0;
+        while ($off < $n) {
+          my $w = syswrite($tfh, $buf, $n - $off, $off);
+          last if !defined($w);
+          $off += $w;
+        }
+        if ($off < $n) {
+          $early = 1;
+          last;
+        }
+      }
+      # let the decompressor finish rather than hit a closed pipe
+      1 while ($early && read($zfh, $buf, 65536));
+      close($tfh);
+      $ok = ($? == 0);
+    }
+    $ok = close($zfh) && $ok;
+  } else {
+    $ok = (system($tar, $taropt, $tarfile) == 0);
+  }
+  if (!$ok) {
     tlwarn("TLUtils::untar: $tar $taropt $tarfile failed (in $targetdir)\n");
     $ret = 0;
   } else {
     $ret = 1;
   }
-  unlink($tarfile) if $remove_tarfile;
-
   chdir($cwd) || die "chdir($cwd) failed: $!";
+  unlink($tarfile) if $remove_tarfile;
   return $ret;
 }
 
