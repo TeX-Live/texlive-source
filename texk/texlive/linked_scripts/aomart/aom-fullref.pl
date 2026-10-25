@@ -7,7 +7,7 @@
 #
 # Author: Boris Veytsman
 #
-# Version: 1.0, 2025/01/08
+# Version: 2.0, 2026/10/15
 
 =pod
 
@@ -24,7 +24,7 @@ aom-fullref.pl INPUT > OUTPUT
 
 Aomart class L<https://ctan.org/pkg/aomart> uses commands like
 C<\fullref{Theorem}{ref}> to generate clickable reference to constructions
-like ``Theorem 7'' or ``Equation 4''.  This script changes all C<\ref> and
+like ``Theorem 7'' or ``Equation 4''.  This script changes  C<\ref> and
 C<\pageref> commands into C<\fullref> and C<\pfullref> commands suitable
 for use with aomart.
 
@@ -43,9 +43,12 @@ This work is in public domain and licensed under CC0 1.0
 use strict;
 
 # List of patterns for 'equation' words
-my @eqsynonyms = ('\S*equa\S*', 'relat\S*',  'item\S*',
-		  'condition\S*',
-		  '\S*propert\S*');
+my @eqsynonyms = ('equa[a-zA-Z]*', 'relat[a-zA-Z]*',  'item[a-zA-Z]*',
+		  'condition[a-zA-Z]*',
+		  'propert[a-zA-Z]*');
+my @thmsynonyms = ('theorem[a-zA-Z]*', 'proposition[a-zA-Z]*',
+		   'lemma[a-zA-Z]*', 'corollar[a-zA-Z]*');
+my @sectsynonyms = ('(sub)*+section', '(sub)*+sections');
 
 # First we skip preamble
 while(<>) {
@@ -71,10 +74,21 @@ while (<>) {
     foreach my $synonym (@eqsynonyms) {
 	s/(\s)($synonym)[\s~]*\(\\ref\{([^\}]+)\}\)/$1\\pfullref{$2}{$3}/gi;
 	s/(\s)($synonym)[\s~]*\\eqref\{([^\}]+)\}/$1\\eqfullref{$2}{$3}/gi;
+	s/(\s)($synonym)[\s~]*\\pageref\{([^\}]+)\}/$1\\fullpageref{$2}{$3}/gi;
     }
-    s/(\s)([^\s\\]\S*[^~\s\(\)\[\]])[\s~]*\[\\ref\{([^\}]+)\}\]/$1\\bfullref{$2}{$3}/g;
-    s/(\s)([^\s\\]\S*[^~\s\(\)\[\]])[\s~]*\\ref\{([^\}]+)\}/$1\\fullref{$2}{$3}/g;
-    s/(\s)([^\s\\]\S*[^~\s\(\)\[\]])[\s~]*\\pageref\{([^\}]+)\}/$1\\fullpageref[$2]{$3}/g;
+    # We uppercase theorems
+    foreach my $synonym (@thmsynonyms) {
+    	s/(\s)($synonym)[\s~]*\(\\ref\{([^\}]+)\}\)/$1\\pfullref{\u$2}{$3}/gi;
+    	s/(\s)($synonym)[\s~]*\[\\ref\{([^\}]+)\}\]/$1\\bfullref{\u$2}{$3}/gi;
+    	s/(\s)($synonym)[\s~]*\\ref\{([^\}]+)\}/$1\\fullref{\u$2}{$3}/gi;
+	s/(\s)($synonym)[\s~]*\\pageref\{([^\}]+)\}/$1\\fullpageref{$2}{$3}/gi;
+    }
+    foreach my $synonym (@sectsynonyms) {
+    	s/(\s)($synonym)[\s~]*\(\\ref\{([^\}]+)\}\)/$1\\pfullref{\u$2}{$3}/gi;
+    	s/(\s)($synonym)[\s~]*\[\\ref\{([^\}]+)\}\]/$1\\bfullref{\u$2}{$3}/gi;
+    	s/(\s)($synonym)[\s~]*\\ref\{([^\}]+)\}/$1\\fullref{\u$2}{$3}/gi;
+	s/(\s)($synonym)[\s~]*\\pageref\{([^\}]+)\}/$1\\fullpageref{\u$2}{$3}/gi;
+    }
     # Now delete the extra space
     s/^ //;
     $prevline=$_;
