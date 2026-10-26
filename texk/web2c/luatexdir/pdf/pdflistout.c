@@ -341,6 +341,9 @@ void hlist_out(PDF pdf, halfword this_box, int rule_callback_id)
     scaled_whd rule, ci;
     /*tex index to scan |pdf_link_stack| */
     int i;
+    /*tex page position before a \.{\\leftskip} or \.{\\rightskip}, for links */
+    scaled link_skip_h = 0;
+    boolean link_skip = false;
     /*tex DVI! \.{DVI} byte location upon entry */
     int saved_loc = 0;
     /*tex safeguard */
@@ -507,6 +510,11 @@ void hlist_out(PDF pdf, halfword this_box, int rule_callback_id)
                             Move right or output leaders, we use real
                             multiplication.
                         */
+                        if (pdf->link_stack_ptr > 0 && pdf_linking == 2 && type(p) == glue_node
+                            && (subtype(p) == left_skip_glue || subtype(p) == right_skip_glue)) {
+                            link_skip_h = pdf->posstruct->pos.h;
+                            link_skip = true;
+                        }
                         rule.wd = width(p) - cur_g;
                         if (g_sign != normal) {
                             if (g_sign == stretching) {
@@ -672,6 +680,9 @@ void hlist_out(PDF pdf, halfword this_box, int rule_callback_id)
                     /*tex
                         Output a reflection instruction if the direction has changed.
                     */
+                    if (pdf->link_stack_ptr > 0 && pdf_linking == 2) {
+                        link_dir_switch(pdf, 0);
+                    }
                     if (subtype(p) == normal_dir) {
                         /*tex
                             Calculate the needed width to the matching |enddir|, return the
@@ -708,6 +719,10 @@ void hlist_out(PDF pdf, halfword this_box, int rule_callback_id)
                         dir_done--;
                     } else {
                         /*tex maybe issue a warning */
+                    }
+                    if (pdf->link_stack_ptr > 0 && pdf_linking == 2) {
+                        synch_pos_with_cur(pdf->posstruct, refpos, cur);
+                        link_dir_switch(pdf, 1);
                     }
                     break;
                 case whatsit_node:
@@ -842,7 +857,14 @@ void hlist_out(PDF pdf, halfword this_box, int rule_callback_id)
           NEXTP:
             p = vlink(p);
             synch_pos_with_cur(pdf->posstruct, refpos, cur);
+            if (link_skip) {
+                link_skip = false;
+                link_past_skip(pdf, link_skip_h);
+            }
         }
+    }
+    if (pdf->link_stack_ptr > 0 && pdf_linking == 2) {
+        finish_link_pieces(pdf);
     }
     if (synctex) {
         synctextsilh(this_box);

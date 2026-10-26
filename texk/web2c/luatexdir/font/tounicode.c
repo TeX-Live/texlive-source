@@ -198,7 +198,7 @@ static void set_glyph_unicode(char *s, glyph_unicode_entry * gp)
         return;
     /* assert(strlen(s) < sizeof(buf)); */
     if ( strlen(s) >= sizeof(buf) )
-      formatted_error("tounicode", "Invalid glyph name %s, it has length %d >= %d", s, strlen(s), sizeof(buf));
+      formatted_error("tounicode", "Invalid glyph name %s, it has length %zu >= %zu", s, strlen(s), sizeof(buf));
     /*tex Strip everything after the first dot. */
     p = strchr(s, '.');
     if (p != NULL) {

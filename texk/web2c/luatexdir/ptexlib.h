@@ -364,8 +364,6 @@ extern void lua_nodelib_push_fast(lua_State * L, halfword n);
 
 extern halfword list_node_mem_usage(void);
 
-extern halfword *check_isnode(lua_State * L, int ud);
-
 extern extinfo *get_charinfo_vert_variants(charinfo * ci);
 extern extinfo *get_charinfo_hor_variants(charinfo * ci);
 extern void set_charinfo_hor_variants(charinfo * ci, extinfo * ext);

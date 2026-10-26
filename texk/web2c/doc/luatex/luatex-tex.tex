@@ -1,4 +1,4 @@
-% engine=luatex language=uk
+% language=us engine=luatex runpath=texruns:manuals/luatex
 
 % lua.newtable
 
@@ -148,7 +148,6 @@ index into \type {status}. The current list is:
 \NC \type{cs_count}           \NC number of control sequences \NC \NR
 \NC \type{dest_names_size}    \NC \PDF\ destination table size \NC \NR
 \NC \type{dvi_gone}           \NC written \DVI\ bytes \NC \NR
-\NC \type{development_id}     \NC ID of this \LUATEX\ release \NC \NR
 \NC \type{dvi_ptr}            \NC not yet written \DVI\ bytes \NC \NR
 \NC \type{dyn_used}           \NC token (multi|-|word) memory in use  \NC \NR
 \NC \type{filename}           \NC name of the current input file \NC \NR
@@ -178,7 +177,6 @@ index into \type {status}. The current list is:
 \NC \type{luatex_engine}      \NC the \LUATEX\ engine identifier \NC \NR
 \NC \type{luatex_hashchars}   \NC length to which \LUA\ hashes strings ($2^n$) \NC \NR
 \NC \type{luatex_hashtype}    \NC the hash method used (in \LUAJITTEX) \NC \NR
-\NC \type{luatex_release_name}\NC name of this \LUATEX\ release \NC \NR
 \NC \type{luatex_version}     \NC the \LUATEX\ version number \NC \NR
 \NC \type{luatex_revision}    \NC the \LUATEX\ revision string \NC \NR
 \NC \type{max_buf_stack}      \NC max used buffer position \NC \NR
@@ -278,6 +276,9 @@ value so you are responsible for its freeing at the \LUA\ end. When you set a
 glue quantity you can either pass a \nod {glue_spec} or upto five numbers. If
 you pass \type {true} to \type {get} you get 5 values returned for a glue and
 when you pass \type {false} you only get the width returned.
+
+If you ask for one of the \ETEX\ penalty arrays you can pass \type {true} as
+second parameter and get the count instead of a table.
 
 \subsubsection{Integer parameters}
 
@@ -1416,28 +1417,28 @@ following:
 \stopitem
 \stopitemize
 
-%\subsubsection{\type {tex.getlinenumber} and \type {tex.setlinenumber}}
+% \subsubsection{\type {tex.getlinenumber} and \type {tex.setlinenumber}}
 %
-%\libindex{getlinenumber}
-%\libindex{setlinenumber}
+% \libindex{getlinenumber}
+% \libindex{setlinenumber}
 %
-%You can mess with the current line number:
+% You can mess with the current line number:
 %
-%\startfunctioncall
-%local n = tex.getlinenumber()
-%tex.setlinenumber(n+10)
-%\stopfunctioncall
+% \startfunctioncall
+% local n = tex.getlinenumber()
+% tex.setlinenumber(n+10)
+% \stopfunctioncall
 %
-%which can be shortcut to:
+% which can be shortcut to:
 %
-%\startfunctioncall
-%tex.setlinenumber(10,true)
-%\stopfunctioncall
+% \startfunctioncall
+% tex.setlinenumber(10,true)
+% \stopfunctioncall
 %
-%This might be handy when you have a callback that read numbers from a file and
-%combines them in one line (in which case an error message probably has to refer
-%to the original line). Interference with \TEX's internal handling of numbers is
-%of course possible.
+% This might be handy when you have a callback that read numbers from a file and
+% combines them in one line (in which case an error message probably has to refer
+% to the original line). Interference with \TEX's internal handling of numbers is
+% of course possible.
 
 \subsubsection{\type {error} and \type {show_context}}
 
@@ -1719,11 +1720,9 @@ The understood parameters are as follows:
 \NC \type{tracingparagraphs}    \NC number          \NC \NC \NR
 \NC \type{tolerance}            \NC number          \NC \NC \NR
 \NC \type{looseness}            \NC number          \NC \NC \NR
-\NC \type{hyphenpenalty}        \NC number          \NC \NC \NR
-\NC \type{exhyphenpenalty}      \NC number          \NC \NC \NR
-\NC \type{pdfadjustspacing}     \NC number          \NC \NC \NR
+\NC \type{adjustspacing}        \NC number          \NC \NC \NR
 \NC \type{adjdemerits}          \NC number          \NC \NC \NR
-\NC \type{pdfprotrudechars}     \NC number          \NC \NC \NR
+\NC \type{protrudechars}        \NC number          \NC \NC \NR
 \NC \type{linepenalty}          \NC number          \NC \NC \NR
 \NC \type{lastlinefit}          \NC number          \NC \NC \NR
 \NC \type{doublehyphendemerits} \NC number          \NC \NC \NR
@@ -1784,7 +1783,7 @@ all numbers:
 \stoptabulate
 
 Note there are a few things you cannot interface using this function: You cannot
-influence font expansion other than via \type {pdfadjustspacing}, because the
+influence font expansion other than via \type {adjustspacing}, because the
 settings for that take place elsewhere. The same is true for hbadness and hfuzz
 etc. All these are in the \type {hpack} routine, and that fetches its own
 variables via globals.
@@ -1933,12 +1932,11 @@ the executable after loading and executing the startup file.
 \NC \type{max_print_line}   \NC number   \NC     79  \NC cf.\ web2c docs \NC \NR
 \NC \type{hash_extra}       \NC number   \NC      0  \NC cf.\ web2c docs \NC \NR
 \NC \type{pk_dpi}           \NC number   \NC     72  \NC cf.\ web2c docs \NC \NR
-\NC \type{trace_file_names} \NC boolean  \NC true 
+\NC \type{trace_file_names} \NC boolean  \NC true
 \NC
     \type {false} disables \TEX's normal file open|-|close feedback (the
     assumption is that callbacks will take care of that)
 \NC \NR
-\NC \type{trace_extra_newline} \NC boolean  \NC false \NC adds an extra newline in \type{\tracingmacros} \NC\NR
 \NC \type{file_line_error} \NC boolean \NC false
 \NC
     do \type {file:line} style error messages
@@ -1968,17 +1966,9 @@ the executable after loading and executing the startup file.
     the level shown up front
 \NC \NR
 \NC \type{check_dvi_total_pages} \NC boolean \NC
-\NC 
-     in \DVI\ output mode, if true abort run when the number of pages exceeds 65535. 
+\NC
+     in \DVI\ output mode, if true abort run when the number of pages exceeds 65535.
      This is the default behaviour. If false, the run goes on as is in \TEX.
-\NC \NR
-\NC \type{texlua_img} \NC boolean \NC
-\NC 
-     if true, allows access to the \type {img} library in \TEXLUA\ mode. If
-     false (the default), the \type {img} library is not available in \TEXLUA\
-     mode (as it was unconditionally for \LUATEX\ versions prior to 1.22.0).
-     Note that this setting is {\bf experimental} and subject to be removed at
-     any time, without notice.
 \NC \NR
 \LL
 \stoptabulate
@@ -1991,7 +1981,7 @@ You can kick in your own nesting level visualizer, for instance:
 
 \starttyping
 callback.register("input_level_string",function(n)
- if tex.tracingmacros > 0 and tex.count.tracingstacklevels > 0 then
+if tex.tracingmacros > 0 and tex.count.tracingstacklevels > 0 then
     if tex.tracingmacros > 1 then
         return "! " .. string.rep(">",n) .. " "
     end
@@ -2460,9 +2450,6 @@ has been added per request of the \LATEX\ team. It skips this error checking and
 follows a different code path. It assumes that a valid token user datum is
 passed and can crash the engine otherwise.
 
-The \type {token.expand} function will trigger
-expansion but what happens really depends on what you're doing where.
-
 \stopsubsection
 
 \startsubsection[title={Nota bene}]
@@ -2774,7 +2761,6 @@ The options match commandline arguments from \type {kpsewhich}:
 If \type {--output-directory} is specified and the value is a relative pathname,
 the file is searched first here and then in the standard tree.
 
-
 \stopsubsection
 
 \startsubsection[title={\type {init_prog}}]
@@ -2849,8 +2835,8 @@ Like kpsewhich's \type {-expand-braces}:
 
 \libindex{in_name_ok}
 
-Returns true if \type{fname} is acceptable to open for reading, otherwise false and 
-write a message to standard error. 
+Returns true if \type{fname} is acceptable to open for reading, otherwise false and
+write a message to standard error.
 
 \startfunctioncall
 <boolean> r = kpse.in_name_ok(<string> fname)
@@ -2871,12 +2857,11 @@ a message to standard error.
 
 \stopsubsection
 
-
 \startsubsection[title={\type {out_name_ok}}]
 
 \libindex{out_name_ok}
 
-Returns true if \type{fname} is acceptable to open for writing. 
+Returns true if \type{fname} is acceptable to open for writing.
 
 \startfunctioncall
 <boolean> r = kpse.out_name_ok(<string> fname)
@@ -2945,14 +2930,13 @@ Returns the kpathsea version string.
 
 Checks if the \type{filename} can be executed or not.
 Returns \type{1}, \type{filename} or a safe cmd alternative  if it can be executed,
-otherwise  returns \type{0} and an error message. 
+otherwise returns \type{0} and an error message.
 
 \startfunctioncall
 <string> res, cmd = kpse.check_permission(<string> filename)
 \stopfunctioncall
 
 \stopsubsection
-
 
 \stopsection
 

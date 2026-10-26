@@ -172,7 +172,7 @@ int avl_do_entry(fm_entry * fm, int mode)
                 }
                 break;
             default:
-                formatted_error("map file", "something bad happened",0);
+                formatted_error("map file", "something bad happened");
         }
     }
     if ((mode == FM_DUPIGNORE || mode == FM_REPLACE) && delete_new == 0) {
@@ -336,7 +336,7 @@ static void fm_scan_line(void)
             }
             /* Fix for warning: stack-based buffer underwrite [CWE-124] [-Wanalyzer-out-of-bounds] ⚠️  out-of-bounds write at byte -1 but ‘fm_line’ starts at byte 0*/
 	    /* *(--p) = '\0'; */
-	    if (p>fm_line) *(--p)= '\0'; else if (p==fm_line) *p='\0'; else formatted_error("map file", "invalid pointer",0);
+	    if (p>fm_line) *(--p)= '\0'; else if (p==fm_line) *p='\0'; else formatted_error("map file", "invalid pointer");
             r = fm_line;
             break;
         case MAPLINE:
@@ -344,7 +344,7 @@ static void fm_scan_line(void)
             r = mitem->line;
             break;
         default:
-            formatted_error("map file", "invalid map type",0);
+            formatted_error("map file", "invalid map type");
     }
     /* Fix for warning: dereference of NULL ‘r’ [CWE-476] [-Wanalyzer-null-dereference] if (*r == '\0' || is_cfg_comment(*r))  ⚠️  dereference of NULL ‘r’ */
     if (r==NULL)

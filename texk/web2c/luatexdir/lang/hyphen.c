@@ -655,7 +655,7 @@ void hnj_hyphen_load(HyphenDict * dict, const unsigned char *f)
                         neworg = malloc((size_t) (l1 + 2 - e1));
 			if (neworg == NULL)
 			  formatted_error("hyphenation","Cannot allocate %zu bytes for a new key",
-					  l1 + 2 - e1);
+					  (size_t)(l1 + 2 - e1));
                         /*tex Fill with right amount of zeros: */
                         sprintf(neworg, "%0*d", l1 + 1 - e1, 0);
                         hyppat_insert(dict->merged, newword, combine(neworg, subpat_pat));

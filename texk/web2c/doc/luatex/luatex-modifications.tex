@@ -1444,6 +1444,19 @@ That way (we hope) legacy documents come out as expected, whatever those
 expectations are. One of the aspects dealt with concerns (unusual) left and right
 skips.
 
+With value two the rectangles follow the linked text as it is actually output.
+This also fixes links that cross a change of direction, for instance a link that
+starts in a left|-|to|-|right word inside right|-|to|-|left text and ends after
+it:
+
+\starttyping
+\pdfvariable linking = 2
+\stoptyping
+
+Such a link can get more than one rectangle on a line, one for each visually
+separate part. Multi|-|line links come out as with value one, so the left and
+right skips of a line are not included.
+
 \stopsubsection
 
 \stopsection

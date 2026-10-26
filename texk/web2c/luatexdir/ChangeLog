@@ -1,3 +1,47 @@
+2026-10-22 Luigi Scarso <luigi.scarso@gmail.com>
+	
+	* A few different (and more strict) checks in tex.linebreak (H.Hagen)
+	* LuaTeX 1.27.11
+
+2026-10-25 Luigi Scarso <luigi.scarso@gmail.com>
+	
+	* Fixed wrong node test  for direction to tex.linebreak  (Udi Fogiel)
+	* LuaTeX 1.27.10
+
+
+	2026-10-23 Luigi Scarso <luigi.scarso@gmail.com>
+	
+	* minor fixes to tex.linebreak  (Udi Fogiel)
+	* luatex_revision is an int not more limited to '0',..,'9'
+	* LuaTeX 1.27.9
+
+
+2026-10-14 Luigi Scarso <luigi.scarso@gmail.com>
+	
+	* Fix for tex.get("[etex]penalties") including a second "true"
+	  argument for getting the count only (H.Hagen)
+	* LuaTeX 1.27.8
+
+	
+2026-10-14 Luigi Scarso <luigi.scarso@gmail.com>
+	
+	*  Patches for links around visually non contiguous bidirictional text (Udi Fogiel)
+	*  LuaTeX 1.27.7
+
+
+2026-10-14 Luigi Scarso <luigi.scarso@gmail.com>
+	
+	 * Fixed pplib-src/src/ppcrypt.c. See details in source/libs/pplib/ChangeLog .
+
+
+2026-10-07 Luigi Scarso <luigi.scarso@gmail.com>
+
+	*  Fix for a bug when a VF packet length extends past EOF (thanks to 정동우)
+	*  luatex_svn_revision updated: it is now a date YYYYmmddHHMMSS UTC. Available in status.list() as 'development_id'
+	*  New luatex_release_name. Available as Available in status.list() as 'luatex_release_name'
+	*  Luatex 1.27.6 -- 🌿 🄸 🅃 '🅂  🄼 🄾 🅁 🄴  🄵 🅄 🄽  🅃 🄾  🄲 🄾 🄼 🄿 🅄 🅃 🄴  🌿
+
+
 2026-10-02 Luigi Scarso <luigi.scarso@gmail.com>
 
 	* Luatex 1.27.5

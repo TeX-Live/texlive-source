@@ -125,7 +125,7 @@ char *luatex_find_read_file(const char *s, int n, int callback_index)
         (void) run_callback(callback_id, "dS->R", n, s, &ftemp);
     } else {
       char str[21]; 
-      snprintf(str, sizeof(str), "%lld", callback_index);
+      snprintf(str, sizeof(str), "%d", callback_index);
       if (kpse_available(str)) {
         /*tex Use kpathsea here. */
         ftemp = find_in_output_directory(s);
@@ -151,7 +151,7 @@ char *luatex_find_file(const char *s, int callback_index)
         (void) run_callback(callback_id, "S->R", s, &ftemp);
     } else {
       char str[21]; 
-      snprintf(str, sizeof(str), "%lld", callback_index);
+      snprintf(str, sizeof(str), "%d", callback_index);
       if (kpse_available(str)) {
         /*tex Use kpathsea here. */
         switch (callback_index) {
