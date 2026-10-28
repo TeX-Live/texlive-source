@@ -2569,6 +2569,19 @@ get_seconds_and_micros (integer *seconds,  integer *micros)
    length(line except trailing whitespace).  */
 
 #ifndef XeTeX /* for XeTeX, we have a replacement function in XeTeX_ext.c */
+/* TeX is single-threaded, so reading input does not need the locking
+   that getc does on every character (same as in XeTeX_ext.c).  */
+#ifdef WIN32
+#ifdef __MINGW32__
+/* MinGW has problems with _getc_nolock() */
+#define GETC(f) getc(f)
+#else
+#define GETC(f) _getc_nolock(f)
+#endif
+#else
+#define GETC(f) getc_unlocked(f)
+#endif
+
 boolean
 input_line (FILE *f)
 {
@@ -2613,7 +2626,7 @@ input_line (FILE *f)
   last = first;
   do {
     errno = 0; /* otherwise EINTR might wrongly persist */
-    while (last < bufsize && (i = getc (f)) != EOF && i != '\n' && i != '\r')
+    while (last < bufsize && (i = GETC (f)) != EOF && i != '\n' && i != '\r')
       buffer[last++] = i;
 
     /* The story on EINTR: because we tell libc to pass interrupts
@@ -2652,7 +2665,7 @@ input_line (FILE *f)
 
   /* If next char is LF of a CRLF, read it.  */
   if (i == '\r') {
-    while ((i = getc (f)) == EOF && errno == EINTR)
+    while ((i = GETC (f)) == EOF && errno == EINTR)
       ;
     if (i != '\n')
       ungetc (i, f);
