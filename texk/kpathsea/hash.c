@@ -32,18 +32,19 @@ hash (hash_table_type table,  const_string key)
 {
   unsigned n = 0;
 
-  /* Our keys aren't often anagrams of each other, so no point in
-     weighting the characters.  */
+  /* Reduce modulo the table size only once, at the end, instead of
+     dividing for every character.  Multiply by 31 rather than 2 so
+     that the first characters of long keys still affect the result.  */
   while (*key != 0)
 #if defined (WIN32) && defined (KPSE_COMPAT_API)
     if (IS_KANJI(key)) {
-      n = (n + n + (unsigned)(*key++)) % table.size;
-      n = (n + n + (unsigned)(*key++)) % table.size;
+      n = 31 * n + (unsigned)(*key++);
+      n = 31 * n + (unsigned)(*key++);
     } else
 #endif
-    n = (n + n + TRANSFORM (*key++)) % table.size;
+    n = 31 * n + TRANSFORM (*key++);
 
-  return n;
+  return n % table.size;
 }
 
 /* Identical hash function as above, but does not normalize keys. */
@@ -52,12 +53,11 @@ hash_normalized (hash_table_type table,  const_string key)
 {
   unsigned n = 0;
 
-  /* Our keys aren't often anagrams of each other, so no point in
-     weighting the characters.  */
+  /* See comments above.  */
   while (*key != 0)
-    n = (n + n + (*key++)) % table.size;
+    n = 31 * n + (*key++);
 
-  return n;
+  return n % table.size;
 }
 
 hash_table_type
