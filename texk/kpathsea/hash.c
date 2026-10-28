@@ -92,19 +92,13 @@ hash_insert (hash_table_type *table,
 
   new_elt->key = key;
   new_elt->value = value;
-  new_elt->next = NULL;
 
-  /* Insert the new element at the end of the list.  */
-  if (!table->buckets[n])
-    /* first element in bucket is a special case.  */
-    table->buckets[n] = new_elt;
-  else
-    {
-      hash_element_type *loc = table->buckets[n];
-      while (loc->next)         /* Find the last element.  */
-        loc = loc->next;
-      loc->next = new_elt;      /* Insert the new one after.  */
-    }
+  /* Insert the new element at the beginning of the list, so that
+     insertion takes constant time even when many keys are the same
+     (e.g., README in ls-R).  hash_lookup reverses its result to
+     return values in insertion order.  */
+  new_elt->next = table->buckets[n];
+  table->buckets[n] = new_elt;
 }
 
 /* Same as above, for normalized keys. */
@@ -118,19 +112,13 @@ hash_insert_normalized (hash_table_type *table,
 
   new_elt->key = key;
   new_elt->value = value;
-  new_elt->next = NULL;
 
-  /* Insert the new element at the end of the list.  */
-  if (!table->buckets[n])
-    /* first element in bucket is a special case.  */
-    table->buckets[n] = new_elt;
-  else
-    {
-      hash_element_type *loc = table->buckets[n];
-      while (loc->next)         /* Find the last element.  */
-        loc = loc->next;
-      loc->next = new_elt;      /* Insert the new one after.  */
-    }
+  /* Insert the new element at the beginning of the list, so that
+     insertion takes constant time even when many keys are the same
+     (e.g., README in ls-R).  hash_lookup reverses its result to
+     return values in insertion order.  */
+  new_elt->next = table->buckets[n];
+  table->buckets[n] = new_elt;
 }
 
 /* Remove a (KEY, VALUE) pair.  */
@@ -171,9 +159,17 @@ hash_lookup (hash_table_type table,  const_string key)
     if (FILESTRCASEEQ (key, p->key))
       cstr_list_add (&ret, p->value);
 
-  /* If we found anything, mark end of list with null.  */
-  if (STR_LIST (ret))
+  /* If we found anything, reverse the list to get insertion order
+     (see hash_insert), and mark end of list with null.  */
+  if (STR_LIST (ret)) {
+    unsigned i, j;
+    for (i = 0, j = STR_LIST_LENGTH (ret) - 1; i < j; i++, j--) {
+      const_string tmp = STR_LIST_ELT (ret, i);
+      STR_LIST_ELT (ret, i) = STR_LIST_ELT (ret, j);
+      STR_LIST_ELT (ret, j) = tmp;
+    }
     cstr_list_add (&ret, NULL);
+  }
 
 #ifdef KPSE_DEBUG
 #if defined (KPSE_COMPAT_API)

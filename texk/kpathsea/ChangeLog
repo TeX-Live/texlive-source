@@ -1,3 +1,13 @@
+2026-10-28  Ben Spitz  <1844060+diracdeltafunk@users.noreply.github.com>
+
+	* hash.c (hash_insert, hash_insert_normalized): insert new
+	elements at the beginning of the bucket instead of walking to
+	the end. ls-R has thousands of identical names (README, etc.),
+	which all land in the same bucket, so building the db was
+	quadratic in the number of duplicates.
+	(hash_lookup): reverse the result, so values are still
+	returned in insertion order.
+
 2026-06-28  Karl Berry  <karl@freefriends.org>
 
 	* texmf.cnf (TEXMFHOME, TEXMFVAR, TEXMFCONFIG): mention
