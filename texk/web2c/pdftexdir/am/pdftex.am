@@ -106,12 +106,14 @@ EXTRA_DIST += \
 # pdfTeX tests
 #
 pdftex_tests = pdftexdir/wprob.test pdftexdir/pdftex.test \
-  pdftexdir/pdfimage.test pdftexdir/expanded.test \
+  pdftexdir/pdfimage.test pdftexdir/pdfobjfile.test \
+  pdftexdir/expanded.test \
   pdftexdir/tests/cnfline.test pdftexdir/tests/partoken.test \
   pdftexdir/wcfname.test
 
 pdftexdir/wprob.log pdftexdir/pdftex.log \
-  pdftexdir/pdfimage.log pdftexdir/expanded.log \
+  pdftexdir/pdfimage.log pdftexdir/pdfobjfile.log \
+  pdftexdir/expanded.log \
   pdftexdir/tests/cnfline.log pdftexdir/tests/partoken.log \
   pdftexdir/wcfname.log: pdftex$(EXEEXT)
 
@@ -129,6 +131,12 @@ DISTCLEANFILES += pwprob.log pwprob.tex
 EXTRA_DIST += pdftexdir/tests/pdfimage.tex \
 	tests/1-4.jpg tests/B.pdf tests/basic.tex tests/lily-ledger-broken.png
 DISTCLEANFILES += pdfimage.fmt pdfimage.log pdfimage.pdf
+
+## pdfobjfile.test
+EXTRA_DIST += pdftexdir/tests/pdfobjfile.tex
+DISTCLEANFILES += pdfobjfile.fmt pdfobjfile.log pdfobjfile.pdf \
+	pdfobjfile-empty.bin pdfobjfile-noeol.bin \
+	pdfobjfile-eol.bin pdfobjfile-data.bin
 
 ## expanded.test
 EXTRA_DIST += tests/expanded.tex tests/expanded.txt

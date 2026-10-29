@@ -1,3 +1,11 @@
+2026-10-29  Ben Spitz  <1844060+diracdeltafunk@users.noreply.github.com>
+
+	* pdftex.web (pdf_write_obj): read each byte of a file object
+	once, instead of testing eof (which reads ahead and pushes the
+	byte back) before each getc.
+	* pdfobjfile.test, tests/pdfobjfile.tex: new test.
+	* am/pdftex.am (pdftex_tests): add it.
+
 2026-10-04  Karl Berry  <karl@freefriends.org>
 
 	* writettf.c (ttf_write_dirtab): when computing checkSumAdjustment,
