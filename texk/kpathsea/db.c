@@ -82,13 +82,36 @@ ignore_dir_p (const_string dirname)
   return false;
 }
 
+/* Read the rest of F into a newly allocated buffer with room for a
+   null after the contents, and set *SIZE to the number of bytes read.
+   As with read_line, a read error is treated as end of file.  */
+
+static string
+read_all (FILE *f, size_t *size)
+{
+  size_t limit = 65536, n = 0;
+  string buf = (string)xmalloc (limit + 1);
+
+  for (;;) {
+    n += fread (buf + n, 1, limit - n, f);
+    if (n < limit)
+      break;
+    limit *= 2;
+    buf = (string)xrealloc (buf, limit + 1);
+  }
+
+  *size = n;
+  return (string)xrealloc (buf, n + 1);
+}
+
 /* If no DB_FILENAME, return false (maybe they aren't using this feature).
    Otherwise, add entries from DB_FILENAME to TABLE, and return true.  */
 
 static boolean
 db_build (kpathsea kpse, hash_table_type *table,  const_string db_filename)
 {
-  string line;
+  string line, buf, end, p, q;
+  size_t size;
   unsigned dir_count = 0, file_count = 0, ignore_dir_count = 0;
   unsigned len = strlen (db_filename) - sizeof (DB_NAME) + 1; /* Keep the /. */
   string top_dir = (string)xmalloc (len + 1);
@@ -102,8 +125,25 @@ db_build (kpathsea kpse, hash_table_type *table,  const_string db_filename)
   top_dir[len] = 0;
 
   if (db_file) {
-    while ((line = read_line (db_file)) != NULL) {
-      len = strlen (line);
+    /* ls-R is large, so read it all at once and split it into lines in
+       place, instead of using read_line, which allocates every line.
+       As in read_line, lines end with LF, CR, or CRLF, and null bytes
+       are silently dropped.  */
+    buf = read_all (db_file, &size);
+    end = buf + size;
+    p = buf;
+    while (p < end) {
+      line = q = p;
+      while (p < end && *p != '\n' && *p != '\r') {
+        if (*p != 0)
+          *q++ = *p;
+        p++;
+      }
+      /* Absorb the line terminator, including the LF of a CRLF pair.  */
+      if (p < end && *p++ == '\r' && p < end && *p == '\n')
+        p++;
+      *q = 0;
+      len = q - line;
 
 #if defined(MONOCASE_FILENAMES)
       for (pp = line; *pp; pp++) {
@@ -145,22 +185,22 @@ db_build (kpathsea kpse, hash_table_type *table,  const_string db_filename)
            of `cur_dir'.  An already-existing identical key is ok, since
            a file named `foo' can be in more than one directory.  Share
            `cur_dir' among all its files (and hence never free it).
+           Likewise, the key points into `buf', which is never freed.
 
            Note that we assume that all names in the ls-R file have already
            been case-smashed to lowercase where appropriate.
         */
-        hash_insert_normalized (table, xstrdup (line), cur_dir);
+        hash_insert_normalized (table, line, cur_dir);
         file_count++;
 
       } /* else ignore blank lines or top-level files
            or files in ignored directories*/
-
-      free (line);
     }
 
     xfclose (db_file, db_filename);
 
     if (file_count == 0) {
+      free (buf);
       WARNING1 ("kpathsea: %s: No usable entries in ls-R", db_filename);
       WARNING ("kpathsea: See the manual for how to generate ls-R");
       db_file = NULL;
