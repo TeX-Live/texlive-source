@@ -1,0 +1,27 @@
+#! /bin/sh -vx
+# $Id$
+# Public domain.
+# Check that a JPEG spanning several PDF output buffers is copied intact.
+
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_pdftex=$BinDir/pdftex$ExeExt
+
+TEXMFCNF=$srcdir/../kpathsea; export TEXMFCNF
+TEXINPUTS="$srcdir/pdftexdir/tests;$srcdir/tests"; export TEXINPUTS
+TEXFORMATS=.; export TEXFORMATS
+
+$_pdftex -ini -interaction=batchmode jpgcopy </dev/null || exit 1
+$_pdftex -fmt=jpgcopy -interaction=batchmode jpgcopy </dev/null || exit 2
+
+perl -e '
+  open(PDF, "<", $ARGV[0]) or die "$ARGV[0]: $!";
+  binmode PDF;
+  $pdf = do { local $/; <PDF> };
+  open(JPG, "<", $ARGV[1]) or die "$ARGV[1]: $!";
+  binmode JPG;
+  $jpg = do { local $/; <JPG> };
+  index($pdf, $jpg) >= 0 or die "JPEG data not found in PDF\n";
+' jpgcopy.pdf "$srcdir/tests/1-4.jpg" || exit 3
+
+exit 0
