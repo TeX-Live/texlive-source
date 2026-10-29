@@ -1,3 +1,11 @@
+2026-10-28  Ben Spitz  <1844060+diracdeltafunk@users.noreply.github.com>
+
+	* db.c (read_all): new function.
+	(db_build): read ls-R with read_all and split it into lines in
+	place, instead of calling read_line for each line; the keys now
+	point into the buffer instead of being copied. Saves three
+	malloc/free calls and a stream lock per entry.
+
 2026-06-28  Karl Berry  <karl@freefriends.org>
 
 	* texmf.cnf (TEXMFHOME, TEXMFVAR, TEXMFCONFIG): mention
