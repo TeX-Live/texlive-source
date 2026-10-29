@@ -1,3 +1,14 @@
+2026-10-29  Ben Spitz  <1844060+diracdeltafunk@users.noreply.github.com>
+
+	* pdftoepdf.cc (find_add_document): also compare st_dev and
+	st_ino, so that a file replaced by rename is read again even if
+	its size and modification time are the same.
+	(stat_file): new function, using fsyscp_stat on Windows so that
+	file names in the file system code page (e.g., UTF-8) work.
+	* tests/pdfreuse.test, tests/pdfreuse.tex: new test, from
+	Norbert Preining.
+	* am/pdftex.am (pdftex_tests): add it.
+
 2026-10-28  Ben Spitz  <1844060+diracdeltafunk@users.noreply.github.com>
 
 	* pdftoepdf.cc (epdf_delete): keep the most recently released

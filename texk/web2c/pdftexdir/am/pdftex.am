@@ -108,12 +108,12 @@ EXTRA_DIST += \
 pdftex_tests = pdftexdir/wprob.test pdftexdir/pdftex.test \
   pdftexdir/pdfimage.test pdftexdir/expanded.test \
   pdftexdir/tests/cnfline.test pdftexdir/tests/partoken.test \
-  pdftexdir/wcfname.test
+  pdftexdir/wcfname.test pdftexdir/tests/pdfreuse.test
 
 pdftexdir/wprob.log pdftexdir/pdftex.log \
   pdftexdir/pdfimage.log pdftexdir/expanded.log \
   pdftexdir/tests/cnfline.log pdftexdir/tests/partoken.log \
-  pdftexdir/wcfname.log: pdftex$(EXEEXT)
+  pdftexdir/wcfname.log pdftexdir/tests/pdfreuse.log: pdftex$(EXEEXT)
 
 EXTRA_DIST += $(pdftex_tests)
 
@@ -144,5 +144,9 @@ DISTCLEANFILES += partoken-ok.log partoken-xfail.log
 
 ## wcfname.test
 DISTCLEANFILES += pdftests/fn*.*
+
+## pdfreuse.test
+EXTRA_DIST += pdftexdir/tests/pdfreuse.tex
+DISTCLEANFILES += pdfreuse.fmt pdfreuse.log pdfreuse-*
 
 # (end of pdftex.am)
