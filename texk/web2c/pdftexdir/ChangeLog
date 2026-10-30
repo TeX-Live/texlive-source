@@ -1,3 +1,10 @@
+2026-10-28  Ben Spitz  <1844060+diracdeltafunk@users.noreply.github.com>
+
+	* ptexmac.h (GETC): new macro, getc_unlocked or equivalent,
+	as in XeTeX_ext.c.
+	* utils.c (xgetc): use it.
+	* writet1.c (t1_getchar, enc_getchar): likewise.
+
 2026-10-04  Karl Berry  <karl@freefriends.org>
 
 	* writettf.c (ttf_write_dirtab): when computing checkSumAdjustment,
