@@ -1,0 +1,17 @@
+% $Id$
+% Public domain.  Used by pdfobjfile.test: file objects that are empty,
+% with and without a final newline, and a 20 KB binary stream, which
+% spans more than one 16 KB PDF output buffer.
+\ifx\fmtname\undefined
+  \input basic
+  \def\fmtname{basic}
+  \expandafter\dump
+\fi
+\pdfoutput=1
+\pdfcompresslevel=0
+\pdfobjcompresslevel=0
+\immediate\pdfobj file{pdfobjfile-empty.bin}
+\immediate\pdfobj file{pdfobjfile-noeol.bin}
+\immediate\pdfobj file{pdfobjfile-eol.bin}
+\immediate\pdfobj stream file{pdfobjfile-data.bin}
+Hello\bye

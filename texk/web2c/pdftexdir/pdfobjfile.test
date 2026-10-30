@@ -1,0 +1,44 @@
+#! /bin/sh -vx
+# $Id$
+# Public domain.
+# Check copying files into raw and stream PDF objects (\pdfobj file).
+
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_pdftex=$BinDir/pdftex$ExeExt
+
+TEXMFCNF=$srcdir/../kpathsea; export TEXMFCNF
+TEXINPUTS=".;$srcdir/pdftexdir/tests;$srcdir/tests"; export TEXINPUTS
+TEXFORMATS=.; export TEXFORMATS
+
+perl -e '
+  sub put_file {
+    my ($name, $data) = @_;
+    open(my $out, ">", $name) or die "$name: $!";
+    binmode $out;
+    print $out $data;
+    close $out or die "$name: $!";
+  }
+  put_file("pdfobjfile-empty.bin", "");
+  put_file("pdfobjfile-noeol.bin", "NOEOL-MARKER");
+  put_file("pdfobjfile-eol.bin", "WITHEOL-MARKER\n");
+  put_file("pdfobjfile-data.bin", pack("C*", 0..255) x 80);
+' || exit 1
+
+$_pdftex -ini -interaction=batchmode pdfobjfile </dev/null || exit 2
+$_pdftex -fmt=pdfobjfile -interaction=batchmode pdfobjfile </dev/null || exit 3
+
+perl -e '
+  open(my $in, "<", "pdfobjfile.pdf") or die "pdfobjfile.pdf: $!";
+  binmode $in;
+  my $pdf = do { local $/; <$in> };
+  open($in, "<", "pdfobjfile-data.bin") or die "pdfobjfile-data.bin: $!";
+  binmode $in;
+  my $data = do { local $/; <$in> };
+  $pdf =~ /\d+ 0 obj\nendobj\n/ or die "empty object changed\n";
+  index($pdf, "NOEOL-MARKER\nendobj\n") >= 0 or die "missing final newline\n";
+  index($pdf, "WITHEOL-MARKER\nendobj\n") >= 0 or die "extra final newline\n";
+  index($pdf, $data) >= 0 or die "binary stream data changed\n";
+' || exit 4
+
+exit 0
