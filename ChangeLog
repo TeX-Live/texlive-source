@@ -1,3 +1,8 @@
+2026-10-30  Karl Berry  <karl@freefriends.org>
+
+	* AGENTS.md: mention desire for ChangeLog and NEWS entries
+	in submitted patches.
+
 2026-09-10  Karl Berry  <karl@freefriends.org>
 
 	* automake 1.19.

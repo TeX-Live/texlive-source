@@ -112,17 +112,24 @@ General expectations:
 
 - When fixing a bug, add or update the nearest test and its expected output.
 
+- Treat portability regressions as bugs. TeX Live must build on a
+  wide variety of systems (GNU/Linux, macOS, Windows, and many more,
+  including old versions thereof) and compilers (GCC, Clang, MSVC).
+  System variations such as 32/64-bit, BigEndian/LittleEndian and
+  reduced-feature builds must all remain supported.
+
 - All new changes must be accompanied by new tests, following the
   pattern of existing tests for the software component being changed.
   Besides the tests themselves, patches must also include changes to
   install the new tests into the Automake test infrastructure that is
   used for all of TeX Live.
 
-- Treat portability regressions as bugs. TeX Live must build on a
-  wide variety of systems (GNU/Linux, macOS, Windows, and many more,
-  including old versions thereof) and compilers (GCC, Clang, MSVC).
-  System variations such as 32/64-bit, BigEndian/LittleEndian and
-  reduced-feature builds must all remain supported.
+- Changes should include new entries for the relevant `ChangeLog`
+file(s) for the changed component(s), following the existing pattern.
+
+- When a component has a `NEWS` file in its source directory, patches
+should also include new entry or entries for it. These are a
+sentence or two concisely stating the change from the user's point of view.
 
 ## Avoid
 
