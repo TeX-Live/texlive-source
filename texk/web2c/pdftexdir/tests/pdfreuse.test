@@ -1,0 +1,43 @@
+#! /bin/sh -vx
+# $Id$
+# Public domain.
+# Check including pages of the same PDF file on successive pages, which
+# reuses the open document, and a file rewritten between pages.
+
+: ${BinDir=.}
+: ${ExeExt=}
+_pdftex=$BinDir/pdftex$ExeExt
+
+LC_ALL=C; export LC_ALL;  LANGUAGE=C; export LANGUAGE
+
+# running in Build/source/Work/texk/web2c
+# srcdir  is Build/source/texk/web2c
+: ${srcdir=../../../texk/web2c}
+TEXMFCNF=$srcdir/../kpathsea; export TEXMFCNF
+TEXINPUTS="$srcdir/pdftexdir/tests;."; export TEXINPUTS
+TEXFORMATS=.; export TEXFORMATS
+
+rm -f pdfreuse.fmt pdfreuse.log pdfreuse-*
+
+$_pdftex -ini -interaction=batchmode pdfreuse || exit 1
+
+for mode in a b; do
+  $_pdftex -fmt=pdfreuse -interaction=batchmode -jobname=pdfreuse-$mode \
+    pdfreuse || exit 1
+done
+cp pdfreuse-a.pdf pdfreuse-x.pdf
+cp pdfreuse-a.pdf pdfreuse-y.pdf
+cp pdfreuse-a.pdf pdfreuse-z.pdf
+
+for mode in same copies; do
+  $_pdftex -fmt=pdfreuse -interaction=batchmode -jobname=pdfreuse-$mode \
+    pdfreuse || exit 2
+done
+cmp pdfreuse-same.pdf pdfreuse-copies.pdf || exit 3
+
+$_pdftex -fmt=pdfreuse -interaction=batchmode -shell-escape \
+  -jobname=pdfreuse-rewrite pdfreuse || exit 4
+test `grep -a -c '0\.111 w' pdfreuse-rewrite.pdf` = 1 || exit 5
+test `grep -a -c '0\.333 w' pdfreuse-rewrite.pdf` = 1 || exit 6
+
+exit 0

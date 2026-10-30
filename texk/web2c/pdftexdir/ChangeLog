@@ -1,3 +1,33 @@
+2026-10-30  Ben Spitz  <1844060+diracdeltafunk@users.noreply.github.com>
+
+	* pdftoepdf.cc [_WIN32] (stat): define as _stat, as lib/texmfmp.c
+	does, since fsyscp_stat fills a struct _stat. With MinGW-w64 and
+	_FILE_OFFSET_BITS=64, struct stat has another layout, so the size
+	and time read back were wrong and a rewritten file was not
+	noticed (pdfreuse.test failed).
+
+2026-10-29  Ben Spitz  <1844060+diracdeltafunk@users.noreply.github.com>
+
+	* pdftoepdf.cc (find_add_document): also compare st_dev and
+	st_ino, so that a file replaced by rename is read again even if
+	its size and modification time are the same.
+	(stat_file): new function, using fsyscp_stat on Windows so that
+	file names in the file system code page (e.g., UTF-8) work.
+	* tests/pdfreuse.test, tests/pdfreuse.tex: new test, from
+	Norbert Preining.
+	* am/pdftex.am (pdftex_tests): add it.
+
+2026-10-28  Ben Spitz  <1844060+diracdeltafunk@users.noreply.github.com>
+
+	* pdftoepdf.cc (epdf_delete): keep the most recently released
+	document open instead of deleting it, forgetting its copied
+	objects, so that including the pages of a file one at a time
+	does not make xpdf read its whole page tree for every page.
+	(find_add_document): reuse the released document only if the
+	file's modification time and size are unchanged.
+	(free_in_obj_list): new function, split from delete_document.
+	(epdf_check_mem): reset releasedDocument.
+
 2026-10-04  Karl Berry  <karl@freefriends.org>
 
 	* writettf.c (ttf_write_dirtab): when computing checkSumAdjustment,
