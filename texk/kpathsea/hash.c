@@ -32,18 +32,19 @@ hash (hash_table_type table,  const_string key)
 {
   unsigned n = 0;
 
-  /* Our keys aren't often anagrams of each other, so no point in
-     weighting the characters.  */
+  /* Reduce modulo the table size only once, at the end, instead of
+     dividing for every character.  Multiply by 31 rather than 2 so
+     that the first characters of long keys still affect the result.  */
   while (*key != 0)
 #if defined (WIN32) && defined (KPSE_COMPAT_API)
     if (IS_KANJI(key)) {
-      n = (n + n + (unsigned)(*key++)) % table.size;
-      n = (n + n + (unsigned)(*key++)) % table.size;
+      n = 31 * n + (unsigned)(*key++);
+      n = 31 * n + (unsigned)(*key++);
     } else
 #endif
-    n = (n + n + TRANSFORM (*key++)) % table.size;
+    n = 31 * n + TRANSFORM (*key++);
 
-  return n;
+  return n % table.size;
 }
 
 /* Identical hash function as above, but does not normalize keys. */
@@ -52,12 +53,11 @@ hash_normalized (hash_table_type table,  const_string key)
 {
   unsigned n = 0;
 
-  /* Our keys aren't often anagrams of each other, so no point in
-     weighting the characters.  */
+  /* See comments above.  */
   while (*key != 0)
-    n = (n + n + (*key++)) % table.size;
+    n = 31 * n + (*key++);
 
-  return n;
+  return n % table.size;
 }
 
 hash_table_type
@@ -92,19 +92,13 @@ hash_insert (hash_table_type *table,
 
   new_elt->key = key;
   new_elt->value = value;
-  new_elt->next = NULL;
 
-  /* Insert the new element at the end of the list.  */
-  if (!table->buckets[n])
-    /* first element in bucket is a special case.  */
-    table->buckets[n] = new_elt;
-  else
-    {
-      hash_element_type *loc = table->buckets[n];
-      while (loc->next)         /* Find the last element.  */
-        loc = loc->next;
-      loc->next = new_elt;      /* Insert the new one after.  */
-    }
+  /* Insert the new element at the beginning of the list, so that
+     insertion takes constant time even when many keys are the same
+     (e.g., README in ls-R).  hash_lookup reverses its result to
+     return values in insertion order.  */
+  new_elt->next = table->buckets[n];
+  table->buckets[n] = new_elt;
 }
 
 /* Same as above, for normalized keys. */
@@ -118,19 +112,13 @@ hash_insert_normalized (hash_table_type *table,
 
   new_elt->key = key;
   new_elt->value = value;
-  new_elt->next = NULL;
 
-  /* Insert the new element at the end of the list.  */
-  if (!table->buckets[n])
-    /* first element in bucket is a special case.  */
-    table->buckets[n] = new_elt;
-  else
-    {
-      hash_element_type *loc = table->buckets[n];
-      while (loc->next)         /* Find the last element.  */
-        loc = loc->next;
-      loc->next = new_elt;      /* Insert the new one after.  */
-    }
+  /* Insert the new element at the beginning of the list, so that
+     insertion takes constant time even when many keys are the same
+     (e.g., README in ls-R).  hash_lookup reverses its result to
+     return values in insertion order.  */
+  new_elt->next = table->buckets[n];
+  table->buckets[n] = new_elt;
 }
 
 /* Remove a (KEY, VALUE) pair.  */
@@ -171,9 +159,17 @@ hash_lookup (hash_table_type table,  const_string key)
     if (FILESTRCASEEQ (key, p->key))
       cstr_list_add (&ret, p->value);
 
-  /* If we found anything, mark end of list with null.  */
-  if (STR_LIST (ret))
+  /* If we found anything, reverse the list to get insertion order
+     (see hash_insert), and mark end of list with null.  */
+  if (STR_LIST (ret)) {
+    unsigned i, j;
+    for (i = 0, j = STR_LIST_LENGTH (ret) - 1; i < j; i++, j--) {
+      const_string tmp = STR_LIST_ELT (ret, i);
+      STR_LIST_ELT (ret, i) = STR_LIST_ELT (ret, j);
+      STR_LIST_ELT (ret, j) = tmp;
+    }
     cstr_list_add (&ret, NULL);
+  }
 
 #ifdef KPSE_DEBUG
 #if defined (KPSE_COMPAT_API)
