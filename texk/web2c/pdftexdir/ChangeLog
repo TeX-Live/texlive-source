@@ -1,3 +1,11 @@
+2026-10-30  Ben Spitz  <1844060+diracdeltafunk@users.noreply.github.com>
+
+	* pdftoepdf.cc [_WIN32] (stat): define as _stat, as lib/texmfmp.c
+	does, since fsyscp_stat fills a struct _stat. With MinGW-w64 and
+	_FILE_OFFSET_BITS=64, struct stat has another layout, so the size
+	and time read back were wrong and a rewritten file was not
+	noticed (pdfreuse.test failed).
+
 2026-10-29  Ben Spitz  <1844060+diracdeltafunk@users.noreply.github.com>
 
 	* pdftoepdf.cc (find_add_document): also compare st_dev and
