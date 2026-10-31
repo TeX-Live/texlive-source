@@ -1,3 +1,11 @@
+2026-10-29  Ben Spitz  <1844060+diracdeltafunk@users.noreply.github.com>
+
+	* writejpg.c (write_jpg): copy the JPEG data into the PDF output
+	buffer in chunks instead of one byte at a time; after a short
+	read, finish one byte at a time as before.
+	* jpgcopy.test, tests/jpgcopy.tex: new test.
+	* am/pdftex.am (pdftex_tests): add it.
+
 2026-10-30  Ben Spitz  <1844060+diracdeltafunk@users.noreply.github.com>
 
 	* pdftoepdf.cc [_WIN32] (stat): define as _stat, as lib/texmfmp.c

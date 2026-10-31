@@ -1,0 +1,12 @@
+% $Id$
+% Public domain.  Used by jpgcopy.test: 1-4.jpg (80 KB) spans several
+% 16 KB PDF output buffers.
+\ifx\fmtname\undefined
+  \input basic
+  \def\fmtname{basic}
+  \expandafter\dump
+\fi
+\pdfoutput=1
+\pdfximage{1-4.jpg}
+\hbox{\pdfrefximage\pdflastximage}
+\bye

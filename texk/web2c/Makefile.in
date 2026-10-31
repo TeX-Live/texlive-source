@@ -3368,17 +3368,17 @@ EXTRA_DIST = PROJECTS cftests cpascal.h help.h w2c/config.h \
 	pdftexdir/README pdftexdir/change-files.txt $(pdftex_tests) \
 	tests/wprob.tex pdftexdir/tests/pdfimage.tex tests/1-4.jpg \
 	tests/B.pdf tests/basic.tex tests/lily-ledger-broken.png \
-	tests/expanded.tex tests/expanded.txt tests/cnfline.tex \
-	tests/partoken-ok.tex tests/partoken-xfail.tex \
-	pdftexdir/tests/fileread.tex tests/cmr10.pfb tests/lmr10.pfb \
-	tests/lm-texnansi.enc tests/texnansi-lmr10.tfm \
-	pdftexdir/tests/pdfreuse.tex $(ttf2afm_tests) \
-	pdftexdir/tests/postV3.afm pdftexdir/tests/postV3.ttf \
-	pdftexdir/tests/postV7.afm pdftexdir/tests/postV7.ttf \
-	$(pdftosrc_tests) pdftexdir/tests/test-13.pdf \
-	pdftexdir/tests/test-13.xref pdftexdir/tests/test-15.pdf \
-	pdftexdir/tests/test-15.xref $(libluasocket_sources) \
-	luatexdir/luasocket/src/ftp_lua.c \
+	pdftexdir/tests/jpgcopy.tex tests/expanded.tex \
+	tests/expanded.txt tests/cnfline.tex tests/partoken-ok.tex \
+	tests/partoken-xfail.tex pdftexdir/tests/fileread.tex \
+	tests/cmr10.pfb tests/lmr10.pfb tests/lm-texnansi.enc \
+	tests/texnansi-lmr10.tfm pdftexdir/tests/pdfreuse.tex \
+	$(ttf2afm_tests) pdftexdir/tests/postV3.afm \
+	pdftexdir/tests/postV3.ttf pdftexdir/tests/postV7.afm \
+	pdftexdir/tests/postV7.ttf $(pdftosrc_tests) \
+	pdftexdir/tests/test-13.pdf pdftexdir/tests/test-13.xref \
+	pdftexdir/tests/test-15.pdf pdftexdir/tests/test-15.xref \
+	$(libluasocket_sources) luatexdir/luasocket/src/ftp_lua.c \
 	luatexdir/luasocket/src/headers_lua.c \
 	luatexdir/luasocket/src/http_lua.c \
 	luatexdir/luasocket/src/ltn12_lua.c \
@@ -3695,8 +3695,9 @@ DISTCLEANFILES = CXXLD.sh tangle.c tangle.h tangle.p tangle-web2c \
 	$(nodist_histretch_SOURCES) hiformat-tangle hitex-tangle \
 	hello.log rule.log $(nodist_pdftex_SOURCES) pdftex-final.ch \
 	pdftex-web2c pdftex.p pdftex.pool pdftex-tangle pwprob.log \
-	pwprob.tex pdfimage.fmt pdfimage.log pdfimage.pdf expanded.log \
-	cnfline.log partoken-ok.log partoken-xfail.log pdftests/fn*.* \
+	pwprob.tex pdfimage.fmt pdfimage.log pdfimage.pdf jpgcopy.fmt \
+	jpgcopy.log jpgcopy.pdf expanded.log cnfline.log \
+	partoken-ok.log partoken-xfail.log pdftests/fn*.* \
 	fileread-eol.tex fileread.map fileread.exp fileread.out \
 	fileread.log fileread.pdf pdfreuse.fmt pdfreuse.log pdfreuse-* \
 	postV3.afm postV7.afm test-13.pdf test-13.xref test-15.pdf \
@@ -4763,10 +4764,10 @@ pdftex_ch_srcs = \
 # pdfTeX tests
 #
 pdftex_tests = pdftexdir/wprob.test pdftexdir/pdftex.test \
-	pdftexdir/pdfimage.test pdftexdir/expanded.test \
-	pdftexdir/tests/cnfline.test pdftexdir/tests/partoken.test \
-	pdftexdir/wcfname.test pdftexdir/tests/pdfreuse.test \
-	pdftexdir/tests/fileread.test
+	pdftexdir/pdfimage.test pdftexdir/jpgcopy.test \
+	pdftexdir/expanded.test pdftexdir/tests/cnfline.test \
+	pdftexdir/tests/partoken.test pdftexdir/wcfname.test \
+	pdftexdir/tests/pdfreuse.test pdftexdir/tests/fileread.test
 ttf2afm_CPPFLAGS = $(AM_CPPFLAGS) -I$(srcdir)/pdftexdir
 ttf2afm_SOURCES = pdftexdir/ttf2afm.c
 ttf2afm_DEPENDENCIES = $(default_dependencies)
@@ -22371,7 +22372,7 @@ pdftex.tex: $(srcdir)/pdftexdir/pdftex.web
 	weave $(srcdir)/pdftexdir/pdftex.web
 
 pdftexdir/wprob.log pdftexdir/pdftex.log \
-  pdftexdir/pdfimage.log pdftexdir/expanded.log \
+  pdftexdir/pdfimage.log pdftexdir/jpgcopy.log pdftexdir/expanded.log \
   pdftexdir/tests/cnfline.log pdftexdir/tests/partoken.log \
   pdftexdir/wcfname.log pdftexdir/tests/pdfreuse.log: pdftex$(EXEEXT)
 pdftexdir/tests/fileread.log: pdftex$(EXEEXT)
