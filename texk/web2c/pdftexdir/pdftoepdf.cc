@@ -68,6 +68,10 @@ extern integer zround(double);
 
 #if defined(_WIN32)
 // From lib/texmfmp.c; handles file names in the file system code page.
+// texmfmp.c defines stat as _stat, so do the same here: with MinGW-w64
+// and _FILE_OFFSET_BITS=64, struct stat is not the struct _stat it fills.
+#undef stat
+#define stat _stat
 extern int fsyscp_stat(const char *path, struct stat *buffer);
 #endif
 }
