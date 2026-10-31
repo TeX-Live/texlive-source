@@ -1,5 +1,11 @@
 2026-10-28  Ben Spitz  <1844060+diracdeltafunk@users.noreply.github.com>
 
+	* hash.c (hash, hash_normalized): take the modulus only once,
+	at the end, instead of dividing for every character; multiply
+	by 31 instead of 2 so that all characters affect the result.
+
+2026-10-28  Ben Spitz  <1844060+diracdeltafunk@users.noreply.github.com>
+
 	* hash.c (hash_insert, hash_insert_normalized): insert new
 	elements at the beginning of the bucket instead of walking to
 	the end. ls-R has thousands of identical names (README, etc.),
