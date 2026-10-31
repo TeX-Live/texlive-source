@@ -1,3 +1,10 @@
+2026-10-29  Norbert Preining  <norbert@preining.info>
+
+	* tests/hashdup.test: new test for keys with several values:
+	texmf.cnf variables and aliases are used in insertion order,
+	and all copies of a file name in ls-R are found.
+	* Makefile.am (TESTS): add it.
+
 2026-10-28  Ben Spitz  <1844060+diracdeltafunk@users.noreply.github.com>
 
 	* hash.c (hash, hash_normalized): take the modulus only once,

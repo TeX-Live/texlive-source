@@ -1,0 +1,54 @@
+#! /bin/sh -vx
+# $Id$
+# Public domain.
+# Check that a hash lookup returns all values of a key, in insertion
+# order: the first definition of a texmf.cnf variable wins, aliases are
+# tried in the order of the aliases file, and many directories with
+# the same file name in ls-R are all found.
+
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_kpsewhich=$BinDir/kpsewhich$ExeExt
+
+# Directory names in ls-R are matched against absolute path elements.
+dir=`pwd`/hashdup.dir
+rm -rf $dir
+mkdir $dir $dir/cnf $dir/alias $dir/dup || exit 1
+
+# texmf.cnf: the first definition wins.
+printf 'dupvar = first\ndupvar = second\ndupvar = third\n' >$dir/cnf/texmf.cnf
+val=`TEXMFCNF=$dir/cnf $_kpsewhich --var-value=dupvar`
+test x"$val" = xfirst || exit 1
+
+TEXMFCNF=$srcdir; export TEXMFCNF
+TEXMFDBS=$dir; export TEXMFDBS
+
+# ls-R: 500 directories containing dup.tex, and two files for the
+# alias test.
+: >$dir/ls-R.tmp
+i=0
+while test $i -lt 500; do
+  mkdir $dir/dup/d$i && echo >$dir/dup/d$i/dup.tex || exit 2
+  printf './dup/d%s:\ndup.tex\n' $i >>$dir/ls-R.tmp
+  echo $dir/dup/d$i/dup.tex >>$dir/expected.tmp
+  i=`expr $i + 1`
+done
+echo >$dir/alias/one.tex
+echo >$dir/alias/two.tex
+{
+  printf '%% ls-R -- filename database for kpathsea; do not change this line.\n'
+  printf './alias:\none.tex\ntwo.tex\n'
+  cat $dir/ls-R.tmp
+} >$dir/ls-R
+
+# aliases: the first real file for an alias wins.
+printf 'one.tex alias.tex\ntwo.tex alias.tex\n' >$dir/aliases
+test "`TEXINPUTS=!!$dir/alias $_kpsewhich alias.tex`" = "$dir/alias/one.tex" \
+  || exit 3
+
+# All copies; their order depends on the order of directories on disk.
+TEXINPUTS=!!$dir// $_kpsewhich -all dup.tex | sort >$dir/found.tmp
+sort $dir/expected.tmp | cmp - $dir/found.tmp || exit 4
+
+rm -rf $dir
+exit 0
