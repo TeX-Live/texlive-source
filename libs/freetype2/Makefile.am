@@ -28,6 +28,10 @@ noinst_DATA = libfreetype.a
 # be lost, even though it is not the cleanest solution. Similarly, don't
 # incorporate other libraries which are not needed or are elsewhere in TL.
 # They just complicate things.
+#
+# FreeType 2.15.0 enables its HVF driver whenever the macOS SDK provides
+# <hvf/Scaler.h>, which requires linking with Apple's -lhvf (macOS 15.4+).
+# There is no --without-hvf option, so preset the header check result.
 ft-config:
 	rm -rf ft-build
 	$(MKDIR_P) ft-build
@@ -40,6 +44,7 @@ ft-config:
 	    --without-harfbuzz \
 	    --without-png \
 	    --without-zlib \
+	    ac_cv_header_hvf_Scaler_h=no \
 	    --prefix=$(abs_builddir)/ft-install \
 	    --libdir=$(abs_builddir) \
 	    --includedir=$(abs_builddir)
