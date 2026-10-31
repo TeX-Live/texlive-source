@@ -1,0 +1,53 @@
+#! /bin/sh -vx
+# $Id$
+# Public domain.
+# Check how ls-R is parsed: LF, CR and CRLF line ends, null bytes,
+# blank lines, `.' and `..', hidden directories, a last line without
+# newline, and an ls-R larger than the initial read buffer in db.c.
+
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_kpsewhich=$BinDir/kpsewhich$ExeExt
+
+TEXMFCNF=$srcdir; export TEXMFCNF
+
+# Directory names in ls-R are matched against absolute path elements.
+dir=`pwd`/lsrparse.dir
+rm -rf $dir
+mkdir $dir $dir/crlf $dir/a $dir/b $dir/.git $dir/pad $dir/z || exit 1
+for f in crlf/crlf.tex a/dup.tex a/nul.tex b/dup.tex b/cr.tex .git/hidden.tex \
+         z/last.tex z/notindb.tex; do
+  echo >$dir/$f || exit 1
+done
+
+{
+  printf '%% ls-R -- filename database for kpathsea; do not change this line.\n'
+  printf './crlf:\r\ncrlf.tex\r\n\r\n'
+  printf './a:\rdup.tex\rnul\000.tex\n\000\n'
+  printf './b:\ndup.tex\n.\n..\n\ncr.tex\r\r\n'
+  printf './.git:\nhidden.tex\n'
+  # more than 64KiB of entries
+  printf './pad:\n'
+  awk 'BEGIN { for (i = 0; i < 5000; i++) printf "padding-file-%05d.tex\n", i }'
+  printf './z:\nlast.tex'
+} >$dir/ls-R || exit 1
+
+TEXMFDBS=$dir; export TEXMFDBS
+TEXINPUTS="!!$dir//"; export TEXINPUTS
+
+test "`$_kpsewhich crlf.tex`" = "$dir/crlf/crlf.tex" || exit 1
+test "`$_kpsewhich nul.tex`" = "$dir/a/nul.tex" || exit 2
+test "`$_kpsewhich cr.tex`" = "$dir/b/cr.tex" || exit 3
+test "`$_kpsewhich last.tex`" = "$dir/z/last.tex" || exit 4
+
+# Both copies; their order depends on the order of directories on disk.
+all=`$_kpsewhich -all dup.tex | sort | tr '\n' ' '`
+test "$all" = "$dir/a/dup.tex $dir/b/dup.tex " || exit 5
+
+# Hidden directories are not in the database, nor are files missing
+# from ls-R; with !!, kpathsea must not look on the disk.
+test -z "`$_kpsewhich hidden.tex`" || exit 6
+test -z "`$_kpsewhich notindb.tex`" || exit 7
+
+rm -rf $dir
+exit 0

@@ -1,3 +1,10 @@
+2026-10-29  Norbert Preining  <norbert@preining.info>
+
+	* tests/lsrparse.test: new test for reading ls-R: line ends,
+	null bytes, hidden directories, and a file larger than the
+	initial read buffer.
+	* Makefile.am (TESTS): add it.
+
 2026-10-28  Ben Spitz  <1844060+diracdeltafunk@users.noreply.github.com>
 
 	* db.c (read_all): new function.
