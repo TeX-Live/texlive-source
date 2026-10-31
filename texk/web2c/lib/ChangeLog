@@ -1,3 +1,9 @@
+2026-10-28  Ben Spitz  <1844060+diracdeltafunk@users.noreply.github.com>
+
+	* texmfmp.c (GETC): new macro, getc_unlocked or equivalent,
+	as in XeTeX_ext.c.
+	(input_line): use it.
+
 2026-03-02  Karl Berry  <karl@tug.org>
 
 	* TL'26 release.
