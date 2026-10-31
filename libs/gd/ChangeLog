@@ -1,3 +1,11 @@
+2026-10-29  Ben Spitz  <1844060+diracdeltafunk@users.noreply.github.com>
+
+	* libgd-src/src/gd_nnquant.c, libgd-src/src/gd_tiff.c: use
+	prototype-style definitions, from upstream commit d4a3100
+	(https://github.com/libgd/libgd/pull/835). Clang rejects
+	old-style definitions as C23, which Autoconf 2.73 now selects.
+	* TLpatches/patch-04-c23: New.
+
 2022-11-06  Sam James  <sam@gentoo.org>
 
 	* libgd-src/tests/xpm/bug00185.c: placate clang16.
