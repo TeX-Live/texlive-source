@@ -1,0 +1,37 @@
+% $Id$
+% Public domain.  Used by pdfreuse.test; the job name selects the test.
+% Run from a format: in INITEX, pdfTeX keeps all images, to dump them.
+\catcode`\{=1 \catcode`\}=2 \catcode`\#=6
+\ifx\fmtname\undefined
+  \def\fmtname{pdfreuse}
+  \expandafter\dump
+\fi
+\pdfoutput=1 \pdfcompresslevel=0 \pdfobjcompresslevel=0
+\pdfinfoomitdate=1 \pdftrailerid{} \pdfsuppressptexinfo=-1
+\pdfpagewidth=100bp \pdfpageheight=100bp
+
+\def\test#1{\ifnum\pdfstrcmp{\jobname}{pdfreuse-#1}=0 }
+\def\img#1#2{\pdfximage page #2 {#1}\shipout\hbox{\pdfrefximage\pdflastximage}}
+
+% Source files: each page has a marker line width in its content, and
+% an ExtGState resource that is copied as an object when it is included.
+\def\src#1{\shipout\hbox{\pdfliteral{/G gs #1 w}}}
+\def\space{ }
+\immediate\pdfobj{<< /CA 0.5 >>}
+\edef\next{/ExtGState << /G \the\pdflastobj\space 0 R >>}
+\pdfpageresources\expandafter{\next}
+\test{a}\src{0.111}\src{0.222}\fi
+\test{b}\src{0.333}\fi
+\pdfpageresources{}
+
+% The same file, which pdfTeX keeps open between the pages ...
+\test{same}\img{pdfreuse-x.pdf}1\img{pdfreuse-x.pdf}2\img{pdfreuse-x.pdf}1\fi
+% ... must give the same output as copies of it, which it opens anew.
+\test{copies}\img{pdfreuse-x.pdf}1\img{pdfreuse-y.pdf}2\img{pdfreuse-z.pdf}1\fi
+
+% A file rewritten between pages is read again.
+\test{rewrite}
+  \immediate\write18{cp pdfreuse-a.pdf pdfreuse-w.pdf}\img{pdfreuse-w.pdf}1
+  \immediate\write18{cp pdfreuse-b.pdf pdfreuse-w.pdf}\img{pdfreuse-w.pdf}1
+\fi
+\end

@@ -108,13 +108,13 @@ EXTRA_DIST += \
 pdftex_tests = pdftexdir/wprob.test pdftexdir/pdftex.test \
   pdftexdir/pdfimage.test pdftexdir/expanded.test \
   pdftexdir/tests/cnfline.test pdftexdir/tests/partoken.test \
-  pdftexdir/wcfname.test
+  pdftexdir/wcfname.test pdftexdir/tests/pdfreuse.test
 pdftex_tests += pdftexdir/tests/fileread.test
 
 pdftexdir/wprob.log pdftexdir/pdftex.log \
   pdftexdir/pdfimage.log pdftexdir/expanded.log \
   pdftexdir/tests/cnfline.log pdftexdir/tests/partoken.log \
-  pdftexdir/wcfname.log: pdftex$(EXEEXT)
+  pdftexdir/wcfname.log pdftexdir/tests/pdfreuse.log: pdftex$(EXEEXT)
 pdftexdir/tests/fileread.log: pdftex$(EXEEXT)
 
 EXTRA_DIST += $(pdftex_tests)
@@ -152,5 +152,9 @@ EXTRA_DIST += pdftexdir/tests/fileread.tex tests/cmr10.pfb tests/lmr10.pfb \
 	tests/lm-texnansi.enc tests/texnansi-lmr10.tfm
 DISTCLEANFILES += fileread-eol.tex fileread.map fileread.exp fileread.out \
 	fileread.log fileread.pdf
+
+## pdfreuse.test
+EXTRA_DIST += pdftexdir/tests/pdfreuse.tex
+DISTCLEANFILES += pdfreuse.fmt pdfreuse.log pdfreuse-*
 
 # (end of pdftex.am)

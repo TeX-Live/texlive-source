@@ -65,6 +65,11 @@ extern int getpdfsuppresswarningpagegroup(void);
 extern integer getpdfsuppressptexinfo(void);
 extern integer getptexuseunderscore(void);
 extern integer zround(double);
+
+#if defined(_WIN32)
+// From lib/texmfmp.c; handles file names in the file system code page.
+extern int fsyscp_stat(const char *path, struct stat *buffer);
+#endif
 }
 
 // The prefix "PTEX" for the PDF keys is special to pdfTeX;
@@ -158,6 +163,18 @@ static XRef *xref = 0;
 
 static void delete_document(PdfDocument * pdf_doc);
 
+// stat() a PDF file by name; on Windows the name is in the file system
+// code page (e.g., UTF-8), as when xpdf opens it.
+
+static int stat_file(const char *file_name, struct stat *st)
+{
+#if defined(_WIN32)
+    return fsyscp_stat(file_name, st);
+#else
+    return stat(file_name, st);
+#endif
+}
+
 // Returns pointer to PdfDocument record for PDF file.
 // Creates a new record if it doesn't exist yet.
 // xref is made current for the document.
@@ -169,10 +186,12 @@ static PdfDocument *find_add_document(char *file_name)
         p = p->next;
     if (p && p == releasedDocument) {
         // Reuse the released document only if the file has not been
-        // changed since, e.g., by \write18.
+        // changed or replaced since, e.g., by \write18.
         struct stat st;
         releasedDocument = 0;
-        if (stat(p->file_name, &st) != 0
+        if (stat_file(p->file_name, &st) != 0
+            || st.st_dev != p->file_stat.st_dev
+            || st.st_ino != p->file_stat.st_ino
             || st.st_mtime != p->file_stat.st_mtime
             || st.st_size != p->file_stat.st_size) {
             delete_document(p);
@@ -1093,7 +1112,7 @@ void epdf_delete()
             delete_document(releasedDocument);
         releasedDocument = 0;
         xref = pdf_doc->xref;
-        if (stat(pdf_doc->file_name, &pdf_doc->file_stat) == 0) {
+        if (stat_file(pdf_doc->file_name, &pdf_doc->file_stat) == 0) {
             free_in_obj_list(pdf_doc);
             releasedDocument = pdf_doc;
         } else
