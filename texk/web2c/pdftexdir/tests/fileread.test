@@ -1,0 +1,57 @@
+#! /bin/sh -vx
+# $Id$
+# Public domain.
+# Check reading files one character at a time: input lines with LF,
+# CR and CRLF line ends, and pdfTeX's map, encoding and Type 1 files.
+
+: ${BinDir=.}
+: ${ExeExt=}
+_pdftex=$BinDir/pdftex$ExeExt
+
+LC_ALL=C; export LC_ALL;  LANGUAGE=C; export LANGUAGE
+
+# running in Build/source/Work/texk/web2c
+# srcdir  is Build/source/texk/web2c
+: ${srcdir=../../../texk/web2c}
+TEXMFCNF=$srcdir/../kpathsea; export TEXMFCNF
+TEXINPUTS="$srcdir/pdftexdir/tests;."; export TEXINPUTS
+TEXFONTMAPS=.; export TEXFONTMAPS
+TFMFONTS=$srcdir/tests; export TFMFONTS
+ENCFONTS=$srcdir/tests; export ENCFONTS
+T1FONTS=$srcdir/tests; export T1FONTS
+
+rm -f fileread.log fileread.pdf
+
+printf 'lf line\ncrlf line\r\ncr line\rtrailing spaces   \n' >fileread-eol.tex
+printf '\r\n\rno final newline' >>fileread-eol.tex
+printf '%% comment\ncmr10 CMR10 <cmr10.pfb\n' >fileread.map
+printf 'texnansi-lmr10 LMRoman10-Regular <lm-texnansi.enc <lmr10.pfb\n' \
+  >>fileread.map
+
+$_pdftex -ini -etex -interaction=batchmode fileread.tex || exit 1
+
+# Reading past the last line gives one more, empty, line.
+cat >fileread.exp <<'EOF'
+START
+[lf line]
+[crlf line]
+[cr line]
+[trailing spaces]
+[]
+[]
+[no final newline]
+[]
+END
+EOF
+sed -n '/^START$/,/^END$/p' fileread.log >fileread.out
+diff fileread.exp fileread.out || exit 2
+
+grep 'pdfTeX warning' fileread.log && exit 3
+
+# Both fonts are embedded, one of them reencoded.
+test `grep -a -c '/FontFile ' fileread.pdf` = 2 || exit 4
+grep -a '/BaseFont /[A-Z]*+CMR10$' fileread.pdf || exit 5
+grep -a '/BaseFont /[A-Z]*+LMRoman10-Regular$' fileread.pdf || exit 6
+grep -a '/Differences' fileread.pdf || exit 7
+
+exit 0

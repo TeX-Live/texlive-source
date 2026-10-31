@@ -1,0 +1,17 @@
+% $Id$
+% Public domain.  Used by fileread.test.
+\catcode`\{=1 \catcode`\}=2 \catcode`\#=6
+\pdfoutput=1 \pdfcompresslevel=0 \pdfobjcompresslevel=0
+\pdfpagewidth=100bp \pdfpageheight=100bp
+
+% Input lines, from fileread-eol.tex made by fileread.test.
+\def\readall{\ifeof1 \else
+  \readline1 to\x \immediate\write16{[\x]}\expandafter\readall\fi}
+\openin1=fileread-eol.tex
+\immediate\write16{START}{\endlinechar=-1 \readall}\immediate\write16{END}
+
+% Map, encoding and Type 1 font files.
+\pdfmapfile{fileread.map}
+\font\a=cmr10 \font\b=texnansi-lmr10
+\shipout\hbox{\a AB\b AB}
+\end

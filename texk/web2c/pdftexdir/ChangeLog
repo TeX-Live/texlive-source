@@ -1,3 +1,10 @@
+2026-10-29  Norbert Preining  <norbert@preining.info>
+
+	* tests/fileread.test, tests/fileread.tex: new test for reading
+	input lines with LF, CR and CRLF line ends, and map, encoding
+	and Type 1 font files.
+	* am/pdftex.am (pdftex_tests): add it.
+
 2026-10-28  Ben Spitz  <1844060+diracdeltafunk@users.noreply.github.com>
 
 	* ptexmac.h (GETC): new macro, getc_unlocked or equivalent,
