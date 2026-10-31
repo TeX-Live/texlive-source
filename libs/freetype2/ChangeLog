@@ -1,3 +1,11 @@
+2026-10-29  Ben Spitz  <1844060+diracdeltafunk@users.noreply.github.com>
+
+	* Makefile.am (ft-config): pass ac_cv_header_hvf_Scaler_h=no to
+	FreeType's configure, so the HVF driver is not enabled when the
+	macOS SDK provides <hvf/Scaler.h>; otherwise libfreetype.a needs
+	-lhvf, which KPSE_FREETYPE2_FLAGS does not add.
+	* Makefile.in: Regenerated.
+
 2026-10-15  Akira Kakuto  <kakuto@jcom.zaq.ne.jp>
 
 	Import freetype-2.15.0.
