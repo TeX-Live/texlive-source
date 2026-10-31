@@ -1,0 +1,43 @@
+#! /bin/sh -vx
+# $Id$
+# Public domain.
+# Check the numbers before SlantFont and ExtendFont in a map file,
+# including one directly followed by ExtendFont: glibc's sscanf("%f")
+# rejects "0.5ExtendFont", so it used to be ignored.
+
+: ${BinDir=.}
+: ${ExeExt=}
+_pdftex=$BinDir/pdftex$ExeExt
+
+LC_ALL=C; export LC_ALL;  LANGUAGE=C; export LANGUAGE
+
+# running in Build/source/Work/texk/web2c
+# srcdir  is Build/source/texk/web2c
+: ${srcdir=../../../texk/web2c}
+TEXMFCNF=$srcdir/../kpathsea; export TEXMFCNF
+TEXINPUTS="$srcdir/pdftexdir/tests;."; export TEXINPUTS
+TEXFONTMAPS=.; export TEXFONTMAPS
+TFMFONTS=$srcdir/tests; export TFMFONTS
+T1FONTS=$srcdir/tests; export T1FONTS
+
+rm -f mapnumber.log mapnumber.pdf
+
+printf '%s\n' \
+  'cmr10 CMR10 ".167 SlantFont" <cmr10.pfb' \
+  'cmr7 CMR10 "0.5ExtendFont" <cmr10.pfb' \
+  'cmr8 CMR10 " -.1 SlantFont 1.2 ExtendFont " <cmr10.pfb' >mapnumber.map
+
+$_pdftex -ini -interaction=batchmode mapnumber.tex || exit 1
+
+grep 'pdfTeX warning' mapnumber.log && exit 2
+
+grep -a '/BaseFont /[A-Z]*+CMR10-Slant_167$' mapnumber.pdf || exit 3
+grep -a '/BaseFont /[A-Z]*+CMR10-Extend_500$' mapnumber.pdf || exit 4
+grep -a '/BaseFont /[A-Z]*+CMR10-Slant_-100-Extend_1200$' mapnumber.pdf \
+  || exit 5
+
+grep -a '^/FontMatrix \[0.001 0 0.000167 0.001 0 0 \]' mapnumber.pdf || exit 6
+grep -a '^/FontMatrix \[0.0005 0 0 0.001 0 0 \]' mapnumber.pdf || exit 7
+grep -a '^/FontMatrix \[0.0012 0 -0.00012 0.001 0 0 \]' mapnumber.pdf || exit 8
+
+exit 0

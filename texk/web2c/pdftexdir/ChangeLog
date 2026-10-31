@@ -1,3 +1,10 @@
+2026-10-31  Norbert Preining  <norbert@preining.info>
+
+	* tests/mapnumber.test, tests/mapnumber.tex: new test for the
+	numbers before SlantFont and ExtendFont in a map file, including
+	"0.5ExtendFont", which was ignored with glibc's sscanf.
+	* am/pdftex.am (pdftex_tests): add it.
+
 2026-10-31  Ben Spitz  <1844060+diracdeltafunk@users.noreply.github.com>
 
 	* mapfile.c (fm_scan_line): parse the numbers in the quoted part
