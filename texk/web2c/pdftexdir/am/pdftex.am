@@ -106,13 +106,15 @@ EXTRA_DIST += \
 # pdfTeX tests
 #
 pdftex_tests = pdftexdir/wprob.test pdftexdir/pdftex.test \
-  pdftexdir/pdfimage.test pdftexdir/jpgcopy.test pdftexdir/expanded.test \
+  pdftexdir/pdfimage.test pdftexdir/jpgcopy.test pdftexdir/pdfobjfile.test \
+  pdftexdir/expanded.test \
   pdftexdir/tests/cnfline.test pdftexdir/tests/partoken.test \
   pdftexdir/wcfname.test pdftexdir/tests/pdfreuse.test
 pdftex_tests += pdftexdir/tests/fileread.test
 
 pdftexdir/wprob.log pdftexdir/pdftex.log \
-  pdftexdir/pdfimage.log pdftexdir/jpgcopy.log pdftexdir/expanded.log \
+  pdftexdir/pdfimage.log pdftexdir/jpgcopy.log pdftexdir/pdfobjfile.log \
+  pdftexdir/expanded.log \
   pdftexdir/tests/cnfline.log pdftexdir/tests/partoken.log \
   pdftexdir/wcfname.log pdftexdir/tests/pdfreuse.log: pdftex$(EXEEXT)
 pdftexdir/tests/fileread.log: pdftex$(EXEEXT)
@@ -135,6 +137,12 @@ DISTCLEANFILES += pdfimage.fmt pdfimage.log pdfimage.pdf
 ## jpgcopy.test
 EXTRA_DIST += pdftexdir/tests/jpgcopy.tex
 DISTCLEANFILES += jpgcopy.fmt jpgcopy.log jpgcopy.pdf
+
+## pdfobjfile.test
+EXTRA_DIST += pdftexdir/tests/pdfobjfile.tex
+DISTCLEANFILES += pdfobjfile.fmt pdfobjfile.log pdfobjfile.pdf \
+	pdfobjfile-empty.bin pdfobjfile-noeol.bin \
+	pdfobjfile-eol.bin pdfobjfile-data.bin
 
 ## expanded.test
 EXTRA_DIST += tests/expanded.tex tests/expanded.txt

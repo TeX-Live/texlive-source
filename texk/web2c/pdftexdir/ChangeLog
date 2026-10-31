@@ -1,5 +1,13 @@
 2026-10-29  Ben Spitz  <1844060+diracdeltafunk@users.noreply.github.com>
 
+	* pdftex.web (pdf_write_obj): read each byte of a file object
+	once, instead of testing eof (which reads ahead and pushes the
+	byte back) before each getc.
+	* pdfobjfile.test, tests/pdfobjfile.tex: new test.
+	* am/pdftex.am (pdftex_tests): add it.
+
+2026-10-29  Ben Spitz  <1844060+diracdeltafunk@users.noreply.github.com>
+
 	* writejpg.c (write_jpg): copy the JPEG data into the PDF output
 	buffer in chunks instead of one byte at a time; after a short
 	read, finish one byte at a time as before.
