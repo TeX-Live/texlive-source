@@ -5,7 +5,7 @@
 -- are half-broken without it too.
 kpse.set_program_name("luatex")
 
-local SPITOOL_VERSION = "1.3"
+local SPITOOL_VERSION = "1.4"
 local lfs = require("lfs")
 
 -- OS detection and Quoting helper (POSIX vs Windows)
