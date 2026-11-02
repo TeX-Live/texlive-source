@@ -14,8 +14,16 @@ tst=hyperlink
 
 rm -f $tst.ps $tst.out
 
+# pre-generated test results in the repository are stored in LF
+# but the output might be written in CRLF on some platform.
+# if 'diff --strip-trailing-cr' is available, exploit it.
+# (useful for tests on win32 binaries run on MSYS shell)
+DIFF="diff"
+$DIFF --strip-trailing-cr $0 $0 \
+  && DIFF="diff --strip-trailing-cr" || echo
+
 # hps.pro is generated into the build directory, not shipped in testdata.
-TEXPSHEADERS=.:$TEXPSHEADERS; export TEXPSHEADERS
+TEXPSHEADERS=".;"$TEXPSHEADERS; export TEXPSHEADERS
 
 $_dvips -z -D 600 $srcdir/testdata/$tst.dvi -o $tst.ps || exit 1
 
@@ -27,6 +35,6 @@ awk '{ s = $0
          s = substr(s, RSTART + RLENGTH)
        } }' $tst.ps >$tst.out || exit 1
 
-diff $srcdir/testdata/$tst.rects $tst.out || exit 1
+$DIFF $srcdir/testdata/$tst.rects $tst.out || exit 1
 
 exit 0

@@ -1,3 +1,7 @@
+2026-11-02  TANAKA Takuji  <ttk@t-lab.opal.ne.jp>
+
+	* test-hyperlink.test: tweak to pass also on MinGW.
+
 2026-09-19  Tomas Rokicki  <rokicki@gmail.com>
 
 	* hps.c (NEED_ORIGIN, set_hps_origin): new flag and function,
