@@ -55,6 +55,7 @@ texmf-dist/scripts/bib2gls/convertgls2bib.sh convertgls2bib
 texmf-dist/scripts/bib2gls/datatool2bib.sh datatool2bib
 texmf-dist/scripts/bibcop/bibcop.pl bibcop
 texmf-dist/scripts/bibtexperllibs/ltx2unitxt ltx2unitxt
+texmf-dist/scripts/bibupdate/bibupdate.py bibupdate
 texmf-dist/scripts/bookshelf/bookshelf-listallfonts bookshelf-listallfonts
 texmf-dist/scripts/bookshelf/bookshelf-mkfontsel bookshelf-mkfontsel
 texmf-dist/scripts/bundledoc/arlatex arlatex

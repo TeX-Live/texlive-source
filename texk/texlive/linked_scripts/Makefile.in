@@ -336,6 +336,7 @@ texmf_other_scripts = \
 	bib2gls/datatool2bib.sh \
 	bibcop/bibcop.pl \
 	bibtexperllibs/ltx2unitxt \
+	bibupdate/bibupdate.py \
 	bookshelf/bookshelf-listallfonts \
 	bookshelf/bookshelf-mkfontsel \
 	bundledoc/arlatex \
