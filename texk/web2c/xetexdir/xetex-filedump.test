@@ -13,12 +13,18 @@ TEXINPUTS=".;$srcdir/tests"; export TEXINPUTS
 TEXFORMATS=.; export TEXFORMATS
 
 # get same filename in log
-rm -f filedump.tex
+rm -f filedump.tex filedump-data
+trap 'rm -f filedump-data' 0 1 2 3 15
 $LN_S $srcdir/xetexdir/tests/filedump.tex .
+
+perl -e 'print "x" x 32768, "A", "x" x 32766, "B", "C", "x" x 4463, "D";' \
+  >filedump-data || exit 1
 
 #exit 77
 
-$_xetex -ini filedump || exit 1
+# Negative offset and length are TeX errors, but \nonstopmode continues.
+$_xetex -ini filedump
+test -f filedump.log || exit 1
 
 sed 1d filedump.log >filedump.out
 
