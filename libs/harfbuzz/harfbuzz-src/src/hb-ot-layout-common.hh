@@ -1972,21 +1972,18 @@ struct ClassDefFormat2_4
       /* Match if there's any glyph that is not listed! */
       hb_codepoint_t g = HB_SET_VALUE_INVALID;
       hb_codepoint_t last = HB_SET_VALUE_INVALID;
-      auto it = hb_iter (rangeRecord);
-      for (auto &range : it)
+      for (auto &range : rangeRecord)
       {
-        if (it->first == last + 1)
+	/* Only probe for a glyph in the gap before this range; a range
+	 * starting right after the previous one (or at glyph 0) has none. */
+	if (range.first != last + 1)
 	{
-	  it++;
-	  continue;
+	  if (!glyphs->next (&g))
+	    break;
+	  if (g < range.first)
+	    return true;
 	}
-
-	if (!glyphs->next (&g))
-	  break;
-	if (g < range.first)
-	  return true;
-	g = range.last;
-	last = g;
+	g = last = range.last;
       }
       if (g != HB_SET_VALUE_INVALID && glyphs->next (&g))
 	return true;
@@ -2789,11 +2786,23 @@ struct VarRegionList
     unsigned axis_count = axis_tags.length;
     unsigned region_count = regions.length;
     if (!axis_count || !region_count) return_trace (false);
-    if (unlikely (hb_unsigned_mul_overflows (axis_count * region_count,
-                                             VarRegionAxis::static_size))) return_trace (false);
+    if (unlikely (region_count > 0x7FFFu))
+    {
+      c->err (HB_SERIALIZE_ERROR_INT_OVERFLOW);
+      return_trace (false);
+    }
+    unsigned total_axes;
+    if (unlikely (hb_unsigned_mul_overflows (axis_count, region_count, &total_axes) ||
+                  hb_unsigned_mul_overflows (total_axes, VarRegionAxis::static_size)))
+    {
+      c->err (HB_SERIALIZE_ERROR_INT_OVERFLOW);
+      return_trace (false);
+    }
     if (unlikely (!c->extend_min (this))) return_trace (false);
-    axisCount = axis_count;
-    regionCount = region_count;
+    if (unlikely (!c->check_assign (axisCount, axis_count, HB_SERIALIZE_ERROR_INT_OVERFLOW)))
+      return_trace (false);
+    if (unlikely (!c->check_assign (regionCount, region_count, HB_SERIALIZE_ERROR_INT_OVERFLOW)))
+      return_trace (false);
 
     for (unsigned r = 0; r < region_count; r++)
     {
@@ -2825,11 +2834,23 @@ struct VarRegionList
   bool serialize (hb_serialize_context_t *c, const VarRegionList *src, const hb_inc_bimap_t &region_map)
   {
     TRACE_SERIALIZE (this);
+    unsigned mapped_region_count = region_map.get_population ();
+    if (unlikely (mapped_region_count > 0x7FFFu))
+    {
+      c->err (HB_SERIALIZE_ERROR_INT_OVERFLOW);
+      return_trace (false);
+    }
     if (unlikely (!c->extend_min (this))) return_trace (false);
     axisCount = src->axisCount;
-    regionCount = region_map.get_population ();
-    if (unlikely (hb_unsigned_mul_overflows (axisCount * regionCount,
-					     VarRegionAxis::static_size))) return_trace (false);
+    if (unlikely (!c->check_assign (regionCount, mapped_region_count, HB_SERIALIZE_ERROR_INT_OVERFLOW)))
+      return_trace (false);
+    unsigned total_axes;
+    if (unlikely (hb_unsigned_mul_overflows ((unsigned) axisCount, (unsigned) regionCount, &total_axes) ||
+		  hb_unsigned_mul_overflows (total_axes, VarRegionAxis::static_size)))
+    {
+      c->err (HB_SERIALIZE_ERROR_INT_OVERFLOW);
+      return_trace (false);
+    }
     if (unlikely (!c->extend (this))) return_trace (false);
     unsigned int region_count = src->regionCount;
     for (unsigned int r = 0; r < regionCount; r++)
@@ -4017,6 +4038,7 @@ struct DeltaSetIndexMapFormat01
       return_trace (false);
     if (unlikely (!c->extend_min (this))) return_trace (false);
 
+    format = MapCountT::static_size == HBUINT16::static_size ? 0 : 1;
     entryFormat = ((width-1)<<4)|(inner_bit_count-1);
     mapCount = output_map.length;
     HBUINT8 *p = c->allocate_size<HBUINT8> (width * output_map.length);
@@ -4108,8 +4130,7 @@ struct DeltaSetIndexMap
   {
     TRACE_SERIALIZE (this);
     unsigned length = plan.get_output_map ().length;
-    u.format.v = length <= 0xFFFF ? 0 : 1;
-    switch (u.format.v) {
+    switch (length <= 0xFFFF ? 0 : 1) {
     case 0: hb_barrier (); return_trace (u.format0.serialize (c, plan));
     case 1: hb_barrier (); return_trace (u.format1.serialize (c, plan));
     default:return_trace (false);
@@ -4219,7 +4240,11 @@ struct ItemVarStoreInstancer
    if (!coords || varIdx == VarIdx::NO_VARIATION)
      return Float (0);
 
-    varIdx += offset;
+    unsigned index;
+    if (unlikely (hb_unsigned_add_overflows (varIdx, offset, &index) ||
+		  index == VarIdx::NO_VARIATION))
+      return Float (0);
+    varIdx = index;
     if (varIdxMap)
       varIdx = varIdxMap->map (varIdx);
     return varStore->get_delta<Float> (varIdx, coords, cache);
@@ -6095,16 +6120,10 @@ struct FeatureVariations
       (this+record.substitutions).collect_feature_indices (feature_indices);
   }
 
-  bool has_lookup_variations (unsigned feature_index) const
+  void collect_lookup_variation_feature_indices (hb_set_t *feature_indices) const
   {
     for (const LookupVariationRecord &record : get_lookup_variation_records ())
-    {
-      if (record.featureIndex == feature_index)
-	return true;
-      if (record.featureIndex > feature_index)
-	break;
-    }
-    return false;
+      feature_indices->add (record.featureIndex);
   }
 
   bool subset (hb_subset_context_t *c,

@@ -28,6 +28,65 @@
 const unsigned char cvar_data[] = "\x0\x1\x0\x0\x0\x2\x0\x14\x0\x51\xa0\x0\xc0\x0\x0\x54\xa0\x0\x40\x0\x2a\x29\x17\x1\x1\x1\x1\x1\x1\x1\x1\x1\x1\x1\x1\x1\x1\x1\x1\x1\x1\x1\x1\x1\x1\x1\x1\x1\x1\x1\x1\x1\x1\x1\x1\x1\x1\x1\x1\x1\x1\x1\x1\x1\xd\xff\x0\xfd\x1\x0\xff\x0\xfd\x1\x0\xdb\xdb\xe6\xe6\x82\x0\xfd\x84\x6\xfd\x0\x2\xe3\xe3\xec\xec\x82\x4\x1\xe3\xe3\xec\xec\x82\x0\x1\x2a\x29\x17\x1\x1\x1\x1\x1\x1\x1\x1\x1\x1\x1\x1\x1\x1\x1\x1\x1\x1\x1\x1\x1\x1\x1\x1\x1\x1\x1\x1\x1\x1\x1\x1\x1\x1\x1\x1\x1\x1\x1\x1\x1\xd\x1\x0\x5\xfd\x0\x1\x0\x5\xfd\x0\x61\x61\x44\x44\x82\x0\x5\x81\x9\x1\xff\x1\x7\xff\xfb\x49\x49\x35\x35\x82\x4\xff\x49\x49\x35\x35\x82\x0\xff";
 
 static void
+test_iup_shifted_default ()
+{
+  /* #6462: a fractional shift makes distinct reference coordinates round to
+   * the same glyf coordinate. IUP must not infer against the fractional base. */
+  const float positions[][2] = {{0, 1000}, {1000, 1000}, {1000, 0}, {0, 0}};
+  const float deltas[] = {499, 500, 500, 500};
+  const int signs[] = {1, -1};
+  const hb_tag_t tag = HB_TAG ('w', 'g', 'h', 't');
+  for (unsigned axis = 0; axis < 2; axis++)
+    for (int sign : signs)
+    {
+      contour_point_vector_t points;
+      hb_always_assert (points.resize (8));
+      for (unsigned i = 0; i < 4; i++)
+      {
+        points[i].init (sign * positions[i][axis], sign * positions[i][1 - axis]);
+      }
+      points[3].is_end_point = true;
+      /* Fractional phantom positions must survive the optimization unchanged. */
+      for (unsigned i = 4; i < 8; i++)
+        points[i].init (i + 0.25f, i + 0.75f);
+
+      OT::TupleVariationData<>::tuple_variations_t vars;
+      auto *tuple = vars.tuple_vars.push ();
+      hb_always_assert (!vars.tuple_vars.in_error ());
+      hb_always_assert (tuple->axis_tuples.set (tag, Triple (0., 1., 1.)));
+      hb_always_assert (tuple->indices.resize (8));
+      hb_always_assert (tuple->deltas_x.resize (8));
+      hb_always_assert (tuple->deltas_y.resize (8));
+      for (unsigned i = 0; i < 8; i++)
+      {
+        tuple->indices[i] = true;
+        tuple->deltas_x[i] = i < 4 && !axis ? sign * deltas[i] : 0.f;
+        tuple->deltas_y[i] = i < 4 && axis ? sign * deltas[i] : 0.f;
+      }
+
+      hb_hashmap_t<hb_tag_t, Triple> limits;
+      hb_always_assert (limits.set (tag, Triple (0.002, 0.002, 1.)));
+      hb_hashmap_t<hb_tag_t, TripleDistances> distances;
+      hb_always_assert (distances.set (tag, TripleDistances (1., 1.)));
+      OT::optimize_scratch_t scratch;
+      hb_always_assert (vars.instantiate (limits, distances, scratch, nullptr, &points, true));
+      hb_always_assert (vars.tuple_vars.length == 1);
+      const auto &result = vars.tuple_vars[0];
+      for (unsigned i = 0; i < 4; i++)
+      {
+        hb_always_assert (result.indices[i]);
+        float delta = (axis ? result.deltas_y : result.deltas_x)[i];
+        hb_always_assert (roundf (delta) == sign * (i ? 499 : 498));
+      }
+      for (unsigned i = 4; i < 8; i++)
+      {
+        hb_always_assert (points[i].x == i + 0.25f);
+        hb_always_assert (points[i].y == i + 0.75f);
+      }
+    }
+}
+
+static void
 test_decompile_cvar ()
 {
   const OT::cvar* cvar_table = reinterpret_cast<const OT::cvar*> (cvar_data);
@@ -152,8 +211,159 @@ test_decompile_cvar ()
     hb_always_assert (tuple_variations.tuple_vars[1].compiled_deltas.arrayZ[i] == compiled_deltas_2[i]);
 }
 
+static void
+test_shared_tuple_scalar_cache ()
+{
+  const unsigned char plain_data[] = {0, 0, 0, 0};
+  const unsigned char intermediate_data[] = {0, 0, 0x40, 0, 0, 0, 0x40, 0};
+  const unsigned char peak_data[] = {0x20, 0};
+  const auto &plain = *reinterpret_cast<const OT::TupleVariationHeader *> (plain_data);
+  const auto &intermediate = *reinterpret_cast<const OT::TupleVariationHeader *> (intermediate_data);
+  auto peaks = hb_array (reinterpret_cast<const OT::F2DOT14 *> (peak_data), 1);
+
+  /* The two tuples share a peak at 0.5, but the intermediate region ends
+   * at 1.0. A cached default-region scalar must not suppress its deltas. */
+  for (int coord : {0, 4096, 8192, 12288, 16384})
+    for (bool intermediate_first : {false, true})
+    {
+      auto coords = hb_array (&coord, 1);
+      float plain_scalar = plain.calculate_scalar (coords, 1, peaks);
+      float intermediate_scalar = intermediate.calculate_scalar (coords, 1, peaks);
+      if (coord == 12288)
+      {
+        hb_always_assert (plain_scalar == 0.f);
+        hb_always_assert (intermediate_scalar == 0.5f);
+      }
+
+      OT::hb_scalar_cache_t scratch;
+      auto *cache = OT::hb_scalar_cache_t::create (1, &scratch);
+      if (intermediate_first)
+      {
+        hb_always_assert (intermediate.calculate_scalar (coords, 1, peaks, cache) == intermediate_scalar);
+        hb_always_assert (plain.calculate_scalar (coords, 1, peaks, cache) == plain_scalar);
+      }
+      else
+      {
+        hb_always_assert (plain.calculate_scalar (coords, 1, peaks, cache) == plain_scalar);
+        hb_always_assert (intermediate.calculate_scalar (coords, 1, peaks, cache) == intermediate_scalar);
+      }
+    }
+}
+
+static void
+test_tuple_values_count_values ()
+{
+  unsigned count = 999;
+  const unsigned char empty = 0;
+  hb_always_assert (OT::TupleValues::count_values (&empty, &empty, &count));
+  hb_always_assert (count == 0);
+
+  /* 64 zeros (0xBF) + 2 bytes (0x01: 10, 20) + 1 word (0x40: 256) + 1 long (0xC0: 1) = 68 */
+  const unsigned char valid_mix[] = {
+    0xBF,
+    0x01, 10, 20,
+    0x40, 0x01, 0x00,
+    0xC0, 0x00, 0x00, 0x00, 0x01
+  };
+  hb_always_assert (OT::TupleValues::count_values (valid_mix, valid_mix + sizeof (valid_mix), &count));
+  hb_always_assert (count == 68);
+
+  /* Truncated word run: claims 2 words (4B), only 2B left. */
+  const unsigned char trunc_words[] = {0x41, 0x00, 0x05};
+  hb_always_assert (!OT::TupleValues::count_values (trunc_words, trunc_words + sizeof (trunc_words), &count));
+
+  /* Truncated long run: claims 1 long (4B), only 3B left. */
+  const unsigned char trunc_longs[] = {0xC0, 0x00, 0x00, 0x01};
+  hb_always_assert (!OT::TupleValues::count_values (trunc_longs, trunc_longs + sizeof (trunc_longs), &count));
+
+  /* Total count > INT_MAX: 33,554,433 * 64 = 2,147,483,712 > INT_MAX. */
+  hb_vector_t<unsigned char> huge_zeros;
+  hb_always_assert (huge_zeros.resize_dirty (33554433u));
+  hb_memset (huge_zeros.arrayZ, 0xBF, huge_zeros.length);
+  hb_always_assert (!OT::TupleValues::count_values (huge_zeros.arrayZ,
+                                           huge_zeros.arrayZ + huge_zeros.length,
+                                           &count));
+}
+
+static void
+test_tuple_values_valid_control ()
+{
+  const unsigned char valid_bytes[] = {0x81, 0x01, 42, 0xF9};
+  OT::TupleValues::iter_t it (valid_bytes, sizeof (valid_bytes));
+  hb_always_assert (hb_len (it) == 4);
+
+  OT::TupleValues::fetcher_t fetcher (valid_bytes + 1, 3);
+  float acc = 0.f;
+  fetcher.add_to (hb_array (&acc, 1), 1.f);
+  hb_always_assert (acc == 42.f);
+  fetcher.skip (1);
+
+  hb_vector_t<int> out;
+  const OT::HBUINT8 *p = reinterpret_cast<const OT::HBUINT8 *> (valid_bytes);
+  hb_always_assert (OT::TupleValues::decompile (p, out, p + sizeof (valid_bytes), true));
+  hb_always_assert (out.length == 4);
+  hb_always_assert (out[0] == 0 && out[1] == 0 && out[2] == 42 && out[3] == -7);
+}
+
+static void
+test_tuple_values_iter_trunc ()
+{
+  /* 0x41 claims 2 word values (4B), with only 2B {0x00, 0x05} left.
+   * Must stop cleanly instead of yielding 0 and re-parsing 0x00 as a 1-byte run (+5). */
+  const unsigned char trunc_bytes[] = {0x41, 0x00, 0x05};
+  OT::TupleValues::iter_t it (trunc_bytes, sizeof (trunc_bytes));
+  hb_always_assert (hb_len (it) == 0);
+}
+
+static void
+test_tuple_values_fetcher_trunc ()
+{
+  /* Truncated word run must advance fetcher_t::p to end so subsequent
+   * add_to() or skip() + add_to() calls do not re-parse {0x00, 0x05} as +5. */
+  const unsigned char trunc_bytes[] = {0x41, 0x00, 0x05};
+  {
+    OT::TupleValues::fetcher_t f (trunc_bytes, sizeof (trunc_bytes));
+    float acc = 0.f;
+    f.add_to (hb_array (&acc, 1), 1.f);
+    f.add_to (hb_array (&acc, 1), 1.f);
+    hb_always_assert (acc == 0.f);
+  }
+  {
+    OT::TupleValues::fetcher_t f (trunc_bytes, sizeof (trunc_bytes));
+    float acc = 0.f;
+    f.skip (1);
+    f.add_to (hb_array (&acc, 1), 1.f);
+    hb_always_assert (acc == 0.f);
+  }
+}
+
+static void
+test_tuple_values_decompile_trunc ()
+{
+  /* 1024 * 64 = 65,536 compressed zeros followed by a truncated word header (0x41):
+   * decompile(consume_all=true) must pre-validate via count_values and reject
+   * without expanding 65,536 elements into out. */
+  hb_vector_t<unsigned char> buf;
+  hb_always_assert (buf.resize_dirty (1025));
+  hb_memset (buf.arrayZ, 0xBF, 1024);
+  buf.arrayZ[1024] = 0x41;
+
+  hb_vector_t<int> out;
+  const OT::HBUINT8 *p = reinterpret_cast<const OT::HBUINT8 *> (buf.arrayZ);
+  hb_always_assert (!OT::TupleValues::decompile (p, out, p + buf.length, true));
+  hb_always_assert (out.length == 0);
+}
+
+
 int
 main (int argc, char **argv)
 {
+  test_iup_shifted_default ();
+  test_tuple_values_count_values ();
+  test_tuple_values_valid_control ();
+  test_tuple_values_iter_trunc ();
+  test_tuple_values_fetcher_trunc ();
+  test_tuple_values_decompile_trunc ();
+  test_shared_tuple_scalar_cache ();
   test_decompile_cvar ();
 }

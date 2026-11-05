@@ -118,8 +118,7 @@ static void _colr_closure (hb_subset_plan_t* plan,
   hb_set_t palette_indices, layer_indices;
   // Collect all glyphs referenced by COLRv0
   hb_set_t glyphset_colrv0;
-  for (hb_codepoint_t gid : *glyphs_colred)
-    colr.closure_glyphs (gid, &glyphset_colrv0);
+  colr.closure_glyphs (glyphs_colred, &glyphset_colrv0);
 
   glyphs_colred->union_ (glyphset_colrv0);
 
@@ -392,6 +391,7 @@ _glyf_add_gid_and_children (const OT::glyf_accelerator_t &glyf,
 			    hb_codepoint_t gid,
 			    hb_set_t *gids_to_retain,
 			    int operation_count,
+			    int64_t &bytes_budget,
 			    unsigned depth = 0)
 {
   /* Check if is already visited */
@@ -399,10 +399,16 @@ _glyf_add_gid_and_children (const OT::glyf_accelerator_t &glyf,
 
   gids_to_retain->add (gid);
 
+  auto glyph = glyf.glyph_for_gid (gid);
+
+  /* Every retained glyph is walked here and again when glyf is subset.
+   * Charge its untrimmed bytes before the operation count can bail out,
+   * so that a glyph retained past that point is still paid for. */
+  if (unlikely (!hb_budget_spend (bytes_budget, HB_BUDGET_1, glyph.get_bytes ().length)))
+    return operation_count;
+
   if (unlikely (depth++ > HB_MAX_NESTING_LEVEL)) return operation_count;
   if (unlikely (--operation_count < 0)) return operation_count;
-
-  auto glyph = glyf.glyph_for_gid (gid);
 
   for (auto &item : glyph.get_composite_iterator ())
     operation_count =
@@ -410,6 +416,7 @@ _glyf_add_gid_and_children (const OT::glyf_accelerator_t &glyf,
 				  item.get_gid (glyph.is_extended ()),
 				  gids_to_retain,
 				  operation_count,
+				  bytes_budget,
 				  depth);
 
   return operation_count;
@@ -495,13 +502,29 @@ _populate_gids_to_retain (hb_subset_plan_t* plan,
   /* Populate a full set of glyphs to retain by adding all referenced
    * composite glyphs. */
   if (glyf.has_data ())
+  {
+    /* With a monotonic loca the retained glyphs add up to at most the
+     * table; loca need not be monotonic though, and any number of glyph
+     * IDs may alias the same bytes, each of them trimmed separately. */
+    int64_t bytes_budget = (int64_t) glyf.get_table_length () *
+			   HB_SUBSET_GLYF_MAX_BYTES_FACTOR;
     for (hb_codepoint_t gid : cur_glyphset)
       _glyf_add_gid_and_children (glyf, gid, &plan->_glyphset,
-				  cur_glyphset.get_population () * HB_MAX_COMPOSITE_OPERATIONS_PER_GLYPH);
+				  cur_glyphset.get_population () * HB_MAX_COMPOSITE_OPERATIONS_PER_GLYPH,
+				  bytes_budget);
+    if (unlikely (!plan->check_success (bytes_budget >= 0)))
+      return;
+  }
   else
     plan->_glyphset.union_ (cur_glyphset);
 #ifndef HB_NO_SUBSET_CFF
-  if (!plan->accelerator || plan->accelerator->has_seac)
+  /* Component closure cannot add anything when all valid glyphs are already
+   * retained. A new accelerator still needs an accurate has_seac value for
+   * future partial subsets. */
+  bool all_glyphs_retained =
+    cur_glyphset.get_population () == plan->source->get_num_glyphs ();
+  if ((!all_glyphs_retained || plan->attach_accelerator_data) &&
+      (!plan->accelerator || plan->accelerator->has_seac))
   {
     bool has_seac = false;
     if (cff->is_valid ())
@@ -596,11 +619,27 @@ _create_old_gid_to_new_gid_map (const hb_face_t *face,
         continue;
       }
 
+      if (unlikely (!*new_gid))
+      {
+        DEBUG_MSG (SUBSET, nullptr, "Glyph id 0 is reserved for .notdef.");
+        return false;
+      }
+
       if (*new_gid > max_glyph)
         max_glyph = *new_gid;
       new_to_old_gid_list->push (hb_pair (*new_gid, old_gid));
     }
     new_to_old_gid_list->qsort ();
+
+    // MAXP has the widest glyph-count field, HBUINT24. Include the unmapped
+    // glyphs and the initial .notdef slot before assigning their ids below.
+    constexpr unsigned max_num_glyphs = (1u << (8 * OT::HBUINT24::static_size)) - 1;
+    if (unlikely (max_glyph >= max_num_glyphs ||
+                  remaining.get_population () > max_num_glyphs - (max_glyph + 1)))
+    {
+      DEBUG_MSG (SUBSET, nullptr, "The provided custom glyph mapping is out of range.");
+      return false;
+    }
 
     // Anything that wasn't mapped by the requested mapping should
     // be placed after the requested mapping.
@@ -674,6 +713,7 @@ hb_subset_plan_t::hb_subset_plan_t (hb_face_t *face,
   all_axes_pinned = false;
   pinned_at_default = true;
   has_gdef_varstore = false;
+  colrv1_constant_after_pinning = -1;
   has_avar2 = false;
 
 #ifdef HB_EXPERIMENTAL_API

@@ -989,11 +989,13 @@ if get_option('tests').enabled()
   endif
 
   compiled_tests = {
+    'test-aat': ['test-aat.cc', 'hb-static.cc'],
     'test-algs': ['test-algs.cc', 'hb-static.cc'],
     'test-array': ['test-array.cc'],
     'test-bimap': ['test-bimap.cc', 'hb-static.cc'],
     'test-cache': ['test-cache.cc'],
     'test-cff': ['test-cff.cc', 'hb-static.cc'],
+    'test-colr': ['test-colr.cc', 'hb-static.cc'],
     'test-classdef-graph': ['graph/test-classdef-graph.cc', 'hb-static.cc', 'graph/gsubgpos-context.cc'],
     'test-result': ['test-result.cc', 'hb-static.cc'],
     'test-decycler': ['test-decycler.cc', 'hb-static.cc'],
@@ -1016,6 +1018,9 @@ if get_option('tests').enabled()
     'test-jstf': ['test-jstf.cc', 'hb-static.cc'],
     'test-unicode-ranges': ['test-unicode-ranges.cc'],
   }
+  if conf.get('HAVE_UNISCRIBE', 0) == 1
+    compiled_tests += {'test-uniscribe': ['test-uniscribe.cc']}
+  endif
   foreach name, source : compiled_tests
     if cpp_is_microsoft_compiler and source.contains('hb-static.cc')
       # TODO: Microsoft compilers cannot link tests using hb-static.cc, fix them
@@ -1038,6 +1043,33 @@ if get_option('tests').enabled()
     ),
       args: [meson.project_source_root() / 'test/api/fonts/NotoColorEmoji.subset.multiple_size_tables.ttf'],
       suite: ['src', 'subset'])
+    test('test-subset-cff2-serialize', executable('test-subset-cff2-serialize', ['hb-subset-cff2.cc', 'hb-subset-cff-common.cc', 'hb-subset-instancer-solver.cc', 'hb-subset-instancer-iup.cc', 'hb-static.cc'],
+      include_directories: incconfig,
+      cpp_args: cpp_args + ['-DMAIN', '-UNDEBUG'],
+      dependencies: [libharfbuzz_dep, libharfbuzz_subset_dep],
+      install: false,
+    ),
+      suite: ['src', 'subset'])
+  endif
+
+  if not cpp_is_microsoft_compiler and conf.get('HAVE_GRAPHITE2', 0) == 1
+    test('test-graphite2-buffer', executable('test-graphite2-buffer', ['test-graphite2-buffer.cc', 'hb-static.cc'],
+      include_directories: incconfig,
+      cpp_args: cpp_args + ['-UNDEBUG'],
+      dependencies: libharfbuzz_dep,
+      install: false,
+    ),
+      args: [meson.project_source_root() / 'test/api/fonts/graphite2-expansion.ttf'],
+      suite: ['src', 'shape'])
+  endif
+
+  if not get_option('raster').disabled()
+    test('test-raster-paint', executable('test-raster-paint', 'test-raster-paint.cc',
+      include_directories: incconfig,
+      cpp_args: cpp_args + ['-UNDEBUG'],
+      dependencies: libharfbuzz_raster_dep,
+      install: false,
+    ), suite: ['src', 'raster'])
   endif
 endif
 

@@ -140,17 +140,6 @@ struct TupleVariationHeader
     }
     else
     {
-      float scalar;
-      if (!plain_shared_tuple &&
-	  shared_tuple_scalar_cache->length &&
-	  shared_tuple_scalar_cache->get (index, &scalar))
-      {
-        if (has_interm && (scalar != 0 && scalar != 1.f))
-	  shared_tuple_scalar_cache = nullptr;
-	else
-	  return scalar;
-      }
-
       if (unlikely ((index + 1) * coord_count > shared_tuples.length))
         return 0.f;
       peak_tuple = shared_tuples.arrayZ + (coord_count * index);
@@ -162,6 +151,8 @@ struct TupleVariationHeader
 
     if (has_interm)
     {
+      /* Intermediate regions belong to this tuple, not the shared peak. */
+      shared_tuple_scalar_cache = nullptr;
       start_tuple = get_start_tuple (coord_count);
       end_tuple = get_end_tuple (coord_count);
     }
@@ -197,7 +188,6 @@ struct TupleVariationHeader
 
       if (has_interm)
       {
-	shared_tuple_scalar_cache = nullptr;
         int start = start_tuple[i].to_int ();
         int end = end_tuple[i].to_int ();
         if (unlikely (start > peak || peak > end ||
@@ -330,16 +320,17 @@ struct tuple_delta_t
     return *this;
   }
 
-  void copy_from (const tuple_delta_t& o, hb_alloc_pool_t *pool = nullptr)
+  bool copy_from (const tuple_delta_t& o, hb_alloc_pool_t *pool = nullptr)
   {
     axis_tuples = o.axis_tuples;
-    indices.duplicate_vector_from_pool (pool, o.indices);
-    deltas_x.duplicate_vector_from_pool (pool, o.deltas_x);
-    deltas_y.duplicate_vector_from_pool (pool, o.deltas_y);
-    compiled_tuple_header.duplicate_vector_from_pool (pool, o.compiled_tuple_header);
-    compiled_deltas.duplicate_vector_from_pool (pool, o.compiled_deltas);
-    compiled_peak_coords.duplicate_vector_from_pool (pool, o.compiled_peak_coords);
-    compiled_interm_coords.duplicate_vector_from_pool (pool, o.compiled_interm_coords);
+    return !axis_tuples.in_error () &&
+	   indices.duplicate_vector_from_pool (pool, o.indices) &&
+	   deltas_x.duplicate_vector_from_pool (pool, o.deltas_x) &&
+	   deltas_y.duplicate_vector_from_pool (pool, o.deltas_y) &&
+	   compiled_tuple_header.duplicate_vector_from_pool (pool, o.compiled_tuple_header) &&
+	   compiled_deltas.duplicate_vector_from_pool (pool, o.compiled_deltas) &&
+	   compiled_peak_coords.duplicate_vector_from_pool (pool, o.compiled_peak_coords) &&
+	   compiled_interm_coords.duplicate_vector_from_pool (pool, o.compiled_interm_coords);
   }
 
   void remove_axis (hb_tag_t axis_tag)
@@ -437,7 +428,13 @@ struct tuple_delta_t
 
       tuple_delta_t new_var;
       if (i < solutions.length - 1)
-	new_var.copy_from (*this, pool);
+      {
+	if (unlikely (!new_var.copy_from (*this, pool)))
+	{
+	  out.ensure_error ();
+	  return;
+	}
+      }
       else
 	new_var = std::move (*this);
 
@@ -1131,13 +1128,6 @@ struct TupleVariationData
     }
 
     private:
-    static int _cmp_axis_tag (const void *pa, const void *pb)
-    {
-      const hb_tag_t *a = (const hb_tag_t*) pa;
-      const hb_tag_t *b = (const hb_tag_t*) pb;
-      return (int)(*a) - (int)(*b);
-    }
-
     bool change_tuple_variations_axis_limits (const hb_hashmap_t<hb_tag_t, Triple>& normalized_axes_location,
                                               const hb_hashmap_t<hb_tag_t, TripleDistances>& axes_triple_distances,
 					      hb_alloc_pool_t *pool = nullptr)
@@ -1153,7 +1143,7 @@ struct TupleVariationData
       rebase_tent_result_scratch_t scratch;
       hb_vector_t<tuple_delta_t> out;
 
-      axis_tags.qsort (_cmp_axis_tag);
+      axis_tags.qsort (_hb_cmp_operator<hb_tag_t, hb_tag_t>);
       for (auto axis_tag : axis_tags)
       {
         Triple *axis_limit;
@@ -1168,6 +1158,7 @@ struct TupleVariationData
         {
 	  // This may move var out.
 	  var.change_tuple_var_axis_limit (axis_tag, *axis_limit, axis_triple_distances, out, scratch, pool);
+          if (unlikely (out.in_error ())) return false;
           if (!out) continue;
 
           unsigned new_len = new_vars.length + out.length;
@@ -1346,7 +1337,17 @@ struct TupleVariationData
       if (!merge_tuple_variations (optimize ? contour_points : nullptr))
         return false;
 
-      if (optimize && !iup_optimize (*contour_points, scratch)) return false;
+      if (optimize)
+      {
+        /* Match the integer contour base serialized to glyf when selecting
+         * IUP references. Keep the four phantom points unrounded. */
+        for (unsigned i = 0; i + 4 < contour_points->length; i++)
+        {
+          contour_points->arrayZ[i].x = roundf (contour_points->arrayZ[i].x);
+          contour_points->arrayZ[i].y = roundf (contour_points->arrayZ[i].y);
+        }
+        if (!iup_optimize (*contour_points, scratch)) return false;
+      }
       return !tuple_vars.in_error ();
     }
 

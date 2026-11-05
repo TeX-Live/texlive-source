@@ -28,186 +28,211 @@
 
 #include "hb.hh"
 
-// Handles 0..308; anything larger overflows double and returns HUGE_VAL.
-static inline double
-_pow10 (unsigned exponent)
-{
-  // DBL_MAX is between 10^308 and 10^309
-  if (unlikely (exponent > 308)) return HUGE_VAL;
+static const double _small_powers_of_10[] =
+{ 1e0, 1e1, 1e2, 1e3, 1e4, 1e5, 1e6, 1e7, 1e8, 1e9, 1e10, 1e11, 1e12, 1e13, 1e14, 1e15 };
+static const double _large_powers_of_10[] =
+{ 1e0, 1e16, 1e32, 1e48, 1e64, 1e80, 1e96, 1e112, 1e128, 1e144,
+  1e160, 1e176, 1e192, 1e208, 1e224, 1e240, 1e256, 1e272, 1e288, 1e304 };
 
-  static const double _powers_of_10[] =
-  {
-    1.0e+256,
-    1.0e+128,
-    1.0e+64,
-    1.0e+32,
-    1.0e+16,
-    1.0e+8,
-    10000.,
-    100.,
-    10.
-  };
-  unsigned mask = 1 << (ARRAY_LENGTH (_powers_of_10) - 1);
-  double result = 1;
-  for (const double *power = _powers_of_10; mask; ++power, mask >>= 1)
-    if (exponent & mask) result *= *power;
-  return result;
-}
-
-struct _hb_fraction
+/* Grammar:
+ *   number  := sign? mantissa exponent?
+ *   sign    := '+' | '-'
+ *   mantissa:= digits ('.' digits?)?
+ *            | '.' digits
+ *   exponent:= ('e'|'E') sign? digits
+ */
+struct hb_number_parser_t
 {
-  void add (int digit)
+  /* Returns true if c was accepted; false ends the parse (c not consumed). */
+  bool consume (char c)
   {
-    if (likely (fraction <= MAX_FRACT / 10))
+    switch (state)
     {
-      fraction = fraction * 10. + digit;
-      ++count;
+      case Start:
+	if (c == '+' || c == '-') { neg = (c == '-'); state = Sign; pos++; return true; }
+	if ('0' <= c && c <= '9') { value = value * 10. + (c - '0'); state = IntDigits; pos++; return true; }
+	if (c == '.') { state = AfterDotFromStart; pos++; return true; }
+	return false;
+
+      case Sign:
+	if ('0' <= c && c <= '9') { value = value * 10. + (c - '0'); state = IntDigits; pos++; return true; }
+	if (c == '.') { state = AfterDotFromStart; pos++; return true; }
+	return false;
+
+      case IntDigits:
+	if ('0' <= c && c <= '9') { value = value * 10. + (c - '0'); pos++; return true; }
+	if (c == '.') { state = AfterDotFromInt; pos++; return true; }
+	if (c == 'e' || c == 'E') { enter_exponent (); return true; }
+	return false;
+
+      case AfterDotFromInt:
+	if ('0' <= c && c <= '9') { fraction.add (c - '0'); state = FracDigits; pos++; return true; }
+	if (c == 'e' || c == 'E') { enter_exponent (); return true; }
+	return false;
+
+      case AfterDotFromStart:
+	if ('0' <= c && c <= '9') { fraction.add (c - '0'); state = FracDigits; pos++; return true; }
+	return false;
+
+      case FracDigits:
+	if ('0' <= c && c <= '9') { fraction.add (c - '0'); pos++; return true; }
+	if (c == 'e' || c == 'E') { enter_exponent (); return true; }
+	return false;
+
+      case ExpStart:
+	if (c == '+' || c == '-') { exp_neg = (c == '-'); state = ExpSign; pos++; return true; }
+	if ('0' <= c && c <= '9') { exp = c - '0'; state = ExpDigits; pos++; return true; }
+	rollback_exponent ();
+	return false;
+
+      case ExpSign:
+	if ('0' <= c && c <= '9') { exp = c - '0'; state = ExpDigits; pos++; return true; }
+	rollback_exponent ();
+	return false;
+
+      case ExpDigits:
+	if ('0' <= c && c <= '9')
+	{
+	  constexpr unsigned MAX_EXP = 0x7FFu; /* 2^11-1 */
+	  if (likely (exp * 10 + (c - '0') <= MAX_EXP)) exp = exp * 10 + (c - '0');
+	  else exp_overflow = true;
+	  pos++;
+	  return true;
+	}
+	return false;
     }
-    else if (drop < 0) drop = digit;
-    else if (digit != 0) sticky = true;
+    return false;
   }
 
+  /* Signal end of input.  Rolls back a dangling exponent.  Returns the
+   * accepted length, or 0 if no valid number was parsed. */
+  HB_NODISCARD size_t commit ()
+  {
+    if (state == ExpStart || state == ExpSign) rollback_exponent ();
+    return (state == Sign || state == AfterDotFromStart) ? 0 : pos;
+  }
+
+  /* Valid after `commit ()` returned nonzero. */
   double get_value () const
   {
-    double result = fraction;
-    // Round-to-nearest-even using the recorded tail
-    if (drop > 5 || (drop == 5 && ((((uint64_t) fraction) & 1) || sticky)))
-      result += 1;
-    return result / _pow10 (count);
-  }
+    double v = value;
+    if (!fraction.is_empty ()) v += fraction.get_value ();
+    if (neg) v *= -1.;
 
-  bool is_empty () const { return !count; }
+    /* Zero mantissa: any exponent gives zero, and this avoids
+     * 0 * HUGE_VAL = nan for "0e441" where _pow10(441) is HUGE_VAL
+     * but exp_overflow didn't fire.  Preserves -0.0 for "-0e<...>". */
+    if (v == 0) return v;
+
+    if (unlikely (exp_overflow))
+    {
+      if (exp_neg) return neg ? -.0 : .0;
+      else         return neg ? -HUGE_VAL : HUGE_VAL;
+    }
+
+    if (exp)
+    {
+      unsigned e = exp;
+      if (exp_neg)
+      {
+	/* 10^308 is the largest finite power of ten, so two reductions of 308 suffice. */
+	if (unlikely (e > 308))
+	{
+	  v /= 1e308; e -= 308;
+	  if (unlikely (e > 308)) { v /= 1e308; e -= 308; }
+	}
+	v /= _pow10 (e);
+      }
+      else
+	v *= _pow10 (e);
+    }
+    return v;
+  }
 
 private:
-  unsigned count = 0;
-  double fraction = 0;
-  int drop = -1; // drop is the first digit we couldn't accumulate
-  bool sticky = false; // sticky is set when any later digit was nonzero.
-  static constexpr uint64_t MAX_FRACT = 0xFFFFFFFFFFFFFull; /* 2^52-1 */
-};
-
-// A variant of strtod that also gets end of buffer in its second argument.
-//
-// Grammar (with backtracking on partial exponents):
-//
-//   number  := sign? mantissa exponent?
-//   sign    := '+' | '-'
-//   mantissa:= digits ('.' digits?)?
-//	    | '.' digits
-//   exponent:= ('e'|'E') sign? digits
-//
-// On success, *end_ptr is set just past the longest well-formed prefix.
-// On no match, *end_ptr is left at the original p (matching strtod's
-// "no conversion performed" behavior, so the caller's pointer is unchanged).
-static inline double
-hb_strtod (const char *p, const char **end_ptr /* IN/OUT */)
-{
-  const char *p_original = p;
-  const char *pe = *end_ptr;
-
-  // Skip leading whitespace
-  while (p < pe && ISSPACE (*p))
-    p++;
-
-  // Sign
-  bool neg = false;
-  if (p < pe && (*p == '+' || *p == '-'))
+  static constexpr uint64_t MAX_FRACT = 10000000000000000000ull; // 10^19
+  struct /* fraction */
   {
-    neg = (*p == '-');
-    p++;
-  }
+    void add (int digit)
+    {
+      if (likely (fraction <= MAX_FRACT / 10))
+      {
+	fraction = fraction * 10 + digit;
+	++count;
+      }
+      else if (drop < 0) drop = digit;
+      else if (digit != 0) sticky = true;
+    }
+
+    double get_value () const
+    {
+      /* (double) fraction rounds to nearest; division by an exact
+       * power of ten rounds once more.  Combined error < 1 ULP. */
+      double result = (double) fraction;
+      if (drop > 5 || (drop == 5 && (sticky || (fraction & 1))))
+	result += 1;
+      return result / _pow10 (count);
+    }
+
+    bool is_empty () const { return !count; }
+
+  private:
+    unsigned count = 0;
+    uint64_t fraction = 0;
+    int drop = -1; /* drop is the first digit we couldn't accumulate */
+    bool sticky = false; /* sticky is set when any later digit was nonzero. */
+  } fraction;
+
+  enum /* State */
+  {
+    Start, Sign, IntDigits,
+    AfterDotFromInt, AfterDotFromStart, FracDigits,
+    ExpStart, ExpSign, ExpDigits,
+  } state = Start, pre_exp_state = Start;
 
   double value = 0;
-
-  // Integer and fraction
-  {
-    const char *int_start = p;
-    while (p < pe && '0' <= *p && *p <= '9')
-    {
-      value = value * 10. + (*p - '0');
-      p++;
-    }
-    bool has_int = p > int_start;
-
-    _hb_fraction frac;
-    if (p < pe && *p == '.')
-    {
-      p++;
-      while (p < pe && '0' <= *p && *p <= '9')
-      {
-	frac.add (*p - '0');
-	p++;
-      }
-    }
-
-    if (!frac.is_empty ()) value += frac.get_value ();
-    else if (!has_int)
-    {
-      // Nothing could be parsed
-      *end_ptr = p_original;
-      return .0;
-    }
-  }
-
-  // Exponent
   unsigned exp = 0;
-  bool exp_neg = false, exp_overflow = false;
-  if (p < pe && (*p == 'e' || *p == 'E'))
+  bool neg = false, exp_neg = false, exp_overflow = false, exp_speculation_active = false;
+  size_t pos = 0, pre_exp_pos = 0;
+
+  void enter_exponent ()
   {
-    constexpr unsigned MAX_EXP = 0x7FFu; /* 2^11-1 */
-    const char *before_exponent = p;
-    p++;
-    if (p < pe && (*p == '+' || *p == '-'))
-    {
-      exp_neg = (*p == '-');
-      p++;
-    }
-
-    if (p < pe && '0' <= *p && *p <= '9')
-      do
-      {
-	if (likely (exp * 10 + (*p - '0') <= MAX_EXP))
-	  exp = exp * 10 + (*p - '0');
-	else
-	  exp_overflow = true;
-	p++;
-      } while (p < pe && '0' <= *p && *p <= '9');
-    else
-      p = before_exponent; // rewind
-  }
-  *end_ptr = p;
-
-  if (neg) value *= -1.;
-
-  if (unlikely (exp_overflow))
-  {
-    if (value == 0) return value;
-    if (exp_neg)    return neg ? -.0 : .0;
-    else            return neg ? -DBL_MAX : DBL_MAX;
+    pre_exp_state = state;
+    pre_exp_pos = pos;
+    exp_speculation_active = true;
+    state = ExpStart;
+    pos++;
   }
 
-  if (exp)
+  void rollback_exponent ()
   {
-    if (exp_neg)
-    {
-      // 10^308 is the largest finite power of ten, so two reductions of 308 suffice.
-      if (unlikely (exp > 308))
-      {
-	value /= 1e308;
-	exp -= 308;
-	if (unlikely (exp > 308))
-	{
-	  value /= 1e308;
-	  exp -= 308;
-	}
-      }
-      value /= _pow10 (exp);
-    }
-    else
-      value *= _pow10 (exp);
+    if (unlikely (!exp_speculation_active)) return;
+    state = pre_exp_state;
+    pos = pre_exp_pos;
+    exp = 0;
+    exp_neg = false;
+    exp_overflow = false;
+    exp_speculation_active = false;
   }
 
-  return value;
-}
+  /* Handles 0..308; anything larger overflows double and returns HUGE_VAL. */
+  static double _pow10 (unsigned n)
+  {
+    /* DBL_MAX is between 10^308 and 10^309 */
+    constexpr unsigned MAX_POW10_EXP = 308;
+    constexpr unsigned POW10_SHIFT   = 4;
+    constexpr unsigned POW10_SMALL   = 1u << POW10_SHIFT;   /* 16 */
+    constexpr unsigned POW10_MASK    = POW10_SMALL - 1;     /* 15 */
+
+    static_assert (ARRAY_LENGTH (_small_powers_of_10) == POW10_SMALL,
+		   "_small_powers_of_10: size must be 2^POW10_SHIFT");
+    static_assert ((MAX_POW10_EXP >> POW10_SHIFT) < ARRAY_LENGTH (_large_powers_of_10),
+		   "_large_powers_of_10: must cover MAX_POW10_EXP >> POW10_SHIFT");
+
+    if (unlikely (n > MAX_POW10_EXP)) return HUGE_VAL;
+    if (likely (n < POW10_SMALL)) return _small_powers_of_10[n];
+    return _large_powers_of_10[n >> POW10_SHIFT] * _small_powers_of_10[n & POW10_MASK];
+  }
+};
 
 #endif /* HB_NUMBER_PARSER_HH */

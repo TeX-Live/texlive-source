@@ -328,14 +328,22 @@ hb_buffer_t::enter ()
   deallocate_var_all ();
   serial = 0;
   scratch_flags = HB_BUFFER_SCRATCH_FLAG_DEFAULT;
+  /* enter() now runs on every shape, including hb_shape_plan_execute().
+   * Compute the per-text limit as before, but if internal code has already
+   * narrowed a limit below the idle default (e.g. the fault injection in
+   * test-graphite2-buffer), keep the stricter value.  Public paths always
+   * arrive at the defaults (from hb_buffer_create() / leave()), so they get
+   * the computed per-text limit unchanged. */
   unsigned mul;
   if (likely (!hb_unsigned_mul_overflows (len, HB_BUFFER_MAX_LEN_FACTOR, &mul)))
   {
-    max_len = hb_max (mul, (unsigned) HB_BUFFER_MAX_LEN_MIN);
+    unsigned limit = hb_max (mul, (unsigned) HB_BUFFER_MAX_LEN_MIN);
+    max_len = max_len < HB_BUFFER_MAX_LEN_DEFAULT ? hb_min (max_len, limit) : limit;
   }
   if (likely (!hb_unsigned_mul_overflows (len, HB_BUFFER_MAX_OPS_FACTOR, &mul)))
   {
-    max_ops = hb_max (mul, (unsigned) HB_BUFFER_MAX_OPS_MIN);
+    int limit = (int) hb_max (mul, (unsigned) HB_BUFFER_MAX_OPS_MIN);
+    max_ops = max_ops < HB_BUFFER_MAX_OPS_DEFAULT ? hb_min (max_ops, limit) : limit;
   }
 }
 void
@@ -561,29 +569,39 @@ void
 hb_buffer_t::merge_clusters_impl (unsigned int start,
 				  unsigned int end)
 {
-  max_ops -= end - start;
-  if (unlikely (max_ops < 0))
-    successful = false;
-
   unsigned int cluster = info[start].cluster;
 
   for (unsigned int i = start + 1; i < end; i++)
     cluster = hb_min (cluster, info[i].cluster);
 
-  /* Extend end */
-  if (cluster != info[end - 1].cluster)
-    while (end < len && info[end - 1].cluster == info[end].cluster)
-      end++;
+  /* Extending over neighboring same-cluster runs is work the font or
+   * text controls, so charge it to max_ops and stop once the budget is
+   * gone.  Callers keep calling after the buffer has failed. */
+  if (likely (successful))
+  {
+    /* Extend end */
+    if (cluster != info[end - 1].cluster)
+      while (end < len && info[end - 1].cluster == info[end].cluster)
+	end++;
 
-  /* Extend start */
-  if (cluster != info[start].cluster)
-    while (idx < start && info[start - 1].cluster == info[start].cluster)
-      start--;
+    /* Extend start */
+    if (cluster != info[start].cluster)
+      while (idx < start && info[start - 1].cluster == info[start].cluster)
+	start--;
 
-  /* If we hit the start of buffer, continue in out-buffer. */
-  if (idx == start && info[start].cluster != cluster)
-    for (unsigned int i = out_len; i && out_info[i - 1].cluster == info[start].cluster; i--)
-      set_cluster (out_info[i - 1], cluster);
+    /* If we hit the start of buffer, continue in out-buffer. */
+    if (idx == start && info[start].cluster != cluster)
+    {
+      unsigned int i;
+      for (i = out_len; i && out_info[i - 1].cluster == info[start].cluster; i--)
+	set_cluster (out_info[i - 1], cluster);
+      max_ops -= out_len - i;
+    }
+  }
+
+  max_ops -= end - start;
+  if (unlikely (max_ops < 0))
+    successful = false;
 
   for (unsigned int i = start; i < end; i++)
     set_cluster (info[i], cluster);
@@ -592,27 +610,40 @@ void
 hb_buffer_t::merge_out_clusters_impl (unsigned int start,
 				      unsigned int end)
 {
-  max_ops -= end - start;
-  if (unlikely (max_ops < 0))
-    successful = false;
-
   unsigned int cluster = out_info[start].cluster;
 
   for (unsigned int i = start + 1; i < end; i++)
     cluster = hb_min (cluster, out_info[i].cluster);
 
-  /* Extend start */
-  while (start && out_info[start - 1].cluster == out_info[start].cluster)
-    start--;
+  /* Same as merge_clusters_impl(): charge the extension, and skip it once
+   * the buffer has failed.  The cluster != ... guards also avoid walking a
+   * run that already holds the merged value; set_cluster() is a no-op on
+   * such a glyph, so output is unchanged. */
+  if (likely (successful))
+  {
+    /* Extend start */
+    if (cluster != out_info[start].cluster)
+      while (start && out_info[start - 1].cluster == out_info[start].cluster)
+	start--;
 
-  /* Extend end */
-  while (end < out_len && out_info[end - 1].cluster == out_info[end].cluster)
-    end++;
+    /* Extend end */
+    if (cluster != out_info[end - 1].cluster)
+      while (end < out_len && out_info[end - 1].cluster == out_info[end].cluster)
+	end++;
 
-  /* If we hit the end of out-buffer, continue in buffer. */
-  if (end == out_len)
-    for (unsigned int i = idx; i < len && info[i].cluster == out_info[end - 1].cluster; i++)
-      set_cluster (info[i], cluster);
+    /* If we hit the end of out-buffer, continue in buffer. */
+    if (end == out_len && out_info[end - 1].cluster != cluster)
+    {
+      unsigned int i;
+      for (i = idx; i < len && info[i].cluster == out_info[end - 1].cluster; i++)
+	set_cluster (info[i], cluster);
+      max_ops -= i - idx;
+    }
+  }
+
+  max_ops -= end - start;
+  if (unlikely (max_ops < 0))
+    successful = false;
 
   for (unsigned int i = start; i < end; i++)
     set_cluster (out_info[i], cluster);
@@ -633,12 +664,17 @@ hb_buffer_t::delete_glyph ()
   if (out_len)
   {
     /* Merge cluster backward. */
-    if (cluster < out_info[out_len - 1].cluster)
+    if (cluster < out_info[out_len - 1].cluster && likely (successful))
     {
       unsigned int mask = info[idx].mask;
       unsigned int old_cluster = out_info[out_len - 1].cluster;
-      for (unsigned i = out_len; i && out_info[i - 1].cluster == old_cluster; i--)
+      unsigned int i;
+      for (i = out_len; i && out_info[i - 1].cluster == old_cluster; i--)
 	set_cluster (out_info[i - 1], cluster, mask);
+
+      max_ops -= out_len - i;
+      if (unlikely (max_ops < 0))
+	successful = false;
     }
     goto done;
   }
@@ -675,12 +711,17 @@ hb_buffer_t::delete_glyphs_inplace (bool (*filter) (const hb_glyph_info_t *info)
       if (j)
       {
 	/* Merge cluster backward. */
-	if (cluster < info[j - 1].cluster)
+	if (cluster < info[j - 1].cluster && likely (successful))
 	{
 	  unsigned int mask = info[i].mask;
 	  unsigned int old_cluster = info[j - 1].cluster;
-	  for (unsigned k = j; k && info[k - 1].cluster == old_cluster; k--)
+	  unsigned int k;
+	  for (k = j; k && info[k - 1].cluster == old_cluster; k--)
 	    set_cluster (info[k - 1], cluster, mask);
+
+	  max_ops -= j - k;
+	  if (unlikely (max_ops < 0))
+	    successful = false;
 	}
 	continue;
       }
@@ -806,6 +847,9 @@ hb_buffer_t *
 hb_buffer_create_similar (const hb_buffer_t *src)
 {
   hb_buffer_t *buffer = hb_buffer_create ();
+
+  if (unlikely (hb_object_is_immutable (buffer)))
+    return buffer;
 
   buffer->similar (*src);
 
@@ -1428,6 +1472,9 @@ void
 hb_buffer_set_not_found_variation_selector_glyph (hb_buffer_t    *buffer,
 						  hb_codepoint_t  not_found_variation_selector)
 {
+  if (unlikely (hb_object_is_immutable (buffer)))
+    return;
+
   buffer->not_found_variation_selector = not_found_variation_selector;
 }
 
@@ -1810,6 +1857,9 @@ hb_buffer_reverse_clusters (hb_buffer_t *buffer)
 void
 hb_buffer_guess_segment_properties (hb_buffer_t *buffer)
 {
+  if (unlikely (hb_object_is_immutable (buffer)))
+    return;
+
   buffer->guess_segment_properties ();
 }
 

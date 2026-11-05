@@ -28,6 +28,85 @@
 const char hvar_data[] = "\x0\x1\x0\x0\x0\x0\x0\x14\x0\x0\x0\xc4\x0\x0\x0\x0\x0\x0\x0\x0\x0\x1\x0\x0\x0\x10\x0\x2\x0\x0\x0\x74\x0\x0\x0\x7a\x0\x2\x0\x8\xc0\x0\xc0\x0\x0\x0\x0\x0\x0\x0\x0\x0\x0\x0\x40\x0\x40\x0\x0\x0\x0\x0\x0\x0\x0\x0\x0\x0\x0\x0\xc0\x0\xc0\x0\x0\x0\x0\x0\x0\x0\x0\x0\x0\x0\x40\x0\x40\x0\xc0\x0\xc0\x0\x0\x0\xc0\x0\xc0\x0\x0\x0\xc0\x0\xc0\x0\x0\x0\x0\x0\x40\x0\x40\x0\x0\x0\x40\x0\x40\x0\xc0\x0\xc0\x0\x0\x0\x0\x0\x40\x0\x40\x0\x0\x0\x40\x0\x40\x0\x0\x1\x0\x0\x0\x0\x0\x4\x0\x0\x0\x8\x0\x0\x0\x1\x0\x2\x0\x3\x0\x4\x0\x5\x0\x6\x0\x7\xf9\xf\x2f\xbf\xfb\xfb\x35\xf9\x4\x4\xf3\xb4\xf2\xfb\x2e\xf3\x4\x4\xe\xad\xfa\x1\x1a\x1\x15\x22\x59\xd6\xe3\xf6\x6\xf5\x0\x1\x0\x5\x0\x4\x7\x5\x6";
 
 static void
+test_var_region_list_serialize ()
+{
+  hb_vector_t<hb_tag_t> axes;
+  axes.push (HB_TAG ('w', 'g', 'h', 't'));
+  hb_hashmap_t<hb_tag_t, Triple> region;
+  hb_always_assert (region.set (axes[0], Triple (0., 0.5, 1.)));
+  hb_vector_t<const hb_hashmap_t<hb_tag_t, Triple> *> regions;
+  regions.push (&region);
+
+  char buf[32], copy_buf[32];
+  hb_serialize_context_t c (buf, sizeof (buf));
+  auto *out = c.start_serialize<OT::VarRegionList> ();
+  hb_always_assert (out->serialize (&c, axes, regions));
+  hb_always_assert (!c.in_error ());
+  hb_always_assert (out->axisCount == 1 && out->regionCount == 1);
+  const int coords[] = {8192};
+  hb_always_assert (out->evaluate (0, coords, ARRAY_LENGTH (coords)) == 1.f);
+
+  hb_inc_bimap_t region_map;
+  region_map.add (0);
+  hb_always_assert (region_map.get_population () == 1);
+  hb_serialize_context_t copy_c (copy_buf, sizeof (copy_buf));
+  auto *copy = copy_c.start_serialize<OT::VarRegionList> ();
+  hb_always_assert (copy->serialize (&copy_c, out, region_map));
+  hb_always_assert (!copy_c.in_error ());
+  hb_always_assert (!hb_memcmp (out, copy, out->get_size ()));
+}
+
+static void
+test_var_region_list_serialize_bounds ()
+{
+  const unsigned counts[][2] = {
+    {0x10000u, 1},          /* axisCount does not fit uint16. */
+    {1, 0x8000u},          /* regionCount's high bit is reserved. */
+    {0x40000u, 0x4000u},   /* axisCount * regionCount wraps uint32. */
+  };
+  hb_hashmap_t<hb_tag_t, Triple> region;
+  for (const auto &count : counts)
+  {
+    hb_vector_t<hb_tag_t> axes;
+    hb_always_assert (axes.resize (count[0]));
+    for (auto &tag : axes)
+      tag = HB_TAG ('w', 'g', 'h', 't');
+    hb_vector_t<const hb_hashmap_t<hb_tag_t, Triple> *> regions;
+    hb_always_assert (regions.resize (count[1]));
+    for (auto &r : regions)
+      r = &region;
+
+    char buf[16];
+    hb_serialize_context_t c (buf, sizeof (buf));
+    auto *out = c.start_serialize<OT::VarRegionList> ();
+    hb_always_assert (!out->serialize (&c, axes, regions));
+    hb_always_assert (c.errors == HB_SERIALIZE_ERROR_INT_OVERFLOW);
+  }
+
+  /* Only the header is needed: reject overflowing sizes before reading axes. */
+  const unsigned char source[] = {0xFF, 0xFF, 0x7F, 0xFF};
+  const auto *src = reinterpret_cast<const OT::VarRegionList *> (source);
+  const unsigned mapped_counts[] = {
+    0x8000u, /* Reserved high bit. */
+    0x10000u, /* Narrowing would wrap to zero. */
+    0x7FFFu, /* Valid counts, but 0xFFFF * 0x7FFF * 6 overflows uint32. */
+  };
+  for (unsigned count : mapped_counts)
+  {
+    hb_inc_bimap_t region_map;
+    for (unsigned i = 0; i < count; i++)
+      region_map.add (i);
+    hb_always_assert (region_map.get_population () == count);
+
+    char buf[16];
+    hb_serialize_context_t c (buf, sizeof (buf));
+    auto *out = c.start_serialize<OT::VarRegionList> ();
+    hb_always_assert (!out->serialize (&c, src, region_map));
+    hb_always_assert (c.errors == HB_SERIALIZE_ERROR_INT_OVERFLOW);
+  }
+}
+
+static void
 test_scalar_cache_precision ()
 {
   const float scalars[] = {
@@ -335,9 +414,50 @@ test_failed_encoding ()
   hb_always_assert (!item_vars.compile_varidx_map_for_testing (front_mapping));
 }
 
+static void
+test_item_varstore_instancer_varidx_overflow ()
+{
+  /* Minimal sanitized ItemVariationStore: 1 axis, 1 region [0, 1, 1],
+   * 1 VarData item [0][0] with 8-bit delta = +42. */
+  alignas (4) static const uint8_t store_bytes[] = {
+    0, 1,             /* format = 1 */
+    0, 0, 0, 12,      /* regionListOffset = 12 */
+    0, 1,             /* dataCount = 1 */
+    0, 0, 0, 22,      /* dataSets[0] = 22 */
+    /* VarRegionList @ 12 (10 bytes): axisCount=1, regionCount=1, [0, 1, 1] */
+    0, 1, 0, 1,
+    0x00, 0x00, 0x40, 0x00, 0x40, 0x00,
+    /* VarData @ 22 (9 bytes): itemCount=1, wordDeltaCount=0, regionIdxCount=1, reg[0]=0, delta=42 */
+    0, 1, 0, 0, 0, 1, 0, 0, 42
+  };
+  hb_blob_t *blob = hb_blob_create ((const char *) store_bytes, sizeof (store_bytes),
+                                    HB_MEMORY_MODE_READONLY, nullptr, nullptr);
+  hb_sanitize_context_t sc (blob);
+  const auto &store = *reinterpret_cast<const OT::ItemVariationStore *> (store_bytes);
+  hb_always_assert (store.sanitize (&sc));
+  hb_blob_destroy (blob);
+
+  int coords[] = {16384};
+  OT::ItemVarStoreInstancer instancer (&store, nullptr, hb_array (coords));
+#ifdef HB_NO_VAR
+  hb_always_assert (instancer (0, 0) == 0.f);
+#else
+  hb_always_assert (instancer (0, 0) == 42.f);
+#endif
+  hb_always_assert (instancer (OT::VarIdx::NO_VARIATION, 0) == 0.f);
+  hb_always_assert (instancer (OT::VarIdx::NO_VARIATION, 1) == 0.f);
+  /* 0xFFFFFFFE + 1 == NO_VARIATION and 0xFFFFFFFE + 2 wraps 32-bit to 0. */
+  hb_always_assert (instancer (0xFFFFFFFEu, 1) == 0.f);
+  hb_always_assert (instancer (0xFFFFFFFEu, 2) == 0.f);
+}
+
+
 int
 main (int argc, char **argv)
 {
+  test_var_region_list_serialize ();
+  test_var_region_list_serialize_bounds ();
+  test_item_varstore_instancer_varidx_overflow ();
   test_scalar_cache_precision ();
   test_item_variations ();
   test_implicit_advance_mapping ();
