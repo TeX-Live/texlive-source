@@ -1,3 +1,8 @@
+2026-11-06  Akira Kakuto  <kakuto@jcom.zaq.ne.jp>
+
+	Import zlib-1.4.
+	Remove a patch zlib-caddr-fix.patch
+
 2026-02-18  Norbert Preining  <norbert@preining.info>
 
 	Add a patch to minigzip to not use caddr.
