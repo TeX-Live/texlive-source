@@ -1,11 +1,16 @@
-(TeX Live 2027)
-
 - bugfixes:
   - when computing checkSumAdjustment in ttf output fonts, do not
     depend on char signedness; output where char is signed by default,
     e.g., arm64 and x86_64 will have a different head.checkSumAdjustment
     value. Where char is unsigned (aarch64), no change.
 
+- performance:
+  - use getc_unlocked as with XeTeX and Kpathsea (r80886).
+  - keep last released PDF image document open (r80889-90).
+  - copy jpeg to pdf in chunks (r80892).
+  - read file bytes once, without eof peeks (r80893).
+  - parse numbers in map files with strtod instead of sscanf (80894).
+    An incorrect bare "e" or "E" in map file now gets a warning.
 -----------------------------------------------------------------------------
 pdfTeX 3.141592653-2.6-1.40.29 (TeX Live 2026) (3 March 2026)
 - changes:

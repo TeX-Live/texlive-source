@@ -4,6 +4,11 @@ This file records noteworthy changes.  (Public domain.)
 * kpsewhich: special-case dvipdfmx.cfg, like the other program
   configuration files (config.ps, fmtutil.cnf, texmf.cnf, etc.).
 
+* Performance:
+  - read ls-R in one piece instead of line by line (r80896).
+  - make hash_insert constant-time (r80898).
+  - avoid division per character when hashing (r80899).
+
 6.4.2 (for TeX Live 2026, 3 March 2026)
 * New configuration value texmf_nlink_for_leaf to specify whether the
   st_nlink=2 (stat member for number of links, only on Unix-ish systems)
@@ -18,7 +23,7 @@ This file records noteworthy changes.  (Public domain.)
 * kpsewhich: add abbreviations all for file type formats that have a
   space in their names, and "src" as a shorter abbreviation for "source",
   for completeness.  The practical benefit is minimal.
-
+
 6.4.1 (for TeX Live 2025, 7 March 2025)
 * kpsewhich outputs a blank line when a given file cannot be found,
   if more than one file to search for is specified.  
@@ -47,7 +52,7 @@ This file records noteworthy changes.  (Public domain.)
 * The library does not emit warnings for unrecognized filenames,
   leaving it up to the caller.
 * Double save_size limit to 200,000 for tex4ht, l3regex, etc.
-
+
 6.3.2 (for TeX Live 2020, 27 March 2020)
 * New option --cnf-line for kpsewhich (and tex and mf) to support
   arbitrary configuration settings on the command line.
@@ -76,7 +81,7 @@ This file records noteworthy changes.  (Public domain.)
 
 6.2.2 (for TeX Live 2016, 21 May 2016)
 * gregorio added to default shell_escape_commands.
-
+
 6.2.1 (for TeX Live 2015, 21 May 2015)
 * search path information output with new option --help-formats to kpsewhich,
   no longer with --help.
@@ -103,7 +108,7 @@ This file records noteworthy changes.  (Public domain.)
 * Add .tlu to type lua suffixes, and .dfont to truetype suffixes.
 * Prefix program_invocation{,_short}_name with kpse_.
 * Finally remove kpse_set_progname (deprecated since 1998).
-
+
 6.0.0 (for TeX Live 2010, 4 June 2010)
 * Change xmalloc and friends to use size_t, unfortunately changing the ABI.
 
