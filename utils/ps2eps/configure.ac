@@ -8,7 +8,7 @@ dnl   This file is free software; the copyright holder
 dnl   gives unlimited permission to copy and/or distribute it,
 dnl   with or without modifications, as long as this notice is preserved.
 dnl
-m4_define([ps2eps_version], [1.71])[]dnl using unmodified ps2eps source tree
+m4_define([ps2eps_version], [1.72])[]dnl using unmodified ps2eps source tree
 AC_INIT([ps2eps (TeX Live)], ps2eps_version, [tex-k@tug.org])
 AC_PREREQ([2.65])
 AC_CONFIG_SRCDIR([ps2eps-src/src/perl/ps2eps.pl])

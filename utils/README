@@ -31,7 +31,8 @@ m-tx 0.63d - checked 14sep22
 pmx 3.0.0 - checked 13feb23
   https://ctan.org/pkg/pmx/
 
-ps2eps 1.71 - checked 21sep26
+ps2eps 1.72 - checked 7nov26
+  https://ctan.org/tex-archive/support/ps2eps
   https://github.com/roland-bless/ps2eps
 
 t1utils 1.42 - checked 24may26

@@ -1,4 +1,4 @@
-Changes applied to the ps2eps-1.71 tree as obtained from:
+Changes applied to the ps2eps-1.72 tree as obtained from:
 	https://github.com/roland-bless/ps2eps
 
 # update ../README (== Build/source/utils/README) for version and url.
@@ -8,7 +8,7 @@ tar xf ps2eps-1*.tar.gz
 mv ps2eps-src prev
 mv ps2eps-1* ps2eps-src
 cd ps2eps-src
-mv src/perl/ps2eps{,pl} # because script_links.am requires an extension.
+mv src/perl/ps2eps{,.pl} # because script_links.am requires an extension.
 
 # files to add:
 svn status | sed -n 's/^\?//p'
@@ -28,5 +28,10 @@ svn status # should have no ? or !
 # then make, make check, make install, etc., in build directory.
 
 # for ps2eps[.pl], might as well update runtime files by hand,
-# since it's just a script.
-cp ps2eps-src/doc/ps2eps.1 /u/texlive/karl/Master/texmf-dist/doc/man/man1/ps2eps.1
+# since it's just a script. Use your own Master path.
+Master=/u/texlive/karl/Master
+cp -p ps2eps-src/src/perl/ps2eps.pl $Master/texmf-dist/scripts/ps2eps/ps2eps.pl
+cp -p ps2eps-src/doc/man/man1/ps2eps.1 $Master/texmf-dist/doc/man/man1/ps2eps.1
+
+# commit:
+svn commit -m"ps2eps-$newver" ../README . $Master/texmf-dist/{scripts,doc}

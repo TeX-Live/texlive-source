@@ -15,7 +15,9 @@ Nowadays PDF is more widely used, but the original problems
 described below still exist: pdfcrop sometimes does not 
 produce the correct bounding box. This program can be used 
 together with pdfcrop in order to produce reliable bounding 
-boxes for PDF files, too.
+boxes for PDF files, too (see shell script scripts/rbpdfcrop
+as an example how to use ps2eps for cropping PDFs – requires
+pdfcrop).
 
 Other programs like ps2epsi do not calculate the bounding box 
 always correctly (because the values are put on the postscript

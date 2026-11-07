@@ -23,8 +23,8 @@ bbox_SOURCES = \
 	@PS2EPS_TREE@/src/C/bbox.c
 
 man1_MANS = \
-	$(PS2EPS_TREE)/doc/bbox.1 \
-	$(PS2EPS_TREE)/doc/ps2eps.1
+	$(PS2EPS_TREE)/doc/man/man1/bbox.1 \
+	$(PS2EPS_TREE)/doc/man/man1/ps2eps.1
 
 perl_scripts = ps2eps
 scriptsdir = texmf-dist/scripts/ps2eps

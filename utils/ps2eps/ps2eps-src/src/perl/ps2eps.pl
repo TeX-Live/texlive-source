@@ -21,7 +21,9 @@ eval '(exit $?0)' && eval 'exec perl -S $0 ${1+"$@"}' && eval 'exec perl -S $0 $
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
 # Author: Roland Bless
-# Send bug reports to roland <at> bless.de
+# the code lives here https://github.com/roland-bless/ps2eps
+# Please report issues there
+# or send bug reports to roland <at> bless.de
 # -------------------------------------------------------------------
 # Additional filtering is performed when Windows generated PostScript files
 # are processed. Some instructions will otherwise lead to bad output
@@ -45,7 +47,7 @@ $prgname= "ps2eps";
 
 if (! -d "/usr/bin")
 { # we assume that we are running under native windows
-  $ghostscriptname = "gswin32c";
+  $ghostscriptname = "gswin64c";
   $NULLDEV = "nul";
 } 
 else 
@@ -56,7 +58,7 @@ else
 
 $bboxver=`bbox >$NULLDEV -V`;
 $bboxname= ($?== -1) ? "" : "bbox";
-$version= '$Id: ps2eps,v 1.71 2026-08-23 23:00:00 bless Exp $'; #'
+$version= '$Id: ps2eps,v 1.72 2026-09-26 10:00:00 bless Exp $'; #'
 $insertPScode= 1;     # Insert surrounding Postscript code
 $infhandle = STDIN;   # Standard input is the default input file
 $outfhandle = STDOUT; # Standard output is default output if STDIN is input

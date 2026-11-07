@@ -1,3 +1,9 @@
+2026-11-07  Karl Berry  <karl@freefriends.org>
+
+	Import ps2eps-1.72 from https://ctan.org/tex-archive/support/ps2eps.
+	* configure.ac: version 1.72.
+	* Makefile.am (man1_MANS): new location in upstream tree.
+
 2026-09-23  Karl Berry  <karl@freefriends.org>
 
 	* configure.ac (AC_CONFIG_SRCDIR): need .pl, renamed script (again).
