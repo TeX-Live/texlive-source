@@ -119,12 +119,21 @@ db_build (kpathsea kpse, hash_table_type *table,  const_string db_filename)
   FILE *db_file = fopen (db_filename, FOPEN_R_MODE);
 #if defined(MONOCASE_FILENAMES)
   string pp;
+  char lower[256];
+  int c;
 #endif /* MONOCASE_FILENAMES */
 
   strncpy (top_dir, db_filename, len);
   top_dir[len] = 0;
 
   if (db_file) {
+#if defined(MONOCASE_FILENAMES)
+    /* TRANSFORM is a CharLower call on Windows; evaluate it once per
+       byte value instead of once per byte of ls-R.  */
+    lower[0] = 0;
+    for (c = 1; c < 256; c++)
+      lower[c] = (char) TRANSFORM (c);
+#endif /* MONOCASE_FILENAMES */
     /* ls-R is large, so read it all at once and split it into lines in
        place, instead of using read_line, which allocates every line.
        As in read_line, lines end with LF, CR, or CRLF, and null bytes
@@ -152,7 +161,7 @@ db_build (kpathsea kpse, hash_table_type *table,  const_string db_filename)
           pp++;
         else
 #endif /* _WIN32 */
-          *pp = TRANSFORM(*pp);
+          *pp = lower[(unsigned char) *pp];
       }
 #endif /* MONOCASE_FILENAMES */
 

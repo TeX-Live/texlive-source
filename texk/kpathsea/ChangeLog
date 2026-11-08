@@ -1,3 +1,11 @@
+2026-11-07  Norbert Preining  <norbert@preining.info>
+
+	* db.c (db_build): compute TRANSFORM once per byte value into
+	a table, instead of once per byte of ls-R; on Windows, it is a
+	CharLower call, which is slow. The result is the same as before,
+	so the keys still match what hash computes at lookup.
+	Report and original patch from Yukimasa Morimi.
+
 2026-10-29  Norbert Preining  <norbert@preining.info>
 
 	* tests/hashdup.test: new test for keys with several values:
