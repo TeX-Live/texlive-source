@@ -1,3 +1,7 @@
+2026-11-08  Karl Berry  <karl@freefriends.org>
+
+	* reautoconf: don't do -x on the #! line.
+
 2026-11-07  Karl Berry  <karl@freefriends.org>
 
 	* automake 1.20.

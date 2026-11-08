@@ -1,9 +1,9 @@
-#! /bin/sh -x
+#! /bin/sh
 # $Id$
 # This "reautoconf" script at the root of the TeX Live source tree 
 # runs autoreconf (from PATH) in all relevant TL directories.
 #
-# Copyright 2008-2025 Karl Berry.
+# Copyright 2008-2026 Karl Berry.
 # Copyright 2004-2009 Peter Breitenlohner.
 # Copyright 2005 Olaf Weber.
 #
