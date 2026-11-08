@@ -215,7 +215,7 @@ STATIC_PREFIX_WHEN_USED =
 endif
 
 # Static library prefix and file extension
-STATIC_PREFIX = 
+STATIC_PREFIX = s
 LIBSICU = $(LIBPREFIX)$(STATIC_PREFIX)$(ICUPREFIX)
 A = a
 SOBJ = $(SO)

@@ -1,5 +1,6 @@
 Changes applied to the icu tree as obtained from:
-  github.com/unicode-org/icu/releases/download/release-78.2/icu4c-78.2-sources.tgz
+  https://github.com/unicode-org/icu/releases/latest
+  https://github.com/unicode-org/icu/releases/download/release-79.1/icu4c-79.1-sources.tgz
 
 cd $Build/source/libs/icu       # for whatever $Build directory
 # update ./version.ac
@@ -31,12 +32,12 @@ aux=$Build/source/build-aux
 # diff -u2 after each to update patch-* file.
 # Don't lose our leading comments.
 
-# autoreconf in the TL directory (Build/source/libs/icu); 
+# autoreconf in the TL directory (Build/source/libs/icu, not icu-src); 
 # don't run autoreconf in the icu-src/source/ directory, it fails due to
 # missing pkg-config prerequisites, and isn't what we want anyway.
 # 
 # As of ICU 76, C++-17 is required. To build on an older GNU/Linux, such
-# as tug.org, yum install gcc-toolset-13.
+# as tug.org, yum install gcc-toolset-13 or later.
 # 
 # rebuild; must rerun configure (not just config.status),
 # so easiest is to just do a whole new build.
@@ -45,7 +46,7 @@ aux=$Build/source/build-aux
 # Assuming all seems ok, reduce size of source/data/in/icudt*.dat
 # to decrease data segment size, e.g., for old BSD.  First, check
 # that we successfully built the full .dat:
-ver=78
+ver=79
 srcdat=$Build/source/libs/icu/icu-src/source/data/in/icudt${ver}l.dat 
 cd $Work/libs/icu/icu-build/data/out/build/icudt${ver}l
 indat=../../tmp/icudt${ver}l.dat
@@ -55,6 +56,8 @@ diff $srcdat $indat
 # we need to use icupkg, which may need LD_LIBRARY_PATH since it is a
 # C++ binary and we didn't cxx-hack it.
 icupkg="env LD_LIBRARY_PATH=$gnu/lib ../../../../bin/icupkg"
+# but if we used the system compiler, it should just work:
+icupkg=../../../../bin/icupkg
 
 # then remove some elements unused by the icu clients in our tree, which are
 # bibtexu (in texk/bibtex-x), upmendex, and xetex (in texk/web2c/xetexdir).
@@ -75,3 +78,4 @@ svn status | grep -v '^[MAD]' | sort -k 2b
 # if all is ok.
 # update icu/ChangeLog and icu/TLpatches/ChangeLog.
 # then commit icu and libs/README.
+svn commit -m"import icu $version"

@@ -1,3 +1,7 @@
+2026-11-08  Karl Berry  <karl@freefriends.org>
+
+	* Update for icu-79.1.
+
 2026-02-04  Karl Berry  <karl@freefriends.org>
 
 	* patch-13-STATIC_PREFIX: also change source/icudefs.mk.in,

@@ -1656,7 +1656,7 @@ static UBool testTag(const char* frag,
     UChar* base = NULL;
     UChar* expected_string = NULL;
     const UChar* string = NULL;
-    char buf[5];
+    char buf[12];
     char item_tag[10];
     int32_t i,j,row,col, len;
     int32_t actual_bundle;
@@ -2185,7 +2185,7 @@ static void TestFallback(void)
         UResourceBundle* myResB = ures_open(NULL,"no_NO_NY",&err);
         UResourceBundle* resLocID = ures_getByKey(myResB, "Version", NULL, &err);
         const UChar* version = NULL;
-        static const UChar versionStr[] = u"48"; // 48 in nn_NO or in a parent bundle/root
+        static const UChar versionStr[] = u"49"; // 49 in nn_NO or in a parent bundle/root
 
         if(U_FAILURE(err)) {
             log_data_err("Expected success when trying to test no_NO_NY aliased to nn_NO for Version "

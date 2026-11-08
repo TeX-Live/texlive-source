@@ -1,8 +1,8 @@
 	From Marc Baudoin.
 	https://tug.org/pipermail/tlbuild/2024q4/005581.html
 
---- source/common/unicode/ptypes.h~	2024-10-24 11:24:00.000000000 -0700
-+++ source/common/unicode/ptypes.h	2024-10-30 17:25:22.442817993 -0700
+--- source/common/unicode/ptypes.h~	2026-10-22 08:02:04.000000000 -0700
++++ source/common/unicode/ptypes.h	2026-11-08 08:45:07.173913584 -0800
 @@ -57,5 +57,5 @@
  // ICU4C must detect and deal with that.
  #if !defined(__cplusplus) && !defined(U_IN_DOXYGEN)

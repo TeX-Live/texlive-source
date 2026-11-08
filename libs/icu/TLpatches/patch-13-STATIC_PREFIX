@@ -1,21 +1,11 @@
 	No `s' for STATIC_PREFIX.
 
---- source/config/Makefile.inc.in~	2026-01-08 11:02:41.000000000 -0800
-+++ source/config/Makefile.inc.in	2026-01-21 14:37:08.830531431 -0800
+--- source/config/Makefile.inc.in~	2026-10-22 08:02:04.000000000 -0700
++++ source/config/Makefile.inc.in	2026-11-08 08:39:21.868012011 -0800
 @@ -47,5 +47,5 @@
  
  # Static library prefix and file extension
- LIBSICU = lib$(STATIC_PREFIX)$(ICUPREFIX)
- A = a
---- source/icudefs.mk.in	(revision 77591)
-+++ source/icudefs.mk.in	(working copy)
-@@ -211,3 +211,3 @@ LIBICU = $(LIBPREFIX)$(ICUPREFIX)
- ifneq ($(ENABLE_SHARED),YES)
--STATIC_PREFIX_WHEN_USED = s
-+STATIC_PREFIX_WHEN_USED = 
- else
-@@ -217,3 +217,3 @@ endif
- # Static library prefix and file extension
 -STATIC_PREFIX = s
 +STATIC_PREFIX = 
- LIBSICU = $(LIBPREFIX)$(STATIC_PREFIX)$(ICUPREFIX)
+ LIBSICU = lib$(STATIC_PREFIX)$(ICUPREFIX)
+ A = a
