@@ -1,0 +1,214 @@
+#!/usr/bin/env texlua
+-- SPDX-License-Identifier: MIT
+-- Copyright (c) 2026 import-citation-cff contributors
+
+local kpse = require("kpse")
+kpse.set_program_name("luatex")
+local script_directory = arg[0]:match("^(.*[/\\])") or "./"
+local lfs = require("lfs")
+local windows = package.config:sub(1, 1) == "\\"
+
+-- Kpathsea's Lua searcher does not use package.path. Prefer sibling files in
+-- a source checkout; installed modules can fall back to the TeX search path.
+local function load_module(name)
+  local filename = script_directory .. name .. ".lua"
+  if lfs.isfile(filename) then
+    package.loaded[name] = dofile(filename)
+    return package.loaded[name]
+  end
+  return require(name)
+end
+
+local function read_file(filename)
+  local input, message = io.open(filename, "rb")
+  if not input then
+    error(message, 0)
+  end
+  local text, read_error = input:read("*a")
+  input:close()
+  if not text then
+    error(read_error, 0)
+  end
+  return text
+end
+
+local function options(arguments)
+  local result, positional = {}, false
+  local index = 1
+  while index <= #arguments do
+    local value = arguments[index]
+    if not positional and (value == "--help" or value == "-h") then
+      return {help = true}
+    elseif not positional and value == "--version" then
+      return {version = true}
+    elseif not positional and value == "--" then
+      positional = true
+    elseif not positional and (value == "--output" or value == "-o"
+      or value:match("^%-%-output=")) then
+      if result.output then
+        error("--output may be specified only once", 0)
+      end
+      result.output = value:match("^%-%-output=(.*)$")
+      if not result.output then
+        index = index + 1
+        result.output = arguments[index]
+      end
+      if not result.output or result.output == "" then
+        error("--output requires a filename", 0)
+      end
+    elseif not positional and value:sub(1, 1) == "-" then
+      error("unknown option: " .. value, 0)
+    elseif result.input then
+      error("expected exactly one input TeX file", 0)
+    else
+      result.input = value
+    end
+    index = index + 1
+  end
+  if not result.input then
+    error("expected an input TeX file (see --help)", 0)
+  end
+  return result
+end
+
+local function absolute(filename)
+  if windows then
+    if not filename:match("^[/\\]") and not filename:match("^%a:[/\\]") then
+      filename = lfs.currentdir() .. "/" .. filename
+    end
+    filename = filename:gsub("\\", "/")
+  elseif not filename:match("^/") then
+    filename = lfs.currentdir() .. "/" .. filename
+  end
+  -- A Windows path keeps its drive, as in C:/Users, without a leading slash.
+  local drive = windows and filename:match("^%a:") or ""
+  local parts = {}
+  for part in filename:sub(#drive + 1):gmatch("[^/]+") do
+    if part == ".." then
+      parts[#parts] = nil
+    elseif part ~= "." then
+      parts[#parts + 1] = part
+    end
+  end
+  return drive .. "/" .. table.concat(parts, "/")
+end
+
+local function protect_input(input, output)
+  if absolute(input) == absolute(output) then
+    error("refusing to overwrite the input TeX file", 0)
+  end
+  local original, target = lfs.attributes(input), lfs.attributes(output)
+  if original and target and original.ino and original.ino ~= 0
+    and original.dev == target.dev and original.ino == target.ino then
+    error("refusing to overwrite the input TeX file (same file)", 0)
+  end
+end
+
+-- Allocate a private directory next to the destination, then rename the
+-- complete result into place. A conversion or write failure keeps the old
+-- destination intact. No shell commands or global temporary paths are used.
+local function write_output(filename, text)
+  local directory, basename = filename:match("^(.*[/\\])([^/\\]+)$")
+  directory, basename = directory or "./", basename or filename
+  local temporary
+  for index = 1, 100 do
+    local candidate = directory .. "." .. basename .. ".cfflatexpand-"
+      .. os.time() .. "-" .. index
+    if lfs.mkdir(candidate) then
+      temporary = candidate
+      break
+    end
+  end
+  if not temporary then
+    error("cannot create an output temporary directory beside " .. filename, 0)
+  end
+  local staged = temporary .. "/output.tex"
+  local success, message = pcall(function()
+    local output, open_error = io.open(staged, "wb")
+    if not output then
+      error(open_error, 0)
+    end
+    local written, write_error = output:write(text)
+    local closed, close_error = output:close()
+    if not written or not closed then
+      error(write_error or close_error, 0)
+    end
+    local renamed, rename_error = os.rename(staged, filename)
+    -- Windows does not rename a file onto an existing one. Move the old
+    -- destination into the private directory, and back if the new file
+    -- cannot take its place.
+    if not renamed and windows and lfs.attributes(filename, "mode") == "file" then
+      local previous = temporary .. "/previous.tex"
+      if os.rename(filename, previous) then
+        renamed, rename_error = os.rename(staged, filename)
+        if renamed then
+          os.remove(previous)
+        else
+          os.rename(previous, filename)
+        end
+      end
+    end
+    if not renamed then
+      error(rename_error, 0)
+    end
+  end)
+  os.remove(staged)
+  lfs.rmdir(temporary)
+  if not success then
+    error(message, 0)
+  end
+end
+
+local function main()
+  local selected = options(arg)
+  if selected.help then
+    load_module("cfflatex-data")
+    io.stdout:write(load_module("cfflatexpand").help)
+    return
+  end
+  if selected.version then
+    local filename = script_directory .. "import-citation-cff.sty"
+    if not lfs.isfile(filename) then
+      filename = kpse.find_file("import-citation-cff.sty", "tex") or filename
+    end
+    local version = read_file(filename):match(
+      "\\ProvidesExplPackage%s*{import%-citation%-cff}%s*{[^}]*}%s*{([^}]+)}")
+    if not version then
+      error("cannot read the import-citation-cff version from " .. filename, 0)
+    end
+    io.stdout:write("cfflatexpand (import-citation-cff) " .. version .. "\n")
+    return
+  end
+  if selected.output and selected.output ~= "-" then
+    protect_input(selected.input, selected.output)
+  end
+  load_module("cfflatex-data")
+  local expand = load_module("cfflatexpand")
+  local function render_authors(model, author_options)
+    load_module("cfflatex")
+    local document_directory = absolute(selected.input):match("^(.*[/\\])")
+    return load_module("cfflatexpand-authors").render(model, author_options,
+      script_directory, document_directory)
+  end
+  local result = expand.transform(read_file(selected.input), selected.input, render_authors)
+  if selected.output and selected.output ~= "-" then
+    write_output(selected.output, result)
+  else
+    -- Windows would write each line feed as CR LF, and CR LF as CR CR LF,
+    -- which TeX reads as an extra empty line. Write the bytes unchanged.
+    lfs.setmode(io.stdout, "binary")
+    local success, message = io.stdout:write(result)
+    if success then
+      success, message = io.stdout:flush()
+    end
+    if not success then
+      error(message, 0)
+    end
+  end
+end
+
+local success, message = pcall(main)
+if not success then
+  io.stderr:write("cfflatexpand: " .. tostring(message) .. "\n")
+  os.exit(1)
+end

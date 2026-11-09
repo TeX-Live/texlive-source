@@ -387,6 +387,7 @@ texmf_other_scripts = \
 	glossaries/makeglossaries \
 	glossaries/makeglossaries-lite.lua \
 	hyperxmp/hyperxmp-add-bytecount.pl \
+	import-citation-cff/cfflatexpand \
 	jfmutil/jfmutil.pl \
 	ketcindy/ketcindy.pl \
 	kotex-utils/jamo-normalize.pl \

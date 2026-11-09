@@ -103,6 +103,7 @@ texmf-dist/scripts/getmap/getmapdl.lua getmapdl
 texmf-dist/scripts/glossaries/makeglossaries makeglossaries
 texmf-dist/scripts/glossaries/makeglossaries-lite.lua makeglossaries-lite
 texmf-dist/scripts/hyperxmp/hyperxmp-add-bytecount.pl hyperxmp-add-bytecount
+texmf-dist/scripts/import-citation-cff/cfflatexpand cfflatexpand
 texmf-dist/scripts/jfmutil/jfmutil.pl jfmutil
 texmf-dist/scripts/ketcindy/ketcindy.pl ketcindy
 texmf-dist/scripts/kotex-utils/jamo-normalize.pl jamo-normalize
