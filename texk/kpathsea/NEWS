@@ -8,6 +8,8 @@ This file records noteworthy changes.  (Public domain.)
   - read ls-R in one piece instead of line by line (r80896).
   - make hash_insert constant-time (r80898).
   - avoid division per character when hashing (r80899).
+  - when reading ls-R on Windows, transform to lowercase via a computed
+    table instead of CharLower on each character individually (r81032).
 
 6.4.2 (for TeX Live 2026, 3 March 2026)
 * New configuration value texmf_nlink_for_leaf to specify whether the

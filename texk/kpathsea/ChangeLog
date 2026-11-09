@@ -1,3 +1,7 @@
+2026-11-09  Karl Berry  <karl@freefriends.org>
+
+	* NEWS: add performance entries.
+
 2026-11-07  Norbert Preining  <norbert@preining.info>
 
 	* db.c (db_build): compute TRANSFORM once per byte value into
