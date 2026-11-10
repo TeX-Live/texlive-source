@@ -1,3 +1,11 @@
+2026-11-10  Karl Berry  <karl@freefriends.org>
+
+	* synctex_parser.c (__synctex_parse_sfi): comment out
+	"Negative width\n" debugging output that was written to stdout,
+	breaking other uses of stdout, e.g., by epdfinfo.
+	Report from Sven Kockrick,
+	https://tug.org/pipermail/tex-live/2026-November/052801.html
+
 2026-03-22  Jerome Laurens <jerome.laurens@ube.fr>
 
 	* synctex_parser.c: Fix NULL pointer dereference.

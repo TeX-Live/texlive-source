@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2008-2017 jerome DOT laurens AT u-bourgogne DOT fr
+ Copyright (c) 2008-2026 jerome DOT laurens AT u-bourgogne DOT fr
  
  This file is part of the __SyncTeX__ package.
  
@@ -5476,9 +5476,10 @@ content_loop:
 #   endif
             ns = _synctex_parse_new_void_hbox(scanner);
             if (ns.status == SYNCTEX_STATUS_OK) {
-                if (_synctex_data_width(ns.node)<0) {
-                    printf("Negative width\n");
-                }
+                /* debugging, don't write to stdout, probably not needed? */
+                /* if (_synctex_data_width(ns.node)<0) {
+                    fprintf(stderr, "Negative width\n");
+                } */
                 if (child) {
                     _synctex_node_set_sibling(child,ns.node);
                 } else {
