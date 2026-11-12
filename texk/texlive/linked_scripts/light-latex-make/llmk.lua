@@ -3,7 +3,7 @@
 --
 -- This is file `llmk.lua'.
 --
--- Copyright 2018-2023 Takuto Asakura (wtsnjp)
+-- Copyright 2018-2026 Takuto Asakura (wtsnjp)
 --   GitHub:   https://github.com/wtsnjp
 --   Twitter:  @wtsnjp
 --
@@ -39,8 +39,8 @@ local M = {}
 
 -- program information
 M.prog_name = 'llmk'
-M.version = '1.2.0'
-M.copyright = 'Copyright 2018-2023'
+M.version = '1.3.0'
+M.copyright = 'Copyright 2018-2026'
 M.author = 'Takuto Asakura (wtsnjp)'
 M.llmk_toml = 'llmk.toml'
 
@@ -214,6 +214,12 @@ function M.replace_specifiers(str, source, target, output_directory)
   str = str:gsub('%%B', sub_output_directory_basename)
 
   return str
+end
+
+function M.merge_tables(one, another)
+    for k, v in pairs(another) do
+      one[k] = v
+    end
 end
 
 llmk.util = M
@@ -844,6 +850,12 @@ function M.parse_toml(toml, file_info)
     step()
   end
 
+  -- update entries from command line args
+  if llmk.cli.temporary_feature and llmk.cli.temporary_feature.config_override then
+      for k, v in pairs(llmk.cli.temporary_feature.config_override) do
+          res[k] = v
+      end
+  end
   return res
 end
 
@@ -1326,9 +1338,11 @@ function M.run_sequence(fn, config)
   llmk.util.dbg_print('fdb', 'The initial file database is as follows:')
   llmk.util.dbg_print_table('fdb', fdb)
 
-  -- check if output directory exists
+  -- create the output directory if it does not exist
   if config.output_directory and not lfs.isdir(config.output_directory) then
-    llmk.util.err_print('error', 'Output directory does not exist "%s"', config.output_directory)
+    if not lfs.mkdirp(config.output_directory) then
+      llmk.util.err_print('error', 'Failed to create output directory "%s"', config.output_directory)
+    end
   end
 
   for _, name in ipairs(config.sequence) do
@@ -1406,6 +1420,10 @@ Options:
   -n, --dry-run         Show what would have been executed.
   -q, --quiet           Suppress most messages.
   -s, --silent          Silence messages from called programs.
+  --source              Substitute the given path for the `source` entry on
+                        `llmk.toml` at runtime.  This is a temporary
+                        feature and is prohibited by default.
+  -T, --temporary       Allow the temporary features.
   -v, --verbose         Print additional information.
   -V, --version         Print the version number.
 
@@ -1470,6 +1488,18 @@ local function read_options()
     return tab
   end
 
+  local function register_temporary_feature(key, value)
+    if M.temporary_feature == nil then
+      M.temporary_feature = {}
+    end
+    if M.temporary_feature[key] == nil then
+      M.temporary_feature[key] = value
+    else
+      M.temporary_feature[key] = M.merge_tables(M.temporary_feature[key], value)
+    end
+  end
+
+  local allow_temporary_feature = false
   local opts = getopt(arg, 'd')
   for _, tp in pairs(opts) do
     k, v = tp[1], tp[2]
@@ -1510,11 +1540,23 @@ local function read_options()
     -- dry run
     elseif (curr_arg == '-n') or (curr_arg == '--dry-run') then
       llmk.core.dry_run = true
+    -- config override
+    elseif (curr_arg == '--source') then
+      register_temporary_feature("config_override", {source = v})
+    --allow temporary features
+    elseif (curr_arg == '-T') or (curr_arg == '--temporary') then
+      allow_temporary_feature=true
     -- problem
     else
       llmk.util.err_print('error', 'unknown option: ' .. curr_arg)
       os.exit(C.exit_error)
     end
+  end
+
+  -- Check if temporary features are along with `-T` flag.
+  if M.temporary_feature and not allow_temporary_feature then
+      llmk.util.err_print('error', 'Some options enable non-reproducible behavior and require the --temporary flag. See the manual for details.')
+      os.exit(C.exit_error)
   end
 
   return action
