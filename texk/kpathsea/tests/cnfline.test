@@ -1,6 +1,6 @@
 #!/bin/sh -vx
 # $Id$
-# Copyright 2019 Karl Berry <tex-live@tug.org>
+# Copyright 2019-2026 Karl Berry <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 
 BinDir=${BinDir:-.}
@@ -18,6 +18,9 @@ remove_cr() {
     val=`echo $val | sed -e 's/\\r//'`
   fi
 }
+
+# Since we use --cnf-line.
+KPSEWHICH_INSECURE=1; export KPSEWHICH_INSECURE
 
 # Just for fun, let's first try the --cnf-line feature to set TEXMFCNF.
 val=`$_kpsewhich "--cnf-line=TEXMFCNF=$cnf_dir" --var-value=othervar`; remove_cr

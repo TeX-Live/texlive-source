@@ -1,6 +1,6 @@
 #!/bin/sh -vx
 # $Id$
-# Copyright 2025 Karl Berry <tex-live@tug.org>
+# Copyright 2025-2026 Karl Berry <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 # 
 # Test configuration value for enabling/disabling the check for
@@ -22,6 +22,9 @@ touch nlinkc/throughfile.tex || exit 1
 
 # We don't need a texmf.cnf for this.
 KPATHSEA_WARNING=0; export KPATHSEA_WARNING
+
+# Since we use --cnf-line.
+KPSEWHICH_INSECURE=1; export KPSEWHICH_INSECURE
 
 # debugging
 #find nlink\* -type f | sort

@@ -3,7 +3,7 @@
 @settitle Kpathsea: A library for path searching
 
 @set version 6.4.2/dev
-@set month-year April 2026
+@set month-year November 2026
 
 @copying
 This file documents the Kpathsea library for path searching.
@@ -698,7 +698,7 @@ later files.  Thus, if the search path is @samp{.:$TEXMF}, values from
 If Kpathsea cannot find any @file{texmf.cnf} file, it reports a
 warning including all the directories it checked.  If you don't want
 to see this warning, set the environment variable
-@env{KPATHSEA_WARNING} to the single character @samp{0} (zero, not
+@code{KPATHSEA_WARNING} to the single character @samp{0} (zero, not
 oh).
 
 While (or instead of) reading this description, you may find it helpful
@@ -1623,6 +1623,13 @@ casefolding itself.
 
 @item --cnf-line=@var{str}
 @opindex --cnf-line
+@vindex KPSEWHICH_INSECURE
+This option is allowed only if the environment variable
+@code{KPSEWHICH_INSECURE} is set to a non-empty value; since it allows
+overriding anything, it would be unsafe to allow it to be used from
+@TeX{} documents, but we want to allow normal use of @code{kpsewhich}
+from @TeX{} (@pxref{Shell escapes,,, web2c, Web2c}).
+
 Parse @var{str} as if it were a line in the @file{texmf.cnf}
 configuration file (@pxref{Config files}), overriding settings in the
 actual configuration files, and also in the environment (@pxref{Path
@@ -1765,6 +1772,11 @@ from standard input.
 @itemx --no-mktex=@var{filetype}
 @opindex --mktex=@var{filetype}
 @opindex --no-mktex=@var{filetype}
+@vindex KPSEWHICH_INSECURE
+This option is allowed only if the environment variable
+@code{KPSEWHICH_INSECURE} is set, since it can be tweaked to invoke
+arbitrary external programs. See above at @code{--cnf-line}.
+
 Turn on or off the @samp{mktex} script associated with @var{filetype}.
 Usual values for @var{filetype} are @samp{pk}, @samp{mf}, @samp{tex},
 and @samp{tfm}.  By default, all are off in Kpsewhich, even if they

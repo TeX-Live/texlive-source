@@ -1,6 +1,6 @@
 #!/bin/sh -vx
 # $Id$
-# Copyright 2019 Karl Berry <tex-live@tug.org>
+# Copyright 2019-2026 Karl Berry <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 # Test strange program name qualifiers which should give warnings.
 
@@ -12,6 +12,9 @@ cnf_dir=$srcdir/tests/cnfprog
 
 # But for the rest, just use the environment, to keep things simpler.
 TEXMFCNF=$cnf_dir; export TEXMFCNF
+
+# Since we use --cnf-line.
+KPSEWHICH_INSECURE=1; export KPSEWHICH_INSECURE
 
 # Make sure we get expected values from the test texmf.cnf.
 errfile=cnfprog.err

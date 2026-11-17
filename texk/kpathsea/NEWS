@@ -1,8 +1,11 @@
 $Id$
 This file records noteworthy changes.  (Public domain.)
 
-* kpsewhich: special-case dvipdfmx.cfg, like the other program
-  configuration files (config.ps, fmtutil.cnf, texmf.cnf, etc.).
+* kpsewhich:
+  - special-case dvipdfmx.cfg, like the other program configuration
+    files (config.ps, fmtutil.cnf, texmf.cnf, etc.).
+  - allow the --cnf-line and --mktex options only if the (new)
+    environment variables KPSEWHICH_INSECURE is set.
 
 * Performance:
   - read ls-R in one piece instead of line by line (r80896).

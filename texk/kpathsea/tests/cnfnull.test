@@ -1,6 +1,6 @@
 #!/bin/sh -vx
 # $Id$
-# Copyright 2020 Karl Berry <tex-live@tug.org>
+# Copyright 2020-2026 Karl Berry <tex-live@tug.org>
 # You may freely use, modify and/or distribute this file.
 # 
 # Test nul (zero) bytes in texmf.cnf.
@@ -18,6 +18,9 @@ rm -rf $cnf_dir
 mkdir $cnf_dir
 test -d $cnf_dir || exit 1
 printf 'x\0=1\n\0' >$cnf_file || exit 2
+
+# Since we use --cnf-line.
+KPSEWHICH_INSECURE=1; export KPSEWHICH_INSECURE
 
 val=`$_kpsewhich "--cnf-line=TEXMFCNF=$cnf_dir" --var-value=x`
 if [ "$ExeExt" = ".exe" ]; then val=`echo $val | sed -e 's/\\r//'`; fi

@@ -615,6 +615,21 @@ help_formats (kpathsea kpse, string *argv)
 
 /* Reading the options.  */
 
+/* A couple options allow invoking arbitrary other programs, so require
+   the user to set an envvar declaring them ok.  */
+
+static void
+assert_insecure (const_string option)
+{
+  string var = getenv ("KPSEWHICH_INSECURE");
+  if (!var || ! *var) {
+    fprintf (stderr,
+             "kpsewhich: option requires KPSEWHICH_INSECURE to be set: %s\n",
+             option);
+    exit (EXIT_FAILURE);
+  }
+}
+
 /* This macro tests whether getopt found an option ``A''.
    Assumes the option index is in the variable `option_index', and the
    option table in a variable `long_options'.  */
@@ -686,6 +701,7 @@ read_command_line (kpathsea kpse, int argc, string *argv)
       xputenv ("texmf_casefold_search", "1");      
 
     } else if (ARGUMENT_IS ("cnf-line")) {
+      assert_insecure ("-cnf-line");
       if (user_cnf_lines == NULL) {
         user_cnf_nlines = 1;
         user_cnf_lines = xmalloc (sizeof (const_string));
@@ -725,6 +741,7 @@ read_command_line (kpathsea kpse, int argc, string *argv)
       help_formats (kpse, argv);
 
     } else if (ARGUMENT_IS ("mktex")) {
+      assert_insecure ("-mktex");
       kpathsea_maketex_option (kpse, optarg, true);
       must_exist = 1;  /* otherwise it never gets called */
 
