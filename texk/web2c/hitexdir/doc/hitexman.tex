@@ -132,7 +132,7 @@ Germany.
 \medskip
 {\tt ruckert\:@cs.hm.edu}
 \medskip
-Last commit: Tue Aug 11 18:32:07 2026
+Last commit: Tue Nov 17 17:30:36 2026
 \par
 }
 \eject
@@ -313,10 +313,11 @@ to convert the input files before processing them with \HiTeX.
 On the technical level, \HiTeX\ converts any (multibyte) \UTF8 codepoint from an input file
 into a single character token with a character value in the range 0 to \.{"10FFFF}.
 On output, a character token with a value within the ASCII range 0 to  \.{"7F}
-is conveted using the ``classic'' output routines of \TeX\ that attempt to
+is converted using the ``classic'' output routines of \TeX\ that attempt to
 present even non-printable characters in a readable form,
 while a character token with a value greater than \.{"7F} is converted to
-its multibyte \UTF8 encoding.
+its multibyte \UTF8 encoding. For error messages, like missing characters in a font,
+also the numeric value is printed.
 
 Following the example of \LuaTeX\ and \XeTeX, a number of primitives were
 extended and others were added to cope with the larger range of character codes.
@@ -327,13 +328,13 @@ A character code in \HiTeX\ is no longer
 an \sym{\hbox{8-bit}\  number} but an \sym{utf\ character\ code}:
 \medskip
 \rule\sym{utf\ character\ code}: 
-a \sym{number} in the range \.{0} to \.{"10FFFF}. \index{utf character code+\sym{utf\ character\ code}}
+21-bit \sym{integer} in the range \.{0} to \.{"10FFFF}. \index{utf character code+\sym{utf\ character\ code}}
 \medskip
 
 Some traditional primitives are simply extended to handle these larger
 character codes. To get access to any character whatsoever, you can type
 \ctl{char}\sym{utf\ character\ code}. Similarly, you can write
-\ctl{chardef}\sym{control sequence}\.{=}\sym{utf\ character\ code}.
+\ctl{chardef}\sym{control sequence} \.{=} \sym{utf\ character\ code}.
 
 To enter unusual character codes in the input file \TeX\ provides the \.{\^\^} notation:
 you can type \.{\^\^} followed by an ASCII character $c$ in the range $0\le c\le 127$.
@@ -352,8 +353,8 @@ With this convention, the remaining unicode characters are
 obtainable in a uniform way, from \.{\^\^\^\^0100} to \.{\^\^\^\^\^\^10ffff}.
 
 
-New are the primitives \ctl{Uchar} and \ctl{Ucharcat} as defined by the
-\XeTeX\ manual. \ctl{Uchar}\sym{utf\ character\ code} expands to a
+New are the primitives \ctl{Uchar} and \ctl{Ucharcat}.
+\ctl{Uchar}\sym{utf\ character\ code} expands to a
 character token with the specified \sym{utf\ character\ code} with
 category code 12. While it looks superficially like the \TeX\ primitive
 \ctl{char}, \ctl{Uchar} is an expandable operation.
@@ -361,6 +362,8 @@ category code 12. While it looks superficially like the \TeX\ primitive
 character token with the specified \sym{utf\ character\ code}
 and the given \sym{catcode}. The values allowed
 for \sym{catcode} are: 1--4, 6--8 and 10--13.
+The definition of \ctl{Uchar} and \ctl{Ucharcat} follows the \XeTeX\ manual.
+
 
 With a small exception, \ctl{if}, \ctl{ifcat}, and \ctl{ifx}
 work for unicode characters exactly as described in the \TeX\ book:
@@ -381,7 +384,7 @@ Since the range of single byte UTF8 codes is only 0 to \.{"7F},
 Characters outside this range are coded with multiple bytes and go
 into \TeX's hash table. The same schema is used for active characters.
 It is, however, necessary to use a separate hash table for characters
-that have a multibyte UTF8 coding, because, the control sequence associated
+that have a multibyte UTF8 encoding, because, the control sequence associated
 with an active character is not the same thing as the single character
 control sequence for the same character.
 
@@ -397,34 +400,33 @@ using the Angstr\"om symbol.
 \subsubsection{Setting and retrieving character information}
 To typeset characters correctly, \TeX\ relies on a number of properties
 associated with a character: its
-\ctl{catcode},  \ctl{sfcode}, \ctl{uccode}, \ctl{lccode}, 
-%\ctl{Umathcode}, \ctl{Umathcodenum},
+\ctl{catcode},  \ctl{sfcode}, \ctl{uccode}, \ctl{lccode},
 \ctl{mathcode}, and \ctl{delcode}.
 
 While \TeX\ traditionaly stores this information in arrays indexed
 by the character code, this approach is no longer appropriate if
-character codes span a range from 0 to 1114111 as is the case for
+character codes span a range of over one million characters as is the case for
 \UTF\ coded characters. For this reason, \HiTeX\ uses a compressed
 tree representation that is compact (about 40kByte) and allows very fast access.
-Modifying the data stored this way is less convenient and will run out of
-table space if more than a few dozend character codes need to be changed.
+Modifying the data stored this way is less convenient.
 Since traditionaly character data is changed only for
-code vales less than 256, \HiTeX\ assumes that most changes of
-\ctl{catcode}, \ctl{sfcode},
-\ctl{mathcode}, % family, class, slot
-and \ctl{delcode} occur in this range and keeps this data in \TeX's
+code values up to  255, \HiTeX\ assumes that most changes
+occur in this range and keeps this data in \TeX's
 traditional arrays where changes will not affect the compressed tables.
+Changes that occur for code values larger than 255 are stored in a separate
+hash table, which is most efficient if the hash table is not too full. Keep this
+in mind when making large scale changes to character properties.
 
 It is to bee seen if this approach will work in practice or
 some other data structure will deliver similar performance while
-allowing large scale across the whole range of unicode characters.
+allowing large scale  changes across the whole range of unicode characters.
 
 Because the compression is a complicated operation, it is not done at run time,
 but a separate program computes the compressed tables which are loaded into
 the \HiTeX\ engine at compiletime. Therefore \HiTeX\ is different from other
 unicode \TeX\ engines: With \HiTeX, it is not a good idea
-to load the unicode character data at runtime. The loading would destroy the
-compression and would sooner or later produce and overflow error.
+to load the complete unicode character data at runtime. The loading would destroy the
+compression and would sooner or later produce an overflow error for the hash table.
 Instead the character data is already part of the \HiTeX\ engine when it starts
 with exactly the same values it would and should have after the runtime initialization.
 
@@ -432,7 +434,8 @@ Now let's consider the details.
 
 \subsubsection{\ctl{catcode} and \ctl{sfcode}}
 These primitives work pretty much as usual, except that their argument
-is no longer an \sym{\hbox{8-bit}\  number} but \sym{utf\ character\ code}:
+is no longer restricted to an \sym{\hbox{8-bit}\  number};
+it is now an \sym{utf\ character\ code}.
 
 The values---category codes are in the range from 1 to 15 and
 space factor codes are in the range from 0 to 32767---can be retrieved like this:
@@ -442,23 +445,20 @@ space factor codes are in the range from 0 to 32767---can be retrieved like this
 \rule\sym{internal\ integer}:
 \ctl{sfcode}\sym{utf\ character\ code}.
 \medskip
-Setting new values is equaly simple. The assigned \sym{number} must be in the
+Setting new values is equaly simple. The assigned \sym{integer} must be in the
 propper range.
 \medskip
 \rule\sym{code\ assignment}:
-\ctl{catcode}\sym{utf\ character\ code} \opt{\.{=}} \sym{number}.
+\ctl{catcode}\sym{utf\ character\ code} \opt{\.{=}} \sym{integer}.
 \rule\sym{code\ assignment}:
-\ctl{sfcode}\sym{utf\ character\ code} \opt{\.{=}} \sym{number}.
+\ctl{sfcode}\sym{utf\ character\ code} \opt{\.{=}} \sym{integer}.
 \medskip
 
 \subsubsection{\ctl{uccode} and \ctl{lccode}}
 These primitives are again extended to work with the full range of unicode
-characters. It is expected that the assignment of new lower case or upper case
-values is relatively rare. Sometimes it is used in certain coding tricks.
-So \TeX's traditional tables are not retained and all information is stored
-in the new compressed format. Take this into accound before attempting to
-large scale rearangements of these assignments. Information about ``title case''
-is currently not implemented.
+characters. The storage scheme and its limitation is the same as for
+\ctl{uccode} and \ctl{lccode}.
+Information about ``title case'' is currently not implemented.
 \medskip
 \rule\sym{internal\ integer}:
 \ctl{lccode}\sym{utf\ character\ code}.
@@ -470,102 +470,280 @@ is currently not implemented.
 \ctl{uccode}\sym{utf\ character\ code} \opt{\.{=}} \sym{utf\ character\ code}.
 \medskip
 
+\subsection{Unicode math}
 
-\subsubsection{\ctl{mathcode}, \ctl{delcode} and friends}
-Before diving deeper into this section, there is a confession due:
-using \HiTeX\ with unicode fonts in math mode is a largely untested area.
-But the basics are implemented in the \HiTeX\ engine.
+The following subsections document how \HiTeX\ extends \TeX\ to enable
+the use of UTF encoded OpenType fonts in math mode. The primitives and their
+implementation follows mostly the implementation of \XeTeX. This manual tries
+to be complete in listing  differences to \XeTeX\ or \LuaTeX.
 
-Making the \ctl{mathcode} primitive work nicely with unicode values
-requires some extra work because \TeX\ packs three different values,
-the class, the family, and the character code into one integer.
-In hexadecimal notation a mathcode contains four hexadecimal digits:
+\subsubsection{\ctl{mathcode}, \ctl{Umathcode}, and \ctl{Umatcodenum}}
+
+Before considering the extensions necessary to support the full range
+of unicode character codes, let's first review \TeX's definition of
+math codes. \TeX\ packs three different values, the class, the family,
+and the character code into one integer.
+\medskip
+\rule\sym{class}: 3-bit \sym{integer} in the range 0 to 7.
+\rule\sym{family}: 4-bit \sym{integer} in the range 0 to 15.
+\rule\sym{character\ code}: 8-bit \sym{integer} in the range 0 to 255.
+\rule\sym{math\ code}: \sym{class}\sym{familiy}\sym{character\ code} \OR \.{"8000}.
+\medskip
+
+Note that you can use the special math code value \.{"8000}
+to make an ``active'' math character.
+
+It is convenient to give a \sym{math\ code} in hexadecimal notation.
+In hexadecimal notation a \sym{math\ code} has four hexadecimal digits:
 the leading hex-digit specifies the class,
 the next hex-digit specifies the familiy and the lowest two digits
-a one byte character code.
-\medskip
-\rule\sym{class}: \sym{hexdigit}.
-\rule\sym{family}: \sym{hexdigit}.
-\rule\sym{byte}: \sym{hexdigit}\sym{hexdigit}.
-\rule\sym{math\ code}:\sym{class}\sym{familiy}\sym{byte}.
-\medskip
-It is not strictly necessary to give the number in hexadecimal;
-it is possible to convert the hexadecimal number into a decimal
-number and write it down in decimal; or in any other format that
-\TeX\ provides for the representation of numbers.
+the character code.
 
-To be compatible with existing \TeX\ code this format is retained when
-using  \ctl{mathcode}, only the argument of  \ctl{mathcode} now can be
-any unicode character.
+To be compatible with \TeX, this format is retained.
+The argument of  \ctl{mathcode}, however, can be
+any unicode character. The range and format of a \sym{math\ code} remains unchanged.
+The limits on \sym{family} and \sym{character\ code} on the right side of the equal sign
+still apply.
 \medskip
-\rule\sym{math\ code}:
+\rule\sym{internal\ integer}:
 \ctl{mathcode}\sym{utf\ character\ code}.
 \rule\sym{code\ assignment}:
 \ctl{mathcode}\sym{utf\ character\ code} \opt{\.{=}} \sym{math\ code}.
 \medskip
-So you can say \ctl{mathcode}\.{96} as well as \ctl{mathcode}\.{9600}
-and in both cases, you will get a math code in the range 0 to \.{"FFFF}.
-If however the class stored for the character in question is not
-in the range 0 to \.{"F}, or the family is not in the range \.{"F},
-or the character code does not fit into one byte, \ctl{mathcode} will
-return zero. You can also use \ctl{mathcode}\.{9600} to give a new math code
-value to the unicode character 9600, but the new value is limited to a
-one byte character code.
-Note also that you can continue to use the special math code value \.{"8000}
-to make an ``active'' math character.
 
-
-To set or retrieve math codes with arbitrary unicode characters,
-\HiTeX\ follows the example of \LuaTeX\ and \XeTeX\ and
-packs a 3-bit class number, a 8-bit family number and a 21-bit unicode character
+Next we define \sym{Umath\ code}, \HiTeX's extended math code, allowing the
+full range of UTF character codes and up to 256 families:
+A \sym{Umath\ code} packs a 3-bit class number, a 8-bit family number
+and a 21-bit unicode character
 into a 32-bit value: the 8 most siginficant bits contain the family, the
 next 3 bits contain the class, and the 21 least significant bits contain
 the unicode character.
 \medskip
-\rule\sym{Uclass}: \sym{\hbox{3-bit}}.
-\rule\sym{Ufamily}: \sym{\hbox{8-bit}}.
-\rule\sym{Ucode}: \sym{\hbox{21-bit}}.
-\rule\sym{Umath\ code}:\sym{Ufamily}\sym{Uclass}\sym{Ucode}.
+\rule\sym{Ufamily}: 8-bit \sym{integer} in the range 0 to 255.
+\rule\sym{Umath\ code}:\sym{Ufamily}\sym{class}\sym{utf\ character\ code}\OR \.{"1FFFFF}.
 \medskip
+Note that instead on the special \sym{math\ code} value \.{"8000} to make an active math character,
+the special \sym{Umath\ code} value is  \.{"1FFFFF}. This change is necesary because \.{"8000}
+is a valid \sym{utf\ character\ code}.
 
-Because the three values are not nicely aligned
-on the four bit boundaries of an hexadecimal notation
-two new primitives \ctl{Umathcode} and \ctl{Umathcodenum} are provided.
-\ctl{Umathcodenum} is a simple extension of \ctl{mathcode}. It returns
-a single number in the bit-packed format as just described and when
-a new value is set it must already be in the correct bit-packed format.
+The three values in a \sym{Umath\ code} are not nicely aligned
+on the four bit boundaries of an hexadecimal notation; an octal notation is
+more readable. 21 bit are exactly 7 octal digits, 3 bit are one octal digit, and
+the topmost 8-bit fit into 3 more octal digits. For example the left-pointing angle bracket
+(\.{'21451}) in class 4 (Opening) in family \.{'11} (decimal 9)
+has the \sym{Umath\ code} \.{'1140021451}.
+
+To specify a \sym{Umath\ code}, \HiTeX\ provides
+two new primitives \ctl{Umathcodenum} and \ctl{Umathcode}.
+
+\ctl{Umathcodenum} is a simple extension of \ctl{mathcode}.
+It associates a \sym{utf\ character\ code} with a \sym{Umath\ code}.
+The rules for setting and retrieving are plain extensions of the rules for \ctl{mathcode}:
 \medskip
-\rule\sym{Umath\ code}:
+\rule\sym{internal\ integer}:
 \ctl{Umathcodenum}\sym{utf\ character\ code}.
 \rule\sym{code\ assignment}:
 \ctl{Umathcodenum}\sym{utf\ character\ code} \opt{\.{=}} \sym{Umath\ code}.
 \medskip
+
 \ctl{Umathcode} is a little easier to use because it does not require
-the user to do the bit packing. Instead a new math code can be set by
+the user to do the bit packing. Instead a \sym{Umath\ code} can be set by
 giving three separate numbers: one for the class, one for the family and
 one for the character code. 
 \medskip
-\rule\sym{class\ number}: a \sym{number} in the range 0 to 7.
-\rule\sym{family\ number}: a \sym{number} in the range 0 to 255.
-\rule\sym{Umath\ code}:
-\ctl{Umathcode}\sym{utf\ character\ code}.
 \rule\sym{code\ assignment}:
 \ctl{Umathcode}\sym{utf\ character\ code} \opt{\.{=}}
-    \sym{class\ number} \sym{family\ number} \sym{utf\ character\ code}.
+    \sym{class} \sym{Ufamily} \sym{utf\ character\ code}.
 \medskip
 
-\HiTeX's \ctl{delcode} primitive offers no surprise. For any unicode
-character, you can use \ctl{delcode} to set or retrieve its delimiter code.
-The traditional delimiter code is in the range -1 to \.{"FFFFFF}.
+\noindent There are a few subtle differences between \XeTeX, \LuaTeX, and \HiTeX:
+\itemize
+\item Strictly speaking \ctl{Umathcode} can not be used to retrieve an \sym{internal\ integer}.
+But if you dare to write \ctl{the}\ctl{Umathcode}\dots, \HiTeX\ will silently
+replace \ctl{Umathcode} by \ctl{Umathcodenum}. In this respect \HiTeX\ follows \LuaTeX;
+\XeTeX\ does not allow \ctl{the}\ctl{Umathcode},
 
+\item While \XeTeX\ does not allow the use of \ctl{mathcode} to assign or retrieve values outside the 0 to \.{"8000} range of a \sym{math\ code},
+\HiTeX\ (like \LuaTeX) will not give an error and silently replace \ctl{mathcode} by \ctl{Umathcodenum}.
+
+
+\item While \HiTeX\ (like \XeTeX) uses a \ctl{Umathcode} value of \.{"1FFFFF} to make an active math character,
+\LuaTeX\ uses the \ctl{Umathcode} \.{"1000000}.
+For example, if you set \ctl{mathcode}\.{0="8000} then \ctl{the}\ctl{Umathcodenum}\.0
+will return \.{"1000000} in \LuaTeX\ and \.{"1FFFFF} in \XeTeX.
+The former is the same value that one can get in \LuaTeX\ with \ctl{Umathcode}\.{0 = 0 1 0}.
+Since a \sym{Umath\ code} fills a 32-bit word completely, the only unused bit-patterns
+are those that contain an invalid  \sym{utf\ character\ code}.
+\HiTeX\ will follow \XeTeX\ and use  \.{"1FFFFF} to signal an active math character.
+
+\item Since \sym{Umath code} is a superset of  \sym{math code},
+you can express any  \sym{math code} also as a \sym{Umath code}.
+When retrieving math codes with \ctl{the}\ctl{mathcode}\dots, \HiTeX\
+will return a \sym{math code} if the code stored can be represented as a \sym{math code}.
+Otherwise it will return a \sym{Umath code}.
+When retrieving math codes with \ctl{the}\ctl{Umathcode}\dots, \HiTeX\ will return
+always a \sym{Umath code} even if a simple \sym{math code} would suffice.
+\enditemize
+
+\subsubsection{\ctl{Umathchar} and \ctl{Umathcharnum}}
+The extension of \ctl{mathchar} by \ctl{Umathchar} and \ctl{Umathcharnum} follows the
+same path that we have seen in the previous section.
+But this section is much shorter than the previous section for three reasons:
+First, unlike \ctl{mathcode}, the primitive  \ctl{mathchar} does not change at all.
+Second, we can reuse the definitions of  \sym{class}, \sym{Ufamily}, \sym{Umath\ code}.
+And third, the primitives we consider in this section are quite simpel.
+Both primitives \ctl{Umathchar} and \ctl{Umathcharnum} define a \sym{math\ character}.
+And here are the syntax rules:
+\medskip
+\rule\sym{math\ character}: \ctl{Umathcharnum} \sym{Umath\ code}.
+\rule\sym{math\ character}: \ctl{Umathchar} \sym{class} \sym{Ufamily} \sym{utf\ character\ code}.
+\medskip
+\noindent \ctl{Umathchar} needs the class, the familiy, and the UTF character code as three separate
+numbers. \ctl{Umathcharnum} needs the same information packed into a single number.
+Note also that the special \sym{Umath\ code} value \.{"1FFFFF} is not allowed after \ctl{Umathcharnum}
+in the same way as \.{"8000} is not allowed after \ctl{mathchar}.
+
+\subsubsection{\ctl{Umathchardef} and \ctl{Umathcharnumdef}}
+The primitives \ctl{Umathchardef} and \ctl{Umathcharnumdef} are extended versions
+of \ctl{mathchardef}. Both define shorthand definitions for math characters.
+Given the previous sections, the syntax should be no surprise.
+\medskip
+\rule\sym{shorthand deﬁnition}:\ctl{Umathcharnumdef}\sym{control\ sequence} \opt{\.{=}} \sym{Umath\ code}.
+\rule\sym{shorthand deﬁnition}:\ctl{Umathchardef}\sym{control\ sequence} \opt{\.{=}}
+   \sym{class} \sym{Ufamily} \sym{utf\ character\ code}.
+\medskip
+These primitives will behave pretty much as expected. For example if you say
+\ctl{mathchardef}\ctl{foo}\.{=600} and later ask for \ctl{the}\ctl{foo} you will get \.{600}.
+The same will happen when you say \ctl{Umathcharnumdef}\ctl{bar}\.{=600} and then
+ask for \ctl{the}\ctl{bar}. You will get \.{600} as well.
+But what you will get when you say \.{\$\\foo\$}  or \.{\$\\bar\$} is entirely different.
+The hexadecimal notation of \.{600} is \.{"0258} so from \.{\$\\foo\$} you should expect
+character \.{"58} (an upper case X) in family 2 (math-italic) in class 0 (ordinary character).
+And this is what you get: $\mathchar"0258$.
+When you write  \.{\$\\bar\$}, you get ``{\tt There is no {\utf ɘ} ("258) in font cmr10!}''.
+To get the math-italic X, you can write either
+\ctl{Umathchardef}\ctl{bar}\.{=0 2 "58} or  \ctl{Umathcharnumdef}\ctl{bar}\.{='200000130}.
+Both forms specify family 2, class 0 and character \.{"58} = \.{'130}.
+But if you define \ctl{bar} in this way, it should not come to you as a surprise that
+\ctl{the}\ctl{bar} will give you 33554520 which is nothing but the decimal notation of \.{'200000130}.
+
+Note again that the special \sym{Umath\ code} value \.{"1FFFFF} is not allowed after \ctl{Umathcharnumdef}
+in the same way as \.{"8000} is not allowed after \ctl{mathchardef}.
+
+
+\subsubsection{\ctl{delcode}, \ctl{Udelcode}, and \ctl{Udelcodenum}}
+
+Let's first review \TeX's \ctl{delcode} primitive.
+For any character, you can use \ctl{delcode} to set or retrieve its delimiter code.
+The delimiter code is an integer number.
+If this number is written as a six digit hexadecimal number,
+the first three digits specify the small delimiter variant and
+the last three digits the large variant.
+Within each three-digit group, the first digit specifies the family in the range 0 to 7
+and the next two digits define the character code in the range 0 to \.{"FF}.
+Hence, valid delimiter codes are in the range 0 to \.{"7FF7FF}.
+Negative delimiter codes indicate that the character is not a delimiter at all.
+
+\HiTeX\ extends this notation and adds two more primitives.
+The extension of \ctl{delcode} is simple: the format of the
+delimiter code is unchanged, but delimiter codes can be set and retrieved for any unicode character.
 \medskip
 \rule\sym{internal\ integer}: \ctl{delcode}\sym{utf\ character\ code}.
 \rule\sym{code\ assignment}:
-\ctl{delcode}\sym{utf\ character\ code} \opt{\.{=}} \sym{number}.
+\ctl{delcode}\sym{utf\ character\ code} \opt{\.{=}} \sym{integer} in the range 0 to \.{"7FF7FF} \OR negative.
 \medskip
 
-The primitives \ctl{Udelcode} and \ctl{Udelcodenum}, as known from \XeTeX\ or
-\LuaTeX, are not yet implemented.
+Unlike \ctl{delcode} the primitives \ctl{Udelcode} and \ctl{Udelcodenum} map
+the given character to a single character code in an OpenType math font because
+modern OpenType math fonts can handle the delimiter resizing internally.
+The primitive \ctl{Udelcode} uses two numbers to specify family and character code separately
+while the primitive \ctl{Udelcodenum} as before packs both numbers into one number.
+The first format is easier to read and write and recomended for normal use. The latter is more
+compact and the same format is used for setting and retrieving the delimiter code.
+\medskip
+\rule\sym{code\ assignment}:
+\ctl{Udelcode}\sym{utf\ character\ code} \opt{\.{=}} \sym{Ufamily} \sym{utf\ character\ code}. 
+\rule\sym{code\ assignment}:
+\ctl{Udelcodenum}\sym{utf\ character\ code} \opt{\.{=}} \sym{Ufamily}\sym{utf\ character\ code} \OR negative. 
+\rule\sym{internal\ integer}: \ctl{Udelcodenum}\sym{utf\ character\ code}.
+\medskip
+The combined 8-bit family and 21-bit UTF character code uses the character code as its 21 low bits
+and the 8-bit familiy as its high bits giving a combined 29-bit number. For writing such a combined number,
+octal numbers are better suited than decimal or hexadecimal numbers as described above.
+For example the mathematical left angle bracket with UTF code \.{"27E8} is written in octal
+as \.{'23750} and combined with family 1, the delimiter code can be written
+\.{'10023750}. The maximum delimiter code with family \.{"FF}=\.{'377} and UTF code
+\.{"10FFFF}=\.{'4177777} is simply\.{'3774177777}: three octal digits for the family followed by
+7 octal digits for the character code.
+
+
+
+\noindent Here are some differences between \HiTeX, \LuaTeX\ and \XeTeX:
+\itemize
+\item As can be seen from the above rules \ctl{Udelcode} can be used in a \sym{code\ assignment},
+but not as an \sym{internal\ integer}. If you write
+\ctl{the}\ctl{Udelcode}\.{"1234} anyway. \HiTeX\ (like \LuaTeX) silently uses
+\ctl{Udelcodenum} instead, unlike  \XeTeX\ which gives an error message.
+
+\item \LuaTeX\ rejects \ctl{Udelcodenum}\.{0=}\sym{some\ negative\ number},
+while \HiTeX\ (like \XeTeX) accepts it and sets the code.
+
+\item The internal bit packed format used by \LuaTeX\ is different from the format used by \HiTeX\ and \XeTeX.
+For example the sequence \ctl{Udelcode}\.{0='12 '34567} followed by \ctl{the}\ctl{Udelcodenum}\.0 will produce: in \HiTeX\ 20986231 =\.{'120034567}, in \XeTeX\ 1094728055 =\.{'10120034567}, and in \LuaTeX\ 70742016 =\.{'415670000}.
+While \HiTeX\ uses internaly the same flag bit \.{'10000000000}
+as \XeTeX, the flag bit is removed when retrieving the number. 
+
+As a consequence, \LuaTeX\ will not be able to read  with \ctl{Udelcodenum}
+the  delimiter code produced with \ctl{the}\ctl{Udelcodenum}. To continuing the previous example,
+let's see what happens if we feed the output of \ctl{the}\ctl{Udelcodenum}\.{0} back
+as input to \ctl{Udelcodenum}\.{1}.
+Using \LuaTeX, the code sequence \ctl{Udelcodenum}\.{1=70742016} will throw an``Invalid delimiter code'' error and uses zero instead.
+Using \XeTeX, the code sequence \ctl{Udelcodenum}\.{1=1094728055} the will silently ignore
+the leading flag-bit on the right hand side of the equal sign.
+Using \HiTeX, the code sequence \ctl{Udelcodenum}\.{1= 20986231} is perfectly legal anyway.
+
+\item As with the primitives \ctl{mathchardef} and \ctl{Umathchardef} also
+\ctl{delcode} and \ctl{Udelcode} accept an overlapping range of values, and the same
+values have different semantics. Internaly \HiTeX\ (as well as \XeTeX) uses a flag bit
+to distinguish the two types of values.
+If you use \ctl{delcode} to retrieve a value set with \ctl{Udelcodenum}, \HiTeX\ and \XeTeX\ will
+issue an error message. In the other direction \XeTeX\ will again raise an error;
+\HiTeX will issue only a warning
+giving you the value but leaving it open whether it belongs to a \ctl{delcode} or \ctl{Udelcode}.
+
+The design decission for \ctl{Udelcodenum} was here:
+should the output number be equal to the input number or should the output number reveal also
+the semantics. If the current decission creates serious problems, it might be possible to adopt
+the \XeTeX\ design.
+
+\enditemize
+
+\subsubsection{\ctl{Udelimiter}, \ctl{Uradical}, and \ctl{Umathaccent} }
+The primitives in this section extend \TeX's \ctl{delimiter}, \ctl{radical}, and \ctl{mathaccent} primitives.
+As we have seen for the \ctl{Udelcode} primitive, the primitives \ctl{Udelimiter} and \ctl{Uradical}
+do not specify a large and a small variant.
+They specify a single character code and leave the resizing to the OpenType font.
+
+\ctl{Umathaccent} specifies the accent character in the same format as \ctl{Umathchar}
+but with a few options.
+
+\medskip
+\rule\sym{math\ char}: \ctl{Udelimiter} \sym{class} \sym{Ufamily} \sym{utf\ character\ code}.
+\rule\sym{math\ char}: \ctl{Uradical} \sym{Ufamily} \sym{utf\ character\ code}.
+\rule\sym{math\ char}: \ctl{Umathaccent} \opt{\.{bottom}}  \opt{\.{fixed}}
+    \sym{class} \sym{Ufamily} \sym{utf\ character\ code}.
+\medskip
+\itemize
+\item Note that the \ctl{Uradical} primitive does not have a \sym{class} parameter.
+\item After \ctl{Umathaccent} follow two optional keywords. The first is \.{bottom}, and
+if it is pressent, the accent is placed below its base.
+By default the accent is placed above its base.
+The second is \.{fixed}, and if it is given, the accent will not be stretched to
+match the size of its base.
+The default is to stretch the accent if the font and the glyph allow stretching.
+\item While extensible delimiters are already implemented, extensible accents are not.
+\enditemize 
+
 
 \subsection{OpenType fonts}
 When \TeX\ was invented, digital fonts, especially fonts suitable to typeset
@@ -582,13 +760,16 @@ are still in use today.
 
 In the meantime, the number of high quality, freely available, digital fonts has
 exploded. And ``high quality'' is no longer equivalent to ``PostScript Type~1''.
-Today, the most popular file format for fonts is the OpenType format, an extension
-of the slightly simpler TrueType format. So it seems natural to extend the
+Today, the most popular file format for fonts is the OpenType format. It is an extension
+of the popular and slightly simpler TrueType format. So in the following ``OpenType''
+always includes ``TrueType''.
+It seems natural to extend the
 capabilities of \TeX\ to work with these types of font files.
 OpenType font files not only contain the glyphs, but they also contain the
 necessary font metrics. So an OpenType font file can replace both the \.{.pk} file
 and the \.{.tfm} file.
 
+\subsubsection{Loading OpenType fonts}
 To define fonts, \HiTeX\ extents the syntax and semantics of \TeX's \ctl{font}
 primitive. It tries to be simple and as much as possible compatible with
 the implementation of the \ctl{font} primitive in \LuaTeX\ and \XeTeX.
@@ -632,62 +813,90 @@ If the \.{.tfm} file is found, \HiTeX\ will assume that
 the font is one of the traditional \TeX\ fonts, using \TeX's traditional encoding.
 Later, \HiTeX\ will then use again the \.{kpathsearch} library to
 find and open the matching PostScript Type~1 font and if that is not possible
-a matching \.{.pk} file. Thats all.
+a matching \.{.pk} file. Thats all for this case.
 
 If the  \.{kpathsearch} library can not find a suitable \.{.tfm} file,
-\HiTeX\ assumes that an OpenType or TrueType file should be loaded.
+\HiTeX\ assumes that an OpenType file should be loaded.
 In this case, a \sym{font\ specifier} can be more complex than just a simple  \sym{pathname}.
 Its sophisticated syntax is mostly
 due to the attempt to be compatibel with existing implementations.
 
 \medskip
-\rule\sym{font\ specifier}: \sym{font\ file\ name} \opt{\.{:} \sym{font\ features}}.
-\rule\sym{font\ file\ name}: \.{file:}\sym{pathname} \opt{\sym{font\ selector}}.
-\rule\sym{font\ file\ name}: \.{[}\sym{pathname}\.{]}\opt{\sym{font\ selector}}.
-\rule\sym{font\ selector}: \.{(}\sym{number}\.{)}.
-\rule\sym{font\ specifier}: \.{name:}\sym{font\ name} \opt{\.{:} \sym{font\ features}}.
+\rule\sym{font\ specifier}: \sym{font\ file} \opt{\.{:} \sym{font\ features}}.
+\rule\sym{font\ file}: \.{[}\sym{pathname}\.{]}\opt{\sym{font\ selector}}.
+\rule\sym{font\ file}: \.{file:}\sym{pathname} \opt{\sym{font\ selector}}.
+\rule\sym{font\ file}: \.{name:}\sym{font\ name}.
+\rule\sym{font\ selector}: \.{(}\sym{integer}\.{)}.
 \smallskip
 
-$\bullet$ Note that font lookup using the \.{name:} prefix to indicate the use
-of ``font names'' as opposed to ``file names'' is currently not yet implemented.
-Currently only file name lookup is implemented.
+\itemize
+\item Note that font file lookup using the \.{name:} prefix to indicate the use
+of ``font names'' as opposed to ``file names'' is not implemented.
+Currently only the lookup using a pathname is implemented.
 
-$\bullet$ Note that a \sym{font\ selector} must be a font index number enclosed in parentheses.
+\item Note that a \sym{font\ selector} must be a font index number enclosed in parentheses.
 Using the PostScript name to select a font is not implemented.
 
-$\bullet$ Note that \HiTeX\ in an attempt to maintain compatibility with other engines
+\item Note that \HiTeX\ in an attempt to maintain compatibility with other engines
 will not give up on a font specifier that neither leads to a matching \.{.tfm} file
 nor has a \.{file:} or \.{name:} prefix and is not bracketed either.
-Instead \HiTeX\ will issue a warning and tries to resolve the problem.
-First, it tries to assume that the \.{file} prefix is missing, and if
-that does not help, it tries to assume that the \.{name:} prefix is missing.
-Only if none of this leads to a usable font file, \HiTeX\ succumbs.
-
-\medskip
+Instead \HiTeX\ will issue a warning and tries to resolve the problem:
+It assumes that the \.{file} prefix is missing.
+Only if this does not lead to a usable font file, \HiTeX\ succumbs.
+\enditemize
 
 The extended font specifiers used for OpenType fonts
-assign special meaning to the colon ``\.{:}'' and the opening parenthesis ``\.{(}''.
+assign special meaning to the colon ``\.{:}'' that starts the \sym{font\ features}
+and the opening parenthesis ``\.{(}'' that starts a \sym{font\ selector}.
 If these characters occur in the \sym{pathname} of a font file, it is possible to use
 the bracketed notation of the \sym{pathname} as a alternative to using the \.{file:} prefix.
 If the pathname is enclosed in square brackets, it may
 contain any character except the closing square bracket; otherwise it must not contain
 the colon ``\.{:}'' nor the opening parenthesis ``\.{(}''.
 Since the colon can be necessary after a drive letter in Windows,
-the bracketed verions is quite common. The paraenthesis
-is excluded from the unbracketed version because it starts the
-optional \sym{font\ selector}.
+the bracketed version is quite common.
 
 Once \HiTeX\ has determined the \sym{pathname}, it uses the \.{kpathsearch} library to
-find a matching OpenType font and if this does not succeed, it tries to find a matching
+find a matching OpenType font, and if this does not succeed, it tries to find a matching
 TrueType font. Once the file is found, the Harfbuzz library is used to open the font file.
 
-$\bullet$ Note that it is possible to open PostScript Type~1 font files without a \.{.tfm} file
-using Harfbuzz. The use of Type~1 fonts with Harfbuzz, however,
-requires the use of \.{.afm} files, and this does not work well and is deprecated.
+While Harfbuzz can use a PostScript Type~1 font file even without a \.{.tfm} file
+if an  \.{.afm} file is available, this does not work well and is deprecated.
 Therefore \HiTeX\ does not support it.
 For Type~1 fonts, one should use \.{afm2tfm} to convert the \.{.afm} files to \.{tfm} 
 files and put the new \.{tfm} files in a place where the \.{kpathsearch} library
 can find them. Then run \.{mktexls}.
+
+\subsubsection{Suppressing ``font not found''}
+When a package (like fontenc) tries to find and
+load fonts without knowing which fonts are available on the current machine
+it might use a code sequence like this:
+\medskip{\parskip=0pt
+\verbatim/
+\font\somefont=somefont
+\ifx\somefont\nullfont
+\font\somefont=replacement
+\fi
+/}
+\medskip
+This code will produce ``font not found'' error messages if ``somefont'' is not available on the
+current machine even if the code tests for this error and supplies a replacement font.
+A few of these error messages are a nuisance; a lot of these messages are a problem
+because more serious error messages might be hidden in the avalance of error messages.
+
+In this situation, the integer parameter \ctl{suppressfontnotfounderror} can help.
+It will suppress the ``font not found messages''
+if its value is 1. With its default value of 0, the error messages come out as usual.
+For example, an improved version of the above code can read:
+\medskip{\parskip=0pt
+\verbatim/
+{\suppressfontnotfounderror=1\font\somefont=somefont}
+\ifx\somefont\nullfont
+\font\somefont=replacement
+\fi
+/}
+\medskip
+This code will not produce error messages if either the font or its replacement is found.
 
 \subsubsection{Font features}
 As described above, the \sym{font\ specifier} might end with a colon and a list of
@@ -705,7 +914,7 @@ and their description.  If you need to know the font features of a
 specific font, you can use the program \.{otfinfo} that comes with
 the \TeX\ Live distribution. For example, if \.{otfinfo} is on your
 search path and the latin modern roman italic font \.{lmroman10-regular.otf}
-is in the current directory, running \.{otfinfo-f lmroman10-regular.otf}
+is in the current directory, running \.{otfinfo -f lmroman10-regular.otf}
 gives you the following output:
 \medskip
 {\parskip 0pt
@@ -739,12 +948,12 @@ Features that are not available in the font are silently ignored.
 If a feature tag has less than four characters, it is padded with spaces.
 If it has more than four characters, it is ignored.
 Actualy, \HiTeX\ uses the Harfbuzz function \.{hb\_feature\_from\_string} which accepts
-even more complicated feature specifications specifying a start and end position.
-This information is not used by \HiTeX\ and silently ignored.  The following table
-explains the possibilities:
+even more complicated feature specifications. % specifying a start and end position.
+The additional information, however, is not used by \HiTeX\ and silently ignored.
+The following table explains the possibile formats using the \.{kern} and \.{aalt} tag:
 
-$$\vbox{\halign{\tt #\hfil\quad & \hfil #\hfil &\hfil #& #\hfil\cr
-{\bf Syntax} & {\bf Value} & {\bf Description} \cr
+$$\vbox{\halign{\tt #\hfil\quad & \hfil #\hfil\quad &#\hfil\cr
+{\bf Example} & {\bf Value} & {\bf Description} \cr
 \noalign{\smallskip}
 kern   & 1  &  Turn feature on \cr
 +kern  & 1 & Turn feature on \cr
@@ -768,79 +977,6 @@ but with Oldstyle Figures, you can write
 \medskip
 \.{\\font\\oldrm = [lmroman10-regular.otf]:-liga;+onum}
 \medskip
-
-\subsubsection{Scripts and languages}
-The list of features is traditionally also used to specify the script and the language
-that should be used when typesetting the font.
-
-Because it is not possible to tell an OpenType script tag from an OpenType feature tag
-based on its syntax, \HiTeX\ allows a special syntax to specify a script:
-\medskip
-\rule\sym{feature}: \.{script=}\sym{script\ tag}.
-\medskip
-This is the same syntax that is also available in \XeTeX.
-For example you can write ``\.{script=dev2}''.
-But you can also hide the same script specification somewhere
-inside the list of font features writing for example ``\.{+dev2}''. To catch this specification,
-\HiTeX\ retrieves from the OpenType font in question a complete list of all OpenType script
-tags used in the font. If any tag in the list of features matches one of these script tags,
-it is assumed that the tag is meant to be a script tag, and it is treated as such.
-In the example above, if the font uses ``\.{dev2}'' as a sript tag, \HiTeX\ will treat
-``\.{+dev2}'' in the same way as ``\.{script=dev2}''. If it is not found among the
-script tags of the font, it is considered a feature. Don't worry, Harfbuzz will silently
-ignore features that are not supported by the font.
-
-If there are multiple specifications of a script, later tags will overwrite earlier tags.
-
-Next, let' s consider languages. OpenType languages are something like subcategories
-of scripts. For example the font \.{Mukta-Light.ttf} supports four scripts:
-\.{DFLT}, \.{latn}, \.{deva}, and \.{dev2}. The first is the default script, the second is Latin,
-the last two are Devanagari version 1 and version 2. This font is mainly a font for
-typesetting Devanagari, an Indic script, but it contains also a set of characters from the Latin alphabet,
-in case you need to put in some Latin text now and then. The two scripts for Devanagari
-can both be used to typeset text written in the Hindi language or in the Marathi
-language. The shaping is different between the two languages and you can indicate the
-language using the two tags \.{HIN} and \.{MAR}.
-A complete list of OpenType language tags can be found on the internet.
-%https://learn.microsoft.com/en-us/typography/opentype/spec/languagetags.
-
-
-Similar to scripts, there is a special syntax to specify languages.
-\medskip
-\rule\sym{feature}: \.{language=}\sym{language\ tag}.
-\medskip
-As before, a language tag can also be specified without using this special syntax.
-Unlike for scripts, for most (or even all?) languages there is no need to compare the tags against
-the language tags used in the font, because by convention, language tags consist of
-three or four uppercase letters like \.{ENG} for English or \.{DEU} for Deutsch.
-\HiTeX\ will consider all tags that starts with three uppercase letters als
-language tags. But in case a non-standardized language tag sneaks in and you have
-already specified a script, \HiTeX\ will search for any given tag if the font tables
-for the given script contain a matching language tag. If so, it will consider the tag
-a language tag.
-Note that for those ``non-standard'' language tags to be found, you must specify a script.
-
-If there are multiple specifications of a language, later tags will overwrite earlier tags.
-
-A word of warning: Specifying properties like script or language will result in
-\HiTeX\ setting these features for every word before calling Harfbuzz
-to shape it. If the characters in the word are from a different language
-or script the outcome might be less than perfect. If you do not specify
-these properties, then \HiTeX\ will ask harfbuzz to guess the script and the language
-from the buffer content.
-%It uses |hb_buffer_guess_segment_properties| on each buffer befor it passes it to |hb_shape|.
-This gives usualy better results than an obviously
-wrong script or language. So if you have a font like \.{Mukta-Light.ttf} that is
-intended to be used to typeset Devanagari, but also contains characters for the Latin alphabet,
-you might set the script to Devanagari and the language to Marathi (or Hindi)
-if you know that this is the right script and language and you do not care
-too much about the shaping of a few words that are in English using the Latin
-alphabet. If you use English often, and you care, you might define two
-\TeX\ fonts using the same OpenType font file but with different script and language
-and change fonts when you change language. If you are satisfied with
-harfbuzz's ability to guess, you can use the same font for english and devanagari
-and refrain from specifying a script or language.
-
 
 \subsubsection{\TeX\ standard ligatures and accents}
 Traditional \TeX\ fonts implement a few standard ligatures
@@ -912,24 +1048,26 @@ if the \.{tacc} feature is enabled:
 \showtacc{"7F}{"308}{\"o}{Diaresis}
 }
 \medskip
-Note that some of plain \TeX's control sequences for accents (\ctl{c}, \ctl{t}, \ctl{d},
+\itemize
+\item Note that some of plain \TeX's control sequences for accents (\ctl{c}, \ctl{t}, \ctl{d},
 and \ctl{b}) are not simple calls to \ctl{accent} and therefore will not work correctly
 even if the \.{tacc} feature is enabled.
 
-Note that OpenType fonts often can handle accents without
+\item Note that OpenType fonts often can handle accents without
 using \TeX's \ctl{accent} primitive if the accent is simply placed {\it after}
 the base character. So you can write ``\.{o\\char"301}'' to obtain {\lmr o\char"301}.
-Sometimes, the Harfbuzz library will find the accent and place it above the base character
+Sometimes, the Harfbuzz library will find the accent and place it above the base character;
 somtimes, it finds a single glyph that already combines the accent with the base character.
 
-Note that \.{tlig} and \.{tacc} are not registered feature tags implemented in
+\item Note that \.{tlig} and \.{tacc} are not registered feature tags implemented in
 the font file. They are implemented by the \HiTeX\ engine.
 The processing of \TeX's standard ligatures is done after the font's build-in
 ligatures are applied by shaping with the Harfbuzz library.
 So built-in ligatures take precedence over \TeX's standard ligatures.
 The translation of \TeX's standard accents is done inside the \ctl{accent} primitive.
+\enditemize
 
-\subsubsection{Testing for OpenType fonts}
+\subsubsection{Testing fonts with \ctl{ifTeXfont}}
 In the previous section, the most common differences between \TeX's standard
 fonts and UTF encoded OpenType fonts were handled by providing pseudo font features.
 But this is not a solution for all situations.
@@ -945,45 +1083,144 @@ else it acts like \ctl{iffalse}.
 It would be possible to implement a more complex form of this conditional
 similar to the \ctl{fontname} primitive
 which has the form \ctl{fontname}\sym{font}. Where \sym{font} here
-is either an identifier defined by \ctl{font}; or \ctl{textfont}\sym{number},
-\ctl{scriptfont}\sym{number}, or \ctl{scriptscriptfont}\sym{number}; or \ctl{font}, 
+is either an identifier defined by \ctl{font}; or \ctl{textfont}\sym{integer},
+\ctl{scriptfont}\sym{integer}, or \ctl{scriptscriptfont}\sym{integer}; or \ctl{font}, 
 which denotes the current font. But such a more complicated conditional is not
 necessary. If an action depends on a font other than the current font, it is possible
 to switch to this font, then test, define a macro to perform this action,
 and switch back to the previous font. This can be done once in the preamble of the
 document and the overhead of switching fonts is neglegible. 
 
-Another primitive comes in handy when a package (like fontenc) tries to find and
-load fonts without knowing which fonts are available on the current machine
-using a code sequence like:
-\medskip{\parskip=0pt
-\verbatim/
-\font\somefont=somefont
-\ifx\somefont\nullfont
-\font\somefont=replacement
-\fi
-/}
+\subsubsection{Scripts and languages}
+The list of features is traditionally also used to specify the script, the language,
+and the character mapping that should be used when typesetting with the font.
+
+Because it is not possible to tell an OpenType script tag from an OpenType feature tag
+based on its syntax, \HiTeX\ allows a special syntax to specify a script:
 \medskip
-This code will produce ``font not found'' error messages if ``somefont'' is not available on the
-current machine even if the code tests for this error and supplies a replacement font.
-A few of these error messages are a nuisance; a lot of these messages are a problem
-because more serious error messages might be hidden in the avalance of error messages.
-The integer parameter \ctl{suppressfontnotfounderror} will suppress the ``font not found messages''
-if its value is 1. With its default value of 0, the error messages come out as usual.
-For example, an improved version of the above code can read:
-\medskip{\parskip=0pt
-\verbatim/
-{\suppressfontnotfounderror=1\font\somefont=somefont}
-\ifx\somefont\nullfont
-\font\somefont=replacement
-\fi
-/}
+\rule\sym{feature}: \.{script=}\sym{script\ tag}.
 \medskip
-This code will not produce error messages if either the font or its replacement is found.
+This is the same syntax that is also available in \XeTeX.
+For example you can write ``\.{script=dev2}''.
+But you can also hide the same script specification somewhere
+inside the list of font features writing for example ``\.{+dev2}''. To catch this specification,
+\HiTeX\ retrieves from the OpenType font in question a complete list of all OpenType script
+tags used in the font. If any tag in the list of features matches one of these script tags,
+it is assumed that the tag is meant to be a script tag, and it is treated as such.
+In the example above, if the font uses ``\.{dev2}'' as a sript tag, \HiTeX\ will treat
+``\.{+dev2}'' in the same way as ``\.{script=dev2}''. If it is not found among the
+script tags of the font, it is considered a feature. Don't worry, Harfbuzz will silently
+ignore features that are not supported by the font.
+
+If there are multiple specifications of a script, later tags will overwrite earlier tags.
+
+Next, let' s consider languages. OpenType languages are something like subcategories
+of scripts. For example the font \.{Mukta-Light.ttf} supports four scripts:
+\.{DFLT}, \.{latn}, \.{deva}, and \.{dev2}. The first is the default script, the second is Latin,
+the last two are Devanagari version 1 and version 2. This font is mainly a font for
+typesetting Devanagari, an Indic script, but it contains also a set of characters from the Latin alphabet,
+in case you need to put in some Latin text now and then. The two scripts for Devanagari
+can both be used to typeset text written in the Hindi language or in the Marathi
+language. The shaping is different between the two languages and you can indicate the
+language using the two tags \.{HIN} and \.{MAR}.
+A complete list of OpenType language tags can be found on the internet.
+%https://learn.microsoft.com/en-us/typography/opentype/spec/languagetags.
+
+
+Similar to scripts, there is a special syntax to specify languages.
+\medskip
+\rule\sym{feature}: \.{language=}\sym{language\ tag}.
+\medskip
+As before, a language tag can also be specified without using this special syntax.
+Unlike for scripts, for most (or even all?) languages there is no need to compare the tags against
+the language tags used in the font, because by convention, language tags consist of
+three or four uppercase letters like \.{ENG} for English or \.{DEU} for Deutsch.
+\HiTeX\ will consider all tags that starts with three uppercase letters als
+language tags. But in case a non-standardized language tag sneaks in and you have
+already specified a script, \HiTeX\ will search for any given tag whether the font tables
+for the given script contain a matching language tag. If so, it will consider the tag
+a language tag.
+Note that for those ``non-standard'' language tags to be found, you must specify a script.
+
+If there are multiple specifications of a language, later tags will overwrite earlier tags.
+
+A word of warning: Specifying properties like script or language will result in
+\HiTeX\ setting these features for every word before calling Harfbuzz
+to shape it. If the characters in the word are from a different language
+or script the outcome might be less than perfect. If you do not specify
+these properties, then \HiTeX\ will ask harfbuzz to guess the script and the language
+from the buffer content.
+%It uses |hb_buffer_guess_segment_properties| on each buffer befor it passes it to |hb_shape|.
+This gives usualy better results than an obviously
+wrong script or language. So if you have a font like \.{Mukta-Light.ttf} that is
+intended to be used to typeset Devanagari, but also contains characters for the Latin alphabet,
+you might set the script to Devanagari and the language to Marathi (or Hindi)
+if you know that this is the right script and language and you do not care
+too much about the shaping of a few words that are in English using the Latin
+alphabet. If you use English often, and you care, you might define two
+\TeX\ fonts using the same OpenType font file but with different script and language
+and change fonts when you change language. If you are satisfied with
+harfbuzz's ability to guess, you can use the same font for english and devanagari
+and refrain from specifying a script or language.
+
+\subsubsection{Mappings}
+Finaly there is a special syntax to specify character mappings. The character mappings
+in \HiTeX\ are not designed to map characters from an arbitrary encoding like Windows-1252
+to some other encoding (something that \XeTeX\ can do) but are restricted to mapping characters
+to the right glyphs exclusively in math mode.
+
+In math mode, it is customary to typeset a simple x using a glyph from a ``math italic'' font.
+So typing \verbatim/$x$/ will come out as ``$x$'' and not ``x''.
+While the unicode code point of the former is U+0078 (Latin Small Letter X),
+the code point for the latter is  U+1D465 (Mathematical Italic Small X).
+Depending on the field of mathematicas, a mathematician might possibly
+also want the x to come out using a ``black-board-bold'' font, or a ``caligraphic'' font.
+Now this is achived traditionally by specifying a special font family for the x,
+and assigning a math-italic, or black-board-bold, or caligraphic font to this family.
+
+But modern OpenType math fonts are designed to contain all different font
+styles in one single font. Each glyph at the position specified by the unicode standard.
+So it is not longer possible to assign different math fonts to different font families but
+the same math font must be assigned to all families using different font mappings.
+
+Here is a list of possible math character styles, and the names of the \XeTeX\ mappings
+that are used as well in \HiTeX.
+
+
+$$\vbox{\halign{#\hfil\quad &#\hfil\cr
+\bf Style               &\bf Mapping\cr
+\noalign{\smallskip}
+Italic                   &unimath-it\cr
+Bold                     &unimath-bf\cr
+Bold Italic              &unimath-bfit\cr
+Sans-Serif               &unimath-sf\cr
+Sans-Serif Bold          &unimath-sfbf\cr
+Sans-Serif Italic        &unimath-sfit\cr
+Sans-Serif Bold Italic   &unimath-sfbfit\cr
+Double-Struck            &unimath-bb\cr
+Double-Struck Italic     &unimath-bbit\cr
+Script                   &unimath-scr\cr
+Bold Script              &unimath-scrbf\cr
+Fraktur                  &unimath-frak\cr
+Bold Fraktur             &unimath-frakbf\cr
+Monospace                &unimath-tt\cr
+}}$$
+
+For example if you use the traditional family 1 for math italic and want to use
+the math italic glyphs of the Latin Modern Math font, you can say
+\medskip
+{\parskip 0pt\hangindent 4em%
+\tt \ctl{font}\ctl{teni} = [latinmodernmath.otf]:mapping=unimath-it\par
+\ctl{textfont} 1 =   \ctl{teni}\par}
+\medskip
+\itemize
+\item Note that there is no full set of alphabetic unicode code points for Double-Struck Italic. So for characters that do not exist the regular Double-Struck characters are used.
+Similarly, digits are only available for Bold, Sans-Serif, Sans-Serif Bold, Double-Struck, and Monospace. If suitable unicode codes are not available, no mapping is applied.
+\enditemize
 
 \subsubsection{Embedding subsets of fonts}
 Very often only a small subset of the glyphs contained in a font are actually used in
-document. For example in this document, the acronym ``\HINT'' uses a special font,
+a document. For example in this document, the acronym ``\HINT'' uses a special font,
 and only those four characters from this font are ever used in the entire document.
 In cases like this, it is possible to reduce the size of the document by embedding
 a subset font that contains only those four characters.
