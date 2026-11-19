@@ -4,10 +4,15 @@
 	* kpsewhich.c (assert_insecure): new fn to check that the
 	KPSEWHICH_INSECURE environment variable is set and non-empty.
 	(read_command_line): call it for -cnf-line and -mktex.
+	* tests/cnfline.test,
+	* tests/cnfnewline.test,
+	* tests/cnfnlink.test,
+	* tests/cnfnull.test,
+	* tests/cnfprog.test: set the new envvar to run tests.
 	* doc/kpathsea.texi (Invoking kpsewhich): document this.
 	* NEWS: mention this.
 	Report from Tobias Holl, tlsecurity 21 Oct 2026 09:26:53.
-	r81163.
+	r81164.
 
 2026-11-09  Karl Berry  <karl@freefriends.org>
 
