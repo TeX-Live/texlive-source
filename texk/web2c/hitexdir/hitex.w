@@ -395,7 +395,7 @@ known as `\Prote'.
    /*printed when \Prote\ starts*/
 @#
 
-@d HITEX_REVISION "0"
+@d HITEX_REVISION "1"
 @d HITEX_VERSION HINT_VERSION_STRING "." HITEX_REVISION
 
 
