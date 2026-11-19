@@ -37,11 +37,7 @@ aarch64-linux: Built on github, see below.
 
 armhf-linux: github, see below.
 
-x86_64-cygwin: gcc-10.2.0, cygwin-3.1.7
-  TL_CONFIGURE_ARGS="--enable-xindy --enable-shared CLISP=/path/to/clisp.exe
-    CXXFLAGS=-Wa,-mbig-obj
-    LDFLAGS='-Wl,--no-insert-timestamp -Wl,--stack,0x800000'" \
-  ./Build
+x86_64-cygwin: see doc/README.cygwin.
   
 i386-freebsd amd64-freebsd: github, see below.
 

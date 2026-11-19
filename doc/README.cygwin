@@ -1,0 +1,297 @@
+$Id$
+Public domain. Procedures for building TeX Live and Biber on Cygwin.
+From Ken Brown, 19oct2026, on the occasion of his retirement.
+
+#+TITLE: Building texlive
+
+* Set up subversion
+
+#+BEGIN_EXAMPLE
+# Get config file.
+https://tug.org/texlive/svn/setup.html
+#+END_EXAMPLE
+
+* Checkout source tree
+
+Here we use svn's sparse checkout feature:
+
+http://svnbook.red-bean.com/en/1.8/svn.advanced.sparsedirs.html
+
+#+BEGIN_EXAMPLE
+cd ~/src/texlive
+svn co svn://$USR:$PASS@tug.org/texlive/trunk --depth immediates
+svn update --set-depth exclude trunk/TODO
+svn update --set-depth empty trunk/Master/bin
+svn update --set-depth infinity trunk/Master/bin/i386-cygwin
+svn update --set-depth infinity trunk/Master/bin/x86_64-cygwin
+svn update --set-depth empty trunk/Master/tlpkg
+svn update --set-depth infinity trunk/Master/tlpkg/tlpsrc
+svn update --set-depth empty trunk/Master/tlpkg/bin
+svn update trunk/Master/tlpkg/bin/tl-update-bindir
+svn update --set-depth empty trunk/Master/tlpkg/installer
+svn update --set-depth empty trunk/Master/tlpkg/installer/xz
+svn update trunk/Master/tlpkg/installer/xz/xz.i386-cygwin.exe
+svn update trunk/Master/tlpkg/installer/xz/xz.x86_64-cygwin.exe
+svn update --set-depth empty trunk/Master/tlpkg/installer/lz4
+svn update trunk/Master/tlpkg/installer/lz4/lz4.i386-cygwin.exe
+svn update trunk/Master/tlpkg/installer/lz4/lz4.x86_64-cygwin.exe
+svn update --set-depth immediates trunk/Build
+svn update --set-depth exclude trunk/Build/logs
+svn update --set-depth exclude trunk/Build/tests
+svn update --set-depth exclude trunk/Build/README
+svn update --set-depth infinity trunk/Build/source
+#+END_EXAMPLE
+
+* Update source tree
+
+#+BEGIN_EXAMPLE
+cd ~/src/texlive/trunk
+svn up
+#+END_EXAMPLE
+   
+* Clean up old build directory
+
+#+BEGIN_EXAMPLE
+cd ~/src/texlive/build
+old_build_datetime=$(ls -l Work/build.log | gawk '{ print $6 "." $7 }')
+cp -p Work/build.log ../${old_build_datetime}-build.log
+rm -rf Work inst
+#+END_EXAMPLE
+
+
+* Update build directory
+
+#+BEGIN_EXAMPLE
+cd ~/src/texlive/trunk/Build
+rsync -av --delete source/ ../../build/
+#+END_EXAMPLE
+
+   
+
+* Build
+
+=~/src/clisp-texlive= contains a stripped-down version of =clisp=,
+without dynamic modules.  If I build =xindy= with the system =clisp=,
+the resulting =xindy-lisp= complains that it can’t find =lisp.exe=.
+This must have something to do with the way =clisp= is built to
+support dynamic modules.  I build =clisp-texlive= using
+
+#+BEGIN_EXAMPLE
+https://github.com/kbrow1i/clisp-texlive.git
+#+END_EXAMPLE
+
+If this is too much trouble, the next maintainer can simply build
+without =xindy=.
+
+The CXXFLAGS setting avoids the "too many sections" assembler error when
+building harfbuzz.
+
+#+BEGIN_EXAMPLE
+cd ~/src/texlive/build
+JOBS=$(($(nproc) + 1))
+TL_CONFIGURE_ARGS=\
+"-C \
+--enable-xindy \
+--enable-shared \
+--enable-silent-rules \
+CLISP=/home/kbrown/src/clisp-texlive/clisp-2.49.92-1.x86_64/build/clisp.exe \
+CXXFLAGS='-Wa,-mbig-obj -g -O2' \
+LDFLAGS='-Wl,--no-insert-timestamp -Wl,--stack,0x800000'" \
+TL_MAKE_FLAGS="-j$JOBS --jobserver-style=pipe -k" ./Build
+#+END_EXAMPLE
+
+* Building asymptote
+
+From https://www.tug.org/texlive/build.html#asymptote
+
+#+BEGIN_EXAMPLE
+If necessary, download gc-7.6.2 into ~/src/texlive before starting:
+
+  wget https://github.com/ivmai/bdwgc/releases/download/v7.6.2/gc-7.6.2.tar.gz
+
+cd ~/src/texlive/build/utils/asymptote
+tar -xf ../../../gc-7.6.2.tar.gz
+./configure \
+        --prefix=/tmp/asyinst \
+        --enable-texlive-build \
+	--disable-lsp \
+	--disable-curl \
+        --disable-fftw \
+        --disable-gsl \
+&& make GC=gc-7.6.2 && make check && strip asy
+cp asy.exe ../../../trunk/Master/bin/x86_64-cygwin/
+#+END_EXAMPLE
+
+* Commit binaries
+
+#+BEGIN_EXAMPLE
+cd ~/src/texlive/trunk
+svn up
+
+Master/tlpkg/bin/tl-update-bindir --bin-loc ~/src/texlive/build/inst/bin/x86_64-pc-cygwin/ x86_64-cygwin
+svn commit -m "Update 2026 binaries for x86_64-cygwin"
+#+END_EXAMPLE
+
+* Building xz
+
+From https://www.tug.org/texlive/build.html#xz
+
+#+BEGIN_EXAMPLE
+cd ~/src/texlive
+VERSION=5.6.0
+wget https://github.com/tukaani-project/xz/releases/download/v${VERSION}/xz-${VERSION}.tar.xz
+
+[Or download from trunk/Master/source]
+
+tar -xf xz-${VERSION}.tar.xz
+
+rsync -av --delete xz-${VERSION}/ build-xz/
+
+cd build-xz
+./configure --disable-nls --disable-shared --disable-threads && make
+strip src/xz/xz.exe
+cp src/xz/xz.exe ../trunk/Master/tlpkg/installer/xz/xz.x86_64-cygwin.exe
+#+END_EXAMPLE
+
+
+#+TITLE: Building biber
+
+* Set up git repos
+
+This has changed since I got commit rights.
+
+#+BEGIN_EXAMPLE
+cd ~/src/texlive
+git clone git@github.com:plk/biber.git
+#+END_EXAMPLE
+
+* Clean up old build directory
+
+#+BEGIN_EXAMPLE
+./Build realclean   # Have to run as admin.
+#+END_EXAMPLE
+
+* Update source tree
+
+#+BEGIN_EXAMPLE
+cd ~/src/texlive/biber
+git pull
+cd ..
+rsync -av --delete --exclude=.git --exclude=scancache biber/ biber64/
+#+END_EXAMPLE
+
+* Build
+
+#+BEGIN_EXAMPLE
+cd ~/src/texlive/biber64
+perl Build.PL
+./Build test
+./Build install # (run as admin; maybe capture output for later
+                # uninstall; or could later run ./Build fakeinstall, or
+                # look at .../.packlist?
+cd dist/cygwin64
+./build.sh # might need to first update absolute paths in biber.files and build.sh
+#+END_EXAMPLE
+
+Note: If I had to change =biber.files= or =biber.sh=, I need to commit
+the changes to Phil Kime’s github repo.
+
+* Commit binaries to SourceForge
+
+#+BEGIN_EXAMPLE
+mv biber-cygwin64.exe biber.exe
+tar -cvzf biber-cygwin64.tar.gz biber.exe
+scp biber-cygwin64.tar.gz $USR,biblatex-biber@frs.sourceforge.net:/home/frs/project/biblatex-biber/biblatex-biber/current/binaries/Cygwin/
+#+END_EXAMPLE
+
+* Upload biber-cygwin package to CTAN
+
+#+BEGIN_EXAMPLE
+VERSION=2.22 # [or 2.22-1,...]
+mkdir -p ~/src/texlive/ctan/biblio/biber
+cd ~/src/texlive/ctan/biblio/biber
+rm biber-cygwin/*.tar.gz
+cp ~/src/texlive/biber64/dist/cygwin64/biber-cygwin64.tar.gz biber-cygwin/biber-${VERSION}-cygwin_x86_64.tar.gz
+tar -cvzf biber-cygwin.tar.gz biber-cygwin/*
+#+END_EXAMPLE
+
+Now go to https://ctan.org/upload and upload =biber-cygwin.tar.gz=,
+using =VERSION= as the version and =biblio/biber/biber-cygwin= as the
+suggested CTAN directory.
+
+* Uninstall local Biber
+
+#+BEGIN_EXAMPLE
+rm /usr/local/share/man/man1/biber.1
+rm -rf /usr/local/share/perl5/site_perl/5.32/Biber*
+rm /usr/local/share/man/man3/Biber*.3pm
+rm /usr/local/bin/biber
+#+END_EXAMPLE
+
+Here's the list as of last check:
+
+#+BEGIN_EXAMPLE
+/usr/local/share/man/man1/biber.1
+/usr/local/share/perl5/site_perl/5.32/Biber.pm
+/usr/local/share/perl5/site_perl/5.32/Biber/Annotation.pm
+/usr/local/share/perl5/site_perl/5.32/Biber/bcf.rnc
+/usr/local/share/perl5/site_perl/5.32/Biber/bcf.rng
+/usr/local/share/perl5/site_perl/5.32/Biber/bcf.xsl
+/usr/local/share/perl5/site_perl/5.32/Biber/biber-tool.conf
+/usr/local/share/perl5/site_perl/5.32/Biber/Config.pm
+/usr/local/share/perl5/site_perl/5.32/Biber/config.rnc
+/usr/local/share/perl5/site_perl/5.32/Biber/config.rng
+/usr/local/share/perl5/site_perl/5.32/Biber/Constants.pm
+/usr/local/share/perl5/site_perl/5.32/Biber/DataList.pm
+/usr/local/share/perl5/site_perl/5.32/Biber/DataLists.pm
+/usr/local/share/perl5/site_perl/5.32/Biber/DataModel.pm
+/usr/local/share/perl5/site_perl/5.32/Biber/Entries.pm
+/usr/local/share/perl5/site_perl/5.32/Biber/Entry.pm
+/usr/local/share/perl5/site_perl/5.32/Biber/Internals.pm
+/usr/local/share/perl5/site_perl/5.32/Biber/Section.pm
+/usr/local/share/perl5/site_perl/5.32/Biber/Sections.pm
+/usr/local/share/perl5/site_perl/5.32/Biber/UCollate.pm
+/usr/local/share/perl5/site_perl/5.32/Biber/Utils.pm
+/usr/local/share/perl5/site_perl/5.32/Biber/Date/Format.pm
+/usr/local/share/perl5/site_perl/5.32/Biber/Entry/Name.pm
+/usr/local/share/perl5/site_perl/5.32/Biber/Entry/Names.pm
+/usr/local/share/perl5/site_perl/5.32/Biber/Input/file/biblatexml.pm
+/usr/local/share/perl5/site_perl/5.32/Biber/Input/file/bibtex.pm
+/usr/local/share/perl5/site_perl/5.32/Biber/LaTeX/Recode.pm
+/usr/local/share/perl5/site_perl/5.32/Biber/LaTeX/recode_data.xml
+/usr/local/share/perl5/site_perl/5.32/Biber/Output/base.pm
+/usr/local/share/perl5/site_perl/5.32/Biber/Output/bbl.pm
+/usr/local/share/perl5/site_perl/5.32/Biber/Output/bblxml.pm
+/usr/local/share/perl5/site_perl/5.32/Biber/Output/biblatexml.pm
+/usr/local/share/perl5/site_perl/5.32/Biber/Output/bibtex.pm
+/usr/local/share/perl5/site_perl/5.32/Biber/Output/dot.pm
+/usr/local/share/perl5/site_perl/5.32/Biber/Output/test.pm
+/usr/local/share/man/man3/Biber.3pm
+/usr/local/share/man/man3/Biber.Annotation.3pm
+/usr/local/share/man/man3/Biber.Config.3pm
+/usr/local/share/man/man3/Biber.Constants.3pm
+/usr/local/share/man/man3/Biber.DataList.3pm
+/usr/local/share/man/man3/Biber.DataLists.3pm
+/usr/local/share/man/man3/Biber.DataModel.3pm
+/usr/local/share/man/man3/Biber.Date.Format.3pm
+/usr/local/share/man/man3/Biber.Entries.3pm
+/usr/local/share/man/man3/Biber.Entry.3pm
+/usr/local/share/man/man3/Biber.Entry.Name.3pm
+/usr/local/share/man/man3/Biber.Entry.Names.3pm
+/usr/local/share/man/man3/Biber.Input.file.biblatexml.3pm
+/usr/local/share/man/man3/Biber.Input.file.bibtex.3pm
+/usr/local/share/man/man3/Biber.Internals.3pm
+/usr/local/share/man/man3/Biber.LaTeX.Recode.3pm
+/usr/local/share/man/man3/Biber.Output.base.3pm
+/usr/local/share/man/man3/Biber.Output.bbl.3pm
+/usr/local/share/man/man3/Biber.Output.bblxml.3pm
+/usr/local/share/man/man3/Biber.Output.biblatexml.3pm
+/usr/local/share/man/man3/Biber.Output.bibtex.3pm
+/usr/local/share/man/man3/Biber.Output.dot.3pm
+/usr/local/share/man/man3/Biber.Output.test.3pm
+/usr/local/share/man/man3/Biber.Section.3pm
+/usr/local/share/man/man3/Biber.Sections.3pm
+/usr/local/share/man/man3/Biber.UCollate.3pm
+/usr/local/share/man/man3/Biber.Utils.3pm
+/usr/local/bin/biber
+#+END_EXAMPLE
