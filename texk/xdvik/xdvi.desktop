@@ -3,6 +3,7 @@ Name=XDvi
 GenericName=DVI Viewer
 Exec=xdvi %f
 Type=Application
+Icon=x-office-document
 Terminal=false
 Categories=Graphics;Viewer;
 Keywords=documents;

@@ -1,3 +1,23 @@
+2026-11-19  Karl Berry  <karl@freefriends.org>
+
+	* xdvi.desktop (Icon): add, setting to x-office-document,
+	taking Max's suggestion.
+	From https://github.com/TeX-Live/texlive-source/pull/92,
+	where the author suggested accessories-text-editor. But xdvi
+	doesn't edit text.
+	
+	Max wrote:
+        The full list of standard icons is here:
+          https://specifications.freedesktop.org/icon-naming/latest/#apps
+        What classic Gnome shows for all these icons:
+          https://commons.wikimedia.org/wiki/GNOME_Desktop_icons#Apps
+        But the appearance can vary quite wildly between different DEs:
+          https://commons.wikimedia.org/w/index.php?search=intitle%3Aaccessories-text-editor&ns6=1
+        [...] the "x-office-document" icon seems the most suitable to me:
+          https://commons.wikimedia.org/w/index.php?search=intitle%3Ax-office-document&ns6=1
+        It's not technically an application icon like the others, but it's
+        more suggestive of a document viewer than the others are.	
+
 2025-10-16  Karl Berry  <karl@freefriends.org>
 
 	* mksedscript (XDVI_VERSION_INFO): avoid using egrep.
