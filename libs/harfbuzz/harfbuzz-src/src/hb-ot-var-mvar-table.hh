@@ -102,7 +102,8 @@ struct MVAR
     if (unlikely (!c->serializer->extend_min (out))) return_trace (false);
     out->version = version;
     out->reserved = reserved;
-    out->valueRecordSize = valueRecordSize;
+    /* Source records may be longer than the struct; we only emit the struct. */
+    out->valueRecordSize = VariationValueRecord::static_size;
     out->valueRecordCount = valueRecordCount;
 
     item_variations_t item_vars;
@@ -120,11 +121,12 @@ struct MVAR
 
     /* serialize value records array */
     unsigned value_rec_count = valueRecordCount;
-    const VariationValueRecord *record = reinterpret_cast<const VariationValueRecord*> (valuesZ.arrayZ);
+    unsigned value_rec_size = valueRecordSize;
     for (unsigned i = 0; i < value_rec_count; i++)
     {
-      if (!record->subset (c, item_vars.get_varidx_map ())) return_trace (false);
-      record++;
+      const VariationValueRecord &record = StructAtOffset<VariationValueRecord> (valuesZ.arrayZ,
+										 i * value_rec_size);
+      if (!record.subset (c, item_vars.get_varidx_map ())) return_trace (false);
     }
     return_trace (true);
   }
@@ -174,10 +176,10 @@ protected:
 
 #define HB_ADD_MVAR_VAR(tag, field) \
        c->serializer->check_assign (table->field, \
-				    roundf (table->field + \
+				    hb_clamp_to<int> (roundf (table->field + \
 					    MVAR.get_var (tag, \
 							  c->plan->normalized_coords.arrayZ, \
-							  c->plan->normalized_coords.length)), \
+							  c->plan->normalized_coords.length))), \
 				    HB_SERIALIZE_ERROR_INT_OVERFLOW)
 
 

@@ -540,6 +540,11 @@ hb_raster_draw_get_pixel_work (const hb_raster_draw_t *draw)
     max_rows = draw->fixed_extents.height;
     max_cols = draw->fixed_extents.width;
   }
+  else if (draw->has_clip_box)
+  {
+    max_rows = hb_max ((int64_t) 0, hb_clamp_to<int64_t> (ceil ((double) draw->clip_y1) - floor ((double) draw->clip_y0)));
+    max_cols = hb_max ((int64_t) 0, hb_clamp_to<int64_t> (ceil ((double) draw->clip_x1) - floor ((double) draw->clip_x0)));
+  }
 
   int64_t work = 0;
   for (const auto &edge : draw->edges)
@@ -562,6 +567,10 @@ hb_raster_draw_get_pixel_work (const hb_raster_draw_t *draw)
  * Recycles @image for reuse by a subsequent hb_raster_draw_render()
  * call, avoiding per-render memory allocation.  The caller transfers
  * ownership of @image to @draw and must not use it afterwards.
+ *
+ * Finish accessing @image and its buffer before recycling, and do
+ * not keep other references to it: later renders may reuse the
+ * image and overwrite its contents.
  *
  * If @draw already holds a recycled image, the previously recycled
  * image is destroyed.
@@ -1622,8 +1631,8 @@ sweep_row_to_alpha_wide (uint8_t *__restrict row_buf,
  *
  * Return value: (transfer full):
  * A rendered #hb_raster_image_t. Returns `NULL` on allocation/configuration
- * failure. If no geometry was accumulated, returns an empty image. If
- * rasterizing the geometry would exceed the work budget, returns a blank image.
+ * failure, or if rasterizing the geometry would exceed the work budget.
+ * If no geometry was accumulated, returns an empty image.
  *
  * Since: 13.0.0
  **/
@@ -1666,10 +1675,21 @@ hb_raster_draw_render (hb_raster_draw_t *draw)
       int x1 = (int) (((int64_t) xmax + HB_RASTER_PIXEL_MASK) >> HB_RASTER_PIXEL_BITS);
       int y1 = (int) (((int64_t) ymax + HB_RASTER_PIXEL_MASK) >> HB_RASTER_PIXEL_BITS);
 
+      /* Paint masks only need the part visible on their destination.
+       * Clip before the dimension cap, so a large off-surface outline
+       * neither allocates a huge mask nor loses its visible portion. */
+      if (draw->has_clip_box)
+      {
+	x0 = hb_max (x0, hb_clamp_to<int> (floorf (draw->clip_x0)));
+	y0 = hb_max (y0, hb_clamp_to<int> (floorf (draw->clip_y0)));
+	x1 = hb_min (x1, hb_clamp_to<int> (ceilf (draw->clip_x1)));
+	y1 = hb_min (y1, hb_clamp_to<int> (ceilf (draw->clip_y1)));
+      }
+
       ext.x_origin = x0;
       ext.y_origin = y0;
-      ext.width    = (unsigned) hb_min (hb_max (0, x1 - x0), HB_RASTER_MAX_AUTO_DIMENSION);
-      ext.height   = (unsigned) hb_min (hb_max (0, y1 - y0), HB_RASTER_MAX_AUTO_DIMENSION);
+      ext.width    = (unsigned) hb_min (hb_max ((int64_t) 0, (int64_t) x1 - x0), (int64_t) HB_RASTER_MAX_AUTO_DIMENSION);
+      ext.height   = (unsigned) hb_min (hb_max ((int64_t) 0, (int64_t) y1 - y0), (int64_t) HB_RASTER_MAX_AUTO_DIMENSION);
       ext.stride   = 0; /* filled below */
     }
   }
@@ -1681,6 +1701,17 @@ hb_raster_draw_render (hb_raster_draw_t *draw)
   /* ── 3. Allocate or reuse image ─────────────────────────────────── */
   /* Reset one-shot state on every exit path. */
   HB_SCOPE_GUARD (hb_raster_draw_clear (draw));
+
+  /* The sweep walks every edge once per row it spans, a product that
+     neither the edge cap nor the dimension cap bounds: fail if over
+     the pixel budget.  An unlimited outline policy disables that too. */
+  if (unlikely (draw->edges.length && ext.width && ext.height &&
+		draw->budget != HB_BUDGET_UNLIMITED &&
+		hb_raster_draw_get_pixel_work (draw) >
+		hb_max ((int64_t) HB_BUDGET_RASTER_PIXELS,
+			(int64_t) HB_BUDGET_RASTER_DRAW_PASSES *
+			ext.width * ext.height)))
+    return nullptr;
 
   hb_unique_ptr_t<hb_raster_image_t> image;
   if (draw->recycled_image)
@@ -1699,15 +1730,7 @@ hb_raster_draw_render (hb_raster_draw_t *draw)
   image->clear ();
 
   /* ── 4. Bucket edges by starting row and rasterize scanlines ──── */
-  /* The sweep walks every edge once per row it spans, a product that
-     neither the edge cap nor the dimension cap bounds: skip it if over
-     the pixel budget.  An unlimited outline policy disables that too. */
-  if (draw->edges.length && ext.width && ext.height &&
-      likely (draw->budget == HB_BUDGET_UNLIMITED ||
-	      hb_raster_draw_get_pixel_work (draw) <=
-	      hb_max ((int64_t) HB_BUDGET_RASTER_PIXELS,
-		      (int64_t) HB_BUDGET_RASTER_PAINT_PASSES *
-		      ext.width * ext.height)))
+  if (draw->edges.length && ext.width && ext.height)
   {
     if (unlikely (!draw->row_area.resize_dirty (ext.width) ||
 		  !draw->row_cover.resize_dirty (ext.width)))

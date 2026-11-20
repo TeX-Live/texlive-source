@@ -46,19 +46,9 @@ namespace AAT {
 using namespace OT;
 
 struct ankr;
+struct kern_pair_filter_t;
 
 using hb_aat_class_cache_t = hb_ot_layout_mapping_cache_t;
-
-/* The state-machine subtables' transition functions are called once per
- * transition from the drive loop, but are big enough that the compiler
- * declines to inline them, leaving a call in the hottest loop of AAT
- * shaping.  Forcing them inline is worth 3-10% instructions on
- * morx/kerx-heavy fonts, for about 16KB of code. */
-#ifndef HB_OPTIMIZE_SIZE
-#define HB_AAT_TRANSITION_INLINE HB_ALWAYS_INLINE
-#else
-#define HB_AAT_TRANSITION_INLINE
-#endif
 
 struct hb_aat_scratch_t
 {
@@ -144,7 +134,11 @@ struct hb_aat_apply_context_t :
   hb_bit_set_t *buffer_glyph_set = nullptr;
   const hb_bit_set_t *first_set = nullptr;
   const hb_bit_set_t *second_set = nullptr;
-  hb_aat_class_cache_t *machine_class_cache = nullptr;
+  bool second_set_gates = false;
+  union {
+    hb_aat_class_cache_t *machine_class_cache = nullptr;
+    const kern_pair_filter_t *kern_pair_filter;
+  };
 
   /* Unused. For debug tracing only. */
   unsigned int lookup_index;
@@ -166,19 +160,6 @@ struct hb_aat_apply_context_t :
     buffer_is_reversed = !buffer_is_reversed;
   }
 
-  /* Applying a subtable walks the whole buffer.  The font controls the
-   * number of subtables, so charge each pass to the buffer's work budget. */
-  HB_NODISCARD bool charge_buffer_pass ()
-  {
-    buffer->max_ops -= buffer->len;
-    if (unlikely (buffer->max_ops < 0))
-    {
-      buffer->successful = false;
-      return false;
-    }
-    return true;
-  }
-
   void setup_buffer_glyph_set ()
   {
     using_buffer_glyph_set = buffer->len >= 4 && buffer_glyph_set;
@@ -194,6 +175,23 @@ struct hb_aat_apply_context_t :
     // Faster for shorter buffers.
     for (unsigned i = 0; i < buffer->len; i++)
       if (first_set->has (buffer->info[i].codepoint))
+	return true;
+    return false;
+  }
+  /* Returns false (skip) only when second_set is a sufficient skip gate for the
+   * subtable (second_set_gates) AND the buffer contains none of its completer
+   * glyphs, so no action can fire. */
+  bool buffer_intersects_second () const
+  {
+    if (!second_set_gates)
+      return true;
+
+    if (likely (using_buffer_glyph_set))
+      return buffer_glyph_set->intersects (*second_set);
+
+    // Faster for shorter buffers.
+    for (unsigned i = 0; i < buffer->len; i++)
+      if (second_set->has (buffer->info[i].codepoint))
 	return true;
     return false;
   }
@@ -282,6 +280,48 @@ struct hb_aat_apply_context_t :
 
 template <typename T> struct Lookup;
 
+/* Collects the glyphs of LookupFormat2 / LookupFormat4 segments.
+ *
+ * Segments are supposed to be sorted and disjoint, in which case adding
+ * them one by one touches each glyph and each page of the set at most once.
+ * The sanitizer does not check that, and a malformed table can repeat a
+ * segment spanning the whole glyph range thousands of times, each costing a
+ * full pass.  So once a segment is out of order, add the rest as a single
+ * range; that is a superset of the glyphs, which is fine for a set that is
+ * only used as a pre-filter. */
+template <typename segments_t, typename set_t, typename filter_t>
+static inline void
+collect_segments_glyphs_filtered (const segments_t &segments,
+				  set_t &glyphs,
+				  const void *base,
+				  const filter_t &filter)
+{
+  unsigned count = segments.get_length ();
+  hb_codepoint_t next = 0; /* One past the last glyph added. */
+  unsigned i;
+  for (i = 0; i < count; i++)
+  {
+    const auto &segment = segments[i];
+    if (segment.first < next) break; /* Not sorted and disjoint. */
+    if (!segment.may_match (base, filter))
+      continue;
+    segment.collect_glyphs_filtered (glyphs, base, filter);
+    next = segment.last + 1;
+  }
+
+  hb_codepoint_t first = HB_CODEPOINT_INVALID, last = 0;
+  for (; i < count; i++)
+  {
+    const auto &segment = segments[i];
+    if (!segment.may_match (base, filter))
+      continue;
+    first = hb_min (first, (hb_codepoint_t) segment.first);
+    last = hb_max (last, (hb_codepoint_t) segment.last);
+  }
+  if (first <= last)
+    glyphs.add_range (first, last);
+}
+
 template <typename T>
 struct LookupFormat0
 {
@@ -341,11 +381,13 @@ struct LookupSegmentSingle
     if (first == DELETED_GLYPH) return;
     glyphs.add_range (first, last);
   }
+  template <typename filter_t>
+  bool may_match (const void *base HB_UNUSED, const filter_t &filter) const
+  { return first != DELETED_GLYPH && first <= last && filter (value); }
   template <typename set_t, typename filter_t>
-  void collect_glyphs_filtered (set_t &glyphs, const filter_t &filter) const
+  void collect_glyphs_filtered (set_t &glyphs, const void *base, const filter_t &filter) const
   {
-    if (first == DELETED_GLYPH) return;
-    if (!filter (value)) return;
+    if (!may_match (base, filter)) return;
     glyphs.add_range (first, last);
   }
 
@@ -386,41 +428,7 @@ struct LookupFormat2
   }
   template <typename set_t, typename filter_t>
   void collect_glyphs_filtered (set_t &glyphs, const filter_t &filter) const
-  {
-    /* Segments are supposed to be sorted and disjoint, in which case adding
-     * them one by one touches each page of the set at most once.  The
-     * sanitizer does not check that, and a malformed table can repeat a
-     * segment spanning the whole glyph range thousands of times, each
-     * costing a full pass over the set.  So once a segment is out of order,
-     * add the rest as a single range; that is a superset of the glyphs,
-     * which is fine for a set that is only used as a pre-filter. */
-    unsigned count = segments.get_length ();
-    hb_codepoint_t next = 0; /* One past the last glyph added. */
-    unsigned i;
-    for (i = 0; i < count; i++)
-    {
-      const auto &segment = segments[i];
-      if (segment.first < next) break; /* Not sorted and disjoint. */
-      if (segment.first == DELETED_GLYPH || segment.first > segment.last ||
-	  !filter (segment.value))
-	continue;
-      glyphs.add_range (segment.first, segment.last);
-      next = segment.last + 1;
-    }
-
-    hb_codepoint_t first = HB_CODEPOINT_INVALID, last = 0;
-    for (; i < count; i++)
-    {
-      const auto &segment = segments[i];
-      if (segment.first == DELETED_GLYPH || segment.first > segment.last ||
-	  !filter (segment.value))
-	continue;
-      first = hb_min (first, (hb_codepoint_t) segment.first);
-      last = hb_max (last, (hb_codepoint_t) segment.last);
-    }
-    if (first <= last)
-      glyphs.add_range (first, last);
-  }
+  { collect_segments_glyphs_filtered (segments, glyphs, this, filter); }
 
   bool sanitize (hb_sanitize_context_t *c) const
   {
@@ -459,6 +467,10 @@ struct LookupSegmentArray
     if (first == DELETED_GLYPH) return;
     glyphs.add_range (first, last);
   }
+  /* Without looking at the values; for a superset. */
+  template <typename filter_t>
+  bool may_match (const void *base HB_UNUSED, const filter_t &filter HB_UNUSED) const
+  { return first != DELETED_GLYPH && first <= last; }
   template <typename set_t, typename filter_t>
   void collect_glyphs_filtered (set_t &glyphs, const void *base, const filter_t &filter) const
   {
@@ -514,17 +526,11 @@ struct LookupFormat4
   template <typename set_t>
   void collect_glyphs (set_t &glyphs) const
   {
-    unsigned count = segments.get_length ();
-    for (unsigned i = 0; i < count; i++)
-      segments[i].collect_glyphs (glyphs);
+    collect_glyphs_filtered (glyphs, [] (const T &) { return true; });
   }
   template <typename set_t, typename filter_t>
   void collect_glyphs_filtered (set_t &glyphs, const filter_t &filter) const
-  {
-    unsigned count = segments.get_length ();
-    for (unsigned i = 0; i < count; i++)
-      segments[i].collect_glyphs_filtered (glyphs, this, filter);
-  }
+  { collect_segments_glyphs_filtered (segments, glyphs, this, filter); }
 
   bool sanitize (hb_sanitize_context_t *c) const
   {
@@ -960,6 +966,62 @@ struct StateTable
       glyphs.add (DELETED_GLYPH);
 
     (this+classTable).collect_glyphs_filtered (glyphs, num_glyphs, filter);
+  }
+
+  /* Collect the "completer" glyphs: glyphs whose class makes an *actionable*
+   * transition from some reachable state.  Any action is triggered by the
+   * current glyph via get_entry(state, class), so if the buffer contains none
+   * of these, the machine can produce no action and the subtable is skippable.
+   *
+   * Returns true (second_set is a sufficient skip gate) only if that invariant
+   * holds.  Returns false when an action can fire without a real completer glyph
+   * in the buffer: on CLASS_END_OF_TEXT (end of buffer), CLASS_OUT_OF_BOUNDS
+   * (unenumerable), on non-extended machines (mort: negative states), or OOM. */
+  template <typename set_t, typename table_t>
+  bool collect_second_glyphs (set_t &glyphs, unsigned num_glyphs, const table_t &table) const
+  {
+    if (!Types::extended)
+      return false;
+
+    unsigned num_classes = nClasses;
+    if (unlikely (num_classes > hb_bit_page_t::BITS))
+      return false;
+
+    hb_bit_page_t filter;
+    hb_set_t visited;
+    hb_vector_t<unsigned> queue;
+    visited.add (STATE_START_OF_TEXT);
+    queue.push (STATE_START_OF_TEXT);
+    if (unlikely (visited.in_error () || queue.in_error ()))
+      return false;
+
+    while (queue.length)
+    {
+      unsigned s = queue.pop ();
+      for (unsigned k = 0; k < num_classes; k++)
+      {
+	const auto &entry = get_entry ((int) s, k);
+	if (table.is_actionable (entry))
+	{
+	  if (k == CLASS_END_OF_TEXT || k == CLASS_OUT_OF_BOUNDS)
+	    return false;
+	  filter.add (k);
+	}
+	int ns = new_state (entry.newState);
+	if (ns >= 0 && !visited.has ((unsigned) ns))
+	{
+	  visited.add ((unsigned) ns);
+	  queue.push ((unsigned) ns);
+	  if (unlikely (visited.in_error () || queue.in_error ()))
+	    return false;
+	}
+      }
+    }
+
+    if (filter (CLASS_DELETED_GLYPH))
+      glyphs.add (DELETED_GLYPH);
+    (this+classTable).collect_glyphs_filtered (glyphs, num_glyphs, filter);
+    return true;
   }
 
   int new_state (unsigned int newState) const

@@ -84,6 +84,28 @@ struct ValueFormat : HBUINT16
     return result;
   }
 
+  /* Most first-glyph pair values are simple horizontal kerning. */
+#ifndef HB_OPTIMIZE_SIZE
+  HB_ALWAYS_INLINE
+#endif
+  bool apply_pair_value (hb_ot_apply_context_t *c,
+                         const ValueBase *base,
+                         const Value *values,
+                         hb_glyph_position_t &glyph_pos) const
+  {
+    if ((unsigned) *this == xAdvance)
+    {
+      bool ret = false;
+#ifndef HB_NO_VERTICAL
+      if (likely (HB_DIRECTION_IS_HORIZONTAL (c->direction)))
+#endif
+        glyph_pos.x_advance = hb_saturate_add (glyph_pos.x_advance,
+            c->font->em_scale_x (get_short (values, &ret)));
+      return ret;
+    }
+    return apply_value (c, base, values, glyph_pos);
+  }
+
   bool apply_value (hb_ot_apply_context_t *c,
                     const ValueBase       *base,
                     const Value           *values,
@@ -418,6 +440,12 @@ struct ValueFormat : HBUINT16
     unsigned size = get_size ();
 
     if (!c->check_range (values, count, size)) return_trace (false);
+
+    /* Records of an empty ValueFormat take no bytes, so the range check
+     * neither bounds count nor charges for it, while later code (eg. the
+     * subsetter) still walks count records.  Manually modify the sanitizer
+     * max ops to take this into account. */
+    if (unlikely (!size && !c->check_ops (count))) return_trace (false);
 
     if (c->lazy_some_gpos)
       return_trace (true);

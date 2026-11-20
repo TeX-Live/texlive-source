@@ -401,6 +401,7 @@ hb_subset_sources = files(
   'hb-subset-cff2.cc',
   'hb-subset-cff2-round.hh',
   'hb-subset-cff2-to-cff1.hh',
+  'hb-subset-hinting.hh',
   'hb-subset-input.cc',
   'hb-subset-input.hh',
   'hb-subset-instancer-iup.hh',
@@ -525,7 +526,7 @@ if conf.get('HAVE_GDI', 0) == 1
   harfbuzz_deps += gdi_uniscribe_deps
 endif
 
-if conf.get('HAVE_GRAPHITE2', 0) == 1
+if conf.get('HAVE_GRAPHITE', 0) == 1
   hb_sources += hb_graphite2_sources
   hb_headers += hb_graphite2_headers
   harfbuzz_deps += [graphite2_dep, graphite_dep]
@@ -741,6 +742,7 @@ hb_vector_sources = files(
   'hb-vector-paint.cc',
   'hb-vector-paint-svg.cc',
   'hb-vector-paint-pdf.cc',
+  'hb-vector-paint-pdf-image.hh',
   'hb-vector-path.hh',
   'hb-vector-buf.hh',
   'hb-static.cc',
@@ -852,8 +854,9 @@ hb_gpu_shader_sources = [
 ]
 
 hb_gpu_shader_helper = find_program('gen-gpu-shader-artifacts.py')
+hb_gpu_shader_headers = []
 foreach p: hb_gpu_shader_sources
-  custom_target('@0@'.format(p.get(1)),
+  hb_gpu_shader_headers += custom_target('@0@'.format(p.get(1)),
     build_by_default: true,
     input: p.get(0),
     output: p.get(1),
@@ -878,6 +881,7 @@ if not get_option('gpu').disabled()
 
   libharfbuzz_gpu = library('harfbuzz-gpu',
     hb_gpu_sources,
+    hb_gpu_shader_headers,
     include_directories: incconfig,
     dependencies: gpu_deps,
     link_with: [libharfbuzz],
@@ -968,7 +972,6 @@ if get_option('tests').enabled()
   # error LNK2019: unresolved external symbol "unsigned __int64 const * const _hb_NullPool"
   if not cpp_is_microsoft_compiler
     noinst_programs = {
-      'main': 'main.cc',
       'test-basics': 'test.cc',
       'test-buffer-serialize': 'test-buffer-serialize.cc',
       'test-ot-meta': 'test-ot-meta.cc',
@@ -993,8 +996,12 @@ if get_option('tests').enabled()
     'test-algs': ['test-algs.cc', 'hb-static.cc'],
     'test-array': ['test-array.cc'],
     'test-bimap': ['test-bimap.cc', 'hb-static.cc'],
+    'test-bit-vector': ['test-bit-vector.cc', 'hb-static.cc'],
+    'test-buffer': ['test-buffer.cc', 'hb-static.cc'],
+    'test-gdef-cache': ['test-gdef-cache.cc', 'hb-static.cc'],
     'test-cache': ['test-cache.cc'],
     'test-cff': ['test-cff.cc', 'hb-static.cc'],
+    'test-checksum': ['test-checksum.cc', 'hb-static.cc'],
     'test-colr': ['test-colr.cc', 'hb-static.cc'],
     'test-classdef-graph': ['graph/test-classdef-graph.cc', 'hb-static.cc', 'graph/gsubgpos-context.cc'],
     'test-result': ['test-result.cc', 'hb-static.cc'],
@@ -1035,6 +1042,14 @@ if get_option('tests').enabled()
   endforeach
 
   if not cpp_is_microsoft_compiler and not get_option('subset').disabled()
+    test('test-subset-glyf-budget', executable('test-subset-glyf-budget', ['test-subset-glyf-budget.cc', 'hb-static.cc'],
+      include_directories: incconfig,
+      cpp_args: cpp_args + ['-UNDEBUG'],
+      dependencies: [libharfbuzz_dep, libharfbuzz_subset_dep],
+      install: false,
+    ),
+      args: [meson.project_source_root() / 'test/subset/data/fonts/Handjet.ttf'],
+      suite: ['src', 'subset'])
     test('test-cbdt-cache', executable('test-cbdt-cache', ['test-cbdt-cache.cc', 'hb-static.cc'],
       include_directories: incconfig,
       cpp_args: cpp_args + ['-UNDEBUG'],
@@ -1052,7 +1067,7 @@ if get_option('tests').enabled()
       suite: ['src', 'subset'])
   endif
 
-  if not cpp_is_microsoft_compiler and conf.get('HAVE_GRAPHITE2', 0) == 1
+  if not cpp_is_microsoft_compiler and conf.get('HAVE_GRAPHITE', 0) == 1
     test('test-graphite2-buffer', executable('test-graphite2-buffer', ['test-graphite2-buffer.cc', 'hb-static.cc'],
       include_directories: incconfig,
       cpp_args: cpp_args + ['-UNDEBUG'],

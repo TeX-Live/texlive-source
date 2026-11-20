@@ -48,6 +48,7 @@ struct LigatureSet
 
   void closure (hb_closure_context_t *c) const
   {
+    if (unlikely (!c->spend_budget (HB_BUDGET_1, ligature.len))) return;
     + hb_iter (ligature)
     | hb_map (hb_add (this))
     | hb_apply ([c] (const Ligature<Types> &_) { _.closure (c); })
@@ -117,7 +118,6 @@ struct LigatureSet
     auto &skippy_iter = c->iter_context;
     skippy_iter.reset (c->buffer->idx);
     skippy_iter.set_match_func (match_always, nullptr);
-    skippy_iter.set_glyph_data ((HBUINT16 *) nullptr);
     unsigned unsafe_to;
     hb_codepoint_t second = (unsigned) -1;
     bool matched = skippy_iter.next (&unsafe_to);

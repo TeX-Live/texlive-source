@@ -17,7 +17,8 @@ subset_single_subst (hb_subset_context_t *c,
   const hb_map_t &glyph_map = *c->plan->glyph_map;
 
   hb_set_t intersection;
-  coverage.intersect_set (glyphset, intersection);
+  if (unlikely (!coverage.intersect_set (c, glyphset, intersection)))
+    return false;
 
   auto it =
   + hb_iter (intersection)
@@ -77,6 +78,7 @@ void single_subst_closure (hb_closure_context_t *c,
 	 (min_before <= max_after && max_after <= max_before)))
     return;
 
+  if (unlikely (!c->spend_budget (HB_BUDGET_1, intersection.get_population ()))) return;
   + hb_iter (intersection)
   | hb_map ([d, mask] (hb_codepoint_t g) { return (g + d) & mask; })
   | hb_sink (c->output)
@@ -115,14 +117,7 @@ struct SingleSubstFormat1_3
   {
     TRACE_SANITIZE (this);
     return_trace (c->check_struct (this) &&
-                  coverage.sanitize (c, this) &&
-                  /* The coverage  table may use a range to represent a set
-                   * of glyphs, which means a small number of bytes can
-                   * generate a large glyph set. Manually modify the
-                   * sanitizer max ops to take this into account.
-                   *
-                   * Note: This check *must* be right after coverage sanitize. */
-                  c->check_ops ((this + coverage).get_population () >> 1));
+                  coverage.sanitize (c, this));
   }
 
   hb_codepoint_t get_mask () const

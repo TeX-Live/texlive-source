@@ -196,9 +196,7 @@ hb_gpu_paint_push_clip_path_end (hb_paint_funcs_t *funcs HB_UNUSED,
 
   hb_glyph_extents_t ext;
   hb_blob_t *blob = hb_gpu_draw_encode (c->scratch_draw, &ext);
-  /* A path with no ink encodes to the empty blob, not NULL.  Don't
-   * record a zero-length sub-blob for it (see emit_clip_sub_blob);
-   * mark the slot so layers under this clip are skipped. */
+  /* Empty clip: don't record a sub-blob; skip layers under it. */
   bool empty = blob && !hb_blob_get_length (blob);
   if (unlikely (!blob || (!empty && !c->push_sub_blob (blob))))
   {
@@ -562,13 +560,7 @@ emit_clip_sub_blob (hb_gpu_paint_t *c,
 
   hb_glyph_extents_t ext;
   hb_blob_t *blob = hb_gpu_draw_encode (c->scratch_draw, &ext);
-  /* A glyph with no ink (e.g. a space, or one with zero contours)
-   * draws successfully but encodes to the empty blob, not NULL.  A
-   * zero-length sub-blob would get the texel offset of whatever
-   * follows it -- the next sub-blob or the end of the blob -- and
-   * the shader would decode that as the clip outline.  Nothing
-   * shows through an empty clip: skip the layer, and remember so
-   * further layers under this clip don't redraw the glyph. */
+  /* Empty clip (glyph with no ink): skip the layer, and remember. */
   if (blob && !hb_blob_get_length (blob))
   {
     hb_blob_destroy (blob);
@@ -1513,8 +1505,7 @@ hb_gpu_paint_encode (hb_gpu_paint_t     *paint,
   /* No ink (e.g. space glyph): return the empty-blob singleton, not
    * nullptr.  Same convention as hb_gpu_draw_encode(); callers can
    * distinguish "nothing to render" (length 0) from "encoder
-   * failed" (NULL).  Extents still at their sentinels means every
-   * layer was skipped (empty clips) and only group ops remain. */
+   * failed" (NULL).  No extents means only group ops remain. */
   if (paint->num_ops == 0 || paint->ext_min_x > paint->ext_max_x)
   {
     if (extents)
@@ -1686,6 +1677,7 @@ hb_gpu_paint_clear (hb_gpu_paint_t *paint)
   paint->sub_blobs.reset ();
   paint->sub_bytes = 0;
   paint->clip_depth = 0;
+  paint->group_depth = 0;
   hb_memset (paint->rect_clips, 0, sizeof (paint->rect_clips));
   paint->pending_clip_path = false;
   paint->unsupported = false;
@@ -1730,6 +1722,12 @@ hb_gpu_paint_reset (hb_gpu_paint_t *paint)
  * If @blob came from hb_gpu_paint_encode() its underlying buffer
  * will be reused by the next call to hb_gpu_paint_encode(),
  * avoiding a malloc / blob allocation per glyph.
+ *
+ * Finish accessing @blob and its data before recycling, and do
+ * not keep other references to it: later encodes may reuse the
+ * blob and overwrite its data.  An immutable blob, such as one
+ * that a sub-blob was created from, is not reused; it is simply
+ * destroyed.
  *
  * Since: 14.2.0
  **/

@@ -55,13 +55,19 @@ struct hb_subset_context_t :
   dispatch (const T &obj, Ts&&... ds) HB_AUTO_RETURN
   ( _dispatch (obj, hb_prioritize, std::forward<Ts> (ds)...) )
 
+  /* Charge COUNT units of work that the size of the source table does
+   * not bound.  Fails the table once its budget is exhausted. */
+  bool check_ops (unsigned count)
+  { return serializer->check_success (hb_budget_spend (budget_remaining, count)); }
+
   hb_blob_t *source_blob;
   hb_subset_plan_t *plan;
   hb_serialize_context_t *serializer;
   hb_tag_t table_tag;
-  /* Outline work left for instancing this table.  Lives here rather than in
-   * the table's subset() so retries with a larger buffer share it. */
-  int64_t budget_remaining = HB_BUDGET_SUBSET_GLYF;
+  /* Work left for subsetting this table: outline work for glyf instancing,
+   * Coverage and ClassDef glyph walks for layout tables.  Lives here rather
+   * than in the table's subset() so retries with a larger buffer share it. */
+  int64_t budget_remaining;
 
   hb_subset_context_t (hb_blob_t *source_blob_,
 		       hb_subset_plan_t *plan_,
@@ -70,7 +76,10 @@ struct hb_subset_context_t :
 		        source_blob (source_blob_),
 			plan (plan_),
 			serializer (serializer_),
-			table_tag (table_tag_) {}
+			table_tag (table_tag_),
+			budget_remaining (table_tag_ == HB_TAG ('g','l','y','f') ||
+					  table_tag_ == HB_TAG ('G','L','Y','F') ?
+					  HB_BUDGET_SUBSET_GLYF : HB_BUDGET_SUBSET_LAYOUT) {}
 };
 
 #endif /* HB_SUBSET_HH */

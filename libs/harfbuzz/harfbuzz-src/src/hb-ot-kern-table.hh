@@ -88,8 +88,9 @@ struct KernSubTableFormat3
   }
 
   template <typename set_t>
-  void collect_glyphs (set_t &left_set, set_t &right_set, unsigned num_glyphs) const
+  void collect_glyphs (set_t &left_set, set_t &right_set, bool &second_set_gates, unsigned num_glyphs) const
   {
+    second_set_gates = false;
     if (likely (glyphCount))
     {
       left_set.add_range (0, num_glyphs - 1);
@@ -128,6 +129,7 @@ struct KernSubTable
 {
   size_t get_size () const { return u.header.length; }
   unsigned int get_type () const { return u.header.format; }
+  bool is_machine_kern () const { return get_type () == 1; }
 
   int get_kerning (hb_codepoint_t left, hb_codepoint_t right) const
   {
@@ -157,17 +159,19 @@ struct KernSubTable
   }
 
   template <typename set_t>
-  void collect_glyphs (set_t &left_set, set_t &right_set, unsigned num_glyphs) const
+  void collect_glyphs (set_t &left_set, set_t &right_set, bool &second_set_gates,
+                       AAT::kern_pair_filter_t &filter, unsigned num_glyphs) const
   {
+    second_set_gates = false;
     unsigned int subtable_type = get_type ();
     switch (subtable_type) {
-    case 0:	hb_barrier (); u.format0.collect_glyphs (left_set, right_set, num_glyphs); return;
+    case 0:	hb_barrier (); u.format0.collect_glyphs (left_set, right_set, filter); return;
 #ifndef HB_NO_AAT_SHAPE
-    case 1:	hb_barrier (); u.format1.collect_glyphs (left_set, right_set, num_glyphs); return;
+    case 1:	hb_barrier (); u.format1.collect_glyphs (left_set, right_set, second_set_gates, num_glyphs); return;
 #endif
-    case 2:	hb_barrier (); u.format2.collect_glyphs (left_set, right_set, num_glyphs); return;
+    case 2:	hb_barrier (); u.format2.collect_glyphs (left_set, right_set, second_set_gates, num_glyphs); return;
 #ifndef HB_NO_AAT_SHAPE
-    case 3:	hb_barrier (); u.format3.collect_glyphs (left_set, right_set, num_glyphs); return;
+    case 3:	hb_barrier (); u.format3.collect_glyphs (left_set, right_set, second_set_gates, num_glyphs); return;
 #endif
     default:	return;
     }
@@ -409,7 +413,6 @@ struct kern
 
     hb_blob_ptr_t<kern> table;
     AAT::kern_accelerator_data_t accel_data;
-    AAT::hb_aat_scratch_t scratch;
   };
 
   protected:

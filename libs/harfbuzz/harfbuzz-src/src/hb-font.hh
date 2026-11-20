@@ -166,7 +166,7 @@ struct hb_font_t
   float em_fscale_y (int32_t v) { return em_fmult (v, y_multf); }
   float em_fscalef_x (float v) { return em_fmultf (v, x_multf); }
   float em_fscalef_y (float v) { return em_fmultf (v, y_multf); }
-  hb_position_t em_scale_dir (int16_t v, hb_direction_t direction)
+  hb_position_t em_scale_dir (int32_t v, hb_direction_t direction)
   { return em_mult (v, dir_mult (direction)); }
 
   /* Convert from parent-font user-space to our user-space */
@@ -205,10 +205,32 @@ struct hb_font_t
     float x2 = x1 + em_fscale_x (extents->width);
     float y2 = y1 + em_fscale_y (extents->height);
 
-    extents->x_bearing = hb_clamp_to<hb_position_t> (floorf (x1));
-    extents->y_bearing = hb_clamp_to<hb_position_t> (floorf (y1));
-    extents->width = hb_clamp_to<hb_position_t> ((double) ceilf (x2) - extents->x_bearing);
-    extents->height = hb_clamp_to<hb_position_t> ((double) ceilf (y2) - extents->y_bearing);
+    round_glyph_extents (x1, y1, x2, y2, extents);
+  }
+
+  /* Scales unrounded font-unit bounds.  Scaling before rounding keeps the
+   * box tight around fractional outlines, such as those of variable-font
+   * instances. */
+  void scale_glyph_extents (const hb_extents_t<> &bounds,
+			    hb_glyph_extents_t *extents)
+  {
+    round_glyph_extents (em_fscalef_x (bounds.xmin), em_fscalef_y (bounds.ymax),
+			 em_fscalef_x (bounds.xmax), em_fscalef_y (bounds.ymin),
+			 extents);
+  }
+
+  /* Takes the scaled origin corner (x1,y1) and opposite corner (x2,y2). */
+  static void round_glyph_extents (float x1, float y1,
+				   float x2, float y2,
+				   hb_glyph_extents_t *extents)
+  {
+    /* Round outward even when scaling reverses an axis. */
+    bool x_forward = x1 <= x2;
+    bool y_forward = y1 >= y2;
+    extents->x_bearing = hb_clamp_to<hb_position_t> (x_forward ? floorf (x1) : ceilf (x1));
+    extents->y_bearing = hb_clamp_to<hb_position_t> (y_forward ? ceilf (y1) : floorf (y1));
+    extents->width = hb_clamp_to<hb_position_t> ((double) (x_forward ? ceilf (x2) : floorf (x2)) - extents->x_bearing);
+    extents->height = hb_clamp_to<hb_position_t> ((double) (y_forward ? floorf (y2) : ceilf (y2)) - extents->y_bearing);
   }
 
   void synthetic_glyph_extents (hb_glyph_extents_t *extents)
@@ -283,8 +305,8 @@ struct hb_font_t
     if (synthetic && ret)
     {
       /* Embolden */
-      int y_shift = y_scale < 0 ? -y_strength : y_strength;
-      extents->ascender += y_shift;
+      hb_position_t y_shift = y_scale < 0 ? -y_strength : y_strength;
+      extents->ascender = hb_saturate_add (extents->ascender, y_shift);
     }
 
     return ret;
@@ -300,14 +322,14 @@ struct hb_font_t
     if (synthetic && ret)
     {
       /* Embolden */
-      int x_shift = x_scale < 0 ? -x_strength : x_strength;
+      hb_position_t x_shift = x_scale < 0 ? -x_strength : x_strength;
       if (embolden_in_place)
       {
-	extents->ascender += x_shift / 2;
-	extents->descender -= x_shift - x_shift / 2;
+	extents->ascender = hb_saturate_add (extents->ascender, x_shift / 2);
+	extents->descender = hb_saturate_sub (extents->descender, x_shift - x_shift / 2);
       }
       else
-	extents->ascender += x_shift;
+	extents->ascender = hb_saturate_add (extents->ascender, x_shift);
     }
 
     return ret;
@@ -362,7 +384,7 @@ struct hb_font_t
     {
       /* Embolden */
       hb_position_t strength = x_scale >= 0 ? x_strength : -x_strength;
-      advance += advance ? strength : 0;
+      advance = hb_saturate_add (advance, advance ? strength : 0);
     }
 
     return advance;
@@ -379,7 +401,7 @@ struct hb_font_t
     {
       /* Embolden */
       hb_position_t strength = y_scale >= 0 ? y_strength : -y_strength;
-      advance += advance ? strength : 0;
+      advance = hb_saturate_add (advance, advance ? strength : 0);
     }
 
     return advance;
@@ -404,7 +426,7 @@ struct hb_font_t
       hb_position_t strength = x_scale >= 0 ? x_strength : -x_strength;
       for (unsigned int i = 0; i < count; i++)
       {
-	*first_advance += *first_advance ? strength : 0;
+	*first_advance = hb_saturate_add (*first_advance, *first_advance ? strength : 0);
 	first_advance = &StructAtOffsetUnaligned<hb_position_t> (first_advance, advance_stride);
       }
     }
@@ -429,7 +451,7 @@ struct hb_font_t
       hb_position_t strength = y_scale >= 0 ? y_strength : -y_strength;
       for (unsigned int i = 0; i < count; i++)
       {
-	*first_advance += *first_advance ? strength : 0;
+	*first_advance = hb_saturate_add (*first_advance, *first_advance ? strength : 0);
 	first_advance = &StructAtOffsetUnaligned<hb_position_t> (first_advance, advance_stride);
       }
     }
@@ -451,8 +473,8 @@ struct hb_font_t
       /* Embolden */
       if (!embolden_in_place)
       {
-        *x += x_scale < 0 ? -x_strength : x_strength;
-	*y += y_scale < 0 ? -y_strength : y_strength;
+        *x = hb_saturate_add (*x, x_scale < 0 ? -x_strength : x_strength);
+	*y = hb_saturate_add (*y, y_scale < 0 ? -y_strength : y_strength);
       }
     }
 
@@ -475,8 +497,8 @@ struct hb_font_t
       /* Embolden */
       if (!embolden_in_place)
       {
-        *x += x_scale < 0 ? -x_strength : x_strength;
-	*y += y_scale < 0 ? -y_strength : y_strength;
+        *x = hb_saturate_add (*x, x_scale < 0 ? -x_strength : x_strength);
+	*y = hb_saturate_add (*y, y_scale < 0 ? -y_strength : y_strength);
       }
     }
 
@@ -510,8 +532,8 @@ struct hb_font_t
 	/* Embolden */
 	if (!embolden_in_place)
 	{
-	  *first_x += x_shift;
-	  *first_y += y_shift;
+	  *first_x = hb_saturate_add (*first_x, x_shift);
+	  *first_y = hb_saturate_add (*first_y, y_shift);
 	}
 	first_x = &StructAtOffsetUnaligned<hb_position_t> (first_x, x_stride);
 	first_y = &StructAtOffsetUnaligned<hb_position_t> (first_y, y_stride);
@@ -548,8 +570,8 @@ struct hb_font_t
 	/* Embolden */
 	if (!embolden_in_place)
 	{
-	  *first_x += x_shift;
-	  *first_y += y_shift;
+	  *first_x = hb_saturate_add (*first_x, x_shift);
+	  *first_y = hb_saturate_add (*first_y, y_shift);
 	}
 	first_x = &StructAtOffsetUnaligned<hb_position_t> (first_x, x_stride);
 	first_y = &StructAtOffsetUnaligned<hb_position_t> (first_y, y_stride);
@@ -653,13 +675,13 @@ struct hb_font_t
     {
       /* Slant */
       if (slant_xy)
-        *x += roundf (*y * slant_xy);
+        *x = hb_clamp_to<hb_position_t> (*x + roundf (*y * slant_xy));
 
       /* Embolden */
       if (!embolden_in_place)
       {
-	int x_shift = x_scale < 0 ? -x_strength : x_strength;
-	*x += x_shift;
+	hb_position_t x_shift = x_scale < 0 ? -x_strength : x_strength;
+	*x = hb_saturate_add (*x, x_shift);
       }
     }
 
@@ -839,20 +861,22 @@ struct hb_font_t
   {
     assert (mult == -1 || mult == +1);
 
-    *x += dx * mult;
-    *y += dy * mult;
+    if (mult > 0)
+      add_offset (x, y, dx, dy);
+    else
+      subtract_offset (x, y, dx, dy);
   }
   void add_offset (hb_position_t *x, hb_position_t *y,
 		   hb_position_t dx, hb_position_t dy)
   {
-    *x += dx;
-    *y += dy;
+    *x = hb_saturate_add (*x, dx);
+    *y = hb_saturate_add (*y, dy);
   }
   void subtract_offset (hb_position_t *x, hb_position_t *y,
 			hb_position_t dx, hb_position_t dy)
   {
-    *x -= dx;
-    *y -= dy;
+    *x = hb_saturate_sub (*x, dx);
+    *y = hb_saturate_sub (*y, dy);
   }
 
   void guess_v_origin_minus_h_origin (hb_codepoint_t glyph,
@@ -899,8 +923,8 @@ struct hb_font_t
 	  for (unsigned j = 0; j < n; j++)
 	  {
 	    hb_codepoint_t glyph = buf->info[offset + j].codepoint;
-	    origins[j].x -= get_glyph_h_advance (glyph) / 2;
-	    origins[j].y -= ascender;
+	    origins[j].x = hb_saturate_sub (origins[j].x, get_glyph_h_advance (glyph) / 2);
+	    origins[j].y = hb_saturate_sub (origins[j].y, ascender);
 	  }
 	}
 	else
@@ -963,8 +987,8 @@ struct hb_font_t
 	  for (unsigned j = 0; j < n; j++)
 	  {
 	    hb_codepoint_t glyph = buf->info[offset + j].codepoint;
-	    origins[j].x += get_glyph_h_advance (glyph) / 2;
-	    origins[j].y += ascender;
+	    origins[j].x = hb_saturate_add (origins[j].x, get_glyph_h_advance (glyph) / 2);
+	    origins[j].y = hb_saturate_add (origins[j].y, ascender);
 	  }
 	}
 	else
@@ -1151,8 +1175,8 @@ struct hb_font_t
 
     is_synthetic =  x_embolden || y_embolden || slant;
 
-    x_strength = roundf (abs (x_scale) * x_embolden);
-    y_strength = roundf (abs (y_scale) * y_embolden);
+    x_strength = embolden_strength (x_scale, x_embolden);
+    y_strength = embolden_strength (y_scale, y_embolden);
 
     slant_xy = y_scale ? slant * x_scale / y_scale : 0.f;
 
@@ -1161,10 +1185,14 @@ struct hb_font_t
     serial++;
   }
 
+  /* The strength is negated for negative scales, so keep it away from INT32_MIN. */
+  static int32_t embolden_strength (int32_t scale, float embolden)
+  { return hb_max (hb_clamp_to<int32_t> (roundf (fabsf ((float) scale) * embolden)), -INT32_MAX); }
+
   hb_position_t em_mult (int32_t v, int64_t mult)
   { return (hb_position_t) ((v * mult + 32768) >> 16); }
   hb_position_t em_multf (float v, float mult)
-  { return (hb_position_t) roundf (em_fmultf (v, mult)); }
+  { return hb_clamp_to<hb_position_t> (roundf (em_fmultf (v, mult))); }
   float em_fmultf (float v, float mult)
   { return v * mult; }
   float em_fmult (int32_t v, float mult)

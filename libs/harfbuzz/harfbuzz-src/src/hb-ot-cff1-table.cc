@@ -422,30 +422,14 @@ bool OT::cff1::accelerator_t::get_extents (hb_font_t *font, hb_codepoint_t glyph
   if (!_get_bounds (this, glyph, bounds, false, budget))
     return false;
 
-  if (bounds.min.x >= bounds.max.x)
-  {
-    extents->width = 0;
-    extents->x_bearing = 0;
-  }
-  else
-  {
-    double x_bearing = roundf (bounds.min.x.to_real ());
-    extents->x_bearing = hb_clamp_to<hb_position_t> (x_bearing);
-    extents->width = hb_clamp_to<hb_position_t> ((double) roundf (bounds.max.x.to_real ()) - x_bearing);
-  }
-  if (bounds.min.y >= bounds.max.y)
-  {
-    extents->height = 0;
-    extents->y_bearing = 0;
-  }
-  else
-  {
-    double y_bearing = roundf (bounds.max.y.to_real ());
-    extents->y_bearing = hb_clamp_to<hb_position_t> (y_bearing);
-    extents->height = hb_clamp_to<hb_position_t> ((double) roundf (bounds.min.y.to_real ()) - y_bearing);
-  }
-
-  font->scale_glyph_extents (extents);
+  /* An axis with no extent collapses to the origin. */
+  bool has_x = bounds.min.x < bounds.max.x;
+  bool has_y = bounds.min.y < bounds.max.y;
+  hb_extents_t<> box (has_x ? (float) bounds.min.x.to_real () : 0.f,
+		      has_y ? (float) bounds.min.y.to_real () : 0.f,
+		      has_x ? (float) bounds.max.x.to_real () : 0.f,
+		      has_y ? (float) bounds.max.y.to_real () : 0.f);
+  font->scale_glyph_extents (box, extents);
 
   return true;
 }
@@ -662,7 +646,7 @@ _cff1_charstring_may_end_in_seac (const hb_ubytes_t &str,
   return end >= 2 && str[end - 2] == OpCode_escape;
 }
 
-bool OT::cff1::accelerator_subset_t::get_seac_components (hb_codepoint_t glyph, hb_codepoint_t *base, hb_codepoint_t *accent) const
+bool OT::cff1::accelerator_subset_t::get_seac_components (hb_codepoint_t glyph, hb_codepoint_t *base, hb_codepoint_t *accent, int64_t *budget) const
 {
   if (unlikely (!is_valid () || (glyph >= num_glyphs))) return false;
   /* seac uses StandardEncoding names and is not defined in CID-keyed fonts. */
@@ -674,7 +658,7 @@ bool OT::cff1::accelerator_subset_t::get_seac_components (hb_codepoint_t glyph, 
   cff1_cs_interp_env_t env (str, *this, fd);
   cff1_cs_interpreter_t<cff1_cs_opset_seac_t, get_seac_param_t> interp (env);
   get_seac_param_t  param (this);
-  if (unlikely (!interp.interpret (param))) return false;
+  if (unlikely (!interp.interpret (param, budget))) return false;
 
   if (param.has_seac ())
   {

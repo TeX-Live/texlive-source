@@ -328,23 +328,14 @@ hb_buffer_t::enter ()
   deallocate_var_all ();
   serial = 0;
   scratch_flags = HB_BUFFER_SCRATCH_FLAG_DEFAULT;
-  /* enter() now runs on every shape, including hb_shape_plan_execute().
-   * Compute the per-text limit as before, but if internal code has already
-   * narrowed a limit below the idle default (e.g. the fault injection in
-   * test-graphite2-buffer), keep the stricter value.  Public paths always
-   * arrive at the defaults (from hb_buffer_create() / leave()), so they get
-   * the computed per-text limit unchanged. */
   unsigned mul;
   if (likely (!hb_unsigned_mul_overflows (len, HB_BUFFER_MAX_LEN_FACTOR, &mul)))
   {
-    unsigned limit = hb_max (mul, (unsigned) HB_BUFFER_MAX_LEN_MIN);
-    max_len = max_len < HB_BUFFER_MAX_LEN_DEFAULT ? hb_min (max_len, limit) : limit;
+    max_len = hb_max (mul, (unsigned) HB_BUFFER_MAX_LEN_MIN);
   }
-  if (likely (!hb_unsigned_mul_overflows (len, HB_BUFFER_MAX_OPS_FACTOR, &mul)))
-  {
-    int limit = (int) hb_max (mul, (unsigned) HB_BUFFER_MAX_OPS_MIN);
-    max_ops = max_ops < HB_BUFFER_MAX_OPS_DEFAULT ? hb_min (max_ops, limit) : limit;
-  }
+  max_ops = (int) hb_clamp ((uint64_t) len * HB_BUFFER_MAX_OPS_FACTOR,
+			  (uint64_t) HB_BUFFER_MAX_OPS_MIN,
+			  (uint64_t) HB_BUFFER_MAX_OPS_DEFAULT);
 }
 void
 hb_buffer_t::leave ()
@@ -370,6 +361,8 @@ hb_buffer_t::add (hb_codepoint_t  codepoint,
   glyph->codepoint = codepoint;
   glyph->mask = 0;
   glyph->cluster = cluster;
+  if (unlikely (have_positions))
+    hb_memset (&pos[len], 0, sizeof (pos[len]));
 
   len++;
 }
@@ -569,37 +562,33 @@ void
 hb_buffer_t::merge_clusters_impl (unsigned int start,
 				  unsigned int end)
 {
+  /* Callers keep merging after the buffer has failed; don't walk then. */
+  if (unlikely (!successful))
+    return;
+
   unsigned int cluster = info[start].cluster;
 
   for (unsigned int i = start + 1; i < end; i++)
     cluster = hb_min (cluster, info[i].cluster);
 
-  /* Extending over neighboring same-cluster runs is work the font or
-   * text controls, so charge it to max_ops and stop once the budget is
-   * gone.  Callers keep calling after the buffer has failed. */
-  if (likely (successful))
-  {
-    /* Extend end */
-    if (cluster != info[end - 1].cluster)
-      while (end < len && info[end - 1].cluster == info[end].cluster)
-	end++;
+  /* Extend end */
+  if (cluster != info[end - 1].cluster)
+    while (end < len && info[end - 1].cluster == info[end].cluster)
+      end++;
 
-    /* Extend start */
-    if (cluster != info[start].cluster)
-      while (idx < start && info[start - 1].cluster == info[start].cluster)
-	start--;
+  /* Extend start */
+  if (cluster != info[start].cluster)
+    while (idx < start && info[start - 1].cluster == info[start].cluster)
+      start--;
 
-    /* If we hit the start of buffer, continue in out-buffer. */
-    if (idx == start && info[start].cluster != cluster)
-    {
-      unsigned int i;
-      for (i = out_len; i && out_info[i - 1].cluster == info[start].cluster; i--)
-	set_cluster (out_info[i - 1], cluster);
-      max_ops -= out_len - i;
-    }
-  }
+  /* If we hit the start of buffer, continue in out-buffer. */
+  unsigned int j = out_len;
+  if (idx == start && info[start].cluster != cluster)
+    for (; j && out_info[j - 1].cluster == info[start].cluster; j--)
+      set_cluster (out_info[j - 1], cluster);
 
-  max_ops -= end - start;
+  /* Charge the extended ranges; neighboring runs are font/text controlled. */
+  max_ops -= (end - start) + (out_len - j);
   if (unlikely (max_ops < 0))
     successful = false;
 
@@ -610,38 +599,33 @@ void
 hb_buffer_t::merge_out_clusters_impl (unsigned int start,
 				      unsigned int end)
 {
+  /* Callers keep merging after the buffer has failed; don't walk then. */
+  if (unlikely (!successful))
+    return;
+
   unsigned int cluster = out_info[start].cluster;
 
   for (unsigned int i = start + 1; i < end; i++)
     cluster = hb_min (cluster, out_info[i].cluster);
 
-  /* Same as merge_clusters_impl(): charge the extension, and skip it once
-   * the buffer has failed.  The cluster != ... guards also avoid walking a
-   * run that already holds the merged value; set_cluster() is a no-op on
-   * such a glyph, so output is unchanged. */
-  if (likely (successful))
-  {
-    /* Extend start */
-    if (cluster != out_info[start].cluster)
-      while (start && out_info[start - 1].cluster == out_info[start].cluster)
-	start--;
+  /* Extend start */
+  if (cluster != out_info[start].cluster)
+    while (start && out_info[start - 1].cluster == out_info[start].cluster)
+      start--;
 
-    /* Extend end */
-    if (cluster != out_info[end - 1].cluster)
-      while (end < out_len && out_info[end - 1].cluster == out_info[end].cluster)
-	end++;
+  /* Extend end */
+  if (cluster != out_info[end - 1].cluster)
+    while (end < out_len && out_info[end - 1].cluster == out_info[end].cluster)
+      end++;
 
-    /* If we hit the end of out-buffer, continue in buffer. */
-    if (end == out_len && out_info[end - 1].cluster != cluster)
-    {
-      unsigned int i;
-      for (i = idx; i < len && info[i].cluster == out_info[end - 1].cluster; i++)
-	set_cluster (info[i], cluster);
-      max_ops -= i - idx;
-    }
-  }
+  /* If we hit the end of out-buffer, continue in buffer. */
+  unsigned int j = idx;
+  if (end == out_len)
+    for (; j < len && info[j].cluster == out_info[end - 1].cluster; j++)
+      set_cluster (info[j], cluster);
 
-  max_ops -= end - start;
+  /* Charge the extended ranges; neighboring runs are font/text controlled. */
+  max_ops -= (end - start) + (j - idx);
   if (unlikely (max_ops < 0))
     successful = false;
 
@@ -1918,10 +1902,31 @@ hb_buffer_add_utf (hb_buffer_t  *buffer,
   const T *end = next + item_length;
   while (next < end)
   {
-    hb_codepoint_t u;
-    const T *old_next = next;
-    next = utf_t::next (next, end, &u, replacement);
-    buffer->add (u, old_next - (const T *) text);
+    if (unlikely (!buffer->ensure (buffer->len + 1)))
+    {
+      next = end;
+      break;
+    }
+    /* Each remaining code unit produces at most one glyph. Decode up to
+     * the available space before checking capacity again. */
+    const T *limit = next + hb_min ((unsigned) (end - next),
+				    buffer->allocated - buffer->len - 1);
+    unsigned start = buffer->len;
+    hb_glyph_info_t *out = buffer->info + start;
+    do
+    {
+      hb_codepoint_t u;
+      const T *old_next = next;
+      next = utf_t::next (next, end, &u, replacement);
+      *out = {};
+      out->codepoint = u;
+      out->cluster = old_next - text;
+      out++;
+    } while (next < limit);
+    buffer->len = out - buffer->info;
+    if (unlikely (buffer->have_positions))
+      hb_memset (buffer->pos + start, 0,
+		 (buffer->len - start) * sizeof (buffer->pos[0]));
   }
 
   /* Add post-context */

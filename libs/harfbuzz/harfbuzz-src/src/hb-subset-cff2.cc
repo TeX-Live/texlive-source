@@ -133,11 +133,16 @@ struct cff2_instancing_plan_t
     /* Instance each VarData with identity delta rows; the surviving tuples'
      * delta columns are the old-region → new-region transform. */
     OT::optimize_scratch_t scratch;
+    int64_t budget = HB_BUDGET_SUBSET_CFF2_CELLS;
     for (unsigned m = 0; m < major_count; m++)
     {
       const OT::VarData &var_data = varStore.get_sub_table (m);
       unsigned k = var_data.get_region_index_count ();
       vardata_transform_t &t = transforms.arrayZ[m];
+
+      /* k identity tuples of k cells each; neither k nor the number of
+       * VarDatas is otherwise bounded, and offsets may alias one VarData. */
+      if (unlikely (!hb_budget_spend (budget, k, k))) return false;
 
       if (!t.gains.resize_exact (k)) return false;
       varStore.get_region_scalars (m, plan->normalized_coords.arrayZ,
@@ -164,6 +169,10 @@ struct cff2_instancing_plan_t
 
       if (!tuples.instantiate (plan->axes_location, plan->axes_triple_distances, scratch))
 	return false;
+
+      /* The solver can split a region into several; the surviving tuples'
+       * columns are kept for the rest of the table. */
+      if (unlikely (!hb_budget_spend (budget, tuples.tuple_vars.length, k))) return false;
 
       for (auto &tuple : tuples.tuple_vars)
       {
@@ -437,6 +446,14 @@ struct cff2_top_dict_op_serializer_t : cff_top_dict_op_serializer_t<>
 struct cff2_cs_opset_flatten_t : cff2_cs_opset_t<cff2_cs_opset_flatten_t, flatten_param_t, blend_arg_t>
 {
   static constexpr bool preserve_blends = true;
+
+  static void drop_glyph_outline (cff2_cs_interp_env_t<blend_arg_t> &env HB_UNUSED,
+				 flatten_param_t &param)
+  {
+    param.flatStr.clear ();
+    if (param.commands)
+      param.commands->clear ();
+  }
 
   static void flush_args_and_op (op_code_t op, cff2_cs_interp_env_t<blend_arg_t> &env, flatten_param_t& param)
   {
@@ -1212,6 +1229,7 @@ struct cff2_subset_plan
 	hb_vector_t<bool> round_charstrings;
 	if (unlikely (!round_charstrings.resize (num_glyphs))) return false;
 	hb_set_t used_fds;
+	int64_t *budget = plan->cff_budget (CFF::get_subset_budget (acc.get_blob ()));
 	for (unsigned int i = 0; i < num_glyphs; i++)
 	{
 	  hb_codepoint_t glyph;
@@ -1229,7 +1247,7 @@ struct cff2_subset_plan
 	  cff2_usage_param_t param;
 	  param.instancing = partial_instancing ? &instancing : nullptr;
 	  param.drop_hints = drop_hints;
-	  if (unlikely (!interp.interpret (param)))
+	  if (unlikely (!interp.interpret (param, budget)))
 	    return false;
 	  round_charstrings.arrayZ[i] = param.has_blend && !param.has_flex1;
 	}
@@ -1285,8 +1303,10 @@ struct cff2_subset_plan
 	  cff2_cs_rounding_t rounding;
 	  if (round_charstrings.arrayZ[i]) param.rounding = &rounding;
 	  param.instancer = partial_instancing ? &instancing : nullptr;
-	  if (unlikely (!interp.interpret (param)))
+	  if (unlikely (!interp.interpret (param, budget)))
 	    return false;
+	  if (!i && !(plan->flags & HB_SUBSET_FLAGS_NOTDEF_OUTLINE))
+	    cff2_cs_opset_flatten_t::drop_glyph_outline (env, param);
 	}
       }
       else
@@ -1330,7 +1350,7 @@ struct cff2_subset_plan
     {
       if (unlikely (!hb_plan_subset_cff_fdselect (plan,
 						  orig_fdcount,
-						  *(const FDSelect *)acc.fdSelect,
+						  *acc.fdSelect,
 						  acc.num_glyphs,
 						  subset_fdcount,
 						  subset_fdselect_size,
@@ -1645,6 +1665,10 @@ serialize_cff2_to_cff1 (hb_serialize_context_t *c,
   // CFF2 makes it optional when there's only one FD
   if (acc.fdSelect != &Null (CFF2FDSelect))
   {
+    // CFF1 has no FDSelect format 4; more than 256 FDs cannot be represented
+    if (unlikely (plan.subset_fdselect_format == 4))
+      return_trace (false);
+
     c->push ();
     if (likely (hb_serialize_cff_fdselect (c, plan.num_glyphs,
                                           *(const FDSelect *)acc.fdSelect,

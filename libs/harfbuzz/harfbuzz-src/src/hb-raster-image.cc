@@ -682,7 +682,7 @@ hb_raster_image_t::deserialize_from_png (hb_blob_t *blob,
 
   for (unsigned y = 0; y < (unsigned) h; y++)
   {
-    hb_packed_t<uint32_t> *dst = (hb_packed_t<uint32_t> *) (decoded.buffer.arrayZ + (size_t) ((unsigned) h - 1 - y) * decoded.extents.stride);
+    hb_raster_pixel_t *dst = (hb_raster_pixel_t *) (decoded.buffer.arrayZ + (size_t) ((unsigned) h - 1 - y) * decoded.extents.stride);
     const uint8_t *src = reader->rgba + (size_t) y * (size_t) rowbytes;
     for (unsigned x = 0; x < (unsigned) w; x++)
     {
@@ -690,7 +690,7 @@ hb_raster_image_t::deserialize_from_png (hb_blob_t *blob,
       uint8_t g = src[4 * x + 1];
       uint8_t b = src[4 * x + 2];
       uint8_t a = src[4 * x + 3];
-      dst[x] = hb_packed_t<uint32_t> ((uint32_t) hb_raster_div255 (b * a)
+      dst[x] = hb_raster_pixel_t ((uint32_t) hb_raster_div255 (b * a)
 				    | ((uint32_t) hb_raster_div255 (g * a) << 8)
 				    | ((uint32_t) hb_raster_div255 (r * a) << 16)
 				    | ((uint32_t) a << 24));
@@ -790,8 +790,7 @@ hb_raster_image_t::serialize_to_png_or_fail () const
 
     for (unsigned x = 0; x < extents.width; x++)
     {
-      uint32_t px;
-      hb_memcpy (&px, src + x * 4, 4);
+      uint32_t px = *(const hb_raster_pixel_t *) (src + x * 4);
       uint8_t b = (uint8_t) (px & 0xFF);
       uint8_t g = (uint8_t) ((px >> 8) & 0xFF);
       uint8_t r = (uint8_t) ((px >> 16) & 0xFF);
@@ -842,6 +841,32 @@ hb_raster_image_t::clear ()
 {
   size_t buf_size = (size_t) extents.stride * extents.height;
   hb_memset (buffer.arrayZ, 0, buf_size);
+  painted = {0, 0, 0, 0};
+}
+
+void
+hb_raster_image_t::clear_painted ()
+{
+  /* Painted all over, or holding whatever: clear it whole, row padding
+   * included. */
+  if (painted.x0 == 0 && painted.y0 == 0 &&
+      painted.x1 >= extents.width && painted.y1 >= extents.height)
+  {
+    clear ();
+    return;
+  }
+
+  /* Never past the image, whatever the box says. */
+  unsigned x1 = hb_min (painted.x1, extents.width);
+  unsigned y1 = hb_min (painted.y1, extents.height);
+  if (painted.x0 < x1)
+  {
+    unsigned bpp = bytes_per_pixel (format);
+    for (unsigned y = painted.y0; y < y1; y++)
+      hb_memset (buffer.arrayZ + (size_t) y * extents.stride + (size_t) painted.x0 * bpp,
+		 0, (size_t) (x1 - painted.x0) * bpp);
+  }
+  painted = {0, 0, 0, 0};
 }
 
 const uint8_t *
@@ -852,29 +877,80 @@ hb_raster_image_t::get_buffer () const
 
 void
 hb_raster_image_t::composite_from (const hb_raster_image_t *src,
-				   hb_paint_composite_mode_t mode)
+				   hb_paint_composite_mode_t mode,
+				   const hb_raster_box_t &box)
 {
-  unsigned w = extents.width;
-  unsigned h = extents.height;
   unsigned stride = extents.stride;
+  /* Never past the image, whatever the box says. */
+  unsigned x1 = hb_min (box.x1, extents.width);
+  unsigned y1 = hb_min (box.y1, extents.height);
 
-  for (unsigned y = 0; y < h; y++)
+  for (unsigned y = box.y0; y < y1; y++)
   {
-    hb_packed_t<uint32_t> *dp = (hb_packed_t<uint32_t> *) (buffer.arrayZ + y * stride);
-    const hb_packed_t<uint32_t> *sp = (const hb_packed_t<uint32_t> *) (src->buffer.arrayZ + y * stride);
-    for (unsigned x = 0; x < w; x++)
-      dp[x] = hb_packed_t<uint32_t> (composite_pixel ((uint32_t) sp[x], (uint32_t) dp[x], mode));
+    hb_raster_pixel_t *dp = (hb_raster_pixel_t *) (buffer.arrayZ + y * stride);
+    const hb_raster_pixel_t *sp = (const hb_raster_pixel_t *) (src->buffer.arrayZ + y * stride);
+    for (unsigned x = box.x0; x < x1; x++)
+      dp[x] = hb_raster_pixel_t (composite_pixel ((uint32_t) sp[x], (uint32_t) dp[x], mode));
   }
 }
 
-/* Composite src image onto dst image.
+/* Composite src image onto dst image, within box.
  * Both images must have the same extents and BGRA32 format. */
 void
 hb_raster_image_composite (hb_raster_image_t *dst,
 			   const hb_raster_image_t *src,
-			   hb_paint_composite_mode_t mode)
+			   hb_paint_composite_mode_t mode,
+			   const hb_raster_box_t &box)
 {
-  dst->composite_from (src, mode);
+  dst->composite_from (src, mode, box);
+}
+
+bool
+hb_raster_composite_mode_ignores_clear_source (hb_paint_composite_mode_t mode)
+{
+  switch (mode)
+  {
+  /* These give back the destination pixel, whatever it holds. */
+  case HB_PAINT_COMPOSITE_MODE_DEST:
+  case HB_PAINT_COMPOSITE_MODE_SRC_OVER:
+  case HB_PAINT_COMPOSITE_MODE_DEST_OUT:
+  case HB_PAINT_COMPOSITE_MODE_SRC_ATOP:
+  case HB_PAINT_COMPOSITE_MODE_XOR:
+  case HB_PAINT_COMPOSITE_MODE_PLUS:
+    return true;
+
+  /* These clear the destination where the source is clear. */
+  case HB_PAINT_COMPOSITE_MODE_CLEAR:
+  case HB_PAINT_COMPOSITE_MODE_SRC:
+  case HB_PAINT_COMPOSITE_MODE_SRC_IN:
+  case HB_PAINT_COMPOSITE_MODE_DEST_IN:
+  case HB_PAINT_COMPOSITE_MODE_SRC_OUT:
+  case HB_PAINT_COMPOSITE_MODE_DEST_ATOP:
+
+  /* These give back a destination pixel that has alpha, but clear one
+   * that has color without it. */
+  case HB_PAINT_COMPOSITE_MODE_DEST_OVER:
+  case HB_PAINT_COMPOSITE_MODE_MULTIPLY:
+  case HB_PAINT_COMPOSITE_MODE_SCREEN:
+  case HB_PAINT_COMPOSITE_MODE_OVERLAY:
+  case HB_PAINT_COMPOSITE_MODE_DARKEN:
+  case HB_PAINT_COMPOSITE_MODE_LIGHTEN:
+  case HB_PAINT_COMPOSITE_MODE_COLOR_DODGE:
+  case HB_PAINT_COMPOSITE_MODE_COLOR_BURN:
+  case HB_PAINT_COMPOSITE_MODE_HARD_LIGHT:
+  case HB_PAINT_COMPOSITE_MODE_SOFT_LIGHT:
+  case HB_PAINT_COMPOSITE_MODE_DIFFERENCE:
+  case HB_PAINT_COMPOSITE_MODE_EXCLUSION:
+  case HB_PAINT_COMPOSITE_MODE_HSL_HUE:
+  case HB_PAINT_COMPOSITE_MODE_HSL_SATURATION:
+  case HB_PAINT_COMPOSITE_MODE_HSL_COLOR:
+  case HB_PAINT_COMPOSITE_MODE_HSL_LUMINOSITY:
+
+  /* Anything else composites as SRC_OVER does; taking it not to costs
+   * work only. */
+  default:
+    return false;
+  }
 }
 
 /**

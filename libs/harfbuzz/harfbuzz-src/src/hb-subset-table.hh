@@ -50,8 +50,12 @@ _hb_subset_table_try (const TableType *table,
     return needed;
   }
 
-  unsigned buf_size = buf->allocated;
-  buf_size = buf_size * 2 + 16;
+  /* Compact tables can expand substantially under glyph renumbering. */
+  uint64_t max_size = hb_max ((uint64_t) c->source_blob->length * HB_SUBSET_MAX_TABLE_SIZE_FACTOR,
+			     (uint64_t) HB_SUBSET_MAX_TABLE_SIZE_MIN);
+  max_size = hb_min (max_size, (uint64_t) INT_MAX);
+  unsigned old_size = buf->allocated;
+  unsigned buf_size = (unsigned) hb_min ((uint64_t) old_size * 2 + 16, max_size);
 
 
 
@@ -59,8 +63,7 @@ _hb_subset_table_try (const TableType *table,
   DEBUG_MSG (SUBSET, nullptr, "OT::%c%c%c%c ran out of room; reallocating to %u bytes.",
              HB_UNTAG (c->table_tag), buf_size);
 
-  if (unlikely (buf_size > c->source_blob->length * 256 ||
-		!buf->alloc_exact (buf_size)))
+  if (unlikely (buf_size <= old_size || !buf->alloc_exact (buf_size)))
   {
     DEBUG_MSG (SUBSET, nullptr, "OT::%c%c%c%c failed to reallocate %u bytes.",
                HB_UNTAG (c->table_tag), buf_size);
@@ -128,12 +131,6 @@ _hb_subset_repack (hb_tag_t tag, const hb_serialize_context_t& c)
   return result;
 }
 
-template <typename T>
-static HB_UNUSED auto _hb_do_destroy (T &t, hb_priority<1>) HB_RETURN (void, t.destroy ())
-
-template <typename T>
-static HB_UNUSED void _hb_do_destroy (T &t, hb_priority<0>) {}
-
 template<typename TableType>
 static bool
 _hb_subset_table (hb_subset_plan_t *plan, hb_vector_t<char> &buf)
@@ -147,7 +144,6 @@ _hb_subset_table (hb_subset_plan_t *plan, hb_vector_t<char> &buf)
   {
     DEBUG_MSG (SUBSET, nullptr,
                "OT::%c%c%c%c::subset sanitize failed on source table.", HB_UNTAG (tag));
-    _hb_do_destroy (source_blob, hb_prioritize);
     return false;
   }
 
@@ -157,7 +153,6 @@ _hb_subset_table (hb_subset_plan_t *plan, hb_vector_t<char> &buf)
   if (unlikely (!buf.alloc (buf_size)))
   {
     DEBUG_MSG (SUBSET, nullptr, "OT::%c%c%c%c failed to allocate %u bytes.", HB_UNTAG (tag), buf_size);
-    _hb_do_destroy (source_blob, hb_prioritize);
     return false;
   }
 
@@ -167,7 +162,6 @@ _hb_subset_table (hb_subset_plan_t *plan, hb_vector_t<char> &buf)
     hb_subset_context_t c (blob, plan, &serializer, tag);
     needed = _hb_subset_table_try (table, &buf, &c);
   }
-  _hb_do_destroy (source_blob, hb_prioritize);
 
   if (serializer.in_error () && !serializer.only_offset_overflow ())
   {

@@ -521,7 +521,7 @@ hb_ot_get_glyph_v_advances (hb_font_t* font, void* font_data,
   {
     hb_font_extents_t font_extents;
     font->get_h_extents_with_fallback (&font_extents);
-    hb_position_t advance = font_extents.descender - font_extents.ascender;
+    hb_position_t advance = hb_saturate_sub (font_extents.descender, font_extents.ascender);
     for (unsigned int i = 0; i < count; i++)
     {
       *first_advance = advance;
@@ -774,7 +774,7 @@ hb_ot_get_glyph_v_origins (hb_font_t *font,
   {
     hb_font_extents_t font_extents;
     font->get_h_extents_with_fallback (&font_extents);
-    hb_position_t font_advance = font_extents.ascender - font_extents.descender;
+    hb_position_t font_advance = hb_saturate_sub (font_extents.ascender, font_extents.descender);
 
     for (unsigned i = 0; i < count; i++)
     {
@@ -834,6 +834,18 @@ hb_ot_get_glyph_extents (hb_font_t *font,
 #endif
 
   return false;
+}
+
+static hb_bool_t
+hb_ot_get_glyph_contour_point (hb_font_t *font,
+                               void *font_data,
+                               hb_codepoint_t glyph,
+                               unsigned point_index,
+                               hb_position_t *x, hb_position_t *y,
+                               void *user_data HB_UNUSED)
+{
+  const hb_ot_font_t *ot_font = (const hb_ot_font_t *) font_data;
+  return ot_font->ot_face->glyf->get_contour_point (font, glyph, point_index, x, y);
 }
 
 #ifndef HB_NO_OT_FONT_GLYPH_NAMES
@@ -950,8 +962,8 @@ hb_ot_paint_glyph_or_fail (hb_font_t *font,
   if (font->face->table.SVG->paint_glyph (font, glyph, paint_funcs, paint_data)) return true;
 #endif
 #ifndef HB_NO_OT_FONT_BITMAP
-  if (font->face->table.CBDT->paint_glyph (font, glyph, paint_funcs, paint_data)) return true;
   if (font->face->table.sbix->paint_glyph (font, glyph, paint_funcs, paint_data)) return true;
+  if (font->face->table.CBDT->paint_glyph (font, glyph, paint_funcs, paint_data)) return true;
 #endif
 #endif
   return false;
@@ -988,7 +1000,9 @@ static struct hb_ot_font_funcs_lazy_loader_t : hb_font_funcs_lazy_loader_t<hb_ot
 #endif
 
     hb_font_funcs_set_glyph_extents_func (funcs, hb_ot_get_glyph_extents, nullptr, nullptr);
-    //hb_font_funcs_set_glyph_contour_point_func (funcs, hb_ot_get_glyph_contour_point, nullptr, nullptr);
+    /* Keep the implementation available without enabling it by default. */
+    if (false)
+      hb_font_funcs_set_glyph_contour_point_func (funcs, hb_ot_get_glyph_contour_point, nullptr, nullptr);
 
 #ifndef HB_NO_OT_FONT_GLYPH_NAMES
     hb_font_funcs_set_glyph_name_func (funcs, hb_ot_get_glyph_name, nullptr, nullptr);

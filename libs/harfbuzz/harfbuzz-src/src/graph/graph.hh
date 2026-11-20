@@ -149,6 +149,34 @@ struct graph_t
       return graph_result_t<void>::from (obj_.virtual_links, ALLOCATION_FAILURE);
     }
 
+    // Collapses virtual links that point to the same object down to a single link, keeping the
+    // first occurrence of each target. The object index of every dropped link is appended to
+    // 'removed' so the caller can correct that target's incoming-edge bookkeeping. Linear in the
+    // number of virtual links.
+    graph_result_t<void> dedup_virtual_links (hb_vector_t<unsigned>& removed)
+    {
+      if (obj_.virtual_links.length <= 1) return Ok ();
+
+      hb_set_t seen;
+      unsigned count = obj_.virtual_links.length;
+      unsigned w = 0;
+      for (unsigned r = 0; r < count; r++)
+      {
+        unsigned objidx = obj_.virtual_links.arrayZ[r].objidx;
+        if (seen.has (objidx))
+        {
+          removed.push (objidx);
+          continue;
+        }
+        seen.add (objidx);
+        obj_.virtual_links.arrayZ[w++] = obj_.virtual_links.arrayZ[r];
+      }
+      obj_.virtual_links.shrink (w);
+      TRY (graph_result_t<void>::from (seen, ALLOCATION_FAILURE));
+      TRY (graph_result_t<void>::from (removed, ALLOCATION_FAILURE));
+      return graph_result_t<void>::from (obj_.virtual_links, ALLOCATION_FAILURE);
+    }
+
     const hb_serialize_context_t::object_t& obj() const { return obj_; }
 
     template<typename T>
@@ -916,7 +944,13 @@ public:
   graph_result_t<unsigned> mutable_index_for_offset (unsigned node_idx, const void* offset)
   {
     TRY_ASSIGN (unsigned child_idx, index_for_offset (node_idx, offset));
-    if (unlikely (child_idx >= vertices_.length))
+    return mutable_index_for_child (node_idx, child_idx);
+  }
+
+  // Like mutable_index_for_offset(), but for an already-resolved child index.
+  graph_result_t<unsigned> mutable_index_for_child (unsigned node_idx, unsigned child_idx)
+  {
+    if (unlikely (node_idx >= vertices_.length || child_idx >= vertices_.length))
       return Err(OUT_OF_BOUNDS);
 
     auto& child = vertices_[child_idx];
@@ -1589,6 +1623,54 @@ public:
   }
 
   /*
+   * Gives each real link at position >= first_link_pos its own mutable child.
+   * This also separates children shared with other parents or with earlier
+   * fields of this parent. Children with incoming virtual edges cannot safely
+   * be unshared, just as in duplicate (parent_idx, child_idx).
+   *
+   * Reassign links in one pass rather than rescanning the parent per child.
+   * Collapse redundant outgoing virtual links before copying a shared child,
+   * so n references carrying n redundant links do not require O(n^2) memory.
+   */
+  graph_result_t<void> unshare_duplicate_children (unsigned parent_idx, unsigned first_link_pos)
+  {
+    if (unlikely (parent_idx >= vertices_.length))
+      return Err(OUT_OF_BOUNDS);
+
+    TRY (update_parents ());
+
+    hb_vector_t<unsigned> dropped;
+    unsigned num_links = vertices_[parent_idx].obj ().real_links.length;
+    for (unsigned i = 0; i < num_links; i++)
+    {
+      const auto& l = vertices_[parent_idx].obj ().real_links[i];
+      unsigned child_idx = l.objidx;
+      if (unlikely (child_idx >= vertices_.length))
+        return Err(OUT_OF_BOUNDS);
+      if (l.position < first_link_pos)
+        continue;
+
+      dropped.clear ();
+      TRY (vertices_[child_idx].dedup_virtual_links (dropped));
+      for (unsigned target : dropped)
+        if (likely (target < vertices_.length))
+          vertices_[target].remove_parent (child_idx);
+
+      if (vertices_[child_idx].incoming_edges () <= 1)
+        continue;
+      if (unlikely (vertices_[child_idx].has_incoming_virtual_edges ()))
+        return Err(INVALID_ARGUMENT);
+
+      TRY_ASSIGN (unsigned clone_idx, duplicate (child_idx, true));
+      // duplicate () can reallocate vertices_; reacquire the parent's link.
+      TRY (reassign_link (vertices_[parent_idx].real_links_writer ()[i],
+                          parent_idx, clone_idx, false));
+    }
+
+    return Ok ();
+  }
+
+  /*
    * Raises the sorting priority of all children.
    */
   graph_result_t<bool> raise_childrens_priority (unsigned parent_idx)
@@ -1886,8 +1968,8 @@ public:
     queue.insert (0, root_idx ());
     TRY (graph_result_t<void>::from (queue, ALLOCATION_FAILURE));
 
-    hb_vector_t<bool> visited;
-    if (unlikely (!visited.resize (vertices_.length)))
+    hb_bit_vector_t<> visited (0, count - 1);
+    if (unlikely (visited.in_error ()))
       return Err(ALLOCATION_FAILURE);
 
     while (!queue.in_error () && !queue.is_empty ())
@@ -1896,7 +1978,7 @@ public:
       if (visited[next_idx]) continue;
       const auto& next = vertices_[next_idx];
       int64_t next_distance = next.distance;
-      visited[next_idx] = true;
+      visited.add (next_idx);
 
       for (const auto& link : next.obj().all_links ())
       {

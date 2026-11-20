@@ -615,10 +615,16 @@ struct CmapSubtableFormat4
       unsigned int count = this->segCount;
       if (count && this->startCount[count - 1] == 0xFFFFu)
 	count--; /* Skip sentinel segment. */
+      hb_codepoint_t next = 0;
       for (unsigned int i = 0; i < count; i++)
       {
-	hb_codepoint_t start = this->startCount[i];
+	/* Segments must be sorted and disjoint; never walk a codepoint twice,
+	 * so that the total work is bounded regardless of segment count. */
+	hb_codepoint_t start = hb_max ((hb_codepoint_t) this->startCount[i], next);
 	hb_codepoint_t end = this->endCount[i];
+	if (unlikely (start > end))
+	  continue;
+	next = end + 1;
 	unsigned int rangeOffset = this->idRangeOffset[i];
         out->add_range(start, end);
 	if (rangeOffset == 0)
@@ -656,10 +662,16 @@ struct CmapSubtableFormat4
       unsigned count = this->segCount;
       if (count && this->startCount[count - 1] == 0xFFFFu)
 	count--; /* Skip sentinel segment. */
+      hb_codepoint_t next = 0;
       for (unsigned i = 0; i < count; i++)
       {
-	hb_codepoint_t start = this->startCount[i];
+	/* Segments must be sorted and disjoint; never walk a codepoint twice,
+	 * so that the total work is bounded regardless of segment count. */
+	hb_codepoint_t start = hb_max ((hb_codepoint_t) this->startCount[i], next);
 	hb_codepoint_t end = this->endCount[i];
+	if (unlikely (start > end))
+	  continue;
+	next = end + 1;
 	unsigned rangeOffset = this->idRangeOffset[i];
 	if (rangeOffset == 0)
 	{
@@ -896,8 +908,10 @@ struct CmapSubtableLongSegmented
 	gid++;
       }
       if (unlikely ((unsigned int) gid >= num_glyphs)) continue;
-      if (unlikely ((unsigned int) (gid + end - start) >= num_glyphs))
-	end = start + (hb_codepoint_t) num_glyphs - gid;
+      /* Format 13 maps a whole group to one glyph; only clamp groups whose
+       * glyph ids increase, keeping the last one below num_glyphs. */
+      if (T::increment && unlikely ((unsigned int) (gid + end - start) >= num_glyphs))
+	end = start + (hb_codepoint_t) num_glyphs - gid - 1;
 
       out->add_range (start, hb_min (end, 0x10FFFFu));
     }
@@ -929,8 +943,10 @@ struct CmapSubtableLongSegmented
 	gid++;
       }
       if (unlikely ((unsigned int) gid >= num_glyphs)) continue;
-      if (unlikely ((unsigned int) (gid + end - start) >= num_glyphs))
-	end = start + (hb_codepoint_t) num_glyphs - gid;
+      /* Format 13 maps a whole group to one glyph; only clamp groups whose
+       * glyph ids increase, keeping the last one below num_glyphs. */
+      if (T::increment && unlikely ((unsigned int) (gid + end - start) >= num_glyphs))
+	end = start + (hb_codepoint_t) num_glyphs - gid - 1;
 
       mapping->alloc (mapping->get_population () + end - start + 1);
 
@@ -1314,6 +1330,9 @@ struct VariationSelectorRecord
     (base+nonDefaultUVS).collect_unicodes (out);
   }
 
+  void collect_non_default_unicodes (hb_set_t *out, const void *base) const
+  { (base+nonDefaultUVS).collect_unicodes (out); }
+
   void collect_mapping (const void *base,
 			hb_set_t *unicodes, /* OUT */
 			hb_map_t *mapping /* OUT */) const
@@ -1401,6 +1420,9 @@ struct CmapSubtableFormat14_15
   void collect_variation_unicodes (hb_codepoint_t variation_selector,
 				   hb_set_t *out) const
   { record.bsearch (variation_selector).collect_unicodes (out, this); }
+  void collect_variation_non_default_unicodes (hb_codepoint_t variation_selector,
+					       hb_set_t *out) const
+  { record.bsearch (variation_selector).collect_non_default_unicodes (out, this); }
 
   void serialize (hb_serialize_context_t *c,
 		  const hb_set_t *unicodes,
@@ -1577,6 +1599,18 @@ struct CmapSubtable
     case 14: hb_barrier (); u.format14.collect_variation_unicodes (variation_selector, out); return;
 #ifndef HB_NO_BEYOND_64K
     case 15: hb_barrier (); u.format15.collect_variation_unicodes (variation_selector, out); return;
+#endif
+    default: return;
+    }
+  }
+
+  void collect_variation_non_default_unicodes (hb_codepoint_t variation_selector,
+					       hb_set_t *out) const
+  {
+    switch (u.format.v) {
+    case 14: hb_barrier (); u.format14.collect_variation_non_default_unicodes (variation_selector, out); return;
+#ifndef HB_NO_BEYOND_64K
+    case 15: hb_barrier (); u.format15.collect_variation_non_default_unicodes (variation_selector, out); return;
 #endif
     default: return;
     }
@@ -1797,11 +1831,14 @@ struct SubtableUnicodesCache {
   hb_blob_ptr_t<cmap> base_blob;
   const char* base;
   unsigned int table_length;
+  unsigned int num_glyphs;
+  /* Keyed by subtable offset: several encoding records may share one subtable. */
   hb_hashmap_t<unsigned, hb::unique_ptr<hb_set_t>> cached_unicodes;
 
  public:
 
-  static SubtableUnicodesCache* create (hb_blob_ptr_t<cmap> source_table)
+  static SubtableUnicodesCache* create (hb_blob_ptr_t<cmap> source_table,
+					unsigned int num_glyphs)
   {
     SubtableUnicodesCache* cache =
         (SubtableUnicodesCache*) hb_malloc (sizeof(SubtableUnicodesCache));
@@ -1809,7 +1846,7 @@ struct SubtableUnicodesCache {
     if (unlikely (!cache))
       return nullptr;
 
-    new (cache) SubtableUnicodesCache (source_table);
+    new (cache) SubtableUnicodesCache (source_table, num_glyphs);
     return cache;
   }
 
@@ -1822,17 +1859,21 @@ struct SubtableUnicodesCache {
   }
 
   SubtableUnicodesCache(const void* cmap_base,
-			unsigned int table_length_ = 0)
+			unsigned int table_length_ = 0,
+			unsigned int num_glyphs_ = UINT_MAX)
       : base_blob(),
         base ((const char*) cmap_base),
         table_length (table_length_),
+        num_glyphs (num_glyphs_),
         cached_unicodes ()
   {}
 
-  SubtableUnicodesCache(hb_blob_ptr_t<cmap> base_blob_)
+  SubtableUnicodesCache(hb_blob_ptr_t<cmap> base_blob_,
+			unsigned int num_glyphs_ = UINT_MAX)
       : base_blob(base_blob_),
         base ((const char *) base_blob.get()),
         table_length (base_blob.get_length ()),
+        num_glyphs (num_glyphs_),
         cached_unicodes ()
   {}
 
@@ -1849,15 +1890,15 @@ struct SubtableUnicodesCache {
   const hb_set_t* set_for (const EncodingRecord* record,
                            SubtableUnicodesCache& mutable_cache) const
   {
-    if (cached_unicodes.has ((unsigned) ((const char *) record - base)))
-      return cached_unicodes.get ((unsigned) ((const char *) record - base));
+    if (cached_unicodes.has ((unsigned) record->subtable))
+      return cached_unicodes.get ((unsigned) record->subtable);
 
     return mutable_cache.set_for (record);
   }
 
   const hb_set_t* set_for (const EncodingRecord* record)
   {
-    if (!cached_unicodes.has ((unsigned) ((const char *) record - base)))
+    if (!cached_unicodes.has ((unsigned) record->subtable))
     {
       hb_set_t *s = hb_set_create ();
       if (unlikely (s->in_error ()))
@@ -1866,14 +1907,14 @@ struct SubtableUnicodesCache {
       unsigned int subtable_data_size = record->subtable < table_length
 					? table_length - (unsigned int) record->subtable
 					: 0;
-      (base+record->subtable).collect_unicodes (s, UINT_MAX, subtable_data_size);
+      (base+record->subtable).collect_unicodes (s, num_glyphs, subtable_data_size);
 
-      if (unlikely (!cached_unicodes.set ((unsigned) ((const char *) record - base), hb::unique_ptr<hb_set_t> {s})))
+      if (unlikely (!cached_unicodes.set ((unsigned) record->subtable, hb::unique_ptr<hb_set_t> {s})))
         return hb_set_get_empty ();
 
       return s;
     }
-    return cached_unicodes.get ((unsigned) ((const char *) record - base));
+    return cached_unicodes.get ((unsigned) record->subtable);
   }
 
 };
@@ -1898,7 +1939,8 @@ struct cmap
   static constexpr hb_tag_t tableTag = HB_OT_TAG_cmap;
 
 
-  static SubtableUnicodesCache* create_filled_cache(hb_blob_ptr_t<cmap> source_table) {
+  static SubtableUnicodesCache* create_filled_cache(hb_blob_ptr_t<cmap> source_table,
+						    unsigned int num_glyphs) {
     const cmap* cmap = source_table.get();
     auto it =
     + hb_iter (cmap->encodingRecord)
@@ -1907,13 +1949,15 @@ struct cmap
     })
     ;
 
-    SubtableUnicodesCache* cache = SubtableUnicodesCache::create(source_table);
+    SubtableUnicodesCache* cache = SubtableUnicodesCache::create(source_table, num_glyphs);
 
     if (unlikely (!cache))
       return nullptr;
 
+    hb_set_t seen_encodings;
     for (const EncodingRecord& _ : it)
-      cache->set_for(&_); // populate the cache for this encoding record.
+      if (cmap::is_first_record_for_encoding (cmap, _, seen_encodings))
+	cache->set_for(&_); // populate the cache for this encoding record.
 
     return cache;
   }
@@ -1937,7 +1981,8 @@ struct cmap
 #endif
     auto snap = c->snapshot ();
 
-    SubtableUnicodesCache local_unicodes_cache (base, source_table_length);
+    SubtableUnicodesCache local_unicodes_cache (base, source_table_length,
+						plan->source->get_num_glyphs ());
     const SubtableUnicodesCache* unicodes_cache = &local_unicodes_cache;
 
     if (plan->accelerator &&
@@ -1945,6 +1990,7 @@ struct cmap
         plan->accelerator->cmap_cache->same_base (base))
       unicodes_cache = plan->accelerator->cmap_cache;
 
+    hb_set_t seen_encodings;
     for (const EncodingRecord& _ : encodingrec_iter)
     {
       if (c->in_error ())
@@ -1956,6 +2002,8 @@ struct cmap
 	  && format != 15
 #endif
 	 ) continue;
+
+      if (!is_first_record_for_encoding (base, _, seen_encodings)) continue;
 
       const hb_set_t* unicodes_set = unicodes_cache->set_for (&_, local_unicodes_cache);
 
@@ -2086,6 +2134,7 @@ struct cmap
     if (unlikely (!encodingrec_iter.len ())) return_trace (false);
 
     const EncodingRecord *unicode_bmp= nullptr, *unicode_ucs4 = nullptr, *ms_bmp = nullptr, *ms_ucs4 = nullptr;
+    const EncodingRecord *ms_symbol = nullptr;
     bool has_format12 = false;
 
     for (const EncodingRecord& _ : encodingrec_iter)
@@ -2098,10 +2147,11 @@ struct cmap
       else if (_.platformID == 0 && _.encodingID ==  4) unicode_ucs4 = table;
       else if (_.platformID == 3 && _.encodingID ==  1) ms_bmp = table;
       else if (_.platformID == 3 && _.encodingID == 10) ms_ucs4 = table;
+      else if (_.platformID == 3 && _.encodingID ==  0) ms_symbol = table;
     }
 
-    if (unlikely (!is_dmap && !has_format12 && !unicode_bmp && !ms_bmp)) return_trace (false);
-    if (unlikely (!is_dmap && has_format12 && (!unicode_ucs4 && !ms_ucs4))) return_trace (false);
+    if (unlikely (!is_dmap && !has_format12 && !unicode_bmp && !ms_bmp && !ms_symbol)) return_trace (false);
+    if (unlikely (!is_dmap && has_format12 && (!unicode_ucs4 && !ms_ucs4 && !ms_symbol))) return_trace (false);
 
     auto it =
     + c->plan->unicode_to_new_gid_list.iter ()
@@ -2361,11 +2411,32 @@ struct cmap
     void collect_mapping (hb_set_t *unicodes, hb_map_t *mapping,
 			  unsigned num_glyphs = UINT_MAX) const
     { subtable->collect_mapping (unicodes, mapping, num_glyphs, get_subtable_data_size (subtable)); }
+    void closure_symbol_unicodes (hb_set_t *unicodes) const
+    {
+      /* Inverted sets explicitly exclude source codepoints. */
+      if (unicodes->is_inverted ()) return;
+      bool symbol = false;
+      table->find_best_subtable (&symbol);
+      if (!symbol) return;
+
+      unsigned data_size = get_subtable_data_size (subtable);
+      for (unsigned cp = 0; cp <= 0xFF; cp++)
+      {
+	hb_codepoint_t glyph;
+	unsigned mapped = _hb_symbol_pua_map (cp);
+	if (unicodes->has (cp) && !subtable->get_glyph (cp, &glyph, data_size) &&
+	    subtable->get_glyph (mapped, &glyph, data_size))
+	  unicodes->add (mapped);
+      }
+    }
     void collect_variation_selectors (hb_set_t *out) const
     { subtable_uvs->collect_variation_selectors (out); }
     void collect_variation_unicodes (hb_codepoint_t variation_selector,
 				     hb_set_t *out) const
     { subtable_uvs->collect_variation_unicodes (variation_selector, out); }
+    void collect_variation_non_default_unicodes (hb_codepoint_t variation_selector,
+						 hb_set_t *out) const
+    { subtable_uvs->collect_variation_non_default_unicodes (variation_selector, out); }
 
     protected:
     typedef bool (*hb_cmap_get_glyph_func_t) (const void *obj,
@@ -2505,9 +2576,30 @@ struct cmap
     return
         (_.platformID == 0 && _.encodingID == 3) ||
         (_.platformID == 0 && _.encodingID == 4) ||
+        (_.platformID == 3 && _.encodingID == 0) ||
         (_.platformID == 3 && _.encodingID == 1) ||
         (_.platformID == 3 && _.encodingID == 10) ||
         (cmap + _.subtable).is_variation_selector ();
+  }
+
+  /* Only the first encoding record of each (platformID, encodingID) pair is
+   * used: lookup binary-searches the records and sees one per pair, and
+   * EncodingRecord::copy already links later records of a format to the first
+   * serialized subtable.  Collapsing them here bounds the number of per-record
+   * unicode sets the subsetter builds (and the _can_drop walk) regardless of
+   * how many records a malformed font repeats.  Variation-selector records are
+   * exempt, so a font with both a format 14 and a format 15 subtable keeps
+   * both. */
+  static bool is_first_record_for_encoding (const void *base,
+					    const EncodingRecord& _,
+					    hb_set_t& seen_encodings)
+  {
+    if ((base+_.subtable).is_variation_selector ()) return true;
+
+    hb_codepoint_t encoding = ((unsigned) _.platformID << 16) | _.encodingID;
+    if (seen_encodings.has (encoding)) return false;
+    seen_encodings.add (encoding);
+    return true;
   }
 
   protected:
@@ -2532,6 +2624,12 @@ struct cmap_accelerator_t
     dmap (face, HB_OT_TAG_DMAP),
     base (face)
   {}
+
+  void closure_symbol_unicodes (hb_set_t *unicodes) const
+  {
+    dmap.closure_symbol_unicodes (unicodes);
+    base.closure_symbol_unicodes (unicodes);
+  }
 
   bool get_nominal_glyph (hb_codepoint_t  unicode,
 			  hb_codepoint_t *glyph) const
@@ -2624,8 +2722,14 @@ struct cmap_accelerator_t
       if (!unicodes->has (variation_selector))
 	continue;
 
+      /* As in CmapSubtableFormat14_15::closure_glyphs(), only non-default
+       * mappings can add glyphs: a default mapping resolves to the nominal
+       * glyph, which the caller retains with the unicode itself.  Expanding
+       * the Default UVS ranges instead would cost work proportional to the
+       * codepoints they cover, for every selector that shares them. */
       hb_set_t variation_unicodes;
-      collect_variation_unicodes (variation_selector, &variation_unicodes);
+      base.collect_variation_non_default_unicodes (variation_selector, &variation_unicodes);
+      dmap.collect_variation_non_default_unicodes (variation_selector, &variation_unicodes);
       for (hb_codepoint_t unicode : variation_unicodes)
       {
 	if (!unicodes->has (unicode))
