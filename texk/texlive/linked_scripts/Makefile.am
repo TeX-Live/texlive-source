@@ -244,6 +244,7 @@ texmf_other_scripts = \
 	srcredact/srcredact.pl \
 	sty2dtx/sty2dtx.pl \
 	svn-multi/svn-multi.pl \
+	tenkana/tenkana.pyz \
 	tex4ebook/tex4ebook \
 	texblend/texblend \
 	texchanges/texchanges-merge.py \
