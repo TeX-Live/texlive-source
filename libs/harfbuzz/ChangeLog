@@ -1,7 +1,7 @@
 2026-11-20  Akira Kakuto  <kakuto@jcom.zaq.ne.jp>
 
 	Import harfbuzz-15.2.0.
-	* version.ac: Adjusted.
+	* configure.ac, version.ac: Adjusted.
 
 2026-11-05  Akira Kakuto  <kakuto@jcom.zaq.ne.jp>
 

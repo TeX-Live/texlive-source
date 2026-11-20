@@ -8866,7 +8866,7 @@ if :; then
 printf '%s\n' "#define HAVE_OT 1" >>confdefs.h
 
 
-printf '%s\n' "#define HAVE_GRAPHITE2 1" >>confdefs.h
+printf '%s\n' "#define HAVE_GRAPHITE 1" >>confdefs.h
 
 else
 

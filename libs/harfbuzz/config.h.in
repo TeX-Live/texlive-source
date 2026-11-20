@@ -32,7 +32,7 @@
 #undef HAVE_GOBJECT
 
 /* Use Graphite library */
-#undef HAVE_GRAPHITE2
+#undef HAVE_GRAPHITE
 
 /* Use gthread2 library */
 #undef HAVE_GTHREAD

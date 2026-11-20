@@ -82,7 +82,7 @@ fi
 
 if :; then
   AC_DEFINE([HAVE_OT], 1, [Use native OpenType Layout backend])
-  AC_DEFINE([HAVE_GRAPHITE2], 1, [Use Graphite library])
+  AC_DEFINE([HAVE_GRAPHITE], 1, [Use Graphite library])
 else
 dnl add all these to config.h.in but do not define them in config.h
   AC_DEFINE([HAVE_PTHREAD], 1, [Use POSIX threads])
