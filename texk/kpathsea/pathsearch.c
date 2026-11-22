@@ -1,7 +1,7 @@
 /* pathsearch.c: look up a filename in a path.
 
    Copyright 1993, 1994, 1995, 1997, 2007, 2009-2012, 2018,
-   2020, 2025 Karl Berry.
+   2020, 2025, 2026 Karl Berry.
    Copyright 1997-2005 Olaf Weber.
 
    This library is free software; you can redistribute it and/or
@@ -43,15 +43,19 @@
 #define puts  win32_puts
 #endif
 
-/* The very first search is for texmf.cnf, called when someone tries to
-   initialize the TFM path or whatever.  init_path calls kpse_cnf_get
-   which calls kpse_all_path_search to find all the texmf.cnf's.  We
-   need to do various special things in this case, since we obviously
-   don't yet have the configuration files when we're searching for the
-   configuration files.  Therefore we have a followup_search member in
-   kpathsea_instance to distinguish the first search from all others.  */
-
-
+/* The very first search is normally for texmf.cnf, called when someone
+   tries to initialize the TFM path or whatever. init_path calls
+   kpse_cnf_get which calls kpse_all_path_search to find all the
+   texmf.cnf's. We need to do various special things in this case, since
+   we obviously don't yet have the configuration files when we're
+   searching for the configuration files. Therefore we have a
+   followup_search member in kpathsea_instance to distinguish the first
+   search from all others.
+   
+   When called by kpsewhich -path (see comments below), the first search
+   might not be for texmf.cnf. Not sure what the implications are. We
+   ignore this problem.  */
+   
 
 #ifdef KPSE_DEBUG
 /* Print on FH elements of L surrounded by brackets, separated by spaces.  */
@@ -140,8 +144,8 @@ typedef string (*readable_file_fn_type) (kpathsea, string);
    case-insensitively on the last file name component.  We return the
    first match (in new memory), or NULL.  In practice this is always
    called after checking the filename as-is, so there's no use in
-   continuing to look for an exact match.  The KPSE arg is only passed
-   to kpathsea_readable_file if we have a candidate match.
+   continuing to look for an exact match.  The KPSE arg is passed
+   to kpathsea_readable_file only if we have a candidate match.
    
    Clearly we could do some caching here, but let's see if it's actually
    necessary, given all the other levels of caching (disk, memory, cpu)
@@ -442,8 +446,8 @@ path_search (kpathsea kpse, const_string path, string name,
     boolean allow_disk_search = true;
 
     if (*elt == '!' && *(elt + 1) == '!') {
-      /* Those magic leading chars in a path element means don't search the
-         disk for this elt.  And move past the magic to get to the name.  */
+      /* Those magic leading chars in a path element mean don't search the
+         disk for this elt.  Move past the magic to get to the name.  */
       allow_disk_search = false;
       elt += 2;
     }
@@ -475,16 +479,32 @@ path_search (kpathsea kpse, const_string path, string name,
         *found = dir_list_search (kpse, dirs, name, all,
                                   kpathsea_readable_file);
 #ifdef KPSE_CASEFOLDING_SEARCH
-        if (!STR_LIST (*found)
-            && kpse_cnf_p (kpathsea_var_value (kpse,
-                                               "texmf_casefold_search"))) {
-          /* Nothing found; search again, case-insensitively: */
-          *found = dir_list_search (kpse, dirs, name, all,
-                                    casefold_readable_file);
-        }
+       { /* Unfortunately, kpse_path_element is not reentrant; it
+            clobbers the original kpse->path. If we (this function) was
+            called from a kpsewhich -path invocation (see
+            tests/pathoption.test), this call to kpathsea_var_value can
+            end up doing the lookup for texmf.cnf and thus clobbering
+            the original PATH we were called with. So, save and preserve
+            it so callers don't have to.
+            
+            Normally lookups are done by file type and thus texmf.cnf
+            has already been looked up, but in case there are any
+            callers besides kpsewhich specifying an explicit path, best
+            to handle it here. */
+
+         const_string save_path = kpse->path;
+         if (!STR_LIST (*found)
+             && kpse_cnf_p (kpathsea_var_value (kpse,
+                                                "texmf_casefold_search"))) {
+           /* Nothing was found; search again, case-insensitively: */
+           *found = dir_list_search (kpse, dirs, name, all,
+                                     casefold_readable_file);
+         }
+         kpse->path = save_path;
+       }
 #endif /* KPSE_CASEFOLDING_SEARCH */
       }
-    }
+    } /* end disk search */
 
     /* Did we find anything?  */
     if (found && STR_LIST (*found)) {
@@ -501,7 +521,7 @@ path_search (kpathsea kpse, const_string path, string name,
       str_list_free (found);
       free (found);
     }
-  }
+  } /* end loop through path elements */
 
   return ret_list;
 }
@@ -573,8 +593,9 @@ search (kpathsea kpse, const_string path,  const_string original_name,
       || (all && STR_LIST_LAST_ELT (ret_list) != NULL))
     str_list_add (&ret_list, NULL);
 
-  /* The very first search is for texmf.cnf.  We can't log that, since
-     we want to allow setting TEXMFLOG in texmf.cnf.  */
+  /* The very first search is usually for texmf.cnf (see comment at
+     top).  We can't log that, since we want to allow setting TEXMFLOG
+     in texmf.cnf.  */
   if (kpse->followup_search == false) {
     kpse->followup_search = true;
   } else {
@@ -707,15 +728,21 @@ kpathsea_path_search_list_generic (kpathsea kpse,
         *found = dir_list_search_list (kpse, dirs, names, all,
                                       kpathsea_readable_file);
 #ifdef KPSE_CASEFOLDING_SEARCH
-        if (!STR_LIST (*found) && kpse_cnf_p (kpathsea_var_value (kpse,
+        { /* See reentrancy comments in path_search fn above.
+             (Also, fix the code duplication.)  */
+          const_string save_path = kpse->path;
+          
+          if (!STR_LIST (*found) && kpse_cnf_p (kpathsea_var_value (kpse,
                                                    "texmf_casefold_search"))) {
-          /* Still nothing; search again, case-insensitively: */
-          *found = dir_list_search_list (kpse, dirs, names, all,
-                                         casefold_readable_file);
+            /* Still nothing; search again, case-insensitively: */
+            *found = dir_list_search_list (kpse, dirs, names, all,
+                                           casefold_readable_file);
+          }
+          kpse->path = save_path;
         }
 #endif
       }
-    }
+    } /* end disk search */
 
     /* Did we find anything? */
     if (found && STR_LIST (*found)) {
@@ -726,7 +753,7 @@ kpathsea_path_search_list_generic (kpathsea kpse,
         done = true;
       }
     }
-  }
+  } /* end loop through path elements */
 
  out:
   /* Uniqify, since our paths can often end up finding the same file

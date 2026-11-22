@@ -1,3 +1,20 @@
+2026-11-22  Karl Berry  <karl@freefriends.org>
+
+	* pathsearch.c (path_search): save and restore kpse->path around
+	the call to look up texmf_casefold_search. Else
+	  kpsewhich -path /some-existing-dir:. file.tex
+	fails to find ./file.tex, because (ultimately) kpse_path_element
+	is not reentrant.
+	(kpathsea_path_search_list_generic): likewise.
+	* Makefile.am (tests/pathoption): new test.
+	Report from Norman Gray,
+	https://tug.org/pipermail/tex-k/2026-October/004410.html.
+	r81228.
+
+	I suspect more bugs are lurking here, because the assumption that
+	the first lookup is for texmf.cnf fails in this situation; see
+	comments around the followup member.
+
 2026-11-17  Max Chernoff <tex@maxchernoff.ca>
 	    Karl Berry  <karl@freefriends.org>
 

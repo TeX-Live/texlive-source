@@ -285,16 +285,23 @@ TESTS += tests/cnfnull.test tests/cnfprog.test
 TESTS += tests/kpseaccess.test
 TESTS += tests/kpsereadlink.test
 TESTS += tests/kpsesafe.test tests/kpsestat.test tests/kpsewhich.test
-TESTS += tests/lsrparse.test
 TESTS += tests/hashdup.test
+TESTS += tests/lsrparse.test
+TESTS += tests/pathoption.test
 #
 tests/cnfline.log tests/cnfnewline.log tests/cnfnull.log tests/cnfprog.log \
   tests/kpsesafe.log tests/kpsewhich.log: kpsewhich$(EXEEXT)
 tests/kpseaccess.log: kpseaccess$(EXEEXT)
 tests/kpsereadlink.log: kpsereadlink$(EXEEXT)
 tests/kpsestat.log: kpsestat$(EXEEXT)
-tests/lsrparse.log: kpsewhich$(EXEEXT)
 tests/hashdup.log: kpsewhich$(EXEEXT)
+tests/lsrparse.log: kpsewhich$(EXEEXT)
+tests/pathoption.log: kpsewhich$(EXEEXT)
+#
+# To run a single test:
+# dir=$Work/texk/kpathsea
+# tst=whatever.test
+# make -C $dir check TESTS=tests/$tst keep_testdirs=yes
 #
 EXTRA_DIST += $(TESTS)
 EXTRA_DIST += tests/cnfline/texmf.cnf

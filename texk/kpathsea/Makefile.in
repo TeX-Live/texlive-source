@@ -785,6 +785,11 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 SUBDIRS = . doc man $(am__append_6)
 #
+# To run a single test:
+# dir=$Work/texk/kpathsea
+# tst=tests/whatever.test
+# make -C $dir check TESTS=$tst keep_testdirs=yes
+#
 EXTRA_DIST = COPYING.LESSERv2 PROJECTS putenv.c bsnl.awk \
 	cnf-to-paths.awk $(TESTS) tests/cnfline/texmf.cnf \
 	tests/cnfnewline/texmf.cnf tests/cnfprog/texmf.cnf
@@ -898,8 +903,8 @@ AM_TESTS_ENVIRONMENT = LN_S='$(LN_S)'; export LN_S; \
 TESTS = tests/cnfline.test tests/cnfnewline.test tests/cnfnlink.test \
 	tests/cnfnull.test tests/cnfprog.test tests/kpseaccess.test \
 	tests/kpsereadlink.test tests/kpsesafe.test \
-	tests/kpsestat.test tests/kpsewhich.test tests/lsrparse.test \
-	tests/hashdup.test
+	tests/kpsestat.test tests/kpsewhich.test tests/hashdup.test \
+	tests/lsrparse.test tests/pathoption.test
 
 # Rebuild
 rebuild_prereq = 
@@ -2607,8 +2612,9 @@ tests/cnfline.log tests/cnfnewline.log tests/cnfnull.log tests/cnfprog.log \
 tests/kpseaccess.log: kpseaccess$(EXEEXT)
 tests/kpsereadlink.log: kpsereadlink$(EXEEXT)
 tests/kpsestat.log: kpsestat$(EXEEXT)
-tests/lsrparse.log: kpsewhich$(EXEEXT)
 tests/hashdup.log: kpsewhich$(EXEEXT)
+tests/lsrparse.log: kpsewhich$(EXEEXT)
+tests/pathoption.log: kpsewhich$(EXEEXT)
 rebuild.stamp: $(rebuild_target)
 	echo timestamp >$@
 

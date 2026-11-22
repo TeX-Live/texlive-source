@@ -1,0 +1,36 @@
+#! /bin/sh -vx
+# $Id$
+# Public domain. Testing the -path option to kpsewhich with
+# existing directories. Original report from Norman Gray,
+# https://tug.org/pipermail/tex-k/2026-October/004410.html
+
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_kpsewhich=$BinDir/kpsewhich$ExeExt
+
+# No need for warnings about missing texmf.cnf.
+KPATHSEA_WARNING=0; export KPATHSEA_WARNING
+
+file=pathopt.tex
+touch $file
+status=0
+
+# giving an existing directory first shouldn't matter.
+subdir=pathoptsubdir
+rm -rf $subdir
+mkdir $subdir
+
+# It is the first test that was the failure, but as long as we're here,
+# let's do some more.
+$_kpsewhich -path $subdir:. $file || status=1
+$_kpsewhich -path .:$subdir $file || status=2
+
+# try with -all.
+$_kpsewhich -all -path $subdir:. $file || status=3
+$_kpsewhich -all -path .:$subdir $file || status=4
+
+# with with a nonexistent directory.
+$_kpsewhich -path nonesuch:. $file || status=5
+$_kpsewhich -path .:nonesuch $file || status=6
+
+exit $status
