@@ -479,29 +479,29 @@ path_search (kpathsea kpse, const_string path, string name,
         *found = dir_list_search (kpse, dirs, name, all,
                                   kpathsea_readable_file);
 #ifdef KPSE_CASEFOLDING_SEARCH
-       { /* Unfortunately, kpse_path_element is not reentrant; it
-            clobbers the original kpse->path. If we (this function) was
-            called from a kpsewhich -path invocation (see
-            tests/pathoption.test), this call to kpathsea_var_value can
-            end up doing the lookup for texmf.cnf and thus clobbering
-            the original PATH we were called with. So, save and preserve
-            it so callers don't have to.
-            
-            Normally lookups are done by file type and thus texmf.cnf
-            has already been looked up, but in case there are any
-            callers besides kpsewhich specifying an explicit path, best
-            to handle it here. */
+        { /* Unfortunately, kpse_path_element is not reentrant; it
+             clobbers the original kpse->path. If we (this function) was
+             called from a kpsewhich -path invocation (see
+             tests/pathoption.test), this call to kpathsea_var_value can
+             end up doing the lookup for texmf.cnf and thus clobbering
+             the original PATH we were called with. So, save and preserve
+             it so callers don't have to.
 
-         const_string save_path = kpse->path;
-         if (!STR_LIST (*found)
-             && kpse_cnf_p (kpathsea_var_value (kpse,
-                                                "texmf_casefold_search"))) {
-           /* Nothing was found; search again, case-insensitively: */
-           *found = dir_list_search (kpse, dirs, name, all,
-                                     casefold_readable_file);
-         }
-         kpse->path = save_path;
-       }
+             Normally lookups are done by file type and thus texmf.cnf
+             has already been looked up, but in case there are any
+             callers besides kpsewhich specifying an explicit path, best
+             to handle it here. */
+
+          const_string save_path = kpse->path;
+          if (!STR_LIST (*found)
+              && kpse_cnf_p (kpathsea_var_value (kpse,
+                                                 "texmf_casefold_search"))) {
+            /* Nothing was found; search again, case-insensitively: */
+            *found = dir_list_search (kpse, dirs, name, all,
+                                      casefold_readable_file);
+          }
+          kpse->path = save_path;
+        }
 #endif /* KPSE_CASEFOLDING_SEARCH */
       }
     } /* end disk search */
