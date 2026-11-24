@@ -3964,7 +3964,8 @@ tex_ch_srcs = \
 
 # TeX tests
 #
-tex_tests = triptest.test tests/outputdir.test tests/tex-closeout.test \
+tex_tests = triptest.test tests/fontgap.test tests/outputdir.test \
+  tests/tex-closeout.test \
   tests/write18-quote-test.pl
 
 call_mf_CPPFLAGS = -DEXEPROG=\"mf.exe\"
@@ -21849,6 +21850,7 @@ tex-tangle: tangle$(EXEEXT) tex.web tex-final.ch tangle-sh
 tex-final.ch: tie$(EXEEXT) $(tex_ch_srcs)
 	$(tie_c) $(tex_ch_srcs) || { rm -f $@; exit 1; }
 triptest.log: tex$(EXEEXT) dvitype$(EXEEXT) pltotf$(EXEEXT) tftopl$(EXEEXT)
+fontgap.log: tex$(EXEEXT) tftopl$(EXEEXT)
 tests/outputdir.log tests/tex-closeout.log \
   tests/write18-quote-test.log: tex$(EXEEXT)
 

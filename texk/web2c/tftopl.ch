@@ -264,7 +264,32 @@ if a>@'3777 then @<Reduce negative to positive@>;
   if verbose then print_octal(c); {progress report}
 @z
 
-% [89] Change the name of the variable `class', since AIX 3.1's <math.h>
+@x [78] l.1258: Complain if spurious values; see fontgap.test.
+  ext_tag: @<Output an extensible character recipe@>;
+  end; {there are no other cases}
+  right;
+  end
+@y
+  ext_tag: @<Output an extensible character recipe@>;
+  end; {there are no other cases}
+  right;
+  end
+else
+  begin
+  if (height_index(c)>0)
+  or (depth_index(c)>0)
+  or (italic_index(c)>0)
+  or (tag(c)<>no_tag)
+  then
+    begin perfect:=false; print_ln(' ');
+    print('Nonexistent character '); print_octal(c);
+    print_ln(' has spurious dimension or tag.');
+@.Nonexistent character...@>
+    end
+  end
+@z
+
+% Change the name of the variable `class', since AIX 3.1's <math.h>
 % defines a function by that name.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 @x [89] l.1408
@@ -278,7 +303,7 @@ if a>@'3777 then @<Reduce negative to positive@>;
 @x [90] l.1435
   goto final_end;
 @y
-  uexit(1);;
+  uexit(1);
 @z
 
 @x [90] l.1440 Change name of the function `f'.
@@ -324,7 +349,7 @@ f:=lig_z[h];
 f_fn:=lig_z[h];
 @z
 
-@x [99] l.1570
+@x [99] l.1570 Just exit instead of goto.
 if not organize then goto final_end;
 @y
 if not organize then uexit(1);
@@ -336,7 +361,16 @@ do_characters; print_ln('.');@/
 do_characters; if verbose then print_ln('.');@/
 @z
 
-@x [99] l.1582
+@x [99] l.1579 Exit with bad status if not perfect.
+@.THE TFM FILE WAS BAD...@>
+  write_ln(pl_file);
+@y
+@.THE TFM FILE WAS BAD...@>
+  write_ln(pl_file);
+  uexit(1);
+@z
+
+@x [99] l.1582 No need for label.
 final_end:end.
 @y
 end.

@@ -1,3 +1,20 @@
+2026-11-24  Karl Berry  <karl@freefriends.org>
+
+	* tftopl.ch ([78] l.1258): complain if spurious values
+	crept into the .tfm.
+	* tests/fontgap.test: test both TeX and tftopl.
+	* tests/fontgap-bad.tfm: the bad tfm.
+	* tests/fontgap.tfm: the good tfm.
+	* am/texmf.am (tex_tests): add fontgap.test.
+	(fontgap.log): new target, depending on tex and tftopl.
+	* NEWS: mention this.
+	Fix from drf; report from doogwoo,
+	https://tug.org/pipermail/tex-k/2026-July/004373.html
+
+	* tftopl.ch ([99] l.1579): uexit(1) if not perfect, as in the
+	above new case. Other cases already replaced goto final_end
+	with uexit(1), but this is cleaner.
+
 2026-09-16  Karl Berry  <karl@freefriends.org>
 
 	* configure.ac (KPSE_KPATHSEA_PATHS_H): replace inline check

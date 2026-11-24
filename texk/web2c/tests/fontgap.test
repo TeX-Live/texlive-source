@@ -1,0 +1,212 @@
+#!/bin/sh -vx
+# $Id$
+# Public domain. tftopl should complain about a bad tfm if TeX does.
+# From doogwoo, 30jul26, https://tug.org/pipermail/tex-k/2026-July/004373.html.
+# (original posted message copied below).
+
+BinDir=${BinDir:-.}
+ExeExt=${ExeExt:-}
+_tex=$BinDir/tex$ExeExt
+_tftopl=$BinDir/tftopl$ExeExt
+
+# in case we're invoked standalone instead of from make.
+test -z "$srcdir" && srcdir=`cd \`dirname $0\`/.. && pwd` # web2c/
+TEXMFCNF=$srcdir/../kpathsea; export TEXMFCNF
+
+badfont=$srcdir/tests/fontgap-bad.tfm
+
+buggy=0
+
+# A particular bad tfm constructed with the steps below.
+# Both TeX and tftopl should complain.
+if $_tex -ini '\nonstopmode\font\x='$badfont' \relax' </dev/null; then
+  echo "$0: TeX should not have succeeded."
+  buggy=1
+fi
+
+if $_tftopl $badfont fontgap-bad.pl; then
+  echo "$0: tftopl should not have succeeded."
+  buggy=2
+fi
+
+exit $buggy
+
+
+Date: Thu, 30 Jul 2026 23:10:30 -0700
+From: <doogwoo@gmail.com>
+To: <tex-k@tug.org>
+Subject: TFtoPL 3.3 misses invalid char_info fields in nonexistent character slots
+
+[unfortunately missing from online tex-k mailing list archive. --karl]
+
+I found a TFM file that TeX rejects, while TFtoPL accepts the same file
+without any diagnostic. That seems inconsistent with the guarantees in the
+source documentation for both programs.
+
+Versions, all as shipped in TeX Live 2026:
+
+  TeX 3.141592653
+  TFtoPL 3.3
+  PLtoTF 3.6
+  kpathsea 6.4.2
+
+
+What the programs promise
+-------------------------
+
+tex.web module 561 explains why TeX's own message is so terse:
+
+  There are programs called TFtoPL and PLtoTF that convert between the TFM
+  format and a symbolic property-list format that can be easily edited. These
+  programs contain extensive diagnostic information, so TeX does not have to
+  bother giving precise details about why it rejects a particular TFM file.
+
+tftopl.web module 1 makes the corresponding promise:
+
+  It also makes a thorough check of the given TFM file, using essentially the
+  same algorithm as TeX. Thus if TeX complains that a TFM file is "bad," this
+  program will pinpoint the source or sources of badness.
+
+The section titled "Doing it" states the same goal more directly:
+
+  Of course, a bad file shows up every now and again, and that's where TFtoPL
+  comes in. This program wants to catch at least as many errors as TeX does,
+  and to give informative error messages besides.
+
+
+Reproduction
+------------
+
+Build a font with a gap in its character range:
+
+  $ cat > gap.pl <<'EOF'
+  (FAMILY GAPTEST)
+  (DESIGNSIZE R 10.0)
+  (CHARACTER C A (CHARWD R 0.5))
+  (CHARACTER C E (CHARWD R 0.25))
+  EOF
+  $ pltotf gap.pl gap.tfm
+
+That gives bc=65, ec=69, ni=1, and zero char_info words for characters 66,
+67, and 68. A zero width index means that the character does not exist in the
+font. The char_info word for character 66 starts at byte 96 + 4*(66-65) =
+100, so byte 102 contains italic_index<<2 | tag. Set italic_index to 63,
+which is well past ni=1:
+
+  $ python3 -c "b=bytearray(open('gap.tfm','rb').read()); b[102]=252; \
+      open('gap-bad.tfm','wb').write(bytes(b))"
+  $ cmp -l gap.tfm gap-bad.tfm
+  103   0 374
+
+This changes one byte in a character slot that does not exist.
+
+TeX rejects it:
+
+  ! Font \f=gap-bad not loadable: Bad metric (TFM) file.
+
+TFtoPL accepts it without printing anything:
+
+  $ tftopl gap-bad.tfm gap-bad.pl
+  $ echo $?
+  0
+  $ grep -c 'THE TFM FILE WAS BAD' gap-bad.pl
+  0
+
+There is no output on stdout or stderr, the exit status is 0, and the PL file
+contains no correction marker. The -verbose option does not change this; the
+help text describes it as a way to display progress reports.
+
+If the same corruption is applied to an existing character, TFtoPL behaves as
+documented:
+
+  Italic correction index for character '101 is too large;
+  so I reset it to zero.
+
+The resulting PL file also contains the usual
+`(COMMENT THE TFM FILE WAS BAD, SO THE DATA HAS BEEN CHANGED!).`
+
+
+Where the two readers differ
+----------------------------
+
+tex.web module 569, in the section named "Read character data," walks the
+whole char_info array without checking whether the character exists:
+
+  for k:=fmem_ptr to width_base[f]-1 do
+    begin store_four_quarters(font_info[k].qqqq);
+    if (a>=nw)or(b div @'20>=nh)or(b mod @'20>=nd)or
+      (c div 4>=ni) then abort;
+    case c mod 4 of
+    lig_tag: if d>=nl then abort;
+    ext_tag: if d>=ne then abort;
+    list_tag: @<Check for charlist cycle@>;
+
+tftopl.web module 78, on the other hand, wraps the character-output block in
+`width_index(c)>0`:
+
+  for c:=bc to ec do if width_index(c)>0 then
+
+As a result, the height, depth, italic-correction, extensible-index, and
+charlist checks inside that block do not run for a nonexistent character. The
+change file does not alter this condition.
+
+There is one exception worth pointing out. TFtoPL checks ligature starting
+indices separately while it builds its label table. Therefore an invalid
+lig_tag remainder is reported and reset rather than silently accepted.
+
+Using logo10.tfm, which has bc=65, ec=84, and an absent character 66, the
+results are:
+
+  field pushed out of range      tex       tftopl
+  ---------------------------    reject    --------
+  height_index = 15 (nh=2)       reject    silent
+  depth_index = 15 (nd=1)        reject    silent
+  italic_index = 16 (ni=2)       reject    silent
+  ext_tag remainder = 250 (ne=0) reject    silent
+  lig_tag remainder = 250 (nl=3) reject    reports and resets
+
+The same fields on a character that exists are reported by TFtoPL.
+
+For the italic corruption shown above, TFtoPL reads the file without complaint
+and omits the malformed slot from the PL output. Passing that PL through PLtoTF
+therefore removes the bad data:
+
+  $ pltotf gap-bad.pl gap-laundered.tfm
+
+The resulting TFM file loads successfully. A user whose font fails to load can
+therefore round-trip it through TFtoPL and PLtoTF, get a working font, and lose
+the only evidence of what was wrong with the original file.
+
+
+What should change
+------------------
+
+The direct fix would be to validate the relevant index fields before the
+`width_index(c)>0` test, while still omitting nonexistent characters from the
+PL output.
+
+There is a broader question about which reader should change. The format
+description says that a character is valid if and only if it lies between bc
+and ec and has a nonzero width_index. It does not explicitly constrain the
+other index fields or the tag of an absent slot. One could therefore argue
+that TeX is stricter than the format requires and that tex.web should accept
+these fields instead. Either way, the current implementations disagree, and
+the promise in tftopl.web is not true as written.
+
+Item 426 in tex82.bug went in the other direction, adding a check to TeX
+because TFtoPL already performed it:
+
+  426. For robustness, enforce a restriction checked by TFtoPL (suggested by
+  DRF)
+
+I could not find an erratum covering the reverse inconsistency.
+
+LuaTeX 1.24.0 currently agrees with TFtoPL and loads gap-bad.tfm. Its reader
+has the same width_index gate in luatexdir/font/tfmofm.c. pdfTeX and XeTeX
+reject the file, like TeX. I have sent a separate note about that to
+dev-luatex, since either resolution will affect LuaTeX as well.
+
+--
+jdw64
+doogwoo@gmail.com
+https://www.makonea.com
