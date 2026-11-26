@@ -1,6 +1,6 @@
 #!/usr/bin/env texlua
 
-local show_pdf_tags_version = "1.7"
+local show_pdf_tags_version = "1.8"
 
 kpse.set_program_name'lualatex'
 
@@ -13,6 +13,7 @@ local out_format = "tree"
 local follow_rolemap = false
 local hide_w3c = false
 local show_xmp = false
+local show_id = true
 
 local pdfe = pdfe or require'pdfe'
 local process_stream = require'show-pdf-tags_process_stream'
@@ -492,7 +493,9 @@ local function print_tree(tree, ctx)
           local total_count = #af_output
           for i, file in ipairs(obj.associated_files) do
             if file.EF.F then
-              af_output = '\n└─Content: ' .. pdfe.readwholestream(file.EF.F, true):gsub('\n', '\n  ')
+              af_output = af_output .. '\n' ..
+	         (i == #obj.associated_files  and '└─'  or '├─') ..
+		 'Content: ' .. pdfe.readwholestream(file.EF.F, true):gsub('\n', '\n  ')
               -- recurse(obj.kids, prefix .. '├─', prefix .. '└─', prefix .. '│ ', prefix .. '  ')
             end
           end
@@ -583,7 +586,7 @@ local function print_tree_xml(tree, ctx)
           print(string.format('%s%s', indent, format_subtype_xml(subtype)))
         end
         local lines = {}
-        if obj.id then
+        if obj.id and show_id then
           lines[#lines + 1] = ' id="' .. obj.id:gsub('&','&amp;'):gsub('<','&lt;'):gsub('"','&quot;'):gsub('\0','[NULL]') .. '"'
         end
         if obj.title then
@@ -716,8 +719,8 @@ local function print_tree_xml(tree, ctx)
   print ("<PDF version=\"" .. ctx.version .."\">\n <StructTreeRoot>")
   recurse(tree, '  ', '', '', ' ')
   print (" </StructTreeRoot>")
-  if show_xmp then
-    print(" <XMP>\n" ..pdfe.readwholestream(ctx.xmp,true):gsub("\n[ \n]*\n","\n") .. "\n </XMP>")
+  if show_xmp and ctx.xmp then
+    print(" <XMP>" ..pdfe.readwholestream(ctx.xmp,true):gsub("\n[ \n]*\n","\n"):gsub("\n","\n  ") .. "\n </XMP>")
   end
   print ("</PDF>")
   return
@@ -735,6 +738,7 @@ Options
   --table          show Lua table structure
   --map            Follow role mapping (xml printer)
   --xmp            include XMP XML (xml printer)
+  --hideid         do not show id in XML output
   --w3c-           Add - to w3c namespaces to force browser tree display
 
 ]]
@@ -753,6 +757,8 @@ while argi <= #arg and arg[argi]:match("^%-") do
     hide_w3c=true
   elseif arg[argi] == "--xmp" then
     show_xmp=true
+  elseif arg[argi] == "--hideid" then
+    show_id=false
   elseif arg[argi] == "--help" or arg[argi] == "-h" then
     io.stderr:write(string.format(helpstr, arg[0]))
     return
