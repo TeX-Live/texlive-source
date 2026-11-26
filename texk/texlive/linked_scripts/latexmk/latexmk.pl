@@ -67,8 +67,8 @@ BEGIN {
     # blocks.
     $my_name = 'latexmk';
     $My_name = 'Latexmk';
-    $version_num = '4.89';
-    $version_details = "$My_name, John Collins, 8 November 2026. Version $version_num";
+    $version_num = '4.90';
+    $version_details = "$My_name, John Collins, 25 November 2026. Version $version_num";
 }
 
 # Ensure that when STDERR and STDOUT are both redirected, the results are
@@ -139,7 +139,10 @@ BEGIN {
     # (a) On Windows 11 as of 13 April 2026, with a standard Windows perl,
     #     HiRes's sleep, stat, and time are imported, but not utime.
     #     sleep & time work properly in HiRes.  But stat gives 1 s
-    #     resolution, even on NTFS.
+    #     resolution, even on NTFS.  There's something about this in the
+    #     Time::HiRes documentation.  Basically the
+    #     Result of Time::HiRes::d_hires_utime() reports whether subsecond
+    #     filetime resolution is supported.
     # (b) macOS, Ubuntu, cygwin, and msys: All are imported and work.
     # (c) Other cases: Even if imported, the functions may or may not give
     #     better than 1 sec, depending on combination of OS, file system,
@@ -291,6 +294,12 @@ our %compilation_defaults =
       'lualatexmk' => [0,0,0,4,0],
       'pdflatexmk' => [0,0,0,1,0],
       'xelatexmk' => [0,0,0,5,0],
+    );
+our %compilation_default_messages =
+    ( 'latexmk' =>    'dvi by latex',
+      'lualatexmk' => 'pdf by lualatex',
+      'pdflatexmk' => 'pdf by pdflatex',
+      'xelatexmk' =>  'pdf by xelatex',
     );
 # If name isn't in canonical set, change it to a good default:
 unless (exists $compilation_defaults{$invoked_name}) { $invoked_name = 'latexmk'; }
@@ -616,7 +625,7 @@ our $fdb_ver = 4;             # Version number for kind of fdb_file.
 #       non-standard basename.
 our @generated_exts = ( 'aux', 'bcf', 'bcf'.$save_error_suffix, 'fls',
                     'idx', 'ind', 'lof', 'lot',  
-                    'out', 'run.xml', 'toc',
+                    'out', 'out.ps', 'run.xml', 'toc',
                     'blg', 'ilg', 'log',
                     'xdv'
                   );
@@ -1019,40 +1028,73 @@ our $search_path_separator = ':';
 # File::Spec's tmpdir() finds whatever is appropriate for the OS.
 our $tmpdir = tmpdir();
 
-
-# Latexmk does tests on whether a particular generated file, e.g., log or
-# fls, has been generated on a current run of a rule, especially *latex, or
-# is leftover from previous runs.  An expected file can fail to be
-# generated or generated in other than the expected place because of errors
-# or because of misconfiguration of latexmk.  There are also files (notably
-# bcf files) that are generated or not according to the current set of
-# packages, options, etc used by a document.
+######################################
+# In the code below these comments are set some variables used to control
+# the precision used in time-based tests to determine whether or not
+# particular files were generated on a current run.
 #
-# The test for whether a file was generated on the current run of a rule is
-# that the modification time of the file is at least as recent as the
-# system time at the start of the run.  A file with a modification time
-# significantly less than the time at the start of the run is presumably
-# left over from a previous run and not generated in the currrent run.  (An
-# allowance is made in this comparison for the effects of granularity of
-# file-system times.  Such granularity can make a file time a second or two
-# earlier than the system time at which the file was last modified.)
+# Typical uses:
+# 1. Did a current run of *latex generate a .log file, an .fls file, an
+#    .aux file?
+# 2. Did a current run of *latex generate a .bcf file? (This is the
+#    primary symptom of the use of a biber.)
+# 3. Were files of the final-output kind generated in the current
+#    invocation of latexmk, i.e., the current run of latexmk?  This
+#    is needed in determining which files are to be copied to the
+#    final-output directory. Notably should a synctex file be copied.
+# 4. Similar considerations apply with respect to a current run of *latex
+#    for moving files from the aux directory to the output directory.
 #
-# But generated files may be on a file system hosted by a server computer
-# that is different than the computer running latexmk.  There may be an
-# offset between the time on the two computers; this can make it
-# incorrectly appear that the generated files were made before the
-# run. Most of the time, this problem does not arise, since (a) typical
-# usage of latexmk is with a local file system, and (b) current-day
-# computers and operating systems have their time synchronized accurately
-# with a time server.  Difficulties are most acute with small documents
-# compiled on a fast computer, e.g., with sub-second compilation times.
+# See the subtroutines test_gen_file and test_gen_file_time for how the
+# tests are implemented.
 #
-# When latexmk sees symptoms of an excessive offset, it measures the offset
-# between the filesystem time and the system time. This involves writing a
-# temporary file, getting its modification time, and deleting it.  Then
-# when testing for whether a file was made on the current run or not, an
-# allowance is then made for the measured time offset between the two
-# computers.
+# When possible, the test for a file being generated on the current run is
+# done by testing whether the file is listed as an output file in the .fls
+# file or in the .fls file.  However, this is not always sufficient:
+#
+#    synctex files from are never listed in the .fls and .log files.
+#    for determining files to move/copy to the output and final-output
+#       directories. 
+#
+# In these cases, a time-based test is used, that says that a file was
+# generated on the current run when its modification time is at least as
+# recent as the system time at the start of the run.
+#
+# A problem is that the times do not always have adequate accuracy. The run
+# time for *latex and even for a whole invocation of latexmk is often well
+# under a second, for small documents.  But the inaccuracies in the times
+# can be larger than such subsecond run times, and can result in an
+# incorrect assessment that a file was not made on a current run when in
+# fact is was.  So the file-time tests have to make an allowance for the
+# inaccuracies, controlled by the variables defined below these comments.
+#
+# Known sources of inaccuracies include:
+#
+# 1. The file system may only store filetimes with limited granularity:
+#    E.g., FAT systems have a granularity of 2 sec, and HFS+ file systems
+#    have a granularity of 1 sec.
+# 2. Even if a file system has subsecond granularity, the method Perl uses
+#    to support file times may not support them.  This is the case on
+#    native Windows implementations of Perl, which only give 1 sec
+#    granularity, even with the use of the Time::HiRes package which gives
+#    subsecond filetime granularity on other operating systems, and even on
+#    Windows when a cygwin version of Perl is used.
+# 3. When generated files are hosted on a file system on a server computer
+#    that is different than the computer running latexmk, there may be an
+#    offset between the time on the two computers; this can make it
+#    incorrectly appear that the generated files were made before the
+#    run. Most of the time, this problem does not arise, since (a) typical
+#    usage of latexmk is with a local file system, and (b) current-day
+#    computers and operating systems have their time synchronized
+#    accurately with a time server.  But situations have been encountered
+#    where the server and the user's computer use very different times.
+#
+# Latexmk takes precautions for the last item: When latexmk sees symptoms
+# of an excessive offset, it measures the offset between the filesystem
+# time and the system time. This involves writing a temporary file, getting
+# its modification time, and deleting it.  Then when testing for whether a
+# file was made on the current run or not, an allowance is then made for
+# the measured time offset between the two computers.
 #
 # Note that typically an invocation of latexmk's processing of a document
 # occurs after some human action, e.g., editting a document or a
@@ -1063,7 +1105,10 @@ our $tmpdir = tmpdir();
 # about time differences.  
 #
 # Granularity of file system etc:
-# FAT file system: 2 sec granularity. Others 1 sec or often much less.
+#    FAT: 2 sec, HFS+: 1 sec.
+#    Many others much less (e.g., ext4, NTFS, APFS).
+# But native Windows perl's are restricted to 1 sec granularity (even with
+# the use of Time::HiRes, as used by latexmk).
 #                  
 # Functions available to latexmk from Perl:
 #   mtime from Perl's CORE::stat: 1 sec, but 2 sec on FAT file system;
@@ -1071,17 +1116,18 @@ our $tmpdir = tmpdir();
 #         combination of Perl, the OS and the file system support it.
 #   system time from CORE::time(): 1 sec;
 #   system time from Time::HiRes::time(): Much less than 1 sec.
-
+#
+#---------------
 # Variables controlling the assessment of time offset between file system
 # and computer:
 
 our $filetime_causality_threshold = 5;
     # This is the size of time differences below which latexmk doesn't
-    # worry. It allows for (a) different granularity between system time
-    # and filesystem time, (b) for a modest mismatch between file and system
-    # time. This allowance can be generous; it merely needs to be below the
-    # human time-scale for editing documents, reconfiguring (or
-    # misconfiguring) latexmk, etc.
+    # worry. It allows for (a) granularities of filesystem time, (b) for a
+    # modest time mismatch between server hosting generated files and
+    # system running latexmk. This allowance can be generous; it merely
+    # needs to be below the human time-scale for editing documents,
+    # reconfiguring (or misconfiguring) latexmk, etc. 
 
 our $filetime_offset_measured = 0;   # Measurement not yet done.
 our $filetime_offset = 0;            # Filetime relative to system time.
@@ -1092,8 +1138,6 @@ our $filetime_offset_report_threshold = 10; # Threshold beyond which filetime of
                                      # are reported at end of run; large
                                      # offsets indicate incorrect system
                                      # time on at least one system. 
-
-
 
 ################################################################
 ################################################################
@@ -1626,10 +1670,23 @@ our ( $aux_dir_requested, $out_dir_requested, $out2_dir_requested );
 
 
 
-# Extensions for files to be copied to $out2_dir.
+# The following array @out2_exts lists the extensions specifying the files
+# that will be copied to the final-output directory $out2_dir from the
+# output directory $out_dir.
+#
+# After it is determined which kinds of target file are to be made (e.g.,
+# 'pdf' when $pdf_mode is non-zero, 'dvi' when $dvi_mode is non-zero),
+# their extensions are added to the array. So the array should be
+# initialized only to the other files that should be copied to the
+# final-output directory, but are not given by this procedure, i.e., the
+# synctex files.
+#
+# The user can override it for special purposes.
+# 
 # Specify as for @generated_exts: I.e., extension w/o period
 #  or string including %R to be substituted by basename.
-our @out2_exts = ( 'hnt', 'pdf', 'ps', 'synctex', 'synctex.gz' );
+# PREVIOUS: our @out2_exts = ( 'hnt', 'pdf', 'ps', 'synctex', 'synctex.gz' );
+our @out2_exts = ( 'synctex', 'synctex.gz' );
 
 ## default flag settings.
 our $recorder = 1;          # Whether to use recorder option on latex/pdflatex
@@ -2410,7 +2467,8 @@ while (defined(local $_ = $ARGV[0])) {
   elsif (/^-cd-$/)   { $do_cd = 0; }
   elsif (/^-commands$/) { print_commands(); exit; }
   elsif (/^-d$/) {
-     warn "$My_name: Option -d is no longer used by latexmk.\n";
+      warn "$My_name: Option -d is only supported when a postscript file is produced.\n",
+           "  If necessary, I will turn on use of latex and production of ps file.\n";
      $banner = 1;
   }
   elsif (/^-dependents$/ || /^-deps$/ || /^-M$/ ) { $dependents_list = 1; }
@@ -2766,7 +2824,7 @@ if ( $diagnostics || $rc_report ) {
 }
 
 if ( $bad_options > 0 ) {
-    exit_help( "Bad options specified" );
+    exit_help( "Incorrect options specified. See above for details." );
 }
 
 # !!!!!!!!!!!!! BEGIN PARALLEL CODE
@@ -3035,57 +3093,34 @@ if ( $jobname ne '' ) {
     add_option( "--jobname=%R", \$dvilualatex, \$hilatex, \$latex, \$lualatex, \$pdflatex, \$xelatex );
 }
 
-# Make sure we make the kind of file we want to view:
-if ( ($view eq 'dvi') && ($dvi_mode == 0) ) { $dvi_mode = 1; }
-if ( ($view eq 'hnt') && ($hnt_mode == 0) ) { $hnt_mode = 1; }
-if ( $view eq 'ps' ) { $postscript_mode = 1; }
-if ( ($view eq 'pdf') && ($pdf_mode == 0) ) {
-    warn "$my_name: Viewing of pdf requested, but pdf_mode off, so I'll turn it on.\n";
-    $pdf_mode = 1; 
+# Make sure we make the kind of files that are explicitly requestd to view and print.
+# By default, $view is 'default' and $print_type is 'none', so nothing here applies
+for ( $view, $print_type ) {
+    if ( ($_ eq 'dvi') && ($dvi_mode == 0) ) { $dvi_mode = 1; }
+    if ( ($_ eq 'hnt') && ($hnt_mode == 0) ) { $hnt_mode = 1; }
+    if ( ($_ eq 'ps') && ($postscript_mode == 0) ) { $postscript_mode = 1; }
+    if ( ($_ eq 'pdf') && ($pdf_mode == 0) ) { $pdf_mode = 1; }
 }
 
 # Make sure that we make something if all requests are turned off
-unless ( $dvi_mode ||  $hnt_mode || $pdf_mode || $postscript_mode || $printout_mode || $xdv_mode )  {
-    print "No specific requests made, so using default for $invoked_name.\n";
+unless ( $dvi_mode ||  $hnt_mode || $pdf_mode || $postscript_mode || $printout_mode || $xdv_mode )  {    
+  print "$My_name: No specific requests made for final-output files, so using default:\n",
+      "    $compilation_default_messages{$invoked_name}\n";
     ($dvi_mode, $hnt_mode, $postscript_mode, $pdf_mode, $xdv_mode )
         = @{$compilation_defaults{$invoked_name}};
 }
 
 
-# Which kind of file do we preview?
-if ( $view eq "default" ) {
-    # If default viewer requested, use "highest" of dvi, ps and pdf
-    #    that was requested by user.  
-    # No explicit request means view dvi.
-    if ( $pdf_mode ) { $view = "pdf"; }
-    elsif ( $postscript_mode ) { $view = "ps"; }
-    elsif ( $xdv_mode ) { $view = "none"; }
-    elsif ( $hnt_mode ) { $view = "hnt"; }
-    else { $view = "dvi"; }
-}
-
 # Determine and normalize requests for actions:
 
 if ($go_mode == 2) { $cleanup_mode = 1; $cleanup_only = 0; }
 
-if ( $banner ) { $postscript_mode = 1; }
-if ( $dvi_mode ) {
-    $requested_filetypes{'dvi'} = 1;
-    if ( length($dvi_filter) != 0 ) { $requested_filetypes{'dviF'} = 1; }
-}
-if ( $postscript_mode ) {
-    $requested_filetypes{'ps'} = 1;
-    if ( length($ps_filter) != 0 )  { $requested_filetypes{'psF'} = 1; }
-}
-if ( $xdv_mode ) {
-    $requested_filetypes{'xdv'} = 1;
-}
+# Deal with incompatible requests, implicit requests, etc:
 if ($pdf_mode > 5) {
     warn "$My_name: Non-allowed value of \$pdf_mode = $pdf_mode,",
         " replaced by 1.\n";
     $pdf_mode = 1;
 }
-
 if ( ($dvi_mode || $postscript_mode) && $pdf_mode ) {
     my %disallowed = ();
     foreach (1,4,5) { $disallowed{$_} = 1; }
@@ -3113,30 +3148,44 @@ if ( $xdv_mode && $pdf_mode ) {
             "  I replaced it by $pdf_mode, to be compatible with those other requests.\n";
     }
 }
-if ( $pdf_mode == 0 ) {
-    $pdf_method = '';
+
+if ( $banner ) { $postscript_mode = 1; }
+
+# Set requested filetypes:
+if ( $dvi_mode ) {
+    $requested_filetypes{'dvi'} = 1;
+    if ( length($dvi_filter) != 0 ) { $requested_filetypes{'dviF'} = 1; }
 }
-elsif ( $pdf_mode == 1 ) { 
-    $requested_filetypes{'pdf'} = 1;
-    $pdf_method = 'pdflatex';
+if ( $postscript_mode ) {
+    $requested_filetypes{'ps'} = 1;
+    if ( length($ps_filter) != 0 )  { $requested_filetypes{'psF'} = 1; }
 }
-elsif ( $pdf_mode == 2 ) { 
-    $requested_filetypes{'pdf'} = 1;
-    $pdf_method = 'ps2pdf';
-}
-elsif ( $pdf_mode == 3 ) { 
-    $requested_filetypes{'pdf'} = 1;
-    $pdf_method = 'dvipdf';
-}
-elsif ( $pdf_mode == 4 ) { 
-    $requested_filetypes{'pdf'} = 1;
-    $pdf_method = 'lualatex';
-}
-elsif ( $pdf_mode == 5 ) { 
-    $requested_filetypes{'pdf'} = 1;
-    $pdf_method = 'xelatex';
+if ( $hnt_mode ) { $requested_filetypes{'hnt'} = 1; }
+if ( $xdv_mode ) { $requested_filetypes{'xdv'} = 1; }
+if ( $pdf_mode ) { $requested_filetypes{'pdf'} = 1; }
+
+if ( $pdf_mode == 0 ) { $pdf_method = ''; }
+elsif ( $pdf_mode == 1 ) { $pdf_method = 'pdflatex'; }
+elsif ( $pdf_mode == 2 ) { $pdf_method = 'ps2pdf'; }
+elsif ( $pdf_mode == 3 ) { $pdf_method = 'dvipdf'; }
+elsif ( $pdf_mode == 4 ) { $pdf_method = 'lualatex'; }
+elsif ( $pdf_mode == 5 ) { $pdf_method = 'xelatex'; }
+
+for (keys %requested_filetypes) { push @out2_exts, $_; }
+
+# Which kind of file do we preview when not set explicitly:
+if ( $view eq "default" ) {
+    # If default viewer requested, use "highest" of dvi, ps and pdf
+    #    that was requested by user.  
+    # No explicit request means view dvi.
+    if ( $pdf_mode ) { $view = "pdf"; }
+    elsif ( $postscript_mode ) { $view = "ps"; }
+    elsif ( $xdv_mode ) { $view = "none"; }
+    elsif ( $hnt_mode ) { $view = "hnt"; }
+    else { $view = "dvi"; }
 }
 
+# Which kind of file do we print when not set explicitly:
 if ($print_type eq 'auto') {
     if ( $postscript_mode ) { $print_type = 'ps'; }
     elsif ( $pdf_mode )     { $print_type = 'pdf'; }
@@ -3176,13 +3225,6 @@ if ( $pdf_mode == 2 ) {
     add_option( "$dvips_pdf_switch", \$dvips );
 }
 
-for ('dvi', 'dviF', 'xdv') {
-    if ( exists( $requested_filetypes{$_} )
-         || ($view eq $_) || ($print_type eq $_)
-       )
-    { push @out2_exts, $_; }
-}
-
 # Note that 100% CPU usage may not be terribly bad with a multi-core CPU,
 # and an SSD, especially when the OS caches file metadata reliably.
 if ( $sleep_time == 0 ) {
@@ -3215,7 +3257,12 @@ our $quell_uptodate_msgs = $silent;
    # Will turn off in -pvc mode
 
 our $failure_count = 0;
+# For global view of failures, array of filenames for which round of compilation
+# failed:
 our @failed_primaries = ();
+# For a round of compilation, array of rules that failed (which refers to cached
+# round, as appropriate):
+our @failed_rules = ();
 
 if ($deps_file eq '' ) {
     # Standardize name used for stdout
@@ -3274,8 +3321,8 @@ our ( @default_includes, $texfile_name, $root_filename, $log_name,
 $rule = '';
 $Pbase = \$root_filename;
 $Psource = \$texfile_name;
-my $start_time = time();
-$Prun_time = \$start_time;
+my $overall_start_time = time();
+$Prun_time = \$overall_start_time;
 
 # !!!!!!!!!!!!! BEGIN PARALLEL CODE
 # Parallel processing of multiple .tex documents.
@@ -3402,7 +3449,14 @@ sub process_docs_parallel {
                      if $parallel_diagnostics || $diagnostics;
                 push @PID_children, $$;
                 $doc_state_file = $state_file;
-                $child_type = 1;   # Document child
+                $child_type = 1;    # I am a document child
+                # Reinitialize error variables in this document-child process,
+                # so that it only reports failures in processing its own
+                # document.  This insulates it from any values set in the
+                # parent from errors in previously terminated child processes
+                # for other documents:
+                $failure_count = 0; 
+                @failed_primaries = ();
                 # Set STDIN, STDOUT, and STDERR suitably for
                 # non-interactive process, with output to $out_file: 
                 redirect_STDIO( $out_file );
@@ -3414,8 +3468,10 @@ sub process_docs_parallel {
                 # Clear inherited state so the child does not try to wait
                 # for sibling processes that were forked by the parent.
                 %doc_children = ();
-                process_docs( $single_file );
-                exit;
+                # Run process_docs to process the file.
+                # Then exit the process with return code reported by
+                # process_docs, so that parent process knows about any errors:
+                exit process_docs( $single_file );
             }
             # Arrive here only in parent process. Record child:
             $doc_children{$pid} = $PAinfo;
@@ -3449,7 +3505,7 @@ sub process_docs_parallel {
              say "$$ collected ", scalar(@finished), " terminated processes.";
          }
 
-    }   # END of loop on doc processes to spawn
+    }   #END of loop on doc processes to spawn
     # I am in parent process.
     # Wait for all remaining children:
     while (scalar( %doc_children ) > 0) {
@@ -3470,6 +3526,8 @@ sub process_docs_parallel {
 #************************************************************
 
 sub process_docs {
+    # Process documents specified by the arguments @_.
+    # Return count of errors.
     my @file_list = @_;
 
     FILE:
@@ -3503,6 +3561,7 @@ sub process_docs {
         local $aux_dir = $aux_dir;
         local $out_dir = $out_dir;
         local $out2_dir = $out2_dir;
+        local @out2_exts = @out2_exts;
 
         local $dvilualatex = $dvilualatex;
         local $hilatex = $hilatex;
@@ -3694,11 +3753,12 @@ sub process_docs {
         if ($show_time && ! $preview_continuous_mode) { show_timing1();};
         print "\n";
     }
-
+    return $failure_count;
 } # end process_docs
 
 #************************************************************
 
+# Get here after all files processed.  Give overall summary.
 
 close($deps_handle) if ( $deps_handle );
 
@@ -4034,7 +4094,7 @@ sub path_fudge {
             $ENV{$var} = join( $search_path_separator, @items );
             print "====== ENV{$var} changed to '$ENV{$var}'\n";
          }
-    }  # END loop over env. vars.
+    }  #END loop over env. vars.
 } #END path_fudge
 
 #############################################################
@@ -4300,7 +4360,7 @@ sub rdb_initialize_rules {
     if ($xdv_mode) { $target_files{$xdv_final} = 1; }
 
     rdb_set_rule_net();
-} # END rdb_initialize_rules
+} #END rdb_initialize_rules
 
 #************************************************************
 
@@ -4371,7 +4431,7 @@ sub rdb_set_rule_templates {
                                $view_file,  "",        "",   2 ],
         'view'     => [ 'external', "$viewer",    'if_source',   $view_file,  "",        "",   2 ],
     );
-} # END rdb_set_rule_templates 
+} #END rdb_set_rule_templates 
 
 #************************************************************
 
@@ -4430,7 +4490,7 @@ sub set_file_links_for_rule {
         }
         $from_rules{$dest} = $rule;
     }
-} # END set_file_links_for_rule
+} #END set_file_links_for_rule
    
 #------------
 
@@ -4471,7 +4531,7 @@ sub rdb_set_source_rules {
             if ( defined $new_rule ) { $$PHsource_rules{$new_rule} = 0; }
         }
     }
-} # END rdb_set_source_rules
+} #END rdb_set_source_rules
 
 #------------
 
@@ -4801,7 +4861,7 @@ sub get_small_cleanup {
     if ( $cleanup_includes_cusdep_generated) { push @files, keys %cusdep_generated; }
     push @files, $fdb_name;
     return @files;
-}  # END get_small_cleanup
+}  #END get_small_cleanup
 
 #************************************************************
 
@@ -4855,7 +4915,7 @@ sub do_cusdep {
         }
     }
     return $return;
-}  # END do_cusdep
+}  #END do_cusdep
 
 #************************************************************
 
@@ -5048,7 +5108,7 @@ sub make_banner_file {
     my ($message, $scale, $intensity) = @_;
     say "MAKING BANNER $message, $scale, $intensity";
 
-    my ($fh, $tmp_file) = tempfile( "latexmk_header",
+    my ($fh, $tmp_file) = tempfile( "latexmk_header-XXXX",
                                    SUFFIX => ".ps",
                                    DIR => $tmpdir,
                                    UNLINK => 0,
@@ -5522,6 +5582,7 @@ sub print_help
   "   -aux-directory=dir or -auxdir=dir \n",
   "                 - set name of directory for auxiliary files (aux, log)\n",
   "                 - See also the -emulate-aux-dir option\n",
+  "   -bi <intensity> - Set contrast or intensity of banner. (Postscript only.)\n",
   "   -bibtex       - use bibtex when needed\n",
   "   -bibtex-      - never use bibtex\n",
   "   -bibtex-cond  - use bibtex when needed, but only if the bib file exists\n",
@@ -5531,6 +5592,8 @@ sub print_help
   "   -bibfudge or -bibtexfudge - change directory to output directory when\n",
   "                   running bibtex\n",
   "   -bibfudge- or -bibtexfudge- - don't change directory when running bibtex\n",
+  "   -bm <message> - Print message across the page when converting to postscript\n",
+  "   -bs <scale> - Set scale for banner. (Postscript only.)\n",
   "   -commands  - list commands used by $my_name for processing files\n",
   "   -c    - clean up (remove) all nonessential files, except\n",
   "           dvi, ps and pdf files.\n",
@@ -5545,6 +5608,8 @@ sub print_help
   "   -cc    - \"Continuous compile\": equivalent to -pvc -view=none\n",
   "   -cd    - Change to directory of source file when processing it\n",
   "   -cd-   - Do NOT change to directory of source file when processing it\n",
+  "   -d     - When making a postscript file (and hence a pdf file by ps2pdf),\n",
+  "            put banner message on each page\n",    
   "   -dependents or -deps - Show list of dependent files after processing\n",
   "   -dependents- or -deps- - Do not show list of dependent files\n",
   "   -deps-escape=<kind> - Set kind of escaping of spaces in names in deps file\n",    
@@ -6363,46 +6428,26 @@ sub do_moves_aux_to_out {
 
 sub do_copies_out_to_out2 {
     # do_copies_out_to_out2( source, dest )
-    # Copies final output files from source dir (e.g., $out_dir1) to
-    # dest dir (e.g., $out2_dir1).
-    # Note copy, not move, otherwise rules complain about non-existent
-    #   destination pdf file (etc). 
-    # Assume rule context, which is normally global context.
+    # Copies final output files from source dir (normally $out_dir1) to
+    # dest dir (normally $out2_dir1).
+    # Note use copy, not move, otherwise rules complain about non-existent
+    #   destination pdf file (etc).
+    # ?? Check following
+    # Assume rule-like context, which is normally global context,
     # Directory names should end in /, so that concatenation OK.
-    my ($source1, $dest1) = @_;
 
-    # Ideally, guard against source and destination being same.
-    # Easy case:
-    my $absSource = abs_pathA($source1);
-    my $absDest = abs_pathA($dest1);
-    if ( defined($absSource) && defined($absDest) && ($absSource eq $absDest) ) {
+    my ($source1, $dest1) = @_;
+    
+    # Guard against source and destination being same.  Names are already normalized.
+    if ( $source1 eq $dest1 ) {
         # Directories are same.  Nothing to do.
-        # Note that abs_path can return undef under certain error conditions.
-        # I'll leave the diagnosis to the copy subroutine.
         return;
     }
-    # !!! HOWEVER: !!
-    # There can be multiple ways of referring to the same directories
-    # without that being detectable by the use of abs_path
-    # on the names: E.g., on Windows one directory is referred to via a
-    # drive letter that is used for files on a server, and the second
-    # uses the '\\...' (or '//...'construction to refer to the server directly.
-    # Also, on a OS/FS combination that is insensitive to case, the
-    # abs_paths can differ in case while referring to the same entity
-    # On UNIX, I can use a dev and inode test for equality, from the
-    # results of stat.
-    # But that doesn't work on Windows (where the inode numbers
-    # returned by stat are always zero).
-    # Easiest is to let the copy subroutine do the work, and just
-    # diagnose the situation when it fails 
-    
     say "$My_name: Copying final output files from '$source1' to '$dest1'";
 
-    foreach ( @out2_exts ) {
-        my $name = ( /%R/ ? $_ : "%R.$_" );
-        $name =~ s/%R/$$Pbase/;
-        my $from =  "$source1$name";
-        my $to = "$dest1$name";
+    for ( get_target_names() ) {
+        my $from =  "$source1$_";
+        my $to = "$dest1$_";
         if ( test_gen_file_time( $from )
              || ( -e $from && ! -e $to )
             ) {
@@ -6429,6 +6474,23 @@ sub do_copies_out_to_out2 {
 
 #*************************************************************************
 
+sub get_target_names {
+    # Determine names (without directory) of target files that are to be
+    # copied from output to final-output directory.
+    # They are determined by the extensions in @out2_ext.
+    # Use hash for the names for insulation against repeated extensions in
+    # @out2_ext.
+    my %names = ();
+    for ( @out2_exts ) {
+        my $name = ( /%R/ ? $_ : "%R.$_" );
+        $name =~ s/%R/$root_filename/;
+        $names{$name} = 1;
+    }
+    return sort( keys %names );
+} #END get_target_names
+
+#*************************************************************************
+
 sub correct_locations {
     # Deal with situations after a *latex run where files are in different
     # directories than expected (specifically aux v. output directory).
@@ -6445,7 +6507,7 @@ sub correct_locations {
     
     my $where_log = find_set_log();
 
-    if ( ($aux_dir_requested ne '') && $emulate_aux && ($aux_dir ne $out_dir) ) {
+    if ( $emulate_aux && ($aux_dir ne $out_dir) ) {
         do_moves_aux_to_out( $aux_dir1, $out_dir1 );
     }
 
@@ -6511,7 +6573,7 @@ sub correct_locations {
             warn "$My_name: fls file doesn't appear to have been made.\n";
         }
     }
-} # END correct_locations
+} #END correct_locations
 
 #-----------------
 
@@ -7636,6 +7698,10 @@ sub get_log_file {
     #                xetex:  UTF-8 with wrapping at $log_wrap codepoints.
     #                hilatex: (TL 2023, HINT 2.0) Pure 7-bit ASCII with ^^
     #                        encoding of non-ASCII. Wrapping at 79 bytes.
+    #   (2026-11-13) uptex: like luatex but slightly different line breaks,
+    #                       at around $log_wrap bytes, but without
+    #                       malformed UTF-8.
+    #                       **I haven't implemented detection of uptex.**
     # So we read file as bytes.  Then
     #   first line gives which program was used and hence whether to wrap
     #     according to byte or codepoint count.
@@ -7698,6 +7764,12 @@ sub get_log_file {
         #         It is not possible in all cases to distinguish whether
         #         a pair of lines arise from wrapping of a longer line
         #         or from actual writing of a pair of lines.
+        # The situation can be different for other *latex engines.  See
+        #   demos-tests/Unicode-Win-macOS-tests/unicode-test-files/
+        # and especially
+        #   demos-tests/Unicode-Win-macOS-tests/unicode-test-files/input
+        # for some information.
+        #
         # Determine whether line is potentially wrapped:
         my $cont = ($len == $log_wrap)
             || ( $lua_mode && ($len >= $log_wrap-2) && ($len <= $log_wrap+1) );
@@ -7741,7 +7813,6 @@ sub get_log_file {
 #=====================================
 
 sub parse_fls {
-    my $start_time = processing_time();  
     my ($fls_name, $Pinputs, $Poutputs, $Pfirst_read_after_write, $Ppwd_latex ) = @_;
     %$Pinputs = %$Poutputs = %$Pfirst_read_after_write = ();
     my $fls_file;
@@ -8840,7 +8911,7 @@ LINE:
     rdb_set_rule_net();
 
     return $errors;
-}  # END rdb_read
+}  #END rdb_read
 
 #************************************************************
 
@@ -8856,6 +8927,7 @@ sub rdb_read_set_rule {
     $$Pcheck_time = $check_time;
     $$Plast_result = $last_result;
     $$Plast_result_info = 'CACHE';
+    if ($last_result) { push @failed_rules, $rule; }
     
     # Deal with possibility that destination file in fdb_latexmk from
     # run differs from what is currently set. Often that just reflects a
@@ -9190,7 +9262,6 @@ sub rdb_set_latex_deps {
             warn "$My_name: fls file '$fls_name' appears to have been made but it couldn't be opened.\n";
         }
     }
- 
     if ($read_log_file) { parse_log( $log_name, \@log_lines, \%log_info ); }
 
     my $missing_dirs = 'none';      # Status of missing directories
@@ -9298,6 +9369,10 @@ sub rdb_set_latex_deps {
             # Therefore it is not a true externally visible generated file.
             # (Typically, e.g., with the minted package, it is a temporary
             #   file created during a run and then deleted during the run.)
+            # Also it covers case of main .pdf file output from pdflatex
+            # (or lualatex) in the case that emulate_aux is on and aux_dir
+            # is different from out_dir, for then the .pdf file was moved
+            # from aux_dir to out_dir immediately after run of *latex.
             next;
         }
         rdb_add_generated( $_ );
@@ -9899,7 +9974,7 @@ NEW_SOURCE:
             ( $log_info{bad_warning} ? 1 : 0 ),
            );
 
-} # END rdb_set_latex_deps
+} #END rdb_set_latex_deps
 
 #************************************************************
 
@@ -9971,37 +10046,47 @@ sub switch_output {
 sub test_gen_file {
     # Usage: test_gen_file( filename )
     # Tests whether a file of given name was generated during current run
-    #   of *latex, with override of comparison of file and run time by
-    #   file being listed in %generated_log or %generated_fls
-    # Assumes context for primary rule.
+    #   or is left over from a previous run.
+    # In rule context, "current run" refers to current run of rule.
+    # Outside rule context, "current run" refers to overall run of latexmk.
+    # This function is normally only used in the context of a *latex rule
+    # If the file is listed in %generated_log or %generated_fls, this is
+    # used since it is definitive.
+    # If not, the time test in test_gen_file_time is used, which compares
+    # file modification time and run time. The time test can be less
+    # reliable because the times don't always have appropriate granularity
+    # and accuracy, and an allowance is made for that.
+    
     my $file = shift;
-    if ($file eq $aux_main ) {
-        # Do I need special treatment here, if I make aux file just before run?
-    }
     our ( %generated_fls, %generated_log );
     return exists $generated_log{$file} || $generated_fls{$file}
           || test_gen_file_time($file);
-}
+} #END test_gen_file
 
 #************************************************************
 
 sub test_gen_file_time {
     # Usage: test_gen_file_time( filename )
-    # Tests whether a file of given name exists and was generated during 
-    #   current run of *latex.  Comparison of file and run time used for
-    #   testing whether file was generated or is left over from a previous run.
-    #
+    # Uses comparison of file time and run time to test whether a file of
+    # given name exists and was generated during current run.
+    # In rule context, run time refers to start of current run of rule.
+    # Outside rule context, run time refers to start of latexmk.
+    # Allowance is made for inaccuracies in the values of the times
+    # involved. 
+
     my $file = shift;
     if (! -e $file) { return 0; }
     my $new_time = get_mtime( $file );
-    # If file's mtime is later than at beginning of this pass, it was certainly made.
-    # But unless hires time is available, the time of a new file may equal that for the old file.
+    # If file's mtime is later than at beginning of this pass, it was
+    # certainly made. 
+    # But unless hires file times are available, the time of a new file may
+    # equal that for the old file.
     if ( (exists $fdb_current{$file}) && ($new_time > ${$fdb_current{$file}}[0] ) ) {
         return 1;
     }
-    # Fall back on mtime relative to run time, with allowance for imprecisioni.
+    # Fall back on mtime relative to run time, with allowance for imprecision.
     return ( $new_time >= $$Prun_time + $filetime_offset - $filetime_causality_threshold );
-}
+} #END test_gen_file_time
 
 #************************************************************
 
@@ -10107,7 +10192,7 @@ MISSING_FILE:
         show_array( "$My_name: Detected previously missing files:", sort(keys %new_includes) );
     }
     return $found;
-} # END rdb_find_new_files
+} #END rdb_find_new_files
 
 #************************************************************
 
@@ -10738,7 +10823,7 @@ sub rdb_make {
         rdb_make_par_rules( \@pre_primary, \&rdb_make1 );
         rdb_one_rule( $current_primary, \&rdb_make1 );
 # !!!!!!!!!!!!!  END PARALLEL CODE
-# !!!  NON-PARALLEL CODE :      
+# !!!  NON-PARALLEL CODE :
 #        rdb_for_some( [@pre_primary, $current_primary], \&rdb_make1 );
         if ($switched_primary_output) {
             print "=========SWITCH OF OUTPUT WAS DONE.\n";
@@ -10820,7 +10905,7 @@ sub rdb_make {
                     ); 
     }
     rdb_for_some( [@unusual_one_time], \&rdb_make1 );
-    if ( ($out2_dir_requested ne '') && ($out_dir ne $out2_dir) ) {
+    if ( $out_dir ne $out2_dir ) {
         do_copies_out_to_out2( $out_dir1, $out2_dir1 );
     }
     
@@ -10878,7 +10963,9 @@ sub rdb_make {
         rdb_for_some( [rdb_accessible()], \&rdb_update_gen_files );
         rdb_write( $fdb_name );
     }
-    else { print "$My_name: Nothing to do for '$texfile_name'.\n"; }
+    else {
+        print "$My_name: Nothing to do for '$texfile_name'.\n";
+    }
 
     # Diagnostics
     my @missing_bib = ();
@@ -10932,11 +11019,42 @@ sub rdb_make {
             print "$My_name: Errors, so I did not complete making targets\n";
         }
         else {
-#            local @dests = ( $current_primary, @pre_primary, @post_primary, @unusual_one_time );
-            my @rules = ( $current_primary, @post_primary, @unusual_one_time );
-            my @dests = ();
-            rdb_for_some( [@rules], sub{ push @dests, $$Pdest if ($$Pdest); } );
-            print "$My_name: All targets (@dests) are up-to-date\n";
+            # Announce overall result if no explicit failure.
+            # Cases: rules run and files up-to-date,
+            #        no rules run, no previous errors, so files up-to-date,
+            #        no rules run, previous errors, but no change of files.
+
+            my @dest_names = get_target_names();
+            # Destination files in $out2_dir:
+            my @dests2 = ();
+            # Non-existent
+            my @none = ();
+            for (@dest_names) {
+                my $file = $out2_dir1.$_;
+                # Special case: synctex and synctex.gz files.  If they
+                # don't exist, they probably aren't being used.  All other
+                # entries correspond to requests for certain final output
+                # files. 
+                if ( /\.synctex(|\.gz)$/ ) {
+                    if (! -e $file) { next; }
+                }
+                push @dests2, $file;
+                if (! -e $file) { push @none, $file; }
+            }
+            if ( ($runs_total == 0) && (rdb_list_previous_failures()) )
+            {   
+                print
+                    "$My_name: No rules were run because there were errors on a previous run, and no\n",
+                    "  source files have changed, so it is not useful to rerun anything, which\n",
+                    "  would repeat the same errors.  So the targets are as up to date as possible:\n",
+                    "    ", join(', ', @dests2), ".\n";
+                if (@none) { print "  Of these, non-existent is/are: ", join(', ', @none), "\n"; }
+                #  No need to list the failures here.  That's done later.
+            }
+            else {
+                print "$My_name: All targets (", join(', ', @dests2), ") are up-to-date\n";
+            }
+
         }
     }
 
@@ -11321,6 +11439,33 @@ sub rdb_make_par_rules {
 
 #-------------------
 
+sub rdb_list_previous_failures {
+    # Return array of messages about rules where there was no current run,
+    # and there was a failure in an earlier round of compilation.
+    my @errors = ();
+    rdb_for_actives( 
+        sub {
+            my $message_tail = "";
+            if ( $$Plast_result_info eq 'PREV' ) {
+                $message_tail = " in previous round of document compilation.";
+            }
+            elsif ( $$Plast_result_info eq 'CACHE' ) {
+                $message_tail = " in previous invocation of $my_name.";
+            }
+            else { return; }
+            if ( ($$Plast_message ne '') && ($$Plast_result != 200) ) {
+                    push @errors, "$rule: $$Plast_message";
+            }
+            elsif ($$Plast_result == 2) {
+                push @errors, "$rule: gave an error$message_tail";
+            }
+        }
+    );
+    return @errors;
+}
+
+#-------------------
+
 sub rdb_show_rule_errors {
     my @errors = ();
     my @warnings = ();
@@ -11618,7 +11763,7 @@ sub rdb_run1 {
 
     my $latex_like = ($$Pcmd_type eq 'primary'); 
     
-    # Defulat return value for external command is success:
+    # Default return value for external command is success:
     my $return = 0;
 
     # Initialize set of generated files to those given by the current
@@ -11733,7 +11878,7 @@ sub rdb_run1 {
         $$Plast_result = 1;
     }
     return $return;
-}  # END rdb_run1
+}  #END rdb_run1
 
 #-----------------
 
@@ -14274,7 +14419,7 @@ sub cache_good_cwd {
         if (defined $abs) { $cwd = $abs; }
     }
     $cache{cwd} = $cwd;
-}  # END cache_good_cwd
+}  #END cache_good_cwd
 
 #============================================
 
@@ -14283,7 +14428,7 @@ sub good_cwd {
     # Use cached result, to save a possible expensive computation (running 
     #  of extenal program under cygwin).
     return $cache{cwd};
-}  # END good_cwd
+}  #END good_cwd
 
 #============================================
 
