@@ -1,5 +1,24 @@
  restricted \write18 enabled.
  %&-line parsing enabled.
 **filedump
-(./filedump.tex 25C2AA0A5C636174636F6465605C7B3D310A5C63 )
+(./filedump.tex
+25C2AA0A5C636174636F6465605C7B3D310A5C63
+0:78,32767:78,32768:41,65535:42,65536:43,70000:44
+at-eof:44,past-eof:44,after-eof:,zero-length:
+! Bad file offset (-1).
+l.18 \message{negative-offset:\filedump offset -1 
+                                                  length 1{filedump-data}}
+A file offset must be between 0 and 2^{31}-1,
+I changed this one to zero.
+
+negative-offset:78
+! Bad dump length (-1).
+<to be read again> 
+                   {
+l.19 \message{negative-length:\filedump length -1{
+                                                  filedump-data}}
+A dump length must be between 0 and 2^{31}-1,
+I changed this one to zero.
+
+negative-length: )
 No pages of output.
