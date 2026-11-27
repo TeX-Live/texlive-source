@@ -77,12 +77,6 @@ char *expandfilename(const char *src)
 }
 #endif
 
-long sfntscale(long what, unsigned short unitsPerEm)
-{
-   return(((what / unitsPerEm) << 20) +
-          (((what % unitsPerEm) << 20) + 500) / unitsPerEm);
-}
-
 #define MAXFILENAME 2056
 FILE *lookup_font_file(const char *fpath, char **p_real_fpath, int *p_is_dfont)
 {
@@ -321,9 +315,9 @@ int sfntload(fontdesctype *curfnt)
 			else
 				cid = gid;
 			if (gid > 0) {
-				int li = scalewidth(sfntscale(metrics[gid].advance, head->unitsPerEm), curfnt->scaledsize);
+				double li = (double)metrics[gid].advance * curfnt->scaledsize / head->unitsPerEm;
 				cd = add_chardesc(curfnt, n);
-				cd->TFMwidth = li;
+				cd->TFMwidth = (integer)(li + 0.5);
 				cd->pixelwidth = ((integer)(conv*li + 0.5));
 				cd->cid = cid;
 				cd->flags = (curfnt->resfont ? EXISTS : 0);
@@ -343,9 +337,9 @@ int sfntload(fontdesctype *curfnt)
 //			else
 				cid = gid;
 			if (gid > 0) {
-				int li = scalewidth(sfntscale(metrics[gid].advance, head->unitsPerEm), curfnt->scaledsize);
+				double li = (double)metrics[gid].advance * curfnt->scaledsize / head->unitsPerEm;
 				cd = add_chardesc(curfnt, current->charcode);
-				cd->TFMwidth = li;
+				cd->TFMwidth = (integer)(li + 0.5);
 				cd->pixelwidth = ((integer)(conv*li + 0.5));
 				cd->cid = cid;
 				cd->flags = (curfnt->resfont ? EXISTS : 0);

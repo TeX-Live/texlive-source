@@ -115,96 +115,112 @@ static void add_otf_g2u_table(const char *ps_name)
 {
     const charusetype_ref *cu_ref;
     const charusetype_entry *cu_head = NULL;
-    boolean used;
-    charusetype_entry *cu_entry;
+    const charusetype_entry *cu_entry;
     int gid;
     const UsedMapElem *usedchars;
     static UsedMapElem processed_gids[USED_CHARS_BUF_SIZE];
-    char empty_str[] = "";
+    UsedMapElem used_mask;
     const struct resfont *cur_resfont;
     char *tex_name;
     luamaptype *lmap_ptr, *lmap_iter, *lmap_tmp;
     int id;
-    int ii;
+    int ii, kk, ll;
 
-    fprintf(bitfile, "  /GlyphNames2Unicode <<\n");
-
-    if (ps_name)
+    if (((Otf_Enc_Type == enc_gid) || charcode_otf_g2u) && ps_name)
     {
         cu_ref = lookup_charused(ps_name, Any_otf_font);
         if (cu_ref)
             cu_head = cu_ref->head;
-    }
-    else
-        ps_name = "";
 
-    if (cu_head)
-    {
-        lmap_ptr = NULL;
-        id = -1;
-
-        if ((Otf_Enc_Type == enc_gid) || charcode_otf_g2u)
+        if (cu_head)
         {
-            cur_resfont = NULL;
-            tex_name = empty_str;
+            fprintf(bitfile, "  /GlyphNames2Unicode <<\n");
 
-            if (cu_head->charused_ptr && cu_head->charused_ptr->fd && cu_head->charused_ptr->fd->resfont)
-            {
-                if (cu_head->charused_ptr->fd->resfont->TeXname)
-                {
-                    tex_name = cu_head->charused_ptr->fd->resfont->TeXname;
-                    cur_resfont = lookup(tex_name);
-                }
-            }
-            if (cur_resfont)
-            {
-                id = Luamap_otf_get(cur_resfont->Vectfile ? cur_resfont->Vectfile : cur_resfont->PSname, cu_head);
-                if (id >= 0)
-                    lmap_ptr = LuaMap_cache_get(id);
-                if (lmap_ptr == NULL)
-                    fprintf(stderr, "\nError: No font encoding for %s", ps_name);
-            }
-            else
-                fprintf(stderr, "\nError: Font %s not found", tex_name);
-        }
-
-        if (lmap_ptr)
-        {
             memset(processed_gids, 0, sizeof(processed_gids));
+
             cu_entry = cu_head;
             while (cu_entry)
             {
-                HASH_ITER(hh, lmap_ptr, lmap_iter, lmap_tmp)
+                if (cu_entry->charused_ptr)
                 {
-                    gid = lmap_iter->gid;
-                    used = FALSE;
-                    if (cu_entry->charused_ptr)
+                    cur_resfont = NULL;
+                    usedchars = cu_entry->charused_ptr->bitmap;
+
+                    lmap_ptr = NULL;
+                    id = -1;
+
+                    if (usedchars && cu_entry->charused_ptr->fd && cu_entry->charused_ptr->fd->resfont)
                     {
-                        usedchars = cu_entry->charused_ptr->bitmap;
-                        if (usedchars && IS_USED_CHAR(usedchars, gid) && (!IS_USED_CHAR(processed_gids, gid)))
+                        if (cu_entry->charused_ptr->fd->resfont->TeXname)
                         {
-                            used = TRUE;
-                            ADD_TO_USED_CHARS(processed_gids, gid);
+                            tex_name = cu_entry->charused_ptr->fd->resfont->TeXname;
+                            cur_resfont = lookup(tex_name);
+
+                            if (cur_resfont)
+                            {
+                                id = Luamap_otf_get(cur_resfont->Vectfile ? cur_resfont->Vectfile : cur_resfont->PSname, cu_entry);
+                                if (id >= 0)
+                                    lmap_ptr = LuaMap_cache_get(id);
+
+                                if (lmap_ptr)
+                                {
+                                    for (kk = 0; kk < USED_CHARS_BUF_SIZE; kk++)
+                                    {
+                                        if (usedchars[kk])
+                                        {
+                                            used_mask = 0x8000; // 0x80 << (sizeof(UsedMapElem) - 1) * BITS_PER_BYTE
+                                            for (ll = 0; ll < BITS_PER_USED_ELEM; ll++)
+                                            {
+                                                gid = kk * BITS_PER_USED_ELEM + ll;
+                                                if ((usedchars[kk] & used_mask) &&
+                                                    (!IS_USED_CHAR(processed_gids, gid)))
+                                                {
+                                                    ADD_TO_USED_CHARS(processed_gids, gid);
+
+                                                    HASH_FIND_INT(lmap_ptr, &gid, lmap_iter);
+                                                    if (lmap_iter)
+                                                    {
+                                                        if (lmap_iter->tounicode && lmap_iter->tu_count)
+                                                        {
+                                                            fprintf(bitfile, "    %d <", gid);
+                                                            for (ii = 0; ii < lmap_iter->tu_count; ii++)
+                                                                fprintf(bitfile, "%04X", lmap_iter->tounicode[ii]);
+                                                            fprintf(bitfile, ">\n");
+                                                        }
+                                                        else
+                                                            fprintf(stderr, "Warning: Unicode value for the glyph %d not found; font: %s (%s).\n", gid, tex_name, ps_name);
+                                                    }
+                                                    else
+                                                        fprintf(stderr, "Warning: Glyph %d encoding not found; font: %s (%s).\n", gid, tex_name, ps_name);
+                                                }
+                                                used_mask >>= 1;
+                                            }
+                                        }
+                                    }
+                                }
+                                else // if (!lmap_ptr)
+                                    fprintf(stderr, "\nError: No font encoding for the font %s (%s)\n", tex_name, ps_name);
+                            }
+                            else // if (!cur_resfont)
+                                fprintf(stderr, "\nError: Font %s (%s) not found\n", tex_name, ps_name);
                         }
+                        else // if (cu_entry->charused_ptr->fd->resfont->TeXname)
+                            fprintf(stderr, "\nError: Font %s TeX name not found\n", ps_name);
                     }
-                    if (used)
-                    {
-                        if (lmap_iter->tounicode && lmap_iter->tu_count)
-                        {
-                            fprintf(bitfile, "    %d <", gid);
-                            for (ii = 0; ii < lmap_iter->tu_count; ii++)
-                                fprintf(bitfile, "%04X", lmap_iter->tounicode[ii]);
-                            fprintf(bitfile, ">\n");
-                        }
-                        else
-                            fprintf(stderr, "Warning: Unicode value for the glyph %d not found; font: %s.\n", gid, ps_name);
-                    }
+
+                    if (!usedchars)
+                        fprintf(stderr, "\nError: Font %s used chars array not found\n", ps_name);
                 }
+                else // if (cu_entry->charused_ptr)
+                    fprintf(stderr, "\nError: Font %s used chars entry not found\n", ps_name);
+
                 cu_entry = cu_entry->next;
             }
+            fprintf(bitfile, "    >> def\n");
         }
+        else // if (cu_head)
+            fprintf(stderr, "\nError: Font %s used chars list not found\n", ps_name);
     }
-    fprintf(bitfile, "    >> def\n");
 }
 
 #define FMT_BUF_LEN 50

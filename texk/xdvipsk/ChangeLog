@@ -1,3 +1,15 @@
+2026-11-23  Sigitas Tolušis <sigitas@vtex.lt>
+
+	* charcode.c, sfntload.c, protos.h: compute OpenType glyph widths
+	in floating point for better precision; remove sfntscale().
+	* writecid.c (add_otf_g2u_table): rewrite GlyphNames2Unicode
+	output: per-entry encoding lookup, faster used-glyph scan, emit
+	the dictionary only when needed; improve and newline-terminate
+	warning and error messages.
+	* writet1.c: enlarge hex_val buffers to prevent overflow.
+	* prescan.c: remove leftover debug code.
+	* xdvips.c: version to 2026.11.23.
+
 2026-09-19  Karl Berry  <karl@freefriends.org>
 
 	* hps.c,
@@ -37,6 +49,75 @@
 	[Copying fix from ../dvipsk.]
 	* download.c (quarterword): compute yoff(set), not xoff twice.
 	See dvipsk/ChangeLog for details.
+
+2026-05-25  Sigitas Tolušis <sigitas@vtex.lt>
+
+	* xdvips.c: bump VTEX_VERSION to 2026.05.25.
+
+	* glyphlist_table.lua, glyphlist_table.h: extend glyph-to-Unicode
+	table with ~360 entries from the newtx/newpx (ntx) and luaotf glyph
+	sets: blackboard-bold letters (bbA-bbZ, bba-bbz), math arrows and
+	brackets, accent combiners (arcwide*, tilde*, bar*), and
+	miscellaneous symbols.  Normalise entry order to case-sensitive
+	alphabetical (uppercase before lowercase) throughout.
+
+	* Build/Dockerfile, Build/builder.sh, Build/Makefile: add
+	Docker-based Linux (x86-64) build infrastructure.  The container
+	runs as the host user to prevent ownership changes in the source
+	tree; output goes into Build/source/Work-linux/.
+
+	* configure.ac, configure: fix zziplib AX_PREFIX_CONFIG_H macro
+	for autoconf 2.73 where $as_echo is not yet defined at the point
+	the macro expands.
+
+	* configure.ac, Makefile.am: refactor --with-system-libjpeg and
+	--with-system-libtiff to use the standard KPSE macro infrastructure
+	(kpse_try_pkg / kpse_add_flags) for consistency with the rest of
+	the TeX Live build system.
+
+2026-05-20  Sigitas Tolušis <sigitas@vtex.lt>
+
+	* Makefile.am, Makefile.in: change LIBJPEG_LIBS/LIBTIFF_LIBS from
+	hardcoded libjpeg.a/libtiff.a to @LIBJPEG_BUILT@/@LIBTIFF_BUILT@
+	so that bundled archives are not built as xdvipsk dependencies when
+	system libraries are selected via --with-system-libjpeg/libtiff.
+	* graphlib/loadJPEG.cpp: guard local static jpeg_read_icc_profile
+	definition with #ifndef LIBJPEG_TURBO_VERSION_NUMBER so it is not
+	compiled when using libjpeg-turbo, which already declares the
+	function in its public jpeglib.h.
+
+	* Makefile.am, Makefile.in: add tif_unix.c (Unix) / tif_win32.c
+	(Windows cross) to libtiff_a_SOURCES so the bundled libtiff provides
+	_TIFFmalloc, _TIFFfree, _TIFFwarningHandler etc. that loadTIFF.cpp
+	no longer defines; add compile rules and am__append_3 conditional.
+	* graphlib/loadJPEG.cpp: add #include <stddef.h>/<stdio.h> before
+	extern "C" block (needed by bundled jpeglib.h for size_t/FILE);
+	restore HAVE_BOOLEAN guard (C++ mode makes jmorecfg.h define boolean
+	as enum otherwise, conflicting with bitmap.h int macros TRUE/FALSE).
+	* thirdparty/libtiff/libtiff-src/tif_config.h: define HAVE_UNISTD_H
+	and HAVE_SYS_TYPES_H so tif_unix.c can include <unistd.h>.
+
+2026-05-19  Sigitas Tolušis <sigitas@vtex.lt>
+
+	* configure.ac, configure: add --with-system-libjpeg and
+	--with-system-libtiff options; when a system library is chosen,
+	the corresponding bundled thirdparty/ sources are skipped entirely;
+	add LIBJPEG_BUILT, LIBJPEG_INCLUDES, LIBTIFF_BUILT, LIBTIFF_INCLUDES
+	substitutions.
+	* Makefile.am, Makefile.in: make noinst_LIBRARIES conditional on
+	@LIBJPEG_BUILT@/@LIBTIFF_BUILT@; LIBJPEG_INCLUDES/LIBTIFF_INCLUDES
+	are now configure substitutions.
+	* graphlib/loadJPEG.cpp: drop dependency on internal libjpeg header
+	jinclude.h; use public <jpeglib.h> and <jerror.h>.
+	* graphlib/loadTIFF.cpp: drop dependency on internal libtiff header
+	tiffiop.h; use public <tiffio.h>; remove definitions of internal
+	libtiff symbols (_TIFFmalloc, _TIFFfree, _TIFFcalloc, _TIFFrealloc,
+	_TIFFmemset, _TIFFmemcpy, _TIFFmemcmp, TIFFFdOpen, TIFFOpen,
+	_TIFFwarningHandler, _TIFFerrorHandler); use TIFFSetWarningHandler/
+	TIFFSetErrorHandler and TIFFClientOpen from the public API.
+
+2026-04-16  Sigitas Tolušis <sigitas@vtex.lt>
+	* output.c: bug fix for dash in encoding name (MP);
 
 2026-04-10  Sigitas Tolušis <sigitas@vtex.lt>
 

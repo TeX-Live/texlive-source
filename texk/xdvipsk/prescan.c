@@ -33,8 +33,8 @@ readpreamble(void)
    if (overridemag > 0) signedquad();
    else if (overridemag < 0) mag = (mag * signedquad()) / 1000.0;
    else mag = signedquad();
-   conv = (real) num * DPI * mag / ( den * 254000000.0 ); 
-   vconv = (real) num * VDPI * mag / ( den * 254000000.0 ); 
+   conv = (real) num * DPI * mag / ( den * 254000000.0 );
+   vconv = (real) num * VDPI * mag / ( den * 254000000.0 );
    alpha = (((real)den / 7227.0) / 0x100000) * (25400000.0 / (real) num);
    fsizetol = 1 + (integer)(DPI/(72270.0 * conv));
    if (!pprescan) {
@@ -324,9 +324,6 @@ prescanpages(void)
                   memset(cp->bitmap, 0, sizeof(cp->bitmap));
                   if (f->resfont && f->resfont->otftype) {
                      HASH_ITER(hh, f->chardesc_hh, current, tmp) {
-                        if (current->charcode == 120601) {
-                           int xxx = 0;
-                        }
                         if ((current->cid > 0) && (current->flags & PREVPAGE))
                            ADD_TO_USED_CHARS(cp->bitmap, current->cid);
                      }

@@ -52,8 +52,8 @@ chardesctype *find_chardesc(fontdesctype *f, int charcode)
             if (head && metrics)
             {
                 if (charcode > 0) {
-                    int li = scalewidth(sfntscale(metrics[charcode].advance, head->unitsPerEm), curfnt->scaledsize);
-                    s->TFMwidth = li;
+                    double li = (double)metrics[charcode].advance * curfnt->scaledsize / head->unitsPerEm;
+                    s->TFMwidth = (integer)(li + 0.5);
                     s->pixelwidth = ((integer)(conv * li + 0.5));
                     s->flags = (curfnt->resfont ? EXISTS : 0);
                     s->flags2 = EXISTS;

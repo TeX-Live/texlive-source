@@ -1271,7 +1271,7 @@ void parse_g2u(const char *pfb_fname)
     static char map_line[ENC_BUF_SIZE + 1];
     char *tok_ptr, *val_ptr, *tok_end;
     char *val_cpy = NULL;
-    char hex_val[8 + 1];
+    char hex_val[20];
     int ii;
     unsigned long ucode;
 
@@ -1422,7 +1422,7 @@ static void append_glyph_to_g2u_map_buf(const char *ps_name, const char *pfb_nam
     int ucnt;
     boolean needs_g2u_tounicode, needs_g2u_cvt;
     static char map_line[ENC_BUF_SIZE + 1];
-    char hex_val[8 + 1];
+    char hex_val[20];
     int ii;
 
     assert(ps_name);

@@ -311,8 +311,6 @@ extern char *expandfilename(const char *src);
    returned p_real_fpath should be removed after return, if not NULL: if (*p_real_fpath) free(*p_real_fpath); */
 extern FILE *lookup_font_file(const char *fpath, char **p_real_fpath, int *p_is_dfont);
 
-extern long sfntscale(long what, unsigned short unitsPerEm);
-
 extern int sfntload(fontdesctype *curfnt);
 #endif /* XDVIPSK */
 
