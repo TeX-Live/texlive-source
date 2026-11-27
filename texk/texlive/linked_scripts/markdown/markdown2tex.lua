@@ -59,7 +59,7 @@
 -- those in the standard .ins files.
 --
 local metadata = {
-    version   = "3.16.3-0-gc2b177d5",
+    version   = "3.16.4-0-g50ab7075",
     comment   = "A module for the conversion from markdown "
              .. "to plain TeX",
     author    = "John MacFarlane, Hans Hagen, Vít Starý Novotný, "
