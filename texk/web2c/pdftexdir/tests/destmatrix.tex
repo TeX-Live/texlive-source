@@ -1,0 +1,15 @@
+% $Id$
+% Public domain.  Used by destmatrix.test.
+% Destinations of the types without dimensions inside \pdfsetmatrix,
+% each in a node that last held a fitr destination with height 30bp
+% and depth 20bp.  All are at (100bp,100bp), the origin of the matrix.
+\catcode`\{=1 \catcode`\}=2 \catcode`\#=6
+\pdfoutput=1 \pdfcompresslevel=0 \pdfobjcompresslevel=0
+\pdfhorigin=0pt \pdfvorigin=0pt \pdfpagewidth=200bp \pdfpageheight=200bp
+\countdef\n=1
+\def\leftover{{\setbox0\hbox{\pdfdest num 99 fitr width 10bp height 30bp depth 20bp}}}
+\def\d#1{\leftover\advance\n1 \pdfdest num\n #1}
+\def\dests#1{\pdfsave\pdfsetmatrix{#1}\d{xyz}\d{fith}\d{fitv}\d{fitbh}\d{fitbv}\pdfrestore}
+\leftover
+\shipout\vbox{\kern100bp \hbox{\kern100bp \dests{1 0 0 1}\dests{0 1 -1 0}}}
+\end

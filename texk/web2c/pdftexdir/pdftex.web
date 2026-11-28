@@ -35122,6 +35122,11 @@ begin
         pdf_width(tail) := width(alt_rule);
         pdf_height(tail) := height(alt_rule);
         pdf_depth(tail) := depth(alt_rule);
+    end
+    else begin {the other types have no dimensions, they denote a point}
+        pdf_width(tail) := 0;
+        pdf_height(tail) := 0;
+        pdf_depth(tail) := 0;
     end;
     if pdf_dest_named_id(tail) <> 0 then begin
         i := tokens_to_string(pdf_dest_id(tail));

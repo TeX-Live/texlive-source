@@ -3,6 +3,9 @@
     depend on char signedness; output where char is signed by default,
     e.g., arm64 and x86_64 will have a different head.checkSumAdjustment
     value. Where char is unsigned (aarch64), no change.
+  - \pdfdest of type xyz, fith, fitv, fitbh or fitbv inside
+    \pdfsetmatrix (e.g., \scalebox, \rotatebox) could be moved by
+    values left over in node memory (github issue #103).
 
 - performance:
   - use getc_unlocked as with XeTeX and Kpathsea (r80886).

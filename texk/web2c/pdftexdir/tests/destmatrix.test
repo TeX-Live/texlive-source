@@ -1,0 +1,30 @@
+#! /bin/sh -vx
+# $Id$
+# Public domain.
+# Check the position of xyz, fith, fitv, fitbh and fitbv destinations
+# inside \pdfsetmatrix: their width, height and depth used to be left
+# over from the node's previous use, which moved the destination.
+
+: ${BinDir=.}
+: ${ExeExt=}
+_pdftex=$BinDir/pdftex$ExeExt
+
+LC_ALL=C; export LC_ALL;  LANGUAGE=C; export LANGUAGE
+
+# running in Build/source/Work/texk/web2c
+# srcdir  is Build/source/texk/web2c
+: ${srcdir=../../../texk/web2c}
+TEXMFCNF=$srcdir/../kpathsea; export TEXMFCNF
+TEXINPUTS="$srcdir/pdftexdir/tests;."; export TEXINPUTS
+
+rm -f destmatrix.log destmatrix.pdf
+
+$_pdftex -ini -interaction=batchmode destmatrix.tex || exit 1
+
+# ten destinations, each at (100bp,100bp)
+test `grep -a -c '^\[2 0 R /' destmatrix.pdf` = 10 || exit 2
+grep -a '^\[2 0 R /' destmatrix.pdf \
+  | grep -v '^\[2 0 R /\(XYZ 100 100 null\|FitH 100\|FitV 100\|FitBH 100\|FitBV 100\)\]$' \
+  && exit 3
+
+exit 0

@@ -1,3 +1,18 @@
+2026-11-27  Norbert Preining  <norbert@preining.info>
+
+	* tests/destmatrix.test, tests/destmatrix.tex: new test for
+	xyz, fith, fitv, fitbh and fitbv destinations inside
+	\pdfsetmatrix, with the identity matrix and with a rotation.
+	* am/pdftex.am (pdftex_tests): add it.
+
+2026-11-27  Ambrus Toth  <32463042+tothambrus11@users.noreply.github.com>
+
+	* pdftex.web (Implement \pdfdest): set pdf_width, pdf_height and
+	pdf_depth to zero for all types but fitr. With a matrix in use,
+	do_dest passes them to set_rect_dimens, and they held whatever the
+	node's memory held before, which moved the destination.
+	https://github.com/TeX-Live/texlive-source/issues/103
+
 2026-10-31  Norbert Preining  <norbert@preining.info>
 
 	* tests/mapnumber.test, tests/mapnumber.tex: new test for the
