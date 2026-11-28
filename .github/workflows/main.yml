@@ -58,6 +58,7 @@ jobs:
             ci_build: true
             use_qemu: false
             buildsys: debian
+            runner: ubuntu-24.04
           - tl_name: x86_64-linux
             image: almalinux:8
             platform: amd64
